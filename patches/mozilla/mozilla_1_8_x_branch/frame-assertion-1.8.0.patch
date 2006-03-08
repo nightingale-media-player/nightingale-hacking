@@ -1,0 +1,25 @@
+Index: layout/generic/nsFrame.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/generic/nsFrame.cpp,v
+retrieving revision 3.574.2.4.2.2
+diff -u -8 -p -r3.574.2.4.2.2 nsFrame.cpp
+--- layout/generic/nsFrame.cpp	23 Feb 2006 04:59:54 -0000	3.574.2.4.2.2
++++ layout/generic/nsFrame.cpp	24 Feb 2006 21:09:19 -0000
+@@ -4351,17 +4351,16 @@ nsIFrame::GetOverflowAreaProperty(PRBool
+     // The property isn't set yet, so allocate a new rect, set the property,
+     // and return the newly allocated rect
+     nsRect*  overflow = new nsRect(0, 0, 0, 0);
+     propTable->SetProperty(this, nsLayoutAtoms::overflowAreaProperty,
+                            overflow, DestroyRectFunc, nsnull);
+     return overflow;
+   }
+ 
+-  NS_NOTREACHED("Frame abuses NS_FRAME_OUTSIDE_CHILDREN flag");
+   return nsnull;
+ }
+ 
+ void 
+ nsIFrame::FinishAndStoreOverflow(nsRect* aOverflowArea, nsSize aNewSize)
+ {
+   // This is now called FinishAndStoreOverflow() instead of 
+   // StoreOverflow() because frame-generic ways of adding overflow

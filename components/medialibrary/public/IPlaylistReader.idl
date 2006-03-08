@@ -1,0 +1,78 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+#include "nsIArray.idl"
+#include "nsIWebProgressListener.idl"
+
+[scriptable, uuid(5770099E-503B-4b76-B1A6-0BC53F53D2BF)]
+interface sbIPlaylistReaderListener : nsIWebProgressListener
+{
+  attribute wstring originalURL;
+  attribute wstring serviceGuid;
+  attribute wstring destinationURL;
+  attribute wstring destinationTable;
+  attribute wstring readableName;
+  attribute wstring playlistType;
+  attribute wstring description;
+  attribute PRBool  appendOrReplace;
+};
+
+[scriptable, uuid(43005B48-8138-424d-AA12-FE604BA3A3E8)]
+interface sbIPlaylistReader : nsISupports
+{
+  attribute wstring originalURL;
+
+  PRBool Read(in wstring strURL, in wstring strGUID, in wstring strDestTable, in PRBool bReplace, out PRInt32 errorCode);
+  PRInt32 Vote(in wstring strURL);
+
+  wstring Name();
+  wstring Description();
+  
+  void SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
+  void SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
+};
+
+[scriptable, uuid(18032AD6-CB1F-403d-B3F5-7FE8EB579C28)]
+interface sbIPlaylistReaderManager : nsISupports
+{
+  attribute wstring originalURL;
+
+  PRInt32 AutoLoad(in wstring strURL, in wstring strGUID, in wstring strReadableName, 
+                   in wstring strPlaylistType, in wstring strDescription, in wstring strContentType, 
+                   in sbIPlaylistReaderListener playlistReaderListener);
+  
+  PRInt32 LoadPlaylist(in wstring strURL, in wstring strGUID, in wstring strName, 
+                       in wstring strReadableName, in wstring strPlaylistType, in wstring strDescription, 
+                       in wstring strContentType, in PRBool bAppendOrReplace, in sbIPlaylistReaderListener playlistReaderListener);
+
+  PRInt32 Read(in wstring strFile, in wstring strGUID, in wstring strName, 
+               in wstring strReadableName, in wstring strContentType, in PRBool bAppendOrReplace);
+
+  void SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
+  void SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
+};

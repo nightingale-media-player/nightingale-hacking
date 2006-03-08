@@ -1,0 +1,272 @@
+/**
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+#include "nsIObserver.idl"
+#include "IPlaylist.idl"
+#include "sbICoreWrapper.idl"
+
+/**
+ * An interface that describes the PlaylistPlayback Service
+ */
+[scriptable, uuid(190b1e87-8769-43b4-a362-4065eb6730e5)]
+interface sbIPlaylistPlayback : nsIObserver
+{
+  const unsigned short REPEAT_MODE_OFF = 1;
+  const unsigned short REPEAT_MODE_ALL = 2;
+  const unsigned short REPEAT_MODE_ONE = 3;
+
+  /**
+   * 
+   */
+  attribute sbICoreWrapper core;
+
+  /**
+   * 
+   */
+  attribute unsigned short volume;
+
+  /**
+   * 
+   */
+  attribute boolean mute;
+
+  /**
+   * 
+   */
+  readonly attribute long long length;
+
+  /**
+   * 
+   */
+  attribute long long position;
+
+  /**
+   * 
+   */
+  attribute unsigned short repeat;
+
+  /**
+   * 
+   */
+  attribute boolean shuffle;
+
+  /**
+   * 
+   */
+  attribute unsigned long currentIndex;
+
+  /**
+   * 
+   */
+  attribute unsigned long itemCount;
+
+  /**
+   *
+   */
+  readonly attribute wstring currentGUID;
+
+  /**
+   *
+   */
+  readonly attribute wstring currentURL;
+
+  /**
+   *
+   */
+  void addCore(in sbICoreWrapper core,
+               in boolean select);
+
+  /**
+   *
+   */
+  void removeCore(in sbICoreWrapper core);
+
+  /**
+   *
+   */
+  void selectCore(in sbICoreWrapper core);
+
+   /**
+   * To resume playback or just play a default value if not currently playing back.
+   */
+  boolean play();
+
+ /**
+   * Use the string as a playlistsource ref
+   */
+  boolean playRef(in wstring source_ref,
+                  in unsigned long index);
+ /**
+   * Create a new playlistsource ref
+   */
+  boolean playTable(in wstring dbGUID,
+                    in wstring table,
+                    in unsigned long index);
+  /**
+   *
+   */
+  boolean playObject(in sbIPlaylist playlist,
+                     in unsigned long index);
+
+  /**
+   * This method just clears the internal playlist and plays a single file (for web playback)
+   */
+  boolean playUrl(in wstring url);
+
+  /**
+   *
+   */
+  boolean pause();
+
+  /**
+   *
+   */
+  boolean stop();
+
+  /**
+   * calculate based upon shuffle and repeat values
+   */
+  unsigned long next();
+
+  /**
+   * calculate based upon shuffle and repeat values
+   */
+  unsigned long previous();
+
+  /**
+   * 
+   */
+  unsigned long current();
+
+
+/*
+
+It's totally fine to implement the following as attributes if you prefer,  
+so long as we carry over the same functionality.
+
+The mute/volume/length/position api here should just call to the current wrapper.
+
+*/
+
+  /**
+   * 
+   */
+  boolean getPaused();
+
+  /**
+   *
+   */
+  boolean getPlaying();
+
+  /**
+   *
+   */
+  unsigned short getVolume();
+
+  /**
+   *
+   */
+  boolean setVolume(in unsigned short volume);
+
+  /**
+   *
+   */
+  boolean getMute();
+
+  /**
+   *
+   */
+  void setMute(in boolean mute);
+
+  /**
+   *
+   */
+  unsigned long long getLength();
+
+  /**
+   *
+   */
+  unsigned long long getPosition();
+
+  /**
+   *
+   */
+  boolean setPosition(in unsigned long long position);
+
+  /**
+   *
+   */
+  void setRepeat(in unsigned short repeatMode);
+
+  /**
+   *
+   */
+  unsigned short getRepeat();
+
+  /**
+   *
+   */
+  void setShuffle(in boolean shuffle);
+
+  /**
+   *
+   */
+  boolean getShuffle();
+
+  /**
+   *
+   */
+  void getMetadataFields(out unsigned long fieldCount,
+                         [array, size_is(fieldCount), retval] out wstring metaFields);
+
+  /**
+   *
+   */
+  wstring getCurrentValue(in wstring field);
+
+   /**
+   *
+   */
+  void setCurrentValue(in wstring field,
+                       in wstring value);
+
+  /**
+   *
+   */
+  void getCurrentValues(in unsigned long fieldCount,
+                        [array, size_is(fieldCount)] in wstring metaFields,
+                        out unsigned long valueCount,
+                        [array, size_is(valueCount), retval] out wstring metaValues);
+
+  /**
+   *
+   */
+  void setCurrentValues(in unsigned long fieldCount,
+                        [array, size_is(fieldCount)] in wstring metaFields,
+                        in unsigned long valueCount,
+                        [array, size_is(valueCount)] in wstring metaValues);
+};

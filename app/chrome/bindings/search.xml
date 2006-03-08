@@ -1,0 +1,382 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!--
+
+
+    WOO HOO!! LET'S MAKE A BINDING WIDGET!!
+
+
+-->
+
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="search">
+    <content>
+      <xul:hbox onmousedown="onFirstMousedown();">
+        <xul:button 
+          sbid="search.button"
+          type="menu"
+          xbl:inherits="id=buttonid"
+          class="sb_faceplate"
+          oncommand="onSearchServiceMenu(event.target);"
+        >
+          <xul:menupopup id="search.popup">
+            <xul:menuitem id="search.popup.songbird" sid="search.item.songbird"
+              label="Library" class="menuitem-iconic" image="chrome://rmp_demo/skin/default_skin/icon_lib_16x16.png"
+            />
+            <xul:menuitem id="search.popup.google" 
+              label="Google" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/google.ico"
+            />
+            <xul:menuitem id="search.popup.wiki" 
+              label="Wikipedia" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/pogues.ico"
+            />
+            <xul:menuitem id="search.popup.yahoo" 
+              label="Yahoo!" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/yahoo.ico"
+            />
+            <xul:menuitem id="search.popup.emusic" 
+              label="eMusic" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/emusic.ico"
+            />
+            <xul:menuitem id="search.popup.insound" 
+              label="Insound" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/insound.ico"
+            />
+            <xul:menuitem id="search.popup.odeo" 
+              label="Odeo" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/odeo.ico"
+            />
+            <xul:menuitem id="search.popup.shoutcast" 
+              label="Shoutcast" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/shoutcast.ico"
+            />
+            <xul:menuitem id="search.popup.radiotime" 
+              label="Radiotime" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/radiotime.ico"
+            />
+          </xul:menupopup>
+        </xul:button>
+         
+        <xul:menulist 
+          sbid="search.list"
+          xbl:inherits="id=listid"
+          editable="true"
+          class="sb_faceplate"
+          xxx_onchange="onSearchChange();"
+          xxx_oncommand="onSearchChange();"
+          onkeypress="onSearchKeypress( event );"
+          label="Search"
+        >
+          <xul:menupopup 
+            sbid="search.list.popup"
+            id="search.list.popup"
+            onpopupshowing="onSearchPopup();"
+          />
+        </xul:menulist>
+
+        <children/>
+      </xul:hbox>
+    </content>
+
+   <implementation>
+
+    <!-- CONSTRUCTION -->
+    <constructor>
+    <![CDATA[
+    try
+    {
+      // Woo, magic includes on instantiation!
+      var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+      
+      jsLoader.loadSubScript( "chrome://rmp_demo/content/songbird_interfaces.js", this );
+      jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
+      
+/*      
+*/
+      // Set our starting values.                              
+      this.theSongbirdSearchSelection = document.getAnonymousElementByAttribute( this, "sid", "search.item.songbird" );
+      this.theCurrentSearchSelection = this.theSongbirdSearchSelection;
+      if ( this.theCurrentSearchSelection )
+      {
+        this.button.setAttribute( "image", this.theCurrentSearchSelection.getAttribute( "image" ) );
+      }
+
+      this.editIdleInterval = null;
+      
+      // Stuff us into the document context so we can find us from an interval callback
+      document.__SEARCH_WIDGET__ = this;
+      
+      this.list.label = "Search";
+    }
+    catch ( err )
+    {
+      alert( err );
+    }
+    ]]>
+    </constructor>
+    
+    <destructor>
+    </destructor>
+
+    <!-- DATA FIELDS -->
+    <field name="button">document.getAnonymousElementByAttribute(this, 'sbid', 'search.button');</field>
+    <field name="list">  document.getAnonymousElementByAttribute(this, 'sbid', 'search.list');  </field>
+    <field name="popup"> document.getAnonymousElementByAttribute(this, 'sbid', 'search.list.popup'); </field>
+    <field name="first_mousedown">false</field>
+
+    <!-- DATA PROPERTIES -->
+    <property name="cur_service">
+      <getter>
+        return this.theCurrentSearchSelection;
+      </getter>
+      <setter>
+        // readonly, bitches!
+      </setter>
+    </property>
+    
+    <property name="is_songbird">
+      <getter>
+        return ( this.theCurrentSearchSelection == this.theSongbirdSearchSelection );
+      </getter>
+      <setter>
+        // readonly, bitches!
+      </setter>
+    </property>
+
+    <property name="reset">
+      <getter>
+        return 0;
+      </getter>
+      <setter>
+        this.onSearchPopup();
+      </setter>
+    </property>
+
+    <!-- INTERNAL EVENT HANDLERS -->
+    <method name="onFirstMousedown">
+      <parameter name="event"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        if ( ! this.first_mousedown )
+        {
+          this.list.label = "";
+          this.first_mousedown = true;
+        }
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="onSearchServiceMenu">
+      <parameter name="target"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        this.theCurrentSearchSelection = target;
+        this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
+        this.onSearchChange();
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="onSearchChange">
+      <body>
+      <![CDATA[
+      try
+      {
+        var empty_space = " ";
+        var search_term = this.list.label;
+        if ( ( search_term.length > 0 ) && ( search_term != empty_space ) )
+        {
+          this.sendSearchEvent();
+        }
+        else
+        {
+          // Is the term now empty?
+          this.list.selectedIndex = -1;
+          this.list.label = "";
+        }
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="onSearchKeypress">
+      <parameter name="evt"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        switch ( evt.keyCode )
+        {
+          case 27: // Esc
+            this.list.label = ""; // Clear it
+            // Fallthru
+          case 13: // Return
+            this.onSearchChange();
+            break;      
+          default:
+            if ( this.editIdleInterval )
+            {
+              clearInterval( this.editIdleInterval );
+            }
+            this.editIdleInterval = setInterval( this.onSearchEditIdle, 1000 );
+            break;      
+        }
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="onSearchEditIdle">
+      <body>
+      <![CDATA[
+      try
+      {
+        // WOO HOO.  YAY FOR GLOBAL DATA POLLUTING MY DOCUMENT OBJECT!!
+        if ( document.__SEARCH_WIDGET__.theCurrentSearchSelection == document.__SEARCH_WIDGET__.theSongbirdSearchSelection )
+        {
+          // Only do key timeouts when the library is selected
+          document.__SEARCH_WIDGET__.sendSearchEvent();
+        }
+        clearInterval( document.__SEARCH_WIDGET__.editIdleInterval );
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="onSearchPopup">
+      <body>
+      <![CDATA[
+      try
+      {
+        var empty_space = " ";
+        var thePlaybackURL = new sbIDataRemote( "metadata.url" );
+        if ( thePlaybackURL.GetValue().length )
+        {
+          var prev_sel = this.list.selectedIndex;
+          var prev_label = this.list.label;
+          this.list.removeAllItems();
+          
+          var aDBQuery = new sbIDatabaseQuery();
+          aDBQuery.SetAsyncQuery(false);
+          aDBQuery.SetDatabaseGUID("songbird");
+          aDBQuery.AddQuery('select title, artist, album, genre from library where url="' + thePlaybackURL.GetValue() + '"' );
+          var ret = aDBQuery.Execute();
+          var resultset = aDBQuery.GetResultObject();
+          
+          // Go through and see if there is anything upon which to search.
+          var ccount = resultset.GetColumnCount();
+          var rowcount = resultset.GetRowCount();
+          
+          for(var i = 0; i < rowcount; i++)
+          {
+            for(var j = 0; j < ccount; j++)
+            {
+              // LAME.  If I append a totally blank item it is autoselected.
+              var value = "" + resultset.GetRowCell(i, j);
+              if ( ! value.length )
+              {
+                value = " ";
+                // A unique number of blank spaces to ensure that the metadata column is preserved
+                for ( var k = 0; k < j; k++ )
+                {
+                  value += empty_space; 
+                }
+              }
+              this.list.appendItem( value, null, null )
+              retval = true;
+            }
+          } 
+          this.list.selectedIndex = prev_sel;
+          if ( prev_sel == -1 )
+          {
+            // Reset the label if it's a hand-edited label.
+            this.list.label = prev_label;
+          }
+        }
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+
+    <!-- EXTERNAL EVENT DISPATCH -->
+    <method name="sendSearchEvent">
+      <parameter name="which"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        if ( this.list.label == "migmigmig" )
+        {
+          alert( ".gge retsaE" );
+        }
+        var e = document.createEvent("Events");
+        e.initEvent("search", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( err )
+      }
+      ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>

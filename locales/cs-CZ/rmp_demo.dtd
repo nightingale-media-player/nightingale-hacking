@@ -1,0 +1,153 @@
+﻿
+<!ENTITY window.main.title  "Songbird 0.1 Ukázka" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "OK" >
+<!ENTITY window.cancel      "Storno" >
+<!ENTITY window.browse      "Procházet..." >
+
+<!ENTITY menu.file          "Soubor" >
+<!ENTITY menu.file.new      "Nový seznam stop..." >
+<!ENTITY menu.file.smart    "Nový chytrý seznam stop..." >
+<!ENTITY menu.file.remote   "Nový vzdálený seznam stop..." >
+<!ENTITY menu.file.open     "Otevřít soubor..." >
+<!ENTITY menu.file.url      "Otevřít adresu URL..." >
+<!ENTITY menu.file.playlist "Načíst seznam stop..." >
+<!ENTITY menu.file.scan     "Hledat mediální soubory..." >
+<!ENTITY menu.file.dlfolder "Nastavit složku pro stažené soubory..." >
+<!ENTITY menu.file.watch    "Nastavit sledované složky..." >
+<!ENTITY menu.file.htmlbar  "Vždy zobrazit webovou lištu" >
+<!ENTITY menu.file.skin     "Vybrat jiný vzhled" >
+<!ENTITY menu.file.window   "Otevřít hlavní okno" >
+<!ENTITY menu.file.mini     "Otevřít Mini přehrávač" >
+<!ENTITY menu.file.about    "O aplikaci Songbird..." >
+<!ENTITY menu.file.exit     "Ukončit" >
+
+<!ENTITY menu.edit          "Úpravy" >
+<!ENTITY menu.edit.undo     "Zpět" >
+<!ENTITY menu.edit.cut      "Vyjmout" >
+<!ENTITY menu.edit.copy     "Kopírovat" >
+<!ENTITY menu.edit.paste    "Vložit" >
+<!ENTITY menu.edit.clear    "Vyčistit" >
+<!ENTITY menu.edit.selall   "Vybrat vše" >
+<!ENTITY menu.edit.selnone  "Zrušit výběr" >
+
+<!ENTITY menu.controls      "Ovládání" >
+<!ENTITY menu.control.play  "Přehrát / Pozastavit" >
+<!ENTITY menu.control.next  "Další stopa" >
+<!ENTITY menu.control.prev  "Předchozí stopa" >
+<!ENTITY menu.control.shuf  "Náhodné přehrávání" >
+<!ENTITY menu.control.repa  "Opakovat vše" >
+<!ENTITY menu.control.rep1  "Opakovat jednu stopu" >
+<!ENTITY menu.control.repx  "Neopakovat" >
+
+<!ENTITY menu.services        "Služby" >
+<!ENTITY menu.services.browse "Procházet služby..." >
+
+<!ENTITY menu.devices       "Zařízení" >
+
+<!ENTITY menu.help          "Nápověda" >
+<!ENTITY menu.help.topics   "Témata nápovědy..." >
+<!ENTITY menu.help.about    "O aplikaci Songbird..." >
+
+<!ENTITY html.context.open  "Otevřít" >
+<!ENTITY html.context.play  "Přehrát" >
+<!ENTITY html.context.add   "Přidat do knihovny medií" >
+
+<!ENTITY playlist.context.remove  "Odstranit" >
+<!ENTITY playlist.context.rename  "Přejmenovat" >
+<!ENTITY playlist.context.search  "Hledat" >
+<!ENTITY playlist.context.lyrics  "Texty" >
+
+<!ENTITY tooltip.miniplayer       "Přepnout na Mini přehrávač" >
+<!ENTITY tooltip.minimize         "Minimalizovat" >
+<!ENTITY tooltip.maximize         "Maximalizovat/Obnovit" >
+<!ENTITY tooltip.exit             "Ukončit" >
+<!ENTITY tooltip.control.back     "Předchozí stopa" >
+<!ENTITY tooltip.control.play     "Přehrát" >
+<!ENTITY tooltip.control.pause    "Pozastavit" >
+<!ENTITY tooltip.control.fwd      "Další stopa" >
+<!ENTITY tooltip.control.mute     "Ztlumit" >
+<!ENTITY tooltip.control.volume   "Hlasitost" >
+<!ENTITY tooltip.control.repeat   "Opakovat" >
+<!ENTITY tooltip.control.shuffle  "Náhodné přehrávání" >
+<!ENTITY tooltip.control.curtrack "Najít aktuální skladbu" >
+<!ENTITY tooltip.control.service  "Přepnout zobrazení displeje" >
+<!ENTITY tooltip.search           "Hledat" >
+<!ENTITY tooltip.browser.back     "Procházet zpět" >
+<!ENTITY tooltip.browser.fwd      "Procházet vpřed" >
+<!ENTITY tooltip.browser.stop     "Zastavit prohlížení" >
+<!ENTITY tooltip.browser.home     "Domů" >
+<!ENTITY tooltip.browser.playlist "Zobrazit dostupná média na této webové stránce" >
+<!ENTITY tooltip.browser.download "Zobrazit aktuální stahování" >
+
+<!ENTITY smart.window             "Vytvořit chytrý seznam stop" >
+<!ENTITY smart.library            "Vybrat knihovnu medií:" >
+<!ENTITY smart.limit              "Omezit na" >
+<!ENTITY smart.match              "Odpovídá" >
+<!ENTITY smart.any                "zčásti" >
+<!ENTITY smart.all                "všem" >
+<!ENTITY smart.following          "následujícím podmínkám:" >   
+<!ENTITY smart.random             "náhodný" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "umělec" >
+<!ENTITY smart.genre              "žánr" >
+<!ENTITY smart.title              "název" >
+<!ENTITY smart.high_rating        "vysoké hodnocení" >
+<!ENTITY smart.low_rating         "nízké hodnocení" >
+<!ENTITY smart.most_recent        "nejnovější" >
+<!ENTITY smart.least_recent       "nejstarší" >
+<!ENTITY smart.most_often         "nejčastěji přehrávané" >
+<!ENTITY smart.least_often        "nejméně přehrávané" >
+<!ENTITY smart.most_added         "nejčastěji přidávané" >
+<!ENTITY smart.least_added        "nejméně přidávané" >
+<!ENTITY smart.minutes            "minut(y)" >
+<!ENTITY smart.hours              "hodin(y)" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "skladby" >
+<!ENTITY smart.contains           "obsahuje" >
+<!ENTITY smart.not_contain        "neobsahuje" >
+<!ENTITY smart.is                 "je" >
+<!ENTITY smart.is_not             "není" >
+<!ENTITY smart.starts             "začíná na" >
+<!ENTITY smart.ends               "končí na" >
+         
+<!ENTITY download.window          "Stáhnout" >
+<!ENTITY download.select          "Zvolit cílový adresář:" >
+<!ENTITY download.always          "Vždy používat tento adresář" >
+
+<!ENTITY textbox.rmp_demo_open_url "Zadejte adresu URL nebo cestu k souboru který chcete přehrát:">
+
+<!ENTITY open_url.title           "Otevřít adresu URL">
+<!ENTITY subscribe.title          "Přihlásit">
+<!ENTITY subscribe.minutes        "Minutu(y)">
+<!ENTITY subscribe.hours          "Hodinu(y)">
+<!ENTITY subscribe.days           "Den(Dny)">
+<!ENTITY subscribe.autocheck      "Automaticky obnovit každou">
+<!ENTITY subscribe.destinationfolder      "Zvolit cílovou složku:">
+
+<!ENTITY exists.title             "Seznam stop již existuje">
+<!ENTITY exists.exists            "Seznam stop s tímto jménem již existuje!">
+
+<!ENTITY media_scan.title          "Hledat mediální soubory...">
+<!ENTITY media_scan.watch          "Hledat nové soubory v této složce">
+
+<!ENTITY new_playlist.title       "Vytvořit nový seznam stop">
+<!ENTITY new_playlist.name        "Zadejte jméno nového seznamu stop.">
+
+<!ENTITY addtoplaylist.title      "Přidat do seznamu stop">
+<!ENTITY addtoplaylist.create      "Vytvořit nový seznam stop">
+
+<!ENTITY watchfolder.title        "Sledovat adresáře">
+<!ENTITY watchfolder.folderlist   "Hledat nové soubory v těchto složkách:">
+
+<!ENTITY locale.language          "Jazyk" >
+
+
+
+<!ENTITY menu.preferences "Možnosti..." >
+<!ENTITY menu.extensions "Rozšíření..." >
+
+

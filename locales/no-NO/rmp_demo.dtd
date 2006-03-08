@@ -1,0 +1,153 @@
+﻿
+<!ENTITY window.main.title  "Songbird ForhŒndsvisning" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "OK" >
+<!ENTITY window.cancel      "Avbryt" >
+<!ENTITY window.browse      "Bla..." >
+
+<!ENTITY menu.file          "Fil" >
+<!ENTITY menu.file.new      "Ny spilleliste..." >
+<!ENTITY menu.file.smart    "Ny smart spilleliste..." >
+<!ENTITY menu.file.remote   "Ny ekstern spilleliste..." >
+<!ENTITY menu.file.open     "pne fil..." >
+<!ENTITY menu.file.url      "pne URL..." >
+<!ENTITY menu.file.playlist "Last inn spilleliste..." >
+<!ENTITY menu.file.scan     "S¿k etter media..." >
+<!ENTITY menu.file.dlfolder "Velg nedlastings mappe..." >
+<!ENTITY menu.file.watch    "Velg overvŒkede mapper..." >
+<!ENTITY menu.file.htmlbar  "Vis alltid web-bar" >
+<!ENTITY menu.file.skin     "Skift tema" >
+<!ENTITY menu.file.window   "pne hovedvindu" >
+<!ENTITY menu.file.mini     "pne minispiller" >
+<!ENTITY menu.file.about    "Om Songbird..." >
+<!ENTITY menu.file.exit     "Avslutt" >
+
+<!ENTITY menu.edit          "Rediger" >
+<!ENTITY menu.edit.undo     "Angre" >
+<!ENTITY menu.edit.cut      "Klipp ut" >
+<!ENTITY menu.edit.copy     "Kopier" >
+<!ENTITY menu.edit.paste    "Lim inn" >
+<!ENTITY menu.edit.clear    "T¿m" >
+<!ENTITY menu.edit.selall   "Velg alle" >
+<!ENTITY menu.edit.selnone  "Velg ingen" >
+
+<!ENTITY menu.controls      "Kontroller" >
+<!ENTITY menu.control.play  "Spill/Pause" >
+<!ENTITY menu.control.next  "Neste spor" >
+<!ENTITY menu.control.prev  "Forrige spor" >
+<!ENTITY menu.control.shuf  "Stokk om" >
+<!ENTITY menu.control.repa  "Repeter alle" >
+<!ENTITY menu.control.rep1  "Repeter en" >
+<!ENTITY menu.control.repx  "Repeter ingen" >
+
+<!ENTITY menu.services        "Tjenester" >
+<!ENTITY menu.services.browse "Bla i tjenester..." >
+
+<!ENTITY menu.devices       "Enheter" >
+
+<!ENTITY menu.help          "Hjelp" >
+<!ENTITY menu.help.topics   "Hjelp temaer..." >
+<!ENTITY menu.help.about    "Om Songbird..." >
+
+<!ENTITY html.context.open  "pne" >
+<!ENTITY html.context.play  "Spill" >
+<!ENTITY html.context.add   "Legg til biblioteket" >
+
+<!ENTITY playlist.context.remove  "Fjern" >
+<!ENTITY playlist.context.rename  "Gi nytt navn" >
+<!ENTITY playlist.context.search  "S¿k" >
+<!ENTITY playlist.context.lyrics  "Sangtekster" >
+
+<!ENTITY tooltip.miniplayer       "Skift til minispiller" >
+<!ENTITY tooltip.minimize         "Minimer" >
+<!ENTITY tooltip.maximize         "Maksimer/Gjenopprett" >
+<!ENTITY tooltip.exit             "Avslutt" >
+<!ENTITY tooltip.control.back     "Forrige spor" >
+<!ENTITY tooltip.control.play     "Spill" >
+<!ENTITY tooltip.control.pause    "Pause" >
+<!ENTITY tooltip.control.fwd      "Neste spor" >
+<!ENTITY tooltip.control.mute     "Demp" >
+<!ENTITY tooltip.control.volume   "LydnivŒ" >
+<!ENTITY tooltip.control.repeat   "Repeter" >
+<!ENTITY tooltip.control.shuffle  "Stokk om" >
+<!ENTITY tooltip.control.curtrack "Finn gjeldende spor" >
+<!ENTITY tooltip.control.service  "Skift faceplate fremvisning" >
+<!ENTITY tooltip.search           "S¿k" >
+<!ENTITY tooltip.browser.back     "Forrige side" >
+<!ENTITY tooltip.browser.fwd      "Neste side" >
+<!ENTITY tooltip.browser.stop     "Stopp nettleser" >
+<!ENTITY tooltip.browser.home     "Hjem" >
+<!ENTITY tooltip.browser.playlist "Vis tilgjengelig media pŒ denne nettsiden" >
+<!ENTITY tooltip.browser.download "Vis gjeldende nedlastinger" >
+
+<!ENTITY smart.window             "Smart spilleliste konstrukt¿r" >
+<!ENTITY smart.library            "Velg bibliotek:" >
+<!ENTITY smart.limit              "Avgrens til" >
+<!ENTITY smart.match              "Lik" >
+<!ENTITY smart.any                "enhver" >
+<!ENTITY smart.all                "alle" >
+<!ENTITY smart.following          "de f¿lgende vilkŒr:" >   
+<!ENTITY smart.random             "tilfeldig" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "artist" >
+<!ENTITY smart.genre              "sjanger" >
+<!ENTITY smart.title              "tittel" >
+<!ENTITY smart.high_rating        "h¿y popularitet" >
+<!ENTITY smart.low_rating         "lav rate" >
+<!ENTITY smart.most_recent        "mest nylig" >
+<!ENTITY smart.least_recent       "minst nylig" >
+<!ENTITY smart.most_often         "mest ofte" >
+<!ENTITY smart.least_often        "minst ofte" >
+<!ENTITY smart.most_added         "mest lagt til" >
+<!ENTITY smart.least_added        "minst lagt til" >
+<!ENTITY smart.minutes            "minutter" >
+<!ENTITY smart.hours              "timer" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "sanger" >
+<!ENTITY smart.contains           "inneholder" >
+<!ENTITY smart.not_contain        "ikke inneholder" >
+<!ENTITY smart.is                 "er" >
+<!ENTITY smart.is_not             "ikke er" >
+<!ENTITY smart.starts             "starter med" >
+<!ENTITY smart.ends               "slutter med" >
+         
+<!ENTITY download.window          "Last ned" >
+<!ENTITY download.select          "Velg destinasjonsmappe:" >
+<!ENTITY download.always          "Bruk alltid denne mappen" >
+
+<!ENTITY textbox.rmp_demo_open_url "Skriv inn URL eller sti til mediet du vil spille:">
+
+<!ENTITY open_url.title           "pne URL">
+<!ENTITY subscribe.title          "Abonner">
+<!ENTITY subscribe.minutes        "Minutt(er)">
+<!ENTITY subscribe.hours          "Time(r)">
+<!ENTITY subscribe.days           "Dag(er)">
+<!ENTITY subscribe.autocheck      "Oppdater automatisk hver">
+<!ENTITY subscribe.destinationfolder      "Velg destinasjonsmappe:">
+
+<!ENTITY exists.title             "Spilleliste eksisterer">
+<!ENTITY exists.exists            "En spilleliste med det navnet eksisterer allerede!">
+
+<!ENTITY media_scan.title          "S¿k etter media">
+<!ENTITY media_scan.watch          "OvervŒk denne mappen for ny media">
+
+<!ENTITY new_playlist.title       "Lag ny spilleliste">
+<!ENTITY new_playlist.name        "Skriv inn navnet til den nye spillelisten.">
+
+<!ENTITY addtoplaylist.title      "Legg til spilleliste">
+<!ENTITY addtoplaylist.create     "Lag ny spilleliste">
+
+<!ENTITY watchfolder.title        "OvervŒkede mapper">
+<!ENTITY watchfolder.folderlist   "OvervŒk disse mappene for ny media:">
+
+<!ENTITY locale.language          "SprŒk" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

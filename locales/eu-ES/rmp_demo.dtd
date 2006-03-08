@@ -1,0 +1,151 @@
+﻿
+<!ENTITY window.main.title  "Songbird Aurrebista" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Ados" >
+<!ENTITY window.cancel      "Utzi" >
+<!ENTITY window.browse      "Arakatu..." >
+
+<!ENTITY menu.file          "Fitxategia" >
+<!ENTITY menu.file.new      "Erreprodukzio-zerrenda Berria..." >
+<!ENTITY menu.file.smart    "Adimendun Erreprodukzio-zerrenda Berria..." >
+<!ENTITY menu.file.remote   "Urruneko Erreprodukzio-zerrenda Berria..." >
+<!ENTITY menu.file.open     "Fitxategi bat ireki..." >
+<!ENTITY menu.file.url      "URL batetik ireki..." >
+<!ENTITY menu.file.playlist "Erreprodukzio-zerrenda Kargatu..." >
+<!ENTITY menu.file.scan     "Euskarriak Bilatu..." >
+<!ENTITY menu.file.htmlbar  "Web-barra Beti Erakutsi" >
+<!ENTITY menu.file.skin     "Azal Alternatiboa" >
+<!ENTITY menu.file.window   "Lehio Nagusia Ireki" >
+<!ENTITY menu.file.mini     "Mini-Erreproduzigailua Ireki" >
+<!ENTITY menu.file.about    "Songbird-i Buruz..." >
+<!ENTITY menu.file.exit     "Irten" >
+
+<!ENTITY menu.edit          "Editatu" >
+<!ENTITY menu.edit.undo     "Desegin" >
+<!ENTITY menu.edit.cut      "Ebaki" >
+<!ENTITY menu.edit.copy     "Kopiatu" >
+<!ENTITY menu.edit.paste    "Itsatsi" >
+<!ENTITY menu.edit.clear    "Garbitu" >
+<!ENTITY menu.edit.selall   "Denak Aukeratu" >
+<!ENTITY menu.edit.selnone  "Bat Ere Ez Aukeratu" >
+
+<!ENTITY menu.controls      "Kontrolak" >
+<!ENTITY menu.control.play  "Erreproduzitu/Eten" >
+<!ENTITY menu.control.next  "Hurrengo Pista" >
+<!ENTITY menu.control.prev  "Aurreko Pista" >
+<!ENTITY menu.control.shuf  "Ausaz" >
+<!ENTITY menu.control.repa  "Dena Errepikatu" >
+<!ENTITY menu.control.rep1  "Bat Errepikatu" >
+<!ENTITY menu.control.repx  "Bat Ere Ez Errepikatu" >
+
+<!ENTITY menu.services        "Zerbitzuak" >
+<!ENTITY menu.services.browse "Zerbitzuak Arakatu..." >
+
+<!ENTITY menu.devices       "Gailuak" >
+
+<!ENTITY menu.help          "Laguntza" >
+<!ENTITY menu.help.topics   "Laguntza Gaiak..." >
+<!ENTITY menu.help.about    "Songbird-i Buruz..." >
+
+<!ENTITY html.context.open  "Ireki" >
+<!ENTITY html.context.play  "Erreproduzitu" >
+<!ENTITY html.context.add   "Liburutegira Gehitu" >
+
+<!ENTITY playlist.context.remove  "Kendu" >
+<!ENTITY playlist.context.rename  "Izena Aldatu" >
+<!ENTITY playlist.context.search  "Bilatu" >
+<!ENTITY playlist.context.lyrics  "Hitzak" >
+
+<!ENTITY tooltip.miniplayer       "Mini-Erreproduzigailura Aldatu" >
+<!ENTITY tooltip.minimize         "Minimizatu" >
+<!ENTITY tooltip.maximize         "Maximizatu/Leheneratu" >
+<!ENTITY tooltip.exit             "Irten" >
+<!ENTITY tooltip.control.back     "Aurreko Pista" >
+<!ENTITY tooltip.control.play     "Erreproduzitu" >
+<!ENTITY tooltip.control.pause    "Eten" >
+<!ENTITY tooltip.control.fwd      "Hurrengo Pista" >
+<!ENTITY tooltip.control.mute     "Mututu" >
+<!ENTITY tooltip.control.volume   "Bolumena" >
+<!ENTITY tooltip.control.repeat   "Errepikatu" >
+<!ENTITY tooltip.control.shuffle  "Ausaz" >
+<!ENTITY tooltip.control.curtrack "Uneko Pista Bilatu" >
+<!ENTITY tooltip.control.service  "Aurre-Xaflaren Bistaratzea Aldatu" >
+<!ENTITY tooltip.search           "Bilatu" >
+<!ENTITY tooltip.browser.back     "Atzera Arakatu" >
+<!ENTITY tooltip.browser.fwd      "Aurrera Arakatu" >
+<!ENTITY tooltip.browser.stop     "Arakatzailea Gelditu" >
+<!ENTITY tooltip.browser.home     "Etxera" >
+<!ENTITY tooltip.browser.playlist "Web Orri Honetako Euskarri Erabilgarriak Ikusi" >
+<!ENTITY tooltip.browser.download "Uneko Deskargak Ikusi" >
+
+<!ENTITY smart.window             "Adimendun Erreprodukzio-Zerrenda Egilea" >
+<!ENTITY smart.library            "Liburutegia Aukeratu:" >
+<!ENTITY smart.limit              "Gehienez" >
+<!ENTITY smart.match              "Bat Egin" >
+<!ENTITY smart.any                "edozein" >
+<!ENTITY smart.all                "denak" >
+<!ENTITY smart.following          "ondorengo baldintza(k):" >   
+<!ENTITY smart.random             "aleatorioa" >
+<!ENTITY smart.album              "albuma" >
+<!ENTITY smart.artist             "artista" >
+<!ENTITY smart.genre              "generoa" >
+<!ENTITY smart.title              "izenburua" >
+<!ENTITY smart.high_rating        "puntuazio altua" >
+<!ENTITY smart.low_rating         "puntuazio baxua" >
+<!ENTITY smart.most_recent        "berriena" >
+<!ENTITY smart.least_recent       "zaharrena" >
+<!ENTITY smart.most_often         "ohikoena" >
+<!ENTITY smart.least_often        "ez-ohikoena" >
+<!ENTITY smart.most_added         "gehituena" >
+<!ENTITY smart.least_added        "gutxien gehituena" >
+<!ENTITY smart.minutes            "minutuak" >
+<!ENTITY smart.hours              "orduak" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "abestiak" >
+<!ENTITY smart.contains           "dauka" >
+<!ENTITY smart.not_contain        "ez dauka" >
+<!ENTITY smart.is                 "da" >
+<!ENTITY smart.is_not             "ez da" >
+<!ENTITY smart.starts             "honela hasten da" >
+<!ENTITY smart.ends               "honela amaitzen da" >
+         
+<!ENTITY download.window          "Deskarga" >
+<!ENTITY download.select          "Helburu karpeta aukeratu:" >
+<!ENTITY download.always          "Karpeta hau beti erabili" >
+
+
+
+<!ENTITY locale.language          "Hizkuntza" >
+
+
+<!ENTITY menu.file.dlfolder "Set Download Folder..." >
+<!ENTITY menu.file.watch "Set Watched Folders..." >
+<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY open_url.title "Open URL" >
+<!ENTITY subscribe.title "Subscribe" >
+<!ENTITY subscribe.minutes "Minute(s)" >
+<!ENTITY subscribe.hours "Hour(s)" >
+<!ENTITY subscribe.days "Day(s)" >
+<!ENTITY subscribe.autocheck "Automatically update every" >
+<!ENTITY subscribe.destinationfolder "Select destination folder:" >
+<!ENTITY exists.title "Playlist Exists" >
+<!ENTITY exists.exists "A playlist with that name already exists!" >
+<!ENTITY media_scan.title "Scan for Media" >
+<!ENTITY media_scan.watch "Watch this folder for new media" >
+<!ENTITY new_playlist.title "Create New Playlist" >
+<!ENTITY new_playlist.name "Enter the name of the new playlist." >
+<!ENTITY addtoplaylist.title "Add To Playlist" >
+<!ENTITY addtoplaylist.create "Create new playlist" >
+<!ENTITY watchfolder.title "Watch Folders" >
+<!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
+
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

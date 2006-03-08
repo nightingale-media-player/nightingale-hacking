@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window 
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="media_scan"
+ title="&media_scan.title;"
+ onload="return onLoad();"
+ flex="1"
+ hidechrome="true"
+>
+  <stringbundle id="songbird_strings" src="chrome://rmp_demo/locale/songbird.properties"/>
+
+  <!-- Astounding complexity! -->
+   
+
+<windowregion/>
+
+<stack flex="1">
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+        <image id="chrome_nw" class="sb_faceplate"/>
+        <image id="chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="chrome_ne" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+        <image id="chrome_w" class="sb_faceplate"/>
+        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <image id="chrome_e" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+      <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+    <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
+      <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
+        <hbox id="window_top" class="sb_faceplate" >
+          <label id="app_title" value="&media_scan.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+        </hbox>
+        <spacer flex="1"/>
+        <hbox style="overflow: hidden;"> 
+          <spacer flex="1"/>
+          <label id="rmp_demo_media_scan_title" value="" control="rmp_demo_media_scan"/>
+          <spacer flex="1"/>
+        </hbox> 
+        <hbox style="overflow: hidden;"> 
+          <spacer flex="1"/>
+          <label id="rmp_demo_media_scan_label" value="" control="rmp_demo_media_scan"/>
+          <spacer flex="1"/>
+        </hbox> 
+        <hbox>
+          <spacer flex="1"/>
+          <progressmeter id="rmp_demo_media_scan" flex="1"/>
+          <spacer flex="1"/>
+        </hbox>
+        <hbox>
+          <spacer flex="1"/>
+          <checkbox class="dialog_checkbox dialog_label" id="watch_check" label="&media_scan.watch;" />
+          <spacer flex="1"/>
+        </hbox>
+        <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+        <hbox>
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <button id="button_ok" label="&window.ok;" disabled="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>  
+        </hbox>
+        <spacer flex="1"/> 
+      </vbox>
+    <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+      <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+    </hbox>
+  </vbox>
+</stack>  
+  
+  
+  <!-- And intrepid instructions! -->  
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/sbIDataRemote.js"/>
+  <script type="application/x-javascript"   
+   src="chrome://rmp_demo/content/media_scan.js" />
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/rmp_demo.js" />
+</window>

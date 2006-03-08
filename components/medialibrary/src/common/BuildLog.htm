@@ -1,0 +1,61 @@
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=Windows-1252">
+</head>
+<body>
+<pre>
+<table width=100% bgcolor=#CFCFE5><tr> <td> <font face=arial size=+3>
+Build Log
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>
+<h3>------- Build started: Project: Common, Configuration: Release|Win32 -------
+</h3>
+</pre></table><table width=100% bgcolor=#DFDFE5><tr><td><font face=arial size=+2>
+Command Lines
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>Creating temporary file "d:\Home\songbird\current-cvs\work\Common\Release\RSP000043.rsp" with contents
+[
+/O2 /I "..\Dependencies\mozilla-sdk\include" /I "..\Dependencies\mozilla-sdk\include\nspr" /I "..\Dependencies\mozilla-sdk\include\xpcom" /D "WIN32" /D "NDEBUG" /D "_LIB" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /GS /Yu"stdafx.h" /Fp"Release/Common.pch" /Fo"Release/" /Fd"Release/vc70.pdb" /W3 /c /Wp64 /Zi /TP /FI "mozilla-config.h"
+".\Wait.cpp"
+".\Thread.cpp"
+".\Lock.cpp"
+]
+Creating command line "cl.exe @"d:\Home\songbird\current-cvs\work\Common\Release\RSP000043.rsp" /nologo"
+Creating temporary file "d:\Home\songbird\current-cvs\work\Common\Release\RSP000044.rsp" with contents
+[
+/O2 /I "..\Dependencies\mozilla-sdk\include" /I "..\Dependencies\mozilla-sdk\include\nspr" /I "..\Dependencies\mozilla-sdk\include\xpcom" /D "WIN32" /D "NDEBUG" /D "_LIB" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /GS /Yc"stdafx.h" /Fp"Release/Common.pch" /Fo"Release/" /Fd"Release/vc70.pdb" /W3 /c /Wp64 /Zi /TP /FI "mozilla-config.h"
+".\stdafx.cpp"
+]
+Creating command line "cl.exe @"d:\Home\songbird\current-cvs\work\Common\Release\RSP000044.rsp" /nologo"
+Creating temporary file "d:\Home\songbird\current-cvs\work\Common\Release\RSP000045.rsp" with contents
+[
+/OUT:"Release/Common.lib" /LIBPATH:"..\Dependencies\mozilla-sdk\\" /NOLOGO
+".\release\Lock.obj"
+".\release\stdafx.obj"
+".\release\Thread.obj"
+".\release\Wait.obj"
+]
+Creating command line "lib.exe @"d:\Home\songbird\current-cvs\work\Common\Release\RSP000045.rsp""
+</pre></table><table width=100% bgcolor=#DFDFE5><tr><td><font face=arial size=+2>
+Output Window
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>Compiling...
+stdafx.cpp
+d:\Home\songbird\current-cvs\work\Common\stdafx.h(28) : warning C4005: 'WIN32_LEAN_AND_MEAN' : macro redefinition
+        ..\Dependencies\mozilla-sdk\include\mozilla-config.h(49) : see previous definition of 'WIN32_LEAN_AND_MEAN'
+Compiling...
+Wait.cpp
+Thread.cpp
+Thread.cpp(184) : warning C4267: 'return' : conversion from 'size_t' to 'PRInt32', possible loss of data
+Thread.cpp(193) : warning C4018: '<' : signed/unsigned mismatch
+Thread.cpp(208) : warning C4018: '<' : signed/unsigned mismatch
+Thread.cpp(223) : warning C4267: 'initializing' : conversion from 'size_t' to 'PRInt32', possible loss of data
+Thread.cpp(250) : warning C4018: '<' : signed/unsigned mismatch
+Thread.cpp(265) : warning C4267: 'initializing' : conversion from 'size_t' to 'PRInt32', possible loss of data
+Lock.cpp
+Generating Code...
+Creating library...
+</pre></table><table width=100% bgcolor=#DFDFE5><tr><td><font face=arial size=+2>
+Results
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>
+Build Time 0:01
+Build log was saved at "file://d:\Home\songbird\current-cvs\work\Common\Release\BuildLog.htm"
+Common - 0 error(s), 7 warning(s)</pre></table><table   width=100% height=20 bgcolor=#CFCFE5><tr><td><font face=arial size=+2>
+</font></table></body></html>

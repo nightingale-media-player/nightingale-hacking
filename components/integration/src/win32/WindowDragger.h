@@ -1,0 +1,96 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+* \file  WindowDragger.h
+* \brief Songbird Window Dragger Object Definition.
+*/
+
+#pragma once
+
+// INCLUDES ===================================================================
+
+// XXX Remove Me !!!
+#ifndef PRUSTRING_DEFINED
+#define PRUSTRING_DEFINED
+#include <string>
+#include "nscore.h"
+namespace std
+{
+  typedef basic_string< PRUnichar > prustring;
+};
+#endif
+
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+#include "IWindowDragger.h"
+
+#include "nsCOMPtr.h"
+class sbIDataRemote;
+
+// DEFINES ====================================================================
+#define SONGBIRD_WINDOWDRAGGER_CONTRACTID  "@songbird.org/Songbird/WindowDragger;1"
+#define SONGBIRD_WINDOWDRAGGER_CLASSNAME   "Songbird Window Dragger Interface"
+
+// {880147D8-8DE1-44ae-AB4E-FC3D52C048BE}
+#define SONGBIRD_WINDOWDRAGGER_CID { 0x880147d8, 0x8de1, 0x44ae, { 0xab, 0x4e, 0xfc, 0x3d, 0x52, 0xc0, 0x48, 0xbe } }
+
+// CLASSES ====================================================================
+class CWindowDragger : public sbIWindowDragger
+{
+public:
+  CWindowDragger();
+  virtual ~CWindowDragger();
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIWINDOWDRAGGER
+  
+  LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  
+protected:
+
+  void OnDrag();
+  void EndWindowDrag(UINT msg, WPARAM flags);
+  void OnCaptureLost();
+  void DoDocking(HWND wnd, int *x, int *y, POINT *monitorPoint);
+
+  void InitPause();
+  void IncPause();
+  void DecPause();
+  
+  HWND m_draggedWindow;
+  HWND m_captureWindow;
+  HWND m_oldCapture;
+  int m_dockDistance;
+
+  bool m_backscanPaused; // hack hack hack.  at least it's through a data remote.
+  nsCOMPtr<sbIDataRemote> m_pauseScan;
+
+  POINT m_relativeClickPos;
+};
+

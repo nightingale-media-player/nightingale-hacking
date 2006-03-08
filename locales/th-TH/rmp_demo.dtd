@@ -1,0 +1,153 @@
+
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "ตกลง" >
+<!ENTITY window.cancel      "ยกเลิก" >
+<!ENTITY window.browse      "เลือก..." >
+
+<!ENTITY menu.file          "แฟ้ม" >
+<!ENTITY menu.file.new      "สร้างรายการเพลง..." >
+<!ENTITY menu.file.smart    "สร้างรายการเพลงอัตโนมัติ..." >
+<!ENTITY menu.file.remote   "New Remote Playlist..." >
+<!ENTITY menu.file.open     "เปิดแฟ้ม..." >
+<!ENTITY menu.file.url      "เปิดจาก URL..." >
+<!ENTITY menu.file.playlist "เรียกรายการเพลง..." >
+<!ENTITY menu.file.scan     "ตรวจสอบสื่อ..." >
+<!ENTITY menu.file.dlfolder "ตั้งโฟลเดอร์ดาวน์โหลด..." >
+<!ENTITY menu.file.watch    "เฝ้าดูโฟลเดอร์..." >
+<!ENTITY menu.file.htmlbar  "แสดงแถบเว็บเสมอ" >
+<!ENTITY menu.file.skin     "เปลี่ยนสกิน" >
+<!ENTITY menu.file.window   "เปิดหน้าต่างหลัก" >
+<!ENTITY menu.file.mini     "เปิดตัวเล่นแบบย่อ" >
+<!ENTITY menu.file.about    "เกี่ยวกับ Songbird..." >
+<!ENTITY menu.file.exit     "ออก" >
+
+<!ENTITY menu.edit          "แก้ไข" >
+<!ENTITY menu.edit.undo     "ยกเลิก" >
+<!ENTITY menu.edit.cut      "ตัด" >
+<!ENTITY menu.edit.copy     "คัดลอก" >
+<!ENTITY menu.edit.paste    "วาง" >
+<!ENTITY menu.edit.clear    "ล้าง" >
+<!ENTITY menu.edit.selall   "เลือกทั้งหมด" >
+<!ENTITY menu.edit.selnone  "ไม่เลือก" >
+
+<!ENTITY menu.controls      "ควบคุม" >
+<!ENTITY menu.control.play  "เล่น/หยุด" >
+<!ENTITY menu.control.next  "เพลงถัดไป" >
+<!ENTITY menu.control.prev  "เพลงที่แล้ว" >
+<!ENTITY menu.control.shuf  "เล่นแบบสุ่ม" >
+<!ENTITY menu.control.repa  "เล่นซ้ำทั้งหมด" >
+<!ENTITY menu.control.rep1  "เล่นเพลงนี้ซ้ำ" >
+<!ENTITY menu.control.repx  "ไม่เล่นซ้ำ" >
+
+<!ENTITY menu.services        "บริการ" >
+<!ENTITY menu.services.browse "เลือกบริการ..." >
+
+<!ENTITY menu.devices       "อุปกรณ์" >
+
+<!ENTITY menu.help          "วิธีใช้" >
+<!ENTITY menu.help.topics   "วิธีใช้..." >
+<!ENTITY menu.help.about    "เกี่ยวกับ Songbird..." >
+
+<!ENTITY html.context.open  "เปิด" >
+<!ENTITY html.context.play  "เล่น" >
+<!ENTITY html.context.add   "เพิ่มในไลบรารี" >
+
+<!ENTITY playlist.context.remove  "ลบ" >
+<!ENTITY playlist.context.rename  "เปลี่ยนชื่อ" >
+<!ENTITY playlist.context.search  "ค้นหา" >
+<!ENTITY playlist.context.lyrics  "เนื้อเพลง" >
+
+<!ENTITY tooltip.miniplayer       "เปลี่ยนเป็นตัวเล่นขนาดเล็ก" >
+<!ENTITY tooltip.minimize         "ย่อเล็กสุด" >
+<!ENTITY tooltip.maximize         "ขยาย/คืนค่า" >
+<!ENTITY tooltip.exit             "ออก" >
+<!ENTITY tooltip.control.back     "เพลงที่แล้ว" >
+<!ENTITY tooltip.control.play     "เล่น" >
+<!ENTITY tooltip.control.pause    "หยุด" >
+<!ENTITY tooltip.control.fwd      "เพลงถัดไป" >
+<!ENTITY tooltip.control.mute     "ปิดเสียง" >
+<!ENTITY tooltip.control.volume   "ระดับเสียง" >
+<!ENTITY tooltip.control.repeat   "เล่นซ้ำ" >
+<!ENTITY tooltip.control.shuffle  "เล่นสุ่ม" >
+<!ENTITY tooltip.control.curtrack "หาเพลงปัจจุบัน" >
+<!ENTITY tooltip.control.service  "เปลี่ยนหน้าตา" >
+<!ENTITY tooltip.search           "ค้นหา" >
+<!ENTITY tooltip.browser.back     "ถอยกลับ" >
+<!ENTITY tooltip.browser.fwd      "ถัดไป" >
+<!ENTITY tooltip.browser.stop     "หยุด" >
+<!ENTITY tooltip.browser.home     "หน้าแรก" >
+<!ENTITY tooltip.browser.playlist "แสดงสื่อที่มีบนเว็บเพจนี้" >
+<!ENTITY tooltip.browser.download "แสดงการดาวน์โหลดปัจจุบัน" >
+
+<!ENTITY smart.window             "ตัวช่วยสร้างรายการเพลงอัตโนมัติ" >
+<!ENTITY smart.library            "เลือกไลบรารี:" >
+<!ENTITY smart.limit              "จำกัดที่" >
+<!ENTITY smart.match              "ตรงเงื่อนไข" >
+<!ENTITY smart.any                "เงื่อนไขเดียว" >
+<!ENTITY smart.all                "ทั้งหมด" >
+<!ENTITY smart.following          "ซึ่งมีเงื่อนไขต่อไปนี้:" >   
+<!ENTITY smart.random             "สุ่ม" >
+<!ENTITY smart.album              "อัลบั้ม" >
+<!ENTITY smart.artist             "ศิลปิน" >
+<!ENTITY smart.genre              "ประเภท" >
+<!ENTITY smart.title              "ชื่อ" >
+<!ENTITY smart.high_rating        "คะแนนสูงสุด" >
+<!ENTITY smart.low_rating         "คะแนนต่ำสุด" >
+<!ENTITY smart.most_recent        "ใหม่ล่าสุด" >
+<!ENTITY smart.least_recent       "ใหม่น้อยที่สุด" >
+<!ENTITY smart.most_often         "บ่อยที่สุด" >
+<!ENTITY smart.least_often        "บ่อยน้อยที่สุด" >
+<!ENTITY smart.most_added         "most added" >
+<!ENTITY smart.least_added        "least added" >
+<!ENTITY smart.minutes            "นาที" >
+<!ENTITY smart.hours              "ชั่วโมง" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "เพลง" >
+<!ENTITY smart.contains           "มีคำว่า" >
+<!ENTITY smart.not_contain        "ไม่มีคำว่า" >
+<!ENTITY smart.is                 "คือคำว่า" >
+<!ENTITY smart.is_not             "ไม่ใช่คำว่า" >
+<!ENTITY smart.starts             "ขึ้นต้นด้วย" >
+<!ENTITY smart.ends               "ลงท้ายด้วย" >
+         
+<!ENTITY download.window          "ดาวน์โหลด" >
+<!ENTITY download.select          "เลือกโฟลเดอร์ปลายทาง:" >
+<!ENTITY download.always          "ใช้โฟลเดอร์นี้ตลอด" >
+
+<!ENTITY textbox.rmp_demo_open_url "ใส่ URL หรือที่อยู่ของสื่อที่ต้องการเล่น:">
+
+<!ENTITY open_url.title           "เปิด URL">
+<!ENTITY subscribe.title          "สมัคร">
+<!ENTITY subscribe.minutes        "นาที">
+<!ENTITY subscribe.hours          "ชั่วโมง">
+<!ENTITY subscribe.days           "วัน">
+<!ENTITY subscribe.autocheck      "อัพเดตอัตโนมัติทุก">
+<!ENTITY subscribe.destinationfolder      "เลือกโฟลเดอร์ปลายทาง:">
+
+<!ENTITY exists.title             "มีรายการเพลงอยู่แล้ว">
+<!ENTITY exists.exists            "มีรายการเพลงชื่อนี้อยู่แล้ว!">
+
+<!ENTITY media_scan.title          "ตรวจสอบสื่อ">
+<!ENTITY media_scan.watch          "เฝ้าดูโฟลเดอร์ต่อไปนี้สำหรับสื่อใหม่">
+
+<!ENTITY new_playlist.title       "สร้างรายการเพลงใหม่">
+<!ENTITY new_playlist.name        "ใส่ชื่อสำหรับรายการเพลงใหม่">
+
+<!ENTITY addtoplaylist.title      "เพิ่มยังรายการเพลง">
+<!ENTITY addtoplaylist.create      "สร้างรายการเพลง">
+
+<!ENTITY watchfolder.title        "เฝ้าดูโฟลเดอร์">
+<!ENTITY watchfolder.folderlist   "เฝ้าดูโฟลเดอร์ต่อไปนี้สำหรับสื่อใหม่:">
+
+<!ENTITY locale.language          "ภาษา" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

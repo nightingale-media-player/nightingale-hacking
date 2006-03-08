@@ -1,0 +1,77 @@
+#include "nsISupports.idl"
+#include "nsIObserver.idl"
+/**
+ * The sbIDataRemote Interface
+ */
+[scriptable, uuid(79eece3f-d661-4f03-83dd-5764a0f77088)]
+interface sbIDataRemote : nsIObserver
+{
+  /**
+   * Sets internal state, must be called before any other methods
+   */
+  void init(in wstring key, in wstring root);
+
+  /**
+   * 
+   */
+  void unbind();
+
+  /**
+   * 
+   */
+  void bindEventFunction(in wstring func);
+
+  /**
+   * 
+   */
+  void bindCallbackFunction(in wstring func,
+                            in boolean suppressFirst);
+
+  /**
+   * 
+   */
+  void bindCallbackProperty(in wstring obj, // This needs to be a DOM element.  Can this even work?
+                            in wstring prop,
+                            in boolean is_bool,
+                            in boolean is_not,
+                            in wstring eval);
+ 
+  /**
+   * 
+   */
+  void bindCallbackAttribute(in wstring obj, // This needs to be a DOM element.
+                             in wstring prop,
+                             in boolean is_bool,
+                             in boolean is_not,
+                             in wstring eval);
+
+  /**
+   * 
+   */
+  void setValue(in wstring value);
+
+  /**
+   * DOH!  int can translate okay, but bool becomes "true"
+   */
+  void setBoolValue(in boolean value);
+
+  /**
+   * 
+   */
+  wstring getValue();
+
+  /**
+   * 
+   */
+  long getIntValue();
+
+  /**
+   * 
+   */
+  boolean getBoolValue();
+
+  /**
+   * 
+   */
+  long makeIntValue(in wstring value);
+};

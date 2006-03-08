@@ -1,0 +1,199 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="windowregionset">
+    <content>
+      <children/>
+    </content>
+
+    <implementation type="application/x-javascript" implements="sbIWindowResizeHookCallback">
+
+      <constructor>
+        <![CDATA[
+        try
+        {
+          this.makeRegionList();
+          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"].getService(Components.interfaces.sbIWindowResizeHook);
+          windowResizeHook.SetCallback(document, this);
+        }    
+        catch ( err )
+        {
+          alert( "windowregionset constructor - " + err );
+        }
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+        try
+        {
+          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"].getService(Components.interfaces.sbIWindowResizeHook);
+          windowResizeHook.ResetCallback(this);
+        }    
+        catch ( err )
+        {
+          alert( "windowregionset destructor - " + err );
+        }
+        ]]>
+      </destructor>
+      
+      <method name="OnResize">
+        <parameter name="x"/>
+        <parameter name="y"/>
+        <parameter name="w"/>
+        <parameter name="h"/>
+        <body>
+          this.setRegion();
+        </body>
+      </method>
+      
+     
+      <method name="makeRegionList">
+        <body>
+          <![CDATA[
+          try
+          {
+            this.regionList = Array();
+            for (var i=0;i<this.childNodes.length;i++)
+            {
+              var node = this.childNodes[i];
+              if (node.tagName == "windowregionrect" ||
+                  node.tagName == "xul:windowregionrect")
+              {
+                this.addRegionNode(node);
+              }
+            }
+          }    
+          catch ( err )
+          {
+            alert( "windowregionset setRegion - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="addRegionNode">
+        <parameter name="node"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            var rect;
+            if (node.getAttribute("size") == "window") rect = Array("window");
+            else rect = node.getAttribute("size").split(",");
+            this.regionList.push(
+              Array(
+                rect,
+                node.getAttribute("type"),
+                node.getAttribute("anchor"),
+                node.getAttribute("offsetx"),
+                node.getAttribute("offsety")
+              )
+            );
+          }    
+          catch ( err )
+          {
+            alert( "windowregionset setRegion - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="setRegion">
+        <body>
+          <![CDATA[
+          try
+          {
+            var region;
+            region = Components.classes["@mozilla.org/gfx/region;1"].createInstance(Components.interfaces.nsIScriptableRegion);
+            region.init();
+            for (var i=0;i<this.regionList.length;i++)
+            {
+              var rect = this.regionList[i];
+              var x,y,w,h;
+              var dw = document.documentElement.boxObject.width;
+              var dh = document.documentElement.boxObject.height;
+              if (rect[0] == "window")
+              {
+                x = 0;
+                y = 0;
+                w = dw;
+                h = dh;
+              }
+              else
+              {
+                w = rect[0][0];
+                h = rect[0][1];
+                var ox = rect[3];
+                var oy = rect[4];
+                switch (rect[2])
+                {
+                  case "topleft": x = ox; y = oy; break;
+                  case "topright": x = dw - ox - w; y = oy; break;
+                  case "bottomleft": x = ox; y = dh - oy - h; break;
+                  case "bottomright": x = dw - ox - w; y = dh - oy - h; break;
+                }
+              }
+              switch (rect[1])
+              {
+                case "add":
+                  region.unionRect(x, y, w, h);
+                  break;
+                case "sub":
+                  region.subtractRect(x, y, w, h);
+                  break;
+              }
+            }
+            var windowRegion = Components.classes["@songbird.org/Songbird/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
+            windowRegion.SetWindowRegion(document, region);
+          }    
+          catch ( err )
+          {
+            alert( "windowregionset setRegion - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+  </binding>
+
+  <binding id="windowregionrect">
+    <content>
+    </content>
+  </binding>
+
+
+</bindings>

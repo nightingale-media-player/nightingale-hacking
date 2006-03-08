@@ -1,0 +1,307 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="add_to_playlist"
+ title="&addtoplaylist.title;"
+ hidechrome="true"
+ buttons="none"
+ onkeydown="handleKeyDown(event);"
+ onload="PushBackscanPause();initFocus();"
+ onunload="PopBackscanPause();"
+>
+  
+<windowregion/>
+
+<stack flex="1">
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+        <image id="chrome_nw" class="sb_faceplate"/>
+        <image id="chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="chrome_ne" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+        <image id="chrome_w" class="sb_faceplate"/>
+        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <image id="chrome_e" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+
+  <vbox class="sb_faceplate">
+    <hbox class="sb_faceplate">
+      <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
+      <vbox class="sb_faceplate chrome_bkgd" flex="1">        
+        <hbox id="window_top" class="sb_faceplate" >
+          <label id="app_title" value="&addtoplaylist.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+        </hbox>
+        <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        <listbox class="dialog_listbox" id="rmp_demo_playlistlist" onselect="enableOK();" />
+        <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        <button id="rmp_demo_makenewplaylist" label="&addtoplaylist.create;" oncommand="doCreateNew();"/>
+        <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+        <hbox>
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        </hbox>
+      </vbox>
+      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+</stack>
+  
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/songbird_interfaces.js" />
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/sbIDataRemote.js" />
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/rmp_demo.js" />
+  <script>
+  <![CDATA[
+    const VK_ESCAPE = 27;
+    const VK_ENTER = 13;
+    
+    const PLAYLIST_LIST_TABLE_NAME = "playlist_list";
+    const PLAYLIST_DB_GUID = "songbird";
+    const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+    const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+  
+    try
+    {
+      document.getElementById("button_ok").setAttribute("disabled", "true");
+
+      var list = document.getElementById("rmp_demo_playlistlist");
+      if (list != null)
+      {
+        var result = getListOfPlaylists();
+
+        //alert("Found " + result.GetRowCount() + " playlists.");
+        
+        for (var i = 0; i < result.GetRowCount(); i++)
+        {
+          if (result.GetRowCellByColumn(i, "base_type") != "playlist") continue;
+          var listitem = document.createElement("listitem");
+          listitem.setAttribute("label", result.GetRowCellByColumn(i, "readable_name"));
+          listitem.setAttribute("playlist_name", result.GetRowCellByColumn(i, "name"));
+          list.appendChild(listitem);
+        }
+        
+      }
+    }
+    catch (err)
+    {
+      alert("add_to_playlist.xul - init - " + err);
+    }
+    
+    function initFocus()
+    {
+      var list = document.getElementById("rmp_demo_playlistlist");
+      if (list != null) list.focus();
+    }
+    
+    function getListOfPlaylists() 
+    {
+      var queryObj = newQuery();
+      queryObj.SetDatabaseGUID(PLAYLIST_DB_GUID);
+      queryObj.SetAsyncQuery(false);
+      
+      var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
+      aPlaylistManager.GetPlaylistList(queryObj);
+      
+      return queryObj.GetResultObject();
+    }
+    
+    function newQuery()
+    {
+      var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"];
+      queryObj = queryObj.createInstance();
+      queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+      return queryObj;
+    }
+    
+    function newGuid()
+    {
+      var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance();;
+      aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
+
+      return aUUIDGenerator.generateUUID();
+    }
+    
+    function enableOK()
+    {
+      document.getElementById("button_ok").setAttribute("disabled", "false");
+    }
+    
+    function doOK()
+    {
+      if ( typeof( window.arguments[0] ) != 'undefined' )
+      {
+        window.arguments[0].playlist = "";
+        var list = document.getElementById("rmp_demo_playlistlist");
+        if (list != null)
+        {
+          window.arguments[0].playlist = list.selectedItem.getAttribute("playlist_name");
+        }
+        window.arguments[0].retval = "ok";
+      }
+      return true;
+    }
+    function doCancel()
+    {
+      if ( typeof( window.arguments[0] ) != 'undefined' )
+      {
+        window.arguments[0].playlist = "";
+        window.arguments[0].retval = "cancel";
+      }
+      return true;
+    }
+    
+    function doCreateNew()
+    {
+      // Make a data object to get the name of the playlist from the dialog
+      var new_playlist_data = new Object();
+      // Open the modal dialog
+      SBOpenModalDialog( "chrome://rmp_demo/content/new_playlist.xul", "new_playlist", "chrome,modal=yes, centerscreen", new_playlist_data );
+      if ( new_playlist_data.retval == "ok" )
+      {
+        var playlistname = new_playlist_data.playlistname;
+        if (playlistname.replace(/ /g, "") != "") 
+        {
+          // create it !
+          createNewPlaylist(playlistname);
+        }
+      }  
+    }
+    
+    function createNewPlaylist(name)
+    {
+      // if there exists a playlist with that name, tell the user, and abort creation
+      var exists = false;
+      var result = getListOfPlaylists();
+      for (var i=0;i<result.GetRowCount();i++)
+      {
+        if (result.GetRowCellByColumn(i, "readable_name") == name)
+        {
+          exists = true;
+          break;
+        }
+      }
+      if (exists)
+      {
+        // Make a data object to send the name of the playlist to the dialog
+        var playlist_exists_data = new Object();
+        playlist_exists_data.playlistname = name;
+        // Open the modal dialog
+        SBOpenModalDialog( "chrome://rmp_demo/content/playlist_exists.xul", "playlist_exists", "chrome,modal=yes, centerscreen", playlist_exists_data );
+        return;
+      }
+      // otherwise, create it, then add it to the list and select it 
+      
+      var queryObj = newQuery();      
+      var mediaLibrary = new MediaLibrary();    
+      if (mediaLibrary)
+      {
+        mediaLibrary = mediaLibrary.QueryInterface(Components.interfaces.sbIMediaLibrary);
+        queryObj.SetAsyncQuery( true );
+        queryObj.SetDatabaseGUID( "songbird" );
+        mediaLibrary.SetQueryObject( queryObj );
+        var playlistManager = new PlaylistManager();
+        if (playlistManager)
+        {
+          playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+          playlistManager.CreateDefaultPlaylistManager( queryObj );      
+          var playlistguid = newGuid();
+          var playlist = playlistManager.CreatePlaylist( playlistguid, name, "Playlist", "user", queryObj );
+
+          var list = document.getElementById("rmp_demo_playlistlist");
+          if (list != null)
+          {
+            var listitem = document.createElement("listitem");
+            listitem.setAttribute("label", name);
+            listitem.setAttribute("playlist_name", playlist.GetName());
+            list.appendChild(listitem);
+            list.ensureElementIsVisible(listitem);
+            list.selectItem(listitem);
+            list.focus();
+          }
+        }
+        else
+        {
+        alert("add_to_playlist.xul - createNewPlaylist - error creating playlistManager object");
+        return;
+        }
+      }
+      else
+      {
+        alert("add_to_playlist.xul - createNewPlaylist - error creating mediaLibrary object");
+        return;
+      }
+    }
+    
+    function handleKeyDown(event) 
+    {
+      switch (event.keyCode)
+      {
+        case VK_ESCAPE:
+          document.getElementById("button_cancel").doCommand();
+          break;
+        case VK_ENTER:
+          document.getElementById("button_ok").doCommand();
+          break;
+      }
+    }
+  ]]>
+  </script>
+
+</window>

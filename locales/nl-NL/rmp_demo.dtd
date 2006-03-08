@@ -1,0 +1,153 @@
+﻿
+<!ENTITY window.main.title  "Songbird gebruikerspreview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "OK" >
+<!ENTITY window.cancel      "Annuleren" >
+<!ENTITY window.browse      "Bladeren..." >
+
+<!ENTITY menu.file          "Bestand" >
+<!ENTITY menu.file.new      "Nieuwe afspeellijst..." >
+<!ENTITY menu.file.smart    "Nieuwe slimme afspeellijst..." >
+<!ENTITY menu.file.remote   "Nieuwe afspeellijst op afstand..." >
+<!ENTITY menu.file.open     "Bestand openen..." >
+<!ENTITY menu.file.url      "Locatie openen..." >
+<!ENTITY menu.file.playlist "Afspeellijst laden..." >
+<!ENTITY menu.file.scan     "Media indexeren..." >
+<!ENTITY menu.file.dlfolder "Downloadmap instellen..." >
+<!ENTITY menu.file.watch    "Volgmappen instellen..." >
+<!ENTITY menu.file.htmlbar  "Webbalk altijd weergeven" >
+<!ENTITY menu.file.skin     "Andere skin" >
+<!ENTITY menu.file.window   "Hoofdvenster openen" >
+<!ENTITY menu.file.mini     "Minispeler openen" >
+<!ENTITY menu.file.about    "Over Songbird..." >
+<!ENTITY menu.file.exit     "Afsluiten" >
+
+<!ENTITY menu.edit          "Bewerken" >
+<!ENTITY menu.edit.undo     "Ongedaan maken" >
+<!ENTITY menu.edit.cut      "Knippen" >
+<!ENTITY menu.edit.copy     "Kopiëren" >
+<!ENTITY menu.edit.paste    "Plakken" >
+<!ENTITY menu.edit.clear    "Wissen" >
+<!ENTITY menu.edit.selall   "Alles selecteren" >
+<!ENTITY menu.edit.selnone  "Niets selecteren" >
+
+<!ENTITY menu.controls      "Bediening" >
+<!ENTITY menu.control.play  "Afspelen/Pauze" >
+<!ENTITY menu.control.next  "Volgende nummer" >
+<!ENTITY menu.control.prev  "Vorige nummer" >
+<!ENTITY menu.control.shuf  "Willekeurige volgorde" >
+<!ENTITY menu.control.repa  "Herhalen alles" >
+<!ENTITY menu.control.rep1  "Herhaal één" >
+<!ENTITY menu.control.repx  "Niets herhalen" >
+
+<!ENTITY menu.services        "Diensten" >
+<!ENTITY menu.services.browse "Diensten bekijken..." >
+
+<!ENTITY menu.devices       "Apparaten" >
+
+<!ENTITY menu.help          "Help" >
+<!ENTITY menu.help.topics   "Help-onderwerpen..." >
+<!ENTITY menu.help.about    "Over Songbird..." >
+
+<!ENTITY html.context.open  "Openen" >
+<!ENTITY html.context.play  "Afspelen" >
+<!ENTITY html.context.add   "Toevoegen aan catalogus" >
+
+<!ENTITY playlist.context.remove  "Verwijderen" >
+<!ENTITY playlist.context.rename  "Naam wijzigen" >
+<!ENTITY playlist.context.search  "Zoeken" >
+<!ENTITY playlist.context.lyrics  "Songteksten" >
+
+<!ENTITY tooltip.miniplayer       "Schakel naar Minispeler" >
+<!ENTITY tooltip.minimize         "Minimaliseren" >
+<!ENTITY tooltip.maximize         "Maximaliseren/Vorige formaat" >
+<!ENTITY tooltip.exit             "Afsluiten" >
+<!ENTITY tooltip.control.back     "Vorige nummer" >
+<!ENTITY tooltip.control.play     "Afspelen" >
+<!ENTITY tooltip.control.pause    "Pauze" >
+<!ENTITY tooltip.control.fwd      "Volgende nummer" >
+<!ENTITY tooltip.control.mute     "Geluid dempen" >
+<!ENTITY tooltip.control.volume   "Volume" >
+<!ENTITY tooltip.control.repeat   "Herhalen" >
+<!ENTITY tooltip.control.shuffle  "Willekeurige volgorde" >
+<!ENTITY tooltip.control.curtrack "Vind huidige nummer" >
+<!ENTITY tooltip.control.service  "Wissel faceplate weergave" >
+<!ENTITY tooltip.search           "Zoeken" >
+<!ENTITY tooltip.browser.back     "Terug navigeren" >
+<!ENTITY tooltip.browser.fwd      "Vooruit navigeren" >
+<!ENTITY tooltip.browser.stop     "Stop navigatie" >
+<!ENTITY tooltip.browser.home     "Startpagina" >
+<!ENTITY tooltip.browser.playlist "Toon beschikbare media op deze webpagina" >
+<!ENTITY tooltip.browser.download "Toon huidige downloads" >
+
+<!ENTITY smart.window             "Maak slimme afspeellijst" >
+<!ENTITY smart.library            "Selecteer catalogus:" >
+<!ENTITY smart.limit              "Beperken tot" >
+<!ENTITY smart.match              "Voldoen aan" >
+<!ENTITY smart.any                "één van" >
+<!ENTITY smart.all                "al" >
+<!ENTITY smart.following          "de volgende vereisten:" >   
+<!ENTITY smart.random             "willekeurig" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "artiest" >
+<!ENTITY smart.genre              "genre" >
+<!ENTITY smart.title              "titel" >
+<!ENTITY smart.high_rating        "hoge waardering" >
+<!ENTITY smart.low_rating         "lage waardering" >
+<!ENTITY smart.most_recent        "meest recent" >
+<!ENTITY smart.least_recent       "minst recent" >
+<!ENTITY smart.most_often         "meest vaak" >
+<!ENTITY smart.least_often        "minst vaak" >
+<!ENTITY smart.most_added         "meest toegevoegd" >
+<!ENTITY smart.least_added        "minst toegevoegd" >
+<!ENTITY smart.minutes            "minuten" >
+<!ENTITY smart.hours              "uren" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "nummers" >
+<!ENTITY smart.contains           "bevat" >
+<!ENTITY smart.not_contain        "bevat niet" >
+<!ENTITY smart.is                 "is" >
+<!ENTITY smart.is_not             "is niet" >
+<!ENTITY smart.starts             "begint met" >
+<!ENTITY smart.ends               "eindigt op" >
+         
+<!ENTITY download.window          "Download" >
+<!ENTITY download.select          "Selecteer doelmap:" >
+<!ENTITY download.always          "Altijd naar deze map downloaden" >
+
+<!ENTITY textbox.rmp_demo_open_url "Geef het pad of de URL van het media bestand dat u wilt afspelen:">
+
+<!ENTITY open_url.title           "URL openen">
+<!ENTITY subscribe.title          "Abonneer">
+<!ENTITY subscribe.minutes        "Minuten">
+<!ENTITY subscribe.hours          "Uur">
+<!ENTITY subscribe.days           "Dag(en)">
+<!ENTITY subscribe.autocheck      "Ververs automatisch iedere">
+<!ENTITY subscribe.destinationfolder      "Selecteer doelmap:">
+
+<!ENTITY exists.title             "Afspeellijst bestaat al">
+<!ENTITY exists.exists            "Een afspeellijst met dezelfde naam bestaat al!">
+
+<!ENTITY media_scan.title          "Media indexeren">
+<!ENTITY media_scan.watch          "Inhoud van deze map blijvend in de gaten houden">
+
+<!ENTITY new_playlist.title       "Maak nieuwe afspeellijst">
+<!ENTITY new_playlist.name        "Geef een naam aan deze nieuwe afspeellijst.">
+
+<!ENTITY addtoplaylist.title      "Aan afspeellijst toevoegen">
+<!ENTITY addtoplaylist.create      "Maak nieuwe afspeellijst">
+
+<!ENTITY watchfolder.title        "Media mappen">
+<!ENTITY watchfolder.folderlist   "Inhoud van deze mappen blijvend in de gaten houden:">
+
+<!ENTITY locale.language          "Taal" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

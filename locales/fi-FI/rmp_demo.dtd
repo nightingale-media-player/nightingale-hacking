@@ -1,0 +1,152 @@
+﻿
+<!ENTITY window.main.title  "Songbird käyttäjän ennakkoversio" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Ok" >
+<!ENTITY window.cancel      "Peruuta" >
+<!ENTITY window.browse      "Selaa..." >
+
+<!ENTITY menu.file          "Tiedosto" >
+<!ENTITY menu.file.new      "Uusi soittolista..." >
+<!ENTITY menu.file.smart    "Uusi älykäs soittolista..." >
+<!ENTITY menu.file.remote   "Uusi etäsoittolista..." >
+<!ENTITY menu.file.open     "Avaa tiedosto..." >
+<!ENTITY menu.file.url      "Avaa URL..." >
+<!ENTITY menu.file.playlist "Lataa soittolista..." >
+<!ENTITY menu.file.scan     "Etsi mediatiedostoja..." >
+<!ENTITY menu.file.dlfolder "Aseta kansio latauksille..." >
+<!ENTITY menu.file.watch    "Aseta tarkkailtu kansio..." >
+<!ENTITY menu.file.htmlbar  "Näytä aina web-palkki" >
+<!ENTITY menu.file.skin     "Vaihtoehtoinen ulkoasu" >
+<!ENTITY menu.file.window   "Avaa pääikkuna" >
+<!ENTITY menu.file.mini     "Avaa minisoitin" >
+<!ENTITY menu.file.about    "Tietoja Songbirdista..." >
+<!ENTITY menu.file.exit     "Sulje" >
+
+<!ENTITY menu.edit          "Muokkaa" >
+<!ENTITY menu.edit.undo     "Kumoa" >
+<!ENTITY menu.edit.cut      "Leikkaa" >
+<!ENTITY menu.edit.copy     "Kopioi" >
+<!ENTITY menu.edit.paste    "Liitä" >
+<!ENTITY menu.edit.clear    "Tyhjennä" >
+<!ENTITY menu.edit.selall   "Valitse kaikki" >
+<!ENTITY menu.edit.selnone  "Poista valinnat" >
+
+<!ENTITY menu.controls      "Toiminnot" >
+<!ENTITY menu.control.play  "Toista/Tauko" >
+<!ENTITY menu.control.next  "Seuraava kappale" >
+<!ENTITY menu.control.prev  "Edellinen kappale" >
+<!ENTITY menu.control.shuf  "Satunnaistoisto" >
+<!ENTITY menu.control.repa  "Kaikkien jatkuva toisto" >
+<!ENTITY menu.control.rep1  "Yhden jatkuva toisto" >
+<!ENTITY menu.control.repx  "Ei jatkuvaa toistoa" >
+
+<!ENTITY menu.services        "Palvelut" >
+<!ENTITY menu.services.browse "Selaa palveluita..." >
+
+<!ENTITY menu.devices       "Laitteet" >
+
+<!ENTITY menu.help          "Ohje" >
+<!ENTITY menu.help.topics   "Ohjeen aiheet..." >
+<!ENTITY menu.help.about    "Tietoja Songbirdstä..." >
+
+<!ENTITY html.context.open  "Avaa" >
+<!ENTITY html.context.play  "Toista" >
+<!ENTITY html.context.add   "Lisää kokoelmaan" >
+
+<!ENTITY playlist.context.remove  "Poista" >
+<!ENTITY playlist.context.rename  "Nimeä uudelleen" >
+<!ENTITY playlist.context.search  "Etsi" >
+<!ENTITY playlist.context.lyrics  "Sanoitukset" >
+
+<!ENTITY tooltip.miniplayer       "Vaihda minisoittimeen" >
+<!ENTITY tooltip.minimize         "Pienennä" >
+<!ENTITY tooltip.maximize         "Suurenna/Palauta" >
+<!ENTITY tooltip.exit             "Sulje" >
+<!ENTITY tooltip.control.back     "Edellinen kappale" >
+<!ENTITY tooltip.control.play     "Toista" >
+<!ENTITY tooltip.control.pause    "Tauko" >
+<!ENTITY tooltip.control.fwd      "Seuraava kappale" >
+<!ENTITY tooltip.control.mute     "Mykistä" >
+<!ENTITY tooltip.control.volume   "Äänenvoimakkuus" >
+<!ENTITY tooltip.control.repeat   "Jatkuva toisto" >
+<!ENTITY tooltip.control.shuffle  "Satunnaistoisto" >
+<!ENTITY tooltip.control.curtrack "Etsi tämän hetkinen kappale" >
+<!ENTITY tooltip.control.service  "Vaihda otsikkopaneelin esitystapaa" >
+<!ENTITY tooltip.search           "Etsi" >
+<!ENTITY tooltip.browser.back     "Selaa taakse" >
+<!ENTITY tooltip.browser.fwd      "Selaa eteen" >
+<!ENTITY tooltip.browser.stop     "Pysäytä selain" >
+<!ENTITY tooltip.browser.home     "Kotisivu" >
+<!ENTITY tooltip.browser.playlist "Näytä web-sivulta saatavilla oleva media" >
+<!ENTITY tooltip.browser.download "Näytä tämän hetkiset lataukset" >
+
+<!ENTITY smart.window             "Älykkään soittolistan rakentaja" >
+<!ENTITY smart.library            "Valitse kokoelma:" >
+<!ENTITY smart.limit              "Rajoita" >
+<!ENTITY smart.match              "Vertaa" >
+<!ENTITY smart.any                "mikä tahansa" >
+<!ENTITY smart.all                "kaikki" >
+<!ENTITY smart.following          "seuraavilla ehdoilla:" >   
+<!ENTITY smart.random             "satunnainen" >
+<!ENTITY smart.album              "levy" >
+<!ENTITY smart.artist             "esittäjä" >
+<!ENTITY smart.genre              "tyylilaji" >
+<!ENTITY smart.title              "nimi" >
+<!ENTITY smart.high_rating        "korkea arvosana" >
+<!ENTITY smart.low_rating         "matala arvosana" >
+<!ENTITY smart.most_recent        "viimeksi soitettu" >
+<!ENTITY smart.least_recent       "vähiten viimeksi soitettu" >
+<!ENTITY smart.most_often         "useiten soitettu" >
+<!ENTITY smart.least_often        "vähiten soitettu" >
+<!ENTITY smart.most_added         "lisätyin" >
+<!ENTITY smart.least_added        "vähiten lisätty" >
+<!ENTITY smart.minutes            "minuutit" >
+<!ENTITY smart.hours              "tunnit" >
+<!ENTITY smart.mb                 "Mt" >
+<!ENTITY smart.gb                 "Gt" >
+<!ENTITY smart.songs              "kappaleet" >
+<!ENTITY smart.contains           "sisältää" >
+<!ENTITY smart.not_contain        "ei sisällä" >
+<!ENTITY smart.is                 "on" >
+<!ENTITY smart.is_not             "ei ole" >
+<!ENTITY smart.starts             "alkaa" >
+<!ENTITY smart.ends               "päättyy" >
+         
+<!ENTITY download.window          "Lataukset" >
+<!ENTITY download.select          "Valitse kohde kansio:" >
+<!ENTITY download.always          "Käytä aina valittua kansiota" >
+
+<!ENTITY textbox.rmp_demo_open_url "Kirjoita toistettavan median URL-osoite:">
+
+<!ENTITY open_url.title           "Avaa URL">
+<!ENTITY subscribe.title          "Tilaa">
+<!ENTITY subscribe.minutes        "Minuutit">
+<!ENTITY subscribe.hours          "Tunnit">
+<!ENTITY subscribe.days           "Päivät">
+<!ENTITY subscribe.autocheck      "Automaattisesti päivitä joka">
+<!ENTITY subscribe.destinationfolder      "Valitse kohde kansio:">
+
+<!ENTITY exists.title             "Soittolista on jo olemassa">
+<!ENTITY exists.exists            "Tämän niminen soittolista on jo olemassa!">
+
+<!ENTITY media_scan.title          "Etsi mediatiedostoja">
+<!ENTITY media_scan.watch          "Tarkkaile tämän kansion uusia mediatiedostoja">
+
+<!ENTITY new_playlist.title       "Luo uusi soittolista">
+<!ENTITY new_playlist.name        "Nimeä uusi soittolista.">
+
+<!ENTITY addtoplaylist.title      "Lisää soittolistaan">
+<!ENTITY addtoplaylist.create      "Luo uusi soittolista">
+
+<!ENTITY watchfolder.title        "Tarkkaile kansioita">
+<!ENTITY watchfolder.folderlist   "Tarkkaile näiden kansioiden uusia mediatiedostoja:">
+
+<!ENTITY locale.language          "Kieli" >
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

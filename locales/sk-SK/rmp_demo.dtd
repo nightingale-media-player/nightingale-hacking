@@ -1,0 +1,150 @@
+
+<!ENTITY window.main.title                "Songbird - Ukážka" >
+<!ENTITY songbird                         "Songbird" >
+<!ENTITY web.url.first.old                "" >
+<!ENTITY web.url.first                    "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok                        "OK" >
+<!ENTITY window.cancel                    "Zrušiť" >
+<!ENTITY window.browse                    "Prehľadávať..." >
+
+<!ENTITY menu.file                        "Súbor" >
+<!ENTITY menu.file.new                    "Nový zoznam skladieb..." >
+<!ENTITY menu.file.smart                  "Nový Smart zoznam..." >
+<!ENTITY menu.file.remote                 "Nový vzdialený zoznam..." >
+<!ENTITY menu.file.open                   "Otvoriť súbor..." >
+<!ENTITY menu.file.url                    "Otvoriť z URL adresy..." >
+<!ENTITY menu.file.playlist               "Načítať zoznam skladieb..." >
+<!ENTITY menu.file.scan                   "Hľadať médiá..." >
+<!ENTITY menu.file.dlfolder               "Nastaviť priečinok sťahovania..." >
+<!ENTITY menu.file.watch                  "Nastaviť sledované priečinky..." >
+<!ENTITY menu.file.htmlbar                "Vždy zobrazovať panel Web" >
+<!ENTITY menu.file.skin                   "Alternatívna téma" >
+<!ENTITY menu.file.window                 "Otvoriť hlavné okno" >
+<!ENTITY menu.file.mini                   "Otvoriť Mini Player" >
+<!ENTITY menu.file.about                  "Informácie o Songbird..." >
+<!ENTITY menu.file.exit                   "Ukončiť" >
+
+<!ENTITY menu.edit                        "Upraviť" >
+<!ENTITY menu.edit.undo                   "Späť" >
+<!ENTITY menu.edit.cut                    "Vystrihnúť" >
+<!ENTITY menu.edit.copy                   "Kopírovať" >
+<!ENTITY menu.edit.paste                  "Prilepiť" >
+<!ENTITY menu.edit.clear                  "Vymazať" >
+<!ENTITY menu.edit.selall                 "Vybrať všetko" >
+<!ENTITY menu.edit.selnone                "Nevybrať nič" >
+
+<!ENTITY menu.controls                    "Ovládanie" >
+<!ENTITY menu.control.play                "Prehrať/Pozastaviť" >
+<!ENTITY menu.control.next                "Ďalšia skladba" >
+<!ENTITY menu.control.prev                "Predch. skladba" >
+<!ENTITY menu.control.shuf                "Náhodne" >
+<!ENTITY menu.control.repa                "Opakovať všetko" >
+<!ENTITY menu.control.rep1                "Opakovať jednu" >
+<!ENTITY menu.control.repx                "Neopakovať žiadnu" >
+
+<!ENTITY menu.services                    "Služby" >
+<!ENTITY menu.services.browse             "Prehľadávať Služby..." >
+
+<!ENTITY menu.devices                     "Zariadenia" >
+
+<!ENTITY menu.help                        "Pomocník" >
+<!ENTITY menu.help.topics                 "Témy Pomocníka..." >
+<!ENTITY menu.help.about                  "Informácie o Songbirde..." >
+
+<!ENTITY html.context.open                "Otvoriť" >
+<!ENTITY html.context.play                "Prehrať" >
+<!ENTITY html.context.add                 "Pridať do knižnice" >
+
+<!ENTITY playlist.context.remove          "Odstrániť" >
+<!ENTITY playlist.context.rename          "Premenovať" >
+<!ENTITY playlist.context.search          "Hľadať" >
+<!ENTITY playlist.context.lyrics          "Texty" >
+
+<!ENTITY tooltip.miniplayer               "Prepnúť na Mini Player" >
+<!ENTITY tooltip.minimize                 "Minimalizovať" >
+<!ENTITY tooltip.maximize                 "Maximalizovať/Obnoviť" >
+<!ENTITY tooltip.exit                     "Ukončiť" >
+<!ENTITY tooltip.control.back             "Predch. skladba" >
+<!ENTITY tooltip.control.play             "Prehrať" >
+<!ENTITY tooltip.control.pause            "Pozastaviť" >
+<!ENTITY tooltip.control.fwd              "Ďalšia skladba" >
+<!ENTITY tooltip.control.mute             "Stlmiť" >
+<!ENTITY tooltip.control.volume           "Hlasitosť" >
+<!ENTITY tooltip.control.repeat           "Opakovať" >
+<!ENTITY tooltip.control.shuffle          "Náhodne" >
+<!ENTITY tooltip.control.curtrack         "Nájsť aktuálnu skladbu" >
+<!ENTITY tooltip.control.service          "Prepnúť na Faceplate zobrazenie" >
+<!ENTITY tooltip.search                   "Hľadať" >
+<!ENTITY tooltip.browser.back             "Prehľadávať dozadu" >
+<!ENTITY tooltip.browser.fwd              "Prehľadávať dopredu" >
+<!ENTITY tooltip.browser.stop             "Zastaviť prehliadač" >
+<!ENTITY tooltip.browser.home             "Domov" >
+<!ENTITY tooltip.browser.playlist         "Zobraziť médiá dostupné na tejto stránke" >
+<!ENTITY tooltip.browser.download         "Zobraziť aktuálne sťahovanie" >
+
+<!ENTITY smart.window                     "Vytváranie Smart zoznamu" >
+<!ENTITY smart.library                    "Vybrať knižnicu:" >
+<!ENTITY smart.limit                      "Obmedziť na" >
+<!ENTITY smart.match                      "Výsledok" >
+<!ENTITY smart.any                        "ľubovoľný" >
+<!ENTITY smart.all                        "všetky" >
+<!ENTITY smart.following                  "podľa podmienok:" >   
+<!ENTITY smart.random                     "náhodne" >
+<!ENTITY smart.album                      "album" >
+<!ENTITY smart.artist                     "interpret" >
+<!ENTITY smart.genre                      "žáner" >
+<!ENTITY smart.title                      "názov" >
+<!ENTITY smart.high_rating                "vysoké hodnotenie" >
+<!ENTITY smart.low_rating                 "nízke hodnotenie" >
+<!ENTITY smart.most_recent                "najnovšie" >
+<!ENTITY smart.least_recent               "najstaršie" >
+<!ENTITY smart.most_often                 "časté" >
+<!ENTITY smart.least_often                "zriedkavé" >
+<!ENTITY smart.most_added                 "najpridávanejšie" >
+<!ENTITY smart.least_added                "málo pridávané" >
+<!ENTITY smart.minutes                    "minúty" >
+<!ENTITY smart.hours                      "hodiny" >
+<!ENTITY smart.mb                         "MB" >
+<!ENTITY smart.gb                         "GB" >
+<!ENTITY smart.songs                      "piesne" >
+<!ENTITY smart.contains                   "obsahujúce" >
+<!ENTITY smart.not_contain                "neobsahujúce" >
+<!ENTITY smart.is                         "je" >
+<!ENTITY smart.is_not                     "nie je" >
+<!ENTITY smart.starts                     "začínajúce na" >
+<!ENTITY smart.ends                       "končiace na" >
+         
+<!ENTITY download.window                  "Sťahovanie" >
+<!ENTITY download.select                  "Vyberte cieľový priečinok:" >
+<!ENTITY download.always                  "Vždy použiť tento priečinok" >
+
+<!ENTITY textbox.rmp_demo_open_url        "Zadajte URL alebo cestu k médiu, ktoré chcete prehrať:">
+
+<!ENTITY open_url.title                   "Otvoriť URL">
+<!ENTITY subscribe.title                  "Prihlásiť">
+<!ENTITY subscribe.minutes                "Minúty">
+<!ENTITY subscribe.hours                  "Hodiny">
+<!ENTITY subscribe.days                   "Dni">
+<!ENTITY subscribe.autocheck              "Automaticky atualizovať každé">
+<!ENTITY subscribe.destinationfolder      "Vyberte cieľový priečinok:">
+
+<!ENTITY exists.title                     "Zoznam skladieb existuje">
+<!ENTITY exists.exists                    "Zoznam skladieb s týmto názvom už existuje!">
+
+<!ENTITY media_scan.title                 "Hľadať médiá">
+<!ENTITY media_scan.watch                 "Sledovať nové médiá v tomto priečinku">
+
+<!ENTITY new_playlist.title               "Vytvoriť nový zoznam skladieb">
+<!ENTITY new_playlist.name                "Zadajte názov nového zoznamu skladieb.">
+
+<!ENTITY addtoplaylist.title              "Pridať do zoznamu skladieb">
+<!ENTITY addtoplaylist.create             "Vytvoriť nový zoznam skladieb">
+
+<!ENTITY watchfolder.title                "Sledovať priečinky">
+<!ENTITY watchfolder.folderlist           "Sledovať nové médiá v týchto priečinkoch:">
+
+<!ENTITY locale.language                  "Jazyk" >
+
+<!ENTITY menu.preferences                 "Predvoľby..." >
+<!ENTITY menu.extensions                  "Rozšírenia..." >
+

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="medialibrary"
+	ProjectGUID="{5684DF11-A153-4DC9-BB42-B5C824BA27E5}"
+	RootNamespace="medialibrary"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\&quot;;&quot;$(ProjectDir)src\common&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MEDIALIBRARY_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				SmallerTypeCheck="TRUE"
+				RuntimeLibrary="3"
+				BufferSecurityCheck="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="4"
+				ForcedIncludeFiles="mozilla-config.h"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib common.lib"
+				OutputFile="$(OutDir)/sbMediaLibrary_d.dll"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src\common&quot;"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/MediaLibrary.pdb"
+				SubSystem="2"
+				ImportLibrary="$(OutDir)/MediaLibrary.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\&quot;;&quot;$(ProjectDir)src\common&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MEDIALIBRARY_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"
+				ForcedIncludeFiles="mozilla-config.h"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib common.lib"
+				OutputFile="$(OutDir)/sbMediaLibrary.dll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src\common&quot;"
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				ImportLibrary="$(OutDir)/MediaLibrary.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="public"
+			Filter="">
+			<File
+				RelativePath=".\public\IDatabaseEngine.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IDatabaseQuery.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IDatabaseResult.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IMediaLibrary.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IPlaylist.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IPlaylistPlayback.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IPlaylistReader.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IPlaylistWriter.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="src"
+			Filter="">
+			<File
+				RelativePath=".\src\DatabaseEngine.cpp">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseEngine.h">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseQuery.cpp">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseQuery.h">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseResult.cpp">
+			</File>
+			<File
+				RelativePath=".\src\DatabaseResult.h">
+			</File>
+			<File
+				RelativePath=".\src\MediaLibraryComponent.cpp">
+			</File>
+			<File
+				RelativePath=".\src\MediaScan.cpp">
+			</File>
+			<File
+				RelativePath=".\src\MediaScan.h">
+			</File>
+			<File
+				RelativePath=".\src\Playlist.cpp">
+			</File>
+			<File
+				RelativePath=".\src\Playlist.h">
+			</File>
+			<File
+				RelativePath=".\src\sbIDynamicPlaylist.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIMediaLibrary.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylist.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistManager.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistPlayback.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistReaderAtom.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistReaderHTML.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistReaderListener.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistReaderManager.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistReaderRDF.js">
+			</File>
+			<File
+				RelativePath=".\src\sbIPlaylistReaderRSS.js">
+			</File>
+			<File
+				RelativePath=".\src\sbISimplePlaylist.js">
+			</File>
+			<File
+				RelativePath=".\src\sbISmartPlaylist.js">
+			</File>
+			<Filter
+				Name="common"
+				Filter="">
+				<File
+					RelativePath=".\src\common\Common.h">
+				</File>
+				<File
+					RelativePath=".\src\common\Lock.h">
+				</File>
+				<File
+					RelativePath=".\src\common\Singleton.h">
+				</File>
+				<File
+					RelativePath=".\src\common\stdafx.h">
+				</File>
+				<File
+					RelativePath=".\src\common\Thread.h">
+				</File>
+				<File
+					RelativePath=".\src\common\Wait.h">
+				</File>
+			</Filter>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

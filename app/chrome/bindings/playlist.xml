@@ -1,0 +1,2427 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="playlist">
+    <content>
+    <xul:stack flex="1">
+      <xul:vbox sbid="loading_box" pack="end" align="right" flex="1" class="sb_faceplate">
+        <xul:vbox id="loading_box" class="sb_faceplate" flex="1">
+          <xul:label id="loading_text" flex="1" value=""/>
+        </xul:vbox>
+      </xul:vbox>
+      <xul:vbox flex="1" class="sb_faceplate" style="margin: 0px;padding: 0px;">
+        <!-- Playlist Filters
+        -->        
+        <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
+        </xul:hbox>
+        
+        <xul:splitter id="horz_splitter" sbid="filter_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest">
+          <xul:grippy/>
+        </xul:splitter>
+      
+        <!-- Playlist Tree -->        
+        <xul:tree 
+          xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker" 
+          id="playlist_tree" 
+          sbid="playlist_tree" 
+          ref="" 
+          datasources="" 
+          flags="dont-build-content"
+          flex="3" 
+          onmouseup="saveColumnsProperties();"
+          ondblclick="onPlaylistDblClick( event );"
+          onkeypress="onPlaylistKeypress( event );"
+          oncontextmenu="onPlaylistContextClick( event );"
+          onselect="onPlaylistSelectClick( event );"
+          onclick="onPlaylistClick( event );"
+          onscroll="onPlaylistScroll( event );"
+          ondraggesture="onDrag(event);"
+        >
+        </xul:tree>
+        
+        <!-- Playlist Toolbar
+        -->
+        <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
+          <xul:toolbar id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
+          </xul:toolbar>                 
+        </xul:hbox>
+        
+        <!-- Popupset
+        -->
+        <xul:popupset>
+          <!-- Context Popup 
+          -->
+          <xul:popup 
+            id="playlist_context_popup" 
+            sbid="playlist_context_popup" 
+            onpopupshown="onPopupShown( event );"
+            onpopuphidden="onPopupHidden( event );"
+            oncommand="onPlaylistContextMenu( event );"
+          >
+            <xul:menuseparator sbid="playlist_context_before"/>
+            <xul:menu id="playlist.context.search" label="&playlist.context.search;">
+              <xul:menupopup id="playlist.popup.search">
+                <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
+                <xul:menuseparator/>
+                <xul:menuitem id="search.popup.google" 
+                  label="Google" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/google.ico"
+                />
+                <xul:menuitem id="search.popup.wiki" 
+                  label="Wikipedia" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/pogues.ico"
+                />
+                <xul:menuitem id="search.popup.yahoo" 
+                  label="Yahoo!" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/yahoo.ico"
+                />
+                <xul:menuitem id="search.popup.emusic" 
+                  label="eMusic" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/emusic.ico"
+                />
+                <xul:menuitem id="search.popup.insound" 
+                  label="Insound" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/insound.ico"
+                />
+                <xul:menuitem id="playlist.popup.odeo" 
+                  label="Odeo" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/odeo.ico"
+                />
+                <xul:menuitem id="search.popup.shoutcast" 
+                  label="Shoutcast" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/shoutcast.ico"
+                />
+                <xul:menuitem id="search.popup.radiotime" 
+                  label="Radiotime" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/radiotime.ico"
+                />
+              </xul:menupopup>
+            </xul:menu>
+            <xul:menu id="playlist.context.lyrics" label="&playlist.context.lyrics;">
+              <xul:menupopup id="playlist.popup.lyrics">
+                <xul:menuitem id="lyrics_popup_term" sbid="lyrics_popup_term" label="" disabled="true"/>
+                <xul:menuseparator/>
+                <xul:menuitem id="lyrics.popup.google" 
+                  label="Google" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/google.ico"
+                />
+              </xul:menupopup>
+            </xul:menu>
+            <children/>
+          </xul:popup>
+          <!-- Edit Popup (doesn't work)
+          -->
+          <xul:popup id="playlist_edit_popup" sbid="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
+            <xul:textbox id="playlist_edit_box" sbid="playlist_edit_box" class="sb_faceplate" onblur="hidePlaylistEdit();" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" flex="1"/>
+          </xul:popup>
+        </xul:popupset>
+      </xul:vbox>
+    </xul:stack>
+    </content>
+
+  <implementation type="application/x-javascript" implements="nsIXULBuilderListener,nsIXULTreeBuilderObserver" name="songbird_playlist">
+
+    <constructor>
+      <![CDATA[
+      try
+      {
+        // Load the javascript we want to use
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://rmp_demo/content/songbird_interfaces.js", this );
+        jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
+        jsLoader.loadSubScript( "chrome://rmp_demo/content/messagebox.js", this );
+
+        jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
+        jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
+        jsLoader.loadSubScript("chrome://rmp_demo/content/dragAndDrop.js", this);
+
+        // Load up the string bundle
+        var src = "chrome://rmp_demo/locale/songbird.properties";
+        var stringBundleService =
+            Components.classes["@mozilla.org/intl/stringbundle;1"]
+            .getService(Components.interfaces.nsIStringBundleService);
+        this.stringbundle = stringBundleService.createBundle( src );
+            
+        // Someone explain to me the difference between a builder's listener
+        // and a builderview's observer?  ?!?
+        this.tree.builder.addListener(this);
+
+        // These are all the possible column ids whose cell content we can use as unique ids (for saveSelection/restoreSelection)
+        this._selection_key_array = Array("row_id", "idx", "id", "playlist_uuid", "playlist_id");
+        
+        this._lastviewsummary = "";
+        
+      }
+      catch ( err )
+      {
+        alert( "playlist.xml - constructor - " + err );
+      }
+      ]]>
+    </constructor>
+
+    <destructor>
+      if (this.m_dndSourceTracker != null) this.m_dndSourceTracker.unregisterDnDSource(this);
+      this.stopWatchingDragObjects();
+      this.tree.builder.removeListener(this);
+    </destructor>
+
+    <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_tree');</field>
+    <field name="context_popup">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');</field>
+    <field name="loading_box">document.getAnonymousElementByAttribute(this, 'sbid', 'loading_box');</field>
+    <field name="context_x">-1</field>
+    <field name="context_y">-1</field>
+    <field name="context_term">""</field>
+    <field name="context_item"></field>
+    <field name="popup_showing">false</field>
+    <field name="guid">""</field>
+    <field name="table">""</field>
+    <field name="type">""</field>
+    <field name="base_type">""</field>
+    <field name="description">""</field>
+    <field name="readable_name">""</field>
+    <field name="filters">new Array();</field>
+    <field name="commands"></field>
+    <field name="toolbarbuttons">new Array();</field>
+    <field name="menuitems">new Array();</field>
+    <field name="stringbundle">null</field>
+    <field name="m_Library">null</field>
+    <field name="m_PlaylistManager">null</field>
+    <field name="edit_popup">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_edit_popup');</field>
+    <field name="edit_box">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_edit_box');</field>
+    <field name="source">null</field>
+    <field name="builder">this.tree.builder</field>
+    <field name="view">this.tree.view</field>
+    <field name="_saved_selection">null</field>
+    <field name="_saved_nitems">null</field>
+    <field name="_dragobjects">null</field>
+    <field name="_selection_key">""</field>
+    <field name="_selection_key_array">""</field>
+    <field name="treecols">null</field>
+    <field name="restoring_selection">false</field>
+    <field name="_addedtolibrary_count">0</field>
+    <field name="_existedinlibrary_count">0</field>
+    <field name="m_dndSourceTracker">null</field>
+    <field name="lastClickIndex">0</field>
+    <field name="lastClickTimestamp">0</field>
+    <field name="paused_scanning">false</field>
+ 
+    <property name="ref">
+      <getter>
+        return this.tree.getAttribute("ref");
+      </getter>
+      <setter>
+        return this.tree.setAttribute("ref", val);
+      </setter>
+    </property>
+
+    <property name="datasources">
+      <getter>
+        return this.tree.getAttribute("datasources");
+      </getter>
+      <setter>
+        return this.tree.setAttribute("datasources", val);
+      </setter>
+    </property>
+    
+    <!-- Initialization and Control -->
+    
+    <method name="bind">
+      <parameter name="guid"/>
+      <parameter name="table"/>
+      <parameter name="filters"/>
+      <parameter name="commands"/>
+      <parameter name="resize"/>
+      <parameter name="collapse"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        // Perhaps we need to reload our columns
+        var need_loadcolumns = false;
+        
+        // Make sure we have a playlist source.
+        if ( this.source == null )
+        {
+          this.source = Components.classes[ "@mozilla.org/rdf/datasource;1?name=playlist" ].getService( Components.interfaces.sbIPlaylistsource );
+        }
+        
+        // Reset some variables used elsewhere.
+        this.m_queryObj = null;
+        this.m_Library = null;
+        this.m_PlaylistManager = null;
+        this.loading_box.removeAttribute( "hidden" );
+        
+        // Set some others
+        this.guid = guid;
+        this.table = table;
+        this.type = "";
+        this.base_type = "";
+
+        // Find the table in the playlistlist if possible.
+        var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+        queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+        queryObj.SetDatabaseGUID(guid);
+        var PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+        var playlistManager = new PlaylistManager();
+        playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+        playlistManager.GetAllPlaylistList( queryObj );
+        var resultset = queryObj.GetResultObject();
+        for ( var i = 0; i < resultset.GetRowCount(); i++ )
+        {
+          if ( table == resultset.GetRowCellByColumn( i, "name" ) )
+          {
+            this.type = resultset.GetRowCellByColumn( i, "type" );
+            this.base_type = resultset.GetRowCellByColumn( i, "base_type" );
+            this.description = resultset.GetRowCellByColumn( i, "description" );
+            this.readable_name = resultset.GetRowCellByColumn( i, "readable_name" );
+            break;
+          }
+        }        
+
+        var ref = "NC:" + guid + "_" + table;
+        
+        var feed = false;
+        // If there are no rows already loaded for this ref
+        if ( this.source.GetRefRowCount( ref ) <= 0 )
+        {
+          // We must feed from the sbIPlaylistsource interface
+          feed = true;
+        }
+
+        // If we are loading a new ref into an extant playlist        
+        if ( ref != this.ref )
+        {
+          // New columns from the new feed.
+          this.removeColumns();
+          this.removeTemplate();
+          need_loadcolumns = true;
+        }
+        
+        // Tell the playlist source to feed.
+        if ( feed )
+        {
+          this.source.FeedPlaylist( ref, guid, table );
+        }
+
+        // Tell the tree to listen for the datasource
+        this.source.IncomingObserver( ref, this ); // HI!  We're about to stick an observer on you!
+        this.tree.setAttribute("ref", ref);
+        this.tree.setAttribute("datasources", "rdf:playlist");
+        this.builder.refresh();
+        
+        // Handle the silly observer stuff
+        if ( this.tree.view && this.addedObserver )
+        {
+          this.tree.view.removeObserver(this);
+        }
+        this.addedObserver = false;
+        
+        this._lastviewsummary = "";
+        if ( filters && filters.length )
+        {
+          for ( var i = 0; i < filters.length; ++i )
+          {
+            this.addFilter( filters[ i ], feed );
+          }
+        }
+        else
+        {
+          // These should be hidden
+          var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_parent');
+          parent.hidden = true;
+          var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
+          splitter.hidden = true;
+        }
+        
+        // Tell the playlist source to feed.
+        if ( feed )
+        {
+          this.source.FeedFilters( ref );
+        }
+
+        // Clear out the old commands
+        var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
+        toolbar.hidden = true;
+        
+        // And add the new ones
+        this.commands = commands;
+        // See if there is one registered specifically for this table
+        var cmds = this.source.GetPlaylistCommands( this.guid, this.table, this.type );
+        if ( cmds )
+        {
+          this.commands = cmds;
+        }
+        // Make sure it does what we think it does.
+        if ( this.commands )
+        {
+          this.commands = this.commands.QueryInterface( Components.interfaces.sbIPlaylistCommands );
+        }
+        this.refreshCommands();
+        
+        // If boolean true, read from the XUL file.
+        if ( resize == true )
+        {
+          resize = this.getAttribute( "resize_height" );
+        }
+        // If an integer
+        if ( parseInt( resize ) > 0 )
+        {
+          this.height = resize;
+        }
+        if ( collapse > 0 )
+        {
+          this.previousSibling.setAttribute( "state", "collapsed" );
+        }
+        else if ( collapse != null )
+        {
+          this.previousSibling.setAttribute( "state", "open" );
+        }
+        
+        // Last last last thing, just force one redraw on the tree.
+        if ( need_loadcolumns )
+        {
+          // Load columns upon rebinding.
+          this.loadcolumns();
+        }
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - bind - " + err );
+      }
+      ]]>
+      </body>
+    </method>
+
+    <method name="refreshCommands">
+      <parameter name="stateonly"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        if (!stateonly) stateonly = false;
+        if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0) stateonly = false;
+        
+        // Get the parents
+        var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
+        var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
+        var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
+        var before = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_before');
+        
+        // If we have a popup, skip it
+        if ( this.popup_shown )
+        {
+          return;
+        }
+        
+        if (!stateonly) toolbar.hidden = true;
+
+        // Remove old elements
+        if (!stateonly) this.removeCommands();
+        
+        if ( this.commands )
+        {
+          // Once we get here, tell the commands who we are.
+          if (!stateonly) this.commands.SetPlaylist( this );
+          
+          // And make all the new stuff
+          var num = this.commands.GetNumCommands();
+          for ( var i = 0; i < num; i++ )
+          {
+            var toolbarbutton;
+            var menuitem;
+            if (!stateonly)
+            {
+              // If we get here, show the toolbar
+              toolbar.hidden = false;
+              
+              // What id?
+              var obj_id = this.commands.GetCommandId( i );
+              
+              var toolbarbutton_type = "toolbarbutton";
+              var menuitem_type = "menuitem";
+              
+              if ( obj_id == "*separator*" )
+              {
+                toolbarbutton_type = "spacer";
+                menuitem_type = "menuseparator";
+              }
+            
+              // Create a toolbarbutton
+              toolbarbutton = document.createElement( toolbarbutton_type );
+              toolbarbutton.setAttribute( "id", obj_id );
+              toolbarbutton.setAttribute( "sbtype", "command" ); // to find it easily, later
+
+              // And a menuitem
+              menuitem = document.createElement( menuitem_type );
+              menuitem.setAttribute( "id", obj_id );
+              menuitem.setAttribute( "sbtype", "command" );
+              menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
+              
+              // No label unless you have a label
+              var cmd_text = this.commands.GetCommandText( i );
+              if ( cmd_text.length > 0 )
+              {
+                if ( cmd_text[ 0 ] == "&" )
+                {
+                  try
+                  {
+                    cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
+                  }
+                  catch( err )
+                  {
+                  }
+                }
+                toolbarbutton.setAttribute( "label", cmd_text );
+                menuitem.setAttribute( "label", cmd_text );
+              }
+
+              // No label unless you have a label
+              var cmd_flex = this.commands.GetCommandFlex( i );
+              if ( cmd_flex > 0 )
+              {
+                toolbarbutton.setAttribute( "flex", cmd_flex );
+//                menuitem.setAttribute( "flex", cmd_flex );
+              }
+
+              // No tooltip unless you have a tooltip
+              var tooltip_text = this.commands.GetCommandToolTipText( i );
+              if ( tooltip_text.length > 0 )
+              {
+                if ( tooltip_text[ 0 ] == "&" )
+                {
+                  try
+                  {
+                    tooltip_text = this.stringbundle.GetStringFromName( tooltip_text.substr( 1, tooltip_text.length ) );
+                  }
+                  catch( err )
+                  {
+                  }
+                }
+                /*
+                    These cause the crashy if they're up while updating.  :(
+                
+                  toolbarbutton.setAttribute( "tooltiptext", tooltip_text );
+                  menuitem.setAttribute( "tooltiptext", tooltip_text );
+                */
+              }
+            }
+            else
+            {
+              toolbarbutton = this.toolbarbuttons[i];
+              menuitem = this.menuitems[i];
+            }
+
+            if ( this.commands.GetCommandEnabled( i ) )
+            {
+              toolbarbutton.setAttribute( "disabled", "false" );
+              menuitem.setAttribute( "disabled", "false" );
+            }
+            else
+            {
+              toolbarbutton.setAttribute( "disabled", "true" );
+              menuitem.setAttribute( "disabled", "true" );
+            }
+            
+            // Add them to the parents
+            if (!stateonly)
+            {
+              this.toolbarbuttons.push( toolbarbutton );
+              this.menuitems.push( menuitem );
+              parent.appendChild( toolbarbutton );
+              popup.insertBefore( menuitem, before );
+            }
+          }
+
+          if ( this.toolbarbuttons.length != this.commands.GetNumCommands() )
+          {
+            alert( "ERROR: TOOLBARBUTTONS OUT OF SYNCH!" );
+          }
+        }
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - refreshCommands - " + err );
+      }
+      ]]>
+      </body>
+    </method>
+
+    <method name="removeCommands">
+      <body>
+        <![CDATA[
+        try
+        {
+          // Delete the toolbar commands
+          var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
+          var command_nodes = parent.getElementsByAttribute( 'sbtype', 'command' );
+          // command_nodes is a live array, removing children from parent auto removes items from it
+          while ( command_nodes.length > 0 ) 
+          {
+            var node = command_nodes.item( 0 );
+            parent.removeChild(node);
+          }
+          this.toolbarbuttons.length = 0; // clear the array??
+        
+          // Delete the popup commands
+          var popup = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');
+          command_nodes = popup.getElementsByAttribute( 'sbtype', 'command' );
+          while ( command_nodes.length > 0 ) 
+          {
+            var node = command_nodes.item( 0 );
+            popup.removeChild(node);
+          }
+          this.menuitems.length = 0; // clear the array??
+        }
+        catch ( err )
+        {
+          alert( "playlist.xml - removeElementsByAttribute - " + err );
+        }
+        ]]>
+      </body>
+    </method>
+
+    <method name="addFilter">
+      <parameter name="meta_column"/>
+      <parameter name="feed"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        // These should be shown
+        var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
+        splitter.hidden = false;
+        var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_parent');
+        parent.hidden = false;
+        
+        // Add a splitter
+        if ( this.filters.length > 0 )
+        {
+          var splitter = document.createElement( "splitter" );
+          splitter.setAttribute( "id", "filter_splitter" );
+          splitter.setAttribute( "state", "open" );
+          splitter.setAttribute( "resizebefore", "closest" );
+          splitter.setAttribute( "resizeafter", "closest" );
+          splitter.setAttribute( "collapse", "before" );
+          
+          var grippy = document.createElement( "grippy" );
+
+          splitter.appendChild( grippy );
+          parent.appendChild( splitter );          
+        }
+        
+        // Add a filterlist
+        var filterlist = document.createElement( "filterlist" );
+        filterlist.setAttribute( "id", meta_column + "_filter" );
+        filterlist.setAttribute( "enableColumnDrag", "false" );
+        filterlist.setAttribute( "hidecolumnpicker", "true" );
+        filterlist.setAttribute( "flex", "1" );
+        
+        parent.appendChild( filterlist );          
+        
+        // And set it up properly.
+        var ref = this.ref + "_" + meta_column;
+        this.source.IncomingObserver( ref, filterlist ); // HEY YOU GUYYYYYYYS!!
+        filterlist.source = this.source;
+        filterlist.ref = ref;
+        filterlist.ref_pl = this.ref;
+        filterlist.index = this.filters.length;
+        filterlist.column = meta_column;
+        filterlist.datasources = "rdf:playlist";
+        filterlist.playlist = this;
+        
+        filterlist.addEventListener( "dblclick", this.onFilterDblClick, true );
+        
+        if ( feed )
+        {
+          this.source.SetFilter(  this.ref, 
+                                  filterlist.index, 
+                                  "", 
+                                  filterlist.ref,
+                                  filterlist.column  );
+        }
+                
+        filterlist.builder.refresh();
+        
+        
+        if ( feed )
+        {
+          this.source.FeedFilters( this.ref );
+        }
+        
+        this.filters.push( filterlist );
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - addFilter - " + err );
+      }
+      ]]>
+      </body>
+    </method>
+
+    <!-- Dynamic Columns/Template -->
+
+    <method name="loadcolumns">
+      <body>
+      <![CDATA[
+      try
+      {
+        if (this.source == null) { /*alert( "playlist.xml - loadcolumns - source is null");*/ return; }
+        // Don't nuke the columns if the user's currently moving or resizing them, or if the columns picker is open
+        if (!this.isAnyDragObjectDown() && !this.isColumnPickerOpen()) {
+          // Don't nuke the columns if there's no current query result.  Yipe.
+          if ( this.source.GetRefColumnCount( this.ref ) > 0 )
+          {
+            this.saveColumnsProperties();
+            this.removeColumns();
+            this.removeTemplate(); 
+            this.addNewContent(this.source, this.ref);
+          }
+        }
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - loadcolumns - " + err );
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="addNewContent">
+      <parameter name="source"/>
+      <parameter name="ref"/>
+      <body>
+        <![CDATA[
+        try
+        {
+          // See if we need to hide the loading box.
+          if ( ! this.loading_box.hidden )
+          {
+            if ( ! this.source.IsQueryExecuting( this.ref ) )
+            {
+              this.loading_box.hidden = true;
+            }
+          }
+      
+          const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+          const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          const SimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+          const Playlist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
+        
+          this.stopWatchingDragObjects();
+        
+          // Columns nodes parent
+          var columns_node = document.createElement("treecols");
+
+          // Template nodes parents
+          var template_node = document.createElement("template");
+
+          var rule_node = document.createElement("rule");
+
+          var treechildren_node = document.createElement("treechildren");
+          treechildren_node.setAttribute("flex", "1");
+
+          var treeitem_node = document.createElement("treeitem");
+          treeitem_node.setAttribute("uri", "rdf:*");
+
+          var treerow_node = document.createElement("treerow");
+
+          // Go through all the columns on the table and create nodes accordingly
+          if(this.guid == 'undefined' || this.table == 'undefined' || this.guid == "" || this.table == "") return;
+
+          if(this.m_queryObj == null)
+          {          
+            this.m_queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+            this.m_queryObj = this.m_queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+            this.m_queryObj.SetDatabaseGUID(this.guid);
+          }
+          
+          if(this.m_Library == null)
+          {
+            this.m_Library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+            this.m_Library.SetQueryObject(this.m_queryObj);
+          }
+          
+          if(this.m_PlaylistManager == null)
+          {
+            this.m_PlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
+          }
+          
+          if(this.table == "library")
+          {
+            this.m_Library.GetColumnInfo();
+          }
+          else
+          {
+            var playlist = this.m_PlaylistManager.GetPlaylist(this.table, this.m_queryObj);
+            
+            if(!playlist)
+              playlist = this.m_PlaylistManager.GetSimplePlaylist(this.table, this.m_queryObj);
+
+            if(!playlist)
+              playlist = this.m_PlaylistManager.GetDynamicPlaylist(this.table, this.m_queryObj);
+
+            if(!playlist)
+              playlist = this.m_PlaylistManager.GetSmartPlaylist(this.table, this.m_queryObj);
+           
+            if(playlist)
+            {
+              playlist.GetColumnInfo();
+            }
+            else
+            {
+              this.m_Library.GetColumnInfo();
+            }
+          }
+          
+          result = this.m_queryObj.GetResultObject();
+
+          for (var i = 0; i < result.GetRowCount(); i++)
+          {
+            var this_column_node = document.createElement("treecol");
+
+            var name = result.GetRowCellByColumn(i, "column_name");
+            var readableName = result.GetRowCellByColumn(i, "readable_name");
+            var isVisible = result.GetRowCellByColumn(i, "is_visible");
+            var isDefaultVisible = result.GetRowCellByColumn(i, "default_visibility");
+            
+            if ( readableName[ 0 ] == "&" )
+            {
+              try
+              {
+                readableName = this.stringbundle.GetStringFromName( readableName.substr( 1, readableName.length ) );
+              }
+              catch( err )
+              {
+              }
+            }
+            
+            var ordinal = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".ordinal" );
+            if (ordinal == 0) ordinal = 1;
+
+            var defaultFlex = result.GetRowCellByColumn(i, "width");
+            if (defaultFlex == -1) defaultFlex = 35;
+            var isFixed = "false";
+            var size = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".size" );
+
+            this_column_node.setAttribute("id", name);
+            this_column_node.setAttribute("label", readableName);
+            this_column_node.setAttribute("ordinal", ordinal);
+            
+            if (name == "progress")
+            {
+              this_column_node.setAttribute("type", "progressmeter");
+            }
+            
+            var savedHidden = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".hidden" );
+            
+            if (savedHidden == "1") 
+            {
+              this_column_node.setAttribute("hidden", "true");
+            }
+            else
+            {
+              if (savedHidden == "" && isDefaultVisible == "0") 
+              {
+                this_column_node.setAttribute("hidden", "true");
+              } 
+            }
+
+            if(isVisible == "0")
+            {
+              this_column_node.setAttribute("ignoreincolumnpicker", "true");
+            }
+            
+            if (size != '' && size != '0') this_column_node.width = size;
+            
+            this_column_node.setAttribute("fixed", isFixed);
+            this_column_node.setAttribute("flex", defaultFlex);
+            this_column_node.setAttribute("minheight", "0");
+            
+            var splitter = document.createElement("splitter");
+            splitter.setAttribute("class", "tree-splitter");
+            splitter.setAttribute("ordinal", ordinal);
+            columns_node.appendChild(splitter);
+            this.registerDragObject(splitter);
+
+            columns_node.appendChild(this_column_node);
+            this.registerDragObject(this_column_node);
+
+            var treecell_node = document.createElement("treecell");
+            treecell_node.setAttribute("label", "rdf:http://home.netscape.com/NC-rdf#"+name);
+            
+            // hardcode hack for progressmeter
+            if (name == "progress") {
+              treecell_node.setAttribute("value", "rdf:http://home.netscape.com/NC-rdf#"+name);
+              treecell_node.setAttribute("mode", "normal");
+            }
+            treerow_node.appendChild(treecell_node);
+          }
+          
+        
+          // Now add columns and template node hierarchy to the tree
+          this.tree.insertBefore(columns_node, null);
+
+          treeitem_node.appendChild(treerow_node); 
+          treechildren_node.appendChild(treeitem_node);
+          rule_node.appendChild(treechildren_node);
+          template_node.appendChild(rule_node);
+          this.tree.appendChild(template_node);
+
+          this.startWatchingDragObjects();
+          
+          this.treecols = columns_node;
+        }
+        catch( err )
+        {
+          alert( "playlist.xml - addNewContent - " + err );
+        }
+        ]]>
+      </body>
+    </method> 
+
+    <!-- Tree Manipulation Functions -->
+
+    <method name="removeColumns">
+      <body>
+          this.removeChildByName("treecols");
+      </body>
+    </method>
+
+    <method name="removeTemplate">
+      <body>
+          this.removeChildByName("template");
+      </body>
+    </method>
+
+    <method name="removeChildByName">
+      <parameter name="childname"/>
+      <body>
+        <![CDATA[
+          for (var i=0;i<this.tree.childNodes.length;i++) {
+            var node = this.tree.childNodes.item(i);
+            if (node.tagName == childname ||
+                node.tagName == "xul:"+childname) {
+              this.tree.removeChild(node);
+              i--;
+            }
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <!-- Save columns UI properties -->
+
+    <method name="saveColumnsProperties">
+      <body>
+        this.saveColumnsWidth(); 
+        this.saveColumnsOrdinal();
+        this.saveColumnsVisibility();
+      </body>
+    </method>
+    
+    <!-- Save columns width in data remotes -->
+
+    <method name="saveColumnsWidth">
+      <body>
+        <![CDATA[
+          try
+          {
+            if (this.tree.columns && this.tree.columns.count > 0) {
+              for (var i=0;i<this.tree.columns.count;i++) {
+                var id = this.tree.columns[i].id;
+                var width = this.tree.columns[i].width;
+                if (width == 0) continue; // first rebuild when coming back from a url doesn't have time to show the columns and still has all their widths to 0, don't save that
+                this.SBDataSetValue( "playlist." + this.ref + ".column." + id + ".size", width );
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - saveColumnsWidth - " + err );
+          }
+        ]]> 
+      </body>
+    </method>
+
+    <method name="findObject">
+      <parameter name="parent"/>
+      <parameter name="object"/>
+      <body>
+        <![CDATA[
+          var ret = null;
+          try
+          {
+            if (parent != null)
+            {
+              var n = parent.childNodes.length;
+              for (var i=0;i<parent.childNodes.length;i++) {
+                var node = parent.childNodes.item(i);
+                if (node.tagName == object ||
+                    node.tagName == "xul:" + object) {
+                  ret = node;
+                }
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - findObject - " + err );
+          }
+          return ret;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="findAnonymousObject">
+      <parameter name="parent"/>
+      <parameter name="object"/>
+      <body>
+        <![CDATA[
+          var ret = null;
+          try
+          {
+            if (parent != null)
+            {
+              var nodes = document.getAnonymousNodes(parent);
+              if (nodes != null)
+              {
+                var n = nodes.length;
+                for (var i=0;i<nodes.length;i++) {
+                  var node = nodes.item(i);
+                  if (node.tagName == object ||
+                      node.tagName == "xul:" + object) {
+                    ret = node;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - findAnonymousObject - " + err );
+          }
+          return ret;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="isColumnPickerOpen">
+      <body>
+        <![CDATA[
+          var ret = false;
+          try
+          {
+            if (this.treecols != null)
+            {
+              var colpicker = this.findAnonymousObject(this.treecols, "treecolpicker");
+              if (colpicker != null)
+              {
+                var popup = this.findAnonymousObject(colpicker, "menupopup");
+                if (popup != null)
+                {
+                  if (popup.popupBoxObject.x != 0) ret = true;
+                }
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - isColumnPickerOpen - " + err );
+          }
+          return ret;
+        ]]> 
+      </body>
+    </method>
+    
+
+    <!-- Save columns ordinal in data remotes -->
+
+    <method name="findColumns">
+      <body>
+        return this.findObject(this.tree, "treecols");
+      </body>
+    </method>
+    
+    <method name="saveColumnsOrdinal">
+      <body>
+        <![CDATA[
+          try
+          {
+            var columnsNode = this.findColumns();
+            if (columnsNode == null) return;
+            for (var i=0;i<columnsNode.childNodes.length;i++)
+            {
+              var node = columnsNode.childNodes[i];
+              if (node.tagName == "treecol" || node.tagName == "xul:treecol")
+              {
+                this.SBDataSetValue( "playlist." + this.ref + ".column." + node.id + ".ordinal", node.ordinal );
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - saveColumnsOrdinal - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="saveColumnsVisibility">
+      <body>
+        <![CDATA[
+          try
+          {
+            var columnsNode = this.findColumns();
+            if (columnsNode == null) return;
+            for (var i=0;i<columnsNode.childNodes.length;i++)
+            {                                                                          
+              var node = columnsNode.childNodes[i];
+              if (node.tagName == "treecol" || node.tagName == "xul:treecol")
+              {
+                this.SBDataSetValue( "playlist." + this.ref + ".column." + node.id + ".hidden", node.hidden );
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - saveColumnsVisibility - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <!-- Selection save/restore - HACK -->
+    
+    <method name="saveSelection">
+      <body>
+        <![CDATA[
+          try
+          {
+            if (this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
+              var column 
+              // pick a column whose content we will use as unique identifier
+              for (var k=0;k<this._selection_key_array.length;k++)
+              {
+                column = this.tree.columns.getNamedColumn(this._selection_key_array[k]);
+                if (column != null)
+                {
+                  this._selection_key = this._selection_key_array[k];
+                  break;
+                }
+              }
+              // save selection array
+              if (column != null) {
+                this._saved_selection = Array();
+                this._saved_nitems = this.tree.view.rowCount;
+                var rangeCount = this.tree.view.selection.getRangeCount();
+                for (var i=0; i < rangeCount; i++) {
+                  var start = {};
+                  var end = {};
+                  this.tree.view.selection.getRangeAt( i, start, end );
+                  for( var c = start.value; c <= end.value; c++ )
+                  {
+                    if (c >= this.tree.view.rowCount) 
+                    {
+                      return; //alert( "playlist.xml - saveSelection - selection item c (" + c + ") is not in range! (rowCount = " + this.tree.view.rowCount + ")");
+                    }
+                    try
+                    {
+                      var index = this.tree.view.getCellText( c, column );
+                    }
+                    catch ( e )
+                    {
+                      alert( "Error? " + column + " - " + c + "\r\n" + e );
+                      return;  // wtf?!
+                    }
+                    this._saved_selection.push(index);
+                  }
+                }
+              }
+            } 
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - saveSelection" + err );
+          }
+        ]]> 
+      </body>
+    </method>
+    
+    <method name="restoreSelection">
+      <body>
+        <![CDATA[
+          try
+          {
+            this.restoring_selection = true;
+            if (this._saved_selection != null && this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
+              if (1) { //this.tree.view.rowCount == this._saved_nitems) {
+                // use the key we picked in saveSelection
+                var column = this.tree.columns.getNamedColumn(this._selection_key); 
+                if (column != null) {
+                  // restore selection from array
+                  while (this._saved_selection.length > 0) {
+                    var cell = this._saved_selection.pop();
+                    var row = this.findCell(column, cell);
+                    if (row != -1) 
+                    {
+                      this.tree.view.selection.rangedSelect(row, row, true);
+                    } 
+                    else
+                    {
+                      this.tree.view.selection.clearSelection();
+                      this.restoring_selection = false;
+                      return;
+                    }
+                  }
+                }
+              } 
+            } 
+            this.restoring_selection = false;
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - restoreSelection - " + err );
+          }
+        ]]> 
+      </body>
+    </method>
+  
+    <method name="findCell">
+      <parameter name="column"/>
+      <parameter name="value"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            // Instead of a linear search, try a shortcut.
+            if ( column.id == "row_id" )
+            {
+              return value - 1;   
+            }
+            var n = this.tree.view.rowCount;
+            for( var c = 0; c < n; c++ )
+            {
+              var cell = this.tree.view.getCellText( c, column );
+              if (cell == value) return c;
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - findCell - " + err );
+          }
+          return -1;
+        ]]>
+      </body>
+    </method>
+
+    <!-- Drag Objects watcher -->
+    
+    <method name="registerDragObject">
+      <parameter name="obj"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            if (this._dragobjects == null) this._dragobjects = Array();
+            this._dragobjects.push(obj);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - registerDragObject - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="startWatchingDragObjects">
+      <body>
+        <![CDATA[
+          try
+          {
+            if (this._dragobjects != null)
+            {
+              for (var i=0; i<this._dragobjects.length;i++)
+              {
+                this._dragobjects[i].addEventListener("mouseup", this.dragObjectMouseUp, true); 
+                this._dragobjects[i].addEventListener("mousedown", this.dragObjectMouseDown, true); 
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - stopWatchingDragObjects - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="stopWatchingDragObjects">
+      <body>
+        <![CDATA[
+          try
+          {
+            if (this._dragobjects != null)
+            {
+              for (var i=0; i<this._dragobjects.length;i++)
+              {
+                this._dragobjects[i].removeEventListener("mouseup", this.dragObjectMouseUp, true); 
+                this._dragobjects[i].removeEventListener("mousedown", this.dragObjectMouseDown, true); 
+              }
+              this._dragobjects = null;
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - stopWatchingDragObjects - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="dragObjectMouseUp">
+      <body>
+        document.__PlaylistXBL_DragObjectDown__ = null;
+      </body>
+    </method>
+
+    <method name="dragObjectMouseDown">
+      <body>
+        document.__PlaylistXBL_DragObjectDown__ = this;
+      </body>
+    </method>
+    
+    <method name="isAnyDragObjectDown">
+      <body>
+        <![CDATA[
+          var ret = 0;
+          try
+          {
+            if (this._dragobjects != null) {
+              var o = document.__PlaylistXBL_DragObjectDown__;
+              for (var i=0; i<this._dragobjects.length;i++)
+              {
+                if (o == this._dragobjects[i])
+                {
+                  ret = 1;
+                  break;
+                }
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - isAnyDragObjectDown - " + err );
+          }
+          return ret;
+        ]]>
+      </body>
+    </method>
+
+    <!-- nsIXULBuilderListener implementation -->
+
+    <method name="willRebuild">
+      <parameter name="builder"/>
+      <body>
+//        alert("?");
+        this.saveSelection();
+        this.loadcolumns(); 
+      </body>
+    </method>
+
+    <method name="didRebuild">
+      <parameter name="builder"/>
+      <body>
+//        alert("!");
+        var viewsummary = this.getViewSummary();
+        if (this._lastviewsummary == viewsummary) 
+        {
+          this.restoreSelection();
+          this.refreshCommands(true);
+        }
+        else
+        {
+          this.refreshCommands(false);
+        }
+        this._lastviewsummary = viewsummary;
+      </body>
+    </method>
+
+    <!-- nsIXULTreeBuilderObserver implementation -->
+
+    <method name="isEditable">
+      <parameter name="row"/>
+      <parameter name="col"/>
+      <body>
+      <![CDATA[
+      try
+      {
+        alert( "isEditable( " + row + ", " + col + " )" );
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - isEditable - " + err )
+      }
+      return true;
+      ]]>
+      </body>
+    </method>
+
+    <!-- Event yellers -->
+    
+    <method name="sendPlayEvent">
+      <body>
+      <![CDATA[
+      try
+      {
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-play", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - sendPlayEvent - " + err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <method name="sendEditEvent">
+      <body>
+      <![CDATA[
+      try
+      {
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-edit", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - sendEditEvent - " + err )
+      }
+      ]]>
+      </body>
+    </method>
+    
+    <!-- Tree event listeners -->
+    
+    <method name="onToolbarCommand">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            if ( this.commands )
+            {
+              this.commands.OnCommand( evt );
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onToolbarCommand - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="onPlaylistDblClick">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var obj = {}, row = {}, col = {}; 
+            this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
+            if ( obj.value )
+            {
+              if ( this.tree.currentIndex != -1 )
+              {
+                this.sendPlayEvent();
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistDblClick - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFilterDblClick">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var playlist = evt.target.playlist;
+            
+            if ( playlist )
+            {
+              document.__PlaylistXBL_DragObjectDown__ = playlist; // YUCK YUCK YUCK YUCK (note the absence of "f")
+              var txt = "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.currentIndex = 0;"
+              txt += "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.select( 0 );"
+              txt += "document.__PlaylistXBL_DragObjectDown__.sendPlayEvent();"
+              // Play it in awhile, after the tree updates.
+              setTimeout( txt, 250 ); 
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onFilterDblClick - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistKeypress">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            switch ( evt.keyCode )
+            {
+              case 46: // Del
+                if ( this.tree.currentIndex != -1 )
+                {
+                  this.removeTracks();
+                }
+                break;
+              case 13: // Return
+                if ( this.tree.currentIndex != -1 )
+                {
+                  this.sendPlayEvent();
+                }
+                break;
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistKeypress - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistContextClick">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            if ( this.tree.currentIndex > -1 )
+            {
+              this.hidePlaylistEdit();
+
+              // Find the url column. 
+              var title_column = this.tree.columns ? this.tree.columns["title"] : "title";
+              // Get the text of the hidden tree cell, this contains the url.
+              var play_title = this.tree.view.getCellText( this.tree.currentIndex, title_column );
+              
+              var cell_text = "";
+
+              // First, get the row and column clicked.
+              var obj = {}, row = {}, col = {}; 
+              this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+              // If the "obj" has a value, it is a cell?
+              if ( obj.value )
+              {
+                cell_text = this.tree.view.getCellText( row.value, col.value );
+                this.edit_row = row.value;
+                this.edit_col = col.value;
+              }
+              else
+              {
+                return;
+              }
+                                                                    
+              // And if it's good, launch the popup for it.
+              if ( cell_text.length > 0 )
+              {
+                this.context_term = cell_text;
+              }
+              else
+              {
+                this.context_term = play_title;
+              }
+              
+              this.SBDataSetValue( "playlist.context.term", this.context_term );
+
+              var search_term = document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
+              search_term.label = "Search: " + this.context_term;
+              var lyrics_term = document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
+              lyrics_term.label = "Lyrics: " + this.context_term;
+              
+              this.context_x = evt.clientX;
+              this.context_y = evt.clientY;
+              this.context_popup.showPopup( this.tree, evt.screenX, evt.screenY, "context", null, null, null );
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistContextClick - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistSelectClick">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this.hidePlaylistEdit();
+            
+            // If we have commands, allow them to update
+            if ( ! this.restoring_selection )
+            {
+              this.refreshCommands();
+            }
+            
+            // If we select too many items, we need to pause the scanning.
+            var count = 0;
+            var rangeCount = this.tree.view.selection.getRangeCount();
+            for (var i=0; i < rangeCount; i++) 
+            {
+              var start = {};
+              var end = {};
+              this.tree.view.selection.getRangeAt( i, start, end );
+              count += end.value - start.value + 1;
+            }            
+            if ( count > 50 )
+            {
+              if ( ! this.paused_scanning )
+              {
+                // Push the pause value
+                SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') + 1 );
+                this.paused_scanning = true;
+              }
+            }
+            else
+            {
+              if ( this.paused_scanning )
+              {
+                // Pop the pause value
+                var pause = SBDataGetIntValue('backscan.paused') - 1;
+                if ( pause < 0 ) pause = 0;
+                SBDataSetValue('backscan.paused', pause );
+                this.paused_scanning = false;
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistSelectClick - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistClick">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this.hidePlaylistEdit();
+            
+            if ( ! this.addedObserver )
+            {
+              // And then listen to the tree?
+              this.tree.view.addObserver(this);
+              this.addedObserver = true;
+            }
+            
+            var delay = evt.timeStamp - this.tree.lastClickTimestamp;
+            if ( delay > 1000 && delay < 2000 )
+            {
+              if ( this.tree.currentIndex != -1 && this.tree.currentIndex == this.tree.lastClickIndex )
+              {
+                var obj = {}, row = {}, col = {}; 
+                this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+                // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
+                if ( obj.value )
+                {
+                  // Remember the row and column
+                  this.edit_row = row.value;
+                  this.edit_col = col.value;
+                  // Send the event and see if anyone is there to catch it?
+                  this.sendEditEvent();
+                }
+              }
+            }
+            this.tree.lastClickIndex = this.tree.currentIndex;            
+            this.tree.lastClickTimestamp = evt.timeStamp;            
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistClick - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistScroll">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            alert( "Scroll:" + evt );
+            this.hidePlaylistEdit();
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistScroll - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistContextMenu">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this.context_item = null;
+            if ( ! evt.target )
+            {
+              return;
+            }
+            this.context_item = document.getAnonymousElementByAttribute(this, 'id', evt.target.id);
+            if ( evt.target.getAttribute( "sbtype" ) == "command" )
+            {
+              if ( this.commands ) // I hope so!
+              {
+                this.commands.OnCommand( evt );
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistContextMenu - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistEdit">
+      <parameter name="mouse_x"/>
+      <parameter name="mouse_y"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            // First, get the row and column clicked.
+            var obj = {}; 
+            var tree_edit_row = {};
+            var tree_edit_col = {};
+            this.tree.treeBoxObject.getCellAt( mouse_x, mouse_y, tree_edit_row, tree_edit_col, obj );
+            
+            // If the "obj" has a value, it is a cell?
+            if ( obj.value )
+            {
+              // Remember the row and column
+              this.edit_row = tree_edit_row.value;
+              this.edit_col = tree_edit_col.value;
+              
+              // *?* So, instead, we send an event and hope it can find us
+              this.sendEditEvent();
+              
+/* LAME -- The edit popup doesnt work in here.  Phththth.
+              // Is this supposed to be editable?
+              var editable = this.tree.view.isEditable( this.edit_row, this.edit_col );
+              
+              if ( editable )
+              {
+                // Get the info for the cell item.
+                var out_x = {}, out_y = {}, out_w = {}, out_h = {}; 
+                this.tree.treeBoxObject.getCoordsForCellItem( tree_edit_row.value, tree_edit_col.value, "cell",
+                                                                    out_x , out_y , out_w , out_h );
+                var cell_text = this.tree.view.getCellText( tree_edit_row.value, tree_edit_col.value );
+                
+                // Then pop the edit box to the bounds of the cell.
+                var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
+                var extra_y = 22; // Why do I have to give it extra?  What am I calculating wrong?
+                var less_w  = 6;
+                var pos_x = extra_x + this.tree.boxObject.screenX + out_x.value;
+                var pos_y = extra_y + this.tree.boxObject.screenY + out_y.value;
+                this.edit_popup.showPopup( this.tree, pos_x, pos_y, "popup", null, null, null );
+                this.edit_popup.sizeTo( out_w.value - less_w, out_h.value ); // increase the width to the size of the cell.
+                this.edit_box.focus();
+                this.edit_box.value = cell_text;
+              }
+*/              
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistEdit - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPopupShown">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this.popup_shown = true;
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistContextMenu - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPopupHidden">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this.popup_shown = false;
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistContextMenu - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistEdit">
+      <parameter name="mouse_x"/>
+      <parameter name="mouse_y"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            // First, get the row and column clicked.
+            var obj = {}; 
+            var tree_edit_row = {};
+            var tree_edit_col = {};
+            this.tree.treeBoxObject.getCellAt( mouse_x, mouse_y, tree_edit_row, tree_edit_col, obj );
+            
+            // If the "obj" has a value, it is a cell?
+            if ( obj.value )
+            {
+              // Remember the row and column
+              this.edit_row = tree_edit_row.value;
+              this.edit_col = tree_edit_col.value;
+              
+              // *?* So, instead, we send an event and hope it can find us
+              this.sendEditEvent();
+              
+/* LAME -- The edit popup doesnt work in here.  Phththth.
+              // Is this supposed to be editable?
+              var editable = this.tree.view.isEditable( this.edit_row, this.edit_col );
+              
+              if ( editable )
+              {
+                // Get the info for the cell item.
+                var out_x = {}, out_y = {}, out_w = {}, out_h = {}; 
+                this.tree.treeBoxObject.getCoordsForCellItem( tree_edit_row.value, tree_edit_col.value, "cell",
+                                                                    out_x , out_y , out_w , out_h );
+                var cell_text = this.tree.view.getCellText( tree_edit_row.value, tree_edit_col.value );
+                
+                // Then pop the edit box to the bounds of the cell.
+                var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
+                var extra_y = 22; // Why do I have to give it extra?  What am I calculating wrong?
+                var less_w  = 6;
+                var pos_x = extra_x + this.tree.boxObject.screenX + out_x.value;
+                var pos_y = extra_y + this.tree.boxObject.screenY + out_y.value;
+                this.edit_popup.showPopup( this.tree, pos_x, pos_y, "popup", null, null, null );
+                this.edit_popup.sizeTo( out_w.value - less_w, out_h.value ); // increase the width to the size of the cell.
+                this.edit_box.focus();
+                this.edit_box.value = cell_text;
+              }
+*/              
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistEdit - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistEditChange">
+      <body>
+        <![CDATA[
+          try
+          {
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistEditChange - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPlaylistEditKeypress">
+      <body>
+        <![CDATA[
+          try
+          {
+            alert( "key" );
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPlaylistEditKeypress - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="hidePlaylistEdit">
+      <body>
+        <![CDATA[
+          try
+          {
+        //    alert( "hide" );
+            this.edit_popup.hidePopup();
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - hidePlaylistEdit - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="addToPlaylist">
+      <body>
+        <![CDATA[
+          try
+          {
+            // Make a data object to get the playlist to add to from the dialog
+            var add_to_playlist_data = new Object();
+            // Open the modal dialog
+            window.openDialog( "chrome://rmp_demo/content/add_to_playlist.xul", "add_to_playlist", "chrome,modal=yes, centerscreen", add_to_playlist_data );
+            if ( add_to_playlist_data.retval == "ok" )
+            {
+              // add them !
+              var playlist = add_to_playlist_data.playlist;
+              this.addToPlaylistOrLibrary(playlist);
+            }  
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - addToPlaylist - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="addToLibrary">
+      <body>
+        <![CDATA[
+          try
+          {
+            this.addToPlaylistOrLibrary();
+            var msg = "" + this._addedtolibrary_count + " " + "track(s) added to the library";
+            if (this._existedinlibrary_count > 0) msg += ", " + this._existedinlibrary_count + " " + "track(s) already in it";
+            this.sbMessageBox("Add To Library", msg);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - addToPlaylist - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="addToPlaylistOrLibrary">
+      <parameter name="playlist"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+            mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+            
+            var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+            queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+            queryObj.SetDatabaseGUID("songbird");
+            
+            mediaLibrary.SetQueryObject(queryObj);
+            
+            var PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+            var playlistManager = new PlaylistManager();
+            playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+            
+            var thePlaylist;
+            if (playlist != null) thePlaylist = playlistManager.GetPlaylist(playlist, queryObj);
+            
+            if (playlist != null && thePlaylist == null)
+            {
+              alert("playlist.xml - addToPlaylistOrLibrary - Playlist '" + playlist + "' not found!");
+              return;
+            }
+
+            // Add the tracks to it     
+            var urlcolumn = this.tree.columns.getNamedColumn("url");
+            var uuidcolumn = this.tree.columns.getNamedColumn("uuid");
+            if (urlcolumn) // it is okay if uuidcolumn does not exist, but url is our fallback
+            {
+              var metadataintersection_ids = Array();
+              var metadataintersection_cols = Array();
+              
+              // are the tracks coming from a different db ? if so, compute the intersection of metadata columns between the source
+              // and destination db, so that the insertion can use it later to insert the proper data in the destination db
+              if (this.guid != "songbird")
+              {
+                mediaLibrary.GetColumnInfo();
+                var destcols = queryObj.GetResultObject();
+                
+                var thisPlaylist = playlistManager.GetPlaylist(this.table, this.m_queryObj);
+                thisPlaylist.GetColumnInfo();
+                var srccols = this.m_queryObj.GetResultObject();
+                
+                for (var i=0;i<destcols.GetRowCount();i++)
+                {
+                  var columnid = destcols.GetRowCell(i, 0);
+                  if (columnid == "uuid" || columnid == "url" || columnid == "service_uuid" || columnid == "id" || columnid == "row_id") continue;
+                  for (var j=0;j<srccols.GetRowCount();j++)
+                  {
+                    if (columnid == srccols.GetRowCell(j, 0))
+                    {
+                      metadataintersection_ids.push(columnid);
+                      metadataintersection_cols.push(this.tree.columns.getNamedColumn(columnid));
+                      break;
+                    }
+                  }
+                }
+              }
+              queryObj.ResetQuery();
+              var params = Array(mediaLibrary, thePlaylist, urlcolumn, uuidcolumn, metadataintersection_ids, metadataintersection_cols);
+              this._addedtolibrary_count = 0;
+              this._existedinlibrary_count = 0;
+              if (this.table != "library" && this.tree.view.selection.getRangeCount() == 0)
+                this.processAll(this.processSelection_addToPlaylistOrLibrary, params);
+              else
+                this.processSelection(this.processSelection_addToPlaylistOrLibrary, params);
+                
+              queryObj.Execute();
+            }
+            else
+            {
+              alert("playlist.xml - addToPlaylistOrLibrary - no url column");
+              return;
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - addToPlaylistOrLibrary - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="processSelection">
+      <parameter name="func"/>
+      <parameter name="params"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var rangeCount = this.tree.view.selection.getRangeCount();
+            for (var i=0; i < rangeCount; i++) 
+            {
+              var start = {};
+              var end = {};
+              this.tree.view.selection.getRangeAt( i, start, end );
+              for( var c = start.value; c <= end.value; c++ )
+              {
+                if (c > this.tree.view.rowCount) 
+                {
+                  continue; 
+                }
+                func(this, c, params);
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - processSelection - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="processAll">
+      <parameter name="func"/>
+      <parameter name="params"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var rowCount = this.tree.view.rowCount;
+            for (var i=0; i < rowCount; i++) 
+            {
+              func(this, i, params);
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - processAll - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="processSelection_addToPlaylistOrLibrary">
+      <parameter name="_this"/>
+      <parameter name="item"/>
+      <parameter name="params"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var mediaLibrary = params[0];
+            var thePlaylist = params[1];
+            var urlcolumn = params[2];
+            var uuidcolumn = params[3];
+            var metadataintersection_ids = params[4];
+            var metadataintersection_cols = params[5];
+            
+            var guid;
+            
+            // metadataintersection is empty if the destination library is the same as the source library
+            if (uuidcolumn && metadataintersection_cols.length == 0) 
+            {
+              guid = _this.tree.view.getCellText( item, uuidcolumn );
+            }
+            else
+            {
+              var url = _this.tree.view.getCellText( item, urlcolumn );
+              if (metadataintersection_cols.length != 0)
+              {
+                var values = new Array();
+                if (mediaLibrary.FindByURL(url) != null) 
+                {
+                  _this._existedinlibrary_count++;
+                }
+                else
+                {
+                  _this._addedtolibrary_count++;
+                }
+                // source playlist has its own library, use the intersection of available metadata in source and 
+                // destination libraries as the metadata for the insertion in the the destination library 
+                for (var i=0;i<metadataintersection_cols.length;i++)
+                {
+                  values.push(_this.tree.view.getCellText( item, metadataintersection_cols[i] ));
+                }
+                guid = mediaLibrary.AddMedia( url, metadataintersection_ids.length, metadataintersection_ids, values.length, values, false, true );
+              }
+              else
+              {
+                // item is already in destination library, but we didnt have a uuid column, 
+                // ask the library for the guid associated with this url
+                guid = mediaLibrary.AddMedia( url, 0, null, 0, null, false, true );
+              }
+            }
+            
+            if (thePlaylist) 
+            {
+              thePlaylist.AddByGUID( guid, "songbird", -1, false, true );
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - processSelection_addToPlaylistOrLibrary - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="removeTracks">
+      <body>
+        <![CDATA[
+          try
+          {
+            const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+            if (this.table == "library")
+            {
+              var column = this.tree.columns.getNamedColumn("uuid");
+              if (column)
+              {
+                const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+                var library = new MediaLibrary();    
+                library = library.QueryInterface(Components.interfaces.sbIMediaLibrary);
+                library.SetQueryObject(this.m_queryObj);
+
+                var params = Array(library, column);
+                this.processSelection(this.processSelection_removeTracksFromLibrary, params);
+                this.m_queryObj.Execute();
+                // problem: playlists containing the tracks we just removed now show these items as blank, we could prompt the user to tell him that these tracks
+                //          are in existing playlists and ask for confirmation, then remove the items from the playlists as well, but it might get very slow for 
+                //          lots of selected items/lots of playlists (even just the check may be real slow)
+              }
+              else
+              {
+                alert("playlist.xml - removeTracks - no uuid column for library");
+                return;
+              }
+            }
+            else
+            {
+              var playlistmgr = new PlaylistManager();
+              playlistmgr = playlistmgr.QueryInterface(Components.interfaces.sbIPlaylistManager);
+              
+              var playlist = playlistmgr.GetPlaylist(this.table, this.m_queryObj);
+              
+              if (playlist)
+              {
+                column = this.tree.columns.getNamedColumn("row_id");
+                if (column)
+                {
+                  var params = Array(playlist, column);
+                  this.processSelection(this.processSelection_removeTracksFromPlaylist, params);
+                  this.m_queryObj.Execute();
+                }
+                else
+                {
+                  alert("playlist.xml - removeTracks - no uuid column for playlist");
+                  return;
+                }
+              }
+              else
+              {
+                var column = this.tree.columns.getNamedColumn("playlist_uuid");
+                if ( !column )
+                {
+                  // Try url if no guid?
+                  column = this.tree.columns.getNamedColumn("url");
+                }
+                if ( !column )
+                {
+                  // Try id if no url?
+                  column = this.tree.columns.getNamedColumn("id");
+                }
+                if (column)
+                {
+                  playlist = playlistmgr.GetSimplePlaylist(this.table, this.m_queryObj);
+                  if (playlist)
+                  {
+                    var params = Array(playlist, column);
+                    this.processSelection(this.processSelection_removeTracksFromSimplePlaylist, params);
+                    this.m_queryObj.Execute();
+                  }
+                  else
+                  {
+                    alert("playlist.xml - removeTracks - not a library, playlist, or simpleplaylist");
+                    return;
+                  }
+                }
+                else
+                {
+                  var text = "";
+                  for ( var i = 0; i < this.tree.columns.count; i++ )
+                  {
+                    text += this.tree.columns.getColumnAt( i ).element.getAttribute( "label" ) + " - " + this.tree.columns.getColumnAt( i ).id + "\r\n";
+                  }
+                  alert( text + "playlist.xml - removeTracks - no id, url, or playlist_uuid columns for simple playlist?" );
+                  return;
+                }
+              }
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - removeTracks - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="processSelection_removeTracksFromLibrary">
+      <parameter name="_this"/>
+      <parameter name="item"/>
+      <parameter name="params"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var mediaLibrary = params[0];
+            var column = params[1];
+            var guid = _this.tree.view.getCellText( item, column );
+            mediaLibrary.RemoveMediaByGUID(guid, true);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - processSelection_removeTracksFromLibrary - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="processSelection_removeTracksFromPlaylist">
+      <parameter name="_this"/>
+      <parameter name="item"/>
+      <parameter name="params"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var playlist = params[0];
+            var column = params[1];
+            var index = _this.tree.view.getCellText( item, column );
+            playlist.RemoveByIndex(index, true);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - processSelection_removeTracksFromPlaylist - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="processSelection_removeTracksFromSimplePlaylist">
+      <parameter name="_this"/>
+      <parameter name="item"/>
+      <parameter name="params"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var playlist = params[0];
+            var column = params[1];
+            var value = _this.tree.view.getCellText( item, column );
+            switch ( column.id )
+            {
+              case "id":
+                playlist.RemoveByIndex( value, true );
+                break;
+              case "playlist_uuid":
+                playlist.RemoveByGUID( value, true );
+                break;
+              case "url":
+                playlist.RemoveByURL( value, true );
+                break;
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - processSelection_removeTracksFromSimplePlaylist - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="setDnDSourceTracker">
+      <parameter name="tracker"/>
+      <body>
+        if (this.m_dndSourceTracker == tracker) 
+        {
+          return;
+        }
+        else 
+        {
+          if (this.m_dndSourceTracker != null) 
+          {
+            this.m_dndSourceTracker.unregisterDnDSource(this);
+            this.m_dndSourceTracker = null;
+          }
+        }
+        this.m_dndSourceTracker = tracker;
+        if (tracker != null) tracker.registerDnDSource(this);
+      </body>
+    </method>
+    
+    <method name="getDnDSourceIndex">
+      <body>
+        if (this.m_dndSourceTracker != null) return this.m_dndSourceTracker.getDnDSourceIndex(this);
+        return -1;
+      </body>
+    </method>
+    
+    <method name="onDrag">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            //
+            //  Do something interesting to indicate the drag of a column?
+            //
+
+            var obj = {}, row = {}, col = {}; 
+            this.tree.treeBoxObject.getCellAt( event.clientX, event.clientY, row, col, obj );
+            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
+            if ( obj.value )
+            {
+              // Heheh, only drag if you're dragging a cell.  Otherwise, don't screw with the scrollbar
+              this.nsDragAndDrop.startDrag(event,this.sbIPlaylistDragObserver);
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onDrag - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="getViewSummary">
+      <body>
+        <![CDATA[
+          var ret = "";
+          try
+          {
+            if (this.source && this.ref != "")
+            {
+              ret = this.guid + ";" + this.table;
+              var n = this.source.GetNumFilters(this.ref);
+              ret += ";" + n;
+              for (var i=0;i<n;i++) ret += ";" + this.source.GetFilter(this.ref, 0);
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - getViewSummary - " + err );
+          }
+          return ret;
+        ]]>
+      </body>
+    </method>
+    
+   </implementation> 
+ 
+  </binding>
+
+</bindings>

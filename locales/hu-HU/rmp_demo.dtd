@@ -1,0 +1,153 @@
+
+<!ENTITY window.main.title  "Songbird előzetes bemutatkozás" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Oké" >
+<!ENTITY window.cancel      "Mégse" >
+<!ENTITY window.browse      "Tallózás..." >
+
+<!ENTITY menu.file          "Fájl" >
+<!ENTITY menu.file.new      "Új lejátszólista..." >
+<!ENTITY menu.file.smart    "Új okos lejátszólista..." >
+<!ENTITY menu.file.remote   "Új távoli lejátszólista..." >
+<!ENTITY menu.file.open     "Fájl megnyitása..." >
+<!ENTITY menu.file.url      "URL megnyitása..." >
+<!ENTITY menu.file.playlist "Lejátszólista megnyitása..." >
+<!ENTITY menu.file.scan     "Média keresés..." >
+<!ENTITY menu.file.dlfolder "Letöltési könyvtár beállítása..." >
+<!ENTITY menu.file.watch    "Figyelt könyvtárak beállítása..." >
+<!ENTITY menu.file.htmlbar  "Mindig mutasd a Web eszköztárat" >
+<!ENTITY menu.file.skin     "Sminkváltás" >
+<!ENTITY menu.file.window   "Főablak megnyitása" >
+<!ENTITY menu.file.mini     "Mini Player megnyitása" >
+<!ENTITY menu.file.about    "A Songbird névjegye..." >
+<!ENTITY menu.file.exit     "Kilépés" >
+
+<!ENTITY menu.edit          "Szerkesztés" >
+<!ENTITY menu.edit.undo     "Visszavonás" >
+<!ENTITY menu.edit.cut      "Kivágás" >
+<!ENTITY menu.edit.copy     "Másolás" >
+<!ENTITY menu.edit.paste    "Beillesztés" >
+<!ENTITY menu.edit.clear    "Tisztán" >
+<!ENTITY menu.edit.selall   "Az összes kijelölése" >
+<!ENTITY menu.edit.selnone  "Kijelölés megszüntetése" >
+
+<!ENTITY menu.controls      "Vezérlők" >
+<!ENTITY menu.control.play  "Lejátszás/Szünet" >
+<!ENTITY menu.control.next  "Következő sáv" >
+<!ENTITY menu.control.prev  "Előző sáv" >
+<!ENTITY menu.control.shuf  "Keverés" >
+<!ENTITY menu.control.repa  "Mindent ismétel" >
+<!ENTITY menu.control.rep1  "Egyet ismétel" >
+<!ENTITY menu.control.repx  "Nincs ismétlés" >
+
+<!ENTITY menu.services        "Szolgáltatások" >
+<!ENTITY menu.services.browse "Szolgáltatások tallózása..." >
+
+<!ENTITY menu.devices       "Eszközök" >
+
+<!ENTITY menu.help          "Súgó" >
+<!ENTITY menu.help.topics   "Súgó témakörei..." >
+<!ENTITY menu.help.about    "A Songbird névjegye..." >
+
+<!ENTITY html.context.open  "Megnyitás" >
+<!ENTITY html.context.play  "Lejátszás" >
+<!ENTITY html.context.add   "Hozzáad a könyvtárhoz" >
+
+<!ENTITY playlist.context.remove  "Eltávolítás" >
+<!ENTITY playlist.context.rename  "Átnevezés" >
+<!ENTITY playlist.context.search  "Keresés" >
+<!ENTITY playlist.context.lyrics  "Dalszöveg" >
+
+<!ENTITY tooltip.miniplayer       "Válátás Miniplayer-re" >
+<!ENTITY tooltip.minimize         "Kis méret" >
+<!ENTITY tooltip.maximize         "Teljes méret/Előző méret" >
+<!ENTITY tooltip.exit             "Kilépés" >
+<!ENTITY tooltip.control.back     "Előző sáv" >
+<!ENTITY tooltip.control.play     "Lejátszás" >
+<!ENTITY tooltip.control.pause    "Szünet" >
+<!ENTITY tooltip.control.fwd      "Következő sáv" >
+<!ENTITY tooltip.control.mute     "Némít" >
+<!ENTITY tooltip.control.volume   "Hangerő" >
+<!ENTITY tooltip.control.repeat   "Ismétlés" >
+<!ENTITY tooltip.control.shuffle  "Keverő" >
+<!ENTITY tooltip.control.curtrack "A jelenlegi sáv keresése" >
+<!ENTITY tooltip.control.service  "Váltás védőborítós megjelenítésre" >
+<!ENTITY tooltip.search           "Keresés" >
+<!ENTITY tooltip.browser.back     "Tallózon vissza" >
+<!ENTITY tooltip.browser.fwd      "Tallózon előre" >
+<!ENTITY tooltip.browser.stop     "Tallózó leállítása" >
+<!ENTITY tooltip.browser.home     "Főoldal" >
+<!ENTITY tooltip.browser.playlist "A jelenlegi web oldalon rendelkezésre álló média megtekinése" >
+<!ENTITY tooltip.browser.download "A jelenlegi letöltések megtekintése" >
+
+<!ENTITY smart.window             "Okos lejátszólista készítő" >
+<!ENTITY smart.library            "Válassz könyvtárat:" >
+<!ENTITY smart.limit              "Limitáld" >
+<!ENTITY smart.match              "Találat" >
+<!ENTITY smart.any                "bármi" >
+<!ENTITY smart.all                "minden" >
+<!ENTITY smart.following          "a következő feltételre(ekre):" >   
+<!ENTITY smart.random             "véletlen" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "előadó" >
+<!ENTITY smart.genre              "műfaj" >
+<!ENTITY smart.title              "cím" >
+<!ENTITY smart.high_rating        "magas ráta" >
+<!ENTITY smart.low_rating         "alacsony ráta" >
+<!ENTITY smart.most_recent        "mostanában" >
+<!ENTITY smart.least_recent       "régebben" >
+<!ENTITY smart.most_often         "leggyakrabban" >
+<!ENTITY smart.least_often        "legritkábban" >
+<!ENTITY smart.most_added         "mostanában hozzáadott" >
+<!ENTITY smart.least_added        "régebben hozzáadott" >
+<!ENTITY smart.minutes            "percek" >
+<!ENTITY smart.hours              "órák" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "dalok" >
+<!ENTITY smart.contains           "tartalmaz" >
+<!ENTITY smart.not_contain        "nem tartalmaz" >
+<!ENTITY smart.is                 "van" >
+<!ENTITY smart.is_not             "nincs" >
+<!ENTITY smart.starts             "azzal kezdődik" >
+<!ENTITY smart.ends               "végződés" >
+         
+<!ENTITY download.window          "Letöltés" >
+<!ENTITY download.select          "Válassz célkönyvtárat:" >
+<!ENTITY download.always          "Mindig ezt a könyvtárat használd" >
+
+<!ENTITY textbox.rmp_demo_open_url "Írd be a lejátszandó média URL-jét vagy elérési útját:">
+
+<!ENTITY open_url.title           "URL megnyitása">
+<!ENTITY subscribe.title          "Feliratkozás">
+<!ENTITY subscribe.minutes        "percben(ekben)">
+<!ENTITY subscribe.hours          "órában(ákban)">
+<!ENTITY subscribe.days           "napon(okban)">
+<!ENTITY subscribe.autocheck      "Automatikusan frissítsd minden">
+<!ENTITY subscribe.destinationfolder      "Válassz célkönyvtárat:">
+
+<!ENTITY exists.title             "Lejátszólista létezik">
+<!ENTITY exists.exists            "Ezzel a névvel már létezik lejátszólista!">
+
+<!ENTITY media_scan.title          "Média vizsgálat">
+<!ENTITY media_scan.watch          "Figyeld az új médiákat a könyvtárban:">
+
+<!ENTITY new_playlist.title       "Új lejátszólista létrerhozása">
+<!ENTITY new_playlist.name        "Írd be az új lejátszólista nevét.">
+
+<!ENTITY addtoplaylist.title      "Add hozzá a lejátszólistához">
+<!ENTITY addtoplaylist.create      "Új lejátszólista létrehozása">
+
+<!ENTITY watchfolder.title        "Figyelt könyvtárak">
+<!ENTITY watchfolder.folderlist   "Figyeld az új médiákat a könyvtárban:">
+
+<!ENTITY locale.language          "Nyelv" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

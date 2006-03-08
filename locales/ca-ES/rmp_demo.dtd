@@ -1,0 +1,151 @@
+﻿<!ENTITY window.main.title  "Songbird Vista previa d'usuari" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Ok" >
+<!ENTITY window.cancel      "Cancella" >
+<!ENTITY window.browse      "Navega..." >
+
+<!ENTITY menu.file          "Arxiu" >
+<!ENTITY menu.file.new      "Nova Llista de Reproducci..." >
+<!ENTITY menu.file.smart    "Nova Llista de Reproducciligent..." >
+<!ENTITY menu.file.remote   "Nova Llista de Reproducci remota..." >
+<!ENTITY menu.file.open     "Obrir un Arxiu..." >
+<!ENTITY menu.file.url      "Obrir una URL..." >
+<!ENTITY menu.file.playlist "Carregar una Llista de Reproducci..." >
+<!ENTITY menu.file.scan     "Buscar Multimdia..." >
+<!ENTITY menu.file.dlfolder "Fixar carpeta de descrregues..." >
+<!ENTITY menu.file.watch    "Fixar carpetes vigilades..." >
+<!ENTITY menu.file.htmlbar  "Mostra sempre la barra Web" >
+<!ENTITY menu.file.skin     "Aparena alternativa" >
+<!ENTITY menu.file.window   "Obrir finestra principal" >
+<!ENTITY menu.file.mini     "Obrir mini-reproductor" >
+<!ENTITY menu.file.about    "Sobre Songbird..." >
+<!ENTITY menu.file.exit     "Sortir" >
+
+<!ENTITY menu.edit          "Edici" >
+<!ENTITY menu.edit.cut      "Tallar" >
+<!ENTITY menu.edit.undo     "Desfer" >
+<!ENTITY menu.edit.copy     "Copiar" >
+<!ENTITY menu.edit.paste    "Enganxar" >
+<!ENTITY menu.edit.clear    "Netejar" >
+<!ENTITY menu.edit.selall   "Seleccionar-ho tot" >
+<!ENTITY menu.edit.selnone  "No selleccionar res" >
+
+<!ENTITY menu.controls      "Controls" >
+<!ENTITY menu.control.play  "Play/Pausa" >
+<!ENTITY menu.control.next  "Segent Pista" >
+<!ENTITY menu.control.prev  "Pista Prvia" >
+<!ENTITY menu.control.shuf  "Aleatori" >
+<!ENTITY menu.control.repa  "Repetir Tot" >
+<!ENTITY menu.control.rep1  "Repetir Una" >
+<!ENTITY menu.control.repx  "No Repetir" >
+
+<!ENTITY menu.services        "Serveis" >
+<!ENTITY menu.services.browse "Serveis del Navegador..." >
+
+<!ENTITY menu.devices       "Dispositius" >
+
+<!ENTITY menu.help          "Ajuda" >
+<!ENTITY menu.help.topics   "Ttols de l'ajuda..." >
+<!ENTITY menu.help.about    "Sobre el Songbird..." >
+
+<!ENTITY html.context.open  "Obrir" >
+<!ENTITY html.context.play  "Reprodur" >
+<!ENTITY html.context.add   "Afegir a la llibrera" >
+
+<!ENTITY playlist.context.remove  "Esborar" >
+<!ENTITY playlist.context.rename  "Renombrar" >
+<!ENTITY playlist.context.search  "Buscar" >
+<!ENTITY playlist.context.lyrics  "Lletres" >
+
+<!ENTITY tooltip.miniplayer       "Canviar al MiniReproductor" >
+<!ENTITY tooltip.minimize         "Minimitzar" >
+<!ENTITY tooltip.maximize         "Maximitza/Restaurar" >
+<!ENTITY tooltip.exit             "Sortir" >
+<!ENTITY tooltip.control.back     "Pista Anterior" >
+<!ENTITY tooltip.control.play     "Play" >
+<!ENTITY tooltip.control.pause    "Pausa" >
+<!ENTITY tooltip.control.fwd      "Segent Pista" >
+<!ENTITY tooltip.control.mute     "Silenci" >
+<!ENTITY tooltip.control.volume   "Volum" >
+<!ENTITY tooltip.control.repeat   "Repetir" >
+<!ENTITY tooltip.control.shuffle  "Aleatori" >
+<!ENTITY tooltip.control.curtrack "Buscar pista actual" >
+<!ENTITY tooltip.control.service  "Canviar a visualitzaci platejada" >
+<!ENTITY tooltip.search           "Buscar" >
+<!ENTITY tooltip.browser.back     "Navegador Enrera" >
+<!ENTITY tooltip.browser.fwd      "Navegador Endavant" >
+<!ENTITY tooltip.browser.stop     "Parar Navegador" >
+<!ENTITY tooltip.browser.home     "Inici" >
+<!ENTITY tooltip.browser.playlist "Veure Multimdia disponible en aqueta Plana" >
+<!ENTITY tooltip.browser.download "Veure Baixades actuals" >
+
+<!ENTITY smart.window             "Constructor de Llistes de Reproducciligents" >
+<!ENTITY smart.library            "Sela:" >
+<!ENTITY smart.limit              "Limitar a" >
+<!ENTITY smart.match              "Coincidncia" >
+<!ENTITY smart.any                "qualsevol" >
+<!ENTITY smart.all                "tot" >
+<!ENTITY smart.following          "de la/es seg/ns:" >   
+<!ENTITY smart.random             "aletori" >
+<!ENTITY smart.album              "lbum" >
+<!ENTITY smart.artist             "artista" >
+<!ENTITY smart.genre              "gnere" >
+<!ENTITY smart.title              "ttol" >
+<!ENTITY smart.high_rating        "valoraci alta" >
+<!ENTITY smart.low_rating         "valoraci baixa" >
+<!ENTITY smart.most_recent        "ms recent" >
+<!ENTITY smart.least_recent       "menys recent" >
+<!ENTITY smart.most_often         "most often" >
+<!ENTITY smart.least_often        "least often" >
+<!ENTITY smart.most_added         "ms afegit" >
+<!ENTITY smart.least_added        "menys afegit" >
+<!ENTITY smart.minutes            "minuts" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "canons" >
+<!ENTITY smart.hours              "hores" >
+<!ENTITY smart.contains           "cont" >
+<!ENTITY smart.not_contain        "no cont" >
+<!ENTITY smart.is                 "es" >
+<!ENTITY smart.is_not             "no es" >
+<!ENTITY smart.starts             "comena amb" >
+<!ENTITY smart.ends               "acaba amb" >
+         
+<!ENTITY download.window          "Descarregar" >
+<!ENTITY download.select          "Selleccioni la carpeta on desar-ho:" >
+<!ENTITY download.always          "Sempre fer servir aquesta carpeta" >
+
+<!ENTITY textbox.rmp_demo_open_url "Introdueixi la URL o l'ubicacir:">
+
+<!ENTITY open_url.title           "Obrir URL">
+<!ENTITY subscribe.title          "Subscriure">
+<!ENTITY subscribe.minutes        "Minut(s)">
+<!ENTITY subscribe.hours          "Hora(s)">
+<!ENTITY subscribe.days           "Dia(s)">
+<!ENTITY subscribe.autocheck      "Actualitzar automticament cada">
+<!ENTITY subscribe.destinationfolder      "Seleccionar carpeta de dest:">
+
+<!ENTITY exists.title             "Llista de Reproducci Existent">
+<!ENTITY exists.exists            "Ja existeix una Llista de Reproducci amb aquest nom!">
+
+<!ENTITY media_scan.title          "Bdia">
+<!ENTITY media_scan.watch          "Vigilar aquesta carpeta si hi ha nou MultiMdia">
+
+<!ENTITY new_playlist.title       "Crear nova Llista de Reproducci">
+<!ENTITY new_playlist.name        "Escrigui el nom de la nova Llista de Reproducci.">
+
+<!ENTITY addtoplaylist.title      "Afegir a la Llista de Reproducci">
+<!ENTITY addtoplaylist.create      "Crear nova Llista de Reproducci">
+
+<!ENTITY watchfolder.title        "Carpetes vigilades">
+<!ENTITY watchfolder.folderlist   "Vigilar aquestes carpetes per nou MultiMdia:">
+
+<!ENTITY locale.language          "Idioma" >
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

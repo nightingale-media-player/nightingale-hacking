@@ -1,0 +1,152 @@
+
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "확인" >
+<!ENTITY window.cancel      "취소" >
+<!ENTITY window.browse      "검색..." >
+
+<!ENTITY menu.file          "파일" >
+<!ENTITY menu.file.new      "새 재생목록..." >
+<!ENTITY menu.file.smart    "새 스마트 재생목록..." >
+<!ENTITY menu.file.remote   "새 원격 재생목록..." >
+<!ENTITY menu.file.open     "파일 열기..." >
+<!ENTITY menu.file.url      "URL 열기..." >
+<!ENTITY menu.file.playlist "재생목록 읽어오기..." >
+<!ENTITY menu.file.scan     "미디어 검색..." >
+<!ENTITY menu.file.dlfolder "다운로드 폴더 지정..." >
+<!ENTITY menu.file.watch    "조사할 폴더 지정..." >
+<!ENTITY menu.file.htmlbar  "항상 웹 바로 보이기" >
+<!ENTITY menu.file.skin     "스킨" >
+<!ENTITY menu.file.window   "메인 윈도우 열기" >
+<!ENTITY menu.file.mini     "미니 플레이어 열기" >
+<!ENTITY menu.file.about    "Songbird에 대하여..." >
+<!ENTITY menu.file.exit     "종료" >
+
+<!ENTITY menu.edit          "편집" >
+<!ENTITY menu.edit.undo     "실행취소" >
+<!ENTITY menu.edit.cut      "잘라내기" >
+<!ENTITY menu.edit.copy     "복사하기" >
+<!ENTITY menu.edit.paste    "붙여넣기" >
+<!ENTITY menu.edit.clear    "지우기" >
+<!ENTITY menu.edit.selall   "모두 선택" >
+<!ENTITY menu.edit.selnone  "선택하지 않음" >
+
+<!ENTITY menu.controls      "컨트롤" >
+<!ENTITY menu.control.play  "재생/잠시 멈춤" >
+<!ENTITY menu.control.next  "다음 트랙" >
+<!ENTITY menu.control.prev  "이전 트랙" >
+<!ENTITY menu.control.shuf  "무작위" >
+<!ENTITY menu.control.repa  "모두 반복" >
+<!ENTITY menu.control.rep1  "한곡 반복" >
+<!ENTITY menu.control.repx  "반복하지 않음" >
+
+<!ENTITY menu.services        "서비스" >
+<!ENTITY menu.services.browse "서비스 검색..." >
+
+<!ENTITY menu.devices       "장치" >
+
+<!ENTITY menu.help          "도움말" >
+<!ENTITY menu.help.topics   "주제별 도움말..." >
+<!ENTITY menu.help.about    "Songbird에 대하여..." >
+
+<!ENTITY html.context.open  "열기" >
+<!ENTITY html.context.play  "재생" >
+<!ENTITY html.context.add   "라이브러리에 추가" >
+
+<!ENTITY playlist.context.remove  "삭제" >
+<!ENTITY playlist.context.rename  "이름 바꾸기" >
+<!ENTITY playlist.context.search  "검색" >
+<!ENTITY playlist.context.lyrics  "가사" >
+
+<!ENTITY tooltip.miniplayer       "미니 플레이어로 전환" >
+<!ENTITY tooltip.minimize         "최소화" >
+<!ENTITY tooltip.maximize         "최대화/복원" >
+<!ENTITY tooltip.exit             "종료합니다" >
+<!ENTITY tooltip.control.back     "이전 트랙" >
+<!ENTITY tooltip.control.play     "재생" >
+<!ENTITY tooltip.control.pause    "잠시 멈춤" >
+<!ENTITY tooltip.control.fwd      "다음 트랙" >
+<!ENTITY tooltip.control.mute     "음소거" >
+<!ENTITY tooltip.control.volume   "볼륨" >
+<!ENTITY tooltip.control.repeat   "반복" >
+<!ENTITY tooltip.control.shuffle  "무작위" >
+<!ENTITY tooltip.control.curtrack "현재 트랙 찾기" >
+<!ENTITY tooltip.control.service  "Faceplate Display로 전환" >
+<!ENTITY tooltip.search           "검색" >
+<!ENTITY tooltip.browser.back     "뒤로 검색" >
+<!ENTITY tooltip.browser.fwd      "앞으로 검색" >
+<!ENTITY tooltip.browser.stop     "검색 중지" >
+<!ENTITY tooltip.browser.home     "홈" >
+<!ENTITY tooltip.browser.playlist "이 웹페이지에서 재생가능한 미디어 보기" >
+<!ENTITY tooltip.browser.download "현재 다운로드 보기" >
+
+<!ENTITY smart.window             "스마트 재생목록 빌더" >
+<!ENTITY smart.library            "라이브러리 선택 :" >
+<!ENTITY smart.limit              "Limit to" >
+<!ENTITY smart.match              "Match" >
+<!ENTITY smart.any                "any" >
+<!ENTITY smart.all                "all" >
+<!ENTITY smart.following          "of the following condition(s):" >   
+<!ENTITY smart.random             "무작위" >
+<!ENTITY smart.album              "앨범" >
+<!ENTITY smart.artist             "아티스트" >
+<!ENTITY smart.genre              "장르" >
+<!ENTITY smart.title              "제목" >
+<!ENTITY smart.high_rating        "가장 높은 평점" >
+<!ENTITY smart.low_rating         "가장 낮은 평점" >
+<!ENTITY smart.most_recent        "가장 최근" >
+<!ENTITY smart.least_recent       "가장 오래전" >
+<!ENTITY smart.most_often         "가장 자주" >
+<!ENTITY smart.least_often        "가장 가끔" >
+<!ENTITY smart.most_added         "가장 많이 추가된" >
+<!ENTITY smart.least_added        "가장 적게 추가된" >
+<!ENTITY smart.minutes            "분" >
+<!ENTITY smart.hours              "시간" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "노래" >
+<!ENTITY smart.contains           "contains" >
+<!ENTITY smart.not_contain        "does not contain" >
+<!ENTITY smart.is                 "is" >
+<!ENTITY smart.is_not             "is not" >
+<!ENTITY smart.starts             "다음 단어로 시작 :" >
+<!ENTITY smart.ends               "다음 단어로 끝 :" >
+         
+<!ENTITY download.window          "다운로드" >
+<!ENTITY download.select          "목적지 폴더 선택 :" >
+<!ENTITY download.always          "항상 이 폴더 사용" >
+
+<!ENTITY textbox.rmp_demo_open_url "재생하기 원하는 미디어의 URL 혹은 경로를 입력하세요:">
+
+<!ENTITY open_url.title           "URL 열기">
+<!ENTITY subscribe.title          "구독">
+<!ENTITY subscribe.minutes        "분">
+<!ENTITY subscribe.hours          "시간">
+<!ENTITY subscribe.days           "일">
+<!ENTITY subscribe.autocheck      "매일 자동으로 업데이트">
+<!ENTITY subscribe.destinationfolder      "목적지 폴더 선택:">
+
+<!ENTITY exists.title             "재생목록 존재">
+<!ENTITY exists.exists            "같은 이름의 재생목록가 존재합니다!">
+
+<!ENTITY media_scan.title          "미디어 검색">
+<!ENTITY media_scan.watch          "새 미디어를 찾기 위해 이 폴더를 조사합니다.">
+
+<!ENTITY new_playlist.title       "새 재생목록 작성">
+<!ENTITY new_playlist.name        "새 재생목록의 이름을 입력해 주세요.">
+
+<!ENTITY addtoplaylist.title      "재생목록에 추가">
+<!ENTITY addtoplaylist.create      "새 재생목록 작성">
+
+<!ENTITY watchfolder.title        "조사 폴더">
+<!ENTITY watchfolder.folderlist   "새 미디어를 찾기 위해 이 폴더를 조사합니다.">
+
+<!ENTITY locale.language          "언어" >
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

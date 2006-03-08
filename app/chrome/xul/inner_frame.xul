@@ -1,0 +1,68 @@
+<!--
+/*
+ * Software Copyright © 2005 Pioneers of the Inevitable
+ *
+ * songbird@songbirdnest.com - <chirp, chirp>
+ *
+ * Q Public License v1.0
+ * 
+ * Copyright © 1999 Trolltech AS, Norway.
+ * 
+ * Everyone is permitted to copy and distribute this license document.
+ * 
+ * The intent of this license is to establish freedom to share and change the software 
+ * regulated by this license under the open source model.
+ * 
+ * This license applies to any software containing a notice placed by the copyright holder 
+ * saying that it may be distributed under the terms of the Q Public License version 1.0. 
+ * Such software is herein referred to as the Software. This license covers modification  
+ * and distribution of the Software, use of third-party application programs based on the 
+ * Software, and development of free software which uses the Software.
+ */
+-->
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window
+  id="frame_inner"
+  class="empty_frame"  
+  hidechrome="true"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+>
+    
+  <!-- TOP PANE -->
+  <iframe id="frame_top_pane" src="top_pane/top_pane.xul"/>
+
+  <separator id="separator" class="groove"/>
+  
+  <!-- CONTROL PANE -->
+  <iframe id="frame_control_pane" src="control_pane/control_pane.xul"/>
+  
+  <separator id="separator" class="groove"/>
+  
+  <vbox id="frame_middle_pane" flex="1"> 
+    <hbox flex="1">
+    
+      <!-- SERVICE PANE -->
+      <iframe id="frame_service_pane" src="service_pane/service_pane.xul" />
+
+      <splitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest">
+        <grippy/>
+      </splitter>
+      
+      <!-- MAIN PANE -->
+      <iframe id="frame_main_pane" src="main_pane/main_pane.xul" flex="1"/>
+      
+    </hbox>
+  </vbox> <!-- frame_middle_pane -->
+  
+  <separator id="separator" class="groove"/>
+
+  <!-- STATUS PANE -->
+  <iframe id="frame_status_pane" src="status_pane/status_pane.xul"/>
+  
+</window>
+

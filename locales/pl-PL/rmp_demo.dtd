@@ -1,0 +1,151 @@
+
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Okay" >
+<!ENTITY window.cancel      "Anuluj" >
+<!ENTITY window.browse      "Przeglądaj..." >
+
+<!ENTITY menu.file          "Plik" >
+<!ENTITY menu.file.new      "Nowa lista utworów..." >
+<!ENTITY menu.file.smart    "Nowa inteligentna lista utworów..." >
+<!ENTITY menu.file.remote   "Nowa zdalna lista utworów..." >
+<!ENTITY menu.file.open     "Otwórz plik..." >
+<!ENTITY menu.file.url      "Otwórz URL..." >
+<!ENTITY menu.file.playlist "Załaduj listę utworów..." >
+<!ENTITY menu.file.scan     "Szukaj mediów" >
+<!ENTITY menu.file.htmlbar  "Zawsze pokazuj pasek Web" >
+<!ENTITY menu.file.skin     "Alternatywna skórka" >
+<!ENTITY menu.file.window   "Otwórz okno główne" >
+<!ENTITY menu.file.mini     "Otwórz Mini Playera" >
+<!ENTITY menu.file.about    "O Songbirdzie..." >
+<!ENTITY menu.file.exit     "Wyjście" >
+
+<!ENTITY menu.edit          "Edytuj" >
+<!ENTITY menu.edit.undo     "Cofnij" >
+<!ENTITY menu.edit.cut      "Wytnij" >
+<!ENTITY menu.edit.copy     "Kopiuj" >
+<!ENTITY menu.edit.paste    "Wklej" >
+<!ENTITY menu.edit.clear    "Wyczyść" >
+<!ENTITY menu.edit.selall   "Zaznacz wszystko" >
+<!ENTITY menu.edit.selnone  "Zazmacz żaden" >
+
+<!ENTITY menu.controls      "Ustawienia" >
+<!ENTITY menu.control.play  "Odtwarzaj/Przerwa" >
+<!ENTITY menu.control.next  "Następna ścieżka" >
+<!ENTITY menu.control.prev  "Poprzednia ścieżka" >
+<!ENTITY menu.control.shuf  "Tasuj" >
+<!ENTITY menu.control.repa  "Powtórz wszystko" >
+<!ENTITY menu.control.rep1  "Powtórz jeden" >
+<!ENTITY menu.control.repx  "Powtórz żaden" >
+
+<!ENTITY menu.services        "Usługi" >
+<!ENTITY menu.services.browse "Przeglądaj Usługi..." >
+
+<!ENTITY menu.devices       "Urządzenia" >
+
+<!ENTITY menu.help          "Pomoc" >
+<!ENTITY menu.help.topics   "Tematy pomocy..." >
+<!ENTITY menu.help.about    "O Songbirdzie..." >
+
+<!ENTITY html.context.open  "Otwórz" >
+<!ENTITY html.context.play  "Odtwarzaj" >
+<!ENTITY html.context.add   "Dodaj do biblioteki" >
+
+<!ENTITY playlist.context.remove  "Usuń" >
+<!ENTITY playlist.context.rename  "Zmień nazwę" >
+<!ENTITY playlist.context.search  "Szukaj" >
+<!ENTITY playlist.context.lyrics  "Słowa" >
+
+<!ENTITY tooltip.miniplayer       "Przełącz do Miniplayera" >
+<!ENTITY tooltip.minimize         "Minimalizuj" >
+<!ENTITY tooltip.maximize         "Maksymalizuj/Przywróć" >
+<!ENTITY tooltip.exit             "Wyjście" >
+<!ENTITY tooltip.control.back     "Poprzednia ścieżka" >
+<!ENTITY tooltip.control.play     "Odtwarzaj" >
+<!ENTITY tooltip.control.pause    "Przerwa" >
+<!ENTITY tooltip.control.fwd      "Następna ścieżka" >
+<!ENTITY tooltip.control.mute     "Wycisz" >
+<!ENTITY tooltip.control.volume   "Głośność" >
+<!ENTITY tooltip.control.repeat   "Powtórz" >
+<!ENTITY tooltip.control.shuffle  "Tasuj" >
+<!ENTITY tooltip.control.curtrack "Znajdź bieżącą ścieżkę" >
+<!ENTITY tooltip.control.service  "Przełącz ekran czołowy" >
+<!ENTITY tooltip.search           "Szukaj" >
+<!ENTITY tooltip.browser.back     "Wstecz" >
+<!ENTITY tooltip.browser.fwd      "Do przodu" >
+<!ENTITY tooltip.browser.stop     "Zatrzymaj" >
+<!ENTITY tooltip.browser.home     "Strona domowa" >
+<!ENTITY tooltip.browser.playlist "Przeglądaj dostępne na tej stronie media" >
+<!ENTITY tooltip.browser.download "Przeglądaj bieżące pobieranie" >
+
+<!ENTITY smart.window             "Kreator inteligentnej listy utworów" >
+<!ENTITY smart.library            "Wybierz bibliotekę" >
+<!ENTITY smart.limit              "Ogranicz do" >
+<!ENTITY smart.match              "Porównaj" >
+<!ENTITY smart.any                "jakikolwiek" >
+<!ENTITY smart.all                "wszystko" >
+<!ENTITY smart.following          "z następujących warunków" >   
+<!ENTITY smart.random             "losowy" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "artysta" >
+<!ENTITY smart.genre              "gatunek" >
+<!ENTITY smart.title              "tytuł" >
+<!ENTITY smart.high_rating        "wysokirating" >
+<!ENTITY smart.low_rating         "niski rating" >
+<!ENTITY smart.most_recent        "najnowszy" >
+<!ENTITY smart.least_recent       "najstarszy" >
+<!ENTITY smart.most_often         "najczęściej" >
+<!ENTITY smart.least_often        "najrzadziej" >
+<!ENTITY smart.most_added         "najczęściej dodawany" >
+<!ENTITY smart.least_added        "najrzadziej dodawany" >
+<!ENTITY smart.minutes            "minuty" >
+<!ENTITY smart.hours              "godziny" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "piosenki" >
+<!ENTITY smart.contains           "zawiera" >
+<!ENTITY smart.not_contain        "nie zawiera" >
+<!ENTITY smart.is                 "jest" >
+<!ENTITY smart.is_not             "nie jest" >
+<!ENTITY smart.starts             "zaczyna się ..." >
+<!ENTITY smart.ends               "kończy się ..." >
+         
+<!ENTITY download.window          "Pobierz" >
+<!ENTITY download.select          "Wybierz folder docelowy" >
+<!ENTITY download.always          "Zawsze używaj tego folderu" >
+
+
+
+<!ENTITY locale.language          "Język" >
+
+
+<!ENTITY menu.file.dlfolder "Set Download Folder..." >
+<!ENTITY menu.file.watch "Set Watched Folders..." >
+<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY open_url.title "Open URL" >
+<!ENTITY subscribe.title "Subscribe" >
+<!ENTITY subscribe.minutes "Minute(s)" >
+<!ENTITY subscribe.hours "Hour(s)" >
+<!ENTITY subscribe.days "Day(s)" >
+<!ENTITY subscribe.autocheck "Automatically update every" >
+<!ENTITY subscribe.destinationfolder "Select destination folder:" >
+<!ENTITY exists.title "Playlist Exists" >
+<!ENTITY exists.exists "A playlist with that name already exists!" >
+<!ENTITY media_scan.title "Scan for Media" >
+<!ENTITY media_scan.watch "Watch this folder for new media" >
+<!ENTITY new_playlist.title "Create New Playlist" >
+<!ENTITY new_playlist.name "Enter the name of the new playlist." >
+<!ENTITY addtoplaylist.title "Add To Playlist" >
+<!ENTITY addtoplaylist.create "Create new playlist" >
+<!ENTITY watchfolder.title "Watch Folders" >
+<!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
+
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

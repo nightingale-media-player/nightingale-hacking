@@ -1,0 +1,153 @@
+﻿
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Почали" >
+<!ENTITY window.cancel      "Відмінити" >
+<!ENTITY window.browse      "Переглянути..." >
+
+<!ENTITY menu.file          "Файл" >
+<!ENTITY menu.file.new      "Новий плейліст..." >
+<!ENTITY menu.file.smart    "Новий розумний плейліст..." >
+<!ENTITY menu.file.remote   "Новий віддалений плейліст..." >
+<!ENTITY menu.file.open     "Відкрити файл..." >
+<!ENTITY menu.file.url      "Відкрити з інтернет..." >
+<!ENTITY menu.file.playlist "Завантажити плейліст..." >
+<!ENTITY menu.file.scan     "Шукати медіа..." >
+<!ENTITY menu.file.dlfolder "Обрати теку для завантажених файлів..." >
+<!ENTITY menu.file.watch    "Обрати теку..." >
+<!ENTITY menu.file.htmlbar  "Завжди показувати інтернет панель" >
+<!ENTITY menu.file.skin     "Змінити " >
+<!ENTITY menu.file.window   "Відкрити головне вікно" >
+<!ENTITY menu.file.mini     "Відкрити маленьке вікно" >
+<!ENTITY menu.file.about    "Про Songbird..." >
+<!ENTITY menu.file.exit     "Вийти" >
+
+<!ENTITY menu.edit          "Редагувати" >
+<!ENTITY menu.edit.undo     "Відмінити" >
+<!ENTITY menu.edit.cut      "Вирізати" >
+<!ENTITY menu.edit.copy     "Скопіювати" >
+<!ENTITY menu.edit.paste    "Вставити" >
+<!ENTITY menu.edit.clear    "Очистити" >
+<!ENTITY menu.edit.selall   "Вибрати все" >
+<!ENTITY menu.edit.selnone  "Зняти виділення" >
+
+<!ENTITY menu.controls      "Управління" >
+<!ENTITY menu.control.play  "Грати/Пауза" >
+<!ENTITY menu.control.next  "Наступна композиція" >
+<!ENTITY menu.control.prev  "Попередня композиція" >
+<!ENTITY menu.control.shuf  "Випадково" >
+<!ENTITY menu.control.repa  "Повторити усі" >
+<!ENTITY menu.control.rep1  "Повторити одну" >
+<!ENTITY menu.control.repx  "Не повторювати" >
+
+<!ENTITY menu.services        "Послуги" >
+<!ENTITY menu.services.browse "Шукати послуги..." >
+
+<!ENTITY menu.devices       "Пристрої" >
+
+<!ENTITY menu.help          "Допомога" >
+<!ENTITY menu.help.topics   "Теми допомоги..." >
+<!ENTITY menu.help.about    "Про Songbird..." >
+
+<!ENTITY html.context.open  "Відкрити" >
+<!ENTITY html.context.play  "Грати" >
+<!ENTITY html.context.add   "Додати до бібліотеки" >
+
+<!ENTITY playlist.context.remove  "Видалити" >
+<!ENTITY playlist.context.rename  "Перейменувати" >
+<!ENTITY playlist.context.search  "Шукати" >
+<!ENTITY playlist.context.lyrics  "Слова" >
+
+<!ENTITY tooltip.miniplayer       "Переключити в маленьке вікно" >
+<!ENTITY tooltip.minimize         "Згорнути" >
+<!ENTITY tooltip.maximize         "Розгорнути/Відновити" >
+<!ENTITY tooltip.exit             "Вийти" >
+<!ENTITY tooltip.control.back     "Попередня композиція" >
+<!ENTITY tooltip.control.play     "Грати" >
+<!ENTITY tooltip.control.pause    "Пауза" >
+<!ENTITY tooltip.control.fwd      "Наступна композиція" >
+<!ENTITY tooltip.control.mute     "Без звуку" >
+<!ENTITY tooltip.control.volume   "Звук" >
+<!ENTITY tooltip.control.repeat   "Повторити" >
+<!ENTITY tooltip.control.shuffle  "Випадково" >
+<!ENTITY tooltip.control.curtrack "Знайти поточну композицію" >
+<!ENTITY tooltip.control.service  "Змінити Faceplate Display" >
+<!ENTITY tooltip.search           "Шукати" >
+<!ENTITY tooltip.browser.back     "Шукати назад" >
+<!ENTITY tooltip.browser.fwd      "Шукати вперед" >
+<!ENTITY tooltip.browser.stop     "Зупинити оглядач" >
+<!ENTITY tooltip.browser.home     "Додому" >
+<!ENTITY tooltip.browser.playlist "Переглянути доступні композиції на цій сторінці" >
+<!ENTITY tooltip.browser.download "Переглянути поточні завантаження" >
+
+<!ENTITY smart.window             "Створення розумного плейлісту" >
+<!ENTITY smart.library            "Обрати бібілотеку:" >
+<!ENTITY smart.limit              "Обмежити" >
+<!ENTITY smart.match              "Збіг" >
+<!ENTITY smart.any                "будь-який" >
+<!ENTITY smart.all                "усе" >
+<!ENTITY smart.following          "згідно з такими умовами:" >   
+<!ENTITY smart.random             "випадково" >
+<!ENTITY smart.album              "альбом" >
+<!ENTITY smart.artist             "виконавець" >
+<!ENTITY smart.genre              "жанр" >
+<!ENTITY smart.title              "назва" >
+<!ENTITY smart.high_rating        "найвищий рейтинг" >
+<!ENTITY smart.low_rating         "найнижчий рейтинг" >
+<!ENTITY smart.most_recent        "найостанніші" >
+<!ENTITY smart.least_recent       "найдавніші" >
+<!ENTITY smart.most_often         "найчастші" >
+<!ENTITY smart.least_often        "найрідші" >
+<!ENTITY smart.most_added         "найбільш додані" >
+<!ENTITY smart.least_added        "найменш додані" >
+<!ENTITY smart.minutes            "хвилин" >
+<!ENTITY smart.hours              "годин" >
+<!ENTITY smart.mb                 "Мб" >
+<!ENTITY smart.gb                 "Гб" >
+<!ENTITY smart.songs              "пісень" >
+<!ENTITY smart.contains           "містить" >
+<!ENTITY smart.not_contain        "не містить" >
+<!ENTITY smart.is                 "є" >
+<!ENTITY smart.is_not             "не є" >
+<!ENTITY smart.starts             "починається з" >
+<!ENTITY smart.ends               "закінчується на" >
+         
+<!ENTITY download.window          "Завантажити" >
+<!ENTITY download.select          "Обрати теку для завантажених файлів:" >
+<!ENTITY download.always          "завжди використовувати цю теку" >
+
+<!ENTITY textbox.rmp_demo_open_url "Введіть веб-адресу чи шлях до композицій, які ви хочете грати:">
+
+<!ENTITY open_url.title           "Відкрити веб-адресу">
+<!ENTITY subscribe.title          "Передплатити">
+<!ENTITY subscribe.minutes        "Хвилин">
+<!ENTITY subscribe.hours          "Годин">
+<!ENTITY subscribe.days           "Днів">
+<!ENTITY subscribe.autocheck      "Автоматично оновлювати кожні">
+<!ENTITY subscribe.destinationfolder      "Обрати теку:">
+
+<!ENTITY exists.title             "Плейліст вже існє">
+<!ENTITY exists.exists            "Плейліст з такою назвою вже існує!">
+
+<!ENTITY media_scan.title          "Шукати медіа">
+<!ENTITY media_scan.watch          "Шукати файли з медіа у цій теці">
+
+<!ENTITY new_playlist.title       "Створити новий плейліст">
+<!ENTITY new_playlist.name        "Введіть назву нового плейліста.">
+
+<!ENTITY addtoplaylist.title      "Додати">
+<!ENTITY addtoplaylist.create      "Створити новий плейліст">
+
+<!ENTITY watchfolder.title        "Спостерігати за теками">
+<!ENTITY watchfolder.folderlist   "Спостерігати за цими теками на наявність  нових файлів:">
+
+<!ENTITY locale.language          "Мова" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

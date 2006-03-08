@@ -1,0 +1,111 @@
+/**
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+#include "nsIDOMHTMLObjectElement.idl"
+
+/**
+ * A wrapper for various media cores
+ */
+[scriptable, uuid(ea5d3666-c790-4bf8-8d2f-780bb90e5579)]
+interface sbICoreWrapper : nsISupports
+{
+  /**
+   * 
+   */
+  boolean getPaused();
+
+  /**
+   *
+   */
+  boolean getPlaying();
+
+  /**
+   *
+   */
+  boolean getMute();
+  void setMute(in boolean mute);
+
+  /**
+   *
+   */
+  unsigned long getVolume();
+  void setVolume(in unsigned long volume);
+
+  /**
+   *
+   */
+  unsigned long long getLength();
+
+  /**
+   *
+   */
+  unsigned long long getPosition();
+  void setPosition(in unsigned long long position);
+
+  /**
+   * Generic id string
+   */
+  wstring getId();
+  void setId(in wstring id);
+
+  /**
+   * The HTML object of the media core
+   */
+  nsIDOMHTMLObjectElement getObject();
+  void setObject(in nsIDOMHTMLObjectElement object);
+
+  /**
+   * Specify the url to play and start playback
+   */
+  boolean playUrl(in wstring url);
+
+  /**
+   * Resume paused playback.  Multiple calls do nothing.
+   */
+  boolean play();
+
+  /**
+   * Stop playback.
+   */
+  boolean stop();
+
+  /**
+   * Pause playing playback.  Multiple calls do nothing.
+   */
+  boolean pause();
+
+  /**
+   * Get the requested metadata
+   */
+  wstring getMetadata(in wstring key);
+
+  /**
+   * Called when the core is swapping. Cleanup.
+   */
+  void onSwapCore();
+};
+

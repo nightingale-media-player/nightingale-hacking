@@ -1,0 +1,3024 @@
+v/*
+ * Software Copyright © 2005 Pioneers of the Inevitable
+ *
+ * songbird@songbirdnest.com - <chirp, chirp>
+ *
+ * Q Public License v1.0
+ * 
+ * Copyright © 1999 Trolltech AS, Norway.
+ * 
+ * Everyone is permitted to copy and distribute this license document.
+ * 
+ * The intent of this license is to establish freedom to share and change the software 
+ * regulated by this license under the open source model.
+ * 
+ * This license applies to any software containing a notice placed by the copyright holder 
+ * saying that it may be distributed under the terms of the Q Public License version 1.0. 
+ * Such software is herein referred to as the Software. This license covers modification  
+ * and distribution of the Software, use of third-party application programs based on the 
+ * Software, and development of free software which uses the Software.
+ */
+ 
+/** 
+************************************************************************************************************************************************
+COLOR SCHEME: RED
+************************************************************************************************************************************************
+*/ 
+ 
+ /** 
+************************************************************************************************************************************************
+THE WINDOW
+Love the window.
+************************************************************************************************************************************************
+*/ 
+page
+{
+  -moz-user-focus: ignore;
+  -moz-appearance: none;
+  background-image: none;
+  list-style-image: none;
+}
+
+tree
+{ 
+  -moz-appearance: none;
+  background-image: none;
+  list-style-image: none;
+}
+
+.sb_faceplate
+{
+  -moz-user-focus: ignore;
+  -moz-appearance: none;
+  -moz-background-clip: padding;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  min-width: 0px;
+  min-height: 0px;
+  border-width: 0px;
+  font-family: tahoma;
+  font-size: 11;
+}  
+
+/* Edit-in-place popups overlapping the entries in the service pane tree */
+
+.sb_faceplate_edit
+{
+  -moz-appearance:none;
+}
+
+#service_edit,
+#service_edit_popup
+{
+  background-color: #8F0000 !important;
+  color: #CDD4C4 !important;
+}
+
+#playlist_edit,
+#playlist_edit_popup
+{
+  background-color: #8F0000 !important;
+  color: #6B0000 !important;
+  border: none !important;
+}
+
+.empty_frame
+{
+  -moz-user-focus: ignore;
+  -moz-appearance: none;
+  -moz-background-clip: padding;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  border-width: 0px;
+}  
+
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/
+
+#chrome_bkgd,
+.chrome_bkgd
+{
+  background-image: url(default_skin/chrome_bkgd.png); /** <img src="default_skin/chrome_bkgd.png"> */
+  background-color: #000;
+}
+
+
+#chrome_nw
+{
+  -moz-appearance: none;
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_nw_25x25.png); /** <img src="default_skin/chrm_nw_25x25.png"> */
+  background-color: transparent;
+}
+
+#chrome_n
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_n.png); /** <img src="default_skin/chrm_n.png"> */
+  background-color: transparent;
+}
+
+#chrome_ne
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_ne_25x25.png); /** <img src="default_skin/chrm_ne_25x25.png"> */
+  background-color: transparent;
+}
+
+#chrome_w
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_w.png); /** <img src="default_skin/chrm_w.png"> */
+  background-color: transparent;
+}
+
+#chrome_e
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_e.png); /** <img src="default_skin/chrm_e.png"> */
+  background-color: transparent;
+}
+
+#chrome_sw
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_sw_25x25.png); /** <img src="default_skin/chrm_sw_25x25.png"> */
+  background-color: transparent;
+}
+
+#chrome_s
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_s.png); /** <img src="default_skin/chrm_s.png"> */
+  background-color: transparent;
+}
+
+#chrome_se
+{
+  height: 25px;
+  width: 25px;
+  background-image: url(default_skin/chrm_se_25x25.png); /** <img src="default_skin/chrm_se_25x25.png"> */
+  background-color: transparent;
+}
+
+/** 
+************************************************************************************************************************************************
+THE LAYOUT
+Love the box.
+************************************************************************************************************************************************
+*/ 
+
+#frame_outer
+{
+  width:  980px;
+  min-width: 980px;
+  height: 660px;
+  background-color: none;
+}
+
+
+#frame_top_pane
+{
+  top: 0px;
+  left: 0px;
+  height: 40px;
+}
+
+#frame_control_pane
+{
+  top: 0px;
+  left: 0px;
+  height: 45px;
+}
+
+#frame_middle_pane
+{
+  -moz-appearance: none;
+  border: none;
+}
+
+#frame_service_tree
+{
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  -moz-border-top-colors: #6B0000;
+  -moz-border-left-colors: #6B0000;
+  -moz-border-bottom-colors: #6B0000;
+  -moz-border-right-colors: #6B0000;
+  border: 1px solid #6B0000;
+  margin: 0px;
+  padding: 6px 0px 0px 0px;
+  width: 135px;
+  background-color: #6B0000;
+  color: #CDD4C4;
+}
+
+
+#frame_service_tree > treechildren::-moz-tree-row( selected )
+{
+  -moz-border-radius: 3px;
+  border: 1px solid #6B0000;
+  margin: 0px 0px 0px 0px;
+  padding: 0px;
+  background-color: #550000;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #FFF;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text
+{
+  margin: 0px 0px 0px 3px;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty
+{
+  list-style-image: url(default_skin/twisty_closed.png);
+}
+
+/**
+<img src="default_skin/twisty_closed.png">
+*/
+
+#frame_service_tree > treechildren::-moz-tree-twisty( open )
+{
+  list-style-image: url(default_skin/twisty_open.png);
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist )
+{
+  list-style-image: url(default_skin/icon_playlist_16x16.png);
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist smart )
+{
+  list-style-image: url(default_skin/icon_smplaylist_16x16.png);
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
+{
+  list-style-image: url(default_skin/icon_dynplaylist_16x16.png);
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist download )
+{
+  list-style-image: url(default_skin/icon_downloads_16x16.png);
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
+{
+  list-style-image: url(default_skin/icon_playlist_16x16.png);
+}
+
+#frame_service_tree_label
+{
+  -moz-appearance: none;
+  border: none;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  height: 0px;
+  background-color: transparent; 
+}
+
+tree .treecol-image
+{
+  -moz-appearance: none;
+  -moz-border-top-colors: #000 #000;
+  -moz-border-right-colors: #000 #000;
+  -moz-border-bottom-colors: #000 #000;
+  -moz-border-left-colors: #000 #000;
+  margin: 0px 0px 0px 0px;
+  padding: 0px;
+  background-image: url(default_skin/treecol.png);
+  border: none;
+  background-color: transparent;
+}
+
+tree .tree-columnpicker-icon
+{
+  -moz-appearance: none;
+  -moz-border-top-colors: #000 #000;
+  -moz-border-right-colors: #000 #000;
+  -moz-border-bottom-colors: #000 #000;
+  -moz-border-left-colors: #000 #000;
+  margin: 0px;
+  padding: 0px;
+  border: none;
+  list-style-image: url(default_skin/column_picker.png);
+  background-color: transparent;
+}
+
+tree treecol
+{
+  -moz-appearance: none;
+  margin: 0px;
+  padding: 0px 0px 0px 5px;
+  background-image: url(default_skin/treecol.png);
+  color: #FFC8C8;  
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-top-colors: none;
+  -moz-border-left-colors: none;
+  height: 20px;  
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-topleft: 5px;
+  border: 1px solid #6B0000;
+  border-bottom: none;
+  background-color: transparent;
+}
+
+/** 
+************************************************************************************************************************************************
+THE FILTERLISTS
+Organize your collection with genre/artist/album filterlists.  Somehow Apple seems to have patented this already common place UI.
+************************************************************************************************************************************************
+*/ 
+
+filterlist
+{
+  -moz-appearance: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+filterlist > tree
+{
+  -moz-appearance: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-top-colors: none;
+  -moz-border-left-colors: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
+  margin: 0px;
+  padding: 0px;
+  background-color: #212121;
+  color: #BFBFBF;
+}
+
+/* striping for genre filter */
+filterlist > tree > treechildren::-moz-tree-row( odd )
+{
+  background-color: #000;
+}
+
+filterlist > tree > treechildren::-moz-tree-row( even )
+{
+  background-color: #191919;
+}
+
+filterlist > tree > treechildren::-moz-tree-row( selected )
+{
+  background-color: #550000;
+}
+
+filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+{
+  -moz-appearance: none;
+  border: none;
+  background-color: #8F0000;
+}
+
+filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #FFF;
+}
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist
+{
+  -moz-appearance: none;
+  border: none !important;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background-color: #212121;
+  
+}
+
+playlist > stack > vbox
+{
+  -moz-appearance: none;
+  border: none !important;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background-color: transparent;
+}
+
+
+playlist > stack > vbox > tree
+{
+  -moz-appearance: none;
+  border: none !important;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background-color: transparent;
+  color: #BFBFBF;
+}
+
+/* The Toolbar at the bottom of the 4 Pane Library View */
+#playlist_toolbar
+{
+  -moz-appearance: none;
+  border: none !important;
+}
+
+
+#playlist_toolbar_bkg,
+playlist > stack > vbox > toolbar
+{
+  -moz-appearance: none;
+  background-color: #8F0000 !important;
+  border-top: 1px solid #490000;
+  height: 27px;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-row
+{
+  margin: 0px;
+  padding: 0px 0px 0px 0px;
+  border: 0px solid #000;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
+{
+  background-color: #191919;
+}
+
+playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
+{
+  background-color: #000;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-cell
+{
+  margin: 0px;
+  padding: 0px 0px 0px 5px;
+  border-right: 1px solid #490000;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
+{
+  background-color: #550000;
+}
+playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
+{
+  -moz-appearance: none;
+  border: none;
+  background-color: #8F0000;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #FFF;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
+{
+ -moz-appearance: none;
+ border: none;
+ background-color: #191919;
+ color: #6B0000;
+ margin-top: 6px;
+ margin-bottom: 6px;
+ height: 10px !important;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
+{
+ background-color: #252525;
+ color: #6B0000;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+ -moz-appearance: none;
+  border: none;
+  color: #6B0000;
+  background-color: #191919;
+}
+
+/*  This is the box shown while a playlist is loading */
+#loading_box
+{
+  background-image: url(default_skin/spinner.gif);
+  background-repeat: no-repeat;
+  text-align: center;
+  height: 216px;
+  width: 216px;
+}
+
+/** 
+************************************************************************************************************************************************
+THE TOOLBAR
+The Toolbar is a way for a user to discover pertinent contextual menu 
+features without having to know how to right-click.  You'll see styles
+for both the toolbar buttons and the corresponding entries in the 
+contextual menu.
+************************************************************************************************************************************************
+*/ 
+
+/* the generic style for all playlist toolbarbuttons */
+playlist > stack > vbox > hbox > toolbar > toolbarbutton 
+{
+  -moz-appearance: none;
+  -moz-border-radius: 5px;
+  border-width: 1px;
+  color: #FFF;
+  background-color: transparent !important;
+  height: 27px;
+  padding-left: 7px;
+  padding-right: 8px;
+  margin: 0px;
+}
+playlist > stack > vbox > hbox > toolbar > toolbarbutton:hover
+{
+  -moz-appearance: none;
+  border: 1px solid #FFF;
+  margin: 0px;
+}
+playlist > stack > vbox > hbox > toolbar > toolbarbutton:hover[disabled="true"],
+playlist > stack > vbox > hbox > toolbar > toolbarbutton[disabled="true"]
+{
+  -moz-appearance: none;
+  border: none !important;
+  margin: 0px;
+}
+
+/* 
+  These are the actual command elements created,
+  a toolbarbutton and a menuitem for each command id.
+
+  You should attach each command's icon, here.
+*/
+
+/* Toolbar: Play Button */
+toolbarbutton#library_cmd_play
+{
+  list-style-image: url(default_skin/toolbar_play_normal.png);  
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_play:hover
+{
+  list-style-image: url(default_skin/toolbar_play_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_play[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_play_disabled.png);
+  padding-left: 8px; /* stops this button from shifting on the library view */
+  padding-right: 9px; /* stops the play button from shifting the rest of the buttons on the url slurper  */
+  color: #490000 !important;
+}
+menuitem#library_cmd_play
+{
+  list-style-image: url(default_skin/toolbar_play_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_play:hover
+{
+  list-style-image: url(default_skin/toolbar_play_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_play[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_play_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: remove Button */
+toolbarbutton#library_cmd_remove
+{
+  list-style-image: url(default_skin/toolbar_remove_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_remove:hover
+{
+  list-style-image: url(default_skin/toolbar_remove_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_remove[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_remove_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_remove
+{
+  list-style-image: url(default_skin/toolbar_remove_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_remove:hover
+{
+  list-style-image: url(default_skin/toolbar_remove_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_remove[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_remove_normal.png);
+  padding-left: 9px;
+  color: #FFC8C8;
+}
+
+/* Toolbar: edit Button */
+toolbarbutton#library_cmd_edit
+{
+  list-style-image: url(default_skin/toolbar_info_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_edit:hover
+{
+  list-style-image: url(default_skin/toolbar_info_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_edit[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_info_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_edit
+{
+  list-style-image: url(default_skin/toolbar_info_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_edit:hover
+{
+  list-style-image: url(default_skin/toolbar_info_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_edit[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_info_normal.png);
+  color: #FFC8C8;
+}
+
+
+/* Toolbar: addtoplaylist Button */
+toolbarbutton#library_cmd_addtoplaylist
+{
+  list-style-image: url(default_skin/toolbar_addtoplaylist_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_addtoplaylist:hover
+{
+  list-style-image: url(default_skin/toolbar_addtoplaylist_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_addtoplaylist[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_addtoplaylist_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_addtoplaylist
+{
+  list-style-image: url(default_skin/toolbar_addtoplaylist_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_addtoplaylist:hover
+{
+  list-style-image: url(default_skin/toolbar_addtoplaylist_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_addtoplaylist[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_addtoplaylist_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: burntocd Button */
+toolbarbutton#library_cmd_burntocd
+{
+  list-style-image: url(default_skin/toolbar_burntocd_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_burntocd:hover
+{
+  list-style-image: url(default_skin/toolbar_burntocd_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_burntocd[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_burntocd_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_burntocd
+{
+  list-style-image: url(default_skin/toolbar_burntocd_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_burntocd:hover
+{
+  list-style-image: url(default_skin/toolbar_burntocd_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_burntocd[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_burntocd_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: device Button */
+toolbarbutton#library_cmd_device
+{
+  list-style-image: url(default_skin/toolbar_device_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_device:hover
+{
+  list-style-image: url(default_skin/toolbar_device_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_device[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_device_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_device
+{
+  list-style-image: url(default_skin/toolbar_device_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_device:hover
+{
+  list-style-image: url(default_skin/toolbar_device_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_device[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_device_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: addtolibrary Button */
+toolbarbutton#library_cmd_addtolibrary
+{
+  list-style-image: url(default_skin/toolbar_addtolibrary_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_addtolibrary:hover
+{
+  list-style-image: url(default_skin/toolbar_addtolibrary_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_addtolibrary[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_addtolibrary_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_addtolibrary
+{
+  list-style-image: url(default_skin/toolbar_addtolibrary_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_addtolibrary:hover
+{
+  list-style-image: url(default_skin/toolbar_addtolibrary_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_addtolibrary[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_addtolibrary_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: download Button */
+toolbarbutton#library_cmd_download
+{
+  list-style-image: url(default_skin/toolbar_download_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_download:hover
+{
+  list-style-image: url(default_skin/toolbar_download_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_download[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_download_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_download
+{
+  list-style-image: url(default_skin/toolbar_download_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_download:hover
+{
+  list-style-image: url(default_skin/toolbar_download_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_download[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_download_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: subscribe Button */
+toolbarbutton#library_cmd_subscribe
+{
+  list-style-image: url(default_skin/toolbar_subscribe_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_subscribe:hover
+{
+  list-style-image: url(default_skin/toolbar_subscribe_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_subscribe[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_subscribe_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_subscribe
+{
+  list-style-image: url(default_skin/toolbar_subscribe_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_subscribe:hover
+{
+  list-style-image: url(default_skin/toolbar_subscribe_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_subscribe[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_subscribe_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: pause Button */
+toolbarbutton#library_cmd_pause
+{
+  list-style-image: url(default_skin/toolbar_pause_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_pause:hover
+{
+  list-style-image: url(default_skin/toolbar_pause_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_pause[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_pause_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_pause
+{
+  list-style-image: url(default_skin/toolbar_pause_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_pause:hover
+{
+  list-style-image: url(default_skin/toolbar_pause_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_pause[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_pause_normal.png);
+  color: #FFC8C8;
+}
+
+/* Toolbar: resume Button */
+toolbarbutton#library_cmd_resume
+{
+  list-style-image: url(default_skin/toolbar_resume_normal.png);
+  color: #FFC8C8;
+}
+toolbarbutton#library_cmd_resume:hover
+{
+  list-style-image: url(default_skin/toolbar_resume_hover.png);
+  color: #FFF;
+}
+toolbarbutton#library_cmd_resume[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_resume_disabled.png);
+  padding-left: 9px; /* stops this button from shifting on the library view */
+  color: #490000 !important;
+}
+menuitem#library_cmd_resume
+{
+  list-style-image: url(default_skin/toolbar_resume_hover.png) !important;
+  color: #FFF !important;
+}
+menuitem#library_cmd_resume:hover
+{
+  list-style-image: url(default_skin/toolbar_resume_disabled.png);
+  color: #490000;
+}
+menuitem#library_cmd_resume[disabled="true"]
+{
+  list-style-image: url(default_skin/toolbar_resume_normal.png);
+  color: #FFC8C8;
+}
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Spliters to resize the panes */
+
+#filter_splitter
+{
+  -moz-appearance: none;
+  width: 0px;
+  background-color: #8F0000;
+  border: none;
+}
+
+.vert_splitter,
+#vert_splitter
+{
+  -moz-appearance: none;
+  width: 2px;
+  background-color: transparent;
+  border: none;
+}
+
+.horz_splitter,
+#horz_splitter
+{
+  -moz-appearance: none;
+  height: 6px;
+  background-color: #8F0000;
+  /*background-image: url(default_skin/gripper.png);*/
+  border: none;
+}
+
+#main_pane_border
+{
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-topleft: 5px;
+  border: 1px solid #6B0000;
+}
+
+#frame_main_pane
+{
+}
+
+#frame_main_pane_html
+{
+ 
+}
+
+#frame_main_pane_over
+{
+  background-color: Black; /* #EEE; */
+}
+
+#frame_status_pane
+{
+  height: 10px;
+}
+
+#frame_resize_t
+{
+  -moz-appearance: none;
+  height: 9px;
+  
+  background-image: none;
+  list-style-image: none;
+}
+
+#frame_resize_to
+{
+  -moz-appearance: none;
+  width: 16px;
+  height: 9px;
+  
+  background-image: none;
+  list-style-image: none;
+}
+
+#frame_resize_m
+{
+  -moz-appearance: none;
+  width: 9px;  
+  background-image: none;
+  list-style-image: none;
+}
+
+#frame_resize_mo
+{
+  -moz-appearance: none;
+  height: 16px;
+  width: 9px;
+  
+  background-image: none;
+  list-style-image: none;
+}
+
+#resize
+{
+  -moz-appearance: none;
+  background-image: url(demo_assets/rmp_demo.progbkgdfill.png);
+  list-style-image: none;
+}
+
+/** 
+************************************************************************************************************************************************
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+#songbird_top  /* unused, marks the hbox that contains the top bar */
+{
+}
+
+#app_title
+{
+  margin: 0px 0px 0px 8px;
+  font-family: tahoma;
+  font-weight: bold;
+  font-size: 11;
+  color: #FFF;
+}
+
+#sysbtn_close
+{
+  width: 9px;
+  height: 9px;
+  background-image: url(default_skin/sysbtn_close_9x9.png); /** <img src="default_skin/sysbtn_close_9x9.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{
+  -moz-appearance: none;
+  width: 9px;
+  height: 9px;
+  max-width: 9px;
+  max-height: 9px;
+  border: none;
+  margin: -2px 0px 0px 0px;
+  padding: 0px;
+  background-color: transparent;  
+  background-image: none;
+  list-style-image: none;
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  width: 0px;
+  height: 0px;
+  max-width: 0px;
+  max-height: 0px;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  -moz-appearance: none;
+  background-color: transparent;
+  background-image: none;
+  list-style-image: none;
+}
+
+#sysbtn_maximize > image
+{
+  -moz-appearance:none;
+  width: 9px;
+  height: 9px;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  list-style-image: none;
+  background-image: url(default_skin/sysbtn_maximize_9x9.png); /** <img src="default_skin/sysbtn_maximize_9x9.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  width: 9px;
+  height: 9px;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  list-style-image: none;
+  background-image: url(default_skin/sysbtn_restore_9x9.png); /** <img src="default_skin/sysbtn_restore_9x9.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#sysbtn_minimize
+{
+  width: 9px;
+  height: 9px;
+  list-style-image: none;
+  background-image: url(default_skin/sysbtn_minimize_9x9.png); /** <img src="default_skin/sysbtn_minimize_9x9.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#sysbtn_minimode
+{
+  width: 9px;
+  height: 9px;
+  background-image: url(default_skin/sysbtn_minimode_9x9.png); /** <img src="default_skin/sysbtn_minimode_9x9.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+/* Scroll Bars */
+
+scrollbar
+{   
+  -moz-appearance: none; 
+  background-color: #8F0000; 
+  background-image: none; 
+  background-image: none; 
+  padding: 0 0 0 0; 
+  border-left: 1px solid #6B0000; 
+  border-right: 1px solid #6B0000; 
+  border-bottom: 1px solid #6B0000; 
+} 
+
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-appearance: none;  
+  background-image: url(default_skin/chrome_scroll_up.png);
+  background-color: transparent; 
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  border: none; 
+  height: 19px;
+  width: 15px;
+} 
+ 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-appearance: none;  
+  background-image: url(default_skin/chrome_scroll_down.png);
+  background-color: transparent; 
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  border: none; 
+  height: 19px;
+  width: 15px;
+} 
+ 
+scrollbar > slider > thumb > gripper
+{   
+  -moz-appearance: none;
+  background-color: transparent; 
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  border: none; 
+  height: 19px;
+  width: 15px;
+} 
+
+scrollbar > slider > thumb
+{   
+  -moz-appearance: none;  
+  -moz-border-radius: 3px;  
+  -moz-border-top-colors: #FFC8C8 #6B0000;
+  -moz-border-right-colors: #6B0000 #6B0000;
+  -moz-border-bottom-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #FFC8C8 #6B0000;
+  border: 2px solid; 
+  background-color: transparent; 
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;  
+  height: 19px;
+  width: 15px;
+} 
+
+scrollbar > slider
+{   
+  -moz-appearance: none; 
+  background-color: #8F0000; 
+  background-image: none; 
+  list-style-image: none; 
+  padding: 0 0 0 0; 
+  border: none; 
+} 
+
+/* Search Widget*/
+
+#search_temp
+{
+  width: 143px;
+  height: 21px;
+  background-image: url(default_skin/search_temp.png);
+}
+
+#search_service_button
+{
+  background-color: transparent;
+  width: 10px; /* doesn't work.  grr. */
+}
+
+#search_service_list
+{
+  width: 120px;
+  background-color: transparent;
+  color: #0F0;
+}
+
+#search_service_list > dropmarker
+{
+  -moz-appearance: none;
+  list-style-image: url(default_skin/chrome_scroll_down.png);
+  background-repeat: no-repeat;
+  margin: 1px 2px 0px 0px;
+  height:19px;
+  width:15px;
+  border: none;
+  background-color: #8F0000;
+}
+
+
+#search_widget
+{ 
+  height: 25px; 
+  background-color: #8F0000;
+  border: 1px solid #6B0000; 
+  -moz-border-radius: 5px; 
+} 
+
+#search_widget input
+{
+  -moz-appearance:none;
+  color: #FFF;
+}
+
+.button-menu-dropmarker
+{
+  -moz-appearance: none;
+  background-color: transparent;
+  background-image: url(default_skin/dropmarker.png);
+  background-repeat: no-repeat;
+}
+
+/* Status Pane */
+
+#status_progress_box
+{
+  -moz-appearance:none;
+  height: 5px;
+  width: 100px;
+  overflow: hidden;
+}
+
+#status_progress { 
+   -moz-appearance: none; 
+   margin: 2px 0px 0px 0px;
+   background-color: #6B0000; 
+   border: none;
+   min-width: 100px; 
+} 
+
+#status_progress .progress-bar { 
+   -moz-appearance: none; 
+   background-color: #6B0000;
+} 
+  
+#status_progress[mode="undetermined"] { 
+  background-color: #6B0000;
+} 
+  
+#status_text, #library_text, #scanning_text
+{
+  color: #FFC8C8;
+}
+
+/* tooltips */
+tooltip
+{
+  -moz-appearance: none;  
+  background-color: #EEE;
+  color: #6B0000;   
+}
+
+
+/* the menus */
+#songbird_menu
+{
+  -moz-appearance: none;
+  height: 10px !important;
+  padding: 0px;
+  margin: 0px;
+}
+
+#songbird_menu > menu > label
+{
+  -moz-appearance: none;
+  background-color: transparent;
+  color: #490000 !important;
+  height: 10px !important;
+  
+  padding-left: 2px !important;
+  padding-right: 6px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin-left: 0px !important;
+  margin-top: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label
+{
+  -moz-appearance: none;
+  background-color: #6B0000 !important; /* I feel SUPER important! */
+  height: 10px !important;
+  color: #EEE !important;
+
+  padding-left: 2px !important;
+  padding-right: 3px !important;
+  padding-top: 1px;
+  padding-bottom: 0px !important;
+  margin-left: -1px !important;
+  margin-top: -1px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu#songbird_menu_spacer
+{
+ -moz-appearance: none;
+  width: 14px !important;
+}
+
+
+#control_left_box
+{
+  width: 121px;
+}
+
+#control_right_box
+{
+  width: 580px;
+}
+
+#face_left_box
+{
+  width: 35px;
+}
+
+#face_middle_box
+{
+
+  height: 45px;
+}
+
+#face_right_box
+{
+  width: 35px;
+}
+
+#dashboard_box
+{
+  background-color: transparent;
+  height: 45px;
+}
+
+#dashboard_bkgd
+{
+  height: 45px;
+  background-image: url(default_skin/dashboard_bkgd.png);
+}
+
+#dashboard_w
+{
+  width: 25px;
+  height: 45px;
+  background-image: url(default_skin/dashboard_w.png);
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+#dashboard_e
+{
+  width: 25px;
+  height: 45px;
+  background-image: url(default_skin/dashboard_e.png);
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#intro_box
+{
+  height: 45px;
+}
+
+#intro_box_bkgd
+{
+  height: 45px;
+  background-image: url(default_skin/dashboard_bkgd.png);
+}
+
+#intro_box_image
+{
+  width: 45px;
+  height: 45px;
+  background-image: url(default_skin/default_bkgd_logo.png);
+  background-repeat: no-repeat;
+}
+
+#dashboard_line_h
+{
+  height: 1px;
+  background-color: #CCCCCC;
+}
+
+#dashboard_line_v
+{
+  width: 1px;
+  background-color: #CCCCCC;
+}
+
+/** 
+************************************************************************************************************************************************
+CHROME - The Main Controls
+Play/Pause, Previous (back), Next (forward)
+************************************************************************************************************************************************
+*/
+
+/* the play button */
+#songbird_btn_play
+{
+  margin-left: 0px;
+  width: 36px;
+  height: 36px;
+  background-image: url(default_skin/play_normal.png); /** <img src="default_skin/play_normal.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#songbird_btn_play[disabled="true"]
+{
+  background-image: url(default_skin/play_active.png); /** <img src="default_skin/play_active.png"> */
+  background-color: transparent;
+}
+#songbird_btn_play:hover
+{
+  background-image: url(default_skin/play_normal.png); /** <img src="default_skin/play_normal.png"> */
+  background-color: transparent;
+}
+#songbird_btn_play:active
+{
+  background-image: url(default_skin/play_active.png); /** <img src="default_skin/play_active.png"> */
+  background-color: transparent;
+}
+
+/* the pause button */
+#songbird_btn_pause
+{
+  margin-left: 0px;
+  width: 36px;
+  height: 36px;
+  background-image: url(default_skin/pause_normal.png); /** <img src="default_skin/pause_normal.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+#songbird_btn_pause[disabled="true"]
+{
+  background-image: url(default_skin/pause_normal.png); /** <img src="default_skin/pause_normal.png"> */
+  background-color: transparent;
+}
+#songbird_btn_pause:hover
+{
+  background-image: url(default_skin/pause_normal.png); /** <img src="default_skin/pause_normal.png"> */
+  background-color: transparent;
+}
+#songbird_btn_pause:active
+{
+  background-image: url(default_skin/pause_active.png); /** <img src="default_skin/pause_active.png"> */
+  background-color: transparent;
+}
+
+/* the back button */
+
+#songbird_btn_back
+{
+  margin: 2px 0px 0px 4px;
+  width: 32px;
+  height: 32px;
+  background-image: url(default_skin/back_normal.png); /** <img src="default_skin/back_normal.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+#songbird_btn_back[disabled="true"]
+{
+  background-image: url(default_skin/back_disabled.png); /** <img src="default_skin/back_disabled.png"> */
+  background-color: transparent;
+}
+#songbird_btn_back:hover
+{
+  background-image: url(default_skin/back_normal.png); /** <img src="default_skin/back_normal.png"> */
+  background-color: transparent;
+}
+#songbird_btn_back:active
+{
+  background-image: url(default_skin/back_active.png); /** <img src="default_skin/back_active.png"> */
+  background-color: transparent;
+}
+
+/* the fwd button */
+#songbird_btn_fwd
+{
+  margin: 2px 13px 0px 0px;
+  width: 32px;
+  height: 32px;
+  background-image: url(default_skin/forward_normal.png); /** <img src="default_skin/forward_normal.png"> */
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+#songbird_btn_fwd[disabled="true"]
+{
+  background-image: url(default_skin/forward_disabled.png); /** <img src="default_skin/forward_disabled.png"> */
+  background-color: transparent;
+}
+#songbird_btn_fwd:hover
+{
+  background-image: url(default_skin/forward_normal.png); /** <img src="default_skin/forward_normal.png"> */
+  background-color: transparent;
+}
+#songbird_btn_fwd:active
+{
+  background-image: url(default_skin/forward_active.png); /** <img src="default_skin/forward_active.png"> */
+  background-color: transparent;
+}
+
+/* the curr button */
+#songbird_btn_curr
+{
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/currenttrack_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_curr[disabled="true"]
+{
+  background-image: url(default_skin/currenttrack_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_curr:hover
+{
+  background-image: url(default_skin/currenttrack_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_curr:active
+{
+  background-image: url(default_skin/currenttrack_active.png);
+  background-color: transparent;
+}
+
+/* the next button */
+#songbird_btn_next
+{
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/nextsvc_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_next[disabled="true"]
+{
+  background-image: url(default_skin/nextsvc_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_next:hover
+{
+  background-image: url(default_skin/nextsvc_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_next:active
+{
+  background-image: url(default_skin/nextsvc_active.png);
+  background-color: transparent;
+}
+
+/* the rep1 button */
+#songbird_btn_rep
+{
+  top: 0px;
+  left: 0px;
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/rep1_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_rep[disabled="true"]
+{
+  background-image: url(default_skin/rep1_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_rep:hover[disabled="true"]
+{
+  background-image: url(default_skin/rep1_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_rep:active
+{
+  background-image: url(default_skin/rep1_active.png);
+  background-color: transparent;
+}
+
+/* the rep1_on button */
+#songbird_btn_rep1
+{
+  top: 0px;
+  left: 0px;
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/rep1_on_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_rep1[disabled="true"]
+{
+  background-image: url(default_skin/rep1_on_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_rep1:hover[disabled="true"]
+{
+  background-image: url(default_skin/rep1_on_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_rep1:active
+{
+  background-image: url(default_skin/rep1_on_active.png);
+  background-color: transparent;
+}
+
+/* the repall button */
+#songbird_btn_repall
+{
+  top: 0px;
+  left: 0px;
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/repall_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_repall[disabled="true"]
+{
+  background-image: url(default_skin/repall_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_repall:hover[disabled="true"]
+{
+  background-image: url(default_skin/repall_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_repall:active
+{
+  background-image: url(default_skin/repall_active.png);
+  background-color: transparent;
+}
+
+/* the shuf button */
+#songbird_btn_shuf
+{
+  top: 0px;
+  left: 0px;
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/shuf_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_shuf[disabled="true"]
+{
+  background-image: url(default_skin/shuf_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_shuf:hover[disabled="true"]
+{
+  background-image: url(default_skin/shuf_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_shuf:active
+{
+  background-image: url(default_skin/shuf_active.png);
+  background-color: transparent;
+}
+
+/* the shuf_on button */
+#songbird_btn_shuf_on
+{
+  top: 0px;
+  left: 0px;
+  width: 35px;
+  height: 20px;
+  background-image: url(default_skin/shuf_on_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_shuf_on[disabled="true"]
+{
+  background-image: url(default_skin/shuf_disabled.png);
+  background-color: transparent;
+}
+#songbird_btn_shuf_on:hover[disabled="true"]
+{
+  background-image: url(default_skin/shuf_normal.png);
+  background-color: transparent;
+}
+#songbird_btn_shuf_on:active
+{
+  background-image: url(default_skin/shuf_on_active.png);
+  background-color: transparent;
+}
+
+/** 
+************************************************************************************************************************************************
+WEB BAR
+Browser Toolbar, Address Box, and Url-Slurper Button
+************************************************************************************************************************************************
+*/
+
+/* the browser buttons */
+
+#browser_url
+{
+  -moz-appearance: none;  
+  -moz-border-top-colors: #6B0000;
+  -moz-border-bottom-colors: #6B0000;
+  -moz-border-right-colors: #6B0000;
+  -moz-border-radius-topright: 2px;
+  -moz-border-radius-bottomright: 2px;
+  border: 1px solid #6B0000;
+  border-left: none;
+  margin: 2px 10px 2px 0px;
+  padding: 4px 0px 0px 0px;
+  height: 22px;
+  background-color: transparent;
+  color: #CCC;
+  
+  
+/*  
+  border-bottom: none;
+  -moz-border-radius: 2px;
+  -moz-border-left-colors: #808583;
+*/
+}
+
+#browser_url_image
+{
+  margin: 2px 0px 2px 0px;
+  width: 21px;
+  height: 22px;
+  padding: 2px 2px 2px 2px;
+  -moz-background-origin: padding;
+  -moz-border-top-colors: #6B0000;
+  -moz-border-left-colors: #6B0000;
+  -moz-border-bottom-colors: #6B0000;
+  border: 1px solid #6B0000;
+  border-right: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  color: #CCC;  
+  -moz-border-radius-topleft: 2px;
+  -moz-border-radius-bottomleft: 2px;
+}
+
+#browser_toolbar
+{
+  border-bottom: 1px solid #6B0000;
+  background-color: transparent;
+}
+
+#browser_toolbar toolbarbutton 
+{
+/*  
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-bottom: none;
+*/
+  -moz-border-radius: 5px;
+  border-width: 1px;
+  color: #FFF;
+}
+
+#browser_toolbar toolbarbutton:hover
+{
+  background-color: Transparent;
+  color: #000;
+}
+
+#browser_back
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_back_normal.png);
+}
+#browser_back:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_back_hover.png);
+}
+#browser_back[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_back_disabled.png);
+}
+#browser_refresh
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_refresh_normal.png);
+}
+#browser_refresh:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_refresh_hover.png);
+}
+#browser_refresh[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_refresh_disabled.png);
+}
+#browser_stop
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_stop_normal.png);
+}
+#browser_stop:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_stop_hover.png);
+}
+#browser_stop[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_stop_disabled.png);
+}
+#browser_fwd
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_forward_normal.png);
+}
+#browser_fwd:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_forward_hover.png);
+}
+#browser_fwd[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_forward_disabled.png);
+}
+#browser_home
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_home_normal.png);
+}
+#browser_home:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_home_hover.png);
+}
+#browser_home[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_home_disabled.png);
+}
+#browser_playlist
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_addtoplaylist_normal.png);
+}
+#browser_playlist:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_addtoplaylist_hover.png);
+}
+#browser_playlist[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_addtoplaylist_disabled.png);
+}
+#browser_download
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_dlplaylist_normal.png);
+}
+#browser_download:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_dlplaylist_hover.png);
+}
+#browser_download[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default_skin/webbar_dlplaylist_disabled.png);
+}
+
+
+/** 
+************************************************************************************************************************************************
+VOLUME
+Mute and Slider
+************************************************************************************************************************************************
+*/
+#mute_off
+{
+  width: 12px;
+  height: 12px;
+  background-image: url(default_skin/mute_off.png);
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#mute_on
+{
+  width: 12px;
+  height: 12px;
+  background-image: url(default_skin/mute_on.png);
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+#volume_box
+{
+  height: 16px;    
+  padding-top: 0px;
+  background-color: transparent; 
+}
+
+#songbird_volume
+{
+  top: 5px;
+  left: 5px;
+  width: 104px;
+  height: 14px;
+}
+
+/*
+*/
+#songbird_volume > slider,
+#songbird_volume gripper
+{  
+  -moz-appearance: none;
+  background-image: none;
+  list-style-image: none;
+  padding: 0 0 0 0;
+  border: none;
+  background-color: transparent;
+}
+
+
+
+#songbird_volume_thumb
+{
+  width: 16px;
+  height: 14px;
+  background-image: url(default_skin/volume_thumb.png);
+  background-color: transparent;
+}
+
+#songbird_volume_progress
+{
+  top: 0px;
+  left: 0px; /* previously 20px, 1 thumb-width in */
+  width: 104px; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  height: 14px;
+  background-color: transparent;
+}
+#songbird_volume_progress > .progress-bar
+{
+  -moz-appearance: none;
+  background-image: url(default_skin/volume_progress_bar.png);
+  background-color: transparent;
+}
+#songbird_volume_progress > .progress-remainder
+{
+  -moz-appearance: none;
+  background-image: url(default_skin/volume_progress_remainder.png);
+  background-color: transparent;
+}
+
+#songbird_volume_e
+{
+  background-image: url(default_skin/volume_e.png);
+  margin: 0px 0px 0px 0px;
+  height: 5px;
+  width: 3px;
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+#songbird_volume_w
+{
+  background-image: url(default_skin/volume_w.png);
+  margin: 0px 0px 0px 0px;
+  height: 5px;
+  width: 3px;
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+/* the seekbar slider */
+#songbird_seekbar_slider
+{
+  -moz-appearance: none;
+  height: 10px;
+}
+#songbird_seekbar_thumb
+{
+  -moz-appearance: none;
+  width: 21px;
+  height: 10px;
+  background-image: url(default_skin/seekbar_thumb.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+}
+#songbird_seekbar_thumb > gripper
+{
+  -moz-appearance: none;
+  height: 10px;
+}
+#songbird_seekbar_progress
+{
+  height: 10px;
+}
+#songbird_seekbar_progress > .progress-bar
+{
+  -moz-appearance: none;
+  background-image: url(default_skin/seekbar_progress.png);
+  height: 10px;
+}
+#songbird_seekbar_progress > .progress-remainder
+{
+  -moz-appearance: none;
+  background-image: url(default_skin/seekbar_remainder.png);
+  height: 10px;
+}
+#songbird_seekbar
+{
+  border: 1px solid #8F0000;
+  height: 10px;
+}
+
+/** 
+************************************************************************************************************************************************
+DASHBOARD
+Artist Name, Album Title, Elapsed Time, Total Time
+************************************************************************************************************************************************
+*/
+
+/* the texties */
+#songbird_text_title
+{
+  max-width: auto;
+  color: #FFF;
+}
+#songbird_text_artist
+{
+  color: #FFF;
+}
+#songbird_text_album
+{
+  color: #FFF;
+}
+#songbird_text_slash
+{
+  color: #FFF;
+}
+#songbird_text_time
+{
+  color: #FFF; 
+}
+
+#songbird_text_time_total
+{
+  color: #FFF;
+}
+
+#songbird_text_time_elapsed
+{
+  color: #FFF;
+}
+
+#playlist_edit_popup
+{ 
+  -moz-appearance: none;
+  background-color: #FFFFFF;
+  background-image: none;
+  list-style-image: none;
+}
+#playlist_edit
+{ 
+  -moz-appearance: none;
+  background-color: #FFFFFF;
+  background-image: none;
+  list-style-image: none;
+  border-style: solid;
+  border-color: black;
+  border-width: 1px;
+}
+
+
+
+/** 
+************************************************************************************************************************************************
+DIALOG BOXES
+************************************************************************************************************************************************
+*/
+
+#window_top  
+{
+  border-bottom: 1px solid #490000 !important; /* this draws the line under the title bar */
+  padding-bottom: 6px !important;
+  margin-bottom: 4px !important;
+}
+
+#new_playlist label,
+#playlist_exists label,
+#open_url label,
+#download label,
+#smart_playlist label,
+#subscribe
+{
+  color: #fff;
+}
+
+#smart_playlist
+{
+  width:  550px;
+  background-color: transparent; /*this breaks the red flash in the Inspector*/
+}
+
+#open_url,
+#download
+{
+  width:  460px;
+  background-color: transparent; /*this breaks the red flash in the Inspector*/
+}
+
+#watchfolder,
+#new_playlist,
+#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+{
+  background-color: transparent;
+}
+
+/* Dialog Form Elements */
+.dialog_label
+{
+  color: #FFF;
+}
+
+/* dialog buttons */
+
+.dialog_button 
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px;
+  padding: 3px 20px 3px 20px;
+  border: 1px solid !important;
+  -moz-border-top-colors: #FFC8C8;
+  -moz-border-left-colors: #FFC8C8;
+  -moz-border-bottom-colors: #6B0000;
+  -moz-border-right-colors: #6B0000;
+  background-color: #8F0000 !important;
+  color: #FFF;
+}
+
+.backless_button 
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 0px;
+  padding: 0px 0px 0px 0px;
+  border: 0px solid !important;
+  background-color: transparent !important;
+  color: #FFF;
+}
+
+#button_ok[disabled="true"],
+#button_ok:hover[disabled="true"],
+#button_browse[disabled="true"],
+#button_browse:hover[disabled="true"],
+#button_cancel[disabled="true"],
+#button_cancel:hover[disabled="true"],
+#rmp_demo_makenewplaylist[disabled="true"],
+#rmp_demo_makenewplaylist:hover[disabled="true"]
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px;
+  padding: 3px 20px 3px 20px;
+  border: 1px solid !important;
+  -moz-border-top-colors: #6B0000 !important;
+  -moz-border-left-colors: #6B0000 !important;
+  -moz-border-bottom-colors: #6B0000 !important;
+  -moz-border-right-colors: #6B0000 !important;
+  background-color: #8F0000 !important;
+  color: #6B0000;
+}
+
+#button_ok,
+#button_browse,
+#button_cancel,
+#rmp_demo_makenewplaylist
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px;
+  padding: 3px 20px 3px 20px;
+  border: 1px solid !important;
+  -moz-border-top-colors: #FFC8C8;
+  -moz-border-left-colors: #FFC8C8;
+  -moz-border-bottom-colors: #6B0000;
+  -moz-border-right-colors: #6B0000;
+  background-color: #8F0000 !important;
+  color: #FFF;
+}
+
+#button_ok:hover,
+#button_cancel:hover,
+#rmp_demo_makenewplaylist:hover,
+#button_browse:hover,
+#button_ok:focus,
+#button_cancel:focus,
+#rmp_demo_makenewplaylist:focus,
+#button_browse:focus
+{
+  color: #FFF;
+  background-color: #6B0000 !important;
+}
+
+.dialog_textbox,
+.smart_condition_box textbox
+{
+  -moz-appearance: none;
+  -moz-border-radius: 3px;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #FFC8C8 #6B0000;
+  -moz-border-bottom-colors: #FFC8C8 #6B0000;
+  background-color: #8F0000; 
+  color: #FFF;
+  height: 25px;
+  padding-top: 3px;
+  padding-left: 5px;
+}
+
+.dialog_textbox input:focus,
+.smart_condition_box input:focus
+{
+  -moz-appearance: none;
+  -moz-border-radius: 3px;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #FFC8C8 #6B0000;
+  -moz-border-bottom-colors: #FFC8C8 #6B0000;
+  background-color: #490000; 
+  color: #FFF;
+  height: 25px;
+  padding-top: 3px;
+  padding-left: 5px;
+}
+
+/* Listboxes for dialogs */
+
+.dialog_listbox
+{
+  -moz-appearance: none;
+  -moz-border-radius: 3px;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #FFC8C8 #6B0000;
+  -moz-border-bottom-colors: #FFC8C8 #6B0000;
+  background-color: #6B0000; 
+}
+
+.dialog_listbox > listitem
+{
+  background-color: #6B0000 !important; /* doesn't seem to inherit the #6B0000 from .dialog_listbox */
+  color: #FFF !important;
+}
+
+.dialog_listbox > listitem[selected=true]
+{
+  background-color: #490000 !important;
+}
+
+.formgrouping
+{
+  padding: 5px; 
+  -moz-border-radius: 5px; 
+  border: 1px solid #490000;
+}
+
+.dialog_checkbox
+{
+  -moz-appearance: none;  
+}
+
+.checkbox-check
+{
+  -moz-appearance: none;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #FFC8C8 #6B0000;
+  -moz-border-bottom-colors: #FFC8C8 #6B0000;
+  background-color: #8F0000;
+}
+
+.dialog_checkbox:focus
+{
+  -moz-appearance: none;
+  border: none;
+  background-color: #490000; 
+}
+
+
+.dialog_checkbox .checkbox-check[checked="true"]
+{
+  height: 7px !important;
+  width: 7px !important; 
+  background-image: url(default_skin/check_fff.png) !important;
+}
+
+/* Smart Playlist Builder */
+#smartpl_select_library
+{
+  -moz-appearance: none;
+  margin: 10px 0px 0px 0px;
+}
+
+.smart_condition_box
+{
+  -moz-border-radius: 5px !important; 
+  border: 1px solid #490000 !important;
+  padding-right: 5px;
+}
+
+#smart_playlist_name_label
+{
+  margin-top: 7px; /* lines this label with it's textbox counterpart in the smart playlist builder */
+}
+
+#smart_songs_check,
+#smart_match_check
+{
+  margin-top: 0px; /* the align="center" of the parent needs this to have no top margin. */
+}
+
+#smart_songs_count
+{
+  width: 40px;
+}
+
+.smart_condition_box
+{
+  border: 1px solid #FFC8C8;
+  -moz-border-radius: 5px; 
+}
+
+.smart_condition_plus
+{
+  /* if you want an icon */
+}
+
+.smart_condition_minus
+{
+  /* if you want an icon */
+}
+
+/* Media Scan Progress Dialog */
+
+#media_scan
+{
+  background-color: transparent;
+  width: 500px;
+}
+
+#rmp_demo_media_scan 
+{ 
+   -moz-appearance: none; 
+   margin: 2px 0px 0px 0px;
+   background-color: #6B0000; 
+   border: none;
+   color: #FFF;
+} 
+
+#rmp_demo_media_scan .progress-bar { 
+   -moz-appearance: none; 
+   background-color: #6B0000;
+} 
+  
+#rmp_demo_media_scan[mode="undetermined"] { 
+  background-color: #6B0000;
+} 
+
+#rmp_demo_media_scan_title,
+#rmp_demo_media_scan_label
+{color: #FFF;}
+
+/* Add to Playlist */
+#add_to_playlist
+{
+  -moz-appearance: none;
+  height: 200px;
+  /*background-color: transparent; BUGGY*/
+}
+
+#rmp_demo_playlistlist > listitem
+{
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px !important;
+  background-color: #FFF;
+  color: #6B0000;
+}
+
+#rmp_demo_playlistlist > listitem[selected=true]
+{
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px !important;
+  background-color: #490000;
+  color: #FFF;
+}
+
+/* Download Dialog */
+#subscribe_folder_path,
+#download_folder_path
+{
+  width: 365px;
+}
+
+#subscribe_url
+{
+  width: 420px;
+}
+
+#subscribe_interval
+{
+  width: 40px;
+}
+
+#watchfolder
+{
+  width: 400px;
+}
+
+textbox,
+checkbox
+{
+  -moz-user-focus: normal !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+************************************************************************************************************************************************
+*/
+
+menupopup, 
+popup
+{
+  -moz-appearance: none;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #6B0000 #6B0000;
+  -moz-border-bottom-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  background-color: #6B0000;
+  color: #FFF;
+}
+
+menuseparator
+{
+  -moz-appearance: none;
+  border-top: 1px solid #490000;
+  border-bottom: 1px solid #6B0000;
+}
+
+menupopup > menu,
+popup > menu
+{
+  -moz-appearance: none;
+  background-color: #6B0000;
+  color: #FFF;
+}
+
+popup, menuitem, popup > menuitem
+{
+  -moz-appearance: none;
+  color: #FFF;
+}
+
+menuitem[_moz-menuactive="true"],  
+popup > menuitem[_moz-menuactive="true"],
+popup > menu[_moz-menuactive="true"],
+menupopup > menu[_moz-menuactive="true"]
+{
+  -moz-appearance: none;
+  background-color: #490000;
+  color: #FFF;
+}
+
+.menu-right[_moz-menuactive="true"] 
+{
+  -moz-appearance: none; 
+  margin: 0px 0px 0px 0px;
+  height: 9px;
+  width: 7px;
+  list-style-image: url(default_skin/menu-arrow-hover.png);
+  background-repeat: no-repeat;
+}
+
+.menu-right
+{   
+  -moz-appearance: none; 
+  margin: 0px 0px 0px 0px;
+  height: 9px;
+  width: 7px;
+  list-style-image: url(default_skin/menu-arrow.png);
+  background-repeat: no-repeat;
+}
+
+menuitem[selected="true"]
+{
+  background-color: #490000;
+  color: #FFF;
+}
+
+menuitem[checked="true"] > hbox[checked="true"] 
+{ 
+  -moz-appearance: none; 
+  margin: 0px 0px 0px 2px;
+  height: 7px;
+  width: 7px;
+  list-style-image: url(default_skin/check_fff.png);
+  background-repeat: no-repeat;
+}
+
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{ 
+  -moz-appearance: none; 
+  margin: 0px 0px 0px 2px;
+  height: 7px;
+  width: 7px;
+  list-style-image: url(default_skin/check_fff.png);
+  background-repeat: no-repeat;
+}
+
+/* Menulist */
+
+
+menulist
+{ 
+  -moz-appearance: none;
+  height: 25px; 
+  background-color: #8F0000;
+  border: 1px solid #6B0000; 
+  color: #FFF !important;
+  -moz-border-radius: 3px;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #FFC8C8 #6B0000;
+  -moz-border-bottom-colors: #FFC8C8 #6B0000; 
+} 
+
+menulist > dropmarker
+{
+  -moz-appearance: none;
+  list-style-image: url(default_skin/chrome_scroll_down.png);
+  background-repeat: no-repeat;
+  background-color: transparent;
+  height:19px;
+  width:15px;
+  border: none;
+  -moz-border-radius: 3px;
+  -moz-border-top-colors: #6B0000 #6B0000;
+  -moz-border-left-colors: #6B0000 #6B0000;
+  -moz-border-right-colors: #FFC8C8 #6B0000;
+  -moz-border-bottom-colors: #FFC8C8 #6B0000; 
+}
+
+menulist:focus
+{
+  background-color: #490000;
+}
+
+menulist:focus > hbox
+{
+  background-color: #490000;
+}
+
+
+/** 
+************************************************************************************************************************************************
+MINI PLAYER SKIN
+Anything with #rmp_demo refers to the skin of the mini player.
+************************************************************************************************************************************************
+*/  
+
+window#rmp_demo  
+{ 
+  width: 640px;
+  height: 20px;
+  background-color: transparent;
+}
+
+#rmp_demo_btn_max
+{
+  width: 33px;
+  height: 30px;
+  background-image: url(demo_assets/rmp_demo.btn.max.png);
+  background-color: transparent;
+}
+
+/* the back button */
+#rmp_demo_btn_back
+{
+  width: 61px;
+  height: 30px;
+  background-image: url(demo_assets/rmp_demo.btn.back.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_back[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.back.d.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_back:hover[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.back.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_back:active
+{
+  background-image: url(demo_assets/rmp_demo.btn.back.a.png);
+  background-color: transparent;
+}
+
+/* the play button */
+
+#rmp_demo_btn_play
+{
+  width: 81px;
+  height: 30px;
+  background-image: url(demo_assets/rmp_demo.btn.play.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_play[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.play.d.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_play:hover[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.play.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_play:active
+{
+  background-image: url(demo_assets/rmp_demo.btn.play.a.png);
+  background-color: transparent;
+}
+
+/* the pause button */
+#rmp_demo_btn_pause
+{
+  width: 81px;
+  height: 30px;
+  background-image: url(demo_assets/rmp_demo.btn.pause.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_pause[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.pause.d.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_pause:hover[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.pause.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_pause:active
+{
+  background-image: url(demo_assets/rmp_demo.btn.pause.a.png);
+  background-color: transparent;
+}
+
+/* the fwd button */
+#rmp_demo_btn_fwd
+{
+  width: 61px;
+  height: 30px;
+  background-image: url(demo_assets/rmp_demo.btn.fwd.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_fwd[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.fwd.d.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_fwd:hover[disabled="true"]
+{
+  background-image: url(demo_assets/rmp_demo.btn.fwd.n.png);
+  background-color: transparent;
+}
+#rmp_demo_btn_fwd:active
+{
+  background-image: url(demo_assets/rmp_demo.btn.fwd.a.png);
+  background-color: transparent;
+}
+
+
+/* the seekbar slider */
+#songbird_seekbar_slider.miniplayer
+{
+  -moz-appearance: none;
+  height: 10px;
+}
+#rmp_demo_seekbar_thumb
+{
+  -moz-appearance: none;
+  width: 10px;
+  height: 8px;
+  background-image: url(demo_assets/seekbar_thumb.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+}
+#rmp_demo_seekbar_thumb > gripper
+{
+  -moz-appearance: none;
+  height: 10px;
+}
+#songbird_seekbar_progress
+{
+  height: 10px;
+}
+#songbird_seekbar.miniplayer .progress-bar
+{
+  -moz-appearance: none;
+  background-image: url(demo_assets/seekbar_progress.png);
+  height: 8px;
+}
+#songbird_seekbar.miniplayer .progress-remainder
+{
+  -moz-appearance: none;
+  background-image: url(demo_assets/seekbar_remainder.png);
+  height: 8px;
+}
+#songbird_seekbar.miniplayer
+{
+  -moz-appearance: none;
+  height: 8px;
+  border: none;
+  margin-bottom: 2px;
+  background-color: transparent;
+}
+
+#rmp_demo_dash
+{
+  background-image: url(demo_assets/rmp_demo.bkg.dashboard.png);
+}
+
+/* volume */
+
+#rmp_demo_volume
+{
+  width: 160px;
+  height: 27px;
+  background-image: url(demo_assets/mini_volume_bkgd.png);
+  padding: 3px 0px 0px 15px;
+  border: 0px solid #F00;
+}
+
+/*
+*/
+#rmp_demo_volume > slider,
+#rmp_demo_volume gripper
+{  
+  -moz-appearance: none;
+  background-image: none;
+  list-style-image: none;
+  padding: 0 0 0 0;
+  border: none;
+  background-color: transparent;
+}
+
+#rmp_demo_volume_thumb
+{
+  width: 36px;
+  height: 14px;
+  background-image: url(default_skin/volume_thumb.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+}
+
+#rmp_demo_volume_progress
+{
+  top: 0px;
+  left: 0px; /* previously 20px, 1 thumb-width in */
+  width: 104px; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  height: 14px;
+  background-color: transparent;
+}
+#rmp_demo_volume_progress > .progress-bar
+{
+  -moz-appearance: none;
+  background-image: url(default_skin/volume_progress_bar.png);
+  background-color: transparent;
+}
+#rmp_demo_volume_progress > .progress-remainder
+{
+  -moz-appearance: none;
+  background-image: url(default_skin/volume_progress_remainder.png);
+  background-color: transparent;
+}
+
+#rmp_demo_volume_e
+{
+  background-image: url(default_skin/volume_e.png);
+  margin: 0px 0px 0px 0px;
+  height: 5px;
+  width: 3px;
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+#rmp_demo_volume_w
+{
+  background-image: url(default_skin/volume_w.png);
+  margin: 0px 0px 0px 0px;
+  height: 5px;
+  width: 3px;
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
+/* the texties */
+#rmp_demo_text_title
+{
+  width: 220px;
+  height: 15px;
+  color: #E4EADF;
+ 
+}
+#rmp_demo_text_time
+{
+  width: 160px;
+  height: 15px;
+  color: #E4EADF;
+  padding: 3px 3px 0px 5px;
+}
+
+/** 
+************************************************************************************************************************************************
+MISCELLANEOUS
+************************************************************************************************************************************************
+*/  
+
+/*Line styles
+
+line_v_EEE
+
+v = vertical
+EEE is the hexcolor
+*/
+
+#line_v_EEE
+{
+width: 1px;
+background-color: #EEE;
+}
+
+#line_h_EEE
+{
+height: 1px;
+background-color: #EEE;
+}
+
+#line_v_CCC
+{
+width: 1px;
+background-color: #CCC;
+}
+
+#line_h_CCC
+{
+height: 1px;
+background-color: #CCC;
+}
+
+#line_v_999
+{
+width: 1px;
+background-color: #FFC8C8;
+}
+
+#line_h_999
+{
+height: 1px;
+background-color: #FFC8C8;
+}
+
+#line_v_6B0000
+{
+width: 1px;
+background-color: #6B0000;
+}
+
+#line_h_6B0000
+{
+height: 1px;
+background-color: #6B0000;
+}
+
+#line_v_6B0000
+{
+width: 1px;
+background-color: #6B0000;
+}
+
+#line_h_6B0000
+{
+height: 1px;
+background-color: #6B0000;
+}
+
+#line_v_000
+{
+width: 1px;
+background-color: #000;
+}
+
+#line_h_000
+{
+height: 1px;
+background-color: #000;
+}
+
+/*koshi_test.xul*/
+#koshi_test
+{
+  color: #FFC8C8;
+  width:  460px;
+  background-color: transparent;
+}
+
+/* sample multistate button with custom content (svg/xul, etc) */
+
+#songbird_multistatebuttontest {
+  -moz-binding: url("chrome://rmp_demo/skin/bindings.xml#samplebutton");
+}
+
+/* window region */
+
+windowregion {
+  -moz-binding: url("chrome://rmp_demo/skin/bindings.xml#windowregion");
+}
+

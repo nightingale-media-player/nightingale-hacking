@@ -1,0 +1,70 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+#include "nsIRDFDataSource.idl"
+#include "nsIDOMEvent.idl"
+#include "nsIDOMNode.idl"
+#include "IDatabaseResult.idl"
+
+[scriptable, uuid(A0C79C6C-BED5-4b13-8567-37D105FA12E1)]
+interface sbIPlaylistCommands : nsISupports 
+{
+  void SetPlaylist( in nsIDOMNode node );
+  PRInt32 GetNumCommands( );
+  wstring GetCommandId( in PRInt32 index );
+  wstring GetCommandText( in PRInt32 index );
+  PRInt32 GetCommandFlex( in PRInt32 index );
+  wstring GetCommandToolTipText( in PRInt32 index );
+  PRBool GetCommandEnabled( in PRInt32 index );
+  void OnCommand( in nsIDOMEvent event );
+  sbIPlaylistCommands Duplicate( );
+};
+
+[scriptable, uuid(836D6EA5-CA63-418f-BFD8-27704509A6A3)]
+interface sbIPlaylistsource : nsIRDFDataSource
+{
+  void FeedPlaylist( in wstring RefName, in wstring ContextGUID, in wstring TableName ); // Publish a playlist/library as an autoXUL and an RDF datafeed, both named "TableName". Possibly load a saved filter set. 
+  void ClearPlaylist( in wstring RefName ); // [DEPRECATED!] Clear the query
+  void IncomingObserver( in wstring RefName, in nsIDOMNode Observer ); // An observer is about to attach.  Bind to this refname.  STUPID.
+  sbIDatabaseResult GetQueryResult( in wstring RefName ); // [DEPRECATED!] Get the results object for the query bound to RefName
+  PRInt32 GetRefRowCount( in wstring RefName ); // Get row count from the results object for the query bound to RefName
+  PRInt32 GetRefColumnCount( in wstring RefName ); // Get column count from the results object for the query bound to RefName
+  wstring GetRefRowCellByColumn( in wstring RefName, in PRInt32 Row, in wstring Column ); // GetRowCellByColumn on the ref's resultset
+  PRInt32 GetRefRowByColumnValue( in wstring RefName, in wstring Column, in wstring Value ); // Lookup the rowid for the value of a column (usually url, but might as well make it generic)
+  PRBool IsQueryExecuting( in wstring RefName ); // Is the query currently executing
+  void FeedPlaylistFilterOverride( in wstring RefName, in wstring FilterString ); // Add or change the filter at the Index'th level. 
+  wstring GetFilterOverride( in wstring RefName ); // Get the filter override on a table's feed. 
+  void SetFilter( in wstring RefName, in PRInt32 Index, in wstring FilterString, in wstring FilterRefName, in wstring FilterColumn  ); // Add or change the filter at the Index'th level. 
+  PRInt32 GetNumFilters( in wstring RefName ); // Get the number of filters on a table's feed. 
+  void ClearFilter( in wstring RefName, in PRInt32 Index); // Clear a filter
+  wstring GetFilter( in wstring RefName, in PRInt32 Index ); // Get a filter in wstring on a table's feed. 
+  wstring GetFilterRef( in wstring RefName, in PRInt32 Index ); // Get a filter in wstring on a table's feed. 
+  PRInt32 FeedFilters( in wstring RefName ); // Resubmit the table queries required to build the feeds.
+  void RegisterPlaylistCommands( in wstring ContextGUID, in wstring TableName, in wstring PlaylistType, in sbIPlaylistCommands CommandObj );
+  sbIPlaylistCommands GetPlaylistCommands( in wstring ContextGUID, in wstring TableName, in wstring PlaylistType );
+  void ForceGetTargets( in wstring RefName ); // Force "GetTargets" to be called on the ref to set up the innards.
+};

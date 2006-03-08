@@ -1,0 +1,158 @@
+
+<!ENTITY window.main.title  "Προεπισκόπηση Χρηστών του Songbird" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Εντάξει" >
+<!ENTITY window.cancel      "Ακύρωση" >
+<!ENTITY window.browse      "Αναζήτηση..." >
+
+<!ENTITY menu.file          "Αρχείο" >
+<!ENTITY menu.file.new      "Νέα Λίστα Αναπαραγωγής..." >
+<!ENTITY menu.file.smart    "Νέα Έξυπνη Λίστα Αναπαραγωγής..." >
+<!ENTITY menu.file.remote   "Νέα Απομακρυσμένη Λίστα Αναπαραγωγής..." >
+<!ENTITY menu.file.open     "Άνοιγμα Αρχείου..." >
+<!ENTITY menu.file.url      "Άνοιγμα URL..." >
+<!ENTITY menu.file.playlist "Φόρτωση Λίστας Αναπαραγωγής..." >
+<!ENTITY menu.file.scan     "Ανίχνευση για Πολυμέσα..." >
+<!ENTITY menu.file.dlfolder "Επιλογή Καταλόγου Κατεβάσματος..." >
+<!ENTITY menu.file.watch    "Επιλογή Καταλόγων για Ανίχνευση..." >
+<!ENTITY menu.file.htmlbar  "Πάντα Εμφάνιση της Μπάρας Ιστού" >
+<!ENTITY menu.file.skin     "Εναλλακτικό Κέλυφος" >
+<!ENTITY menu.file.window   "Άνοιγμα Κύριου Παραθύρου" >
+<!ENTITY menu.file.mini     "Άνοιγμα του μικρό-αναπαραγωγέα" >
+<!ENTITY menu.file.about    "Σχετικά με το Songbird..." >
+<!ENTITY menu.file.exit     "Έξοδος" >
+
+<!ENTITY menu.edit          "Επεξεργασία" >
+<!ENTITY menu.edit.undo     "Αναίρεση" >
+<!ENTITY menu.edit.cut      "Αποκοπή" >
+<!ENTITY menu.edit.copy     "Αντιγραφή" >
+<!ENTITY menu.edit.paste    "Επικόλληση" >
+<!ENTITY menu.edit.clear    "Καθαρισμός" >
+<!ENTITY menu.edit.selall   "Επιλογή Όλων" >
+<!ENTITY menu.edit.selnone  "Επιλογή Κανενός" >
+
+<!ENTITY menu.controls      "Χειρισμοί" >
+<!ENTITY menu.control.play  "Αναπαραγωγή/Παύση" >
+<!ENTITY menu.control.next  "Επόμενο Κομμάτι" >
+<!ENTITY menu.control.prev  "Προηγούμενο Κομμάτι" >
+<!ENTITY menu.control.shuf  "Ανακάτεμα" >
+<!ENTITY menu.control.repa  "Επανάληψη Όλων" >
+<!ENTITY menu.control.rep1  "Επανάληψη Ενός" >
+<!ENTITY menu.control.repx  "Επανάληψη Κανενός" >
+
+<!ENTITY menu.services        "Υπηρεσίες" >
+<!ENTITY menu.services.browse "Αναζήτηση Υπηρεσιών..." >
+
+<!ENTITY menu.devices       "Συσκευές" >
+
+<!ENTITY menu.help          "Βοήθεια" >
+<!ENTITY menu.help.topics   "Θέματα Βοήθειας..." >
+<!ENTITY menu.help.about    "Σχετικά με το Songbird..." >
+
+<!ENTITY html.context.open  "Άνοιγμα" >
+<!ENTITY html.context.play  "Αναπαραγωγή" >
+<!ENTITY html.context.add   "Προσθήκη στη Βιβλιοθήκη" >
+
+<!ENTITY playlist.context.remove  "Αφαίρεση" >
+<!ENTITY playlist.context.rename  "Μετονομασία" >
+<!ENTITY playlist.context.search  "Εύρεση" >
+<!ENTITY playlist.context.lyrics  "Στίχοι" >
+
+<!ENTITY tooltip.miniplayer       "Εναλλαγή στον μικρο-αναπαραγωγέα" >
+<!ENTITY tooltip.minimize         "Ελαχιστοποίηση" >
+<!ENTITY tooltip.maximize         "Μεγιστοποίηση/Επαναφορά" >
+<!ENTITY tooltip.exit             "Έξοδος" >
+<!ENTITY tooltip.control.back     "Προηγούμενο Κομμάτι" >
+<!ENTITY tooltip.control.play     "Αναπαραγωγή" >
+<!ENTITY tooltip.control.pause    "Παύση" >
+<!ENTITY tooltip.control.fwd      "Επόμενο Κομμάτι" >
+<!ENTITY tooltip.control.mute     "Σίγαση" >
+<!ENTITY tooltip.control.volume   "Ένταση" >
+<!ENTITY tooltip.control.repeat   "Επανάληψη" >
+<!ENTITY tooltip.control.shuffle  "Ανακάτεμα" >
+<!ENTITY tooltip.control.curtrack "Εύρεση Παρόντος Κομματιού" >
+<!ENTITY tooltip.control.service  "Εναλλαγή Πρόσοψης Οθόνης" >
+<!ENTITY tooltip.search           "Αναζήτηση" >
+<!ENTITY tooltip.browser.back     "Αναζήτηση Πίσω" >
+<!ENTITY tooltip.browser.fwd      "Αναζήτηση Μπροστά" >
+<!ENTITY tooltip.browser.stop     "Σταμάτημα Φυλλομετρητή" >
+<!ENTITY tooltip.browser.home     "Αρχική Σελίδα" >
+<!ENTITY tooltip.browser.playlist "Προβολή Διαθέσιμων Πολυμέσων στην Παρούσα Ιστοσελίδα" >
+<!ENTITY tooltip.browser.download "Προβολή Τρέχόντων Κατεβασμάτων" >
+
+<!ENTITY smart.window             "Δημιουργός Έξυπνης Λίστας Αναπαραγωγής" >
+<!ENTITY smart.library            "Επιλογή Βιβλιοθήκης:" >
+<!ENTITY smart.limit              "Περιορισμός σε" >
+<!ENTITY smart.match              "Ταίρισμα" >
+<!ENTITY smart.any                "όποιοδήποτε" >
+<!ENTITY smart.all                "όλα" >
+<!ENTITY smart.following          "του(ων) παρακάτω όρου(ων):" >   
+<!ENTITY smart.random             "τυχαία" >
+<!ENTITY smart.album              "δίσκος" >
+<!ENTITY smart.artist             "καλλιτέχνης" >
+<!ENTITY smart.genre              "ύφος" >
+<!ENTITY smart.title              "τίτλος" >
+<!ENTITY smart.high_rating        "υψηλή βαθμολόγηση" >
+<!ENTITY smart.low_rating         "χαμηλή βαθμολόγηση" >
+<!ENTITY smart.most_recent        "πλέον πρόσφατα" >
+<!ENTITY smart.least_recent       "λιγότερο πρόσφατα" >
+<!ENTITY smart.most_often         "πλέον συχνά" >
+<!ENTITY smart.least_often        "λιγότερο συχνά" >
+<!ENTITY smart.most_added         "πλέον προστιθεμένα" >
+<!ENTITY smart.least_added        "λιγότερο προστιθεμένα" >
+<!ENTITY smart.minutes            "λεπτά" >
+<!ENTITY smart.hours              "ώρες" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "τραγούδια" >
+<!ENTITY smart.contains           "περιέχει" >
+<!ENTITY smart.not_contain        "δεν περιέχει" >
+<!ENTITY smart.is                 "είναι" >
+<!ENTITY smart.is_not             "δεν είναι" >
+<!ENTITY smart.starts             "αρχινά με" >
+<!ENTITY smart.ends               "τελειώνει με" >
+         
+<!ENTITY download.window          "Κατεβάσματα" >
+<!ENTITY download.select          "Επιλογή Καταλόγου Προορισμού:" >
+<!ENTITY download.always          "Πάντα χρήση αυτού του καταλόγου" >
+
+<!ENTITY textbox.rmp_demo_open_url "Εισάγετε το URL ή τη διαδρομή των πολυμέσων που θέλετε να αναπαράγετε:">
+
+<!ENTITY open_url.title           "Άνοιγμα URL">
+<!ENTITY subscribe.title          "Συνδρομή">
+<!ENTITY subscribe.hours          "Λεπτό(α)">
+<!ENTITY subscribe.days           "Ημέρα(ες)">
+<!ENTITY subscribe.autocheck      "Ανανέωση αυτόματα κάθε">
+<!ENTITY subscribe.destinationfolder      "Επιλογή Καταλόγου Προορισμού:">
+
+<!ENTITY exists.title             "Η λίστα αναπαραγωγής υπάρχει ήδη">
+<!ENTITY exists.exists            "Υπάρχει μια λίστα αναπαραγωγής με το ίδιο όνομα!">
+
+<!ENTITY media_scan.title          "Αναζήτηση για πολυμέσα">
+<!ENTITY media_scan.watch          "Παρακολούθηση αυτού του καταλόγου για νέα πολυμέσα">
+
+<!ENTITY new_playlist.title       "Δημιουργία νέας λίστας αναπαραγωγής">
+<!ENTITY new_playlist.name        "Εισάγετε το όνομα της νέας λίστας αναπαραγωγής">
+
+<!ENTITY addtoplaylist.title      "Προσθήκη στη λίστα αναπαραγωγής">
+<!ENTITY addtoplaylist.create      "Δημιουργία νέας λίστας αναπαραγωγής">
+
+<!ENTITY watchfolder.title        "Παρακολούθηση Καταλόγων">
+<!ENTITY watchfolder.folderlist   "Παρακολούθηση αυτών των καταλόγων για νέα πολυμέσα:">
+
+<!ENTITY locale.language          "Γλώσσα" >
+
+
+
+<!ENTITY subscribe.minutes "Minute(s)" >
+
+
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

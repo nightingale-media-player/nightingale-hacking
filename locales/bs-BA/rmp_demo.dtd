@@ -1,0 +1,153 @@
+﻿
+<!ENTITY window.main.title  "Songbird" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "U redu" >
+<!ENTITY window.cancel      "Prekid" >
+<!ENTITY window.browse      "Listaj..." >
+
+<!ENTITY menu.file          "Datoteka" >
+<!ENTITY menu.file.new      "Nova playlist-a..." >
+<!ENTITY menu.file.smart    "Nova pametna playlist-a..." >
+<!ENTITY menu.file.remote   "Nova udaljena playlist-a..." >
+<!ENTITY menu.file.open     "Otvori datoteku..." >
+<!ENTITY menu.file.url      "Otvori sa URL-a..." >
+<!ENTITY menu.file.playlist "Ucitaj playlist-u..." >
+<!ENTITY menu.file.scan     "Trazi media datoteke..." >
+<!ENTITY menu.file.dlfolder "Postavi download mapu..." >
+<!ENTITY menu.file.watch    "Postavi pregledane mape..." >
+<!ENTITY menu.file.htmlbar  "Uvijek prikazi Web Bar" >
+<!ENTITY menu.file.skin     "Alternativni skin" >
+<!ENTITY menu.file.window   "Otvori glavni prozor" >
+<!ENTITY menu.file.mini     "Otvori mini player" >
+<!ENTITY menu.file.about    "O Songbird-u..." >
+<!ENTITY menu.file.exit     "Izlaz" >
+
+<!ENTITY menu.edit          "Izmjena" >
+<!ENTITY menu.edit.undo     "Undo" >
+<!ENTITY menu.edit.cut      "Odsjeci" >
+<!ENTITY menu.edit.copy     "Kopiraj" >
+<!ENTITY menu.edit.paste    "Priljepi" >
+<!ENTITY menu.edit.clear    "Pocisti" >
+<!ENTITY menu.edit.selall   "Selektuj sve" >
+<!ENTITY menu.edit.selnone  "Deselektuj sve" >
+
+<!ENTITY menu.controls      "Kontrole" >
+<!ENTITY menu.control.play  "Pusti/Pauza" >
+<!ENTITY menu.control.next  "Slijedeca" >
+<!ENTITY menu.control.prev  "Prethodna" >
+<!ENTITY menu.control.shuf  "Izmijesaj" >
+<!ENTITY menu.control.repa  "Ponavljaj sve" >
+<!ENTITY menu.control.rep1  "Ponavljaj jednu" >
+<!ENTITY menu.control.repx  "Bez ponavljanja" >
+
+<!ENTITY menu.services        "Servisi" >
+<!ENTITY menu.services.browse "Listaj servise..." >
+
+<!ENTITY menu.devices       "Uredjaji" >
+
+<!ENTITY menu.help          "Pomoc" >
+<!ENTITY menu.help.topics   "Naslovi..." >
+<!ENTITY menu.help.about    "O Songbird-u..." >
+
+<!ENTITY html.context.open  "Otvori" >
+<!ENTITY html.context.play  "Pusti" >
+<!ENTITY html.context.add   "Dodaj u biblioteku" >
+
+<!ENTITY playlist.context.remove  "Ukloni" >
+<!ENTITY playlist.context.rename  "Preimenuj" >
+<!ENTITY playlist.context.search  "Pretraga" >
+<!ENTITY playlist.context.lyrics  "Rijeci" >
+
+<!ENTITY tooltip.miniplayer       "Prebaci na miniplayer" >
+<!ENTITY tooltip.minimize         "Minimize" >
+<!ENTITY tooltip.maximize         "Maximize/Restore" >
+<!ENTITY tooltip.exit             "Izlaz" >
+<!ENTITY tooltip.control.back     "Prethodna" >
+<!ENTITY tooltip.control.play     "Pusti" >
+<!ENTITY tooltip.control.pause    "Pauza" >
+<!ENTITY tooltip.control.fwd      "Slijedeca" >
+<!ENTITY tooltip.control.mute     "Mute" >
+<!ENTITY tooltip.control.volume   "Jacina zvuka" >
+<!ENTITY tooltip.control.repeat   "Ponavljaj" >
+<!ENTITY tooltip.control.shuffle  "Izmijesaj" >
+<!ENTITY tooltip.control.curtrack "Naði aktivnu pjesmu" >
+<!ENTITY tooltip.control.service  "Prebaci Faceplate izgled" >
+<!ENTITY tooltip.search           "Pretraga" >
+<!ENTITY tooltip.browser.back     "Listaj nazad" >
+<!ENTITY tooltip.browser.fwd      "Listaj naprijed" >
+<!ENTITY tooltip.browser.stop     "Zaustavi browser" >
+<!ENTITY tooltip.browser.home     "Home" >
+<!ENTITY tooltip.browser.playlist "Pregledaj dostupne datoteke na ovoj Web stranici" >
+<!ENTITY tooltip.browser.download "Pregledaj trenutne download-e" >
+
+<!ENTITY smart.window             "Kreator pametne playlist-e" >
+<!ENTITY smart.library            "Izbor biblioteke:" >
+<!ENTITY smart.limit              "Ogranicenje na:" >
+<!ENTITY smart.match              "Jednako" >
+<!ENTITY smart.any                "bilo koji" >
+<!ENTITY smart.all                "svi" >
+<!ENTITY smart.following          "od slijedecih uslova:" >   
+<!ENTITY smart.random             "slucajno" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "umjetnik" >
+<!ENTITY smart.genre              "zanr" >
+<!ENTITY smart.title              "naslov" >
+<!ENTITY smart.high_rating        "visok rejting" >
+<!ENTITY smart.low_rating         "nizak rejting" >
+<!ENTITY smart.most_recent        "poslijednji" >
+<!ENTITY smart.least_recent       "naj stariji" >
+<!ENTITY smart.most_often         "naj cesce" >
+<!ENTITY smart.least_often        "naj rijeðe" >
+<!ENTITY smart.most_added         "naj dodavaniji" >
+<!ENTITY smart.least_added        "najmanje dodavan" >
+<!ENTITY smart.minutes            "minute" >
+<!ENTITY smart.hours              "sati" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "pjesme" >
+<!ENTITY smart.contains           "sadrzi" >
+<!ENTITY smart.not_contain        "ne sadrzi" >
+<!ENTITY smart.is                 "je" >
+<!ENTITY smart.is_not             "nije" >
+<!ENTITY smart.starts             "pocinje sa" >
+<!ENTITY smart.ends               "zavrsava sa" >
+         
+<!ENTITY download.window          "Download" >
+<!ENTITY download.select          "Postavi ciljnu mapu:" >
+<!ENTITY download.always          "Uvijek koristi ovu mapu" >
+
+<!ENTITY textbox.rmp_demo_open_url "Unesite put ili URL media datoteke koju zelite pokrenuti:">
+
+<!ENTITY open_url.title           "Otvori URL">
+<!ENTITY subscribe.title          "Prijava">
+<!ENTITY subscribe.minutes        "Minut(a)">
+<!ENTITY subscribe.hours          "Sat(i)">
+<!ENTITY subscribe.days           "Dan(a)">
+<!ENTITY subscribe.autocheck      "Automatski update svakih">
+<!ENTITY subscribe.destinationfolder      "Odaberite ciljnu mapu:">
+
+<!ENTITY exists.title             "Playlist-a postoji">
+<!ENTITY exists.exists            "Playlist-a sa tim imenoj vec postoji!">
+
+<!ENTITY media_scan.title          "Trazi Media datoteke">
+<!ENTITY media_scan.watch          "Trazi nove daoteke u ovoj mapi">
+
+<!ENTITY new_playlist.title       "Kreiraj novu playlist-u">
+<!ENTITY new_playlist.name        "Unesi ime playlist-e.">
+
+<!ENTITY addtoplaylist.title      "Dodaj u playlist-u">
+<!ENTITY addtoplaylist.create      "Kreiraj novu playlist-u">
+
+<!ENTITY watchfolder.title        "Mape za pregled">
+<!ENTITY watchfolder.folderlist   "Pregledaj ove mape za novim datotekama:">
+
+<!ENTITY locale.language          "Bosanian" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

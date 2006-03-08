@@ -1,0 +1,76 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+[scriptable, uuid()]
+interface sbIMediaType : nsISupports
+{
+  attribute wstring name;
+  attribute wstring description;
+
+  attribute wstring majorType;
+  attribute wstring contentType;
+
+  void MIMETypes(out PRUint32 nMIMECount, [array, size_is(nMIMECount), retval] out wstring aMIMETypes);
+  void Extensions(out PRUint32 nExtCount, [array, size_is(nExtCount), retval] out wstring aExts);
+}
+
+[scriptable, uuid()]
+interface sbIMediaTranscoderCallback : nsISupports
+{
+  void onTranscodeBegin(in wstring strInputURL, in wstring strOutputURL, in sbIMediaType outputType);
+  void onTranscodeProgress(in wstring strInputURL, in wstring strOutputURL, in PRInt32 progressPercent);
+  void onTranscodeMessage(in wstring strMessage);
+  void onTranscodeError(in wstring strInputURL, in wstring strOutputURL, in PRInt32 errorNum, in wstring strError);
+  void onTranscodeComplete(in wstring strInputURL, in wstring strOutputURL);
+};
+
+[scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
+interface sbIMediaTranscoder : nsISupports
+{
+  attribute wstring name;
+  attribute wstring description;
+
+  PRInt32 Transcode(in wstring strInputURL, in wstring strOutputURL, in sbIMediaType strOutputMIMEType);
+  
+  void SupportedMajorInputTypes(out PRUint32 nMajorCount, 
+                                [array, size_is(nMajorCount), retval] out wstring aMajorInputs);
+  void SupportedInputMediaTypes(out PRUint32 nInputCount, 
+                                [array, size_is(nInputCount), retval] out sbIMediaType aInputTypes);
+  
+  void SupportedMajorOutputTypes(out PRUint32 nMajorCount, 
+                                 [array, size_is(nMajorCount), retval] out wstring aMajorOutputs);
+  void SupportedOutputMediaTypes(out PRUint32 nOutputCount, 
+                                 [array, size_is(nOutputCount), retval] out sbIMediaType aOutputTypes);
+};
+
+[scriptable, uuid()]
+interface sbIMediaTranscoderManager : nsISupports
+{
+  PRInt32 Transcode(in wstring strInputURL, in wstring strOutputURL, in sbIMediaTranscoderCallback cb);
+  void SupportedMediaTypes(out PRUint32 nTypeCount, [array, size_is(nTypeCount), retval] out sbIMediaType aTypes);
+};

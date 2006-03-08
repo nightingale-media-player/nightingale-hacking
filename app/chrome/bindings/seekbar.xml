@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="seekbar">
+    <content>
+      <xul:stack flex="1">
+        <children/>
+        <xul:progressmeter sbid="seekbar_progress" xbl:inherits="class=class,orient=orient,id=progressid" flex="1"/>
+        <xul:slider sbid="seekbar_slider" xbl:inherits="class=class,disabled=disabled,orient=orient,maxpos=maxpos,id=sliderid" pageincrement="0" flex="1" onmousedown="slidermousedown(event)" onmouseup="slidermouseup(event)" onmousemove="slidermousemove(event)" > 
+          <xul:thumb sbid="seekbar_thumb" xbl:inherits="class=class,id=thumbid"/>  
+        </xul:slider>
+      </xul:stack>
+    </content>
+
+   <implementation>
+
+    <constructor>
+      document.addEventListener("mouseup", this.globalMouseUp, true); 
+    </constructor>
+    <destructor>
+      document.removeEventListener("mouseup", this.globalMouseUp, true); 
+    </destructor>
+
+    <field name="tracking">0</field>
+    <field name="slider">document.getAnonymousElementByAttribute(this, 'sbid', 'seekbar_slider');</field>
+    <field name="thumb">document.getAnonymousElementByAttribute(this, 'sbid', 'seekbar_thumb');</field>
+    <field name="progress">document.getAnonymousElementByAttribute(this, 'sbid', 'seekbar_progress');</field>
+
+    <property name="value">
+      <getter>
+        return this.slider.getAttribute('curpos');
+      </getter>
+      <setter>
+        this.progress_value = val;
+        return this.slider.setAttribute('curpos', val);
+      </setter>
+    </property>
+
+    <property name="progress_value">
+      <getter>
+        return ( this.progress.getAttribute('value') * this.maxpos ) / 100;
+      </getter>
+      <setter>
+      <![CDATA[
+        var prog = (val * 100) / this.maxpos;
+        if ( this.thumb.boxObject.width > 0 )
+        {
+          // Stupid fun to keep progress under the thumb.
+          if ( ( val > 0 ) && ( prog < 50 ) ) 
+          {
+            prog += 2;
+          }
+        }
+        this.progress.setAttribute('value', prog);
+      ]]>
+      </setter>
+    </property>
+
+    <property name="maxpos">
+      <getter>
+        return this.slider.getAttribute('maxpos');
+      </getter>
+      <setter>
+        this.slider.setAttribute('maxpos', val);
+        this.progress_value = this.value;
+        return this.maxpos;
+      </setter>
+    </property>
+
+    <property name="data_tracking">
+      <getter>
+        return this.getAttribute('data_tracking');
+      </getter>
+      <setter>
+        // nope
+      </setter>
+    </property>
+
+    <property name="is_tracking_data">
+      <getter>
+        var data_str = this.getAttribute('data_tracking');
+        if ( data_str.length )
+        {
+          return SBDataGetValue( data_str );
+        }
+        return "";
+      </getter>
+      <setter>
+        var data_str = this.getAttribute('data_tracking');
+        if ( data_str.length )
+        {
+          return SBDataSetValue( data_str, val );
+        }
+        return "";
+      </setter>
+    </property>
+
+    <method name="sendChangeEvent">
+      <body>
+        var e = document.createEvent("Events");
+        e.initEvent("seekbar-change", false, true);
+        this.dispatchEvent(e);
+      </body>
+    </method>
+
+    <method name="sendReleaseEvent">
+      <body>
+        var e = document.createEvent("Events");
+        e.initEvent("seekbar-release", false, true);
+        this.dispatchEvent(e);
+      </body>
+    </method>
+
+    <method name="globalMouseUp">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (document.__TrackingSeeker__.tracking == 0) return;
+          document.__TrackingSeeker__.tracking = 0;
+          document.__TrackingSeeker__.is_tracking_data = false;
+          document.__TrackingSeeker__.sendReleaseEvent();
+        ]]>
+      </body>
+    </method>
+
+    <method name="mouseonthumb">
+      <parameter name="x"/>
+      <parameter name="y"/>
+      <body>
+        <![CDATA[
+          if (x >= this.thumb.boxObject.screenX && x <= this.thumb.boxObject.screenX + this.thumb.boxObject.width &&
+              y >= this.thumb.boxObject.screenY && y <= this.thumb.boxObject.screenY + this.thumb.boxObject.height) {
+            return true;
+          }
+          return false;
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermousedown">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this.mouseonthumb(event.screenX, event.screenY)) 
+          { 
+            this.tracking = 2; 
+          } 
+          else 
+          {
+            document.__TrackingSeeker__ = this;
+            this.tracking = 1;
+            this.handlemouse(event);
+          }
+          if ( this.tracking > 0 )
+          {
+            // Report if requested
+            this.is_tracking_data = true;
+          }
+          this.sendChangeEvent();
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermouseup">
+      <parameter name="event"/>
+      <body>
+        if (this.tracking == 0) return;
+        this.tracking = 0;
+        this.is_tracking_data = false;
+        this.sendReleaseEvent();
+      </body>
+    </method>
+
+    <method name="slidermousemove">
+      <parameter name="event"/>
+      <body>
+          if (this.tracking == 2) {
+            this.progress_value = this.value;
+          } else if (this.tracking == 0) {
+            return;
+          } else {
+            this.handlemouse(event);
+          }
+          this.sendChangeEvent();
+      </body>
+    </method>
+
+    <method name="handlemouse">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var m = this.maxpos;
+          var x = event.screenX - this.slider.boxObject.screenX; 
+          var v = (x - this.thumb.boxObject.width/2) / (this.slider.boxObject.width - this.thumb.boxObject.width) * m; 
+          if (v < 0) v = 0; else if (v > m) v = m;
+          this.slider.setAttribute('curpos', ''+v);
+          this.progress_value = v;
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>

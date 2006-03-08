@@ -1,0 +1,410 @@
+Index: xpcom/base/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/base/Makefile.in,v
+retrieving revision 1.67.10.1
+diff -u -8 -p -r1.67.10.1 Makefile.in
+--- xpcom/base/Makefile.in	22 Feb 2006 03:55:29 -0000	1.67.10.1
++++ xpcom/base/Makefile.in	24 Feb 2006 21:22:30 -0000
+@@ -57,16 +57,17 @@ CPPSRCS		= \
+ 		nsConsoleMessage.cpp \
+ 		nsConsoleService.cpp \
+ 		nsDebugImpl.cpp \
+ 		nsErrorService.cpp \
+ 		nsExceptionService.cpp \
+ 		nsMemoryImpl.cpp \
+ 		nsTraceRefcntImpl.cpp \
+ 		nsInterfaceRequestorAgg.cpp \
++		nsUUIDGenerator.cpp \
+ 		$(NULL)
+ 
+ ifdef GC_LEAK_DETECTOR
+ CSRCS += nsGarbageCollector.c
+ CPPSRCS += nsLeakDetector.cpp
+ REQUIRES	+= boehm
+ endif
+ 
+@@ -117,16 +118,17 @@ SDK_HEADERS     = \
+ XPIDLSRCS	= \
+ 		nsIConsoleListener.idl \
+ 		nsIConsoleMessage.idl \
+ 		nsIConsoleService.idl \
+ 		nsIErrorService.idl \
+ 		nsIException.idl \
+ 		nsIExceptionService.idl \
+ 		nsIVersionComparator.idl \
++		nsIUUIDGenerator.idl \
+ 		$(NULL)
+ 
+ ifdef GC_LEAK_DETECTOR
+ XPIDLSRCS       += nsILeakDetector.idl
+ endif
+ 
+ ifeq ($(OS_ARCH),Darwin)
+ XPIDLSRCS	+= nsIMacUtils.idl
+Index: xpcom/build/nsXPComInit.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/build/nsXPComInit.cpp,v
+retrieving revision 1.214.2.1.2.1
+diff -u -8 -p -r1.214.2.1.2.1 nsXPComInit.cpp
+--- xpcom/build/nsXPComInit.cpp	22 Feb 2006 03:55:30 -0000	1.214.2.1.2.1
++++ xpcom/build/nsXPComInit.cpp	24 Feb 2006 21:22:31 -0000
+@@ -106,16 +106,18 @@
+ #include "nsAtomTable.h"
+ #include "nsTraceRefcnt.h"
+ #include "nsTimelineService.h"
+ 
+ #include "nsHashPropertyBag.h"
+ 
+ #include "nsVariant.h"
+ 
++#include "nsUUIDGenerator.h"
++
+ #ifdef GC_LEAK_DETECTOR
+ #include "nsLeakDetector.h"
+ #endif
+ #include "nsRecyclingAllocator.h"
+ 
+ #include "SpecialSystemDirectory.h"
+ 
+ #if defined(XP_WIN) && !defined(WINCE)
+@@ -208,16 +210,18 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(nsTimelin
+ #endif
+ 
+ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(nsHashPropertyBag, Init)
+ 
+ #ifdef XP_MACOSX
+ NS_GENERIC_FACTORY_CONSTRUCTOR(nsMacUtilsImpl)
+ #endif
+ 
++NS_GENERIC_FACTORY_CONSTRUCTOR(nsUUIDGenerator)
++
+ static NS_METHOD
+ nsXPTIInterfaceInfoManagerGetSingleton(nsISupports* outer,
+                                        const nsIID& aIID,
+                                        void* *aInstancePtr)
+ {
+     NS_ENSURE_ARG_POINTER(aInstancePtr);
+     NS_ENSURE_TRUE(!outer, NS_ERROR_NO_AGGREGATION);
+ 
+@@ -391,16 +395,18 @@ static const nsModuleComponentInfo compo
+     COMPONENT(VARIANT, nsVariantConstructor),
+     COMPONENT(INTERFACEINFOMANAGER_SERVICE, nsXPTIInterfaceInfoManagerGetSingleton),
+ 
+     COMPONENT(RECYCLINGALLOCATOR, nsRecyclingAllocatorImplConstructor),
+ 
+ #define NS_HASH_PROPERTY_BAG_CLASSNAME "Hashtable Property Bag"
+     COMPONENT(HASH_PROPERTY_BAG, nsHashPropertyBagConstructor),
+ 
++    COMPONENT(UUID_GENERATOR, nsUUIDGeneratorConstructor),
++
+ #if defined(XP_WIN) && !defined(WINCE)
+     COMPONENT(WINDOWSREGKEY, nsWindowsRegKeyConstructor),
+ #endif
+ 
+ #ifdef XP_MACOSX
+     COMPONENT(MACUTILSIMPL, nsMacUtilsImplConstructor),
+ #endif
+ };
+============================================================
+--- xpcom/base/nsIUUIDGenerator.idl	
++++ xpcom/base/nsIUUIDGenerator.idl	b804bc6a6be12b7972761c40782481bbed6347c6
+@@ -0,0 +1,72 @@
++/* -*- Mode: C++; tab-width: 50; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
++/* ***** BEGIN LICENSE BLOCK *****
++ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * The Original Code is mozilla.org code.
++ *
++ * The Initial Developer of the Original Code is
++ * mozilla.org
++ * Portions created by the Initial Developer are Copyright (C) 2005
++ * the Initial Developer. All Rights Reserved.
++ *
++ * Contributor(s):
++ *   Vladimir Vukicevic <vladimir@pobox.com> (original author)
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either of the GNU General Public License Version 2 or later (the "GPL"),
++ * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++ * in which case the provisions of the GPL or the LGPL are applicable instead
++ * of those above. If you wish to allow use of your version of this file only
++ * under the terms of either the GPL or the LGPL, and not to allow others to
++ * use your version of this file under the terms of the MPL, indicate your
++ * decision by deleting the provisions above and replace them with the notice
++ * and other provisions required by the GPL or the LGPL. If you do not delete
++ * the provisions above, a recipient may use your version of this file under
++ * the terms of any one of the MPL, the GPL or the LGPL.
++ *
++ * ***** END LICENSE BLOCK ***** */
++
++#include "nsISupports.idl"
++
++[ptr] native nsNonConstIDPtr(nsID);
++
++/**
++ * nsIUUIDGenerator is implemented by a service that can generate
++ * universally unique identifiers, ideally using any platform-native
++ * method for generating UUIDs.
++ */
++[scriptable, uuid(138ad1b2-c694-41cc-b201-333ce936d8b8)]
++interface nsIUUIDGenerator : nsISupports
++{
++  /**
++   * Obtains a new UUID using appropriate platform-specific methods to
++   * obtain a nsID that can be considered to be globally unique.
++   *
++   * @returns an nsID filled in with a new UUID.
++   *
++   * @throws NS_ERROR_FAILURE if a UUID cannot be generated (e.g. if
++   * an underlying source of randomness is not available)
++   */
++  nsIDPtr generateUUID();
++
++  /**
++   * Obtain a new UUID like the generateUUID method, but place it in
++   * the provided nsID pointer instead of allocating a new nsID.
++   *
++   * @param id an existing nsID pointer where the UUID will be stored.
++   *
++   * @throws NS_ERROR_FAILURE if a UUID cannot be generated (e.g. if
++   * an underlying source of randomness is not available)
++   */
++  [noscript] void generateUUIDInPlace(in nsNonConstIDPtr id);
++};
+============================================================
+--- xpcom/base/nsUUIDGenerator.cpp	
++++ xpcom/base/nsUUIDGenerator.cpp	eb6496a35fa40ac759b1c2f309f66c103d23d633
+@@ -0,0 +1,153 @@
++/* -*- Mode: C++; tab-width: 50; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* ***** BEGIN LICENSE BLOCK *****
++ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * The Original Code is mozilla.org code.
++ *
++ * The Initial Developer of the Original Code is
++ * mozilla.org
++ * Portions created by the Initial Developer are Copyright (C) 2005
++ * the Initial Developer. All Rights Reserved.
++ *
++ * Contributor(s):
++ *   Vladimir Vukicevic <vladimir@pobox.com> (original author)
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either of the GNU General Public License Version 2 or later (the "GPL"),
++ * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++ * in which case the provisions of the GPL or the LGPL are applicable instead
++ * of those above. If you wish to allow use of your version of this file only
++ * under the terms of either the GPL or the LGPL, and not to allow others to
++ * use your version of this file under the terms of the MPL, indicate your
++ * decision by deleting the provisions above and replace them with the notice
++ * and other provisions required by the GPL or the LGPL. If you do not delete
++ * the provisions above, a recipient may use your version of this file under
++ * the terms of any one of the MPL, the GPL or the LGPL.
++ *
++ * ***** END LICENSE BLOCK ***** */
++
++#ifdef XP_WIN
++#include <windows.h>
++#include <objbase.h>
++#else
++#include <stdlib.h>
++#endif
++
++#include <nsMemory.h>
++
++#include "nsUUIDGenerator.h"
++
++#include "prrng.h"
++
++NS_IMPL_ISUPPORTS1(nsUUIDGenerator, nsIUUIDGenerator)
++
++nsUUIDGenerator::nsUUIDGenerator()
++    : mInitialized(PR_FALSE)
++{
++}
++
++nsresult
++nsUUIDGenerator::Init()
++{
++#ifndef XP_WIN
++    /* initialize random number generator using NSPR random noise */
++    unsigned int seed;
++
++    PRSize bytes = 0;
++    while (bytes < sizeof(seed)) {
++        PRSize nbytes = PR_GetRandomNoise(((unsigned char *)&seed)+bytes,
++                                          sizeof(seed)-bytes);
++        if (nbytes == 0) {
++            return NS_ERROR_FAILURE;
++        }
++        bytes += nbytes;
++    }
++
++    initstate(seed, mState, sizeof(mState));
++
++    mRBytes = 4;
++#ifdef RAND_MAX
++    if ((unsigned long) RAND_MAX < (unsigned long)0xffffffff)
++        mRBytes = 3;
++    if ((unsigned long) RAND_MAX < (unsigned long)0x00ffffff)
++        mRBytes = 2;
++    if ((unsigned long) RAND_MAX < (unsigned long)0x0000ffff)
++        mRBytes = 1;
++    if ((unsigned long) RAND_MAX < (unsigned long)0x000000ff)
++        return NS_ERROR_FAILURE;
++#endif
++
++#endif /* non XP_WIN */
++
++    mInitialized = PR_TRUE;
++    return NS_OK;
++}
++
++NS_IMETHODIMP
++nsUUIDGenerator::GenerateUUID(nsID** ret)
++{
++    nsID *id = NS_STATIC_CAST(nsID*, NS_Alloc(sizeof(nsID)));
++    if (id == nsnull)
++        return NS_ERROR_OUT_OF_MEMORY;
++
++    nsresult rv = GenerateUUIDInPlace(id);
++    if (NS_FAILED(rv)) {
++        NS_Free(id);
++        return rv;
++    }
++
++    *ret = id;
++    return rv;
++}
++
++NS_IMETHODIMP
++nsUUIDGenerator::GenerateUUIDInPlace(nsID* id)
++{
++    if (!mInitialized) {
++        nsresult rv = Init();
++        if (NS_FAILED(rv))
++            return rv;
++    }
++
++#ifdef XP_WIN
++    HRESULT hr = CoCreateGuid((GUID*)id);
++    if (NS_FAILED(hr))
++        return NS_ERROR_FAILURE;
++#else /* non-windows; generate randomness using random(). */
++    PRSize bytesLeft = sizeof(nsID);
++    while (bytesLeft > 0) {
++        long rval = random();
++
++        PRUint8 *src = (PRUint8*)&rval;
++#ifdef IS_LITTLE_ENDIAN
++        src += sizeof(rval) - mRBytes;
++#endif
++        PRUint8 *dst = ((PRUint8*) id) + (sizeof(nsID) - bytesLeft);
++        PRSize toWrite = (bytesLeft < mRBytes ? bytesLeft : mRBytes);
++        for (PRSize i = 0; i < toWrite; i++)
++            dst[i] = src[i];
++
++        bytesLeft -= toWrite;
++    }
++
++    /* Put in the version */
++    id->m2 &= 0x0fff;
++    id->m2 |= 0x4000;
++
++    /* Put in the variant */
++    id->m3[0] &= 0x3f;
++    id->m3[0] |= 0x80;
++#endif
++
++    return NS_OK;
++}
+============================================================
+--- xpcom/base/nsUUIDGenerator.h	
++++ xpcom/base/nsUUIDGenerator.h	aa1249b5ceb7481d4f7b2378d2ee928eab0cecd2
+@@ -0,0 +1,66 @@
++/* -*- Mode: C++; tab-width: 50; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* ***** BEGIN LICENSE BLOCK *****
++ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * The Original Code is mozilla.org code.
++ *
++ * The Initial Developer of the Original Code is
++ * mozilla.org
++ * Portions created by the Initial Developer are Copyright (C) 2005
++ * the Initial Developer. All Rights Reserved.
++ *
++ * Contributor(s):
++ *   Vladimir Vukicevic <vladimir@pobox.com> (original author)
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either of the GNU General Public License Version 2 or later (the "GPL"),
++ * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++ * in which case the provisions of the GPL or the LGPL are applicable instead
++ * of those above. If you wish to allow use of your version of this file only
++ * under the terms of either the GPL or the LGPL, and not to allow others to
++ * use your version of this file under the terms of the MPL, indicate your
++ * decision by deleting the provisions above and replace them with the notice
++ * and other provisions required by the GPL or the LGPL. If you do not delete
++ * the provisions above, a recipient may use your version of this file under
++ * the terms of any one of the MPL, the GPL or the LGPL.
++ *
++ * ***** END LICENSE BLOCK ***** */
++
++#ifndef _NSUUIDGENERATOR_H_
++#define _NSUUIDGENERATOR_H_
++
++#include "nsIUUIDGenerator.h"
++
++class nsUUIDGenerator : public nsIUUIDGenerator {
++public:
++    nsUUIDGenerator();
++
++    NS_DECL_ISUPPORTS
++
++    NS_DECL_NSIUUIDGENERATOR
++
++protected:
++    nsresult Init();
++
++    PRBool mInitialized;
++    char mState[32];
++    PRUint8 mRBytes;
++};
++
++#define NS_UUID_GENERATOR_CONTRACTID "@mozilla.org/uuid-generator;1"
++#define NS_UUID_GENERATOR_CLASSNAME "UUID Generator"
++#define NS_UUID_GENERATOR_CID \
++{ 0x706d36bb, 0xbf79, 0x4293, \
++{ 0x81, 0xf2, 0x8f, 0x68, 0x28, 0xc1, 0x8f, 0x9d } }
++
++#endif /* _NSUUIDGENERATOR_H_ */

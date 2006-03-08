@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window 
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+
+ id="rmp_demo"
+ title="Songbird Partner Preview"
+ align="start" 
+ pack="start"
+ hidechrome="true"
+ onload="{centerWindowOnScreen();SBInitialize();}onSBMiniplayerDataLoad();"
+ onunload="onSBMiniplayerDataUnload();thePlayerRepeater.unbind();"
+ class="sb_faceplate miniplayer"
+ onkeypress="onMiniplayerKeypress( event );"
+>
+
+  <!-- Load the Mozilla helpers -->  
+  <script type="application/x-javascript"   
+   src="chrome://global/content/dialogOverlay.js" />
+
+  <!-- Load the core wrappers -->
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/core_wmp.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/core_qt.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/core_vlc.js"/>
+
+
+
+<hbox>
+  <vbox><button id="rmp_demo_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>
+  <vbox><button id="rmp_demo_btn_back"    class="sb_faceplate miniplayer" oncommand="onBack( );" onmousedown="onBackDown();" onmouseup="onBackUp();" /></vbox>
+  <vbox><button id="rmp_demo_btn_play"    class="sb_faceplate miniplayer" oncommand="onPlay( );" /><button id="rmp_demo_btn_pause"   class="sb_faceplate miniplayer" oncommand="onPause( );" /></vbox>
+  <vbox><button id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" oncommand="onFwd( );" onmousedown="onFwdDown();" onmouseup="onFwdUp();" /> </vbox>
+  <vbox id="rmp_demo_dash">
+    <hbox id="rmp_demo_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
+      <label id="rmp_demo_text_title" value="" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <label id="rmp_demo_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <label id="rmp_demo_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <label id="rmp_demo_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <label id="rmp_demo_text_time_total"   value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    </hbox>
+    <seekbar id="songbird_seekbar" sliderid="rmp_demo_seekbar_slider" thumbid="rmp_demo_seekbar_thumb" progressid="rmp_demo_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+  </vbox>  
+  <vbox id="rmp_demo_volume">
+    <hbox id="volume_box" class="sb_faceplate">
+      <stack class="sb_faceplate" >
+        <button id="mute_off" class="sb_faceplate miniplayer" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
+        <button id="mute_on"  class="sb_faceplate miniplayer" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
+      </stack>
+      <spacer width="8"/>
+      <hbox>
+      <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
+      <seekbar id="songbird_volume" sliderid="rmp_demo_volume_slider" thumbid="rmp_demo_volume_thumb" progressid="rmp_demo_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+       <spacer width="3" height="5" id="songbird_volume_e"/>
+      </hbox>
+    </hbox>
+  </vbox>
+  <hbox hidden="true">
+  <button id="rmp_demo_btn_rep1"    class="sb_faceplate miniplayer" oncommand="onRepeat( );" hidden="true"/>
+  <button id="rmp_demo_btn_repa"    class="sb_faceplate miniplayer" oncommand="onRepeat( );" hidden="true" />
+  <button id="rmp_demo_btn_rep"     class="sb_faceplate miniplayer" oncommand="onRepeat( );" hidden="true" />
+  
+  <button id="rmp_demo_btn_shuf"    class="sb_faceplate miniplayer" oncommand="onShuffle( );" hidden="true" />
+  <button id="rmp_demo_btn_shuf_on" class="sb_faceplate miniplayer" oncommand="onShuffle( );" hidden="true" />
+  <button id="rmp_demo_btn_help"    class="sb_faceplate miniplayer" oncommand="onHelp( );" hidden="true" />
+  <button id="rmp_demo_btn_min"     class="sb_faceplate miniplayer" oncommand="onMinimize( );" hidden="true" />
+  <button id="rmp_demo_btn_max"     class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" hidden="true" />
+  <button id="rmp_demo_btn_exit"    class="sb_faceplate miniplayer" oncommand="quitApp( );" hidden="true" />
+  </hbox>
+</hbox>
+
+    
+  <!-- Load the interface code -->
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/player_repeater.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+  <script type="application/x-javascript"   
+   src="chrome://rmp_demo/content/player_controls.js" />
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/player_open.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/sbIDataRemote.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+  
+  <!-- Load the demo-specific scripts -->
+  <script type="application/x-javascript"   
+   src="chrome://rmp_demo/content/miniplayer/miniplayer.data.js" />
+  <script type="application/x-javascript"   
+   src="chrome://rmp_demo/content/miniplayer/miniplayer.js" />
+  <!--script type="application/x-javascript"   
+   src="chrome://rmp_demo/content/player_loop.js" /-->
+  
+</window>

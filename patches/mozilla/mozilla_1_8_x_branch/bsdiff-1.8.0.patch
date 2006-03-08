@@ -1,0 +1,77 @@
+Index: allmakefiles.sh
+===================================================================
+RCS file: /cvsroot/mozilla/allmakefiles.sh,v
+retrieving revision 1.579.2.4.2.1
+diff -u -8 -p -r1.579.2.4.2.1 allmakefiles.sh
+--- allmakefiles.sh	6 Jan 2006 21:00:27 -0000	1.579.2.4.2.1
++++ allmakefiles.sh	24 Feb 2006 21:03:24 -0000
+@@ -1211,17 +1211,20 @@ MAKEFILES_libbz2="
+ 
+ MAKEFILES_libmar="
+     modules/libmar/Makefile
+     modules/libmar/src/Makefile
+     modules/libmar/tool/Makefile
+ "
+ 
+ if test -n "$MOZ_UPDATE_PACKAGING"; then
+-    MAKEFILES_update_packaging="tools/update-packaging/Makefile"
++    MAKEFILES_update_packaging="
++        tools/update-packaging/Makefile
++        other-licenses/bsdiff/Makefile
++    "
+ fi
+ 
+ if [ ! "$SYSTEM_PNG" ]; then
+     MAKEFILES_libimg="$MAKEFILES_libimg modules/libimg/png/Makefile"
+ fi
+ 
+ MAKEFILES_gnome="
+     toolkit/Makefile
+Index: config/config.mk
+===================================================================
+RCS file: /cvsroot/mozilla/config/config.mk,v
+retrieving revision 3.337.8.3
+diff -u -8 -p -r3.337.8.3 config.mk
+--- config/config.mk	22 Feb 2006 16:09:57 -0000	3.337.8.3
++++ config/config.mk	24 Feb 2006 21:03:29 -0000
+@@ -613,16 +613,17 @@ RTL_FLAGS=-MDd         # Dynamically lin
+ endif 
+ endif # MOZ_DEBUG || NS_TRACE_MALLOC
+ endif # USE_STATIC_LIBS
+ endif # WINNT && !GNU_CC
+ 
+ 
+ COMPILE_CFLAGS	= $(VISIBILITY_FLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS) $(PROFILER_CFLAGS) $(DSO_CFLAGS) $(DSO_PIC_CFLAGS) $(CFLAGS) $(RTL_FLAGS) $(OS_COMPILE_CFLAGS)
+ COMPILE_CXXFLAGS = $(VISIBILITY_FLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS) $(PROFILER_CFLAGS) $(DSO_CFLAGS) $(DSO_PIC_CFLAGS)  $(CXXFLAGS) $(RTL_FLAGS) $(OS_COMPILE_CXXFLAGS)
++HOST_CFLAGS += $(RTL_FLAGS)
+ 
+ #
+ # Name of the binary code directories
+ #
+ # Override defaults
+ 
+ # We need to know where to find the libraries we
+ # put on the link line for binaries, and should
+Index: other-licenses/bsdiff/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/other-licenses/bsdiff/Makefile.in,v
+retrieving revision 1.2
+diff -u -8 -p -r1.2 Makefile.in
+--- other-licenses/bsdiff/Makefile.in	9 Jun 2005 01:23:33 -0000	1.2
++++ other-licenses/bsdiff/Makefile.in	24 Feb 2006 21:03:55 -0000
+@@ -45,14 +45,14 @@ include $(DEPTH)/config/autoconf.mk
+ 
+ # This program is output to dist/host/bin because it is only needed by the
+ # build system and is not intended to be included in Mozilla distributions.
+ HOST_PROGRAM = mbsdiff$(BIN_SUFFIX)
+ HOST_CSRCS = bsdiff.c
+ HOST_LIBS += $(DIST)/lib/$(LIB_PREFIX)bz2.$(LIB_SUFFIX)
+ 
+ ifeq (WINNT,$(OS_ARCH))
+-EXTRA_LIBS += $(call EXPAND_LIBNAME,Ws2_32)
++HOST_EXTRA_LIBS += $(call EXPAND_LIBNAME,Ws2_32)
+ endif
+ 
+ LOCAL_INCLUDES += -I$(topsrcdir)/toolkit/mozapps/update/src/updater
+ 
+ include $(topsrcdir)/config/rules.mk

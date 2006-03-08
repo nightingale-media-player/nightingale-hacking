@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+  <RDF:Seq about="urn:mozilla:locale:root">
+    <RDF:li resource="urn:mozilla:locale:tr-TR"/>
+  </RDF:Seq>
+  <!-- locale information -->
+  <RDF:Description about="urn:mozilla:locale:tr-TR"
+        chrome:displayName="Turkish(TR)"
+        chrome:author="Erman Yaman"
+        chrome:name="tr-TR"
+        chrome:previewURL="http://www.mozilla.org/locales/tr-TR.gif">
+    <chrome:packages>
+      <RDF:Seq about="urn:mozilla:locale:tr-TR:packages">
+        <RDF:li resource="urn:mozilla:locale:tr-TR:songbird"/>
+      </RDF:Seq>
+    </chrome:packages>
+  </RDF:Description>
+</RDF:RDF>

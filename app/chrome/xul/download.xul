@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="download"
+ title="&download.window;"
+ onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
+ onload="doLoad();"
+ flex="1"
+ hidechrome="true"
+>
+
+<windowregion/>
+
+<stack flex="1">
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+        <image id="chrome_nw" class="sb_faceplate"/>
+        <image id="chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="chrome_ne" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+        <image id="chrome_w" class="sb_faceplate"/>
+        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <image id="chrome_e" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+  
+  <vbox class="sb_faceplate" flex="1">
+    <hbox class="sb_faceplate" id="frame_top_resizers">
+      <x_resizer id="frame_resize_to" dir="topleft" x_style="cursor: nw-resize;"/>
+      <x_resizer id="frame_resize_t" dir="top" x_style="cursor: n-resize;" flex="1"/>
+      <x_resizer id="frame_resize_to" dir="topright" x_style="cursor: ne-resize;"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+    
+    <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
+      
+        <vbox class="sb_faceplate">
+          <x_resizer id="frame_resize_mo" dir="topleft" x_style="cursor: nw-resize;"/>
+          <x_resizer id="frame_resize_m" dir="left" x_style="cursor: w-resize;" flex="1"/>
+          <x_resizer id="frame_resize_mo" dir="bottomleft" x_style="cursor: sw-resize;"/>
+        </vbox>
+        
+        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
+        
+          <hbox id="window_top" class="sb_faceplate" >
+            <label id="app_title" value="&download.window;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+          </hbox>
+        
+          <vbox flex="1">
+            <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>             
+            <label class="dialog_label" value="&download.select;"/>
+            <spacer height="3" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>             
+            <hbox>
+              <textbox class="dialog_textbox" id="download_folder_path" />
+              <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
+            </hbox>        
+            <spacer height="3" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <hbox>
+              <checkbox class="dialog_checkbox dialog_label" id="download_check" label="&download.always;" />
+            </hbox>              
+            
+          </vbox>
+          
+          <spacer height="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          
+          <hbox>
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+          </hbox>
+                
+        </vbox>
+      
+        <vbox class="sb_faceplate">
+          <x_resizer id="frame_resize_mo" dir="topright" x_style="cursor: ne-resize;"/>
+          <x_resizer id="frame_resize_m" dir="right" x_style="cursor: e-resize;" flex="1"/>
+          <x_resizer id="frame_resize_mo" dir="bottomright" x_style="cursor: se-resize;"/>
+        </vbox>
+        
+      </hbox> <!-- frame_middle_resizers -->
+    </hbox>
+    <hbox class="sb_faceplate" id="frame_bottom_resizers">
+      <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
+      <x_resizer id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
+      <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
+    </hbox>
+  </vbox>
+
+
+   
+</stack>
+ 
+<!-- SCRIPTS -->
+<script type="application/x-javascript" src="chrome://rmp_demo/content/rmp_demo.js" />
+<script type="application/x-javascript" src="chrome://rmp_demo/content/songbird_interfaces.js" />
+<script type="application/x-javascript" src="chrome://rmp_demo/content/sbIDataRemote.js" />
+  
+  
+  <script>
+  <![CDATA[
+    function doLoad()
+    {
+      var theTextbox = document.getElementById( "download_folder_path" );
+      theTextbox.value = SBDataGetValue( "download.folder" );
+      var theCheckbox = document.getElementById( "download_check" );
+      theCheckbox.checked = SBDataGetIntValue( "download.always" ) == 1;
+      var ok = document.getElementById( "button_ok" );
+      ok.focus();
+    }
+    function doOK()
+    {
+      var theTextbox = document.getElementById( "download_folder_path" );
+      var theFolder = theTextbox.value;
+      
+      // Make sure the folder is valid?
+     	var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+     	try
+     	{
+        aLocalFile.initWithPath( theFolder );
+        
+        // Thou shalt not.
+        if ( aLocalFile.isDirectory() )
+        {
+          SBDataSetValue( "download.folder", theFolder );
+          var theCheckbox = document.getElementById( "download_check" );
+          SBDataSetValue( "download.always", theCheckbox.checked );
+          if ( window.arguments && window.arguments[0] )
+          {
+            window.arguments[0].value = theTextbox.value;
+            window.arguments[0].retval = "ok";
+          }
+          return true;
+        }
+      }
+      catch ( err )
+      {
+      }
+      return false;
+    }
+    function doCancel()
+    {
+      if ( window.arguments && window.arguments[0] )
+      {
+        var theTextbox = document.getElementById( "download_folder_path" );
+        window.arguments[0].value = theTextbox.value;
+        window.arguments[0].retval = "cancel";
+      }
+      return true;
+    }
+    function doBrowse()
+    {
+      const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
+      var nsIFilePicker = Components.interfaces.nsIFilePicker;
+      var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
+      fp.init( window, "", nsIFilePicker.modeGetFolder);
+      var res = fp.show();
+      if ( res == nsIFilePicker.returnOK )
+      {
+        var theTextbox = document.getElementById( "download_folder_path" );
+        theTextbox.value = fp.file.path;
+      }
+    }
+  ]]>
+  </script>
+  
+  
+</window>

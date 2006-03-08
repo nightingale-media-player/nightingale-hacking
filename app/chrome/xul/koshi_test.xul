@@ -1,0 +1,159 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="watchfolder"
+ title="&watchfolder.title;"
+ hidechrome="true"
+ onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
+ onload="doLoad();"
+>
+  
+<windowregion/>
+
+<stack flex="1">
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+        <image id="chrome_nw" class="sb_faceplate"/>
+        <image id="chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="chrome_ne" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+        <image id="chrome_w" class="sb_faceplate"/>
+        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <image id="chrome_e" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+
+  <vbox class="sb_faceplate">
+    <hbox class="sb_faceplate">
+      <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
+      <vbox class="sb_faceplate chrome_bkgd" flex="1">        
+      
+        <hbox id="window_top" class="sb_faceplate" >
+          <label id="app_title" value="&watchfolder.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+        </hbox>
+        
+        <label class="dialog_label" value="&watchfolder.folderlist;" />
+        <spacer height="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
+        <spacer height="6" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        
+        <hbox>
+          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+        </hbox>
+        
+      </vbox>
+      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    </hbox>
+    <hbox class="sb_faceplate" id="frame_bottom_resizers">
+      <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
+      <x_resizer id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
+      <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
+    </hbox>
+  </vbox>
+</stack>
+  
+  <script type="application/x-javascript" 
+   src="chrome://rmp_demo/content/rmp_demo.js" />
+  <script>
+  <![CDATA[
+    function doLoad() 
+    {
+      try
+      {
+        var array = new Array();
+        
+        array.push( "c:\\junq" );
+        array.push( "c:\\windows" );
+      
+        var watch_folders = document.getElementById("watch_folders");
+        
+        watch_folders.setFolders( array );
+        
+        watch_folders.animateNewFolder()
+      }
+      catch (err)
+      {
+        alert("watch_folders.xul - doLoad - " + err);
+      }
+    }
+    
+    function doOK()
+    {
+      var watch_folders = document.getElementById("watch_folders");
+      var array = watch_folders.getFolders();
+      
+      var text = array.length + " folder" + ( ( array.length == 1 ) ? "" : "s" ) + "\r\n";
+      for ( var i in array )
+      {
+        text += " ------ " + array[ i ] + "\r\n";
+      }
+      alert( text );
+      
+      if ( window.arguments && window.arguments[0] )
+      {
+        window.arguments[0].retval = "ok";
+      }
+      return true;
+    }
+    
+    function doCancel()
+    {
+      if ( window.arguments && window.arguments[0] )
+      {
+        window.arguments[0].retval = "cancel";
+      }
+      return true;
+    }
+  ]]>
+  </script>
+  
+</window>

@@ -1,0 +1,154 @@
+﻿
+<!ENTITY window.main.title  "Songbird Användar-Förhandsgranskning" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "Ok" >
+<!ENTITY window.cancel      "Avbryt" >
+<!ENTITY window.browse      "Bläddra..." >
+
+<!ENTITY menu.file          "Arkiv" >
+<!ENTITY menu.file.new      "Ny spellista..." >
+<!ENTITY menu.file.smart    "Ny smart spellista..." >
+<!ENTITY menu.file.remote   "Ny fjärrspellista..." >
+<!ENTITY menu.file.open     "Öppna fil..." >
+<!ENTITY menu.file.url      "Öppna från URL..." >
+<!ENTITY menu.file.playlist "Ladda en spellista..." >
+<!ENTITY menu.file.scan     "Scanna efter media..." >
+<!ENTITY menu.file.dlfolder "Välj nerladdningsmapp..." >
+<!ENTITY menu.file.watch    "Välj bevakade mappar..." >
+<!ENTITY menu.file.htmlbar  "Visa alltid webbfältet" >
+<!ENTITY menu.file.skin     "Växla skin" >
+<!ENTITY menu.file.window   "Öppna huvudruta" >
+<!ENTITY menu.file.mini     "Öppna minispelare" >
+<!ENTITY menu.file.about    "Om Songbird..." >
+<!ENTITY menu.file.exit     "Avsluta" >
+
+<!ENTITY menu.edit          "Redigera" >
+<!ENTITY menu.edit.undo     "Ångra" >
+<!ENTITY menu.edit.cut      "Klipp ut" >
+<!ENTITY menu.edit.copy     "Kopiera" >
+<!ENTITY menu.edit.paste    "Klistra in" >
+<!ENTITY menu.edit.clear    "Ta bort" >
+<!ENTITY menu.edit.selall   "Markera allt" >
+<!ENTITY menu.edit.selnone  "Markera inget" >
+
+<!ENTITY menu.controls      "Kontroller" >
+<!ENTITY menu.control.play  "Spela/Paus" >
+<!ENTITY menu.control.next  "Nästa låt" >
+<!ENTITY menu.control.prev  "Föregående låt" >
+<!ENTITY menu.control.shuf  "Blanda" >
+<!ENTITY menu.control.repa  "Repetera alla" >
+<!ENTITY menu.control.rep1  "Repetera ett spår" >
+<!ENTITY menu.control.repx  "Repeat inte" >
+
+<!ENTITY menu.services        "Tjänster" >
+<!ENTITY menu.services.browse "Bläddra tjänster..." >
+
+<!ENTITY menu.devices       "Enheter" >
+
+<!ENTITY menu.help          "Hjälp" >
+<!ENTITY menu.help.topics   "Hjälpavsnitt..." >
+<!ENTITY menu.help.about    "Om Songbird..." >
+
+<!ENTITY html.context.open  "Öppna" >
+<!ENTITY html.context.play  "Spela" >
+<!ENTITY html.context.add   "Lägg till i biblioteket" >
+
+<!ENTITY playlist.context.remove  "Ta bort" >
+<!ENTITY playlist.context.rename  "Rename" >
+<!ENTITY playlist.context.search  "Sök" >
+<!ENTITY playlist.context.lyrics  "Låttexter" >
+
+<!ENTITY tooltip.miniplayer       "Byt till minispelaren" >
+<!ENTITY tooltip.minimize         "Minimera" >
+<!ENTITY tooltip.maximize         "Maximera/Återställ" >
+<!ENTITY tooltip.exit             "Avsluta" >
+<!ENTITY tooltip.control.back     "Föregående låt" >
+<!ENTITY tooltip.control.play     "Spela" >
+<!ENTITY tooltip.control.pause    "Paus" >
+<!ENTITY tooltip.control.fwd      "Nästa låt" >
+<!ENTITY tooltip.control.mute     "Mute" >
+<!ENTITY tooltip.control.volume   "Volym" >
+<!ENTITY tooltip.control.repeat   "Repetera" >
+<!ENTITY tooltip.control.shuffle  "Blanda" >
+<!ENTITY tooltip.control.curtrack "Hitta nuvarande låt" >
+<!ENTITY tooltip.control.service  "Byt Faceplate fönster" >
+<!ENTITY tooltip.search           "Sök" >
+<!ENTITY tooltip.browser.back     "Bläddra bakåt" >
+<!ENTITY tooltip.browser.fwd      "Bläddra framåt" >
+<!ENTITY tooltip.browser.stop     "Stoppa läsaren" >
+<!ENTITY tooltip.browser.home     "Hem" >
+<!ENTITY tooltip.browser.playlist "Visa tillgänglig media på denna webbsida" >
+<!ENTITY tooltip.browser.download "Visa nuvarande nerladdningar" >
+
+<!ENTITY smart.window             "Smart Spellists-byggare" >
+<!ENTITY smart.library            "Välj bibliotek:" >
+<!ENTITY smart.limit              "Begränsa till" >
+<!ENTITY smart.match              "Matcha" >
+<!ENTITY smart.any                "något" >
+<!ENTITY smart.all                "alla" >
+<!ENTITY smart.following          "av följande villkor:" >   
+<!ENTITY smart.random             "slumpmässig" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "artist" >
+<!ENTITY smart.genre              "genre" >
+<!ENTITY smart.title              "titel" >
+<!ENTITY smart.high_rating        "Högt betyg" >
+<!ENTITY smart.low_rating         "Lågt betyg" >
+<!ENTITY smart.most_recent        "Nyast" >
+<!ENTITY smart.least_recent       "Äldst" >
+<!ENTITY smart.most_often         "mest ofta" >
+<!ENTITY smart.least_often        "minst ofta" >
+<!ENTITY smart.most_added         "mest tillagda" >
+<!ENTITY smart.least_added        "minst tillagda" >
+<!ENTITY smart.minutes            "minuter" >
+<!ENTITY smart.hours              "timmar" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "låtar" >
+<!ENTITY smart.contains           "innehåller" >
+<!ENTITY smart.not_contain        "innehåller inte" >
+<!ENTITY smart.is                 "är" >
+<!ENTITY smart.is_not             "är inte" >
+<!ENTITY smart.starts             "börjar med" >
+<!ENTITY smart.ends               "slutar med" >
+         
+<!ENTITY download.window          "Ladda ner" >
+<!ENTITY download.select          "Välj målmapp:" >
+<!ENTITY download.always          "Använd alltid denna mapp" >
+
+<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:">
+<!ENTITY textbox.rmp_demo_open_url "Skriv in URL eller sökväg till musiken du vill spela:">
+
+<!ENTITY open_url.title           "Öppna URL">
+<!ENTITY subscribe.title          "Prenumerera">
+<!ENTITY subscribe.minutes        "Minute(r)">
+<!ENTITY subscribe.hours          "Timme(ar)">
+<!ENTITY subscribe.days           "Dag(ar)">
+<!ENTITY subscribe.autocheck      "Uppdatera automatiskt var ">
+<!ENTITY subscribe.destinationfolder      "Välj målmapp:">
+
+<!ENTITY exists.title             "Spellista existerar">
+<!ENTITY exists.exists            "En spellista med det där namnet existerar redan!">
+
+<!ENTITY media_scan.title          "Scanna efter media">
+<!ENTITY media_scan.watch          "Bevaka denna mapp efter ny media">
+
+<!ENTITY new_playlist.title       "Skapa ny spellista">
+<!ENTITY new_playlist.name        "Skriv in ett ny namn på denna spellista.">
+
+<!ENTITY addtoplaylist.title      "Lägg till i spellista">
+<!ENTITY addtoplaylist.create      "Skapa ny spellista">
+
+<!ENTITY watchfolder.title        "Bevaka mappar">
+<!ENTITY watchfolder.folderlist   "Bevaka dessa mappar efter ny media:">
+
+<!ENTITY locale.language          "Språk" >
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

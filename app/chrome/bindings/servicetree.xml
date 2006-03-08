@@ -1,0 +1,623 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="servicetree">
+    <content>
+
+      <!-- SERVICE PANE -->
+      <xul:tree style="min-width:60px;"
+        id="frame_service_tree" 
+        xxx_flags="dont-build-content"
+        seltype="single"
+        hidecolumnpicker="true"
+        flex="1"
+        
+        onselect="onServiceTreeSelect( event );"
+        onclick="onServiceTreeClick( event );"
+        oncontextmenu="onServiceTreeContext( event );" 
+                  
+        datasources="rdf:Servicesource"
+        ref="NC:Servicesource"
+
+        ondragenter="onServiceTreeDragEnter(event);"
+        ondragover="onServiceTreeDragOver(event);"
+        ondragexit="onServiceTreeDragExit(event);"
+        ondragdrop="onServiceTreeDragDrop(event);"
+      >
+        <xul:treecols>
+          <xul:treecol 
+            id="frame_service_tree_label" 
+            primary="true" 
+            flex="1"
+            sortDirection="natural"
+            sortActive="true"
+            hideheader="true"
+            open="true"
+          />
+          <xul:treecol 
+            id="url" 
+            label="" 
+            primary="true" 
+            flex="1"
+            hidden="true"
+            ignoreincolumnpicker="true"
+            hideheader="true"
+          />
+        </xul:treecols>
+
+        <xul:template>
+
+          <xul:rule>
+            <xul:treechildren flex="1">
+            <xul:treeitem open="true" uri="rdf:*"
+              x_open="rdf:http://home.netscape.com/NC-rdf#Open" 
+              properties="rdf:http://home.netscape.com/NC-rdf#Properties"
+              url="rdf:http://home.netscape.com/NC-rdf#URL"
+            >
+              <xul:treerow>
+                <xul:treecell 
+                  label="rdf:http://home.netscape.com/NC-rdf#Label"
+                  src="rdf:http://home.netscape.com/NC-rdf#Icon"
+                  properties="rdf:http://home.netscape.com/NC-rdf#Properties"
+                />
+                <xul:treecell 
+                  label="rdf:http://home.netscape.com/NC-rdf#URL"
+                />
+              </xul:treerow>
+            </xul:treeitem>
+            </xul:treechildren>
+          </xul:rule>
+
+        </xul:template>
+      </xul:tree>
+    </content>
+
+  <implementation type="application/x-javascript" implements="nsIXULBuilderListener" name="service_tree_binding">
+
+    <field name="tree">document.getAnonymousElementByAttribute(this, 'id', 'frame_service_tree');</field>
+    <field name="current_url">null</field>
+    <field name="browser">null</field>
+    <field name="UrlFromServicePane">false</field>
+    <field name="onPlaylistHide">null</field>
+
+    <!-- CONSTRUCTOR/DESTRUCTOR -->
+    
+    <constructor>
+      
+      <![CDATA[
+        try
+        {
+          this.currentSelection = "";
+          this.popup_playlist = null;
+          this.popup_smartplaylist = null;
+          this.popup_default = null;
+          this.popup_none = null;
+
+          // Load the javascript we want to use
+          var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
+          jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
+          jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
+          jsLoader.loadSubScript("chrome://rmp_demo/content/dragAndDrop.js", this);
+          this.tree.builder.addListener( this );
+        }
+        catch ( err )
+        {
+          alert( "servicetree.xml - constructor - " + err );
+        }
+      ]]>
+    </constructor>
+    
+    <destructor>
+      <![CDATA[
+        try
+        {
+        this.tree.builder.removeListener(this);
+        }
+        catch ( err )
+        {
+          alert( "servicetree.xml - destructor - " + err );
+        }
+      ]]>
+    </destructor>
+    
+    <!-- Init -->
+    
+    <method name="init">
+      <parameter name="browserObject"/>
+      <body>
+      <![CDATA[
+        try
+        {
+          this.browser = browserObject;
+
+          // Do something weird to select the first service tree item.
+          
+          var lastSelection = -1; 
+          if ( this.SBDataGetValue( "servicetree.selection" ) == "" )
+          {
+            lastSelection = 0; 
+          }
+          this.restoreCollapsedStates();
+          var tree = this.tree;
+          tree.view.selection.currentIndex = lastSelection;
+          tree.view.selection.select( lastSelection );
+
+          var lastURI = this.SBDataGetValue( "browser.uri" );
+          if ( lastURI != "" )
+          {
+            this.LaunchURL( lastURI );
+          }
+        }
+        catch ( err )
+        {
+          alert( "servicetree.xml - init - " + err );
+        }
+      ]]>
+      </body>
+    </method>
+
+    <!-- Launch URL in browser object (this.browser) -->
+    
+    <method name="LaunchURL">
+      <parameter name="the_url"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            // And if it's a good string, launch it.
+            if ( ( the_url ) && ( the_url.indexOf ) && ( the_url.length > 0 ) && ( this.current_url != the_url ) )
+            {
+              // No more for loop.
+              CancelAsyncWebDocument();
+              if (this.onPlaylistHide) this.onPlaylistHide();
+              var theMainPane = this.browser;
+              if (theMainPane)
+              {
+                // Set the src attribute to load the url
+                this.current_url = the_url;
+                {
+                  try
+                  { 
+                    theMainPane.stop();
+                    theMainPane.loadURI( this.current_url, null, null );
+                  }
+                  catch (e)
+                  {
+                    // Grrrr.
+                  }
+                }
+              }
+            }
+          }
+          catch ( err )
+          {
+            alert( "servicetree.xml - LaunchURL " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <!-- When an item is selected, switch to the corresponding page -->
+
+    <method name="onServiceTreeSelect">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          { 
+            var theServiceTree = this.tree;
+            
+            // multiple selection on service tree only happen during the highlighting of an item in drag over, don't switch to the service
+            if (theServiceTree.getAttribute("seltype") == "multiple") return;
+            this.SBDataSetValue( "servicetree.selection", theServiceTree.currentIndex );
+            if ( theServiceTree.currentIndex >= 0 )
+            {
+              // Find the column. 
+              var urlcolumn = theServiceTree.columns ? theServiceTree.columns["url"] : "url";
+              
+              // Get the text of the hidden tree cell, this contains the url.
+              var tree_url = theServiceTree.view.getCellText( theServiceTree.currentIndex, urlcolumn );
+              
+              if ( tree_url.length > 0 )
+              {
+                this.UrlFromServicePane = true;
+                this.LaunchURL( tree_url );
+              }
+            }
+          }
+          catch(err)
+          {
+            alert( "servicetree.xml - onServiceTreeSelect - " + err);
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <!-- After the tree was clicked, save collapsed states in case thye changed -->
+
+    <method name="onServiceTreeClick">
+      <parameter name="theEvent"/>
+      <body>
+        this.saveCollapsedStates();
+      </body>
+    </method>
+    
+    <!-- Save/Restore collapsed/open states -->
+    
+    <method name="saveCollapsedStates">
+      <body>
+        <![CDATA[
+          try
+          {
+            var tree = this.tree;
+            var col = tree.columns ? tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
+            for (var i=0;i<tree.view.rowCount;i++)
+            {
+              if (tree.view.isContainer(i))
+              {
+                var item_url = tree.view.getCellText( i, col );
+                var item_remote = new sbIDataRemote( "collapsed_" + tree.id + "_" + item_url );
+                item_remote.SetValue(!tree.view.isContainerOpen(i));
+              }
+            }
+          }
+          catch (err)
+          {
+            alert('servicetree.xml - saveCollapsedStates - ' + err);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="restoreCollapsedStates">
+      <body>
+        <![CDATA[
+          try
+          {
+            var tree = this.tree;
+            var col = tree.columns ? tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
+            for (var i=0;i<tree.view.rowCount;i++)
+            {
+              if (tree.view.isContainer(i))
+              {
+                var item_url = tree.view.getCellText( i, col );
+                var item_remote = new sbIDataRemote( "collapsed_" + tree.id + "_" + item_url );
+                if (item_remote.GetIntValue())
+                {
+                  if (tree.view.isContainerOpen(i))
+                  {
+                    tree.view.toggleOpenState(i);
+                  }
+                }
+              } 
+            }
+          }
+          catch (err)
+          {
+            alert('servicetree.xml - restoreCollapsedStates - ' + err);
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <!-- Save/Restore Selection -->
+    
+    <method name="saveSelection">
+      <body>
+        <![CDATA[
+          try
+          {
+            var tree = this.tree;
+            if ( tree && ( tree.currentIndex != -1 ) )
+            {
+              var column = tree.columns ? tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
+              this.currentSelection = tree.view.getCellText( tree.currentIndex, column );
+            }
+          }
+          catch ( err )
+          {
+            alert( "servicetree.xml - saveSelection - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="restoreSelection">
+      <body>
+        <![CDATA[
+          try
+          {
+            var tree = this.tree;
+            // Restore selection
+            if ( tree && ( tree.currentIndex == -1 ) && ( this.currentSelection.length > 0 ) )
+            {
+              var column = tree.columns ? tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
+              for ( var i = 0; i < tree.view.rowCount; i++ )
+              {
+                if ( this.currentSelection == tree.view.getCellText( i, column ) )
+                {
+                  tree.view.selection.currentIndex = i;
+                  tree.view.selection.select( i );
+                  this.currentSelection = "";
+                  break;
+                }
+              }
+            }
+            this.currentSelection = "";
+        }
+        catch ( err )
+        {
+          alert( "servicetree.xml - restoreSelection - " + err );
+        }
+      ]]>
+      </body>
+    </method>
+    
+    <!-- Context menu -->
+    
+    <method name="setPlaylistPopup">
+      <parameter name="popup"/>
+      <body>
+        this.popup_playlist = popup;
+      </body>
+    </method>
+    
+    <method name="setSmartPlaylistPopup">
+      <parameter name="popup"/>
+      <body>
+        this.popup_smartplaylist = popup;
+      </body>
+    </method>
+    
+    <method name="setDefaultPopup">
+      <parameter name="popup"/>
+      <body>
+        this.popup_default = popup;
+      </body>
+    </method>
+    
+    <method name="setNotAnItemPopup">
+      <parameter name="popup"/>
+      <body>
+        this.popup_none = popup;
+      </body>
+    </method>
+    
+    <method name="onServiceTreeContext">
+      <parameter name="theEvent"/>
+      <body>
+        <![CDATA[
+          try
+          { 
+            // First, get the row clicked.
+            var obj = {}; 
+            var row = {};
+            var col = {};
+            this.tree.treeBoxObject.getCellAt( theEvent.clientX, theEvent.clientY, row, col, obj );
+
+            row = row.value;    
+            
+            if ( row >= 0 )
+            {
+              // Find the selected element
+              var element = this.tree.contentView.getItemAtIndex( row );
+              var properties = element.getAttribute( "properties" ).split(" ");
+              if ( properties.length > 0 )
+              {
+                // The first property is the type.  Later strings are specific to the type.
+                switch ( properties[ 0 ] )
+                {
+                  case "playlist":
+                    this.onServiceTreeContextPlaylist( theEvent, properties );
+                    break;
+                  default:
+                    this.onServiceTreeContextDefault( theEvent, properties );
+                    break;
+                }
+              }
+            }
+            else
+            {
+              this.onServiceTreeContextNone( theEvent );
+            }
+          }
+          catch(err)
+          {
+            alert( "servicetree.xml - onServiceTreeContext - " + err);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onServiceTreeContextPlaylist">
+      <parameter name="theEvent"/>
+      <parameter name="properties"/>
+      <body>
+        <![CDATA[
+          try
+          { 
+            if ( properties.length >= 5 )
+            {
+              var table = properties[ 1 ];
+              var guid = properties[ 2 ];
+              var type = properties[ 3 ];
+              var base_type = properties[ 4 ];
+              
+              // From these 4 pieces of data, we're going to have to do some idiotically complex stuff.
+              // Eventually, we'll register a sbIPlaylistCommands with the Servicesource
+              
+              // For now, make a set of short-circuits to protect our special playlists
+              if ( table == WEB_PLAYLIST_TABLE && guid == WEB_PLAYLIST_CONTEXT )
+              {
+                return;
+              }
+              if ( type == "transfer" && base_type == "simple" )
+              {
+                return;
+              }
+              var theServiceTreePlaylistPopup = this.popup_playlist;
+              if ( base_type == "smart" )
+              {
+                theServiceTreePlaylistPopup = this.popup_smart;
+              }
+              if ( base_type == "dynamic" )
+              {
+                theServiceTreePlaylistPopup = this.popup_smart;
+              }
+              theServiceTreePlaylistPopup.setAttribute( "sb_table", table );
+              theServiceTreePlaylistPopup.setAttribute( "sb_guid", guid );
+              theServiceTreePlaylistPopup.setAttribute( "sb_type", type );
+              theServiceTreePlaylistPopup.setAttribute( "sb_base_type", base_type );
+              if ( theServiceTreePlaylistPopup )
+              {
+                theServiceTreePlaylistPopup.showPopup( document.documentElement, theEvent.screenX, theEvent.screenY, "context", null, null, null );
+              }
+            }
+          }
+          catch(err)
+          {
+            alert( "servicetree.xml - onServiceTreeContextPlaylist - " + err);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onServiceTreeContextDefault">
+      <parameter name="theEvent"/>
+      <parameter name="properties"/>
+      <body>
+        <![CDATA[
+          try
+          { 
+          }
+          catch(err)
+          {
+            alert( "servicetree.xml - onServiceTreeContextDefault - " + err);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onServiceTreeContextNone">
+      <parameter name="theEvent"/>
+      <parameter name="properties"/>
+      <body>
+        <![CDATA[
+          try
+          { 
+            var theServiceTreePlaylistPopup = this.popup_none;
+            if ( theServiceTreePlaylistPopup )
+            {
+              theServiceTreePlaylistPopup.showPopup( document.documentElement, theEvent.screenX, theEvent.screenY, "context", null, null, null );
+            }
+          }
+          catch(err)
+          {
+            alert( "servicetree.xml - onServiceTreeContextNone - " + err);
+          }
+        ]]>
+      </body>
+    </method>
+
+
+    <!-- nsIXULBuilderListener implementation -->
+
+    <method name="willRebuild">
+      <parameter name="builder"/>
+      <body>
+        try
+        {
+          this.saveSelection();
+          this.saveCollapsedStates();
+        }
+        catch( err )
+        {
+          alert( "servicetree.xml - willRebuild - " + err );
+        }
+      </body>
+    </method>
+
+    <method name="didRebuild">
+      <parameter name="builder"/>
+      <body>
+        try
+        {
+          this.restoreSelection();
+          this.restoreCollapsedStates();
+        }
+        catch( err )
+        {
+          alert( "servicetree.xml - didRebuild - " + err );
+        }
+      </body>
+    </method>
+
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>
+
+
+<!--
+
+/*
+
+// Don't do this.  Causes bigger bugs than it solves.
+
+onblur="onServiceTreeBlur( event );"
+onfocus="onServiceTreeFocus( event );"
+
+function onServiceTreeBlur( theEvent )
+{
+  try
+  {
+    var theServiceTree = document.getElementById( "frame_service_tree" );
+    SBServiceTreeListener.willRebuild();
+    theServiceTree.view.selection.currentIndex = -1;
+    theServiceTree.view.selection.select( -1 );
+  }
+  catch ( err )
+  {
+    alert( "onServiceTreeBlur\n\n" + err );
+  }
+}
+function onServiceTreeFocus( theEvent )
+{
+  SBServiceTreeListener.didRebuild();
+}
+*/
+
+-->

@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="subscribe"
+ title="&subscribe.title;"
+ onload="doLoad();"
+ onkeypress="/* dialog key handling */ if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
+ flex="1"
+ hidechrome="true"
+>
+
+
+<windowregion/>
+<stack flex="1">
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+        <image id="chrome_nw" class="sb_faceplate"/>
+        <image id="chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="chrome_ne" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+        <image id="chrome_w" class="sb_faceplate"/>
+        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <image id="chrome_e" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+  
+  <vbox class="sb_faceplate" flex="1">
+    <hbox class="sb_faceplate" id="frame_top_resizers">
+      <x_resizer id="frame_resize_to" dir="topleft" x_style="cursor: nw-resize;"/>
+      <x_resizer id="frame_resize_t" dir="top" x_style="cursor: n-resize;" flex="1"/>
+      <x_resizer id="frame_resize_to" dir="topright" x_style="cursor: ne-resize;"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+    
+    <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
+      
+        <vbox class="sb_faceplate">
+          <x_resizer id="frame_resize_mo" dir="topleft" x_style="cursor: nw-resize;"/>
+          <x_resizer id="frame_resize_m" dir="left" x_style="cursor: w-resize;" flex="1"/>
+          <x_resizer id="frame_resize_mo" dir="bottomleft" x_style="cursor: sw-resize;"/>
+        </vbox>
+        
+        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
+        
+          <hbox id="window_top" class="sb_faceplate" >
+            <label id="app_title" value="&subscribe.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+          </hbox>
+        
+          <vbox flex="1">
+            
+            <hbox align="center">
+              <label class="dialog_label" value="URL:"/>
+              <textbox class="dialog_textbox" id="subscribe_url" value="http://"/>
+            </hbox>
+            <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <hbox class="sb_faceplate" align="center">
+            <spacer width="40" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <checkbox class="dialog_checkbox" id="subscribe_autosubscribe_check" label="&subscribe.autocheck;" checked="true"/>
+            <textbox class="dialog_textbox" id="subscribe_interval" value="1"/>
+            <menulist id="subscribe_interval_unit" value="days">
+              <menupopup id="subscribe_interval_unit_popup">
+                <menuitem id="subscribe_interval_days" label="&subscribe.days;" value="days"/>
+                <menuitem id="subscribe_interval_hours" label="&subscribe.hours;" value="hours"/>
+                <menuitem id="subscribe_interval_minutes" label="&subscribe.minutes;" value="minutes" />
+              </menupopup>
+            </menulist>
+            </hbox>
+            <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>             
+            <label class="dialog_label" value="&subscribe.destinationfolder;"/>
+            <hbox>
+              <textbox class="dialog_textbox" id="subscribe_folder_path" flex="1"/>
+              <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
+            </hbox>        
+          </vbox>
+          
+          <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          
+          <hbox>
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+          </hbox>
+                
+        </vbox>
+      
+        <vbox class="sb_faceplate">
+          <x_resizer id="frame_resize_mo" dir="topright" x_style="cursor: ne-resize;"/>
+          <x_resizer id="frame_resize_m" dir="right" x_style="cursor: e-resize;" flex="1"/>
+          <x_resizer id="frame_resize_mo" dir="bottomright" x_style="cursor: se-resize;"/>
+        </vbox>
+        
+      </hbox> <!-- frame_middle_resizers -->
+    </hbox>
+    <hbox class="sb_faceplate" id="frame_bottom_resizers">
+      <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
+      <x_resizer id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
+      <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
+    </hbox>
+  </vbox>
+
+
+   
+</stack>
+ 
+<!-- SCRIPTS -->
+<script type="application/x-javascript" src="chrome://rmp_demo/content/rmp_demo.js" />
+<script type="application/x-javascript" src="chrome://rmp_demo/content/sbIDataRemote.js" />
+<script type="application/x-javascript" src="chrome://rmp_demo/content/songbird_interfaces.js" />
+<script type="application/x-javascript" src="chrome://rmp_demo/content/dynamic_playlist_updater.js" />
+  
+  <script>
+  <![CDATA[
+    function doLoad()
+    {
+      const SUBSCRIBE_FOLDER_KEY = "download.folder";
+      try
+      {
+        var theTextbox = document.getElementById( "subscribe_folder_path" );
+        theTextbox.value = SBDataGetValue( SUBSCRIBE_FOLDER_KEY );
+        var ok = document.getElementById( "button_ok" );
+        ok.focus();
+        if ( window.arguments && window.arguments[0] )
+        {
+          document.getElementById( "subscribe_url" ).value = window.arguments[0].url;
+        }
+      }
+      catch(err)
+      {
+        alert( "subscribe.xml - doLoad - " + err );
+      }
+    }
+    function doOK()
+    {
+      const SUBSCRIBE_FOLDER_KEY = "download.folder";
+      const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+      try
+      {
+        // Make sure the folder is valid?
+        var theTextbox = document.getElementById( "subscribe_folder_path" );
+        var theFolder = theTextbox.value;
+     	  var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+     	  try
+     	  {
+          aLocalFile.initWithPath( theFolder );
+          
+          // Thou shalt not.
+          if ( ! aLocalFile.isDirectory() )
+          {
+            alert( "Please select a valid destination folder for download." );
+            return false;
+          }
+        }
+        catch ( err )
+        {
+          alert( "THROW - Please select a valid destination folder for download." );
+          return false;
+        }
+        SBDataSetValue( SUBSCRIBE_FOLDER_KEY, theFolder );
+      
+        var url = document.getElementById( "subscribe_url" ).value;
+        var time = parseInt( document.getElementById( "subscribe_interval" ).value );
+        var unit = document.getElementById("subscribe_interval_unit").value;
+        
+        if ( time == 0 )
+        {
+          return false;
+        }
+        
+        switch(unit)
+        {
+          case "days": time = time * 24 * 60; break;
+          case "hours": time = time * 60; break;
+        }
+        
+        var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
+        var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+        aDBQuery.SetAsyncQuery( false );
+        aDBQuery.SetDatabaseGUID( "songbird" );
+        
+        var readable_name = getServer( url );
+        if ( window.arguments && window.arguments[0] && window.arguments[0].readable_name )
+        {
+          readable_name = window.arguments[0].readable_name + " ";
+        }
+    
+        var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
+        var guid = aUUIDGenerator.generateUUID();
+        
+        aPlaylistManager.CreateDynamicPlaylist(guid, readable_name, url, url, url, time, aDBQuery);
+
+        //Run the dynamic playlist updater to download the new playlist.
+        SBDataFireEvent( "dynamic.playlist.update" );
+      
+        if ( window.arguments && window.arguments[0] )
+        {
+          window.arguments[0].value = theTextbox.value;
+          window.arguments[0].retval = "ok";
+        }
+      }
+      catch ( err )
+      {
+        alert( "subscribe.xul - doOK - " + err );
+      }
+      return true;
+    }
+    function doCancel()
+    {
+      if ( window.arguments && window.arguments[0] )
+      {
+        var theTextbox = document.getElementById( "subscribe_folder_path" );
+        window.arguments[0].value = theTextbox.value;
+        window.arguments[0].retval = "cancel";
+      }
+      return true;
+    }
+    function getServer( url )
+    {
+      retval = "";
+      try
+      {
+        var aURL = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURL);
+        aURL.spec = url;
+        var host = aURL.host;
+        var left = host.indexOf(".");
+        var right = host.lastIndexOf(".");
+        if ( left != right )
+        {
+          host = host.substr( left + 1, host.length );
+        }
+        retval = host;
+      }
+      catch (e) {}
+      return retval;
+    }
+    function doBrowse()
+    {
+      const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
+      var nsIFilePicker = Components.interfaces.nsIFilePicker;
+      var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
+      fp.init( window, "", nsIFilePicker.modeGetFolder);
+      var res = fp.show();
+      if ( res == nsIFilePicker.returnOK )
+      {
+        var theTextbox = document.getElementById( "subscribe_folder_path" );
+        theTextbox.value = fp.file.path;
+      }
+    }
+  ]]>
+  </script>
+  
+  
+</window>

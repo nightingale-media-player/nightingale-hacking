@@ -1,0 +1,151 @@
+
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY window.ok          "確定" >
+<!ENTITY window.cancel      "取消" >
+<!ENTITY window.browse      "瀏覽..." >
+
+<!ENTITY menu.file          "檔案" >
+<!ENTITY menu.file.new      "新增播放清單..." >
+<!ENTITY menu.file.smart    "新增智慧型播放清單..." >
+<!ENTITY menu.file.remote   "新增遠端播放清單..." >
+<!ENTITY menu.file.open     "開啟檔案..." >
+<!ENTITY menu.file.url      "自 URL 開啟..." >
+<!ENTITY menu.file.playlist "載入播放清單..." >
+<!ENTITY menu.file.scan     "掃描媒體檔..." >
+<!ENTITY menu.file.htmlbar  "總是顯示網路列" >
+<!ENTITY menu.file.skin     "其他面板" >
+<!ENTITY menu.file.window   "開啟主視窗" >
+<!ENTITY menu.file.mini     "開啟迷你播放器" >
+<!ENTITY menu.file.about    "關於 Songbird..." >
+<!ENTITY menu.file.exit     "離開" >
+
+<!ENTITY menu.edit          "編輯" >
+<!ENTITY menu.edit.undo     "復原" >
+<!ENTITY menu.edit.cut      "剪下" >
+<!ENTITY menu.edit.copy     "複製" >
+<!ENTITY menu.edit.paste    "貼上" >
+<!ENTITY menu.edit.clear    "清除" >
+<!ENTITY menu.edit.selall   "全選" >
+<!ENTITY menu.edit.selnone  "取消全選" >
+
+<!ENTITY menu.controls      "控制" >
+<!ENTITY menu.control.play  "播放/暫停" >
+<!ENTITY menu.control.next  "下一曲" >
+<!ENTITY menu.control.prev  "上一曲" >
+<!ENTITY menu.control.shuf  "隨機播放" >
+<!ENTITY menu.control.repa  "重複全部" >
+<!ENTITY menu.control.rep1  "重複單曲" >
+<!ENTITY menu.control.repx  "不要重複" >
+
+<!ENTITY menu.services        "服務" >
+<!ENTITY menu.services.browse "瀏覽服務..." >
+
+<!ENTITY menu.devices       "裝置" >
+
+<!ENTITY menu.help          "說明" >
+<!ENTITY menu.help.topics   "說明主題..." >
+<!ENTITY menu.help.about    "關於 Songbird..." >
+
+<!ENTITY html.context.open  "開啟" >
+<!ENTITY html.context.play  "播放" >
+<!ENTITY html.context.add   "新增到媒體庫" >
+
+<!ENTITY playlist.context.remove  "移除" >
+<!ENTITY playlist.context.rename  "重新命名" >
+<!ENTITY playlist.context.search  "搜尋" >
+<!ENTITY playlist.context.lyrics  "歌詞" >
+
+<!ENTITY tooltip.miniplayer       "切換到迷你播放器" >
+<!ENTITY tooltip.minimize         "最小化" >
+<!ENTITY tooltip.maximize         "最大化/還原" >
+<!ENTITY tooltip.exit             "離開" >
+<!ENTITY tooltip.control.back     "上一曲" >
+<!ENTITY tooltip.control.play     "播放" >
+<!ENTITY tooltip.control.pause    "暫停" >
+<!ENTITY tooltip.control.fwd      "下一曲" >
+<!ENTITY tooltip.control.mute     "靜音" >
+<!ENTITY tooltip.control.volume   "音量" >
+<!ENTITY tooltip.control.repeat   "重複" >
+<!ENTITY tooltip.control.shuffle  "隨機播放" >
+<!ENTITY tooltip.control.curtrack "尋找目前曲目" >
+<!ENTITY tooltip.control.service  "切換資訊面板顯示" >
+<!ENTITY tooltip.search           "搜尋" >
+<!ENTITY tooltip.browser.back     "瀏覽上一頁" >
+<!ENTITY tooltip.browser.fwd      "瀏覽下一頁" >
+<!ENTITY tooltip.browser.stop     "停止瀏覽器" >
+<!ENTITY tooltip.browser.home     "首頁" >
+<!ENTITY tooltip.browser.playlist "檢視本網頁的可用媒體" >
+<!ENTITY tooltip.browser.download "檢視目前下載" >
+
+<!ENTITY smart.window             "智慧型播放清單建構器" >
+<!ENTITY smart.library            "選擇媒體庫:" >
+<!ENTITY smart.limit              "限制到" >
+<!ENTITY smart.match              "符合" >
+<!ENTITY smart.any                "任何" >
+<!ENTITY smart.all                "所有" >
+<!ENTITY smart.following          "的下列條件：" >   
+<!ENTITY smart.random             "隨機" >
+<!ENTITY smart.album              "專輯" >
+<!ENTITY smart.artist             "演出者" >
+<!ENTITY smart.genre              "類型" >
+<!ENTITY smart.title              "標題" >
+<!ENTITY smart.high_rating        "高評價" >
+<!ENTITY smart.low_rating         "低評價" >
+<!ENTITY smart.most_recent        "最近期" >
+<!ENTITY smart.least_recent       "最不近期" >
+<!ENTITY smart.most_often         "最經常" >
+<!ENTITY smart.least_often        "最不經常" >
+<!ENTITY smart.most_added         "新增最多" >
+<!ENTITY smart.least_added        "新增最少" >
+<!ENTITY smart.minutes            "分鐘" >
+<!ENTITY smart.hours              "小時" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "歌曲" >
+<!ENTITY smart.contains           "包含" >
+<!ENTITY smart.not_contain        "不包含" >
+<!ENTITY smart.is                 "是" >
+<!ENTITY smart.is_not             "不是" >
+<!ENTITY smart.starts             "開頭是" >
+<!ENTITY smart.ends               "結尾是" >
+         
+<!ENTITY download.window          "下載" >
+<!ENTITY download.select          "選擇目的地資料夾：" >
+<!ENTITY download.always          "總是使用此資料夾" >
+
+
+
+<!ENTITY locale.language          "語言" >
+
+
+<!ENTITY menu.file.dlfolder "Set Download Folder..." >
+<!ENTITY menu.file.watch "Set Watched Folders..." >
+<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY open_url.title "Open URL" >
+<!ENTITY subscribe.title "Subscribe" >
+<!ENTITY subscribe.minutes "Minute(s)" >
+<!ENTITY subscribe.hours "Hour(s)" >
+<!ENTITY subscribe.days "Day(s)" >
+<!ENTITY subscribe.autocheck "Automatically update every" >
+<!ENTITY subscribe.destinationfolder "Select destination folder:" >
+<!ENTITY exists.title "Playlist Exists" >
+<!ENTITY exists.exists "A playlist with that name already exists!" >
+<!ENTITY media_scan.title "Scan for Media" >
+<!ENTITY media_scan.watch "Watch this folder for new media" >
+<!ENTITY new_playlist.title "Create New Playlist" >
+<!ENTITY new_playlist.name "Enter the name of the new playlist." >
+<!ENTITY addtoplaylist.title "Add To Playlist" >
+<!ENTITY addtoplaylist.create "Create new playlist" >
+<!ENTITY watchfolder.title "Watch Folders" >
+<!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
+
+
+
+
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+
+

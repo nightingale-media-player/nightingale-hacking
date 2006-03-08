@@ -1,0 +1,136 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+// Generally speaking I/O commands can be issued to a device 
+// if DEVICE_IDLE for the device. But if DEVICE_DOWNLOADING then it can be 
+// asked to transfer more tracks, and the same applies to DEVICE_UPLOADING and DEVICE_DELETING.
+// DEVICE_TRANSFERRING_PAUSED indicates a paused transfer state.
+//
+//#define DEVICE_IDLE                 0
+//#define DEVICE_BUSY                 1
+//#define DEVICE_DOWNLOADING          2
+//#define DEVICE_UPLOADING            3
+//#define DEVICE_DOWNLOAD_PAUSED      4
+//#define DEVICE_UPLOAD_PAUSED        5
+//#define DEVICE_DELETING             6
+
+[scriptable, uuid(D5043150-734E-4e54-943A-80068DE665EF)]
+interface sbIDeviceBaseCallback : nsISupports
+{
+  void onDeviceConnect(in wstring deviceString);
+  void onDeviceDisconnect(in wstring deviceString);
+  void onTransferStart(in wstring strSourceURL, in wstring strDestinationURL);
+  void onTransferComplete(in wstring strSourceURL, in wstring strDestinationURL, in PRInt32 nStatus);
+};
+
+// Base interface for all supported devices. The supported devices can be
+// CD, Windows Media Device, iPod, .. and even a download device for downloading
+// and uploading files.
+// All devices implement this base interface to perform the basic operations such as
+// enumerating tracks (media files) and perform supported I/O operations.
+// In addition, a device class instance, not to be confused with a device instance,
+// can provide extended information about a device, for example recording speed for a CD drive.
+// "Device Category" is used in identifying device class instances (using sbIDeviceManager)
+// and "Device String" is for identifying a device.
+// For instance "Songbird CD Device" is the Device Category and "D:\" is the Device String.
+//
+[scriptable, uuid(8A4F139A-C504-4470-8BB4-A43F33328B41)]
+interface sbIDeviceBase : nsISupports
+{
+	attribute wstring name;
+
+  PRBool Initialize();
+  PRBool Finalize();
+
+  PRBool AddCallback(in sbIDeviceBaseCallback pCallback);
+  PRBool RemoveCallback(in sbIDeviceBaseCallback pCallback);
+
+  // Device category name for this class of devices
+	wstring GetDeviceCategory();
+
+	// Device identifying string for a device at index
+	wstring EnumDeviceString(in PRUint32 index);
+	PRUint32 GetNumDevices();
+	wstring GetNumDestinations(in wstring DeviceString); 
+
+	// To get the database context for a device
+	wstring GetContext(in wstring deviceString);
+
+  PRUint32 GetDeviceState(in wstring deviceString);
+
+  // If calling DownloadTable() or UploadTable() then MakeTransferTable() can be called to create
+  // a transfer table. Or AutoDownloadTable() and AutoUploadTable() can be called to create transfer
+  // table and begin transfer right away.
+	PRBool MakeTransferTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable);
+  
+  PRBool DownloadTable(in wstring DeviceString, in wstring TableName);
+  PRBool UploadTable(in wstring DeviceString, in wstring TableName);
+	
+  PRBool AutoDownloadTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, in wstring FilterColumn, in PRUint32 FilterCount, [array, size_is(FilterCount)] in wstring FilterValues, in wstring sourcePath, in wstring destPath, out wstring TransferTable);
+  PRBool AutoUploadTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, in wstring FilterColumn, in PRUint32 FilterCount, [array, size_is(FilterCount)] in wstring FilterValues, in wstring sourcePath, in wstring destPath, out wstring TransferTable);
+	
+  wstring GetDownloadTable(in wstring deviceString);
+  wstring GetUploadTable(in wstring deviceString);
+
+	PRUint32 GetUsedSpace(in wstring deviceString);
+	PRUint32 GetAvailableSpace(in wstring deviceString);
+
+  // Get all tracks
+  PRBool GetTrackTable(in wstring deviceString, out wstring dbContext, out wstring tableName);
+
+	// Enumerating tracks
+	//[noscript] PRUint32 GetNumTracks();
+	//[noscript] PRBool GetFirstTrack(TrackInfo* trackInfo);
+	//[noscript] PRBool GetNextTrack(TrackInfo* trackInfo);
+	
+
+  PRBool RemoveTranferTracks(in wstring deviceString, in PRUint32 index);
+	PRBool AbortTransfer(in wstring deviceString);
+  PRBool SuspendTransfer();
+  PRBool ResumeTransfer();
+
+	// Download is to copy a track from the device to the host
+	PRBool IsDownloadSupported(in wstring deviceString);
+    // Upload is to copy a track from host to the device
+	PRBool IsUploadSupported(in wstring deviceString);
+
+	PRBool IsTransfering(in wstring deviceString);
+
+	PRUint32 GetSupportedFormats(in wstring deviceString); // This could be the codecs installed on the device
+
+	PRBool IsDeleteSupported(in wstring deviceString);
+	PRBool DeleteTable(in wstring deviceString, in wstring dbContext, in wstring tableName);
+	
+	// This method could be used for updating tracks on a device
+	// or applying CDDB match for a CD.
+	PRBool IsUpdateSupported(in wstring deviceString);
+	PRBool UpdateTable(in wstring deviceString, in wstring tableName);
+	
+	PRBool IsEjectSupported(in wstring deviceString); // Returns false if eject is not supported
+	PRBool EjectDevice(in wstring deviceString); // Returns false if eject is not supported
+};
