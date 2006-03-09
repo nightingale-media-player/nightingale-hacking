@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!--?xml-stylesheet href="chrome://rmp_demo/skin/otherskin.css" type="text/css" title="Other Skin"?-->
-<?xml-stylesheet href="chrome://rmp_demo/skin/rmp_demo.css" type="text/css" title="Skin"?>
+<!--?xml-stylesheet href="chrome://songbird/skin/cardinal.css" type="text/css" title="Other Skin"?-->
+<?xml-stylesheet href="chrome://songbird/skin/rmp_demo.css" type="text/css" title="Skin"?>
 
-<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
 
 <!--
 /*
@@ -50,7 +50,7 @@
 >
   <!-- Sometimes we need to convince the DTD files to not be stupid
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/language_scan.js" />
+   src="chrome://songbird/content/language_scan.js" />
    -->  
 
   <!-- Pop up the mainwin as soon as possible -->
@@ -79,7 +79,7 @@
     
     if ( pop )
     {
-      setTimeout( 'window.open( "chrome://rmp_demo/content/mainwin.xul", "mainwin", "chrome,modal=no" );', 0 ); // (sigh)
+      setTimeout( 'window.open( "chrome://songbird/content/xul/mainwin.xul", "mainwin", "chrome,modal=no" );', 0 ); // (sigh)
     }
   }
   catch ( err )
@@ -89,7 +89,7 @@
   ]]>
   </script>
 
-  <stringbundle id="songbird_strings" src="chrome://rmp_demo/locale/songbird.properties"/>
+  <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
 <windowregion/>
 <stack flex="1" id="window_parent">    
   <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
@@ -144,7 +144,7 @@
             <spacer height="5"/>
             <hbox>
             <spacer flex="1"/>
-            <iframe id="video_controls" src="chrome://rmp_demo/content/miniplayer/miniplayer.xul?video"/>         
+            <iframe id="video_controls" src="chrome://songbird/content/xul/miniplayer.xul?video"/>         
             <spacer flex="1"/>
             </hbox>
         </vbox>
@@ -169,47 +169,47 @@
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_repeater.js"/>
+   src="chrome://songbird/content/scripts/player_repeater.js"/>
   <!--script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_loop.js"/-->
+   src="chrome://songbird/content/scripts/player_loop.js"/-->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_controls.js"/>
+   src="chrome://songbird/content/scripts/player_controls.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/sbIDataRemote.js"/>
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/sbIAsyncForLoop.js"/>
+   src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
    
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/coreVLC.js"/>
+   src="chrome://songbird/content/scripts/coreVLC.js"/>
   
   <!-- Load the core wrappers (SAME AS THE OLD BOSS) -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_wmp.js"/>
+   src="chrome://songbird/content/scripts/core_wmp.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_qt.js"/>
+   src="chrome://songbird/content/scripts/core_qt.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_vlc.js"/>
+   src="chrome://songbird/content/scripts/core_vlc.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_vlc2.js"/>
+   src="chrome://songbird/content/scripts/core_vlc2.js"/>
 
   <!-- Load the "background" scripts -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/dynamic_playlist_updater.js"/>
+   src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/watch_folders.js"/>
+   src="chrome://songbird/content/scripts/watch_folders.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/back_scan.js"/>
+   src="chrome://songbird/content/scripts/back_scan.js"/>
 
 
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/rmp_demo.js"/>
+   src="chrome://songbird/content/scripts/rmp_demo.js"/>
    
   <!-- Scan the available dtd files to see if they need fixing. 
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/language_scan.js"/>
+   src="chrome://songbird/content/language_scan.js"/>
   -->
 
 </window>

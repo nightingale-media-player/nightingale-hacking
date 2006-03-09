@@ -1,5 +1,5 @@
 //Songbird Default Prefs.
-pref("toolkit.defaultChromeURI", "chrome://rmp_demo/content/rmp_demo.xul");
+pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/rmp_demo.xul");
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 
 pref("browser.sessionhistory.max_total_viewers", 0);

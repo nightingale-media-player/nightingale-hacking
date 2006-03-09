@@ -153,7 +153,7 @@
             this_column_node.setAttribute("id", name);
 
             // Try to load the data
-            var src = "chrome://rmp_demo/locale/songbird.properties";
+            var src = "chrome://songbird/locale/songbird.properties";
             var stringBundleService =
                 Components.classes["@mozilla.org/intl/stringbundle;1"]
                 .getService(Components.interfaces.nsIStringBundleService);

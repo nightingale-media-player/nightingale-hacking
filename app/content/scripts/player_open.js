@@ -68,7 +68,7 @@ try
     url_open_data.URL = URL.GetValue();
     url_open_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://rmp_demo/content/open_url.xul", "open_url", "chrome,modal=yes,centerscreen", url_open_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/open_url.xul", "open_url", "chrome,modal=yes,centerscreen", url_open_data );
     if ( url_open_data.retval == "ok" )
     {
       // And if we're good, play it.

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!--?xml-stylesheet href="chrome://rmp_demo/skin/otherskin.css" type="text/css" title="Other Skin"?-->
-<?xml-stylesheet href="chrome://rmp_demo/skin/rmp_demo.css" type="text/css" title="Skin"?>
+<!--?xml-stylesheet href="chrome://songbird/skin/cardinal.css" type="text/css" title="Other Skin"?-->
+<?xml-stylesheet href="chrome://songbird/skin/rmp_demo.css" type="text/css" title="Skin"?>
 
-<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
 
 <!--
 /*
@@ -48,7 +48,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
 
-<stringbundle id="songbird_strings" src="chrome://rmp_demo/locale/songbird.properties"/>
+<stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
 <windowregion/>
 
 <stack flex="1" id="window_parent"
@@ -186,7 +186,7 @@
               <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
               <menu id="songbird_menu_item_help" label="&menu.help;" class="sb_faceplate">
                 <menupopup id="help-popup">
-                  <!-- <menuitem id="help.demo" label="SVG Demo" value="chrome://rmp_demo/content/svg_events2.xml"/> -->
+                  <!-- <menuitem id="help.demo" label="SVG Demo" value="chrome://songbird/content/svg_events2.xml"/> -->
                   <menuitem id="help.topics" label="&menu.help.topics;" value="&web.url.first;"/>
                   <menuseparator/>
                   <menuitem id="file.about" label="&menu.help.about;"/>
@@ -504,58 +504,58 @@
   <script type="application/x-javascript" 
    src="chrome://global/content/nsTransferable.js"/> 
   <script type="application/x-javascript"  
-   src="chrome://rmp_demo/content/dragAndDrop.js" />
+   src="chrome://songbird/content/scripts/dragAndDrop.js" />
   <script type="application/x-javascript"  
-   src="chrome://rmp_demo/content/dndSourceTracker.js" />
+   src="chrome://songbird/content/scripts/dndSourceTracker.js" />
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_repeater.js"/>
+   src="chrome://songbird/content/scripts/player_repeater.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/sbIPlaylistPlayback.js"/>
+   src="chrome://songbird/content/scripts/sbIPlaylistPlayback.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_controls.js"/>
+   src="chrome://songbird/content/scripts/player_controls.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_open.js"/>
+   src="chrome://songbird/content/scripts/player_open.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/sbIDataRemote.js"/>
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/sbIAsyncForLoop.js"/>
+   src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
 
   <!-- Load the core wrappers  -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_wmp.js"/>
+   src="chrome://songbird/content/scripts/core_wmp.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_qt.js"/>
+   src="chrome://songbird/content/scripts/core_qt.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_vlc.js"/>
+   src="chrome://songbird/content/scripts/core_vlc.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_vlc2.js"/>
+   src="chrome://songbird/content/scripts/core_vlc2.js"/>
 
   <!-- Load the Songbird stuff -->
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/rmp_demo.js" />
+   src="chrome://songbird/content/scripts/rmp_demo.js" />
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/async_webplaylist.js" />
+   src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/songbird_hack.js" />
+   src="chrome://songbird/content/scripts/songbird_hack.js" />
   <!--script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/player_loop.js" /-->
+   src="chrome://songbird/content/scripts/player_loop.js" /-->
   <!-- Load the main window data bindings -->
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/mainwin.data.js" />
+   src="chrome://songbird/content/scripts/mainwin.data.js" />
 
   <!-- Load the locale switcher -->
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/switch_locale.js" />
+   src="chrome://songbird/content/scripts/switch_locale.js" />
   
   <!-- Generic message box -->
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/messagebox.js" />
+   src="chrome://songbird/content/scripts/messagebox.js" />
   <!-- Generic restart box -->
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/restartbox.js" />
+   src="chrome://songbird/content/scripts/restartbox.js" />
    
 </window>

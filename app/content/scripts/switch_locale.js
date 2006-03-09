@@ -40,7 +40,7 @@ function switchLocale(locale, displayName) {
       prefs.setCharPref("general.useragent.locale", locale);
 
       var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-      var prop = sbs.createBundle("chrome://rmp_demo/locale/songbird.properties");
+      var prop = sbs.createBundle("chrome://songbird/locale/songbird.properties");
       var str = "This setting will take effect after you restart Songbird";
       var title = "Localization";
       try {

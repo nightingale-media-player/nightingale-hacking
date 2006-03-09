@@ -236,7 +236,7 @@ try
       {
         if ( !thePlaylistTree && !theLastSearchEventTarget )
         {
-          LaunchMainPaneURL( "chrome://rmp_demo/content/main_pane/main_pane.xul?library" );
+          LaunchMainPaneURL( "chrome://songbird/content/xul/main_pane.xul?library" );
         }
         
         if ( thePlaylistRef.GetValue().length > 0 )

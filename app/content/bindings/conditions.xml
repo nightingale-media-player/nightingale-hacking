@@ -474,7 +474,7 @@
             this.metadata.length = 0;
 
             // Load up the string bundle
-            var src = "chrome://rmp_demo/locale/songbird.properties";
+            var src = "chrome://songbird/locale/songbird.properties";
             var stringBundleService =
                 Components.classes["@mozilla.org/intl/stringbundle;1"]
                 .getService(Components.interfaces.nsIStringBundleService);

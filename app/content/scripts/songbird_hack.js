@@ -474,7 +474,7 @@ function onCurrentTrack()
   {
     // This needs to eventually load the "current playing playlist"
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://rmp_demo/content/main_pane/main_pane.xul?library" );
+    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?library" );
     theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
   }
   else
@@ -830,7 +830,7 @@ var SBDocStartListener = {
       if ( ( ( aState & ( STATE_STOP | STATE_IS_DOCUMENT ) ) != 0 ) && ( aStatus == 0x804B001E ) ) // ? 0x804B001E?
       {
       var theServiceTree = document.getElementById( 'frame_servicetree' );
-      theServiceTree.LaunchURL( "chrome://rmp_demo/content/cannot_load.html" );
+      theServiceTree.LaunchURL( "chrome://songbird/content/html/cannot_load.html" );
       }
     }
     catch ( err )
@@ -1273,7 +1273,7 @@ function onBrowserPlaylist()
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://rmp_demo/content/main_pane/main_pane.xul?" + WEB_PLAYLIST_TABLE + "," + WEB_PLAYLIST_CONTEXT );
+    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?" + WEB_PLAYLIST_TABLE + "," + WEB_PLAYLIST_CONTEXT );
   }
 }
 
@@ -1321,7 +1321,7 @@ function onBrowserDownload()
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://rmp_demo/content/main_pane/main_pane.xul?" + table + "," + guid );
+    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
   }
 }
 
@@ -1986,8 +1986,8 @@ try
       {
         onMinimize();
         SBDataSetValue( "option.skin", 1 );
-        prefs.setCharPref("general.skins.selectedSkin", "otherskin");  
-        window.open( "chrome://rmp_demo/content/mainwin.xul", "", "chrome,modal=no" );
+        prefs.setCharPref("general.skins.selectedSkin", "cardinal");  
+        window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
         setTimeout( "onExit();", 1000 );
       }
       else
@@ -1995,7 +1995,7 @@ try
         onMinimize();
         SBDataSetValue( "option.skin", 0 );
         prefs.setCharPref("general.skins.selectedSkin", "songbird");  
-        window.open( "chrome://rmp_demo/content/mainwin.xul", "", "chrome,modal=no" );
+        window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
         setTimeout( "onExit();", 1000 );
       }
 }
@@ -2087,12 +2087,12 @@ function SBOpenPreferences(paneID)
 function SBSetDownloadFolder()
 {
   // Just open the window, we don't care what the user does in it.
-  SBOpenModalDialog( "chrome://rmp_demo/content/download.xul", "", "chrome,modal=yes,centerscreen", null );
+  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", null );
 }
 
 function SBWatchFolders()
 {
-  SBOpenModalDialog( "chrome://rmp_demo/content/watch_folders.xul", "", "chrome,modal=yes,centerscreen", null );
+  SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,modal=yes,centerscreen", null );
 }
 
 // Menubar handling
@@ -2155,7 +2155,7 @@ function SBScanMedia( )
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
     // Open the non-modal dialog
-    SBOpenModalDialog( "chrome://rmp_demo/content/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
   }
   theMediaScanIsOpen.SetValue( false  );
 }
@@ -2166,7 +2166,7 @@ function SBMabOpen()
   mab_data.retval = "";
   
   // Open the modal dialog
-  SBOpenModalDialog( "chrome://rmp_demo/content/mab.xul", "Mozilla Amazon Browser", "chrome,modal=no", mab_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome,modal=no", mab_data );
 }
 
 function SBNewPlaylist()
@@ -2191,7 +2191,7 @@ function SBNewPlaylist()
 function SBMiniplayerOpen()
 {
   // Open the window
-  window.open( "chrome://rmp_demo/content/miniplayer/miniplayer.xul", "", "chrome,modal=no,popup=yes" );
+  window.open( "chrome://songbird/content/xul/miniplayer.xul", "", "chrome,modal=no,popup=yes" );
   onExit();
 }
 
@@ -2205,7 +2205,7 @@ function SBNewSmartPlaylist( guid, table )
   smart_playlist.guid = guid;
   smart_playlist.table = table
   // Open the window
-  SBOpenModalDialog( "chrome://rmp_demo/content/smart_playlist.xul", "", "chrome,modal=yes,centerscreen", smart_playlist );
+  SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,modal=yes,centerscreen", smart_playlist );
   
   if ( smart_playlist.retval == "ok" )
   {
@@ -2219,7 +2219,7 @@ function SBKoshiOpen()
   var koshi_data = new Object();
   koshi_data.retval = "";
   // Open the window
-  SBOpenModalDialog( "chrome://rmp_demo/content/koshi_test.xul", "", "chrome,modal=yes,centerscreen", koshi_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/koshi_test.xul", "", "chrome,modal=yes,centerscreen", koshi_data );
 }
 
 function SBExtensionsManagerOpen()
@@ -2263,7 +2263,7 @@ function SBSubscribe( url, guid, table, readable_name )
   subscribe_data.readable_name = readable_name;
   // Open the window
   SBScanServiceTreeNewEntryEditable();
-  SBOpenModalDialog( "chrome://rmp_demo/content/subscribe.xul", "", "chrome,modal=yes,centerscreen", subscribe_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/subscribe.xul", "", "chrome,modal=yes,centerscreen", subscribe_data );
   if ( subscribe_data.retval == "ok" )
   {
     if ( guid && table )
@@ -2287,7 +2287,7 @@ function About( )
   var about_data = new Object();
   about_data.retval = "";
   // Open the modal dialog
-  SBOpenModalDialog( "chrome://rmp_demo/content/about.xul", "about", "chrome,modal=yes,centerscreen", about_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,modal=yes,centerscreen", about_data );
   if ( about_data.retval == "ok" )
   {
   }  
@@ -2359,7 +2359,7 @@ function SBDropped()
     media_scan_data.URL = theDropPath;
     media_scan_data.retval = "";
     // Open the non-modal dialog
-    SBOpenModalDialog( "chrome://rmp_demo/content/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
     theMediaScanIsOpen.SetValue( false  );
   }
 }
@@ -2429,7 +2429,7 @@ function SBGetServiceImageFromUrl( url )
             if ( tree_image == "" )
             {
               // For now, use a default.  Assume it's playlisty.
-              tree_image = "chrome://rmp_demo/skin/default_skin/icon_lib_16x16.png";
+              tree_image = "chrome://songbird/skin/default/icon_lib_16x16.png";
             }
           
             retval = tree_image;
@@ -2622,7 +2622,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                 else
                 {
                   // Open the window
-                  SBOpenModalDialog( "chrome://rmp_demo/content/download.xul", "", "chrome,modal=yes,centerscreen", download_data );
+                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", download_data );
                 }
 
                 // Pick download destination
@@ -3257,7 +3257,7 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
             else
             {
                 // Open the window
-                SBOpenModalDialog( "chrome://rmp_demo/content/download.xul", "", "chrome,modal=yes,centerscreen", ripping_data );
+                SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", ripping_data );
             }
 
             // Pick download destination

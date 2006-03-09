@@ -27,9 +27,9 @@
  */
 -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<?xml-stylesheet href="chrome://songbird/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
 <dialog 
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -100,7 +100,7 @@
 
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/rmp_demo.js" />
+   src="chrome://songbird/content/scripts/rmp_demo.js" />
   <script>
   <![CDATA[
     // Init the text box to the last url played (shrug).

@@ -27,7 +27,7 @@
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -96,28 +96,28 @@
                 <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
                 <xul:menuseparator/>
                 <xul:menuitem id="search.popup.google" 
-                  label="Google" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/google.ico"
+                  label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
                 />
                 <xul:menuitem id="search.popup.wiki" 
-                  label="Wikipedia" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/pogues.ico"
+                  label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/pogues.ico"
                 />
                 <xul:menuitem id="search.popup.yahoo" 
-                  label="Yahoo!" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/yahoo.ico"
+                  label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
                 />
                 <xul:menuitem id="search.popup.emusic" 
-                  label="eMusic" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/emusic.ico"
+                  label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
                 />
                 <xul:menuitem id="search.popup.insound" 
-                  label="Insound" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/insound.ico"
+                  label="Insound" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/insound.ico"
                 />
                 <xul:menuitem id="playlist.popup.odeo" 
-                  label="Odeo" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/odeo.ico"
+                  label="Odeo" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/odeo.ico"
                 />
                 <xul:menuitem id="search.popup.shoutcast" 
-                  label="Shoutcast" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/shoutcast.ico"
+                  label="Shoutcast" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/shoutcast.ico"
                 />
                 <xul:menuitem id="search.popup.radiotime" 
-                  label="Radiotime" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/radiotime.ico"
+                  label="Radiotime" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/radiotime.ico"
                 />
               </xul:menupopup>
             </xul:menu>
@@ -126,7 +126,7 @@
                 <xul:menuitem id="lyrics_popup_term" sbid="lyrics_popup_term" label="" disabled="true"/>
                 <xul:menuseparator/>
                 <xul:menuitem id="lyrics.popup.google" 
-                  label="Google" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/google.ico"
+                  label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
                 />
               </xul:menupopup>
             </xul:menu>
@@ -150,16 +150,16 @@
       {
         // Load the javascript we want to use
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://rmp_demo/content/songbird_interfaces.js", this );
-        jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
-        jsLoader.loadSubScript( "chrome://rmp_demo/content/messagebox.js", this );
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
 
         jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
         jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
-        jsLoader.loadSubScript("chrome://rmp_demo/content/dragAndDrop.js", this);
+        jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
 
         // Load up the string bundle
-        var src = "chrome://rmp_demo/locale/songbird.properties";
+        var src = "chrome://songbird/locale/songbird.properties";
         var stringBundleService =
             Components.classes["@mozilla.org/intl/stringbundle;1"]
             .getService(Components.interfaces.nsIStringBundleService);
@@ -1931,7 +1931,7 @@
             // Make a data object to get the playlist to add to from the dialog
             var add_to_playlist_data = new Object();
             // Open the modal dialog
-            window.openDialog( "chrome://rmp_demo/content/add_to_playlist.xul", "add_to_playlist", "chrome,modal=yes, centerscreen", add_to_playlist_data );
+            window.openDialog( "chrome://songbird/content/xul/add_to_playlist.xul", "add_to_playlist", "chrome,modal=yes, centerscreen", add_to_playlist_data );
             if ( add_to_playlist_data.retval == "ok" )
             {
               // add them !

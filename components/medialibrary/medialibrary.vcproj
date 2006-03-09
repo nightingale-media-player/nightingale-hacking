@@ -34,7 +34,11 @@
 				DebugInformationFormat="4"
 				ForcedIncludeFiles="mozilla-config.h"/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+				Description="XPT Linking: sbMediaLibrary.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt"
+				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
+				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib common.lib"
@@ -85,7 +89,11 @@
 				DebugInformationFormat="3"
 				ForcedIncludeFiles="mozilla-config.h"/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+				Description="XPT Linking: sbMediaLibrary.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt"
+				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
+				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib common.lib"

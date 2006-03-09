@@ -48,8 +48,8 @@ function CPlayerRepeater()
 {
   // Hook it up
   var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://rmp_demo/content/songbird_interfaces.js", null );
-  jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", null );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", null );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", null );
 
   // First we need our internal API, originally stubbed to NULL
   this.doPlayImmediate_i  = CNullStub;

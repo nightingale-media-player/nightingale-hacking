@@ -258,7 +258,7 @@ try
       {
         if (LaunchMainPaneURL) // OPTIONAL CONNECTION -- this may fail because the faceplate's onMainPaneLoad may take time to retrieve a reference to the playlist tree
         {
-          LaunchMainPaneURL( "chrome://rmp_demo/content/main_pane/main_pane.xul?library" );
+          LaunchMainPaneURL( "chrome://songbird/content/xul/main_pane.xul?library" );
           SBPlayPlaylistIndex( 0 );
         }
       }

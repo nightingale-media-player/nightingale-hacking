@@ -125,10 +125,10 @@
 
           // Load the javascript we want to use
           var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-          jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
+          jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
           jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
           jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
-          jsLoader.loadSubScript("chrome://rmp_demo/content/dragAndDrop.js", this);
+          jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
           this.tree.builder.addListener( this );
         }
         catch ( err )

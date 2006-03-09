@@ -4,7 +4,6 @@
 	Version="7.10"
 	Name="app"
 	ProjectGUID="{00A5E4C1-0FFC-4932-8E50-763DF2E57054}"
-	RootNamespace="app"
 	Keyword="MakeFileProj">
 	<Platforms>
 		<Platform
@@ -48,237 +47,243 @@
 	</References>
 	<Files>
 		<Filter
-			Name="chrome"
+			Name="content"
 			Filter="">
 			<File
-				RelativePath=".\chrome\contents.rdf">
+				RelativePath=".\content\songbird.mn">
 			</File>
 			<Filter
-				Name="bindings"
+				Name="html"
 				Filter="">
 				<File
-					RelativePath=".\chrome\bindings\bindings.css">
+					RelativePath=".\content\html\about.html">
 				</File>
 				<File
-					RelativePath=".\chrome\bindings\conditions.xml">
+					RelativePath=".\content\html\cannot_load.html">
 				</File>
 				<File
-					RelativePath=".\chrome\bindings\filterlist.xml">
-				</File>
-				<File
-					RelativePath=".\chrome\bindings\folders.xml">
-				</File>
-				<File
-					RelativePath=".\chrome\bindings\multistatebutton.xml">
-				</File>
-				<File
-					RelativePath=".\chrome\bindings\playlist.xml">
-				</File>
-				<File
-					RelativePath=".\chrome\bindings\search.xml">
-				</File>
-				<File
-					RelativePath=".\chrome\bindings\seekbar.xml">
-				</File>
-				<File
-					RelativePath=".\chrome\bindings\windowregion.xml">
-				</File>
-			</Filter>
-			<Filter
-				Name="scripts"
-				Filter="">
-				<File
-					RelativePath=".\chrome\scripts\async_webplaylist.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\back_scan.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\core_qt.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\core_vlc.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\core_vlc2.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\core_wmp.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\dndSourceTracker.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\dragAndDrop.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\dynamic_playlist_updater.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\language_scan.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\mainwin.data.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\media_scan.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\messagebox.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\miniplayer.data.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\miniplayer.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\player_controls.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\player_loop.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\player_open.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\player_repeater.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\playlist_reader.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\restartbox.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\rmp_demo.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIAsyncForLoop.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIDataRemote.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIDOMEval.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIMediaLibrary.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIPlaylist.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIPlaylistManager.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbIPlaylistPlayback.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\sbISimplePlaylist.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\smilScript.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\songbird_hack.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\songbird_interfaces.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\switch_locale.js">
-				</File>
-				<File
-					RelativePath=".\chrome\scripts\watch_folders.js">
+					RelativePath=".\content\html\not_connected.html">
 				</File>
 			</Filter>
 			<Filter
 				Name="xul"
 				Filter="">
 				<File
-					RelativePath=".\chrome\xul\about.xul">
+					RelativePath=".\content\xul\about.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\add_to_playlist.xul">
+					RelativePath=".\content\xul\add_to_playlist.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\download.xul">
+					RelativePath=".\content\xul\control_pane.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\inner_frame.xul">
+					RelativePath=".\content\xul\download.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\koshi_test.xul">
+					RelativePath=".\content\xul\inner_frame.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\mab.xul">
+					RelativePath=".\content\xul\koshi_test.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\main_pane.xul">
+					RelativePath=".\content\xul\mab.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\mainwin.xul">
+					RelativePath=".\content\xul\main_pane.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\media_scan.xul">
+					RelativePath=".\content\xul\mainwin.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\messagebox.xul">
+					RelativePath=".\content\xul\media_scan.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\miniplayer.xul">
+					RelativePath=".\content\xul\messagebox.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\new_playlist.xul">
+					RelativePath=".\content\xul\miniplayer.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\open_url.xul">
+					RelativePath=".\content\xul\new_playlist.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\playlist_exists.xul">
+					RelativePath=".\content\xul\open_url.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\playlist_test.xul">
+					RelativePath=".\content\xul\playlist_exists.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\restartbox.xul">
+					RelativePath=".\content\xul\playlist_test.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\rmp_demo.xul">
+					RelativePath=".\content\xul\restartbox.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\smart_playlist.xul">
+					RelativePath=".\content\xul\rmp_demo.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\subscribe.xul">
+					RelativePath=".\content\xul\smart_playlist.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\watch_folders.xul">
+					RelativePath=".\content\xul\subscribe.xul">
 				</File>
 				<File
-					RelativePath=".\chrome\xul\yahoo_hybrid.xul">
+					RelativePath=".\content\xul\watch_folders.xul">
+				</File>
+				<File
+					RelativePath=".\content\xul\yahoo_hybrid.xul">
 				</File>
 			</Filter>
 			<Filter
-				Name="html"
+				Name="bindings"
 				Filter="">
 				<File
-					RelativePath=".\chrome\html\about.html">
+					RelativePath=".\content\bindings\bindings.css">
 				</File>
 				<File
-					RelativePath=".\chrome\html\cannot_load.html">
+					RelativePath=".\content\bindings\conditions.xml">
 				</File>
 				<File
-					RelativePath=".\chrome\html\not_connected.html">
+					RelativePath=".\content\bindings\filterlist.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\folders.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\multistatebutton.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\playlist.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\search.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\seekbar.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\servicetree.xml">
+				</File>
+				<File
+					RelativePath=".\content\bindings\windowregion.xml">
+				</File>
+			</Filter>
+			<Filter
+				Name="scripts"
+				Filter="">
+				<File
+					RelativePath=".\content\scripts\async_webplaylist.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\back_scan.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\core_qt.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\core_vlc.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\core_vlc2.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\core_wmp.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\dndSourceTracker.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\dragAndDrop.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\dynamic_playlist_updater.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\language_scan.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\mainwin.data.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\media_scan.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\messagebox.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\miniplayer.data.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\miniplayer.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\player_controls.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\player_loop.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\player_open.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\player_repeater.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\playlist_reader.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\restartbox.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\rmp_demo.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIAsyncForLoop.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIDataRemote.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIDOMEval.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIMediaLibrary.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIPlaylist.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIPlaylistManager.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbIPlaylistPlayback.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\sbISimplePlaylist.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\smilScript.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\songbird_hack.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\songbird_interfaces.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\switch_locale.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\watch_folders.js">
 				</File>
 			</Filter>
 		</Filter>
 		<Filter
-			Name="xulrunner"
+			Name="icons"
 			Filter="">
 			<File
-				RelativePath=".\xulrunner\updater.ini">
+				RelativePath=".\icons\songbird.ico">
 			</File>
 		</Filter>
 		<Filter
@@ -294,6 +299,12 @@
 				RelativePath=".\preferences\songbird-update-prefs.js">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\application.ini">
+		</File>
+		<File
+			RelativePath=".\xulrunner\updater.ini">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

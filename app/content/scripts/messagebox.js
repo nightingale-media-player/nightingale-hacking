@@ -35,7 +35,7 @@ function sbMessageBox( title, message )
     var messagebox_data = new Object();
     messagebox_data.title = title;
     messagebox_data.message = message;
-    window.openDialog( "chrome://rmp_demo/content/messagebox.xul", "messagebox", "chrome,modal=yes, centerscreen", messagebox_data );
+    window.openDialog( "chrome://songbird/content/xul/messagebox.xul", "messagebox", "chrome,modal=yes, centerscreen", messagebox_data );
   }
   catch ( err )
   {

@@ -28,10 +28,10 @@
 -->
 
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://rmp_demo/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://rmp_demo/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://rmp_demo/locale/rmp_demo.dtd" >
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
 <window 
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -53,11 +53,11 @@
 
   <!-- Load the core wrappers -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_wmp.js"/>
+   src="chrome://songbird/content/scripts/core_wmp.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_qt.js"/>
+   src="chrome://songbird/content/scripts/core_qt.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/core_vlc.js"/>
+   src="chrome://songbird/content/scripts/core_vlc.js"/>
 
 
 
@@ -107,24 +107,24 @@
     
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_repeater.js"/>
+   src="chrome://songbird/content/scripts/player_repeater.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/player_controls.js" />
+   src="chrome://songbird/content/scripts/player_controls.js" />
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/player_open.js"/>
+   src="chrome://songbird/content/scripts/player_open.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/sbIDataRemote.js"/>
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
-   src="chrome://rmp_demo/content/songbird_interfaces.js"/>
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   
   <!-- Load the demo-specific scripts -->
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/miniplayer/miniplayer.data.js" />
+   src="chrome://songbird/content/scripts/miniplayer.data.js" />
   <script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/miniplayer/miniplayer.js" />
+   src="chrome://songbird/content/scripts/miniplayer.js" />
   <!--script type="application/x-javascript"   
-   src="chrome://rmp_demo/content/player_loop.js" /-->
+   src="chrome://songbird/content/scripts/player_loop.js" /-->
   
 </window>

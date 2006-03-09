@@ -52,31 +52,31 @@
         >
           <xul:menupopup id="search.popup">
             <xul:menuitem id="search.popup.songbird" sid="search.item.songbird"
-              label="Library" class="menuitem-iconic" image="chrome://rmp_demo/skin/default_skin/icon_lib_16x16.png"
+              label="Library" class="menuitem-iconic" image="chrome://songbird/skin/default/icon_lib_16x16.png"
             />
             <xul:menuitem id="search.popup.google" 
-              label="Google" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/google.ico"
+              label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
             />
             <xul:menuitem id="search.popup.wiki" 
-              label="Wikipedia" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/pogues.ico"
+              label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/pogues.ico"
             />
             <xul:menuitem id="search.popup.yahoo" 
-              label="Yahoo!" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/yahoo.ico"
+              label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
             />
             <xul:menuitem id="search.popup.emusic" 
-              label="eMusic" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/emusic.ico"
+              label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
             />
             <xul:menuitem id="search.popup.insound" 
-              label="Insound" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/insound.ico"
+              label="Insound" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/insound.ico"
             />
             <xul:menuitem id="search.popup.odeo" 
-              label="Odeo" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/odeo.ico"
+              label="Odeo" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/odeo.ico"
             />
             <xul:menuitem id="search.popup.shoutcast" 
-              label="Shoutcast" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/shoutcast.ico"
+              label="Shoutcast" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/shoutcast.ico"
             />
             <xul:menuitem id="search.popup.radiotime" 
-              label="Radiotime" class="menuitem-iconic" image="chrome://rmp_demo/skin/service_icons/radiotime.ico"
+              label="Radiotime" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/radiotime.ico"
             />
           </xul:menupopup>
         </xul:button>
@@ -112,8 +112,8 @@
       // Woo, magic includes on instantiation!
       var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
       
-      jsLoader.loadSubScript( "chrome://rmp_demo/content/songbird_interfaces.js", this );
-      jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
+      jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
+      jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
       
 /*      
 */

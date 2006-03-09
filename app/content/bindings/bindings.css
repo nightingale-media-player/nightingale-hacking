@@ -27,41 +27,41 @@
 /* Uh... we should maybe have sb_ prefices or something. */
 
 seekbar {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/seekbar.xml#seekbar");
+  -moz-binding: url("chrome://songbird/content/bindings/seekbar.xml#seekbar");
 }
 
 smart_conditions {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/conditions.xml#conditions");
+  -moz-binding: url("chrome://songbird/content/bindings/conditions.xml#conditions");
 }
 
 watch_folders {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/folders.xml#folders");
+  -moz-binding: url("chrome://songbird/content/bindings/folders.xml#folders");
 }
 
 playlist {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/playlist.xml#playlist");
+  -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#playlist");
 }
 
 filterlist {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/filterlist.xml#filterlist");
+  -moz-binding: url("chrome://songbird/content/bindings/filterlist.xml#filterlist");
 }
 
 search {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/search.xml#search");
+  -moz-binding: url("chrome://songbird/content/bindings/search.xml#search");
 }
 
 multistatebutton {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/multistatebutton.xml#multistatebutton");
+  -moz-binding: url("chrome://songbird/content/bindings/multistatebutton.xml#multistatebutton");
 }
 
 windowregionset {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/windowregion.xml#windowregionset");
+  -moz-binding: url("chrome://songbird/content/bindings/windowregion.xml#windowregionset");
 }
 
 windowregionrect {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/windowregion.xml#windowregionrect");
+  -moz-binding: url("chrome://songbird/content/bindings/windowregion.xml#windowregionrect");
 }
 
 servicetree {
-  -moz-binding: url("chrome://rmp_demo/content/bindings/servicetree.xml#servicetree");
+  -moz-binding: url("chrome://songbird/content/bindings/servicetree.xml#servicetree");
 }

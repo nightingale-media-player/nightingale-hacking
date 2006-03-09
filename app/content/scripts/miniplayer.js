@@ -167,7 +167,7 @@ try
     mab_data.retval = "";
     
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://rmp_demo/content/mab.xul", "Mozilla Amazon Browser", "chrome,modal=no", mab_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome,modal=no", mab_data );
   }
 
   function SBNewPlaylist()
@@ -176,7 +176,7 @@ try
     playlist_data.retval = "";
     
     // Open the window
-    window.open( "chrome://rmp_demo/content/playlist_test.xul", "Testing Playlist Datafeed", "chrome,modal=no", playlist_data );
+    window.open( "chrome://songbird/content/xul/playlist_test.xul", "Testing Playlist Datafeed", "chrome,modal=no", playlist_data );
   }
 
   function SBMainWindowOpen()
@@ -185,7 +185,7 @@ try
     if ( location.indexOf("?video") == -1 )
     {
       // Open the window
-      window.open( "chrome://rmp_demo/content/mainwin.xul", "", "chrome,modal=no" );
+      window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
       onExit();
     }
   }
@@ -196,7 +196,7 @@ try
     var about_data = new Object();
     about_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://rmp_demo/content/about.xul", "about", "chrome,modal=yes,centerscreen", about_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,modal=yes,centerscreen", about_data );
     if ( about_data.retval == "ok" )
     {
     }  

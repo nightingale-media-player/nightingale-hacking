@@ -37,7 +37,7 @@ function sbRestartBox( title, message )
     restartbox_data.message = message;
     restartbox_data.playing = gPPS.getPlaying();
     restartbox_data.ret = 0;
-    SBOpenModalDialog( "chrome://rmp_demo/content/restartbox.xul", "restartbox", "chrome,modal=yes, centerscreen", restartbox_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/restartbox.xul", "restartbox", "chrome,modal=yes, centerscreen", restartbox_data );
     var restartOnPlaybackEnd = new sbIDataRemote("restart.onplaybackend");
     switch (restartbox_data.ret)
     {

@@ -10,8 +10,8 @@ const SONGBIRD_PLAYLISTPLAYBACK_IID = Components.interfaces.sbIPlaylistPlayback;
 function CPlaylistPlayback()
 {
   jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://rmp_demo/content/songbird_interfaces.js", this );
-  jsLoader.loadSubScript( "chrome://rmp_demo/content/sbIDataRemote.js", this );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
   this.m_queryObject = new this.sbIDatabaseQuery();
   this.m_strTable = "";
