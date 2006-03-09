@@ -33,6 +33,6 @@
 interface sbIDatabaseEngine : nsISupports
 {
   [noscript] void AddPersistentQuery(in CDatabaseQueryPtr dbQuery, [const] in stlCStringRef strTableName);
-  [noscript] void RemovePersistentQuery(in cDatabaseQueryPtr dbQuery);
+  [noscript] void RemovePersistentQuery(in CDatabaseQueryPtr dbQuery);
   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr dbQuery);
 };
