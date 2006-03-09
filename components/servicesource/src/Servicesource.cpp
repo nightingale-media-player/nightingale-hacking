@@ -119,7 +119,7 @@ NS_IMETHODIMP MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, con
 // Lame hardcode to find the playlist folder
 const int nPlaylistsInsert = 1;
 
-static nsString gPlaylistUrl( NS_LITERAL_STRING("chrome://rmp_demo/content/main_pane/main_pane.xul?") );
+static nsString gPlaylistUrl( NS_LITERAL_STRING("chrome://Songbird/content/xul/main_pane.xul?") );
 
 static nsString     gParentLabels[ NUM_PARENTS ] =
 {
@@ -136,21 +136,21 @@ static nsString     gParentLabels[ NUM_PARENTS ] =
 
 static nsString     gParentIcons[ NUM_PARENTS ] =
 {
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/logo_16.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_lib_16x16.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/logo_16.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_lib_16x16.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/icon_folder.png") ),
 };
 
 static nsString     gParentUrls[ NUM_PARENTS ] =
 {
   nsString( NS_LITERAL_STRING("http://songbirdnest.com/player/welcome/") ),
-  nsString( NS_LITERAL_STRING("chrome://rmp_demo/content/main_pane/main_pane.xul?library") ),
+  nsString( NS_LITERAL_STRING("chrome://Songbird/content/xul/main_pane.xul?library") ),
   nsString( ),
   nsString( ),
   nsString( ),
@@ -330,52 +330,52 @@ static nsString     gChildIcons[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("http://www.pitchforkmedia.com/favicon.ico") ),
     nsString( NS_LITERAL_STRING("http://podbop.org/favicon.ico")),
     nsString( NS_LITERAL_STRING("http://www.swedelife.com/favicon.ico")),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/default_skin/logo_16.png") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/logo_16.png") ),
     nsString( ),
   },
   // Group 11
   {
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/google.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/yahoo.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/google.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/yahoo.ico") ),
     nsString( NS_LITERAL_STRING("http://creativecommons.org/favicon.ico") ),
     nsString( ),
   },
   // Group 8
   {
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/connect.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/amazon.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/connect.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/amazon.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("https://www.beatport.com/favicon.ico") ),
     nsString( NS_LITERAL_STRING("http://www.mp3tunes.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/emusic.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/cdbaby.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/emusic.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/cdbaby.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( ),
   },
   // Group 9
   {
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/odeo.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/odeo.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( ),
   },
   // Group 10
   {
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/shoutcast.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/radiotime.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/shoutcast.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/radiotime.ico") ),
     nsString( NS_LITERAL_STRING("http://www.mvyradio.com/favicon.ico") ),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/ninjam_gui_win.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/ninjam_gui_win.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("http://www.allmusic.com/favicon.ico") ),
     nsString( NS_LITERAL_STRING("http://mp3tunes.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://rmp_demo/skin/service_icons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("http://tablesturned.com/favicon.ico") ),
     nsString( ),
   },
@@ -423,7 +423,7 @@ void CServicesource::Init(void)
       rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
       if ( NS_SUCCEEDED(rv) )
       {
-        rv = StringBundleService->CreateBundle( "chrome://rmp_demo/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
+        rv = StringBundleService->CreateBundle( "chrome://Songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
 //        StringBundleService->Release();
       }
     }
@@ -713,7 +713,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
       else if (property == kNC_Icon)
       {
         // These icons come from the skin.
-//        outstring = NS_LITERAL_STRING( "chrome://rmp_demo/skin/default_skin/icon_lib_16x16.png" );
+//        outstring = NS_LITERAL_STRING( "chrome://Songbird/skin/default/icon_lib_16x16.png" );
       }
       else if (property == kNC_URL)
       {

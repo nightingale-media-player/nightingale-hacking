@@ -3013,12 +3013,12 @@ background-color: #000;
 /* sample multistate button with custom content (svg/xul, etc) */
 
 #songbird_multistatebuttontest {
-  -moz-binding: url("chrome://rmp_demo/skin/bindings.xml#samplebutton");
+  -moz-binding: url("chrome://Songbird/skin/bindings.xml#samplebutton");
 }
 
 /* window region */
 
 windowregion {
-  -moz-binding: url("chrome://rmp_demo/skin/bindings.xml#windowregion");
+  -moz-binding: url("chrome://Songbird/skin/bindings.xml#windowregion");
 }
 

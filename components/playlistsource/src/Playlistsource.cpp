@@ -1394,7 +1394,7 @@ void sbPlaylistsource::Init(void)
       rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
       if ( NS_SUCCEEDED(rv) )
       {
-        rv = StringBundleService->CreateBundle( "chrome://rmp_demo/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
+        rv = StringBundleService->CreateBundle( "chrome://Songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
         //        StringBundleService->Release();
       }
     }

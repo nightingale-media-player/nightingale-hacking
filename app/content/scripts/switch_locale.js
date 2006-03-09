@@ -80,7 +80,7 @@ function fillLocaleList(menu) {
       menu.removeChild(children[i - 1]);
     }
 
-    var locales = cr.getLocalesForPackage("rmp_demo");
+    var locales = cr.getLocalesForPackage("Songbird");
 
     while (locales.hasMore()) {
       var locale = locales.getNext();
