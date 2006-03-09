@@ -53,9 +53,6 @@
 			<File
 				RelativePath=".\chrome\contents.rdf">
 			</File>
-			<File
-				RelativePath=".\chrome\songbird-jar.mn">
-			</File>
 			<Filter
 				Name="bindings"
 				Filter="">
