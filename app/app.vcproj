@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="app"
 	ProjectGUID="{00A5E4C1-0FFC-4932-8E50-763DF2E57054}"
+	RootNamespace="app"
 	Keyword="MakeFileProj">
 	<Platforms>
 		<Platform
@@ -51,6 +52,9 @@
 			Filter="">
 			<File
 				RelativePath=".\chrome\contents.rdf">
+			</File>
+			<File
+				RelativePath=".\chrome\songbird-jar.mn">
 			</File>
 			<Filter
 				Name="bindings"
