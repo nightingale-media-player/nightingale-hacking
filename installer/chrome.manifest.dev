@@ -1,5 +1,5 @@
 locale  branding  en-US         locales/branding/
-content songbird  content/
+content songbird                content/
 skin    songbird  rubberducky   feathers/rubberducky/
 skin    songbird  cardinal      feathers/cardinal/
 
@@ -41,3 +41,7 @@ locale	songbird	cs-CZ	        locales/cs-CZ/
 locale	songbird	ca-ES	        locales/ca-ES/
 locale	songbird	ca-AD	        locales/ca-AD/
 locale	songbird	bs-BA	        locales/bs-BA/
+
+locale  browser   en-US         browser/locale/browser/ 
+content browser                 browser/content/
+skin    browser   classic/1.0   browser/skin/classic/browser/ 
