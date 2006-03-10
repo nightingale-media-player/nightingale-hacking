@@ -2079,7 +2079,6 @@ function SBOpenPreferences(paneID)
   }
   else
     openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
-    //openDialog("chrome://songbird/content/browser/content/preferences/preferences.xul", "Preferences", features, paneID);
     
   // to open connection settings only:
   // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,modal=yes,centerscreen", null);
