@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="metadatahandlerid3"
 	ProjectGUID="{19BEE539-E27A-4F93-A943-9419EF9F2800}"
+	RootNamespace="metadatahandlerid3"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -20,8 +21,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\common\id3lib\include&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;METADATAHANDLERID3_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\src\id3lib\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;METADATAHANDLERID3_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN;ID3LIB_LINKOPTION=3"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="TRUE"
@@ -48,7 +49,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+mkdir $(SolutionDir)dist\xulrunner
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(SolutionDir)dependencies\win32\id3lib\release\*.dll $(SolutionDir)dist\xulrunner\"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -75,8 +80,8 @@
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\common\id3lib\include&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;METADATAHANDLERID3_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\src\id3lib\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;METADATAHANDLERID3_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN;ID3LIB_LINKOPTION=3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -90,7 +95,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib id3lib.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerID3.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerID3.pdb"
 				SubSystem="2"
@@ -101,7 +106,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+mkdir $(SolutionDir)dist\xulrunner
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(SolutionDir)dependencies\win32\id3lib\release\*.dll $(SolutionDir)dist\xulrunner\"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

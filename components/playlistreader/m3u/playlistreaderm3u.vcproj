@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="playlistreaderm3u"
 	ProjectGUID="{ACDBF78E-46BC-4308-B0E6-778A3D72524F}"
+	RootNamespace="playlistreaderm3u"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -48,7 +49,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -101,7 +106,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

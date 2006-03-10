@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="dataremote"
 	ProjectGUID="{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}"
+	RootNamespace="dataremote"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -22,7 +23,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(InputDir)src\sbDataRemote.js $(SolutionDir)dist\components
+copy /y $(InputDir)$(OutDir)\sbIDataRemote.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>
@@ -38,7 +43,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(InputDir)src\sbDataRemote.js $(SolutionDir)dist\components
+copy /y $(InputDir)$(OutDir)\sbIDataRemote.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>

@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="app"
 	ProjectGUID="{00A5E4C1-0FFC-4932-8E50-763DF2E57054}"
+	RootNamespace="app"
 	Keyword="MakeFileProj">
 	<Platforms>
 		<Platform
@@ -21,7 +22,19 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				ExcludedFromBuild="TRUE"/>
+				CommandLine="mkdir $(SolutionDir)dist\chrome\content
+mkdir $(SolutionDir)dist\defaults\preferences
+echo $(ProjectExt) &gt;&gt; _EXCLUDE
+echo Release\ &gt;&gt; _EXCLUDE
+echo _EXCLUDE &gt;&gt; _EXCLUDE
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
+copy /y $(InputDir)application.ini $(SolutionDir)dist
+$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\release\xulrunner.zip -d $(SolutionDir)dist\xulrunner\
+move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe"
+				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				ExcludedFromBuild="TRUE"/>
@@ -37,7 +50,23 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				ExcludedFromBuild="TRUE"/>
+				CommandLine="mkdir $(SolutionDir)dist\chrome\content
+mkdir $(SolutionDir)dist\defaults\preferences
+echo $(ProjectExt) &gt;&gt; _EXCLUDE
+echo Release\ &gt;&gt; _EXCLUDE
+echo _EXCLUDE &gt;&gt; _EXCLUDE
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
+copy /y $(InputDir)application.ini $(SolutionDir)dist
+copy /y $(SolutionDir)installer\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
+copy /y $(SolutionDir)dependencies\win32\runtime\release\*.dll $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
+$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\release\xulrunner.zip -d $(SolutionDir)dist\xulrunner\
+move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
+"
+				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				ExcludedFromBuild="TRUE"/>

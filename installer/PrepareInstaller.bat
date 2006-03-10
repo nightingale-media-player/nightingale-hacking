@@ -48,7 +48,6 @@ REM @xcopy /q /e /y .\Dependencies\browser-plugins\win32\realplayer\* .\Dist\xul
 REM @xcopy /q /e /y .\Dependencies\runtimelibs\win32\*.dll .\Dist\xulrunner\
 REM @xcopy /q /e /y .\Dependencies\runtimelibs\win32\primosdk.dll .\Dist\xulrunner\
 
-@xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcp71.dll .\Dist
 @xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcp71.dll .\Dist\xulrunner\
 @xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcr71.dll .\Dist\xulrunner\
 @xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcr70.dll .\Dist\xulrunner\

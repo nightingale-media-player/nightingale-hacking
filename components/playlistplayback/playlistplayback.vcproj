@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="playlistplayback"
 	ProjectGUID="{4BE75698-527D-4261-96B3-57A80F6CF1D3}"
+	RootNamespace="playlistplayback"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -22,7 +23,14 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetDir)src\coreVLC.js $(SolutionDir)dist\components
+copy /y $(TargetDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components
+copy /y $(TargetDir)sbICoreWrapper.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
+
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>
@@ -38,7 +46,14 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetDir)src\coreVLC.js $(SolutionDir)dist\components
+copy /y $(TargetDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components
+copy /y $(TargetDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
+
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 		</Configuration>

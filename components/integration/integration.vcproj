@@ -36,7 +36,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt
+"
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"/>
 			<Tool
@@ -53,7 +54,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIntegration.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -91,7 +96,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt
+"
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"/>
 			<Tool
@@ -110,7 +116,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIntegration.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

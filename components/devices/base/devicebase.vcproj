@@ -40,7 +40,10 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIDeviceBase.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -81,7 +84,10 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetDir)sbIDeviceBase.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

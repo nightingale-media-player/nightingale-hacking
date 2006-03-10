@@ -36,7 +36,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt
+"
 				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
 			<Tool
@@ -53,7 +54,13 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
+mkdir $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -91,7 +98,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt
+"
 				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
 			<Tool
@@ -109,7 +117,13 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
+mkdir $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

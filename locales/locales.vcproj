@@ -22,7 +22,13 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				ExcludedFromBuild="TRUE"/>
+				CommandLine="mkdir $(SolutionDir)dist\chrome\locales\
+echo $(ProjectExt) &gt;&gt; _EXCLUDE
+echo Release\ &gt;&gt; _EXCLUDE
+echo _EXCLUDE &gt;&gt; _EXCLUDE
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\locales\
+"
+				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				ExcludedFromBuild="TRUE"/>
@@ -39,7 +45,13 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				ExcludedFromBuild="TRUE"/>
+				CommandLine="mkdir $(SolutionDir)dist\chrome\locales\
+echo $(ProjectExt) &gt;&gt; _EXCLUDE
+echo Release\ &gt;&gt; _EXCLUDE
+echo _EXCLUDE &gt;&gt; _EXCLUDE
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\locales\
+"
+				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				ExcludedFromBuild="TRUE"/>
