@@ -25,11 +25,10 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
-copy /y $(TargetDir)src\coreVLC.js $(SolutionDir)dist\components
+copy /y $(TargetDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(TargetDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components
-copy /y $(TargetDir)sbICoreWrapper.xpt $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
-
+copy /y $(TargetDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -48,11 +47,10 @@ copy /y $(TargetDir)sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
-copy /y $(TargetDir)src\coreVLC.js $(SolutionDir)dist\components
+copy /y $(TargetDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(TargetDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components
 copy /y $(TargetDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(TargetDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
-
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
