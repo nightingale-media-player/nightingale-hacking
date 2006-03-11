@@ -64,7 +64,7 @@ if "%2"=="publish" goto publish
 goto nopublish
 
 :publish
-@call PublishInstaller.bat %BUILD_ID%
+REM @call PublishInstaller.bat %BUILD_ID%
 
 :nopublish
 goto end
