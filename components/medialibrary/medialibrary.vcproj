@@ -46,6 +46,7 @@
 				OutputFile="$(OutDir)/sbMediaLibrary_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src\common&quot;"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MediaLibrary.pdb"
 				SubSystem="2"
@@ -413,9 +414,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				Filter="">
 				<File
 					RelativePath=".\src\common\Common.h">
-				</File>
-				<File
-					RelativePath=".\src\common\Lock.h">
 				</File>
 				<File
 					RelativePath=".\src\common\Singleton.h">
