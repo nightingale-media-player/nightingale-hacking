@@ -145,7 +145,7 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (document.__TrackingSeeker__.tracking == 0) return;
+          if (!document.__TrackingSeeker__ || !document.__TrackingSeeker__.tracking) return;
           document.__TrackingSeeker__.tracking = 0;
           document.__TrackingSeeker__.is_tracking_data = false;
           document.__TrackingSeeker__.sendReleaseEvent();
