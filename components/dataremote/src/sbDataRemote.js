@@ -88,7 +88,8 @@ DataRemote.prototype = {
   unbind: function() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    this.m_Prefs.removeObserver( this.m_Key, this );
+    if (this.m_Prefs)
+      this.m_Prefs.removeObserver( this.m_Key, this );
   },
       
   bindEventFunction: function(func) {
