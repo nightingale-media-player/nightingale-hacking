@@ -172,7 +172,6 @@ protected:
   static void PR_CALLBACK DeviceProcess(sbDeviceBase* pData);
 
 private:
-    //sbCommon::CThread mDeviceThread;
     std::deque<ThreadMessage *> mDeviceMessageQueue;
     PRUint32 mDeviceState;
     PRUint32 mTransferTrackIndex;

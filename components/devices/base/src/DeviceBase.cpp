@@ -82,7 +82,6 @@ sbDeviceBase::sbDeviceBase(PRBool usingThread)
   NS_ASSERTION(mpDeviceThreadMonitor, "sbDeviceBase.mpDeviceThreadMonitor failed");
   DeviceIdle();
   if (mUsingThread) {
-    //mDeviceThread.Create(reinterpret_cast<sbCommon::threadfunction_t *>(sbDeviceBase::DeviceProcess), this);
     nsCOMPtr<nsIThread> pThreadRunner;
     nsCOMPtr<nsIRunnable> pThread = new sbDeviceThread(this);
     NS_ASSERTION(pThread, "Unable to create sbDeviceThread");
