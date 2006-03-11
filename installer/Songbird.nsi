@@ -36,7 +36,7 @@ OutFile "Songbird_${BUILD_ID}.exe"
 InstallDir "$PROGRAMFILES\Songbird\"
 ;InstallDirRegKey HKLM SOFTWARE\Songbird "Install_Dir"
 
-LicenseData License.txt
+LicenseData LICENSE.txt
 
 Page license
 Page components
@@ -68,13 +68,15 @@ NoUninstall:
   File *.ini
   File *.exe
   File *.ico
-  File License.txt
+  File LICENSE.txt
   File GPL.txt
   File TRADEMARK.txt
   
   File /r chrome
   File /r components
   File /r defaults
+  File /r plugins
+  File /r vlcplugins
   File /r xulrunner
   
   FindFirst $0 $1 $SYSDIR\msvcp71.dll
@@ -109,16 +111,16 @@ SectionEnd
 
 Section "Start Menu Entries"
   CreateDirectory "$SMPROGRAMS\Songbird"
-  CreateShortCut "$SMPROGRAMS\Songbird\Songbird.lnk" "$INSTDIR\Songbird.exe" "" "$INSTDIR\Songbird.ico" 0
+  CreateShortCut "$SMPROGRAMS\Songbird\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\songbird.ico" 0
   CreateShortCut "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk" "$INSTDIR\songbird-uninstall.exe" "" "$INSTDIR\songbird-uninstall.exe" 0
 SectionEnd
 
 Section "Desktop Icon"
-  CreateShortCut "$DESKTOP\Songbird.lnk" "$INSTDIR\Songbird.exe" "" "$INSTDIR\Songbird.ico" 0
+  CreateShortCut "$DESKTOP\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\Songbird.ico" 0
 SectionEnd
 
 Section "QuickLaunch Icon"
-  CreateShortCut "$QUICKLAUNCH\Songbird.lnk" "$INSTDIR\Songbird.exe" "" "$INSTDIR\Songbird.ico" 0
+  CreateShortCut "$QUICKLAUNCH\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\Songbird.ico" 0
 SectionEnd
 
 Section "Uninstall"
@@ -136,7 +138,7 @@ Section "Uninstall"
   Delete "$QUICKLAUNCH\Songbird.lnk"
 
   ; Remove directories used
-  Delete $INSTDIR\License.txt
+  Delete $INSTDIR\LICENSE.txt
   Delete $INSTDIR\GPL.txt
   Delete $INSTDIR\TRADEMARK.txt
   

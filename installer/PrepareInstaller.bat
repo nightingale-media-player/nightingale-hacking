@@ -13,106 +13,37 @@ if "%1"=="" goto usage
 
 set BUILD_ID=%1
 
-if "%2"=="prepare" goto checkfordist
+if "%2"=="prepare" goto prepare
 
 if "%2"=="package" goto package
 
-:checkfordist
-
-if exist Dist goto cleanup
-goto prepare
-
-:cleanup
-@del /f /s /q Dist
-@rd /s /q Dist
-
 :prepare
-@mkdir .\Dist
-@mkdir .\Dist\chrome\
 
-@copy /y .\Staging\songbird.ini .\Dist\application.ini
-@xcopy /q /y .\Staging\chrome\chrome.manifest Dist\chrome
+@copy /y Songbird.nsi ..\dist\
+@copy /y SongbirdInstall.ico ..\dist\
 
-@Tools\unzip\unzip -qq -o Dependencies\xulrunner\xulrunner-current-win32.zip -d .\Dist\xulrunner\
-@move .\Dist\xulrunner\xulrunner-stub.exe .\Dist\Songbird.exe
+@mkdir ..\dist\chrome\icons\default
+@copy  ..\app\icons\songbird.ico ..\dist\chrome\icons\default\frame_outer.ico
+@copy  ..\app\icons\songbird.ico ..\dist\songbird.ico
 
-REM Can't package these for public builds.
-REM @xcopy /q /e /y .\Dependencies\browser-plugins\win32\quicktime\* .\Dist\xulrunner\
-REM @xcopy /q /e /y .\Dependencies\browser-plugins\win32\realplayer\* .\Dist\xulrunner\
-@xcopy /q /e /y .\Dependencies\browser-plugins\win32\flash .\Dist\xulrunner\plugins\
+@copy /y LICENSE.txt ..\dist\
+@copy /y GPL.txt ..\dist\
+@copy /y TRADEMARK.txt ..\dist\
 
-@xcopy /q /e /y .\Dependencies\browser-plugins\win32\vlc\plugins .\Dist\xulrunner\plugins\
-@xcopy /q /e /y .\Dependencies\browser-plugins\win32\vlc\vlcplugins .\Dist\xulrunner\vlcplugins\
-@xcopy /q /e /y .\Dependencies\browser-plugins\win32\vlc\vlcrc .\Dist\
-
-REM @xcopy /q /e /y .\Dependencies\runtimelibs\win32\*.dll .\Dist\xulrunner\
-REM @xcopy /q /e /y .\Dependencies\runtimelibs\win32\primosdk.dll .\Dist\xulrunner\
-
-@xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcp71.dll .\Dist\xulrunner\
-@xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcr71.dll .\Dist\xulrunner\
-@xcopy /q /e /y .\Dependencies\runtimelibs\win32\msvcr70.dll .\Dist\xulrunner\
-
-@xcopy /q /e /y .\Staging\chrome\browser .\Dist\chrome\browser\
-@xcopy /q /e /y .\Staging\chrome\content .\Dist\chrome\content\
-@xcopy /q /e /y .\Staging\chrome\locale .\Dist\chrome\locale\
-@xcopy /q /e /y .\Staging\chrome\skin .\Dist\chrome\skin\
-@xcopy /q /e /y .\Staging\chrome\skin2 .\Dist\chrome\skin2\
-
-@xcopy /q /e /y .\Staging\defaults\preferences\* .\Dist\defaults\preferences\
-
-REM Hmmm, after we unzip, copy over our own files.
-@xcopy /q /e /y .\Components\MediaLibrary\Release\sbMediaLibrary.xpt .\Dist\components\
-@xcopy /q /e /y .\Components\MediaLibrary\Release\sbMediaLibrary.dll .\Dist\components\
-@xcopy /q /e /y .\Components\MediaLibrary\sbI*.js .\Dist\components\
-@xcopy /q /e /y .\Dependencies\sqlite\lib\win32\sqlite.dll .\Dist\xulrunner\
-
-@xcopy /q /y .\Components\Playlists\PlaylistReaderPLS\Release\sbPlaylistReaderPLS.xpt .\Dist\components\
-@xcopy /q /y .\Components\Playlists\PlaylistReaderPLS\Release\sbPlaylistReaderPLS.dll .\Dist\components\
-
-@xcopy /q /y .\Components\Playlistsource\sbIPlaylistsource.xpt .\Dist\components\
-@xcopy /q /y .\Components\Playlistsource\Release\sbPlaylistsource.dll .\Dist\components\
-
-@xcopy /q /y .\Components\Servicesource\sbIServicesource.xpt .\Dist\components\
-@xcopy /q /y .\Components\Servicesource\Release\sbServicesource.dll .\Dist\components\
-
-@xcopy /q /y .\Components\Integration\IWindowDragger.xpt .\Dist\components\
-@xcopy /q /y .\Components\Integration\Release\sbIntegration.dll .\Dist\components\
-
-@xcopy /q /y .\Components\Devices\sbIDeviceBase\sbIDeviceBase.xpt .\Dist\components\
-
-@xcopy /q /y .\Components\Devices\sbIDeviceManager\sbIDeviceManager.xpt .\Dist\components\
-@xcopy /q /y .\Components\Devices\sbIDeviceManager\Release\sbDeviceManager.dll .\Dist\components\
-
-@xcopy /q /y .\Components\Devices\sbIDownloadDevice\sbIDownloadDevice.xpt .\Dist\components\
-@xcopy /q /y .\Components\Devices\sbIDownloadDevice\Release\sbDownloadDevice.dll .\Dist\components\
-
-@xcopy /q /y .\Components\Integration\Release\sbIntegration.dll .\Dist\components\
-@xcopy /q /y .\Components\Integration\Release\sbIntegration.xpt .\Dist\components\
-
-@xcopy /q /y .\Installer\Songbird.nsi .\Dist\
-@xcopy /q /y .\Installer\SongbirdInstall.ico .\Dist\
-
-@mkdir .\Dist\chrome\icons\default
-@copy  .\Staging\chrome\skin\service_icons\Songbird.ico .\Dist\chrome\icons\default\frame_outer.ico
-
-@xcopy /q /y .\Installer\License.txt .\Dist\
-@xcopy /q /y .\Installer\GPL.txt .\Dist\
-@xcopy /q /y .\Installer\TRADEMARK.txt .\Dist\
-
-@.\Tools\ResHack\ResHacker.exe -addoverwrite Dist\xulrunner\xulrunner.exe, Dist\xulrunner\xulrunner.exe, Staging\chrome\skin\service_icons\Songbird.ico, icongroup, IDI_APPICON, 1033
-@.\Tools\ResHack\ResHacker.exe -addoverwrite Dist\xulrunner\xulrunner.exe, Dist\xulrunner\xulrunner.exe, Staging\chrome\skin\service_icons\Songbird.ico, icongroup, IDI_DOCUMENT, 1033
-@.\Tools\ResHack\ResHacker.exe -addoverwrite Dist\xulrunner\xulrunner.exe, Dist\xulrunner\xulrunner.exe, Staging\chrome\skin\service_icons\Songbird.ico, icongroup, 32512, 1033
-@.\Tools\ResHack\ResHacker.exe -addoverwrite Dist\Songbird.exe, Dist\Songbird.exe, Staging\chrome\skin\service_icons\Songbird.ico, icongroup, IDI_APPICON, 1033
-@.\Tools\ResHack\ResHacker.exe -addoverwrite Dist\Songbird.exe, Dist\Songbird.exe, Staging\chrome\skin\service_icons\Songbird.ico, icongroup, IDI_DOCUMENT, 1033
+@..\tools\reshacker\ResHacker.exe -addoverwrite dist\xulrunner\xulrunner.exe, dist\xulrunner\xulrunner.exe, dist\songbird.ico, icongroup, IDI_APPICON, 1033
+@..\tools\reshacker\ResHacker.exe -addoverwrite dist\xulrunner\xulrunner.exe, dist\xulrunner\xulrunner.exe, dist\songbird.ico, icongroup, IDI_DOCUMENT, 1033
+@..\tools\reshacker\ResHacker.exe -addoverwrite dist\xulrunner\xulrunner.exe, dist\xulrunner\xulrunner.exe, dist\songbird.ico, icongroup, 32512, 1033
+@..\tools\reshacker\ResHacker.exe -addoverwrite dist\songbird.exe, dist\songbird.exe, dist\songbird.ico, icongroup, IDI_APPICON, 1033
+@..\tools\reshacker\ResHacker.exe -addoverwrite dist\songbird.exe, dist\songbird.exe, dist\songbird.ico, icongroup, IDI_DOCUMENT, 1033
 
 if "%2"=="prepare" goto end
 
 :package
-@cd Dist
-@..\Tools\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
-@cd ..
+@cd ..\dist
+@..\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
+@cd ..\installer
 
-if exist "Dist\Songbird_%BUILD_ID%.exe" goto success
+if exist "..\dist\Songbird_%BUILD_ID%.exe" goto success
 goto failure
 
 :success
@@ -123,9 +54,9 @@ goto failure
 @echo =====================================================
 @echo.
 
-@mkdir .\BuiltInstaller
-@xcopy /q /y .\Dist\Songbird_%BUILD_ID%.exe .\BuiltInstaller
-@.\Tools\fsum\fsum.exe -dBuiltInstaller -md5 -sha1 -jm Songbird_%BUILD_ID%.exe > .\BuiltInstaller\Songbird_%BUILD_ID%.exe.md5
+@mkdir ..\_built_installer
+@xcopy /y ..\dist\Songbird_%BUILD_ID%.exe ..\_built_installer
+@..\tools\win32\fsum\fsum.exe -d..\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%.exe > ..\_built_installer\Songbird_%BUILD_ID%.exe.md5
 
 if "%2"=="publish" goto publish
 goto nopublish
