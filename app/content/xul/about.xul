@@ -42,7 +42,7 @@
 
   <!-- Astounding complexity! -->
   <label id="version_number" value="Version 0.1.1b" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-  <browser id="about_browser" src="about.html" autoscroll="false"/>
+  <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false"/>
 
   <!-- And intrepid instructions! -->  
   <script>
