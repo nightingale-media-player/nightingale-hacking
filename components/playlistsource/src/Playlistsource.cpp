@@ -258,8 +258,10 @@ NS_IMPL_ISUPPORTS2(sbPlaylistsource, sbIPlaylistsource, nsIRDFDataSource)
 //-----------------------------------------------------------------------------
 sbPlaylistsource::sbPlaylistsource()
 {
-  g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
-  NS_ASSERTION(g_pMonitor, "sbPlaylistsource.g_pMonitor failed");
+  if (!g_pMonitor) {
+    g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
+    NS_ASSERTION(g_pMonitor, "sbPlaylistsource.g_pMonitor failed");
+  }
   Init();
 } //ctor
 
@@ -267,8 +269,10 @@ sbPlaylistsource::sbPlaylistsource()
 /*virtual*/ sbPlaylistsource::~sbPlaylistsource()
 {
   DeInit();
-  if (g_pMonitor)
+  if (g_pMonitor) {
     nsAutoMonitor::DestroyMonitor(g_pMonitor);
+    g_pMonitor = nsnull;
+  }
 } //dtor
 
 NS_IMETHODIMP sbPlaylistsource::FeedPlaylist(const PRUnichar *RefName, const PRUnichar *ContextGUID, const PRUnichar *TableName)
