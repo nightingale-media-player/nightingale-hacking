@@ -18,6 +18,9 @@ if "%2"=="prepare" goto prepare
 if "%2"=="package" goto package
 
 :prepare
+@del /s /f /q ..\_built_installer\*.*
+@del /q /f ..\dist\Songbird_*.exe
+@rd /s /q ..\_built_installer
 
 @copy /y Songbird.nsi ..\dist\
 @copy /y SongbirdInstall.ico ..\dist\
