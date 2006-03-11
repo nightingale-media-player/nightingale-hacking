@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(SolutionDir)components\devices\base\src&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(SolutionDir)components\devices\base\src&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\release&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;CDDevice_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN;DEBUG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -40,7 +40,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib primosdk.lib DeviceBase.lib"
 				OutputFile="$(OutDir)/sbCDDevice_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\release&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/sbCDDevice.pdb"
 				SubSystem="2"
@@ -80,7 +80,7 @@ copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(SolutionDir)components\devices\base\src&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(SolutionDir)components\devices\base\src&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\release&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;CDDevice_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -95,7 +95,7 @@ copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib primosdk.lib DeviceBase.lib"
 				OutputFile="$(OutDir)/sbCDDevice.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\sonic\release&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
