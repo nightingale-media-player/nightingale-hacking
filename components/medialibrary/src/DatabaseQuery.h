@@ -40,11 +40,20 @@
 #include "DatabaseResult.h"
 #include "DatabaseEngine.h"
 
-#include "Lock.h"
-#include "Wait.h"
-
+#include <prlock.h>
+#include <prmon.h>
 
 #include <xpcom/nsCOMPtr.h>
+
+#ifndef PRUSTRING_DEFINED
+#define PRUSTRING_DEFINED
+#include <string>
+#include "nscore.h"
+namespace std
+{
+  typedef basic_string< PRUnichar > prustring;
+};
+#endif
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEQUERY_CONTRACTID  "@songbird.org/Songbird/DatabaseQuery;1"
@@ -75,7 +84,7 @@ protected:
   PRBool m_IsPersistentQueryRegistered;
   PRBool m_HasChangedDataOfPersistQuery;
 
-  sbCommon::CLock m_PersistentQueryTableLock;
+  PRLock* m_pPersistentQueryTableLock;
   std::string m_PersistentQueryTable;
 
   PRBool m_IsAborting;
@@ -87,28 +96,29 @@ protected:
   PRInt32 m_CurrentQuery;
   PRInt32 m_LastError;
 
-  sbCommon::CLock m_QueryResultLock;
+  PRLock* m_pQueryResultLock;
   CDatabaseResult * m_QueryResult;
 
-  sbCommon::CLock m_DatabaseGUIDLock;
+  PRLock* m_pDatabaseGUIDLock;
   std::prustring m_DatabaseGUID;
 
   typedef std::vector<std::prustring> dbquerylist_t;
-  sbCommon::CLock m_DatabaseQueryListLock;
+  PRLock* m_pDatabaseQueryListLock;
   dbquerylist_t m_DatabaseQueryList;
 
-  sbCommon::CWait m_DatabaseQueryHasCompleted;
+  PRMonitor* m_pQueryRunningMonitor;
+  PRBool m_QueryHasCompleted;
 
   typedef std::vector<sbIDatabaseQueryCallback *> callbacklist_t;
-  sbCommon::CLock m_CallbackListLock;
+  PRLock* m_pCallbackListLock;
   callbacklist_t m_CallbackList;
 
   typedef std::vector<sbIDatabaseSimpleQueryCallback *> persistentcallbacklist_t;
-  sbCommon::CLock m_PersistentCallbackListLock;
+  PRLock* m_pPersistentCallbackListLock;
   persistentcallbacklist_t m_PersistentCallbackList;
 
   typedef std::set<std::string> modifiedtables_t;
-  sbCommon::CLock m_ModifiedTablesLock;
+  PRLock* m_pModifiedTablesLock;
   modifiedtables_t m_ModifiedTables;
 
   nsCOMPtr<sbIDatabaseEngine> m_Engine;

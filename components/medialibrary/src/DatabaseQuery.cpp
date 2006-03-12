@@ -38,6 +38,11 @@
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <string/nsString.h>
+#include <nsAutoLock.h>
+
+#ifdef DEBUG
+#include <nsPrintfCString.h>
+#endif
 
 // CLASSES ====================================================================
 //=============================================================================
@@ -55,10 +60,44 @@ CDatabaseQuery::CDatabaseQuery()
 , m_IsExecuting(PR_FALSE)
 , m_PersistentQuery(PR_FALSE)
 , m_LastError(0)
-, m_DatabaseGUID( NS_LITERAL_STRING("").get() )
+, m_DatabaseGUID( NS_LITERAL_STRING("").get())
 , m_Engine(nsnull)
+, m_pPersistentQueryTableLock(PR_NewLock())
+, m_pQueryResultLock(PR_NewLock())
+, m_pDatabaseGUIDLock(PR_NewLock())
+, m_pDatabaseQueryListLock(PR_NewLock())
+, m_pCallbackListLock(PR_NewLock())
+, m_pPersistentCallbackListLock(PR_NewLock())
+, m_pModifiedTablesLock(PR_NewLock())
+, m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
+, m_QueryHasCompleted(PR_FALSE)
 {
-  m_QueryResult = new CDatabaseResult;
+  NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
+  NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
+  NS_ASSERTION(m_pDatabaseGUIDLock, "CDatabaseQuery.m_pDatabaseGUIDLock failed");
+  NS_ASSERTION(m_pDatabaseQueryListLock, "CDatabaseQuery.m_pDatabaseQueryListLock failed");
+  NS_ASSERTION(m_pCallbackListLock, "CDatabaseQuery.m_pCallbackListLock failed");
+  NS_ASSERTION(m_pPersistentCallbackListLock, "CDatabaseQuery.m_pPersistentCallbackListLock failed");
+  NS_ASSERTION(m_pModifiedTablesLock, "CDatabaseQuery.m_pModifiedTablesLock failed");
+  NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
+
+#ifdef DEBUG
+  nsCAutoString log;
+  log += NS_LITERAL_CSTRING("\n\nCDatabaseQuery (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
+  log += NS_LITERAL_CSTRING("m_pPersistentQueryTableLock   = ") + nsPrintfCString("%x\n", m_pPersistentQueryTableLock);
+  log += NS_LITERAL_CSTRING("m_pQueryResultLock            = ") + nsPrintfCString("%x\n", m_pQueryResultLock);
+  log += NS_LITERAL_CSTRING("m_pDatabaseGUIDLock           = ") + nsPrintfCString("%x\n", m_pDatabaseGUIDLock);
+  log += NS_LITERAL_CSTRING("m_pDatabaseQueryListLock      = ") + nsPrintfCString("%x\n", m_pDatabaseQueryListLock);
+  log += NS_LITERAL_CSTRING("m_pCallbackListLock           = ") + nsPrintfCString("%x\n", m_pCallbackListLock);
+  log += NS_LITERAL_CSTRING("m_pPersistentCallbackListLock = ") + nsPrintfCString("%x\n", m_pPersistentCallbackListLock);
+  log += NS_LITERAL_CSTRING("m_pModifiedTablesLock         = ") + nsPrintfCString("%x\n", m_pModifiedTablesLock);
+  log += NS_LITERAL_CSTRING("m_pQueryRunningMonitor        = ") + nsPrintfCString("%x\n", m_pQueryRunningMonitor);
+  log += NS_LITERAL_CSTRING("\n");
+  NS_WARNING(log.get());
+#endif
+
+  NS_NEWXPCOM(m_QueryResult, CDatabaseResult);
+  NS_ASSERTION(m_QueryResult, "Failed to create DatabaseQuery.m_QueryResult");
   m_QueryResult->AddRef();
 
   m_Engine = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
@@ -70,6 +109,23 @@ CDatabaseQuery::~CDatabaseQuery()
   m_Engine->RemovePersistentQuery(this);
   
   NS_IF_RELEASE(m_QueryResult);
+
+  if (m_pPersistentQueryTableLock)
+    PR_DestroyLock(m_pPersistentQueryTableLock);
+  if (m_pQueryResultLock)
+    PR_DestroyLock(m_pQueryResultLock);
+  if (m_pDatabaseGUIDLock)
+    PR_DestroyLock(m_pDatabaseGUIDLock);
+  if (m_pDatabaseQueryListLock)
+    PR_DestroyLock(m_pDatabaseQueryListLock);
+  if (m_pCallbackListLock)
+    PR_DestroyLock(m_pCallbackListLock);
+  if (m_pPersistentCallbackListLock)
+    PR_DestroyLock(m_pPersistentCallbackListLock);
+  if (m_pModifiedTablesLock)
+    PR_DestroyLock(m_pModifiedTablesLock);
+  if (m_pQueryRunningMonitor)
+    nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -84,6 +140,7 @@ NS_IMETHODIMP CDatabaseQuery::SetAsyncQuery(PRBool bAsyncQuery)
 /* PRBool IsAyncQuery (); */
 NS_IMETHODIMP CDatabaseQuery::IsAyncQuery(PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_AsyncQuery;
   return NS_OK;
 } //IsAyncQuery
@@ -100,6 +157,7 @@ NS_IMETHODIMP CDatabaseQuery::SetPersistentQuery(PRBool bPersistentQuery)
 /* PRBool IsPersistentQuery (); */
 NS_IMETHODIMP CDatabaseQuery::IsPersistentQuery(PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_PersistentQuery;
   return NS_OK;
 } //IsPersistentQuery
@@ -108,9 +166,9 @@ NS_IMETHODIMP CDatabaseQuery::IsPersistentQuery(PRBool *_retval)
 /* void AddPersistentQueryCallback (in sbIDatabasePersistentQueryCallback dbPersistCB); */
 NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallback *dbPersistCB)
 {
-  if(dbPersistCB == NULL) return NS_ERROR_NULL_POINTER;
+  NS_ENSURE_ARG_POINTER(dbPersistCB);
 
-  sbCommon::CScopedLock lock(&m_PersistentCallbackListLock);
+  nsAutoLock lock(m_pPersistentCallbackListLock);
 
   size_t nSize = m_PersistentCallbackList.size();
   for(size_t nCurrent = 0; nCurrent < nSize; nCurrent++)
@@ -129,9 +187,9 @@ NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallb
 /* void RemovePersistentQueryCallback (in sbIDatabasePersistentQueryCallback dbPersistCB); */
 NS_IMETHODIMP CDatabaseQuery::RemoveSimpleQueryCallback(sbIDatabaseSimpleQueryCallback *dbPersistCB)
 {
-  if(dbPersistCB == NULL) return NS_ERROR_NULL_POINTER;
+  NS_ENSURE_ARG_POINTER(dbPersistCB);
 
-  sbCommon::CScopedLock lock(&m_PersistentCallbackListLock);
+  nsAutoLock lock(m_pPersistentCallbackListLock);
 
   persistentcallbacklist_t::iterator itCallback = m_PersistentCallbackList.begin();
   for(; itCallback != m_PersistentCallbackList.end(); itCallback++)
@@ -150,27 +208,24 @@ NS_IMETHODIMP CDatabaseQuery::RemoveSimpleQueryCallback(sbIDatabaseSimpleQueryCa
 /* void SetDatabaseGUID (in wstring dbGUID); */
 NS_IMETHODIMP CDatabaseQuery::SetDatabaseGUID(const PRUnichar *dbGUID)
 {
-  nsresult ret = NS_ERROR_NULL_POINTER;
+  NS_ENSURE_ARG_POINTER(dbGUID);
   
-  if(dbGUID)
-  {
-    sbCommon::CScopedLock lock(&m_DatabaseGUIDLock);
-    m_DatabaseGUID = dbGUID;
-    ret = NS_OK;
-  }
+  nsAutoLock lock(m_pDatabaseGUIDLock);
+  m_DatabaseGUID = dbGUID;
 
-  return ret;
+  return NS_OK;
 } //SetDatabaseGUID
 
 //-----------------------------------------------------------------------------
 /* wstring GetDatabaseGUID (); */
 NS_IMETHODIMP CDatabaseQuery::GetDatabaseGUID(PRUnichar **_retval)
 {
-  sbCommon::CScopedLock lock(&m_DatabaseGUIDLock);
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsAutoLock lock(m_pDatabaseGUIDLock);
   size_t nLen = m_DatabaseGUID.length() + 1;
 
   *_retval = (PRUnichar *)nsMemory::Clone(m_DatabaseGUID.c_str(), nLen * sizeof(PRUnichar));
-  if(*_retval == NULL) return NS_ERROR_OUT_OF_MEMORY;
+  NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 } //GetDatabaseGUID
@@ -179,7 +234,8 @@ NS_IMETHODIMP CDatabaseQuery::GetDatabaseGUID(PRUnichar **_retval)
 /* void AddQuery (in wstring strQuery); */
 NS_IMETHODIMP CDatabaseQuery::AddQuery(const PRUnichar *strQuery)
 {
-  sbCommon::CScopedLock lock(&m_DatabaseQueryListLock);
+  NS_ENSURE_ARG_POINTER(strQuery);
+  nsAutoLock lock(m_pDatabaseQueryListLock);
   m_DatabaseQueryList.push_back(strQuery);
 
   return NS_OK;
@@ -189,8 +245,9 @@ NS_IMETHODIMP CDatabaseQuery::AddQuery(const PRUnichar *strQuery)
 /* PRInt32 GetQueryCount (); */
 NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRInt32 *_retval)
 {
-  sbCommon::CScopedLock lock(&m_DatabaseQueryListLock);
-  *_retval = m_DatabaseQueryList.size();
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsAutoLock lock(m_pDatabaseQueryListLock);
+  *_retval = (PRInt32)m_DatabaseQueryList.size();
   return NS_OK;
 } //GetQueryCount
 
@@ -198,13 +255,15 @@ NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRInt32 *_retval)
 /* wstring GetQuery (in PRInt32 nIndex); */
 NS_IMETHODIMP CDatabaseQuery::GetQuery(PRInt32 nIndex, PRUnichar **_retval)
 {
-  sbCommon::CScopedLock lock(&m_DatabaseQueryListLock);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_MIN(nIndex, 0);
+  nsAutoLock lock(m_pDatabaseQueryListLock);
 
-  if(nIndex < m_DatabaseQueryList.size())
+  if((PRUint32)nIndex < m_DatabaseQueryList.size())
   {
     size_t nLen = m_DatabaseQueryList[nIndex].length() + 1;
     *_retval = (PRUnichar *)nsMemory::Clone(m_DatabaseQueryList[nIndex].c_str(), nLen * sizeof(PRUnichar));
-    if(*_retval == NULL) return NS_ERROR_OUT_OF_MEMORY;
+    NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
   }
 
   return NS_OK;
@@ -214,13 +273,16 @@ NS_IMETHODIMP CDatabaseQuery::GetQuery(PRInt32 nIndex, PRUnichar **_retval)
 /* void ResetQuery (); */
 NS_IMETHODIMP CDatabaseQuery::ResetQuery()
 {
+  // XXXBen - Seems like we should have one lock that protects both of these.
+  //          What happens when one thread resets the query and another tries
+  //          to read the query results? Maybe we could just switch the order.
   {
-    sbCommon::CScopedLock lock(&m_DatabaseQueryListLock);
+    nsAutoLock dbLock(m_pDatabaseQueryListLock);
     m_DatabaseQueryList.clear();
   }
 
   {
-    sbCommon::CScopedLock lock(&m_QueryResultLock);
+    nsAutoLock qrLock(m_pQueryResultLock);
     m_QueryResult->ClearResultSet();
   }
 
@@ -231,7 +293,8 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
 /* sbIDatabaseResult GetResultObject (); */
 NS_IMETHODIMP CDatabaseQuery::GetResultObject(sbIDatabaseResult **_retval)
 {
-  sbCommon::CScopedLock lock(&m_QueryResultLock);
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsAutoLock lock(m_pQueryResultLock);
 
   *_retval = m_QueryResult;
   m_QueryResult->AddRef();
@@ -243,10 +306,12 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObject(sbIDatabaseResult **_retval)
 /* noscript sbIDatabaseResult GetResultObjectOrphan(); */
 NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
 {
-  sbCommon::CScopedLock lock(&m_QueryResultLock);
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsAutoLock lock(m_pQueryResultLock);
 
   CDatabaseResult *pRes = new CDatabaseResult;
-  
+  NS_ENSURE_TRUE(pRes, NS_ERROR_OUT_OF_MEMORY);
+
   pRes->m_ColumnNames = m_QueryResult->m_ColumnNames;
   pRes->m_RowCells = m_QueryResult->m_RowCells;
   pRes->AddRef();
@@ -261,6 +326,7 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
 /* PRInt32 GetLastError (); */
 NS_IMETHODIMP CDatabaseQuery::GetLastError(PRInt32 *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_LastError;
   return NS_OK;
 } //GetLastError
@@ -269,6 +335,7 @@ NS_IMETHODIMP CDatabaseQuery::GetLastError(PRInt32 *_retval)
 /* void SetLastError (in PRInt32 dbError); */
 NS_IMETHODIMP CDatabaseQuery::SetLastError(PRInt32 dbError)
 {
+  NS_ENSURE_ARG_MIN(dbError, 0);
   m_LastError = dbError;
   return NS_OK;
 }
@@ -276,7 +343,11 @@ NS_IMETHODIMP CDatabaseQuery::SetLastError(PRInt32 dbError)
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
 {
-  m_DatabaseQueryHasCompleted.Reset();
+  NS_ENSURE_ARG_POINTER(_retval);
+  {
+    nsAutoMonitor mon(m_pQueryRunningMonitor);
+    m_QueryHasCompleted = PR_FALSE;
+  }
   m_Engine->SubmitQuery(this, _retval);
   return NS_OK;
 } //Execute
@@ -284,9 +355,13 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
 {
-  *_retval = m_DatabaseQueryHasCompleted.Wait();
-  //m_DatabaseQueryHasCompleted.Reset();
-
+  NS_ENSURE_ARG_POINTER(_retval);
+  {
+    nsAutoMonitor mon(m_pQueryRunningMonitor);
+    while (!m_QueryHasCompleted)
+      mon.Wait();
+  }
+  *_retval = NS_OK;
   return NS_OK;
 } //WaitForCompletion
 
@@ -294,9 +369,9 @@ NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
 /* void AddCallback (in IDatabaseQueryCallback dbCallback); */
 NS_IMETHODIMP CDatabaseQuery::AddCallback(sbIDatabaseQueryCallback *dbCallback)
 {
-  if(dbCallback == NULL) return NS_ERROR_NULL_POINTER;
+  NS_ENSURE_ARG_POINTER(dbCallback);
 
-  sbCommon::CScopedLock lock(&m_CallbackListLock);
+  nsAutoLock lock(m_pCallbackListLock);
 
   size_t nSize = m_CallbackList.size();
   for(size_t nCurrent = 0; nCurrent < nSize; nCurrent++)
@@ -315,9 +390,9 @@ NS_IMETHODIMP CDatabaseQuery::AddCallback(sbIDatabaseQueryCallback *dbCallback)
 /* void RemoveCallback (in IDatabaseQueryCallback dbCallback); */
 NS_IMETHODIMP CDatabaseQuery::RemoveCallback(sbIDatabaseQueryCallback *dbCallback)
 {
-  if(dbCallback == NULL) return NS_ERROR_NULL_POINTER;
+  NS_ENSURE_ARG_POINTER(dbCallback);
 
-  sbCommon::CScopedLock lock(&m_CallbackListLock);
+  nsAutoLock lock(m_pCallbackListLock);
 
   callbacklist_t::iterator itCallback = m_CallbackList.begin();
   for(; itCallback != m_CallbackList.end(); itCallback++)
@@ -336,6 +411,7 @@ NS_IMETHODIMP CDatabaseQuery::RemoveCallback(sbIDatabaseQueryCallback *dbCallbac
 /* PRBool IsExecuting (); */
 NS_IMETHODIMP CDatabaseQuery::IsExecuting(PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_IsExecuting;
   return NS_OK;
 } //IsExecuting
@@ -344,6 +420,7 @@ NS_IMETHODIMP CDatabaseQuery::IsExecuting(PRBool *_retval)
 /* PRInt32 CurrentQuery (); */
 NS_IMETHODIMP CDatabaseQuery::CurrentQuery(PRInt32 *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = m_CurrentQuery;
   return NS_OK;
 } //CurrentQuery
@@ -352,6 +429,7 @@ NS_IMETHODIMP CDatabaseQuery::CurrentQuery(PRInt32 *_retval)
 /* void Abort (); */
 NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
 
   if(m_IsExecuting)
@@ -370,7 +448,7 @@ NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
 //-----------------------------------------------------------------------------
 CDatabaseResult *CDatabaseQuery::GetResultObject()
 {
-  sbCommon::CScopedLock lock(&m_QueryResultLock);
+  nsAutoLock lock(m_pQueryResultLock);
 
   m_QueryResult->AddRef();
   return m_QueryResult;

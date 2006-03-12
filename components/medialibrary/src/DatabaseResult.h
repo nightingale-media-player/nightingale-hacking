@@ -32,13 +32,23 @@
 #pragma once
 
 // INCLUDES ===================================================================
-#include "Common.h"
 #include "IDatabaseResult.h"
-
-#include "Lock.h"
 
 #include <string>
 #include <vector>
+
+#include <prlock.h>
+
+#ifndef PRUSTRING_DEFINED
+#define PRUSTRING_DEFINED
+#include <string>
+#include "nscore.h"
+namespace std
+{
+  typedef basic_string< PRUnichar > prustring;
+};
+#endif
+
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASERESULT_CONTRACTID  "@songbird.org/Songbird/DatabaseResult;1"
@@ -58,14 +68,14 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDATABASERESULT
 
-  void AddRow(const std::vector<std::prustring> &vCellValues);
-  void DeleteRow(PRInt32 dbRow);
+  nsresult AddRow(const std::vector<std::prustring> &vCellValues);
+  nsresult DeleteRow(PRInt32 dbRow);
 
-  void SetColumnNames(const std::vector<std::prustring> &vColumnNames);
-  void SetColumnName(PRInt32 dbColumn, const std::prustring &strColumnName);
+  nsresult SetColumnNames(const std::vector<std::prustring> &vColumnNames);
+  nsresult SetColumnName(PRInt32 dbColumn, const std::prustring &strColumnName);
 
-  void SetRowCell(PRInt32 dbRow, PRInt32 dbCell, const std::prustring &strCellValue);
-  void SetRowCells(PRInt32 dbRow, const std::vector<std::prustring> &vCellValues);
+  nsresult SetRowCell(PRInt32 dbRow, PRInt32 dbCell, const std::prustring &strCellValue);
+  nsresult SetRowCells(PRInt32 dbRow, const std::vector<std::prustring> &vCellValues);
 
   PRInt32 GetColumnIndexFromName(const std::prustring &strColumnName);
 
@@ -74,9 +84,9 @@ protected:
   typedef std::vector<std::vector<std::prustring> > dbrowcells_t;
   
   dbcolumnnames_t m_ColumnNames;
-  sbCommon::CLock m_ColumnNamesLock;
+  PRLock* m_pColumnNamesLock;
   
   dbrowcells_t m_RowCells;
-  sbCommon::CLock m_RowCellsLock;
+  PRLock* m_pRowCellsLock;
   
 };

@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\&quot;;&quot;$(ProjectDir)src\common&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MEDIALIBRARY_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -42,10 +42,10 @@
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib common.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib"
 				OutputFile="$(OutDir)/sbMediaLibrary_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src\common&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MediaLibrary.pdb"
@@ -61,7 +61,8 @@ copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
-copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\"/>
+copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -88,7 +89,7 @@ copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\"/>
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\&quot;;&quot;$(ProjectDir)src\common&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MEDIALIBRARY_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -105,10 +106,10 @@ copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\"/>
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib common.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib"
 				OutputFile="$(OutDir)/sbMediaLibrary.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)src\common&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -124,7 +125,8 @@ copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
-copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\"/>
+copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -365,12 +367,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				RelativePath=".\src\MediaScan.h">
 			</File>
 			<File
-				RelativePath=".\src\Playlist.cpp">
-			</File>
-			<File
-				RelativePath=".\src\Playlist.h">
-			</File>
-			<File
 				RelativePath=".\src\sbIDynamicPlaylist.js">
 			</File>
 			<File
@@ -409,25 +405,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			<File
 				RelativePath=".\src\sbISmartPlaylist.js">
 			</File>
-			<Filter
-				Name="common"
-				Filter="">
-				<File
-					RelativePath=".\src\common\Common.h">
-				</File>
-				<File
-					RelativePath=".\src\common\Singleton.h">
-				</File>
-				<File
-					RelativePath=".\src\common\stdafx.h">
-				</File>
-				<File
-					RelativePath=".\src\common\Thread.h">
-				</File>
-				<File
-					RelativePath=".\src\common\Wait.h">
-				</File>
-			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

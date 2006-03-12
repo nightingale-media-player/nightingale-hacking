@@ -39,14 +39,22 @@
 #include <list>
 #include <map>
 
-#include "Lock.h"
-#include "Thread.h"
-#include "Wait.h"
-
 #include "DatabaseQuery.h"
 #include "IDatabaseEngine.h"
 
-//#include "Singleton.h"
+#include <prlock.h>
+#include <prmon.h>
+#include <nsIRunnable.h>
+
+#ifndef PRUSTRING_DEFINED
+#define PRUSTRING_DEFINED
+#include <string>
+#include "nscore.h"
+namespace std
+{
+  typedef basic_string< PRUnichar > prustring;
+};
+#endif
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID  "@songbird.org/Songbird/DatabaseEngine;1"
@@ -59,9 +67,13 @@
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
 
 // CLASSES ====================================================================
+class QueryProcessorThread;
+
 class CDatabaseEngine : public sbIDatabaseEngine
 {
 public:
+  friend class QueryProcessorThread;
+
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDATABASEENGINE
 
@@ -79,23 +91,23 @@ protected:
   void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const std::string &strTableName);
   void RemovePersistentQueryPrivate(CDatabaseQuery *pQuery);
 
-  void LockDatabase(sqlite3 *pDB);
-  void UnlockDatabase(sqlite3 *pDB);
+  nsresult LockDatabase(sqlite3 *pDB);
+  nsresult UnlockDatabase(sqlite3 *pDB);
 
-  void ClearAllDBLocks();
-  void CloseAllDB();
+  nsresult ClearAllDBLocks();
+  nsresult CloseAllDB();
 
   sqlite3 *GetDBByGUID(PRUnichar *dbGUID, PRBool bCreateIfNotOpen = PR_FALSE);
   sqlite3 *FindDBByGUID(PRUnichar *dbGUID);
 
   PRInt32 GetDBGUIDList(std::vector<std::prustring> &vGUIDList);
 
-  static void PR_CALLBACK QueryProcessor(void *pData);
+  static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine);
 
 private:
   //[database guid/name]
   typedef std::map<std::prustring, sqlite3 *>  databasemap_t;
-  typedef std::map<sqlite3 *, sbCommon::CLock *> databaselockmap_t;
+  typedef std::map<sqlite3 *, PRLock *> databaselockmap_t;
   typedef std::list<CDatabaseQuery *> querylist_t;
   //[table guid/name]
   typedef std::map<std::string, querylist_t> tablepersistmap_t;
@@ -107,19 +119,41 @@ private:
   void DoPersistentCallback(CDatabaseQuery *pQuery);
 
 private:
-  //sbCommon::CThread m_QueryProcessorThread;
-  sbCommon::CThreadPool m_QueryProcessorThreadPool;
 
   databasemap_t m_Databases;
-  sbCommon::CLock m_DatabasesLock;
+  PRLock* m_pDatabasesLock;
 
   databaselockmap_t m_DatabaseLocks;
-  sbCommon::CLock m_DatabaseLocksLock;
+  PRLock* m_pDatabaseLocksLock;
 
+  PRMonitor* m_pQueryProcessorMonitor;
   queryqueue_t m_QueryQueue;
-  sbCommon::CLock m_QueryQueueLock;
-  sbCommon::CWait m_QueryQueueHasItem;
+  PRBool m_QueryProcessorQueueHasItem;
+  PRBool m_QueryProcessorShouldShutdown;
+  PRBool m_QueryProcessorHasShutdown;
+  PRInt32 m_QueryProcessorThreadCount;
 
-  sbCommon::CLock m_PersistentQueriesLock;
+  PRLock* m_pPersistentQueriesLock;
   querypersistmap_t m_PersistentQueries;
+
+  PRLock* m_pCaseConversionLock;
+};
+
+class QueryProcessorThread : public nsIRunnable
+{
+public:
+  NS_DECL_ISUPPORTS
+
+  QueryProcessorThread(CDatabaseEngine* pEngine) {
+    NS_ASSERTION(pEngine, "Null pointer!");
+    mpEngine = pEngine;
+  }
+
+  NS_IMETHOD Run()
+  {
+    CDatabaseEngine::QueryProcessor(mpEngine);
+    return NS_OK;
+  }
+protected:
+  CDatabaseEngine* mpEngine;
 };

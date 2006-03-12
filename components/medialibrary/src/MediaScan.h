@@ -32,17 +32,11 @@
 #pragma once
 
 // INCLUDES ===================================================================
-#include "Common.h"
 #include <vector>
 #include <deque>
 #include <string>
 
 #include "IMediaLibrary.h"
-
-#include "Thread.h"
-#include "Wait.h"
-
-//#include "Singleton.h"
 
 #include <xpcom/nscore.h>
 #include <xpcom/nsCOMPtr.h>
@@ -54,7 +48,20 @@
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsISimpleEnumerator.h>
 #include <xpcom/nsXPCOM.h>
-#include <nspr/prlock.h>
+#include <prlock.h>
+#include <prmon.h>
+#include <nsIRunnable.h>
+
+#ifndef PRUSTRING_DEFINED
+#define PRUSTRING_DEFINED
+#include <string>
+#include "nscore.h"
+namespace std
+{
+  typedef basic_string< PRUnichar > prustring;
+};
+#endif
+
 
 // DEFINES ====================================================================
 #define SONGBIRD_MEDIASCAN_CONTRACTID  "@songbird.org/Songbird/MediaScan;1"
@@ -103,6 +110,7 @@ protected:
   filestack_t m_FileStack;
 };
 
+class sbMediaScanThread;
 
 /**
  * \class CMediaScan
@@ -111,23 +119,42 @@ protected:
 class CMediaScan : public sbIMediaScan
 {
 public:
+
+  friend class sbMediaScanThread;
+
   CMediaScan();
   virtual ~CMediaScan();
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIASCAN
 
-  static void PR_CALLBACK QueryProcessor(void *pData);
+  static void PR_CALLBACK QueryProcessor(CMediaScan* pMediaScan);
   PRInt32 ScanDirectory(sbIMediaScanQuery *pQuery);
 
 protected:
   typedef std::deque<sbIMediaScanQuery *> queryqueue_t;
   typedef std::deque<nsISimpleEnumerator *> dirstack_t;
 
-  sbCommon::CThread m_QueryProcessorThread;
-
   queryqueue_t m_QueryQueue;
-  PRLock* m_pQueryQueueLock;
-  sbCommon::CWait m_QueryQueueHasItem;
-  
+  PRBool m_UsingThread;
+  PRBool m_ThreadShouldShutdown;
+  PRBool m_ThreadHasShutdown;
+  PRBool m_ThreadQueueHasItem;
+  PRMonitor* m_pThreadMonitor;
+};
+
+class sbMediaScanThread : public nsIRunnable
+{
+public:
+  NS_DECL_ISUPPORTS
+  sbMediaScanThread(CMediaScan* pMediaScan) {
+    NS_ASSERTION(pMediaScan, "Null pointer!");
+    mpMediaScan = pMediaScan;
+  }
+  NS_IMETHOD Run() {
+    CMediaScan::QueryProcessor(mpMediaScan);
+    return NS_OK;
+  }
+protected:
+  CMediaScan* mpMediaScan;
 };
