@@ -277,10 +277,10 @@ PRInt32 CPlaylistReaderPLS::ParsePLSFromBuffer(PRUnichar *pPathToFile, PRUnichar
 
   do
   {
-    nextline = wcsstr( (wchar_t *)pBuffer, L"\r"); // sue me.  this is a valid cast.
+    nextline = wcsstr( (wchar_t *)pBuffer, NS_L("\r")); // sue me.  this is a valid cast.
 
     if(!nextline)
-      nextline = wcsstr( (wchar_t *)pBuffer, L"\n" );
+      nextline = wcsstr( (wchar_t *)pBuffer, NS_L("\n"));
 
     if ( nextline )
     {
@@ -289,18 +289,18 @@ PRInt32 CPlaylistReaderPLS::ParsePLSFromBuffer(PRUnichar *pPathToFile, PRUnichar
     }
 
 
-    if ( wcsstr( (wchar_t *)pBuffer, L"[playlist]" ) )
+    if ( wcsstr( (wchar_t *)pBuffer, NS_L("[playlist]") ) )
     {
       bInPlaylist = PR_TRUE;
     }
-    else if ( wcsstr( (wchar_t *)pBuffer, L"[" ) && wcsstr( (wchar_t *)pBuffer, L"]" ) && !wcsstr((wchar_t *)pBuffer, L"="))
+    else if ( wcsstr( (wchar_t *)pBuffer, NS_L("[") ) && wcsstr( (wchar_t *)pBuffer, NS_L("]") ) && !wcsstr((wchar_t *)pBuffer, NS_L("=")))
     {
       bInPlaylist = PR_FALSE;
     }
 
     if ( bInPlaylist )
     {
-      wchar_t *val = wcsstr( (wchar_t *)pBuffer, L"=" );
+      wchar_t *val = wcsstr( (wchar_t *)pBuffer, NS_L("=") );
       if ( val )
       {
         *val++ = L'\0';

@@ -40,6 +40,8 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsComponentManagerUtils.h>
+#include "nsString.h"
+
 #include "sbIDeviceManager.h"
 #include "sbICDDevice.h"
 
@@ -263,7 +265,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
           PRBool retVal;
           nsCOMPtr<sbIDeviceBase> cdDeviceBaseObject;
 
-          deviceManager->GetDevice(L"Songbird CD Device", getter_AddRefs(cdDeviceBaseObject));
+          deviceManager->GetDevice(NS_L("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
           if (cdDeviceBaseObject)
           {
             nsCOMPtr<sbICDDevice> cdDevice;

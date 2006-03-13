@@ -216,7 +216,7 @@ NS_IMETHODIMP CPlaylistReaderM3U::Description(PRUnichar **_retval)
 /* void SupportedMIMETypes (out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out string aMIMETypes); */
 NS_IMETHODIMP CPlaylistReaderM3U::SupportedMIMETypes(PRUint32 *nMIMECount, PRUnichar ***aMIMETypes)
 { 
-  const static PRUnichar *MIMETypes[] = {NS_LITERAL_STRING("audio/mpegurl").get(), NS_LITERAL_STRING("audio/x-mpegurl").get()};
+  const static PRUnichar *MIMETypes[] = {NS_L("audio/mpegurl"), NS_L("audio/x-mpegurl")};
   const static PRUint32 MIMETypesCount = sizeof(MIMETypes) / sizeof(MIMETypes[0]);
 
   PRUnichar** out = (PRUnichar **) nsMemory::Alloc(MIMETypesCount * sizeof(PRUnichar *));
@@ -288,7 +288,7 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
 
   do
   {
-    strNextLine = wcsstr( (wchar_t *)pBuffer, L"\n" );
+    strNextLine = wcsstr( (wchar_t *)pBuffer, NS_L("\n"));
     if ( strNextLine )
     {
       *strNextLine++ = '\0';
@@ -297,11 +297,11 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
     while( *pBuffer && *pBuffer == ' ' || *pBuffer == '\t' || *pBuffer == '\r')
       pBuffer++;
 
-    if ( !wcsncmp( (wchar_t *)pBuffer, L"#EXTM3U", 7 ) )
+    if ( !wcsncmp( (wchar_t *)pBuffer, NS_L("#EXTM3U"), 7 ) )
     {
       nAvail = 1;
     } 
-    else if ( nAvail && ! wcsncmp( (wchar_t *)pBuffer, L"#EXTINF:", 8 ) )
+    else if ( nAvail && ! wcsncmp( (wchar_t *)pBuffer, NS_L("#EXTINF:"), 8 ) )
     {
       wchar_t *title = (wchar_t *)pBuffer + 8;
       strLength = NS_LITERAL_STRING("").get();
@@ -339,7 +339,7 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
       strTitle = title;
     }
 
-    if ( ! wcsncmp( (wchar_t *)pBuffer, L"ASF ", 4 ) )
+    if ( ! wcsncmp( (wchar_t *)pBuffer, NS_L("ASF "), 4 ) )
       pBuffer += 4;
 
     if ( *pBuffer && *pBuffer != '#' && *pBuffer != '\r' && *pBuffer != '\n')

@@ -341,7 +341,7 @@ PRUint32 WinCDObject::GetCDTrackNumber(PRUnichar* trackName)
 
   // Get the string without extension
   nsString workCopyTrackName(trackName);
-  PRInt32 dotPos = workCopyTrackName.Find(L".");
+  PRInt32 dotPos = workCopyTrackName.Find(NS_L("."));
   if (dotPos < 0)
   {
     return trackNumber;

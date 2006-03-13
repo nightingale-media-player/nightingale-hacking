@@ -69,7 +69,7 @@
 /* Implementation file */
 NS_IMPL_ISUPPORTS1(CWindowDragger, sbIWindowDragger)
 
-#define WINDOWDRAGGER_WNDCLASS L"sbWindowDraggerWindow"
+#define WINDOWDRAGGER_WNDCLASS NS_L("sbWindowDraggerWindow")
 
 //-----------------------------------------------------------------------------
 static LRESULT CALLBACK WindowDraggerProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
