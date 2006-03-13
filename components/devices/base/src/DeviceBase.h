@@ -162,11 +162,9 @@ protected:
 
   PRUint32 GetCurrentTransferRowNumber() { return mCurrentTransferRowNumber;  }
 
-  PRLock* mpDeviceQueueLock;
-  PRMonitor* mpDeviceQueueMonitor;
   PRMonitor* mpDeviceThreadMonitor;
-  PRBool mDeviceThreadTerminate;
-  PRBool mDeviceThreadEnded;
+  PRBool mDeviceThreadShouldShutdown;
+  PRBool mDeviceThreadHasShutdown;
   PRBool mDeviceQueueHasItem;
   
   static void PR_CALLBACK DeviceProcess(sbDeviceBase* pData);

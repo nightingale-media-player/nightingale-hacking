@@ -136,7 +136,6 @@ protected:
   typedef std::deque<nsISimpleEnumerator *> dirstack_t;
 
   queryqueue_t m_QueryQueue;
-  PRBool m_UsingThread;
   PRBool m_ThreadShouldShutdown;
   PRBool m_ThreadHasShutdown;
   PRBool m_ThreadQueueHasItem;

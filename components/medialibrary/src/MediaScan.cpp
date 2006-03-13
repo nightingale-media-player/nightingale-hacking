@@ -265,8 +265,7 @@ NS_IMPL_ISUPPORTS1(CMediaScan, sbIMediaScan)
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediaScanThread, nsIRunnable)
 //-----------------------------------------------------------------------------
 CMediaScan::CMediaScan()
-: m_UsingThread(PR_FALSE)
-, m_pThreadMonitor(nsAutoMonitor::NewMonitor("CMediaScan.m_pThreadMonitor"))
+: m_pThreadMonitor(nsAutoMonitor::NewMonitor("CMediaScan.m_pThreadMonitor"))
 , m_ThreadShouldShutdown(PR_FALSE)
 , m_ThreadHasShutdown(PR_FALSE)
 , m_ThreadQueueHasItem(PR_FALSE)
@@ -282,14 +281,9 @@ CMediaScan::CMediaScan()
       break;
     nsresult rv = NS_NewThread(getter_AddRefs(pThread), pThreadRunner);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbMediaScanThread");
-    if (NS_SUCCEEDED(rv))
-      m_UsingThread = PR_TRUE;
-    else {
-      // Something went wrong, kill our monitor
+    if (NS_FAILED(rv)) {
       m_ThreadShouldShutdown = PR_TRUE;
       m_ThreadHasShutdown = PR_TRUE;
-      nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
-      m_pThreadMonitor = nsnull;
     }
   } while (PR_FALSE); // Only do this once
 } //ctor
@@ -297,13 +291,16 @@ CMediaScan::CMediaScan()
 //-----------------------------------------------------------------------------
 CMediaScan::~CMediaScan()
 {
-  if (m_UsingThread) {
+  {
     nsAutoMonitor mon(m_pThreadMonitor);
-    m_ThreadShouldShutdown = PR_TRUE;
-    mon.Notify();
-    while (!m_ThreadHasShutdown)
-      mon.Wait();
+    if (!m_ThreadHasShutdown) {
+      m_ThreadShouldShutdown = PR_TRUE;
+      mon.Notify();
+      while (!m_ThreadHasShutdown)
+        mon.Wait();
+    }
   }
+
   if (m_pThreadMonitor)
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
 } //dtor
@@ -322,6 +319,7 @@ NS_IMETHODIMP CMediaScan::SubmitQuery(sbIMediaScanQuery *pQuery)
     m_ThreadQueueHasItem = PR_TRUE;
     mon.Notify();
   }
+
   return NS_OK;
 } //SubmitQuery
 

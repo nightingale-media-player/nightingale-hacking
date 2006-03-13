@@ -69,43 +69,42 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceThread, nsIRunnable)
 sbDeviceBase::sbDeviceBase(PRBool usingThread)
 :	mUsingThread(usingThread)
 , mDeviceQueueHasItem(PR_FALSE)
-, mpDeviceQueueLock(PR_NewLock())
 , mpCallbackListLock(PR_NewLock())
-, mpDeviceQueueMonitor(nsAutoMonitor::NewMonitor("sbDeviceBase.mpDeviceQueueMonitor"))
 , mpDeviceThreadMonitor(nsAutoMonitor::NewMonitor("sbDeviceBase.mpDeviceThreadMonitor"))
-, mDeviceThreadTerminate(PR_FALSE)
-, mDeviceThreadEnded(PR_FALSE)
+, mDeviceThreadShouldShutdown(PR_FALSE)
+, mDeviceThreadHasShutdown(PR_FALSE)
 {
-  NS_ASSERTION(mpDeviceQueueLock, "sbDeviceBase.mpDeviceQueueLock failed");
   NS_ASSERTION(mpCallbackListLock, "sbDeviceBase.mpCallbackListLock failed");
-  NS_ASSERTION(mpDeviceQueueMonitor, "sbDeviceBase.mpDeviceQueueMonitor failed");
   NS_ASSERTION(mpDeviceThreadMonitor, "sbDeviceBase.mpDeviceThreadMonitor failed");
-  DeviceIdle();
   if (mUsingThread) {
-    nsCOMPtr<nsIThread> pThreadRunner;
-    nsCOMPtr<nsIRunnable> pThread = new sbDeviceThread(this);
-    NS_ASSERTION(pThread, "Unable to create sbDeviceThread");
-    if (!pThread)
+    do {
       mUsingThread = PR_FALSE;
-    nsresult rv = NS_NewThread(getter_AddRefs(pThreadRunner), pThread);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbDeviceThread");
-    if (NS_FAILED(rv)) {
-      mUsingThread = PR_FALSE;
-    }
+      nsCOMPtr<nsIThread> pThreadRunner;
+      nsCOMPtr<nsIRunnable> pThread = new sbDeviceThread(this);
+      NS_ASSERTION(pThread, "Unable to create sbDeviceThread");
+      if (!pThread) 
+        break;
+      nsresult rv = NS_NewThread(getter_AddRefs(pThreadRunner), pThread);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbDeviceThread");
+      if (NS_SUCCEEDED(rv))
+        mUsingThread = PR_TRUE;
+    } while (PR_FALSE); // Only do this once
   }
+  DeviceIdle();
 } //ctor
 
 //-----------------------------------------------------------------------------
 sbDeviceBase::~sbDeviceBase()
 {
   // Shutdown the thread
-  if (mUsingThread && !mDeviceThreadEnded) {
-    NS_ASSERTION(mpDeviceThreadMonitor, "No thread monitor");
+  if (mUsingThread) {
     nsAutoMonitor mon(mpDeviceThreadMonitor);
-    mDeviceThreadTerminate = PR_TRUE;
-    mon.NotifyAll();
-    while (!mDeviceThreadEnded)
-      mon.Wait();
+    if (!mDeviceThreadHasShutdown) {
+      mDeviceThreadShouldShutdown = PR_TRUE;
+      mon.NotifyAll();
+      while (!mDeviceThreadHasShutdown)
+        mon.Wait();
+    }
     mUsingThread = PR_FALSE;
   }
 
@@ -117,12 +116,8 @@ sbDeviceBase::~sbDeviceBase()
     mCallbackList.clear();
   }
 
-  if (mpDeviceQueueLock)
-    PR_DestroyLock(mpDeviceQueueLock);
   if (mpCallbackListLock)
     PR_DestroyLock(mpCallbackListLock);
-  if (mpDeviceQueueMonitor)
-    nsAutoMonitor::DestroyMonitor(mpDeviceQueueMonitor);
   if (mpDeviceThreadMonitor)
     nsAutoMonitor::DestroyMonitor(mpDeviceThreadMonitor);
 } //dtor
@@ -184,58 +179,56 @@ NS_IMETHODIMP sbDeviceBase::RemoveCallback(sbIDeviceBaseCallback *pCallback, PRB
 /* static */
 void PR_CALLBACK sbDeviceBase::DeviceProcess(sbDeviceBase* pDevice)
 {
+  ThreadMessage* pDeviceMessage;
+
   pDevice->OnThreadBegin();
 
   while (PR_TRUE) {
 
-    nsAutoMonitor mon(pDevice->mpDeviceQueueMonitor);
+    pDeviceMessage = nsnull;
 
-    while (!pDevice->mDeviceQueueHasItem) {
-      if (pDevice->mDeviceThreadTerminate) {
-        nsAutoMonitor mon2(pDevice->mpDeviceThreadMonitor);
-        pDevice->mDeviceThreadEnded = PR_TRUE;
-        mon2.NotifyAll();
+    { // Enter Monitor
+
+      nsAutoMonitor mon(pDevice->mpDeviceThreadMonitor);
+      while (!pDevice->mDeviceQueueHasItem && !pDevice->mDeviceThreadShouldShutdown)
+        mon.Wait();
+
+      if (pDevice->mDeviceThreadShouldShutdown) {
+        pDevice->OnThreadEnd();
+        pDevice->mDeviceThreadHasShutdown = PR_TRUE;
+        mon.NotifyAll();
         return;
       }
-      else
-        mon.Wait();
-    }
-
-    ThreadMessage* pDeviceMessage = nsnull;
-
-    {
-      nsAutoLock lock(pDevice->mpDeviceQueueLock);
 
       pDeviceMessage = pDevice->mDeviceMessageQueue.front();
-
       pDevice->mDeviceMessageQueue.pop_front();
       if (pDevice->mDeviceMessageQueue.empty())
         pDevice->mDeviceQueueHasItem = PR_FALSE;
+
+    } // Exit Monitor
+
+    NS_ASSERTION(pDeviceMessage, "No message!");
+
+    switch(pDeviceMessage->message) {
+      case MSG_DEVICE_TRANSFER:
+        pDevice->TransferNextFile((PRInt32) pDeviceMessage->data1, (TransferData *) pDeviceMessage->data2);
+        break;
+      case MSG_DEVICE_INITIALIZE:
+        pDevice->InitializeSync();
+        break;
+      case MSG_DEVICE_FINALIZE:
+        pDevice->FinalizeSync();
+        break;
+      case MSG_DEVICE_EVENT:
+        pDevice->DeviceEventSync((PRBool) pDeviceMessage->data2);
+        break;
+      default:
+        NS_NOTREACHED("Bad DeviceMessage");
+        break;
     }
 
-    if (pDeviceMessage) {
-      switch(pDeviceMessage->message) {
-        case MSG_DEVICE_TRANSFER:
-          pDevice->TransferNextFile((PRInt32) pDeviceMessage->data1, (TransferData *) pDeviceMessage->data2);
-          break;
-        case MSG_DEVICE_INITIALIZE:
-          pDevice->InitializeSync();
-          break;
-        case MSG_DEVICE_FINALIZE:
-          pDevice->FinalizeSync();
-          break;
-        case MSG_DEVICE_EVENT:
-          pDevice->DeviceEventSync((PRBool) pDeviceMessage->data2);
-          break;
-        default:
-          NS_NOTREACHED("No DeviceMessage");
-          break;
-      }
-      delete pDeviceMessage;
-    } // if (pDeviceMessage)
-  } // while (PR_TRUE)
-
-	pDevice->OnThreadEnd();
+    delete pDeviceMessage;
+  } // while
 }
 
 PRBool sbDeviceBase::SubmitMessage(PRUint32 message, void* data1, void* data2)
@@ -250,11 +243,8 @@ PRBool sbDeviceBase::SubmitMessage(PRUint32 message, void* data1, void* data2)
   pDeviceMessage->data2 = data2;
 
   {
-    nsAutoMonitor mon(mpDeviceQueueMonitor);
-    {
-      nsAutoLock lock(mpDeviceQueueLock);
-      mDeviceMessageQueue.push_back(pDeviceMessage);
-    }
+    nsAutoMonitor mon(mpDeviceThreadMonitor);
+    mDeviceMessageQueue.push_back(pDeviceMessage);
     mDeviceQueueHasItem = PR_TRUE;
     mon.Notify();
   }

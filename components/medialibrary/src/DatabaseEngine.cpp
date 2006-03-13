@@ -321,10 +321,12 @@ CDatabaseEngine::CDatabaseEngine()
 {
   {
     nsAutoMonitor mon(m_pQueryProcessorMonitor);
-    m_QueryProcessorShouldShutdown = PR_TRUE;
-    mon.NotifyAll();
-    while (!m_QueryProcessorHasShutdown)
-      mon.Wait();
+    if (!m_QueryProcessorHasShutdown) {
+      m_QueryProcessorShouldShutdown = PR_TRUE;
+      mon.NotifyAll();
+      while (!m_QueryProcessorHasShutdown)
+        mon.Wait();
+    }
   }
 
   ClearAllDBLocks();
