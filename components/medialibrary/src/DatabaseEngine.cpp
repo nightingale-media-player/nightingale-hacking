@@ -356,64 +356,10 @@ PRInt32 CDatabaseEngine::OpenDB(PRUnichar *dbGUID)
   std::prustring strDBGUID(dbGUID);
   std::prustring strFilename(dbGUID);
 
-  strFilename += L".db";
-
-  /*
-  nsCOMPtr<nsIFile> cwd;
-  NS_GetSpecialDirectory(NS_OS_CURRENT_WORKING_DIR, getter_AddRefs(cwd));
-  
-  nsCOMPtr<nsIFile> old_cwd;
-  nsresult rv = cwd->Clone(getter_AddRefs(old_cwd));
-  if (NS_FAILED(rv))
-    return rv;
-  
-  // Create the db subfolder.  If it already exists, I don't care.
-  cwd->Append( NS_LITERAL_STRING("db") );
-
-  PRBool exists;
-  cwd->Exists( &exists );
-  if ( ! exists )
-  {
-    rv = cwd->Create( nsIFile::DIRECTORY_TYPE, 0777 );
-  }
-
-  // Set that to be our working directory (because sqlite is given a local file name)
-  //rv = directory->Set(NS_OS_CURRENT_WORKING_DIR, cwd );
-
-#if defined(_WIN32)
-  _chdir("db/");
-#else
-  chdir("db/");
-#endif
-*/
-
-  /*
-  {
-    // If there's a journal file, we suck.  Nuke it.
-    nsString strDBJournal(dbGUID);
-    strDBJournal += NS_LITERAL_STRING("-journal");
-
-    rv = cwd->Append( strDBJournal );
-    if (NS_FAILED(rv))
-      return rv;
-
-    rv = cwd->Remove( PR_FALSE );
-  }
-  */
+  strFilename += NS_LITERAL_STRING(".db").get();
 
   // Kick sqlite in the pants
   PRInt32 ret = sqlite3_open16(strFilename.c_str(), &pDB);
-
-  // Restore the working directory to where it once were
-  //rv = directory->Set(NS_OS_CURRENT_WORKING_DIR, old_cwd );
-
-/*
-#if defined(_WIN32)
-  _chdir("..");
-#else
-  chdir("..");
-#endif
-*/
 
   // Remember what we just loaded
   if(ret == SQLITE_OK)
@@ -921,13 +867,13 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
         strQuery = pzQuery;
         PR_Free(pzQuery);
         
-        static nsString strAttachToken(L"ATTACH DATABASE \"");
+        NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
 
         size_t nPos = strQuery.find(strAttachToken.get());
         if(nPos != strQuery.npos)
         {
-          static nsString strStartToken(L"AS \"");
-          static nsString strEndToken(L"\"");
+          NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
+          NS_NAMED_LITERAL_STRING(strEndToken, "\"");
 
           nPos += strAttachToken.Length();
           nPos = strQuery.find(strStartToken.get(), nPos);
@@ -956,7 +902,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
             {
               PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
               OutputDebugStringW(szErr);
-              OutputDebugStringW(L"\n");
+              OutputDebugStringW(NS_L("\n"));
             }
 #endif
           }
@@ -976,7 +922,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
             {
               PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
               OutputDebugStringW(szErr);
-              OutputDebugStringW(L"\n");
+              OutputDebugStringW(NS_L("\n"));
             }
 #endif
           }
@@ -994,7 +940,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
             {
               PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
               OutputDebugStringW(szErr);
-              OutputDebugStringW(L"\n");
+              OutputDebugStringW(NS_L("\n"));
               //__asm int 3;
             }
 #endif
@@ -1084,7 +1030,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
 #if defined(HARD_SANITY_CHECK)
                   PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
                   OutputDebugStringW(szErr);
-                  OutputDebugStringW(L"\n");
+                  OutputDebugStringW(NS_L("\n"));
 #endif
 
                 }
@@ -1155,7 +1101,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
           {
             PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
             OutputDebugStringW(szErr);
-            OutputDebugStringW(L"\n");
+            OutputDebugStringW(NS_L("\n"));
             //__asm int 3;
           }
 #endif

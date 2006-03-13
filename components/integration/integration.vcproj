@@ -30,7 +30,7 @@
 				BufferSecurityCheck="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"
 				ForcedIncludeFiles="mozilla-config.h"/>
 			<Tool
@@ -90,7 +90,7 @@ copy /y $(TargetDir)sbIntegration.xpt $(SolutionDir)dist\components
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				ForcedIncludeFiles="mozilla-config.h"/>
 			<Tool

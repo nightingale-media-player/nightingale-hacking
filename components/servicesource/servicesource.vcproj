@@ -51,7 +51,8 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components"/>
+copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -83,7 +84,7 @@ copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components"/>
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				ForcedIncludeFiles="mozilla-config.h"/>
 			<Tool
@@ -107,7 +108,8 @@ copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components"/>
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components"/>
+copy /y $(TargetDir)sbIServicesource.xpt $(SolutionDir)dist\components
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
