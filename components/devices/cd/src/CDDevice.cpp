@@ -62,7 +62,7 @@ NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
 //-----------------------------------------------------------------------------
 sbCDDevice::sbCDDevice()
 : sbDeviceBase(PR_TRUE)
-,mCDManagerObject(this)
+, mCDManagerObject(this)
 {
 } //ctor
 
@@ -356,7 +356,7 @@ PRBool sbCDDevice::DeviceEventSync(PRBool mediaInserted)
 // Transfer related
 nsString sbCDDevice::GetDeviceDownloadTableDescription(const PRUnichar* deviceString)
 { 
-  return nsString(L"cd-rip"); 
+  return nsString(NS_LITERAL_STRING("cd-rip"));
 }
 
 nsString sbCDDevice::GetDeviceUploadTableDescription(const PRUnichar* deviceString)
@@ -366,7 +366,7 @@ nsString sbCDDevice::GetDeviceUploadTableDescription(const PRUnichar* deviceStri
 
 nsString sbCDDevice::GetDeviceDownloadTableType(const PRUnichar* deviceString)
 { 
-  return nsString(L"cd-rip"); 
+  return nsString(NS_LITERAL_STRING("cd-rip")); 
 }
 
 nsString sbCDDevice::GetDeviceUploadTableType(const PRUnichar* deviceString)
@@ -376,7 +376,7 @@ nsString sbCDDevice::GetDeviceUploadTableType(const PRUnichar* deviceString)
 
 nsString sbCDDevice::GetDeviceDownloadReadable(const PRUnichar* deviceString)
 { 
-  return nsString(L"CD Ripping"); 
+  return nsString(NS_LITERAL_STRING("CD Ripping")); 
 }
 
 nsString sbCDDevice::GetDeviceUploadTableReadable(const PRUnichar* deviceString)
@@ -386,7 +386,7 @@ nsString sbCDDevice::GetDeviceUploadTableReadable(const PRUnichar* deviceString)
 
 nsString sbCDDevice::GetDeviceDownloadTable(const PRUnichar* deviceString)
 { 
-  return nsString(L"cdrip"); 
+  return nsString(NS_LITERAL_STRING("cdrip"));
 }
 
 nsString sbCDDevice::GetDeviceUploadTable(const PRUnichar* deviceString)
