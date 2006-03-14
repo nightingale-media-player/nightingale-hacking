@@ -59,7 +59,6 @@
 #define strnicmp strncasecmp
 #endif
 
-#define USE_TIMING                    0
 #define USE_SQLITE_FULL_DISK_CACHING  1
 #define SQLITE_MAX_RETRIES            66
 //#define HARD_SANITY_CHECK             0
@@ -760,11 +759,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
 //-----------------------------------------------------------------------------
 /*static*/ void PR_CALLBACK CDatabaseEngine::QueryProcessor(CDatabaseEngine* pEngine)
 {
-#if USE_TIMING
-  FILETIME a_start, a_time;
-  PRUnichar str[255];
-#endif
-
   CDatabaseQuery *pQuery = nsnull;
 
   while(PR_TRUE)
@@ -794,11 +788,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
         pEngine->m_QueryProcessorQueueHasItem = PR_FALSE;
       }
     } // Exit Monitor
-
-
-#if USE_TIMING
-    ::GetSystemTimeAsFileTime( &a_start );
-#endif
 
     if(!pQuery)
       continue;

@@ -29,9 +29,6 @@
 * \brief Songbird Playlistsource Component Implementation.
 */
 
-#define WINDOWS_LEAN_AND_MEAN
-#include <Windows.h>
-
 #include "nscore.h"
 #include "prlog.h"
 
@@ -73,21 +70,8 @@
 
 #include "IPlaylist.h"
 
-#define OUTPUT_DEBUG 0
-#define USE_TIMING 0
-
-#if OUTPUT_DEBUG
-#define SAYW( s ) ::OutputDebugStringW( s )
-#define SAYA( s ) ::OutputDebugStringA( s )
-#define SAY( s ) ::OutputDebugString( s )
-#else
-#define SAYW( s ) // ::OutputDebugStringW( s )
-#define SAYA( s ) // ::OutputDebugStringA( s )
-#define SAY( s ) // ::OutputDebugString( s )
-#endif
-
 static  sbPlaylistsource  *gPlaylistPlaylistsource = nsnull;
-static  nsIRDFService       *gRDFService = nsnull;
+static  nsIRDFService     *gRDFService = nsnull;
 
 // A callback from the database for when things change and we should repaint.
 class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
@@ -117,9 +101,7 @@ NS_IMPL_ISUPPORTS1(MyQueryCallback, sbIDatabaseSimpleQueryCallback)
 NS_IMETHODIMP MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, const PRUnichar *dbGUID, const PRUnichar *strQuery)
 {
   // LOCK IT.
-  SAYA("Callback Lock\n");
   nsAutoMonitor mon(sbPlaylistsource::g_pMonitor);
-  SAYA("Callback Granted\n");
 
   // Push the old resultset onto the garbage stack.
   sbPlaylistsource::sbResultInfo result;
@@ -137,14 +119,6 @@ NS_IMETHODIMP MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, con
   //res->Release(); // ah-hah!
   m_Info->m_Resultset = res;
 
-#if OUTPUT_DEBUG
-  {
-    PRUnichar str[255];
-    wsprintfW( str, L"Callback - param(%08X) - query(%08X)\n", dbResultObject, resultset );
-    SAYW( str );
-  }
-#endif
-
   if ( --sbPlaylistsource::g_ActiveQueryCount <= 0 )
   {
     sbPlaylistsource::g_NeedUpdate = PR_TRUE;
@@ -159,36 +133,6 @@ NS_IMETHODIMP MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, con
     m_Timer->InitWithFuncCallback( &MyTimerCallbackFunc, gPlaylistPlaylistsource, 0, 0 );
   }
 
-
-#if defined(WIN32) && 1 // OUTPUT_DEBUG  // yah, okay, now we shouldn't be naughty with win32 in the code anymore.
-  static PRBool bOnce = PR_FALSE;
-
-  PRUnichar *query_str = nsnull;
-  m_Info->m_Query->GetQuery( 0, &query_str );
-  {
-    static PRUnichar txt[2048];
-    PRInt32 num_rows, db_rows;
-    m_Info->m_Resultset->GetRowCount( &num_rows );
-    dbResultObject->GetRowCount( &db_rows );
-    wsprintfW( txt, L"%s - `%s`\nResults has %d row%c and %d dbrow%c\n\n", dbGUID, query_str, num_rows, (num_rows == 1) ? ' ' : 's' , db_rows, (db_rows == 1) ? ' ' : 's' );
-    OutputDebugStringW( txt );
-
-    if( num_rows && !bOnce )
-    {
-      bOnce = PR_TRUE;
-    }
-
-    if ( !num_rows && bOnce)
-    {
-
-//      __asm PRInt32 3;
-    }
-  }
-  PR_Free( query_str );
-#endif
-
-  SAYA("Callback Unlock\n");
-  SAYA("Callback Exit\n");
   return NS_OK;
 }
 
@@ -320,41 +264,6 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylist(const PRUnichar *RefName, const PRU
       query->AddSimpleQueryCallback( callback );
       query->SetPersistentQuery( PR_TRUE );
 
-      // Fire it.
-      //if ( Execute )
-      //{
-      //  // Load it.
-      //  nsString query_str( NS_LITERAL_STRING( "select * from " ) );
-      //  nsString table_name( TableName );
-
-      //  query_str += qu_str + table_name + qu_str;
-
-      //  if(table_name != library_str)
-      //  {
-      //    nsCOMPtr<sbISimplePlaylist> pPlaylist;
-      //    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
-      //    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbird.org/Songbird/PlaylistManager;1");
-
-      //    pQuery->SetAsyncQuery(PR_TRUE);
-      //    pQuery->SetDatabaseGUID(ContextGUID);
-
-      //    g_Lock.Unlock();
-      //    pPlaylistManager->GetSimplePlaylist(table_name.get(), pQuery.get(), pPlaylist.StartAssignment());
-      //    g_Lock.Lock();
-
-      //    if(!pPlaylist.get())
-      //    {
-      //      query_str += left_join_str + library_str + on_str + qu_str + table_name + qu_str + dot_str + playlist_uuid_str + eq_str + library_str + dot_str + uuid_str;
-      //      //        ::MessageBoxW( nsnull, query_str.get(), query_str.get(), MB_OK );
-      //    }
-      //  }
-
-      //  query->AddQuery( query_str.get() );
-
-      //  PRInt32 ret;
-      //  query->Execute( &ret );
-      //}
-
       // Make a resource for it.
       nsIRDFResource *new_resource = nsnull;
       gRDFService->GetResource( NS_ConvertUTF16toUTF8(strRefName), &new_resource );
@@ -400,11 +309,6 @@ NS_IMETHODIMP sbPlaylistsource::IncomingObserver(const PRUnichar *RefName, nsIDO
   }
   if ( !found )
   {
-    // This better be blank.
-    if ( m_IncomingObserver.Length() )
-    {
-      MessageBoxW( nsnull, m_IncomingObserver.get(), RefName, MB_OK );
-    }
     m_IncomingObserver = RefName;
     m_IncomingObserverPtr = Observer;
   }
@@ -716,12 +620,7 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefN
             filter_info->m_Override = filter_str;
             filter_info->m_Query->ResetQuery();
             filter_info->m_Query->AddQuery( sub_query_str.get() );
-//            ::MessageBoxW( nsnull, sub_query_str.get(), sub_query_str.get(), MB_OK );
             filter_info->m_Query->Execute( &ret );
-          }
-          else
-          {
-//            __asm PRInt32 3;
           }
         }
 
@@ -803,12 +702,10 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefN
           main_query_str += cp_str;
         }
       }
-//      main_query_str += cp_str;
 
       mon.Exit();
 
       PRInt32 ret;
-//      ::MessageBoxW( nsnull, main_query_str.get(), main_query_str.get(), MB_OK );
       info->m_Query->ResetQuery();
       info->m_Query->AddQuery( main_query_str.get() );
       info->m_Query->Execute( &ret );
@@ -1031,13 +928,6 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
     _retval = &retval;
   }
 
-#if USE_TIMING
-  FILETIME a_start, a_time;
-  PRUnichar str[255];
-  ::GetSystemTimeAsFileTime( &a_start );
-  SAYA("FeedFilter - START\n" );
-#endif
-
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
@@ -1179,20 +1069,13 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
       if ( bret )
       {
         mon.Exit();
-        SAYA("FeedFilter - ABORTING QUERY\n" );
         filter_info->m_Query->Abort( &bret ); // Blocks until aborted.
-        SAYA("FeedFilter - ABORTED\n" );
         mon.Enter();
       }
       PRInt32 ret;
       filter_info->m_Query->ResetQuery();
       filter_info->m_Query->AddQuery( sub_query_str.get() );
 //      g_Lock.Unlock();
-      SAYA("FeedFilter - Execute - " );
-#if USE_TIMING
-      wsprintfW( str, L"(%08X): %s\n", filter_info->m_Query.get(), sub_query_str.get()  );
-      SAYW( str );
-#endif
       filter_info->m_Query->Execute( &ret );
 //      g_Lock.Lock();
 
@@ -1209,46 +1092,16 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
       main_query_str = simple_query_str;
     }
 
-    // It's highly probable that we're still executing from FeedPlaylist()
-    PRBool bret;
-    info->m_Query->IsExecuting( &bret );
-    if ( bret )
-    {
-      SAYA("FeedFilter - ABORTING QUERY\n" );
-/*
-      g_Lock.Unlock();
-      info->m_Query->Abort( &bret ); // Blocks until aborted.
-      SAYA("FeedFilter - ABORTED\n" );
-      g_Lock.Lock();
-*/
-    }
-//    else
-    {
-      // Remove the previous results
-      info->m_Resultset = nsnull;
+    // Remove the previous results
+    info->m_Resultset = nsnull;
 
-      // Change the main query and resubmit.
-      SAYA("FeedFilter - Reset\n" );
-      info->m_Query->ResetQuery();
-      //    ::MessageBoxW( nsnull, main_query_str.get(), main_query_str.get(), MB_OK );
-      SAYA("FeedFilter - Add\n" );
-      info->m_Query->AddQuery( main_query_str.get() );
-      //    g_Lock.Unlock();
-      SAYA("FeedFilter - Execute - " );
-#if USE_TIMING
-      wsprintfW( str, L"(%08X): %s\n", info->m_Query.get(), main_query_str.get()  );
-      SAYW( str );
-#endif
-      info->m_Query->Execute( _retval );
-      //    g_Lock.Lock();
-    }
+    // Change the main query and resubmit.
+    info->m_Query->ResetQuery();
+    info->m_Query->AddQuery( main_query_str.get() );
+    //    g_Lock.Unlock();
+    info->m_Query->Execute( _retval );
+    //    g_Lock.Lock();
   }
-
-#if USE_TIMING
-  ::GetSystemTimeAsFileTime( &a_time );
-  wsprintfW( str, L"FeedFilter - %06d\n", ( a_time.dwLowDateTime - a_start.dwLowDateTime ) / 10000 );
-  SAYW( str );
-#endif
 
   return NS_OK;
 }
@@ -1367,14 +1220,6 @@ void sbPlaylistsource::UpdateObservers()
     {
       if ( (*r).m_Results.get() )
       {
-#if USE_TIMING
-        PRUnichar str[255];
-        PRInt32 row, col;
-        (*r).m_Results->GetRowCount( &row );
-        (*r).m_Results->GetColumnCount( &col );
-        wsprintfW( str, L"Garbage Collect - 0x%08X - %d, %d\n", (*r).m_Results.get(), row, col );
-        SAYW( str );
-#endif
         (*r).m_Results->ClearResultSet();
       }
     }
@@ -1433,10 +1278,6 @@ void sbPlaylistsource::Init(void)
       gRDFService->GetLiteral(NS_LITERAL_STRING("PR_FALSE").get(),      
         &kLiteralFalse);
     }
-    else
-    {
-      SAYA("Init - No gRDFService, can't get resources.\n" );
-    }
 
     gPlaylistPlaylistsource = this;
   }
@@ -1444,35 +1285,12 @@ void sbPlaylistsource::Init(void)
 
 void sbPlaylistsource::DeInit (void)
 {
-#ifdef DEBUG_REFS
-  --gInstanceCount;
-  fprintf(stdout, "%d - RDF: sbPlaylistsource\n", gInstanceCount);
-#endif
-
-  // DEINIT THE LOCAL 
-/*
-  std::map< nsIRDFResource *, PRInt32>::iterator i;
-  for ( i = m_QueryResources.begin(); i != m_QueryResources.end(); i++ )
-  {
-    NS_RELEASE( const_cast<nsIRDFResource *>( (*i).first ) );
-  }
-  m_QueryResources.clear();
-  ClearPlaylistRDF( m_RootResource );
-  */
-
   // DEINIT THE STATIC 
   if (--gRefCnt == 0) 
   {
     if ( nsnull != gRDFService )
     {
       NS_RELEASE(kNC_Playlist);
-/*
-      PRInt32 i;
-      for ( i = 0; i < sbPlaylistsource::kNumMetadataColumns; i++ )
-      {
-        NS_RELEASE(kNC_Metadata[ i ]);
-      }
-*/
       NS_RELEASE(kRDF_InstanceOf);
       NS_RELEASE(kRDF_type);
       NS_RELEASE(gRDFService);
@@ -1484,7 +1302,6 @@ void sbPlaylistsource::DeInit (void)
 NS_IMETHODIMP
 sbPlaylistsource::GetURI(char **uri)
 {
-  SAYA("GetURI\n" );
   NS_PRECONDITION(uri != nsnull, "null ptr");
   if (! uri)
     return NS_ERROR_NULL_POINTER;
@@ -1503,7 +1320,6 @@ sbPlaylistsource::GetSource(nsIRDFResource* property,
                     PRBool tv,
                     nsIRDFResource** source /* out */)
 {
-  SAYA("GetSource\n" );
   NS_PRECONDITION(property != nsnull, "null ptr");
   if (! property)
     return NS_ERROR_NULL_POINTER;
@@ -1528,7 +1344,6 @@ sbPlaylistsource::GetSources(nsIRDFResource *property,
                      PRBool tv,
                      nsISimpleEnumerator **sources /* out */)
 {
-  SAYA("GetSources\n" );
   //  NS_NOTYETIMPLEMENTED("write me");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -1553,22 +1368,8 @@ sbPlaylistsource::GetTarget(nsIRDFResource *source,
   if (! target)
     return NS_ERROR_NULL_POINTER;
 
-  SAYA("\nGetTarget\n" );
-
   nsCString value;
   source->GetValueUTF8( value );
-
-#if OUTPUT_DEBUG
-  const char *source_val = nsnull;
-  source->GetValueConst( &source_val );
-  SAYA("source: " );
-  SAYA( source_val );
-  const char *property_val = nsnull;
-  property->GetValueConst( &property_val );
-  SAYA("\nproperty: " );
-  SAYA( property_val );
-  SAYA("\n" );
-#endif // OUTPUT_DEBUG
 
   *target = nsnull;
 
@@ -1693,20 +1494,6 @@ sbPlaylistsource::GetTargets(nsIRDFResource *source,
                      PRBool tv,
                      nsISimpleEnumerator **targets /* out */)
 {
-  SAYA("\nGetTargets\n" );
-
-#if OUTPUT_DEBUG
-  const char *source_val = nsnull;
-  source->GetValueConst( &source_val );
-  SAYA("source: " );
-  SAYA( source_val );
-  const char *property_val = nsnull;
-  property->GetValueConst( &property_val );
-  SAYA("\nproperty: " );
-  SAYA( property_val );
-  SAYA("\n" );
-#endif // OUTPUT_DEBUG
-
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1730,11 +1517,6 @@ sbPlaylistsource::GetTargets(nsIRDFResource *source,
   {
 
     PRInt32 rowcount = 0, colcount = 0;
-#if USE_TIMING
-    FILETIME a_start, a_time;
-    PRUnichar str[255];
-    ::GetSystemTimeAsFileTime( &a_start );
-#endif
 
     // LOCK IT!
     nsAutoMonitor mon(g_pMonitor);
@@ -1977,17 +1759,10 @@ sbPlaylistsource::GetTargets(nsIRDFResource *source,
       *targets = result;
       info->m_RootTargets = result;
 
-#if USE_TIMING
-      ::GetSystemTimeAsFileTime( &a_time );
-      wsprintfW( str, L"GetTargets - %06d (%d)\n", ( a_time.dwLowDateTime - a_start.dwLowDateTime ) / 10000, rowcount );
-      SAYW( str );
-#endif
-
       return rv;
     }
     else
     {
-//      ::MessageBoxW( nsnull, L"bad source", L"sbPlaylistsource", MB_OK );
     }
   }
 
@@ -2002,7 +1777,6 @@ sbPlaylistsource::Assert(nsIRDFResource *source,
                  nsIRDFNode *target,
                  PRBool tv)
 {
-  SAYA("Assert\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -2013,7 +1787,6 @@ sbPlaylistsource::Unassert(nsIRDFResource *source,
                    nsIRDFResource *property,
                    nsIRDFNode *target)
 {
-  SAYA("Unassert\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -2025,7 +1798,6 @@ sbPlaylistsource::Change(nsIRDFResource* aSource,
                  nsIRDFNode* aOldTarget,
                  nsIRDFNode* aNewTarget)
 {
-  SAYA("Change\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -2037,7 +1809,6 @@ sbPlaylistsource::Move(nsIRDFResource* aOldSource,
                nsIRDFResource* aProperty,
                nsIRDFNode* aTarget)
 {
-  SAYA("Move\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -2050,29 +1821,6 @@ sbPlaylistsource::HasAssertion(nsIRDFResource *source,
                        PRBool tv,
                        PRBool *hasAssertion /* out */)
 {
-  SAYA("\nHasAssertion\n" );
-
-#if OUTPUT_DEBUG
-  const char *source_val = nsnull;
-  source->GetValueConst( &source_val );
-  SAYA("source: " );
-  SAYA( source_val );
-  const char *property_val = nsnull;
-  property->GetValueConst( &property_val );
-  SAYA("\nproperty: " );
-  SAYA( property_val );
-  const char *target_val = nsnull;
-  nsCOMPtr<nsIRDFResource> resource( do_QueryInterface(target) );
-  if ( resource.get() )
-  {
-    resource->GetValueConst( &target_val );
-    SAYA("\ntarget: " );
-    SAYA( target_val );
-  }
-  SAYA("\n" );
-#endif // OUTPUT_DEBUG
-
-
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -2115,10 +1863,6 @@ sbPlaylistsource::HasAssertion(nsIRDFResource *source,
         *hasAssertion = PR_FALSE;
       }
     }
-    else
-    {
-      SAYA("Has Assertion - ERROR: Unknown property" );
-    }
   }
 
   return NS_OK;
@@ -2129,7 +1873,6 @@ sbPlaylistsource::HasAssertion(nsIRDFResource *source,
 NS_IMETHODIMP 
 sbPlaylistsource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *result)
 {
-  SAYA("HasArcIn\n" );
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -2138,47 +1881,7 @@ sbPlaylistsource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *resu
 NS_IMETHODIMP 
 sbPlaylistsource::HasArcOut(nsIRDFResource *aSource, nsIRDFResource *aArc, PRBool *result)
 {
-  SAYA("\nHasArcOut\n" );
-#if OUTPUT_DEBUG
-  const char *source_val = nsnull;
-  aSource->GetValueConst( &source_val );
-  SAYA("source: " );
-  SAYA( source_val );
-  const char *property_val = nsnull;
-  aArc->GetValueConst( &property_val );
-  SAYA("\narc: " );
-  SAYA( property_val );
-  SAYA("\n" );
-#endif // OUTPUT_DEBUG
   *result = PR_FALSE;
-  /*
-  if (aSource == kNC_Playlist)
-  {
-  *result = (aArc == kNC_child || aArc == kNC_pulse);
-  }
-  else if (isFileURI(aSource))
-  {
-  if (aArc == kNC_pulse)
-  {
-  *result = PR_TRUE;
-  }
-  else if (isDirURI(aSource))
-  {
-  #ifdef  XP_WIN
-  *result = isValidFolder(aSource);
-  #else
-  *result = PR_TRUE;
-  #endif
-  }
-  else if (aArc == kNC_pulse || aArc == kNC_Name || aArc == kNC_Icon ||
-  aArc == kNC_URL || aArc == kNC_Length || aArc == kWEB_LastMod ||
-  aArc == kNC_FileSystemObject || aArc == kRDF_InstanceOf ||
-  aArc == kRDF_type)
-  {
-  *result = PR_TRUE;
-  }
-  }
-  */
   return NS_OK;
 }
 
@@ -2188,8 +1891,6 @@ NS_IMETHODIMP
 sbPlaylistsource::ArcLabelsIn(nsIRDFNode *node,
                       nsISimpleEnumerator ** labels /* out */)
 {
-  SAYA("ArcLabelsIn\n" );
-  //  NS_NOTYETIMPLEMENTED("write me");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -2199,7 +1900,6 @@ NS_IMETHODIMP
 sbPlaylistsource::ArcLabelsOut(nsIRDFResource *source,
                        nsISimpleEnumerator **labels /* out */)
 {
-  SAYA("ArcLabelsOut\n" );
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -2264,7 +1964,6 @@ sbPlaylistsource::ArcLabelsOut(nsIRDFResource *source,
 NS_IMETHODIMP
 sbPlaylistsource::GetAllResources(nsISimpleEnumerator** aCursor)
 {
-  SAYA("GetAllResources\n" );
   NS_NOTYETIMPLEMENTED("sorry!");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -2274,7 +1973,6 @@ sbPlaylistsource::GetAllResources(nsISimpleEnumerator** aCursor)
 NS_IMETHODIMP
 sbPlaylistsource::AddObserver(nsIRDFObserver *n)
 {
-  SAYA("AddObserver\n" );
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -2287,11 +1985,6 @@ sbPlaylistsource::AddObserver(nsIRDFObserver *n)
     {
       // Cool, we already knew about this guy?
       found = PR_TRUE;
-      // But doublecheck just in case
-      if ( (*oi).m_Ref != m_IncomingObserver )
-      {
-        MessageBoxW( nsnull, (*oi).m_Ref.get(), m_IncomingObserver.get(), MB_OK );
-      }
       (*oi).m_Ref = m_IncomingObserver;
       (*oi).m_Ptr = m_IncomingObserverPtr;
     }
@@ -2319,7 +2012,6 @@ sbPlaylistsource::AddObserver(nsIRDFObserver *n)
 NS_IMETHODIMP
 sbPlaylistsource::RemoveObserver(nsIRDFObserver *n)
 {
-  SAYA("RemoveObserver\n" );
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -2346,7 +2038,6 @@ NS_IMETHODIMP
 sbPlaylistsource::GetAllCmds(nsIRDFResource* source,
                      nsISimpleEnumerator/*<nsIRDFResource>*/** commands)
 {
-  SAYA("GetAllCmds\n" );
   return(NS_NewEmptyEnumerator(commands));
 }
 
@@ -2358,7 +2049,6 @@ sbPlaylistsource::IsCommandEnabled(nsISupportsArray/*<nsIRDFResource>*/* aSource
                            nsISupportsArray/*<nsIRDFResource>*/* aArguments,
                            PRBool* aResult)
 {
-  SAYA("IsCommandEnabled\n" );
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -2369,7 +2059,6 @@ sbPlaylistsource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
                     nsIRDFResource*   aCommand,
                     nsISupportsArray/*<nsIRDFResource>*/* aArguments)
 {
-  SAYA("DoCommand\n" );
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -2378,7 +2067,6 @@ sbPlaylistsource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
 NS_IMETHODIMP
 sbPlaylistsource::BeginUpdateBatch()
 {
-  SAYA("BeginUpdateBatch\n" );
   return NS_OK;
 }
 
@@ -2387,7 +2075,6 @@ sbPlaylistsource::BeginUpdateBatch()
 NS_IMETHODIMP
 sbPlaylistsource::EndUpdateBatch()
 {
-  SAYA("EndUpdateBatch\n" );
   return NS_OK;
 }
 
@@ -2448,7 +2135,7 @@ sbPlaylistsource::LoadRowResults( sbPlaylistsource::sbValueInfo & value )
   // Walk through the ResList to put the lookahead values into the rows
   PRInt32 i,rows = 0;
   result->GetRowCount( &rows );
-  PRInt32 end = min( value.m_ResMapIndex + rows, value.m_Info->m_ResList.size() );
+  PRInt32 end = ( value.m_ResMapIndex + rows < value.m_Info->m_ResList.size() ) ? value.m_ResMapIndex + rows : value.m_Info->m_ResList.size();
   for ( i = value.m_ResMapIndex; i < end; i++ )
   {
     sbPlaylistsource::sbValueInfo &val = g_ValueMap[ value.m_Info->m_ResList[ i ] ];

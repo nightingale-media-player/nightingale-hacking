@@ -29,9 +29,6 @@
 * \brief Songbird Servicesource Component Implementation.
 */
 
-#define WINDOWS_LEAN_AND_MEAN
-#include <Windows.h>
-
 #include "nscore.h"
 #include "prlog.h"
 
@@ -68,16 +65,6 @@
 #include "Servicesource.h"
 
 #include "IPlaylist.h"
-
-#define OUTPUT_DEBUG 0
-
-#if OUTPUT_DEBUG
-#define SAYA( s ) ::OutputDebugStringA( s )
-#define SAY( s ) ::OutputDebugString( s )
-#else
-#define SAYA( s ) // ::OutputDebugStringA( s )
-#define SAY( s ) // ::OutputDebugString( s )
-#endif
 
 static  CServicesource  *gServicesource = nsnull;
 static  nsIRDFService   *gRDFService = nsnull;
@@ -481,10 +468,6 @@ void CServicesource::Init(void)
       gRDFService->GetLiteral(NS_LITERAL_STRING("false").get(),      
         &kLiteralFalse);
     }
-    else
-    {
-      SAYA( "Init - No gRDFService, can't get resources.\n" );
-    }
 
     // Setup the list of playlists as a persistent query
     m_PlaylistsQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
@@ -542,7 +525,6 @@ void CServicesource::DeInit (void)
 NS_IMETHODIMP
 CServicesource::GetURI(char **uri)
 {
-  SAYA( "GetURI\n" );
   NS_PRECONDITION(uri != nsnull, "null ptr");
   if (! uri)
     return NS_ERROR_NULL_POINTER;
@@ -561,7 +543,6 @@ CServicesource::GetSource(nsIRDFResource* property,
                     PRBool tv,
                     nsIRDFResource** source /* out */)
 {
-  SAYA( "GetSource\n" );
   NS_PRECONDITION(property != nsnull, "null ptr");
   if (! property)
     return NS_ERROR_NULL_POINTER;
@@ -586,8 +567,6 @@ CServicesource::GetSources(nsIRDFResource *property,
                      PRBool tv,
                      nsISimpleEnumerator **sources /* out */)
 {
-  SAYA( "GetSources\n" );
-  //  NS_NOTYETIMPLEMENTED("write me");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -610,20 +589,6 @@ CServicesource::GetTarget(nsIRDFResource *source,
   NS_PRECONDITION(target != nsnull, "null ptr");
   if (! target)
     return NS_ERROR_NULL_POINTER;
-
-  SAYA( "\nGetTarget\n" );
-
-#if OUTPUT_DEBUG
-  const char *source_val = NULL;
-  source->GetValueConst( &source_val );
-  SAYA( "source: " );
-  SAYA( source_val );
-  const char *property_val = NULL;
-  property->GetValueConst( &property_val );
-  SAYA( "\nproperty: " );
-  SAYA( property_val );
-  SAYA( "\n" );
-#endif // OUTPUT_DEBUG
 
   *target = nsnull;
 
@@ -785,41 +750,6 @@ CServicesource::GetTargets(nsIRDFResource *source,
                      PRBool tv,
                      nsISimpleEnumerator **targets /* out */)
 {
-  SAYA( "\nGetTargets\n" );
-
-/*
-  PRBool exec = false;
-  m_PlaylistsQuery->IsExecuting( &exec );
-  if ( ! exec )
-  {
-    PRInt32 error;
-    m_PlaylistsQuery->GetLastError( &error );
-    if ( error )
-    {
-      nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbird.org/Songbird/PlaylistManager;1" );
-      if(pPlaylistManager.get())
-        pPlaylistManager->GetAllPlaylistList( m_PlaylistsQuery );
-      m_PlaylistsQuery->GetLastError( &error );
-      if ( error )
-      {
-//        __asm int 3;
-      }
-    }
-  }
-*/
-
-#if OUTPUT_DEBUG
-  const char *source_val = NULL;
-  source->GetValueConst( &source_val );
-  SAYA( "source: " );
-  SAYA( source_val );
-  const char *property_val = NULL;
-  property->GetValueConst( &property_val );
-  SAYA( "\nproperty: " );
-  SAYA( property_val );
-  SAYA( "\n" );
-#endif // OUTPUT_DEBUG
-
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -844,7 +774,6 @@ CServicesource::GetTargets(nsIRDFResource *source,
   {
     if (property == kNC_child)
     {
-      SAYA( "GetTargets - kNC_child\n" );
       nsresult rv = NS_OK;
       *targets = NULL;
 
@@ -897,7 +826,6 @@ CServicesource::GetTargets(nsIRDFResource *source,
   {
     if (property == kNC_child)
     {
-      SAYA( "GetTargets - kNC_child\n" );
       nsresult rv = NS_OK;
       *targets = NULL;
 
@@ -963,16 +891,6 @@ CServicesource::GetTargets(nsIRDFResource *source,
               // If there is a label for this element, append it.
               if ( gChildLabels[ i ][ j ].Length() )
               {
-#if OUTPUT_DEBUG
-                const char *property_val = NULL;
-                kNC_Child[ i ][ j ]->GetValueConst( &property_val );
-                SAYA( "target: " );
-                SAYA( property_val );
-                SAYA( " : " );
-
-                SAY( PromiseFlatString( gChildLabels[ i ][ j ] ).get() );
-                SAYA( "\n" );
-#endif
                 nextItemArray->AppendElement( kNC_Child[ i ][ j ] );
               }
             }
@@ -1003,7 +921,6 @@ CServicesource::Assert(nsIRDFResource *source,
                  nsIRDFNode *target,
                  PRBool tv)
 {
-  SAYA( "Assert\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1014,7 +931,6 @@ CServicesource::Unassert(nsIRDFResource *source,
                    nsIRDFResource *property,
                    nsIRDFNode *target)
 {
-  SAYA( "Unassert\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1026,7 +942,6 @@ CServicesource::Change(nsIRDFResource* aSource,
                  nsIRDFNode* aOldTarget,
                  nsIRDFNode* aNewTarget)
 {
-  SAYA( "Change\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1038,7 +953,6 @@ CServicesource::Move(nsIRDFResource* aOldSource,
                nsIRDFResource* aProperty,
                nsIRDFNode* aTarget)
 {
-  SAYA( "Move\n" );
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1051,29 +965,6 @@ CServicesource::HasAssertion(nsIRDFResource *source,
                        PRBool tv,
                        PRBool *hasAssertion /* out */)
 {
-  SAYA( "\nHasAssertion\n" );
-
-#if OUTPUT_DEBUG
-  const char *source_val = NULL;
-  source->GetValueConst( &source_val );
-  SAYA( "source: " );
-  SAYA( source_val );
-  const char *property_val = NULL;
-  property->GetValueConst( &property_val );
-  SAYA( "\nproperty: " );
-  SAYA( property_val );
-  const char *target_val = NULL;
-  nsCOMPtr<nsIRDFResource> resource( do_QueryInterface(target) );
-  if ( resource.get() )
-  {
-    resource->GetValueConst( &target_val );
-    SAYA( "\ntarget: " );
-    SAYA( target_val );
-  }
-  SAYA( "\n" );
-#endif // OUTPUT_DEBUG
-
-
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1116,10 +1007,6 @@ CServicesource::HasAssertion(nsIRDFResource *source,
         *hasAssertion = PR_FALSE;
       }
     }
-    else
-    {
-      SAYA( "Has Assertion - ERROR: Unknown property" );
-    }
   }
 
   return NS_OK;
@@ -1130,7 +1017,6 @@ CServicesource::HasAssertion(nsIRDFResource *source,
 NS_IMETHODIMP 
 CServicesource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *result)
 {
-  SAYA( "HasArcIn\n" );
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1139,18 +1025,6 @@ CServicesource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *result
 NS_IMETHODIMP 
 CServicesource::HasArcOut(nsIRDFResource *aSource, nsIRDFResource *aArc, PRBool *result)
 {
-  SAYA( "\nHasArcOut\n" );
-#if OUTPUT_DEBUG
-  const char *source_val = NULL;
-  aSource->GetValueConst( &source_val );
-  SAYA( "source: " );
-  SAYA( source_val );
-  const char *property_val = NULL;
-  aArc->GetValueConst( &property_val );
-  SAYA( "\narc: " );
-  SAYA( property_val );
-  SAYA( "\n" );
-#endif // OUTPUT_DEBUG
   *result = PR_FALSE;
 
   if (aSource == kNC_Servicesource)
@@ -1177,8 +1051,6 @@ NS_IMETHODIMP
 CServicesource::ArcLabelsIn(nsIRDFNode *node,
                       nsISimpleEnumerator ** labels /* out */)
 {
-  SAYA( "ArcLabelsIn\n" );
-  //  NS_NOTYETIMPLEMENTED("write me");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1188,7 +1060,6 @@ NS_IMETHODIMP
 CServicesource::ArcLabelsOut(nsIRDFResource *source,
                        nsISimpleEnumerator **labels /* out */)
 {
-  SAYA( "ArcLabelsOut\n" );
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1253,7 +1124,6 @@ CServicesource::ArcLabelsOut(nsIRDFResource *source,
 NS_IMETHODIMP
 CServicesource::GetAllResources(nsISimpleEnumerator** aCursor)
 {
-  SAYA( "GetAllResources\n" );
   NS_NOTYETIMPLEMENTED("sorry!");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -1263,7 +1133,6 @@ CServicesource::GetAllResources(nsISimpleEnumerator** aCursor)
 NS_IMETHODIMP
 CServicesource::AddObserver(nsIRDFObserver *n)
 {
-  SAYA( "AddObserver\n" );
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -1279,7 +1148,6 @@ CServicesource::AddObserver(nsIRDFObserver *n)
 NS_IMETHODIMP
 CServicesource::RemoveObserver(nsIRDFObserver *n)
 {
-  SAYA( "RemoveObserver\n" );
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -1300,7 +1168,6 @@ NS_IMETHODIMP
 CServicesource::GetAllCmds(nsIRDFResource* source,
                      nsISimpleEnumerator/*<nsIRDFResource>*/** commands)
 {
-  SAYA( "GetAllCmds\n" );
   return(NS_NewEmptyEnumerator(commands));
 }
 
@@ -1312,7 +1179,6 @@ CServicesource::IsCommandEnabled(nsISupportsArray/*<nsIRDFResource>*/* aSources,
                            nsISupportsArray/*<nsIRDFResource>*/* aArguments,
                            PRBool* aResult)
 {
-  SAYA( "IsCommandEnabled\n" );
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -1323,7 +1189,6 @@ CServicesource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
                     nsIRDFResource*   aCommand,
                     nsISupportsArray/*<nsIRDFResource>*/* aArguments)
 {
-  SAYA( "DoCommand\n" );
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -1332,7 +1197,6 @@ CServicesource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
 NS_IMETHODIMP
 CServicesource::BeginUpdateBatch()
 {
-  SAYA( "BeginUpdateBatch\n" );
   return NS_OK;
 }
 
@@ -1341,7 +1205,6 @@ CServicesource::BeginUpdateBatch()
 NS_IMETHODIMP
 CServicesource::EndUpdateBatch()
 {
-  SAYA( "EndUpdateBatch\n" );
   return NS_OK;
 }
 
