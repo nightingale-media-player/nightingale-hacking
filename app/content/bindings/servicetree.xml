@@ -489,11 +489,11 @@
               var theServiceTreePlaylistPopup = this.popup_playlist;
               if ( base_type == "smart" )
               {
-                theServiceTreePlaylistPopup = this.popup_smart;
+                theServiceTreePlaylistPopup = this.popup_smartplaylist;
               }
               if ( base_type == "dynamic" )
               {
-                theServiceTreePlaylistPopup = this.popup_smart;
+                theServiceTreePlaylistPopup = this.popup_smartplaylist;
               }
               theServiceTreePlaylistPopup.setAttribute( "sb_table", table );
               theServiceTreePlaylistPopup.setAttribute( "sb_guid", guid );
