@@ -419,6 +419,29 @@ function onBkgUp( )
   SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
 }
 
+function saveWindowPosition()
+{
+  var root = "window." + document.documentElement.id;
+  SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
+  SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+  SBDataSetValue( root + ".w", document.documentElement.boxObject.width );
+  SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
+}
+
+function switchFeathers(internalName)
+{
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  var curfeathers = "rubberducky";
+  try {
+    curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
+  } catch (err) {}
+  if (curfeathers == internalName) return;
+  onMinimize();
+  prefs.setCharPref("general.skins.selectedSkin", internalName);  
+  window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
+  setTimeout( "onExit();", 1000 );
+}
+
 // old version, just in case
 /*var trackerBkg = false;
 var offsetScrX = 0;
@@ -1976,11 +1999,7 @@ function onMenu( target )
     case "file.skin":
 try    
 {
-      var root = "window." + document.documentElement.id;
-      SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-      SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
-      SBDataSetValue( root + ".w", document.documentElement.boxObject.width );
-      SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
+      saveWindowPosition();
       var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
       if ( SBDataGetIntValue( "option.skin" ) == 0 )
       {

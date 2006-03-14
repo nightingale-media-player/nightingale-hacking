@@ -37,6 +37,8 @@ copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(So
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\xulrunner\
 move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
+mkdir $(SolutionDir)dist\xulrunner\extensions
+xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 "
 				ExcludedFromBuild="FALSE"/>
 			<Tool
@@ -69,6 +71,8 @@ copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(So
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\xulrunner\
 move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
+mkdir $(SolutionDir)dist\xulrunner\extensions
+xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 "
 				ExcludedFromBuild="FALSE"/>
 			<Tool
@@ -303,6 +307,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 				</File>
 				<File
 					RelativePath=".\content\scripts\songbird_interfaces.js">
+				</File>
+				<File
+					RelativePath=".\content\scripts\switch_feathers.js">
 				</File>
 				<File
 					RelativePath=".\content\scripts\switch_locale.js">

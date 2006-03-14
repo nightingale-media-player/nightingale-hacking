@@ -42,6 +42,6 @@ locale	songbird	ca-ES	        locales/ca-ES/
 locale	songbird	ca-AD	        locales/ca-AD/
 locale	songbird	bs-BA	        locales/bs-BA/
 
-locale  browser   en-US         browser/locale/browser/ 
-content browser                 browser/content/
-skin    browser   classic/1.0   browser/skin/classic/browser/ 
+locale  browser   en-US         content/browser/locale/browser/ 
+content browser                 content/browser/content/
+skin    browser   classic/1.0   content/browser/skin/classic/browser/ 
