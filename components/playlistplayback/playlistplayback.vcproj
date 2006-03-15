@@ -27,6 +27,7 @@
 				CommandLine="mkdir $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\
+copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\
 copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
@@ -50,6 +51,7 @@ copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\componen
 				CommandLine="mkdir $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\
+copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\
 copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
@@ -116,6 +118,9 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Filter="">
 			<File
 				RelativePath=".\src\coreVLC.js">
+			</File>
+			<File
+				RelativePath=".\src\coreWMP.js">
 			</File>
 			<File
 				RelativePath=".\src\sbPlaylistPlayback.js">

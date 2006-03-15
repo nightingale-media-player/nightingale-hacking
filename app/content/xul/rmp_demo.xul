@@ -139,6 +139,7 @@
             <hbox flex="1">
             <spacer width="10"/>
               <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
+              <html:object id="core_wm" flex="1" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="application/asx" />
             <spacer width="10"/>
             </hbox>
             <spacer height="5"/>
@@ -184,8 +185,10 @@
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreVLC.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/coreWMP.js"/>
   
-  <!-- Load the core wrappers (SAME AS THE OLD BOSS) -->
+  <!-- Load the core wrappers (SAME AS THE OLD BOSS) 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/core_wmp.js"/>
   <script type="application/x-javascript" 
@@ -194,6 +197,7 @@
    src="chrome://songbird/content/scripts/core_vlc.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/core_vlc2.js"/>
+  -->
 
   <!-- Load the "background" scripts -->
   <script type="application/x-javascript" 

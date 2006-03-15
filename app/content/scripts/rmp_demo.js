@@ -259,15 +259,17 @@ function SBAppInitialize()
     // Bind the core instances to the core objects (I really should make these use createElementNS, if we can get it to work)      
     //theWMPCore.bindInstance( theWMPInstance );
     //theQTCore.bindInstance( theQTInstance );
-    theVLCCore.bindInstance( theVLCInstance );
+    //theVLCCore.bindInstance( theVLCInstance );
 
     // Tell the repeater we will be playing only one specific type of media
     //thePlayerRepeater.setPlaybackCore( theWMPCore );
     //thePlayerRepeater.setPlaybackCore( theQTCore );
-    thePlayerRepeater.setPlaybackCore( theVLCCore );
+    //thePlayerRepeater.setPlaybackCore( theVLCCore );
 
     // Let the sbIPlaylistPlayback interface play in the game, too, maaaan.
     CoreVLCDocumentInit( "core_vlc" );
+    //CoreWMPDocumentInit( "core_wm" );
+    //setTimeout("CoreWMPDocumentInit( 'core_wm' );", 0);
     
     // Reset this on application startup. 
     SBDataSetValue("backscan.paused", false);
