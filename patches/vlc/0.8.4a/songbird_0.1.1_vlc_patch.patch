@@ -1,0 +1,1091 @@
+Index: D:/Coding/vlc/_tags/0.8.4a/configure.ac
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/configure.ac	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/configure.ac	(working copy)
+@@ -4501,32 +4501,32 @@
+ then
+   if test "${SYS}" = "mingw32"; then
+     AC_CHECK_TOOL(CYGPATH, cygpath, "")
+-    mozilla_sdk_xpcom="/xpcom"
++    mozilla_sdk_xpcom="/include/xpcom"
+   fi
+ 
+   real_mozilla_sdk="`cd ${with_mozilla_sdk_path} 2>/dev/null && pwd`"
+-  CPPFLAGS="${CPPFLAGS_save} -I${real_mozilla_sdk} -I${real_mozilla_sdk}/include"
++  CPPFLAGS="${CPPFLAGS_save} -I${real_mozilla_sdk}/include/xpcom -I${real_mozilla_sdk}/include/plugin -I${real_mozilla_sdk}/include/string -I${real_mozilla_sdk}/necko -I${real_mozilla_sdk}/include"
+   AC_CHECK_HEADERS(mozilla-config.h, [
+     mozilla=:
+-    VLC_ADD_CPPFLAGS([mozilla],[-DXPCOM_GLUE -I${real_mozilla_sdk} -I${real_mozilla_sdk}/include -I${real_mozilla_sdk}/embedstring/include -I${real_mozilla_sdk}/xpcom/include -I${real_mozilla_sdk}/nspr/include -I${real_mozilla_sdk}/string/include -I${real_mozilla_sdk}/plugin/include -I${real_mozilla_sdk}/java/include])
+-    VLC_ADD_LDFLAGS([mozilla],[-L${real_mozilla_sdk}/embedstring/bin -L${real_mozilla_sdk}/xpcom/bin -L${real_mozilla_sdk}/nspr/bin -L${real_mozilla_sdk}/string/bin -L${real_mozilla_sdk}/lib -lnspr4 -lplds4 -lplc4 -lxpcomglue])
++    VLC_ADD_CPPFLAGS([mozilla],[-DXPCOM_GLUE -I${real_mozilla_sdk}/include -I${real_mozilla_sdk}/include/embedstring -I${real_mozilla_sdk}/include/xpcom -I${real_mozilla_sdk}/include/nspr -I${real_mozilla_sdk}/include/string -I${real_mozilla_sdk}/include/plugin -I${real_mozilla_sdk}/include/java])
++    VLC_ADD_LDFLAGS([mozilla],[-L${real_mozilla_sdk}/lib/win32 -lnspr4 -lplds4 -lplc4 -lxpcom -lxul])
+     if test "${SYS}" = "mingw32"; then
+-      VLC_ADD_LDFLAGS([mozilla],[-lembedstring -Wl,--kill-at])
++      VLC_ADD_LDFLAGS([mozilla],[-Wl,--kill-at])
+     fi
+ 
+-    XPIDL_INCL="-I${real_mozilla_sdk}${mozilla_sdk_xpcom}/idl"
+-    XPIDL="${real_mozilla_sdk}${mozilla_sdk_xpcom}/bin/xpidl"
++    XPIDL_INCL="-I${real_mozilla_sdk}/idl"
++    XPIDL="${real_mozilla_sdk}/bin/win32/xpidl"
+ 
+     if test -n "${CYGPATH}"; then
+       real_mozilla_sdk="`${CYGPATH} -w ${real_mozilla_sdk}`"
+-      XPIDL_INCL="${XPIDL_INCL} -I\"${real_mozilla_sdk}${mozilla_sdk_xpcom}/idl\""
++      XPIDL_INCL="${XPIDL_INCL} -I\"${real_mozilla_sdk}/idl\""
+     fi ])
+   CPPFLAGS="${CPPFLAGS_save}"
+ fi
+ 
+ dnl Not necessarily in ${PATH}
+ if test -z "${XPIDL}" -o ! -x "${XPIDL}"; then
+-  XPIDL="/usr/lib/mozilla/xpidl"
++  XPIDL="/${real_mozilla_sdk}/bin/win32/xpidl"
+ fi
+ AS_IF([test "${MOZILLA_CONFIG}"], [
+   if test -z "${XPIDL_INCL}"; then
+Index: D:/Coding/vlc/_tags/0.8.4a/include/vlc/vlc.h
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/include/vlc/vlc.h	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/include/vlc/vlc.h	(working copy)
+@@ -25,6 +25,11 @@
+  *****************************************************************************/
+ 
+ /**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * 2/6/2006 9:10PM
++ */
++
++/**
+  * \defgroup libvlc Libvlc
+  * This is libvlc, the base library of the VLC program.
+  *
+@@ -154,6 +159,9 @@
+  * Exported libvlc API
+  *****************************************************************************/
+ #if !defined( __VLC__ )
++
++#include "vlc_meta.h"
++
+ /* Otherwise they are declared and exported in vlc_common.h */
+ /**
+  * Retrieve libvlc version
+@@ -567,6 +575,26 @@
+ int             VLC_FullScreen( int );
+ 
+ 
++/**
++ * Get Playlist Item MetaData.
++ *
++ * \param i_object a vlc object id.
++ * \param i_item an item index.
++ * \return VLC_SUCCESS on success
++ */
++int             VLC_PlaylistGetItemMetadata( int, int, vlc_meta_t ** );
++
++/**
++ * Remove an item from the playlist
++ *
++ * Remove a single item from the playlist by index.
++ *
++ * \param i_object a vlc object id
++ * \param i_index the index number of the item to delete from the playlist.
++ * \return VLC_SUCCESS on success
++ */
++int             VLC_PlaylistDeleteItem( int, int );
++
+ # ifdef __cplusplus
+ }
+ # endif
+Index: D:/Coding/vlc/_tags/0.8.4a/include/vlc_config.h
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/include/vlc_config.h	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/include/vlc_config.h	(working copy)
+@@ -22,6 +22,11 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * 2/6/2006 9:10PM
++ */
++
+ /* Conventions regarding names of symbols and variables
+  * ----------------------------------------------------
+  *
+@@ -50,7 +55,11 @@
+ #elif SYS_DARWIN
+ #  define CONFIG_DIR                    "Library/Preferences/VLC"
+ #elif defined( WIN32 ) || defined( UNDER_CE )
+-#  define CONFIG_DIR                    "vlc"
++
++//SONGBIRD Custom BUILD Changes --- aus@songbirdnest.com
++//These changes were last modified -- 2/6/2006 9:09PM
++#  define CONFIG_DIR                    "Songbird_vlc"
++
+ #else
+ #  define CONFIG_DIR                    ".vlc"
+ #endif
+Index: D:/Coding/vlc/_tags/0.8.4a/modules/demux/mp4/drms.c
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/modules/demux/mp4/drms.c	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/modules/demux/mp4/drms.c	(working copy)
+@@ -24,6 +24,8 @@
+ 
+ #include <stdlib.h>                                      /* malloc(), free() */
+ 
++#define DISABLE_DRMS_PLAYBACK 1
++
+ #ifdef WIN32
+ #   include <io.h>
+ #else
+@@ -288,6 +290,11 @@
+ int drms_init( void *_p_drms, uint32_t i_type,
+                uint8_t *p_info, uint32_t i_len )
+ {
++
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     int i_ret = 0;
+ 
+@@ -386,6 +393,9 @@
+     }
+ 
+     return i_ret;
++
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /* The following functions are local */
+@@ -1550,6 +1560,11 @@
+  *****************************************************************************/
+ static int WriteUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else
++  
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     FILE *file;
+     int i_ret = -1;
+@@ -1581,6 +1596,9 @@
+     }
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1590,6 +1608,11 @@
+  *****************************************************************************/
+ static int ReadUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++  
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else
++      
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     FILE *file;
+     int i_ret = -1;
+@@ -1608,6 +1631,9 @@
+     }
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1619,6 +1645,11 @@
+  *****************************************************************************/
+ static int GetUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else
++
+     static char const p_secret[] = "mUfnpognadfgf873";
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     struct aes_s aes;
+@@ -1752,6 +1783,9 @@
+     free( p_sci_data );
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1762,6 +1796,11 @@
+ static int GetSCIData( char *psz_ipod, uint32_t **pp_sci,
+                        uint32_t *pi_sci_size )
+ {
++  
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else    
++      
+     FILE *file;
+     char *psz_path = NULL;
+     char p_tmp[ PATH_MAX ];
+@@ -1847,6 +1886,9 @@
+     }
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1944,6 +1986,11 @@
+  *****************************************************************************/
+ static int GetiPodID( int64_t *p_ipod_id )
+ {
++  
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else    
++  
+     int i_ret = -1;
+ 
+ #define PROD_NAME   "iPod"
+@@ -2060,6 +2107,9 @@
+ #endif
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK    
++    
+ }
+ 
+ #else /* !defined( UNDER_CE ) */
+Index: D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcintf.idl
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcintf.idl	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcintf.idl	(working copy)
+@@ -1,14 +1,19 @@
+-
+ #include "nsISupports.idl"
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/6/2006
++ */
++
+ [scriptable, uuid(ea92ef52-afe4-4212-bacb-dfe9fca94cd6)]
+-
+ interface VlcIntf : nsISupports
+ {
+     /* Basic playback control */
+     void play();
+     void pause();
+     void stop();
++
++    void playmrl( in wstring psz_url );
+  
+     /* Audio/Video control */
+     void fullscreen();
+@@ -25,6 +30,21 @@
+     PRBool get_bool_variable( in string psz_var );
+     string get_str_variable( in string psz_var );
+ 
++    /* Metadata Get */
++    PRInt64 get_metadata_cat_count();
++    PRInt64 get_metadata_info_count( in PRInt64 i_category);
++
++    string get_metadata_cat_name( in PRInt64 i_category );
++    string get_metadata_info_name( in PRInt64 i_category, in PRInt64 i_info );
++    
++    string get_metadata_int( in PRInt64 i_category, in PRInt64 i_key );
++    wstring get_metadata_str( in string psz_category, in string psz_metakey );
++    
++    void get_url_metadata( in wstring psz_url, 
++                           in PRUint32 i_metacatcount, [array, size_is (i_metacatcount)] in string apsz_metacats,
++                           in PRUint32 i_metakeycount, [array, size_is (i_metakeycount)] in string apsz_metakeys,
++                           out PRUint32 i_metavaluecount, [array, size_is (i_metavaluecount), retval] out wstring apsz_metavalues );
++
+     /* Playlist management */
+     void clear_playlist();
+     void add_item( in string psz_name);
+Index: D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcpeer.cpp
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcpeer.cpp	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcpeer.cpp	(working copy)
+@@ -1,7 +1,7 @@
+ /*****************************************************************************
+  * vlcpeer.cpp: scriptable peer descriptor
+  *****************************************************************************
+- * Copyright (C) 2002-2005 the VideoLAN team
++ * Copyright (C) 2002-2005 VideoLAN
+  * $Id$
+  *
+  * Authors: Samuel Hocevar <sam@zoy.org>
+@@ -21,12 +21,22 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/15/2006
++ */
++
+ /*****************************************************************************
+  * Preamble
+  *****************************************************************************/
+ #include "config.h"
+ 
++#if defined(SYS_MINGW32)
++#include <windows.h>
++#endif
++
+ #include <vlc/vlc.h>
++#include <vlc_meta.h>
+ 
+ #ifdef DEBUG
+ /* We do not want to use nsDebug.h */
+@@ -36,8 +46,14 @@
+ #ifdef HAVE_MOZILLA_CONFIG_H
+ #   include <mozilla-config.h>
+ #endif
++
++#include <nscore.h>
+ #include <nsISupports.h>
++#include <nsXPCOM.h>
+ #include <nsMemory.h>
++#include <nsStringAPI.h>
++
++#include <prmem.h>
+ #include <npapi.h>
+ 
+ #if !defined(XP_MACOSX) && !defined(XP_UNIX) && !defined(XP_WIN)
+@@ -57,17 +73,20 @@
+ VlcPeer::VlcPeer()
+ {
+     NS_INIT_ISUPPORTS();
++    p_current_meta = NULL;
+ }
+ 
+ VlcPeer::VlcPeer( VlcPlugin * plugin )
+ {
+     NS_INIT_ISUPPORTS();
+     p_plugin = plugin;
++    p_current_meta = NULL;
+ }
+ 
+ VlcPeer::~VlcPeer()
+ {
+-    ;
++  if(p_current_meta)
++    vlc_meta_Delete(p_current_meta);
+ }
+ 
+ /*****************************************************************************
+@@ -93,6 +112,7 @@
+         }
+ 
+         VLC_Play( p_plugin->i_vlc );
++        UpdateCurrentMetadata();
+     }
+     return NS_OK;
+ }
+@@ -116,6 +136,39 @@
+     return NS_OK;
+ }
+ 
++NS_IMETHODIMP VlcPeer::Playmrl(const PRUnichar* psz_url)
++{
++    if( p_plugin )
++    {
++        VLC_Stop( p_plugin->i_vlc );
++        VLC_CleanUp( p_plugin->i_vlc );
++        
++        p_plugin->b_stream = 0;
++
++        if(p_plugin->psz_target)
++        {        
++          free(p_plugin->psz_target);
++          p_plugin->psz_target = NULL;
++        }
++     
++        //NS_ConvertUTF16toUTF8 strValue(psz_url);
++        NS_LossyConvertUTF16toASCII strValue(psz_url);
++        
++        p_plugin->psz_target = strdup(strValue.get());
++        
++        VLC_PlaylistClear( p_plugin->i_vlc );
++        
++        VLC_AddTarget( p_plugin->i_vlc, strValue.get(), NULL, 0,
++                       PLAYLIST_APPEND | PLAYLIST_GO, PLAYLIST_END );
++                       
++        VLC_Play( p_plugin->i_vlc );
++        
++        p_plugin->b_stream = 1;
++    }
++    
++    return NS_OK;
++}
++
+ NS_IMETHODIMP VlcPeer::Fullscreen()
+ {
+     if( p_plugin )
+@@ -191,20 +244,156 @@
+     vlc_value_t val;
+     if( p_plugin )
+     {
+-        fprintf(stderr, "Choppage de %s\n", psz_var );
+         VLC_VariableGet( p_plugin->i_vlc, psz_var, &val );
+         if( val.psz_string )
+         {
+-            *result = strdup( val.psz_string );
++            int len = strlen(val.psz_string) + 1;
++            *result = (char *)PR_Calloc(len + 1, sizeof(char));
++            memset(*result, 0, len);
++            
++            if( *result )
++            {
++              memcpy(*result, val.psz_string, len - 1);
++            }
+         }
+         else
+         {
+-            *result = strdup( "" );
++            *result = 0;
+         }
+     }
++    
+     return NS_OK;
+ }
+ 
++/* PRInt64 get_metadata_cat_count (); */
++NS_IMETHODIMP VlcPeer::Get_metadata_cat_count(PRInt64 *_retval)
++{
++   return NS_OK;
++}
++
++/* PRInt64 get_metadata_info_count (); */
++NS_IMETHODIMP VlcPeer::Get_metadata_info_count(PRInt64 i_category, PRInt64 *_retval)
++{
++  return NS_OK;
++}
++
++/* string get_metadata_int (in PRInt64 i_category, in PRInt64 i_key); */
++NS_IMETHODIMP VlcPeer::Get_metadata_int(PRInt64 i_category, PRInt64 i_key, char **_retval)
++{
++  return NS_OK;
++}
++
++/* string get_metadata_cat_name (in PRInt64 i_category); */
++NS_IMETHODIMP VlcPeer::Get_metadata_cat_name(PRInt64 i_category, char **_retval)
++{
++  return NS_OK;
++}
++
++/* string get_metadata_info_name (); */
++NS_IMETHODIMP VlcPeer::Get_metadata_info_name(PRInt64 i_category, PRInt64 i_info, char **_retval)
++{
++  return NS_OK;
++}
++
++/* string get_metadata_str (in string psz_category, in string psz_metakey); */
++NS_IMETHODIMP VlcPeer::Get_metadata_str(const char *psz_category, const char *psz_metakey, PRUnichar **_retval)
++{
++  *_retval = nsnull;
++  
++  UpdateCurrentMetadata();
++  
++  for(int i = 0; i < p_current_meta->i_track; i++)
++  {
++    if(!strcmp(psz_category, p_current_meta->track[i]->value[0]))
++    {
++      for(int j = 0; j < p_current_meta->track[i]->i_track; j++)
++      {
++        char *val = vlc_meta_GetValue(p_current_meta->track[i]->track[j], psz_metakey);
++        if(val)
++        {
++          NS_ConvertUTF8toUTF16 strValue(val);
++          
++          int len = strlen(val) + 1;
++          *_retval = (PRUnichar *) PR_Calloc(len, sizeof(PRUnichar));
++          memcpy(*_retval, strValue.get(), len * sizeof(PRUnichar));
++                    
++          //free( val );
++        }
++      }
++    }
++  }
++
++  return NS_OK;
++}
++
++NS_IMETHODIMP VlcPeer::Get_url_metadata(const PRUnichar *psz_url, 
++                                        PRUint32 i_metacatcount, const char **apsz_metacats, 
++                                        PRUint32 i_metakeycount, const char **apsz_metakeys, 
++                                        PRUint32 *i_metavaluecount, PRUnichar ***apsz_metavalues)
++{
++  *i_metavaluecount = 0;
++  *apsz_metavalues = NULL;
++  
++  if( p_plugin )
++  {
++    PRUnichar** out = ( PRUnichar ** ) PR_Calloc( i_metakeycount, sizeof( PRUnichar * ) );
++      
++    if(!out)
++      return NS_ERROR_UNEXPECTED;
++    
++    //NS_ConvertUTF16toUTF8 strValue(psz_url);
++    NS_LossyConvertUTF16toASCII strValue(psz_url);
++    
++    int i_err = VLC_AddTarget( p_plugin->i_vlc, strValue.get(), NULL, 0,
++                   PLAYLIST_APPEND, PLAYLIST_END);
++                   
++    int items = VLC_PlaylistNumberOfItems( p_plugin->i_vlc ) - 1;
++    
++    vlc_meta_t *p_meta = NULL;
++    VLC_PlaylistGetItemMetadata( p_plugin->i_vlc, items, &p_meta );
++    
++    for(PRUint32 h = 0; h < i_metakeycount; h++)
++    {
++      for(PRUint32 i = 0; i < p_meta->i_track; i++)
++      {
++        if( !strcmp( apsz_metacats[h], p_meta->track[i]->value[0] ) )
++        {
++          for(PRUint32 j = 0; j < p_meta->track[i]->i_track; j++)
++          {
++            char *val = vlc_meta_GetValue( p_meta->track[i]->track[j], apsz_metakeys[h] );
++            if( val != NULL )
++            {
++              NS_ConvertUTF8toUTF16 strValue(val);
++
++              int len = strValue.Length();
++              out[h] = (PRUnichar *) PR_Calloc(len + 1, sizeof(PRUnichar));
++              memcpy(out[h], strValue.get(), len * sizeof(PRUnichar));
++                            
++              //free(val);
++            }
++            else
++            {
++              out[h] = (PRUnichar *) PR_Calloc(1, sizeof(PRUnichar));
++            }
++          }
++        }
++      }
++    }
++    
++    *apsz_metavalues = out;
++    *i_metavaluecount = i_metakeycount;
++
++    //VLC_PlaylistDeleteItem( p_plugin->i_vlc, items);
++    //VLC_PlaylistDeleteItem( p_plugin->i_vlc, i_err);
++    
++    //if(p_meta)
++    //  vlc_meta_Delete(p_meta);
++  }
++  
++  return NS_OK;
++}
++
++
+ /* Playlist control */
+ NS_IMETHODIMP VlcPeer::Clear_playlist()
+ {
+@@ -228,9 +417,14 @@
+ 
+ NS_IMETHODIMP VlcPeer::Isplaying( PRBool *b_playing )
+ {
++    *b_playing = PR_FALSE;
++    
+     if( p_plugin->i_vlc )
+     {
+-        *b_playing = VLC_IsPlaying( p_plugin->i_vlc );
++        PRInt32 i_playing = VLC_IsPlaying( p_plugin->i_vlc );
++        
++        if( i_playing != VLC_ENOOBJ )
++          *b_playing = i_playing;
+     }
+     return NS_OK;
+ }
+@@ -240,6 +434,8 @@
+     if( p_plugin->i_vlc )
+     {
+         *i_position = (PRInt64)VLC_PositionGet( p_plugin->i_vlc );
++        
++        if( *i_position == VLC_ENOOBJ ) *i_position = 0;
+     }
+     return NS_OK;
+ }
+@@ -249,6 +445,8 @@
+     if( p_plugin->i_vlc )
+     {
+         *i_time = VLC_TimeGet( p_plugin->i_vlc );
++        
++        if( *i_time == VLC_ENOOBJ ) *i_time = 0;
+     }
+     return NS_OK;
+ }
+@@ -258,6 +456,8 @@
+     if( p_plugin->i_vlc )
+     {
+         *i_length = VLC_LengthGet( p_plugin->i_vlc );
++        
++        if( *i_length == VLC_ENOOBJ ) *i_length = 0;
+     }
+     return NS_OK;
+ }
+@@ -315,3 +515,15 @@
+     }
+     return NS_OK;
+ }
++
++void VlcPeer::UpdateCurrentMetadata()
++{
++  if(p_current_meta != NULL)
++  {
++    //vlc_meta_Delete(p_current_meta);
++    p_current_meta = NULL;
++  }
++
++  int i_index = VLC_PlaylistIndex( p_plugin->i_vlc );
++  VLC_PlaylistGetItemMetadata( p_plugin->i_vlc, i_index, &p_current_meta );
++}
+Index: D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcpeer.h
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcpeer.h	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcpeer.h	(working copy)
+@@ -21,10 +21,16 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/6/2006
++ */
++
+ #include "vlcintf.h"
+ #include "support/classinfo.h"
+ 
+ class VlcPlugin;
++struct vlc_meta_t;
+ 
+ class VlcPeer : public VlcIntf, public ClassInfo
+ {
+@@ -52,7 +58,10 @@
+ 
+     void     Disable();
+ 
++    void UpdateCurrentMetadata();
++    
+ private:
+-    VlcPlugin * p_plugin;
++    VlcPlugin  *p_plugin;
++    vlc_meta_t *p_current_meta;
+ };
+ 
+Index: D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcplugin.cpp
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcplugin.cpp	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcplugin.cpp	(working copy)
+@@ -21,11 +21,20 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/6/2006
++ */
++
+ /*****************************************************************************
+  * Preamble
+  *****************************************************************************/
+ #include "config.h"
+ 
++#if defined(SYS_MINGW32)
++#include <windows.h>
++#endif
++
+ #include <vlc/vlc.h>
+ 
+ #ifdef HAVE_MOZILLA_CONFIG_H
+Index: D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcshell.cpp
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcshell.cpp	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/mozilla/vlcshell.cpp	(working copy)
+@@ -21,6 +21,11 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/6/2006
++ */
++
+ /* XXX: disable VLC here */
+ #define USE_LIBVLC 1
+ 
+@@ -35,7 +40,10 @@
+ 
+ /* vlc stuff */
+ #ifdef USE_LIBVLC
+-#   include <vlc/vlc.h>
++#  if defined(SYS_MINGW32)
++#    include <windows.h>
++#  endif
++#  include <vlc/vlc.h>
+ #endif
+ 
+ /* Mozilla stuff */
+@@ -59,6 +67,9 @@
+ 
+ #ifdef XP_WIN
+     /* Windows stuff */
++# if defined(UNICODE)
++#   include <tchar.h>    
++# endif
+ #endif
+ 
+ #ifdef XP_MACOSX
+@@ -90,7 +101,7 @@
+ ******************************************************************************/
+ #ifdef XP_UNIX
+ #   define VOUT_PLUGINS "xvideo,x11,dummy"
+-#   define AOUT_PLUGINS "alsa,oss,dummy"
++#   define AOUT_PLUGINS "oss,dummy"
+ 
+ static unsigned int i_previous_height = 100000;
+ static unsigned int i_previous_width = 100000;
+@@ -306,21 +317,42 @@
+         char *ppsz_argv[] = { NULL, "-vv" };
+         HKEY h_key;
+         DWORD i_type, i_data = MAX_PATH + 1;
+-        char p_data[MAX_PATH + 1];
++#if defined(UNICODE)
++        wchar_t pwsz_data[MAX_PATH + 1] = {0};
++        char p_data[MAX_PATH + 1] = {0};
++#else
++        char p_data[MAX_PATH + 1] = {0};
++#endif
++
++/*
++#if defined(UNICODE)
++        if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, L"Software\\VideoLAN\\VLC",
++                          0, KEY_READ, &h_key ) == ERROR_SUCCESS )
++        {
++             if( RegQueryValueEx( h_key, L"InstallDir", 0, &i_type,
++                                  (LPBYTE)pwsz_data, &i_data ) == ERROR_SUCCESS )
++             {
++#else
+         if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, "Software\\VideoLAN\\VLC",
+                           0, KEY_READ, &h_key ) == ERROR_SUCCESS )
+         {
+              if( RegQueryValueEx( h_key, "InstallDir", 0, &i_type,
+                                   (LPBYTE)p_data, &i_data ) == ERROR_SUCCESS )
+              {
++#endif
+                  if( i_type == REG_SZ )
+                  {
+-                     strcat( p_data, "\\vlc" );
++#if defined(UNICODE)
++                     wcstombs(p_data, pwsz_data, MAX_PATH);
++
++#endif                     
++                     strcat( p_data, "\\Songbird_vlc" );
+                      ppsz_argv[0] = p_data;
+                  }
+              }
+              RegCloseKey( h_key );
+         }
++*/
+ 
+         if( !ppsz_argv[0] ) ppsz_argv[0] = "vlc";
+ 
+@@ -647,7 +679,13 @@
+ #endif /* !USE_LIBVLC */
+ 
+     p_plugin->p_hwnd = (HWND)window->window;
++
++#if defined(UNICODE)
++    SetProp( p_plugin->p_hwnd, L"w00t", (HANDLE)p_plugin );
++#else
+     SetProp( p_plugin->p_hwnd, "w00t", (HANDLE)p_plugin );
++#endif
++
+     InvalidateRect( p_plugin->p_hwnd, NULL, TRUE );
+     UpdateWindow( p_plugin->p_hwnd );
+ #endif /* XP_WIN */
+Index: D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_configure.sh
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_configure.sh	(revision 0)
++++ D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_configure.sh	(revision 0)
+@@ -0,0 +1,29 @@
++#!/bin/sh
++#./bootstrap && \
++CPPFLAGS="-I/mingw/include -I/_win32/include -I/_win32/include/ebml" \
++LDFLAGS="-L/mingw/lib -L/_win32/lib" \
++./configure \
++  --enable-release \
++  --enable-strip \
++  --enable-mozilla \
++  --with-mozilla-sdk-path=/usr/_win32/mozilla-sdk \
++  --enable-ffmpeg --with-ffmpeg-faac --with-ffmpeg-mp3lame --with-ffmpeg-zlib \
++  --enable-mad --disable-a52 \
++  --enable-faad --enable-flac \
++  --disable-activex \
++  --disable-hal \
++  --disable-sdl --disable-gtk \
++  --disable-cddax --disable-vcdx --disable-goom \
++  --disable-twolame \
++  --disable-wxwidgets --disable-skins2 \
++  --disable-debug --disable-dvdread \
++  --disable-dvdnav --disable-screen --disable-visual \
++  --disable-bonjour --disable-joystick --disable-httpd \
++  --disable-vlm --disable-gnutls --disable-disable-dvbpsi \
++  --disable-cdda --disable-libcddb --disable-png --disable-x11 --disable-xvideo --disable-glx --disable-opengl \
++  --disable-alsa  --disable-mkv --disable-cmml --disable-freetype --disable-mod --disable-mpc \
++  --disable-dts --disable-x264 --disable-h264 --disable-real --disable-realrtsp --disable-libmpeg2 \
++  --with-xml2-config-path=/usr/_win32/bin \
++  --with-freetype-config-path=/usr/_win32/bin \
++  --with-fribidi-config-path=/usr/_win32/bin \
++  --with-libintl-prefix=/usr/_win32
+Index: D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_copy.sh
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_copy.sh	(revision 0)
++++ D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_copy.sh	(revision 0)
+@@ -0,0 +1,7 @@
++rm -rf /projects/songbird/Staging/vlcplugins/*
++cp -R vlc-0.8.2/plugins/* /projects/songbird/Staging/vlcplugins/
++
++rm -f /projects/songbird/Staging/plugins/npvlc.dll
++rm -f /projects/songbird/Staging/plugins/vlcintf.xpt
++cp vlc-0.8.2/mozilla/* /projects/songbird/Staging/plugins/
++
+Index: D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_make.sh
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_make.sh	(revision 0)
++++ D:/Coding/vlc/_tags/0.8.4a/songbird_vlc_make.sh	(revision 0)
+@@ -0,0 +1,4 @@
++#!/bin/sh
++rm -rf vlc-0.8.4a
++make clean && make && make package-win32-base
++./copyit.sh
+Index: D:/Coding/vlc/_tags/0.8.4a/src/libvlc.c
+===================================================================
+--- D:/Coding/vlc/_tags/0.8.4a/src/libvlc.c	(revision 14355)
++++ D:/Coding/vlc/_tags/0.8.4a/src/libvlc.c	(working copy)
+@@ -24,6 +24,11 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/6/2006
++ */
++
+ /*****************************************************************************
+  * Pretend we are a builtin module
+  *****************************************************************************/
+@@ -1175,6 +1180,18 @@
+ }
+ 
+ /*****************************************************************************
++ * MyItemChange: .
++ *****************************************************************************/
++int g_ItemUpdated = -1;
++
++static int MyItemChange( vlc_object_t *p_obj, const char *psz_var,
++                       vlc_value_t oldval, vlc_value_t newval, void *param )
++{
++    g_ItemUpdated = newval.i_int;
++    return VLC_SUCCESS;
++}
++
++/*****************************************************************************
+  * VLC_AddTarget: adds a target for playing.
+  *****************************************************************************
+  * This function adds psz_target to the current playlist. If a playlist does
+@@ -1212,6 +1229,35 @@
+     i_err = playlist_AddExt( p_playlist, psz_target, psz_target,
+                              i_mode, i_pos, -1, ppsz_options, i_options);
+ 
++//SONGBIRD Custom BUILD Changes --- aus
++
++    //vlc_mutex_lock( &p_playlist->object_lock );
++
++    playlist_item_t *p_item = NULL;
++    p_item = playlist_ItemGetById( p_playlist, i_err);
++
++    //vlc_mutex_unlock( &p_playlist->object_lock );
++
++    //vlc_mutex_lock( &p_item->input.lock );
++    //var_AddCallback( p_playlist, "item-change", MyItemChange, p_playlist );
++
++    //playlist_PreparseEnqueueItem( p_playlist, p_item );
++    input_Preparse( p_playlist, &p_item->input );
++
++    //msleep( 3000L );
++    
++    /*while( g_ItemUpdated != i_err )
++    {
++      msleep( 250 );
++    }*/
++
++    //g_ItemUpdated = -1;
++
++    //var_DelCallback( p_playlist, "item-change", MyItemChange, p_playlist );
++    //vlc_mutex_unlock( &p_item->input.lock );
++
++//END
++    
+     vlc_object_release( p_playlist );
+ 
+     if( i_object ) vlc_object_release( p_vlc );
+@@ -2722,3 +2768,139 @@
+     if( ( str != NULL ) && ( libvlc.to_locale != (vlc_iconv_t)(-1) ) )
+         free( (char *)str );
+ }
++
++//=======================================================================================
++//CUSTOM SONGBIRD ADDITIONS
++//=======================================================================================
++
++//SONGBIRD Custom BUILD Changes -- aus@songbirdnest.com
++//Last modified -- 2/6/2006
++
++/** 
++ * Get Item Metadata. 
++ * 
++ * \param i_object
++ * \param i_index
++ * \param pp_meta
++ * \return 
++ */
++int            VLC_PlaylistGetItemMetadata( int i_object, int i_index, vlc_meta_t ** pp_meta)
++{
++  playlist_t *p_playlist = NULL;
++  vlc_t *p_vlc = vlc_current_object( i_object );
++
++  /* Check that the handle is valid */
++  if( !p_vlc )
++  {
++    return VLC_ENOOBJ;
++  }
++  
++  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
++  
++  if( !p_playlist )
++  {
++    if( i_object ) vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++
++  //vlc_mutex_lock( &p_playlist->object_lock );
++  
++  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
++  
++  if( !p_item )
++  {
++    vlc_object_release( p_playlist );
++    if( i_object ) vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++  
++  vlc_mutex_lock( &p_item->input.lock );
++  
++  *pp_meta = vlc_meta_New();
++  vlc_meta_t *p_meta = *pp_meta;
++  
++  vlc_meta_Add(p_meta, "Root", "Root Metadata Node");
++  
++  int i = 0;
++  for( ; i < p_item->input.i_categories; i++ )
++  {
++    p_meta->track = (vlc_meta_t**)realloc( p_meta->track, sizeof( vlc_meta_t* ) * (p_meta->i_track+1) );
++    p_meta->track[p_meta->i_track] = vlc_meta_New();
++    vlc_meta_Add(p_meta->track[p_meta->i_track], "Category", p_item->input.pp_categories[i]->psz_name);
++
++    p_meta->track[i]->track = (vlc_meta_t**)realloc( p_meta->track[i]->track, sizeof( vlc_meta_t* ) * (p_meta->track[i]->i_track+1) );
++    p_meta->track[i]->track[p_meta->track[i]->i_track] = vlc_meta_New();    
++       
++    int j = 0;
++    for( ; j < p_item->input.pp_categories[i]->i_infos; j++ )
++    {
++      if( p_item->input.pp_categories[i]->pp_infos[j]->psz_name[0] != 0 &&
++          p_item->input.pp_categories[i]->pp_infos[j]->psz_value[0] != 0 )
++      {
++        vlc_meta_Add(p_meta->track[i]->track[p_meta->track[i]->i_track], 
++                     p_item->input.pp_categories[i]->pp_infos[j]->psz_name,
++                     p_item->input.pp_categories[i]->pp_infos[j]->psz_value);
++        
++      }
++    }
++    
++    p_meta->track[i]->i_track++;    
++    p_meta->i_track++;
++  }
++  
++  vlc_mutex_unlock( &p_item->input.lock );
++  //vlc_mutex_unlock( &p_playlist->object_lock );
++  
++  vlc_object_release( p_playlist );
++  
++  if( i_object ) vlc_object_release( p_vlc );
++  
++  return VLC_SUCCESS;
++}
++
++/*****************************************************************************
++ * VLC_PlaylistDeleteItem: Delete an item from the playlist
++ *****************************************************************************/
++int VLC_PlaylistDeleteItem( int i_object, int i_index)
++{
++  playlist_t *p_playlist = NULL;
++  vlc_t *p_vlc = vlc_current_object( i_object );
++
++  /* Check that the handle is valid */
++  if( !p_vlc )
++  {
++    return VLC_ENOOBJ;
++  }
++  
++  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
++  
++  if( !p_playlist )
++  {
++    vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++
++  vlc_mutex_lock( &p_playlist->object_lock );
++  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
++  
++  if( !p_item )
++  {
++    vlc_object_release( p_playlist );
++    vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++  
++  int ret = VLC_SUCCESS;
++  ret = playlist_ItemDelete( p_item );
++
++  vlc_mutex_unlock( &p_playlist->object_lock );
++
++  vlc_object_release( p_playlist );
++  vlc_object_release( p_vlc );
++  
++  return ret;
++}
++
++//=======================================================================================
++//END
++//=======================================================================================
