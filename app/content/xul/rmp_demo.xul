@@ -139,7 +139,7 @@
             <hbox flex="1">
             <spacer width="10"/>
               <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
-              <html:object id="core_wm" flex="1" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="application/asx" />
+              <!--html:object id="core_wm" flex="1" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="application/asx" /-->
             <spacer width="10"/>
             </hbox>
             <spacer height="5"/>

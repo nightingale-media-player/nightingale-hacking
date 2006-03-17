@@ -174,7 +174,8 @@ try
           scanning = bsSongbirdStrings.getString("back_scan.scanning");
         } catch(e) {}
         bsScanningText.SetValue( scanning + "..." );
-        var metadata = theVLCCore.getURLMetadata(url, keys);
+        var metadata = new Array(); // TODO: REPLACE WITH METADATA API.   theVLCCore.getURLMetadata(url, keys);
+        metadata.push(null);metadata.push(null);metadata.push(null);metadata.push(null);metadata.push(null);
         
         // GRRRRR.
         for ( var i in metadata )
@@ -285,6 +286,8 @@ try
 
   function BSStripHoursFromTimeString( str )
   {
+    if ( str == null )
+      str = "";
     var retval = str;
     if ( ( str.length == 7 ) && ( str[ 0 ] == "0" ) && ( str[ 1 ] == ":" ) )
     {

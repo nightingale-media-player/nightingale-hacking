@@ -1,4 +1,4 @@
-/**
+/* 
 //
 // BEGIN SONGBIRD GPL
 // 
