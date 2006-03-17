@@ -44,6 +44,8 @@
 
 #include <prlock.h>
 #include <prmon.h>
+#include <nsCOMArray.h>
+#include <nsIThread.h>
 #include <nsIRunnable.h>
 
 #ifndef PRUSTRING_DEFINED
@@ -125,13 +127,12 @@ private:
 
   databaselockmap_t m_DatabaseLocks;
   PRLock* m_pDatabaseLocksLock;
-
+  
   PRMonitor* m_pQueryProcessorMonitor;
+  nsCOMArray<nsIThread> m_QueryProcessorThreads;
+  PRBool m_QueryProcessorShouldShutdown;
   queryqueue_t m_QueryQueue;
   PRBool m_QueryProcessorQueueHasItem;
-  PRBool m_QueryProcessorShouldShutdown;
-  PRBool m_QueryProcessorHasShutdown;
-  PRInt32 m_QueryProcessorThreadCount;
 
   PRLock* m_pPersistentQueriesLock;
   querypersistmap_t m_PersistentQueries;

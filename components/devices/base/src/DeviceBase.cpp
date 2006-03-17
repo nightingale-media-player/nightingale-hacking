@@ -36,11 +36,9 @@
 
 #include <xpcom/nsXPCom.h>
 #include <xpcom/nsXPCOM.h>
-#include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsAutoLock.h>
 #include <xpcom/nsMemory.h>
-#include <xpcom/nsIThread.h>
 
 #include <xpcom/nsCRT.h>
 
@@ -67,27 +65,27 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceThread, nsIRunnable)
 
 //-----------------------------------------------------------------------------
 sbDeviceBase::sbDeviceBase(PRBool usingThread)
-:	mUsingThread(usingThread)
-, mDeviceQueueHasItem(PR_FALSE)
+: mDeviceQueueHasItem(PR_FALSE)
 , mpCallbackListLock(PR_NewLock())
+, mpDeviceThread(nsnull)
 , mpDeviceThreadMonitor(nsAutoMonitor::NewMonitor("sbDeviceBase.mpDeviceThreadMonitor"))
 , mDeviceThreadShouldShutdown(PR_FALSE)
-, mDeviceThreadHasShutdown(PR_FALSE)
 {
   NS_ASSERTION(mpCallbackListLock, "sbDeviceBase.mpCallbackListLock failed");
   NS_ASSERTION(mpDeviceThreadMonitor, "sbDeviceBase.mpDeviceThreadMonitor failed");
-  if (mUsingThread) {
+  if (usingThread) {
     do {
-      mUsingThread = PR_FALSE;
-      nsCOMPtr<nsIThread> pThreadRunner;
       nsCOMPtr<nsIRunnable> pThread = new sbDeviceThread(this);
       NS_ASSERTION(pThread, "Unable to create sbDeviceThread");
       if (!pThread) 
         break;
-      nsresult rv = NS_NewThread(getter_AddRefs(pThreadRunner), pThread);
+      nsresult rv = NS_NewThread(getter_AddRefs(mpDeviceThread),
+                                 pThread,
+                                 0,
+                                 PR_JOINABLE_THREAD);
       NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbDeviceThread");
-      if (NS_SUCCEEDED(rv))
-        mUsingThread = PR_TRUE;
+      if (NS_FAILED(rv))
+        mpDeviceThread = nsnull;
     } while (PR_FALSE); // Only do this once
   }
   DeviceIdle();
@@ -97,23 +95,25 @@ sbDeviceBase::sbDeviceBase(PRBool usingThread)
 sbDeviceBase::~sbDeviceBase()
 {
   // Shutdown the thread
-  if (mUsingThread) {
-    nsAutoMonitor mon(mpDeviceThreadMonitor);
-    if (!mDeviceThreadHasShutdown) {
+  if (mpDeviceThread) {
+    {
+      nsAutoMonitor mon(mpDeviceThreadMonitor);
       mDeviceThreadShouldShutdown = PR_TRUE;
       mon.NotifyAll();
-      while (!mDeviceThreadHasShutdown)
-        mon.Wait();
     }
-    mUsingThread = PR_FALSE;
+    mpDeviceThread->Join();
+    mpDeviceThread = nsnull;
   }
 
-  if(mCallbackList.size()) {
-    for(size_t nCurrent = 0; nCurrent < mCallbackList.size(); ++nCurrent) {
-      if(mCallbackList[nCurrent])
-        mCallbackList[nCurrent]->Release();
+  {
+    nsAutoLock listLock(mpCallbackListLock);
+    if(mCallbackList.size()) {
+      for(size_t nCurrent = 0; nCurrent < mCallbackList.size(); ++nCurrent) {
+        if(mCallbackList[nCurrent])
+          mCallbackList[nCurrent]->Release();
+      }
+      mCallbackList.clear();
     }
-    mCallbackList.clear();
   }
 
   if (mpCallbackListLock)
@@ -179,6 +179,8 @@ NS_IMETHODIMP sbDeviceBase::RemoveCallback(sbIDeviceBaseCallback *pCallback, PRB
 /* static */
 void PR_CALLBACK sbDeviceBase::DeviceProcess(sbDeviceBase* pDevice)
 {
+  NS_ASSERTION(pDevice, "Null Pointer!");
+
   ThreadMessage* pDeviceMessage;
 
   pDevice->OnThreadBegin();
@@ -195,8 +197,6 @@ void PR_CALLBACK sbDeviceBase::DeviceProcess(sbDeviceBase* pDevice)
 
       if (pDevice->mDeviceThreadShouldShutdown) {
         pDevice->OnThreadEnd();
-        pDevice->mDeviceThreadHasShutdown = PR_TRUE;
-        mon.NotifyAll();
         return;
       }
 
@@ -1385,7 +1385,7 @@ PRBool sbDeviceBase::AddTrack(nsString& deviceString,
 
 PRBool sbDeviceBase::InitializeAsync()
 {
-  if (mUsingThread) {
+  if (mpDeviceThread) {
     SubmitMessage(MSG_DEVICE_INITIALIZE, (void *) -1, (void *) nsnull);
     return PR_TRUE;
   }
@@ -1394,7 +1394,7 @@ PRBool sbDeviceBase::InitializeAsync()
 
 PRBool sbDeviceBase::FinalizeAsync()
 {
-  if (mUsingThread) {
+  if (mpDeviceThread) {
     SubmitMessage(MSG_DEVICE_FINALIZE, (void *) -1, (void *) nsnull);
     return PR_TRUE;
   }
@@ -1403,7 +1403,7 @@ PRBool sbDeviceBase::FinalizeAsync()
 
 PRBool sbDeviceBase::DeviceEventAsync(PRBool mediaInserted)
 {  
-  if (mUsingThread) {
+  if (mpDeviceThread) {
     DeviceEventSync( mediaInserted);
     return PR_TRUE;
   }

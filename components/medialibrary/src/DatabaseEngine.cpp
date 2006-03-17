@@ -42,7 +42,6 @@
 #include <unicharutil/nsUnicharUtils.h>
 
 #include <nsAutoLock.h>
-#include <nsIThread.h>
 
 #ifdef DEBUG
 #include <nsPrintfCString.h>
@@ -276,8 +275,6 @@ CDatabaseEngine::CDatabaseEngine()
 , m_pCaseConversionLock(PR_NewLock())
 , m_QueryProcessorQueueHasItem(PR_FALSE)
 , m_QueryProcessorShouldShutdown(PR_FALSE)
-, m_QueryProcessorHasShutdown(PR_FALSE)
-, m_QueryProcessorThreadCount(0)
 {
   NS_ASSERTION(m_pDatabasesLock, "CDatabaseEngine.mpDatabaseLock failed");
   NS_ASSERTION(m_pDatabaseLocksLock, "CDatabaseEngine.m_pDatabasesLocksLock failed");
@@ -302,30 +299,30 @@ CDatabaseEngine::CDatabaseEngine()
     NS_ASSERTION(pQueryProcessorRunner, "Unable to create QueryProcessorRunner");
     if (!pQueryProcessorRunner)
       break;        
-    nsresult rv = NS_NewThread(getter_AddRefs(pThread), pQueryProcessorRunner);
+    nsresult rv = NS_NewThread(getter_AddRefs(pThread),
+                               pQueryProcessorRunner,
+                               0,
+                               PR_JOINABLE_THREAD);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
-    if (NS_FAILED(rv))
-      break;
-    m_QueryProcessorThreadCount++;
-  }
-
-  if (m_QueryProcessorThreadCount == 0) {
-    m_QueryProcessorShouldShutdown = PR_TRUE;
-    m_QueryProcessorHasShutdown = PR_TRUE;
+    if (NS_SUCCEEDED(rv))
+      m_QueryProcessorThreads.AppendObject(pThread);
   }
 } //ctor
 
 //-----------------------------------------------------------------------------
 /*virtual*/ CDatabaseEngine::~CDatabaseEngine()
 {
-  {
-    nsAutoMonitor mon(m_pQueryProcessorMonitor);
-    if (!m_QueryProcessorHasShutdown) {
+  PRInt32 count = m_QueryProcessorThreads.Count();
+  if (count) {
+
+    {
+      nsAutoMonitor mon(m_pQueryProcessorMonitor);
       m_QueryProcessorShouldShutdown = PR_TRUE;
       mon.NotifyAll();
-      while (!m_QueryProcessorHasShutdown)
-        mon.Wait();
     }
+
+    for (PRInt32 i = 0; i < count; i++)
+      m_QueryProcessorThreads[i]->Join();
   }
 
   ClearAllDBLocks();
@@ -773,11 +770,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
       // Handle shutdown request
       if (pEngine->m_QueryProcessorShouldShutdown) {
         sqlite3_thread_cleanup();
-        pEngine->m_QueryProcessorThreadCount--;
-        if (pEngine->m_QueryProcessorThreadCount == 0) {
-          pEngine->m_QueryProcessorHasShutdown = PR_TRUE;
-          mon.NotifyAll();
-        }
         return;
       }
 
@@ -789,8 +781,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
       }
     } // Exit Monitor
 
-    if(!pQuery)
-      continue;
+    NS_ASSERTION(pQuery, "How can we get here without a query?");
 
     PRBool bAllDB = PR_FALSE;
     sqlite3 *pDB = nsnull;

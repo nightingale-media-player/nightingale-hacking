@@ -50,6 +50,7 @@
 #include <xpcom/nsXPCOM.h>
 #include <prlock.h>
 #include <prmon.h>
+#include <nsIThread.h>
 #include <nsIRunnable.h>
 
 #ifndef PRUSTRING_DEFINED
@@ -135,11 +136,11 @@ protected:
   typedef std::deque<sbIMediaScanQuery *> queryqueue_t;
   typedef std::deque<nsISimpleEnumerator *> dirstack_t;
 
-  queryqueue_t m_QueryQueue;
-  PRBool m_ThreadShouldShutdown;
-  PRBool m_ThreadHasShutdown;
-  PRBool m_ThreadQueueHasItem;
   PRMonitor* m_pThreadMonitor;
+  nsCOMPtr<nsIThread> m_pThread;
+  PRBool m_ThreadShouldShutdown;
+  queryqueue_t m_QueryQueue;
+  PRBool m_ThreadQueueHasItem;
 };
 
 class sbMediaScanThread : public nsIRunnable

@@ -36,7 +36,6 @@
 #include <nspr/prmem.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsAutoLock.h>
-#include <nsIThread.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -266,39 +265,37 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediaScanThread, nsIRunnable)
 //-----------------------------------------------------------------------------
 CMediaScan::CMediaScan()
 : m_pThreadMonitor(nsAutoMonitor::NewMonitor("CMediaScan.m_pThreadMonitor"))
+, m_pThread(nsnull)
 , m_ThreadShouldShutdown(PR_FALSE)
-, m_ThreadHasShutdown(PR_FALSE)
 , m_ThreadQueueHasItem(PR_FALSE)
 {
   NS_ASSERTION(m_pThreadMonitor, "MediaScan.m_pThreadMonitor failed");
   
   // Attempt to create the scan thread
   do {
-    nsCOMPtr<nsIThread> pThread;
     nsCOMPtr<nsIRunnable> pThreadRunner = new sbMediaScanThread(this);
     NS_ASSERTION(pThreadRunner, "Unable to create sbMediaScanThread");
     if (!pThreadRunner)
       break;
-    nsresult rv = NS_NewThread(getter_AddRefs(pThread), pThreadRunner);
+    nsresult rv = NS_NewThread(getter_AddRefs(m_pThread),
+                               pThreadRunner,
+                               0,
+                               PR_JOINABLE_THREAD);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbMediaScanThread");
-    if (NS_FAILED(rv)) {
-      m_ThreadShouldShutdown = PR_TRUE;
-      m_ThreadHasShutdown = PR_TRUE;
-    }
   } while (PR_FALSE); // Only do this once
 } //ctor
 
 //-----------------------------------------------------------------------------
 CMediaScan::~CMediaScan()
 {
-  {
-    nsAutoMonitor mon(m_pThreadMonitor);
-    if (!m_ThreadHasShutdown) {
+  if (m_pThread) {
+    {
+      nsAutoMonitor mon(m_pThreadMonitor);
       m_ThreadShouldShutdown = PR_TRUE;
       mon.Notify();
-      while (!m_ThreadHasShutdown)
-        mon.Wait();
     }
+    m_pThread->Join();
+    m_pThread = nsnull;
   }
 
   if (m_pThreadMonitor)
@@ -327,8 +324,7 @@ NS_IMETHODIMP CMediaScan::SubmitQuery(sbIMediaScanQuery *pQuery)
 /* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
 NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bRecurse, sbIMediaScanCallback *pCallback, PRInt32 *_retval)
 {
-  if(strDirectory == nsnull)
-    return NS_ERROR_NULL_POINTER;
+  NS_ENSURE_ARG_POINTER(strDirectory);
 
   dirstack_t dirStack;
   //filestack_t fileStack;
@@ -463,15 +459,13 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
   {
     sbIMediaScanQuery* pQuery = nsnull;
 
-    {
+    { // Enter Monitor
       nsAutoMonitor mon(pMediaScan->m_pThreadMonitor);
 
       while (!pMediaScan->m_ThreadQueueHasItem && !pMediaScan->m_ThreadShouldShutdown)
         mon.Wait();
 
       if (pMediaScan->m_ThreadShouldShutdown) {
-        pMediaScan->m_ThreadHasShutdown = PR_TRUE;
-        mon.NotifyAll();
         return;
       }
 
@@ -479,7 +473,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
       pMediaScan->m_QueryQueue.pop_front();
       if (pMediaScan->m_QueryQueue.empty())
         pMediaScan->m_ThreadQueueHasItem = PR_FALSE;
-    }
+    } // Exit Monitor
 
     if(pQuery) {
       pQuery->SetIsScanning(PR_TRUE);
@@ -488,8 +482,6 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
       pQuery->Release();
     }
   }
-
-  return;
 } //QueryProcessor
 
 //-----------------------------------------------------------------------------

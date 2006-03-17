@@ -42,7 +42,9 @@
 #include <list>
 #include <vector>
 #include <map>
-#include <xpcom/nsIRunnable.h>
+#include <nsCOMPtr.h>
+#include <nsIThread.h>
+#include <nsIRunnable.h>
 
 #define SONGBIRD_DeviceBase_CONTRACTID  "@songbird.org/Songbird/Device/DeviceBase;1"
 #define SONGBIRD_DeviceBase_CLASSNAME   "Songbird Device Base"
@@ -162,22 +164,22 @@ protected:
 
   PRUint32 GetCurrentTransferRowNumber() { return mCurrentTransferRowNumber;  }
 
-  PRMonitor* mpDeviceThreadMonitor;
-  PRBool mDeviceThreadShouldShutdown;
-  PRBool mDeviceThreadHasShutdown;
-  PRBool mDeviceQueueHasItem;
   
   static void PR_CALLBACK DeviceProcess(sbDeviceBase* pData);
 
 private:
-    std::deque<ThreadMessage *> mDeviceMessageQueue;
-    PRUint32 mDeviceState;
-    PRUint32 mTransferTrackIndex;
-    PRInt32 mCurrentTransferRowNumber;
-    PRBool mUsingThread;
+  PRUint32 mDeviceState;
+  PRUint32 mTransferTrackIndex;
+  PRInt32 mCurrentTransferRowNumber;
 
-    PRLock* mpCallbackListLock;
-    std::vector<sbIDeviceBaseCallback *> mCallbackList;
+  PRLock* mpCallbackListLock;
+  std::vector<sbIDeviceBaseCallback *> mCallbackList;
+
+  PRMonitor* mpDeviceThreadMonitor;
+  nsCOMPtr<nsIThread> mpDeviceThread;
+  PRBool mDeviceThreadShouldShutdown;
+  std::deque<ThreadMessage *> mDeviceMessageQueue;
+  PRBool mDeviceQueueHasItem;
 };
 
 class sbDeviceThread : public nsIRunnable
