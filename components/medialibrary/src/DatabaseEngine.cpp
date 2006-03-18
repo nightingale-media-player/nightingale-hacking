@@ -68,6 +68,26 @@ const PRUnichar* DB_GUID_TOKEN = NS_LITERAL_STRING("%db_guid%").get();
 const PRInt32 DB_GUID_TOKEN_LEN = 9;
 
 // FUNCTIONS ==================================================================
+int SQLiteCaseInsensitiveCollate(void *pData, int nLenA, const void *pStrA, int nLenB, const void *pStrB)
+{
+  nsString strA( (PRUnichar *)pStrA, nLenA );
+  nsString strB( (PRUnichar *)pStrB, nLenB );
+
+  ToLowerCase(strA);
+  ToLowerCase(strB);
+
+  if(strA < strB)
+    return -1;
+  
+  if(strA > strB)
+    return 1;
+
+  if(strA == strB)
+    return 0;
+
+  return -1;
+} //SQLiteCaseInsensitiveCollate
+
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger)
 {
   int ret = SQLITE_OK;
@@ -369,6 +389,8 @@ PRInt32 CDatabaseEngine::OpenDB(PRUnichar *dbGUID)
     sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
     if(strErr) sqlite3_free(strErr);
 #endif
+
+    sqlite3_create_collation16(pDB, NS_LITERAL_CSTRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
   }
 
   return ret;
