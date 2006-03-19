@@ -1029,11 +1029,15 @@ PlaylistPlayback.prototype = {
         this._metadataPos.setValue( pos );
       }
       
+      // Ignore metadata when paused.
+      if ( core.getPlaying() && ! core.getPaused() ) {
+        this._onPollMetadata( len, pos, core );
+      }
+      
       // Call all the wacky poll functions!  yeehaw!
-      this._onSetTimeText( len, pos );
+      this._onPollTimeText( len, pos );
       this._onPollVolume( core );
       this._onPollButtons( len, core );
-      this._onPollMetadata( len, pos, core );
       this._onPollCompleted( len, pos, core );
     }       
     catch ( err )  
@@ -1045,7 +1049,7 @@ PlaylistPlayback.prototype = {
 
   // Elapsed / Total display
  
-  _onSetTimeText: function ( len, pos ) {
+  _onPollTimeText: function ( len, pos ) {
     this._metadataPosText.setValue( EmitSecondsToTimeString( pos / 1000.0 ) + " " );
 
     if ( len > 0 && this._showRemaining.getBoolValue() )
