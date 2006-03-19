@@ -269,4 +269,15 @@ The mute/volume/length/position api here should just call to the current wrapper
                         [array, size_is(fieldCount)] in wstring metaFields,
                         in unsigned long valueCount,
                         [array, size_is(valueCount)] in wstring metaValues);
+
+  /**
+   *  Returns true if the url can be played as media
+   */
+  boolean isMediaUrl(in wstring url);
+
+  /**
+   *  Returns true if the url can be opened as playlist
+   */
+  boolean isPlaylistUrl(in wstring url);
+
 };

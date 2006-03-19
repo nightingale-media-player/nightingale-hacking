@@ -339,6 +339,7 @@ CPlaylistRSS.prototype =
             ( the_url.indexOf( "rtsp:" ) == 0 ) || 
             // File extensions at the end
             ( the_url.indexOf( ".pls" ) != -1 ) || 
+            ( the_url.indexOf( "rss" ) != -1 ) || 
             ( the_url.indexOf( ".m3u" ) == ( the_url.length - 4 ) ) || 
 //            ( the_url.indexOf( ".rm" ) == ( the_url.length - 3 ) ) || 
 //            ( the_url.indexOf( ".ram" ) == ( the_url.length - 4 ) ) || 

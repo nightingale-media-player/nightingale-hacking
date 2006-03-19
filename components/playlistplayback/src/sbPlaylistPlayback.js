@@ -973,6 +973,72 @@ PlaylistPlayback.prototype = {
     return;
   },
 
+  isMediaUrl: function(the_url) {
+    if ( ( the_url.indexOf ) && 
+          (
+            // Known playlist type?
+            ( this.isPlaylistUrl( the_url ) ) ||
+            // Protocols at the beginning
+            ( the_url.indexOf( "mms:" ) == 0 ) || 
+            ( the_url.indexOf( "rtsp:" ) == 0 ) || 
+            // File extensions at the end
+            ( the_url.indexOf( ".pls" ) != -1 ) || 
+            ( the_url.indexOf( "rss" ) != -1 ) || 
+            ( the_url.indexOf( ".m3u" ) == ( the_url.length - 4 ) ) || 
+  //          ( the_url.indexOf( ".rm" ) == ( the_url.length - 3 ) ) || 
+  //          ( the_url.indexOf( ".ram" ) == ( the_url.length - 4 ) ) || 
+  //          ( the_url.indexOf( ".smil" ) == ( the_url.length - 5 ) ) || 
+            ( the_url.indexOf( ".mp3" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".ogg" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".flac" ) == ( the_url.length - 5 ) ) ||
+            ( the_url.indexOf( ".wav" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".m4a" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".wma" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
+          )
+        )
+    {
+      return true;
+    }
+    return false;
+  },
+
+  isPlaylistUrl: function(the_url) {
+    try
+    {
+      if ( the_url.indexOf )
+      {
+        // Make the playlist reader manager.
+        const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+        var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+        
+        // Tell it what filters to be using
+        var filterlist = "";
+        var extensionCount = new Object;
+        var extensions = aPlaylistReaderManager.SupportedFileExtensions(extensionCount);
+
+        for(var i = 0; i < extensions.length; i++)
+        {
+          if ( the_url.indexOf( "." + extensions[i] ) != -1 )
+          {      
+            return true;
+          }
+        }
+      }
+    }
+    catch ( err )
+    {
+      alert( "IsPlaylistUrl - " + err );
+    }
+    return false;
+  },
+
   /**
    * Handle Observer Service notifications
    */
@@ -1006,6 +1072,7 @@ PlaylistPlayback.prototype = {
   _startPlayerLoop: function () {
     this._stopPlayerLoop();
     this._seenPlaying.setBoolValue(false);
+    this._lookForPlayingCount = 0;
     this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
   },
   
@@ -1195,6 +1262,12 @@ PlaylistPlayback.prototype = {
           restartApp();
       }
     }
+    else {
+      // After 10 seconds or fatal error, give up and go to the next one?
+      if ( ( this._lookForPlayingCount++ > 40 ) || ( len < -1 ) )
+        this.next();
+    }
+    
   },
   
   _findCurrentIndex: function () {
