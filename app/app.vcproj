@@ -249,6 +249,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					RelativePath=".\content\scripts\messagebox.js">
 				</File>
 				<File
+					RelativePath=".\content\scripts\metrics.js">
+				</File>
+				<File
 					RelativePath=".\content\scripts\miniplayer.data.js">
 				</File>
 				<File
