@@ -129,6 +129,7 @@
           jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
           jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
           jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
+          jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
           this.tree.builder.addListener( this );
         }
         catch ( err )
@@ -253,6 +254,7 @@
               {
                 this.UrlFromServicePane = true;
                 this.LaunchURL( tree_url );
+                this.metrics_click( tree_url ); // if user has opted out, this doesn't do anything
               }
             }
           }
