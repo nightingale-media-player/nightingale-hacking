@@ -29,18 +29,22 @@ try
   // Don't turn this on unless you change the locale folder to your own hd.
   var ENABLE_LANGUAGESCAN = 1;
   
-  var lsLocaleFolder = "c:\\projects\\songbird\\Staging\\chrome\\locale";
+  var lsLocaleFolder = "c:\\projects\\svn\\locales";
   
   var lsDTDFileName = "rmp_demo.dtd";
   var lsDTDMasterFile = lsLocaleFolder + "\\en-US\\" + lsDTDFileName;
 
   var lsPropFileName = "songbird.properties";
   var lsPropMasterFile = lsLocaleFolder + "\\en-US\\" + lsPropFileName;
+  
+  var language_scan_text = ""; // Output.
 
   function LSRunScan()
   {
   try
   {
+    alert( "scanning property and dtd files for missing entries" );
+    
     // Scan the master file to know what to compare against.
     var lsDTDMasterArray = LSScanDTD( lsDTDMasterFile );
     var lsPropMasterArray = LSScanProp( lsPropMasterFile );
@@ -70,14 +74,15 @@ try
       }
     }
     
+    alert( language_scan_text );
 
 /*
-    var text = lsDTDMasterArray.length + " items.\n\n";
+    language_scan_text += lsDTDMasterArray.length + " items.\n\n";
     for ( var i in lsDTDMasterArray )
     {
-      text += "key: '" + lsDTDMasterArray[ i ].key + "'   value: '" + lsDTDMasterArray[ i ].value + "'\n";   
+      language_scan_text += "key: '" + lsDTDMasterArray[ i ].key + "'   value: '" + lsDTDMasterArray[ i ].value + "'\n";   
     }
-    alert( text );
+    alert( language_scan_text );
 */ 
   }
   catch ( err )   
@@ -113,14 +118,14 @@ try
 
     if ( lsFixArray.length )
     {
-      var text = file.path + " needs " + lsFixArray.length + " items.\n\n";
+      language_scan_text += file.path + " needs " + lsFixArray.length + " items.\n\n";
       for ( var i in lsFixArray )
       {
-        text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
+        language_scan_text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
       }
-      text += "\nHit OK to append these items to the dtd file.";
-      alert( text );
+      language_scan_text += "\nHit OK to append these items to the dtd file.";
 /*
+      alert( language_scan_text );
 */    
       var aFileWriter = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);      
       aFileWriter.init( file, /* PR_RDWR | PR_APPEND */ 0x04 | 0x10, 0, null );
@@ -203,14 +208,14 @@ try
 
     if ( lsFixArray.length )
     {
-      var text = file.path + " needs " + lsFixArray.length + " items.\n\n";
+      language_scan_text += file.path + " needs " + lsFixArray.length + " items.\n\n";
       for ( var i in lsFixArray )
       {
-        text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
+        language_scan_text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
       }
-      text += "\nHit OK to append these items to the Prop file.";
-      alert( text );
+      language_scan_text += "\nHit OK to append these items to the Prop file.";
 /*
+      alert( language_scan_text );
 */    
       var aFileWriter = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);      
       aFileWriter.init( file, /* PR_RDWR | PR_APPEND */ 0x04 | 0x10, 0, null );
