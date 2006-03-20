@@ -1456,7 +1456,7 @@
             var obj = {}, row = {}, col = {}; 
             this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
             // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( obj.value )
+            if ( ( obj.value ) && ( row.value ) && ( row.value != -1 ) )
             {
               if ( this.tree.currentIndex != -1 )
               {
@@ -1478,16 +1478,23 @@
         <![CDATA[
           try
           {
-            var playlist = evt.target.playlist;
-            
-            if ( playlist )
+
+            var obj = {}, row = {}, col = {}; 
+            evt.target.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
+            if ( ( obj.value ) && ( row.value ) && ( row.value != -1 ) )
             {
-              document.__PlaylistXBL_DragObjectDown__ = playlist; // YUCK YUCK YUCK YUCK (note the absence of "f")
-              var txt = "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.currentIndex = 0;"
-              txt += "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.select( 0 );"
-              txt += "document.__PlaylistXBL_DragObjectDown__.sendPlayEvent();"
-              // Play it in awhile, after the tree updates.
-              setTimeout( txt, 250 ); 
+              var playlist = evt.target.playlist;
+              
+              if ( playlist )
+              {
+                document.__PlaylistXBL_DragObjectDown__ = playlist; // YUCK YUCK YUCK YUCK (note the absence of "f")
+                var txt = "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.currentIndex = 0;"
+                txt += "document.__PlaylistXBL_DragObjectDown__.tree.view.selection.select( 0 );"
+                txt += "document.__PlaylistXBL_DragObjectDown__.sendPlayEvent();"
+                // Play it in awhile, after the tree updates.
+                setTimeout( txt, 250 ); 
+              }
             }
           }
           catch( err )

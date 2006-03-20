@@ -37,6 +37,7 @@
  buttons="accept"
  width="420"
  height="260"
+ onload="return doInit();"
  ondialogaccept="return doOK();"
 >
 
@@ -47,15 +48,21 @@
   <!-- And intrepid instructions! -->  
   <script>
   <![CDATA[
-    function doOK()
-    {
+    function doInit() {
+      // dunno if this works or not, can't test it.
+      var version = document.getElementById( "version_number" );
+      var user_agent = SBDataGetValue( "general.useragent.extra.songbird" );
+      if ( user_agent.length > 0 )
+        version.value = " - " + user_agent;
+    }
+    function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
-      {
         window.arguments[0].retval = "ok";
-      }
       return true;
     }
   ]]>
   </script>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   
 </dialog>
