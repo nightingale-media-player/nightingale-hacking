@@ -1,0 +1,96 @@
+#
+# BEGIN SONGBIRD GPL
+# 
+# This file is part of the Songbird web player.
+#
+# Copyright© 2006 Pioneers of the Inevitable LLC
+# http://www.songbirdnest.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the “GPL”).
+# 
+# Software distributed under the License is distributed 
+# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+# express or implied. See the GPL for the specific language 
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this 
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc., 
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# 
+# END SONGBIRD GPL
+#
+
+##############################################################################
+# Autodefs..mk
+#
+# This file gets included in every makefile for easy access to important
+# definitions and tools
+###############################################################################
+
+#------------------------------------------------------------------------------
+# Only include this file once
+ifndef AUTODEFS_MK_INCLUDED
+AUTODEFS_MK_INCLUDED=1
+#------------------------------------------------------------------------------
+
+SB_PLATFORM      = @SB_PLATFORM@
+SB_CONFIGURATION = @SB_CONFIGURATION@
+
+BIN_SUFFIX       = @BIN_SUFFIX@
+OBJ_SUFFIX       = @OBJ_SUFFIX@
+LIB_SUFFIX       = @LIB_SUFFIX@
+DLL_SUFFIX       = @DLL_SUFFIX@
+
+DEBUG            = @DEBUG@
+DEFS             = @DEFS@
+
+#
+# Cygwin stuff
+#
+
+CYGWIN_WRAPPER = @CYGWIN_WRAPPER@
+CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
+
+#
+# Commonly used directories
+#
+
+DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@
+SQLITE_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/sqlite/@SB_CONFIGURATION@
+MOZSDK_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@
+MOZSDK_INCLUDE_DIR = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/include
+MOZSDK_LIB_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/lib
+MOZSDK_BIN_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin
+MOZSDK_IDL_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/idl
+
+#
+# Tools
+#
+
+CC        = @CYGWIN_WRAPPER@ @CC@@BIN_SUFFIX@
+CXX       = @CYGWIN_WRAPPER@ @CXX@@BIN_SUFFIX@
+LD        = @CYGWIN_WRAPPER@ @LD@@BIN_SUFFIX@
+LIBRARIAN = @CYGWIN_WRAPPER@ @LIBRARIAN@@BIN_SUFFIX@
+PERL      = @CYGWIN_WRAPPER@ @PERL@@BIN_SUFFIX@
+XPIDL     = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpidl@BIN_SUFFIX@
+XPTLINK   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpt_link@BIN_SUFFIX@
+MAR       = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/mar@BIN_SUFFIX@
+MSBDIFF   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/msbdiff@BIN_SUFFIX@
+
+#
+# Tool flags
+#
+
+CFLAGS         = @CFLAGS@
+CXXFLAGS       = @CXXFLAGS@
+LDFLAGS        = @LDFLAGS@
+LDFLAGS_DLL    = @LDFLAGS_DLL@
+LDFLAGS_OUT    = @LDFLAGS_OUT@
+DEFAULT_LIBS   = @DEFAULT_LIBS@
+LIBRARIANFLAGS = @LIBRARIANFLAGS@
+
+#------------------------------------------------------------------------------
+endif #AUTODEFS_MK_INCLUDED
+#------------------------------------------------------------------------------
