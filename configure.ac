@@ -245,8 +245,9 @@ case "$SB_PLATFORM" in
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL"
     LDFLAGS_OUT="-OUT:"
+    LDFLAGS_PATH="-LIBPATH:"
     ARFLAGS="-nologo"
-    DEFAULT_LIBS="kernel32.lib user32.lib gdi32.lib winmm.lib wsock32.lib advapi32.lib comctl32.lib"
+    DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32"
   ;;
   *)
   ;;
@@ -255,6 +256,7 @@ esac
 AC_SUBST(ARFLAGS)
 AC_SUBST(LDFLAGS_DLL)
 AC_SUBST(LDFLAGS_OUT)
+AC_SUBST(LDFLAGS_PATH)
 AC_SUBST(DEFAULT_LIBS)
 
 #

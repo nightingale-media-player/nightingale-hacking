@@ -55,13 +55,17 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_EXTRA_IMPORTS = $(MOZSDK_LIB_DIR)/nspr4$(LIB_SUFFIX) \
-                            $(MOZSDK_LIB_DIR)/plds4$(LIB_SUFFIX)  \
-                            $(MOZSDK_LIB_DIR)/plc4$(LIB_SUFFIX)  \
-                            $(MOZSDK_LIB_DIR)/xpcom$(LIB_SUFFIX) \
-                            $(MOZSDK_LIB_DIR)/xul$(LIB_SUFFIX) \
-                            $(MOZSDK_LIB_DIR)/unicharutil_s$(LIB_SUFFIX) \
-                            $(SQLITE_DIR)/sqlite$(LIB_SUFFIX) \
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4  \
+                            plc4  \
+                            xpcom \
+                            xul \
+                            unicharutil_s \
+                            sqlite \
                             $(NULL)
+
+DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
+                          $(SQLITE_DIR) \
+                          $(NULL)
 
 include $(topsrcdir)/build/rules.mk
