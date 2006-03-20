@@ -224,17 +224,6 @@ CPlaylist.prototype =
       
       this.m_queryObject.AddQuery(strQuery);
       
-      strQuery = "UPDATE \"library_desc\" SET ";
-      strQuery += "readable_name = \"" + strReadableName + "\", ";
-      strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\", ";
-      strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\", ";
-      strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\", ";
-      strQuery += "sort_weight = \"" + sortWeight + "\", ";
-      strQuery += "width = \"" + colWidth + "\" ";
-      strQuery += "WHERE = \"" + strColumn + "\"";
-      
-      this.m_queryObject.AddQuery(strQuery);
-      
       if(!bWillRunLater)
       {
         this.m_queryObject.Execute();

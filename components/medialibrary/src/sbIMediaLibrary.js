@@ -318,6 +318,26 @@ CMediaLibrary.prototype =
     return resObj.GetRowCell(0, 0);
   },
 
+  AddColumn: function(strColumn, strDataType)
+  {
+    if(this.m_queryObject != null)
+    {
+      this.m_queryObject.ResetQuery();
+      this.m_queryObject.AddQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
+      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
+      
+      this.m_queryObject.Execute();
+      this.m_queryObject.WaitForCompletion();
+    }
+
+    return;
+  },
+  
+  DeleteColumn: function(strColumn)
+  {
+    return;
+  },
+
   GetColumnInfo: function()
   {
     if(this.m_queryObject != null)
@@ -381,12 +401,20 @@ CMediaLibrary.prototype =
     return aMetadataFields;
   },
   
-  AddMetadataField: function(strField, bWillRunLater)
+  AddMetadataField: function(strField, strFieldType, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
-      if(bWillRunLater)
+      if(!bWillRunLater)
+        this.m_queryObject.ResetQuery();
+        
+      this.m_queryObject.AddQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
+      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name, is_metadata) VALUES (\"" + strColumn + "\", \"1\")");
+      
+      if(!bWillRunLater)
       {
+        this.m_queryObject.Execute();
+        this.m_queryObject.WaitForCompletion();
       }
     }
     
@@ -397,7 +425,8 @@ CMediaLibrary.prototype =
   {
     if(this.m_queryObject != null)
     {
-      if(bWillRunLater)
+    
+      if(!bWillRunLater)
       {
       }
     }

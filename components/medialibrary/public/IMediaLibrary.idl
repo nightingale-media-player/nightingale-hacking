@@ -44,15 +44,18 @@ interface sbIMediaLibrary : nsISupports
 
   wstring FindByGUID(in wstring mediaGUID);
   wstring FindByURL(in wstring strURL); 
-  
+
+  void AddColumn(in wstring strColumn, in wstring strDataType);
+  void DeleteColumn(in wstring strColumn);
+
   void GetColumnInfo();
   void SetColumnInfo(in wstring strColumn, in wstring strReadableName, in PRBool isVisible, 
     in PRBool defaultVisibility, in PRBool isMetadata, in PRInt32 sortWeight,
     in PRInt32 colWidth, in PRBool bWillRunLater);
 
   void GetMetadataFields(out PRUint32 nMetadataFieldCount, [array, size_is (nMetadataFieldCount), retval] out wstring aMetadataFields);
-  void AddMetadataField(in wstring strField);
-  PRBool DeleteMetadataField(in wstring strField);
+  void AddMetadataField(in wstring strField, in wstring strDataType, in PRBool bWillRunLater);
+  PRBool DeleteMetadataField(in wstring strField, in PRBool bWillRunLater);
   
   PRBool SetValueByIndex(in PRInt32 mediaIndex, in wstring strField, in wstring strValue, in PRBool bWillRunLater);
   
