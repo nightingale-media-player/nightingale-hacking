@@ -69,11 +69,11 @@ MOZSDK_IDL_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGU
 # Tools
 #
 
-CC        = @CYGWIN_WRAPPER@ @CC@@BIN_SUFFIX@
-CXX       = @CYGWIN_WRAPPER@ @CXX@@BIN_SUFFIX@
-LD        = @CYGWIN_WRAPPER@ @LD@@BIN_SUFFIX@
-LIBRARIAN = @CYGWIN_WRAPPER@ @LIBRARIAN@@BIN_SUFFIX@
-PERL      = @CYGWIN_WRAPPER@ @PERL@@BIN_SUFFIX@
+CC        = @CYGWIN_WRAPPER@ @CC@
+CXX       = @CYGWIN_WRAPPER@ @CXX@
+LD        = @CYGWIN_WRAPPER@ @LD@
+AR        = @CYGWIN_WRAPPER@ @AR@
+PERL      = @CYGWIN_WRAPPER@ @PERL@
 XPIDL     = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpidl@BIN_SUFFIX@
 XPTLINK   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpt_link@BIN_SUFFIX@
 MAR       = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/mar@BIN_SUFFIX@
@@ -89,7 +89,7 @@ LDFLAGS        = @LDFLAGS@
 LDFLAGS_DLL    = @LDFLAGS_DLL@
 LDFLAGS_OUT    = @LDFLAGS_OUT@
 DEFAULT_LIBS   = @DEFAULT_LIBS@
-LIBRARIANFLAGS = @LIBRARIANFLAGS@
+ARFLAGS        = @ARFLAGS@
 
 #------------------------------------------------------------------------------
 endif #AUTODEFS_MK_INCLUDED
