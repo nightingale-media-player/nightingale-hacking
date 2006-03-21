@@ -410,7 +410,8 @@
                       <toolbarbutton disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/> 
                       <toolbarbutton disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="Refresh"/>
                       <toolbarbutton disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
-                      <toolbarbutton disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>                                           
+                      <toolbarbutton disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
+                      <toolbarbutton disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>                                           
                       <image id="browser_url_image" class="sb_faceplate" src=""/>                      
                       <textbox id="browser_url" class="sb_faceplate" onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" flex="1"/>
                       <!-- SEARCH WIDGET -->
