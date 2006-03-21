@@ -1456,7 +1456,7 @@
             var obj = {}, row = {}, col = {}; 
             this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
             // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( ( obj.value ) && ( row.value ) && ( row.value != -1 ) )
+            if ( ( obj.value ) && ( row.value != null ) && ( row.value != -1 ) )
             {
               if ( this.tree.currentIndex != -1 )
               {
@@ -1482,7 +1482,7 @@
             var obj = {}, row = {}, col = {}; 
             evt.target.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
             // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( ( obj.value ) && ( row.value ) && ( row.value != -1 ) )
+            if ( ( obj.value ) && ( row.value != null ) && ( row.value != -1 ) )
             {
               var playlist = evt.target.playlist;
               
