@@ -531,7 +531,6 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected
 {
   background-image: url(default/spinner.gif);
   background-repeat: no-repeat;
-  background-color: Transparent;
   border: 0px solid #F00;
   width: 54px;
   height: 54px;
