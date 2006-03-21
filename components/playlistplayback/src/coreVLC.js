@@ -40,6 +40,9 @@ try
  */  
 function LOG(string) {
   dump("***CoreVLC*** " + string + "\n");
+  gConsole = Components.classes["@mozilla.org/consoleservice;1"].createInstance(Components.interfaces.nsIConsoleService);
+  if (gConsole)
+    gConsole.logStringMessage(string);
 } // LOG
 
 /**

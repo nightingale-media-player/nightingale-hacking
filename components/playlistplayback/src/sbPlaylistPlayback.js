@@ -248,6 +248,11 @@ PlaylistPlayback.prototype = {
   _source: null,
   
   /**
+   * Used to not hit the playback core for metadata too often.
+   */
+  _metadataPollCount: 0,
+  
+  /**
    *
    */
   _repeatMode: REPEAT_MODE_OFF,
@@ -702,19 +707,27 @@ PlaylistPlayback.prototype = {
    * See sbIPlaylistPlayback.idl
    */
   playUrl: function(url) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    try  {
+      var core = this.core;
+      if (!core)
+        throw Components.results.NS_ERROR_NOT_INITIALIZED;
+        
+      this._playUrl.setValue(url);
+      this._metadataUrl.setValue(url);
       
-    this._playUrl.setValue(url);
-    this._metadataUrl.setValue(url);
-    
-    core.stop();
-    core.playUrl( url );
-    
-    // Start the polling loop to feed the metadata dataremotes.
-    this._startPlayerLoop();
-    
+      LOG("playUrl: " + url);
+      
+      core.stop();
+      core.playUrl( url );
+      
+      LOG( "Playing '" + core.getId() + "'(" + this.getLength() + "/" + this.getPosition() + ") - playing: " + this.getPlaying() + " paused: " + this.getPaused() );
+      
+      // Start the polling loop to feed the metadata dataremotes.
+      this._startPlayerLoop();
+    } catch( err ) {
+      LOG( "playUrl:\n" + err );
+      return false;
+    }
     return true;
   },
 
@@ -1082,14 +1095,19 @@ PlaylistPlayback.prototype = {
   
   // Poll function
   _onPlayerLoop: function () {
-    try {  
+    try {
       var core = this.core;
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
-        
-      var len = core.getLength();
-      var pos = core.getPosition();
+
+      var len = this.getLength();
+      var pos = this.getPosition();
       
+      if ( !this._once ) {
+        LOG( "_onPlayerLoop '" + core.getId() + "'(" + this.getLength() + "/" + this.getPosition() + ") - playing: " + this.getPlaying() + " paused: " + this.getPaused() );
+        this._once = true;
+      }
+        
       // Don't update the data if we're currently tracking the seekbar.
       if ( ! this._seekbarTracker.getBoolValue() ) {
         this._metadataLen.setValue( len );
@@ -1152,8 +1170,6 @@ PlaylistPlayback.prototype = {
   // Routes metadata (and their possible updates) to the metadata ui data remotes
   // Also updates the database if the core reads metadata that is different from
   // what we had so far
-  
-  _metadataPollCount: 0,
   _onPollMetadata: function ( len_ms, pos_ms, core )
   {
     // Wait a bit, and then only ask infrequently
