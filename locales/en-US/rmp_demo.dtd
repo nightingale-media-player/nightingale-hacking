@@ -81,6 +81,7 @@
 <!ENTITY tooltip.browser.fwd      "Browse Forward" >
 <!ENTITY tooltip.browser.stop     "Stop Browser" >
 <!ENTITY tooltip.browser.home     "Home" >
+<!ENTITY tooltip.browser.bookmark "Bookmark" >
 <!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
 <!ENTITY tooltip.browser.download "View Current Downloads" >
 
