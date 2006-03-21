@@ -33,27 +33,33 @@
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="about"
- title="About..."
+ title="&menu.help.about;"
  buttons="accept"
- width="420"
- height="260"
+ width="480"
+ height="360"
  onload="return doInit();"
  ondialogaccept="return doOK();"
 >
 
   <!-- Astounding complexity! -->
-  <label id="version_number" value="Version 0.1.1b" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-  <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false"/>
+  <label id="version_number" value="&about.version;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+  <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" flex="1"/>
 
   <!-- And intrepid instructions! -->  
   <script>
   <![CDATA[
     function doInit() {
-      // dunno if this works or not, can't test it.
+      // Figure out a string to use from the user agent.
+      var user_agent = navigator.userAgent;
+      sb_idx = user_agent.indexOf("Songbird");
+      if ( sb_idx != -1 )
+      {
+        // Try to get rid of the annoying mozilla crap at the beginning.
+        user_agent = user_agent.substr( sb_idx, user_agent.length );
+      }
+      // Paste it into the label
       var version = document.getElementById( "version_number" );
-      var user_agent = SBDataGetValue( "general.useragent.extra.songbird" );
-      if ( user_agent.length > 0 )
-        version.value = " - " + user_agent;
+      version.value += ": " + user_agent;
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
@@ -62,7 +68,4 @@
     }
   ]]>
   </script>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
-  
 </dialog>
