@@ -374,10 +374,7 @@ function SBInitialize()
       const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
     
-      var aHandler = aMetadataManager.GetHandlerForMediaURL("file:///G:\\Media\\Music\\Aus\\Aus - Flight 01 Departing For.mp3");
-      
-      var aChannel = aHandler.GetChannel();
-      alert(aChannel);
+      var aHandler = aMetadataManager.GetHandlerForMediaURL("file:///H:\\Media\\Music\\Aus\\Aus - Flight 01 Departing For.mp3");
       
       var retval = aHandler.Read();
       alert(retval);
@@ -387,7 +384,6 @@ function SBInitialize()
       alert(err);
     }
 */
-
   }
   catch(err)
   {
