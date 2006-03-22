@@ -41,8 +41,8 @@
 
 #include <string/nsStringAPI.h>
 #include <string/nsString.h>
-
-#include <id3/tag.h>
+#include <string/nsReadableUtils.h>
+#include <xpcom/nsEscape.h>
 
 // DEFINES ====================================================================
 
@@ -82,7 +82,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::SupportedFileExtensions(PRUint32 *nExtCount,
 NS_IMETHODIMP sbMetadataHandlerID3::GetChannel(nsIChannel **_retval)
 {
   *_retval = m_Channel.get();
-  
+  (*_retval)->AddRef();
+
   return NS_OK;
 } //GetChannel
 
@@ -119,18 +120,33 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
   if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
   {
-    ID3_Tag id3Tag;
-    id3Tag.Link(cstrPath.get());
 
-    ID3_Frame *id3Frame = id3Tag.Find(ID3FID_ALBUM);
-    if(id3Frame)
+#if defined(XP_WIN)
+    nsCString::iterator itBegin, itEnd;
+
+    if(StringBeginsWith(cstrPath, NS_LITERAL_CSTRING("/")))
+      cstrPath.Cut(0, 1);
+
+    cstrPath.BeginWriting(itBegin);
+    cstrPath.EndWriting(itEnd);
+
+    while(itBegin != itEnd)
     {
-      size_t nFields = id3Frame->NumFields();
-
+      if( (*itBegin) == '/') (*itBegin) = '\\';
+      itBegin++;
     }
+#endif
+    
+    size_t nTagSize = m_ID3Tag.Link(NS_UnescapeURL(cstrPath).get());
+    *_retval = nTagSize;
+
+    ReadTag(m_ID3Tag);
+
+    nRet = NS_OK;
   }
   else
   {
+
   }
 
   return nRet;
@@ -163,7 +179,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::GetAvailableTags(PRUint32 *tagCount, PRUnich
 /* wstring GetTag (in wstring tagName); */
 NS_IMETHODIMP sbMetadataHandlerID3::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+
+  return NS_OK;
 } //GetTag
 
 //-----------------------------------------------------------------------------
@@ -188,3 +205,561 @@ NS_IMETHODIMP sbMetadataHandlerID3::SetTags(PRUint32 tagCount, const PRUnichar *
   *_retval = 0;
   return NS_ERROR_NOT_IMPLEMENTED;
 } //SetTags
+
+//-----------------------------------------------------------------------------
+PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
+{
+  PRInt32 ret = 0;
+
+  ID3_Tag::Iterator *itFrame = tag.CreateIterator();
+  ID3_Frame *pFrame = nsnull;
+  while( (pFrame = itFrame->GetNext()) != NULL)
+  {
+    switch(pFrame->GetID())
+    {
+      //No known frame.
+      case ID3FID_NOFRAME:
+      {
+      }
+      break;
+
+      //Audio encryption.
+      case ID3FID_AUDIOCRYPTO:
+      {
+      }
+      break;
+
+      //Picture
+      case ID3FID_PICTURE:  	
+      {
+      }
+      break;
+
+      //Comments.
+      case ID3FID_COMMENT:
+      {
+      }
+      break;
+
+      //Commercial frame.
+      case ID3FID_COMMERCIAL:
+      {
+      }
+      break;
+
+      //Encryption method registration.
+      case ID3FID_CRYPTOREG:
+      {
+
+      }
+      break;
+
+      //Equalization.
+      case ID3FID_EQUALIZATION:
+      {
+
+      }
+      break;
+
+
+      //Event timing codes.
+      case ID3FID_EVENTTIMING:
+      {
+
+      }
+      break;
+      
+      //General encapsulated object.
+      case ID3FID_GENERALOBJECT:
+      {
+
+      }
+      break;
+
+      //Group identification registration.
+      case ID3FID_GROUPINGREG:
+      {
+
+      }
+      break;
+
+      //Involved people list.
+      case ID3FID_INVOLVEDPEOPLE:
+      {
+
+      }
+      break;
+
+      //Linked information.
+      case ID3FID_LINKEDINFO:
+      {
+
+      }
+      break;
+
+      //Music CD identifier.
+      case ID3FID_CDID:
+      {
+
+      }
+      break;
+
+      //MPEG location lookup table.
+      case ID3FID_MPEGLOOKUP:
+      {
+
+      }
+      break;
+
+      //Ownership frame.
+      case ID3FID_OWNERSHIP:
+      {
+
+      }
+      break;
+
+      //Private frame.
+      case ID3FID_PRIVATE:
+      {
+
+      }
+      break;
+
+      //Play counter.
+      case ID3FID_PLAYCOUNTER:
+      {
+
+      }
+      break;
+
+      //Popularimeter.
+      case ID3FID_POPULARIMETER:
+      {
+
+      }
+      break;
+
+      //Position synchronisation frame.
+      case ID3FID_POSITIONSYNC:
+      {
+
+      }
+      break;
+
+      //Recommended buffer size.
+      case ID3FID_BUFFERSIZE:
+      {
+
+      }
+      break;
+
+      //Relative volume adjustment.
+      case ID3FID_VOLUMEADJ:
+      {
+
+      }
+      break;
+
+      //Reverb.
+      case ID3FID_REVERB:
+      {
+
+      }
+      break;
+
+      //Synchronized lyric/text.
+      case ID3FID_SYNCEDLYRICS:
+      {
+
+      }
+      break;
+
+      //Synchronized tempo codes.
+      case ID3FID_SYNCEDTEMPO:
+      {
+
+      }
+      break;
+
+      //Album/Movie/Show title.
+      case ID3FID_ALBUM:
+      {
+
+      }
+      break;
+
+      //BPM (beats per minute).
+      case ID3FID_BPM:
+      {
+
+      }
+      break;
+
+      //Composer.
+      case ID3FID_COMPOSER:
+      {
+
+      }
+      break;
+
+      //Content type.
+      case ID3FID_CONTENTTYPE:
+      {
+
+      }
+      break;
+
+      //Copyright message.
+      case ID3FID_COPYRIGHT:
+      {
+
+      }
+      break;
+
+      //Date.
+      case ID3FID_DATE:
+      {
+
+      }
+      break;
+
+      //Playlist delay.
+      case ID3FID_PLAYLISTDELAY:
+      {
+
+      }
+      break;
+
+      //Encoded by.
+      case ID3FID_ENCODEDBY:
+      {
+
+      }
+      break;
+
+      //Lyricist/Text writer.
+      case ID3FID_LYRICIST:
+      {
+
+      }
+      break;
+
+      //File type.
+      case ID3FID_FILETYPE:
+      {
+
+      }
+      break;
+
+      //Time.
+      case ID3FID_TIME:
+      {
+
+      }
+      break;
+
+      //Content group description.
+      case ID3FID_CONTENTGROUP:
+      {
+
+      }
+      break;
+
+      //Title/songname/content description.
+      case ID3FID_TITLE:
+      {
+
+      }
+      break;
+
+      //Subtitle/Description refinement.
+      case ID3FID_SUBTITLE:
+      {
+
+      }
+      break;
+
+      //Initial key.
+      case ID3FID_INITIALKEY:
+      {
+
+      }
+      break;
+
+      //Language(s).
+      case ID3FID_LANGUAGE:
+      {
+
+      }
+      break;
+
+      //Length.
+      case ID3FID_SONGLEN:
+      {
+
+      }
+      break;
+
+      //Media type.
+      case ID3FID_MEDIATYPE:
+      {
+
+      }
+      break;
+
+      //Original album/movie/show title.
+      case ID3FID_ORIGALBUM:
+      {
+
+      }
+      break;
+
+      //Original filename.
+      case ID3FID_ORIGFILENAME:
+      {
+
+      }
+      break;
+
+      //Original lyricist(s)/text writer(s).
+      case ID3FID_ORIGLYRICIST:
+      {
+
+      }
+      break;
+
+      //Original artist(s)/performer(s).
+      case ID3FID_ORIGARTIST:
+      {
+
+      }
+      break;
+
+      //Original release year.
+      case ID3FID_ORIGYEAR:
+      {
+
+      }
+      break;
+
+      //File owner/licensee.
+      case ID3FID_FILEOWNER:
+      {
+
+      }
+      break;
+
+      //Lead performer(s)/Soloist(s).
+      case ID3FID_LEADARTIST:
+      {
+
+      }
+      break;
+
+      //Band/orchestra/accompaniment.
+      case ID3FID_BAND:
+      {
+
+      }
+      break;
+
+      //Conductor/performer refinement.
+      case ID3FID_CONDUCTOR:
+      {
+
+      }
+      break;
+
+      //Interpreted, remixed, or otherwise modified by.
+      case ID3FID_MIXARTIST:
+      {
+
+      }
+      break;
+
+      //Part of a set.
+      case ID3FID_PARTINSET:
+      {
+
+      }
+      break;
+
+      //Publisher.
+      case ID3FID_PUBLISHER:
+      {
+
+      }
+      break;
+
+      //Track number/Position in set.
+      case ID3FID_TRACKNUM:
+      {
+
+      }
+      break;
+
+      //Recording dates.
+      case ID3FID_RECORDINGDATES:
+      {
+
+      }
+      break;
+
+      //Internet radio station name.
+      case ID3FID_NETRADIOSTATION:
+      {
+
+      }
+      break;
+
+      //Internet radio station owner.
+      case ID3FID_NETRADIOOWNER:
+      {
+
+      }
+      break;
+
+      //Size.
+      case ID3FID_SIZE:
+      {
+
+      }
+      break;
+
+      //ISRC (international standard recording code).
+      case ID3FID_ISRC:
+      {
+
+      }
+      break;
+
+      //Software/Hardware and settings used for encoding.
+      case ID3FID_ENCODERSETTINGS:
+      {
+
+      }
+      break;
+
+      //User defined text information.
+      case ID3FID_USERTEXT:
+      {
+
+      }
+      break;
+
+      //Year.
+      case ID3FID_YEAR:
+      {
+
+      }
+      break;
+
+      //Unique file identifier.
+      case ID3FID_UNIQUEFILEID:
+      {
+
+      }
+      break;
+
+      //Terms of use.
+      case ID3FID_TERMSOFUSE:
+      {
+
+      }
+      break;
+
+      //Unsynchronized lyric/text transcription.
+      case ID3FID_UNSYNCEDLYRICS:
+      {
+
+      }
+      break;
+
+      //Commercial information.
+      case ID3FID_WWWCOMMERCIALINFO:
+      {
+
+      }
+      break;
+
+      //Copyright/Legal infromation.
+      case ID3FID_WWWCOPYRIGHT:
+      {
+
+      }
+      break;
+
+      //Official audio file webpage.
+      case ID3FID_WWWAUDIOFILE:
+      {
+
+      }
+      break;
+
+      //Official artist/performer webpage.
+      case ID3FID_WWWARTIST:
+      {
+
+      }
+      break;
+
+      //Official audio source webpage.
+      case ID3FID_WWWAUDIOSOURCE:
+      {
+
+      }
+      break;
+
+      //Official internet radio station homepage.
+      case ID3FID_WWWRADIOPAGE:
+      {
+
+      }
+      break;
+
+      //Payment.
+      case ID3FID_WWWPAYMENT:
+      {
+
+      }
+      break;
+
+      //Official publisher webpage.
+      case ID3FID_WWWPUBLISHER:
+      {
+
+      }
+      break;
+
+      //User defined URL link.
+      case ID3FID_WWWUSER:
+      {
+
+      }
+      break;
+
+      //Encrypted meta frame (id3v2.2.x).
+      case ID3FID_METACRYPTO:
+      {
+
+      }
+      break;
+
+      //Compressed meta frame (id3v2.2.1).
+      case ID3FID_METACOMPRESSION:
+      {
+
+      }
+      break;
+
+      //Last field placeholder.
+      case ID3FID_LASTFRAMEID:
+      {
+
+      }
+      break;
+    }
+  }
+
+  return ret;
+} //ReadTag

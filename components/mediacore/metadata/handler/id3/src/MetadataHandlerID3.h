@@ -42,6 +42,8 @@
 
 #include <necko/nsIChannel.h>
 
+#include <id3/tag.h>
+
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAHANDLERID3_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/ID3;1"
 #define SONGBIRD_METADATAHANDLERID3_CLASSNAME   "Songbird ID3 Metadata Handler Interface"
@@ -61,6 +63,9 @@ class sbMetadataHandlerID3 : public sbIMetadataHandler
   virtual ~sbMetadataHandlerID3();
 
 protected:
+  PRInt32 ReadTag(ID3_Tag &tag);
+
   nsCOMPtr<nsIChannel> m_Channel;
+  ID3_Tag              m_ID3Tag;
 
 };

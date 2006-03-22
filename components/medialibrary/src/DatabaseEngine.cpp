@@ -390,7 +390,12 @@ PRInt32 CDatabaseEngine::OpenDB(PRUnichar *dbGUID)
     if(strErr) sqlite3_free(strErr);
 #endif
 
-    sqlite3_create_collation16(pDB, NS_LITERAL_CSTRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
+    ret = sqlite3_create_collation16(pDB, NS_LITERAL_CSTRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
+
+    if(ret != SQLITE_OK)
+    {
+      
+    }
   }
 
   return ret;
@@ -1218,8 +1223,6 @@ void CDatabaseEngine::DoPersistentCallback(CDatabaseQuery *pQuery)
 {
   if(pQuery->m_PersistentQuery)
   {
-    //pQuery->m_QueryResultLock.Lock();
-
     nsCOMPtr<sbIDatabaseResult> pDBResult;
     PRUnichar *strGUID = nsnull, *strQuery = nsnull;
 
@@ -1245,8 +1248,6 @@ void CDatabaseEngine::DoPersistentCallback(CDatabaseQuery *pQuery)
         }
       }
     }
-
-    //pQuery->m_QueryResultLock.Unlock();
 
     PR_Free(strGUID);
     PR_Free(strQuery);
