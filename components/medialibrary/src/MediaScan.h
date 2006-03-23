@@ -60,7 +60,7 @@
 namespace std
 {
   typedef basic_string< PRUnichar > prustring;
-};
+}
 #endif
 
 
