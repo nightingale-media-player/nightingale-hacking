@@ -147,3 +147,10 @@
 
 <!ENTITY locale.language          "Език" >
 
+
+
+<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "Version" >
+
+

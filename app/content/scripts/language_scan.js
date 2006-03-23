@@ -64,10 +64,12 @@ try
           var file = files.getNext().QueryInterface( Components.interfaces.nsILocalFile );
           if ( file.leafName.indexOf( '.dtd' ) != -1 )
           {
+            language_scan_text += "file: " + file.path + "\n";
             LSFixDTD( lsDTDMasterArray, file );
           }
           if ( file.leafName.indexOf( '.properties' ) != -1 )
           {
+            language_scan_text += "file: " + file.path + "\n";
             LSFixProp( lsPropMasterArray, file );
           }
         }
@@ -118,12 +120,10 @@ try
 
     if ( lsFixArray.length )
     {
-      language_scan_text += file.path + " needs " + lsFixArray.length + " items.\n\n";
       for ( var i in lsFixArray )
       {
         language_scan_text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
       }
-      language_scan_text += "\nHit OK to append these items to the dtd file.";
 /*
       alert( language_scan_text );
 */    
@@ -208,12 +208,10 @@ try
 
     if ( lsFixArray.length )
     {
-      language_scan_text += file.path + " needs " + lsFixArray.length + " items.\n\n";
       for ( var i in lsFixArray )
       {
         language_scan_text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
       }
-      language_scan_text += "\nHit OK to append these items to the Prop file.";
 /*
       alert( language_scan_text );
 */    

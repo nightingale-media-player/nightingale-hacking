@@ -48,9 +48,9 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
   <!-- Sometimes we need to convince the DTD files to not be stupid
+   -->  
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/language_scan.js" />
-   -->  
 
   <!-- Pop up the mainwin as soon as possible -->
   <script>
