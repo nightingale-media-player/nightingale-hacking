@@ -796,7 +796,9 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
 
       // Handle shutdown request
       if (pEngine->m_QueryProcessorShouldShutdown) {
+#if defined(XP_WIN)
         sqlite3_thread_cleanup();
+#endif
         return;
       }
 
