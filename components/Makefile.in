@@ -29,8 +29,23 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+#SUBDIRS = dataremote \
+#          devices \
+#          integration \
+#          mediacore \
+#          medialibrary \
+#          playlistplayback \
+#          playlistreader \
+#          playlistsource \
+#          servicesource \
+#          $(NULL)
+
+#SUBDIRDEPS  = mediacore : medialibrary
+#SUBDIRDEPS2 = playlistreader : playlistsource
+#SUBDIRDEPS3 = playlistsource : medialibrary
+#SUBDIRDEPS4 = servicesource : medialibrary
+
+SUBDIRS = medialibrary \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+SUBDIRS = cardinal \
+          rubberducky \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -29,8 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+SUBDIRS = content \
+          icons \
+          preferences \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

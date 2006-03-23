@@ -79,7 +79,7 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL) 
 
-all : songbird_output $(CONFIGSTATUS)
+all : songbird_output build
 
 $(CONFIGSTATUS) : $(CONFIGURE)
 	$(CREATE_DIST_DIR_CMD) && $(RUN_CONFIGURE_CMD)
@@ -102,7 +102,7 @@ run_configure : $(CONFIGURE_PREREQS)
 clean :
 	$(CLEAN_CMD)
 
-build :
+build : $(CONFIGSTATUS)
 	$(BUILD_CMD)
 
 .PHONY : all songbird_output run_autoconf create_dist_dir run_configure clean build

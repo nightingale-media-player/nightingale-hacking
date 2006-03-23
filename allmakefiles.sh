@@ -145,8 +145,13 @@ components/integration/src/win32/Makefile
 MAKEFILES_mediacore="
 components/mediacore/Makefile
 components/mediacore/metadata/Makefile
-components/mediacore/metadata/public/Makefile
-components/mediacore/metadata/src/Makefile
+components/mediacore/metadata/handler/Makefile
+components/mediacore/metadata/handler/id3/Makefile
+components/mediacore/metadata/handler/id3/public/Makefile
+components/mediacore/metadata/handler/id3/src/Makefile
+components/mediacore/metadata/manager/Makefile
+components/mediacore/metadata/manager/public/Makefile
+components/mediacore/metadata/manager/src/Makefile
 components/mediacore/transcoding/Makefile
 components/mediacore/transcoding/public/Makefile
 components/mediacore/transcoding/src/Makefile
@@ -164,14 +169,14 @@ components/playlistplayback/src/Makefile
 components/playlistplayback/public/Makefile
 "
 
-MAKEFILES_playlistreaders="
-components/playlistreaders/Makefile
-components/playlistreaders/m3u/Makefile
-components/playlistreaders/m3u/public/Makefile
-components/playlistreaders/m3u/src/Makefile
-components/playlistreaders/pls/Makefile
-components/playlistreaders/pls/public/Makefile
-components/playlistreaders/pls/src/Makefile
+MAKEFILES_playlistreader="
+components/playlistreader/Makefile
+components/playlistreader/m3u/Makefile
+components/playlistreader/m3u/public/Makefile
+components/playlistreader/m3u/src/Makefile
+components/playlistreader/pls/Makefile
+components/playlistreader/pls/public/Makefile
+components/playlistreader/pls/src/Makefile
 "
 
 MAKEFILES_playlistsource="
@@ -191,6 +196,23 @@ components/servicesource/src/Makefile
 #
 
 add_makefiles "
+$MAKEFILES_app
 $MAKEFILES_build
+$MAKEFILES_components
+$MAKEFILES_feathers
+$MAKEFILES_installer
+$MAKEFILES_locales
+$MAKEFILES_dataremote
+$MAKEFILES_devices
+$MAKEFILES_devicemanager
+$MAKEFILES_cddevice
+$MAKEFILES_downloaddevice
+$MAKEFILES_wmdevice
+$MAKEFILES_integration
+$MAKEFILES_mediacore
 $MAKEFILES_medialibrary
+$MAKEFILES_playlistplayback
+$MAKEFILES_playlistreader
+$MAKEFILES_playlistcource
+$MAKEFILES_servicesource
 "

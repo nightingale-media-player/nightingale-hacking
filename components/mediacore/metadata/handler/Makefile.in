@@ -22,15 +22,14 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+SUBDIRS = id3 \
+          $(NONE)
 
 include $(topsrcdir)/build/rules.mk
