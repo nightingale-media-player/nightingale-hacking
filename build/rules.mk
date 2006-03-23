@@ -37,6 +37,10 @@ RULES_MK_INCLUDED=1
 targets=
 clean_targets=
 
+ifdef CREATEDIRS
+targets += create_dirs
+endif
+
 ifdef SUBDIRS
 targets += make_subdirs
 clean_targets += make_subdirs
@@ -81,6 +85,7 @@ all:   $(targets) \
        $(NULL)
 
 clean: $(clean_targets) \
+       create_dirs_clean \
        $(NULL)
 
 #------------------------------------------------------------------------------
@@ -273,6 +278,21 @@ $(SUBDIRS):
 .PHONY : make_subdirs $(SUBDIRS)
 
 endif #SUBDIRS
+
+#------------------------------------------------------------------------------
+# Rules for making directories
+#------------------------------------------------------------------------------
+
+ifdef CREATEDIRS
+create_dirs:
+	mkdir -p $(CREATEDIRS)
+.PHONY create_dirs
+endif #CREATEDIRS
+
+create_dirs_clean:
+	rm -rf $(CREATEDIRS)
+
+.PHONY create_dirs_clean
 
 #------------------------------------------------------------------------------
 # Rules for cleaning up
