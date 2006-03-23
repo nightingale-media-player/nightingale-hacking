@@ -31,6 +31,9 @@
 
 #pragma once
 
+// FORWARD REFERENCES =========================================================
+class CDatabaseQuery;
+
 // INCLUDES ===================================================================
 #include <string>
 #include <vector>
