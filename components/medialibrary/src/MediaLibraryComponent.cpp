@@ -44,7 +44,7 @@
   NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
   return m_Simpleton;                                                         \
   }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor );
+  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
 
 NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CDatabaseEngine)
 
