@@ -29,8 +29,37 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+ifdef DEBUG
+target_name = sbMetadataManager_d
+else
+target_name = sbMetadataManager
+endif
+
+CPP_SOURCES = MetadataManager.cpp \
+              MetadataManagerComponent.cpp \
+              $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4 \
+                            plc4 \
+                            xpcom \
+                            xul \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
+                          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

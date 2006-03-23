@@ -29,23 +29,20 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#SUBDIRS = dataremote \
-#          devices \
-#          integration \
-#          mediacore \
-#          medialibrary \
+SUBDIRS = dataremote \
+          devices \
+          integration \
+          mediacore \
+          medialibrary \
 #          playlistplayback \
 #          playlistreader \
 #          playlistsource \
-#          servicesource \
-#          $(NULL)
-
-#SUBDIRDEPS  = mediacore : medialibrary
-#SUBDIRDEPS2 = playlistreader : playlistsource
-#SUBDIRDEPS3 = playlistsource : medialibrary
-#SUBDIRDEPS4 = servicesource : medialibrary
-
-SUBDIRS = medialibrary \
+#          servicesource 
           $(NULL)
+
+SUBDIRDEPS  = mediacore : medialibrary
+SUBDIRDEPS2 = playlistreader : playlistsource
+SUBDIRDEPS3 = playlistsource : medialibrary
+SUBDIRDEPS4 = servicesource : medialibrary
 
 include $(topsrcdir)/build/rules.mk

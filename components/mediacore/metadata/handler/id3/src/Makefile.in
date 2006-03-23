@@ -29,8 +29,39 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+ifdef DEBUG
+target_name = sbMetadataHandlerID3_d
+else
+target_name = sbMetadataHandlerID3
+endif
+
+CPP_SOURCES = MetadataHandlerID3.cpp \
+              MetadataHandlerID3Component.cpp \
+              $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(ID3LIB_DIR)/include \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIC)
+
+DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = id3 \
+                            nspr4 \
+                            plds4 \
+                            xpcom \
+                            xul \
+                            unicharutil_s \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_DIRS = $(ID3LIB_DIR)/lib \
+                          $(MOZSDK_LIB_DIR) \
+                          $(NULL)
 
 include $(topsrcdir)/build/rules.mk
