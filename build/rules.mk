@@ -286,13 +286,13 @@ endif #SUBDIRS
 ifdef CREATEDIRS
 create_dirs:
 	mkdir -p $(CREATEDIRS)
-.PHONY create_dirs
+.PHONY :  create_dirs
 endif #CREATEDIRS
 
 create_dirs_clean:
 	rm -rf $(CREATEDIRS)
 
-.PHONY create_dirs_clean
+.PHONY : create_dirs_clean
 
 #------------------------------------------------------------------------------
 # Rules for cleaning up
