@@ -43,10 +43,12 @@
 #define PRUSTRING_DEFINED
 #include <string>
 #include "nscore.h"
+
 namespace std
 {
   typedef basic_string< PRUnichar > prustring;
-};
+}
+
 #endif
 
 
