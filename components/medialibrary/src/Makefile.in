@@ -42,13 +42,13 @@ CPP_SOURCES = DatabaseEngine.cpp \
               MediaLibraryComponent.cpp \
               $(NULL)
 
-CPP_INCLUDES = -I$(DEPTH)/components/medialibrary/public \
-               -I$(MOZSDK_INCLUDE_DIR) \
-               -I$(MOZSDK_INCLUDE_DIR)/nspr \
-               -I$(MOZSDK_INCLUDE_DIR)/xpcom \
-               -I$(MOZSDK_INCLUDE_DIR)/string \
-               -I$(MOZSDK_IDL_DIR) \
-               -I$(SQLITE_DIR) \
+CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_IDL_DIR) \
+               $(SQLITE_DIR) \
                $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)

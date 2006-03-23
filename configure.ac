@@ -56,7 +56,7 @@ case "$target" in
   *darwin*)
     SB_PLATFORM="macosx"
   ;;
-  linux*)
+  *linux*)
     SB_PLATFORM="linux"
   ;;
 esac
@@ -180,6 +180,12 @@ AC_SUBST(DEBUG)
 AC_SUBST(SB_CONFIGURATION)
 
 #
+# Generic defines
+#
+
+AC_DEFINE(MOZILLA_INTERNAL_API)
+
+#
 # Set platform-specific defines
 #
 
@@ -197,7 +203,6 @@ case "$SB_PLATFORM" in
     AC_DEFINE(XP_WIN)
     AC_DEFINE(XP_WIN32)
     AC_DEFINE(WIN32_LEAN_AND_MEAN)
-    AC_DEFINE(MOZILLA_INTERNAL_API)
   ;;
   macosx)
     BIN_SUFFIX=
@@ -234,29 +239,70 @@ case "$SB_PLATFORM" in
     else
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MD -Ox"
     fi
-    
+
+    # We always want to include "mozilla-config.h"
+    MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -FI \"mozilla-config.h\""
+   
     MSVC_LINKER_FLAGS="-NOLOGO -INCREMENTAL:NO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG"
     if test "$enable_debug" != "yes"; then
       MSVC_LINKER_FLAGS="$MSVC_LINKER_FLAGS -OPT:REF -OPT:ICF"
     fi
-    
+
     CFLAGS="$CFLAGS $MSVC_COMPILER_FLAGS -TC"
     CXXFLAGS="$CXXFLAGS $MSVC_COMPILER_FLAGS -TP"
+    CFLAGS_INCLUDE_PREFIX="-I"
+    CFLAGS_INCLUDE_SUFFIX=""
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL"
-    LDFLAGS_OUT="-OUT:"
-    LDFLAGS_PATH="-LIBPATH:"
+    LDFLAGS_OUT_PREFIX="-OUT:\""
+    LDFLAGS_OUT_SUFFIX="\""
+    LDFLAGS_PATH_PREFIX="-LIBPATH:\""
+    LDFLAGS_PATH_SUFFIX="\""
+    LDFLAGS_IMPORT_PREFIX=""
+    LDFLAGS_IMPORT_SUFFIX="$(LIB_SUFFIX)"
     ARFLAGS="-nologo"
     DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32"
   ;;
-  *)
+  macosx)
+  ;;
+  linux)
+    GCC_COMPILER_FLAGS="-c -fPIC -fno-rtti -fno-exceptions -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
+    if test "$enable_debug" = "yes"; then
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
+    else
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O"
+    fi
+
+    # We always want to include "mozilla-config.h"
+    GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
+
+    GCC_LINKER_FLAGS=""
+
+    CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
+    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
+    CFLAGS_INCLUDE_PREFIX="-I"
+    CFLAGS_INCLUDE_SUFFIX=""
+    LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
+    LDFLAGS_DLL="-shared"
+    LDFLAGS_OUT_PREFIX="-o"
+    LDFLAGS_OUT_SUFFIX=""
+    LDFLAGS_PATH_PREFIX="-L"
+    LDFLAGS_PATH_SUFFIX=""
+    LDFLAGS_IMPORT_PREFIX="-l"
+    LDFLAGS_IMPORT_SUFFIX=""
   ;;
 esac
 
 AC_SUBST(ARFLAGS)
+AC_SUBST(CFLAGS_INCLUDE_PREFIX)
+AC_SUBST(CFLAGS_INCLUDE_SUFFIX)
 AC_SUBST(LDFLAGS_DLL)
-AC_SUBST(LDFLAGS_OUT)
-AC_SUBST(LDFLAGS_PATH)
+AC_SUBST(LDFLAGS_OUT_PREFIX)
+AC_SUBST(LDFLAGS_OUT_SUFFIX)
+AC_SUBST(LDFLAGS_PATH_PREFIX)
+AC_SUBST(LDFLAGS_PATH_SUFFIX)
+AC_SUBST(LDFLAGS_IMPORT_PREFIX)
+AC_SUBST(LDFLAGS_IMPORT_SUFFIX)
 AC_SUBST(DEFAULT_LIBS)
 
 #

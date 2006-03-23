@@ -88,7 +88,7 @@ clean: $(clean_targets) \
 #------------------------------------------------------------------------------
 
 # CPP_SOURCES - a list of .cpp files to be compiled
-# CPP_INCLUDES - a list of include dirs with the '-I' prepended
+# CPP_INCLUDES - a list of include dirs
 # CPP_FLAGS - an override of the default flags to pass to the compiler
 # CPP_EXTRA_FLAGS - a list of additional flags to pass to the compiler
 # CPP_DEFS - a override of the default defines to pass to the compiler with -D added
@@ -114,10 +114,15 @@ compile_defs += $(CPP_EXTRA_DEFS)
 endif
 endif
 
+ifdef CPP_INCLUDES
+compile_includes_temp = $(addprefix $(CFLAGS_INCLUDE_PREFIX), $(CPP_INCLUDES))
+compile_includes = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX), $(compile_includes_temp))
+endif
+
 compiler_objects = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
 
 $(compiler_objects) :%$(OBJ_SUFFIX): %.cpp
-	$(CXX) $(compile_flags) $(compile_defs) $(CPP_INCLUDES) $<
+	$(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $<
 
 cpp_compile: $(compiler_objects)
 
@@ -150,30 +155,22 @@ endif
 endif
 
 ifdef DYNAMIC_LIB_IMPORTS
-linker_imports_temp = $(DYNAMIC_LIB_IMPORTS)
+linker_imports_temp1 = $(DYNAMIC_LIB_IMPORTS)
 else
-linker_imports_temp = $(DEFAULT_LIBS)
+linker_imports_temp1 = $(DEFAULT_LIBS)
 ifdef DYNAMIC_LIB_EXTRA_IMPORTS
-linker_imports_temp += $(DYNAMIC_LIB_EXTRA_IMPORTS)
+linker_imports_temp1 += $(DYNAMIC_LIB_EXTRA_IMPORTS)
 endif
 endif
+linker_imports_temp2 = $(addprefix $(LDFLAGS_IMPORT_PREFIX), $(linker_imports_temp1))
+linker_imports = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), $(linker_imports_temp2))
 
-# expand libs correctly for each platform
-
-ifeq (macosx,$(SB_PLATFORM))
-linker_imports = $(addprefix -l, $(linker_imports_temp))
 ifdef DYNAMIC_LIB_IMPORT_DIRS
-linker_paths = $(addprefix $(LDFLAGS_PATH), $(DYNAMIC_LIB_IMPORT_DIRS))
-endif
-else
-linker_imports = $(addsuffix $(LIB_SUFFIX), $(linker_imports_temp))
-ifdef DYNAMIC_LIB_IMPORT_DIRS
-linker_paths_temp = $(addprefix $(LDFLAGS_PATH)", $(DYNAMIC_LIB_IMPORT_DIRS))
-linker_paths = $(addsuffix ", $(linker_paths_temp))
-endif
+linker_paths_temp = $(addprefix $(LDFLAGS_PATH_PREFIX), $(DYNAMIC_LIB_IMPORT_DIRS))
+linker_paths = $(addsuffix $(LDFLAGS_PATH_SUFFIX), $(linker_paths_temp))
 endif
 
-linker_out = $(LDFLAGS_OUT)"$(DYNAMIC_LIB)"
+linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(DYNAMIC_LIB_OBJS)
