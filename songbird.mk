@@ -22,7 +22,7 @@
 # END SONGBIRD GPL
 #
 
-DIST_DIR_NAME = dist
+OBJ_DIR_NAME = compiled
 
 CWD := $(shell pwd)
 ifeq "$(CWD)" "/"
@@ -35,8 +35,18 @@ TOPSRCDIR := $(CWD)
 CONFIGURE    = $(TOPSRCDIR)/configure
 ALLMAKEFILES = $(TOPSRCDIR)/allmakefiles.sh
 CONFIGUREAC  = $(TOPSRCDIR)/configure.ac
-DISTDIR      = $(TOPSRCDIR)/$(DIST_DIR_NAME)
-CONFIGSTATUS = $(DISTDIR)/config.status
+OBJDIR       = $(TOPSRCDIR)/$(OBJ_DIR_NAME)
+DISTDIR      = $(OBJDIR)/dist
+CONFIGSTATUS = $(OBJDIR)/config.status
+
+ifdef DEBUG
+CONFIGURE_ARGS = --enable-debug
+else
+ifeq (debug,$(MAKECMDGOALS))
+CONFIGURE_ARGS = --enable-debug
+MAKECMDGOALS=all
+endif
+endif
 
 ifndef AUTOCONF
 AUTOCONF := autoconf
@@ -57,21 +67,19 @@ RUN_AUTOCONF_CMD = cd $(TOPSRCDIR) && \
                    rm -rf $(TOPSRCDIR)/autom4te.cache/ \
                    $(NULL)
 
-CREATE_DIST_DIR_CMD = cd $(TOPSRCDIR) && \
-                      $(MKDIR) -p $(DIST_DIR_NAME) \
-                      $(NULL)
+CREATE_OBJ_DIR_CMD = $(MKDIR) -p $(OBJDIR) $(DISTDIR) \
+                     $(NULL)
 
-RUN_CONFIGURE_CMD = cd $(DISTDIR) && \
-                    $(CONFIGURE) \
+RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
+                    $(CONFIGURE) $(CONFIGURE_ARGS) \
                     $(NULL)
 
-CLEAN_CMD = cd $(TOPSRCDIR) && \
-            rm -rf $(DISTDIR) && \
+CLEAN_CMD = rm -rf $(OBJDIR) && \
             rm -rf $(TOPSRCDIR)/autom4te.cache/ && \
             rm -f $(CONFIGURE) \
             $(NULL)
 
-BUILD_CMD = $(MAKE) -C $(DISTDIR) \
+BUILD_CMD = $(MAKE) -C $(OBJDIR) \
             $(NULL)
 
 CONFIGURE_PREREQS = $(ALLMAKEFILES) \
@@ -80,8 +88,10 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
 
 all : songbird_output build
 
+debug : all
+
 $(CONFIGSTATUS) : $(CONFIGURE)
-	$(CREATE_DIST_DIR_CMD) && $(RUN_CONFIGURE_CMD)
+	$(CREATE_OBJ_DIR_CMD) && $(RUN_CONFIGURE_CMD)
 
 $(CONFIGURE) : $(CONFIGURE_PREREQS)
 	$(RUN_AUTOCONF_CMD)
@@ -92,8 +102,8 @@ songbird_output:
 run_autoconf :
 	$(RUN_AUTOCONF_CMD)
 
-create_dist_dir :
-	$(CREATE_DIST_DIR_CMD)
+create_obj_dir :
+	$(CREATE_OBJ_DIR_CMD)
 
 run_configure : $(CONFIGURE_PREREQS)
 	$(RUN_CONFIGURE_CMD)
