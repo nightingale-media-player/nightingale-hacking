@@ -48,7 +48,7 @@ CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_IDL_DIR) \
-               $(SQLITE_DIR) \
+               $(SQLITE_DIR)/include \
                $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
@@ -65,7 +65,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
-                          $(SQLITE_DIR) \
+                          $(SQLITE_DIR)/lib \
                           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
