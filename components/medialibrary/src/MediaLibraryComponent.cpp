@@ -46,7 +46,7 @@
   }                                                                             \
   NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor );
 
-NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CDatabaseEngine);
+NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CDatabaseEngine)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseQuery)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
