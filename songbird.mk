@@ -71,8 +71,7 @@ CLEAN_CMD = cd $(TOPSRCDIR) && \
             rm -f $(CONFIGURE) \
             $(NULL)
 
-BUILD_CMD = cd $(DISTDIR) && \
-            $(MAKE) \
+BUILD_CMD = $(MAKE) -C $(DISTDIR) \
             $(NULL)
 
 CONFIGURE_PREREQS = $(ALLMAKEFILES) \
