@@ -51,6 +51,10 @@ ifdef CREATEDIRS
 targets += create_dirs
 endif
 
+ifdef XPIDL_CUSTOM_FLAGS
+xpidl_custom_flags = $(XPIDL_CUSTOM_FLAGS)
+endif
+
 ifdef XPIDL_SRCS
 ifndef XPIDL_HEADER_SRCS
 XPIDL_HEADER_SRCS = $(XPIDL_SRCS)
@@ -218,7 +222,7 @@ xpidl_headers  = $(XPIDL_HEADER_SRCS:.idl=.h)
 
 xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
 $(xpidl_headers): %.h: %.idl
-	$(XPIDL) -m header -I $(MOZSDK_IDL_DIR) -I $(srcdir) $<
+	$(XPIDL) -m header -I $(MOZSDK_IDL_DIR) -I $(srcdir) $(xpidl_custom_flags) $<
 
 xpidl_clean_headers:
 	rm -f $(xpidl_headers)
@@ -235,7 +239,7 @@ xpidl_typelibs = $(XPIDL_TYPELIB_SRCS:.idl=.xpt)
 
 xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
 $(xpidl_typelibs): %.xpt: %.idl
-	$(XPIDL) -m typelib -I $(MOZSDK_IDL_DIR) -I $(srcdir) $<
+	$(XPIDL) -m typelib -I $(MOZSDK_IDL_DIR) -I $(srcdir) $(xpidl_custom_flags)  $<
 
 xpidl_clean_typelibs:
 	rm -f $(xpidl_typelibs)

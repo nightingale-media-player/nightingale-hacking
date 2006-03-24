@@ -213,6 +213,6 @@ $MAKEFILES_mediacore
 $MAKEFILES_medialibrary
 $MAKEFILES_playlistplayback
 $MAKEFILES_playlistreader
-$MAKEFILES_playlistcource
+$MAKEFILES_playlistsource
 $MAKEFILES_servicesource
 "

@@ -33,6 +33,4 @@ SUBDIRS = m3u \
           pls \
           $(NULL)
 
-SUBDIRDEPS = src : public
-
 include $(topsrcdir)/build/rules.mk

@@ -34,14 +34,14 @@ SUBDIRS = dataremote \
           integration \
           mediacore \
           medialibrary \
-#          playlistplayback \
-#          playlistreader \
-#          playlistsource \
-#          servicesource 
+          playlistplayback \
+          playlistreader \
+          playlistsource \
+          servicesource \
           $(NULL)
 
 SUBDIRDEPS  = mediacore : medialibrary
-SUBDIRDEPS2 = playlistreader : playlistsource
+SUBDIRDEPS2 = playlistreader : medialibrary
 SUBDIRDEPS3 = playlistsource : medialibrary
 SUBDIRDEPS4 = servicesource : medialibrary
 

@@ -58,6 +58,7 @@ CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
 #
 
 DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@
+COMPONENTS_DIR     = @top_srcdir@/components
 ID3LIB_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/id3lib/@SB_CONFIGURATION@
 SQLITE_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/sqlite/@SB_CONFIGURATION@
 MOZSDK_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@
