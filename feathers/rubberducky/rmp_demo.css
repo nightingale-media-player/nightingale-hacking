@@ -377,35 +377,40 @@ filterlist > tree
   border-left: none;
   margin: 0px;
   padding: 0px;
-  background-color: #DBE1D8;
+  background-color: #000;
 }
 
 /* striping for genre filter */
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #EDF3F0;
+  background-color: #1d272d;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #FFF;
+  background-color: #343d42;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #99A195;
+  background-color: #4A4E48;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none;
   border: none;
-  background-color: #4A4E48;
+  background-color: #99A195;
+}
+
+filterlist > tree > treechildren::-moz-tree-cell-text
+{
+  color: #EEE;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #EEE;
+  color: #FFF;
 }
 
 /** 
@@ -420,7 +425,7 @@ playlist
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
-  background-color: #DBE1D8;
+  background-color: #000;
 }
 
 playlist > stack > vbox
@@ -466,35 +471,40 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-row
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #EDF3F0;
+  background-color: #1d272d;
 }
 
 playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #FFF;
+  background-color: #343d42;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell
 {
   margin: 0px;
   padding: 0px 0px 0px 5px;
-  border-right: 1px solid #DBE1D8;
+  border-right: 1px solid #505154;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #99A195;
+  background-color: #4A4E48;
 }
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none;
   border: none;
-  background-color: #4A4E48;
+  background-color: #99A195;
+}
+
+playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text
+{
+  color: #EEE;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #EEE;
+  color: #FFF;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
