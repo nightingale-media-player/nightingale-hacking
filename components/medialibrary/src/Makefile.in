@@ -53,7 +53,7 @@ CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
