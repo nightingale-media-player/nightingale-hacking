@@ -35,9 +35,9 @@ else
 target_name = sbServicesource
 endif
 
-CPP_SOURCES = Servicesource.cpp \
-              ServicesourceComponent.cpp \
-              $(NULL)
+CPP_SRCS = Servicesource.cpp \
+           ServicesourceComponent.cpp \
+           $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/servicesource/public \
                $(DEPTH)/components/medialibrary/public \

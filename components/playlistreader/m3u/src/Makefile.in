@@ -35,9 +35,9 @@ else
 target_name = sbPlaylistReaderM3U
 endif
 
-CPP_SOURCES = PlaylistReaderM3U.cpp \
-              PlaylistReaderM3UComponent.cpp \
-              $(NULL)
+CPP_SRCS = PlaylistReaderM3U.cpp \
+           PlaylistReaderM3UComponent.cpp \
+           $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR) \
