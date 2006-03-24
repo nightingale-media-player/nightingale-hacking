@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -175,7 +175,7 @@ static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("Pitchfork") ),
     nsString( NS_LITERAL_STRING("Podbop") ),
     nsString( NS_LITERAL_STRING("Swedelife") ),
-    nsString( NS_LITERAL_STRING("La Blogothèque") ),
+    nsString( NS_LITERAL_STRING("La BlogothÃ¨que") ),
     nsString( NS_LITERAL_STRING("Medicine") ),
     nsString( NS_LITERAL_STRING("OpenBSD") ),
     nsString( NS_LITERAL_STRING("Songbirdnest") ),
