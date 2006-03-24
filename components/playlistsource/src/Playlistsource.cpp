@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -302,7 +302,7 @@ NS_IMETHODIMP sbPlaylistsource::IncomingObserver(const PRUnichar *RefName, nsIDO
     // Find the pointer?
     if ( (*oi).m_Ptr == Observer )
     {
-      (*oi).m_Ref = RefName;
+      const_cast<sbObserver &>((*oi)).m_Ref = RefName;
       found = PR_TRUE;
       // Assume that no AddObserver call will occur.
     }
@@ -561,7 +561,8 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefN
       nsString::const_iterator start, end;
       filter_str.BeginReading( start );
       filter_str.EndReading( end );
-      for ( PRInt32 sub_start = 0, count = 0; start != end; start++, count++ )
+      PRInt32 sub_start = 0, count = 0;
+      for ( sub_start = 0, count = 0; start != end; start++, count++ )
       {
         if ( *start == ' ' )
         {
@@ -597,7 +598,8 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefN
         // We're going to submit n+1 queries;
         g_ActiveQueryCount += filter_count + 1;
 
-        for ( filtermap_t::iterator f = info->m_Filters.begin(); f != info->m_Filters.end(); f++ )
+        filtermap_t::iterator f = info->m_Filters.begin();
+        for ( ; f != info->m_Filters.end(); f++ )
         {
           // Compose an override string for the filter query.
           nsString sub_query_str = unique_str + op_str + (*f).second.m_Column + cp_str + from_str + qu_str + table_name + qu_str + where_str + op_str;
@@ -975,7 +977,8 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
     g_ActiveQueryCount += (PRInt32)info->m_Filters.size() + 1;
 
     PRBool anything = PR_FALSE;
-    for ( filtermap_t::iterator f = info->m_Filters.begin(); f != info->m_Filters.end(); f++ )
+    filtermap_t::iterator f = info->m_Filters.begin();
+    for ( ; f != info->m_Filters.end(); f++ )
     {
       // Crack the incoming list of filter strings (semicolon delimited)
       nsString filter_str = (*f).second.m_Filter;
@@ -983,7 +986,9 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
       nsString::const_iterator start, end;
       filter_str.BeginReading( start );
       filter_str.EndReading( end );
-      for ( PRInt32 sub_start = 0, count = 0; start != end; start++, count++ )
+      
+      PRInt32 sub_start = 0, count = 0;
+      for ( ; start != end; start++, count++ )
       {
         if ( *start == ';' )
         {
@@ -1548,9 +1553,11 @@ sbPlaylistsource::GetTargets(nsIRDFResource *source,
       //
 
       // Clear out the current vector of column resources
-      for ( columnmap_t::iterator c = info->m_ColumnMap.begin(); c != info->m_ColumnMap.end(); c++ )
+      columnmap_t::iterator c = info->m_ColumnMap.begin();
+      for ( ; c != info->m_ColumnMap.end(); c++ )
       {
-        NS_RELEASE( const_cast<nsIRDFResource *>( (*c).first ) );
+        nsIRDFResource *p = const_cast<nsIRDFResource *>( (*c).first );
+        NS_RELEASE(p);
       }
       info->m_ColumnMap.clear();
 
@@ -1985,8 +1992,8 @@ sbPlaylistsource::AddObserver(nsIRDFObserver *n)
     {
       // Cool, we already knew about this guy?
       found = PR_TRUE;
-      (*oi).m_Ref = m_IncomingObserver;
-      (*oi).m_Ptr = m_IncomingObserverPtr;
+      const_cast<sbObserver &>((*oi)).m_Ref = m_IncomingObserver;
+      const_cast<sbObserver &>((*oi)).m_Ptr = m_IncomingObserverPtr;
     }
   }
 

@@ -29,8 +29,15 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+XPIDL_CUSTOM_FLAGS = -I $(COMPONENTS_DIR)/medialibrary/public \
+                     $(NULL)
+
+XPIDL_SRCS = sbIPlaylistsource.idl \
+             $(NULL)
+
+XPIDL_MODULE = sbPlaylistsource.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk

@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //          
@@ -54,7 +54,8 @@
 #define SONGBIRD_PLAYLISTSOURCE_CID { 0x836d6ea5, 0xca63, 0x418f, { 0xbf, 0xd8, 0x27, 0x70, 0x45, 0x9, 0xa6, 0xa3 } }
 
 class MyQueryCallback;
-class sbValueInfo;
+class sbPlaylistsource;
+//class sbPlaylistsource::sbValueInfo;
 
 // CLASSES ====================================================================
 class sbPlaylistsource : public sbIPlaylistsource
@@ -114,6 +115,9 @@ public:
   static void ClearPlaylistRDF( nsIRDFResource *RefResource );
 
 public:
+  class sbValueInfo;
+  class sbFeedInfo;
+
   struct sbFilterInfo
   {
     nsString                          m_Ref;
@@ -137,7 +141,20 @@ public:
     PRBool                          m_ForceGetTargets;
   };
   class resultlist_t : public std::vector< sbResultInfo > {};
+  struct sbValueInfo
+  {
+    sbFeedInfo *  m_Info;
+    PRInt32       m_Row;
+    PRInt32       m_ResMapIndex;
+    PRInt32       m_ResultsRow;
+    nsString      m_Id;
+    PRBool          m_All;
+    nsCOMPtr< sbIDatabaseResult >     m_Resultset;
+
+    sbValueInfo() : m_All( PR_FALSE ), m_Row( -1 ), m_Id(), m_Info( nsnull ), m_Resultset() {}
+  };
   class values_t     : public std::vector< sbValueInfo * > {};
+
   struct sbFeedInfo
   {
     PRInt32                           m_RefCount;
@@ -160,20 +177,9 @@ public:
     values_t                          m_Values;
     nsCOMPtr< sbPlaylistsource >      m_Server;
   };
-  struct sbValueInfo
-  {
-    sbFeedInfo *  m_Info;
-    PRInt32       m_Row;
-    PRInt32       m_ResMapIndex;
-    PRInt32       m_ResultsRow;
-    nsString      m_Id;
-    PRBool          m_All;
-    nsCOMPtr< sbIDatabaseResult >     m_Resultset;
-
-    sbValueInfo() : m_All( PR_FALSE ), m_Row( -1 ), m_Id(), m_Info( nsnull ), m_Resultset() {}
-  };
   class valuemap_t   : public std::map< nsIRDFResource *, sbValueInfo > {};
   class infomap_t    : public std::map< nsIRDFResource *, sbFeedInfo > {};
+
   class commandmap_t : public std::map< nsString, nsCOMPtr< sbIPlaylistCommands > > {};
   class stringmap_t  : public std::map< nsString, nsIRDFResource *> {};
 
