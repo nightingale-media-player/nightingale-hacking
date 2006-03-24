@@ -259,7 +259,7 @@ case "$SB_PLATFORM" in
     LDFLAGS_PATH_PREFIX="-LIBPATH:\""
     LDFLAGS_PATH_SUFFIX="\""
     LDFLAGS_IMPORT_PREFIX=""
-    LDFLAGS_IMPORT_SUFFIX="$(LIB_SUFFIX)"
+    LDFLAGS_IMPORT_SUFFIX="${LIB_SUFFIX}"
     ARFLAGS="-nologo"
     DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32"
   ;;
