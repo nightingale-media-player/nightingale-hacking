@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+XPIDL_SRCS = sbIDeviceBase.idl
 
 include $(topsrcdir)/build/rules.mk
