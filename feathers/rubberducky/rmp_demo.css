@@ -2138,6 +2138,24 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   padding-left: 10px;
   list-style-image: url(default/webbar_home_disabled.png);
 }
+#browser_bookmark
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default/webbar_bookmark_normal.png);
+}
+#browser_bookmark:hover
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default/webbar_bookmark_hover.png);
+}
+#browser_bookmark[disabled="true"]
+{
+  -moz-appearance: none;
+  padding-left: 10px;
+  list-style-image: url(default/webbar_bookmark_disabled.png);
+}
 #browser_playlist
 {
   -moz-appearance: none;
