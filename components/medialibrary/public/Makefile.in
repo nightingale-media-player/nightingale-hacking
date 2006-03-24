@@ -42,6 +42,4 @@ XPIDL_SRCS = IDatabaseEngine.idl \
 XPIDL_MODULE = sbMediaLibrary.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
-
 include $(topsrcdir)/build/rules.mk
