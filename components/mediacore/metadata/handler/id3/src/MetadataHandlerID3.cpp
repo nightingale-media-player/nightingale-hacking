@@ -39,8 +39,6 @@
 #include <necko/nsIFileStreams.h>
 #include <necko/nsIIOService.h>
 
-#include <string/nsStringAPI.h>
-#include <string/nsString.h>
 #include <string/nsReadableUtils.h>
 #include <xpcom/nsEscape.h>
 
@@ -211,6 +209,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 {
   PRInt32 ret = 0;
 
+  nsString strTagName;
   ID3_Tag::Iterator *itFrame = tag.CreateIterator();
   ID3_Frame *pFrame = nsnull;
   while( (pFrame = itFrame->GetNext()) != NULL)
@@ -218,548 +217,277 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     switch(pFrame->GetID())
     {
       //No known frame.
-      case ID3FID_NOFRAME:
-      {
-      }
-      break;
+      case ID3FID_NOFRAME: strTagName = NS_LITERAL_STRING(""); break;
 
       //Audio encryption.
-      case ID3FID_AUDIOCRYPTO:
-      {
-      }
-      break;
+      case ID3FID_AUDIOCRYPTO: strTagName = NS_LITERAL_STRING(""); break;
 
       //Picture
-      case ID3FID_PICTURE:  	
-      {
-      }
-      break;
+      case ID3FID_PICTURE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Comments.
-      case ID3FID_COMMENT:
-      {
-      }
-      break;
+      case ID3FID_COMMENT: strTagName = NS_LITERAL_STRING("comment"); break;
 
       //Commercial frame.
-      case ID3FID_COMMERCIAL:
-      {
-      }
-      break;
+      case ID3FID_COMMERCIAL: strTagName = NS_LITERAL_STRING(""); break;
 
       //Encryption method registration.
-      case ID3FID_CRYPTOREG:
-      {
-
-      }
-      break;
+      case ID3FID_CRYPTOREG: strTagName = NS_LITERAL_STRING(""); break;
 
       //Equalization.
-      case ID3FID_EQUALIZATION:
-      {
-
-      }
-      break;
-
+      case ID3FID_EQUALIZATION: strTagName = NS_LITERAL_STRING(""); break;
 
       //Event timing codes.
-      case ID3FID_EVENTTIMING:
-      {
-
-      }
-      break;
+      case ID3FID_EVENTTIMING: strTagName = NS_LITERAL_STRING(""); break;
       
       //General encapsulated object.
-      case ID3FID_GENERALOBJECT:
-      {
-
-      }
-      break;
+      case ID3FID_GENERALOBJECT: strTagName = NS_LITERAL_STRING(""); break;
 
       //Group identification registration.
-      case ID3FID_GROUPINGREG:
-      {
-
-      }
-      break;
+      case ID3FID_GROUPINGREG: strTagName = NS_LITERAL_STRING(""); break;
 
       //Involved people list.
-      case ID3FID_INVOLVEDPEOPLE:
-      {
-
-      }
-      break;
+      case ID3FID_INVOLVEDPEOPLE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Linked information.
-      case ID3FID_LINKEDINFO:
-      {
-
-      }
-      break;
+      case ID3FID_LINKEDINFO: strTagName = NS_LITERAL_STRING(""); break;
 
       //Music CD identifier.
-      case ID3FID_CDID:
-      {
-
-      }
-      break;
+      case ID3FID_CDID: strTagName = NS_LITERAL_STRING(""); break;
 
       //MPEG location lookup table.
-      case ID3FID_MPEGLOOKUP:
-      {
-
-      }
-      break;
+      case ID3FID_MPEGLOOKUP: strTagName = NS_LITERAL_STRING(""); break;
 
       //Ownership frame.
-      case ID3FID_OWNERSHIP:
-      {
-
-      }
-      break;
+      case ID3FID_OWNERSHIP: strTagName = NS_LITERAL_STRING(""); break;
 
       //Private frame.
-      case ID3FID_PRIVATE:
-      {
-
-      }
-      break;
+      case ID3FID_PRIVATE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Play counter.
-      case ID3FID_PLAYCOUNTER:
-      {
-
-      }
-      break;
+      case ID3FID_PLAYCOUNTER: strTagName = NS_LITERAL_STRING(""); break;
 
       //Popularimeter.
-      case ID3FID_POPULARIMETER:
-      {
-
-      }
-      break;
+      case ID3FID_POPULARIMETER: strTagName = NS_LITERAL_STRING(""); break;
 
       //Position synchronisation frame.
-      case ID3FID_POSITIONSYNC:
-      {
-
-      }
-      break;
+      case ID3FID_POSITIONSYNC: strTagName = NS_LITERAL_STRING(""); break;
 
       //Recommended buffer size.
-      case ID3FID_BUFFERSIZE:
-      {
-
-      }
-      break;
+      case ID3FID_BUFFERSIZE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Relative volume adjustment.
-      case ID3FID_VOLUMEADJ:
-      {
-
-      }
-      break;
+      case ID3FID_VOLUMEADJ: strTagName = NS_LITERAL_STRING(""); break;
 
       //Reverb.
-      case ID3FID_REVERB:
-      {
-
-      }
-      break;
+      case ID3FID_REVERB: strTagName = NS_LITERAL_STRING(""); break;
 
       //Synchronized lyric/text.
-      case ID3FID_SYNCEDLYRICS:
-      {
-
-      }
-      break;
+      case ID3FID_SYNCEDLYRICS: strTagName = NS_LITERAL_STRING(""); break;
 
       //Synchronized tempo codes.
-      case ID3FID_SYNCEDTEMPO:
-      {
-
-      }
-      break;
+      case ID3FID_SYNCEDTEMPO: strTagName = NS_LITERAL_STRING(""); break;
 
       //Album/Movie/Show title.
-      case ID3FID_ALBUM:
-      {
-
-      }
-      break;
+      case ID3FID_ALBUM: strTagName = NS_LITERAL_STRING("album"); break;
 
       //BPM (beats per minute).
-      case ID3FID_BPM:
-      {
-
-      }
-      break;
+      case ID3FID_BPM: strTagName = NS_LITERAL_STRING("bpm"); break;
 
       //Composer.
-      case ID3FID_COMPOSER:
-      {
-
-      }
-      break;
+      case ID3FID_COMPOSER: strTagName = NS_LITERAL_STRING("composer"); break;
 
       //Content type.
-      case ID3FID_CONTENTTYPE:
-      {
-
-      }
-      break;
+      case ID3FID_CONTENTTYPE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Copyright message.
-      case ID3FID_COPYRIGHT:
-      {
-
-      }
-      break;
+      case ID3FID_COPYRIGHT: strTagName = NS_LITERAL_STRING("copyright_message"); break;
 
       //Date.
-      case ID3FID_DATE:
-      {
-
-      }
-      break;
+      case ID3FID_DATE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Playlist delay.
-      case ID3FID_PLAYLISTDELAY:
-      {
-
-      }
-      break;
+      case ID3FID_PLAYLISTDELAY: strTagName = NS_LITERAL_STRING(""); break;
 
       //Encoded by.
-      case ID3FID_ENCODEDBY:
-      {
-
-      }
-      break;
+      case ID3FID_ENCODEDBY: strTagName = NS_LITERAL_STRING("encoded_by"); break;
 
       //Lyricist/Text writer.
-      case ID3FID_LYRICIST:
-      {
-
-      }
-      break;
+      case ID3FID_LYRICIST: strTagName = NS_LITERAL_STRING(""); break;
 
       //File type.
-      case ID3FID_FILETYPE:
-      {
-
-      }
-      break;
+      case ID3FID_FILETYPE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Time.
-      case ID3FID_TIME:
-      {
-
-      }
-      break;
+      case ID3FID_TIME: strTagName = NS_LITERAL_STRING(""); break;
 
       //Content group description.
-      case ID3FID_CONTENTGROUP:
-      {
-
-      }
-      break;
+      case ID3FID_CONTENTGROUP: strTagName = NS_LITERAL_STRING(""); break;
 
       //Title/songname/content description.
-      case ID3FID_TITLE:
-      {
-
-      }
-      break;
+      case ID3FID_TITLE: strTagName = NS_LITERAL_STRING("title"); break;
 
       //Subtitle/Description refinement.
-      case ID3FID_SUBTITLE:
-      {
-
-      }
-      break;
+      case ID3FID_SUBTITLE: strTagName = NS_LITERAL_STRING("subtitle"); break;
 
       //Initial key.
-      case ID3FID_INITIALKEY:
-      {
-
-      }
-      break;
+      case ID3FID_INITIALKEY: strTagName = NS_LITERAL_STRING("key"); break;
 
       //Language(s).
-      case ID3FID_LANGUAGE:
-      {
-
-      }
-      break;
+      case ID3FID_LANGUAGE: strTagName = NS_LITERAL_STRING("language"); break;
 
       //Length.
-      case ID3FID_SONGLEN:
-      {
-
-      }
-      break;
+      case ID3FID_SONGLEN: strTagName = NS_LITERAL_STRING("length"); break;
 
       //Media type.
-      case ID3FID_MEDIATYPE:
-      {
-
-      }
-      break;
+      case ID3FID_MEDIATYPE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Original album/movie/show title.
-      case ID3FID_ORIGALBUM:
-      {
-
-      }
-      break;
+      case ID3FID_ORIGALBUM: strTagName = NS_LITERAL_STRING("original_album"); break;
 
       //Original filename.
-      case ID3FID_ORIGFILENAME:
-      {
-
-      }
-      break;
+      case ID3FID_ORIGFILENAME: strTagName = NS_LITERAL_STRING(""); break;
 
       //Original lyricist(s)/text writer(s).
-      case ID3FID_ORIGLYRICIST:
-      {
-
-      }
-      break;
+      case ID3FID_ORIGLYRICIST: strTagName = NS_LITERAL_STRING(""); break;
 
       //Original artist(s)/performer(s).
-      case ID3FID_ORIGARTIST:
-      {
-
-      }
-      break;
+      case ID3FID_ORIGARTIST: strTagName = NS_LITERAL_STRING("original_artist"); break;
 
       //Original release year.
-      case ID3FID_ORIGYEAR:
-      {
-
-      }
-      break;
+      case ID3FID_ORIGYEAR: strTagName = NS_LITERAL_STRING("original_year"); break;
 
       //File owner/licensee.
-      case ID3FID_FILEOWNER:
-      {
-
-      }
-      break;
+      case ID3FID_FILEOWNER: strTagName = NS_LITERAL_STRING(""); break;
 
       //Lead performer(s)/Soloist(s).
-      case ID3FID_LEADARTIST:
-      {
-
-      }
-      break;
+      case ID3FID_LEADARTIST: strTagName = NS_LITERAL_STRING("lead_performer"); break;
 
       //Band/orchestra/accompaniment.
-      case ID3FID_BAND:
-      {
-
-      }
-      break;
+      case ID3FID_BAND: strTagName = NS_LITERAL_STRING("accompaniment"); break;
 
       //Conductor/performer refinement.
-      case ID3FID_CONDUCTOR:
-      {
-
-      }
-      break;
+      case ID3FID_CONDUCTOR: strTagName = NS_LITERAL_STRING("conductor"); break;
 
       //Interpreted, remixed, or otherwise modified by.
-      case ID3FID_MIXARTIST:
-      {
-
-      }
-      break;
+      case ID3FID_MIXARTIST: strTagName = NS_LITERAL_STRING("interpreter_remixer"); break;
 
       //Part of a set.
-      case ID3FID_PARTINSET:
-      {
-
-      }
-      break;
+      case ID3FID_PARTINSET: strTagName = NS_LITERAL_STRING("set_collection"); break;
 
       //Publisher.
-      case ID3FID_PUBLISHER:
-      {
-
-      }
-      break;
+      case ID3FID_PUBLISHER: strTagName = NS_LITERAL_STRING("publisher"); break;
 
       //Track number/Position in set.
-      case ID3FID_TRACKNUM:
-      {
-
-      }
-      break;
+      case ID3FID_TRACKNUM: strTagName = NS_LITERAL_STRING("track_no"); break;
 
       //Recording dates.
-      case ID3FID_RECORDINGDATES:
-      {
-
-      }
-      break;
+      case ID3FID_RECORDINGDATES: strTagName = NS_LITERAL_STRING(""); break;
 
       //Internet radio station name.
-      case ID3FID_NETRADIOSTATION:
-      {
-
-      }
-      break;
+      case ID3FID_NETRADIOSTATION: strTagName = NS_LITERAL_STRING(""); break;
 
       //Internet radio station owner.
-      case ID3FID_NETRADIOOWNER:
-      {
-
-      }
-      break;
+      case ID3FID_NETRADIOOWNER: strTagName = NS_LITERAL_STRING(""); break;
 
       //Size.
-      case ID3FID_SIZE:
-      {
-
-      }
-      break;
+      case ID3FID_SIZE: strTagName = NS_LITERAL_STRING(""); break;
 
       //ISRC (international standard recording code).
-      case ID3FID_ISRC:
-      {
-
-      }
-      break;
+      case ID3FID_ISRC: strTagName = NS_LITERAL_STRING(""); break;
 
       //Software/Hardware and settings used for encoding.
-      case ID3FID_ENCODERSETTINGS:
-      {
-
-      }
-      break;
+      case ID3FID_ENCODERSETTINGS: strTagName = NS_LITERAL_STRING(""); break;
 
       //User defined text information.
-      case ID3FID_USERTEXT:
-      {
-
-      }
-      break;
+      case ID3FID_USERTEXT: strTagName = NS_LITERAL_STRING(""); break;
 
       //Year.
-      case ID3FID_YEAR:
-      {
-
-      }
-      break;
+      case ID3FID_YEAR: strTagName = NS_LITERAL_STRING("year"); break;
 
       //Unique file identifier.
-      case ID3FID_UNIQUEFILEID:
-      {
-
-      }
-      break;
+      case ID3FID_UNIQUEFILEID: strTagName = NS_LITERAL_STRING("uuid"); break;
 
       //Terms of use.
-      case ID3FID_TERMSOFUSE:
-      {
-
-      }
-      break;
+      case ID3FID_TERMSOFUSE: strTagName = NS_LITERAL_STRING("terms_of_use"); break;
 
       //Unsynchronized lyric/text transcription.
-      case ID3FID_UNSYNCEDLYRICS:
-      {
-
-      }
-      break;
+      case ID3FID_UNSYNCEDLYRICS: strTagName = NS_LITERAL_STRING("lyrics"); break;
 
       //Commercial information.
-      case ID3FID_WWWCOMMERCIALINFO:
-      {
-
-      }
-      break;
+      case ID3FID_WWWCOMMERCIALINFO: strTagName = NS_LITERAL_STRING("commercialinfo_url"); break;
 
       //Copyright/Legal infromation.
-      case ID3FID_WWWCOPYRIGHT:
-      {
-
-      }
-      break;
+      case ID3FID_WWWCOPYRIGHT: strTagName = NS_LITERAL_STRING("copyright_url"); break;
 
       //Official audio file webpage.
-      case ID3FID_WWWAUDIOFILE:
-      {
-
-      }
-      break;
+      case ID3FID_WWWAUDIOFILE: strTagName = NS_LITERAL_STRING(""); break;
 
       //Official artist/performer webpage.
-      case ID3FID_WWWARTIST:
-      {
-
-      }
-      break;
+      case ID3FID_WWWARTIST: strTagName = NS_LITERAL_STRING("artist_url"); break;
 
       //Official audio source webpage.
-      case ID3FID_WWWAUDIOSOURCE:
-      {
-
-      }
-      break;
+      case ID3FID_WWWAUDIOSOURCE: strTagName = NS_LITERAL_STRING("source_url"); break;
 
       //Official internet radio station homepage.
-      case ID3FID_WWWRADIOPAGE:
-      {
-
-      }
-      break;
+      case ID3FID_WWWRADIOPAGE: strTagName = NS_LITERAL_STRING("netradio_url"); break;
 
       //Payment.
-      case ID3FID_WWWPAYMENT:
-      {
-
-      }
-      break;
+      case ID3FID_WWWPAYMENT: strTagName = NS_LITERAL_STRING("payment_url"); break;
 
       //Official publisher webpage.
-      case ID3FID_WWWPUBLISHER:
-      {
-
-      }
-      break;
+      case ID3FID_WWWPUBLISHER: strTagName = NS_LITERAL_STRING("publisher_url"); break;
 
       //User defined URL link.
-      case ID3FID_WWWUSER:
-      {
-
-      }
-      break;
+      case ID3FID_WWWUSER: strTagName = NS_LITERAL_STRING("user_url"); break;
 
       //Encrypted meta frame (id3v2.2.x).
-      case ID3FID_METACRYPTO:
-      {
-
-      }
-      break;
+      case ID3FID_METACRYPTO: strTagName = NS_LITERAL_STRING(""); break;
 
       //Compressed meta frame (id3v2.2.1).
-      case ID3FID_METACOMPRESSION:
-      {
-
-      }
-      break;
+      case ID3FID_METACOMPRESSION: strTagName = NS_LITERAL_STRING(""); break;
 
       //Last field placeholder.
-      case ID3FID_LASTFRAMEID:
-      {
-
-      }
-      break;
+      case ID3FID_LASTFRAMEID: strTagName = NS_LITERAL_STRING(""); break;
     }
   }
 
+  delete itFrame;
+
   return ret;
 } //ReadTag
+
+//-----------------------------------------------------------------------------
+PRInt32 sbMetadataHandlerID3::ReadFrame(ID3_Frame *frame)
+{
+  PRInt32 ret = 0;
+
+  ID3_Frame::Iterator *itField = frame->CreateIterator();
+  ID3_Field* field = NULL;
+
+  while( (field = itField->GetNext()) != NULL )
+  {
+    ReadFields(field);
+  }
+
+  delete itField;
+
+  return ret;
+} //ReadFrame
+
+//-----------------------------------------------------------------------------
+PRInt32 sbMetadataHandlerID3::ReadFields(ID3_Field *field)
+{
+  PRInt32 ret = 0;
+
+  ID3_FieldType fieldType = field->GetType();
+  switch(fieldType)
+  {
+    case ID3FTY_NONE: break;
+    case ID3FTY_INTEGER: break;
+    case ID3FTY_BINARY: break;
+    case ID3FTY_TEXTSTRING: break;
+  }
+ 
+  return ret;
+} //ReadField

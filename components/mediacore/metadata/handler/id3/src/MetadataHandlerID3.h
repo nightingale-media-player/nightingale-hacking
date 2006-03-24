@@ -63,6 +63,8 @@ class sbMetadataHandlerID3 : public sbIMetadataHandler
 
 protected:
   PRInt32 ReadTag(ID3_Tag &tag);
+  PRInt32 ReadFrame(ID3_Frame *frame);
+  PRInt32 ReadFields(ID3_Field *field);
 
   nsCOMPtr<nsIChannel> m_Channel;
   ID3_Tag              m_ID3Tag;
