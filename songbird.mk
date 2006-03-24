@@ -22,7 +22,13 @@
 # END SONGBIRD GPL
 #
 
-OBJ_DIR_NAME = compiled
+#
+# I hate hardcoding this, but until we have more time that's
+#   just how it's gonna be... This MUST match what's in
+#   configure.ac or bad things will happen!
+#
+OBJDIRNAME  = compiled
+DISTDIRNAME = dist
 
 CWD := $(shell pwd)
 ifeq "$(CWD)" "/"
@@ -35,8 +41,8 @@ TOPSRCDIR := $(CWD)
 CONFIGURE    = $(TOPSRCDIR)/configure
 ALLMAKEFILES = $(TOPSRCDIR)/allmakefiles.sh
 CONFIGUREAC  = $(TOPSRCDIR)/configure.ac
-OBJDIR       = $(TOPSRCDIR)/$(OBJ_DIR_NAME)
-DISTDIR      = $(OBJDIR)/dist
+OBJDIR       = $(TOPSRCDIR)/$(OBJDIRNAME)
+DISTDIR      = $(OBJDIR)/$(DISTDIRNAME)
 CONFIGSTATUS = $(OBJDIR)/config.status
 
 ifdef DEBUG

@@ -66,6 +66,8 @@ MOZSDK_LIB_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGU
 MOZSDK_BIN_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin
 MOZSDK_IDL_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/idl
 
+SONGBIRD_OBJDIR    = @top_srcdir@/@OBJDIRNAME@
+SONGBIRD_DISTDIR   = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@
 #
 # Tools
 #

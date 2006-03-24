@@ -306,6 +306,17 @@ AC_SUBST(LDFLAGS_IMPORT_SUFFIX)
 AC_SUBST(DEFAULT_LIBS)
 
 #
+# We're going to hardcode our obj and dist directory names for the moment.
+# These MUST match the vars in songbird.mk or bad things will happen!
+#
+
+OBJDIRNAME="compiled"
+DISTDIRNAME="dist"
+
+AC_SUBST(OBJDIRNAME)
+AC_SUBST(DISTDIRNAME)
+
+#
 # Use the mozilla perl method for generating makefiles quickly. This script
 #   only replaces @top_srcdir@ and @srcdir@ in makefiles. If any other vars
 #   are used then it passes them on to config.status via the $MAKEFILES var.

@@ -34,16 +34,21 @@ ifndef RULES_MK_INCLUDED
 RULES_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
+#
+# Collect a list of rules to run. We use two variables so that 'make clean'
+# does what you'd expect.
+#
+
 targets=
 clean_targets=
-
-ifdef CREATEDIRS
-targets += create_dirs
-endif
 
 ifdef SUBDIRS
 targets += make_subdirs
 clean_targets += make_subdirs
+endif
+
+ifdef CREATEDIRS
+targets += create_dirs
 endif
 
 ifdef XPIDL_SRCS
@@ -78,6 +83,11 @@ endif
 ifdef DYNAMIC_LIB
 targets += dll_link
 clean_targets += dll_clean
+endif
+
+ifdef SONGBIRD_COMPONENTS
+CREATEDIRS += $(SONGBIRD_DISTDIR)/components
+targets += create_dirs copy_sb_components
 endif
 
 all:   $(targets) \
@@ -132,7 +142,7 @@ $(compiler_objects) :%$(OBJ_SUFFIX): %.cpp
 cpp_compile: $(compiler_objects)
 
 cpp_clean:
-	@rm -f $(compiler_objects) vc70.pdb
+	rm -f $(compiler_objects) vc70.pdb
 
 .PHONY : cpp_compile cpp_clean
 
@@ -181,7 +191,7 @@ dll_link: $(DYNAMIC_LIB_OBJS)
 	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(DYNAMIC_LIB_OBJS)
 
 dll_clean:
-	@rm -rf $(DYNAMIC_LIB) \
+	rm -rf $(DYNAMIC_LIB) \
 	        $(DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
 	        $(DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
 	        $(DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
@@ -211,7 +221,7 @@ $(xpidl_headers): %.h: %.idl
 	$(XPIDL) -m header -I $(MOZSDK_IDL_DIR) -I $(srcdir) $<
 
 xpidl_clean_headers:
-	@rm -f $(xpidl_headers)
+	rm -f $(xpidl_headers)
 
 .PHONY : xpidl_compile_headers xpidl_clean_headers
 
@@ -228,7 +238,7 @@ $(xpidl_typelibs): %.xpt: %.idl
 	$(XPIDL) -m typelib -I $(MOZSDK_IDL_DIR) -I $(srcdir) $<
 
 xpidl_clean_typelibs:
-	@rm -f $(xpidl_typelibs)
+	rm -f $(xpidl_typelibs)
 
 .PHONY : xpidl_compile_typelibs xpidl_clean_typelibs
 
@@ -244,7 +254,7 @@ xpidl_link: $(xpidl_module_typelibs)
 	$(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
 
 xpidl_clean_link:
-	@rm -f $(XPIDL_MODULE)
+	rm -f $(XPIDL_MODULE)
 
 .PHONY : xpidl_link xpidl_clean_link
 endif #XPIDL_MODULE
@@ -257,7 +267,6 @@ endif #XPIDL_MODULE
 # SUBDIRDEPS - a list of dependencies of the form dir1:dir2 (dir1 depends on
 #              dir2 having already been processed)
 #
-# rules: subdirs - runs make in the list of subdirectories
 
 ifdef SUBDIRS
 
@@ -280,13 +289,29 @@ $(SUBDIRS):
 endif #SUBDIRS
 
 #------------------------------------------------------------------------------
+# Rules for moving files around
+#------------------------------------------------------------------------------
+
+# SONGBIRD_COMPONENTS - indicates that the files should be copied to the
+#                       $(DISTDIR)/components folder
+
+ifdef SONGBIRD_COMPONENTS
+
+copy_sb_components:
+	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_DISTDIR)/components/
+.PHONY : copy_sb_components
+endif #SONGBIRD_COMPONENTS
+
+#------------------------------------------------------------------------------
 # Rules for making directories
 #------------------------------------------------------------------------------
+
+# CREATEDIRS - set to a list of directories to create
 
 ifdef CREATEDIRS
 create_dirs:
 	mkdir -p $(CREATEDIRS)
-.PHONY :  create_dirs
+.PHONY : create_dirs
 endif #CREATEDIRS
 
 create_dirs_clean:
@@ -307,8 +332,8 @@ out:
 .PHONY : out
 endif #GARBAGE
 
-garbage:
-	@$(remove_cmd)
+garbage: 
+	$(remove_cmd)
 
 .PHONY : garbage
 

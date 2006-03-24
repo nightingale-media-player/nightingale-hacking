@@ -68,4 +68,6 @@ DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
                           $(SQLITE_DIR)/lib \
                           $(NULL)
 
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+
 include $(topsrcdir)/build/rules.mk
