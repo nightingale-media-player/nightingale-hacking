@@ -42,13 +42,13 @@ RULES_MK_INCLUDED=1
 targets=
 clean_targets=
 
+ifdef CREATEDIRS
+targets += create_dirs
+endif
+
 ifdef SUBDIRS
 targets += make_subdirs
 clean_targets += make_subdirs
-endif
-
-ifdef CREATEDIRS
-targets += create_dirs
 endif
 
 ifdef XPIDL_CUSTOM_FLAGS
@@ -90,8 +90,7 @@ clean_targets += dll_clean
 endif
 
 ifdef SONGBIRD_COMPONENTS
-CREATEDIRS += $(SONGBIRD_DISTDIR)/components
-targets += create_dirs copy_sb_components
+targets += copy_sb_components
 endif
 
 all:   $(targets) \
@@ -221,6 +220,7 @@ ifdef XPIDL_HEADER_SRCS
 xpidl_headers  = $(XPIDL_HEADER_SRCS:.idl=.h)
 
 xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
+
 $(xpidl_headers): %.h: %.idl
 	$(XPIDL) -m header -I $(MOZSDK_IDL_DIR) -I $(srcdir) $(xpidl_custom_flags) $<
 
@@ -238,6 +238,7 @@ ifdef XPIDL_TYPELIB_SRCS
 xpidl_typelibs = $(XPIDL_TYPELIB_SRCS:.idl=.xpt)
 
 xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
+
 $(xpidl_typelibs): %.xpt: %.idl
 	$(XPIDL) -m typelib -I $(MOZSDK_IDL_DIR) -I $(srcdir) $(xpidl_custom_flags)  $<
 
@@ -261,6 +262,7 @@ xpidl_clean_link:
 	rm -f $(XPIDL_MODULE)
 
 .PHONY : xpidl_link xpidl_clean_link
+
 endif #XPIDL_MODULE
 
 #------------------------------------------------------------------------------
@@ -303,7 +305,9 @@ ifdef SONGBIRD_COMPONENTS
 
 copy_sb_components:
 	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_DISTDIR)/components/
+
 .PHONY : copy_sb_components
+
 endif #SONGBIRD_COMPONENTS
 
 #------------------------------------------------------------------------------
@@ -313,9 +317,12 @@ endif #SONGBIRD_COMPONENTS
 # CREATEDIRS - set to a list of directories to create
 
 ifdef CREATEDIRS
+
 create_dirs:
 	mkdir -p $(CREATEDIRS)
+
 .PHONY : create_dirs
+
 endif #CREATEDIRS
 
 create_dirs_clean:
@@ -330,10 +337,13 @@ create_dirs_clean:
 # GARBAGE - a list of files to delete upon completion
 
 ifdef GARBAGE
+
 remove_cmd = rm -f $(GARBAGE)
+
 out:
 	$(warning garbage string: $(GARBAGE))
 .PHONY : out
+
 endif #GARBAGE
 
 garbage: 

@@ -80,10 +80,12 @@ RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
                     $(CONFIGURE) $(CONFIGURE_ARGS) \
                     $(NULL)
 
-CLEAN_CMD = rm -rf $(OBJDIR) && \
-            rm -rf $(TOPSRCDIR)/autom4te.cache/ && \
-            rm -f $(CONFIGURE) \
+CLEAN_CMD = $(MAKE) -C $(OBJDIR) clean \
             $(NULL)
+
+CLOBBER_CMD = rm -rf $(CONFIGURE) && \
+              rm -rf $(OBJDIR) \
+              $(NULL)
 
 BUILD_CMD = $(MAKE) -C $(OBJDIR) \
             $(NULL)
@@ -117,7 +119,10 @@ run_configure : $(CONFIGURE_PREREQS)
 clean :
 	$(CLEAN_CMD)
 
+clobber:
+	$(CLOBBER_CMD)
+
 build : $(CONFIGSTATUS)
 	$(BUILD_CMD)
 
-.PHONY : all songbird_output run_autoconf create_dist_dir run_configure clean build
+.PHONY : all debug songbird_output run_autoconf create_dist_dir run_configure clean clobber build

@@ -29,6 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
+             $(SONGBIRD_COMPONENTSDIR) \
+             $(SONGBIRD_PLUGINSDIR) \
+             $(SONGBIRD_VLCPLUGINSDIR) \
+             $(SONGBIRD_XULRUNNERDIR) \
+             $(NULL)
+
 SUBDIRS = app \
           components \
           feathers \
