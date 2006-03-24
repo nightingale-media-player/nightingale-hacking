@@ -75,7 +75,7 @@ targets += xpidl_link
 clean_targets += xpidl_clean_link
 endif
 
-ifdef CPP_SOURCES
+ifdef CPP_SRCS
 targets += cpp_compile
 clean_targets += cpp_clean
 endif
@@ -117,14 +117,14 @@ clean: $(clean_targets) \
 # Rules for C++ compilation
 #------------------------------------------------------------------------------
 
-# CPP_SOURCES - a list of .cpp files to be compiled
+# CPP_SRCS - a list of .cpp files to be compiled
 # CPP_INCLUDES - a list of include dirs
 # CPP_FLAGS - an override of the default flags to pass to the compiler
 # CPP_EXTRA_FLAGS - a list of additional flags to pass to the compiler
 # CPP_DEFS - a override of the default defines to pass to the compiler with -D added
 # CPP_EXTRA_DEFS - a list of additional defines with -D to pass to the compiler
 
-ifdef CPP_SOURCES
+ifdef CPP_SRCS
 
 ifdef CPP_FLAGS
 compile_flags = $(CPP_FLAGS)
@@ -149,7 +149,7 @@ compile_includes_temp = $(addprefix $(CFLAGS_INCLUDE_PREFIX), $(CPP_INCLUDES))
 compile_includes = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX), $(compile_includes_temp))
 endif
 
-compiler_objects = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+compiler_objects = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 $(compiler_objects) :%$(OBJ_SUFFIX): %.cpp
 	$(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $<
@@ -161,7 +161,7 @@ cpp_clean:
 
 .PHONY : cpp_compile cpp_clean
 
-endif #CPP_SOURCES
+endif #CPP_SRCS
 
 #-----------------------
 
