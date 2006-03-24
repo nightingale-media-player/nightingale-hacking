@@ -51,10 +51,6 @@ targets += make_subdirs
 clean_targets += make_subdirs
 endif
 
-ifdef XPIDL_CUSTOM_FLAGS
-xpidl_custom_flags = $(XPIDL_CUSTOM_FLAGS)
-endif
-
 ifdef XPIDL_SRCS
 ifndef XPIDL_HEADER_SRCS
 XPIDL_HEADER_SRCS = $(XPIDL_SRCS)
@@ -214,15 +210,24 @@ endif #DYNAMIC_LIB
 # XPIDL_MODULE - the name of an xpt file that will created from linking several
 #                other xpt typelibs
 # XPIDL_MODULE_TYPELIBS - a list of xpt files to link into the module
+# XPIDL_INCLUDES - a list of dirs to search when looking for included idls
+# XPIDL_EXTRA_FLAGS - additional flags to send to XPIDL
 
 ifdef XPIDL_HEADER_SRCS
 
 xpidl_headers  = $(XPIDL_HEADER_SRCS:.idl=.h)
 
+xpidl_includes_temp = $(MOZSDK_IDL_DIR) \
+                      $(srcdir) \
+                      $(XPIDL_INCLUDES) \
+                      $(NULL)
+
+xpidl_includes = $(addprefix $(XPIDLFLAGS_INCLUDE), $(xpidl_includes_temp))
+
 xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
 
 $(xpidl_headers): %.h: %.idl
-	$(XPIDL) -m header -I $(MOZSDK_IDL_DIR) -I $(srcdir) $(xpidl_custom_flags) $<
+	$(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 
 xpidl_clean_headers:
 	rm -f $(xpidl_headers)
@@ -237,10 +242,17 @@ ifdef XPIDL_TYPELIB_SRCS
 
 xpidl_typelibs = $(XPIDL_TYPELIB_SRCS:.idl=.xpt)
 
+xpidl_includes_temp = $(MOZSDK_IDL_DIR) \
+                      $(srcdir) \
+                      $(XPIDL_INCLUDES) \
+                      $(NULL)
+
+xpidl_includes = $(addprefix $(XPIDLFLAGS_INCLUDE), $(xpidl_includes_temp))
+
 xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
 
 $(xpidl_typelibs): %.xpt: %.idl
-	$(XPIDL) -m typelib -I $(MOZSDK_IDL_DIR) -I $(srcdir) $(xpidl_custom_flags)  $<
+	$(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 
 xpidl_clean_typelibs:
 	rm -f $(xpidl_typelibs)
@@ -304,7 +316,7 @@ endif #SUBDIRS
 ifdef SONGBIRD_COMPONENTS
 
 copy_sb_components:
-	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_DISTDIR)/components/
+	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 
 .PHONY : copy_sb_components
 

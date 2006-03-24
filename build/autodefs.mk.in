@@ -107,6 +107,7 @@ LDFLAGS_IMPORT_PREFIX = @LDFLAGS_IMPORT_PREFIX@
 LDFLAGS_IMPORT_SUFFIX = @LDFLAGS_IMPORT_SUFFIX@
 DEFAULT_LIBS          = @DEFAULT_LIBS@
 ARFLAGS               = @ARFLAGS@
+XPIDLFLAGS_INCLUDE    = -I
 
 #------------------------------------------------------------------------------
 endif #AUTODEFS_MK_INCLUDED

@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_CUSTOM_FLAGS = -I $(COMPONENTS_DIR)/medialibrary/public \
-                     $(NULL)
+XPIDL_INCLUDES = $(COMPONENTS_DIR)/medialibrary/public \
+                 $(NULL)
 
 XPIDL_SRCS = sbIPlaylistsource.idl \
              $(NULL)
