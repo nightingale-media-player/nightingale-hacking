@@ -89,6 +89,22 @@ ifdef SONGBIRD_COMPONENTS
 targets += copy_sb_components
 endif
 
+ifdef SONGBIRD_CHROME
+targets += copy_sb_chrome
+endif
+
+ifdef SONGBIRD_PLUGINS
+targets += copy_sb_plugins
+endif
+
+ifdef SONGBIRD_VLCPLUGINS
+targets += copy_sb_vlcplugins
+endif
+
+ifdef SONGBIRD_XULRUNNER
+targets += copy_sb_xulrunner
+endif
+
 all:   $(targets) \
        garbage \
        $(NULL)
@@ -310,17 +326,40 @@ endif #SUBDIRS
 # Rules for moving files around
 #------------------------------------------------------------------------------
 
+# SONGBIRD_CHROME - indicates that the files should be copied into the
+#                   $(SONGBIRD_CHROMEDIR) directory
 # SONGBIRD_COMPONENTS - indicates that the files should be copied to the
-#                       $(DISTDIR)/components folder
+#                       $(SONGBIRD_COMPONENTSDIR) directory
+
+ifdef SONGBIRD_CHROME
+copy_sb_chrome:
+	cp -f $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
+.PHONY : copy_sb_chrome
+endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
-
 copy_sb_components:
 	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
-
 .PHONY : copy_sb_components
-
 endif #SONGBIRD_COMPONENTS
+
+ifdef SONGBIRD_PLUGINS
+copy_sb_plugins:
+	cp -f $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
+.PHONY : copy_sb_plugins
+endif #SONGBIRD_PLUGINS
+
+ifdef SONGBIRD_VLCPLUGINS
+copy_sb_vlcplugins:
+	cp -f $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
+.PHONY : copy_sb_vlcplugins
+endif #SONGBIRD_VLCPLUGINS
+
+ifdef SONGBIRD_XULRUNNER
+copy_sb_xulrunner:
+	cp -f $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
+.PHONY : copy_sb_xulrunner
+endif #SONGBIRD_XULRUNNER
 
 #------------------------------------------------------------------------------
 # Rules for making directories
