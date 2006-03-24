@@ -378,6 +378,8 @@ filterlist > tree
   margin: 0px;
   padding: 0px;
   background-color: #000;
+  background-image: url(default/bkgd_flowers.png);
+  
 }
 
 /* striping for genre filter */
@@ -426,6 +428,7 @@ playlist
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
   background-color: #000;
+  background-image: url(default/bkgd_flowers.png);
 }
 
 playlist > stack > vbox
@@ -535,13 +538,17 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected
 /*  This is the box shown while a playlist is loading */
 #loading_box
 {
-  background-image: url(default/spinner.gif);
+  /*background-image: url(default/spinner.gif);
   background-repeat: no-repeat;
   border: 0px solid #F00;
   width: 54px;
   height: 54px;
   margin: 0px 20px 45px 0px;
-  background-position: right bottom;
+  background-position: right bottom;*/
+  background-image: url(default/bkgd_flowers.png);
+  width: 2000px;
+  height: 2000px;
+
 }
 
 
