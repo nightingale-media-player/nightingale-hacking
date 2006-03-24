@@ -112,7 +112,7 @@ run_autoconf :
 create_obj_dir :
 	$(CREATE_OBJ_DIR_CMD)
 
-run_configure : $(CONFIGURE_PREREQS)
+run_configure : $(CONFIGSTATUS)
 	$(RUN_CONFIGURE_CMD)
 
 clean :
