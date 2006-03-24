@@ -3,14 +3,14 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright© 2006 Pioneers of the Inevitable LLC
+# Copyright 2006 Pioneers of the Inevitable LLC
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the “GPL”).
+# GNU General Public License Version 2 (the GPL).
 # 
 # Software distributed under the License is distributed 
-# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -29,8 +29,42 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+ifdef DEBUG
+target_name = sbPlaylistReaderPLS_d
+else
+target_name = sbPlaylistReaderPLS
+endif
+
+CPP_SOURCES = PlaylistReaderPLS.cpp \
+              PlaylistReaderPLSComponent.cpp \
+              $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/webbrowserpersist \
+               $(MOZSDK_INCLUDE_DIR)/uriloader \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4  \
+                            plc4  \
+                            xpcom \
+                            xul \
+                            unicharutil_s \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
+                          $(NULL)
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk

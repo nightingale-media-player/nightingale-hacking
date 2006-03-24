@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -242,7 +242,7 @@ NS_IMETHODIMP CPlaylistReaderM3U::SupportedMIMETypes(PRUint32 *nMIMECount, PRUni
 /* void SupportedFileExtensions (out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out string aExts); */
 NS_IMETHODIMP CPlaylistReaderM3U::SupportedFileExtensions(PRUint32 *nExtCount, PRUnichar ***aExts)
 {
-  const static PRUnichar *Exts[] = {NS_LITERAL_STRING("m3u").get()};
+  const static PRUnichar *Exts[] = {NS_L("m3u")};
   const static PRUint32 ExtsCount = sizeof(Exts) / sizeof(Exts[0]);
 
   PRUnichar** out = (PRUnichar **) nsMemory::Alloc(ExtsCount * sizeof(PRUnichar *));
@@ -348,21 +348,19 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
       size_t nPos = strURL.find('\r');
       if(nPos != strURL.npos) strURL = strURL.substr(0, nPos);
 
-#if defined(_WIN32)
+#if defined(XP_WIN)
       if(strURL.length() && (*strURL.begin()) == '\\')
       {
         std::prustring strPath(pPathToFile);
         //Drive letter is missing, append it.
         strURL = strPath.substr(0, 2) + strURL;
       }
-#else
-  #error "PORTME"
 #endif
 
       // Try and load the entry as a playlist
       // If it's not a playlist add it as a playstring
       {
-        const static PRUnichar *aMetaKeys[] = {NS_LITERAL_STRING("length").get(), NS_LITERAL_STRING("title").get()};
+        const static PRUnichar *aMetaKeys[] = {NS_L("length"), NS_L("title")};
         const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
 
         PRBool bRet = PR_FALSE;
