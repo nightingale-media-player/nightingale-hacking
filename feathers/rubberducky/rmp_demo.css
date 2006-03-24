@@ -371,40 +371,35 @@ filterlist > tree
   border-left: none;
   margin: 0px;
   padding: 0px;
-  background-color: #000;
+  background-color: #DBE1D8;
 }
 
 /* striping for genre filter */
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d;
+  background-color: #EDF3F0;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42;
+  background-color: #FFF;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48;
+  background-color: #99A195;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none;
   border: none;
-  background-color: #99A195;
-}
-
-filterlist > tree > treechildren::-moz-tree-cell-text
-{
-  color: #EEE;
+  background-color: #4A4E48;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #FFF;
+  color: #EEE;
 }
 
 /** 
@@ -419,7 +414,7 @@ playlist
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
-  background-color: #000;
+  background-color: #DBE1D8;
 }
 
 playlist > stack > vbox
@@ -465,40 +460,35 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-row
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d;
+  background-color: #EDF3F0;
 }
 
 playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42;
+  background-color: #FFF;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell
 {
   margin: 0px;
   padding: 0px 0px 0px 5px;
-  border-right: 1px solid #505154;
+  border-right: 1px solid #DBE1D8;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48;
+  background-color: #99A195;
 }
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none;
   border: none;
-  background-color: #99A195;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text
-{
-  color: #EEE;
+  background-color: #4A4E48;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #FFF;
+  color: #EEE;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
@@ -2124,24 +2114,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-appearance: none;
   padding-left: 10px;
   list-style-image: url(default/webbar_home_disabled.png);
-}
-#browser_bookmark
-{
-  -moz-appearance: none;
-  padding-left: 10px;
-  list-style-image: url(default/webbar_bookmark_normal.png);
-}
-#browser_bookmark:hover
-{
-  -moz-appearance: none;
-  padding-left: 10px;
-  list-style-image: url(default/webbar_bookmark_hover.png);
-}
-#browser_bookmark[disabled="true"]
-{
-  -moz-appearance: none;
-  padding-left: 10px;
-  list-style-image: url(default/webbar_bookmark_disabled.png);
 }
 #browser_playlist
 {
