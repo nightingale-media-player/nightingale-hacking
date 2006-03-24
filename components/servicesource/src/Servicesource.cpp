@@ -179,6 +179,7 @@ static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("Medicine") ),
     nsString( NS_LITERAL_STRING("OpenBSD") ),
     nsString( NS_LITERAL_STRING("Songbirdnest") ),
+    nsString( NS_LITERAL_STRING("Autodownload") ),
     nsString( ),
   },
   // Group 11
@@ -250,6 +251,7 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("http://takeyourmedicinemp3.blogspot.com/")),
     nsString( NS_LITERAL_STRING("http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/")),
     nsString( NS_LITERAL_STRING("http://songbirdnest.com/")),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/content/xul/remote_download.xul")),
     nsString( ),
   },
   // Group 11
@@ -321,6 +323,7 @@ static nsString     gChildIcons[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("chrome://Songbird/skin/default/logo_16.png") ),
+    nsString( NS_LITERAL_STRING("chrome://Songbird/skin/serviceicons/pogues.ico") ),
     nsString( ),
   },
   // Group 11

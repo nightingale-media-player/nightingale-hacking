@@ -154,6 +154,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					RelativePath=".\content\xul\playlist_test.xul">
 				</File>
 				<File
+					RelativePath=".\content\xul\remote_download.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\restartbox.xul">
 				</File>
 				<File

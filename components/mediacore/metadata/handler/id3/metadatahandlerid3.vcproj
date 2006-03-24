@@ -54,6 +54,7 @@
 mkdir $(SolutionDir)dist\xulrunner
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(SolutionDir)dependencies\win32\id3lib\release\bin\*.dll $(SolutionDir)dist\xulrunner\
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -112,6 +113,7 @@ copy /y $(SolutionDir)dependencies\win32\id3lib\release\bin\*.dll $(SolutionDir)
 mkdir $(SolutionDir)dist\xulrunner
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(SolutionDir)dependencies\win32\id3lib\release\bin\*.dll $(SolutionDir)dist\xulrunner\
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

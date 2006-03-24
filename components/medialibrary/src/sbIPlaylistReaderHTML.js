@@ -244,7 +244,7 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::HandleHTMLBuffer - " + err;
+      throw "CPlaylistHTML::HandleHTMLStream - " + err;
     }
     return retval;
   },
@@ -267,6 +267,8 @@ CPlaylistHTML.prototype =
         
         pLibrary.SetQueryObject(pQuery);
         pPlaylist = pPlaylistManager.GetPlaylist(strDestTable, pQuery);
+        
+        dump( "***** strDestTable - " + strDestTable + "    strGUID - " + strGUID + "    pPlaylist - " + pPlaylist + "\n" );
 
         var inserted = new Array();        
         for ( var i in links_array )
@@ -302,7 +304,7 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::HandleHTMLBuffer - " + err;
+      throw "\nCPlaylistHTML::CreatePlaylist\n" + strGUID + "\n" + strDestTable + "\n" + links_array + "\n" + replace + "\n" + err;
     }
   },
 

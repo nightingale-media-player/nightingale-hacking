@@ -27,6 +27,7 @@ echo $(ProjectExt) &gt;&gt; _EXCLUDE
 echo Release\ &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\locales\
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "
 				ExcludedFromBuild="FALSE"/>
 			<Tool
@@ -50,6 +51,7 @@ echo $(ProjectExt) &gt;&gt; _EXCLUDE
 echo Release\ &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\locales\
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "
 				ExcludedFromBuild="FALSE"/>
 			<Tool

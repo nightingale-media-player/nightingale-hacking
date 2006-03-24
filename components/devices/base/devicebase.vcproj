@@ -43,6 +43,7 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIDeviceBase.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -87,6 +88,7 @@ copy /y $(TargetDir)sbIDeviceBase.xpt $(SolutionDir)dist\components
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIDeviceBase.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

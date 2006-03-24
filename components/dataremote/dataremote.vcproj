@@ -27,6 +27,7 @@
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(InputDir)src\sbDataRemote.js $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIDataRemote.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -47,6 +48,7 @@ copy /y $(InputDir)$(OutDir)\sbIDataRemote.xpt $(SolutionDir)dist\components
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(InputDir)src\sbDataRemote.js $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIDataRemote.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

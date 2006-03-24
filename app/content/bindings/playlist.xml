@@ -47,7 +47,7 @@
         <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
         </xul:hbox>
         
-        <xul:splitter id="horz_splitter" sbid="filter_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest">
+        <xul:splitter id="horz_splitter" sbid="filter_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" hidden="true">
           <xul:grippy/>
         </xul:splitter>
       
@@ -247,6 +247,79 @@
     </property>
     
     <!-- Initialization and Control -->
+    
+    <method name="load">
+      <parameter name="url"/>
+      <parameter name="guid"/>
+      <parameter name="table"/>
+      <parameter name="name"/>
+      <parameter name="type"/>
+      <parameter name="description"/>
+      <parameter name="content_type"/>
+      <parameter name="commands"/>
+      <body>
+      <![CDATA[
+      try
+      {
+/*      
+        alert(
+        "   url: " + url + "\n" +
+        "   guid: " + guid + "\n" +
+        "   table: " + table + "\n" +
+        "   name: " + name + "\n" +
+        "   type: " + type + "\n" +
+        "   description: " + description + "\n" +
+        "   content_type: " + content_type + "\n" );
+*/
+        // Get a query object to handle the database transactions.
+        aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+        aDBQuery.SetAsyncQuery(false); // hard and slow.  should only have to happen once.
+        aDBQuery.SetDatabaseGUID(guid);
+        
+        // Get the library interface, make sure there is a default library (fast if already exists)
+        const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+        var aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+        aMediaLibrary.SetQueryObject(aDBQuery);
+        aMediaLibrary.CreateDefaultLibrary();
+
+        // Make it all go now, please.
+        aDBQuery.Execute();
+        aDBQuery.ResetQuery();
+        
+        // Get the playlist manager, and create the internal playlisting infrastructure.
+        var aPlaylistManager = new sbIPlaylistManager();
+        aPlaylistManager.CreateDefaultPlaylistManager(aDBQuery);
+
+        // Make it all go now, please.
+        aDBQuery.Execute();
+        aDBQuery.ResetQuery();
+        
+        // Make sure we load into something empty
+        aPlaylistManager.DeletePlaylist(table, aDBQuery);
+        
+        // Make it all go now, please.
+        aDBQuery.Execute();
+        aDBQuery.ResetQuery();
+
+        // Now it is safe to load up that playlist.    
+        const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+        var aPlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+        
+  
+        // For some reason, this is the offending method?      
+//        var success = aPlaylistReader.LoadPlaylist(url, guid, table, name, type, description, content_type, false, null);
+        
+        
+        // And, lastly, bind ourselves to that playlist being loaded.
+        this.bind( guid, table, "", commands );
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - load - " + err );
+      }
+      ]]>
+      </body>
+    </method>
     
     <method name="bind">
       <parameter name="guid"/>

@@ -52,7 +52,7 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -109,7 +109,7 @@ copy /y $(TargetPath) $(SolutionDir)dist\components
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

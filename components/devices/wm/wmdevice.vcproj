@@ -53,6 +53,7 @@
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIWMDevice.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -110,6 +111,7 @@ copy /y $(TargetDir)sbIWMDevice.xpt $(SolutionDir)dist\components
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIWMDevice.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

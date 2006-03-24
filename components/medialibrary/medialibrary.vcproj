@@ -62,6 +62,7 @@ copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
 copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -126,6 +127,7 @@ copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
 copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

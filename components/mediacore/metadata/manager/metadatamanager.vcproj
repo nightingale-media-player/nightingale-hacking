@@ -53,6 +53,7 @@
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIMetadataManager.xpt $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIMetadataHandler.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -111,6 +112,7 @@ copy /y $(TargetDir)sbIMetadataHandler.xpt $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIMetadataManager.xpt $(SolutionDir)dist\components
 copy /y $(TargetDir)sbIMetadataHandler.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

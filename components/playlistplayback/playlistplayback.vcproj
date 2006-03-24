@@ -31,6 +31,7 @@ copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\
 copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -55,6 +56,7 @@ copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\
 copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -160,14 +162,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>

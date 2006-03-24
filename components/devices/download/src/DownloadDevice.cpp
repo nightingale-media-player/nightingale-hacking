@@ -61,7 +61,7 @@
 #define CONTEXT_DOWNLOAD_DEVICE_LEN       NS_LITERAL_STRING("downloadDB-1108").Length()
 #define CONTEXT_DOWNLOAD_DEVICE           NS_LITERAL_STRING("downloadDB-1108").get()
 
-#define DOWNLOAD_DEVICE_TABLE_NAME        NS_LITERAL_STRING("download").get()
+#define DOWNLOAD_DEVICE_TABLE_NAME        NS_LITERAL_STRING("&device.download").get()
 #define DOWNLOAD_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&device.download").get()
 #define DOWNLOAD_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("download").get()
 #define DOWNLOAD_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("download").get()

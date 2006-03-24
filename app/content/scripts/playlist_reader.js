@@ -101,7 +101,7 @@ function CPlaylistReader()
     return theExtension;
   }
   
-  this.AutoLoad = function AutoLoad(strURL, strGUID, strName, strType, strDesc, webListener)
+  this.AutoLoad = function AutoLoad(strURL, strGUID, strName, strType, strDesc, strContentType, webListener)
   {
     try
     {
