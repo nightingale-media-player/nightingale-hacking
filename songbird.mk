@@ -45,13 +45,12 @@ OBJDIR       = $(TOPSRCDIR)/$(OBJDIRNAME)
 DISTDIR      = $(OBJDIR)/$(DISTDIRNAME)
 CONFIGSTATUS = $(OBJDIR)/config.status
 
+ifeq (debug,$(MAKECMDGOALS))
+DEBUG = 1
+endif
+
 ifdef DEBUG
 CONFIGURE_ARGS = --enable-debug
-else
-ifeq (debug,$(MAKECMDGOALS))
-CONFIGURE_ARGS = --enable-debug
-MAKECMDGOALS=all
-endif
 endif
 
 ifndef AUTOCONF
