@@ -113,7 +113,6 @@ create_obj_dir :
 	$(CREATE_OBJ_DIR_CMD)
 
 run_configure : $(CONFIGSTATUS)
-	$(RUN_CONFIGURE_CMD)
 
 clean :
 	$(CLEAN_CMD)
