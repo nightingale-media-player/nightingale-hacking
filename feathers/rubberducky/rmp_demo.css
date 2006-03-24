@@ -511,8 +511,8 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
 {
  -moz-appearance: none;
  border: none;
- background-color: #eee;
- color: #333;
+ background-color: #333;
+ color: #eee;
  margin-top: 6px;
  margin-bottom: 6px;
  height: 10px !important;
@@ -520,8 +520,8 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
 {
- background-color: #DAE0DD;
- color: #000;
+ background-color: #000;
+ color: #eee;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
