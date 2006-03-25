@@ -35,6 +35,9 @@ else
 target_name = sbMetadataHandlerID3
 endif
 
+CPP_EXTRA_DEFS = -DID3LIB_LINKOPTION=3 \
+                 $(NULL)
+
 CPP_SRCS = MetadataHandlerID3.cpp \
            MetadataHandlerID3Component.cpp \
            $(NULL)
