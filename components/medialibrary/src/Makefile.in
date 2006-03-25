@@ -64,9 +64,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             sqlite \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
-                          $(SQLITE_DIR)/lib \
-                          $(NULL)
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(SQLITE_DIR)/lib \
+                           $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 

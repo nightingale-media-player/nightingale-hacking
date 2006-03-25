@@ -30,41 +30,28 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbDeviceBase_d
+target_name = devicebase_d
 else
-target_name = sbDeviceBase
+target_name = devicebase
 endif
 
-CPP_SRCS = DeviceBase.cpp \
-           $(NULL)
+CPP_SRCS = DeviceBase.cpp
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/rdf \
+               $(MOZSDK_INCLUDE_DIR)/rdfutil \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_IDL_DIR) \
+               $(SQLITE_DIR)/include \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+STATIC_LIB = $(target_name)$(LIB_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4  \
-                            plc4  \
-                            xpcom \
-                            xul \
-                            unicharutil_s \
-                            $(NULL)
-
-DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
-                          $(NULL)
-
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 include $(topsrcdir)/build/rules.mk

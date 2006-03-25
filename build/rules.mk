@@ -85,6 +85,11 @@ targets += dll_link
 clean_targets += dll_clean
 endif
 
+ifdef STATIC_LIB
+targets += lib_link
+clean_targets += lib_clean
+endif
+
 ifdef SONGBIRD_COMPONENTS
 targets += copy_sb_components
 endif
@@ -195,8 +200,8 @@ endif
 linker_imports_temp2 = $(addprefix $(LDFLAGS_IMPORT_PREFIX), $(linker_imports_temp1))
 linker_imports = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), $(linker_imports_temp2))
 
-ifdef DYNAMIC_LIB_IMPORT_DIRS
-linker_paths_temp = $(addprefix $(LDFLAGS_PATH_PREFIX), $(DYNAMIC_LIB_IMPORT_DIRS))
+ifdef DYNAMIC_LIB_IMPORT_PATHS
+linker_paths_temp = $(addprefix $(LDFLAGS_PATH_PREFIX), $(DYNAMIC_LIB_IMPORT_PATHS))
 linker_paths = $(addsuffix $(LDFLAGS_PATH_SUFFIX), $(linker_paths_temp))
 endif
 
@@ -215,6 +220,48 @@ dll_clean:
 .PHONY : dll_link dll_clean
 
 endif #DYNAMIC_LIB
+
+#-----------------------
+
+# STATIC_LIB - the name of a lib to link
+# STATIC_LIB_OBJS - the object files to link into the lib
+# STATIC_LIB_IMPORT_PATHS - a list of paths to search for libs
+# STATIC_LIB_IMPORTS - an override to the default list of libs to link
+# STATIC_LIB_EXTRA_IMPORTS - an additional list of libs to link
+# STATIC_LIB_FLAGS - an override to the default linker flags
+# STATIC_LIB_EXTRA_FLAGS - a list of additional flags to pass to the linker
+
+ifdef STATIC_LIB
+
+ifdef STATIC_LIB_FLAGS
+linker_flags = $(STATIC_LIB_FLAGS)
+else
+linker_flags = $(ARFLAGS) $(ARFLAGS_LIB)
+ifdef STATIC_LIB_EXTRA_FLAGS
+linker_flags += $(STATIC_LIB_EXTRA_FLAGS)
+endif
+endif
+
+ifdef STATIC_LIB_IMPORT_PATHS
+linker_paths_temp = $(addprefix $(ARFLAGS_PATH_PREFIX), $(STATIC_LIB_IMPORT_PATHS))
+linker_paths = $(addsuffix $(ARFLAGS_PATH_SUFFIX), $(linker_paths_temp))
+endif
+
+linker_out = $(ARFLAGS_OUT_PREFIX)$(STATIC_LIB)$(ARFLAGS_OUT_SUFFIX)
+
+lib_link: $(STATIC_LIB_OBJS)
+	$(AR) $(linker_out) $(linker_flags) $(linker_paths) $(STATIC_LIB_OBJS)
+
+lib_clean:
+	rm -rf $(STATIC_LIB) \
+	        $(STATIC_LIB:$(DLL_SUFFIX)=.pdb) \
+	        $(STATIC_LIB:$(DLL_SUFFIX)=.lib) \
+	        $(STATIC_LIB:$(DLL_SUFFIX)=.exp) \
+	        $(NULL)
+
+.PHONY : lib_link lib_clean
+
+endif #STATIC_LIB
 
 #------------------------------------------------------------------------------
 # Rules for XPIDL compilation
