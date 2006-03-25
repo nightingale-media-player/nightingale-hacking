@@ -71,7 +71,7 @@ namespace
 
     // CLASSES ====================================================================
 
-class sbDeviceBase : public sbIDeviceBase
+class sbDeviceBase
 {
   friend class sbDeviceThread;
 

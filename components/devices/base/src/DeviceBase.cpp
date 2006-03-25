@@ -506,7 +506,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
       resultset->GetRowCell(rowNumber, destinationPathColumnIndex, &destinationPath);
       resultset->GetRowCell(rowNumber, indexColumnIndex, &index);
 
-      mTransferTrackIndex = wcstoul(index, NULL, 10);
+      mTransferTrackIndex = nsString(index).ToInteger(&errorCode);
       mCurrentTransferRowNumber = rowNumber;
       PRBool bRet = TransferFile(deviceString, sourcePath, destinationPath, (PRUnichar *) dbContext.get(), (PRUnichar *) tableName.get(), index, rowNumber);
       if(bRet)
@@ -858,8 +858,8 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     else
       sourcePathFile += fileName;
 
-    if(wcslen(strCurSource)) sourcePathFile = strCurSource;
-    if(wcslen(strCurDest)) destinationPathFile = strCurDest;
+    if(nsString(strCurSource).Length()) sourcePathFile = strCurSource;
+    if(nsString(strCurDest).Length()) destinationPathFile = strCurDest;
 
     // These are filled intelligently, well at least not a blind copy!
     AddQuotedString(insertDataQuery, sourcePathFile.get());
@@ -954,9 +954,10 @@ PRBool sbDeviceBase::GetFileNameFromURL(nsString& url, nsString& fileName)
   const PRUnichar frontSlash = '/';
   const PRUnichar backSlash = '\\';
 
-  PRUnichar* foundPosition = wcsrchr(url.get(), frontSlash);
-  if (foundPosition || (foundPosition = wcsrchr(url.get(), backSlash))) {
-    fileName = Substring(url, (++foundPosition - url.get()));
+  PRInt32 pos = url.RFindChar(frontSlash);
+  if(pos || (pos = url.RFindChar(backSlash)))
+  {
+    fileName = Substring(url, ++pos);
     return PR_TRUE;
   }
 
@@ -1432,7 +1433,7 @@ void sbDeviceBase::DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUni
 
     PRUnichar *pGUID = NULL;
     PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
-    aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strFile.get(), (wcslen(strFile.get()) + 1) * sizeof(PRUnichar));
+    aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strFile.get(), (strFile.Length() + 1) * sizeof(PRUnichar));
     nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
     pQuery->SetAsyncQuery(PR_FALSE);
     pQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird").get());
