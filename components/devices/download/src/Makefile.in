@@ -39,7 +39,7 @@ CPP_SRCS = DownloadDevice.cpp \
            DownloadDeviceComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/base/src\
+CPP_INCLUDES = $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/download/public \
                $(DEPTH)/components/medialibrary/public \
@@ -63,9 +63,11 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcom \
                             xul \
                             unicharutil_s \
+                            devicebase \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
+                          $(DEPTH)/components/devices/base/src \
                           $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
