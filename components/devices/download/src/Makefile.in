@@ -39,7 +39,7 @@ CPP_SRCS = DownloadDevice.cpp \
            DownloadDeviceComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(topsrcdir)/components/devices/base/src \
+CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/download/public \
                $(DEPTH)/components/medialibrary/public \

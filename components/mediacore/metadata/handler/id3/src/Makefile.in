@@ -55,7 +55,7 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_EXTRA_IMPORTS = id3 \
+DYNAMIC_LIB_EXTRA_IMPORTS = id3lib \
                             nspr4 \
                             plds4 \
                             xpcom \
@@ -64,7 +64,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = id3 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(ID3LIB_DIR)/lib \
-                          $(MOZSDK_LIB_DIR) \
-                          $(NULL)
+                           $(MOZSDK_LIB_DIR) \
+                           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
