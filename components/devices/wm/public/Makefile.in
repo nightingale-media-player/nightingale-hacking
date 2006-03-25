@@ -35,7 +35,7 @@ XPIDL_INCLUDES = $(COMPONENTS_DIR)/devices/base/public \
 XPIDL_SRCS = sbIWMDevice.idl \
              $(NULL)
 
-XPIDL_MODULE = sbIWMDevice.xpt
+XPIDL_MODULE = sbWMDevice.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 GARBAGE = $(XPIDL_MODULE_TYPELIBS)

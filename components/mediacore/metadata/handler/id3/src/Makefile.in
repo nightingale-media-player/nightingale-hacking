@@ -48,7 +48,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIC)
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 

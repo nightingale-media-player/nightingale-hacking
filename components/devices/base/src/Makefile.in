@@ -35,7 +35,8 @@ else
 target_name = devicebase
 endif
 
-CPP_SRCS = DeviceBase.cpp
+CPP_SRCS = DeviceBase.cpp \
+           $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/medialibrary/public \
@@ -47,7 +48,6 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/rdfutil \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_IDL_DIR) \
-               $(SQLITE_DIR)/include \
                $(NULL)
 
 STATIC_LIB = $(target_name)$(LIB_SUFFIX)
