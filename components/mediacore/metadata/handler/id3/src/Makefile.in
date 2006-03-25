@@ -50,7 +50,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIC)
 
-DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = id3 \
                             nspr4 \
@@ -60,7 +60,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = id3 \
                             unicharutil_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_DIRS = $(ID3LIB_DIR)/lib \
+DYNAMIC_LIB_IMPORT_PATHS = $(ID3LIB_DIR)/lib \
                           $(MOZSDK_LIB_DIR) \
                           $(NULL)
 

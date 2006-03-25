@@ -50,7 +50,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SOURCES:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4 \
@@ -59,7 +59,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xul \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_DIRS = $(MOZSDK_LIB_DIR) \
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
