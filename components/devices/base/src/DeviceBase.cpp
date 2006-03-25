@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -31,10 +31,13 @@
 
 #include "DeviceBase.h"
 #include "sbIDeviceBase.h"
+
+#if defined(XP_WIN)
 #include "objbase.h"
+#endif
+
 #include "nspr.h"
 
-#include <xpcom/nsXPCom.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsAutoLock.h>
@@ -484,7 +487,8 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 
     // Iterate thru the list of download track records to
     // find the first available track to download.
-    for ( PRInt32 rowNumber = 0; rowNumber < rowcount; rowNumber++ )
+    PRInt32 rowNumber = 0;
+    for ( ; rowNumber < rowcount; rowNumber++ )
     {
       // Get progress value
       PRUnichar *progressString = NULL;
@@ -839,7 +843,8 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("url").get(), &data);
 
     nsString fileName;
-    GetFileNameFromURL(nsString(data), fileName);
+    nsString strData(data);
+    GetFileNameFromURL(strData, fileName);
 
     if (!isDestinationGiven)
       destinationPathFile = data;
@@ -946,8 +951,8 @@ inline void sbDeviceBase::AddQuotedString(nsString &destinationString, const PRU
 PRBool sbDeviceBase::GetFileNameFromURL(nsString& url, nsString& fileName)
 {
   // XXXBen This is not portable
-  const frontSlash = wchar_t('/');
-  const backSlash = wchar_t('\\');
+  const PRUnichar frontSlash = '/';
+  const PRUnichar backSlash = '\\';
 
   PRUnichar* foundPosition = wcsrchr(url.get(), frontSlash);
   if (foundPosition || (foundPosition = wcsrchr(url.get(), backSlash))) {

@@ -44,5 +44,6 @@ SUBDIRDEPS  = mediacore : medialibrary
 SUBDIRDEPS2 = playlistreader : medialibrary
 SUBDIRDEPS3 = playlistsource : medialibrary
 SUBDIRDEPS4 = servicesource : medialibrary
+SUBDIRDEPS5 = devices : medialibrary
 
 include $(topsrcdir)/build/rules.mk
