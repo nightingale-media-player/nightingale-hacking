@@ -39,6 +39,7 @@ CPP_SRCS = DeviceBase.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \

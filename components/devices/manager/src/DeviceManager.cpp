@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -30,7 +30,10 @@
 */
 #include "DeviceManager.h"
 #include "nspr.h"
+
+#if defined(XP_WIN)
 #include "objbase.h"
+#endif
 
 #include <xpcom/nscore.h>
 #include <xpcom/nsXPCOM.h>
@@ -42,7 +45,7 @@
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsIComponentRegistrar.h>
 #include <xpcom/nsSupportsPrimitives.h>
-#include <xpconnect/xpcComponents.h>
+#include <xpconnect/xpccomponents.h>
 #include <string/nsStringAPI.h>
 #include "nsIWebProgressListener.h"
 // #include "../sbIDownloadDevice/sbIDownloadDevice.h" // no.
@@ -53,7 +56,7 @@
 
 #define NAME_WINDOWS_MEDIA_DEVICE NS_LITERAL_STRING("Songbird Device Manager").get()
 
-const NUM_DEVICES_SUPPORTED = 1;
+const PRInt32 NUM_DEVICES_SUPPORTED = 1;
 
 sbDeviceManager* sbDeviceManager::mSingleton = NULL;
 
