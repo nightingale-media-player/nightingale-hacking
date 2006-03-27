@@ -82,7 +82,7 @@ RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
 CLEAN_CMD = $(MAKE) -C $(OBJDIR) clean \
             $(NULL)
 
-CLOBBER_CMD = rm -rf $(CONFIGURE) && \
+CLOBBER_CMD = rm -f $(CONFIGURE) && \
               rm -rf $(OBJDIR) \
               $(NULL)
 
@@ -98,7 +98,8 @@ all : songbird_output build
 debug : all
 
 $(CONFIGSTATUS) : $(CONFIGURE)
-	$(CREATE_OBJ_DIR_CMD) && $(RUN_CONFIGURE_CMD)
+	$(CREATE_OBJ_DIR_CMD)
+	$(RUN_CONFIGURE_CMD)
 
 $(CONFIGURE) : $(CONFIGURE_PREREQS)
 	$(RUN_AUTOCONF_CMD)
