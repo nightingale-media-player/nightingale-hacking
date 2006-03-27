@@ -80,14 +80,15 @@ if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
 AC_CHECK_PROG(UNZIP, unzip, unzip)
 if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 
+AC_CHECK_PROG(LN, ln, ln)
+if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
+
 case "$SB_PLATFORM" in
   win32)
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, ml, ml)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
-    AC_CHECK_PROG(RC, rc, rc)
-    if test -z "$RC"; then AC_MSG_ERROR(Resource compiler not found); fi
     AC_CHECK_PROG(AR, lib, lib)
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
   ;;
@@ -96,10 +97,14 @@ case "$SB_PLATFORM" in
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, as, as)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
-    AR="${CXX} -ar"
-    AC_SUBST(AR)
+    AC_CHECK_PROG(AR, ar, ar)
+		if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
+		AC_CHECK_PROG(RANLIB, ranlib, ranlib)
+		if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+		USING_RANLIB=1
   ;;
 esac
+AC_SUBST(USING_RANLIB)
 
 #
 # Checks for libraries.
@@ -297,6 +302,13 @@ case "$SB_PLATFORM" in
     LDFLAGS_PATH_SUFFIX=""
     LDFLAGS_IMPORT_PREFIX="-l"
     LDFLAGS_IMPORT_SUFFIX=""
+    LNFLAGS="--symbolic"
+    ARFLAGS="cr"
+    ARFLAGS_OUT_PREFIX=""
+    ARFLAGS_OUT_SUFFIX=""
+    ARFLAGS_PATH_PREFIX=""
+    ARFLAGS_PATH_SUFFIX=""
+    ARFLAGS_LIB=""
   ;;
 esac
 
@@ -316,6 +328,7 @@ AC_SUBST(LDFLAGS_PATH_PREFIX)
 AC_SUBST(LDFLAGS_PATH_SUFFIX)
 AC_SUBST(LDFLAGS_IMPORT_PREFIX)
 AC_SUBST(LDFLAGS_IMPORT_SUFFIX)
+AC_SUBST(LNFLAGS)
 AC_SUBST(DEFAULT_LIBS)
 
 #

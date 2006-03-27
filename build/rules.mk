@@ -207,17 +207,20 @@ endif
 
 linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 
+makelink_cmd = $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
+
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(DYNAMIC_LIB_OBJS)
+	$(makelink_cmd)
 
 dll_clean:
-	rm -rf $(DYNAMIC_LIB) \
-	        $(DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
-	        $(DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
-	        $(DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
-	        $(NULL)
+	rm -f $(DYNAMIC_LIB) \
+	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
+	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
+	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
+	      $(NULL)
 
-.PHONY : dll_link dll_clean
+.PHONY : dll_clean
 
 endif #DYNAMIC_LIB
 
@@ -225,9 +228,6 @@ endif #DYNAMIC_LIB
 
 # STATIC_LIB - the name of a lib to link
 # STATIC_LIB_OBJS - the object files to link into the lib
-# STATIC_LIB_IMPORT_PATHS - a list of paths to search for libs
-# STATIC_LIB_IMPORTS - an override to the default list of libs to link
-# STATIC_LIB_EXTRA_IMPORTS - an additional list of libs to link
 # STATIC_LIB_FLAGS - an override to the default linker flags
 # STATIC_LIB_EXTRA_FLAGS - a list of additional flags to pass to the linker
 
@@ -242,24 +242,29 @@ linker_flags += $(STATIC_LIB_EXTRA_FLAGS)
 endif
 endif
 
-ifdef STATIC_LIB_IMPORT_PATHS
-linker_paths_temp = $(addprefix $(ARFLAGS_PATH_PREFIX), $(STATIC_LIB_IMPORT_PATHS))
-linker_paths = $(addsuffix $(ARFLAGS_PATH_SUFFIX), $(linker_paths_temp))
-endif
-
 linker_out = $(ARFLAGS_OUT_PREFIX)$(STATIC_LIB)$(ARFLAGS_OUT_SUFFIX)
 
-lib_link: 
-	$(AR) $(linker_out) $(linker_flags) $(linker_paths) $(STATIC_LIB_OBJS)
+static_lib_deps = $(STATIC_LIB_OBJS)
+
+ifdef USING_RANLIB
+ranlib_cmd = $(RANLIB) $(linker_out)
+static_lib_deps += lib_clean
+else
+ranlib_cmd = @echo Not using ranlib
+endif
+
+makelink_cmd = $(LN) $(LNFLAGS) $(STATIC_LIB) $(addprefix lib,$(STATIC_LIB))
+
+lib_link: $(static_lib_deps)
+	$(AR) $(linker_flags) $(linker_out) $(STATIC_LIB_OBJS)
+	$(ranlib_cmd)
+	$(makelink_cmd)
 
 lib_clean:
-	rm -rf $(STATIC_LIB) \
-	        $(STATIC_LIB:$(DLL_SUFFIX)=.pdb) \
-	        $(STATIC_LIB:$(DLL_SUFFIX)=.lib) \
-	        $(STATIC_LIB:$(DLL_SUFFIX)=.exp) \
-	        $(NULL)
+	rm -f $(STATIC_LIB) \
+        $(NULL)
 
-.PHONY : lib_link lib_clean
+.PHONY : lib_clean
 
 endif #STATIC_LIB
 

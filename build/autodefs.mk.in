@@ -46,6 +46,8 @@ DLL_SUFFIX       = @DLL_SUFFIX@
 DEBUG            = @DEBUG@
 DEFS             = @DEFS@
 
+USING_RANLIB     = @USING_RANLIB@
+
 #
 # Cygwin stuff
 #
@@ -79,11 +81,14 @@ SONGBIRD_XULRUNNERDIR  = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/xulrunner
 # Tools
 #
 
-CC        = @CYGWIN_WRAPPER@ @CC@
-CXX       = @CYGWIN_WRAPPER@ @CXX@
-LD        = @CYGWIN_WRAPPER@ @LD@
-AR        = @CYGWIN_WRAPPER@ @AR@
-PERL      = @CYGWIN_WRAPPER@ @PERL@
+CC        = @CYGWIN_WRAPPER@ @CC@@BIN_SUFFIX@
+CXX       = @CYGWIN_WRAPPER@ @CXX@@BIN_SUFFIX@
+LD        = @CYGWIN_WRAPPER@ @LD@@BIN_SUFFIX@
+AR        = @CYGWIN_WRAPPER@ @AR@@BIN_SUFFIX@
+RANLIB    = @CYGWIN_WRAPPER@ @RANLIB@@BIN_SUFFIX@
+PERL      = @CYGWIN_WRAPPER@ @PERL@@BIN_SUFFIX@
+LN        = @CYGWIN_WRAPPER@ @LN@@BIN_SUFFIX@
+
 XPIDL     = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpidl@BIN_SUFFIX@
 XPTLINK   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpt_link@BIN_SUFFIX@
 MAR       = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/mar@BIN_SUFFIX@
@@ -113,6 +118,8 @@ ARFLAGS_OUT_SUFFIX    = @ARFLAGS_OUT_SUFFIX@
 ARFLAGS_PATH_PREFIX   = @ARFLAGS_PATH_PREFIX@
 ARFLAGS_PATH_SUFFIX   = @ARFLAGS_PATH_SUFFIX@
 ARFLAGS_LIB           = @ARFLAGS_LIB@
+LNFLAGS               = @LNFLAGS@
+
 XPIDLFLAGS_INCLUDE    = -I
 
 #------------------------------------------------------------------------------
