@@ -29,8 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+SONGBIRD_COMPONENTS = $(COMPONENTS_DIR)/playlistplayback/src/coreVLC.js \
+                      $(COMPONENTS_DIR)/playlistplayback/src/coreWMP.js \
+                      $(COMPONENTS_DIR)/playlistplayback/src/sbPlaylistPlayback.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

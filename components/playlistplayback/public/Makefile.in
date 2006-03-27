@@ -39,6 +39,8 @@ XPIDL_SRCS = sbIPlaylistPlayback.idl \
 XPIDL_MODULE = sbPlaylistPlayback.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
+
 GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk

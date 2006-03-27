@@ -67,4 +67,6 @@ DYNAMIC_LIB_IMPORT_PATHS = $(ID3LIB_DIR)/lib \
                            $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+
 include $(topsrcdir)/build/rules.mk

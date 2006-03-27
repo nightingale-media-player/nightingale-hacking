@@ -42,4 +42,6 @@ XPIDL_SRCS = IDatabaseEngine.idl \
 XPIDL_MODULE = sbMediaLibrary.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
+SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
+
 include $(topsrcdir)/build/rules.mk

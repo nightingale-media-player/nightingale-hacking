@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+SONGBIRD_COMPONENTS = $(COMPONENTS_DIR)/dataremote/src/sbDataRemote.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
