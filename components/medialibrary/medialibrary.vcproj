@@ -45,7 +45,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib"
 				OutputFile="$(OutDir)/sbMediaLibrary_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\lib&quot;"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MediaLibrary.pdb"
@@ -110,7 +110,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib"
 				OutputFile="$(OutDir)/sbMediaLibrary.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -374,7 +374,8 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						AdditionalDependencies=""
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
@@ -382,7 +383,8 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						AdditionalDependencies=""
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
@@ -393,14 +395,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -410,14 +414,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -427,14 +433,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -444,14 +452,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -461,14 +471,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -478,14 +490,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -495,14 +509,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -512,14 +528,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -529,14 +547,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -546,14 +566,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -563,14 +585,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
@@ -580,14 +604,16 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
