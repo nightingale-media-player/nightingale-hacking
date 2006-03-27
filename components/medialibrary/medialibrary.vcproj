@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\include&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MEDIALIBRARY_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -45,7 +45,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib"
 				OutputFile="$(OutDir)/sbMediaLibrary_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MediaLibrary.pdb"
@@ -90,7 +90,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\include&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MEDIALIBRARY_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -110,7 +110,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib sqlite.lib unicharutil_s.lib"
 				OutputFile="$(OutDir)/sbMediaLibrary.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\sqlite\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -370,42 +370,226 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			</File>
 			<File
 				RelativePath=".\src\sbIDynamicPlaylist.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						AdditionalDependencies=""
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						AdditionalDependencies=""
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIMediaLibrary.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylist.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistManager.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistPlayback.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistReaderAtom.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistReaderHTML.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistReaderListener.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistReaderManager.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistReaderRDF.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistReaderRSS.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbISimplePlaylist.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\sbISmartPlaylist.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

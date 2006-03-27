@@ -307,7 +307,7 @@
         
   
         // For some reason, this is the offending method?      
-//        var success = aPlaylistReader.LoadPlaylist(url, guid, table, name, type, description, content_type, false, null);
+        var success = aPlaylistReader.LoadPlaylist(url, guid, table, name, type, description, content_type, false, null);
         
         
         // And, lastly, bind ourselves to that playlist being loaded.

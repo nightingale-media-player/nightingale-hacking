@@ -107,72 +107,394 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 				Filter="">
 				<File
 					RelativePath=".\content\xul\about.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\add_to_playlist.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\control_pane.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\download.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\inner_frame.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\koshi_test.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\mab.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\main_pane.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\mainwin.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\media_scan.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\messagebox.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\miniplayer.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\new_playlist.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\open_url.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\playlist_exists.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\playlist_test.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\remote_download.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\restartbox.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\rmp_demo.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\smart_playlist.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\subscribe.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\watch_folders.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\xul\yahoo_hybrid.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -180,33 +502,173 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 				Filter="">
 				<File
 					RelativePath=".\content\bindings\bindings.css">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\conditions.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\filterlist.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\folders.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\multistatebutton.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\playlist.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\search.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\seekbar.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\servicetree.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\bindings\windowregion.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -214,114 +676,632 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 				Filter="">
 				<File
 					RelativePath=".\content\scripts\async_webplaylist.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\back_scan.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\core_qt.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\core_vlc.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\core_vlc2.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\core_wmp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\dndSourceTracker.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\dragAndDrop.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\dynamic_playlist_updater.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\language_scan.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\mainwin.data.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\media_scan.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\messagebox.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\metrics.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\miniplayer.data.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\miniplayer.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\player_controls.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\player_loop.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\player_open.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\player_repeater.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\playlist_reader.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\restartbox.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\rmp_demo.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIAsyncForLoop.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIDataRemote.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIDOMEval.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIMediaLibrary.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIPlaylist.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIPlaylistManager.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbIPlaylistPlayback.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\sbISimplePlaylist.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\smilScript.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\songbird_hack.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\songbird_interfaces.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\switch_feathers.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\switch_locale.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\content\scripts\watch_folders.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>

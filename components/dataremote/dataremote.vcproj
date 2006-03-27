@@ -89,6 +89,20 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Filter="">
 			<File
 				RelativePath=".\src\sbDataRemote.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

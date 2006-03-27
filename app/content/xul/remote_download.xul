@@ -66,19 +66,21 @@
   <![CDATA[
 try
 {
+  alert("page load\nyou should only see this once.");
   function onLoad()
   {
     try
     { 
-      // The remote playlist you autogenerate.  Figure out how to get it here, yourself.
-      var remote_playlist = "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/";
-      // Type? RSS, M3U, whatever you want.  But I'm special, I can load a web page as a playlist too.
+      // The remote playlist you autogenerate.
+      var remote_playlist = "http://odeo.com/channel/3420/playlist.m3u";
     
-      // Tell the playlist to bind to the database table with filterlists and commands
+      // Get the playlist element
       var playlist = document.getElementById("your_playlist");
 
-      // So, write down the guid of the playlist returned from the load call.
+      // Also, write down the guid of the playlist returned from the load call
       var playlist_guid =
+      // And tell the playlist element to load your playlist file into your database
+      // Default library initialization is done on the database to load the file
       playlist.load( 
         remote_playlist, 
         "your_database",
@@ -86,7 +88,7 @@ try
         "human_readable_name",
         "custom_playlist_type",
         "description",
-        "text/html" 
+        "" 
       );  
 /*      
 */      
@@ -94,7 +96,7 @@ try
       // and do it yourself if you want your own custom metadata columns.
       
       var webpage = document.getElementById("some_webpage");
-      webpage.setAttribute( "src", remote_playlist );
+      webpage.setAttribute( "src", "http://suicidegirls.com/" );
     }
     catch ( err )
     {

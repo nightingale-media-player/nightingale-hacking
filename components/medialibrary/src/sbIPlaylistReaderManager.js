@@ -171,7 +171,7 @@ CPlaylistReaderManager.prototype =
       this.m_Listener.description = strDescription;
       this.m_Listener.appendOrReplace = bAppendOrReplace;
       
-      //this.m_Browser.persistFlags |= ENCODE_FLAGS_RAW;
+      this.m_Browser.persistFlags |= PERSIST_FLAGS_BYPASS_CACHE;
       this.m_Browser.progressListener = this.m_Listener;
       
       this.m_Browser.saveURI(aLocalURI, null, null, null, "", aLocalFile);
