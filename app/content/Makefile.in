@@ -29,14 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_CHROME_SUBDIR = /content
+CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content
 
-SONGBIRD_CHROME = $(APP_DIR)/content/bindings \
-                  $(APP_DIR)/content/browser \
-                  $(APP_DIR)/content/html \
-                  $(APP_DIR)/content/scripts \
-                  $(APP_DIR)/content/xul \
-                  $(APP_DIR)/content/songbird.mn \
-                  $(NULL)
+CLONEDIR = $(SONGBIRD_CHROMEDIR)/content
 
 include $(topsrcdir)/build/rules.mk

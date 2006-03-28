@@ -31,14 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 CREATEDIRS = $(SONGBIRD_CHROMEDIR)/feathers/rubberducky
 
-SONGBIRD_CHROME_SUBDIR = /feathers/rubberducky
-
-SONGBIRD_CHROME = $(topsrcdir)/feathers/rubberducky/default \
-                  $(topsrcdir)/feathers/rubberducky/mini \
-                  $(topsrcdir)/feathers/rubberducky/serviceicons \
-                  $(topsrcdir)/feathers/rubberducky/bindings.xml \
-                  $(topsrcdir)/feathers/rubberducky/contents.rdf \
-                  $(topsrcdir)/feathers/rubberducky/*.css \
-                  $(NULL)
+CLONEDIR = $(SONGBIRD_CHROMEDIR)/feathers/rubberducky
 
 include $(topsrcdir)/build/rules.mk

@@ -82,8 +82,9 @@ dependencies/Makefile
 
 MAKEFILES_feathers="
 feathers/Makefile
-feathers/rubberducky/Makefile
 feathers/cardinal/Makefile
+feathers/dove/Makefile
+feathers/rubberducky/Makefile
 "
 
 MAKEFILES_installer="

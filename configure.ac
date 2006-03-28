@@ -83,6 +83,9 @@ if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 AC_CHECK_PROG(LN, ln, ln)
 if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 
+AC_CHECK_PROG(FIND, find, find)
+if test -z "$FIND"; then AC_MSG_ERROR(Find not found); fi
+
 case "$SB_PLATFORM" in
   win32)
     AC_CHECK_PROG(LD, link, link)

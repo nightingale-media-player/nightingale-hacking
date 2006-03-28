@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-CREATEDIRS = $(SONGBIRD_DEFAULTSDIR)/preferences
+CREATEDIRS = $(SONGBIRD_CHROMEDIR)/feathers/dove
 
-CLONEDIR = $(SONGBIRD_DEFAULTSDIR)/preferences
+CLONEDIR = $(SONGBIRD_CHROMEDIR)/feathers/dove
 
 include $(topsrcdir)/build/rules.mk

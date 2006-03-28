@@ -31,14 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 CREATEDIRS = $(SONGBIRD_CHROMEDIR)/feathers/cardinal
 
-SONGBIRD_CHROME_SUBDIR = /feathers/cardinal
-
-SONGBIRD_CHROME = $(topsrcdir)/feathers/cardinal/default \
-                  $(topsrcdir)/feathers/cardinal/mini \
-                  $(topsrcdir)/feathers/cardinal/serviceicons \
-                  $(topsrcdir)/feathers/cardinal/bindings.xml \
-                  $(topsrcdir)/feathers/cardinal/contents.rdf \
-                  $(topsrcdir)/feathers/cardinal/*.css \
-                  $(NULL)
+CLONEDIR = $(SONGBIRD_CHROMEDIR)/feathers/cardinal
 
 include $(topsrcdir)/build/rules.mk

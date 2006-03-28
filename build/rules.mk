@@ -94,6 +94,10 @@ ifdef UNZIP_SRC
 targets += unzip_file
 endif
 
+ifdef CLONEDIR
+targets += clone_dir
+endif
+
 ifdef SONGBIRD_DIST
 targets += copy_sb_dist
 endif
@@ -394,56 +398,84 @@ endif #SUBDIRS
 #                   $(SONGBIRD_CHROMEDIR) directory
 # SONGBIRD_COMPONENTS - indicates that the files should be copied to the
 #                       $(SONGBIRD_COMPONENTSDIR) directory
+# CLONE_DIR - a directory which will hold all the files from the source dir
+#             with some pattern matching
+# CLONE_FIND_EXP - an expression to pass to 'find' that specifies the type of
+#                  files that will be cloned
+# CLONE_EXCLUDE_NAME - a list of files that will be excluded from the clone
+#                      based on the filename only
+# CLONE_EXCLUDE_DIR - a list of directories that will be excluded from the clone
+
+ifdef CLONEDIR
+
+ifdef CLONE_FIND_EXP
+find_exp = $(CLONE_FIND_EXP)
+else
+ifdef CLONE_EXCLUDE_NAME
+clone_exclude_name := $(addsuffix ",$(CLONE_EXCLUDE_NAME))
+clone_exclude_name := $(addprefix ! -name ",$(clone_exclude_name))
+endif
+ifdef CLONE_EXCLUDE_DIR
+clone_exclude_dir := $(addsuffix /*",$(CLONE_EXCLUDE_DIR))
+clone_exclude_dir := $(addprefix ! -wholename "*/,$(clone_exclude_dir))
+endif
+find_exp = -type f ! -wholename "*.svn*" $(clone_exclude_dir) ! -name "Makefile.in" $(clone_exclude_name)
+endif
+
+files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))
+
+ifdef files_list
+clone_dir_cmd = cd $(srcdir) && \
+                cp -f --parents $(files_list) $(CLONEDIR) \
+                $(NULL)
+endif
+
+clone_dir :
+	$(clone_dir_cmd)
+
+.PHONY : clone_dir
+
+endif #CLONEDIR
 
 ifdef SONGBIRD_DIST
 copy_sb_dist:
-	cp -af $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
+	cp -f $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
 
-chrome_subdir=
-ifdef SONGBIRD_CHROME_SUBDIR
-  chrome_subdir = $(SONGBIRD_CHROME_SUBDIR)
-endif #SONGBIRD_CHROME_SUBDIR
-
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
-	cp -af $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)$(chrome_subdir)
+	cp -f $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
-	cp -af $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
+	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
 
-defaults_subdir=
-ifdef SONGBIRD_DEFAULTS_SUBDIR
-  defaults_subdir = $(SONGBIRD_DEFAULTS_SUBDIR)
-endif #SONGBIRD_DEFAULTS_SUBDIR
-
 ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
-	cp -af $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)$(defaults_subdir)
+	cp -f $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS  
 
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
-	cp -af $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
+	cp -f $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
-	cp -af $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
+	cp -f $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
 
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
-	cp -af $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
+	cp -f $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
 
