@@ -31,6 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_COMPONENTSDIR) \
+             $(SONGBIRD_DEFAULTSDIR) \
+             $(SONGBIRD_PREFERENCESDIR) \
              $(SONGBIRD_PLUGINSDIR) \
              $(SONGBIRD_VLCPLUGINSDIR) \
              $(SONGBIRD_XULRUNNERDIR) \

@@ -29,8 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+SONGBIRD_DEFAULTS_SUBDIR = /preferences
+
+SONGBIRD_DEFAULTS = $(APP_DIR)/preferences/songbird-prefs.js \
+                    $(APP_DIR)/preferences/songbird-update-prefs.js \
+                    $(NULL)
 
 include $(topsrcdir)/build/rules.mk

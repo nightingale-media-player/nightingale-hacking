@@ -59,6 +59,7 @@ CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
 # Commonly used directories
 #
 
+APP_DIR						 = @top_srcdir@/app
 DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@
 COMPONENTS_DIR     = @top_srcdir@/components
 ID3LIB_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/id3lib/@SB_CONFIGURATION@
@@ -73,6 +74,8 @@ SONGBIRD_OBJDIR        = @top_srcdir@/@OBJDIRNAME@
 SONGBIRD_DISTDIR       = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@
 SONGBIRD_CHROMEDIR     = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/chrome
 SONGBIRD_COMPONENTSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/components
+SONGBIRD_DEFAULTSDIR   = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/defaults
+SONGBIRD_PREFERENCESDIR= @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/defaults/preferences
 SONGBIRD_PLUGINSDIR    = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/plugins
 SONGBIRD_VLCPLUGINSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/vlcplugins
 SONGBIRD_XULRUNNERDIR  = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/xulrunner

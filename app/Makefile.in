@@ -29,6 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content \
+             $(NULL)
+
 SUBDIRS = content \
           icons \
           preferences \

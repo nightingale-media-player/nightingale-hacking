@@ -98,6 +98,10 @@ ifdef SONGBIRD_CHROME
 targets += copy_sb_chrome
 endif
 
+ifdef SONGBIRD_DEFAULTS
+targets += copy_sb_defaults
+endif
+
 ifdef SONGBIRD_PLUGINS
 targets += copy_sb_plugins
 endif
@@ -383,33 +387,49 @@ endif #SUBDIRS
 # SONGBIRD_COMPONENTS - indicates that the files should be copied to the
 #                       $(SONGBIRD_COMPONENTSDIR) directory
 
+chrome_subdir= 
+ifdef SONGBIRD_CHROME_SUBDIR
+  chrome_subdir = $(SONGBIRD_CHROME_SUBDIR)
+endif #SONGBIRD_CHROME_SUBDIR
+
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
-	cp -f $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
+	cp -af $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)$(chrome_subdir)
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
-	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
+	cp -af $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
 
+defaults_subdir=
+ifdef SONGBIRD_DEFAULTS_SUBDIR
+  defaults_subdir = $(SONGBIRD_DEFAULTS_SUBDIR)
+endif #SONGBIRD_DEFAULTS_SUBDIR
+
+ifdef SONGBIRD_DEFAULTS
+copy_sb_defaults:
+	cp -af $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)$(defaults_subdir)
+.PHONY : copy_sb_defaults
+endif #SONGBIRD_DEFAULTS  
+
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
-	cp -f $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
+	cp -af $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
-	cp -f $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
+	cp -af $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
 
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
-	cp -f $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
+	cp -af $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
 
