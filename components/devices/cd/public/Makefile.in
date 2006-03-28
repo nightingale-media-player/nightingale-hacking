@@ -38,6 +38,4 @@ XPIDL_SRCS = sbICDDevice.idl \
 XPIDL_MODULE = sbCDDevice.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
-
 include $(topsrcdir)/build/rules.mk
