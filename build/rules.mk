@@ -90,6 +90,10 @@ targets += lib_link
 clean_targets += lib_clean
 endif
 
+ifdef UNZIP_SRC
+targets += unzip_file
+endif
+
 ifdef SONGBIRD_DIST
 targets += copy_sb_dist
 endif
@@ -442,6 +446,37 @@ copy_sb_xulrunner:
 	cp -af $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
+
+#------------------------------------------------------------------------------
+# Rules for manipulating ZIP archives
+#------------------------------------------------------------------------------
+
+# UNZIP_SRC - The name of a zip file to decompress in its entirety
+# UNZIP_DEST - The name of a directory to hold the archive's contents
+# UNZIP_FLAGS - an override of UNZIPFLAGS to pass to the program
+# UNZIP_EXTRA_FLAGS - an additional list of flags to pass to the program
+
+ifdef UNZIP_SRC
+
+ifndef UNZIP_DEST_DIR
+$(error UNZIP_DEST_DIR *must* be set when extracting from UNZIP_SRC = $(UNZIP_SRC))
+endif
+
+ifdef UNZIP_FLAGS
+unzip_flags = $(UNZIP_FLAGS)
+else
+unzip_flags = $(UNZIPFLAGS)
+ifdef UNZIP_EXTRA_FLAGS
+unzip_flags += $(UNZIP_EXTRA_FLAGS)
+endif
+endif
+
+unzip_file:
+	$(UNZIP) $(unzip_flags) $(UNZIP_SRC) $(UNZIPFLAGS_EXTRACT) $(UNZIP_DEST_DIR)
+
+.PHONY : unzip_file
+
+endif # UNZIP_SRC
 
 #------------------------------------------------------------------------------
 # Rules for making directories

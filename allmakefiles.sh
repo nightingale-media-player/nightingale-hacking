@@ -76,6 +76,10 @@ MAKEFILES_components="
 components/Makefile
 "
 
+MAKEFILES_dependencies="
+dependencies/Makefile
+"
+
 MAKEFILES_feathers="
 feathers/Makefile
 feathers/rubberducky/Makefile
@@ -199,6 +203,7 @@ add_makefiles "
 $MAKEFILES_app
 $MAKEFILES_build
 $MAKEFILES_components
+$MAKEFILES_dependencies
 $MAKEFILES_feathers
 $MAKEFILES_installer
 $MAKEFILES_locales
