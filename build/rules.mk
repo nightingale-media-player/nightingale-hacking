@@ -190,7 +190,7 @@ $(compiler_objects) :%$(OBJ_SUFFIX): %.cpp
 cpp_compile: $(compiler_objects)
 
 cpp_clean:
-	rm -f $(compiler_objects) vc70.pdb
+	$(RM) -f $(compiler_objects) vc70.pdb
 
 .PHONY : cpp_compile cpp_clean
 
@@ -239,11 +239,11 @@ makelink_cmd = $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
 
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(DYNAMIC_LIB_OBJS)
-	chmod +x $(DYNAMIC_LIB)
+	$(CHMOD) +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
 
 dll_clean:
-	rm -f $(DYNAMIC_LIB) \
+	$(RM) -f $(DYNAMIC_LIB) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
@@ -290,7 +290,7 @@ lib_link: $(static_lib_deps)
 	$(makelink_cmd)
 
 lib_clean:
-	rm -f $(STATIC_LIB) \
+	$(RM) -f $(STATIC_LIB) \
         $(NULL)
 
 .PHONY : lib_clean
@@ -327,7 +327,7 @@ $(xpidl_headers): %.h: %.idl
 	$(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 
 xpidl_clean_headers:
-	rm -f $(xpidl_headers)
+	$(RM) -f $(xpidl_headers)
 
 .PHONY : xpidl_compile_headers xpidl_clean_headers
 
@@ -352,7 +352,7 @@ $(xpidl_typelibs): %.xpt: %.idl
 	$(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 
 xpidl_clean_typelibs:
-	rm -f $(xpidl_typelibs)
+	$(RM) -f $(xpidl_typelibs)
 
 .PHONY : xpidl_compile_typelibs xpidl_clean_typelibs
 
@@ -368,7 +368,7 @@ xpidl_link: $(xpidl_module_typelibs)
 	$(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
 
 xpidl_clean_link:
-	rm -f $(XPIDL_MODULE)
+	$(RM) -f $(XPIDL_MODULE)
 
 .PHONY : xpidl_link xpidl_clean_link
 
@@ -438,7 +438,7 @@ files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))
 
 ifdef files_list
 clone_dir_cmd = cd $(srcdir) && \
-                cp -dfp --parents $(files_list) $(CLONEDIR) \
+                $(CP) -dfp --parents $(files_list) $(CLONEDIR) \
                 $(NULL)
 endif
 
@@ -453,7 +453,7 @@ endif #CLONEDIR
 
 ifdef SONGBIRD_DIST
 copy_sb_dist:
-	cp -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
+	$(CP) -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
 
@@ -461,7 +461,7 @@ endif #SONGBIRD_DIST
 
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
-	cp -dfp $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
+	$(CP) -dfp $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
 
@@ -469,7 +469,7 @@ endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
-	cp -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
+	$(CP) -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
 
@@ -477,7 +477,7 @@ endif #SONGBIRD_COMPONENTS
 
 ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
-	cp -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
+	$(CP) -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS  
 
@@ -485,7 +485,7 @@ endif #SONGBIRD_DEFAULTS
 
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
-	cp -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
+	$(CP) -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
 
@@ -493,7 +493,7 @@ endif #SONGBIRD_PLUGINS
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
-	cp -dfp $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
+	$(CP) -dfp $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
 
@@ -501,7 +501,7 @@ endif #SONGBIRD_VLCPLUGINS
 
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
-	cp -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
+	$(CP) -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
 
@@ -515,7 +515,7 @@ $(error You can only have one file as your chrome.manifest)
 endif
 chrome_manifest = $(SONGBIRD_CHROMEDIR)/chrome.manifest
 copy_sb_chrome_manifest: $(SONGBIRD_CHROME_MANIFEST)
-	cp -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
+	$(CP) -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
 #.PHONY : copy_sb_chrome_manifest
 endif
 
@@ -527,8 +527,8 @@ $(error You must specify the xulrunner-stub file here)
 endif
 sb_executable = $(SONGBIRD_DISTDIR)/$(SB_APPNAME)$(BIN_SUFFIX)
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
-	mv -f $(SONGBIRD_MAIN_APP) $(sb_executable)
-	chmod +x $(sb_executable)
+	$(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable)
+	$(CHMOD) +x $(sb_executable)
 #.PHONY : move_sb_stub_executable
 endif
 
@@ -538,7 +538,7 @@ endif
 
 ifdef EXECUTABLE
 chmod_add_executable:
-	chmod +x $(EXECUTABLE)
+	$(CHMOD) +x $(EXECUTABLE)
 .PHONY : chmod_add_executable
 endif
 
@@ -589,7 +589,7 @@ create_dirs:
 endif #CREATEDIRS
 
 create_dirs_clean:
-	rm -rf $(CREATEDIRS)
+	$(RM) -rf $(CREATEDIRS)
 
 .PHONY : create_dirs_clean
 
@@ -601,7 +601,7 @@ create_dirs_clean:
 
 ifdef GARBAGE
 
-remove_cmd = rm -f $(GARBAGE)
+remove_cmd = $(RM) -f $(GARBAGE)
 
 out:
 	$(warning garbage string: $(GARBAGE))

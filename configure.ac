@@ -90,6 +90,18 @@ if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 AC_CHECK_PROG(FIND, find, find)
 if test -z "$FIND"; then AC_MSG_ERROR(Find not found); fi
 
+AC_CHECK_PROG(CP, cp, cp)
+if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
+
+AC_CHECK_PROG(MV, mv, mv)
+if test -z "$MV"; then AC_MSG_ERROR(Mv not found); fi
+
+AC_CHECK_PROG(CHMOD, chmod, chmod)
+if test -z "$CHMOD"; then AC_MSG_ERROR(Chmod not found); fi
+
+AC_CHECK_PROG(RM, rm, rm)
+if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
+
 case "$SB_PLATFORM" in
   win32)
     AC_CHECK_PROG(LD, link, link)
