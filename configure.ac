@@ -302,7 +302,7 @@ case "$SB_PLATFORM" in
     LDFLAGS_PATH_SUFFIX=""
     LDFLAGS_IMPORT_PREFIX="-l"
     LDFLAGS_IMPORT_SUFFIX=""
-    LNFLAGS="--symbolic"
+    LNFLAGS="-f --symbolic"
     ARFLAGS="cr"
     ARFLAGS_OUT_PREFIX=""
     ARFLAGS_OUT_SUFFIX=""
