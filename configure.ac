@@ -273,8 +273,8 @@ case "$SB_PLATFORM" in
     ARFLAGS_PATH_PREFIX=""
     ARFLAGS_PATH_SUFFIX=""
     ARFLAGS_LIB=""
-    UNZIPFLAGS=""
-    UNZIPFLAGS_EXTRACT=""
+    UNZIPFLAGS="-u -o -q"
+    UNZIPFLAGS_EXTRACT="-d"
   ;;
   macosx)
   ;;
