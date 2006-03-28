@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+ifndef USING_JARS
+SONGBIRD_CHROME_MANIFEST = $(srcdir)/chrome.manifest.dev
+endif
 
 include $(topsrcdir)/build/rules.mk

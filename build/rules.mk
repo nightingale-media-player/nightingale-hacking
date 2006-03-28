@@ -126,6 +126,10 @@ ifdef SONGBIRD_XULRUNNER
 targets += copy_sb_xulrunner
 endif
 
+ifdef SONGBIRD_CHROME_MANIFEST
+targets += copy_sb_chrome_manifest
+endif
+
 all:   $(targets) \
        garbage \
        $(NULL)
@@ -394,11 +398,10 @@ endif #SUBDIRS
 # Rules for moving files around
 #------------------------------------------------------------------------------
 
-# SONGBIRD_CHROME - indicates that the files should be copied into the
-#                   $(SONGBIRD_CHROMEDIR) directory
-# SONGBIRD_COMPONENTS - indicates that the files should be copied to the
-#                       $(SONGBIRD_COMPONENTSDIR) directory
-# CLONE_DIR - a directory which will hold all the files from the source dir
+# SONGBIRD_dir - indicates that the files should be copied into the
+#                   $(SONGBIRD_dir) directory
+# SONGBIRD_CHROME_MANIFEST - a file that will be used as the chrome.manifest
+# CLONEDIR - a directory which will hold all the files from the source dir
 #             with some pattern matching
 # CLONE_FIND_EXP - an expression to pass to 'find' that specifies the type of
 #                  files that will be cloned
@@ -478,6 +481,14 @@ copy_sb_xulrunner:
 	cp -f $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
+
+ifdef SONGBIRD_CHROME_MANIFEST
+ifneq (1,$(words $(SONGBIRD_CHROME_MANIFEST)))
+$(error You can only have one file as your chrome.manifest)
+endif
+copy_sb_chrome_manifest:
+	cp -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
+endif
 
 #------------------------------------------------------------------------------
 # Rules for manipulating ZIP archives

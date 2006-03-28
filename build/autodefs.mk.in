@@ -44,6 +44,8 @@ LIB_SUFFIX       = @LIB_SUFFIX@
 DLL_SUFFIX       = @DLL_SUFFIX@
 
 DEBUG            = @DEBUG@
+USING_JARS       = @USING_JARS@
+
 DEFS             = @DEFS@
 
 USING_RANLIB     = @USING_RANLIB@

@@ -188,6 +188,17 @@ AC_SUBST(DEBUG)
 AC_SUBST(SB_CONFIGURATION)
 
 #
+# Check for --enable-jars
+#
+
+AC_ARG_ENABLE(jars,
+              [  --enable-jars           whether or not to create jar files (disabled by default)])
+if test "$enable_jars" = "yes"; then
+  USING_JARS=1
+fi
+AC_SUBST(USING_JARS)
+
+#
 # Generic defines
 #
 
