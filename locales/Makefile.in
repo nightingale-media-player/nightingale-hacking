@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = branding \
-          en-US \
-          $(NULL)
+CREATEDIRS = $(SONGBIRD_CHROMEDIR)/locales
+
+CLONEDIR = $(SONGBIRD_CHROMEDIR)/locales
 
 include $(topsrcdir)/build/rules.mk
