@@ -33,4 +33,6 @@ UNZIP_SRC = $(srcdir)/$(SB_PLATFORM)/xulrunner/$(SB_CONFIGURATION)/xulrunner.zip
 
 UNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
+SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
+
 include $(topsrcdir)/build/rules.mk

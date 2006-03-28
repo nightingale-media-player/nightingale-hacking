@@ -130,6 +130,10 @@ ifdef SONGBIRD_CHROME_MANIFEST
 targets += copy_sb_chrome_manifest
 endif
 
+ifdef SONGBIRD_MAIN_APP
+targets += move_sb_stub_executable
+endif
+
 all:   $(targets) \
        garbage \
        $(NULL)
@@ -440,11 +444,15 @@ clone_dir :
 
 endif #CLONEDIR
 
+#-----------------------
+
 ifdef SONGBIRD_DIST
 copy_sb_dist:
 	cp -f $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
+
+#-----------------------
 
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
@@ -452,11 +460,15 @@ copy_sb_chrome:
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
 
+#-----------------------
+
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
 	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
+
+#-----------------------
 
 ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
@@ -464,11 +476,15 @@ copy_sb_defaults:
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS  
 
+#-----------------------
+
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
 	cp -f $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
+
+#-----------------------
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
@@ -476,11 +492,17 @@ copy_sb_vlcplugins:
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
 
+#-----------------------
+
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
 	cp -f $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
+
+#------------------------------------------------------------------------------
+# Rules for packaging things nicely
+#------------------------------------------------------------------------------
 
 ifdef SONGBIRD_CHROME_MANIFEST
 ifneq (1,$(words $(SONGBIRD_CHROME_MANIFEST)))
@@ -488,6 +510,18 @@ $(error You can only have one file as your chrome.manifest)
 endif
 copy_sb_chrome_manifest:
 	cp -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
+.PHONY : copy_sb_chrome_manifest
+endif
+
+#-----------------------
+
+ifdef SONGBIRD_MAIN_APP
+ifneq (,$(findstring *xulrunner-stub*,$(SONGBIRD_MAIN_APP)))
+$(error You must specify the xulrunner-stub file here)
+endif
+move_sb_stub_executable:
+	mv -f $(SONGBIRD_MAIN_APP) $(SONGBIRD_DISTDIR)/$(SB_APPNAME)$(BIN_SUFFIX)
+.PHONY : move_sb_stub_executable
 endif
 
 #------------------------------------------------------------------------------

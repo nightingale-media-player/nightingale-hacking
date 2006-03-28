@@ -30,6 +30,10 @@ AC_PREREQ(2.59)
 AC_INIT(build/rules.mk)
 AC_CONFIG_AUX_DIR(${srcdir}/build/autoconf)
 
+SB_APPNAME="Songbird"
+
+AC_SUBST(SB_APPNAME)
+
 #
 # Check platform
 #
@@ -281,6 +285,7 @@ case "$SB_PLATFORM" in
     LDFLAGS_IMPORT_PREFIX=""
     LDFLAGS_IMPORT_SUFFIX="${LIB_SUFFIX}"
     DEFAULT_LIBS="kernel32 user32 gdi32 winmm wsock32 advapi32 comctl32"
+    LNFLAGS="-f --symbolic"
     ARFLAGS="/NOLOGO"
     ARFLAGS_OUT_PREFIX="/OUT:\""
     ARFLAGS_OUT_SUFFIX="\""
