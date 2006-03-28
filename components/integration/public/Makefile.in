@@ -29,8 +29,16 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+XPIDL_SRCS = IWindowCloak.idl \
+             IWindowDragger.idl \
+             IWindowMinMax.idl \
+             IWindowRegion.idl \
+             IWindowResizeHook.idl \
+             $(NULL)
+             
+XPIDL_MODULE = sbIntegration.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+SONGBIRD_COMPONENTS = $(XPIDL_MODULE)             
 
 include $(topsrcdir)/build/rules.mk

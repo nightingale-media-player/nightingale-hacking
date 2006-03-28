@@ -40,6 +40,10 @@ SUBDIRS = dataremote \
           servicesource \
           $(NULL)
 
+ifeq ($(SB_PLATFORM), win32)
+SUBDIRS += integration
+endif
+
 SUBDIRDEPS  = mediacore : medialibrary
 SUBDIRDEPS2 = playlistreader : medialibrary
 SUBDIRDEPS3 = playlistsource : medialibrary

@@ -29,8 +29,57 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+ifdef DEBUG
+target_name = sbIntegration_d
+else
+target_name = sbIntegration
+endif
+
+CPP_SRCS = MultiMonitor.cpp \
+           NativeWindowFromNode.cpp \
+           WindowCloak.cpp \
+           WindowDragger.cpp \
+           WindowMinMax.cpp \
+           WindowMinMaxSubclass.cpp \
+           WindowRegion.cpp \
+           WindowResizeHook.cpp \
+           $(NULL)
+           
+CPP_INCLUDES = $(DEPTH)/components/integration/public \
+               $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/devices/manager/public \
+               $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/cd/public \
+               $(COMPONENTS_DIR)/devices/base/src \
+               $(COMPONENTS_DIR)/devices/cd/src \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/gfx \
+               $(MOZSDK_INCLUDE_DIR)/accessibility \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/xultmpl \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+           
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4  \
+                            plc4  \
+                            xpcom \
+                            xul \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk
