@@ -42,7 +42,7 @@
 
   <binding id="search">
     <content>
-      <xul:hbox onmousedown="onFirstMousedown();">
+      <xul:hbox onmousedown="onFirstMousedown();" onfocus="onFirstMousedown();">
         <xul:button 
           sbid="search.button"
           type="menu"
@@ -188,6 +188,8 @@
           this.list.label = "";
           this.first_mousedown = true;
         }
+        this.list.setAttribute( "focused", "true" );
+        this.list.mInputField.focus();
       }
       catch( err )
       {

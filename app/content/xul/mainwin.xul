@@ -42,6 +42,7 @@
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();thePlayerRepeater.unbind();"
   title="&window.main.title;"
+  onkeypress="onMainwinKeypress( event );"
   
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"

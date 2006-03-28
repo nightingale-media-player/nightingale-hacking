@@ -1852,6 +1852,20 @@ function onPlaylistEditKeypress( evt )
   }
 }
 
+function onMainwinKeypress( evt )
+{
+  switch ( evt.charCode )
+  {
+    case 102: // Ctrl-F
+      if ( evt.ctrlKey )
+      {
+        var search_widget = document.getElementById( "search_widget" );
+        search_widget.onFirstMousedown(); // Sets focus.  Clears "search" text.
+      }
+      break;
+  }
+}
+
 var isPlaylistEditShowing = false;
 function HidePlaylistEdit()
 {
