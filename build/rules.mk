@@ -94,6 +94,14 @@ ifdef UNZIP_SRC
 targets += unzip_file
 endif
 
+ifdef SONGBIRD_MAIN_APP
+targets += move_sb_stub_executable
+endif
+
+ifdef EXECUTABLE
+targets += chmod_add_executable
+endif
+
 ifdef CLONEDIR
 targets += clone_dir
 endif
@@ -128,10 +136,6 @@ endif
 
 ifdef SONGBIRD_CHROME_MANIFEST
 targets += copy_sb_chrome_manifest
-endif
-
-ifdef SONGBIRD_MAIN_APP
-targets += move_sb_stub_executable
 endif
 
 all:   $(targets) \
@@ -526,6 +530,16 @@ move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
 	mv -f $(SONGBIRD_MAIN_APP) $(sb_executable)
 	chmod +x $(sb_executable)
 #.PHONY : move_sb_stub_executable
+endif
+
+#------------------------------------------------------------------------------
+# Rules for changing permissions
+#------------------------------------------------------------------------------
+
+ifdef EXECUTABLE
+chmod_add_executable:
+	chmod +x $(EXECUTABLE)
+.PHONY : chmod_add_executable
 endif
 
 #------------------------------------------------------------------------------
