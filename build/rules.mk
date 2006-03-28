@@ -90,6 +90,10 @@ targets += lib_link
 clean_targets += lib_clean
 endif
 
+ifdef SONGBIRD_DIST
+targets += copy_sb_dist
+endif
+
 ifdef SONGBIRD_COMPONENTS
 targets += copy_sb_components
 endif
@@ -387,7 +391,13 @@ endif #SUBDIRS
 # SONGBIRD_COMPONENTS - indicates that the files should be copied to the
 #                       $(SONGBIRD_COMPONENTSDIR) directory
 
-chrome_subdir= 
+ifdef SONGBIRD_DIST
+copy_sb_dist:
+	cp -af $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
+.PHONY : copy_sb_dist
+endif #SONGBIRD_DIST
+
+chrome_subdir=
 ifdef SONGBIRD_CHROME_SUBDIR
   chrome_subdir = $(SONGBIRD_CHROME_SUBDIR)
 endif #SONGBIRD_CHROME_SUBDIR

@@ -29,8 +29,16 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+CREATEDIRS = $(SONGBIRD_CHROMEDIR)/feathers/rubberducky
+
+SONGBIRD_CHROME_SUBDIR = /feathers/rubberducky
+
+SONGBIRD_CHROME = $(topsrcdir)/feathers/rubberducky/default \
+                  $(topsrcdir)/feathers/rubberducky/mini \
+                  $(topsrcdir)/feathers/rubberducky/serviceicons \
+                  $(topsrcdir)/feathers/rubberducky/bindings.xml \
+                  $(topsrcdir)/feathers/rubberducky/contents.rdf \
+                  $(topsrcdir)/feathers/rubberducky/*.css \
+                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
