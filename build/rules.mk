@@ -235,6 +235,7 @@ makelink_cmd = $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
 
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(DYNAMIC_LIB_OBJS)
+	chmod +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
 
 dll_clean:
@@ -433,7 +434,7 @@ files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))
 
 ifdef files_list
 clone_dir_cmd = cd $(srcdir) && \
-                cp -f --parents $(files_list) $(CLONEDIR) \
+                cp -dfp --parents $(files_list) $(CLONEDIR) \
                 $(NULL)
 endif
 
@@ -448,7 +449,7 @@ endif #CLONEDIR
 
 ifdef SONGBIRD_DIST
 copy_sb_dist:
-	cp -f $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
+	cp -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
 
@@ -456,7 +457,7 @@ endif #SONGBIRD_DIST
 
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
-	cp -f $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
+	cp -dfp $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
 
@@ -464,7 +465,7 @@ endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
-	cp -f $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
+	cp -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
 
@@ -472,7 +473,7 @@ endif #SONGBIRD_COMPONENTS
 
 ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
-	cp -f $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
+	cp -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS  
 
@@ -480,7 +481,7 @@ endif #SONGBIRD_DEFAULTS
 
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
-	cp -f $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
+	cp -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
 
@@ -488,7 +489,7 @@ endif #SONGBIRD_PLUGINS
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
-	cp -f $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
+	cp -dfp $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
 
@@ -496,7 +497,7 @@ endif #SONGBIRD_VLCPLUGINS
 
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
-	cp -f $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
+	cp -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
 
@@ -508,9 +509,10 @@ ifdef SONGBIRD_CHROME_MANIFEST
 ifneq (1,$(words $(SONGBIRD_CHROME_MANIFEST)))
 $(error You can only have one file as your chrome.manifest)
 endif
-copy_sb_chrome_manifest:
+chrome_manifest = $(SONGBIRD_CHROMEDIR)/chrome.manifest
+copy_sb_chrome_manifest: $(SONGBIRD_CHROME_MANIFEST)
 	cp -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
-.PHONY : copy_sb_chrome_manifest
+#.PHONY : copy_sb_chrome_manifest
 endif
 
 #-----------------------
@@ -519,9 +521,11 @@ ifdef SONGBIRD_MAIN_APP
 ifneq (,$(findstring *xulrunner-stub*,$(SONGBIRD_MAIN_APP)))
 $(error You must specify the xulrunner-stub file here)
 endif
-move_sb_stub_executable:
-	mv -f $(SONGBIRD_MAIN_APP) $(SONGBIRD_DISTDIR)/$(SB_APPNAME)$(BIN_SUFFIX)
-.PHONY : move_sb_stub_executable
+sb_executable = $(SONGBIRD_DISTDIR)/$(SB_APPNAME)$(BIN_SUFFIX)
+move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
+	mv -f $(SONGBIRD_MAIN_APP) $(sb_executable)
+	chmod +x $(sb_executable)
+#.PHONY : move_sb_stub_executable
 endif
 
 #------------------------------------------------------------------------------
