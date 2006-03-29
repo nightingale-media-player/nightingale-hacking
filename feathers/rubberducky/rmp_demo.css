@@ -1480,6 +1480,11 @@ SEARCH WIDGET
   margin: 2px 2px 2px 2px; 
 } 
 
+#search_widget input
+{
+  color: #CCC;
+}
+
 #search_widget input:focus
 {
   border: 1px solid #C0C8BB;
