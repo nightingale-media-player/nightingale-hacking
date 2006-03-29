@@ -1863,6 +1863,13 @@ function onMainwinKeypress( evt )
         search_widget.onFirstMousedown(); // Sets focus.  Clears "search" text.
       }
       break;
+    case 108: // Ctrl-L
+      if ( evt.ctrlKey )
+      {
+        var location_bar = document.getElementById( "browser_url" );
+        location_bar.focus();
+      }
+      break;
   }
 }
 
@@ -2433,7 +2440,6 @@ function SBGetServiceFromUrl( url )
   {
     alert( "SBGetServiceFromUrl - " + err )
   }
-  alert( "SBGetServiceFromUrl( " + url + " ) = " + retval + "\n" + text );
   return retval;
 }
 
@@ -2516,7 +2522,6 @@ function SBGetUrlFromService( service )
   {
     alert( "SBGetUrlFromService - " + err )
   }
-  alert( "SBGetUrlFromService( " + service + " ) = " + retval );
   return retval;
 }
 
