@@ -47,6 +47,7 @@ SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/vlcplugins/*$(DLL_SUFFIX) \
                       $(NULL)
 
 SONGBIRD_XULRUNNER = $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
+                     $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                      $(NULL)
 
 ifeq ($(SB_PLATFORM), win32)
