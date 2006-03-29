@@ -36,8 +36,8 @@ const SONGBIRD_PLAYLISTREADERLISTENER_CID = Components.ID("{5770099E-503B-4b76-B
 function CPlaylistReaderListener()
 {
   jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://Songbird/content/scripts/songbird_interfaces.js", this );
-  jsLoader.loadSubScript( "chrome://Songbird/content/scripts/sbIDataRemote.js", this );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 }
 
 CPlaylistReaderListener.prototype.constructor = CPlaylistReaderListener;

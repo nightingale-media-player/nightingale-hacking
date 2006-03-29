@@ -50,7 +50,7 @@ const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbird.org/Songbird/MediaLibrary;1"
 const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
 
 // String Bundles
-const URI_SONGBIRD_PROPERTIES    = "chrome://Songbird/locale/songbird.properties";
+const URI_SONGBIRD_PROPERTIES    = "chrome://songbird/locale/songbird.properties";
 
 // Database GUIDs
 const DB_TEST_GUID = "testdb-0000";

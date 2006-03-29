@@ -60,7 +60,7 @@
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
-copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\
 copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
@@ -125,7 +125,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
-copy /y $(SolutionDir)dependencies\win32\sqlite\release\sqlite.dll $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\
 copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
@@ -429,25 +429,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			</File>
 			<File
 				RelativePath=".\src\sbIPlaylistManager.js">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
-"
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
-"
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\src\sbIPlaylistPlayback.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

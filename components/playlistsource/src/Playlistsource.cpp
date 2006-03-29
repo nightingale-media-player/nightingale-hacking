@@ -202,11 +202,13 @@ NS_IMPL_ISUPPORTS2(sbPlaylistsource, sbIPlaylistsource, nsIRDFDataSource)
 //-----------------------------------------------------------------------------
 sbPlaylistsource::sbPlaylistsource()
 {
+  NS_ASSERTION(this, "like, not having a this pointer is _bad_ dude.");
+  gPlaylistPlaylistsource = this;
   if (!g_pMonitor) {
     g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
     NS_ASSERTION(g_pMonitor, "sbPlaylistsource.g_pMonitor failed");
   }
-  Init();
+  gPlaylistPlaylistsource->Init();
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -1248,7 +1250,7 @@ void sbPlaylistsource::Init(void)
       rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
       if ( NS_SUCCEEDED(rv) )
       {
-        rv = StringBundleService->CreateBundle( "chrome://Songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
+        rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
         //        StringBundleService->Release();
       }
     }

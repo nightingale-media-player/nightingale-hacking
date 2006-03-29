@@ -36,7 +36,7 @@ const SONGBIRD_PLAYLISTHTML_IID = Components.interfaces.sbIPlaylistReader;
 function CPlaylistHTML()
 {
   jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://Songbird/content/scripts/songbird_interfaces.js", this );
+  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
 }
 
 /* I actually need a constructor in this case. */

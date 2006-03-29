@@ -2397,14 +2397,17 @@ function SBDropped()
 function SBGetServiceFromUrl( url )
 {
   retval = url;
+  var text = "";
   try
   {
     var theServiceTree = document.getElementById( "frame_servicetree" );
     if ( theServiceTree )
     {
+      text += "tree\n";
       var theServiceTree_tree = theServiceTree.tree;
       if (theServiceTree_tree)
       {
+        text += "tree_tree\n";
         // Find the columns. 
         var urlcolumn = theServiceTree_tree.columns ? theServiceTree_tree.columns["url"] : "url";
         var labelcolumn = theServiceTree_tree.columns ? theServiceTree_tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
@@ -2420,7 +2423,9 @@ function SBGetServiceFromUrl( url )
             retval = tree_label;
             break;
           }
+          text += "row " + tree_url + "\n";
         }
+        text += "end\n";
       }
     }
   }
@@ -2428,6 +2433,7 @@ function SBGetServiceFromUrl( url )
   {
     alert( "SBGetServiceFromUrl - " + err )
   }
+  alert( "SBGetServiceFromUrl( " + url + " ) = " + retval + "\n" + text );
   return retval;
 }
 
@@ -2510,6 +2516,7 @@ function SBGetUrlFromService( service )
   {
     alert( "SBGetUrlFromService - " + err )
   }
+  alert( "SBGetUrlFromService( " + service + " ) = " + retval );
   return retval;
 }
 
