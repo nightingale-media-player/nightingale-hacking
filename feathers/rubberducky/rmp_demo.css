@@ -1475,14 +1475,15 @@ SEARCH WIDGET
 #search_widget
 { 
   background-color: #242527;
-  border: 1px solid #C0C8BB; 
+  border: 1px solid #4A4E48; 
   -moz-border-radius: 5px;
   margin: 2px 2px 2px 2px; 
 } 
 
-#search_widget input
+#search_widget input:focus
 {
-  -moz-appearance:none;
+  border: 1px solid #C0C8BB;
+  background-color: #99A195;
   color: #FFF;
 }
 
@@ -1977,51 +1978,39 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 ************************************************************************************************************************************************
 */
 
-/* the browser buttons */
-
-#browser_url
+/* the box with the url image and the url textbox */
+#browser_url_box
 {
   margin: 2px 0px 2px 0px;
-  padding-top: 4px;
-  -moz-border-top-colors: #4A4E48;
-  -moz-border-bottom-colors: #4A4E48;
-  -moz-border-right-colors: #4A4E48;
+  padding: 3px;
+  -moz-border-radius: 5px;
   border: 1px solid #4A4E48;
-  border-left: none;
-  -moz-appearance: none;
   background-color: transparent;
   color: #CCC;
-  -moz-border-radius-topright: 3px;
-  -moz-border-radius-bottomright: 3px;
-  
-/*  
-  border-bottom: none;
-  -moz-border-radius: 2px;
-  -moz-border-left-colors: #808583;
-*/
 }
 
 #browser_url_image
 {
-  margin: 2px 0px 2px 0px;
-  padding: 4px 2px 2px 2px;
-  -moz-background-origin: padding;
-  -moz-border-top-colors: #4A4E48;
-  -moz-border-left-colors: #4A4E48;
-  -moz-border-bottom-colors: #4A4E48;
-  border: 1px solid #F00;/*4F5054*/
-  border-right: none;
   -moz-appearance: none;
   background-color: transparent;
-  color: #CCC;  
-  -moz-border-radius-topleft: 3px;
-  -moz-border-radius-bottomleft: 3px;
-  
-/*  
-  border-bottom: none;
-  -moz-border-right-colors: #808583;
-*/
+  height: 16px;
+  width: 16px;
 }
+
+#browser_url
+{
+  background-color: transparent;
+  color: #CCC;  
+  margin-left: 3px;
+}
+
+#browser_url input:focus
+{
+  background-color: #99A195;
+  color: #FFF;
+}
+
+
 
 #browser_toolbar
 {
