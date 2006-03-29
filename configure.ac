@@ -121,7 +121,7 @@ case "$SB_PLATFORM" in
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
   ;;
   *)
-    AC_CHECK_PROG(LD, ld, ld)
+    AC_CHECK_PROG(LD, ${CC}, ${CC})
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, as, as)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
