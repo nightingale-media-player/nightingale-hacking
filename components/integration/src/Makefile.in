@@ -29,7 +29,59 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = $(SB_PLATFORM) \
-          $(NULL)
+ifdef DEBUG
+target_name = sbIntegration_d$(DLL_SUFFIX)
+else
+target_name = sbIntegration$(DLL_SUFFIX)
+endif
+
+CPP_SRCS = $(SB_PLATFORM)/MultiMonitor.cpp \
+           $(SB_PLATFORM)/NativeWindowFromNode.cpp \
+           $(SB_PLATFORM)/WindowCloak.cpp \
+           $(SB_PLATFORM)/WindowDragger.cpp \
+           $(SB_PLATFORM)/WindowMinMax.cpp \
+           $(SB_PLATFORM)/WindowMinMaxSubclass.cpp \
+           $(SB_PLATFORM)/WindowRegion.cpp \
+           $(SB_PLATFORM)/WindowResizeHook.cpp \
+           IntegrationComponent.cpp \
+           $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/integration/public \
+               $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/devices/manager/public \
+               $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/cd/public \
+               $(COMPONENTS_DIR)/integration/src/$(SB_PLATFORM) \
+               $(COMPONENTS_DIR)/devices/base/src \
+               $(COMPONENTS_DIR)/devices/cd/src \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/gfx \
+               $(MOZSDK_INCLUDE_DIR)/accessibility \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/xultmpl \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)
+
+DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%.obj,$(notdir $(CPP_SRCS)))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4  \
+                            plc4  \
+                            xpcom \
+                            xul \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(target_name)
 
 include $(topsrcdir)/build/rules.mk

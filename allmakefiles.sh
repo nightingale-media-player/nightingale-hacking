@@ -142,9 +142,6 @@ MAKEFILES_integration="
 components/integration/Makefile
 components/integration/public/Makefile
 components/integration/src/Makefile
-components/integration/src/linux/Makefile
-components/integration/src/macosx/Makefile
-components/integration/src/win32/Makefile
 "
 
 MAKEFILES_mediacore="
