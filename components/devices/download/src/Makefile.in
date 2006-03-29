@@ -55,7 +55,9 @@ CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+
+DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/devicebase$(LIB_SUFFIX)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
@@ -63,11 +65,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcom \
                             xul \
                             unicharutil_s \
-                            devicebase \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(DEPTH)/components/devices/base/src \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)

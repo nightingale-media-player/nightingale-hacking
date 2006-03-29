@@ -207,6 +207,7 @@ endif #CPP_SRCS
 # DYNAMIC_LIB_IMPORT_PATHS - a list of paths to search for libs
 # DYNAMIC_LIB_IMPORTS - an override to the default list of libs to link
 # DYNAMIC_LIB_EXTRA_IMPORTS - an additional list of libs to link
+# DYNAMIC_LIB_STATIC_IMPORTS - a list of static libs to link
 # DYNAMIC_LIB_FLAGS - an override to the default linker flags
 # DYNAMIC_LIB_EXTRA_FLAGS - a list of additional flags to pass to the linker
 
@@ -229,6 +230,19 @@ ifdef DYNAMIC_LIB_EXTRA_IMPORTS
 linker_imports_temp1 += $(DYNAMIC_LIB_EXTRA_IMPORTS)
 endif
 endif
+
+ifeq (win32,$(SB_PLATFORM))
+ifdef $(DYNAMIC_LIB_STATIC_IMPORTS)
+linker_imports_temp1 += $(DYNAMIC_LIB_STATIC_IMPORTS)
+endif
+linker_objs = $(DYNAMIC_LIB_OBJS)
+else
+linker_objs = $(DYNAMIC_LIB_OBJS)
+ifdef $(DYNAMIC_LIB_STATIC_IMPORTS)
+linker_objs += $(DYNAMIC_LIB_STATIC_IMPORTS)
+endif
+endif
+
 linker_imports_temp2 = $(addprefix $(LDFLAGS_IMPORT_PREFIX), $(linker_imports_temp1))
 linker_imports = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), $(linker_imports_temp2))
 
@@ -242,7 +256,7 @@ linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 makelink_cmd = $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
 
 dll_link: $(DYNAMIC_LIB_OBJS)
-	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(DYNAMIC_LIB_OBJS)
+	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(linker_objs)
 	$(CHMOD) +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
 
