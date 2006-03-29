@@ -29,9 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(COMPONENTS_DIR)/playlistplayback/src/coreVLC.js \
-                      $(COMPONENTS_DIR)/playlistplayback/src/coreWMP.js \
-                      $(COMPONENTS_DIR)/playlistplayback/src/sbPlaylistPlayback.js \
-                      $(NULL)
+CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content/scripts
+                
+CLONEDIR = $(SONGBIRD_CHROMEDIR)/content/scripts
 
 include $(topsrcdir)/build/rules.mk

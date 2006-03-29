@@ -421,17 +421,21 @@ endif #SUBDIRS
 ifdef CLONEDIR
 
 ifdef CLONE_FIND_EXP
-find_exp = $(CLONE_FIND_EXP)
+
+  find_exp = $(CLONE_FIND_EXP)
+
 else
-ifdef CLONE_EXCLUDE_NAME
-clone_exclude_name := $(addsuffix ",$(CLONE_EXCLUDE_NAME))
-clone_exclude_name := $(addprefix ! -name ",$(clone_exclude_name))
-endif
-ifdef CLONE_EXCLUDE_DIR
-clone_exclude_dir := $(addsuffix /*",$(CLONE_EXCLUDE_DIR))
-clone_exclude_dir := $(addprefix ! -wholename "*/,$(clone_exclude_dir))
-endif
-find_exp = -type f ! -wholename "*.svn*" $(clone_exclude_dir) ! -name "Makefile.in" $(clone_exclude_name)
+  ifdef CLONE_EXCLUDE_NAME
+    clone_exclude_name := $(addsuffix ",$(CLONE_EXCLUDE_NAME))
+    clone_exclude_name := $(addprefix ! -name ",$(clone_exclude_name))
+  endif
+  ifdef CLONE_EXCLUDE_DIR
+    clone_exclude_dir := $(addsuffix /*",$(CLONE_EXCLUDE_DIR))
+    clone_exclude_dir := $(addprefix ! -wholename "*/,$(clone_exclude_dir))
+  endif
+
+  find_exp = -type f ! -wholename "*.svn*" $(clone_exclude_dir) ! -name "Makefile.in" $(clone_exclude_name)
+
 endif
 
 files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))

@@ -43,6 +43,7 @@ CPP_SRCS = MultiMonitor.cpp \
            WindowMinMaxSubclass.cpp \
            WindowRegion.cpp \
            WindowResizeHook.cpp \
+           ../IntegrationComponent.cpp \
            $(NULL)
            
 CPP_INCLUDES = $(DEPTH)/components/integration/public \
@@ -50,6 +51,7 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/cd/public \
+               $(COMPONENTS_DIR)/integration/src/win32 \
                $(COMPONENTS_DIR)/devices/base/src \
                $(COMPONENTS_DIR)/devices/cd/src \
                $(MOZSDK_INCLUDE_DIR) \
@@ -68,7 +70,16 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
            
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = MultiMonitor$(OBJ_SUFFIX) \
+                   NativeWindowFromNode$(OBJ_SUFFIX) \
+                   WindowCloak$(OBJ_SUFFIX) \
+                   WindowDragger$(OBJ_SUFFIX) \
+                   WindowMinMax$(OBJ_SUFFIX) \
+                   WindowMinMaxSubclass$(OBJ_SUFFIX) \
+                   WindowRegion$(OBJ_SUFFIX) \
+                   WindowResizeHook$(OBJ_SUFFIX) \
+                   IntegrationComponent$(OBJ_SUFFIX) \
+                   $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
@@ -78,6 +89,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(DEPTH)/components/integration/src/win32 \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
