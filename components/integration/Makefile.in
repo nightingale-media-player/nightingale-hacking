@@ -29,10 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = public \
-          src \
-          $(NULL)
+SUBDIRS = public
 
+ifeq (win32,$(SB_PLATFORM))
+SUBDIRS += src
 SUBDIRDEPS = src : public
+endif
 
 include $(topsrcdir)/build/rules.mk
