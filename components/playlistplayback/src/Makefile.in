@@ -32,5 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content/scripts
                 
 CLONEDIR = $(SONGBIRD_CHROMEDIR)/content/scripts
+CLONE_EXCLUDE_NAME = sbPlaylistPlayback.js
+
+SONGBIRD_COMPONENTS = sbPlaylistPlayback.js
 
 include $(topsrcdir)/build/rules.mk
