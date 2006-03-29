@@ -64,6 +64,7 @@ CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
 
 APP_DIR						 = @top_srcdir@/app
 DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@
+XULRUNNER_DIR      = @top_srcdir@/dependencies/@SB_PLATFORM@/xulrunner/@SB_CONFIGURATION@
 COMPONENTS_DIR     = @top_srcdir@/components
 ID3LIB_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/id3lib/@SB_CONFIGURATION@
 SQLITE_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/sqlite/@SB_CONFIGURATION@
@@ -96,6 +97,9 @@ PERL      = @CYGWIN_WRAPPER@ @PERL@@BIN_SUFFIX@
 LN        = @CYGWIN_WRAPPER@ @LN@@BIN_SUFFIX@
 UNZIP     = @CYGWIN_WRAPPER@ @UNZIP@@BIN_SUFFIX@
 ZIP       = @CYGWIN_WRAPPER@ @ZIP@@BIN_SUFFIX@
+GUNZIP    = @CYGWIN_WRAPPER@ @GUNZIP@@BIN_SUFFIX@
+GZIP      = @CYGWIN_WRAPPER@ @GZIP@@BIN_SUFFIX@
+TAR       = @CYGWIN_WRAPPER@ @TAR@@BIN_SUFFIX@
 FIND      = @CYGWIN_WRAPPER@ @FIND@@BIN_SUFFIX@
 CP        = @CYGWIN_WRAPPER@ @CP@@BIN_SUFFIX@
 MV        = @CYGWIN_WRAPPER@ @MV@@BIN_SUFFIX@

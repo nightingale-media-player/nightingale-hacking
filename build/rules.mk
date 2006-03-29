@@ -94,6 +94,10 @@ ifdef UNZIP_SRC
 targets += unzip_file
 endif
 
+ifdef GUNZIP_SRC
+targets += gunzip_file
+endif
+
 ifdef SONGBIRD_MAIN_APP
 targets += move_sb_stub_executable
 endif
@@ -561,6 +565,10 @@ ifndef UNZIP_DEST_DIR
 $(error UNZIP_DEST_DIR *must* be set when extracting from UNZIP_SRC = $(UNZIP_SRC))
 endif
 
+ifneq (1,$(words $(UNZIP_SRC)))
+$(error You can only have one file specified by UNZIP_SRC)
+endif
+
 ifdef UNZIP_FLAGS
 unzip_flags = $(UNZIP_FLAGS)
 else
@@ -576,6 +584,27 @@ unzip_file:
 .PHONY : unzip_file
 
 endif # UNZIP_SRC
+
+#------------------------------------------------------------------------------
+# Rules for manipulating GZ archives
+#------------------------------------------------------------------------------
+
+ifdef GUNZIP_SRC
+
+ifndef GUNZIP_DEST_DIR
+$(error GUNZIP_DEST_DIR *must* be set when extracting from GUNZIP_SRC = $(GUNZIP_SRC))
+endif
+
+ifneq (1,$(words $(GUNZIP_SRC)))
+$(error You can only have one file specified by GUNZIP_SRC)
+endif
+
+gunzip_file:
+	$(TAR) zxvf $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
+
+.PHONY : gunzip_file
+
+endif # GUNZIP_SRC
 
 #------------------------------------------------------------------------------
 # Rules for making directories

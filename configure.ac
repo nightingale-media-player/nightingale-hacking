@@ -84,6 +84,15 @@ if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
 AC_CHECK_PROG(UNZIP, unzip, unzip)
 if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 
+AC_CHECK_PROG(GZIP, gzip, gzip)
+if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
+
+AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
+if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
+
+AC_CHECK_PROG(TAR, tar, tar)
+if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
+
 AC_CHECK_PROG(LN, ln, ln)
 if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 

@@ -29,9 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-UNZIP_SRC = $(srcdir)/$(SB_PLATFORM)/xulrunner/$(SB_CONFIGURATION)/xulrunner.zip
-
+ifeq (win32,$(SB_PLATFORM))
+UNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.zip
 UNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
+else
+GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
+GUNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
+endif
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
