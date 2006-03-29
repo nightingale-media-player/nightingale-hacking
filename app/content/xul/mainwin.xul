@@ -413,8 +413,10 @@
                       <toolbarbutton disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
                       <toolbarbutton disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
                       <toolbarbutton disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>                                           
+                      <hbox class="sb_faceplate" id="browser_url_box" flex="1">
                       <image id="browser_url_image" class="sb_faceplate" src=""/>                      
                       <textbox id="browser_url" class="sb_faceplate" onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" flex="1"/>
+                      </hbox>
                       <!-- SEARCH WIDGET -->
                       <search
                         id="search_widget" 
