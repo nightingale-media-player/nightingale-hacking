@@ -2022,168 +2022,169 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border-bottom: 1px solid #808583; 
   background-color: transparent;
   height: 29px;
+  padding-left: 5px;
 }
 
 #browser_toolbar toolbarbutton 
 {
-/*  
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-topright: 5px;
-  border-bottom: none;
-*/
-  -moz-border-radius: 5px;
-  border-width: 1px;
-  color: #FFF;
-}
+  -moz-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+ }
 
 #browser_toolbar toolbarbutton:hover
 {
-  background-color: Transparent;
-  color: #000;
 }
 
 #browser_back
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_back_normal.png);
 }
 #browser_back:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_back_hover.png);
 }
 #browser_back[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_back_disabled.png);
+}
+#browser_back[active="true"]
+{
+  -moz-appearance: none;
+  list-style-image: url(default/webbar_back_active.png);
 }
 #browser_refresh
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_refresh_normal.png);
 }
 #browser_refresh:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_refresh_hover.png);
 }
 #browser_refresh[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_refresh_disabled.png);
+}
+#browser_refresh[active="true"]
+{
+  -moz-appearance: none;
+  list-style-image: url(default/webbar_refresh_active.png);
 }
 #browser_stop
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_stop_normal.png);
 }
 #browser_stop:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_stop_hover.png);
 }
 #browser_stop[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_stop_disabled.png);
+}
+#browser_stop[active="true"]
+{
+  -moz-appearance: none;
+  list-style-image: url(default/webbar_stop_active.png);
 }
 #browser_fwd
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_forward_normal.png);
 }
 #browser_fwd:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_forward_hover.png);
 }
 #browser_fwd[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_forward_disabled.png);
+}
+#browser_fwd[active="true"]
+{
+  -moz-appearance: none;
+  list-style-image: url(default/webbar_forward_active.png);
 }
 #browser_home
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_home_normal.png);
 }
 #browser_home:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_home_hover.png);
 }
 #browser_home[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_home_disabled.png);
+}
+#browser_home[active="true"]
+{
+  -moz-appearance: none;
+  list-style-image: url(default/webbar_home_active.png);
 }
 #browser_bookmark
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_bookmark_normal.png);
 }
 #browser_bookmark:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_bookmark_hover.png);
 }
 #browser_bookmark[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_bookmark_disabled.png);
+}
+#browser_bookmark[active="true"]
+{
+  -moz-appearance: none;
+  list-style-image: url(default/webbar_bookmark_active.png);
 }
 #browser_playlist
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_normal.png);
 }
 #browser_playlist:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_hover.png);
 }
 #browser_playlist[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_disabled.png);
 }
 #browser_download
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_normal.png);
 }
 #browser_download:hover
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_hover.png);
 }
 #browser_download[disabled="true"]
 {
   -moz-appearance: none;
-  padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_disabled.png);
 }
 
