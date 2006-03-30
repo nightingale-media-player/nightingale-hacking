@@ -108,6 +108,9 @@ if test -z "$CHMOD"; then AC_MSG_ERROR(Chmod not found); fi
 AC_CHECK_PROG(RM, rm, rm)
 if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 
+AC_CHECK_PROG(MKDIR, mkdir, mkdir)
+if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
+
 case "$SB_PLATFORM" in
   win32)
     AC_CHECK_PROG(CP, cp, cp)
@@ -366,11 +369,11 @@ case "$SB_PLATFORM" in
   ;;
   linux)
     GCC_COMPILER_FLAGS="-c -fPIC -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
-    if test "$enable_debug" = "yes"; then
+#    if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
-    else
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O"
-    fi
+#    else
+#      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O"
+#    fi
 
     # We always want to include "mozilla-config.h"
     GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
