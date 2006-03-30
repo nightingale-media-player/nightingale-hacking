@@ -615,7 +615,7 @@ $(error You can only have one file specified by GUNZIP_SRC)
 endif
 
 gunzip_file:
-	$(TAR) zxvf $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
+	$(TAR) zxf $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
 
 .PHONY : gunzip_file
 
