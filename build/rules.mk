@@ -231,15 +231,16 @@ linker_imports_temp1 += $(DYNAMIC_LIB_EXTRA_IMPORTS)
 endif
 endif
 
+linker_objs = $(DYNAMIC_LIB_OBJS)
+
 ifeq (win32,$(SB_PLATFORM))
-ifdef $(DYNAMIC_LIB_STATIC_IMPORTS)
+ifdef DYNAMIC_LIB_STATIC_IMPORTS
 linker_imports_temp1 += $(DYNAMIC_LIB_STATIC_IMPORTS)
 endif
-linker_objs = $(DYNAMIC_LIB_OBJS)
 else
-linker_objs = $(DYNAMIC_LIB_OBJS)
-ifdef $(DYNAMIC_LIB_STATIC_IMPORTS)
-linker_objs += $(DYNAMIC_LIB_STATIC_IMPORTS)
+ifdef DYNAMIC_LIB_STATIC_IMPORTS
+static_objs = $(addsuffix $(OBJ_SUFFIX),$(DYNAMIC_LIB_STATIC_IMPORTS))
+linker_objs += $(static_objs)
 endif
 endif
 

@@ -57,7 +57,7 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
 
-DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/devicebase$(LIB_SUFFIX)
+DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/devicebase
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
