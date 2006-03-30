@@ -130,7 +130,6 @@ case "$SB_PLATFORM" in
 		if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
 		AC_CHECK_PROG(RANLIB, ranlib, ranlib)
 		if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
-		USING_RANLIB=1
   ;;
   macosx)
     AC_CHECK_PROG(CP, gcp, gcp)
@@ -143,10 +142,8 @@ case "$SB_PLATFORM" in
 		if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
 		AC_CHECK_PROG(RANLIB, ranlib, ranlib)
 		if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
-		USING_RANLIB=1
   ;;
 esac
-AC_SUBST(USING_RANLIB)
 
 #
 # Checks for libraries.
@@ -331,6 +328,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
   ;;
   macosx)
+		USING_RANLIB=1
   ;;
   linux)
     GCC_COMPILER_FLAGS="-c -fPIC -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
@@ -367,6 +365,7 @@ case "$SB_PLATFORM" in
     ARFLAGS_LIB=""
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
+    USING_RANLIB=1
   ;;
 esac
 
@@ -390,6 +389,7 @@ AC_SUBST(DEFAULT_LIBS)
 AC_SUBST(LNFLAGS)
 AC_SUBST(UNZIPFLAGS)
 AC_SUBST(UNZIPFLAGS_EXTRACT)
+AC_SUBST(USING_RANLIB)
 
 #
 # We're going to hardcode our obj and dist directory names for the moment.
