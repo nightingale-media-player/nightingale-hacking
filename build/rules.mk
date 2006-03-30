@@ -239,7 +239,7 @@ linker_imports_temp1 += $(DYNAMIC_LIB_STATIC_IMPORTS)
 endif
 else
 ifdef DYNAMIC_LIB_STATIC_IMPORTS
-static_objs = $(addsuffix $(OBJ_SUFFIX),$(DYNAMIC_LIB_STATIC_IMPORTS))
+static_objs = $(addsuffix $(LIB_SUFFIX),$(DYNAMIC_LIB_STATIC_IMPORTS))
 linker_objs += $(static_objs)
 endif
 endif
