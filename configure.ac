@@ -328,7 +328,6 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
   ;;
   macosx)
-<<<<<<< .mine
     GCC_COMPILER_FLAGS="-c -fPIC -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
