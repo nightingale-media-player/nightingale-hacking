@@ -324,7 +324,7 @@ tree .tree-columnpicker-icon
   -moz-border-right-colors: #000 #000;
   -moz-border-bottom-colors: #000 #000;
   -moz-border-left-colors: #000 #000;
-  margin: 0px;
+  margin: 0px 2px 0px 0px;
   padding: 0px;
   border: none;
   list-style-image: url(default/column_picker.png);
@@ -530,7 +530,6 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected
 {
  -moz-appearance: none;
   border: none;
-  color: #333;
   background-color: #676D65;
 }
 
@@ -1306,10 +1305,7 @@ scrollbar
   background-color: #000; 
   background-image: none; 
   background-image: none; 
-  padding: 0 0 0 0; 
-  border-left: 1px solid #666; 
-  border-right: 1px solid #666; 
-  border-bottom: 1px solid #666; 
+  padding: 0 0 0 0;  
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
@@ -1321,8 +1317,8 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
@@ -1334,8 +1330,8 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
  
 scrollbar > slider > thumb > gripper
@@ -1345,24 +1341,22 @@ scrollbar > slider > thumb > gripper
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  width: 16px;
 } 
 
 scrollbar > slider > thumb
 {   
   -moz-appearance: none;  
-  -moz-border-radius: 3px;  
-  -moz-border-top-colors: #999 #666;
-  -moz-border-right-colors: #666 #333;
-  -moz-border-bottom-colors: #666 #333;
-  -moz-border-left-colors: #999 #666;
+  -moz-border-radius: 2px;  
+  -moz-border-top-colors: #666 #333;
+  -moz-border-right-colors: #333 #000;
+  -moz-border-bottom-colors: #333 #000;
+  -moz-border-left-colors: #666 #333;
   border: 2px solid; 
-  background-color: transparent; 
+  background-color: #343d42; 
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;  
-  height: 19px;
-  width: 15px;
+  width: 16px;
 } 
 
 scrollbar > slider
