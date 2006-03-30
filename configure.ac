@@ -328,7 +328,42 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
   ;;
   macosx)
-		USING_RANLIB=1
+<<<<<<< .mine
+    GCC_COMPILER_FLAGS="-c -fPIC -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
+    if test "$enable_debug" = "yes"; then
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
+    else
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O"
+    fi
+
+    # We always want to include "mozilla-config.h"
+    GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
+
+    GCC_LINKER_FLAGS=""
+
+    CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
+    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
+    CFLAGS_INCLUDE_PREFIX="-I"
+    CFLAGS_INCLUDE_SUFFIX=""
+    LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
+    LDFLAGS_DLL="-dynamic"
+    LDFLAGS_LIB="-static"
+    LDFLAGS_OUT_PREFIX="-o "
+    LDFLAGS_OUT_SUFFIX=""
+    LDFLAGS_PATH_PREFIX="-L"
+    LDFLAGS_PATH_SUFFIX=""
+    LDFLAGS_IMPORT_PREFIX="-l"
+    LDFLAGS_IMPORT_SUFFIX=""
+    LNFLAGS="-f --symbolic"
+    ARFLAGS="cr"
+    ARFLAGS_OUT_PREFIX=""
+    ARFLAGS_OUT_SUFFIX=""
+    ARFLAGS_PATH_PREFIX=""
+    ARFLAGS_PATH_SUFFIX=""
+    ARFLAGS_LIB=""
+    UNZIPFLAGS="-u -o -q"
+    UNZIPFLAGS_EXTRACT="-d"
+    USING_RANLIB=1
   ;;
   linux)
     GCC_COMPILER_FLAGS="-c -fPIC -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
@@ -350,7 +385,7 @@ case "$SB_PLATFORM" in
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
     LDFLAGS_DLL="-shared"
     LDFLAGS_LIB="-static"
-    LDFLAGS_OUT_PREFIX="-o"
+    LDFLAGS_OUT_PREFIX="-o "
     LDFLAGS_OUT_SUFFIX=""
     LDFLAGS_PATH_PREFIX="-L"
     LDFLAGS_PATH_SUFFIX=""
