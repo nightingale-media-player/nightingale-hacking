@@ -453,7 +453,7 @@ else
     clone_exclude_dir := $(addprefix ! -wholename "*/,$(clone_exclude_dir))
   endif
 
-  find_exp = -type f ! -wholename "*.svn*" $(clone_exclude_dir) ! -name "Makefile.in" $(clone_exclude_name)
+  find_exp = -type f ! -path "*.svn*" $(clone_exclude_dir) ! -name "Makefile.in" $(clone_exclude_name)
 
 endif
 
@@ -461,7 +461,7 @@ files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))
 
 ifdef files_list
 clone_dir_cmd = cd $(srcdir) && \
-                $(CP) -dfp --parents $(files_list) $(CLONEDIR) \
+                $(CP) -P -f -p --parents $(files_list) $(CLONEDIR) \
                 $(NULL)
 endif
 

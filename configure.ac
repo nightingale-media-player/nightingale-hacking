@@ -120,7 +120,20 @@ case "$SB_PLATFORM" in
     AC_CHECK_PROG(AR, lib, lib)
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
   ;;
-  *)
+  linux)
+    AC_CHECK_PROG(LD, ${CC}, ${CC})
+    if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
+    AC_CHECK_PROG(AS, as, as)
+    if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
+    AC_CHECK_PROG(AR, ar, ar)
+		if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
+		AC_CHECK_PROG(RANLIB, ranlib, ranlib)
+		if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+		USING_RANLIB=1
+  ;;
+  macosx)
+    AC_CHECK_PROG(CP, gcp, gcp)
+    if test -z "$CP"; then AC_MSG_ERROR(GNU cp not found); fi
     AC_CHECK_PROG(LD, ${CC}, ${CC})
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, as, as)
