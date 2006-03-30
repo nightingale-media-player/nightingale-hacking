@@ -99,9 +99,6 @@ if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 AC_CHECK_PROG(FIND, find, find)
 if test -z "$FIND"; then AC_MSG_ERROR(Find not found); fi
 
-AC_CHECK_PROG(CP, cp, cp)
-if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
-
 AC_CHECK_PROG(MV, mv, mv)
 if test -z "$MV"; then AC_MSG_ERROR(Mv not found); fi
 
@@ -113,6 +110,8 @@ if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 
 case "$SB_PLATFORM" in
   win32)
+    AC_CHECK_PROG(CP, cp, cp)
+    if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, ml, ml)
@@ -121,6 +120,8 @@ case "$SB_PLATFORM" in
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
   ;;
   linux)
+    AC_CHECK_PROG(CP, cp, cp)
+    if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
     AC_CHECK_PROG(LD, ${CC}, ${CC})
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, as, as)
