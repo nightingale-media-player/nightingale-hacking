@@ -1016,8 +1016,26 @@ function onBrowserStop()
 // onBrowserHome
 function onBrowserHome()
 {
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "http://songbirdnest.com/player/welcome/" );
+  var theServiceTree = document.getElementById( 'frame_servicetree' );
+  theServiceTree.LaunchURL( "http://songbirdnest.com/player/welcome/" );
+}
+
+// onBrowserBookmark
+function onBrowserBookmark()
+{
+  try
+  {
+    var url = SBDataGetValue( "browser.uri" );
+    alert(url + "\n" + Components.interfaces.nsIBookmarksService);
+    var bmarks = document.getElementById( 'frame_servicetree' );//Components.classes["@mozilla.org/browser/bookmarks-service;1"].getService();
+    bmarks.QueryInterface(Components.interfaces.nsIBookmarksService);
+    bmarks.addBookmarkImmediately(url,url,0,null);
+    alert(url);
+  }  
+  catch ( err )
+  {
+    alert( "onBrowserBookmark\n" + err );
+  }
 }
 
 var SBWebPlaylistCommands = 
