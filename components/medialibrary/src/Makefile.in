@@ -68,7 +68,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS += sqlite3 \
                              $(NULL)
 else
 DYNAMIC_LIB_EXTRA_IMPORTS += xul \
-                             unicharutils_s \
+                             unicharutil_s \
                              sqlite \
                              $(NULL)
 endif
