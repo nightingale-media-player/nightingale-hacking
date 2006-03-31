@@ -58,14 +58,15 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
                             plc4  \
                             xpcom \
-                            unicharutil_s \
                             $(NULL)
 
 ifeq ($(SB_PLATFORM), macosx)
   DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 else
-  DYNAMIC_LIB_EXTRA_IMPORTS += xul
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                               unicharutil_s \
+                               $(NULL)
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
