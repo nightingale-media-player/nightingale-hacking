@@ -368,7 +368,7 @@ function SBInitialize()
 //    var the_url = "http://takeyourmedicinemp3.blogspot.com/atom.xml";
 //    var success = thePlaylistReader.AutoLoad(the_url, "songbird", ConvertUrlToDisplayName( the_url ), "http", the_url, "", null);
 
-/*
+
     try
     {
       const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
@@ -383,7 +383,7 @@ function SBInitialize()
     {
       alert(err);
     }
-*/
+
   }
   catch(err)
   {

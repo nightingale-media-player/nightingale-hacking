@@ -332,7 +332,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
   ;;
   macosx)
-    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -fobjc-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe -lpthread"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -fobjc-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
     else
@@ -342,7 +342,7 @@ case "$SB_PLATFORM" in
     # We always want to include "mozilla-config.h"
     GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS="-shared-libgcc -lstdc++ -Wl,-executable_path,$(MOZSDK_LIB_DIR)/lib"
+    GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,$(MOZSDK_LIB_DIR)/lib"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"

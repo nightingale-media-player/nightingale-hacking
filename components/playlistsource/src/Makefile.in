@@ -63,11 +63,17 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
                             plc4  \
                             xpcom \
-                            xul \
                             $(NULL)
 
+ifeq ($(SB_PLATFORM), macosx)
+  DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
+  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+else
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul
+endif
+
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                          $(NULL)
+                           $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
