@@ -36,6 +36,7 @@ target_name = sbMetadataManager
 endif
 
 CPP_SRCS = MetadataManager.cpp \
+           MetadataValues.cpp \
            MetadataManagerComponent.cpp \
            $(NULL)
 

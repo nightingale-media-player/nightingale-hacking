@@ -452,7 +452,11 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     }
   }
 
-  delete itFrame;
+  // For now, leak this?
+
+//  delete itFrame;
+
+  // We crash when we delete it.
 
   return ret;
 } //ReadTag

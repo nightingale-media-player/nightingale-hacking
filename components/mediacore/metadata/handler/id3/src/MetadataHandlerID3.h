@@ -68,5 +68,4 @@ protected:
 
   nsCOMPtr<nsIChannel> m_Channel;
   ID3_Tag              m_ID3Tag;
-
 };

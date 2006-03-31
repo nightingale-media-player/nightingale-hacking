@@ -31,6 +31,7 @@
 
 #include "nsIGenericFactory.h"
 #include "MetadataManager.h"
+#include "MetadataValues.h"
 
 #define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
   static _Interface * _Interface##SimpletonConstructor( void )                  \
@@ -42,6 +43,7 @@
   NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor );
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataManager)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataValues)
 
 static nsModuleComponentInfo sbMetadataManagerComponent[] =
 {
@@ -51,6 +53,12 @@ static nsModuleComponentInfo sbMetadataManagerComponent[] =
     SONGBIRD_METADATAMANAGER_CID,
     SONGBIRD_METADATAMANAGER_CONTRACTID,
     sbMetadataManagerConstructor
+  },
+  {
+    SONGBIRD_METADATAVALUES_CLASSNAME,
+    SONGBIRD_METADATAVALUES_CID,
+    SONGBIRD_METADATAVALUES_CONTRACTID,
+    sbMetadataValuesConstructor
   },
 
 };
