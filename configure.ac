@@ -269,6 +269,7 @@ case "$SB_PLATFORM" in
     DLL_SUFFIX=".dylib"
     AC_DEFINE(XP_MACOSX)
     AC_DEFINE(XP_UNIX)
+    AC_DEFINE(NO_X11)
   ;;
   linux)
     BIN_SUFFIX=
@@ -331,24 +332,24 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
   ;;
   macosx)
-    GCC_COMPILER_FLAGS="-c -fPIC -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -fobjc-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe -lpthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
     else
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O2"
     fi
 
     # We always want to include "mozilla-config.h"
     GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS=""
+    GCC_LINKER_FLAGS="-shared-libgcc -lstdc++ -Wl,-executable_path,$(MOZSDK_LIB_DIR)/lib"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
     CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
-    LDFLAGS_DLL="-dynamic"
+    LDFLAGS_DLL="-dynamiclib"
     LDFLAGS_LIB="-static"
     LDFLAGS_OUT_PREFIX="-o "
     LDFLAGS_OUT_SUFFIX=""
@@ -356,7 +357,7 @@ case "$SB_PLATFORM" in
     LDFLAGS_PATH_SUFFIX=""
     LDFLAGS_IMPORT_PREFIX="-l"
     LDFLAGS_IMPORT_SUFFIX=""
-    LNFLAGS="-f --symbolic"
+    LNFLAGS="-f -s"
     ARFLAGS="cr"
     ARFLAGS_OUT_PREFIX=""
     ARFLAGS_OUT_SUFFIX=""

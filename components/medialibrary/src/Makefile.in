@@ -59,10 +59,20 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
                             plc4  \
                             xpcom \
-                            xul \
-                            unicharutil_s \
-                            sqlite \
                             $(NULL)
+
+ifeq ($(SB_PLATFORM), macosx)
+DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
+DYNAMIC_LIB_EXTRA_FLAGS = -lobjc
+DYNAMIC_LIB_EXTRA_IMPORTS += sqlite3 \
+                             mozjs \
+                             $(NULL)
+else
+DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                             unicharutils_s \
+                             sqlite \
+                             $(NULL)
+endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(SQLITE_DIR)/lib \
