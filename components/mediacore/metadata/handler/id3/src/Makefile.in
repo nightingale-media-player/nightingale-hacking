@@ -59,9 +59,16 @@ DYNAMIC_LIB_EXTRA_IMPORTS = id3lib \
                             nspr4 \
                             plds4 \
                             xpcom \
-                            xul \
-                            unicharutil_s \
                             $(NULL)
+
+ifeq ($(SB_PLATFORM), macosx)
+  DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
+  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+else
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                               unicharutil_s \
+                               $(NULL)
+endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(ID3LIB_DIR)/lib \
                            $(MOZSDK_LIB_DIR) \
