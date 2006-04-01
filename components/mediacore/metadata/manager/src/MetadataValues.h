@@ -57,9 +57,12 @@ class sbMetadataValues : public sbIMetadataValues
 
   struct sbMetadataValue
   {
-    nsString        m_Value;
-    PRInt32         m_Type;
+    sbMetadataValue( void ) : m_Value( ), m_Type( 0 ) {}
+    sbMetadataValue( nsString value, PRInt32 type = 0 ) : m_Value( value ), m_Type( type ) {}
+    nsString m_Value;
+    PRInt32 m_Type;
   };
 
-  std::map< nsString, sbMetadataValue >  m_Map;
+  class t_map : public std::map< nsString, sbMetadataValue > {};
+  t_map m_Map;
 };

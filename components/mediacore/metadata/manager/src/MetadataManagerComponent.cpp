@@ -33,15 +33,6 @@
 #include "MetadataManager.h"
 #include "MetadataValues.h"
 
-#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
-  static _Interface * _Interface##SimpletonConstructor( void )                  \
-  {                                                                             \
-  static _Interface * m_Simpleton = NULL;                                     \
-  NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
-  return m_Simpleton;                                                         \
-  }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor );
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataManager)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataValues)
 

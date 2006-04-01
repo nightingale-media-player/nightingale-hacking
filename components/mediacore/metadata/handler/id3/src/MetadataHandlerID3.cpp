@@ -52,7 +52,6 @@ NS_IMPL_ISUPPORTS1(sbMetadataHandlerID3, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerID3::sbMetadataHandlerID3()
 {
-
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -103,6 +102,14 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
   *_retval = 0;
   if(!m_Channel)
+  {
+    *_retval = -1;
+    return NS_ERROR_FAILURE;
+  }
+
+  // Get a new values object.
+  m_Values = do_CreateInstance("@songbird.org/Songbird/MetadataValues;1");
+  if(!m_Values.get())
   {
     *_retval = -1;
     return NS_ERROR_FAILURE;
@@ -210,8 +217,10 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
   PRInt32 ret = 0;
 
   nsString strTagName;
+
   ID3_Tag::Iterator *itFrame = tag.CreateIterator();
   ID3_Frame *pFrame = nsnull;
+
   while( (pFrame = itFrame->GetNext()) != NULL)
   {
     switch(pFrame->GetID())
