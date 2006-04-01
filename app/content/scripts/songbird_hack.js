@@ -368,14 +368,14 @@ function SBInitialize()
 //    var the_url = "http://takeyourmedicinemp3.blogspot.com/atom.xml";
 //    var success = thePlaylistReader.AutoLoad(the_url, "songbird", ConvertUrlToDisplayName( the_url ), "http", the_url, "", null);
 
-
+/*
     try
     {
       const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
-    
-      var aHandler = aMetadataManager.GetHandlerForMediaURL("file:///H:\\Media\\Music\\Aus\\Aus - Flight 01 Departing For.mp3");
-      
+
+      var aHandler = aMetadataManager.GetHandlerForMediaURL("file:///c:\\junq\\TheseDays.mp3");
+
       var retval = aHandler.Read();
       alert(retval);
     }
@@ -383,7 +383,7 @@ function SBInitialize()
     {
       alert(err);
     }
-
+*/
   }
   catch(err)
   {
