@@ -69,9 +69,9 @@ ifeq (win32,$(SB_PLATFORM))
 endif
 
 ifeq (linux,$(SB_PLATFORM))
+  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s
   DYNAMIC_LIB_EXTRA_IMPORTS += id3 \
                                xul \
-                               unicharutil_s \
                                $(NULL)
 endif
 

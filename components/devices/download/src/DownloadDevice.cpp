@@ -242,7 +242,7 @@ sbDownloadDevice::~sbDownloadDevice()
 NS_IMETHODIMP sbDownloadDevice::Initialize(PRBool *_retval)
 {
   // Resume transfer if any pending
-  ResumeAbortedTransfer();
+  sbDeviceBase::ResumeAbortedTransfer();
   return NS_OK;
 }
 

@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -736,7 +736,8 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<std::prustring> &vGUIDList)
                 strLeaf.BeginReading(itStart);
                 strLeaf.EndReading(itEnd);
 
-                PRBool bFound = FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd, nsCaseInsensitiveStringComparator());
+                ToLowerCase(strLeaf);
+                PRBool bFound = FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd);
                 
                 if(bFound)
                 {
@@ -820,13 +821,17 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
     
     // create |nsDependentString|s wrapping PRUnichar* buffers so we can
     // do fancy things in a platform independent way.
-    nsDependentString ALL_TOKEN_nsds(ALL_TOKEN);
-    nsDependentString pGUID_nsds(pGUID);
+    nsString ALL_TOKEN_nsds(ALL_TOKEN);
+    nsString pGUID_nsds(pGUID);
     PRBool bEquals = PR_FALSE;
     {
-      // UnicharUtils is not threadsafe, so make sure we don't switch threads here
+      // UnicharUtils is not threadsafe, so make sure we don't switch threads here.
       nsAutoLock ccLock(pEngine->m_pCaseConversionLock);
-      bEquals = ALL_TOKEN_nsds.Equals(pGUID_nsds, nsCaseInsensitiveStringComparator());
+
+      ToLowerCase(ALL_TOKEN_nsds);
+      ToLowerCase(pGUID_nsds);
+
+      bEquals = ALL_TOKEN_nsds.Equals(pGUID_nsds);
     }
 
     if(bEquals)
@@ -1068,7 +1073,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
                 strTableName.BeginReading(itStart);
                 strTableName.EndReading(itEnd);
 
-                bFound = FindInReadable(NS_LITERAL_STRING(" from "), itStart, itEnd, nsCaseInsensitiveStringComparator());
+                bFound = FindInReadable(NS_LITERAL_STRING(" from "), itStart, itEnd);
               }
               if(bFound)
               {
@@ -1085,7 +1090,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
 
                 strTableName.BeginReading(itStart);
                 strTableName.EndReading(itEnd);
-                bFound = FindInReadable(NS_LITERAL_STRING(" "), itStart, itEnd, nsCaseInsensitiveStringComparator());
+                bFound = FindInReadable(NS_LITERAL_STRING(" "), itStart, itEnd);
 
                 if(bFound)
                 {

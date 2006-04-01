@@ -65,10 +65,18 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcom \
                             $(NULL)
 
-ifeq ($(SB_PLATFORM), macosx)
+ifeq (macosx,$(SB_PLATFORM))
   DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
-else
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                               $(NULL)
+endif
+
+ifeq (win32,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                                unicharutil_s \
                                $(NULL)
