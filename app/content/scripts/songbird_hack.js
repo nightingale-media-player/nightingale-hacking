@@ -378,12 +378,25 @@ function SBInitialize()
 
       var retval = aHandler.Read();
       alert(retval);
+      
+      var values = aHandler.GetValuesMap();
+      
+      var text = "";
+      var md_array = new Array( "artist", "album", "genre", "title", "length" );
+      for ( var i in md_array )
+      {
+        text += " " + md_array[ i ] + ": " + values.GetValue( md_array[ i ] ) + "\n";
+      }
+      alert( text );
     }
     catch(err)
     {
       alert(err);
     }
 */
+
+
+    
   }
   catch(err)
   {

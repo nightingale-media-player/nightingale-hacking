@@ -26,6 +26,7 @@
 
 #include "nsISupports.idl"
 #include "nsIChannel.idl"
+#include "sbIMetadataValues.idl"
 
 //{ 0x919ff2d3, 0x616d, 0x4035, { 0xa5, 0x2f, 0x8, 0xc2, 0x39, 0xf3, 0x34, 0xee } }
 
@@ -40,6 +41,9 @@ interface sbIMetadataHandler : nsISupports
 
   PRInt32 Read();
   PRInt32 Write();
+
+  sbIMetadataValues GetValuesMap();
+  void SetValuesMap(in sbIMetadataValues values);
 
   PRInt32 GetNumAvailableTags();
   void GetAvailableTags(out PRUint32 tagCount, [array, size_is(tagCount), retval] out wstring tags);

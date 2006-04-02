@@ -165,6 +165,22 @@ NS_IMETHODIMP sbMetadataHandlerID3::Write(PRInt32 *_retval)
   return NS_OK;
 } //Write
 
+/* sbIMetadataValues GetValuesMap (); */
+NS_IMETHODIMP sbMetadataHandlerID3::GetValuesMap(sbIMetadataValues **_retval)
+{
+  *_retval = m_Values;
+  if ( (*_retval) )
+    (*_retval)->AddRef();
+  return NS_OK;
+}
+
+/* void SetValuesMap (in sbIMetadataValues values); */
+NS_IMETHODIMP sbMetadataHandlerID3::SetValuesMap(sbIMetadataValues *values)
+{
+  m_Values = values;
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 //-----------------------------------------------------------------------------
 /* PRInt32 GetNumAvailableTags (); */
 NS_IMETHODIMP sbMetadataHandlerID3::GetNumAvailableTags(PRInt32 *_retval)
