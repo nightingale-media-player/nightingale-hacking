@@ -1333,20 +1333,21 @@
     <method name="startWatchingDragObjects">
       <body>
         <![CDATA[
-          try
-          {
-            if (this._dragobjects != null)
-            {
-              for (var i=0; i<this._dragobjects.length;i++)
-              {
-                this._dragobjects[i].addEventListener("mouseup", this.dragObjectMouseUp, true); 
-                this._dragobjects[i].addEventListener("mousedown", this.dragObjectMouseDown, true); 
+          try {
+            var dragObjects = this._dragobjects;
+            if (dragObjects) {
+              var count = dragObjects.length;
+              for (var i = 0; i < count; i++) {
+                var dragObject = dragObjects[i];
+                if (dragObject.addEventListener) {
+                  dragObject.addEventListener("mouseup", this.dragObjectMouseUp, true); 
+                  dragObject.addEventListener("mousedown", this.dragObjectMouseDown, true); 
+                }
               }
             }
           }
-          catch( err )
-          {
-            alert( "playlist.xml - stopWatchingDragObjects - " + err );
+          catch(err) {
+            alert("playlist.xml - startWatchingDragObjects - " + err);
           }
         ]]>
       </body>
