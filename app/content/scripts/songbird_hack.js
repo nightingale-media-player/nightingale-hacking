@@ -122,8 +122,13 @@ var SBWindowMinMaxCB =
 
 function setMinMaxCallback()
 {
-  var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-  windowMinMax.SetCallback(document, SBWindowMinMaxCB);
+  try {
+    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
+    windowMinMax.SetCallback(document, SBWindowMinMaxCB);
+  }
+  catch (e) {
+    // No component
+  }
 }
 
 function checkAltF4(evt)

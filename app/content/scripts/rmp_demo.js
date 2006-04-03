@@ -361,8 +361,13 @@ function SBInitializeNamedDatabase( db_name )
 var coreInitialCloakDone = 0;
 function HideCoreWindow() 
 {
-  var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"].getService(Components.interfaces.sbIWindowCloak);
-  windowCloak.Cloak( document ); 
+  try {
+    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"].getService(Components.interfaces.sbIWindowCloak);
+    windowCloak.Cloak( document ); 
+  }
+  catch (e) {
+    //No component
+  }
   coreInitialCloakDone = 1;
 }
 
@@ -478,6 +483,11 @@ var SBVideoMinMaxCB =
 
 function setVideoMinMaxCallback()
 {
-  var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-  windowMinMax.SetCallback(document, SBVideoMinMaxCB);
+  try {
+    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
+    windowMinMax.SetCallback(document, SBVideoMinMaxCB);
+  }
+  catch (e) {
+    // No component
+  }
 }
