@@ -73,6 +73,7 @@ MOZSDK_INCLUDE_DIR = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGU
 MOZSDK_LIB_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/lib
 MOZSDK_BIN_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin
 MOZSDK_IDL_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/idl
+PLUGINS_DIR        = @top_srcdir@/dependencies/@SB_PLATFORM@/plugins
 
 SONGBIRD_OBJDIR        = @top_srcdir@/@OBJDIRNAME@
 SONGBIRD_DISTDIR       = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@

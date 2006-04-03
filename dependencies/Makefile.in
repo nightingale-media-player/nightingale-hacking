@@ -30,35 +30,42 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifeq (win32,$(SB_PLATFORM))
-UNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.zip
-UNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
+FLASH_PLUGIN = NPSWF32
+VLC_PLUGIN = npvlc
 else
-GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
-GUNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
+FLASH_PLUGIN = libflashplayer
+VLC_PLUGIN = libvlcplugin
 endif
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-SONGBIRD_COMPONENTS = $(DEPS_DIR)/plugins/vlc/components/*.xpt \
-                      $(DEPS_DIR)/plugins/flash/components/*.xpt \
+SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/vlc/components/vlcintf.xpt \
+                      $(PLUGINS_DIR)/flash/components/flashplayer.xpt \
                       $(NULL)
                       
-SONGBIRD_PLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) \
-                   $(DEPS_DIR)/plugins/flash/plugins/*$(DLL_SUFFIX) \
+SONGBIRD_PLUGINS = $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX) \
+                   $(PLUGINS_DIR)/vlc/plugins/$(VLC_PLUGIN)$(DLL_SUFFIX) \
                    $(NULL)
 
-SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/vlcplugins/*$(DLL_SUFFIX) \
+SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX) \
                       $(NULL)
-
-SONGBIRD_XULRUNNER = $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
-                     $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
-                     $(NULL)
-
-ifeq ($(SB_PLATFORM), win32)
-SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
-endif
 
 EXECUTABLE = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX) \
              $(NULL)
+
+ifeq ($(SB_PLATFORM), win32)
+UNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.zip
+UNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
+SONGBIRD_XULRUNNER = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
+                     $(ID3LIB_DIR)/bin/id3lib$(DLL_SUFFIX) \
+                     $(SQLITE_DIR)/bin/sqlite$(DLL_SUFFIX) \
+                     $(NULL)
+else
+GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
+GUNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
+SONGBIRD_XULRUNNER = $(ID3LIB_DIR)/lib/libid3$(DLL_SUFFIX) \
+                     $(SQLITE_DIR)/lib/libsqlite3$(DLL_SUFFIX) \
+                     $(NULL)
+endif
 
 include $(topsrcdir)/build/rules.mk
