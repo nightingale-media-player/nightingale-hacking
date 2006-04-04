@@ -38,7 +38,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "integration", "components\integration\integration.vcproj", "{5DF6F1EA-D56E-4459-BE1B-6DAA2197B911}"
 	ProjectSection(ProjectDependencies) = postProject
 		{581FC30D-8DE2-4824-8039-B9CA1BDCB179} = {581FC30D-8DE2-4824-8039-B9CA1BDCB179}
-		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC} = {653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}
+		{A128DAEA-38CB-4F4C-B1D8-7E31CD3DBD60} = {A128DAEA-38CB-4F4C-B1D8-7E31CD3DBD60}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatahandlerid3", "components\mediacore\metadata\handler\id3\metadatahandlerid3.vcproj", "{19BEE539-E27A-4F93-A943-9419EF9F2800}"
@@ -92,6 +92,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rubberducky", "feathers\rub
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "locales", "locales\locales.vcproj", "{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "update", "components\update\update.vcproj", "{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -179,6 +183,10 @@ Global
 		{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}.Debug.Build.0 = Debug|Win32
 		{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}.Release.ActiveCfg = Release|Win32
 		{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}.Release.Build.0 = Release|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Debug.ActiveCfg = Debug|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Debug.Build.0 = Debug|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Release.ActiveCfg = Release|Win32
+		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

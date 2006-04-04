@@ -100,67 +100,67 @@
             <label id="app_title" value="&window.main.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <menubar id="songbird_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)">
-              <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate">
+              <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
                 <menupopup id="file-popup">
-                  <menuitem id="file.new" label="&menu.file.new;"/>
-                  <menuitem id="file.smart" label="&menu.file.smart;"/>
-                  <menuitem id="file.remote" label="&menu.file.remote;"/>
-                  <menuitem id="file.file" label="&menu.file.open;"/>
-                  <menuitem id="file.url" label="&menu.file.url;"/>
-                  <menuitem id="file.playlist" label="&menu.file.playlist;"/>
+                  <menuitem id="file.new" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+                  <menuitem id="file.smart" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+                  <menuitem id="file.remote" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+                  <menuitem id="file.file" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
+                  <menuitem id="file.url" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
+                  <menuitem id="file.playlist" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="file.scan" label="&menu.file.scan;"/>
-                  <menuitem id="file.dlfolder" label="&menu.file.dlfolder;"/>
-                  <menuitem id="file.watch" label="&menu.file.watch;"/>
+                  <menuitem id="file.scan" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
+                  <menuitem id="file.dlfolder" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
+                  <menuitem id="file.watch" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
                   <menuseparator/>
                   <!--menuitem id="file.htmlbar" type="checkbox" label="&menu.file.htmlbar;"/-->
                   <menuitem id="file.skin" type="checkbox" label="&menu.file.skin;"/>
-                  <menuitem id="file.window" label="&menu.file.mini;"/>
+                  <menuitem id="file.window" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
                   <menuseparator/>
-                  <menu id="songbird_menu_locale" label="&locale.language;" class="sb_faceplate">
+                  <menu id="songbird_menu_locale" label="&locale.language;" class="sb_faceplate" accesskey="&locale.language.accesskey;">
                     <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
                   </menu> 
-                  <menu id="songbird_menu_feathers" label="&menu.feathers;" class="sb_faceplate">
+                  <menu id="songbird_menu_feathers" label="&menu.feathers;" class="sb_faceplate" accesskey="&menu.feathers.accesskey;">
                     <menupopup id="feathers.popup" onpopupshowing="fillFeathersList(this);" />
                   </menu> 
                   <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="sb_faceplate"/> -->
-                  <menuitem id="menu.preferences" label="&menu.preferences;" class="sb_faceplate"/>
-                  <menuitem id="menu.extensions" label="&menu.extensions;" class="sb_faceplate"/>
+                  <menuitem id="menu.preferences" label="&menu.preferences;" class="sb_faceplate" accesskey="&menu.preferences.accesskey;"/>
+                  <menuitem id="menu.extensions" label="&menu.extensions;" class="sb_faceplate" accesskey="&menu.extensions.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="file.exit" label="&menu.file.exit;"/>
+                  <menuitem id="file.exit" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
                 </menupopup>
               </menu>
               <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate">
+              <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate" accesskey="&menu.edit.accesskey;">
                 <menupopup id="edit-popup">
-                  <menuitem id="edit.undo" label="&menu.edit.undo;"/>
+                  <menuitem id="edit.undo" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="edit.cut" label="&menu.edit.cut;"/>
-                  <menuitem id="edit.copy" label="&menu.edit.copy;"/>
-                  <menuitem id="edit.paste" label="&menu.edit.paste;"/>
-                  <menuitem id="edit.clear" label="&menu.edit.clear;"/>
+                  <menuitem id="edit.cut" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+                  <menuitem id="edit.copy" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+                  <menuitem id="edit.paste" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+                  <menuitem id="edit.clear" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="edit.selall" label="&menu.edit.selall;"/>
-                  <menuitem id="edit.selnone" label="&menu.edit.selnone;"/>
+                  <menuitem id="edit.selall" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+                  <menuitem id="edit.selnone" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
                 </menupopup>
               </menu>
               <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <menu id="songbird_menu_item_controls" label="&menu.controls;" class="sb_faceplate">
+              <menu id="songbird_menu_item_controls" label="&menu.controls;" class="sb_faceplate" accesskey="&menu.controls.accesskey;">
                 <menupopup id="controls-popup">
-                  <menuitem id="control.play" label="&menu.control.play;"/>
+                  <menuitem id="control.play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="control.next" label="&menu.control.next;"/>
-                  <menuitem id="control.prev" label="&menu.control.prev;"/>
+                  <menuitem id="control.next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
+                  <menuitem id="control.prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" checked="true"/>
+                  <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" checked="true" accesskey="&menu.control.shuf.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" checked="true"/>
-                  <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" checked="true"/>
-                  <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" checked="true"/>
+                  <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" checked="true" accesskey="&menu.control.repa.accesskey;"/>
+                  <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" checked="true" accesskey="&menu.control.rep1.accesskey;"/>
+                  <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" checked="true" accesskey="&menu.control.repx.accesskey;"/>
                 </menupopup>
               </menu>
               <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <menu id="songbird_menu_item_services" label="&menu.services;" class="sb_faceplate">
+              <menu id="songbird_menu_item_services" label="&menu.services;" class="sb_faceplate" accesskey="&menu.services.accesskey;">
                 <!-- TRY FILLING THE MENUBAR WITH THE SAME DATA AS THE SERVICE PANE? -->
                 <menupopup 
                   id="services-popup"
@@ -183,18 +183,18 @@
                 </menupopup>
               </menu>
               <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate">
+              <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate" accesskey="&menu.devices.accesskey;">
                 <menupopup id="devices-popup">
                   <menuitem label="No Devices Yet"/>
                 </menupopup>
               </menu>
               <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <menu id="songbird_menu_item_help" label="&menu.help;" class="sb_faceplate">
+              <menu id="songbird_menu_item_help" label="&menu.help;" class="sb_faceplate" accesskey="&menu.help.accesskey;">
                 <menupopup id="help-popup">
                   <!-- <menuitem id="help.demo" label="SVG Demo" value="chrome://songbird/content/svg_events2.xml"/> -->
-                  <menuitem id="help.topics" label="&menu.help.topics;" value="&web.url.first;"/>
+                  <menuitem id="help.topics" label="&menu.help.topics;" value="&web.url.first;" accesskey="&menu.help.help.accesskey;"/>
                   <menuseparator/>
-                  <menuitem id="file.about" label="&menu.help.about;"/>
+                  <menuitem id="file.about" label="&menu.help.about;" accesskey="&menu.help.about.accesskey;"/>
                 </menupopup>
               </menu>
 

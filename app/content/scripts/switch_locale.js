@@ -41,7 +41,7 @@ function switchLocale(locale, wantmessagebox) {
       if (wantmessagebox) {
         var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
         var prop = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-        var str = "This setting will take effect after you restart Songbird"; // todo: internationalize !
+        var str = "This setting will take effect after you restart Songbird"; // todo: restart the current window instead !
         var title = "Localization";
         try {
           // These can throw if the strings don't exist.

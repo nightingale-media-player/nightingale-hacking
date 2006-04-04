@@ -6,7 +6,7 @@
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="firstrun"
- title="Songbird Setup Options"
+ title="&setup.title;"
  buttons="cancel, accept"
  ondialogaccept="return doOK();"
  ondialogcancel="return doCancel();"
@@ -45,7 +45,7 @@
       <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
         <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
           <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="Songbird Setup Options" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&setup.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
@@ -60,7 +60,7 @@
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <vbox>
               <spacer height="5" width="250" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <label id="pleasewait" flex="1" value="Retrieving extensions list. Please wait..."/>                                          <!-- todo: internationalize -->
+              <label id="pleasewait" flex="1" value="&setup.retrievingxpilist;"/>
             </vbox>
           </hbox>
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
@@ -69,7 +69,7 @@
           <hbox>
             <button id="cancel_button" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-            <button id="custom_button" disabled="true" label="Custom Install" class="dialog_button sb_faceplate" oncommand="customInstall();"/>
+            <button id="custom_button" disabled="true" label="&setup.custominstall;" class="dialog_button sb_faceplate" oncommand="customInstall();"/>
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <button id="ok_button" disabled="true" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
           </hbox> 

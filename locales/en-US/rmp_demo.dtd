@@ -134,14 +134,14 @@
 <!ENTITY exists.title             "Playlist Exists">
 <!ENTITY exists.exists            "A playlist with that name already exists!">
 
-<!ENTITY media_scan.title          "Scan for Media">
-<!ENTITY media_scan.watch          "Watch this folder for new media">
+<!ENTITY media_scan.title         "Scan for Media">
+<!ENTITY media_scan.watch         "Watch this folder for new media">
 
 <!ENTITY new_playlist.title       "Create New Playlist">
 <!ENTITY new_playlist.name        "Enter the name of the new playlist.">
 
 <!ENTITY addtoplaylist.title      "Add To Playlist">
-<!ENTITY addtoplaylist.create      "Create new playlist">
+<!ENTITY addtoplaylist.create     "Create new playlist">
 
 <!ENTITY watchfolder.title        "Watch Folders">
 <!ENTITY watchfolder.folderlist   "Watch these folders for new media:">
@@ -150,3 +150,50 @@
 <!ENTITY menu.feathers            "Feathers" >
 <!ENTITY about.version            "Version" >
 
+<!ENTITY setup.retrievingxpilist  "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.custominstall      "Custom Install" >
+<!ENTITY setup.title              "Songbird Setup Options" >
+<!ENTITY setupprogress.pleasewait "Please wait..." >
+
+<!ENTITY menu.file.accesskey          "F" >
+<!ENTITY menu.file.new.accesskey      "N" >
+<!ENTITY menu.file.smart.accesskey    "S" >
+<!ENTITY menu.file.remote.accesskey   "R" >
+<!ENTITY menu.file.open.accesskey     "O" >
+<!ENTITY menu.file.url.accesskey      "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey     "M" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey    "W" >
+<!ENTITY menu.file.mini.accesskey     "M" >
+<!ENTITY locale.language.accesskey    "L" >
+<!ENTITY menu.feathers.accesskey      "F" >
+<!ENTITY menu.preferences.accesskey   "P" >
+<!ENTITY menu.extensions.accesskey    "E" >
+<!ENTITY menu.file.exit.accesskey     "X" >
+
+<!ENTITY menu.edit.accesskey          "E" >
+<!ENTITY menu.edit.undo.accesskey     "U" >
+<!ENTITY menu.edit.cut.accesskey      "T" >
+<!ENTITY menu.edit.copy.accesskey     "C" >
+<!ENTITY menu.edit.paste.accesskey    "P" >
+<!ENTITY menu.edit.clear.accesskey    "L" >
+<!ENTITY menu.edit.selall.accesskey   "A" >
+<!ENTITY menu.edit.selnone.accesskey  "N" >
+
+<!ENTITY menu.controls.accesskey      "C" >
+<!ENTITY menu.control.play.accesskey  "P" >
+<!ENTITY menu.control.next.accesskey  "N" >
+<!ENTITY menu.control.prev.accesskey  "R" >
+<!ENTITY menu.control.shuf.accesskey  "S" >
+<!ENTITY menu.control.repa.accesskey  "A" >
+<!ENTITY menu.control.rep1.accesskey  "O" >
+<!ENTITY menu.control.repx.accesskey  "E" >
+
+<!ENTITY menu.services.accesskey      "S" >
+
+<!ENTITY menu.devices.accesskey       "D" >
+
+<!ENTITY menu.help.accesskey          "H" >
+<!ENTITY menu.help.help.accesskey     "H" >
+<!ENTITY menu.help.about.accesskey    "A" >

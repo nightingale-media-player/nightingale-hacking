@@ -44,8 +44,11 @@ function updateDataReady(upd) {
   if (upd.getNumExtensions() > 0) {
     enableCustomInstall(); 
   } else {
-    // todo: internationalize !
-    sbMessageBox("Offline", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false);
+    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+    var errortitle = songbirdStrings.GetStringFromName("setup.networkerrortitle");
+    var errormsg = songbirdStrings.GetStringFromName("setup.networkerrormsg");
+    sbMessageBox(errortitle, errormsg, false);
   }
   enableGoAhead();
   hidePleaseWait();
@@ -193,13 +196,16 @@ function doOK()
     noext = (count == 0);
   }
   if (noext) {
-    // todo: internationalize !
-    var r = sbMessageBox("No extension", "Press Ok to keep a minimal installation, or Cancel if you would like to be revisit this screen the next time you start Songbird.", true);
+    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+    var noxpititle = songbirdStrings.GetStringFromName("setup.noxpititle");
+    var noxpimsg = songbirdStrings.GetStringFromName("setup.noxpimsg");
+    var r = sbMessageBox(noxpititle, noxpimsg, true);
     if (r == "accept") { 
       prefs.setCharPref("firstruncheck", "1");  
       return true; 
     } else {
-      window.close();
+      return false;
     }
   } else {
     upd.installSelectedExtensions(window);
@@ -224,8 +230,11 @@ function doOK()
 function doCancel()
 {
   var upd = window.arguments[0].update;
-  // todo: internationalize !
-  var r = sbMessageBox("Proceed ?", "Are you sure you want to bypass the final setup? (you will be offered another opportunity to revisit this screen the next time you run Songbird).", true); 
+  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+  var bypasstitle = songbirdStrings.GetStringFromName("setup.bypasstitle");
+  var bypassmsg = songbirdStrings.GetStringFromName("setup.bypassmsg");
+  var r = sbMessageBox(bypasstitle, bypassmsg, true); 
   if (r == "accept") { 
     window.arguments[0].cancelled = true; 
     return true; 

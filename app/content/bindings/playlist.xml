@@ -2034,9 +2034,14 @@
           try
           {
             this.addToPlaylistOrLibrary();
-            var msg = "" + this._addedtolibrary_count + " " + "track(s) added to the library"; // todo: internationalize !
-            if (this._existedinlibrary_count > 0) msg += ", " + this._existedinlibrary_count + " " + "track(s) already in it";
-            this.sbMessageBox("Add To Library", msg, false);
+            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+            var addedtolibrary = songbirdStrings.GetStringFromName("library.tracksadded");
+            var alreadyinit = songbirdStrings.GetStringFromName("library.tracksalreadyinit");
+            var addtolibrary = songbirdStrings.GetStringFromName("library.addtolibrary");
+            var msg = "" + this._addedtolibrary_count + " " + addedtolibrary; 
+            if (this._existedinlibrary_count > 0) msg += ", " + this._existedinlibrary_count + " " + alreadyinit;
+            this.sbMessageBox(addtolibrary, msg, false);
           }
           catch( err )
           {

@@ -88,8 +88,12 @@ function fillFeathersList(menu) {
       item.setAttribute("name", "feathers.switch");
       item.setAttribute("type", "radio");
       item.setAttribute("class", className);
-      var curFeathers = ""; // !
-      if (curFeathers == feathers) {
+      var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+      var curfeathers = "rubberducky";
+      try {
+        curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
+      } catch (err) {}
+      if (curfeathers == internalName) {
         item.setAttribute("checked", "true");
       }
       item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");

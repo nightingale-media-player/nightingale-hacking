@@ -41,7 +41,7 @@
   
   <!-- Astounding complexity! -->  
   
-  <label flex="1" id="setupprogress_label" value="Please wait..."/>
+  <label flex="1" id="setupprogress_label" value="&setupprogress.pleasewait;"/>
   <spacer height="5" width="250"/>
   <progressmeter flex="1" id="setupprogress_progress"/>
   

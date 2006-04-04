@@ -165,3 +165,52 @@
 <!ENTITY tooltip.browser.bookmark "Bookmark" >
 
 
+
+
+<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.custominstall "Custom Install" >
+<!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setupprogress.pleasewait "Please wait..." >
+
+
+
+
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+
+
