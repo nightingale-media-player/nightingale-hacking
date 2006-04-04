@@ -736,7 +736,6 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<std::prustring> &vGUIDList)
                 strLeaf.BeginReading(itStart);
                 strLeaf.EndReading(itEnd);
 
-                ToLowerCase(strLeaf);
                 PRBool bFound = FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd);
                 
                 if(bFound)
