@@ -70,9 +70,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS += sqlite3 \
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s
+DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s \
+                             $(SQLITE_DIR)/lib/libsqlite3
 DYNAMIC_LIB_EXTRA_IMPORTS += xul \
-                             sqlite \
                              $(NULL)
 endif
 
