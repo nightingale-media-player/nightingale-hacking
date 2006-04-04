@@ -1,0 +1,77 @@
+#include "nsISupports.idl"
+#include "nsIArray.idl"
+
+/**
+ * The sbIUpdate Interface
+ */
+interface sbIUpdateObserver;
+interface sbIDownloadObserver;
+
+[scriptable, uuid(D8A028CC-73F4-4113-BED0-AF316B572B8E)]
+interface sbIUpdate : nsISupports
+{
+  // first retrieveUpdateFile should be called
+  void retrieveUpdateFile();
+  // use this to watch for onload/onerror events during the download of the xml update file
+  void addUpdateObserver(in sbIUpdateObserver obs);
+  void removeUpdateObserver(in sbIUpdateObserver obs);
+  // status is 0 while downloading xml, 1 after success, -1 after error
+  long getStatus();
+  // the DOM for the update document
+  nsISupports getUpdateDocument();
+  // the xml document text
+  wstring getTextData();
+  // version of the bundle described by the update document
+  wstring getBundleVersion();
+  
+  // set/get extension install flag
+  boolean getExtensionInstallState(in long idx);
+  void setExtensionInstallState(in long idx, in boolean installstate);
+  // installs all the extensions whose installstate is true, window is the parent for the progress dialog
+  void installSelectedExtensions(in nsISupports window);
+  // download a file under a temporary local filename, returns it. use sbIDownloadObservers for progress/done/error events
+  wstring downloadFile(in wstring url, in sbIDownloadObserver observer);
+  // delete the last file that was downloaded via downloadFile
+  void deleteLastDownloadedFile();
+  // install an XPI from a local filename, returns 1 for success, 0 for failure (ie, not a valid xpi, could not be installed)
+  long installXPI(in wstring localFilename);
+  // set/get restart flag, set to true if at least one xpi got installed
+  void setNeedRestart(in boolean need);
+  long getNeedRestart();
+  
+  // convenience functions (zero based)
+  long getNumExtensions(); 
+  wstring getExtensionName(in long index);
+  wstring getExtensionDesc(in long index);
+  wstring getExtensionURL(in long index);
+  wstring getExtesionId(in long index);
+
+  // create a temporary filename
+  wstring getTempFilename();
+  
+  // metrics
+  void uploadMetrics();
+};
+
+[scriptable, uuid(62DF6C33-2523-471e-A9AF-A8BA876CF36F)]
+interface sbIUpdateObserver : nsISupports
+{
+  // update document done loading
+  void onLoad(in sbIUpdate upd); 
+  // error downloading update document
+  void onError(in sbIUpdate upd); 
+};
+
+[scriptable, uuid(D143A14A-266B-48aa-A15E-94BD4F027BF0)]
+interface sbIDownloadObserver : nsISupports
+{
+  // download progress
+  void onProgress(in sbIUpdate upd, in long percent); 
+  // download is complete
+  void onDownloadComplete(in sbIUpdate upd);
+  // error downloading
+  void onError(in sbIUpdate upd);
+};
+
+
+

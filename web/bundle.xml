@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
  
 <SongbirdData>
-  <Latest version="0.3" url="http://songbirdnest.com/songbird_0.3.exe"/> <!-- or whatever -->
+  <Latest version="0.2" url="http://songbirdnest.com/songbird_0.2.exe"/> <!-- or whatever -->
   <Setup>
     <XPI name="Some Extension" desc="Some super duper extension" 
          url="http://bluemars.org/songbird-extension.xpi" default="true" />
