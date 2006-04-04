@@ -26,19 +26,6 @@
 
 #include "nsISupports.idl"
 
-// Generally speaking I/O commands can be issued to a device 
-// if DEVICE_IDLE for the device. But if DEVICE_DOWNLOADING then it can be 
-// asked to transfer more tracks, and the same applies to DEVICE_UPLOADING and DEVICE_DELETING.
-// DEVICE_TRANSFERRING_PAUSED indicates a paused transfer state.
-//
-//#define DEVICE_IDLE                 0
-//#define DEVICE_BUSY                 1
-//#define DEVICE_DOWNLOADING          2
-//#define DEVICE_UPLOADING            3
-//#define DEVICE_DOWNLOAD_PAUSED      4
-//#define DEVICE_UPLOAD_PAUSED        5
-//#define DEVICE_DELETING             6
-
 [scriptable, uuid(D5043150-734E-4e54-943A-80068DE665EF)]
 interface sbIDeviceBaseCallback : nsISupports
 {
@@ -47,6 +34,32 @@ interface sbIDeviceBaseCallback : nsISupports
   void onTransferStart(in wstring strSourceURL, in wstring strDestinationURL);
   void onTransferComplete(in wstring strSourceURL, in wstring strDestinationURL, in PRInt32 nStatus);
 };
+
+%{ C++
+// File format constants
+#define kSB_DEVICE_FILE_FORMAT_UNDEFINED  -1
+#define kSB_DEVICE_FILE_FORMAT_WAV        0
+#define kSB_DEVICE_FILE_FORMAT_MP3        1
+#define kSB_DEVICE_FILE_FORMAT_WMA        2
+
+%}
+
+// Generally speaking I/O commands can be issued to a device if, device state is kSB_DEVICE_STATE_IDLE for the device. 
+// But if kSB_DEVICE_STATE_DOWNLOADING then it can be asked to transfer more tracks, and the same applies 
+// to kSB_DEVICE_STATE_UPLOADING and kSB_DEVICE_STATE_DELETING. kSB_DEVICE_STATE_TRANSFERRING_PAUSED indicates 
+// a paused transfer state.
+//
+%{ C++
+// Device State constants
+#define kSB_DEVICE_STATE_IDLE             0
+#define kSB_DEVICE_STATE_BUSY             1
+#define kSB_DEVICE_STATE_DOWNLOADING      2
+#define kSB_DEVICE_STATE_UPLOADING        3
+#define kSB_DEVICE_STATE_DOWNLOAD_PAUSED  4
+#define kSB_DEVICE_STATE_UPLOAD_PAUSED    5
+#define kSB_DEVICE_STATE_DELETING         6
+
+%}
 
 // Base interface for all supported devices. The supported devices can be
 // CD, Windows Media Device, iPod, .. and even a download device for downloading
@@ -97,6 +110,11 @@ interface sbIDeviceBase : nsISupports
   wstring GetDownloadTable(in wstring deviceString);
   wstring GetUploadTable(in wstring deviceString);
 
+  PRUint32 GetDownloadFileType(in wstring deviceString);
+  PRBool SetDownloadFileType(in wstring deviceString, in PRUint32 fileType);
+  PRUint32 GetUploadFileType(in wstring deviceString);
+  PRBool SetUploadFileType(in wstring deviceString, in PRUint32 fileType);
+
 	PRUint32 GetUsedSpace(in wstring deviceString);
 	PRUint32 GetAvailableSpace(in wstring deviceString);
 
@@ -104,15 +122,15 @@ interface sbIDeviceBase : nsISupports
   PRBool GetTrackTable(in wstring deviceString, out wstring dbContext, out wstring tableName);
 
 	// Enumerating tracks
-	//[noscript] PRUint32 GetNumTracks();
+	//[noscript] PRUint32 GetNumTracks(); 
 	//[noscript] PRBool GetFirstTrack(TrackInfo* trackInfo);
 	//[noscript] PRBool GetNextTrack(TrackInfo* trackInfo);
 	
 
   PRBool RemoveTranferTracks(in wstring deviceString, in PRUint32 index);
 	PRBool AbortTransfer(in wstring deviceString);
-  PRBool SuspendTransfer();
-  PRBool ResumeTransfer();
+  PRBool SuspendTransfer(in wstring deviceString);
+  PRBool ResumeTransfer(in wstring deviceString);
 
 	// Download is to copy a track from the device to the host
 	PRBool IsDownloadSupported(in wstring deviceString);

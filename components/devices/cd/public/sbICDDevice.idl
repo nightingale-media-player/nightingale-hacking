@@ -27,6 +27,7 @@
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
+
 [scriptable, uuid(FED4919E-213F-4448-A689-F22DD1C56994)]
 interface sbICDDevice : sbIDeviceBase
 {

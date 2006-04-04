@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
 * \file  sbCDDevice.cpp
@@ -61,8 +61,8 @@ NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
 
 //-----------------------------------------------------------------------------
 sbCDDevice::sbCDDevice()
-: sbDeviceBase(PR_TRUE)
-, mCDManagerObject(this)
+: sbDeviceBase(PR_TRUE),
+mCDManagerObject(this)
 {
 } //ctor
 
@@ -164,14 +164,15 @@ NS_IMETHODIMP sbCDDevice::GetUsedSpace(const PRUnichar *deviceString, PRUint32 *
 /* PRUint32 GetAvailableSpace (); */
 NS_IMETHODIMP sbCDDevice::GetAvailableSpace(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-  return sbDeviceBase::GetAvailableSpace(deviceString, _retval);
+  *_retval = mCDManagerObject.GetAvailableSpace(deviceString);
+  return NS_OK;
 }
 
 /* PRBool GetTrackTable (out wstring dbContext, out wstring tableName); */
 NS_IMETHODIMP sbCDDevice::GetTrackTable(const PRUnichar *deviceString, PRUnichar **dbContext, PRUnichar **tableName, PRBool *_retval)
 {
-    *_retval = mCDManagerObject.GetTrackTable(deviceString, dbContext, tableName);
-    return NS_OK;
+  *_retval = mCDManagerObject.GetTrackTable(deviceString, dbContext, tableName);
+  return NS_OK;
 }
 
 /* PRBool AbortTransfer (); */
@@ -221,53 +222,53 @@ PRBool sbCDDevice::IsEjectSupported()
 
 void sbCDDevice::OnThreadBegin()
 {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+  CoInitializeEx(0, COINIT_MULTITHREADED);
 }
 
 void sbCDDevice::OnThreadEnd()
 {
-	CoUninitialize();
+  CoUninitialize();
 }
 
 /* PRBool IsUpdateSupported (); */
 NS_IMETHODIMP sbCDDevice::IsUpdateSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	return sbDeviceBase::IsUpdateSupported(deviceString, _retval);
+  return sbDeviceBase::IsUpdateSupported(deviceString, _retval);
 }
 
 /* PRBool IsEjectSupported (); */
 NS_IMETHODIMP sbCDDevice::IsEjectSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	return sbDeviceBase::IsEjectSupported(deviceString, _retval);
+  return sbDeviceBase::IsEjectSupported(deviceString, _retval);
 }
 
 /* PRUint32 GetNumDevices (); */
 NS_IMETHODIMP sbCDDevice::GetNumDevices(PRUint32 *_retval)
 {
-	return sbDeviceBase::GetNumDevices(_retval);
+  return sbDeviceBase::GetNumDevices(_retval);
 }
 
 /* wstring GetNumDestinations (in wstring DeviceString); */
 NS_IMETHODIMP sbCDDevice::GetNumDestinations(const PRUnichar *DeviceString, PRUnichar **_retval)
 {
-	return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
+  return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
 }
 
 /* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
 NS_IMETHODIMP sbCDDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, PRUnichar **TransferTable, PRBool *_retval)
 {
-	return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
+  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
 }
 
 /* PRBool SuspendTransfer (); */
-NS_IMETHODIMP sbCDDevice::SuspendTransfer(PRBool *_retval)
+NS_IMETHODIMP sbCDDevice::SuspendTransfer(const PRUnichar* deviceString, PRBool *_retval)
 {
   *_retval = PR_FALSE;
   return NS_OK;
 }
 
 /* PRBool ResumeTransfer (); */
-NS_IMETHODIMP sbCDDevice::ResumeTransfer(PRBool *_retval)
+NS_IMETHODIMP sbCDDevice::ResumeTransfer(const PRUnichar* deviceString, PRBool *_retval)
 {
   *_retval = PR_FALSE;
   return NS_OK;
@@ -300,7 +301,7 @@ NS_IMETHODIMP sbCDDevice::GetUploadTable(const PRUnichar *deviceString, PRUnicha
 /* PRBool AutoDownloadTable (in wstring deviceString, in wstring tableName); */
 NS_IMETHODIMP sbCDDevice::AutoDownloadTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **filterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval)
 {
-  if (!IsDownloadInProgress())
+  if (!IsDownloadInProgress(DeviceString))
   {
     // Get rid of previous download entries
     RemoveExistingTransferTableEntries(DeviceString);
@@ -312,7 +313,13 @@ NS_IMETHODIMP sbCDDevice::AutoDownloadTable(const PRUnichar *DeviceString, const
 /* PRBool AutoUploadTable (in wstring deviceString, in wstring tableName); */
 NS_IMETHODIMP sbCDDevice::AutoUploadTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **filterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  if (IsDeviceIdle(DeviceString))
+  {
+    RemoveExistingTransferTableEntries(nsnull);
+    sbDeviceBase::AutoUploadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, filterValues, sourcePath, destPath, TransferTable, _retval);
+  }
+
+  return NS_OK;
 }
 
 /* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
@@ -399,20 +406,52 @@ PRBool sbCDDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUn
   return mCDManagerObject.TransferFile(deviceString, source, destination, dbContext, table, index, curDownloadRowNumber);
 }
 
-PRBool sbCDDevice::StopCurrentTransfer()
+PRBool sbCDDevice::StopCurrentTransfer(const PRUnichar* deviceString)
+{
+  return mCDManagerObject.StopCurrentTransfer(deviceString);
+}
+
+PRBool sbCDDevice::SuspendCurrentTransfer(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
 
-PRBool sbCDDevice::SuspendCurrentTransfer()
+PRBool sbCDDevice::ResumeTransfer(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
 
-PRBool sbCDDevice::ResumeTransfer()
+/* PRBool SetDownloadFileType (in PRUint32 fileType); */
+NS_IMETHODIMP sbCDDevice::SetDownloadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
 {
-  return PR_FALSE;
+  *_retval = mCDManagerObject.SetCDRipFormat(deviceString, fileType);
+
+  return NS_OK;
 }
 
+/* PRBool SetUploadFileType (in PRUint32 fileType); */
+NS_IMETHODIMP sbCDDevice::SetUploadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+{
+  return sbDeviceBase::SetUploadFileType(deviceString, fileType, _retval);
+}
+
+/* PRUint32 GetDownloadFileType (in wstring deviceString); */
+NS_IMETHODIMP sbCDDevice::GetDownloadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+{
+  *_retval = mCDManagerObject.GetCDRipFormat(deviceString);
+
+  return NS_OK;
+}
+
+/* PRUint32 GetUploadFileType (in wstring deviceString); */
+NS_IMETHODIMP sbCDDevice::GetUploadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+{
+  return sbDeviceBase::GetUploadFileType(deviceString, _retval);
+}
+
+PRUint32 sbCDDevice::GetCurrentTransferRowNumber(const PRUnichar* deviceString)
+{
+  return mCDManagerObject.GetCurrentTransferRowNumber(deviceString);
+}
 
 /* End of implementation class template. */

@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
 * \file  DeviceBase.cpp
@@ -63,6 +63,9 @@
 #define MSG_DEVICE_EJECT            (MSG_DEVICE_BASE + 7)
 
 #define TRANSFER_TABLE_NAME         NS_LITERAL_STRING("Transfer")
+#define SOURCE_COLUMN_NAME          NS_LITERAL_STRING("url");
+#define DESTINATION_COLUMN_NAME     NS_LITERAL_STRING("destination");
+#define INDEX_COLUMN_NAME           NS_LITERAL_STRING("id");
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceThread, nsIRunnable)
 
@@ -83,15 +86,14 @@ sbDeviceBase::sbDeviceBase(PRBool usingThread)
       if (!pThread) 
         break;
       nsresult rv = NS_NewThread(getter_AddRefs(mpDeviceThread),
-                                 pThread,
-                                 0,
-                                 PR_JOINABLE_THREAD);
+        pThread,
+        0,
+        PR_JOINABLE_THREAD);
       NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbDeviceThread");
       if (NS_FAILED(rv))
         mpDeviceThread = nsnull;
     } while (PR_FALSE); // Only do this once
   }
-  DeviceIdle();
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -289,7 +291,7 @@ NS_IMETHODIMP sbDeviceBase::SetName(const PRUnichar * aName)
 /* PRBool IsDownloadSupported (); */
 NS_IMETHODIMP sbDeviceBase::IsDownloadSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	*_retval = PR_FALSE;
+  *_retval = PR_FALSE;
   return NS_OK;
 }
 
@@ -302,21 +304,21 @@ NS_IMETHODIMP sbDeviceBase::GetSupportedFormats(const PRUnichar *deviceString, P
 /* PRBool IsUploadSupported (); */
 NS_IMETHODIMP sbDeviceBase::IsUploadSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	*_retval = PR_FALSE;
+  *_retval = PR_FALSE;
   return NS_OK;
 }
 
 /* PRBool IsTransfering (); */
 NS_IMETHODIMP sbDeviceBase::IsTransfering(const PRUnichar *deviceString, PRBool *_retval)
 {
-  *_retval = IsTransferInProgress();
+  *_retval = IsTransferInProgress(deviceString);
   return NS_OK;
 }
 
 /* PRBool IsDeleteSupported (); */
 NS_IMETHODIMP sbDeviceBase::IsDeleteSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	*_retval = PR_FALSE;
+  *_retval = PR_FALSE;
   return NS_OK;
 }
 
@@ -341,29 +343,29 @@ NS_IMETHODIMP sbDeviceBase::GetTrackTable(const PRUnichar *deviceString, PRUnich
 /* PRBool TransferTrackTable (in wstring dbContext, in wstring tableName); */
 PRBool sbDeviceBase::StartTransfer(const PRUnichar *deviceString, const PRUnichar *tableName)
 {
-	TransferData* data = new TransferData;
+  TransferData* data = new TransferData;
   NS_ENSURE_TRUE(data, PR_FALSE);
 
-	data->deviceString = deviceString;
-	PRUnichar* context = nsnull;
+  data->deviceString = deviceString;
+  PRUnichar* context = nsnull;
   GetContext(deviceString, &context);
-	data->dbContext = context;
-	PR_Free(context);
+  data->dbContext = context;
+  PR_Free(context);
   data->dbTable = tableName;
 
   // Send a thread message if using a thread otherwise just call the Tranfer function.
   return TransferNextFile(-1, data);
   PRBool retval = true ?
-                  SubmitMessage(MSG_DEVICE_TRANSFER, (void*)-1, (void*)data) :
-                  TransferNextFile(-1, data);
+    SubmitMessage(MSG_DEVICE_TRANSFER, (void*)-1, (void*)data) :
+  TransferNextFile(-1, data);
 
-	return retval;
+  return retval;
 }
 
 /* PRBool AbortTransfer (); */
 NS_IMETHODIMP sbDeviceBase::AbortTransfer(const PRUnichar *deviceString, PRBool *_retval)
 {
-  *_retval = StopCurrentTransfer();
+  *_retval = StopCurrentTransfer(deviceString);
   return NS_OK;
 }
 
@@ -376,8 +378,8 @@ NS_IMETHODIMP sbDeviceBase::DeleteTable(const PRUnichar *deviceString, const PRU
 /* PRBool IsUpdateSupported (); */
 NS_IMETHODIMP sbDeviceBase::IsUpdateSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	*_retval = PR_FALSE;
-	return NS_OK;
+  *_retval = PR_FALSE;
+  return NS_OK;
 }
 
 /* PRBool UpdateTable (in wstring dbContext, in wstring tableName); */
@@ -389,8 +391,8 @@ NS_IMETHODIMP sbDeviceBase::UpdateTable(const PRUnichar *deviceString, const PRU
 /* PRBool IsEjectSupported (); */
 NS_IMETHODIMP sbDeviceBase::IsEjectSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	*_retval = PR_FALSE;
-	return NS_OK;
+  *_retval = PR_FALSE;
+  return NS_OK;
 }
 
 /* PRBool EjectDevice (); */
@@ -403,13 +405,63 @@ NS_IMETHODIMP sbDeviceBase::EjectDevice(const PRUnichar *deviceString, PRBool *_
   }
   return NS_OK;
 }
- 
+
+//PRBool sbDeviceBase::GetNextTransferFileEntry(PRint32 prevIndex, const PRUnichar *deviceString, PRint32& curIndex, nsString& source, nsString& destination)
+//{
+//  PRUnichar* dbContext;
+//  GetContext(deviceString, &dbContext);
+//  nsString transferTable = GetDeviceDownloadTable(deviceString);
+//
+//  sbIDatabaseResult* resultset;
+//  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+//
+//  if (!query)
+//    return PR_FALSE;
+//
+//  nsString query_str(NS_LITERAL_STRING("select * from "));
+//  query_str += transferTable;
+//  query_str += NS_LITERAL_STRING(" where id > ");
+//  query_str.AppendInt(prevIndex);
+//  query->SetAsyncQuery(PR_FALSE); 
+//  query->SetDatabaseGUID(dbContext);
+//  PR_Free(dbContext);
+//  query->AddQuery(query_str.get()); 
+//  PRInt32 ret;
+//  query->Execute(&ret);
+//  if (ret)
+//    return PR_FALSE;
+//
+//  query->GetResultObject(&resultset);
+//
+//  PRInt32 rowcount = 0;
+//  resultset->GetRowCount( &rowcount );
+//
+//  if ( rowcount )
+//  {
+//    // Get progress value
+//    PRUnichar *progressString = NULL;
+//    resultset->GetRowCellByColumn(rowNumber, NS_LITERAL_STRING("progress").get(), &progressString);
+//    PRInt32 errorCode;
+//    PRInt32 progress = nsString(progressString).ToInteger(&errorCode);
+//    PR_Free(progressString);
+//    if (progress == 100)
+//    {
+//      continue; // This track has already completed downloading
+//    }
+//
+//    // Transfer this file
+//    resultset->GetRowCell(rowNumber, sourcePathColumnIndex, &sourcePath);
+//    resultset->GetRowCell(rowNumber, destinationPathColumnIndex, &destinationPath);
+//    resultset->GetRowCell(rowNumber, indexColumnIndex, &index);
+//
+//}
+
 // Retrieves Transfer information for the next file to be Transfered
 // if prevTransferRowNumber is -1 then the first file is Transfered.
 PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 {
   if (!data)
-      return PR_FALSE;
+    return PR_FALSE;
 
   nsString dbContext = ((TransferData *)data)->dbContext;
   nsString tableName = ((TransferData *)data)->dbTable;
@@ -419,7 +471,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
   // Read the table for Transferring files
   sbIDatabaseResult* resultset;
   nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
-  
+
   // This can happen when the app is shutting down
   if (!query)
     return PR_FALSE;
@@ -436,9 +488,9 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 
   // These are the names of the columns in Transfer table
   // that will be used in obtaining the column indexes.
-  const nsString sourcePathColumnName(NS_LITERAL_STRING("url"));
-  const nsString destinationPathColumnName(NS_LITERAL_STRING("destination"));
-  const nsString indexColumnName(NS_LITERAL_STRING("id"));
+  const nsString sourcePathColumnName = SOURCE_COLUMN_NAME;
+  const nsString destinationPathColumnName = DESTINATION_COLUMN_NAME;
+  const nsString indexColumnName = INDEX_COLUMN_NAME;
 
   PRUnichar *sourcePath;
   PRUnichar *destinationPath;
@@ -449,7 +501,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
   PRUint32 indexColumnIndex = -1;
   PRInt32 colCount;
   PRBool transferComplete = PR_TRUE;
- 
+
   // Find the column indexes with the Transfer info
   resultset->GetColumnCount(&colCount);
   for (PRInt32 colNumber = 0; colNumber < colCount; colNumber ++)
@@ -461,15 +513,15 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
       sourcePathColumnIndex = colNumber;
     }
     else
-    if (destinationPathColumnName == nsString(columnName))
-    {
-      destinationPathColumnIndex = colNumber;
-    }
-    else
-    if (indexColumnName == nsString(columnName))
-    {
-      indexColumnIndex = colNumber;
-    }
+      if (destinationPathColumnName == nsString(columnName))
+      {
+        destinationPathColumnIndex = colNumber;
+      }
+      else
+        if (indexColumnName == nsString(columnName))
+        {
+          indexColumnIndex = colNumber;
+        }
   }
 
   if ((sourcePathColumnIndex != -1) && (destinationPathColumnIndex != -1)) 
@@ -506,8 +558,6 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
       resultset->GetRowCell(rowNumber, destinationPathColumnIndex, &destinationPath);
       resultset->GetRowCell(rowNumber, indexColumnIndex, &index);
 
-      mTransferTrackIndex = nsString(index).ToInteger(&errorCode);
-      mCurrentTransferRowNumber = rowNumber;
       PRBool bRet = TransferFile(deviceString, sourcePath, destinationPath, (PRUnichar *) dbContext.get(), (PRUnichar *) tableName.get(), index, rowNumber);
       if(bRet)
       {
@@ -517,7 +567,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
       PR_Free(index);
       PR_Free(sourcePath);
       PR_Free(destinationPath);
-  
+
       break;
 
     }
@@ -532,7 +582,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 
   if (transferComplete)
   {
-    DeviceIdle();
+    DeviceIdle(deviceString);
   }
 
   delete data;
@@ -548,32 +598,47 @@ PRBool sbDeviceBase::UpdateIOProgress(PRUnichar* deviceString, PRUnichar* table,
   PRInt32 ret = -1;
   PRUnichar* dbContext;
   GetContext(deviceString, &dbContext);
-  
+
   if ( query ) 
   {
-    query->SetDatabaseGUID(dbContext);
     query->SetAsyncQuery( PR_FALSE ); // Would need callbacks
-    // First check if this record is removed, in which case
-    // we should skip to transferring the next transfer record.
-    //sbIDatabaseResult* resultset;
+    query->SetDatabaseGUID(dbContext);
 
-    //query_str = NS_LITERAL_STRING("select * from ");
-    //query_str += table;
-    //query_str += NS_LITERAL_STRING(" WHERE id = ");
-    //query_str += index;
-    //query->Execute(&ret);
-    //query->GetResultObject(&resultset);
-    //PRInt32 numRows;
-    //resultset->GetRowCount(&numRows);
-    //if (numRows == 0)
-    //{
-    //  // Yes, as we suspected ...
-    //  StopCurrentTransfer();
-    //  StartTransfer(deviceString, table);
-    //}
-    //else
+    // check if this record is removed, in which case
+    // we should skip to transferring the next transfer table record.
+    sbIDatabaseResult* resultset;
+
+    query_str = NS_LITERAL_STRING("select * from ");
+    query_str += table;
+    query_str += NS_LITERAL_STRING(" WHERE id = ");
+    query_str += index;
+    query->AddQuery(query_str.get());
+    query->Execute(&ret);
+    query->GetResultObject(&resultset);
+    PRInt32 numRows = 0;
+    resultset->GetRowCount(&numRows);
+    query->ResetQuery();
+    if (numRows == 0)
     {
-      // We can sometimes end up here during shutdown.
+      // Yes, as we suspected ...
+      StopCurrentTransfer(deviceString);
+      // Start a new transfer as this would initiate a transfer
+      // on the next transfer table record.
+      StartTransfer(deviceString, table);
+    }
+    else
+    {
+
+      query_str = NS_LITERAL_STRING("UPDATE ");
+      query_str += table;
+      query_str += NS_LITERAL_STRING(" SET ");
+      query_str += NS_LITERAL_STRING(" Progress = ");
+      query_str.AppendInt( percentComplete ); // ahem.  this is not a string.
+      query_str += NS_LITERAL_STRING(" WHERE id = ");
+      query_str += index;
+
+      query->AddQuery(query_str.get());
+
       if (percentComplete == 100) 
       {
         // Update the location
@@ -585,19 +650,7 @@ PRBool sbDeviceBase::UpdateIOProgress(PRUnichar* deviceString, PRUnichar* table,
         query_str += index;
 
         query->AddQuery(query_str.get());
-        query->Execute(&ret);
-        query->ResetQuery();
       }
-
-      query_str = NS_LITERAL_STRING("UPDATE ");
-      query_str += table;
-      query_str += NS_LITERAL_STRING(" SET ");
-      query_str += NS_LITERAL_STRING(" Progress = ");
-      query_str.AppendInt( percentComplete ); // ahem.  this is not a string.
-      query_str += NS_LITERAL_STRING(" WHERE id = ");
-      query_str += index;
-
-      query->AddQuery(query_str.get());
       query->Execute(&ret);
     }
   }
@@ -642,14 +695,14 @@ NS_IMETHODIMP sbDeviceBase::GetNumDestinations(const PRUnichar *DeviceString, PR
 NS_IMETHODIMP sbDeviceBase::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar* ContextInput, const PRUnichar *TableName, PRUnichar **TransferTableName, PRBool *_retval)
 {
   *_retval = CreateTransferTable(DeviceString,
-                                 ContextInput,
-                                 TableName,
-                                 NS_LITERAL_STRING("").get(),
-                                 0,
-                                 nsnull,
-                                 NS_LITERAL_STRING("").get(),
-                                 NS_LITERAL_STRING("").get(),
-                                 TransferTableName);
+    ContextInput,
+    TableName,
+    NS_LITERAL_STRING("").get(),
+    0,
+    nsnull,
+    NS_LITERAL_STRING("").get(),
+    NS_LITERAL_STRING("").get(),
+    TransferTableName);
   return NS_OK;
 }
 
@@ -660,9 +713,9 @@ NS_IMETHODIMP sbDeviceBase::DownloadTable(const PRUnichar *DeviceString, const P
   // in Device's DB context.
   *_retval = PR_FALSE;
 
-  if (IsDeviceIdle())
+  if (IsDeviceIdle(DeviceString))
   {
-    DeviceDownloading();
+    DeviceDownloading(DeviceString);
     *_retval = StartTransfer(DeviceString, TableName);
   }
 
@@ -676,9 +729,9 @@ NS_IMETHODIMP sbDeviceBase::UploadTable(const PRUnichar *DeviceString, const PRU
   // in Device's DB context.
   *_retval = PR_FALSE;
 
-  if (IsDeviceIdle())
+  if (IsDeviceIdle(DeviceString))
   {
-    DeviceUploading();
+    DeviceUploading(DeviceString);
     *_retval = StartTransfer(DeviceString, TableName);
   }
 
@@ -695,52 +748,52 @@ NS_IMETHODIMP sbDeviceBase::GetNumDevices(PRUint32 *_retval)
 }
 
 /* PRBool SuspendTransfer (); */
-NS_IMETHODIMP sbDeviceBase::SuspendTransfer(PRBool *_retval)
+NS_IMETHODIMP sbDeviceBase::SuspendTransfer(const PRUnichar *deviceString, PRBool *_retval)
 {
   *_retval = PR_FALSE;
 
-  if (!IsTransferInProgress())
+  if (!IsTransferInProgress(deviceString))
     return NS_OK;
 
-  *_retval = SuspendCurrentTransfer();
+  *_retval = SuspendCurrentTransfer(deviceString);
   if (*_retval)
   {
-    if (IsDownloadInProgress())
-      DeviceDownloadPaused();
-    else if (IsUploadInProgress())
-      DeviceUploadPaused();
+    if (IsDownloadInProgress(deviceString))
+      DeviceDownloadPaused(deviceString);
+    else if (IsUploadInProgress(deviceString))
+      DeviceUploadPaused(deviceString);
   }
 
   return NS_OK;
 }
 
-PRBool sbDeviceBase::SuspendCurrentTransfer()
+PRBool sbDeviceBase::SuspendCurrentTransfer(const PRUnichar *deviceString)
 {
   return PR_FALSE;
 }
 
 /* PRBool ResumeTransfer (); */
-NS_IMETHODIMP sbDeviceBase::ResumeTransfer(PRBool *_retval)
+NS_IMETHODIMP sbDeviceBase::ResumeTransfer(const PRUnichar* deviceString, PRBool *_retval)
 {
   *_retval = PR_FALSE;
 
-  if (!IsTransferPaused())
+  if (!IsTransferPaused(deviceString))
     return NS_OK;
 
-  *_retval = ResumeTransfer();
+  *_retval = ResumeTransfer(deviceString);
   if (*_retval) {
     // Correct download status
-    if (IsDownloadPaused())
-      DeviceDownloading();
+    if (IsDownloadPaused(deviceString))
+      DeviceDownloading(deviceString);
     else
-      DeviceUploading();
+      DeviceUploading(deviceString);
   }
 
   return NS_OK;
 }
 
 // Should be overridden in the derived class
-PRBool sbDeviceBase::ResumeTransfer()
+PRBool sbDeviceBase::ResumeTransfer(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
@@ -800,8 +853,8 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
   PRInt32 nEntryCount = 0;
   pPlaylistDest->GetAllEntries(&nEntryCount);
 
-	// Remove any pre-existing transfer entries for this device
-	// RemoveExistingTransferTableEntries(DeviceString, deviceContext, TRANSFER_TABLE_NAME.get());
+  // Remove any pre-existing transfer entries for this device
+  // RemoveExistingTransferTableEntries(DeviceString, deviceContext, TRANSFER_TABLE_NAME.get());
 
   query->GetResultObjectOrphan(getter_AddRefs(resultset));
 
@@ -809,19 +862,19 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
   PRBool isDestinationGiven = nsString(destPath).Length()>0;
 
   // Now copy the transfer data
-	PRInt32 rowcount;
-	resultset->GetRowCount( &rowcount );
-  
+  PRInt32 rowcount;
+  resultset->GetRowCount( &rowcount );
+
   //Clean it up since we'll reuse it.
   query->ResetQuery();
 
   for ( PRInt32 row = 0; row < rowcount; row++ ) {
-		nsString insertDataQuery;
+    nsString insertDataQuery;
     nsString destinationPathFile;
     nsString sourcePathFile;
 
     insertDataQuery = NS_LITERAL_STRING("UPDATE \"") + destTable + NS_LITERAL_STRING("\"");
-		insertDataQuery += NS_LITERAL_STRING(" SET source = ");
+    insertDataQuery += NS_LITERAL_STRING(" SET source = ");
 
     PRUnichar *strCurSource = nsnull;
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("source").get(), &strCurSource);
@@ -843,8 +896,7 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("url").get(), &data);
 
     nsString fileName;
-    nsString strData(data);
-    GetFileNameFromURL(strData, fileName);
+    GetFileNameFromURL(DeviceString, nsString(data), fileName);
 
     if (!isDestinationGiven)
       destinationPathFile = data;
@@ -873,7 +925,7 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     PR_Free(data);
     PR_Free(strCurSource);
     PR_Free(strCurDest);
-	}
+  }
 
   PRInt32 queryError = 0;
   query->Execute(&queryError);
@@ -901,7 +953,7 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
 
   PR_Free(deviceContext);
 
-	return PR_TRUE;
+  return PR_TRUE;
 }
 
 
@@ -910,58 +962,99 @@ void sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceStr
   PRUnichar* deviceContext = nsnull;
   GetContext(DeviceString, &deviceContext);
 
-	nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
 
   nsString deleteEntriesSQL;
   if (dropTable)
   {
-	  deleteEntriesSQL = NS_LITERAL_STRING("drop table ");
-	  deleteEntriesSQL += GetTransferTable(DeviceString);
+    deleteEntriesSQL = NS_LITERAL_STRING("drop table ");
+    deleteEntriesSQL += GetTransferTable(DeviceString);
   }
   else 
   {
     // If DeviceString is not provided then delete everything
     if (DeviceString) 
     {
-      deleteEntriesSQL = NS_LITERAL_STRING("delete from table ");
+      deleteEntriesSQL = NS_LITERAL_STRING("delete from ");
       deleteEntriesSQL += GetTransferTable(DeviceString);
     }
   }
 
-	query->SetAsyncQuery(PR_FALSE); 
-	query->SetDatabaseGUID(deviceContext);
-	query->AddQuery(deleteEntriesSQL.get()); 
-	
+  query->SetAsyncQuery(PR_FALSE); 
+  query->SetDatabaseGUID(deviceContext);
+  query->AddQuery(deleteEntriesSQL.get()); 
+
   PRInt32 ret;
-	query->Execute(&ret);
-	query->ResetQuery();
+  query->Execute(&ret);
+  query->ResetQuery();
 
   PR_Free(deviceContext);
 }
 
 inline void sbDeviceBase::AddQuotedString(nsString &destinationString, const PRUnichar* sourceString, PRBool suffixWithComma)
 {
-	destinationString += NS_LITERAL_STRING("\"");
-	destinationString += sourceString;
-	destinationString += NS_LITERAL_STRING("\"");
-	if (suffixWithComma)
-		destinationString += NS_LITERAL_STRING(",");
+  destinationString += NS_LITERAL_STRING("\"");
+  destinationString += sourceString;
+  destinationString += NS_LITERAL_STRING("\"");
+  if (suffixWithComma)
+    destinationString += NS_LITERAL_STRING(",");
 }
 
-PRBool sbDeviceBase::GetFileNameFromURL(nsString& url, nsString& fileName)
+PRBool sbDeviceBase::GetFileNameFromURL(const PRUnichar *DeviceString, nsString& url, nsString& fileName)
 {
-  // XXXBen This is not portable
-  const PRUnichar frontSlash = '/';
-  const PRUnichar backSlash = '\\';
+  // Extract file name from the url(path) string
+  const PRUnichar frontSlash = *(NS_LITERAL_STRING("\\").get());
+  const PRUnichar backSlash = *(NS_LITERAL_STRING("/").get());
+  const PRUnichar dot = *(NS_LITERAL_STRING(".").get());
 
-  PRInt32 pos = url.RFindChar(frontSlash);
-  if(pos || (pos = url.RFindChar(backSlash)))
+  PRInt32 foundPosition = url.RFindChar(frontSlash);
+  if(foundPosition || (foundPosition = url.RFindChar(backSlash)))
   {
-    fileName = Substring(url, ++pos);
+    fileName = Substring(url, ++foundPosition);
+    // Now add the extension if the device changes the format
+    // of transferred file.
+    PRUint32 fileFormat;
+    GetDownloadFileType(DeviceString, &fileFormat);
+    if (kSB_DEVICE_FILE_FORMAT_UNDEFINED != fileFormat)
+    {
+      nsString outputFileExtension;
+      if (GetFileExtension(fileFormat, outputFileExtension))
+      {
+        foundPosition = fileName.RFindChar(dot);
+        if (foundPosition)
+        {
+          fileName = Substring(fileName, 0, foundPosition + 1);
+          fileName += outputFileExtension;
+        }
+      }
+    }
     return PR_TRUE;
   }
 
   return PR_FALSE;
+}
+
+PRBool sbDeviceBase::GetFileExtension(PRUint32 fileFormat, nsString& fileExtension)
+{
+  PRBool retval = true;
+
+  switch (fileFormat)
+  {
+  case kSB_DEVICE_FILE_FORMAT_WAV:
+    fileExtension = NS_LITERAL_STRING("wav");
+    break;
+  case kSB_DEVICE_FILE_FORMAT_MP3:
+    fileExtension = NS_LITERAL_STRING("mp3");
+    break;
+  case kSB_DEVICE_FILE_FORMAT_WMA:
+    fileExtension = NS_LITERAL_STRING("wma");
+    break;
+  default:
+    retval = PR_FALSE;
+    break;
+  }
+
+  return retval;
 }
 
 nsString sbDeviceBase::GetTransferTable(const PRUnichar* deviceString)
@@ -969,6 +1062,16 @@ nsString sbDeviceBase::GetTransferTable(const PRUnichar* deviceString)
   nsString aDeviceTransferTable = GetDeviceDownloadTable(deviceString);
 
   return aDeviceTransferTable;
+}
+
+PRBool sbDeviceBase::GetUploadFileFormat(PRUint32& fileFormat)
+{
+  return PR_FALSE;
+}
+
+PRBool sbDeviceBase::GetDownloadFileFormat(PRUint32& fileFormat)
+{
+  return PR_FALSE;
 }
 
 PRBool sbDeviceBase::GetSourceAndDestinationURL(const PRUnichar* dbContext, const PRUnichar* table, const PRUnichar* index, nsString& sourceURL, nsString& destURL)
@@ -996,7 +1099,7 @@ PRBool sbDeviceBase::GetSourceAndDestinationURL(const PRUnichar* dbContext, cons
 
   if(result) {
     PRUnichar *strSourceURL = nsnull, *strDestURL = nsnull;
-    
+
     result->GetRowCellByColumn(0, NS_LITERAL_STRING("source").get(), &strSourceURL);
     result->GetRowCellByColumn(0, NS_LITERAL_STRING("destination").get(), &strDestURL);
 
@@ -1100,18 +1203,13 @@ void sbDeviceBase::DoDeviceDisconnectCallback(const PRUnichar* deviceString)
 /* PRUint32 GetDeviceState (); */
 NS_IMETHODIMP sbDeviceBase::GetDeviceState(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-  *_retval = mDeviceState;
+  *_retval = kSB_DEVICE_STATE_IDLE;
   return NS_OK;
 }
 
 /* PRBool RemoveTranferTracks (in PRUint32 index); */
 NS_IMETHODIMP sbDeviceBase::RemoveTranferTracks(const PRUnichar *deviceString, PRUint32 index, PRBool *_retval)
 {
-  if ((IsTransferInProgress()) && (mTransferTrackIndex == index)) {
-    // Stop transfer if track removed is being downloaded
-    StopCurrentTransfer();
-  }
-
   // Remove this track from transfer table
   PRUnichar* deviceContext = nsnull;
   GetContext(deviceString, &deviceContext);
@@ -1138,7 +1236,7 @@ NS_IMETHODIMP sbDeviceBase::RemoveTranferTracks(const PRUnichar *deviceString, P
   return NS_OK;
 }
 
-PRBool sbDeviceBase::StopCurrentTransfer()
+PRBool sbDeviceBase::StopCurrentTransfer(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
@@ -1146,17 +1244,17 @@ PRBool sbDeviceBase::StopCurrentTransfer()
 // ResumeAbortedTransfer() is different than ResumeTransfer()
 // as ResumeAbortedTransfer() handles transfer re-initiation ic
 // cases where app was closed or crashed in the middle of transfer.
-void sbDeviceBase::ResumeAbortedTransfer()
+void sbDeviceBase::ResumeAbortedTransfer(const PRUnichar* deviceString)
 {
-  ResumeAbortedDownload();
-  ResumeAbortedUpload();
+  ResumeAbortedDownload(deviceString);
+  ResumeAbortedUpload(deviceString);
 }
 
-void sbDeviceBase::ResumeAbortedDownload()
+void sbDeviceBase::ResumeAbortedDownload(const PRUnichar* deviceString)
 {
   nsString transferTable = GetDeviceDownloadTable(NS_LITERAL_STRING("").get());
   PRUnichar* context = nsnull;
-  GetContext((PRUnichar *)(""), &context);
+  GetContext(deviceString, &context);
   nsString dbContext(context);
   PR_Free(context);
 
@@ -1172,7 +1270,7 @@ void sbDeviceBase::ResumeAbortedDownload()
   PRInt32 ret;
   query->Execute(&ret);
   query->GetResultObject(&resultset);
-  
+
   // Now copy the transfer data
   PRInt32 rowcount;
   resultset->GetRowCount( &rowcount );
@@ -1186,7 +1284,7 @@ void sbDeviceBase::ResumeAbortedDownload()
     if (progress < 100) {
       // Unfinished transfer,
       // re-initiate it.
-      DeviceDownloading();
+      DeviceDownloading(deviceString);
 
       TransferData *data = new TransferData;
       data->dbContext = dbContext;
@@ -1197,7 +1295,7 @@ void sbDeviceBase::ResumeAbortedDownload()
   }
 }
 
-void sbDeviceBase::ResumeAbortedUpload()
+void sbDeviceBase::ResumeAbortedUpload(const PRUnichar* deviceString)
 {
   nsString transferTable = GetDeviceUploadTable(NS_LITERAL_STRING("").get());
   PRUnichar* context = nsnull;
@@ -1233,7 +1331,7 @@ void sbDeviceBase::ResumeAbortedUpload()
     {
       // Unfinished transfer,
       // re-initiate it.
-      DeviceUploading();
+      DeviceUploading(deviceString);
 
       TransferData *data = new TransferData;
       data->dbContext = dbContext;
@@ -1249,15 +1347,22 @@ void sbDeviceBase::ResumeAbortedUpload()
 NS_IMETHODIMP sbDeviceBase::AutoDownloadTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTableName, PRBool *_retval)
 {
   *_retval = PR_FALSE;
-  if (IsDeviceIdle() || IsDownloadInProgress())
+  if (IsDeviceIdle(DeviceString) || IsDownloadInProgress(DeviceString))
   {
     if (CreateTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTableName))
     {
-      if (IsDeviceIdle())
+      // If we are already downloading then these newly added requests
+      // will be picked up automatically on finishing the previous 
+      // requests, so check for idle state ...
+      if (IsDeviceIdle(DeviceString))
       {
-        DeviceDownloading();
+        DeviceDownloading(DeviceString);
         *_retval = StartTransfer(DeviceString, *TransferTableName);
       }
+    }
+    else
+    {
+      DeviceIdle(DeviceString);
     }
   }
 
@@ -1268,15 +1373,22 @@ NS_IMETHODIMP sbDeviceBase::AutoDownloadTable(const PRUnichar *DeviceString, con
 NS_IMETHODIMP sbDeviceBase::AutoUploadTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTableName, PRBool *_retval)
 {
   *_retval = PR_FALSE;
-  if (IsDeviceIdle() || IsUploadInProgress())
+  if (IsDeviceIdle(DeviceString) || IsUploadInProgress(DeviceString))
   {
     if (CreateTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTableName))
     {
-      if (IsDeviceIdle())
+      // If we are already uploading then these newly added requests
+      // will be picked up automatically on finishing the previous 
+      // requests, so check for idle state ...
+      if (IsDeviceIdle(DeviceString))
       {
-        DeviceUploading();
+        DeviceUploading(DeviceString);
         *_retval = StartTransfer(DeviceString, *TransferTableName);
       }
+    }
+    else
+    {
+      DeviceIdle(DeviceString);
     }
   }
 
@@ -1304,9 +1416,9 @@ NS_IMETHODIMP sbDeviceBase::GetUploadTable(const PRUnichar *deviceString, PRUnic
 
   size_t nLen = transferTable.Length() + 1;
   *_retval = (PRUnichar *) nsMemory::Clone(transferTable.get(), nLen * sizeof(PRUnichar));
-  
+
   if(*_retval == nsnull) return NS_ERROR_OUT_OF_MEMORY;
-  
+
   return NS_OK;
 }
 
@@ -1349,14 +1461,14 @@ PRBool sbDeviceBase::CreateTrackTable(nsString& deviceString, nsString& tableNam
 }
 
 PRBool sbDeviceBase::AddTrack(nsString& deviceString, 
-                            nsString& tableName, 
-                            nsString& url,
-                            nsString& name,
-                            nsString& tim,
-                            nsString& artist,
-                            nsString& album,
-                            nsString& genre,
-                            PRUint32 length)
+                              nsString& tableName, 
+                              nsString& url,
+                              nsString& name,
+                              nsString& tim,
+                              nsString& artist,
+                              nsString& album,
+                              nsString& genre,
+                              PRUint32 length)
 {
   PRUnichar* dbContext;
   GetContext((PRUnichar *) deviceString.get(), &dbContext);
@@ -1429,7 +1541,7 @@ void sbDeviceBase::DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUni
     const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
 
     nsString strFile;
-    GetFileNameFromURL(destURL, strFile);
+    GetFileNameFromURL(deviceString, destURL, strFile);
 
     PRUnichar *pGUID = NULL;
     PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
@@ -1460,7 +1572,7 @@ void sbDeviceBase::DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUni
   data->dbContext = dbContext;
   data->dbTable = table;
   data->deviceString = deviceString;
-  TransferNextFile(GetCurrentTransferRowNumber(), data);
+  TransferNextFile(GetCurrentTransferRowNumber(deviceString), data);
 
   PR_Free(dbContext);
 }
@@ -1482,5 +1594,36 @@ PRBool sbDeviceBase::DeviceEventSync(PRBool mediaInserted)
 {
   return PR_FALSE;
 }
+
+/* PRBool SetDownloadFileType (in PRUint32 fileType); */
+NS_IMETHODIMP sbDeviceBase::SetDownloadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+{
+  // Derived class needs to implement this
+  *_retval = false;
+  return NS_OK;
+}
+
+/* PRBool SetUploadFileType (in PRUint32 fileType); */
+NS_IMETHODIMP sbDeviceBase::SetUploadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+{
+  // Derived class needs to implement this
+  *_retval = false;
+  return NS_OK;
+}
+
+/* PRUint32 GetDownloadFileType (in wstring deviceString); */
+NS_IMETHODIMP sbDeviceBase::GetDownloadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+{
+  *_retval = kSB_DEVICE_FILE_FORMAT_UNDEFINED;
+  return NS_OK;
+}
+
+/* PRUint32 GetUploadFileType (in wstring deviceString); */
+NS_IMETHODIMP sbDeviceBase::GetUploadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+{
+  *_retval = kSB_DEVICE_FILE_FORMAT_UNDEFINED;
+  return NS_OK;
+}
+
 
 /* End of implementation class template. */

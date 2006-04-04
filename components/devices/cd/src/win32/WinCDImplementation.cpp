@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 #include "CDDevice.h"
 #include "WinCDImplementation.h"
@@ -56,11 +56,16 @@
 
 #define TRACK_TABLE NS_LITERAL_STRING("CDTracks").get()
 
-WinCDObject::WinCDObject(WinCDObjectManager *parent, char driveLetter):
-  mParentCDManager(parent),
-  mDriveLetter(driveLetter),
-  mNumTracks(0),
-  mCDTrackTable(TRACK_TABLE)
+WinCDObject::WinCDObject(PlatformCDObjectManager *parent, char driveLetter):
+mParentCDManager(parent),
+mDriveLetter(driveLetter),
+mNumTracks(0),
+mCDTrackTable(TRACK_TABLE),
+mCurrentTransferRowNumber(-1),
+mDeviceState(kSB_DEVICE_STATE_IDLE),
+mStopRip(PR_FALSE),
+mStopBurn(PR_FALSE),
+mCDRipFileFormat(kSB_DEVICE_FILE_FORMAT_WAV) // Default rip to wave file
 {
   mDeviceString = DEVICE_STRING_PREFIX;
   mDeviceString += driveLetter;
@@ -246,7 +251,7 @@ PRBool WinCDObject::UpdateCDLibraryData()
 
       nsString strTitle(NS_LITERAL_STRING("CD Track "));
       strTitle.AppendInt(trackNum);
- 
+
       nsString strLength;
       strLength.AppendInt((unsigned int) length);
 
@@ -310,38 +315,45 @@ void WinCDObject::ReadDiscAttributes(PRBool& mediaChanged)
   mNumTracks = numTracks;
 }
 
-PRBool WinCDObject::RipTrack(PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index)
+PRBool WinCDObject::RipTrack(const PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
 {
   PRUint32 trackNumber = GetCDTrackNumber(source);
-  
+
   if (trackNumber != -1) // Invalid track number
   {
+    mStopRip = PR_FALSE;
 
+    mCurrentTransferRowNumber = curDownloadRowNumber;
     DWORD nuumSectorsRead = 0;
     DWORD driveUnit = mDriveLetter;
 
-    PrimoSDK_ExtractAudioTrack(mSonicHandle, &driveUnit, trackNumber, (PBYTE) destination, &nuumSectorsRead);
-    //free(destinationAscii);
+    DWORD status = PrimoSDK_ExtractAudioTrack(mSonicHandle, &driveUnit, trackNumber, (PBYTE) destination, &nuumSectorsRead);
 
-    RipDBInfo *ripInfo = new RipDBInfo;
-    ripInfo->cdObject = this;
-    ripInfo->table = table;
-    ripInfo->index = index;
-    mTimer->InitWithFuncCallback(MyTimerCallbackFunc, ripInfo, 1000, nsITimer::TYPE_REPEATING_SLACK); // Every second
+    if (status == PRIMOSDK_OK)
+    {
+      //free(destinationAscii);
 
-    return true;
+      RipDBInfo *ripInfo = new RipDBInfo;
+      ripInfo->cdObject = this;
+      ripInfo->table = table;
+      ripInfo->index = index;
+      mTimer->InitWithFuncCallback(MyTimerCallbackFunc, ripInfo, 1000, nsITimer::TYPE_REPEATING_SLACK); // Every second
+
+      return true;
+    }
+
   }
 
   return false;
 }
 
-PRUint32 WinCDObject::GetCDTrackNumber(PRUnichar* trackName)
+PRUint32 WinCDObject::GetCDTrackNumber(const PRUnichar* trackName)
 {
   PRUint32 trackNumber = -1;
 
   // Get the string without extension
   nsString workCopyTrackName(trackName);
-  PRInt32 dotPos = workCopyTrackName.Find(NS_L("."));
+  PRUint32 dotPos = workCopyTrackName.Find(NS_L("."));
   if (dotPos < 0)
   {
     return trackNumber;
@@ -371,19 +383,37 @@ void WinCDObject::UpdateIOProgress(RipDBInfo *ripInfo)
   DWORD readSectors = 0;
   DWORD totalSectors = 0;
   DWORD status = PrimoSDK_RunningStatus(mSonicHandle, PRIMOSDK_GETSTATUS, &readSectors, &totalSectors);
-  if (totalSectors && status == PRIMOSDK_RUNNING)
-  {
-    PRUint32 progress = (readSectors*100)/totalSectors;
-    mParentCDManager->GetBasesbDevice()->UpdateIOProgress((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) ripInfo->index.get(), progress);
+  if (( status == PRIMOSDK_RUNNING) && (mStopRip == PR_FALSE))
+  { 
+    if (totalSectors) // Checking for divide by 0 condition
+    {
+      PRUint32 progress = (readSectors*100)/totalSectors;
+      mParentCDManager->GetBasesbDevice()->UpdateIOProgress((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) ripInfo->index.get(), progress);
+    }
   }
   else
   {
-    // Complete the rip progress status to 100%
-    if (totalSectors && totalSectors == readSectors)
-      mParentCDManager->GetBasesbDevice()->UpdateIOProgress((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) ripInfo->index.get(), 100);
+    if (mStopRip)
+    {
+      // Abort CD Rip operation
+      status = PrimoSDK_RunningStatus(mSonicHandle, PRIMOSDK_ABORT, &readSectors, &totalSectors);
+      mStopRip = PR_FALSE;
+    }
+    else
+    {
+      // Complete the rip progress status to 100%
+      if (totalSectors && totalSectors == readSectors)
+      {
+        mParentCDManager->GetBasesbDevice()->UpdateIOProgress((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) ripInfo->index.get(), 100);
+        mParentCDManager->GetBasesbDevice()->DownloadDone((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) ripInfo->index.get());
+      }
+    }
+  }
 
+  if (status != PRIMOSDK_RUNNING)
+  {
     mTimer->Cancel();
-    mParentCDManager->GetBasesbDevice()->DownloadDone((PRUnichar *) GetDeviceString().get(), (PRUnichar *) ripInfo->table.get(), (PRUnichar *) ripInfo->index.get());
+    
     delete ripInfo;
   }
 }
@@ -395,16 +425,29 @@ void WinCDObject::MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure)
   ripInfo->cdObject->UpdateIOProgress(ripInfo);
 }
 
-WinCDObjectManager::WinCDObjectManager(sbCDDevice* parent):
-  mParentDevice(parent)
+void WinCDObject::StopRip()
+{
+  mStopRip = PR_TRUE;
+}
+
+void WinCDObject::StopBurn()
+{
+  mStopBurn = PR_TRUE;
+}
+
+// PlatformCDObjectManager definitions
+//
+
+PlatformCDObjectManager::PlatformCDObjectManager(sbCDDevice* parent):
+mParentDevice(parent)
 {
 }
 
-WinCDObjectManager::~WinCDObjectManager()
+PlatformCDObjectManager::~PlatformCDObjectManager()
 {
 }
 
-void WinCDObjectManager::Initialize()
+void PlatformCDObjectManager::Initialize()
 {
   DWORD release;
   PrimoSDK_Init(&release);
@@ -423,7 +466,7 @@ void WinCDObjectManager::Initialize()
   EnumerateDrives();
 }
 
-void WinCDObjectManager::Finalize()
+void PlatformCDObjectManager::Finalize()
 {
   // Release the memory by deleting the CD objects
   for (std::list<WinCDObject *>::iterator iteratorCDObjectects = mCDDrives.begin(); iteratorCDObjectects != mCDDrives.end(); iteratorCDObjectects ++)
@@ -434,7 +477,7 @@ void WinCDObjectManager::Finalize()
   PrimoSDK_End();
 }
 
-void WinCDObjectManager::EnumerateDrives()
+void PlatformCDObjectManager::EnumerateDrives()
 {
   DWORD sonicHandle;
   PrimoSDK_GetHandle(&sonicHandle);
@@ -458,7 +501,7 @@ void WinCDObjectManager::EnumerateDrives()
   PrimoSDK_ReleaseHandle(sonicHandle);
 }
 
-PRUnichar* WinCDObjectManager::GetContext(const PRUnichar* deviceString)
+PRUnichar* PlatformCDObjectManager::GetContext(const PRUnichar* deviceString)
 {
   PRUnichar *context = nsnull;
   for (std::list<WinCDObject *>::iterator iteratorCDObjectects = mCDDrives.begin(); iteratorCDObjectects != mCDDrives.end(); iteratorCDObjectects ++)
@@ -473,7 +516,7 @@ PRUnichar* WinCDObjectManager::GetContext(const PRUnichar* deviceString)
   return context;
 }
 
-PRUnichar* WinCDObjectManager::EnumDeviceString(PRUint32 index)
+PRUnichar* PlatformCDObjectManager::EnumDeviceString(PRUint32 index)
 {
   PRUnichar* context = nsnull;
   int currentIndex = 0;
@@ -489,18 +532,18 @@ PRUnichar* WinCDObjectManager::EnumDeviceString(PRUint32 index)
   return context;
 }
 
-PRBool WinCDObjectManager::IsDownloadSupported(const PRUnichar* deviceString)
+PRBool PlatformCDObjectManager::IsDownloadSupported(const PRUnichar* deviceString)
 {
   // All CD Drives should support uploading, a.k.a ripping
   return PR_FALSE;
 }
 
-PRUint32 WinCDObjectManager::GetSupportedFormats(const PRUnichar* deviceString)
+PRUint32 PlatformCDObjectManager::GetSupportedFormats(const PRUnichar* deviceString)
 {
   return 0;
 }
 
-PRBool WinCDObjectManager::IsUploadSupported(const PRUnichar* deviceString)
+PRBool PlatformCDObjectManager::IsUploadSupported(const PRUnichar* deviceString)
 {
   PRBool retVal = false;
   WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
@@ -511,17 +554,17 @@ PRBool WinCDObjectManager::IsUploadSupported(const PRUnichar* deviceString)
   return retVal;
 }
 
-PRBool WinCDObjectManager::IsTransfering(const PRUnichar* deviceString)
+PRBool PlatformCDObjectManager::IsTransfering(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
 
-PRBool WinCDObjectManager::IsDeleteSupported(const PRUnichar* deviceString)
+PRBool PlatformCDObjectManager::IsDeleteSupported(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
 
-PRUint32 WinCDObjectManager::GetUsedSpace(const PRUnichar* deviceString)
+PRUint32 PlatformCDObjectManager::GetUsedSpace(const PRUnichar* deviceString)
 {
   PRUint32 usedSpace = 0;
 
@@ -533,12 +576,21 @@ PRUint32 WinCDObjectManager::GetUsedSpace(const PRUnichar* deviceString)
   return usedSpace;
 }
 
-PRUint32 WinCDObjectManager::GetAvailableSpace(const PRUnichar* deviceString)
+PRUint32 PlatformCDObjectManager::GetAvailableSpace(const PRUnichar* deviceString)
 {
-  return 0;
+  PRUint32 availableSpace = 0;
+
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+
+  if (cdObject)
+  {
+    cdObject->GetFreeDiscSpace();
+  }
+
+  return availableSpace;
 }
 
-PRBool WinCDObjectManager::GetTrackTable(const PRUnichar* deviceString, PRUnichar** dbContext, PRUnichar** tableName)
+PRBool PlatformCDObjectManager::GetTrackTable(const PRUnichar* deviceString, PRUnichar** dbContext, PRUnichar** tableName)
 {
   *dbContext = nsnull;
   for (std::list<WinCDObject *>::iterator iteratorCDObjectects = mCDDrives.begin(); iteratorCDObjectects != mCDDrives.end(); iteratorCDObjectects ++)
@@ -556,47 +608,59 @@ PRBool WinCDObjectManager::GetTrackTable(const PRUnichar* deviceString, PRUnicha
   return PR_TRUE;
 }
 
-PRBool WinCDObjectManager::EjectDevice(const PRUnichar* deviceString)
-{
-  return PR_FALSE;
-}
- 
-PRBool WinCDObjectManager::IsUpdateSupported(const PRUnichar* deviceString)
+PRBool PlatformCDObjectManager::EjectDevice(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
 
-PRBool WinCDObjectManager::IsEjectSupported(const PRUnichar* deviceString)
+PRBool PlatformCDObjectManager::IsUpdateSupported(const PRUnichar* deviceString)
 {
   return PR_FALSE;
 }
 
-PRUint32 WinCDObjectManager::GetNumDevices()
+PRBool PlatformCDObjectManager::IsEjectSupported(const PRUnichar* deviceString)
+{
+  return PR_FALSE;
+}
+
+PRUint32 PlatformCDObjectManager::GetNumDevices()
 {
   return mCDDrives.size();
 }
 
-PRUint32 WinCDObjectManager::GetDeviceState(const PRUnichar* deviceString)
+PRUint32 PlatformCDObjectManager::GetDeviceState(const PRUnichar* deviceString)
 {
   return 0;
 }
 
-PRUnichar* WinCDObjectManager::GetNumDestinations (const PRUnichar* DeviceString)
+PRUnichar* PlatformCDObjectManager::GetNumDestinations (const PRUnichar* DeviceString)
 {
   return nsnull;
 }
 
-PRBool WinCDObjectManager::SuspendTransfer()
+PRBool PlatformCDObjectManager::StopCurrentTransfer(const PRUnichar*  deviceString)
+{
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+
+  if (cdObject)
+  {
+    cdObject->StopRip();
+  }
+
+  return PR_TRUE;
+}
+
+PRBool PlatformCDObjectManager::SuspendTransfer(const PRUnichar*  DeviceString)
 {
   return PR_FALSE;
 }
 
-PRBool WinCDObjectManager::ResumeTransfer()
+PRBool PlatformCDObjectManager::ResumeTransfer(const PRUnichar*  DeviceString)
 {
   return PR_FALSE;
 }
 
-PRBool WinCDObjectManager::OnCDDriveEvent(PRBool mediaInserted)
+PRBool PlatformCDObjectManager::OnCDDriveEvent(PRBool mediaInserted)
 {
   for (std::list<WinCDObject *>::iterator iteratorCDObjectects = mCDDrives.begin(); iteratorCDObjectects != mCDDrives.end(); iteratorCDObjectects ++)
   {
@@ -606,7 +670,7 @@ PRBool WinCDObjectManager::OnCDDriveEvent(PRBool mediaInserted)
   return PR_TRUE;
 }
 
-WinCDObject* WinCDObjectManager::GetDeviceMatchingString(const PRUnichar* deviceString)
+WinCDObject* PlatformCDObjectManager::GetDeviceMatchingString(const PRUnichar* deviceString)
 {
   WinCDObject* retVal = NULL;
 
@@ -622,20 +686,20 @@ WinCDObject* WinCDObjectManager::GetDeviceMatchingString(const PRUnichar* device
   return retVal;
 }
 
-bool WinCDObjectManager::TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
+bool PlatformCDObjectManager::TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
 { 
   WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
 
   if (cdObject)
   {
-    if (mParentDevice->IsDownloadInProgress())
+    if (mParentDevice->IsDownloadInProgress(deviceString))
     {
       // rip
       nsString destUTFString((const PRUnichar *) destination);
       nsCString destAsciiString;
       NS_UTF16ToCString(destUTFString, NS_CSTRING_ENCODING_ASCII, destAsciiString);
 
-      cdObject->RipTrack(source, (char *) destAsciiString.get(), dbContext, table, index);
+      cdObject->RipTrack(source, (char *) destAsciiString.get(), dbContext, table, index, curDownloadRowNumber);
     }
     else
     {
@@ -645,3 +709,131 @@ bool WinCDObjectManager::TransferFile(PRUnichar* deviceString, PRUnichar* source
 
   return false;
 }
+
+PRBool PlatformCDObjectManager::SetCDRipFormat(const PRUnichar*  deviceString, PRUint32 format)
+{
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+
+  if (cdObject)
+  {
+    cdObject->SetCDRipFormat(format);
+
+    return PR_TRUE;
+  }
+
+  return PR_FALSE;
+}
+
+PRUint32 PlatformCDObjectManager::GetCDRipFormat(const PRUnichar*  deviceString)
+{
+  PRUint32 format;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+
+  if (cdObject)
+  {
+    format = cdObject->GetCDRipFormat();
+  }
+
+  return format;
+}
+
+PRUint32 PlatformCDObjectManager::GetCurrentTransferRowNumber(const PRUnichar* deviceString)
+{
+  PRUint32 rowNumber = -1;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+
+  if (cdObject)
+  {
+    rowNumber = cdObject->GetCurrentTransferRowNumber();
+  }
+
+  return rowNumber;
+}
+
+void PlatformCDObjectManager::SetTransferState(const PRUnichar* deviceString, PRInt32 newState)
+{
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+
+  if (cdObject)
+  {
+    cdObject->SetTransferState(newState);
+  }
+}
+
+PRBool PlatformCDObjectManager::IsDeviceIdle(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsDeviceIdle();
+  }
+  return state;
+}
+
+PRBool PlatformCDObjectManager::IsDownloadInProgress(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsDownloadInProgress();
+  }
+  return state;
+}
+
+PRBool PlatformCDObjectManager::IsUploadInProgress(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsUploadInProgress();
+  }
+  return state;
+}
+
+PRBool PlatformCDObjectManager::IsTransferInProgress(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsDownloadInProgress() || cdObject->IsUploadInProgress();
+  }
+  return state;
+}
+
+PRBool PlatformCDObjectManager::IsDownloadPaused(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsDownloadPaused();
+  }
+  return state;
+}
+
+PRBool PlatformCDObjectManager::IsUploadPaused(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsUploadPaused();
+  }
+  return state;
+}
+
+PRBool PlatformCDObjectManager::IsTransferPaused(const PRUnichar* deviceString)
+{
+  PRBool state = PR_FALSE;
+  WinCDObject* cdObject = GetDeviceMatchingString(deviceString);
+  if (cdObject)
+  {
+    state = cdObject->IsUploadPaused() || cdObject->IsDownloadPaused();
+  }
+  return state;
+}
+

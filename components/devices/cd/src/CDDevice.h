@@ -22,12 +22,12 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
- * \file  CDDevice.h
- * \brief Songbird CDDevice Component Definition.
- */
+* \file  CDDevice.h
+* \brief Songbird CDDevice Component Definition.
+*/
 
 #pragma once
 
@@ -56,10 +56,10 @@ class sbCDDevice :  public sbICDDevice, public sbDeviceBase
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIDEVICEBASE
-  NS_DECL_SBICDDEVICE
+    NS_DECL_SBIDEVICEBASE
+    NS_DECL_SBICDDEVICE
 
-  sbCDDevice();
+    sbCDDevice();
 
   // Transfer related
   virtual nsString GetDeviceDownloadTable(const PRUnichar* deviceString);
@@ -71,10 +71,27 @@ public:
   virtual nsString GetDeviceDownloadReadable(const PRUnichar* deviceString);
   virtual nsString GetDeviceUploadTableReadable(const PRUnichar* deviceString);
 
-  virtual PRBool TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
-  virtual PRBool StopCurrentTransfer();
-  virtual PRBool SuspendCurrentTransfer();
-  virtual PRBool ResumeTransfer();
+  virtual PRBool    TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
+  virtual PRBool    StopCurrentTransfer(const PRUnichar* deviceString);
+  virtual PRBool    SuspendCurrentTransfer(const PRUnichar* deviceString);
+  virtual PRBool    ResumeTransfer(const PRUnichar* deviceString);
+  virtual PRUint32  GetCurrentTransferRowNumber(const PRUnichar* deviceString);
+
+  virtual PRBool IsDeviceIdle(const PRUnichar* deviceString) { return mCDManagerObject.IsDeviceIdle(deviceString); }
+  virtual PRBool IsDownloadInProgress(const PRUnichar* deviceString) { return mCDManagerObject.IsDownloadInProgress(deviceString); }
+  virtual PRBool IsUploadInProgress(const PRUnichar* deviceString) { return mCDManagerObject.IsUploadInProgress(deviceString);  }
+  virtual PRBool IsTransferInProgress(const PRUnichar* deviceString) { return (mCDManagerObject.IsDownloadInProgress(deviceString) || mCDManagerObject.IsUploadInProgress(deviceString)); }
+  virtual PRBool IsDownloadPaused(const PRUnichar* deviceString) { return mCDManagerObject.IsDownloadPaused(deviceString); }
+  virtual PRBool IsUploadPaused(const PRUnichar* deviceString) { return mCDManagerObject.IsUploadPaused(deviceString); }
+  virtual PRBool IsTransferPaused(const PRUnichar* deviceString) { return mCDManagerObject.IsTransferPaused(deviceString); }
+
+  virtual void DeviceIdle(const PRUnichar* deviceString){ mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_IDLE); }
+  virtual void DeviceDownloading(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_DOWNLOADING);}
+  virtual void DeviceUploading(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_UPLOADING);}
+  virtual void DeviceDownloadPaused(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_DOWNLOAD_PAUSED);}
+  virtual void DeviceUploadPaused(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_UPLOAD_PAUSED);}
+  virtual void DeviceDeleting(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_DELETING);}
+  virtual void DeviceBusy(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_BUSY);}
 
 private:
   virtual void OnThreadBegin();
@@ -88,5 +105,5 @@ private:
 
   ~sbCDDevice();
 
-  WinCDObjectManager mCDManagerObject;
+  PlatformCDObjectManager mCDManagerObject;
 };

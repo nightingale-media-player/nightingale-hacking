@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 #pragma once
 
@@ -44,7 +44,7 @@ public:
     WinCDObject* cdObject;
   };
 
-  WinCDObject(class WinCDObjectManager* parent, char driveLetter);
+  WinCDObject(class PlatformCDObjectManager* parent, char driveLetter);
   ~WinCDObject();
 
   void Initialize();
@@ -68,9 +68,24 @@ public:
 
   void      EvaluateCDDrive();
 
-  PRBool    RipTrack(PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index);
+  PRBool    RipTrack(const PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 );
   void      UpdateIOProgress(RipDBInfo *ripInfo);
 
+  void        SetCDRipFormat(PRUint32 format) {} // Not yet implemented
+  PRUint32    GetCDRipFormat() { return kSB_DEVICE_FILE_FORMAT_WAV; }  // Not yet implemented
+  PRUint32    GetCurrentTransferRowNumber() { return mCurrentTransferRowNumber; }
+
+  void        SetTransferState(PRInt32 newState) { mDeviceState = newState; }
+  void        StopRip();
+  void        StopBurn();
+
+  PRBool      IsDeviceIdle() { return mDeviceState == kSB_DEVICE_STATE_IDLE; }
+  PRBool      IsDownloadInProgress() { return mDeviceState == kSB_DEVICE_STATE_DOWNLOADING; }
+  PRBool      IsUploadInProgress() { return mDeviceState == kSB_DEVICE_STATE_UPLOADING; }
+  PRBool      IsTransferInProgress() { return mDeviceState == kSB_DEVICE_STATE_DOWNLOAD_PAUSED; }
+  PRBool      IsDownloadPaused() { return mDeviceState == kSB_DEVICE_STATE_UPLOAD_PAUSED; }
+  PRBool      IsUploadPaused() { return mDeviceState == kSB_DEVICE_STATE_DELETING; }
+  PRBool      IsTransferPaused() { return mDeviceState == kSB_DEVICE_STATE_BUSY; }
 
 private:
   WinCDObject() {}
@@ -78,7 +93,7 @@ private:
   void ReadDiscAttributes(PRBool& mediaChanged);
   PRBool UpdateCDLibraryData();
   void ClearCDLibraryData();
-  PRUint32 GetCDTrackNumber(PRUnichar* trackName);
+  PRUint32 GetCDTrackNumber(const PRUnichar* trackName);
 
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
 
@@ -92,20 +107,26 @@ private:
   DWORD mFreeSpace;
   DWORD mMediaErasable;
 
+  PRUint32 mCDRipFileFormat;
+
   nsString mCDTrackTable;
   nsString mDeviceString;
   nsString mDeviceContext;
-  
+  PRUint32 mCurrentTransferRowNumber;
+  PRInt32  mDeviceState;
+  PRBool   mStopRip;
+  PRBool   mStopBurn;
+
   nsCOMPtr<nsITimer> mTimer;
 
-  class WinCDObjectManager* mParentCDManager;
+  class PlatformCDObjectManager* mParentCDManager;
 };
 
-class WinCDObjectManager : public sbCDObjectManager
+class PlatformCDObjectManager : public sbCDObjectManager
 {
 public:
-  WinCDObjectManager(class sbCDDevice* parent);
-  ~WinCDObjectManager();
+  PlatformCDObjectManager(class sbCDDevice* parent);
+  ~PlatformCDObjectManager();
 
   void Initialize();
   void Finalize();
@@ -126,17 +147,31 @@ public:
   virtual PRUint32    GetNumDevices();
   virtual PRUint32    GetDeviceState(const PRUnichar*  deviceString);
   virtual PRUnichar*  GetNumDestinations (const PRUnichar*  DeviceString);
-  virtual PRBool      SuspendTransfer();
-  virtual PRBool      ResumeTransfer();
+  virtual PRBool      StopCurrentTransfer(const PRUnichar*  DeviceString);
+  virtual PRBool      SuspendTransfer(const PRUnichar*  DeviceString);
+  virtual PRBool      ResumeTransfer(const PRUnichar*  DeviceString);
   virtual PRBool      OnCDDriveEvent(PRBool mediaInserted);
+  virtual PRBool      SetCDRipFormat(const PRUnichar*  deviceString, PRUint32 format);
+  virtual PRUint32    GetCDRipFormat(const PRUnichar*  deviceString);
+  virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString);
 
-  virtual bool TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
+  virtual bool TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
+
+  virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState);
+
+  virtual PRBool      IsDeviceIdle(const PRUnichar* deviceString);
+  virtual PRBool      IsDownloadInProgress(const PRUnichar* deviceString);
+  virtual PRBool      IsUploadInProgress(const PRUnichar* deviceString);
+  virtual PRBool      IsTransferInProgress(const PRUnichar* deviceString);
+  virtual PRBool      IsDownloadPaused(const PRUnichar* deviceString);
+  virtual PRBool      IsUploadPaused(const PRUnichar* deviceString);
+  virtual PRBool      IsTransferPaused(const PRUnichar* deviceString);
 
   class sbCDDevice* GetBasesbDevice() { return mParentDevice; };
 
 private:
   WinCDObject* GetDeviceMatchingString(const PRUnichar* deviceString);
-  WinCDObjectManager() {}
+  PlatformCDObjectManager() {}
   void EnumerateDrives();
   std::list<WinCDObject *> mCDDrives;
   class sbCDDevice* mParentDevice;

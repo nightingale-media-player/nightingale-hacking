@@ -22,12 +22,12 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
- * \file  DownloadDevice.h
- * \brief Songbird DownloadDevice Component Definition.
- */
+* \file  DownloadDevice.h
+* \brief Songbird DownloadDevice Component Definition.
+*/
 
 #pragma once
 
@@ -50,24 +50,35 @@
 
 class sbDownloadListener;
 
+// Since download device has only one instance, the "Device String" notion does not
+// apply to this device and hence ignored in all the functions.
 class sbDownloadDevice :  public sbIDownloadDevice, public sbDeviceBase
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIDEVICEBASE
-  NS_DECL_SBIDOWNLOADDEVICE
+    NS_DECL_SBIDEVICEBASE
+    NS_DECL_SBIDOWNLOADDEVICE
 
-  sbDownloadDevice();
+    sbDownloadDevice();
 
 private:
+
+  PRBool IsDeviceIdle(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_IDLE; }
+  PRBool IsDownloadInProgress(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_DOWNLOADING; }
+  PRBool IsUploadInProgress(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_UPLOADING; }
+  PRBool IsTransferInProgress(const PRUnichar* deviceString) { return (IsDownloadInProgress(deviceString) || IsUploadInProgress(deviceString)); }
+  PRBool IsDownloadPaused(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_DOWNLOAD_PAUSED; }
+  PRBool IsUploadPaused(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_UPLOAD_PAUSED; }
+  PRBool IsTransferPaused(const PRUnichar* deviceString) { return (IsDownloadPaused(deviceString) || IsUploadPaused(deviceString)); }
+
   virtual void OnThreadBegin();
   virtual void OnThreadEnd();
 
   virtual PRBool TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
-  
-  virtual PRBool StopCurrentTransfer();
-  virtual PRBool SuspendCurrentTransfer();
-  virtual PRBool ResumeTransfer();
+
+  virtual PRBool StopCurrentTransfer(const PRUnichar* deviceString);
+  virtual PRBool SuspendCurrentTransfer(const PRUnichar* deviceString);
+  virtual PRBool ResumeTransfer(const PRUnichar* deviceString);
 
   // Transfer related
   virtual nsString GetDeviceDownloadTable(const PRUnichar* deviceString);
@@ -78,11 +89,25 @@ private:
   virtual nsString GetDeviceUploadTableType(const PRUnichar* deviceString);
   virtual nsString GetDeviceDownloadReadable(const PRUnichar* deviceString);
   virtual nsString GetDeviceUploadTableReadable(const PRUnichar* deviceString);
-  
+  virtual PRUint32  GetCurrentTransferRowNumber(const PRUnichar* deviceString) { return mCurrentTransferRowNumber;  }
+  void SetCurrentTransferRowNumber(PRUint32 rowNumber) { mCurrentTransferRowNumber = rowNumber; }
+
+  virtual void DeviceIdle(const PRUnichar* deviceString){mDeviceState = kSB_DEVICE_STATE_IDLE; }
+  virtual void DeviceDownloading(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_DOWNLOADING;}
+  virtual void DeviceUploading(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_UPLOADING;}
+  virtual void DeviceDownloadPaused(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_DOWNLOAD_PAUSED;}
+  virtual void DeviceUploadPaused(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_UPLOAD_PAUSED;}
+  virtual void DeviceDeleting(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_DELETING;}
+  virtual void DeviceBusy(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_BUSY;}
+
+
   friend class sbDownloadListener;
 private:
   PRInt32 mCurrentDownloadRowNumber;
   PRBool mDownloading;
+  PRUint32 mDeviceState;
+  PRInt32 mCurrentTransferRowNumber;
+
   ~sbDownloadDevice();
   class sbDownloadListener *mListener;
 

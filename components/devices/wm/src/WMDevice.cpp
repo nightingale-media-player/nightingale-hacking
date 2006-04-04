@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
 * \file  sbWMDevice.cpp
@@ -59,7 +59,7 @@ NS_IMPL_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
 
 //-----------------------------------------------------------------------------
 sbWMDevice::sbWMDevice():
-	sbDeviceBase(true)
+sbDeviceBase(true)
 {
 } //ctor
 
@@ -99,13 +99,13 @@ NS_IMETHODIMP sbWMDevice::RemoveCallback(sbIDeviceBaseCallback *pCallback, PRBoo
 /* wstring EnumDeviceString (in PRUint32 index); */
 NS_IMETHODIMP sbWMDevice::EnumDeviceString(PRUint32 index, PRUnichar **_retval)
 {
-    return sbDeviceBase::EnumDeviceString(index, _retval);
+  return sbDeviceBase::EnumDeviceString(index, _retval);
 }
 
 /* attribute wstring name; */
 NS_IMETHODIMP sbWMDevice::SetName(const PRUnichar * aName)
 {
-    return sbDeviceBase::SetName(aName);
+  return sbDeviceBase::SetName(aName);
 }
 
 /* wstring GetContext (in wstring deviceString); */
@@ -116,56 +116,56 @@ NS_IMETHODIMP sbWMDevice::GetContext(const PRUnichar *deviceString, PRUnichar **
 
   if(*_retval == nsnull) return NS_ERROR_OUT_OF_MEMORY;
 
-	return NS_OK;
+  return NS_OK;
 }
 
 /* PRBool IsDownloadSupported (); */
 NS_IMETHODIMP sbWMDevice::IsDownloadSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-    *_retval = true;
-    return NS_OK;
+  *_retval = true;
+  return NS_OK;
 }
 
 /* PRUint32 GetSupportedFormats (); */
 NS_IMETHODIMP sbWMDevice::GetSupportedFormats(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-    return sbDeviceBase::GetSupportedFormats(deviceString, _retval);
+  return sbDeviceBase::GetSupportedFormats(deviceString, _retval);
 }
 
 /* PRBool IsUploadSupported (); */
 NS_IMETHODIMP sbWMDevice::IsUploadSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-    return sbDeviceBase::IsUploadSupported(deviceString, _retval);
+  return sbDeviceBase::IsUploadSupported(deviceString, _retval);
 }
 
 /* PRBool IsTransfering (); */
 NS_IMETHODIMP sbWMDevice::IsTransfering(const PRUnichar *deviceString, PRBool *_retval)
 {
-    return sbDeviceBase::IsTransfering(deviceString, _retval);
+  return sbDeviceBase::IsTransfering(deviceString, _retval);
 }
 
 /* PRBool IsDeleteSupported (); */
 NS_IMETHODIMP sbWMDevice::IsDeleteSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-    return sbDeviceBase::IsDeleteSupported(deviceString, _retval);
+  return sbDeviceBase::IsDeleteSupported(deviceString, _retval);
 }
 
 /* PRUint32 GetUsedSpace (); */
 NS_IMETHODIMP sbWMDevice::GetUsedSpace(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-    return sbDeviceBase::GetUsedSpace(deviceString, _retval);
+  return sbDeviceBase::GetUsedSpace(deviceString, _retval);
 }
 
 /* PRUint32 GetAvailableSpace (); */
 NS_IMETHODIMP sbWMDevice::GetAvailableSpace(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-    return sbDeviceBase::GetAvailableSpace(deviceString, _retval);
+  return sbDeviceBase::GetAvailableSpace(deviceString, _retval);
 }
 
 /* PRBool GetTrackTable (out wstring dbContext, out wstring tableName); */
 NS_IMETHODIMP sbWMDevice::GetTrackTable(const PRUnichar *deviceString, PRUnichar **dbContext, PRUnichar **tableName, PRBool *_retval)
 {
-    return sbDeviceBase::GetTrackTable(deviceString, dbContext, tableName, _retval);
+  return sbDeviceBase::GetTrackTable(deviceString, dbContext, tableName, _retval);
 }
 
 /* PRBool AutoDownloadTable (in wstring deviceString, in wstring tableName); */
@@ -183,25 +183,25 @@ NS_IMETHODIMP sbWMDevice::AutoUploadTable(const PRUnichar *DeviceString, const P
 /* PRBool AbortTransfer (); */
 NS_IMETHODIMP sbWMDevice::AbortTransfer(const PRUnichar *deviceString, PRBool *_retval)
 {
-    return sbDeviceBase::AbortTransfer(deviceString, _retval);
+  return sbDeviceBase::AbortTransfer(deviceString, _retval);
 }
 
 /* PRBool DeleteTable (in wstring dbContext, in wstring tableName); */
 NS_IMETHODIMP sbWMDevice::DeleteTable(const PRUnichar *deviceString, const PRUnichar *dbContext, const PRUnichar *tableName, PRBool *_retval)
 {
-    return sbDeviceBase::DeleteTable(deviceString, dbContext, tableName, _retval);
+  return sbDeviceBase::DeleteTable(deviceString, dbContext, tableName, _retval);
 }
 
 /* PRBool UpdateTable (in wstring dbContext, in wstring tableName); */
 NS_IMETHODIMP sbWMDevice::UpdateTable(const PRUnichar *deviceString, const PRUnichar *tableName, PRBool *_retval)
 {
-    return sbDeviceBase::UpdateTable(deviceString, tableName, _retval);
+  return sbDeviceBase::UpdateTable(deviceString, tableName, _retval);
 }
 
 /* PRBool EjectDevice (); */
 NS_IMETHODIMP sbWMDevice::EjectDevice(const PRUnichar *deviceString, PRBool *_retval)
 {
-    return sbDeviceBase::EjectDevice(deviceString, _retval);
+  return sbDeviceBase::EjectDevice(deviceString, _retval);
 }
 
 /* End DeviceBase */
@@ -226,58 +226,58 @@ NS_IMETHODIMP sbWMDevice::GetName(PRUnichar **aName)
 
 bool sbWMDevice::IsEjectSupported() 
 {
-    return false;
+  return false;
 }
 
 void sbWMDevice::OnThreadBegin()
 {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+  CoInitializeEx(0, COINIT_MULTITHREADED);
 }
 
 void sbWMDevice::OnThreadEnd()
 {
-	CoUninitialize();
+  CoUninitialize();
 }
 
 /* PRBool IsUpdateSupported (); */
 NS_IMETHODIMP sbWMDevice::IsUpdateSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	return sbDeviceBase::IsUpdateSupported(deviceString, _retval);
+  return sbDeviceBase::IsUpdateSupported(deviceString, _retval);
 }
 
 /* PRBool IsEjectSupported (); */
 NS_IMETHODIMP sbWMDevice::IsEjectSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-	return sbDeviceBase::IsEjectSupported(deviceString, _retval);
+  return sbDeviceBase::IsEjectSupported(deviceString, _retval);
 }
 
 /* PRUint32 GetNumDevices (); */
 NS_IMETHODIMP sbWMDevice::GetNumDevices(PRUint32 *_retval)
 {
-	return sbDeviceBase::GetNumDevices(_retval);
+  return sbDeviceBase::GetNumDevices(_retval);
 }
 
 /* wstring GetNumDestinations (in wstring DeviceString); */
 NS_IMETHODIMP sbWMDevice::GetNumDestinations(const PRUnichar *DeviceString, PRUnichar **_retval)
 {
-	return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
+  return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
 }
 
 /* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
 NS_IMETHODIMP sbWMDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, PRUnichar **TransferTable, PRBool *_retval)
 {
-	return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
+  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
 }
 
 /* PRBool SuspendTransfer (); */
-NS_IMETHODIMP sbWMDevice::SuspendTransfer(PRBool *_retval)
+NS_IMETHODIMP sbWMDevice::SuspendTransfer(const PRUnichar *DeviceString, PRBool *_retval)
 {
   *_retval = false;
   return NS_OK;
 }
 
 /* PRBool ResumeTransfer (); */
-NS_IMETHODIMP sbWMDevice::ResumeTransfer(PRBool *_retval)
+NS_IMETHODIMP sbWMDevice::ResumeTransfer(const PRUnichar *DeviceString, PRBool *_retval)
 {
   *_retval = false;
   return NS_OK;
@@ -317,6 +317,30 @@ NS_IMETHODIMP sbWMDevice::UploadTable(const PRUnichar *DeviceString, const PRUni
 NS_IMETHODIMP sbWMDevice::DownloadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
 {
   return sbDeviceBase::DownloadTable(DeviceString, TableName, _retval);
+}
+
+/* PRBool SetDownloadFileType (in PRUint32 fileType); */
+NS_IMETHODIMP sbWMDevice::SetDownloadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+{
+  return sbDeviceBase::SetDownloadFileType(deviceString, fileType, _retval);
+}
+
+/* PRBool SetUploadFileType (in PRUint32 fileType); */
+NS_IMETHODIMP sbWMDevice::SetUploadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+{
+  return sbDeviceBase::SetUploadFileType(deviceString, fileType, _retval);
+}
+
+/* PRUint32 GetDownloadFileType (in wstring deviceString); */
+NS_IMETHODIMP sbWMDevice::GetDownloadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+{
+  return sbDeviceBase::GetDownloadFileType(deviceString, _retval);
+}
+
+/* PRUint32 GetUploadFileType (in wstring deviceString); */
+NS_IMETHODIMP sbWMDevice::GetUploadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+{
+  return sbDeviceBase::GetUploadFileType(deviceString, _retval);
 }
 
 /* End of implementation class template. */

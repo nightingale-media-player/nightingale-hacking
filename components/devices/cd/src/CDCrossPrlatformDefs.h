@@ -29,24 +29,38 @@
 class sbCDObjectManager
 {
 public:
-  virtual PRUnichar* GetContext(const PRUnichar* deviceString) = 0;
-  virtual PRUnichar* EnumDeviceString(PRUint32 index) = 0;
-  virtual PRBool IsDownloadSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32 GetSupportedFormats(const PRUnichar*  deviceString) = 0;
-  virtual PRBool IsUploadSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRBool IsTransfering(const PRUnichar*  deviceString) = 0;
-  virtual PRBool IsDeleteSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32 GetUsedSpace(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32 GetAvailableSpace(const PRUnichar*  deviceString) = 0;
-  virtual PRBool GetTrackTable(const PRUnichar*  deviceString, PRUnichar** dbContext, PRUnichar** tableName) = 0;
-  virtual PRBool EjectDevice(const PRUnichar*  deviceString) = 0; 
-  virtual PRBool IsUpdateSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRBool IsEjectSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32 GetNumDevices() = 0;
-  virtual PRUint32 GetDeviceState(const PRUnichar*  deviceString) = 0;
-  virtual PRUnichar* GetNumDestinations (const PRUnichar*  DeviceString) = 0;
-  virtual PRBool SuspendTransfer() = 0;
-  virtual PRBool ResumeTransfer() = 0;
+  virtual PRUnichar*  GetContext(const PRUnichar* deviceString) = 0;
+  virtual PRUnichar*  EnumDeviceString(PRUint32 index) = 0;
+  virtual PRBool      IsDownloadSupported(const PRUnichar*  deviceString) = 0;
+  virtual PRUint32    GetSupportedFormats(const PRUnichar*  deviceString) = 0;
+  virtual PRBool      IsUploadSupported(const PRUnichar*  deviceString) = 0;
+  virtual PRBool      IsTransfering(const PRUnichar*  deviceString) = 0;
+  virtual PRBool      IsDeleteSupported(const PRUnichar*  deviceString) = 0;
+  virtual PRUint32    GetUsedSpace(const PRUnichar*  deviceString) = 0;
+  virtual PRUint32    GetAvailableSpace(const PRUnichar*  deviceString) = 0;
+  virtual PRBool      GetTrackTable(const PRUnichar*  deviceString, PRUnichar** dbContext, PRUnichar** tableName) = 0;
+  virtual PRBool      EjectDevice(const PRUnichar*  deviceString) = 0; 
+  virtual PRBool      IsUpdateSupported(const PRUnichar*  deviceString) = 0;
+  virtual PRBool      IsEjectSupported(const PRUnichar*  deviceString) = 0;
+  virtual PRUint32    GetNumDevices() = 0;
+  virtual PRUint32    GetDeviceState(const PRUnichar*  deviceString) = 0;
+  virtual PRUnichar*  GetNumDestinations (const PRUnichar*  DeviceString) = 0;
+  virtual PRBool      StopCurrentTransfer(const PRUnichar*  DeviceString) = 0;
+  virtual PRBool      SuspendTransfer(const PRUnichar*  DeviceString) = 0;
+  virtual PRBool      ResumeTransfer(const PRUnichar*  DeviceString) = 0;
+  virtual PRBool      SetCDRipFormat(const PRUnichar*  DeviceString, PRUint32 format) = 0;
+  virtual PRUint32    GetCDRipFormat(const PRUnichar*  DeviceString) = 0;
+  virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString) = 0;
+
+  virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState) = 0;
+
+  virtual PRBool      IsDeviceIdle(const PRUnichar* deviceString) = 0;
+  virtual PRBool      IsDownloadInProgress(const PRUnichar* deviceString) = 0;
+  virtual PRBool      IsUploadInProgress(const PRUnichar* deviceString) = 0;
+  virtual PRBool      IsTransferInProgress(const PRUnichar* deviceString) = 0;
+  virtual PRBool      IsDownloadPaused(const PRUnichar* deviceString) = 0;
+  virtual PRBool      IsUploadPaused(const PRUnichar* deviceString) = 0;
+  virtual PRBool      IsTransferPaused(const PRUnichar* deviceString) = 0;
 
   virtual ~sbCDObjectManager(){}
 
