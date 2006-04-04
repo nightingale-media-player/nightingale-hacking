@@ -111,3 +111,10 @@ NS_IMETHODIMP sbMetadataValues::GetType(const PRUnichar *key, PRInt32 *_retval)
   return NS_OK;
 }
 
+/* PRInt32 Clear (); */
+NS_IMETHODIMP sbMetadataValues::Clear()
+{
+  m_Map.clear();
+  return NS_OK;
+}
+

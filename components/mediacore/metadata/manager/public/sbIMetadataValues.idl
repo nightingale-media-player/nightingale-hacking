@@ -34,4 +34,5 @@ interface sbIMetadataValues : nsISupports
   void setValue( in wstring key, in wstring value, in PRInt32 type );
   wstring getValue( in wstring key );
   PRInt32 getType( in wstring key );
+  void clear();
 };

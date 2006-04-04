@@ -51,8 +51,7 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIMetadataManager.xpt $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIMetadataHandler.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)*.xpt $(SolutionDir)dist\components
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
@@ -110,8 +109,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIMetadataManager.xpt $(SolutionDir)dist\components
-copy /y $(TargetDir)sbIMetadataHandler.xpt $(SolutionDir)dist\components
+copy /y $(TargetDir)*.xpt $(SolutionDir)dist\components
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool

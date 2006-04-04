@@ -28,11 +28,11 @@ try
 {
   var ENABLE_BACKSCAN = 1;
 
+  const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
+  var aMetadataManager = new MetadataManager();
   const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-  const keys = new Array("title", "length", "album", "artist", "genre");
-
   var aMediaLibrary = new MediaLibrary();
-  aMediaLibrary = aMediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
+  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
 
   var bsPaused = false;
   var bsDBQuery = null;
@@ -174,8 +174,15 @@ try
           scanning = bsSongbirdStrings.getString("back_scan.scanning");
         } catch(e) {}
         bsScanningText.SetValue( scanning + "..." );
+        
         var metadata = new Array(); // TODO: REPLACE WITH METADATA API.   theVLCCore.getURLMetadata(url, keys);
-        metadata.push(null);metadata.push(null);metadata.push(null);metadata.push(null);metadata.push(null);
+        var aHandler = aMetadataManager.GetHandlerForMediaURL(url);
+        var retval = aHandler.Read();
+        var values = aHandler.GetValuesMap();
+        for ( var i in keys )
+        {
+          metadata[ i ] = values.getValue( keys[ i ] );
+        }
         
         // GRRRRR.
         for ( var i in metadata )

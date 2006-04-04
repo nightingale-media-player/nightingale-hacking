@@ -96,7 +96,8 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     nsCString cstrFixedURL = NS_LITERAL_CSTRING("file://");
     cstrFixedURL += cstrURL;
 
-    pIOService->NewURI(cstrURL, nsnull, nsnull, getter_AddRefs(pURI));
+    pIOService->NewURI(cstrFixedURL, nsnull, nsnull, getter_AddRefs(pURI));
+    nRet = pURI->GetScheme(cstrScheme);
   }
 
   //Local File

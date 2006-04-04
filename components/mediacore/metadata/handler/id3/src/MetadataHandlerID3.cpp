@@ -109,6 +109,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
   // Get a new values object.
   m_Values = do_CreateInstance("@songbird.org/Songbird/MetadataValues;1");
+  m_Values->Clear();
   if(!m_Values.get())
   {
     *_retval = -1;
@@ -142,10 +143,11 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     }
 #endif
     
-    size_t nTagSize = m_ID3Tag.Link(NS_UnescapeURL(cstrPath).get());
+    ID3_Tag  tag;
+    size_t nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get());
     *_retval = nTagSize;
 
-    ReadTag(m_ID3Tag);
+    ReadTag(tag);
 
     nRet = NS_OK;
   }
@@ -325,7 +327,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       case ID3FID_COMPOSER: strKey = NS_LITERAL_STRING("composer"); break;
 
       //Content type.
-      case ID3FID_CONTENTTYPE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_CONTENTTYPE: strKey = NS_LITERAL_STRING("genre"); break;
 
       //Copyright message.
       case ID3FID_COPYRIGHT: strKey = NS_LITERAL_STRING("copyright_message"); break;
@@ -367,7 +369,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       case ID3FID_SONGLEN: strKey = NS_LITERAL_STRING("length"); break;
 
       //Media type.
-      case ID3FID_MEDIATYPE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_MEDIATYPE: strKey = NS_LITERAL_STRING("mediatype"); break;
 
       //Original album/movie/show title.
       case ID3FID_ORIGALBUM: strKey = NS_LITERAL_STRING("original_album"); break;
@@ -388,7 +390,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       case ID3FID_FILEOWNER: strKey = NS_LITERAL_STRING(""); break;
 
       //Lead performer(s)/Soloist(s).
-      case ID3FID_LEADARTIST: strKey = NS_LITERAL_STRING("lead_performer"); break;
+      case ID3FID_LEADARTIST: strKey = NS_LITERAL_STRING("artist"); break;
 
       //Band/orchestra/accompaniment.
       case ID3FID_BAND: strKey = NS_LITERAL_STRING("accompaniment"); break;
@@ -479,7 +481,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     }
 
     // If we care,
-    if ( strKey.Length() )
+//    if ( strKey.Length() )
     {
       // Get the text field.
       ID3_Field* pField = pFrame->GetField(ID3FN_TEXT);
