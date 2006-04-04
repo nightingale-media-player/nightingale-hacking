@@ -896,7 +896,10 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("url").get(), &data);
 
     nsString fileName;
-    GetFileNameFromURL(DeviceString, nsString(data), fileName);
+    nsString dataString(data);
+    GetFileNameFromURL(NS_CONST_CAST(PRUnichar*, DeviceString),
+                       dataString,
+                       fileName);
 
     if (!isDestinationGiven)
       destinationPathFile = data;
