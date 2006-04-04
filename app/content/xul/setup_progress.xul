@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 /*
 //
@@ -33,45 +33,23 @@
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="messagebox"
- title=""
- buttons="cancel,accept"
- ondialogaccept="return doOK();"
- ondialogcancel="return doCancel();"
+ title="Installing Extensions"
+ buttons="none"
+ onload="init();"
+ onkeydown="handleKeyDown(event);"
 >
   
   <!-- Astounding complexity! -->  
   
-  <description flex="1" id="rmp_demo_messagebox_label"></description>
+  <label flex="1" id="setupprogress_label" value="Please wait..."/>
+  <spacer height="5" width="250"/>
+  <progressmeter flex="1" id="setupprogress_progress"/>
   
-  <!-- And intrepid instructions! -->  
-  <script>
-  <![CDATA[
-    try
-    {
-      if ( typeof( window.arguments[0] ) != 'undefined' )
-      {
-        document.getElementById("messagebox").setAttribute("title", window.arguments[0].title);
-        document.getElementById("rmp_demo_messagebox_label").appendChild(document.createTextNode(window.arguments[0].message));
-        if (!window.arguments[0].wantcancel) document.getAnonymousElementByAttribute(document.getElementById("messagebox"), "dlgtype", "cancel").setAttribute("hidden", "true");
-      }
-    }
-    catch( err )
-    {
-      alert( "messagebox.xml - " + err );
-    }
-  
-    function doOK()
-    {
-      window.arguments[0].result = "accept";
-      return true;
-    }
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/setup_progress.js" />
+    
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/messagebox.js" />
 
-    function doCancel()
-    {
-      window.arguments[0].result = "cancel";
-      return true;
-    }
-  ]]>
-  </script>
   
 </dialog>

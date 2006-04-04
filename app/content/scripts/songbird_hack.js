@@ -2093,6 +2093,9 @@ catch ( err )
     case "menu.preferences":
       SBOpenPreferences();
     break;
+/*    case "menu.downloadmgr":
+      SBOpenDownloadManager();
+    break;*/
 /*    case "menu.dominspector":
       SBDOMInspectorOpen();
     break;*/
@@ -2132,6 +2135,23 @@ function SBSetDownloadFolder()
   // Just open the window, we don't care what the user does in it.
   SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", null );
 }
+
+/*function SBOpenDownloadManager()
+{
+  var dlmgr = Components.classes['@mozilla.org/download-manager;1'].getService();
+  dlmgr = dlmgr.QueryInterface(Components.interfaces.nsIDownloadManager);
+
+  var windowMediator = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService();
+  windowMediator = windowMediator.QueryInterface(Components.interfaces.nsIWindowMediator);
+
+  var dlmgrWindow = windowMediator.getMostRecentWindow("Download:Manager");
+  if (dlmgrWindow) {
+    dlmgrWindow.focus();
+  }
+  else {
+    openDialog("chrome://mozapps/content/downloads/downloads.xul", "Download:Manager", "chrome,centerscreen", null);
+   }
+}*/
 
 function SBWatchFolders()
 {

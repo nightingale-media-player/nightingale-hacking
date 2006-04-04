@@ -28,14 +28,16 @@
 //  sbMessageBox
 //
 
-function sbMessageBox( title, message )
+function sbMessageBox( title, message, wantcancel )
 {
   try
   {
     var messagebox_data = new Object();
     messagebox_data.title = title;
     messagebox_data.message = message;
+    messagebox_data.wantcancel = wantcancel;
     window.openDialog( "chrome://songbird/content/xul/messagebox.xul", "messagebox", "chrome,modal=yes, centerscreen", messagebox_data );
+    return messagebox_data.result;
   }
   catch ( err )
   {

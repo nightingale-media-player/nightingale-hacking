@@ -17,10 +17,10 @@
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -52,39 +52,49 @@
    src="chrome://songbird/content/scripts/language_scan.js" />
    -->  
 
-  <!-- Pop up the mainwin as soon as possible -->
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/firstrun.js" />
+
+  <!-- Do the first run test and pop up the mainwin as soon as possible -->
   <script>
   <![CDATA[
-  try
-  {
-    //
-    // Stupid pet tricks for when the user loads this page into his mainwin browser.  Duh.
-    //
-    var watcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                  .getService(Components.interfaces.nsIWindowWatcher);
-    var windows = watcher.getWindowEnumerator();
-    var pop = true;    
-    while ( windows.hasMoreElements() )
+    try
     {
-      var win = windows.getNext()
-      win = win.QueryInterface(Components.interfaces.nsIDOMWindow);
+      var nsIUpdate = new Components.Constructor("@songbird.org/Songbird/Update;1", "sbIUpdate");
+      var UpdateService = new nsIUpdate();
+      UpdateService.retrieveUpdateFile();
+      document.__STARTMAINWIN = function( ) { 
+        //
+        // Stupid pet tricks for when the user loads this page into his mainwin browser.  Duh.
+        //
+        var watcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                      .getService(Components.interfaces.nsIWindowWatcher);
+        var windows = watcher.getWindowEnumerator();
+        var pop = true;    
+        while ( windows.hasMoreElements() )
+        {
+          var win = windows.getNext()
+          win = win.QueryInterface(Components.interfaces.nsIDOMWindow);
+          
+          if (win.name == "mainwin")
+          {
+            var pop = false;
+            document.__dont_hide_rmpdemo_window = true;
+          }
+        }
+        
+        if ( pop )
+        {
+          setTimeout( 'window.open( "chrome://songbird/content/xul/mainwin.xul", "mainwin", "chrome,modal=no" );', 0 ); // (sigh)
+        }
+      };
       
-      if (win.name == "mainwin")
-      {
-        var pop = false;
-        document.__dont_hide_rmpdemo_window = true;
-      }
+      if (!doFirstRunTest(document, UpdateService)) document.__STARTMAINWIN();
     }
-    
-    if ( pop )
+    catch ( err )
     {
-      setTimeout( 'window.open( "chrome://songbird/content/xul/mainwin.xul", "mainwin", "chrome,modal=no" );', 0 ); // (sigh)
+      alert( "App Init - Window Watcher - " + err );
     }
-  }
-  catch ( err )
-  {
-    alert( "App Init - Window Watcher - " + err );
-  }
   ]]>
   </script>
 

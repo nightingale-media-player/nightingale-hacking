@@ -26,7 +26,7 @@
 
 // based on Firefox Locale Switcher, by Benjamin Smedberg (http://benjamin.smedbergs.us/blog/2005-11-29/locale-switcher-15/)
 
-function switchLocale(locale, displayName) {
+function switchLocale(locale, wantmessagebox) {
   try 
   {
     var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
@@ -38,18 +38,19 @@ function switchLocale(locale, displayName) {
 
     if (locale != curLocale) {
       prefs.setCharPref("general.useragent.locale", locale);
-
-      var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-      var prop = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-      var str = "This setting will take effect after you restart Songbird";
-      var title = "Localization";
-      try {
-        // These can throw if the strings don't exist.
-        str = prop.GetStringFromName("message.needrestart");
-        title = prop.GetStringFromName("message.localization");
-      } catch (e) { }
-      
-      sbRestartBox(title, str);
+      if (wantmessagebox) {
+        var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+        var prop = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+        var str = "This setting will take effect after you restart Songbird"; // todo: internationalize !
+        var title = "Localization";
+        try {
+          // These can throw if the strings don't exist.
+          str = prop.GetStringFromName("message.needrestart");
+          title = prop.GetStringFromName("message.localization");
+        } catch (e) { }
+        
+        sbRestartBox(title, str);
+      }
     }
   }
   catch ( err )
@@ -80,7 +81,7 @@ function fillLocaleList(menu) {
       menu.removeChild(children[i - 1]);
     }
 
-    var locales = cr.getLocalesForPackage("Songbird");
+    var locales = cr.getLocalesForPackage("songbird");
 
     while (locales.hasMore()) {
       var locale = locales.getNext();
@@ -113,7 +114,7 @@ function fillLocaleList(menu) {
       if (curLocale == locale) {
         item.setAttribute("checked", "true");
       }
-      item.setAttribute("oncommand", "switchLocale(\"" + locale + "\", \"" + displayName + "\")");
+      item.setAttribute("oncommand", "switchLocale(\"" + locale + "\", true)");
 
       menu.appendChild(item);
     }

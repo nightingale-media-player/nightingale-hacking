@@ -23,7 +23,7 @@
 // END SONGBIRD GPL
 //
  */
- 
+
 //
 // XUL Event Methods
 //
@@ -36,6 +36,10 @@ function onBkgDown( theEvent )
 }
 function onBkgUp( ) 
 {
+}
+function eatEvent(evt)
+{
+  evt.preventBubble();
 }
 // old version, just in case
 /*var trackerBkg = false;
@@ -119,6 +123,7 @@ function onWindowSaveSize()
 function onWindowLoadSize()
 {
   var root = "window." + document.documentElement.id;
+  if (SBDataGetValue( root + ".x" ) == "" && SBDataGetValue( root + ".w" ) == "") { return; }
   if ( SBDataGetIntValue( root + ".w" ) && SBDataGetIntValue( root + ".h" ) )
   {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
@@ -491,3 +496,5 @@ function setVideoMinMaxCallback()
     // No component
   }
 }
+
+

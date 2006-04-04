@@ -65,3 +65,7 @@ windowregionrect {
 servicetree {
   -moz-binding: url("chrome://songbird/content/bindings/servicetree.xml#servicetree");
 }
+
+sbextensions {
+  -moz-binding: url("chrome://songbird/content/bindings/sbextensions.xml#sbextensions");
+}

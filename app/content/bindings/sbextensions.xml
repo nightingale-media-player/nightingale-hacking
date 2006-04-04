@@ -1,0 +1,357 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="sbextensions">
+    <content>
+      <xul:vbox class="sbextensions_box" sbid="parent" flex="1">
+        <xul:spacer sbid="first" height="3"/>
+        
+            <!-- stuff gets stuffed here -->
+        
+        <xul:spacer sbid="before" height="3"/>
+      </xul:vbox>
+
+    </content>
+
+    <implementation>
+
+      <constructor>
+      <![CDATA[
+      try
+      {
+      }
+      catch ( err )
+      {
+        alert( "sbextensions constructor - " + err );
+      }
+      ]]>
+      </constructor>
+      <destructor>
+      </destructor>
+
+      <field name="tracking">false</field>
+      <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
+      <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
+      <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
+      <field name="size">150</field>  <!-- height of the added content box -->
+      <field name="distance">0</field>
+      <field name="current">0</field>
+      <field name="anim_start">0</field>
+      <field name="anim_time">0.2</field>
+      <field name="anim_complete">null</field>
+      <field name="interval">null</field>
+      <field name="first_windowsize">false</field>
+      <field name="state">"closed"</field>
+      <field name="updateInterface">null</field>
+
+      <method name="toggleList">
+        <body>
+          <![CDATA[
+          try
+          {
+            if (this.state == "closed") this.openList();
+            else this.closeList();
+          }
+          catch ( err )
+          {
+            alert( "toggleList - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+      <method name="openList">
+        <parameter name="before"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            // No animations until we finish
+            if ( ! this.tracking )
+            {
+              this.state = "open";
+              // If null, put it at the "end"
+              if ( ! before )
+              {
+                before = this.before;
+              }
+              
+              // Make the growbox
+              var growbox = document.createElement( "box" );
+              growbox.setAttribute( "flex", "1" );
+              growbox.setAttribute( "sbid", "growbox" );
+              this.parent.insertBefore( growbox, before );
+              
+              // Set our animation values
+              this.tracking = true;
+              this.distance = this.size;
+              this.current = 0;
+              this.anim_start = new Date().getTime();
+              this.anim_time = 0.2;
+              this.anim_complete = this.onGrowComplete;
+              document.__SB_CONDITIONS__ = this;
+              
+              // Start our animation loop
+              this.interval = setInterval( this.animationCallback, 0 );
+            }
+          }
+          catch ( err )
+          {
+            alert( "openList - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="closeList">
+        <body>
+          <![CDATA[
+          try
+          {
+            this.state = "closed";
+            // No animations until we finish
+            if ( ! this.tracking )
+            {
+              // Make the growbox
+              var growbox = document.createElement( "box" );
+              growbox.setAttribute( "flex", "1" );
+              growbox.setAttribute( "sbid", "growbox" );
+              this.parent.insertBefore( growbox, cond );
+
+              var cond = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_box' );
+              
+              // Remove the condition
+              this.parent.removeChild( cond );
+              
+              // Set our animation values
+              this.tracking = true;
+              this.distance = - this.size; // removing!
+              this.current = 0;
+              this.anim_start = new Date().getTime();
+              this.anim_time = 0.2;
+              this.anim_complete = this.onShrinkComplete;
+              document.__SB_CONDITIONS__ = this;
+              
+              // Start our animation loop
+              this.interval = setInterval( this.animationCallback, 0 ); // as fast as possible for a quarter second
+            }
+          }
+          catch ( err )
+          {
+            alert( "closeList - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="animationCallback">
+        <body>
+          <![CDATA[
+          try
+          {
+            var that = document.__SB_CONDITIONS__;
+            
+            if ( that.tracking )
+            {
+              // Calculate size to resize window based on timer interpolation
+              var elapsed = ( new Date().getTime() - that.anim_start ) / 1000;
+              var interpolate = elapsed / that.anim_time;
+              var size = parseInt( ( that.distance * interpolate ) - that.current + 0.5 );
+              
+              // We have to track a "current" because we do not resize the window via absolute values
+              if ( Math.abs( that.current + size ) > Math.abs( that.distance ) )
+                size = that.distance - that.current;
+              window.resizeBy( 0, size );
+              that.current += size;
+              
+              // Are we done?
+              if ( that.current == that.distance )
+              {
+                if ( that.anim_complete )
+                {
+                  that.anim_complete( that );
+                }
+                
+                // Set our values back
+                that.tracking = false;
+                that.distance = 0;
+                that.current = 0;
+                clearInterval( that.interval );
+              }
+            }
+            else
+            {
+              clearInterval( that.interval );
+            }
+          }
+          catch ( err )
+          {
+            alert( "animateNewCondition - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onGrowComplete">
+        <parameter name="that"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            // Find the grow box
+            var grow_nodes = that.parent.getElementsByAttribute( 'sbid', 'growbox' );
+            if ( grow_nodes.length != 1 )
+            {
+              // ??? really bad?
+            }
+            var growbox = grow_nodes.item( 0 );
+            
+            // Replace the grow box with the condition item
+            if ( growbox )
+            {
+              that.insertContent( growbox );
+              that.parent.removeChild( growbox );
+            }
+          }
+          catch ( err )
+          {
+            alert( "onGrowComplete - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onShrinkComplete">
+        <parameter name="that"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            // Find the grow box
+            var grow_nodes = that.parent.getElementsByAttribute( 'sbid', 'growbox' );
+            if ( grow_nodes.length != 1 )
+            {
+              // ??? really bad?
+            }
+            var growbox = grow_nodes.item( 0 );
+            
+            // Replace the grow box with the condition item
+            if ( growbox )
+            {
+              that.parent.removeChild( growbox );
+            }
+          }
+          catch ( err )
+          {
+            alert( "onShrinkComplete - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="insertContent">
+        <parameter name="before"/>
+        <parameter name="cond"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            before = this.before;
+            
+            // Make the parent hbox
+            var vbox = document.createElement( "vbox" );
+            vbox.setAttribute( "sbid", "extensions_box" );
+            
+            // Make the labels
+            var label1 = document.createElement( "label" );
+            var label2 = document.createElement( "label" );
+            label1.setAttribute( "value", "Make my Songbird do tricks!" );
+            label2.setAttribute( "value", "Install those extensions:" );
+            
+            // Make the extension droplist
+            var listbox = document.createElement( "richlistbox" );
+            listbox.setAttribute( "sbid", "extensions_list" );
+            listbox.setAttribute( "height", "110" );
+            listbox.setAttribute("suppressonselect", "true");
+            listbox.setAttribute("class", "sb_faceplate");
+            
+            // Hook them up.
+            vbox.appendChild( label1 );
+            vbox.appendChild( label2 );
+            vbox.appendChild( listbox );
+            
+            this.parent.insertBefore( vbox, before );
+            this.size = vbox.boxObject.height;
+
+            var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
+            var n = this.updateInterface.getNumExtensions();
+            for (var i=0;i<n;i++)
+            {
+              var item = document.createElement( "richlistitem" );
+              var checkbox = document.createElement( "checkbox" );
+              checkbox.setAttribute("checked", this.updateInterface.getExtensionInstallState(i));
+              item.appendChild(checkbox);
+              var label = document.createElement( "label" );
+              label.setAttribute("value", this.updateInterface.getExtensionName(i) + " - " + this.updateInterface.getExtensionDesc(i));
+              item.setAttribute("url", this.updateInterface.getExtensionURL(i));
+              var oncommand = { 
+                _that: null, 
+                _checkbox: null,
+                _index: 0,
+                handleEvent: function( event ) { this._that.onToggle(this._index, this._checkbox); } 
+              } oncommand._that = this; oncommand._checkbox = checkbox; oncommand._index = i;
+              checkbox.addEventListener("command", oncommand, true);
+              item.appendChild(label);
+              listbox.appendChild(item);
+            }
+          }
+          catch ( err )
+          {
+            alert( "insertContent - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="onToggle">
+        <parameter name="index"/>
+        <parameter name="checkbox"/>
+        <body>
+          this.updateInterface.setExtensionInstallState(index, checkbox.checked);
+        </body>
+      </method>
+      
+    </implementation>
+ 
+  </binding>
+
+</bindings>

@@ -2034,9 +2034,9 @@
           try
           {
             this.addToPlaylistOrLibrary();
-            var msg = "" + this._addedtolibrary_count + " " + "track(s) added to the library";
+            var msg = "" + this._addedtolibrary_count + " " + "track(s) added to the library"; // todo: internationalize !
             if (this._existedinlibrary_count > 0) msg += ", " + this._existedinlibrary_count + " " + "track(s) already in it";
-            this.sbMessageBox("Add To Library", msg);
+            this.sbMessageBox("Add To Library", msg, false);
           }
           catch( err )
           {

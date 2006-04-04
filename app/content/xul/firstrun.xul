@@ -1,0 +1,92 @@
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/rmp_demo.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="firstrun"
+ title="Songbird Setup Options"
+ buttons="cancel, accept"
+ ondialogaccept="return doOK();"
+ ondialogcancel="return doCancel();"
+ hidechrome="true"
+ onkeydown="handleKeyDown(event);"
+ onload="initFirstRun();"
+ onunload="shutdownFirstRun();"
+>
+  
+  <windowregion/>
+  <stack flex="1">
+
+    <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+      <hbox class="sb_faceplate">
+          <image id="chrome_nw" class="sb_faceplate"/>
+          <image id="chrome_n" class="sb_faceplate" flex="1"/>
+          <image id="chrome_ne" class="sb_faceplate"/>
+      </hbox>
+      <hbox class="sb_faceplate" flex="1">
+          <image id="chrome_w" class="sb_faceplate"/>
+          <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+          <image id="chrome_e" class="sb_faceplate"/>
+      </hbox>
+      <hbox class="sb_faceplate">
+          <image id="chrome_sw" class="sb_faceplate"/>
+          <image id="chrome_s" class="sb_faceplate" flex="1"/>
+          <image id="chrome_se" class="sb_faceplate"/>
+      </hbox>
+    </vbox>
+
+    <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+      <hbox class="sb_faceplate">
+        <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+      </hbox>
+      <hbox class="sb_faceplate" flex="1">
+      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
+        <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
+          <hbox id="window_top" class="sb_faceplate" >
+            <label id="app_title" value="Songbird Setup Options" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="sysbtn_close" class="sb_faceplate" oncommand="if (doCancel()) onExit( );" tooltiptext="&tooltip.exit;"/>
+          </hbox>
+          <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <hbox id="window_content" class="sb_faceplate" >
+            <menulist width="200" id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
+              <menupopup>
+              </menupopup>
+            </menulist>
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <vbox>
+              <spacer height="5" width="250" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+              <label id="pleasewait" flex="1" value="Retrieving extensions list. Please wait..."/>                                          <!-- todo: internationalize -->
+            </vbox>
+          </hbox>
+          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+          <sbextensions id="songbird.extensionlist"/>
+          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+          <hbox>
+            <button id="cancel_button" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <button id="custom_button" disabled="true" label="Custom Install" class="dialog_button sb_faceplate" oncommand="customInstall();"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="ok_button" disabled="true" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+          </hbox> 
+        </vbox>
+      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      </hbox>
+      <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+    </vbox>
+   </stack>
+
+ <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/rmp_demo.js" />
+ <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/firstrun.js"/>
+ <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/messagebox.js"/>
+ <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/switch_locale.js"/>
+
+</window>

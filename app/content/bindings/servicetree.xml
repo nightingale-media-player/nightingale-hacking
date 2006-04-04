@@ -117,6 +117,7 @@
       <![CDATA[
         try
         {
+          this.strid = this.tree.parentNode.id;
           this.currentSelection = "";
           this.popup_playlist = null;
           this.popup_smartplaylist = null;
@@ -194,6 +195,7 @@
       <parameter name="the_url"/>
       <body>
         <![CDATA[
+        var r=0;
           try
           {
             // And if it's a good string, launch it.
@@ -212,6 +214,7 @@
                   { 
                     theMainPane.stop();
                     theMainPane.loadURI( this.current_url, null, null );
+                    r=1;
                   }
                   catch (e)
                   {
@@ -225,6 +228,7 @@
           {
             alert( "servicetree.xml - LaunchURL " + err );
           }
+          return r;
         ]]>
       </body>
     </method>
@@ -253,8 +257,11 @@
               if ( tree_url.length > 0 )
               {
                 this.UrlFromServicePane = true;
-                this.LaunchURL( tree_url );
-                this.metrics_click( tree_url ); // if user has opted out, this doesn't do anything
+                var r = this.LaunchURL( tree_url );
+                if (r)
+                {
+                  this.metrics_click( this.strid, tree_url ); // if user has opted out, this doesn't do anything
+                }
               }
             }
           }
@@ -289,7 +296,7 @@
               if (tree.view.isContainer(i))
               {
                 var item_url = tree.view.getCellText( i, col );
-                var item_remote = new sbIDataRemote( "collapsed_" + tree.id + "_" + item_url );
+                var item_remote = new sbIDataRemote( "collapsed_" + this.strid + "_" + item_url );
                 item_remote.SetValue(!tree.view.isContainerOpen(i));
               }
             }
@@ -314,7 +321,7 @@
               if (tree.view.isContainer(i))
               {
                 var item_url = tree.view.getCellText( i, col );
-                var item_remote = new sbIDataRemote( "collapsed_" + tree.id + "_" + item_url );
+                var item_remote = new sbIDataRemote( "collapsed_" + this.treeid + "_" + item_url );
                 if (item_remote.GetIntValue())
                 {
                   if (tree.view.isContainerOpen(i))

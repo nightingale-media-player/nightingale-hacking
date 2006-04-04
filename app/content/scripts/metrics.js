@@ -26,11 +26,11 @@
 
 // Metrics
 
-function metrics_click( url )
+function metrics_click( id, url )
 {
   if ( SBDataGetIntValue( "metrics.enabled" ) ) // opt-out test
   {
-    var cur = SBDataGetIntValue( "metrics." + url );
-    SBDataSetValue( "metrics." + url, cur+1 );
+    var cur = SBDataGetIntValue( "metrics." + id + "." + url );
+    SBDataSetValue( "metrics." + id + "." + url, cur+1 );
   }
 }
