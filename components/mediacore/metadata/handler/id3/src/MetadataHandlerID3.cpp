@@ -38,6 +38,7 @@
 #include <necko/nsIURI.h>
 #include <necko/nsIFileStreams.h>
 #include <necko/nsIIOService.h>
+#include <necko/nsNetUtil.h>
 
 #include <string/nsReadableUtils.h>
 #include <xpcom/nsEscape.h>
@@ -69,6 +70,10 @@ class ID3_ChannelReader : public ID3_Reader
   {
     m_Channel = channel;
     m_Channel->Open( getter_AddRefs(m_Stream) );
+
+    char buffer[ 0xF ];
+    this->readChars( buffer, 0xF );
+    this->setCur( 0 );
   }
 
   virtual int_type peekChar() 
@@ -109,9 +114,9 @@ class ID3_ChannelReader : public ID3_Reader
     
   virtual pos_type getEnd()
   {
-    PRInt32 content_legnth = 0;
-    this->m_Channel->GetContentLength( &content_legnth ); 
-    return content_legnth;
+    PRInt32 content_length = 0;
+    this->m_Channel->GetContentLength( &content_length ); 
+    return content_length;
   }
     
   virtual pos_type remainingBytes()
@@ -128,14 +133,21 @@ class ID3_ChannelReader : public ID3_Reader
   {
     if ( ( pos >= this->getBeg() ) && ( pos < this->getEnd() ) )
     {
+      nsresult nRet = NS_ERROR_UNEXPECTED;
+      nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&nRet);
+      nsCOMPtr<nsIURI> pURI;
+      m_Channel->GetURI( getter_AddRefs(pURI) );
+      nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(m_Channel));
+
       nsCOMPtr<nsIResumableChannel> seek;
       m_Channel->QueryInterface( NS_GET_IID( nsIResumableChannel ), getter_AddRefs( seek ) );
       nsCString blank;
       PRUint64 startPos = m_Pos = pos;
       seek->ResumeAt( startPos, blank );
-//      m_Channel->Open( getter_AddRefs(m_Stream) );
+
+      m_Channel->Open( getter_AddRefs(m_Stream) );
     }
-    return m_Pos;
+    return (pos_type)m_Pos;
   }
 };
 

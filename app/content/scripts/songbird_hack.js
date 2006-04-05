@@ -378,7 +378,8 @@ function SBInitialize()
     {
       const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
-      var aHandler = aMetadataManager.GetHandlerForMediaURL("https://www.polyvinylrecords.com/media/prc-104-03.mp3");
+      var aHandler = aMetadataManager.GetHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
+      //var aHandler = aMetadataManager.GetHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
       var retval = aHandler.Read();
       var values = aHandler.GetValuesMap();
       
