@@ -29,6 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = sbUpdate.js
+SONGBIRD_COMPONENTS = $(srcdir)/sbUpdate.js
 
 include $(topsrcdir)/build/rules.mk

@@ -3,14 +3,14 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright© 2006 Pioneers of the Inevitable LLC
+# Copyright 2006 Pioneers of the Inevitable LLC
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the “GPL”).
+# GNU General Public License Version 2 (the GPL).
 # 
 # Software distributed under the License is distributed 
-# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -42,7 +42,7 @@ SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/vlc/components/vlcintf.xpt \
                       $(PLUGINS_DIR)/flash/components/flashplayer.xpt \
                       $(NULL)
-                      
+
 SONGBIRD_PLUGINS = $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX) \
                    $(PLUGINS_DIR)/vlc/plugins/$(VLC_PLUGIN)$(DLL_SUFFIX) \
                    $(NULL)
@@ -53,14 +53,23 @@ SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX) \
 EXECUTABLE = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX) \
              $(NULL)
 
-ifeq ($(SB_PLATFORM), win32)
+ifeq (win32,$(SB_PLATFORM))
 UNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.zip
 UNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 SONGBIRD_XULRUNNER = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                      $(ID3LIB_DIR)/bin/id3lib$(DLL_SUFFIX) \
                      $(SQLITE_DIR)/bin/sqlite$(DLL_SUFFIX) \
                      $(NULL)
-else
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
+GUNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
+SONGBIRD_XULRUNNER = $(ID3LIB_DIR)/lib/libid3-3.8.so.3.0.0 \
+                     $(NULL)
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
 SONGBIRD_XULRUNNER = $(ID3LIB_DIR)/lib/libid3$(DLL_SUFFIX) \
