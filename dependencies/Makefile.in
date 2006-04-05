@@ -32,6 +32,10 @@ include $(DEPTH)/build/autodefs.mk
 ifeq (win32,$(SB_PLATFORM))
 FLASH_PLUGIN = NPSWF32
 VLC_PLUGIN = npvlc
+
+UNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.zip
+UNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
+
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 SONGBIRD_COMPONENTS = $(DEPS_DIR)/plugins/vlc/components/*.xpt \
                       $(DEPS_DIR)/plugins/flash/components/*.xpt \
@@ -53,6 +57,10 @@ endif
 ifeq (linux,$(SB_PLATFORM))
 FLASH_PLUGIN = libflashplayer
 VLC_PLUGIN = libvlcplugin
+
+GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
+GUNZIP_DEST_DIR = $(SONGBIRD_DISTDIR)
+
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
 SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/vlc/components/vlcintf.xpt \
@@ -65,6 +73,9 @@ SONGBIRD_PLUGINS = $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX) \
 
 SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX) \
                       $(NULL)
+
+SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+                     $(NULL)
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
