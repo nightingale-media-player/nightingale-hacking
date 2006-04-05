@@ -40,7 +40,7 @@
 #include <string/nsString.h>
 #include <nsAutoLock.h>
 
-#ifdef DEBUG
+#ifdef DEBUG_locks
 #include <nsPrintfCString.h>
 #endif
 
@@ -81,7 +81,7 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_pModifiedTablesLock, "CDatabaseQuery.m_pModifiedTablesLock failed");
   NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
 
-#ifdef DEBUG
+#ifdef DEBUG_locks
   nsCAutoString log;
   log += NS_LITERAL_CSTRING("\n\nCDatabaseQuery (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
   log += NS_LITERAL_CSTRING("m_pPersistentQueryTableLock   = ") + nsPrintfCString("%x\n", m_pPersistentQueryTableLock);

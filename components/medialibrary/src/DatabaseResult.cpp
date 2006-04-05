@@ -34,7 +34,7 @@
 #include <xpcom/nsMemory.h>
 #include <nsAutoLock.h>
 
-#ifdef DEBUG
+#ifdef DEBUG_locks
 #include <nsString.h>
 #include <nsPrintfCString.h>
 #endif
@@ -54,7 +54,7 @@ CDatabaseResult::CDatabaseResult()
 {
   NS_ASSERTION(m_pColumnNamesLock, "CDatabaseResult.m_pColumnNamesLock failed");
   NS_ASSERTION(m_pRowCellsLock, "CDatabaseResult.m_pRowCellsLock failed");
-#ifdef DEBUG
+#ifdef DEBUG_locks
   nsCAutoString log;
   log += NS_LITERAL_CSTRING("\n\nCDatabaseResult (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
   log += NS_LITERAL_CSTRING("m_pColumnNamesLock = ") + nsPrintfCString("%x\n", m_pColumnNamesLock);

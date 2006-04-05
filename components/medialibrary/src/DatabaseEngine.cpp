@@ -43,7 +43,7 @@
 
 #include <nsAutoLock.h>
 
-#ifdef DEBUG
+#ifdef DEBUG_locks
 #include <nsPrintfCString.h>
 #endif
 
@@ -301,7 +301,7 @@ CDatabaseEngine::CDatabaseEngine()
   NS_ASSERTION(m_pQueryProcessorMonitor, "CDatabaseEngine.m_pQueryProcessorMonitor failed");
   NS_ASSERTION(m_pPersistentQueriesLock, "CDatabaseEngine.m_pPersistentQueriesLock failed");
   NS_ASSERTION(m_pCaseConversionLock, "CDatabaseEngine.m_pCaseConversionLock failed");
-#ifdef DEBUG
+#ifdef DEBUG_locks
   nsCAutoString log;
   log += NS_LITERAL_CSTRING("\n\nCDatabaseEngine (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
   log += NS_LITERAL_CSTRING("m_pDatabasesLock         = ") + nsPrintfCString("%x\n", m_pDatabasesLock);
