@@ -372,6 +372,30 @@ function SBInitialize()
 //    var the_url = "http://odeo.com/channel/38104/rss";
 //    var the_url = "http://takeyourmedicinemp3.blogspot.com/atom.xml";
 //    var success = thePlaylistReader.AutoLoad(the_url, "songbird", ConvertUrlToDisplayName( the_url ), "http", the_url, "", null);
+
+/*
+    try
+    {
+      const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
+      var aMetadataManager = new MetadataManager();
+      var aHandler = aMetadataManager.GetHandlerForMediaURL("https://www.polyvinylrecords.com/media/prc-104-03.mp3");
+      var retval = aHandler.Read();
+      var values = aHandler.GetValuesMap();
+      
+      var text = "";
+      const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
+      for ( var i in keys )
+      {
+        text += keys[ i ] + ": " + values.getValue( keys[ i ] ) + "\n";
+      }
+      alert( text );
+    }
+    catch(err)
+    {
+      alert("songbird_hack.js - SBInitialize - " +  err);
+    }
+*/    
+    
   }
   catch(err)
   {

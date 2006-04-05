@@ -44,6 +44,104 @@
 
 // DEFINES ====================================================================
 
+#include <id3/reader.h>
+  
+class ID3_ChannelReader : public ID3_Reader
+{
+  nsCOMPtr<nsIChannel> m_Channel;
+  nsCOMPtr<nsIInputStream> m_Stream;
+  volatile PRUint64 m_Pos, m_Total;
+ protected:
+ public:
+  ID3_ChannelReader()
+  {
+    m_Pos = 0;
+  }
+  ID3_ChannelReader(nsIChannel* channel)
+  {
+    m_Pos = 0;
+    setChannel( channel );
+  };
+  virtual ~ID3_ChannelReader() { ; }
+  virtual void close() { ; }
+  
+  void setChannel(nsIChannel* channel)
+  {
+    m_Channel = channel;
+    m_Channel->Open( getter_AddRefs(m_Stream) );
+  }
+
+  virtual int_type peekChar() 
+  { 
+    if (!this->atEnd())
+    {
+      char aByte;
+      PRUint32 count = 0;
+      this->m_Stream->Read( &aByte, 1, &count ); // 1 byte, please.
+      this->setCur( this->getCur() - 1 ); // Now back up 1 byte.  Streams shouldn't peek!
+      return aByte;
+    }
+    return END_OF_READER;
+  }
+    
+  virtual size_type readChars(char buf[], size_type len)
+  {
+    PRUint32 count = 0;
+    this->m_Stream->Read( buf, len, &count );
+    m_Pos += count;
+    m_Total += m_Pos;
+    return count;
+  }
+  virtual size_type readChars(char_type buf[], size_type len)
+  {
+    return this->readChars(reinterpret_cast<char *>(buf), len);
+  }
+    
+  virtual pos_type getCur() 
+  { 
+    return (pos_type)m_Pos;
+  }
+    
+  virtual pos_type getBeg()
+  {
+    return 0;
+  }
+    
+  virtual pos_type getEnd()
+  {
+    PRInt32 content_legnth = 0;
+    this->m_Channel->GetContentLength( &content_legnth ); 
+    return content_legnth;
+  }
+    
+  virtual pos_type remainingBytes()
+  {
+    return getEnd() - getCur();
+  }
+
+  virtual pos_type skipChars(pos_type skip)
+  {
+    return setCur( getCur() + skip );
+  }
+
+  virtual pos_type setCur(pos_type pos)
+  {
+    if ( ( pos >= this->getBeg() ) && ( pos < this->getEnd() ) )
+    {
+      nsCOMPtr<nsIResumableChannel> seek;
+      m_Channel->QueryInterface( NS_GET_IID( nsIResumableChannel ), getter_AddRefs( seek ) );
+      nsCString blank;
+      PRUint64 startPos = m_Pos = pos;
+      seek->ResumeAt( startPos, blank );
+//      m_Channel->Open( getter_AddRefs(m_Stream) );
+    }
+    return m_Pos;
+  }
+};
+
+
+
+
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
@@ -153,7 +251,13 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   }
   else
   {
+    ID3_Tag  tag;
+    ID3_ChannelReader channel_reader( m_Channel );
+    bool ok = tag.Parse( channel_reader );
 
+    ReadTag(tag);
+
+    nRet = NS_OK;
   }
 
   return nRet;

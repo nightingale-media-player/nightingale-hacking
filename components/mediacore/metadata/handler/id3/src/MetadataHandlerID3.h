@@ -34,6 +34,7 @@
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include <necko/nsIChannel.h>
+#include <necko/nsIResumableChannel.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsServiceManagerUtils.h>

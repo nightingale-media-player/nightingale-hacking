@@ -101,7 +101,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   }
 
   //Local File
-  if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
+//  if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
   {
     PRInt32 nHandlerRet = 0;
     nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
@@ -123,7 +123,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     nRet = NS_OK;
   }
   //Remote File
-  else
+//  else
   {
 
   }
