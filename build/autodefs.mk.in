@@ -62,7 +62,7 @@ CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
 # Commonly used directories
 #
 
-APP_DIR						 = @top_srcdir@/app
+APP_DIR	           = @top_srcdir@/app
 DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@
 XULRUNNER_DIR      = @top_srcdir@/dependencies/@SB_PLATFORM@/xulrunner/@SB_CONFIGURATION@
 COMPONENTS_DIR     = @top_srcdir@/components
@@ -75,6 +75,7 @@ MOZSDK_BIN_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGU
 MOZSDK_IDL_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/idl
 PLUGINS_DIR        = @top_srcdir@/dependencies/@SB_PLATFORM@/plugins
 
+ifeq (win32,@SB_PLATFORM@)
 SONGBIRD_OBJDIR        = @top_srcdir@/@OBJDIRNAME@
 SONGBIRD_DISTDIR       = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@
 SONGBIRD_CHROMEDIR     = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/chrome
@@ -84,6 +85,32 @@ SONGBIRD_PREFERENCESDIR= @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/defaults/prefer
 SONGBIRD_PLUGINSDIR    = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/plugins
 SONGBIRD_VLCPLUGINSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/vlcplugins
 SONGBIRD_XULRUNNERDIR  = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/xulrunner
+endif
+
+ifeq (linux,@SB_PLATFORM@)
+SONGBIRD_OBJDIR        = @top_srcdir@/@OBJDIRNAME@
+SONGBIRD_DISTDIR       = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@
+SONGBIRD_CHROMEDIR     = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/chrome
+SONGBIRD_COMPONENTSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/components
+SONGBIRD_DEFAULTSDIR   = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/defaults
+SONGBIRD_PREFERENCESDIR= @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/defaults/preferences
+SONGBIRD_PLUGINSDIR    = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/plugins
+SONGBIRD_VLCPLUGINSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/vlcplugins
+SONGBIRD_XULRUNNERDIR  = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/xulrunner
+endif
+
+ifeq (macosx,@SB_PLATFORM@)
+SONGBIRD_OBJDIR        = @top_srcdir@/@OBJDIRNAME@
+SONGBIRD_DISTDIR       = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources
+SONGBIRD_CHROMEDIR     = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources/chrome
+SONGBIRD_COMPONENTSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources/components
+SONGBIRD_DEFAULTSDIR   = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources/defaults
+SONGBIRD_PREFERENCESDIR= @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources/defaults/preferences
+SONGBIRD_PLUGINSDIR    = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources/plugins
+SONGBIRD_VLCPLUGINSDIR = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Resources/vlcplugins
+SONGBIRD_XULRUNNERDIR  = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/Frameworks/XUL.framework
+SONGBIRD_MACOS         = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@/Contents/MacOS
+endif
 
 #
 # Tools

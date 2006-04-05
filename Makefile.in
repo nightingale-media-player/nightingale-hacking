@@ -38,6 +38,10 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_XULRUNNERDIR) \
              $(NULL)
 
+ifeq (macosx,$(SB_PLATFORM))
+CREATEDIRS += $(SONGBIRD_MACOS)
+endif
+
 SUBDIRS = app \
           components \
           dependencies \

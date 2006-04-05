@@ -545,14 +545,30 @@ endif
 #-----------------------
 
 ifdef SONGBIRD_MAIN_APP
+
+ifeq (macosx,$(SB_PLATFORM))
+
+ifneq (,$(findstring *xulrunner*,$(SONGBIRD_MAIN_APP)))
+$(error You must specify the xulrunner-stub file here)
+else
+sb_executable = $(SONGBIRD_MACOS)/$(SB_APPNAME)$(BIN_SUFFIX)
+endif
+
+else
+
 ifneq (,$(findstring *xulrunner-stub*,$(SONGBIRD_MAIN_APP)))
 $(error You must specify the xulrunner-stub file here)
-endif
+else
 sb_executable = $(SONGBIRD_DISTDIR)/$(SB_APPNAME)$(BIN_SUFFIX)
+endif
+endif
+
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
 	$(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable)
 	$(CHMOD) +x $(sb_executable)
+
 #.PHONY : move_sb_stub_executable
+
 endif
 
 #------------------------------------------------------------------------------
@@ -615,7 +631,7 @@ $(error You can only have one file specified by GUNZIP_SRC)
 endif
 
 gunzip_file:
-	$(TAR) zxf $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
+	$(TAR) -z -x -f $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
 
 .PHONY : gunzip_file
 
