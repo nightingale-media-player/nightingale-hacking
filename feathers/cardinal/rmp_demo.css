@@ -58,7 +58,7 @@ tree
   min-height: 0px;
   border-width: 0px;
   font-family: tahoma;
-  font-size: 11;
+  font-size: 11px;
 }  
 
 /* Edit-in-place popups overlapping the entries in the service pane tree */
@@ -1063,7 +1063,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   margin: 0px 0px 0px 8px;
   font-family: tahoma;
   font-weight: bold;
-  font-size: 11;
+  font-size: 11px;
   color: #FFF;
 }
 
