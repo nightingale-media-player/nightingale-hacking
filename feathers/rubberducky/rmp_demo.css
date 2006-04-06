@@ -64,8 +64,8 @@ tree
   min-width: 0px;
   min-height: 0px;
   border-width: 0px;
-  font-family: tahoma;
-  font-size: 11;
+  font-family: tahoma, arial; /*arial is the fallback font*/
+  font-size: 11px;
 }  
 
 /* Edit-in-place popups overlapping the entries in the service pane tree */
@@ -192,7 +192,7 @@ Love the box.
 {
   width:  924px;
   height: 668px;
-  background-color: none;
+  /*background-color: none;*/
 }
 
 
@@ -1204,9 +1204,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 #video_window_title
 {
   margin: 0px 0px 0px 0px;
-  font-family: tahoma;
+  font-family: tahoma, arial;
   font-weight: bold;
-  font-size: 11;
+  font-size: 11px;
   color: #FFF;
 }
 
@@ -2339,7 +2339,7 @@ DASHBOARD
 /* the texties */
 #songbird_text_title
 {
-  max-width: auto;
+  width: auto; /* was: max-width: auto; */
   color: #1F292B;
 }
 #songbird_text_artist
