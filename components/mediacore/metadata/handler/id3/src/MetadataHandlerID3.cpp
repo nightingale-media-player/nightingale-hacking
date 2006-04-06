@@ -83,7 +83,7 @@ class ID3_ChannelReader : public ID3_Reader
       char aByte;
       PRUint32 count = 0;
       this->m_Stream->Read( &aByte, 1, &count ); // 1 byte, please.
-      this->setCur( this->getCur() - 1 ); // Now back up 1 byte.  Streams shouldn't peek!
+      this->setCur( this->getCur() ); // Now back up 1 byte.  Streams shouldn't peek!
       return aByte;
     }
     return END_OF_READER;
@@ -141,9 +141,8 @@ class ID3_ChannelReader : public ID3_Reader
 
       nsCOMPtr<nsIResumableChannel> seek;
       m_Channel->QueryInterface( NS_GET_IID( nsIResumableChannel ), getter_AddRefs( seek ) );
-      nsCString blank;
-      PRUint64 startPos = m_Pos = pos;
-      seek->ResumeAt( startPos, blank );
+      m_Pos = pos;
+      seek->ResumeAt( m_Pos, nsCString() );
 
       m_Channel->Open( getter_AddRefs(m_Stream) );
     }
