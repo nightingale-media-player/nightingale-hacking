@@ -198,17 +198,6 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreWMP.js"/>
   
-  <!-- Load the core wrappers (SAME AS THE OLD BOSS) 
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_wmp.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_qt.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_vlc.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_vlc2.js"/>
-  -->
-
   <!-- Load the "background" scripts -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/>

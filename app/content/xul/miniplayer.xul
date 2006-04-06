@@ -53,13 +53,9 @@
 
   <!-- Load the core wrappers -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_wmp.js"/>
+   src="chrome://songbird/content/scripts/coreVLC.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_qt.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_vlc.js"/>
-
-
+   src="chrome://songbird/content/scripts/coreWMP.js"/>
 
 <hbox>
   <vbox><button id="rmp_demo_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>

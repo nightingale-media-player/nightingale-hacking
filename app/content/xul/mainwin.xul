@@ -534,13 +534,9 @@
 
   <!-- Load the core wrappers  -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_wmp.js"/>
+   src="chrome://songbird/content/scripts/coreVLC.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_qt.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_vlc.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/core_vlc2.js"/>
+   src="chrome://songbird/content/scripts/coreWMP.js"/>
 
   <!-- Load the Songbird stuff -->
   <script type="application/x-javascript"   
