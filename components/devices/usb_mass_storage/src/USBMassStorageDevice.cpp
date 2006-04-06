@@ -59,16 +59,16 @@
 
 /* Implementation file */
 
-#define NAME_DOWNLOAD_DEVICE_LEN          NS_LITERAL_STRING("Songbird USBMassStorage Device").Length()
-#define NAME_DOWNLOAD_DEVICE              NS_LITERAL_STRING("Songbird USBMassStorage Device").get()
+#define NAME_USBMASSSTORAGE_DEVICE_LEN          NS_LITERAL_STRING("Songbird USBMassStorage Device").Length()
+#define NAME_USBMASSSTORAGE_DEVICE              NS_LITERAL_STRING("Songbird USBMassStorage Device").get()
 
-#define CONTEXT_DOWNLOAD_DEVICE_LEN       NS_LITERAL_STRING("downloadDB").Length()
-#define CONTEXT_DOWNLOAD_DEVICE           NS_LITERAL_STRING("downloadDB").get()
+#define CONTEXT_USBMASSSTORAGE_DEVICE_LEN       NS_LITERAL_STRING("downloadDB").Length()
+#define CONTEXT_USBMASSSTORAGE_DEVICE           NS_LITERAL_STRING("downloadDB").get()
 
-#define DOWNLOAD_DEVICE_TABLE_NAME        NS_LITERAL_STRING("download").get()
-#define DOWNLOAD_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&device.download").get()
-#define DOWNLOAD_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
-#define DOWNLOAD_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_NAME        NS_LITERAL_STRING("download").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&device.download").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevice)
@@ -144,8 +144,8 @@ NS_IMETHODIMP sbUSBMassStorageDevice::EnumDeviceString(PRUint32 index, PRUnichar
 /* wstring GetContext (in wstring deviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetContext(const PRUnichar *deviceString, PRUnichar **_retval)
 {
-  size_t nLen = CONTEXT_DOWNLOAD_DEVICE_LEN + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(CONTEXT_DOWNLOAD_DEVICE, nLen * sizeof(PRUnichar));
+  size_t nLen = CONTEXT_USBMASSSTORAGE_DEVICE_LEN + 1;
+  *_retval = (PRUnichar *) nsMemory::Clone(CONTEXT_USBMASSSTORAGE_DEVICE, nLen * sizeof(PRUnichar));
   return NS_OK;
 }
 
@@ -239,16 +239,16 @@ NS_IMETHODIMP sbUSBMassStorageDevice::EjectDevice(const PRUnichar *deviceString,
 /* wstring GetDeviceCategory (); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetDeviceCategory(PRUnichar **_retval)
 {
-  size_t nLen = NAME_DOWNLOAD_DEVICE_LEN + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(NAME_DOWNLOAD_DEVICE, nLen * sizeof(PRUnichar));
+  size_t nLen = NAME_USBMASSSTORAGE_DEVICE_LEN + 1;
+  *_retval = (PRUnichar *) nsMemory::Clone(NAME_USBMASSSTORAGE_DEVICE, nLen * sizeof(PRUnichar));
   return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP sbUSBMassStorageDevice::GetName(PRUnichar **aName)
 {
-  size_t nLen = NAME_DOWNLOAD_DEVICE_LEN + 1;
-  *aName = (PRUnichar *) nsMemory::Clone(NAME_DOWNLOAD_DEVICE, nLen * sizeof(PRUnichar));
+  size_t nLen = NAME_USBMASSSTORAGE_DEVICE_LEN + 1;
+  *aName = (PRUnichar *) nsMemory::Clone(NAME_USBMASSSTORAGE_DEVICE, nLen * sizeof(PRUnichar));
   return NS_OK;
 }
 
@@ -396,7 +396,7 @@ NS_IMETHODIMP sbUSBMassStorageDevice::GetUploadTable(const PRUnichar *deviceStri
 // Transfer related
 nsString sbUSBMassStorageDevice::GetDeviceDownloadTableDescription(const PRUnichar* deviceString)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_DESCRIPTION); 
+  return nsString(USBMASSSTORAGE_DEVICE_TABLE_DESCRIPTION); 
 }
 
 //-----------------------------------------------------------------------------
@@ -408,7 +408,7 @@ nsString sbUSBMassStorageDevice::GetDeviceUploadTableDescription(const PRUnichar
 //-----------------------------------------------------------------------------
 nsString sbUSBMassStorageDevice::GetDeviceDownloadTableType(const PRUnichar* deviceString)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_TYPE); 
+  return nsString(USBMASSSTORAGE_DEVICE_TABLE_TYPE); 
 }
 
 //-----------------------------------------------------------------------------
@@ -420,7 +420,7 @@ nsString sbUSBMassStorageDevice::GetDeviceUploadTableType(const PRUnichar* devic
 //-----------------------------------------------------------------------------
 nsString sbUSBMassStorageDevice::GetDeviceDownloadReadable(const PRUnichar* deviceString)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_READABLE); 
+  return nsString(USBMASSSTORAGE_DEVICE_TABLE_READABLE); 
 }
 
 //-----------------------------------------------------------------------------
@@ -432,7 +432,7 @@ nsString sbUSBMassStorageDevice::GetDeviceUploadTableReadable(const PRUnichar* d
 //-----------------------------------------------------------------------------
 nsString sbUSBMassStorageDevice::GetDeviceDownloadTable(const PRUnichar* deviceString)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_NAME); 
+  return nsString(USBMASSSTORAGE_DEVICE_TABLE_NAME); 
 }
 
 //-----------------------------------------------------------------------------
