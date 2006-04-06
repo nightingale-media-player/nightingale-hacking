@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
-[scriptable, uuid()]
+[scriptable, uuid(A20BF454-673B-4308-8898-93F2B001D4E9)]
 interface sbIUSBMassStorageDevice : sbIDeviceBase
 {
 };
