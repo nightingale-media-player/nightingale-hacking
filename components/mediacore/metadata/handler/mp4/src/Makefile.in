@@ -1,0 +1,84 @@
+#
+# BEGIN SONGBIRD GPL
+# 
+# This file is part of the Songbird web player.
+#
+# Copyright 2006 Pioneers of the Inevitable LLC
+# http://www.songbirdnest.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+# 
+# Software distributed under the License is distributed 
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
+# express or implied. See the GPL for the specific language 
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this 
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc., 
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# 
+# END SONGBIRD GPL
+#
+
+DEPTH = ../../../../../../
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+ifdef DEBUG
+target_name = sbMetadataHandlerMP4_d
+else
+target_name = sbMetadataHandlerMP4
+endif
+
+CPP_SRCS = MetadataHandlerMP4.cpp \
+           MetadataHandlerMP4Component.cpp \
+           $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(ID3LIB_DIR)/include \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plc4 \
+                            plds4 \
+                            xpcom \
+                            $(NULL)
+
+ifeq (win32,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                               unicharutil_s \
+                               $(NULL)
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                               $(NULL)
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+  DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
+  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs \
+                               $(NULL)
+endif
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+
+include $(topsrcdir)/build/rules.mk
