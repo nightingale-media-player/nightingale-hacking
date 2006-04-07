@@ -88,7 +88,6 @@ class ID3_ChannelReader : public ID3_Reader
   virtual size_type readChars(char buf[], size_type len)
   {
     PRUint32 count = 0;
-    setCur( m_Pos );
     this->m_Stream->Read( buf, len, &count );
     m_Pos += count;
     m_Total += m_Pos;
@@ -143,12 +142,16 @@ class ID3_ChannelReader : public ID3_Reader
 
       m_Channel->Open( getter_AddRefs(m_Stream) );
 
-      static bool recursive = false;
-      if ( !recursive && m_Stream.get() )
+      if ( m_Stream.get() && pos )
       {
-        recursive = true;
-        char aChar = peekChar();
-        recursive = false;
+        // Cheat.
+        const max_buf = 10240;
+        if ( pos < max_buf )
+        {
+          char buf[max_buf];
+          this->readChars( buf, pos );
+          m_Pos = pos;
+        }
       }
     }
     return (pos_type)m_Pos;
