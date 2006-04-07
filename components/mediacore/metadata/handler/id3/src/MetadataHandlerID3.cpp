@@ -145,7 +145,7 @@ class ID3_ChannelReader : public ID3_Reader
       if ( m_Stream.get() && pos )
       {
         // Cheat.
-        const max_buf = 10240;
+        const int max_buf = 10240;
         if ( pos < max_buf )
         {
           char buf[max_buf];

@@ -35,8 +35,10 @@ else
 target_name = sbMetadataHandlerID3
 endif
 
+ifeq (win32,$(SB_PLATFORM))
 CPP_EXTRA_DEFS = -DID3LIB_LINKOPTION=3 \
                  $(NULL)
+endif
 
 CPP_SRCS = MetadataHandlerID3.cpp \
            MetadataHandlerID3Component.cpp \
