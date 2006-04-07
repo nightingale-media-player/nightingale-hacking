@@ -69,11 +69,7 @@ class ID3_ChannelReader : public ID3_Reader
   void setChannel(nsIChannel* channel)
   {
     m_Channel = channel;
-    m_Channel->Open( getter_AddRefs(m_Stream) );
-
-    char buffer[ 0xF ];
-    this->readChars( buffer, 0xF );
-    this->setCur( 0 );
+    this->setCur( 0 );  // Open it as a restartable channel
   }
 
   virtual int_type peekChar() 
@@ -131,7 +127,7 @@ class ID3_ChannelReader : public ID3_Reader
 
   virtual pos_type setCur(pos_type pos)
   {
-    if ( ( pos >= this->getBeg() ) && ( pos < this->getEnd() ) )
+    if ( ( pos >= this->getBeg() ) && ( ( pos < this->getEnd() ) || ( ! this->getEnd() && ! pos ) ) )
     {
       nsresult nRet = NS_ERROR_UNEXPECTED;
       nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&nRet);

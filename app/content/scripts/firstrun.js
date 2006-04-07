@@ -46,8 +46,12 @@ function updateDataReady(upd) {
   } else {
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var errortitle = songbirdStrings.GetStringFromName("setup.networkerrortitle");
-    var errormsg = songbirdStrings.GetStringFromName("setup.networkerrormsg");
+    var errortitle = "setup.networkerrortitle"; // Set these to default english strings
+    var errormsg = "setup.networkerrormsg";
+    try  { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
+      errortitle = songbirdStrings.GetStringFromName("setup.networkerrortitle");
+      errormsg = songbirdStrings.GetStringFromName("setup.networkerrormsg");
+    }catch(e){}
     sbMessageBox(errortitle, errormsg, false);
   }
   enableGoAhead();
@@ -198,8 +202,12 @@ function doOK()
   if (noext) {
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var noxpititle = songbirdStrings.GetStringFromName("setup.noxpititle");
-    var noxpimsg = songbirdStrings.GetStringFromName("setup.noxpimsg");
+    var noxpititle = "setup.noxpititle"; // Set these to default english strings
+    var noxpimsg = "setup.noxpimsg";
+    try { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
+      noxpititle = songbirdStrings.GetStringFromName("setup.noxpititle");
+      noxpimsg = songbirdStrings.GetStringFromName("setup.noxpimsg");
+    }catch(e){}
     var r = sbMessageBox(noxpititle, noxpimsg, true);
     if (r == "accept") { 
       prefs.setCharPref("firstruncheck", "1");  
@@ -232,8 +240,12 @@ function doCancel()
   var upd = window.arguments[0].update;
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
   var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var bypasstitle = songbirdStrings.GetStringFromName("setup.bypasstitle");
-  var bypassmsg = songbirdStrings.GetStringFromName("setup.bypassmsg");
+  var bypasstitle = "setup.bypasstitle"; // Make these be default english titles.
+  var bypassmsg = "setup.bypassmsg";
+  try  { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
+    bypasstitle = songbirdStrings.GetStringFromName("setup.bypasstitle");
+    bypassmsg = songbirdStrings.GetStringFromName("setup.bypassmsg");
+  }catch(e){}
   var r = sbMessageBox(bypasstitle, bypassmsg, true); 
   if (r == "accept") { 
     window.arguments[0].cancelled = true; 

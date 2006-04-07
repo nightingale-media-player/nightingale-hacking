@@ -36,9 +36,6 @@ try
   {
   }
 
-  // Create a player remote with an explicit event handler.
-  var myPlayerRemote = new CPlayerRemote( myPlaybackEvent );
-
   // NOW we have the playlist playback service!
   var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
                        .getService(Components.interfaces.sbIPlaylistPlayback);

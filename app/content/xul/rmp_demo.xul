@@ -173,6 +173,7 @@
   </vbox>
 </stack>   
 
+
   <!-- Load the Mozilla helpers -->  
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" />
@@ -184,11 +185,6 @@
    src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
-
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_repeater.js"/>
-  <!--script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_loop.js"/-->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_controls.js"/>
    
@@ -210,9 +206,4 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/rmp_demo.js"/>
    
-  <!-- Scan the available dtd files to see if they need fixing. 
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/language_scan.js"/>
-  -->
-
 </window>

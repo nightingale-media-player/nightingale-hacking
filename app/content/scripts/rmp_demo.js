@@ -333,7 +333,7 @@ function SBAppInitialize()
   }
   catch( err )
   {
-    alert( err );
+    alert( "SBAppInitialize\n" + err );
   }
 }
 

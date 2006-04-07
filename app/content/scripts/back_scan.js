@@ -305,6 +305,6 @@ try
 }
 catch ( err )
 {
-  alert( err )
+  alert( "back_scan *script init*\n" + err );
 }
 

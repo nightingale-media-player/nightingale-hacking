@@ -103,15 +103,13 @@
     
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_repeater.js"/>
-  <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/player_controls.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   
@@ -120,7 +118,5 @@
    src="chrome://songbird/content/scripts/miniplayer.data.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/miniplayer.js" />
-  <!--script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/player_loop.js" /-->
   
 </window>

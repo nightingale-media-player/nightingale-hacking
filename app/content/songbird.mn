@@ -42,8 +42,6 @@ songbird.jar:
   content/songbird/dialogs/media-scan.js                    (content/media_scan.js)
   content/songbird/dialogs/message-box.js                   (content/messagebox.js)
   content/songbird/media-lib/player-controls.js             (content/player_controls.js)
-  content/songbird/media-lib/player-loop.js                 (content/player_loop.js)
-  content/songbird/media-lib/player-repeater.js             (content/player_repeater.js)
   content/songbird/dialogs/restart-box.js                   (content/restartbox.js)
   content/songbird/songbird.js                              (content/rmp_demo.js)
   content/songbird/utility-lib/async-for-loop.js            (content/sbiasyncforloop.js)

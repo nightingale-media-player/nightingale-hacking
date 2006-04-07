@@ -770,5 +770,5 @@ catch ( err )
 }
 catch ( err )
 {
-  alert( err );
+  alert( "player_controls.js\n" + err );
 }

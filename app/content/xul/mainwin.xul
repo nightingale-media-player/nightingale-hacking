@@ -516,19 +516,18 @@
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/dndSourceTracker.js" />
 
+  
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_repeater.js"/>
-  <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIPlaylistPlayback.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_controls.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
 
@@ -545,8 +544,6 @@
    src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/songbird_hack.js" />
-  <!--script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/player_loop.js" /-->
   <!-- Load the main window data bindings -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/mainwin.data.js" />

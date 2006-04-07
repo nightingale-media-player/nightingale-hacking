@@ -50,11 +50,6 @@ function myPlaybackEvent( key, value )
 {
 }
 
-// Create a player remote with an explicit event handler.
-var myPlayerRemote = new CPlayerRemote( myPlaybackEvent );
-// I should remember to destruct him, eventually, but he was instantiated into the global scope.
-// That's okay, now he's been deprecated.
-
 // NOW we have the playlist playback service!
 var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
