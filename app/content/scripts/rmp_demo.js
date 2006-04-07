@@ -185,7 +185,7 @@ function ConvertUrlToDisplayName( url )
 document.restartOnPlaybackEnd = false;
 function restartApp()
 {
-  thePlayerRepeater.doStop();
+  //thePlayerRepeater.doStop();
   onExit();
 
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
@@ -200,7 +200,7 @@ function restartApp()
 
 function quitApp()
 {
-  thePlayerRepeater.doStop();
+  //thePlayerRepeater.doStop();
   onExit();
 
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
@@ -234,7 +234,7 @@ function SBAppDeinitialize()
   gPPS.stop(); // else we crash?
 
   // Unattach the player repeater. (please deprecate me, soon!)
-  thePlayerRepeater.unbind();
+  //thePlayerRepeater.unbind();
   // Unbind the playback url viewer. (used by the code that uncloaks the video window)
   rmp_demo_playURL.Unbind();
   // Remember where the video window is.
