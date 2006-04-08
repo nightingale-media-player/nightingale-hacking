@@ -29,7 +29,7 @@ const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLib
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
 
 var aMediaLibrary = null;
-var msDBQuery = null;
+var msDBQuery = new sbIDatabaseQuery();
 var polling_interval = null;
 
 var aQueryFileArray = new Array();
@@ -47,8 +47,8 @@ theProgress.value = 0;
 var theProgressValue = 0; // to 100;
 var theProgressText = "";
 
-var aMediaScan = new Object;
-var aMediaScanQuery = new Object;
+var aMediaScan = null;
+var aMediaScanQuery = null;
 
 // Init the text box to the last url played (shrug).
 var polling_interval;
@@ -124,13 +124,14 @@ function onPollScan()
 
 function onScanComplete( mediaScanQuery )
 {
+  mediaScanQuery = aMediaScanQuery;
   theProgress.removeAttribute( "mode" );
 
   if ( mediaScanQuery.GetFileCount() )
   {
     try
     {
-      msDBQuery = new sbIDatabaseQuery();
+      //msDBQuery = new sbIDatabaseQuery();
       aMediaLibrary = new MediaLibrary();
       aMediaLibrary = aMediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
             
@@ -139,13 +140,14 @@ function onScanComplete( mediaScanQuery )
         return -1;
       }
       
+      msDBQuery.ResetQuery();
       msDBQuery.SetAsyncQuery( true );
       msDBQuery.SetDatabaseGUID( "songbird" );
       
       aMediaLibrary.SetQueryObject( msDBQuery );
 
       // Take the file array and for everything that seems to be a media url, add it to the database.
-      var i, count, total;
+      var i = 0, count = 0, total = 0;
       total = aMediaScanQuery.GetFileCount();
 
       for ( i = 0, count = 0; i < total; i++ )
@@ -162,9 +164,10 @@ function onScanComplete( mediaScanQuery )
           values.push( ConvertUrlToDisplayName( the_url ) );
           aMediaLibrary.AddMedia( the_url, keys.length, keys, values.length, values, false, true );
           aQueryFileArray.push( values[0] );
-          count++;
         }
       }
+      
+      count = msDBQuery.GetQueryCount();
 
       if ( count )
       {
@@ -213,10 +216,9 @@ function onPollQuery()
     {
       var len = msDBQuery.GetQueryCount();
       var pos = msDBQuery.CurrentQuery() + 1;
-//      if ( pos == lastpos )
-      {
-      }
+
       lastpos = pos;
+      
       if ( len == pos )
       {
         var added = "Added";
