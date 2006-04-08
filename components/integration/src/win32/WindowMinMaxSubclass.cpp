@@ -34,6 +34,7 @@
 
 #ifdef WIN32
 #include <dbt.h>
+#include <cguid.h>
 #endif
 
 #include <xpcom/nscore.h>
@@ -320,6 +321,29 @@ void CWindowMinMaxSubclass::SubclassWindow()
   m_prevWndProc = (WNDPROC)GetWindowLong(m_hwnd, GWL_WNDPROC);
   SetWindowLong(m_hwnd, GWL_USERDATA, (LONG)this);
   SetWindowLong(m_hwnd, GWL_WNDPROC, (LONG)WindowMinMaxSubclassProc);
+
+  {
+    DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
+    char szMsg[80];
+
+    ZeroMemory( &NotificationFilter, sizeof(NotificationFilter) );
+    NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+    NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+    NotificationFilter.dbcc_classguid = GUID_NULL;
+
+    HDEVNOTIFY hDevNotify = RegisterDeviceNotification( m_hwnd, &NotificationFilter, DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES );
+
+    if(!hDevNotify) 
+    {
+      ::wsprintfA(szMsg, "RegisterDeviceNotification failed: %d\n", ::GetLastError());
+      ::MessageBoxA(m_hwnd, szMsg, "Registration", MB_OK);
+    }
+    else
+    {
+      m_hDevNotify = hDevNotify;
+    }
+  }
+
 #endif
 }
 
@@ -331,6 +355,12 @@ void CWindowMinMaxSubclass::UnsubclassWindow()
   SetWindowLong(m_hwnd, GWL_WNDPROC, (LONG)m_prevWndProc);
   SetWindowLong(m_hwnd, GWL_USERDATA, 0);
   m_prevWndProc = NULL;
+
+  if(m_hDevNotify != NULL)
+  {
+    UnregisterDeviceNotification(m_hDevNotify);
+    m_hDevNotify = NULL;
+  }
 #endif
 }
 

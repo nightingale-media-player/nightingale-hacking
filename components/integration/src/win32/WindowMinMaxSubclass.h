@@ -70,6 +70,7 @@ protected:
   
   WNDPROC m_prevWndProc;
   NATIVEWINDOW m_hwnd;
+  NATVIVEDEVICENOTIFY m_hDevNotify;
   nsISupports *m_window;
   sbIWindowMinMaxCallback *m_callback;
   

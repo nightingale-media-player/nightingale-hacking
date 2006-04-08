@@ -33,7 +33,9 @@
 
 #ifdef WIN32
 #include <windows.h>
+#include <dbt.h>
 #define NATIVEWINDOW HWND
+#define NATVIVEDEVICENOTIFY HDEVNOTIFY 
 #else
 #define NATIVEWINDOW void*
 #endif
