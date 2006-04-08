@@ -480,6 +480,8 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
       PRInt32 nCount = pMediaScan->ScanDirectory(pQuery);
       pQuery->SetIsScanning(PR_FALSE);
       pQuery->Release();
+
+      pQuery = nsnull;
     }
   }
 } //QueryProcessor
