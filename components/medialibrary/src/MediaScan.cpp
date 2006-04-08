@@ -469,8 +469,12 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
         return;
       }
 
-      pQuery = pMediaScan->m_QueryQueue.front();
-      pMediaScan->m_QueryQueue.pop_front();
+      if(pMediaScan->m_QueryQueue.size())
+      {
+        pQuery = pMediaScan->m_QueryQueue.front();
+        pMediaScan->m_QueryQueue.pop_front();
+      }
+
       if (pMediaScan->m_QueryQueue.empty())
         pMediaScan->m_ThreadQueueHasItem = PR_FALSE;
     } // Exit Monitor
