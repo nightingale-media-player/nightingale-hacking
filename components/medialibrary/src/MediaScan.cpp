@@ -601,6 +601,8 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
             if(strDirectory)
               PR_Free(strDirectory);
 
+            NS_IF_RELEASE(pDirEntries);
+
             return NS_OK;
           }
         }
