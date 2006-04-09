@@ -277,6 +277,7 @@ case "$SB_PLATFORM" in
     LIB_SUFFIX=".a"
     DLL_SUFFIX=".so"
     AC_DEFINE(XP_UNIX)
+    AC_DEFINE(_REENTRANT)
   ;;
 esac
 AC_SUBST(BIN_SUFFIX)
@@ -369,11 +370,11 @@ case "$SB_PLATFORM" in
     USING_RANLIB=1
   ;;
   linux)
-    GCC_COMPILER_FLAGS="-c -fPIC -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pedantic -fshort-wchar -pthread -pipe"
+    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pipe"
 #    if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
 #    else
-#      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O3"
 #    fi
 
     # We always want to include "mozilla-config.h"
