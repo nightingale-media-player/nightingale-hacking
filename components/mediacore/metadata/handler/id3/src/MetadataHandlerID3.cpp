@@ -318,7 +318,9 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
     }
     catch ( const StupidException exe )
     {
+#if defined(XP_WIN)
       __asm int 3;
+#endif
     }
   }
 

@@ -50,6 +50,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -71,9 +72,10 @@ ifeq (win32,$(SB_PLATFORM))
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s
-  DYNAMIC_LIB_EXTRA_IMPORTS += id3 \
-                               xul \
+  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s \
+                               $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
+                               id3 \
                                $(NULL)
 endif
 
