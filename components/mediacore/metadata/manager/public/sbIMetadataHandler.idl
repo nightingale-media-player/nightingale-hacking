@@ -56,4 +56,7 @@ interface sbIMetadataHandler : nsISupports
   
   PRInt32 SetTags(in PRUint32 tagCount, [array, size_is(tagCount)] in wstring tags, 
     in PRUint32 valueCount, [array, size_is(valueCount)] in wstring values);
+
+  void OnChannelData( in nsISupports channel );
+  PRBool Completed();
 };

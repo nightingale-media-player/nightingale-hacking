@@ -47,25 +47,113 @@
 
 #include <id3/reader.h>
   
+class StupidException
+{
+};
+
+
 class ID3_ChannelReader : public ID3_Reader
 {
-  nsCOMPtr<nsIChannel> m_Channel;
-  nsCOMPtr<nsIInputStream> m_Stream;
-  volatile PRUint64 m_Pos, m_Total;
- protected:
- public:
+  nsCOMPtr<sbIMetadataChannel> m_Channel;
+protected:
+public:
   ID3_ChannelReader()
   {
-    m_Pos = 0;
   }
-  ID3_ChannelReader(nsIChannel* channel)
+  ID3_ChannelReader(sbIMetadataChannel* channel)
   {
-    m_Pos = 0;
     setChannel( channel );
   };
   virtual ~ID3_ChannelReader() { ; }
   virtual void close() { ; }
-  
+
+  void setChannel(sbIMetadataChannel* channel)
+  {
+    m_Channel = channel;
+    this->setCur( 0 );  // Open it as a restartable channel
+  }
+
+  virtual int_type peekChar() 
+  { 
+    if (!this->atEnd() || !this->getCur())
+    {
+      char aByte;
+      PRUint32 count = 0;
+      m_Channel->Read( &aByte, 1, &count ); // 1 byte, please.
+      this->setCur( this->getCur() - 1 ); // Now back up 1 byte.  Streams shouldn't peek!
+      return aByte;
+    }
+    return END_OF_READER;
+  }
+
+  virtual size_type readChars(char buf[], size_type len)
+  {
+    PRUint32 count = 0;
+    m_Channel->Read( buf, len, &count );
+    return count;
+  }
+  virtual size_type readChars(char_type buf[], size_type len)
+  {
+    return this->readChars(reinterpret_cast<char *>(buf), len);
+  }
+
+  virtual pos_type getCur() 
+  { 
+    PRUint64 pos = 0;
+    m_Channel->GetPos( &pos );
+    return (pos_type)pos;
+  }
+
+  virtual pos_type getBeg()
+  {
+    return 0;
+  }
+
+  virtual pos_type getEnd()
+  {
+    PRUint64 size = 0;
+    m_Channel->GetSize( &size );
+    return (pos_type)size;
+  }
+
+  virtual pos_type remainingBytes()
+  {
+    return getEnd() - getCur();
+  }
+
+  virtual pos_type skipChars(pos_type skip)
+  {
+    return setCur( getCur() + skip );
+  }
+
+  virtual pos_type setCur(pos_type pos)
+  {
+    if ( !NS_SUCCEEDED( m_Channel->SetPos( pos ) ) )
+      throw StupidException();
+    return pos;
+  }
+};
+
+
+class ID3_OldChannelReader : public ID3_Reader
+{
+  nsCOMPtr<nsIChannel> m_Channel;
+  nsCOMPtr<nsIInputStream> m_Stream;
+  volatile PRUint64 m_Pos, m_Total;
+protected:
+public:
+  ID3_OldChannelReader()
+  {
+    m_Pos = 0;
+  }
+  ID3_OldChannelReader(nsIChannel* channel)
+  {
+    m_Pos = 0;
+    setChannel( channel );
+  };
+  virtual ~ID3_OldChannelReader() { ; }
+  virtual void close() { ; }
+
   void setChannel(nsIChannel* channel)
   {
     m_Channel = channel;
@@ -84,7 +172,7 @@ class ID3_ChannelReader : public ID3_Reader
     }
     return END_OF_READER;
   }
-    
+
   virtual size_type readChars(char buf[], size_type len)
   {
     PRUint32 count = 0;
@@ -97,24 +185,24 @@ class ID3_ChannelReader : public ID3_Reader
   {
     return this->readChars(reinterpret_cast<char *>(buf), len);
   }
-    
+
   virtual pos_type getCur() 
   { 
     return (pos_type)m_Pos;
   }
-    
+
   virtual pos_type getBeg()
   {
     return 0;
   }
-    
+
   virtual pos_type getEnd()
   {
     PRInt32 content_length = 0;
     this->m_Channel->GetContentLength( &content_length ); 
     return content_length;
   }
-    
+
   virtual pos_type remainingBytes()
   {
     return getEnd() - getCur();
@@ -135,10 +223,12 @@ class ID3_ChannelReader : public ID3_Reader
       m_Channel->GetURI( getter_AddRefs(pURI) );
       nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(m_Channel));
 
-      nsCOMPtr<nsIResumableChannel> seek;
-      m_Channel->QueryInterface( NS_GET_IID( nsIResumableChannel ), getter_AddRefs( seek ) );
-      m_Pos = pos;
-      seek->ResumeAt( m_Pos, nsCString() );
+      nsCOMPtr<nsIResumableChannel> seek( do_QueryInterface(m_Channel) );
+      if ( seek.get() )
+      {
+        m_Pos = pos;
+        seek->ResumeAt( m_Pos, nsCString() );
+      }
 
       m_Channel->Open( getter_AddRefs(m_Stream) );
 
@@ -159,8 +249,6 @@ class ID3_ChannelReader : public ID3_Reader
 };
 
 
-
-
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
@@ -169,6 +257,7 @@ NS_IMPL_ISUPPORTS1(sbMetadataHandlerID3, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerID3::sbMetadataHandlerID3()
 {
+  m_Completed = false;
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -211,11 +300,49 @@ NS_IMETHODIMP sbMetadataHandlerID3::SetChannel(nsIChannel *urlChannel, PRInt32 *
   return NS_OK;
 } //SetChannel
 
+NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
+{
+  nsCOMPtr<sbIMetadataChannel> mc( do_QueryInterface(channel) ) ;
+
+  if ( mc.get() )
+  {
+    try
+    {
+      if ( !m_Completed )
+      {
+        ID3_Tag  tag;
+        ID3_ChannelReader channel_reader( mc.get() );
+        bool ok = tag.Parse( channel_reader );
+        ReadTag(tag);
+      }
+    }
+    catch ( const StupidException exe )
+    {
+      __asm int 3;
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbMetadataHandlerID3::Completed(PRBool *_retval)
+{
+  *_retval = m_Completed;
+
+  return NS_OK;
+} //SetChannel
+
 //-----------------------------------------------------------------------------
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 {
   nsresult nRet = NS_ERROR_UNEXPECTED;
+
+  if ( m_Completed )
+  {
+    *_retval = -1;
+    return NS_ERROR_UNEXPECTED;
+  }
 
   *_retval = 0;
   if(!m_Channel)
@@ -226,7 +353,6 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
   // Get a new values object.
   m_Values = do_CreateInstance("@songbird.org/Songbird/MetadataValues;1");
-  m_Values->Clear();
   if(!m_Values.get())
   {
     *_retval = -1;
@@ -270,11 +396,14 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   }
   else
   {
-    ID3_Tag  tag;
-    ID3_ChannelReader channel_reader( m_Channel );
-    bool ok = tag.Parse( channel_reader );
-
-    ReadTag(tag);
+    // Get a new channel handler.
+    m_ChannelHandler = do_CreateInstance("@songbird.org/Songbird/MetadataChannel;1");
+    if(!m_ChannelHandler.get())
+    {
+      *_retval = -1;
+      return NS_ERROR_FAILURE;
+    }
+    m_ChannelHandler->Open( m_Channel, this );
 
     nRet = NS_OK;
   }
@@ -293,6 +422,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::Write(PRInt32 *_retval)
 /* sbIMetadataValues GetValuesMap (); */
 NS_IMETHODIMP sbMetadataHandlerID3::GetValuesMap(sbIMetadataValues **_retval)
 {
+  if ( ! m_Completed )
+    return NS_ERROR_UNEXPECTED;
   *_retval = m_Values;
   if ( (*_retval) )
     (*_retval)->AddRef();
@@ -359,12 +490,12 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 
   nsString strKey;
   nsString strValue;
-  PRInt32 type;
+  PRInt32 type = 0; // Always string, for now.
 
   ID3_Tag::Iterator *itFrame = tag.CreateIterator();
   ID3_Frame *pFrame = nsnull;
 
-  while( (pFrame = itFrame->GetNext()) != NULL)
+  while( (pFrame = itFrame->GetNext()) != nsnull)
   {
     switch(pFrame->GetID())
     {
@@ -604,11 +735,11 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     }
 
     // If we care,
-//    if ( strKey.Length() )
+    if ( strKey.Length() )
     {
       // Get the text field.
       ID3_Field* pField = pFrame->GetField(ID3FN_TEXT);
-      if (NULL != pField)
+      if (nsnull != pField)
       {
         ID3_TextEnc enc = pField->GetEncoding();
         switch( enc )
@@ -635,7 +766,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           }
         }
       }
-      m_Values->SetValue( strKey.get(), strValue.get(), 0 );
+      m_Values->SetValue( strKey.get(), strValue.get(), type );
     }
   }
 
@@ -645,6 +776,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 
   // We crash when we delete it?
 
+  m_Completed = true;  // And, we're done.
   return ret;
 } //ReadTag
 
@@ -654,9 +786,9 @@ PRInt32 sbMetadataHandlerID3::ReadFrame(ID3_Frame *frame)
   PRInt32 ret = 0;
 
   ID3_Frame::Iterator *itField = frame->CreateIterator();
-  ID3_Field* field = NULL;
+  ID3_Field* field = nsnull;
 
-  while( (field = itField->GetNext()) != NULL )
+  while( (field = itField->GetNext()) != nsnull )
   {
     ReadFields(field);
   }

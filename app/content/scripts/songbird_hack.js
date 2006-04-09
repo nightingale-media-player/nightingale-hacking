@@ -373,18 +373,30 @@ function SBInitialize()
     {
       const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
-      var aHandler = aMetadataManager.GetHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
-      //var aHandler = aMetadataManager.GetHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
-      var retval = aHandler.Read();
-      var values = aHandler.GetValuesMap();
+      aMetadataHandler = aMetadataManager.GetHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
+      //aMetadataHandler = aMetadataManager.GetHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
+      var retval = aMetadataHandler.Read();
       
-      var text = "";
-      const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
-      for ( var i in keys )
+      function PollMetadata( )
       {
-        text += keys[ i ] + ": " + values.getValue( keys[ i ] ) + "\n";
+        if ( aMetadataHandler.IsExecuting() )
+        {
+          setTimeout( PollMetadata, 500 );
+        }
+        else
+        {
+          var values = aMetadataHandler.GetValuesMap();
+          
+          var text = "";
+          const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
+          for ( var i in keys )
+          {
+            text += keys[ i ] + ": " + values.getValue( keys[ i ] ) + "\n";
+          }
+          alert( text );
+        }
       }
-      alert( text );
+      setTimeout( PollMetadata, 500 );
     }
     catch(err)
     {
@@ -399,6 +411,7 @@ function SBInitialize()
   }
 }
 
+var aMetadataHandler = null;
 
 function SBUninitialize()
 {

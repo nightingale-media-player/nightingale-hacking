@@ -37,6 +37,7 @@ endif
 
 CPP_SRCS = MetadataManager.cpp \
            MetadataValues.cpp \
+           MetadataChannel.cpp \
            MetadataManagerComponent.cpp \
            $(NULL)
 

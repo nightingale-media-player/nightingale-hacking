@@ -32,9 +32,11 @@
 #include "nsIGenericFactory.h"
 #include "MetadataManager.h"
 #include "MetadataValues.h"
+#include "MetadataChannel.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataManager)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataValues)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataChannel)
 
 static nsModuleComponentInfo sbMetadataManagerComponent[] =
 {
@@ -50,6 +52,12 @@ static nsModuleComponentInfo sbMetadataManagerComponent[] =
     SONGBIRD_METADATAVALUES_CID,
     SONGBIRD_METADATAVALUES_CONTRACTID,
     sbMetadataValuesConstructor
+  },
+  {
+    SONGBIRD_METADATACHANNEL_CLASSNAME,
+    SONGBIRD_METADATACHANNEL_CID,
+    SONGBIRD_METADATACHANNEL_CONTRACTID,
+    sbMetadataChannelConstructor
   },
 
 };

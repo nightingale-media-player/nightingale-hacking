@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIMetadataHandler.idl \
              sbIMetadataManager.idl \
              sbIMetadataValues.idl \
+             sbIMetadataChannel.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMetadataManager.xpt

@@ -27,6 +27,9 @@
 try 
 {
   var ENABLE_BACKSCAN = 1;
+  
+  const sbDatabaseGUID = "songbird";
+//  const sbDatabaseGUID = "webplaylist";
 
   const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
   var aMetadataManager = new MetadataManager();
@@ -41,10 +44,11 @@ try
   var bsMaxTries = 5;
   var bsSource = new sbIPlaylistsource();
   var bsSkip = 0;
+  var bsMDHandler = null;
 
   var bsCurQuery = new sbIDatabaseQuery();
   bsCurQuery.SetAsyncQuery( true );
-  bsCurQuery.SetDatabaseGUID( "songbird" );
+  bsCurQuery.SetDatabaseGUID( sbDatabaseGUID );
  
   var bsWaitForExecuting = false;
   
@@ -73,7 +77,7 @@ try
         // Go start an async query on the library
         bsDBQuery = new sbIDatabaseQuery();
         bsDBQuery.SetAsyncQuery( true );
-        bsDBQuery.SetDatabaseGUID( "songbird" );
+        bsDBQuery.SetDatabaseGUID( sbDatabaseGUID );
 
         // Fire us off in a little bit
         bsWaitForExecuting = true;
@@ -100,6 +104,13 @@ try
       }
       if ( ( bsCurQuery ) && ( bsCurQuery.IsExecuting() ) )
       {
+        return;
+      }
+      
+      if ( bsMDHandler )
+      {
+        if ( bsMDHandler.Completed() )
+          BSReadHandlerValues();
         return;
       }
 
@@ -148,7 +159,7 @@ try
     var count = 0;
     var quit = false;
    
-    while ( ( bsLastRow < result.GetRowCount() ) ) 
+    while ( ! bsSubmitQueries && ( bsLastRow < result.GetRowCount() ) ) 
     {
       var time = result.GetRowCellByColumn( bsLastRow, "length" );
       
@@ -175,55 +186,17 @@ try
         } catch(e) {}
         bsScanningText.SetValue( scanning + "..." );
         
-        var metadata = new Array(); // TODO: REPLACE WITH METADATA API.   theVLCCore.getURLMetadata(url, keys);
-        var aHandler = aMetadataManager.GetHandlerForMediaURL(url);
-        var retval = aHandler.Read();
-        var values = aHandler.GetValuesMap();
-        for ( var i in keys )
+        bsMDHandler = aMetadataManager.GetHandlerForMediaURL(url);
+        var retval = bsMDHandler.Read();
+        // If it's immediately done, read the values.
+        if ( bsMDHandler.Completed() )
         {
-          metadata[ i ] = values.getValue( keys[ i ] );
+          // local
+          BSReadHandlerValues();
         }
         
-        // GRRRRR.
-        for ( var i in metadata )
-        {
-          if ( metadata[i] == null )
-          {
-            metadata[i] = "";
-          }
-        }
-
-        // If the title is null, use the url
-        if ( metadata[0] == "" )
-        {
-          // No, this should already have the url (or something else) there, so just leave it alone.
-          metadata[0] = title; // ConvertUrlToDisplayName( url );
-        }
-        // If the length is null parse a 0, otherwise strip hours. 
-        if ( metadata[1] == "" )
-        {
-          metadata[1] = "0:00";
-        }
-        else
-        {
-          metadata[1] = BSStripHoursFromTimeString( metadata[1] );
-        }
-        if ( metadata[1] == "0" )
-        {
-          metadata[1] = "0:00";
-        }
-
-        bsGUIDArray.push( uuid );
-        bsMetadataArray.push( metadata );
-        
-        if ( bsGUIDArray.length >= bsMaxArray )
-        {
-          bsSubmitQueries = true;
-        }
         quit = true;
       }
-      
-      bsLastRow++;
       
       if ( quit )
       {
@@ -240,6 +213,7 @@ try
 
       if ( bsSubmitQueries )
       {
+      
         bsSubmitQueries = false;
         var anything = false;
         
@@ -268,6 +242,64 @@ try
     }
   }
 
+  function BSReadHandlerValues()
+  {
+    var values = bsMDHandler.GetValuesMap();
+    // clear the bsMDHandler variable so we don't track it.
+    bsMDHandler = null;
+    
+    var metadata = new Array();
+    for ( var i in keys )
+    {
+      metadata[ i ] = values.getValue( keys[ i ] );
+    }        
+    
+    // GRRRRR.
+    for ( var i in metadata )
+    {
+      if ( metadata[i] == null )
+      {
+        metadata[i] = "";
+      }
+    }
+
+    var result = bsDBQuery.GetResultObject();
+    var time = result.GetRowCellByColumn( bsLastRow, "length" );
+    var title = result.GetRowCellByColumn( bsLastRow, "title" );
+    var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
+    var url = result.GetRowCellByColumn( bsLastRow, "url" );
+    
+    // If the title is null, use the url
+    if ( metadata[0] == "" )
+    {
+      // No, this should already have the url (or something else) there, so just leave it alone.
+      metadata[0] = title; // ConvertUrlToDisplayName( url );
+    }
+    // If the length is null parse a 0, otherwise strip hours. 
+    if ( metadata[1] == "" )
+    {
+      metadata[1] = "0:00";
+    }
+    else
+    {
+      metadata[1] = BSStripHoursFromTimeString( metadata[1] );
+    }
+    if ( metadata[1] == "0" )
+    {
+      metadata[1] = "0:00";
+    }
+
+    bsGUIDArray.push( uuid );
+    bsMetadataArray.push( metadata );
+    
+    if ( bsGUIDArray.length >= bsMaxArray )
+    {
+      bsSubmitQueries = true;
+    }
+
+    bsLastRow++;
+  }
+  
   function BSDataChange()
   {
     var scanning = "Scanning";
@@ -307,4 +339,3 @@ catch ( err )
 {
   alert( "back_scan *script init*\n" + err );
 }
-

@@ -1,0 +1,46 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+#include "nsIStreamListener.idl"
+#include "nsIChannel.idl"
+#include "sbIMetadataHandler.idl"
+
+// {6CB7F8A0-29ED-424b-AEF6-B491A8784AF4}
+// { 0x6cb7f8a0, 0x29ed, 0x424b, { 0xae, 0xf6, 0xb4, 0x91, 0xa8, 0x78, 0x4a, 0xf4 } };
+
+[uuid(6CB7F8A0-29ED-424b-AEF6-B491A8784AF4)]
+interface sbIMetadataChannel : nsIStreamListener
+{
+  void Open( in nsIChannel channel, in sbIMetadataHandler handler );
+  void Close();
+  void SetPos( in PRUint64 pos );
+  PRUint64 GetPos();
+  PRUint64 GetBuf();
+  PRUint64 GetSize();
+  PRUint32 Read( in charPtr buf, in PRUint32 len );
+  PRBool IsSeekable();
+};

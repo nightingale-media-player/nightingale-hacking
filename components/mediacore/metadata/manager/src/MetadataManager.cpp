@@ -107,7 +107,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
     if(NS_FAILED(nRet)) return nRet;
 
-    pHandler = do_GetService("@songbird.org/Songbird/MetadataHandler/ID3;1");
+    pHandler = do_CreateInstance("@songbird.org/Songbird/MetadataHandler/ID3;1");
     if(!pHandler)
     {
       nRet = NS_ERROR_UNEXPECTED;

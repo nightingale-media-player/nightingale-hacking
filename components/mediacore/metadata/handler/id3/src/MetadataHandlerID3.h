@@ -42,6 +42,7 @@
 
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"
+#include "sbIMetadataChannel.h"
 
 #include <id3/tag.h>
 
@@ -69,6 +70,8 @@ protected:
   PRInt32 ReadFields(ID3_Field *field);
 
   nsCOMPtr<sbIMetadataValues> m_Values;
+  nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;
   nsCOMPtr<nsIChannel> m_Channel;
   ID3_Tag              m_ID3Tag;
+  PRBool               m_Completed;
 };
