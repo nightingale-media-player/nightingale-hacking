@@ -100,33 +100,24 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     nRet = pURI->GetScheme(cstrScheme);
   }
 
-  //Local File
-//  if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
+  PRInt32 nHandlerRet = 0;
+  nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
+  if(NS_FAILED(nRet)) return nRet;
+
+  pHandler = do_CreateInstance("@songbird.org/Songbird/MetadataHandler/ID3;1");
+  if(!pHandler)
   {
-    PRInt32 nHandlerRet = 0;
-    nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
-    if(NS_FAILED(nRet)) return nRet;
-
-    pHandler = do_CreateInstance("@songbird.org/Songbird/MetadataHandler/ID3;1");
-    if(!pHandler)
-    {
-      nRet = NS_ERROR_UNEXPECTED;
-      return nRet;
-    }
-
-    nRet = pHandler->SetChannel(pChannel, &nHandlerRet);
-    if(nRet != 0) return nRet;
-
-    *_retval = pHandler.get();
-    (*_retval)->AddRef();
-
-    nRet = NS_OK;
+    nRet = NS_ERROR_UNEXPECTED;
+    return nRet;
   }
-  //Remote File
-//  else
-  {
 
-  }
+  nRet = pHandler->SetChannel(pChannel, &nHandlerRet);
+  if(nRet != 0) return nRet;
+
+  *_retval = pHandler.get();
+  (*_retval)->AddRef();
+
+  nRet = NS_OK;
 
   return nRet;
 }
