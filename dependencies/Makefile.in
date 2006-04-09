@@ -74,7 +74,9 @@ SONGBIRD_PLUGINS = $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX) \
 SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX) \
                       $(NULL)
 
-SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.0.0 \
+                     $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3 \
+                     $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3.so \
                      $(NULL)
 endif
 
