@@ -376,7 +376,6 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
           {
             nsIID nsIFileIID = NS_IFILE_IID;
             nsCOMPtr<nsIFile> pEntry;
-            //pDirEntry->QueryInterface(nsIFileIID, (void **) pEntry.StartAssignment());
             pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
             
             if(pEntry)
@@ -555,27 +554,31 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
 
             if(pEntry)
             {
-              PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE;
+              PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;;
               pEntry->IsFile(&bIsFile);
               pEntry->IsDirectory(&bIsDirectory);
+              pEntry->IsHidden(&bIsHidden);
 
-              if(bIsFile)
+              if(!bIsHidden)
               {
-                nsString strPath;
-                pEntry->GetPath(strPath);
-
-                pQuery->AddFilePath(strPath.get());
-                nFoundCount += 1;
-
-                if(pCallback)
+                if(bIsFile)
                 {
-                  pCallback->OnMediaScanFile(strPath.get(), nFoundCount);
+                  nsString strPath;
+                  pEntry->GetPath(strPath);
+
+                  pQuery->AddFilePath(strPath.get());
+                  nFoundCount += 1;
+
+                  if(pCallback)
+                  {
+                    pCallback->OnMediaScanFile(strPath.get(), nFoundCount);
+                  }
                 }
-              }
-              else if(bIsDirectory && bRecurse)
-              {
-                dirStack.push_back(pDirEntries);
-                pEntry->GetDirectoryEntries(&pDirEntries);
+                else if(bIsDirectory && bRecurse)
+                {
+                  dirStack.push_back(pDirEntries);
+                  pEntry->GetDirectoryEntries(&pDirEntries);
+                }
               }
             }
           }
