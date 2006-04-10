@@ -342,7 +342,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
   }
 #else
   {
-    ret = pFile->InitWithPath(strDirectory);
+    ret = pFile->InitWithPath(strTheDirectory);
   }
 #endif
   
@@ -523,7 +523,7 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   }
 #else
   {
-    ret = pFile->InitWithPath(strDirectory);
+    ret = pFile->InitWithPath(strTheDirectory);
   }
 #endif
 
