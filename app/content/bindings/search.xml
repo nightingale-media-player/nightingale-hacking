@@ -114,6 +114,7 @@
       
       jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
       jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+      jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
       
 /*      
 */
@@ -227,6 +228,7 @@
         if ( ( search_term.length > 0 ) && ( search_term != empty_space ) )
         {
           this.sendSearchEvent();
+          this.metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
         }
         else
         {
@@ -284,6 +286,7 @@
         {
           // Only do key timeouts when the library is selected
           document.__SEARCH_WIDGET__.sendSearchEvent();
+          this.metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
         }
         clearInterval( document.__SEARCH_WIDGET__.editIdleInterval );
       }

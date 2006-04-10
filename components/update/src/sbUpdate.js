@@ -28,6 +28,11 @@ const SONGBIRD_UPDATE_CLASSNAME = "Songbird Update Service Interface";
 const SONGBIRD_UPDATE_CID = Components.ID("{D8A028CC-73F4-4113-BED0-AF316B572B8E}");
 const SONGBIRD_UPDATE_IID = Components.interfaces.sbIUpdate;
 
+// these are temporary in order to have successful getbundle/postmetrics, they should obviously change ... 
+const SONGBIRD_GETBUNDLE_URL = 'http://www.bluemars.org/bundle.xml';
+const SONGBIRD_POSTMETRICS_URL = 'http://www.bluemars.org/post.php';
+
+const UPLOAD_METRICS_EVERY_NDAYS = 7; // every week
 
 function Update() {
   this._observers = new Array();
@@ -36,6 +41,7 @@ Update.prototype.constructor = Update;
 
 Update.prototype = {
   _req: null,
+  _postreq: null,
   _observers: null,
   _status: 0,
   _extlist: null,
@@ -68,7 +74,7 @@ Update.prototype = {
     this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
     this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onload, false);
     this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", onerror, false);
-    this._req.open('GET', 'http://www.bluemars.org/bundle.xml', true); 
+    this._req.open('GET', SONGBIRD_GETBUNDLE_URL, true); 
     this._req.send(null);
   },
         
@@ -298,10 +304,102 @@ Update.prototype = {
   getBundleVersion: function() {
     return this._bundleversion;
   },
+
+  checkUploadMetrics: function()
+  {
+    var ps = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefBranch);
+    var disabled = 0;
+    try 
+    {
+      disabled = parseInt(ps.getCharPref("metrics_disabled"));
+    }
+    catch (e) { }
+    if (disabled) return;
+    var timenow = new Date();
+    var now = timenow.getTime();
+    var last = 0;
+    try 
+    {
+      last = parseInt(ps.getCharPref("last_metrics_upload"));
+    }
+    catch (e)
+    {
+      // first start, pretend we just uploaded so we'll trigger the next upload in n days
+      ps.setCharPref("last_metrics_upload", now);
+      last = now;
+    }
+    var diff = now - last;
+    if (diff > (1000 /*one second*/ * 60 /*one minute*/ * 60 /*one hour*/ * 24 /*one day*/ * UPLOAD_METRICS_EVERY_NDAYS))
+    {
+      this.uploadMetrics();
+    }
+  },
   
   uploadMetrics: function()
   {
-    // todo
+    var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);
+    var user_install_uuid = appInfo.ID;
+    var user_agent_version = appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;
+    var user_os = xulRuntime.OS;
+    
+    var ps = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefService);   
+    var branch = ps.getBranch("metrics.");
+    var metrics = branch.getChildList("", { value: 0 });
+    var xml;
+    xml += '<metrics guid="' + user_install_uuid + '" user_agent="' + user_agent_version + '" user_os="' + user_os + '">';
+    for (var i = 0; i < metrics.length; i++) 
+    {
+      var val = branch.getCharPref(metrics[i]);
+      xml += '<item key="' + metrics[i] + '" value="' + val + '"/>';
+    }
+    xml += '</metrics>';
+    
+    // upload xml
+
+    var domparser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
+                      .getService(Components.interfaces.nsIDOMParser);   
+    var document = domparser.parseFromString(xml, "text/xml");
+
+    var onpostload = { 
+      _that: null, 
+      handleEvent: function( event ) { this._that.onPostLoad(); } 
+    } onpostload._that = this;
+    
+    var onposterror = { 
+      _that: null, 
+      handleEvent: function( event ) { this._that.onPostError(); } 
+    } onposterror._that = this;
+
+    this._postreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
+    this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onpostload, false);
+    this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", onposterror, false);
+    this._postreq.open('POST', SONGBIRD_POSTMETRICS_URL, true); 
+    this._postreq.send(document);
+  },
+
+  onPostLoad: function() {
+    // POST successful, reset all metrics to 0
+    this.LOG("POST metrics done");
+    var ps = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefService);   
+    var branch = ps.getBranch("metrics.");
+    var metrics = branch.getChildList("", { value: 0 });
+    for (var i = 0; i < metrics.length; i++) 
+    {
+      branch.setCharPref(metrics[i], "0");
+    }
+    var pref = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefBranch);
+    var timenow = new Date();
+    var now = timenow.getTime();
+    pref.setCharPref("last_metrics_upload", now);
+  },
+
+  onPostError: function() {
+    this.LOG("POST metrics error");
   },
   
   /**

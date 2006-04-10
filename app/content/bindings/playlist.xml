@@ -47,7 +47,7 @@
         <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
         </xul:hbox>
         
-        <xul:splitter id="horz_splitter" sbid="filter_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" hidden="true">
+        <xul:splitter id="horz_splitter" sbid="filter_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" hidden="true" onmouseup="onFiltersResize();">
           <xul:grippy/>
         </xul:splitter>
       
@@ -157,6 +157,7 @@
         jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
         jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
         jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
+        jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
 
         // Load up the string bundle
         var src = "chrome://songbird/locale/songbird.properties";
@@ -173,6 +174,7 @@
         this._selection_key_array = Array("row_id", "idx", "id", "playlist_uuid", "playlist_id");
         
         this._lastviewsummary = "";
+        this.lastfiltersstate = "open";
         
       }
       catch ( err )
@@ -1797,6 +1799,7 @@
               return;
             }
             this.context_item = document.getAnonymousElementByAttribute(this, 'id', evt.target.id);
+            this.metrics_inc("playlist.context", this.context_item.getAttribute("id"), null);
             if ( evt.target.getAttribute( "sbtype" ) == "command" )
             {
               if ( this.commands ) // I hope so!
@@ -2502,6 +2505,24 @@
             alert( "playlist.xml - getViewSummary - " + err );
           }
           return ret;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="onFiltersResize">
+      <body>
+        <![CDATA[
+          try
+          {
+            var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
+            var curstate = splitter.getAttribute( "state" );
+            if (this.lastfiltersstate != "collapsed" && curstate == "collapsed") this.metrics_inc("player", "collapse.library", null);
+            this.lastfiltersstate = curstate;
+          }
+          catch (err)
+          {
+            alert( "playlist.xml - onFiltersResize - " + err );
+          }
         ]]>
       </body>
     </method>

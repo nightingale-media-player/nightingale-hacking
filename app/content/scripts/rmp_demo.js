@@ -191,6 +191,8 @@ function restartApp()
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
   if (as)
   {
+    // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
+    SBDataSetValue("metrics_ignorenextstartup", 1);
     const V_RESTART = 16;
     const V_ATTEMPT = 2;
     as.quit(V_RESTART);
@@ -206,6 +208,8 @@ function quitApp()
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
   if (as)
   {
+    // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
+    SBDataSetValue("metrics_ignorenextstartup", 0);
     const V_ATTEMPT = 2;
     as.quit(V_ATTEMPT);
   }
@@ -226,12 +230,22 @@ function SBUrlChanged( value )
   }
 }
 
+function SBMetricsAppShutdown() 
+{
+  var startstamp = SBDataGetIntValue("startup_timestamp");
+  var timenow = new Date();
+  var diff = (timenow.getTime() - startstamp)/60000;
+  metrics_add("player", "timerun", null, diff);
+}
+
 function SBAppDeinitialize()
 {
   // Make sure we stop before shutdown or our timer kills us.
   var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
-  gPPS.stop(); // else we crash?
+  try {
+    gPPS.stop(); // else we crash?
+  } catch (e) {}
 
   // Unattach the player repeater. (please deprecate me, soon!)
   //thePlayerRepeater.unbind();
@@ -239,12 +253,27 @@ function SBAppDeinitialize()
   rmp_demo_playURL.Unbind();
   // Remember where the video window is.
   onWindowSaveSize();
+  SBMetricsAppShutdown();
+}
+
+function SBMetricsAppStart() 
+{
+  // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
+  if (SBDataGetIntValue("metrics_ignorenextstartup") == 0)
+  {
+    metrics_inc("player", "appstart", null);
+  }
+  // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
+  SBDataSetValue("metrics_ignorenextstartup", 0);
+  var timestamp = new Date();
+  SBDataSetValue("startup_timestamp", timestamp.getTime());
 }
 
 function SBAppInitialize()
 {
   try
   {
+    SBMetricsAppStart();
     setVideoMinMaxCallback();
     onWindowLoadSize();
     rmp_demo_playURL.BindCallbackFunction( SBUrlChanged, true )

@@ -535,7 +535,9 @@ function onServiceTreeResize()
 {
   var theServiceTree = document.getElementById( "frame_servicetree" );
   SBDataSetValue( "servicetree.width", theServiceTree.width );
-  SBDataSetValue( "servicetree.collapsed", theServiceTree.nextSibling.getAttribute( "state" ) == "collapsed" );
+  var collapsed = theServiceTree.nextSibling.getAttribute( "state" ) == "collapsed";
+  if (collapsed && SBDataGetIntValue("servicetree.collapsed") == 0) metrics_inc("player", "collapse.servicetree", null);
+  SBDataSetValue( "servicetree.collapsed", collapsed );
 }
 
 // onServiceTreeRestoreSize
@@ -1317,6 +1319,7 @@ if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
 
 function onBrowserPlaylist()
 {
+  metrics_inc("player", "urlslurp", null);
   if ( ! thePlaylistTree )
   {
     if ( theWebPlaylist.ref != ( "NC:" + WEB_PLAYLIST_CONTEXT + "_" + WEB_PLAYLIST_TABLE ) )
@@ -1339,11 +1342,14 @@ function onBrowserPlaylistResize()
 {
   SBDataSetValue( "browser.playlist.height", theWebPlaylist.height );
   var collapsed = theWebPlaylist.previousSibling.getAttribute( "state" ) == "collapsed";
+  if (collapsed && SBDataGetIntValue("browser.playlist.collapsed") == 0) metrics_inc("player", "collapse.webplaylist", null);
   SBDataSetValue( "browser.playlist.collapsed", collapsed );
 }
 
 function onBrowserDownload()
 {
+  metrics_inc("player", "downloads", null);
+
   // Work to figure out guid and table
   var guid = theDownloadContext.GetValue();
   var table = theDownloadTable.GetValue();
@@ -2129,7 +2135,7 @@ catch ( err )
 /*    case "menu.downloadmgr":
       SBOpenDownloadManager();
     break;*/
-/*    case "menu.dominspector":
+    /*case "menu.dominspector":
       SBDOMInspectorOpen();
     break;*/
     

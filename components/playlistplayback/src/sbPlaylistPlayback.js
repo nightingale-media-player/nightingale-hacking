@@ -223,7 +223,9 @@ function PlaylistPlayback() {
   // Playlistsource provides the interface for requesting playlist info.  
   this._source = Components.classes[ "@mozilla.org/rdf/datasource;1?name=playlist" ].getService( Components.interfaces.sbIPlaylistsource );
   this._timer = Components.classes[ "@mozilla.org/timer;1" ].createInstance( Components.interfaces.nsITimer );
-  
+
+  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+  jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
 } // PlaylistPlayback
 PlaylistPlayback.prototype.constructor = PlaylistPlayback;
 
@@ -724,6 +726,15 @@ PlaylistPlayback.prototype = {
       
       // Start the polling loop to feed the metadata dataremotes.
       this._startPlayerLoop();
+      
+      // metrics
+      var s = url.split(".");
+      if (s.length > 1)
+      {
+        var ext = s[s.length-1];
+        this.metrics_inc("play.attempt", ext, null);
+      }
+      this.metrics_inc("play.attempt", core.getId(), null);
     } catch( err ) {
       LOG( "playUrl:\n" + err );
       return false;

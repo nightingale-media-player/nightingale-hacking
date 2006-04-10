@@ -63,6 +63,7 @@
       var nsIUpdate = new Components.Constructor("@songbird.org/Songbird/Update;1", "sbIUpdate");
       var UpdateService = new nsIUpdate();
       UpdateService.retrieveUpdateFile();
+      UpdateService.checkUploadMetrics();
       document.__STARTMAINWIN = function( ) { 
         //
         // Stupid pet tricks for when the user loads this page into his mainwin browser.  Duh.
@@ -202,6 +203,8 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/back_scan.js"/>
 
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/metrics.js" />
 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/rmp_demo.js"/>

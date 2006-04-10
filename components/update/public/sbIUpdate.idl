@@ -50,7 +50,7 @@ interface sbIUpdate : nsISupports
   wstring getTempFilename();
   
   // metrics
-  void uploadMetrics();
+  void checkUploadMetrics();
 };
 
 [scriptable, uuid(62DF6C33-2523-471e-A9AF-A8BA876CF36F)]

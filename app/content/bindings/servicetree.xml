@@ -260,7 +260,8 @@
                 var r = this.LaunchURL( tree_url );
                 if (r)
                 {
-                  this.metrics_click( this.strid, tree_url ); // if user has opted out, this doesn't do anything
+                  if (tree_url.slice(0, 9) == "chrome://") // need a better test than this ! (goal is to discard bookmarks since they are embargoed metrics)
+                    this.metrics_inc( "servicetree", this.strid, tree_url ); // if user has opted out, this doesn't do anything
                 }
               }
             }

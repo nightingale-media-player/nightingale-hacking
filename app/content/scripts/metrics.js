@@ -26,11 +26,63 @@
 
 // Metrics
 
-function metrics_click( id, url )
+// Not assuming sbIDataRemote.js is loaded because this file may be used by a js component
+
+function getValue(key)
 {
-  if ( SBDataGetIntValue( "metrics.enabled" ) ) // opt-out test
+  var v = 0;
+  try
   {
-    var cur = SBDataGetIntValue( "metrics." + id + "." + url );
-    SBDataSetValue( "metrics." + id + "." + url, cur+1 );
+    var pref = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefBranch);
+    v = parseInt(pref.getCharPref(key));                  
+  }
+  catch (e)
+  {
+  }
+  return v;
+}
+ 
+function setValue(key, n)
+{
+  try
+  {
+    var pref = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefBranch);
+    pref.setCharPref(key, parseInt(n));
+  }
+  catch (e)
+  {
   }
 }
+ 
+
+function metrics_add( category, unique_id, extra, intvalue )
+{
+  try 
+  {
+    var disabled = getValue("metrics_disabled");
+    if (disabled) return;
+
+    // only integers allowed
+    intvalue = parseInt(intvalue);
+
+    var key = "metrics." + category + "." + unique_id;
+    if (extra != null && extra != "") key = key + "." + extra;
+    var cur = getValue( key );
+    var newval = cur + intvalue;
+    setValue( key, newval );
+    //var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+    //                        .getService(Components.interfaces.nsIConsoleService);
+    //consoleService.logStringMessage(key + " is now " + newval);
+  }
+  catch(e)
+  {
+  }
+}
+
+function metrics_inc( category, unique_id, extra )
+{
+  metrics_add(category, unique_id, extra, 1);
+}
+
