@@ -416,10 +416,13 @@ var aMetadataHandler = null;
 function SBUninitialize()
 {
   var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-  
-  if(windowMinMax instanceof Object)
+  try
   {
     windowMinMax.ResetCallback(document);  
+  }
+  catch(e)
+  {
+  
   }
 }
  
@@ -437,11 +440,11 @@ function onBkgDown( theEvent )
 {
   var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
   
-  if(windowDragger instanceof Object)
+  try
   {
-    windowDragger.BeginWindowDrag(0); // automatically ends  
+    windowDragger.BeginWindowDrag(0); // automatically ends
   }
-  else
+  catch(e)
   {
     trackerBkg = true;
     offsetScrX = document.defaultView.screenX - theEvent.screenX;
