@@ -32,3 +32,21 @@ interface sbIUSBMassStorageDevice : sbIDeviceBase
 {
 };
 
+
+// {4C4E501E-D117-41a6-99A0-59E8AFEFB61D}
+//{ 0x4c4e501e, 0xd117, 0x41a6, { 0x99, 0xa0, 0x59, 0xe8, 0xaf, 0xef, 0xb6, 0x1d } };
+
+[scriptable, uuid(4C4E501E-D117-41a6-99A0-59E8AFEFB61D)]
+interface sbIUSBMassStorageDeviceHandler : nsISupports
+{
+  PRInt32 OnDeviceConnect(in wstring deviceIdentifier, in wstring devicePath);
+  PRInt32 OnDeviceDisconnect(in wstring deviceIdentifier, in wstring devicePath);
+
+  PRInt32 OnPrepareUpload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, out AString strDefaultDestURL);
+  PRInt32 OnCompleteUpload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, in wstring strDestURL);
+
+  PRInt32 OnPrepareDownload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, out AString strDefaultDestURL);
+  PRInt32 OnCompleteDownload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, out AString strDefaultDestURL);
+
+  PRBool CanHandleDevice(in wstring deviceIdentifier, in wstring devicePath);
+};

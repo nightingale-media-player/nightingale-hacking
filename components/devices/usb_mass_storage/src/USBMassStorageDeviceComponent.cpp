@@ -25,24 +25,23 @@
  */
 
 /** 
-* \file  DownloadDeviceComponent.cpp
-* \brief Songbird DeviceBase Component Factory and Main Entry Point.
+* \file  USBMassStorageDeviceComponent.cpp
+* \brief Songbird USBMassStorage Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
-#include "DownloadDevice.h"
+#include "USBMassStorageDevice.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbDownloadDevice)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbUSBMassStorageDevice)
 
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_DownloadDevice_CLASSNAME, 
-    SONGBIRD_DownloadDevice_CID,
-    SONGBIRD_DownloadDevice_CONTRACTID,
-    sbDownloadDeviceConstructor,
+    SONGBIRD_USBMassStorageDevice_CLASSNAME, 
+    SONGBIRD_USBMassStorageDevice_CID,
+    SONGBIRD_USBMassStorageDevice_CONTRACTID,
+    sbUSBMassStorageDeviceConstructor,
   }
 };
 
-NS_IMPL_NSGETMODULE("SongbirdDownloadDeviceComponent", components)
-
+NS_IMPL_NSGETMODULE("SongbirdUSBMassStorageDeviceComponent", components)

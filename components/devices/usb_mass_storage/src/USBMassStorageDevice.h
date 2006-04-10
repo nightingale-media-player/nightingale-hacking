@@ -100,5 +100,7 @@ private:
   virtual void DeviceBusy(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_BUSY;}
 
 private:
+  PRUint32 mDeviceState;
+  PRInt32 mCurrentTransferRowNumber;
 
 };

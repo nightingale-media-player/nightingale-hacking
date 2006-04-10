@@ -34,11 +34,13 @@ SUBDIRS = base \
           download \
           manager \
           wm \
+          usb_mass_storage \
           $(NULL)
 
 SUBDIRDEPS  = manager : base
 SUBDIRDEPS2 = cd : base
 SUBDIRDEPS3 = download : base
 SUBDIRDEPS4 = wm : base
+SUBDIRDEPS5 = usb_mass_storage : base
 
 include $(topsrcdir)/build/rules.mk

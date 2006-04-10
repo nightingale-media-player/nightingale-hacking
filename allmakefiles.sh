@@ -138,6 +138,12 @@ components/devices/wm/public/Makefile
 components/devices/wm/src/Makefile
 "
 
+MAKEFILES_usb_mass_storagedevice="
+components/devices/usb_mass_storage/Makefile
+components/devices/usb_mass_storage/public/Makefile
+components/devices/usb_mass_storage/src/Makefile
+"
+
 MAKEFILES_integration="
 components/integration/Makefile
 components/integration/public/Makefile
@@ -217,6 +223,7 @@ $MAKEFILES_devicemanager
 $MAKEFILES_cddevice
 $MAKEFILES_downloaddevice
 $MAKEFILES_wmdevice
+$MAKEFILES_usb_mass_storagedevice
 $MAKEFILES_integration
 $MAKEFILES_mediacore
 $MAKEFILES_medialibrary

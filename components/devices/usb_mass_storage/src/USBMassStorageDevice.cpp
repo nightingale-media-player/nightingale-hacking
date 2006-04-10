@@ -41,13 +41,10 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <necko/nsIURI.h>
-#include <webbrowserpersist/nsIWebBrowserPersist.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <string/nsStringAPI.h>
 #include "nsString.h"
-#include "nsIWebProgressListener.h"
-#include "nsNetUtil.h"
 
 #include "USBMassStorageDevice.h"
 
@@ -62,10 +59,10 @@
 #define NAME_USBMASSSTORAGE_DEVICE_LEN          NS_LITERAL_STRING("Songbird USBMassStorage Device").Length()
 #define NAME_USBMASSSTORAGE_DEVICE              NS_LITERAL_STRING("Songbird USBMassStorage Device").get()
 
-#define CONTEXT_USBMASSSTORAGE_DEVICE_LEN       NS_LITERAL_STRING("downloadDB").Length()
-#define CONTEXT_USBMASSSTORAGE_DEVICE           NS_LITERAL_STRING("downloadDB").get()
+#define CONTEXT_USBMASSSTORAGE_DEVICE_LEN       NS_LITERAL_STRING("USBMassStorage").Length()
+#define CONTEXT_USBMASSSTORAGE_DEVICE           NS_LITERAL_STRING("USBMassStorage").get()
 
-#define USBMASSSTORAGE_DEVICE_TABLE_NAME        NS_LITERAL_STRING("download").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_NAME        NS_LITERAL_STRING("usb_mass_storage").get()
 #define USBMASSSTORAGE_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&device.download").get()
 #define USBMASSSTORAGE_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
 #define USBMASSSTORAGE_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
@@ -76,7 +73,6 @@ NS_IMPL_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevic
 //-----------------------------------------------------------------------------
 sbUSBMassStorageDevice::sbUSBMassStorageDevice():
 sbDeviceBase(PR_FALSE),
-mListener(nsnull),
 mDeviceState(kSB_DEVICE_STATE_IDLE)
 {
   PRBool retVal = PR_FALSE;

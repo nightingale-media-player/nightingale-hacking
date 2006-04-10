@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="usb_mass_storage"
+	ProjectGUID="{E61D8808-C882-479C-B447-DD957B60E62C}"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\src\&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MOZILLA_INTERNAL_API;USB_MASS_STORAGE_EXPORTS;XP_WIN;DEBUG"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				BufferSecurityCheck="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="4"
+				ForcedIncludeFiles="mozilla-config.h"/>
+			<Tool
+				Name="VCCustomBuildTool"
+				Description="XPT Linking: sbUSBMassStorageDevice.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbUSBMassStorageDevice.xpt $(ProjectDir)$(OutDir)\sbIUSBMassStorageDevice.xpt"
+				AdditionalDependencies="$(OutDir)\sbIUSBMassStorageDevice.xpt"
+				Outputs="$(OutDir)\sbUSBMassStorageDevice.xpt"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib unicharutil_s.lib"
+				OutputFile="$(OutDir)/sbUSBMassStorageDevice_d.dll"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\$(OutDir)&quot;"
+				IgnoreDefaultLibraryNames="msvcrt"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/usb_mass_storage.pdb"
+				SubSystem="2"
+				ImportLibrary="$(OutDir)/usb_mass_storage.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\src\&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;USB_MASS_STORAGE_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="3"
+				ForcedIncludeFiles="mozilla-config.h"/>
+			<Tool
+				Name="VCCustomBuildTool"
+				Description="XPT Linking: sbUSBMassStorageDevice.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbUSBMassStorageDevice.xpt $(ProjectDir)$(OutDir)\sbIUSBMassStorageDevice.xpt"
+				AdditionalDependencies="$(OutDir)\sbIUSBMassStorageDevice.xpt"
+				Outputs="$(OutDir)\sbUSBMassStorageDevice.xpt"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib unicharutil_s.lib"
+				OutputFile="$(OutDir)/sbUSBMassStorageDevice.dll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\$(OutDir)&quot;"
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				ImportLibrary="$(OutDir)/usb_mass_storage.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="public"
+			Filter="">
+			<File
+				RelativePath=".\public\sbIUSBMassStorageDevice.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl  -I $(SolutionDir)components\devices\base\public -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl  -I $(SolutionDir)components\devices\base\public -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="src"
+			Filter="">
+			<File
+				RelativePath=".\src\USBMassStorageDevice.cpp">
+			</File>
+			<File
+				RelativePath=".\src\USBMassStorageDevice.h">
+			</File>
+			<File
+				RelativePath=".\src\USBMassStorageDeviceComponent.cpp">
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
