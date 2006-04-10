@@ -327,8 +327,6 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
   NS_ENSURE_ARG_POINTER(strDirectory);
 
   dirstack_t dirStack;
-  //filestack_t fileStack;
-
   *_retval = 0;
 
   nsresult ret = NS_ERROR_UNEXPECTED;
@@ -336,9 +334,18 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
 
   nsString strTheDirectory(strDirectory);
   nsCString cstrTheDirectory;
-  NS_UTF16ToCString(strTheDirectory, NS_CSTRING_ENCODING_ASCII, cstrTheDirectory);
 
-  ret = pFile->InitWithNativePath(cstrTheDirectory);
+#if defined(XP_WIN)
+  {
+    NS_UTF16ToCString(strTheDirectory, NS_CSTRING_ENCODING_ASCII, cstrTheDirectory);
+    ret = pFile->InitWithNativePath(cstrTheDirectory);
+  }
+#else
+  {
+    ret = pFile->InitWithPath(strDirectory);
+  }
+#endif
+  
   if(NS_FAILED(ret)) return ret;
 
   PRBool bFlag = PR_FALSE;
@@ -369,7 +376,6 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
         {
 
           nsCOMPtr<nsISupports> pDirEntry;
-          //pDirEntries->GetNext(pDirEntry.StartAssignment());
           pDirEntries->GetNext(getter_AddRefs(pDirEntry));
 
           if(pDirEntry)
@@ -508,13 +514,19 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   pQuery->GetDirectory(&strDirectory);
 
   nsString strTheDirectory(strDirectory);
+  nsCString cstrTheDirectory;
 
+#if defined(XP_WIN)
   {
-    nsCString cstrTheDirectory;
     NS_UTF16ToCString(strTheDirectory, NS_CSTRING_ENCODING_ASCII, cstrTheDirectory);
     ret = pFile->InitWithNativePath(cstrTheDirectory);
   }
-  
+#else
+  {
+    ret = pFile->InitWithPath(strDirectory);
+  }
+#endif
+
   if(NS_FAILED(ret)) return ret;
 
   PRBool bFlag = PR_FALSE;
@@ -542,14 +554,12 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
         {
 
           nsCOMPtr<nsISupports> pDirEntry;
-          //pDirEntries->GetNext(pDirEntry.StartAssignment());
           pDirEntries->GetNext(getter_AddRefs(pDirEntry));
 
           if(pDirEntry)
           {
             nsIID nsIFileIID = NS_IFILE_IID;
             nsCOMPtr<nsIFile> pEntry;
-            //pDirEntry->QueryInterface(nsIFileIID, (void **) pEntry.StartAssignment());
             pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
 
             if(pEntry)
