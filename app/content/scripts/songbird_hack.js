@@ -416,24 +416,59 @@ var aMetadataHandler = null;
 function SBUninitialize()
 {
   var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-  windowMinMax.ResetCallback(document);
+  
+  if(windowMinMax != null)
+  {
+    windowMinMax.ResetCallback(document);  
+  }
 }
  
 //
 // XUL Event Methods
 //
 
+//Necessary when WindowDragger is not available on the current platform.
+var trackerBkg = false;
+var offsetScrX = 0;
+var offsetScrY = 0;
+
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent ) 
 {
   var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-  windowDragger.BeginWindowDrag(0); // automatically ends
+  
+  if(windowDragger != null)
+  {
+    windowDragger.BeginWindowDrag(0); // automatically ends  
+  }
+  else
+  {
+    trackerBkg = true;
+    offsetScrX = document.defaultView.screenX - theEvent.screenX;
+    offsetScrY = document.defaultView.screenY - theEvent.screenY;
+    document.addEventListener( "mousemove", onBkgMove, true );
+  }
 }
+
+function onBkgMove( theEvent ) 
+{
+  if ( trackerBkg )
+  {
+    document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
+  }
+}
+
 function onBkgUp( ) 
 {
   var root = "window." + document.documentElement.id;
   SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
   SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+  
+  if ( trackerBkg )
+  {
+    trackerBkg = false;
+    document.removeEventListener( "mousemove", onBkgMove, true );
+  }
 }
 
 function saveWindowPosition()
@@ -470,6 +505,7 @@ function onBkgDown( theEvent )
   offsetScrY = document.defaultView.screenY - theEvent.screenY;
   document.addEventListener( "mousemove", onBkgMove, true );
 }
+
 function onBkgMove( theEvent ) 
 {
   if ( trackerBkg )
