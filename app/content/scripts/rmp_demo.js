@@ -36,10 +36,9 @@ var offsetScrY = 0;
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent ) 
 {
-  var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-  
   try
   {
+    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
     windowDragger.BeginWindowDrag(0); // automatically ends
   }
   catch(e)
@@ -251,14 +250,22 @@ var rmp_demo_playURL = new sbIDataRemote("faceplate.play.url");
 function SBUrlChanged( value )
 {
   if (!coreInitialCloakDone) return;
-  var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"].getService(Components.interfaces.sbIWindowCloak);
-  if ( IsVideoUrl( value ) )
+  
+  try
   {
-    windowCloak.Uncloak( document ); 
+    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"].getService(Components.interfaces.sbIWindowCloak);
+    if ( IsVideoUrl( value ) )
+    {
+      windowCloak.Uncloak( document ); 
+    }
+    else
+    {
+      windowCloak.Cloak( document ); 
+    }
   }
-  else
+  catch(e)
   {
-    windowCloak.Cloak( document ); 
+    dump(e);
   }
 }
 

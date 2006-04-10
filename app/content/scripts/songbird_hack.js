@@ -415,9 +415,9 @@ var aMetadataHandler = null;
 
 function SBUninitialize()
 {
-  var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
   try
   {
+    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
     windowMinMax.ResetCallback(document);  
   }
   catch(e)
@@ -438,10 +438,9 @@ var offsetScrY = 0;
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent ) 
 {
-  var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-  
   try
   {
+    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
     windowDragger.BeginWindowDrag(0); // automatically ends
   }
   catch(e)
