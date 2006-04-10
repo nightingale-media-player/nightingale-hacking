@@ -417,7 +417,7 @@ function SBUninitialize()
 {
   var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
   
-  if(windowMinMax != null)
+  if(windowMinMax instanceof Object)
   {
     windowMinMax.ResetCallback(document);  
   }
@@ -437,7 +437,7 @@ function onBkgDown( theEvent )
 {
   var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
   
-  if(windowDragger != null)
+  if(windowDragger instanceof Object)
   {
     windowDragger.BeginWindowDrag(0); // automatically ends  
   }

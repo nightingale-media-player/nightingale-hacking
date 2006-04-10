@@ -38,7 +38,7 @@ function onBkgDown( theEvent )
 {
   var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
   
-  if(windowDragger != null)
+  if(windowDragger instanceof Object)
   {
     windowDragger.BeginWindowDrag(0); // automatically ends  
   }
