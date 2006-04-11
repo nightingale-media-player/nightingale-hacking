@@ -89,7 +89,10 @@ public:
   virtual size_type readChars(char buf[], size_type len)
   {
     PRUint32 count = 0;
-    m_Channel->Read( buf, len, &count );
+    if ( ! NS_SUCCEEDED( m_Channel->Read( buf, len, &count ) ) )
+    {
+      throw StupidException();
+    }
     return count;
   }
   virtual size_type readChars(char_type buf[], size_type len)
@@ -134,121 +137,6 @@ public:
   }
 };
 
-
-class ID3_OldChannelReader : public ID3_Reader
-{
-  nsCOMPtr<nsIChannel> m_Channel;
-  nsCOMPtr<nsIInputStream> m_Stream;
-  volatile PRUint64 m_Pos, m_Total;
-protected:
-public:
-  ID3_OldChannelReader()
-  {
-    m_Pos = 0;
-  }
-  ID3_OldChannelReader(nsIChannel* channel)
-  {
-    m_Pos = 0;
-    setChannel( channel );
-  };
-  virtual ~ID3_OldChannelReader() { ; }
-  virtual void close() { ; }
-
-  void setChannel(nsIChannel* channel)
-  {
-    m_Channel = channel;
-    this->setCur( 0 );  // Open it as a restartable channel
-  }
-
-  virtual int_type peekChar() 
-  { 
-    if (!this->atEnd() || !this->getCur())
-    {
-      char aByte;
-      PRUint32 count = 0;
-      this->m_Stream->Read( &aByte, 1, &count ); // 1 byte, please.
-      this->setCur( this->getCur() ); // Now back up 1 byte.  Streams shouldn't peek!
-      return aByte;
-    }
-    return END_OF_READER;
-  }
-
-  virtual size_type readChars(char buf[], size_type len)
-  {
-    PRUint32 count = 0;
-    this->m_Stream->Read( buf, len, &count );
-    m_Pos += count;
-    m_Total += m_Pos;
-    return count;
-  }
-  virtual size_type readChars(char_type buf[], size_type len)
-  {
-    return this->readChars(reinterpret_cast<char *>(buf), len);
-  }
-
-  virtual pos_type getCur() 
-  { 
-    return (pos_type)m_Pos;
-  }
-
-  virtual pos_type getBeg()
-  {
-    return 0;
-  }
-
-  virtual pos_type getEnd()
-  {
-    PRInt32 content_length = 0;
-    this->m_Channel->GetContentLength( &content_length ); 
-    return content_length;
-  }
-
-  virtual pos_type remainingBytes()
-  {
-    return getEnd() - getCur();
-  }
-
-  virtual pos_type skipChars(pos_type skip)
-  {
-    return setCur( getCur() + skip );
-  }
-
-  virtual pos_type setCur(pos_type pos)
-  {
-    if ( ( pos >= this->getBeg() ) && ( ( pos < this->getEnd() ) || ( ! this->getEnd() && ! pos ) ) )
-    {
-      nsresult nRet = NS_ERROR_UNEXPECTED;
-      nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&nRet);
-      nsCOMPtr<nsIURI> pURI;
-      m_Channel->GetURI( getter_AddRefs(pURI) );
-      nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(m_Channel));
-
-      nsCOMPtr<nsIResumableChannel> seek( do_QueryInterface(m_Channel) );
-      if ( seek.get() )
-      {
-        m_Pos = pos;
-        seek->ResumeAt( m_Pos, nsCString() );
-      }
-
-      m_Channel->Open( getter_AddRefs(m_Stream) );
-
-      if ( m_Stream.get() && pos )
-      {
-        // Cheat.
-        const int max_buf = 10240;
-        if ( pos < max_buf )
-        {
-          char buf[max_buf];
-          this->readChars( buf, pos );
-          m_Pos = pos;
-        }
-      }
-    }
-    return (pos_type)m_Pos;
-  }
-};
-
-
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
@@ -263,7 +151,7 @@ sbMetadataHandlerID3::sbMetadataHandlerID3()
 //-----------------------------------------------------------------------------
 sbMetadataHandlerID3::~sbMetadataHandlerID3()
 {
-
+  m_Completed = true;
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -316,11 +204,14 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         ReadTag(tag);
       }
     }
-    catch ( const StupidException exe )
+    catch ( const StupidException )
     {
-#if defined(XP_WIN)
-      __asm int 3;
-#endif
+      PRUint64 size;
+      mc->GetSize( &size );
+      if ( size < ( 1 << 15 ) ) // 32k;
+      { 
+        m_Completed = true;
+      }
     }
   }
 
@@ -333,6 +224,18 @@ NS_IMETHODIMP sbMetadataHandlerID3::Completed(PRBool *_retval)
 
   return NS_OK;
 } //SetChannel
+
+NS_IMETHODIMP sbMetadataHandlerID3::Close()
+{
+  if ( m_ChannelHandler.get() ) 
+    m_ChannelHandler->Close();
+
+  m_Values = nsnull;
+  m_Channel = nsnull;
+  m_ChannelHandler = nsnull;
+
+  return NS_OK;
+} //Close
 
 //-----------------------------------------------------------------------------
 /* PRInt32 Read (); */

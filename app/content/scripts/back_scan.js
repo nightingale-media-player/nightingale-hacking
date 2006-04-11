@@ -28,14 +28,15 @@ try
 {
   var ENABLE_BACKSCAN = 1;
   
-  const sbDatabaseGUID = "songbird";
-//  const sbDatabaseGUID = "webplaylist";
+//  const sbDatabaseGUID = "songbird";
+  const sbDatabaseGUID = "*";
 
   const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
   var aMetadataManager = new MetadataManager();
   const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
   var aMediaLibrary = new MediaLibrary();
-  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
+  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "service_uuid");
+  const bsDBGuidIdx = 7;
 
   var bsPaused = false;
   var bsDBQuery = null;
@@ -54,15 +55,25 @@ try
   
   var bsGUIDArray = new Array();
   var bsMetadataArray = new Array();
-  var bsMaxArray = 20; // How many tracks to enqueue before writing to the db.
   var bsSubmitQueries = false;
+  
+  var bsMaxArray = 20; // How many tracks to enqueue before writing to the db.
+  var bsMaxArrayMax = 20;
+  var bsMaxArrayMin = 1;
+  
+  function BSCalcMaxArray( items )
+  {
+    bsMaxArray = parseInt( items / 10 );
+    bsMaxArray = ( bsMaxArray > bsMaxArrayMax ) ? bsMaxArrayMax : bsMaxArray;
+    bsMaxArray = ( bsMaxArray < bsMaxArrayMin ) ? bsMaxArrayMin : bsMaxArray;
+  }
 
   var bsScanningText = new sbIDataRemote( "backscan.status" );
   var bsPlaylistRef = new sbIDataRemote( "playlist.ref" );
   var bsSongbirdStrings = document.getElementById( "songbird_strings" );
   var bsScanningPaused = new sbIDataRemote( "backscan.paused" );
   
-  var bsQueryString = "SELECT uuid, url, length, title FROM library where length=\"0\"";
+  var bsQueryString = "SELECT uuid, url, length, title, service_uuid FROM library where length=\"0\"";
   
   // Init the text box to the last url played (shrug).
   function BSInitialize()
@@ -118,10 +129,14 @@ try
       {
         if ( ! bsDBQuery.IsExecuting() && ( SBDataGetIntValue( "media_scan.open" ) == 0 ) )
         {
-          // ...otherwise, we need to start the next track
-          var result = bsDBQuery.GetResultObject();
+          if ( bsSubmitQueries )
+          {
+            BSSubmitQueries();
+            return;
+          }
           
           // If we're at the end of the list,
+          var result = bsDBQuery.GetResultObject();
           if ( ( result.GetRowCount() == 0 ) || ( bsLastRow >= result.GetRowCount() ) )
           {
             // ...we need to resubmit the query.
@@ -159,100 +174,104 @@ try
     var count = 0;
     var quit = false;
    
-    while ( ! bsSubmitQueries && ( bsLastRow < result.GetRowCount() ) ) 
+    if ( ! bsSubmitQueries && ( bsLastRow < result.GetRowCount() ) ) 
     {
-      var time = result.GetRowCellByColumn( bsLastRow, "length" );
+      var scanning = "Scanning";
+      try
+      {
+        scanning = bsSongbirdStrings.getString("back_scan.scanning");
+      } catch(e) {}
+      bsScanningText.SetValue( scanning + "..." );
       
-      if ( ( time && time.length && time != "0" ) )
-      {
-        // Skip it, we already have metadata
-        bsScanningText.SetValue( "" );
-        if ( count++ > 200 )
-        {
-          bsSubmitQueries = true;
-          quit = true;
-        }
-      }
-      else
-      {
-        var title = result.GetRowCellByColumn( bsLastRow, "title" );
-        var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
-        var url = result.GetRowCellByColumn( bsLastRow, "url" );
-        
-        var scanning = "Scanning";
-        try
-        {
-          scanning = bsSongbirdStrings.getString("back_scan.scanning");
-        } catch(e) {}
-        bsScanningText.SetValue( scanning + "..." );
-        
-        bsMDHandler = aMetadataManager.GetHandlerForMediaURL(url);
-        var retval = bsMDHandler.Read();
-        // If it's immediately done, read the values.
-        if ( bsMDHandler.Completed() )
-        {
-          // local
-          BSReadHandlerValues();
-        }
-        
-        quit = true;
-      }
-      
-      if ( quit )
-      {
-        break;
-      }
-    }
-
-    {
-      // If we get to the end of the list and we have things to submit, submit them!
-      if ( ( bsLastRow == result.GetRowCount() ) && ( bsGUIDArray.length > 0 ) )
-      {
-        bsSubmitQueries = true;
-      }
-
-      if ( bsSubmitQueries )
-      {
-      
-        bsSubmitQueries = false;
-        var anything = false;
-        
-        bsCurQuery.ResetQuery();
-        aMediaLibrary.SetQueryObject(bsCurQuery);
-        
-        var text = "";
-        for ( var i = 0; i < bsGUIDArray.length; i++ )
-        {
-          text += bsGUIDArray[ i ] + " - " + keys[ i ] + " - " + bsMetadataArray[ i ] + "\n";
-        
-          // Go submit the metdadata update, and stash the query so we know when the update is done.
-          aMediaLibrary.SetValuesByGUID( bsGUIDArray[i], keys.length, keys, bsMetadataArray[i].length, bsMetadataArray[i], true );
-          anything = true;
-        }
-//        alert( text );
-        
-        bsGUIDArray = [];
-        bsMetadataArray = [];
-
-        if ( anything )
-        {
-          bsCurQuery.Execute();
-        }
-      }
+      var url = result.GetRowCellByColumn( bsLastRow, "url" );
+      bsMDHandler = aMetadataManager.GetHandlerForMediaURL(url);
+      var retval = bsMDHandler.Read();
+      // If it's immediately done, read the values.
+      if ( bsMDHandler.Completed() )
+        BSReadHandlerValues();
     }
   }
 
+  function BSSubmitQueries()
+  {
+    bsSubmitQueries = false;
+    var anything = false;
+    
+    if ( bsMetadataArray.length > 0 )
+    {
+      var dbGUID = bsMetadataArray[ 0 ][ bsDBGuidIdx ];
+      
+      var saveGUIDArray = []; // To be saved for next time
+      var saveMetadataArray = [];
+      var workGUIDArray = []; // To be worked on now
+      var workMetadataArray = [];
+      // We can only submit for one database at a time.
+      for ( var i = 0; i < bsMetadataArray.length; i++ )
+      {
+        if ( bsMetadataArray[ i ][ bsDBGuidIdx ] == dbGUID )
+        {
+          // So pull all the items that match the first item.
+          workGUIDArray.push( bsGUIDArray[ i ] );
+          workMetadataArray.push( bsMetadataArray[ i ] );
+        }
+        else
+        {
+          // And save for later the ones that don't.
+          saveGUIDArray.push( bsGUIDArray[ i ] );
+          saveMetadataArray.push( bsMetadataArray[ i ] );
+        }
+      }      
+      bsGUIDArray = workGUIDArray;
+      bsMetadataArray = workMetadataArray;
+    
+      // Prepare the query
+      bsCurQuery.ResetQuery();
+      bsCurQuery.SetDatabaseGUID( dbGUID );
+      aMediaLibrary.SetQueryObject(bsCurQuery);
+      
+      // Add the metadata
+      for ( var i = 0; i < bsMetadataArray.length; i++ )
+      {
+        // Go submit the metdadata update, and stash the query so we know when the update is done.
+        aMediaLibrary.SetValuesByGUID( bsGUIDArray[i], keys.length, keys, bsMetadataArray[i].length, bsMetadataArray[i], true );
+      }
+      bsCurQuery.Execute();
+
+      // See who is next.  Maybe nobody.      
+      bsGUIDArray = saveGUIDArray;
+      bsMetadataArray = saveMetadataArray;
+    }
+    // And if there's somebody still next, keep submitting until we're empty.
+    if ( bsMetadataArray.length > 0 )
+    {
+      bsSubmitQueries = true;
+    }    
+  }
+  
   function BSReadHandlerValues()
   {
     var values = bsMDHandler.GetValuesMap();
     // clear the bsMDHandler variable so we don't track it.
+    bsMDHandler.Close();
     bsMDHandler = null;
+
+    var result = bsDBQuery.GetResultObject();
+    var time = result.GetRowCellByColumn( bsLastRow, "length" );
+    var title = result.GetRowCellByColumn( bsLastRow, "title" );
+    var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
+    var url = result.GetRowCellByColumn( bsLastRow, "url" );
+    var service_uuid = result.GetRowCellByColumn( bsLastRow, "service_uuid" );
+    values.setValue( "service_uuid", service_uuid, 0 ); // Pretend like it came from the file.
+    BSCalcMaxArray( result.GetRowCount() );
     
+    var text = "";
     var metadata = new Array();
     for ( var i in keys )
     {
       metadata[ i ] = values.getValue( keys[ i ] );
-    }        
+      text += keys[ i ] + ": " + metadata[ i ] + "\n";
+    }
+    //alert(text);
     
     // GRRRRR.
     for ( var i in metadata )
@@ -263,12 +282,6 @@ try
       }
     }
 
-    var result = bsDBQuery.GetResultObject();
-    var time = result.GetRowCellByColumn( bsLastRow, "length" );
-    var title = result.GetRowCellByColumn( bsLastRow, "title" );
-    var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
-    var url = result.GetRowCellByColumn( bsLastRow, "url" );
-    
     // If the title is null, use the url
     if ( metadata[0] == "" )
     {
@@ -298,6 +311,12 @@ try
     }
 
     bsLastRow++;
+    
+    // If we get to the end of the list and we have things to submit, submit them!
+    if ( ( bsLastRow == result.GetRowCount() ) && ( bsGUIDArray.length > 0 ) )
+    {
+      bsSubmitQueries = true;
+    }
   }
   
   function BSDataChange()

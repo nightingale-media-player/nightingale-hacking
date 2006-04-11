@@ -59,4 +59,5 @@ interface sbIMetadataHandler : nsISupports
 
   void OnChannelData( in nsISupports channel );
   PRBool Completed();
+  void Close();
 };

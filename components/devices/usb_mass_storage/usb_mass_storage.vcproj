@@ -33,7 +33,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbUSBMassStorageDevice.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbUSBMassStorageDevice.xpt $(ProjectDir)$(OutDir)\sbIUSBMassStorageDevice.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbUSBMassStorageDevice.xpt $(ProjectDir)$(OutDir)\sbIUSBMassStorageDevice.xpt
+"
 				AdditionalDependencies="$(OutDir)\sbIUSBMassStorageDevice.xpt"
 				Outputs="$(OutDir)\sbUSBMassStorageDevice.xpt"/>
 			<Tool
@@ -88,7 +89,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbUSBMassStorageDevice.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbUSBMassStorageDevice.xpt $(ProjectDir)$(OutDir)\sbIUSBMassStorageDevice.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbUSBMassStorageDevice.xpt $(ProjectDir)$(OutDir)\sbIUSBMassStorageDevice.xpt
+"
 				AdditionalDependencies="$(OutDir)\sbIUSBMassStorageDevice.xpt"
 				Outputs="$(OutDir)\sbUSBMassStorageDevice.xpt"/>
 			<Tool
@@ -138,8 +140,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
-$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl  -I $(SolutionDir)components\devices\base\public -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl  -I $(SolutionDir)components\devices\base\public -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
 "
 						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
 				</FileConfiguration>
