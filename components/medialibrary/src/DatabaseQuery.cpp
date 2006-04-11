@@ -309,7 +309,8 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pQueryResultLock);
 
-  CDatabaseResult *pRes = new CDatabaseResult;
+  CDatabaseResult *pRes = nsnull;
+  NS_NEWXPCOM(pRes, CDatabaseResult);
   NS_ENSURE_TRUE(pRes, NS_ERROR_OUT_OF_MEMORY);
 
   pRes->m_ColumnNames = m_QueryResult->m_ColumnNames;
@@ -450,6 +451,6 @@ CDatabaseResult *CDatabaseQuery::GetResultObject()
 {
   nsAutoLock lock(m_pQueryResultLock);
 
-  m_QueryResult->AddRef();
+  //m_QueryResult->AddRef();
   return m_QueryResult;
 } //GetResultObject

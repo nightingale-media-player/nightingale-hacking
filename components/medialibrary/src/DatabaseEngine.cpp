@@ -70,20 +70,20 @@ const PRInt32 DB_GUID_TOKEN_LEN = 9;
 // FUNCTIONS ==================================================================
 int SQLiteCaseInsensitiveCollate(void *pData, int nLenA, const void *pStrA, int nLenB, const void *pStrB)
 {
-  nsString strA( (PRUnichar *)pStrA, nLenA );
-  nsString strB( (PRUnichar *)pStrB, nLenB );
+  nsString strA( (PRUnichar *)pStrA, nLenA / sizeof(PRUnichar) );
+  nsString strB( (PRUnichar *)pStrB, nLenB / sizeof(PRUnichar) );
 
   ToLowerCase(strA);
   ToLowerCase(strB);
+
+  if(strA.Equals(strB))
+    return 0;
 
   if(strA < strB)
     return -1;
   
   if(strA > strB)
     return 1;
-
-  if(strA == strB)
-    return 0;
 
   return -1;
 } //SQLiteCaseInsensitiveCollate
@@ -288,19 +288,21 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
 // CLASSES ====================================================================
 //-----------------------------------------------------------------------------
 CDatabaseEngine::CDatabaseEngine()
-: m_pDatabasesLock(PR_NewLock())
-, m_pDatabaseLocksLock(PR_NewLock())
-, m_pQueryProcessorMonitor(nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor"))
-, m_pPersistentQueriesLock(PR_NewLock())
-, m_pCaseConversionLock(PR_NewLock())
-, m_QueryProcessorQueueHasItem(PR_FALSE)
+: m_QueryProcessorQueueHasItem(PR_FALSE)
 , m_QueryProcessorShouldShutdown(PR_FALSE)
 {
+  m_pDatabasesLock = PR_NewLock();
+  m_pDatabaseLocksLock = PR_NewLock();
+  m_pQueryProcessorMonitor  = nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor");
+  m_pPersistentQueriesLock = PR_NewLock();
+  m_pCaseConversionLock = PR_NewLock();
+
   NS_ASSERTION(m_pDatabasesLock, "CDatabaseEngine.mpDatabaseLock failed");
   NS_ASSERTION(m_pDatabaseLocksLock, "CDatabaseEngine.m_pDatabasesLocksLock failed");
   NS_ASSERTION(m_pQueryProcessorMonitor, "CDatabaseEngine.m_pQueryProcessorMonitor failed");
   NS_ASSERTION(m_pPersistentQueriesLock, "CDatabaseEngine.m_pPersistentQueriesLock failed");
   NS_ASSERTION(m_pCaseConversionLock, "CDatabaseEngine.m_pCaseConversionLock failed");
+
 #ifdef DEBUG_locks
   nsCAutoString log;
   log += NS_LITERAL_CSTRING("\n\nCDatabaseEngine (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
@@ -390,11 +392,13 @@ PRInt32 CDatabaseEngine::OpenDB(PRUnichar *dbGUID)
     if(strErr) sqlite3_free(strErr);
 #endif
 
-    ret = sqlite3_create_collation16(pDB, NS_LITERAL_CSTRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
+    ret = sqlite3_create_collation16(pDB, (char *) NS_LITERAL_STRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
 
     if(ret != SQLITE_OK)
     {
-      
+#if defined(XP_WIN)
+      __asm int 3;
+#endif
     }
   }
 
@@ -1015,7 +1019,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
                   }
 
                   pRes->AddRow(vCellValues);
-                  pRes->Release();
+                  //pRes->Release();
                 }
                 break;
 
