@@ -222,7 +222,7 @@ try
       // Let's append!
       for ( var i in lsFixArray )
       {
-        var append = lsFixArray[ i ].key + '=' + lsFixArray[ i ].value + '\n';
+        var append = lsFixArray[ i ].key + '=' + lsFixArray[ i ].value + '\n\n';
         aFileWriter.write( append, append.length );
       }
       aFileWriter.write( spacer, spacer.length );

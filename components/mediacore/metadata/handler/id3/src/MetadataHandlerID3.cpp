@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <Windows.h>
+
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "MetadataHandlerID3.h"
@@ -47,8 +49,13 @@
 
 #include <id3/reader.h>
   
-class StupidException
+class MetadataHandlerID3Exception
 {
+private:
+  MetadataHandlerID3Exception() {}
+public:
+  MetadataHandlerID3Exception( PRUint64 seek, PRUint64 buf, PRUint64 size ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
+  PRUint64 m_Seek, m_Buf, m_Size;
 };
 
 
@@ -91,7 +98,11 @@ public:
     PRUint32 count = 0;
     if ( ! NS_SUCCEEDED( m_Channel->Read( buf, len, &count ) ) )
     {
-      throw StupidException();
+      PRUint64 pos, buf, size;
+      m_Channel->GetPos( &pos );
+      m_Channel->GetBuf( &buf );
+      m_Channel->GetSize( &size );
+      throw MetadataHandlerID3Exception( pos + len, buf, size );
     }
     return count;
   }
@@ -132,7 +143,13 @@ public:
   virtual pos_type setCur(pos_type pos)
   {
     if ( !NS_SUCCEEDED( m_Channel->SetPos( pos ) ) )
-      throw StupidException();
+    {
+      PRUint64 seek, buf, size;
+      m_Channel->GetPos( &seek );
+      m_Channel->GetBuf( &buf );
+      m_Channel->GetSize( &size );
+      throw MetadataHandlerID3Exception( seek, buf, size );
+    }
     return pos;
   }
 };
@@ -202,16 +219,26 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         ID3_ChannelReader channel_reader( mc.get() );
         bool ok = tag.Parse( channel_reader );
         ReadTag(tag);
+/*
+        PRUnichar *bitrate;
+        m_Values->GetValue( NS_LITERAL_STRING("bitrate").get(), &bitrate );
+        if ( bitrate )
+        {
+          MessageBoxW( NULL, bitrate, L"bitrate", MB_OK );
+        }
+*/
       }
     }
-    catch ( const StupidException )
+    catch ( const MetadataHandlerID3Exception err )
     {
-      PRUint64 size;
-      mc->GetSize( &size );
-      if ( size < ( 1 << 15 ) ) // 32k;
-      { 
+      // If it's a tiny file, it's probably a 404 error
+      if ( err.m_Seek > ( err.m_Size - 1024 ) )
+      {
+        // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
         m_Completed = true;
       }
+
+      // Otherwise, take another spin around and try again.
     }
   }
 
@@ -507,7 +534,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       case ID3FID_FILETYPE: strKey = NS_LITERAL_STRING(""); break;
 
       //Time.
-      case ID3FID_TIME: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_TIME: strKey = NS_LITERAL_STRING("length"); break;
 
       //Content group description.
       case ID3FID_CONTENTGROUP: strKey = NS_LITERAL_STRING(""); break;
@@ -594,7 +621,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       case ID3FID_YEAR: strKey = NS_LITERAL_STRING("year"); break;
 
       //Unique file identifier.
-      case ID3FID_UNIQUEFILEID: strKey = NS_LITERAL_STRING("uuid"); break;
+      case ID3FID_UNIQUEFILEID: strKey = NS_LITERAL_STRING("metadata_uuid"); break;
 
       //Terms of use.
       case ID3FID_TERMSOFUSE: strKey = NS_LITERAL_STRING("terms_of_use"); break;

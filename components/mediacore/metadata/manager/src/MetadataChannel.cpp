@@ -188,13 +188,20 @@ sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
     PRUint32 len = std::min( remaining, left );
     char *buf = BUF(m_Buf); // Magic pointer-to-position method
     inStr->Read( buf, len, &read );
+    buf++;
   }
 
-  // Inform the handler that we read data.
-  nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt) );
-  if ( handler.get() )
+  PRUint64 size;
+  GetSize( &size );
+  // Don't send until you get to the end or are over the block size or its broke or something
+  if ( ( size == -1 ) || ( m_Buf >= size ) || ( m_Buf >= BLOCK_SIZE ) ) 
   {
-    handler->OnChannelData( this );
+    // Inform the handler that we read data.
+    nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt) );
+    if ( handler.get() )
+    {
+      handler->OnChannelData( this );
+    }
   }
   return NS_OK;
 }

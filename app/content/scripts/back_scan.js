@@ -183,12 +183,29 @@ try
       } catch(e) {}
       bsScanningText.SetValue( scanning + "..." );
       
+      var bad_url = false;
       var url = result.GetRowCellByColumn( bsLastRow, "url" );
-      bsMDHandler = aMetadataManager.GetHandlerForMediaURL(url);
-      var retval = bsMDHandler.Read();
-      // If it's immediately done, read the values.
-      if ( bsMDHandler.Completed() )
-        BSReadHandlerValues();
+      try
+      {
+        bsMDHandler = aMetadataManager.GetHandlerForMediaURL(url);
+      } 
+      catch(e)
+      {
+        bad_url = true; // If the url is bad, this will catch.
+      }
+      
+      if ( bad_url )
+      {
+        BSReadHandlerValues( true );
+      }
+      else
+      {
+        // Phew -- maybe it's okay to read, now?
+        var retval = bsMDHandler.Read();
+        // If it's immediately done, read the values.
+        if ( bsMDHandler.Completed() )
+          BSReadHandlerValues();
+      }
     }
   }
 
@@ -197,14 +214,17 @@ try
     bsSubmitQueries = false;
     var anything = false;
     
+    // Make sure there's something to do
     if ( bsMetadataArray.length > 0 )
     {
+      // Get the database guid of the first entry in the list
       var dbGUID = bsMetadataArray[ 0 ][ bsDBGuidIdx ];
       
-      var saveGUIDArray = []; // To be saved for next time
-      var saveMetadataArray = [];
       var workGUIDArray = []; // To be worked on now
       var workMetadataArray = [];
+      var saveGUIDArray = []; // To be saved for next time
+      var saveMetadataArray = [];
+      
       // We can only submit for one database at a time.
       for ( var i = 0; i < bsMetadataArray.length; i++ )
       {
@@ -248,12 +268,17 @@ try
     }    
   }
   
-  function BSReadHandlerValues()
+  // If blank is true, we've failed.  Just create an empty entry for this item.
+  function BSReadHandlerValues( blank ) 
   {
-    var values = bsMDHandler.GetValuesMap();
-    // clear the bsMDHandler variable so we don't track it.
-    bsMDHandler.Close();
-    bsMDHandler = null;
+    var values = null;
+    if ( ! blank )
+    {
+      values = bsMDHandler.GetValuesMap();
+      // clear the bsMDHandler variable so we don't track it.
+      bsMDHandler.Close();
+      bsMDHandler = null;
+    }
 
     var result = bsDBQuery.GetResultObject();
     var time = result.GetRowCellByColumn( bsLastRow, "length" );
@@ -261,17 +286,28 @@ try
     var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
     var url = result.GetRowCellByColumn( bsLastRow, "url" );
     var service_uuid = result.GetRowCellByColumn( bsLastRow, "service_uuid" );
-    values.setValue( "service_uuid", service_uuid, 0 ); // Pretend like it came from the file.
     BSCalcMaxArray( result.GetRowCount() );
     
-    var text = "";
     var metadata = new Array();
-    for ( var i in keys )
+    if ( ! blank )
     {
-      metadata[ i ] = values.getValue( keys[ i ] );
-      text += keys[ i ] + ": " + metadata[ i ] + "\n";
+      values.setValue( "service_uuid", service_uuid, 0 ); // Pretend like it came from the file.
+      var text = "";
+      for ( var i in keys )
+      {
+        metadata[ i ] = values.getValue( keys[ i ] );
+        text += keys[ i ] + ": " + metadata[ i ] + "\n";
+      }
+      //alert(text);
     }
-    //alert(text);
+    else
+    {
+      // Setup a blank entry.
+      for ( var i in keys )
+      {
+        metadata[ i ] = "";
+      }
+    }
     
     // GRRRRR.
     for ( var i in metadata )
@@ -282,11 +318,15 @@ try
       }
     }
 
-    // If the title is null, use the url
+    // If the title is null, use the title
     if ( metadata[0] == "" )
     {
-      // No, this should already have the url (or something else) there, so just leave it alone.
-      metadata[0] = title; // ConvertUrlToDisplayName( url );
+      metadata[0] = title;
+    }
+    // If the service_uuid is null, use the service_uuid;
+    if ( metadata[ bsDBGuidIdx ] == "" )
+    {
+      metadata[ bsDBGuidIdx ] = service_uuid;
     }
     // If the length is null parse a 0, otherwise strip hours. 
     if ( metadata[1] == "" )

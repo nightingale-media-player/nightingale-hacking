@@ -63,7 +63,7 @@ class sbMetadataChannel : public sbIMetadataChannel
   // Internal constants
   enum sbBufferConstants
   {
-    SIZE_SHIFT = 16, // 64k blocks (what moz gives us)
+    SIZE_SHIFT = 16, // 64k blocks (what things seem to prefer)
     BLOCK_SIZE = ( 1 << SIZE_SHIFT ),
     BLOCK_MASK = BLOCK_SIZE - 1
   };
