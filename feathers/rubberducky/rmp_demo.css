@@ -3211,3 +3211,9 @@ MISCELLANEOUS
 ************************************************************************************************************************************************
 */  
 
+/* window region */
+
+windowregion {
+  -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion");
+}
+

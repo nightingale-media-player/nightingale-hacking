@@ -29,8 +29,10 @@ const SONGBIRD_UPDATE_CID = Components.ID("{D8A028CC-73F4-4113-BED0-AF316B572B8E
 const SONGBIRD_UPDATE_IID = Components.interfaces.sbIUpdate;
 
 // these are temporary in order to have successful getbundle/postmetrics, they should obviously change ... 
-const SONGBIRD_GETBUNDLE_URL = 'http://www.bluemars.org/bundle.xml';
-const SONGBIRD_POSTMETRICS_URL = 'http://www.bluemars.org/post.php';
+const SONGBIRD_GETBUNDLE_URL_WIN32 = 'http://www.songbirdnest.com/bundle/firstrun_win32.xml';
+const SONGBIRD_GETBUNDLE_URL_MACOSX = 'http://www.songbirdnest.com/bundle/firstrun_macosx.xml';
+const SONGBIRD_GETBUNDLE_URL_LINUX = 'http://www.songbirdnest.com/bundle/firstrun_linux.xml';
+const SONGBIRD_POSTMETRICS_URL = 'http://www.songbirdnest.com/metrics/post.php';
 
 const UPLOAD_METRICS_EVERY_NDAYS = 7; // every week
 
@@ -74,7 +76,18 @@ Update.prototype = {
     this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
     this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onload, false);
     this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", onerror, false);
-    this._req.open('GET', SONGBIRD_GETBUNDLE_URL, true); 
+    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);
+    var url;
+    switch (xulRuntime.OS) {
+      case 'WINNT': 
+      case 'WIN95':
+        url = SONGBIRD_GETBUNDLE_URL_WIN32; 
+        break;
+      case 'Linux': url = SONGBIRD_GETBUNDLE_URL_LINUX; break;
+      case 'Darwin': url = SONGBIRD_GETBUNDLE_URL_MACOSX; break;
+    }
+    this.LOG(url);
+    this._req.open('GET', url, true); 
     this._req.send(null);
   },
         
