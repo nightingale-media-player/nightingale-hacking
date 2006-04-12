@@ -41,10 +41,15 @@ CPP_SRCS = USBMassStorageDevice.cpp \
            USBMassStorageDeviceComponent.cpp \
            $(NULL)
 
+ifeq (win32,$(SB_PLATFORM))
+CPP_SRCS += $(SB_PLATFORM)/USBMassStorageDeviceWin32.cpp
+endif
+
 CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/usb_mass_storage/public \
                $(DEPTH)/components/medialibrary/public \
+               $(srcdir)/$(SB_PLATFORM)/ \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -57,7 +62,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%.obj,$(notdir $(CPP_SRCS)))
 
 DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/$(devicebase)
 

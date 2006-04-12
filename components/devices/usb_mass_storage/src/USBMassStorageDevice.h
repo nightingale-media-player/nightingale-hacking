@@ -24,12 +24,12 @@
 //
 */
 
+#pragma once
+
 /** 
 * \file  USBMassStorageDevice.h
 * \brief Songbird USBMassStorageDevice Component Definition.
 */
-
-#pragma once
 
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
@@ -38,9 +38,14 @@
 
 #include "DeviceBase.h"
 
+#if defined(XP_WIN)
+#include "win32/USBMassStorageDeviceWin32.h"
+#endif
+
 #ifndef NS_DECL_ISUPPORTS
 #error
 #endif
+
 // DEFINES ====================================================================
 #define SONGBIRD_USBMassStorageDevice_CONTRACTID  "@songbird.org/Songbird/Device/USBMassStorageDevice;1"
 #define SONGBIRD_USBMassStorageDevice_CLASSNAME   "Songbird USBMassStorage Device"
@@ -103,4 +108,5 @@ private:
   PRUint32 mDeviceState;
   PRInt32 mCurrentTransferRowNumber;
 
+  IUSBMassStorageDeviceHelper * m_pHelperImpl;
 };

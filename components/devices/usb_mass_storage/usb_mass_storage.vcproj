@@ -177,6 +177,12 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			<File
 				RelativePath=".\src\USBMassStorageDeviceComponent.cpp">
 			</File>
+			<File
+				RelativePath=".\src\win32\USBMassStorageDeviceWin32.cpp">
+			</File>
+			<File
+				RelativePath=".\src\win32\USBMassStorageDeviceWin32.h">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

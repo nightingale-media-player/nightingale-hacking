@@ -30,10 +30,6 @@
 */
 #include "nspr.h"
 
-#if defined(XP_WIN)
-#include "objbase.h"
-#endif
-
 #include <time.h>
 
 #include <xpcom/nscore.h>
@@ -54,6 +50,12 @@
 #include "IMediaLibrary.h"
 #include "IPlaylist.h"
 
+#if defined(XP_WIN)
+#include "objbase.h"
+#include "win32/USBMassStorageDeviceWin32.h"
+//#elif defined(XP_UNIX)
+#endif
+
 /* Implementation file */
 
 #define NAME_USBMASSSTORAGE_DEVICE_LEN          NS_LITERAL_STRING("Songbird USBMassStorage Device").Length()
@@ -71,11 +73,21 @@
 NS_IMPL_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevice)
 
 //-----------------------------------------------------------------------------
-sbUSBMassStorageDevice::sbUSBMassStorageDevice():
-sbDeviceBase(PR_FALSE),
-mDeviceState(kSB_DEVICE_STATE_IDLE)
+sbUSBMassStorageDevice::sbUSBMassStorageDevice()
+: sbDeviceBase(PR_FALSE)
+, mDeviceState(kSB_DEVICE_STATE_IDLE)
+, m_pHelperImpl(nsnull)
 {
   PRBool retVal = PR_FALSE;
+
+#if defined(XP_WIN)
+  m_pHelperImpl = new CUSBMassStorageDeviceHelperWin32;
+#else
+  m_pHelperImpl = new CUSBMassStorageDeviceHelperStub;
+#endif
+
+  NS_ASSERTION(m_pHelperImpl != nsnull, "Failed to create USB Mass Storage Device Helper.");
+
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -91,9 +103,10 @@ sbUSBMassStorageDevice::~sbUSBMassStorageDevice()
 /* PRBool OnUSBDeviceEvent (in PRBool deviceAdded, in wstring deviceIdentifier); */
 NS_IMETHODIMP sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded, const PRUnichar *deviceName, const PRUnichar *deviceIdentifier, PRBool *_retval)
 {
-  *_retval = PR_TRUE;
-
-
+  if(deviceAdded)
+  {
+    *_retval = m_pHelperImpl->Initialize(deviceName, deviceIdentifier);
+  }
 
   return NS_OK;
 } //OnUSBDeviceEvent
