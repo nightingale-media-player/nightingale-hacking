@@ -52,7 +52,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(TargetDir)sbUSBMassStorageDevice.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -108,7 +112,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components
+copy /y $(TargetPath) $(SolutionDir)dist\components
+copy /y $(TargetDir)sbUSBMassStorageDevice.xpt $(SolutionDir)dist\components
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

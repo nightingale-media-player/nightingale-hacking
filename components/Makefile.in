@@ -50,5 +50,6 @@ SUBDIRDEPS2 = playlistreader : medialibrary
 SUBDIRDEPS3 = playlistsource : medialibrary
 SUBDIRDEPS4 = servicesource : medialibrary
 SUBDIRDEPS5 = devices : medialibrary
+SUBDIRDEPS6 = integration : devices
 
 include $(topsrcdir)/build/rules.mk

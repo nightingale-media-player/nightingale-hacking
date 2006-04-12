@@ -51,6 +51,7 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/cd/public \
+               $(DEPTH)/components/devices/usb_mass_storage/public \
                $(COMPONENTS_DIR)/integration/src/$(SB_PLATFORM) \
                $(COMPONENTS_DIR)/devices/base/src \
                $(COMPONENTS_DIR)/devices/cd/src \
@@ -77,6 +78,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plc4  \
                             xpcom \
                             xul \
+                            ole32 \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

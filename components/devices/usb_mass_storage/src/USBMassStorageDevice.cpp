@@ -63,9 +63,9 @@
 #define CONTEXT_USBMASSSTORAGE_DEVICE           NS_LITERAL_STRING("USBMassStorage").get()
 
 #define USBMASSSTORAGE_DEVICE_TABLE_NAME        NS_LITERAL_STRING("usb_mass_storage").get()
-#define USBMASSSTORAGE_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&device.download").get()
-#define USBMASSSTORAGE_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
-#define USBMASSSTORAGE_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("USB Mass Storage").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("USB Mass Storage").get()
+#define USBMASSSTORAGE_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("USB Mass Storage").get()
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevice)
@@ -84,6 +84,19 @@ sbUSBMassStorageDevice::~sbUSBMassStorageDevice()
   PRBool retVal = PR_FALSE;
   Finalize(&retVal);
 } //dtor
+
+//-----------------------------------------------------------------------------
+// sbIUSBMassStorageDevice
+//-----------------------------------------------------------------------------
+/* PRBool OnUSBDeviceEvent (in PRBool deviceAdded, in wstring deviceIdentifier); */
+NS_IMETHODIMP sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded, const PRUnichar *deviceName, const PRUnichar *deviceIdentifier, PRBool *_retval)
+{
+  *_retval = PR_TRUE;
+
+
+
+  return NS_OK;
+} //OnUSBDeviceEvent
 
 //-----------------------------------------------------------------------------
 /* PRBool Initialize (); */

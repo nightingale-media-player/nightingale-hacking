@@ -30,6 +30,8 @@
 [scriptable, uuid(A20BF454-673B-4308-8898-93F2B001D4E9)]
 interface sbIUSBMassStorageDevice : sbIDeviceBase
 {
+
+  PRBool OnUSBDeviceEvent(in PRBool deviceAdded, in wstring deviceName, in wstring deviceIdentifier);
 };
 
 

@@ -35,6 +35,7 @@
 #ifdef WIN32
 #include <dbt.h>
 #include <cguid.h>
+#include <objbase.h>
 #endif
 
 #include <xpcom/nscore.h>
@@ -45,6 +46,7 @@
 
 #include "sbIDeviceManager.h"
 #include "sbICDDevice.h"
+#include "sbIUSBMassStorageDevice.h"
 
 
 // CLASSES ====================================================================
@@ -265,6 +267,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         {
           PRBool retVal;
           nsCOMPtr<sbIDeviceBase> cdDeviceBaseObject;
+          nsCOMPtr<sbIDeviceBase> usbDeviceBaseObject;
 
           deviceManager->GetDevice(NS_L("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
           if (cdDeviceBaseObject)
@@ -275,6 +278,42 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             if (cdDevice)
             {
               cdDevice->OnCDDriveEvent(DBT_DEVICEARRIVAL==wParam, &retVal);
+            }
+          }
+
+          if(DBT_DEVICEARRIVAL == wParam ||
+             DBT_DEVICEREMOVECOMPLETE == wParam)
+          {
+            nsString strDeviceName;
+            nsString strDeviceGUID;
+
+            GUID deviceGUID = GUID_NULL;
+
+            PDEV_BROADCAST_HDR pBroadcastHeader = (PDEV_BROADCAST_HDR) lParam;
+            if(pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+            {
+              PDEV_BROADCAST_DEVICEINTERFACE pDevBroadcastHeader = (PDEV_BROADCAST_DEVICEINTERFACE) pBroadcastHeader;
+
+              strDeviceName = (PRUnichar *)pDevBroadcastHeader->dbcc_name;
+              deviceGUID = pDevBroadcastHeader->dbcc_classguid;
+
+              wchar_t wszGUID[64] = {0};
+              StringFromGUID2(deviceGUID, wszGUID, 63);
+
+              strDeviceGUID = wszGUID;
+            }
+
+            deviceManager->GetDevice(NS_L("Songbird USBMassStorage Device"), getter_AddRefs(usbDeviceBaseObject));
+            if ( usbDeviceBaseObject && strDeviceName.get() && (deviceGUID != GUID_NULL) )
+            {
+              nsCOMPtr<sbIUSBMassStorageDevice> usbDevice;
+              nsIID usbIID = SBIUSBMASSSTORAGEDEVICE_IID;
+              usbDeviceBaseObject->QueryInterface(usbIID, getter_AddRefs(usbDevice));
+              if (usbDevice)
+              {
+                
+                usbDevice->OnUSBDeviceEvent(DBT_DEVICEARRIVAL == wParam, strDeviceName.get(), strDeviceGUID.get(), &retVal);
+              }
             }
           }
         }
