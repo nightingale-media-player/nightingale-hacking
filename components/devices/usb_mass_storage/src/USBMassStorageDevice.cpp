@@ -53,7 +53,8 @@
 #if defined(XP_WIN)
 #include "objbase.h"
 #include "win32/USBMassStorageDeviceWin32.h"
-//#elif defined(XP_UNIX)
+#else
+#include "USBMassStorageDeviceHelper.h"
 #endif
 
 /* Implementation file */

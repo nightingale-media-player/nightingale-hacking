@@ -39,6 +39,8 @@
 #include <windows.h>
 ///#include <ntddstor.h>
 
+#include "USBMassStorageDeviceHelper.h"
+
 class CUSBMassStorageDeviceHelperWin32 : public IUSBMassStorageDeviceHelper
 {
 public:
