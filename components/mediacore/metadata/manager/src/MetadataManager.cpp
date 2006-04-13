@@ -81,8 +81,6 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   if(NS_FAILED(nRet)) return nRet;
 
   NS_ConvertUTF16toUTF8 cstrURL(strURL);
-  //nRet = pURI->SetSpec(cstrURL);
-  //if(NS_FAILED(nRet)) return nRet;
 
   nsCOMPtr<nsIURI> pURI;
   pIOService->NewURI(cstrURL, nsnull, nsnull, getter_AddRefs(pURI));
