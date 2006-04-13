@@ -49,9 +49,9 @@ public:
   
   virtual PRBool Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier);
 
-  virtual PRUnichar * GetDeviceVendor();
-  virtual PRUnichar * GetDeviceModel();
-  virtual PRUnichar * GetDeviceSerialNumber();
+  virtual const PRUnichar * GetDeviceVendor();
+  virtual const PRUnichar * GetDeviceModel();
+  virtual const PRUnichar * GetDeviceSerialNumber();
 
   virtual PRInt64 GetDeviceCapacity();
 };

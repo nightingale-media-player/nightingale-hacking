@@ -55,19 +55,19 @@ PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const PRUnichar *deviceName,
 } //Initialize
 
 //-----------------------------------------------------------------------------
-PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceVendor()
+const PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceVendor()
 {
   return NS_L("");
 } //GetDeviceVendor
 
 //-----------------------------------------------------------------------------
-PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceModel()
+const PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceModel()
 {
   return NS_L("");
 } //GetDeviceModel
 
 //-----------------------------------------------------------------------------
-PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceSerialNumber()
+const PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceSerialNumber()
 {
   return NS_L("");
 } //GetDeviceSerialNumber
