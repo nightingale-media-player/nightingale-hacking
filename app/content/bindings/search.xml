@@ -191,6 +191,7 @@
         }
         this.list.setAttribute( "focused", "true" );
         this.list.mInputField.focus();
+        this.list.mInputField.select();
       }
       catch( err )
       {
@@ -258,6 +259,7 @@
             // Fallthru
           case 13: // Return
             this.onSearchChange();
+            this.list.mInputField.select();
             break;      
           default:
             if ( this.editIdleInterval )

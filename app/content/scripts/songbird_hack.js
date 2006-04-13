@@ -1468,6 +1468,14 @@ function onHTMLUrlChange( evt )
   }
 }
 
+function onHTMLURLFocus (evt) 
+{
+  var url = document.getElementById("browser_url");
+  var text = url.value;
+  url.selectionStart = 0;
+  url.selectionEnd = text.length;
+}
+
 function onHTMLUrlKeypress( evt )
 {
   switch ( evt.keyCode )
@@ -1475,6 +1483,8 @@ function onHTMLUrlKeypress( evt )
     case 13: // Enter
       evt.target.value = SBTabcompleteService( evt.target.value );
       onHTMLUrlChange( evt );
+      evt.target.selectionStart = 0;
+      evt.target.selectionEnd = evt.target.value.length;
       break;
           
 /*      
@@ -2173,9 +2183,9 @@ catch ( err )
 /*    case "menu.downloadmgr":
       SBOpenDownloadManager();
     break;*/
-    /*case "menu.dominspector":
+    case "menu.dominspector":
       SBDOMInspectorOpen();
-    break;*/
+    break;
     
     default:
       if ( target.value )
