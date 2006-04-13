@@ -40,6 +40,8 @@
 
 #if defined(XP_WIN)
 #include "win32/USBMassStorageDeviceWin32.h"
+#else
+#include "USBMassStorageDeviceHelper.h"
 #endif
 
 #ifndef NS_DECL_ISUPPORTS

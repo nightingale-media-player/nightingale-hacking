@@ -32,6 +32,7 @@
 #pragma once
 
 // INCLUDES ===================================================================
+#include <nspr.h>
 #include <nscore.h>
 #include "MetadataChannel.h"
 
@@ -197,17 +198,19 @@ NS_IMETHODIMP sbMetadataChannel::ReadInt64(PRInt64 *_retval)
   PRUint32 count;
   Read( (char *)_retval, 8, &count );
 
+#if 0
 #ifdef IS_BIG_ENDIAN
   // HMMMMM.  Endianness?
-  *_retval = ( ( *_retval & 0xFF00000000000000 ) >> 56 ) |
-             ( ( *_retval & 0x00FF000000000000 ) >> 40 ) |
-             ( ( *_retval & 0x0000FF0000000000 ) >> 24 ) |
-             ( ( *_retval & 0x000000FF00000000 ) >> 8 )  |
+  *_retval = ( ( *_retval & (long long)0xFF00000000000000 ) >> 56 ) |
+             ( ( *_retval & (long long)0x00FF000000000000 ) >> 40 ) |
+             ( ( *_retval & (long long)0x0000FF0000000000 ) >> 24 ) |
+             ( ( *_retval & (long long)0x000000FF00000000 ) >> 8 )  |
              ( ( *_retval & 0x00000000FF000000 ) << 8 )  |
              ( ( *_retval & 0x0000000000FF0000 ) << 24 ) |
              ( ( *_retval & 0x000000000000FF00 ) << 40 ) |
              ( ( *_retval & 0x00000000000000FF ) << 56 );
-#endif  
+#endif
+#endif
 
   return NS_OK;
 }

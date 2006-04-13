@@ -31,7 +31,9 @@
 
 #pragma once
 
+#if defined(XP_WIN)
 #include <Windows.h>
+#endif
 
 // INCLUDES ===================================================================
 #include <nscore.h>

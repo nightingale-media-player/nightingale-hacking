@@ -63,7 +63,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%.obj,$(notdir $(CPP_SRCS)))
+DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
 
 DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/$(devicebase)
 
