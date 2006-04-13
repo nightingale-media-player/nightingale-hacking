@@ -25,167 +25,63 @@
 */
 
 /**
-* \file MetadataHandlerID3.cpp
+* \file MetadataHandlerOGG.cpp
 * \brief 
 */
 
 #pragma once
 
+#include <windows.h>
 // INCLUDES ===================================================================
 #include <nscore.h>
-#include "MetadataHandlerID3.h"
-
-#include <necko/nsIURI.h>
-#include <necko/nsIFileStreams.h>
-#include <necko/nsIIOService.h>
-#include <necko/nsNetUtil.h>
-
-#include <string/nsReadableUtils.h>
-#include <xpcom/nsEscape.h>
+#include "MetadataHandlerOGG.h"
 
 // DEFINES ====================================================================
-
-#include <id3/reader.h>
-  
-class ID3_ChannelReader : public ID3_Reader
-{
-  nsCOMPtr<nsIChannel> m_Channel;
-  nsCOMPtr<nsIInputStream> m_Stream;
-  volatile PRUint64 m_Pos, m_Total;
- protected:
- public:
-  ID3_ChannelReader()
-  {
-    m_Pos = 0;
-  }
-  ID3_ChannelReader(nsIChannel* channel)
-  {
-    m_Pos = 0;
-    setChannel( channel );
-  };
-  virtual ~ID3_ChannelReader() { ; }
-  virtual void close() { ; }
-  
-  void setChannel(nsIChannel* channel)
-  {
-    m_Channel = channel;
-    m_Channel->Open( getter_AddRefs(m_Stream) );
-
-    char buffer[ 0xF ];
-    this->readChars( buffer, 0xF );
-    this->setCur( 0 );
-  }
-
-  virtual int_type peekChar() 
-  { 
-    if (!this->atEnd())
-    {
-      char aByte;
-      PRUint32 count = 0;
-      this->m_Stream->Read( &aByte, 1, &count ); // 1 byte, please.
-      this->setCur( this->getCur() ); // Now back up 1 byte.  Streams shouldn't peek!
-      return aByte;
-    }
-    return END_OF_READER;
-  }
-    
-  virtual size_type readChars(char buf[], size_type len)
-  {
-    PRUint32 count = 0;
-    this->m_Stream->Read( buf, len, &count );
-    m_Pos += count;
-    m_Total += m_Pos;
-    return count;
-  }
-  virtual size_type readChars(char_type buf[], size_type len)
-  {
-    return this->readChars(reinterpret_cast<char *>(buf), len);
-  }
-    
-  virtual pos_type getCur() 
-  { 
-    return (pos_type)m_Pos;
-  }
-    
-  virtual pos_type getBeg()
-  {
-    return 0;
-  }
-    
-  virtual pos_type getEnd()
-  {
-    PRInt32 content_length = 0;
-    this->m_Channel->GetContentLength( &content_length ); 
-    return content_length;
-  }
-    
-  virtual pos_type remainingBytes()
-  {
-    return getEnd() - getCur();
-  }
-
-  virtual pos_type skipChars(pos_type skip)
-  {
-    return setCur( getCur() + skip );
-  }
-
-  virtual pos_type setCur(pos_type pos)
-  {
-    if ( ( pos >= this->getBeg() ) && ( pos < this->getEnd() ) )
-    {
-      nsresult nRet = NS_ERROR_UNEXPECTED;
-      nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&nRet);
-      nsCOMPtr<nsIURI> pURI;
-      m_Channel->GetURI( getter_AddRefs(pURI) );
-      nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(m_Channel));
-
-      nsCOMPtr<nsIResumableChannel> seek;
-      m_Channel->QueryInterface( NS_GET_IID( nsIResumableChannel ), getter_AddRefs( seek ) );
-      m_Pos = pos;
-      seek->ResumeAt( m_Pos, nsCString() );
-
-      m_Channel->Open( getter_AddRefs(m_Stream) );
-    }
-    return (pos_type)m_Pos;
-  }
-};
-
-
-
 
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS1(sbMetadataHandlerID3, sbIMetadataHandler)
+class MetadataHandlerOGGException
+{
+private:
+  MetadataHandlerOGGException() {}
+public:
+  MetadataHandlerOGGException( PRUint64 seek, PRUint64 buf, PRUint64 size ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
+  PRUint64 m_Seek, m_Buf, m_Size;
+};
+
+
+NS_IMPL_ISUPPORTS1(sbMetadataHandlerOGG, sbIMetadataHandler)
 
 //-----------------------------------------------------------------------------
-sbMetadataHandlerID3::sbMetadataHandlerID3()
+sbMetadataHandlerOGG::sbMetadataHandlerOGG()
 {
+  m_Completed = false;
 } //ctor
 
 //-----------------------------------------------------------------------------
-sbMetadataHandlerID3::~sbMetadataHandlerID3()
+sbMetadataHandlerOGG::~sbMetadataHandlerOGG()
 {
 
 } //dtor
 
 //-----------------------------------------------------------------------------
 /* void SupportedMIMETypes (out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes); */
-NS_IMETHODIMP sbMetadataHandlerID3::SupportedMIMETypes(PRUint32 *nMIMECount, PRUnichar ***aMIMETypes)
+NS_IMETHODIMP sbMetadataHandlerOGG::SupportedMIMETypes(PRUint32 *nMIMECount, PRUnichar ***aMIMETypes)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 } //SupportedMIMETypes
 
 //-----------------------------------------------------------------------------
 /* void SupportedFileExtensions (out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts); */
-NS_IMETHODIMP sbMetadataHandlerID3::SupportedFileExtensions(PRUint32 *nExtCount, PRUnichar ***aExts)
+NS_IMETHODIMP sbMetadataHandlerOGG::SupportedFileExtensions(PRUint32 *nExtCount, PRUnichar ***aExts)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 } //SupportedFileExtensions
 
 //-----------------------------------------------------------------------------
 /* nsIChannel GetChannel (); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetChannel(nsIChannel **_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetChannel(nsIChannel **_retval)
 {
   *_retval = m_Channel.get();
   (*_retval)->AddRef();
@@ -195,7 +91,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::GetChannel(nsIChannel **_retval)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetChannel (in nsIChannel urlChannel); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetChannel(nsIChannel *urlChannel, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::SetChannel(nsIChannel *urlChannel, PRInt32 *_retval)
 {
   *_retval = 0;
   m_Channel = urlChannel;
@@ -203,9 +99,55 @@ NS_IMETHODIMP sbMetadataHandlerID3::SetChannel(nsIChannel *urlChannel, PRInt32 *
   return NS_OK;
 } //SetChannel
 
+NS_IMETHODIMP sbMetadataHandlerOGG::OnChannelData( nsISupports *channel )
+{
+  nsCOMPtr<sbIMetadataChannel> mc( do_QueryInterface(channel) ) ;
+
+  if ( mc.get() )
+  {
+    try
+    {
+      if ( !m_Completed )
+      {
+        ParseChannel();
+        m_Completed = true;
+      }
+    }
+    catch ( const MetadataHandlerOGGException err )
+    {
+      if ( err.m_Seek > ( err.m_Size - 1024 ) )
+      {
+        // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
+        m_Completed = true;
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbMetadataHandlerOGG::Completed(PRBool *_retval)
+{
+  *_retval = m_Completed;
+
+  return NS_OK;
+} //SetChannel
+
+NS_IMETHODIMP sbMetadataHandlerOGG::Close()
+{
+  if ( m_ChannelHandler.get() ) 
+    m_ChannelHandler->Close();
+
+  m_Values = nsnull;
+  m_Channel = nsnull;
+  m_ChannelHandler = nsnull;
+
+  return NS_OK;
+} //Close
+
 //-----------------------------------------------------------------------------
 /* PRInt32 Read (); */
-NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
 {
   nsresult nRet = NS_ERROR_UNEXPECTED;
 
@@ -225,65 +167,31 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     return NS_ERROR_FAILURE;
   }
 
-  nsCOMPtr<nsIURI> pURI;
-  nRet = m_Channel->GetURI(getter_AddRefs(pURI));
-  if(NS_FAILED(nRet)) return nRet;
-
-  nsCString cstrScheme, cstrPath;
-  pURI->GetScheme(cstrScheme);
-  pURI->GetPath(cstrPath);
-
-  if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
+  // Get a new channel handler.
+  m_ChannelHandler = do_CreateInstance("@songbird.org/Songbird/MetadataChannel;1");
+  if(!m_ChannelHandler.get())
   {
-
-#if defined(XP_WIN)
-    nsCString::iterator itBegin, itEnd;
-
-    if(StringBeginsWith(cstrPath, NS_LITERAL_CSTRING("/")))
-      cstrPath.Cut(0, 1);
-
-    cstrPath.BeginWriting(itBegin);
-    cstrPath.EndWriting(itEnd);
-
-    while(itBegin != itEnd)
-    {
-      if( (*itBegin) == '/') (*itBegin) = '\\';
-      itBegin++;
-    }
-#endif
-    
-    ID3_Tag  tag;
-    size_t nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get());
-    *_retval = nTagSize;
-
-    ReadTag(tag);
-
-    nRet = NS_OK;
+    *_retval = -1;
+    return NS_ERROR_FAILURE;
   }
-  else
-  {
-    ID3_Tag  tag;
-    ID3_ChannelReader channel_reader( m_Channel );
-    bool ok = tag.Parse( channel_reader );
+  // Start reading the data.
+  m_ChannelHandler->Open( m_Channel, this );
 
-    ReadTag(tag);
-
-    nRet = NS_OK;
-  }
+  nRet = NS_OK;
 
   return nRet;
 } //Read
 
 //-----------------------------------------------------------------------------
 /* PRInt32 Write (); */
-NS_IMETHODIMP sbMetadataHandlerID3::Write(PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::Write(PRInt32 *_retval)
 {
   *_retval = 0;
   return NS_OK;
 } //Write
 
 /* sbIMetadataValues GetValuesMap (); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetValuesMap(sbIMetadataValues **_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetValuesMap(sbIMetadataValues **_retval)
 {
   *_retval = m_Values;
   if ( (*_retval) )
@@ -292,7 +200,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::GetValuesMap(sbIMetadataValues **_retval)
 }
 
 /* void SetValuesMap (in sbIMetadataValues values); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetValuesMap(sbIMetadataValues *values)
+NS_IMETHODIMP sbMetadataHandlerOGG::SetValuesMap(sbIMetadataValues *values)
 {
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -300,7 +208,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::SetValuesMap(sbIMetadataValues *values)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 GetNumAvailableTags (); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetNumAvailableTags(PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetNumAvailableTags(PRInt32 *_retval)
 {
   *_retval = 0;
   return NS_OK;
@@ -308,22 +216,21 @@ NS_IMETHODIMP sbMetadataHandlerID3::GetNumAvailableTags(PRInt32 *_retval)
 
 //-----------------------------------------------------------------------------
 /* void GetAvailableTags (out PRUint32 tagCount, [array, size_is (tagCount), retval] out wstring tags); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetAvailableTags(PRUint32 *tagCount, PRUnichar ***tags)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetAvailableTags(PRUint32 *tagCount, PRUnichar ***tags)
 {
   return NS_OK;
 } //GetAvailableTags
 
 //-----------------------------------------------------------------------------
 /* wstring GetTag (in wstring tagName); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
 {
-
   return NS_OK;
 } //GetTag
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetTag (in wstring tagName, in wstring tagValue); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetTag(const PRUnichar *tagName, const PRUnichar *tagValue, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::SetTag(const PRUnichar *tagName, const PRUnichar *tagValue, PRInt32 *_retval)
 {
   *_retval = 0;
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -331,346 +238,152 @@ NS_IMETHODIMP sbMetadataHandlerID3::SetTag(const PRUnichar *tagName, const PRUni
 
 //-----------------------------------------------------------------------------
 /* void GetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, out PRUint32 valueCount, [array, size_is (valueCount), retval] out wstring values); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 *valueCount, PRUnichar ***values)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 *valueCount, PRUnichar ***values)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 } //GetTags
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, in PRUint32 valueCount, [array, size_is (valueCount)] in wstring values); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 valueCount, const PRUnichar **values, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::SetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 valueCount, const PRUnichar **values, PRInt32 *_retval)
 {
   *_retval = 0;
   return NS_ERROR_NOT_IMPLEMENTED;
 } //SetTags
 
-//-----------------------------------------------------------------------------
-PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
+void sbMetadataHandlerOGG::ParseChannel()
 {
-  PRInt32 ret = 0;
+  // Lots of data buffers, here
+  PRUint32 count;
+  void *buf;
 
-  nsString strKey;
-  nsString strValue;
-  PRInt32 type;
-
-  ID3_Tag::Iterator *itFrame = tag.CreateIterator();
-  ID3_Frame *pFrame = nsnull;
-
-  while( (pFrame = itFrame->GetNext()) != NULL)
+  // We don't care about the first header?
+  sbOGGHeader first_header = ParseHeader();
+  if ( first_header.m_Size && first_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
   {
-    switch(pFrame->GetID())
+    buf = nsMemory::Alloc( first_header.m_Size );
+    m_ChannelHandler->Read( (char *)buf, first_header.m_Size, &count );
+    nsMemory::Free( buf );
+  }
+  else
+  {
+    return; // Dead monkey.
+  }
+
+
+  // They say we want the second header.
+  sbOGGHeader comment_header = ParseHeader();
+  while ( 
+    ( comment_header.stream_serial_number == first_header.stream_serial_number ) &&
+    ( comment_header.page_sequence_no == first_header.page_sequence_no ) &&
+    ( comment_header.absolute_granule_position == first_header.absolute_granule_position ) &&
+    ( comment_header.page_checksum == first_header.page_checksum ) &&
+    ( comment_header.m_Size == first_header.m_Size ) )
+  {
+    // Unfortunately, sometimes idiot files have 2 opening headers.
+    buf = nsMemory::Alloc( first_header.m_Size );
+    m_ChannelHandler->Read( (char *)buf, first_header.m_Size, &count );
+    nsMemory::Free( buf );
+    comment_header = ParseHeader();
+  }
+  // So, let's go...
+  if ( comment_header.m_Size && comment_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
+  {
+    // Head block.
+    char head[7];
+    m_ChannelHandler->Read( (char *)head, 7, &count ); // junq
+
+    // Vendor block.
+    nsString vendor_string = ReadIntString();
+    if ( vendor_string.Length() )
     {
-      //No known frame.
-      case ID3FID_NOFRAME: strKey = NS_LITERAL_STRING(""); break;
-
-      //Audio encryption.
-      case ID3FID_AUDIOCRYPTO: strKey = NS_LITERAL_STRING(""); break;
-
-      //Picture
-      case ID3FID_PICTURE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Comments.
-      case ID3FID_COMMENT: strKey = NS_LITERAL_STRING("comment"); break;
-
-      //Commercial frame.
-      case ID3FID_COMMERCIAL: strKey = NS_LITERAL_STRING(""); break;
-
-      //Encryption method registration.
-      case ID3FID_CRYPTOREG: strKey = NS_LITERAL_STRING(""); break;
-
-      //Equalization.
-      case ID3FID_EQUALIZATION: strKey = NS_LITERAL_STRING(""); break;
-
-      //Event timing codes.
-      case ID3FID_EVENTTIMING: strKey = NS_LITERAL_STRING(""); break;
-      
-      //General encapsulated object.
-      case ID3FID_GENERALOBJECT: strKey = NS_LITERAL_STRING(""); break;
-
-      //Group identification registration.
-      case ID3FID_GROUPINGREG: strKey = NS_LITERAL_STRING(""); break;
-
-      //Involved people list.
-      case ID3FID_INVOLVEDPEOPLE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Linked information.
-      case ID3FID_LINKEDINFO: strKey = NS_LITERAL_STRING(""); break;
-
-      //Music CD identifier.
-      case ID3FID_CDID: strKey = NS_LITERAL_STRING(""); break;
-
-      //MPEG location lookup table.
-      case ID3FID_MPEGLOOKUP: strKey = NS_LITERAL_STRING(""); break;
-
-      //Ownership frame.
-      case ID3FID_OWNERSHIP: strKey = NS_LITERAL_STRING(""); break;
-
-      //Private frame.
-      case ID3FID_PRIVATE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Play counter.
-      case ID3FID_PLAYCOUNTER: strKey = NS_LITERAL_STRING(""); break;
-
-      //Popularimeter.
-      case ID3FID_POPULARIMETER: strKey = NS_LITERAL_STRING(""); break;
-
-      //Position synchronisation frame.
-      case ID3FID_POSITIONSYNC: strKey = NS_LITERAL_STRING(""); break;
-
-      //Recommended buffer size.
-      case ID3FID_BUFFERSIZE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Relative volume adjustment.
-      case ID3FID_VOLUMEADJ: strKey = NS_LITERAL_STRING(""); break;
-
-      //Reverb.
-      case ID3FID_REVERB: strKey = NS_LITERAL_STRING(""); break;
-
-      //Synchronized lyric/text.
-      case ID3FID_SYNCEDLYRICS: strKey = NS_LITERAL_STRING(""); break;
-
-      //Synchronized tempo codes.
-      case ID3FID_SYNCEDTEMPO: strKey = NS_LITERAL_STRING(""); break;
-
-      //Album/Movie/Show title.
-      case ID3FID_ALBUM: strKey = NS_LITERAL_STRING("album"); break;
-
-      //BPM (beats per minute).
-      case ID3FID_BPM: strKey = NS_LITERAL_STRING("bpm"); break;
-
-      //Composer.
-      case ID3FID_COMPOSER: strKey = NS_LITERAL_STRING("composer"); break;
-
-      //Content type.
-      case ID3FID_CONTENTTYPE: strKey = NS_LITERAL_STRING("genre"); break;
-
-      //Copyright message.
-      case ID3FID_COPYRIGHT: strKey = NS_LITERAL_STRING("copyright_message"); break;
-
-      //Date.
-      case ID3FID_DATE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Playlist delay.
-      case ID3FID_PLAYLISTDELAY: strKey = NS_LITERAL_STRING(""); break;
-
-      //Encoded by.
-      case ID3FID_ENCODEDBY: strKey = NS_LITERAL_STRING("encoded_by"); break;
-
-      //Lyricist/Text writer.
-      case ID3FID_LYRICIST: strKey = NS_LITERAL_STRING(""); break;
-
-      //File type.
-      case ID3FID_FILETYPE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Time.
-      case ID3FID_TIME: strKey = NS_LITERAL_STRING(""); break;
-
-      //Content group description.
-      case ID3FID_CONTENTGROUP: strKey = NS_LITERAL_STRING(""); break;
-
-      //Title/songname/content description.
-      case ID3FID_TITLE: strKey = NS_LITERAL_STRING("title"); break;
-
-      //Subtitle/Description refinement.
-      case ID3FID_SUBTITLE: strKey = NS_LITERAL_STRING("subtitle"); break;
-
-      //Initial key.
-      case ID3FID_INITIALKEY: strKey = NS_LITERAL_STRING("key"); break;
-
-      //Language(s).
-      case ID3FID_LANGUAGE: strKey = NS_LITERAL_STRING("language"); break;
-
-      //Length.
-      case ID3FID_SONGLEN: strKey = NS_LITERAL_STRING("length"); break;
-
-      //Media type.
-      case ID3FID_MEDIATYPE: strKey = NS_LITERAL_STRING("mediatype"); break;
-
-      //Original album/movie/show title.
-      case ID3FID_ORIGALBUM: strKey = NS_LITERAL_STRING("original_album"); break;
-
-      //Original filename.
-      case ID3FID_ORIGFILENAME: strKey = NS_LITERAL_STRING(""); break;
-
-      //Original lyricist(s)/text writer(s).
-      case ID3FID_ORIGLYRICIST: strKey = NS_LITERAL_STRING(""); break;
-
-      //Original artist(s)/performer(s).
-      case ID3FID_ORIGARTIST: strKey = NS_LITERAL_STRING("original_artist"); break;
-
-      //Original release year.
-      case ID3FID_ORIGYEAR: strKey = NS_LITERAL_STRING("original_year"); break;
-
-      //File owner/licensee.
-      case ID3FID_FILEOWNER: strKey = NS_LITERAL_STRING(""); break;
-
-      //Lead performer(s)/Soloist(s).
-      case ID3FID_LEADARTIST: strKey = NS_LITERAL_STRING("artist"); break;
-
-      //Band/orchestra/accompaniment.
-      case ID3FID_BAND: strKey = NS_LITERAL_STRING("accompaniment"); break;
-
-      //Conductor/performer refinement.
-      case ID3FID_CONDUCTOR: strKey = NS_LITERAL_STRING("conductor"); break;
-
-      //Interpreted, remixed, or otherwise modified by.
-      case ID3FID_MIXARTIST: strKey = NS_LITERAL_STRING("interpreter_remixer"); break;
-
-      //Part of a set.
-      case ID3FID_PARTINSET: strKey = NS_LITERAL_STRING("set_collection"); break;
-
-      //Publisher.
-      case ID3FID_PUBLISHER: strKey = NS_LITERAL_STRING("publisher"); break;
-
-      //Track number/Position in set.
-      case ID3FID_TRACKNUM: strKey = NS_LITERAL_STRING("track_no"); break;
-
-      //Recording dates.
-      case ID3FID_RECORDINGDATES: strKey = NS_LITERAL_STRING(""); break;
-
-      //Internet radio station name.
-      case ID3FID_NETRADIOSTATION: strKey = NS_LITERAL_STRING(""); break;
-
-      //Internet radio station owner.
-      case ID3FID_NETRADIOOWNER: strKey = NS_LITERAL_STRING(""); break;
-
-      //Size.
-      case ID3FID_SIZE: strKey = NS_LITERAL_STRING(""); break;
-
-      //ISRC (international standard recording code).
-      case ID3FID_ISRC: strKey = NS_LITERAL_STRING(""); break;
-
-      //Software/Hardware and settings used for encoding.
-      case ID3FID_ENCODERSETTINGS: strKey = NS_LITERAL_STRING(""); break;
-
-      //User defined text information.
-      case ID3FID_USERTEXT: strKey = NS_LITERAL_STRING(""); break;
-
-      //Year.
-      case ID3FID_YEAR: strKey = NS_LITERAL_STRING("year"); break;
-
-      //Unique file identifier.
-      case ID3FID_UNIQUEFILEID: strKey = NS_LITERAL_STRING("uuid"); break;
-
-      //Terms of use.
-      case ID3FID_TERMSOFUSE: strKey = NS_LITERAL_STRING("terms_of_use"); break;
-
-      //Unsynchronized lyric/text transcription.
-      case ID3FID_UNSYNCEDLYRICS: strKey = NS_LITERAL_STRING("lyrics"); break;
-
-      //Commercial information.
-      case ID3FID_WWWCOMMERCIALINFO: strKey = NS_LITERAL_STRING("commercialinfo_url"); break;
-
-      //Copyright/Legal infromation.
-      case ID3FID_WWWCOPYRIGHT: strKey = NS_LITERAL_STRING("copyright_url"); break;
-
-      //Official audio file webpage.
-      case ID3FID_WWWAUDIOFILE: strKey = NS_LITERAL_STRING(""); break;
-
-      //Official artist/performer webpage.
-      case ID3FID_WWWARTIST: strKey = NS_LITERAL_STRING("artist_url"); break;
-
-      //Official audio source webpage.
-      case ID3FID_WWWAUDIOSOURCE: strKey = NS_LITERAL_STRING("source_url"); break;
-
-      //Official internet radio station homepage.
-      case ID3FID_WWWRADIOPAGE: strKey = NS_LITERAL_STRING("netradio_url"); break;
-
-      //Payment.
-      case ID3FID_WWWPAYMENT: strKey = NS_LITERAL_STRING("payment_url"); break;
-
-      //Official publisher webpage.
-      case ID3FID_WWWPUBLISHER: strKey = NS_LITERAL_STRING("publisher_url"); break;
-
-      //User defined URL link.
-      case ID3FID_WWWUSER: strKey = NS_LITERAL_STRING("user_url"); break;
-
-      //Encrypted meta frame (id3v2.2.x).
-      case ID3FID_METACRYPTO: strKey = NS_LITERAL_STRING(""); break;
-
-      //Compressed meta frame (id3v2.2.1).
-      case ID3FID_METACOMPRESSION: strKey = NS_LITERAL_STRING(""); break;
-
-      //Last field placeholder.
-      case ID3FID_LASTFRAMEID: strKey = NS_LITERAL_STRING(""); break;
+      m_Values->SetValue( NS_LITERAL_STRING("vendor").get(), vendor_string.get(), 0 );
     }
 
-    // If we care,
-//    if ( strKey.Length() )
+    // Comment block.
+    PRInt32 comment_count;
+    m_ChannelHandler->ReadInt32( &comment_count );
+    if ( (PRUint32)comment_count < 100 ) // ???
     {
-      // Get the text field.
-      ID3_Field* pField = pFrame->GetField(ID3FN_TEXT);
-      if (NULL != pField)
+      for ( int i = 0; i < comment_count; i++ )
       {
-        ID3_TextEnc enc = pField->GetEncoding();
-        switch( enc )
+        nsString comment_string = ReadIntString();
+        if ( comment_string.Length() )
         {
-          case ID3TE_NONE:
-          case ID3TE_ISO8859_1:
+          PRInt32 split = comment_string.Find( "=", FALSE );
+          if ( split != -1 )
           {
-            nsCString iso_string( pField->GetRawText() );
-            strValue = NS_ConvertASCIItoUTF16(iso_string);
-            break;
+            nsString key, value;
+            comment_string.Left( key, split );
+            comment_string.Right( value, comment_string.Length() - split - 1 );
+            m_Values->SetValue( key.get(), value.get(), 0 ); // Lots of bulletproofing before we get here.
           }
-          case ID3TE_UTF16:
-          case ID3TE_UTF16BE: // ?? what do we do with big endian?  cry?
-          {
-            nsString u16_string( pField->GetRawUnicodeText() );
-            strValue = u16_string;
-            break;
-          }
-          case ID3TE_UTF8:
-          {
-            nsCString u8_string( pField->GetRawText() );
-            strValue = NS_ConvertUTF8toUTF16(u8_string);
-            break;
-          }
+          else break;
         }
+        else break;
       }
-      m_Values->SetValue( strKey.get(), strValue.get(), 0 );
+    }
+  }
+}
+
+sbMetadataHandlerOGG::sbOGGHeader sbMetadataHandlerOGG::ParseHeader()
+{
+  sbOGGHeader retval;
+
+  PRBool failed = false;
+  char test[] = { 'O', 'g', 'g', 'S' };
+  char test_char;
+  for ( int i = 0; i < sizeof(test); i++ )
+  {
+    m_ChannelHandler->ReadChar( &test_char );
+    if ( test_char != test[ i ] )
+    {
+      failed = true;
+      break;
     }
   }
 
-  // For now, leak this?
-
-//  delete itFrame;
-
-  // We crash when we delete it?
-
-  return ret;
-} //ReadTag
-
-//-----------------------------------------------------------------------------
-PRInt32 sbMetadataHandlerID3::ReadFrame(ID3_Frame *frame)
-{
-  PRInt32 ret = 0;
-
-  ID3_Frame::Iterator *itField = frame->CreateIterator();
-  ID3_Field* field = NULL;
-
-  while( (field = itField->GetNext()) != NULL )
+  if ( ! failed )
   {
-    ReadFields(field);
+    m_ChannelHandler->ReadChar( (char *)&retval.stream_structure_version );
+    m_ChannelHandler->ReadChar( (char *)&retval.header_type_flag );
+    m_ChannelHandler->ReadInt64( &retval.absolute_granule_position );
+    m_ChannelHandler->ReadInt32( &retval.stream_serial_number );
+    m_ChannelHandler->ReadInt32( &retval.page_sequence_no );
+    m_ChannelHandler->ReadInt32( &retval.page_checksum );
+
+    PRUint8 segments, segment;
+    m_ChannelHandler->ReadChar( (char *)&segments );
+    for ( int i = 0; i < segments; i++ )
+    {
+      m_ChannelHandler->ReadChar( (char *)&segment );
+      retval.m_Size += segment;
+    }
   }
 
-  delete itField;
+  return retval;
+}
 
-  return ret;
-} //ReadFrame
-
-//-----------------------------------------------------------------------------
-PRInt32 sbMetadataHandlerID3::ReadFields(ID3_Field *field)
+nsString sbMetadataHandlerOGG::ReadIntString()
 {
-  PRInt32 ret = 0;
-
-  ID3_FieldType fieldType = field->GetType();
-  switch(fieldType)
+  nsString retval;
+  PRInt32 length;
+  PRUint32 count;
+  void *buf;
+  m_ChannelHandler->ReadInt32( &length );
+  if ( length > 0 )
   {
-    case ID3FTY_NONE: break;
-    case ID3FTY_INTEGER: break;
-    case ID3FTY_BINARY: break;
-    case ID3FTY_TEXTSTRING: break;
+    buf = nsMemory::Alloc( length + 1 );
+    if ( buf )
+    {
+      m_ChannelHandler->Read( (char *)buf, length, &count );
+      if ( count == length )
+      {
+        ((char *)buf)[ count ] = 0; // Null terminate the string
+        retval = NS_ConvertUTF8toUTF16((char *)buf);
+      }
+      nsMemory::Free( buf );
+    }
   }
- 
-  return ret;
-} //ReadField
+  return retval;
+}

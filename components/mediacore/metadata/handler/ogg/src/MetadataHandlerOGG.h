@@ -25,7 +25,7 @@
 */
 
 /**
-* \file MetadataHandlerID3.h
+* \file MetadataHandlerOGG.h
 * \brief 
 */
 
@@ -39,36 +39,60 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
+#include <xpcom/nsEscape.h>
+#include <string/nsReadableUtils.h>
 
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"
-
-#include <id3/tag.h>
+#include "sbIMetadataChannel.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAHANDLERID3_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/ID3;1"
-#define SONGBIRD_METADATAHANDLERID3_CLASSNAME   "Songbird ID3 Metadata Handler Interface"
+#define SONGBIRD_METADATAHANDLEROGG_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/OGG;1"
+#define SONGBIRD_METADATAHANDLEROGG_CLASSNAME   "Songbird OGG Metadata Handler Interface"
 
-// {D83C6CE1-DDCE-49ad-ABF3-430A5C223C3B}
-#define SONGBIRD_METADATAHANDLERID3_CID { 0xd83c6ce1, 0xddce, 0x49ad, { 0xab, 0xf3, 0x43, 0xa, 0x5c, 0x22, 0x3c, 0x3b } }
+// {1DB86685-8965-400f-99A0-F2A18C38C605}
+#define SONGBIRD_METADATAHANDLEROGG_CID { 0x1db86685, 0x8965, 0x400f, { 0x99, 0xa0, 0xf2, 0xa1, 0x8c, 0x38, 0xc6, 0x5 } }
 
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-class sbMetadataHandlerID3 : public sbIMetadataHandler
+class sbMetadataHandlerOGG : public sbIMetadataHandler
 {
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMETADATAHANDLER
 
-  sbMetadataHandlerID3();
-  virtual ~sbMetadataHandlerID3();
+  sbMetadataHandlerOGG();
+  virtual ~sbMetadataHandlerOGG();
 
 protected:
-  PRInt32 ReadTag(ID3_Tag &tag);
-  PRInt32 ReadFrame(ID3_Frame *frame);
-  PRInt32 ReadFields(ID3_Field *field);
+  struct sbOGGHeader
+  {
+    PRInt8 stream_structure_version;
+    PRInt8 header_type_flag;
+    PRInt64 absolute_granule_position;
+    PRInt32 stream_serial_number;
+    PRInt32 page_sequence_no;
+    PRInt32 page_checksum;
+    PRInt32 m_Size;
 
-  nsCOMPtr<sbIMetadataValues> m_Values;
-  nsCOMPtr<nsIChannel> m_Channel;
-  ID3_Tag              m_ID3Tag;
+    sbOGGHeader() : 
+      stream_structure_version( 0 ),
+      header_type_flag( 0 ),
+      absolute_granule_position( 0 ),
+      stream_serial_number( 0 ),
+      page_sequence_no( 0 ),
+      page_checksum( 0 ),
+      m_Size( 0 )
+    {
+    }
+  };
+
+  void ParseChannel();
+  sbOGGHeader ParseHeader();
+  nsString ReadIntString();
+
+  nsCOMPtr<sbIMetadataValues>   m_Values;
+  nsCOMPtr<sbIMetadataChannel>  m_ChannelHandler;
+  nsCOMPtr<nsIChannel>          m_Channel;
+  PRBool                        m_Completed;
 };

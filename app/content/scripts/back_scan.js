@@ -160,11 +160,19 @@ try
 
   function BSExecute()
   {
-    bsDBQuery.ResetQuery();
-    bsDBQuery.AddQuery( bsQueryString );
-    var ret = bsDBQuery.Execute();
-    bsWaitForExecuting = false;
-    bsLastRow = 0;
+    if ( SBDataGetIntValue( "media_scan.open" ) == 0 )
+    {
+      bsDBQuery.ResetQuery();
+      bsDBQuery.AddQuery( bsQueryString );
+      var ret = bsDBQuery.Execute();
+      bsWaitForExecuting = false;
+      bsLastRow = 0;
+    }
+    else
+    {
+      // Try again in a bit.
+      setTimeout( BSExecute, 2000 );
+    }
   }
   
   function BSNextTrack()

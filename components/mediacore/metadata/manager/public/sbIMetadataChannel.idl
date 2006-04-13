@@ -42,5 +42,8 @@ interface sbIMetadataChannel : nsIStreamListener
   PRUint64 GetBuf();
   PRUint64 GetSize();
   PRUint32 Read( in charPtr buf, in PRUint32 len );
+  char ReadChar();
+  PRInt32 ReadInt32();
+  PRInt64 ReadInt64();
   PRBool IsSeekable();
 };

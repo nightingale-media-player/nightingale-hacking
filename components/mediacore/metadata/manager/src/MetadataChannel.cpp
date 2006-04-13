@@ -156,6 +156,62 @@ NS_IMETHODIMP sbMetadataChannel::Read(char * out_buf, PRUint32 len, PRUint32 *_r
   return NS_OK;
 }
 
+NS_IMETHODIMP sbMetadataChannel::ReadChar(char *_retval)
+{
+  // Sanity check
+  if ( m_Pos + 1 >= m_Buf )
+    return NS_ERROR_UNEXPECTED;
+
+  PRUint32 count;
+  Read( _retval, 1, &count );
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbMetadataChannel::ReadInt32(PRInt32 *_retval)
+{
+  // Sanity check
+  if ( m_Pos + 4 >= m_Buf )
+    return NS_ERROR_UNEXPECTED;
+
+  PRUint32 count;
+  Read( (char *)_retval, 4, &count );
+
+#ifdef IS_BIG_ENDIAN
+  // HMMMMM.  Endianness?
+  *_retval = ( ( *_retval & 0xFF000000 ) >> 24 ) |
+             ( ( *_retval & 0x00FF0000 ) >> 8 )  |
+             ( ( *_retval & 0x0000FF00 ) << 8 )  |
+             ( ( *_retval & 0x000000FF ) << 24 );
+#endif  
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbMetadataChannel::ReadInt64(PRInt64 *_retval)
+{
+  // Sanity check
+  if ( m_Pos + 8 >= m_Buf )
+    return NS_ERROR_UNEXPECTED;
+
+  PRUint32 count;
+  Read( (char *)_retval, 8, &count );
+
+#ifdef IS_BIG_ENDIAN
+  // HMMMMM.  Endianness?
+  *_retval = ( ( *_retval & 0xFF00000000000000 ) >> 56 ) |
+             ( ( *_retval & 0x00FF000000000000 ) >> 40 ) |
+             ( ( *_retval & 0x0000FF0000000000 ) >> 24 ) |
+             ( ( *_retval & 0x000000FF00000000 ) >> 8 )  |
+             ( ( *_retval & 0x00000000FF000000 ) << 8 )  |
+             ( ( *_retval & 0x0000000000FF0000 ) << 24 ) |
+             ( ( *_retval & 0x000000000000FF00 ) << 40 ) |
+             ( ( *_retval & 0x00000000000000FF ) << 56 );
+#endif  
+
+  return NS_OK;
+}
+
 /* PRBool IsSeekable (); */
 NS_IMETHODIMP sbMetadataChannel::IsSeekable(PRBool *_retval)
 {
@@ -212,6 +268,8 @@ NS_IMETHODIMP
 sbMetadataChannel::OnStartRequest(nsIRequest *aRequest,
                                          nsISupports *ctxt)
 {
+  nsresult result;
+  aRequest->GetStatus( &result );
   return NS_OK;
 }
 
@@ -220,5 +278,12 @@ sbMetadataChannel::OnStopRequest(nsIRequest *aRequest,
                                         nsISupports *ctxt,
                                         nsresult status)
 {
+  // Inform the handler that we read data.
+  nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt) );
+  if ( handler.get() )
+  {
+    handler->OnChannelData( this );
+  }
+
   return NS_OK;
 }
