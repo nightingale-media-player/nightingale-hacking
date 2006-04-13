@@ -39,36 +39,6 @@
 #include <windows.h>
 ///#include <ntddstor.h>
 
-class IUSBMassStorageDeviceHelper
-{
-public:
-  IUSBMassStorageDeviceHelper() {};
-  ~IUSBMassStorageDeviceHelper() {};
-
-  virtual PRBool Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier) = 0;
-
-  virtual PRUnichar * GetDeviceVendor() = 0;
-  virtual PRUnichar * GetDeviceModel() = 0;
-  virtual PRUnichar * GetDeviceSerialNumber() = 0;
-
-  virtual PRInt64 GetDeviceCapacity() = 0;
-};
-
-class CUSBMassStorageDeviceHelperStub : public IUSBMassStorageDeviceHelper
-{
-public:
-  CUSBMassStorageDeviceHelperStub() {};
-  ~CUSBMassStorageDeviceHelperStub() {};
-
-  virtual PRBool Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier){ return PR_FALSE; };
-
-  virtual PRUnichar * GetDeviceVendor() { return NS_L("__STUB__"); };
-  virtual PRUnichar * GetDeviceModel() { return NS_L("__STUB__"); };
-  virtual PRUnichar * GetDeviceSerialNumber() { return NS_L("__STUB__"); };
-
-  virtual PRInt64 GetDeviceCapacity() { return -1; };
-};
-
 class CUSBMassStorageDeviceHelperWin32 : public IUSBMassStorageDeviceHelper
 {
 public:
