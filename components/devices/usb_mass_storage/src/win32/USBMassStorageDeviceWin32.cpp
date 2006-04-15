@@ -46,12 +46,22 @@ CUSBMassStorageDeviceHelperWin32::~CUSBMassStorageDeviceHelperWin32()
 //-----------------------------------------------------------------------------
 PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier)
 {
+  PRBool bCanHandleDevice = PR_FALSE;
+
+  nsString strDeviceName(deviceName);
+  nsString strDeviceIdentifier(deviceIdentifier);
+
+  if(FindInReadable(NS_LITERAL_STRING("USBSTOR"), strDeviceName) == PR_TRUE)
+  {
+    bCanHandleDevice = PR_TRUE;
+  }
+
   /*
   CreateFile()
   DeviceIoControl()
   */
 
-  return PR_FALSE;
+  return bCanHandleDevice;
 } //Initialize
 
 //-----------------------------------------------------------------------------
