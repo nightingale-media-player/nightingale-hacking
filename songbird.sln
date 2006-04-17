@@ -112,6 +112,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatahandlerogg", "compo
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dove", "feathers\dove\dove.vcproj", "{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -208,6 +212,10 @@ Global
 		{2DF60AD8-97DA-4225-9AAB-B0055364AF34}.Debug.Build.0 = Debug|Win32
 		{2DF60AD8-97DA-4225-9AAB-B0055364AF34}.Release.ActiveCfg = Release|Win32
 		{2DF60AD8-97DA-4225-9AAB-B0055364AF34}.Release.Build.0 = Release|Win32
+		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Debug.ActiveCfg = Debug|Win32
+		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Debug.Build.0 = Debug|Win32
+		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Release.ActiveCfg = Release|Win32
+		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
