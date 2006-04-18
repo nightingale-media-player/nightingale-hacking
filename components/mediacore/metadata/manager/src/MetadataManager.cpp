@@ -33,13 +33,17 @@
 
 // INCLUDES ===================================================================
 #include <nscore.h>
+#include <nspr.h>
 #include "MetadataManager.h"
 
+#include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
+#include <xpcom/nsMemory.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
-#include <xpcom/nsXPCOM.h>
+#include <xpcom/nsIComponentRegistrar.h>
+#include <xpcom/nsSupportsPrimitives.h>
 
 #include <necko/nsIURI.h>
 #include <necko/nsIFileStreams.h>
@@ -102,7 +106,55 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
   if(NS_FAILED(nRet)) return nRet;
 
-  pHandler = do_CreateInstance("@songbird.org/Songbird/MetadataHandler/ID3;1");
+  // Local types to ease handling.
+  handlerlist_t handlerlist; // hooray for autosorting
+
+  // Find a useful handler for this object.
+  nsresult rv;
+  nsCOMPtr<nsIComponentRegistrar> registrar;
+  rv = NS_GetComponentRegistrar(getter_AddRefs(registrar));
+  if (rv != NS_OK)
+    return rv;
+
+  nsCOMPtr<nsISimpleEnumerator> simpleEnumerator;
+  rv = registrar->EnumerateContractIDs(getter_AddRefs(simpleEnumerator));
+  if (rv != NS_OK)
+    return rv;
+
+  nsCString u8Url;
+  pURI->GetSpec( u8Url );
+  nsString url = NS_ConvertUTF8toUTF16(u8Url);
+  PRBool moreAvailable;
+  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK &&
+    moreAvailable)
+  {
+    nsCOMPtr<nsISupportsCString> contractString;
+    if (simpleEnumerator->GetNext(getter_AddRefs(contractString)) == NS_OK)
+    {
+      char* contractID = NULL;
+      contractString->ToString(&contractID);
+      if (strstr(contractID, "@songbird.org/Songbird/MetadataHandler/"))
+      {
+        nsCOMPtr<sbIMetadataHandler> handler(do_CreateInstance(contractID));
+        if (handler.get())
+        {
+          PRInt32 vote;
+          handler->Vote( url.get(), &vote );
+          sbMetadataHandlerItem item;
+          item.m_Handler = handler;
+          item.m_Vote = vote;
+          handlerlist.insert( item );
+        }
+      }
+      PR_Free(contractID);
+    }
+  }
+  if ( handlerlist.rbegin() != handlerlist.rend() )
+  {
+    handlerlist_t::reverse_iterator i = handlerlist.rbegin();
+    pHandler = (*i).m_Handler;
+  }
+
   if(!pHandler)
   {
     nRet = NS_ERROR_UNEXPECTED;

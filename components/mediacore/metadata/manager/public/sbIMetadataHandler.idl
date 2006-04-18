@@ -60,4 +60,5 @@ interface sbIMetadataHandler : nsISupports
   void OnChannelData( in nsISupports channel );
   PRBool Completed();
   void Close();
+  PRInt32 Vote( in wstring url );
 };

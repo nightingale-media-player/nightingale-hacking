@@ -145,6 +145,18 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Close()
   return NS_OK;
 } //Close
 
+NS_IMETHODIMP sbMetadataHandlerOGG::Vote( const PRUnichar *url, PRInt32 *_retval )
+{
+  nsString strUrl( url );
+
+  if ( strUrl.Find( NS_LITERAL_STRING(".ogg") ) != -1 )
+    *_retval = 1;
+  else
+    *_retval = -1;
+
+  return NS_OK;
+} //Close
+
 //-----------------------------------------------------------------------------
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)

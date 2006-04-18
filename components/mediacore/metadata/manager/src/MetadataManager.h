@@ -34,6 +34,10 @@
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "sbIMetadataManager.h"
+#include "sbIMetadataHandler.h"
+#include <nsCOMPtr.h>
+
+#include <set>
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAMANAGER_CONTRACTID  "@songbird.org/Songbird/MetadataManager;1"
@@ -52,5 +56,20 @@ class sbMetadataManager : public sbIMetadataManager
 
   sbMetadataManager();
   virtual ~sbMetadataManager();
+
+  struct sbMetadataHandlerItem
+  {
+    nsCOMPtr<sbIMetadataHandler> m_Handler;
+    PRInt32 m_Vote;
+    bool operator < ( const sbMetadataManager::sbMetadataHandlerItem &T ) const
+    {
+      return m_Vote < T.m_Vote;
+    }
+    bool operator == ( const sbMetadataManager::sbMetadataHandlerItem &T ) const
+    {
+      return m_Vote == T.m_Vote;
+    }
+  };
+  class handlerlist_t : public std::set< sbMetadataHandlerItem > {};
 
 };
