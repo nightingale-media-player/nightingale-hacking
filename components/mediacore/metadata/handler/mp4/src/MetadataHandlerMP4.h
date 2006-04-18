@@ -25,7 +25,7 @@
 */
 
 /**
-* \file MetadataHandlerID3.h
+* \file MetadataHandlerMP4.h
 * \brief 
 */
 
@@ -42,33 +42,29 @@
 
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"
-
-#include <id3/tag.h>
+#include "sbIMetadataChannel.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAHANDLERID3_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/ID3;1"
-#define SONGBIRD_METADATAHANDLERID3_CLASSNAME   "Songbird ID3 Metadata Handler Interface"
+#define SONGBIRD_METADATAHANDLERMP4_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/MP4;1"
+#define SONGBIRD_METADATAHANDLERMP4_CLASSNAME   "Songbird MP4 Metadata Handler Interface"
 
-// {D83C6CE1-DDCE-49ad-ABF3-430A5C223C3B}
-#define SONGBIRD_METADATAHANDLERID3_CID { 0xd83c6ce1, 0xddce, 0x49ad, { 0xab, 0xf3, 0x43, 0xa, 0x5c, 0x22, 0x3c, 0x3b } }
+// {39B0F740-5E3B-4016-8834-CEC55B6E2967}
+#define SONGBIRD_METADATAHANDLERMP4_CID { 0x39b0f740, 0x5e3b, 0x4016, { 0x88, 0x34, 0xce, 0xc5, 0x5b, 0x6e, 0x29, 0x67 } }
 
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-class sbMetadataHandlerID3 : public sbIMetadataHandler
+class sbMetadataHandlerMP4 : public sbIMetadataHandler
 {
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMETADATAHANDLER
 
-  sbMetadataHandlerID3();
-  virtual ~sbMetadataHandlerID3();
+  sbMetadataHandlerMP4();
+  virtual ~sbMetadataHandlerMP4();
 
 protected:
-  PRInt32 ReadTag(ID3_Tag &tag);
-  PRInt32 ReadFrame(ID3_Frame *frame);
-  PRInt32 ReadFields(ID3_Field *field);
-
   nsCOMPtr<sbIMetadataValues> m_Values;
+  nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;
   nsCOMPtr<nsIChannel> m_Channel;
-  ID3_Tag              m_ID3Tag;
+  PRBool               m_Completed;
 };

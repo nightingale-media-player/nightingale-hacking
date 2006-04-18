@@ -149,7 +149,7 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Vote( const PRUnichar *url, PRInt32 *_retval
 {
   nsString strUrl( url );
 
-  if ( strUrl.Find( NS_LITERAL_STRING(".ogg") ) != -1 )
+  if ( strUrl.Find( ".ogg", PR_TRUE ) != -1 )
     *_retval = 1;
   else
     *_retval = -1;

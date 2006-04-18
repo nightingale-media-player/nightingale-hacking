@@ -25,34 +25,25 @@
 */
 
 /** 
-* \file  MetadataHandlerID3Component.cpp
-* \brief Songbird ID3 Metadata Handler Component Factory and Main Entry Point.
+* \file  MetadataHandlerMP4Component.cpp
+* \brief Songbird MP4 Metadata Handler Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
-#include "MetadataHandlerID3.h"
+#include "MetadataHandlerMP4.h"
 
-#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
-  static _Interface * _Interface##SimpletonConstructor( void )                  \
-  {                                                                             \
-  static _Interface * m_Simpleton = NULL;                                     \
-  NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
-  return m_Simpleton;                                                         \
-  }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor );
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataHandlerMP4)
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataHandlerID3)
-
-static nsModuleComponentInfo sbMetadataHandlerID3Component[] =
+static nsModuleComponentInfo sbMetadataHandlerMP4Component[] =
 {
 
   {
-    SONGBIRD_METADATAHANDLERID3_CLASSNAME,
-    SONGBIRD_METADATAHANDLERID3_CID,
-    SONGBIRD_METADATAHANDLERID3_CONTRACTID,
-    sbMetadataHandlerID3Constructor
+    SONGBIRD_METADATAHANDLERMP4_CLASSNAME,
+    SONGBIRD_METADATAHANDLERMP4_CID,
+    SONGBIRD_METADATAHANDLERMP4_CONTRACTID,
+    sbMetadataHandlerMP4Constructor
   },
 
 };
 
-NS_IMPL_NSGETMODULE("SongbirdMetadataHandlerID3Component", sbMetadataHandlerID3Component)
+NS_IMPL_NSGETMODULE("SongbirdMetadataHandlerMP4Component", sbMetadataHandlerMP4Component)

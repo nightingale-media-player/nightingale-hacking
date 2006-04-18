@@ -222,6 +222,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         bool ok = tag.Parse( channel_reader );
         ReadTag(tag);
 /*
+        // How do I calculate length without bitrate?
         PRUnichar *bitrate;
         m_Values->GetValue( NS_LITERAL_STRING("bitrate").get(), &bitrate );
         if ( bitrate )
@@ -270,7 +271,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Vote(const PRUnichar *url, PRInt32 *_retval 
 {
   nsString strUrl( url );
 
-  if ( strUrl.Find( NS_LITERAL_STRING(".ogg") ) != -1 )
+  if ( strUrl.Find( ".mp3", PR_TRUE ) != -1 )
     *_retval = 1;
   else
     *_retval = 0;
@@ -312,7 +313,6 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   nsCString cstrScheme, cstrPath;
   pURI->GetScheme(cstrScheme);
   pURI->GetPath(cstrPath);
-
   if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
   {
 
