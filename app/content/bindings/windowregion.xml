@@ -44,8 +44,11 @@
         try
         {
           this.makeRegionList();
-          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"].getService(Components.interfaces.sbIWindowResizeHook);
-          windowResizeHook.SetCallback(document, this);
+          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"]
+          if (windowResizeHook)
+            var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
+            if (service)
+              service.SetCallback(document, this);
         }    
         catch ( err )
         {
