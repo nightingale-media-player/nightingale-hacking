@@ -31,10 +31,6 @@
 
 #pragma once
 
-#if defined(XP_WIN)
-#include <Windows.h>
-#endif
-
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "MetadataHandlerID3.h"
@@ -227,7 +223,6 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         m_Values->GetValue( NS_LITERAL_STRING("bitrate").get(), &bitrate );
         if ( bitrate )
         {
-          MessageBoxW( NULL, bitrate, L"bitrate", MB_OK );
         }
 */
       }

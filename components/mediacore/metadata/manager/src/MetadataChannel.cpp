@@ -134,6 +134,12 @@ NS_IMETHODIMP sbMetadataChannel::GetSize(PRUint64 *_retval)
   return NS_OK;
 }
 
+/* void Skip (in PRUint64 skip); */
+NS_IMETHODIMP sbMetadataChannel::Skip(PRUint64 skip)
+{
+  return SetPos( m_Pos + skip );
+}
+
 /* PRUint32 Read (in charPtr buf, in PRUint32 len); */
 NS_IMETHODIMP sbMetadataChannel::Read(char * out_buf, PRUint32 len, PRUint32 *_retval)
 {

@@ -272,15 +272,9 @@ void sbMetadataHandlerOGG::ParseChannel()
   // We don't care about the first header?
   sbOGGHeader first_header = ParseHeader();
   if ( first_header.m_Size && first_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
-  {
-    buf = nsMemory::Alloc( first_header.m_Size );
-    m_ChannelHandler->Read( (char *)buf, first_header.m_Size, &count );
-    nsMemory::Free( buf );
-  }
+    m_ChannelHandler->Skip( first_header.m_Size );
   else
-  {
-    return; // Dead monkey.
-  }
+    return; // Dead monkey.  Empty values.
 
 
   // They say we want the second header.
@@ -292,10 +286,8 @@ void sbMetadataHandlerOGG::ParseChannel()
     ( comment_header.page_checksum == first_header.page_checksum ) &&
     ( comment_header.m_Size == first_header.m_Size ) )
   {
-    // Unfortunately, sometimes idiot files have 2 opening headers.
-    buf = nsMemory::Alloc( first_header.m_Size );
-    m_ChannelHandler->Read( (char *)buf, first_header.m_Size, &count );
-    nsMemory::Free( buf );
+    // Unfortunately, sometimes idiot files have 2 identical opening headers?
+    m_ChannelHandler->Skip( comment_header.m_Size );
     comment_header = ParseHeader();
   }
   // So, let's go...
@@ -330,9 +322,9 @@ void sbMetadataHandlerOGG::ParseChannel()
             comment_string.Right( value, comment_string.Length() - split - 1 );
             m_Values->SetValue( key.get(), value.get(), 0 ); // Lots of bulletproofing before we get here.
           }
-          else break;
+          else break; // Crap
         }
-        else break;
+        else break; // Crap
       }
     }
   }

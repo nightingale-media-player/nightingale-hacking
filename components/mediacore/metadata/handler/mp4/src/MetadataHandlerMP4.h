@@ -44,6 +44,10 @@
 #include "sbIMetadataValues.h"
 #include "sbIMetadataChannel.h"
 
+#include "quicktime.h"
+#include "private.h"
+#include "funcprotos.h"
+
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAHANDLERMP4_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/MP4;1"
 #define SONGBIRD_METADATAHANDLERMP4_CLASSNAME   "Songbird MP4 Metadata Handler Interface"
@@ -61,6 +65,9 @@ class sbMetadataHandlerMP4 : public sbIMetadataHandler
 
   sbMetadataHandlerMP4();
   virtual ~sbMetadataHandlerMP4();
+
+public:
+  void callback( const char *atom_path, const char *value_string );
 
 protected:
   nsCOMPtr<sbIMetadataValues> m_Values;

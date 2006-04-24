@@ -106,15 +106,14 @@ NS_IMETHODIMP sbMetadataHandlerMP4::OnChannelData( nsISupports *channel )
     {
       if ( !m_Completed )
       {
-        /*
+/*
         // How do I calculate length without bitrate?
         PRUnichar *bitrate;
         m_Values->GetValue( NS_LITERAL_STRING("bitrate").get(), &bitrate );
         if ( bitrate )
         {
-        MessageBoxW( NULL, bitrate, L"bitrate", MB_OK );
         }
-        */
+*/
       }
     }
     catch ( const MetadataHandlerMP4Exception err )
@@ -166,6 +165,72 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Vote(const PRUnichar *url, PRInt32 *_retval 
   return NS_OK;
 } //Close
 
+extern "C" void static_callback( const char *atom_path, const char *value_string, void *context_data )
+{
+  if ( context_data )
+  {
+    sbMetadataHandlerMP4 *that = reinterpret_cast<sbMetadataHandlerMP4 *>( context_data );
+    that->callback( atom_path, value_string );
+  }
+}
+
+void sbMetadataHandlerMP4::callback( const char *atom_path, const char *value_string )
+{
+  nsCString atom( atom_path );
+  nsString key, value;
+  
+  // "covr.data" is album art.  deal with this later.
+  if ( key.Find("covr.data") == -1 )
+    value = NS_ConvertUTF8toUTF16(value_string);
+
+  // Mozilla Find can't handle high-bit characters.  Grrr.
+  if ( atom.Find("nam.data") != -1 )
+    key = NS_LITERAL_STRING("title");
+  else if ( atom.Find("ART.data") != -1 )
+    key = NS_LITERAL_STRING("artist");
+  else if ( atom.Find("alb.data") != -1 )
+    key = NS_LITERAL_STRING("album");
+  else if ( atom.Find("gen.data") != -1 )
+    key = NS_LITERAL_STRING("genre");
+  else if ( atom.Find("trkn.data") != -1 )
+    key = NS_LITERAL_STRING("track_no");
+  else if ( atom.Find("disk.data") != -1 )
+    key = NS_LITERAL_STRING("disk_no");
+  else if ( atom.Find("day.data") != -1 )
+    key = NS_LITERAL_STRING("year");
+  else if ( atom.Find("cpil.data") != -1 )
+    key = NS_LITERAL_STRING("compilation");
+  else if ( atom.Find("tmpo.data") != -1 )
+    key = NS_LITERAL_STRING("bpm");
+  else if ( atom.Find("too.data") != -1 )
+    key = NS_LITERAL_STRING("vendor");
+  else if ( atom.Find("labl.data") != -1 )
+    key = NS_LITERAL_STRING("label");
+  else if ( atom.Find("burl.data") != -1 )
+    key = NS_LITERAL_STRING("source_url");
+  else if ( atom.Find("covr.data") != -1 )
+    key = NS_LITERAL_STRING("album_art");
+  else if ( atom.Find("wrt.data") != -1 )
+    key = NS_LITERAL_STRING("composer");
+  else if ( atom.Find("gnre.data") != -1 )
+    key = NS_LITERAL_STRING("genre");
+  else if ( atom.Find("orch.data") != -1 )
+    key = NS_LITERAL_STRING("orchestra");
+  else
+  {
+    // Inform the console that we've a mystery.
+    nsCOMPtr<nsIURI> pURI;
+    m_Channel->GetURI(getter_AddRefs(pURI));
+    nsCString cstrSpec;
+    pURI->GetAsciiSpec(cstrSpec);
+    printf( "MetadataHandlerMP4 -- %s\nUnknown atom: %s = \"%s\"\n\n", cstrSpec.get(), atom.get(), value_string );
+  }
+
+  if ( key.Length() )
+  {
+    m_Values->SetValue( key.get(), value.get(), 0 );
+  }
+} 
 //-----------------------------------------------------------------------------
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
@@ -216,6 +281,18 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
 #endif
 
     // ?? Local file
+    char *url = const_cast<char *>(NS_UnescapeURL(cstrPath).get());
+
+/*
+  Atomic Parsley is GPL and less-desireable, but it seems to know where the proper data atoms are.
+
+    APar_ScanAtoms(url);    
+    AtomicInfo info = APar_FindAtom("moov.udta.meta.ilst.©nam.data", false, false, true, false);
+*/
+    
+    quicktime_t *file;
+    file = quicktime_open( url, 1, 0, 0 );
+    quicktime_dump_info(file, static_callback, this);
   }
   else
   {

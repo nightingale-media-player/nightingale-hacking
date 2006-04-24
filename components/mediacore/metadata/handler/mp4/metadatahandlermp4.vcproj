@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\vendor\mp4&quot;;&quot;$(SolutionDir)dependencies\vendor\mp4\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;METADATAHANDLERMP4_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN;MP4LIB_LINKOPTION=3"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -37,10 +37,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib libmp4_st60.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerMP4_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\mp4lib\release\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\mp4\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerMP4.pdb"
 				SubSystem="2"
@@ -81,7 +81,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\vendor\mp4&quot;;&quot;$(SolutionDir)dependencies\vendor\mp4\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;METADATAHANDLERMP4_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN;MP4LIB_LINKOPTION=3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -93,10 +93,10 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib libmp4_st60.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerMP4.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\mp4lib\release\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\mp4\$(ConfigurationName)&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerMP4.pdb"
 				SubSystem="2"
