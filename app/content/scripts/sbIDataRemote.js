@@ -81,6 +81,7 @@ function sbIDataRemote( key, root )
     this.m_CallbackBool = false;
     this.m_CallbackNot = false;
     this.m_CallbackEval = "";
+    this.m_CallbackObserving = false;
     
     // Go connect to the prefs object acting as the data representation of the key.
     prefs_service = SBBindInterface( null, "@mozilla.org/preferences;1", Components.interfaces.nsIPrefService, true );
@@ -217,7 +218,9 @@ function sbIDataRemote( key, root )
         if ( this.m_Prefs )
         {
           // Clear ourselves as an observer.
-          this.m_Prefs.removeObserver( this.m_Key, this );
+          if ( this.m_CallbackObserving )
+            this.m_Prefs.removeObserver( this.m_Key, this );
+          this.m_CallbackObserving = false;
         }
       }
       catch ( err )
@@ -241,8 +244,10 @@ function sbIDataRemote( key, root )
           this.m_SuppressFirst = suppress_first;
         
           // Clear and reinsert ourselves as an observer.
-          this.m_Prefs.removeObserver( this.m_Key, this );
+          if ( this.m_CallbackObserving )
+            this.m_Prefs.removeObserver( this.m_Key, this );
           this.m_Prefs.addObserver( this.m_Key, this, true );
+          this.m_CallbackObserving = true;
 
           // Now we're observing for a function.        
           this.m_CallbackFunction = func;
@@ -294,8 +299,10 @@ function sbIDataRemote( key, root )
         if ( this.m_Prefs )
         {
           // Clear and reinsert ourselves as an observer.
-          this.m_Prefs.removeObserver( this.m_Key, this );
+          if ( this.m_CallbackObserving )
+            this.m_Prefs.removeObserver( this.m_Key, this );
           this.m_Prefs.addObserver( this.m_Key, this, true );
+          this.m_CallbackObserving = true;
           
           // Now we're observing for an object's property.        
           this.m_CallbackFunction = null;
@@ -347,8 +354,10 @@ function sbIDataRemote( key, root )
         if ( this.m_Prefs )
         {
           // Clear and reinsert ourselves as an observer.
-          this.m_Prefs.removeObserver( this.m_Key, this );
+          if ( this.m_CallbackObserving )
+            this.m_Prefs.removeObserver( this.m_Key, this );
           this.m_Prefs.addObserver( this.m_Key, this, true );
+          this.m_CallbackObserving = true;
           
           // Now we're observing for an object's attribute.        
           this.m_CallbackFunction = null;

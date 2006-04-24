@@ -46,6 +46,7 @@ DataRemote.prototype = {
   _callbackNot: false,
   _callbackEval: "",
   _suppressFirst: false,
+  _observing: false,
 
   init: function(key, root) {
     // Only allow initialization once per object
@@ -88,8 +89,9 @@ DataRemote.prototype = {
   unbind: function() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    if (this.m_Prefs)
-      this.m_Prefs.removeObserver( this.m_Key, this );
+    if (this._prefs && this._observing)
+      this._prefs.removeObserver( this._key, this );
+    this._observing = false;
   },
       
   bindEventFunction: function(func) {
@@ -105,8 +107,10 @@ DataRemote.prototype = {
     this._suppressFirst = suppressFirst;
   
     // Clear and reinsert ourselves as an observer.
-    this._prefs.removeObserver(this._key, this);
+    if ( this._observing )
+      this._prefs.removeObserver(this._key, this);
     this._prefs.addObserver(this._key, this, true);
+    this._observing = true;
 
     // Now we're observing for a function.        
     this._callbackFunction = func;
@@ -133,8 +137,10 @@ DataRemote.prototype = {
       eval = "";
 
     // Clear and reinsert ourselves as an observer.
-    this._prefs.removeObserver(this._key, this);
+    if ( this._observing )
+      this._prefs.removeObserver(this._key, this);
     this._prefs.addObserver(this._key, this, true);
+    this._observing = true;
 
     // Now we're observing for an object's property.        
     this._callbackFunction = null;
@@ -161,8 +167,10 @@ DataRemote.prototype = {
       eval = "";
 
     // Clear and reinsert ourselves as an observer.
-    this._prefs.removeObserver(this._key, this);
+    if ( this._observing )
+      this._prefs.removeObserver(this._key, this);
     this._prefs.addObserver(this._key, this, true);
+    this._observing = true;
     
     // Now we're observing for an object's attribute.        
     this._callbackFunction = null;
