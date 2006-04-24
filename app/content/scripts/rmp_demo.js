@@ -543,7 +543,7 @@ var SBVideoMinMaxCB =
 
   QueryInterface : function(aIID)
   {
-    if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallbacl) &&
+    if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
         !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
         !aIID.equals(Components.interfaces.nsISupports)) 
     {
@@ -564,5 +564,4 @@ function setVideoMinMaxCallback()
     // No component
   }
 }
-
 

@@ -67,6 +67,7 @@ NS_IMETHODIMP CWindowResizeHook::SetCallback(nsISupports *window, sbIWindowResiz
   NATIVEWINDOW wnd = NativeWindowFromNode::get(window);
   if (wnd == NULL) return NS_ERROR_FAILURE;
   if (findItemByCallback(cb)) return NS_ERROR_FAILURE;
+  NS_ADDREF(cb);
   CWindowResizeHookItem *wrhi = new CWindowResizeHookItem();
   wrhi->m_callback = cb;
   wrhi->m_window = wnd;
@@ -81,6 +82,7 @@ NS_IMETHODIMP CWindowResizeHook::ResetCallback(sbIWindowResizeHookCallback *cb)
   if (!wrhi) return NS_ERROR_FAILURE;
   m_items.remove(wrhi);
   delete wrhi;
+  NS_RELEASE(cb);
   return NS_OK;
 } // ResetCallback
 

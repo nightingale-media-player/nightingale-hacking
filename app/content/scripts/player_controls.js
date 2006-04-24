@@ -120,7 +120,7 @@ try
     
 //    setTimeout( SBFirstVolume, 250 );
   }
-  
+
   // Initialize default values (called only by the core window, not by faceplates)
   
   function SBSetPlayerControlsDefaults()
@@ -145,9 +145,8 @@ try
     gPPS.setVolume( playerControls_lastVolume.GetIntValue() );
     var mute = playerControls_muteData.GetIntValue() != 0;
     setMute( mute );
-    onSBPollVolume();
   }
-
+  
   function onVolumeChange( event ) 
   {
     playerControls_trackerVolume.SetValue(true);
@@ -326,6 +325,13 @@ try
     return the_value;
   }
 
+  function log(str)
+  {
+    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                            .getService(Components.interfaces.nsIConsoleService);
+    consoleService.logStringMessage( str );
+  }
+  
   function setMute( theMute )
   {
 try
@@ -771,4 +777,90 @@ catch ( err )
 catch ( err )
 {
   alert( "player_controls.js\n" + err );
+}
+
+var SBMediaKeyboardCB = 
+{
+  OnMute: function()
+  {
+    onMute();
+  },
+  
+  OnVolumeUp: function()
+  {
+    alert('');
+    var s = theVolumeSlider.value;
+    if (s == '') s = playerControls_volume.GetValue();
+    var v = parseInt(s)+8;
+    if (v > 255) v = 255;
+    theVolumeSlider.value = v;
+    onVolumeChange();
+    onVolumeUp();
+  },
+
+  OnVolumeDown: function()
+  {
+    var s = theVolumeSlider.value;
+    if (s == '') s = playerControls_volume.GetValue();
+    var v = parseInt(s)-8;
+    if (v < 0) v = 0;
+    theVolumeSlider.value = v;
+    onVolumeChange();
+    onVolumeUp();
+  },
+
+  OnNextTrack: function()
+  {
+    onFwd();
+  },
+
+  OnPreviousTrack: function()
+  {
+    onBack();
+  },
+
+  OnStop: function()
+  {
+    // yeah... no stop state... hmpf
+    onPause();
+  },
+
+  OnPlayPause: function()
+  {
+    if (gPPS.getPaused()) onPlay(); else onPause(); 
+  },
+
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIMediaKeyboardCallback) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+}
+
+function setMediaKeyboardCallback()
+{
+  try {
+    var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"].getService(Components.interfaces.sbIMediaKeyboard);
+    mediakeyboard.AddCallback(SBMediaKeyboardCB);
+  }
+  catch (e) {
+    // No component
+  }
+}
+
+function resetMediaKeyboardCallback()
+{
+  try {
+    var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"].getService(Components.interfaces.sbIMediaKeyboard);
+    mediakeyboard.RemoveCallback(SBMediaKeyboardCB);
+  }
+  catch (e) {
+    // No component
+  }
 }

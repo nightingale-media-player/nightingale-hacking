@@ -42,7 +42,7 @@
  pack="start"
  hidechrome="true"
  onload="{centerWindowOnScreen();SBInitialize();}onSBMiniplayerDataLoad();"
- onunload="onSBMiniplayerDataUnload();"
+ onunload="onSBMiniplayerDataUnload();SBUninitialize();"
  class="sb_faceplate miniplayer"
  onkeypress="onMiniplayerKeypress( event );"
 >

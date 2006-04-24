@@ -56,7 +56,16 @@ try
     // initialize player controls for this faceplate  
     SBInitPlayerControls();
 
+    var location = "" + window.location; // Grrr.  Dumb objects.
+    if ( location.indexOf("?video") == -1 ) setMediaKeyboardCallback();
+
     window.addEventListener( "keydown", checkAltF4, true );
+  }
+  
+  function SBUninitialize()
+  {
+    var location = "" + window.location; // Grrr.  Dumb objects.
+    if ( location.indexOf("?video") == -1 ) resetMediaKeyboardCallback();
   }
    
   //

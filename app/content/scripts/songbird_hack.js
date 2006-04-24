@@ -247,6 +247,7 @@ function SBInitialize()
     onWindowLoadSize();
     setMinMaxCallback();
     SBInitPlayerControls();
+    setMediaKeyboardCallback();
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
@@ -415,6 +416,7 @@ var aMetadataHandler = null;
 
 function SBUninitialize()
 {
+  resetMediaKeyboardCallback();
   try
   {
     var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
