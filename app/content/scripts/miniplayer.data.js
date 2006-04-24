@@ -54,7 +54,9 @@ try
       MiniplayerAdd( SBDataBindElementAttribute( "playlist.repeat", "rmp_demo_btn_repa", "hidden", true, false, "parseInt( value ) != 2" ) );
       
       // Metadata Items    
+      
       MiniplayerAdd( SBDataBindElementProperty ( "metadata.title",  "rmp_demo_text_title", "value" ) );
+      
 //      MiniplayerAdd( SBDataBindElementProperty ( "metadata.artist", "rmp_demo_text_artist", "value" ) );
 //      MiniplayerAdd( SBDataBindElementProperty ( "metadata.album", "rmp_demo_text_album", "value" ) );
       
@@ -81,7 +83,7 @@ try
       alert( err );
     }
   }
-      
+  
   // The bind function returns a remote, 
   // we keep it here so there's always a ref
   // and we stay bound till we unload.

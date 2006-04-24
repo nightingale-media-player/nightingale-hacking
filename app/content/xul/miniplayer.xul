@@ -64,7 +64,7 @@
   <vbox><button id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" oncommand="onFwd( );" onmousedown="onFwdDown();" onmouseup="onFwdUp();" /> </vbox>
   <vbox id="rmp_demo_dash">
     <hbox id="rmp_demo_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
-      <label id="rmp_demo_text_title" value="" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <label id="rmp_demo_text_title" value="" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
       <label id="rmp_demo_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       <label id="rmp_demo_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       <label id="rmp_demo_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
