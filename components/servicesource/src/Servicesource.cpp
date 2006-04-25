@@ -66,6 +66,18 @@
 
 #include "IPlaylist.h"
 
+
+#define MODULE_SHORTCIRCUIT 0
+
+#if MODULE_SHORTCIRCUIT
+# define METHOD_SHORTCIRCUIT return NS_OK;
+# define VMETHOD_SHORTCIRCUIT return;
+#else
+# define METHOD_SHORTCIRCUIT
+# define VMETHOD_SHORTCIRCUIT
+#endif
+
+
 static  CServicesource  *gServicesource = nsnull;
 static  nsIRDFService   *gRDFService = nsnull;
 
@@ -393,6 +405,7 @@ CServicesource::CServicesource()
 
 void CServicesource::Update(void)
 {
+  VMETHOD_SHORTCIRCUIT;
   // Inform the observers that everything changed.
   for ( observers_t::iterator o = m_Observers.begin(); o != m_Observers.end(); o++ )
   {
@@ -403,6 +416,7 @@ void CServicesource::Update(void)
 
 void CServicesource::Init(void)
 {
+  VMETHOD_SHORTCIRCUIT;
   {
     nsresult rv = NS_OK;
 
@@ -492,6 +506,7 @@ void CServicesource::Init(void)
 
 void CServicesource::DeInit (void)
 {
+  VMETHOD_SHORTCIRCUIT;
 #ifdef DEBUG_REFS
   --gInstanceCount;
   fprintf(stdout, "%d - RDF: CServicesource\n", gInstanceCount);
@@ -528,6 +543,7 @@ void CServicesource::DeInit (void)
 NS_IMETHODIMP
 CServicesource::GetURI(char **uri)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(uri != nsnull, "null ptr");
   if (! uri)
     return NS_ERROR_NULL_POINTER;
@@ -546,6 +562,7 @@ CServicesource::GetSource(nsIRDFResource* property,
                     PRBool tv,
                     nsIRDFResource** source /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(property != nsnull, "null ptr");
   if (! property)
     return NS_ERROR_NULL_POINTER;
@@ -570,6 +587,7 @@ CServicesource::GetSources(nsIRDFResource *property,
                      PRBool tv,
                      nsISimpleEnumerator **sources /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -581,6 +599,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
                     PRBool tv,
                     nsIRDFNode **target /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -753,6 +772,7 @@ CServicesource::GetTargets(nsIRDFResource *source,
                      PRBool tv,
                      nsISimpleEnumerator **targets /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -924,6 +944,7 @@ CServicesource::Assert(nsIRDFResource *source,
                  nsIRDFNode *target,
                  PRBool tv)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -934,6 +955,7 @@ CServicesource::Unassert(nsIRDFResource *source,
                    nsIRDFResource *property,
                    nsIRDFNode *target)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -945,6 +967,7 @@ CServicesource::Change(nsIRDFResource* aSource,
                  nsIRDFNode* aOldTarget,
                  nsIRDFNode* aNewTarget)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -956,6 +979,7 @@ CServicesource::Move(nsIRDFResource* aOldSource,
                nsIRDFResource* aProperty,
                nsIRDFNode* aTarget)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -968,6 +992,7 @@ CServicesource::HasAssertion(nsIRDFResource *source,
                        PRBool tv,
                        PRBool *hasAssertion /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1020,6 +1045,7 @@ CServicesource::HasAssertion(nsIRDFResource *source,
 NS_IMETHODIMP 
 CServicesource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *result)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1028,6 +1054,7 @@ CServicesource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *result
 NS_IMETHODIMP 
 CServicesource::HasArcOut(nsIRDFResource *aSource, nsIRDFResource *aArc, PRBool *result)
 {
+  METHOD_SHORTCIRCUIT;
   *result = PR_FALSE;
 
   if (aSource == kNC_Servicesource)
@@ -1054,6 +1081,7 @@ NS_IMETHODIMP
 CServicesource::ArcLabelsIn(nsIRDFNode *node,
                       nsISimpleEnumerator ** labels /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1063,6 +1091,7 @@ NS_IMETHODIMP
 CServicesource::ArcLabelsOut(nsIRDFResource *source,
                        nsISimpleEnumerator **labels /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1127,6 +1156,7 @@ CServicesource::ArcLabelsOut(nsIRDFResource *source,
 NS_IMETHODIMP
 CServicesource::GetAllResources(nsISimpleEnumerator** aCursor)
 {
+  METHOD_SHORTCIRCUIT;
   NS_NOTYETIMPLEMENTED("sorry!");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -1136,6 +1166,7 @@ CServicesource::GetAllResources(nsISimpleEnumerator** aCursor)
 NS_IMETHODIMP
 CServicesource::AddObserver(nsIRDFObserver *n)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -1151,6 +1182,7 @@ CServicesource::AddObserver(nsIRDFObserver *n)
 NS_IMETHODIMP
 CServicesource::RemoveObserver(nsIRDFObserver *n)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -1182,6 +1214,7 @@ CServicesource::IsCommandEnabled(nsISupportsArray/*<nsIRDFResource>*/* aSources,
                            nsISupportsArray/*<nsIRDFResource>*/* aArguments,
                            PRBool* aResult)
 {
+  METHOD_SHORTCIRCUIT;
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -1192,6 +1225,7 @@ CServicesource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
                     nsIRDFResource*   aCommand,
                     nsISupportsArray/*<nsIRDFResource>*/* aArguments)
 {
+  METHOD_SHORTCIRCUIT;
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -1200,6 +1234,7 @@ CServicesource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
 NS_IMETHODIMP
 CServicesource::BeginUpdateBatch()
 {
+  METHOD_SHORTCIRCUIT;
   return NS_OK;
 }
 
@@ -1208,6 +1243,7 @@ CServicesource::BeginUpdateBatch()
 NS_IMETHODIMP
 CServicesource::EndUpdateBatch()
 {
+  METHOD_SHORTCIRCUIT;
   return NS_OK;
 }
 

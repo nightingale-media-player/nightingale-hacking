@@ -70,6 +70,18 @@
 
 #include "IPlaylist.h"
 
+#define MODULE_SHORTCIRCUIT 0
+
+#if MODULE_SHORTCIRCUIT
+# define METHOD_SHORTCIRCUIT return NS_OK;
+# define VMETHOD_SHORTCIRCUIT return;
+#else
+# define METHOD_SHORTCIRCUIT
+# define VMETHOD_SHORTCIRCUIT
+#endif
+
+
+
 static  sbPlaylistsource  *gPlaylistPlaylistsource = nsnull;
 static  nsIRDFService     *gRDFService = nsnull;
 
@@ -223,6 +235,7 @@ sbPlaylistsource::sbPlaylistsource()
 
 NS_IMETHODIMP sbPlaylistsource::FeedPlaylist(const PRUnichar *RefName, const PRUnichar *ContextGUID, const PRUnichar *TableName)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName && ContextGUID && TableName ) )
   {
     return NS_OK;
@@ -292,12 +305,14 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylist(const PRUnichar *RefName, const PRU
 
 NS_IMETHODIMP sbPlaylistsource::ClearPlaylist(const PRUnichar *RefName)
 {
+  METHOD_SHORTCIRCUIT;
   ClearPlaylistSTR( RefName );
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPlaylistsource::IncomingObserver(const PRUnichar *RefName, nsIDOMNode *Observer)
 {
+  METHOD_SHORTCIRCUIT;
   PRBool found = PR_FALSE;
   for ( observers_t::iterator oi = g_Observers.begin(); oi != g_Observers.end(); oi++ )
   {
@@ -319,6 +334,7 @@ NS_IMETHODIMP sbPlaylistsource::IncomingObserver(const PRUnichar *RefName, nsIDO
 
 void sbPlaylistsource::ClearPlaylistSTR(const PRUnichar *RefName)
 {
+  VMETHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return;
@@ -338,6 +354,7 @@ void sbPlaylistsource::ClearPlaylistSTR(const PRUnichar *RefName)
 
 void sbPlaylistsource::ClearPlaylistRDF(nsIRDFResource *RefResource)
 {
+  VMETHOD_SHORTCIRCUIT;
   // LOCK IT.
   //nsAutoMonitor mon(g_pMonitor);
 
@@ -354,6 +371,7 @@ void sbPlaylistsource::ClearPlaylistRDF(nsIRDFResource *RefResource)
 
 NS_IMETHODIMP sbPlaylistsource::GetQueryResult(const PRUnichar *RefName, sbIDatabaseResult **_retval)
 {
+  METHOD_SHORTCIRCUIT;
   *_retval = nsnull;
 
   if ( RefName )
@@ -382,6 +400,7 @@ NS_IMETHODIMP sbPlaylistsource::GetQueryResult(const PRUnichar *RefName, sbIData
 
 NS_IMETHODIMP sbPlaylistsource::GetRefRowCount(const PRUnichar *RefName, PRInt32 *_retval)
 {
+  METHOD_SHORTCIRCUIT;
   *_retval = -1;
 
   if ( RefName )
@@ -399,6 +418,7 @@ NS_IMETHODIMP sbPlaylistsource::GetRefRowCount(const PRUnichar *RefName, PRInt32
 
 NS_IMETHODIMP sbPlaylistsource::GetRefColumnCount(const PRUnichar *RefName, PRInt32 *_retval)
 {
+  METHOD_SHORTCIRCUIT;
   *_retval = -1;
 
   if ( RefName )
@@ -417,6 +437,7 @@ NS_IMETHODIMP sbPlaylistsource::GetRefColumnCount(const PRUnichar *RefName, PRIn
 /* wstring GetRefRowCellByColum (in wstring RefName, in PRInt32 Row, in wstring Column); */
 NS_IMETHODIMP sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar *RefName, PRInt32 Row, const PRUnichar *Column, PRUnichar **_retval)
 {
+  METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
   if ( RefName )
   {
@@ -444,6 +465,7 @@ NS_IMETHODIMP sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar *RefName, 
 /* PRInt32 GetRefRowByColumnValue (in wstring RefName, in PRInt32 Column, in wstring Value); */
 NS_IMETHODIMP sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar *RefName, const PRUnichar * Column, const PRUnichar *Value, PRInt32 *_retval)
 {
+  METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
   *_retval = -1;
   if ( RefName )
@@ -524,6 +546,7 @@ NS_IMETHODIMP sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar *RefName,
 /* PRBool IsQueryExecuting (in wstring RefName); */
 NS_IMETHODIMP sbPlaylistsource::IsQueryExecuting(const PRUnichar *RefName, PRBool *_retval)
 {
+  METHOD_SHORTCIRCUIT;
   *_retval = PR_FALSE;
 
   if ( RefName )
@@ -542,6 +565,7 @@ NS_IMETHODIMP sbPlaylistsource::IsQueryExecuting(const PRUnichar *RefName, PRBoo
 /* void FeedPlaylistFilterOverride (in wstring RefName, in wstring FilterString); */
 NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefName, const PRUnichar *FilterString)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName && FilterString ) )
   {
     return NS_OK;
@@ -728,6 +752,7 @@ NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefN
 /* wstring GetFilterOverride (in wstring RefName); */
 NS_IMETHODIMP sbPlaylistsource::GetFilterOverride(const PRUnichar *RefName, PRUnichar **_retval)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return NS_OK;
@@ -764,6 +789,7 @@ NS_IMETHODIMP sbPlaylistsource::GetFilterOverride(const PRUnichar *RefName, PRUn
 
 NS_IMETHODIMP sbPlaylistsource::SetFilter(const PRUnichar *RefName, PRInt32 Index, const PRUnichar *FilterString, const PRUnichar *FilterRefName, const PRUnichar *FilterColumn)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName && FilterString && FilterRefName && FilterColumn ) )
   {
     return NS_OK;
@@ -805,6 +831,7 @@ NS_IMETHODIMP sbPlaylistsource::SetFilter(const PRUnichar *RefName, PRInt32 Inde
 
 NS_IMETHODIMP sbPlaylistsource::GetNumFilters(const PRUnichar *RefName, PRInt32 *_retval)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return NS_OK;
@@ -824,6 +851,7 @@ NS_IMETHODIMP sbPlaylistsource::GetNumFilters(const PRUnichar *RefName, PRInt32 
 
 NS_IMETHODIMP sbPlaylistsource::ClearFilter(const PRUnichar *RefName, PRInt32 Index)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return NS_OK;
@@ -848,6 +876,7 @@ NS_IMETHODIMP sbPlaylistsource::ClearFilter(const PRUnichar *RefName, PRInt32 In
 
 NS_IMETHODIMP sbPlaylistsource::GetFilter(const PRUnichar *RefName, PRInt32 Index, PRUnichar **_retval)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return NS_OK;
@@ -886,6 +915,7 @@ NS_IMETHODIMP sbPlaylistsource::GetFilter(const PRUnichar *RefName, PRInt32 Inde
 
 NS_IMETHODIMP sbPlaylistsource::GetFilterRef(const PRUnichar *RefName, PRInt32 Index, PRUnichar **_retval)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return NS_OK;
@@ -920,6 +950,7 @@ NS_IMETHODIMP sbPlaylistsource::GetFilterRef(const PRUnichar *RefName, PRInt32 I
 
 NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_retval)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( RefName ) )
   {
     return NS_OK;
@@ -1116,6 +1147,7 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
 /* void RegisterPlaylistCommands (in wstring ContextGUID, in wstring TableName, in sbIPlaylistCommands CommandObj); */
 NS_IMETHODIMP sbPlaylistsource::RegisterPlaylistCommands(const PRUnichar *ContextGUID, const PRUnichar *TableName, const PRUnichar *PlaylistType, sbIPlaylistCommands *CommandObj)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( ContextGUID && TableName && CommandObj ) )
   {
     return NS_OK;
@@ -1141,6 +1173,7 @@ NS_IMETHODIMP sbPlaylistsource::RegisterPlaylistCommands(const PRUnichar *Contex
 /* sbIPlaylistCommands GetPlaylistCommands (in wstring ContextGUID, in wstring TableName); */
 NS_IMETHODIMP sbPlaylistsource::GetPlaylistCommands(const PRUnichar *ContextGUID, const PRUnichar *TableName, const PRUnichar *PlaylistType, sbIPlaylistCommands **_retval)
 {
+  METHOD_SHORTCIRCUIT;
   if ( ! ( ContextGUID && TableName  ) )
   {
     return NS_OK;
@@ -1172,6 +1205,7 @@ NS_IMETHODIMP sbPlaylistsource::GetPlaylistCommands(const PRUnichar *ContextGUID
 
 void sbPlaylistsource::UpdateObservers()
 {
+  VMETHOD_SHORTCIRCUIT;
   PRBool need_update = PR_FALSE;
   resultlist_t old_garbage;
   nsAutoMonitor mon(g_pMonitor);
@@ -1235,6 +1269,7 @@ void sbPlaylistsource::UpdateObservers()
 
 void sbPlaylistsource::Init(void)
 {
+  VMETHOD_SHORTCIRCUIT;
   if (gRefCnt++ == 0)
   {
     // Make the shared query
@@ -1292,6 +1327,7 @@ void sbPlaylistsource::Init(void)
 
 void sbPlaylistsource::DeInit (void)
 {
+  VMETHOD_SHORTCIRCUIT;
   // DEINIT THE STATIC 
   if (--gRefCnt == 0) 
   {
@@ -1309,6 +1345,7 @@ void sbPlaylistsource::DeInit (void)
 NS_IMETHODIMP
 sbPlaylistsource::GetURI(char **uri)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(uri != nsnull, "null ptr");
   if (! uri)
     return NS_ERROR_NULL_POINTER;
@@ -1327,6 +1364,7 @@ sbPlaylistsource::GetSource(nsIRDFResource* property,
                     PRBool tv,
                     nsIRDFResource** source /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(property != nsnull, "null ptr");
   if (! property)
     return NS_ERROR_NULL_POINTER;
@@ -1351,6 +1389,7 @@ sbPlaylistsource::GetSources(nsIRDFResource *property,
                      PRBool tv,
                      nsISimpleEnumerator **sources /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   //  NS_NOTYETIMPLEMENTED("write me");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -1363,6 +1402,7 @@ sbPlaylistsource::GetTarget(nsIRDFResource *source,
                     PRBool tv,
                     nsIRDFNode **target /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1480,6 +1520,7 @@ NS_IMETHODIMP
 sbPlaylistsource::ForceGetTargets(const PRUnichar *RefName)
 {
 
+  METHOD_SHORTCIRCUIT;
   nsString strRefName( RefName );
   sbFeedInfo *info = GetFeedInfo( strRefName );
 
@@ -1501,6 +1542,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource *source,
                      PRBool tv,
                      nsISimpleEnumerator **targets /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1786,6 +1828,7 @@ sbPlaylistsource::Assert(nsIRDFResource *source,
                  nsIRDFNode *target,
                  PRBool tv)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1796,6 +1839,7 @@ sbPlaylistsource::Unassert(nsIRDFResource *source,
                    nsIRDFResource *property,
                    nsIRDFNode *target)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1807,6 +1851,7 @@ sbPlaylistsource::Change(nsIRDFResource* aSource,
                  nsIRDFNode* aOldTarget,
                  nsIRDFNode* aNewTarget)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1818,6 +1863,7 @@ sbPlaylistsource::Move(nsIRDFResource* aOldSource,
                nsIRDFResource* aProperty,
                nsIRDFNode* aTarget)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_RDF_ASSERTION_REJECTED;
 }
 
@@ -1830,6 +1876,7 @@ sbPlaylistsource::HasAssertion(nsIRDFResource *source,
                        PRBool tv,
                        PRBool *hasAssertion /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1882,6 +1929,7 @@ sbPlaylistsource::HasAssertion(nsIRDFResource *source,
 NS_IMETHODIMP 
 sbPlaylistsource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *result)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1890,6 +1938,7 @@ sbPlaylistsource::HasArcIn(nsIRDFNode *aNode, nsIRDFResource *aArc, PRBool *resu
 NS_IMETHODIMP 
 sbPlaylistsource::HasArcOut(nsIRDFResource *aSource, nsIRDFResource *aArc, PRBool *result)
 {
+  METHOD_SHORTCIRCUIT;
   *result = PR_FALSE;
   return NS_OK;
 }
@@ -1900,6 +1949,7 @@ NS_IMETHODIMP
 sbPlaylistsource::ArcLabelsIn(nsIRDFNode *node,
                       nsISimpleEnumerator ** labels /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -1909,6 +1959,7 @@ NS_IMETHODIMP
 sbPlaylistsource::ArcLabelsOut(nsIRDFResource *source,
                        nsISimpleEnumerator **labels /* out */)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(source != nsnull, "null ptr");
   if (! source)
     return NS_ERROR_NULL_POINTER;
@@ -1973,6 +2024,7 @@ sbPlaylistsource::ArcLabelsOut(nsIRDFResource *source,
 NS_IMETHODIMP
 sbPlaylistsource::GetAllResources(nsISimpleEnumerator** aCursor)
 {
+  METHOD_SHORTCIRCUIT;
   NS_NOTYETIMPLEMENTED("sorry!");
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -1982,6 +2034,7 @@ sbPlaylistsource::GetAllResources(nsISimpleEnumerator** aCursor)
 NS_IMETHODIMP
 sbPlaylistsource::AddObserver(nsIRDFObserver *n)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -2021,6 +2074,7 @@ sbPlaylistsource::AddObserver(nsIRDFObserver *n)
 NS_IMETHODIMP
 sbPlaylistsource::RemoveObserver(nsIRDFObserver *n)
 {
+  METHOD_SHORTCIRCUIT;
   NS_PRECONDITION(n != nsnull, "null ptr");
   if (! n)
     return NS_ERROR_NULL_POINTER;
@@ -2047,6 +2101,7 @@ NS_IMETHODIMP
 sbPlaylistsource::GetAllCmds(nsIRDFResource* source,
                      nsISimpleEnumerator/*<nsIRDFResource>*/** commands)
 {
+  METHOD_SHORTCIRCUIT;
   return(NS_NewEmptyEnumerator(commands));
 }
 
@@ -2058,6 +2113,7 @@ sbPlaylistsource::IsCommandEnabled(nsISupportsArray/*<nsIRDFResource>*/* aSource
                            nsISupportsArray/*<nsIRDFResource>*/* aArguments,
                            PRBool* aResult)
 {
+  METHOD_SHORTCIRCUIT;
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -2068,6 +2124,7 @@ sbPlaylistsource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
                     nsIRDFResource*   aCommand,
                     nsISupportsArray/*<nsIRDFResource>*/* aArguments)
 {
+  METHOD_SHORTCIRCUIT;
   return(NS_ERROR_NOT_IMPLEMENTED);
 }
 
@@ -2076,6 +2133,7 @@ sbPlaylistsource::DoCommand(nsISupportsArray/*<nsIRDFResource>*/* aSources,
 NS_IMETHODIMP
 sbPlaylistsource::BeginUpdateBatch()
 {
+  METHOD_SHORTCIRCUIT;
   return NS_OK;
 }
 
@@ -2084,12 +2142,14 @@ sbPlaylistsource::BeginUpdateBatch()
 NS_IMETHODIMP
 sbPlaylistsource::EndUpdateBatch()
 {
+  METHOD_SHORTCIRCUIT;
   return NS_OK;
 }
 
 void
 sbPlaylistsource::LoadRowResults( sbPlaylistsource::sbValueInfo & value )
 {
+  VMETHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
   m_SharedQuery->ResetQuery();
   PRUnichar *g = nsnull;
