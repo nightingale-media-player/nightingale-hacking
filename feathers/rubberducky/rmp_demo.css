@@ -551,6 +551,16 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected
   height: 2000px;
 }
 
+/** 
+************************************************************************************************************************************************
+THE WEB PLAYLIST aka THE URL SLURPER
+************************************************************************************************************************************************
+*/
+
+#playlist_web
+{
+ 
+} 
 
 /** 
 ************************************************************************************************************************************************
@@ -1394,8 +1404,8 @@ scrollbar > slider
   background-color: transparent; 
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;  
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
 
 #frame_service_tree scrollbar > slider
@@ -1413,8 +1423,8 @@ scrollbar > slider
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
@@ -1426,8 +1436,8 @@ scrollbar > slider
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
 
 /** 
