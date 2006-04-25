@@ -80,7 +80,13 @@
 # define VMETHOD_SHORTCIRCUIT
 #endif
 
-
+#ifdef PR_LOGGING
+/*
+ * NSPR_LOG_MODULES=sbPlaylistsource:5
+ */
+static PRLogModuleInfo* gPlaylistsourceLog = PR_NewLogModule("sbPlaylistsource");
+#endif
+#define LOG(args...) PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, (args))
 
 static  sbPlaylistsource  *gPlaylistPlaylistsource = nsnull;
 static  nsIRDFService     *gRDFService = nsnull;
@@ -220,6 +226,8 @@ sbPlaylistsource::sbPlaylistsource()
     g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
     NS_ASSERTION(g_pMonitor, "sbPlaylistsource.g_pMonitor failed");
   }
+  LOG("sbPlaylistsource::sbPlaylistsource() %d %s", 1, "Cool!");
+//  PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, ("Constructor"));
   gPlaylistPlaylistsource->Init();
 } //ctor
 

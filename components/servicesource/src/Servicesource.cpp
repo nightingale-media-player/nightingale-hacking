@@ -77,6 +77,13 @@
 # define VMETHOD_SHORTCIRCUIT
 #endif
 
+#ifdef PR_LOGGING
+/*
+ * NSPR_LOG_MODULES=sbServicesource:5
+ */
+static PRLogModuleInfo* gServicesourceLog = PR_NewLogModule("sbServicesource");
+#endif
+#define LOG(args...) PR_LOG(gServicesourceLog, PR_LOG_DEBUG, (args))
 
 static  CServicesource  *gServicesource = nsnull;
 static  nsIRDFService   *gRDFService = nsnull;
@@ -416,6 +423,7 @@ void CServicesource::Update(void)
 
 void CServicesource::Init(void)
 {
+  LOG("ServiceSource::Init()");
   VMETHOD_SHORTCIRCUIT;
   {
     nsresult rv = NS_OK;
