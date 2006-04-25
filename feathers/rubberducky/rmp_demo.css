@@ -380,6 +380,7 @@ filterlist > tree
   padding: 0px;
   background-color: #000;
   background-image: url(default/bkgd_flowers.png);
+  opacity: .8;
 }
 
 /* striping for genre filter */
@@ -448,6 +449,7 @@ playlist > stack > vbox > tree
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
   background-color: transparent;
+  opacity: .8;
   
 }
 
@@ -1411,8 +1413,8 @@ scrollbar > slider
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 16px;
-  width: 16px;
+  height: 19px;
+  width: 15px;
 } 
  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
@@ -1424,8 +1426,8 @@ scrollbar > slider
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 16px;
-  width: 16px;
+  height: 19px;
+  width: 15px;
 } 
 
 /** 
