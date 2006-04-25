@@ -41,7 +41,10 @@
 /* Implementation file */
 NS_IMPL_ISUPPORTS1(CMediaKeyboard, sbIMediaKeyboard)
 
+#ifdef WIN32
+
 #define MEDIAKEYBOARD_WNDCLASS NS_L("sbMediaKeyboardWindow")
+
 #define HOTKEY_VOLUME_MUTE         0x100
 #define HOTKEY_VOLUME_DOWN         0x101
 #define HOTKEY_VOLUME_UP           0x102
@@ -56,6 +59,8 @@ static LRESULT CALLBACK MediaKeyboardProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
   CMediaKeyboard *_this = reinterpret_cast<CMediaKeyboard*>(GetWindowLong(hWnd, GWL_USERDATA));
   return _this->WndProc(hWnd, uMsg, wParam, lParam);
 } // MediaKeyboardProc
+
+#endif
 
 //-----------------------------------------------------------------------------
 CMediaKeyboard::CMediaKeyboard()
@@ -120,6 +125,8 @@ NS_IMETHODIMP CMediaKeyboard::RemoveCallback(sbIMediaKeyboardCallback *callback 
   return NS_OK;
 } // RemoveCallback
 
+#ifdef WIN32
+
 //-----------------------------------------------------------------------------
 LRESULT CMediaKeyboard::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -139,6 +146,8 @@ LRESULT CMediaKeyboard::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 } // WndProc
+
+#endif
 
 //-----------------------------------------------------------------------------
 void CMediaKeyboard::OnMute() 
