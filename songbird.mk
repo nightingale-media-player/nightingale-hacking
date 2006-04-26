@@ -113,6 +113,11 @@ run_autoconf :
 create_obj_dir :
 	$(CREATE_OBJ_DIR_CMD)
 
+makefiles:
+	@touch configure
+	$(CREATE_OBJ_DIR_CMD)
+	$(RUN_CONFIGURE_CMD)
+
 run_configure : $(CONFIGSTATUS)
 
 clean :
