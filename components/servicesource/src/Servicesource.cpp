@@ -83,7 +83,7 @@
  */
 static PRLogModuleInfo* gServicesourceLog = PR_NewLogModule("sbServicesource");
 #endif
-#define LOG(args...) PR_LOG(gServicesourceLog, PR_LOG_DEBUG, (args))
+#define LOG(args) PR_LOG(gServicesourceLog, PR_LOG_DEBUG, (args))
 
 static  CServicesource  *gServicesource = nsnull;
 static  nsIRDFService   *gRDFService = nsnull;
@@ -798,8 +798,6 @@ CServicesource::GetTargets(nsIRDFResource *source,
   // we only have positive assertions in the data source.
   if (! tv)
     return NS_RDF_NO_VALUE;
-
-  nsresult rv;
 
   if (source == kNC_Servicesource)
   {
