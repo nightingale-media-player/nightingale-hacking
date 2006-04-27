@@ -151,6 +151,36 @@ clean: $(clean_targets) \
        $(NULL)
 
 #------------------------------------------------------------------------------
+# Update Makefiles
+#------------------------------------------------------------------------------
+
+# In GNU make 3.80, makefiles must use the /cygdrive syntax, even if we're
+# processing them with AS perl. See bmo 232003
+ifdef AS_PERL
+CYGWIN_TOPSRCDIR = -nowrap -p $(topsrcdir) -wrap
+endif
+
+# SUBMAKEFILES: List of Makefiles for next level down.
+#   This is used to update or create the Makefiles before invoking them.
+ifneq ($(SUBDIRS),)
+SUBMAKEFILES            := $(addsuffix /Makefile, $(SUBDIRS))
+endif
+
+$(SUBMAKEFILES): % : $(srcdir)/%.in
+	$(PERL) $(AUTOCONF_TOOLS)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR) $@
+
+Makefile: Makefile.in
+	@$(PERL) $(AUTOCONF_TOOLS)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR)
+
+makefiles: $(SUBMAKEFILES)
+ifneq (,$(SUBDIRS))
+	@for d in $(SUBDIRS); do \
+                $(MAKE) -C $$d $@; \
+	done
+endif
+
+
+#------------------------------------------------------------------------------
 # Rules for C++ compilation
 #------------------------------------------------------------------------------
 

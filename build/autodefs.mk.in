@@ -135,6 +135,8 @@ CHMOD     = @CYGWIN_WRAPPER@ @CHMOD@@BIN_SUFFIX@
 RM        = @CYGWIN_WRAPPER@ @RM@@BIN_SUFFIX@
 MKDIR     = @CYGWIN_WRAPPER@ @MKDIR@@BIN_SUFFIX@
 
+AUTOCONF_TOOLS = @top_srcdir@/build/autoconf
+
 XPIDL     = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpidl@BIN_SUFFIX@
 XPTLINK   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpt_link@BIN_SUFFIX@
 MAR       = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/mar@BIN_SUFFIX@
