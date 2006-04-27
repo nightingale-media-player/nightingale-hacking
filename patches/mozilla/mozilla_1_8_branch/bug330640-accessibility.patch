@@ -2,12 +2,10 @@ Index: accessible/src/base/nsDocAccessible.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/accessible/src/base/nsDocAccessible.cpp,v
 retrieving revision 1.73.2.9
-diff -p -u -1 -0 -r1.73.2.9 nsDocAccessible.cpp
+diff -p -u -8 -r1.73.2.9 nsDocAccessible.cpp
 --- accessible/src/base/nsDocAccessible.cpp	24 Apr 2006 13:35:12 -0000	1.73.2.9
-+++ accessible/src/base/nsDocAccessible.cpp	27 Apr 2006 14:54:45 -0000
-@@ -41,23 +41,20 @@
- #include "nsAccessibleEventData.h"
- #include "nsIAccessibilityService.h"
++++ accessible/src/base/nsDocAccessible.cpp	27 Apr 2006 16:33:20 -0000
+@@ -43,19 +43,16 @@
  #include "nsArray.h"
  #include "nsICommandManager.h"
  #include "nsIDocShell.h"
@@ -27,18 +25,14 @@ diff -p -u -1 -0 -r1.73.2.9 nsDocAccessible.cpp
  #include "nsIDOMXULPopupElement.h"
  #include "nsIEditingSession.h"
  #include "nsIEventStateManager.h"
- #include "nsIFrame.h"
- #include "nsHTMLSelectAccessible.h"
 Index: accessible/src/base/nsRootAccessible.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/accessible/src/base/nsRootAccessible.cpp,v
 retrieving revision 1.130.2.9
-diff -p -u -1 -0 -r1.130.2.9 nsRootAccessible.cpp
+diff -p -u -8 -r1.130.2.9 nsRootAccessible.cpp
 --- accessible/src/base/nsRootAccessible.cpp	5 Apr 2006 23:04:56 -0000	1.130.2.9
-+++ accessible/src/base/nsRootAccessible.cpp	27 Apr 2006 14:54:46 -0000
-@@ -82,30 +82,23 @@
- #include "nsISelectionPrivate.h"
- #include "nsICaret.h"
++++ accessible/src/base/nsRootAccessible.cpp	27 Apr 2006 16:33:21 -0000
+@@ -84,26 +84,19 @@
  #include "nsIDOMHTMLInputElement.h"
  #include "nsAccessibleEventData.h"
  #include "nsIDOMDocument.h"
@@ -68,11 +62,7 @@ diff -p -u -1 -0 -r1.130.2.9 nsRootAccessible.cpp
    nsDocAccessibleWrap(aDOMNode, aShell), 
    mAccService(do_GetService("@mozilla.org/accessibilityService;1")),
    mIsInDHTMLMenu(PR_FALSE)
- {
- }
-@@ -219,135 +212,109 @@ nsRootAccessible::GetChromeEventHandler(
-   if (privateDOMWindow) {
-     chromeEventHandler = privateDOMWindow->GetChromeEventHandler();
+@@ -221,86 +214,69 @@ nsRootAccessible::GetChromeEventHandler(
    }
  
    nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(chromeEventHandler));
@@ -202,10 +192,7 @@ diff -p -u -1 -0 -r1.130.2.9 nsRootAccessible.cpp
    // Fire accessible focus event for pre-existing focus, but wait until all internal
    // focus events are finished for window initialization.
    mFireFocusTimer = do_CreateInstance("@mozilla.org/timer;1");
-   if (mFireFocusTimer) {
-     mFireFocusTimer->InitWithFuncCallback(FireFocusCallback, this,
-                                           0, nsITimer::TYPE_ONE_SHOT);
-   }
+@@ -311,41 +287,32 @@ nsresult nsRootAccessible::AddEventListe
  
    return nsDocAccessible::AddEventListeners();
  }
@@ -259,11 +246,7 @@ diff -p -u -1 -0 -r1.130.2.9 nsRootAccessible.cpp
    }
  
    mAccService = nsnull;
- 
-   return nsDocAccessible::RemoveEventListeners();
-@@ -918,84 +885,20 @@ void nsRootAccessible::GetTargetNode(nsI
-   }
- }
+@@ -920,80 +887,16 @@ void nsRootAccessible::GetTargetNode(nsI
  
  void nsRootAccessible::FireFocusCallback(nsITimer *aTimer, void *aClosure)
  {
@@ -344,16 +327,31 @@ diff -p -u -1 -0 -r1.130.2.9 nsRootAccessible.cpp
    }
    mCaretAccessible = nsnull;
    mAccService = nsnull;
-   if (mFireFocusTimer) {
-     mFireFocusTimer->Cancel();
 Index: accessible/src/base/nsRootAccessible.h
 ===================================================================
 RCS file: /cvsroot/mozilla/accessible/src/base/nsRootAccessible.h,v
 retrieving revision 1.50.2.2
-diff -p -u -1 -0 -r1.50.2.2 nsRootAccessible.h
+diff -p -u -8 -r1.50.2.2 nsRootAccessible.h
 --- accessible/src/base/nsRootAccessible.h	20 Oct 2005 20:01:59 -0000	1.50.2.2
-+++ accessible/src/base/nsRootAccessible.h	27 Apr 2006 14:54:46 -0000
-@@ -65,41 +65,20 @@ class nsRootAccessible : public nsDocAcc
++++ accessible/src/base/nsRootAccessible.h	27 Apr 2006 16:33:21 -0000
+@@ -49,55 +49,32 @@
+ #include "nsIAccessibleCaret.h"
+ #include "nsITimer.h"
+ 
+ class nsIAccessibleEventListener;
+ 
+ const PRInt32 SCROLL_HASH_START_SIZE = 6;
+ 
+ class nsRootAccessible : public nsDocAccessibleWrap,
+-                         public nsIDOMFocusListener,
+-                         public nsIDOMFormListener,
+-                         public nsIDOMXULListener
++                         public nsIDOMEventListener
+ {
+   NS_DECL_ISUPPORTS_INHERITED
+ 
+   public:
+     nsRootAccessible(nsIDOMNode *aDOMNode, nsIWeakReference* aShell);
      virtual ~nsRootAccessible();
  
      NS_IMETHOD GetName(nsAString& aName);
@@ -393,5 +391,3 @@ diff -p -u -1 -0 -r1.50.2.2 nsRootAccessible.h
  
      void ShutdownAll();
  
-   private:
-     nsCOMPtr<nsITimer> mFireFocusTimer;
