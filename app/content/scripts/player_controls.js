@@ -118,7 +118,7 @@ try
     }
 */
     
-//    setTimeout( SBFirstVolume, 250 );
+      setTimeout( SBFirstVolume, 250 );
   }
 
   // Initialize default values (called only by the core window, not by faceplates)
