@@ -655,7 +655,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
         }
         else if (property == kNC_Open)
         {
-          outstring = gParentOpen[ i ];
+//          outstring = gParentOpen[ i ]; // no!
         }
       }
     }
@@ -682,7 +682,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
         }
         else if (property == kNC_Open)
         {
-          outstring = NS_LITERAL_STRING( "false" );
+//          outstring = NS_LITERAL_STRING( "false" ); // no!
         }
       }
     }
@@ -740,7 +740,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
       }
       else if (property == kNC_Open)
       {
-        outstring = NS_LITERAL_STRING("false");
+//        outstring = NS_LITERAL_STRING("false"); // no!
       }
     }
   }
