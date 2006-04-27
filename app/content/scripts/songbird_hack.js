@@ -1088,12 +1088,15 @@ function onBrowserBookmark()
 {
   try
   {
+    alert( "Uh... there's no bookmarks service in XULRunner.  We'll implement this soon." );
+/*  
     var url = SBDataGetValue( "browser.uri" );
     alert(url + "\n" + Components.interfaces.nsIBookmarksService);
-    var bmarks = document.getElementById( 'frame_servicetree' );//Components.classes["@mozilla.org/browser/bookmarks-service;1"].getService();
+    var bmarks = Components.classes["@mozilla.org/browser/bookmarks-service;1"].getService();
     bmarks.QueryInterface(Components.interfaces.nsIBookmarksService);
     bmarks.addBookmarkImmediately(url,url,0,null);
     alert(url);
+*/    
   }  
   catch ( err )
   {
