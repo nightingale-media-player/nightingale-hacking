@@ -976,12 +976,17 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
                 case SQLITE_ROW: 
                 {
                   CDatabaseResult *pRes = pQuery->GetResultObject();
+                  PR_Lock(pQuery->m_pQueryResultLock);
+
                   int nCount = sqlite3_column_count(pStmt);
 
                   if(bFirstRow)
                   {
-                    bFirstRow = PR_FALSE;                                       
+                    bFirstRow = PR_FALSE;
+
+                    PR_Unlock(pQuery->m_pQueryResultLock);
                     pRes->ClearResultSet();
+                    PR_Lock(pQuery->m_pQueryResultLock);
 
                     std::vector<std::prustring> vColumnNames;
                     vColumnNames.reserve(nCount);
@@ -1019,6 +1024,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
                   }
 
                   pRes->AddRow(vCellValues);
+                  PR_Unlock(pQuery->m_pQueryResultLock);
                   //pRes->Release();
                 }
                 break;

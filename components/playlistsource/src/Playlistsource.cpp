@@ -86,7 +86,12 @@
  */
 static PRLogModuleInfo* gPlaylistsourceLog = PR_NewLogModule("sbPlaylistsource");
 #endif
+
+#if defined(_MSC_VER)
 #define LOG(args) PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, (args))
+#else
+#define LOG(args...) PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, (args))
+#endif
 
 static  sbPlaylistsource  *gPlaylistPlaylistsource = nsnull;
 static  nsIRDFService     *gRDFService = nsnull;
