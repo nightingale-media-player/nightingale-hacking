@@ -86,7 +86,7 @@ Update.prototype = {
       case 'Linux': url = SONGBIRD_GETBUNDLE_URL_LINUX; break;
       case 'Darwin': url = SONGBIRD_GETBUNDLE_URL_MACOSX; break;
     }
-    this.LOG(url);
+    //this.LOG(url);
     this._req.open('GET', url, true); 
     this._req.send(null);
   },
