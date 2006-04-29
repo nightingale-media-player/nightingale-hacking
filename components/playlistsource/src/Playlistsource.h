@@ -54,8 +54,7 @@
 #define SONGBIRD_PLAYLISTSOURCE_CID { 0x836d6ea5, 0xca63, 0x418f, { 0xbf, 0xd8, 0x27, 0x70, 0x45, 0x9, 0xa6, 0xa3 } }
 
 class MyQueryCallback;
-class sbPlaylistsource;
-//class sbPlaylistsource::sbValueInfo;
+class nsITimer;
 
 // CLASSES ====================================================================
 class sbPlaylistsource : public sbIPlaylistsource
@@ -252,4 +251,20 @@ private:
     }
     */
   }
+};
+
+class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
+{
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDATABASESIMPLEQUERYCALLBACK
+
+public:
+  MyQueryCallback();
+  static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
+  NS_IMETHODIMP Post(void);
+
+  sbPlaylistsource::sbFeedInfo *m_Info;
+
+private:
+  nsCOMPtr<nsITimer> m_Timer;
 };

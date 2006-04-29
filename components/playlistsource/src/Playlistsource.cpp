@@ -31,11 +31,9 @@
 
 #include "nscore.h"
 #include "prlog.h"
-
 #include "nspr.h"
 #include "nsCOMPtr.h"
 #include "rdf.h"
-
 #include "nsIEnumerator.h"
 #include "nsIRDFService.h"
 #include "nsIRDFDataSource.h"
@@ -48,191 +46,204 @@
 #include "nsIContent.h"
 #include "nsIXULTemplateBuilder.h"
 #include "nsITimer.h"
-
 #include "nsComponentManagerUtils.h"
 #include "nsServiceManagerUtils.h"
 #include "nsEnumeratorUtils.h"
-
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsIFile.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsAutoLock.h>
-/*
-#include "nsIRDFFileSystem.h"
-#include "nsRDFBuiltInPlaylistsources.h"
-*/
-
+#include <xpcom/nsVoidArray.h>
 #include "nsCRT.h"
 #include "nsRDFCID.h"
 #include "nsLiteralString.h"
 
 #include "Playlistsource.h"
-
 #include "IPlaylist.h"
 
 #define MODULE_SHORTCIRCUIT 0
 
 #if MODULE_SHORTCIRCUIT
-# define METHOD_SHORTCIRCUIT return NS_OK;
-# define VMETHOD_SHORTCIRCUIT return;
+#define METHOD_SHORTCIRCUIT  return NS_OK;
+#define VMETHOD_SHORTCIRCUIT return;
 #else
-# define METHOD_SHORTCIRCUIT
-# define VMETHOD_SHORTCIRCUIT
+#define METHOD_SHORTCIRCUIT  /* nothing */
+#define VMETHOD_SHORTCIRCUIT /* nothing */
 #endif
 
 #ifdef PR_LOGGING
 /*
  * NSPR_LOG_MODULES=sbPlaylistsource:5
  */
-static PRLogModuleInfo* gPlaylistsourceLog = PR_NewLogModule("sbPlaylistsource");
-#endif
-
+static PRLogModuleInfo* gPlaylistsourceLog =
+  PR_NewLogModule("sbPlaylistsource");
+#endif
 #define LOG(args) PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, args)
 
-static  sbPlaylistsource  *gPlaylistPlaylistsource = nsnull;
-static  nsIRDFService     *gRDFService = nsnull;
+static sbPlaylistsource *gPlaylistPlaylistsource = nsnull;
+
+static nsIRDFService *gRDFService = nsnull;
+
+nsIRDFResource *sbPlaylistsource::kNC_Playlist = nsnull;
+nsIRDFResource *sbPlaylistsource::kNC_child = nsnull;
+nsIRDFResource *sbPlaylistsource::kNC_pulse = nsnull;
+nsIRDFResource *sbPlaylistsource::kRDF_InstanceOf = nsnull;
+nsIRDFResource *sbPlaylistsource::kRDF_type = nsnull;
+nsIRDFResource *sbPlaylistsource::kRDF_nextVal = nsnull;
+nsIRDFResource *sbPlaylistsource::kRDF_Seq = nsnull;
+
+nsIRDFLiteral *sbPlaylistsource::kLiteralTrue = nsnull;
+nsIRDFLiteral *sbPlaylistsource::kLiteralFalse = nsnull;
+sbPlaylistsource::observers_t  sbPlaylistsource::g_Observers;
+sbPlaylistsource::stringmap_t  sbPlaylistsource::g_StringMap;
+sbPlaylistsource::infomap_t    sbPlaylistsource::g_InfoMap;
+sbPlaylistsource::valuemap_t   sbPlaylistsource::g_ValueMap;
+sbPlaylistsource::resultlist_t sbPlaylistsource::g_ResultGarbage;
+sbPlaylistsource::commandmap_t sbPlaylistsource::g_CommandMap;
+
+PRMonitor* sbPlaylistsource::g_pMonitor = nsnull;
+
+PRInt32 sbPlaylistsource::g_ActiveQueryCount = 0;
+PRInt32 sbPlaylistsource::gRefCnt = 0;
+
+PRBool sbPlaylistsource::g_NeedUpdate = PR_FALSE;
+
+nsCOMPtr<nsIStringBundle> sbPlaylistsource::m_StringBundle;
+
+// Strings that we'll use to compose all the goofy queries.
+NS_NAMED_LITERAL_STRING(select_str, "select ");
+NS_NAMED_LITERAL_STRING(unique_str, "select distinct");
+NS_NAMED_LITERAL_STRING(row_str, "id");
+NS_NAMED_LITERAL_STRING(rowid_str, "_ROWID_");
+NS_NAMED_LITERAL_STRING(from_str, " from ");
+NS_NAMED_LITERAL_STRING(where_str, " where ");
+NS_NAMED_LITERAL_STRING(having_str, " having ");
+NS_NAMED_LITERAL_STRING(like_str, " like ");
+NS_NAMED_LITERAL_STRING(order_str, " order by ");
+NS_NAMED_LITERAL_STRING(left_join_str, " left join ");
+NS_NAMED_LITERAL_STRING(right_join_str, " right join ");
+NS_NAMED_LITERAL_STRING(inner_join_str, " inner join ");
+NS_NAMED_LITERAL_STRING(collate_binary_str, " collate binary ");
+NS_NAMED_LITERAL_STRING(on_str, " on ");
+NS_NAMED_LITERAL_STRING(using_str, " using");
+NS_NAMED_LITERAL_STRING(limit_str, " limit ");
+NS_NAMED_LITERAL_STRING(op_str, "(");
+NS_NAMED_LITERAL_STRING(cp_str, ")");
+NS_NAMED_LITERAL_STRING(eq_str, "=");
+NS_NAMED_LITERAL_STRING(ge_str, ">=");
+NS_NAMED_LITERAL_STRING(qu_str, "\"");
+NS_NAMED_LITERAL_STRING(pct_str, "%");
+NS_NAMED_LITERAL_STRING(dot_str, ".");
+NS_NAMED_LITERAL_STRING(comma_str, ",");
+NS_NAMED_LITERAL_STRING(spc_str, " ");
+NS_NAMED_LITERAL_STRING(and_str, " and ");
+NS_NAMED_LITERAL_STRING(or_str, " or ");
+NS_NAMED_LITERAL_STRING(uuid_str, "uuid");
+NS_NAMED_LITERAL_STRING(playlist_uuid_str, "playlist_uuid");
+NS_NAMED_LITERAL_STRING(library_str, "library");
+
+// CLASSES ====================================================================
 
 // A callback from the database for when things change and we should repaint.
-class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
-{
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIDATABASESIMPLEQUERYCALLBACK
-
-public:
-  sbPlaylistsource::sbFeedInfo  *m_Info;
-
-  MyQueryCallback()
-  {
-    m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID);
-  }
-
-  static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure)
-  {
-    if ( gPlaylistPlaylistsource )
-    {
-      gPlaylistPlaylistsource->UpdateObservers();
-    }
-  }
-  nsCOMPtr< nsITimer >          m_Timer;
-};
 NS_IMPL_ISUPPORTS1(MyQueryCallback, sbIDatabaseSimpleQueryCallback)
-/* void OnQueryEnd (in sbIDatabaseResult dbResultObject, in wstring dbGUID, in wstring strQuery); */
-NS_IMETHODIMP MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, const PRUnichar *dbGUID, const PRUnichar *strQuery)
+//-----------------------------------------------------------------------------
+MyQueryCallback::MyQueryCallback()
 {
+  m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID);
+  NS_ASSERTION(m_Timer, "MyQueryCallback failed to create a timer");
+}
+
+void
+MyQueryCallback::MyTimerCallbackFunc(nsITimer *aTimer,
+                                     void     *aClosure)
+{
+  NS_ASSERTION(gPlaylistPlaylistsource,
+    "MyQueryCallback timer fired before Playlistsource initialized");
+   gPlaylistPlaylistsource->UpdateObservers();
+}
+
+NS_IMETHODIMP
+MyQueryCallback::Post()
+{
+  NS_ENSURE_TRUE(gPlaylistPlaylistsource, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(m_Timer, NS_ERROR_OUT_OF_MEMORY);
+
+  // Tell us to wake up in the main thread so we can poke our observers and
+  // take out our garbage.
+
+  // XXX This is NOT a safe or reliable way to post events to another thread
+  m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, gPlaylistPlaylistsource,
+                                0, 0);
+  return NS_OK;
+}
+
+/* void OnQueryEnd (in sbIDatabaseResult dbResultObject,
+                    in wstring dbGUID, in wstring strQuery); */
+NS_IMETHODIMP
+MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject,
+                            const PRUnichar   *dbGUID,
+                            const PRUnichar   *strQuery)
+{
+  NS_ENSURE_ARG_POINTER(dbResultObject);
+  NS_ENSURE_ARG_POINTER(dbGUID);
+  NS_ENSURE_ARG_POINTER(strQuery);
+
   // LOCK IT.
   nsAutoMonitor mon(sbPlaylistsource::g_pMonitor);
 
-  // Push the old resultset onto the garbage stack.
+  NS_ASSERTION(sbPlaylistsource::g_ActiveQueryCount > 0,
+               "MyQueryCallback running with an invalid active query count");
+
+  NS_ENSURE_TRUE(m_Info->m_Resultset, NS_ERROR_UNEXPECTED);
+
   sbPlaylistsource::sbResultInfo result;
+
+  // Copy the old resultset
   result.m_Results = m_Info->m_Resultset;
   result.m_Source = m_Info->m_RootResource;
   result.m_OldTarget = m_Info->m_RootTargets;
   result.m_Ref = m_Info->m_Ref;
   result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
-  sbPlaylistsource::g_ResultGarbage.push_back( result );
+
+  // Push the old resultset onto the garbage stack.
+  sbPlaylistsource::g_ResultGarbage.push_back(result);
+
+  nsresult rv;
 
   // Orphan the result for the query.
-  sbIDatabaseResult *res; //, *resultset;
-  m_Info->m_Query->GetResultObjectOrphan( &res );
-  //resultset = res;
-  //res->Release(); // ah-hah!
+  sbIDatabaseResult *res = nsnull;
+  rv = m_Info->m_Query->GetResultObjectOrphan(&res);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_NULL_POINTER);
+
   m_Info->m_Resultset = res;
 
-  if ( --sbPlaylistsource::g_ActiveQueryCount <= 0 )
-  {
+  if (--sbPlaylistsource::g_ActiveQueryCount == 0) {
     sbPlaylistsource::g_NeedUpdate = PR_TRUE;
-    sbPlaylistsource::g_ActiveQueryCount = 0;
-
-    // Tell us to wake up in the main thread so we can poke our
-    // observers and take out our garbage.
-    if ( m_Timer.get() )
-    {
-      m_Timer->Cancel();
-    }
-    m_Timer->InitWithFuncCallback( &MyTimerCallbackFunc, gPlaylistPlaylistsource, 0, 0 );
+    return Post();
   }
 
   return NS_OK;
 }
+//-----------------------------------------------------------------------------
 
-PRInt32 sbPlaylistsource::gRefCnt;
-
-nsIRDFResource      *sbPlaylistsource::kNC_Playlist;
-
-// nsIRDFResource      *sbPlaylistsource::kNC_Metadata[ sbPlaylistsource::kNumMetadataColumns ];
-
-nsIRDFResource      *sbPlaylistsource::kNC_child;
-nsIRDFResource      *sbPlaylistsource::kNC_pulse;
-
-nsIRDFResource      *sbPlaylistsource::kRDF_InstanceOf;
-nsIRDFResource      *sbPlaylistsource::kRDF_type;
-nsIRDFResource      *sbPlaylistsource::kRDF_nextVal;
-
-nsIRDFResource      *sbPlaylistsource::kRDF_Seq;
-
-nsIRDFLiteral       *sbPlaylistsource::kLiteralTrue;
-nsIRDFLiteral       *sbPlaylistsource::kLiteralFalse;
-
-sbPlaylistsource::observers_t   sbPlaylistsource::g_Observers;
-sbPlaylistsource::stringmap_t   sbPlaylistsource::g_StringMap;
-sbPlaylistsource::infomap_t     sbPlaylistsource::g_InfoMap;
-sbPlaylistsource::valuemap_t    sbPlaylistsource::g_ValueMap;
-sbPlaylistsource::resultlist_t  sbPlaylistsource::g_ResultGarbage;
-sbPlaylistsource::commandmap_t  sbPlaylistsource::g_CommandMap;
-PRMonitor*                      sbPlaylistsource::g_pMonitor = nsnull;
-PRInt32                             sbPlaylistsource::g_ActiveQueryCount = 0;
-PRBool                            sbPlaylistsource::g_NeedUpdate = PR_FALSE;
-nsCOMPtr< nsIStringBundle >     sbPlaylistsource::m_StringBundle;
-
-// Strings that we'll use to compose all the goofy queries.
-static nsString select_str( NS_LITERAL_STRING( "select " ) );
-static nsString unique_str( NS_LITERAL_STRING( "select distinct" ) );
-static nsString row_str( NS_LITERAL_STRING( "id" ) );
-static nsString rowid_str( NS_LITERAL_STRING( "_ROWID_" ));
-static nsString from_str( NS_LITERAL_STRING( " from " ) );
-static nsString where_str( NS_LITERAL_STRING( " where " ) );
-static nsString having_str( NS_LITERAL_STRING( " having " ) );
-static nsString like_str( NS_LITERAL_STRING( " like " ) );
-static nsString order_str( NS_LITERAL_STRING( " order by " ) );
-static nsString left_join_str( NS_LITERAL_STRING( " left join " ) );
-static nsString right_join_str( NS_LITERAL_STRING( " right join " ) );
-static nsString inner_join_str( NS_LITERAL_STRING( " inner join " ) );
-static nsString collate_binary_str( NS_LITERAL_STRING( " collate binary " ) );
-static nsString on_str( NS_LITERAL_STRING( " on " ) );
-static nsString using_str( NS_LITERAL_STRING( " using" ) );
-static nsString limit_str( NS_LITERAL_STRING( " limit " ) );
-static nsString op_str( NS_LITERAL_STRING( "(" ) );
-static nsString cp_str( NS_LITERAL_STRING( ")" ) );
-static nsString eq_str( NS_LITERAL_STRING( "=" ) );
-static nsString ge_str( NS_LITERAL_STRING( ">=" ) );
-static nsString qu_str( NS_LITERAL_STRING( "\"" ) );
-static nsString pct_str( NS_LITERAL_STRING( "%" ) );
-static nsString dot_str( NS_LITERAL_STRING( "." ) );
-static nsString comma_str( NS_LITERAL_STRING( "," ));
-static nsString spc_str( NS_LITERAL_STRING( " " ) );
-static nsString and_str( NS_LITERAL_STRING( " and " ) );
-static nsString or_str( NS_LITERAL_STRING( " or " ) );
-static nsString uuid_str( NS_LITERAL_STRING( "uuid" ) );
-static nsString playlist_uuid_str( NS_LITERAL_STRING( "playlist_uuid" ) );
-static nsString library_str( NS_LITERAL_STRING( "library" ) );
-
-// CLASSES ====================================================================
+// Playlistsource
 NS_IMPL_ISUPPORTS2(sbPlaylistsource, sbIPlaylistsource, nsIRDFDataSource)
 //-----------------------------------------------------------------------------
 sbPlaylistsource::sbPlaylistsource()
 {
   LOG(("sbPlaylistsource::sbPlaylistsource"));
-  NS_ASSERTION(!gPlaylistPlaylistsource, "Playlistsource initialized more than once!");
+  NS_ASSERTION(!gPlaylistPlaylistsource,
+               "Playlistsource initialized more than once!");
   gPlaylistPlaylistsource = this;
   if (!g_pMonitor) {
     g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
     NS_ASSERTION(g_pMonitor, "sbPlaylistsource.g_pMonitor failed");
   }
   gPlaylistPlaylistsource->Init();
-} //ctor
+}
 
 //-----------------------------------------------------------------------------
-/*virtual*/ sbPlaylistsource::~sbPlaylistsource()
+sbPlaylistsource::~sbPlaylistsource()
 {
   LOG(("sbPlaylistsource::~sbPlaylistsource"));
   DeInit();
@@ -240,753 +251,779 @@ sbPlaylistsource::sbPlaylistsource()
     nsAutoMonitor::DestroyMonitor(g_pMonitor);
     g_pMonitor = nsnull;
   }
-} //dtor
+}
 
-NS_IMETHODIMP sbPlaylistsource::FeedPlaylist(const PRUnichar *RefName, const PRUnichar *ContextGUID, const PRUnichar *TableName)
+NS_IMETHODIMP
+sbPlaylistsource::FeedPlaylist(const PRUnichar *RefName,
+                               const PRUnichar *ContextGUID,
+                               const PRUnichar *TableName)
 {
-  LOG(("sbPlaylistsource::FeedPlaylist\nRefName     = %x\nContextGUID = %x\nTableName   = %x\n",
-    RefName, ContextGUID, TableName));
-  METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName && ContextGUID && TableName ) )
-  {
-    return NS_OK;
-  }
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(ContextGUID);
+  NS_ENSURE_ARG_POINTER(TableName);
 
-  PRInt32 Execute = 0; // legacy crap
+  LOG(("sbPlaylistsource::FeedPlaylist"));
+  METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
   // Find the ref string in the stringmap.
-  nsString strRefName( RefName );
+  nsDependentString strRefName(RefName);
 
   // See if the feed is already there.
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info )
-  {
+  sbFeedInfo *testinfo = GetFeedInfo(strRefName);
+  if (testinfo) {
     // Found it.  Get the refcount and increment it.
-    info->m_RefCount++;
-    info->m_Resultset = nsnull;
-/*
-    if ( Execute )
-    {
-      PRInt32 ret;
-      info->m_Query->Execute( &ret );
-    }
-*/
+    testinfo->m_RefCount++;
+    testinfo->m_Resultset = nsnull;
+    return NS_OK;
   }
-  else
-  {
-    // A new feed.  Fire a new Query object and stuff it in the tables.
-    nsCOMPtr< sbIDatabaseQuery > query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
-    if ( query.get() )
-    {
-      query->SetAsyncQuery( PR_TRUE );
-      query->SetDatabaseGUID( ContextGUID );
 
-      // New callback for a new query.
-      MyQueryCallback *callback = new MyQueryCallback;
-      callback->AddRef();
-      query->AddSimpleQueryCallback( callback );
-      query->SetPersistentQuery( PR_TRUE );
+  // A new feed.  Fire a new Query object and stuff it in the tables.
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
+  NS_ENSURE_TRUE(query, NS_ERROR_FAILURE);
 
-      // Make a resource for it.
-      nsIRDFResource *new_resource = nsnull;
-      gRDFService->GetResource( NS_ConvertUTF16toUTF8(strRefName), &new_resource );
+  nsresult rv;
 
-      // And stuff it.
-      sbFeedInfo info;
-      info.m_Query = query;
-      info.m_RefCount = 1;
-      info.m_Ref = strRefName;
-      info.m_Table = TableName;
-      info.m_GUID = ContextGUID;
-      info.m_RootResource = new_resource;
-      info.m_Server = this;
-      info.m_Callback = callback;
-      info.m_ForceGetTargets = false;
-      g_InfoMap[ new_resource ] = info;
-      callback->m_Info = &g_InfoMap[ new_resource ];
-      g_StringMap[ strRefName ] = new_resource;
-    }
-  }
+  rv = query->SetAsyncQuery(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(ContextGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // New callback for a new query.
+  MyQueryCallback* callback = nsnull;
+  NS_NEWXPCOM(callback, MyQueryCallback);
+  NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = callback->AddRef();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = query->AddSimpleQueryCallback(callback);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetPersistentQuery(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make a resource for it.
+  nsCOMPtr<nsIRDFResource> new_resource;
+  rv = gRDFService->GetResource(NS_ConvertUTF16toUTF8(strRefName),
+                                getter_AddRefs(new_resource));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // And stuff it.
+  sbFeedInfo info;
+  info.m_Query = query;
+  info.m_RefCount = 1;
+  info.m_Ref = strRefName;
+  info.m_Table = TableName;
+  info.m_GUID = ContextGUID;
+  info.m_RootResource = new_resource;
+  info.m_Server = this;
+  info.m_Callback = callback;
+  info.m_ForceGetTargets = false;
+  g_InfoMap[new_resource] = info;
+  callback->m_Info = &g_InfoMap[new_resource];
+  g_StringMap[strRefName] = new_resource;
 
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::ClearPlaylist(const PRUnichar *RefName)
+NS_IMETHODIMP
+sbPlaylistsource::ClearPlaylist(const PRUnichar *RefName)
 {
-  LOG(("sbPlaylistsource::ClearPlaylist\nRefName = %x\n", RefName));
+  NS_ENSURE_ARG_POINTER(RefName);
+  LOG(("sbPlaylistsource::ClearPlaylist"));
   METHOD_SHORTCIRCUIT;
-  ClearPlaylistSTR( RefName );
+  ClearPlaylistSTR(RefName);
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::IncomingObserver(const PRUnichar *RefName, nsIDOMNode *Observer)
+NS_IMETHODIMP
+sbPlaylistsource::IncomingObserver(const PRUnichar *RefName,
+                                   nsIDOMNode      *Observer)
 {
-  LOG(("sbPlaylistsource::IncomingObserver\nRefName  = %x\nObserver = %x\n",
-    RefName, Observer));
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(Observer);
+  LOG(("sbPlaylistsource::IncomingObserver"));
   METHOD_SHORTCIRCUIT;
-  PRBool found = PR_FALSE;
-  for ( observers_t::iterator oi = g_Observers.begin(); oi != g_Observers.end(); oi++ )
-  {
+  for (observers_t::iterator oi = g_Observers.begin();
+       oi != g_Observers.end();
+       oi++ ) {
     // Find the pointer?
-    if ( (*oi).m_Ptr == Observer )
-    {
-      const_cast<sbObserver &>((*oi)).m_Ref = RefName;
-      found = PR_TRUE;
+    if ((*oi).m_Ptr == Observer) {
+      const_cast<sbObserver&>(*oi).m_Ref = RefName;
       // Assume that no AddObserver call will occur.
+      return NS_OK;
     }
   }
-  if ( !found )
-  {
-    m_IncomingObserver = RefName;
-    m_IncomingObserverPtr = Observer;
-  }
+  // Not found
+  m_IncomingObserver = RefName;
+  m_IncomingObserverPtr = Observer;
   return NS_OK;
 }
 
-void sbPlaylistsource::ClearPlaylistSTR(const PRUnichar *RefName)
+void
+sbPlaylistsource::ClearPlaylistSTR(const PRUnichar *RefName)
 {
-  LOG(("sbPlaylistsource::ClearPlaylistSTR\nRefName = %x\n", RefName));
-  VMETHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
+  NS_ASSERTION(RefName, "ClearPlaylistSTR passed a null pointer");
+  if (!RefName)
     return;
-  }
 
-  // LOCK IT.
-  //nsAutoMonitor mon(g_pMonitor);
+  LOG(("sbPlaylistsource::ClearPlaylistSTR"));
+  VMETHOD_SHORTCIRCUIT;
 
   // Find the ref string in the stringmap.
-  nsString strRefName( RefName );
-  stringmap_t::iterator s = g_StringMap.find( strRefName );
-  if ( s != g_StringMap.end() )
-  {
-    ClearPlaylistRDF( (*s).second );
-  }
+  nsDependentString strRefName(RefName);
+  stringmap_t::iterator s = g_StringMap.find(strRefName);
+  if (s != g_StringMap.end())
+    ClearPlaylistRDF((*s).second);
 }
 
-void sbPlaylistsource::ClearPlaylistRDF(nsIRDFResource *RefResource)
+void
+sbPlaylistsource::ClearPlaylistRDF(nsIRDFResource *RefResource)
 {
-  LOG(("sbPlaylistsource::ClearPlaylistRDF\nRefResource = %x\n", RefResource));
+  NS_ASSERTION(RefResource, "ClearPlaylistRDF passed a null pointer");
+  if (!RefResource)
+    return;
+
+  LOG(("sbPlaylistsource::ClearPlaylistRDF"));
   VMETHOD_SHORTCIRCUIT;
-  // LOCK IT.
-  //nsAutoMonitor mon(g_pMonitor);
 
-  sbFeedInfo *info = GetFeedInfo( RefResource );
-  if ( info )
-  {
+  sbFeedInfo *info = GetFeedInfo(RefResource);
+  if (info) {
     // Found it.  Get the refcount and decrement it.
-    if ( --info->m_RefCount == 0 )
-    {
+    if (--info->m_RefCount == 0)
       EraseFeedInfo( RefResource );
-    }
   }
 }
 
-NS_IMETHODIMP sbPlaylistsource::GetQueryResult(const PRUnichar *RefName, sbIDatabaseResult **_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetQueryResult(const PRUnichar   *RefName,
+                                 sbIDatabaseResult **_retval)
 {
-  LOG(("sbPlaylistsource::GetQueryResult\nRefName = %x\n_retval = %x\n", RefName, _retval));
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
+  LOG(("sbPlaylistsource::GetQueryResult"));
   METHOD_SHORTCIRCUIT;
   *_retval = nsnull;
 
-  if ( RefName )
-  {
-    // Find the ref string in the stringmap.
-    nsString strRefName( RefName );
-    sbFeedInfo *info = GetFeedInfo( strRefName );
-    if ( info )
-    {
-      // LOCK IT.
-      nsAutoMonitor mon(g_pMonitor);
-      if ( info->m_Resultset )
-      {
-        *_retval = info->m_Resultset;
-        (*_retval)->AddRef();
-      }
-      else
-      {
-        info->m_Query->GetResultObject( _retval );
-      }
-    }
+  // Find the ref string in the stringmap.
+  nsString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  nsAutoMonitor mon(g_pMonitor);
+
+  if (info->m_Resultset) {
+    info->m_Resultset->AddRef();
+    *_retval = info->m_Resultset;
+    return NS_OK;
   }
 
+  nsresult rv;
+
+  nsCOMPtr<sbIDatabaseResult> resultObject;
+  rv = info->m_Query->GetResultObject(getter_AddRefs(resultObject));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = resultObject;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::GetRefRowCount(const PRUnichar *RefName, PRInt32 *_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetRefRowCount(const PRUnichar *RefName,
+                                 PRInt32         *_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
   LOG(("sbPlaylistsource::GetRefRowCount"));
   METHOD_SHORTCIRCUIT;
   *_retval = -1;
 
-  if ( RefName )
-  {
-    sbIDatabaseResult *resultset = nsnull;
-    GetQueryResult( RefName, &resultset );
-    if ( resultset )
-    {
-      resultset->GetRowCount( _retval );
-      resultset->Release();
-    }
-  }
+  nsresult rv;
+
+  nsCOMPtr<sbIDatabaseResult> resultset;
+  rv = GetQueryResult(RefName, getter_AddRefs(resultset));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  resultset->GetRowCount(_retval);
+  resultset->Release();
+
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::GetRefColumnCount(const PRUnichar *RefName, PRInt32 *_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetRefColumnCount(const PRUnichar *RefName,
+                                    PRInt32         *_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
   LOG(("sbPlaylistsource::GetRefColumnCount"));
   METHOD_SHORTCIRCUIT;
   *_retval = -1;
 
-  if ( RefName )
-  {
-    sbIDatabaseResult *resultset = nsnull;
-    GetQueryResult( RefName, &resultset );
-    if ( resultset )
-    {
-      resultset->GetColumnCount( _retval );
-      resultset->Release();
-    }
-  }
+  nsresult rv;
+
+  nsCOMPtr<sbIDatabaseResult> resultset;
+  rv = GetQueryResult(RefName, getter_AddRefs(resultset));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  resultset->GetColumnCount(_retval);
+  resultset->Release();
+
   return NS_OK;
 }
 
-/* wstring GetRefRowCellByColum (in wstring RefName, in PRInt32 Row, in wstring Column); */
-NS_IMETHODIMP sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar *RefName, PRInt32 Row, const PRUnichar *Column, PRUnichar **_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar *RefName,
+                                        PRInt32         Row,
+                                        const PRUnichar *Column,
+                                        PRUnichar       **_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(Column);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::GetRefRowCellByColumn"));
   METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
-  if ( RefName )
-  {
-    // Find the ref string in the stringmap.
-    nsString strRefName( RefName );
-    sbFeedInfo *info = GetFeedInfo( strRefName );
-    if ( info )
-    {
-      nsIRDFResource *next_resource = info->m_ResList[ Row ];
-      valuemap_t::iterator v = g_ValueMap.find( next_resource );
-      if ( v != g_ValueMap.end() )
-      {
-        if ( ! (*v).second.m_Resultset.get() )
-        {
-          LoadRowResults( (*v).second );
-        }
-        (*v).second.m_Resultset->GetRowCellByColumn( (*v).second.m_ResultsRow, Column, _retval );
-      }
+
+  // Find the ref string in the stringmap.
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  nsIRDFResource *next_resource = info->m_ResList[Row];
+  valuemap_t::iterator v = g_ValueMap.find(next_resource);
+  if (v != g_ValueMap.end()) {
+    sbValueInfo valueInfo = (*v).second;
+    nsresult rv;
+    if (!valueInfo.m_Resultset) {
+      LoadRowResults(valueInfo);
     }
+    rv = valueInfo.m_Resultset->GetRowCellByColumn(valueInfo.m_ResultsRow,
+                                                   Column,
+                                                   _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }
 
 
-/* PRInt32 GetRefRowByColumnValue (in wstring RefName, in PRInt32 Column, in wstring Value); */
-NS_IMETHODIMP sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar *RefName, const PRUnichar * Column, const PRUnichar *Value, PRInt32 *_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar *RefName,
+                                         const PRUnichar *Column,
+                                         const PRUnichar *Value,
+                                         PRInt32         *_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(Column);
+  NS_ENSURE_ARG_POINTER(Value);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::GetRefRowByColumnValue"));
   METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
+
   *_retval = -1;
-  if ( RefName )
-  {
-    // Find the ref string in the stringmap.
-    nsString strRefName( RefName );
-    sbFeedInfo *info = GetFeedInfo( strRefName );
-    if ( info )
-    {
-      // Steal the query info used for the ref
-      m_SharedQuery->ResetQuery();
-      PRUnichar *g = nsnull;
-      info->m_Query->GetDatabaseGUID( &g );
-      nsString guid( g );
-      m_SharedQuery->SetDatabaseGUID( guid.get() );
-      PRUnichar *oq = nsnull;
-      info->m_Query->GetQuery( 0, &oq );
-      nsString q( oq );
 
-      // If we already have a where, don't add another one
-      nsString aw_str;
-      if ( q.Find( "where", PR_TRUE ) == -1 )
-      {
-        aw_str = NS_LITERAL_STRING( " where " );
-      }
-      else
-      {
-        aw_str = NS_LITERAL_STRING( " and " );
-      }
+  // Find the ref string in the stringmap.
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-      // Append the metadata column restraint
-      nsString value_str( Value );
-      nsString column_str( Column );
-      q += aw_str + column_str + eq_str + qu_str + value_str + qu_str;
+  nsresult rv;
 
-      PRInt32 exe;
-      m_SharedQuery->AddQuery( q.get() );
-      mon.Exit();
-      m_SharedQuery->Execute( &exe );
-      mon.Enter();
+  // Steal the query info used for the ref
+  m_SharedQuery->ResetQuery();
 
-      nsCOMPtr< sbIDatabaseResult > result;
-      m_SharedQuery->GetResultObject( getter_AddRefs( result ) );
-      PRUnichar *val = nsnull;
-      result->GetRowCell( 0, 0, &val );
-      if ( val )
-      {
-        nsString v( val );
+  PRUnichar *guidPtr = nsnull;
+  rv = info->m_Query->GetDatabaseGUID(&guidPtr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsDependentString guid(guidPtr);
 
-        // (sigh) Now linear search the info results object for the matching id value to get the result index
-        PRInt32 rowcount;
-        info->m_Resultset->GetRowCount( &rowcount );
-        PRInt32 i = 0;
-        for ( ; i < rowcount; i++ )
-        {
-          PRUnichar *val = nsnull;
-          info->m_Resultset->GetRowCell( i, 0, &val );
-          if ( v == nsString( val ) )
-          {
-            PR_Free( val );
-            break;
-          }
-          PR_Free( val );
-        }
-        if ( i == rowcount )
-        {
-          i = -1;
-        }
+  rv = m_SharedQuery->SetDatabaseGUID(guid.get());
+  NS_ENSURE_SUCCESS(rv, rv);
 
-        *_retval = i;
-        PR_Free( val );
-      }
-    }
+  PRUnichar *queryPtr = nsnull;
+  rv = info->m_Query->GetQuery(0, &queryPtr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsDependentString query(queryPtr);
+
+  nsAString::const_iterator start, end;
+  query.BeginReading(start);
+  query.EndReading(end);
+
+  // If we already have a where, don't add another one
+  nsAutoString aw_str;
+  if (FindInReadable(NS_LITERAL_STRING("where"), start, end))
+    aw_str = NS_LITERAL_STRING(" where ");
+  else
+    aw_str = NS_LITERAL_STRING(" and ");
+
+  // Append the metadata column restraint
+  nsDependentString value_str(Value);
+  nsDependentString column_str(Column);
+  query += aw_str + column_str + eq_str +qu_str + value_str + qu_str;
+
+  PRInt32 exeReturn;
+  rv = m_SharedQuery->AddQuery(query.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Exit();
+  rv = m_SharedQuery->Execute(&exeReturn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Enter();
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = m_SharedQuery->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_NULL_POINTER);
+
+  PRUnichar *val = nsnull;
+  rv = result->GetRowCell(0, 0, &val);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsDependentString v(val);
+
+  // (sigh) Now linear search the info results object for the matching id value to get the result index
+  PRInt32 i, rowcount;
+  rv = info->m_Resultset->GetRowCount(&rowcount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool found = PR_FALSE;
+  PRUnichar *newval = nsnull;
+  for (i = 0 ; i < rowcount; i++ ) {
+    rv = info->m_Resultset->GetRowCell(i, 0, &newval);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsDependentString test(newval);
+
+    if (v == test)
+      found = PR_TRUE;
+
+    PR_Free(newval);
+    newval = nsnull;
+
+    if (found)
+      break;
   }
+
+  PR_Free(val);
+
+  if (found)
+    *_retval = i;
+
   return NS_OK;
 }
 
-/* PRBool IsQueryExecuting (in wstring RefName); */
-NS_IMETHODIMP sbPlaylistsource::IsQueryExecuting(const PRUnichar *RefName, PRBool *_retval)
+NS_IMETHODIMP
+sbPlaylistsource::IsQueryExecuting(const PRUnichar *RefName,
+                                   PRBool          *_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::IsQueryExecuting"));
   METHOD_SHORTCIRCUIT;
   *_retval = PR_FALSE;
 
-  if ( RefName )
-  {
-    // Find the ref string in the stringmap.
-    nsString strRefName( RefName );
-    sbFeedInfo *info = GetFeedInfo( strRefName );
-    if ( info )
-    {
-      info->m_Query->IsExecuting( _retval );
-    }
-  }
-  return NS_OK;
+  // Find the ref string in the stringmap.
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  return info->m_Query->IsExecuting(_retval);
 }
 
-/* void FeedPlaylistFilterOverride (in wstring RefName, in wstring FilterString); */
-NS_IMETHODIMP sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefName, const PRUnichar *FilterString)
+// From nsNavHistory.cpp
+void
+ParseStringIntoArray(const nsString& aString,
+                     nsStringArray*  aArray, 
+                     PRUnichar aDelim)
 {
+  NS_ASSERTION(aArray, "Null pointer passed");
+  if (!aArray)
+    return;
+
+  PRInt32 lastBegin = -1;
+  for (PRUint32 i = 0; i < aString.Length(); i++) {
+    if (aString[i] == aDelim) {
+      if (lastBegin >= 0) {
+        // found the end of a word
+        aArray->AppendString(Substring(aString, lastBegin, i - lastBegin));
+        lastBegin = -1;
+      }
+    } else {
+      if (lastBegin < 0) {
+        // found the beginning of a word
+        lastBegin = i;
+      }
+    }
+  }
+  // last word
+  if (lastBegin >= 0)
+    aArray->AppendString(Substring(aString, lastBegin));
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar *RefName,
+                                             const PRUnichar *FilterString)
+{
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(FilterString);
+
   LOG(("sbPlaylistsource::FeedPlaylistFilterOverride"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName && FilterString ) )
-  {
-    return NS_OK;
-  }
 
-  // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsString strRefName( RefName );
-  nsString filter_str( FilterString );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info && info->m_Resultset.get() )
-  {
-    info->m_Override = filter_str;
-    if ( filter_str.Length() )
-    {
-      // Crack the incoming list of filter strings (space delimited)
-      std::vector< nsString > filter_values;
-      nsString::const_iterator start, end;
-      filter_str.BeginReading( start );
-      filter_str.EndReading( end );
-      PRInt32 sub_start = 0, count = 0;
-      for ( sub_start = 0, count = 0; start != end; start++, count++ )
-      {
-        if ( *start == ' ' )
-        {
-          if ( count - sub_start )
-          {
-            const nsDependentSubstring sb = Substring( filter_str, sub_start, count - sub_start );
-            nsString sub;
-            sub += sb;
-            filter_values.push_back( sub );
-          }
-          sub_start = count + 1;
-        }
+  nsDependentString strRefName(RefName);
+  nsDependentString filter_str(FilterString);
+
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+  NS_ENSURE_TRUE(info->m_Resultset, NS_ERROR_UNEXPECTED);
+
+  info->m_Override = filter_str;
+
+  if (filter_str.IsEmpty()) {
+    // Revert to the normal override.
+    mon.Exit();
+    return FeedFilters(RefName, nsnull);
+  }
+
+  // Crack the incoming list of filter strings (space delimited)
+  nsStringArray filter_values;
+  ParseStringIntoArray(filter_str, &filter_values, NS_L(' '));
+
+  nsDependentString table_name(info->m_Table);
+
+  // The beginning of the main query string before we dump on it.
+  nsAutoString main_query_str = info->m_SimpleQueryStr +where_str;
+
+  // Compose an override query from the filter string and the columns in the
+  // current results
+  PRInt32 col_count, filter_count = (PRInt32)info->m_Filters.size();
+  PRBool any_column = PR_FALSE;
+
+  nsresult rv;
+  rv = info->m_Resultset->GetColumnCount(&col_count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(filter_count || col_count, "Nothing to do here!!!");
+
+  if (filter_count) {
+    // We're going to submit n+1 queries;
+    g_ActiveQueryCount += filter_count + 1;
+
+    filtermap_t::iterator f = info->m_Filters.begin();
+    for (; f != info->m_Filters.end(); f++) {
+      // Compose an override string for the filter query.
+      // XXX Can't we just write it here instead of all this + crap?
+      nsAutoString sub_query_str = unique_str + op_str + (*f).second.m_Column +
+                                   cp_str + from_str + qu_str + table_name +
+                                   qu_str + where_str + op_str;
+      PRBool any_value = PR_FALSE;
+      PRInt32 count = filter_values.Count();
+      for (PRInt32 index = 0; index < count; index++) {
+        if (any_value)
+          sub_query_str += and_str;
+        any_value = PR_TRUE;
+        sub_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
+                         pct_str + *filter_values[index] + pct_str + qu_str +
+                         cp_str;
       }
-      if ( count - sub_start )
-      {
-        const nsDependentSubstring sb = Substring( filter_str, sub_start, count - sub_start );
-        nsString sub;
-        sub += sb;
-        filter_values.push_back( sub );
-        sub_start = count + 1;
-      }
+      sub_query_str += cp_str + order_str + (*f).second.m_Column;
 
-      nsString table_name( info->m_Table );
+      sbFeedInfo *filter_info = GetFeedInfo((*f).second.m_Ref);
+      NS_ENSURE_TRUE(filter_info, NS_ERROR_NULL_POINTER);
 
-      // The beginning of the main query string before we dump on it.
-      nsString main_query_str = info->m_SimpleQueryStr + where_str; // + op_str;
-      // Compose an override query from the filter string and the columns in the current results
-      PRInt32 col_count, filter_count = (PRInt32)info->m_Filters.size();
-      info->m_Resultset->GetColumnCount( &col_count );
-      PRBool any_column = PR_FALSE;
-      if ( filter_count )
-      {
-        // We're going to submit n+1 queries;
-        g_ActiveQueryCount += filter_count + 1;
+      filter_info->m_Override = filter_str;
+      rv = filter_info->m_Query->ResetQuery();
+      NS_ENSURE_SUCCESS(rv, rv);
 
-        filtermap_t::iterator f = info->m_Filters.begin();
-        for ( ; f != info->m_Filters.end(); f++ )
-        {
-          // Compose an override string for the filter query.
-          nsString sub_query_str = unique_str + op_str + (*f).second.m_Column + cp_str + from_str + qu_str + table_name + qu_str + where_str + op_str;
-          PRBool any_value = PR_FALSE;
-          for ( std::vector< nsString >::iterator str = filter_values.begin(); str != filter_values.end(); str++ )
-          {
-            if ( any_value )
-            {
-              sub_query_str += and_str;
-            }
-            any_value = PR_TRUE;
-            sub_query_str += op_str + (*f).second.m_Column + like_str + qu_str + pct_str + (*str) + pct_str + qu_str + cp_str;
-          }
-          sub_query_str += cp_str + order_str + (*f).second.m_Column;
-
-          sbFeedInfo *filter_info = GetFeedInfo( (*f).second.m_Ref );
-          if ( filter_info )
-          {
-            PRInt32 ret;
-            filter_info->m_Override = filter_str;
-            filter_info->m_Query->ResetQuery();
-            filter_info->m_Query->AddQuery( sub_query_str.get() );
-            filter_info->m_Query->Execute( &ret );
-          }
-        }
-
-        PRBool any_value = PR_FALSE;
-        for ( std::vector< nsString >::iterator str = filter_values.begin(); str != filter_values.end(); str++ )
-        {
-          if ( any_value )
-          {
-            main_query_str += and_str;
-          }
-          any_value = PR_TRUE;
-          any_column = PR_FALSE;
-          main_query_str += op_str;
-
-          for ( f = info->m_Filters.begin(); f != info->m_Filters.end(); f++ )
-          {
-            // Add to the main query override string
-            if ( any_column )
-            {
-              main_query_str += or_str;
-            }
-            any_column = PR_TRUE;
-            main_query_str += op_str + (*f).second.m_Column + like_str + qu_str + pct_str + (*str) + pct_str + qu_str + cp_str;
-          }
-
-          main_query_str += or_str + op_str + NS_LITERAL_STRING("title") + like_str + qu_str + pct_str + (*str) + pct_str + qu_str + cp_str;
-          main_query_str += cp_str;
-        }
-      }
-      else if ( col_count ) // do it from the actual columns if there's no filters.
-      {
-        PRBool any_value = PR_FALSE;
-        for ( std::vector< nsString >::iterator str = filter_values.begin(); str != filter_values.end(); str++ )
-        {
-          if ( any_value )
-          {
-            main_query_str += and_str;
-          }
-          else
-          {
-            main_query_str += op_str;
-          }
-          any_value = PR_TRUE;
-          any_column = PR_FALSE;
-/*
-          for ( PRInt32 i = 0; i < col_count; i++ )
-          {
-            if ( any_column )
-            {
-              main_query_str += or_str;
-            }
-            else
-            {
-              main_query_str += op_str;
-            }
-            any_column = PR_TRUE;
-            PRUnichar *col_name = nsnull;
-            info->m_Resultset->GetColumnName( i, &col_name );
-            nsString col_str( col_name );
-            main_query_str += col_str + like_str + qu_str + pct_str + (*str) + pct_str + qu_str;
-            PR_Free( col_name );
-          }
-          if ( any_column )
-          {
-            main_query_str += cp_str;
-          }
-          else
-*/
-          {
-            main_query_str += op_str + NS_LITERAL_STRING("title") + like_str + qu_str + pct_str + (*str) + pct_str + qu_str;
-            main_query_str += or_str + NS_LITERAL_STRING("genre") + like_str + qu_str + pct_str + (*str) + pct_str + qu_str;
-            main_query_str += or_str + NS_LITERAL_STRING("artist") + like_str + qu_str + pct_str + (*str) + pct_str + qu_str;
-            main_query_str += or_str + NS_LITERAL_STRING("album") + like_str + qu_str + pct_str + (*str) + pct_str + qu_str;
-            main_query_str += cp_str;
-          }
-        }
-        if ( any_value )
-        {
-          main_query_str += cp_str;
-        }
-      }
-
-      mon.Exit();
+      rv = filter_info->m_Query->AddQuery(sub_query_str.get());
+      NS_ENSURE_SUCCESS(rv, rv);
 
       PRInt32 ret;
-      info->m_Query->ResetQuery();
-      info->m_Query->AddQuery( main_query_str.get() );
-      info->m_Query->Execute( &ret );
+      rv = filter_info->m_Query->Execute(&ret);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
-    else
-    {
-      // Revert to the normal override.
-      mon.Exit();
-      FeedFilters( RefName, nsnull );
+ 
+    PRBool any_value = PR_FALSE;
+    PRInt32 count = filter_values.Count();
+    for (PRInt32 index = 0; index < count; index++) {
+      if (any_value)
+        main_query_str += and_str;
+      any_value = PR_TRUE;
+      any_column = PR_FALSE;
+      main_query_str += op_str;
+
+      for (f = info->m_Filters.begin(); f != info->m_Filters.end(); f++) {
+        // Add to the main query override string
+        if (any_column)
+          main_query_str += or_str;
+        any_column = PR_TRUE;
+        main_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
+                          pct_str + *filter_values[index] + pct_str + qu_str +
+                          cp_str;
+      }
+
+      main_query_str += or_str + op_str + NS_LITERAL_STRING("title") +
+                        like_str + qu_str + pct_str + *filter_values[index] +
+                        pct_str + qu_str + cp_str + cp_str;
     }
+  } // filter_count
+  else if (col_count) { 
+    // do it from the actual columns if there's no filters.
+    PRBool any_value = PR_FALSE;
+    PRInt32 count = filter_values.Count();
+    for (PRInt32 index = 0; index < count; index++) {
+      if (any_value)
+        main_query_str += and_str;
+      else
+        main_query_str += op_str;
+      any_value = PR_TRUE;
+      any_column = PR_FALSE;
+      main_query_str += op_str + NS_LITERAL_STRING("title") + like_str +
+                        qu_str + pct_str + *filter_values[index] + pct_str +
+                        qu_str + or_str + NS_LITERAL_STRING("genre") +
+                        like_str + qu_str + pct_str + *filter_values[index] +
+                        pct_str + qu_str + or_str +
+                        NS_LITERAL_STRING("artist") + like_str + qu_str +
+                        pct_str + *filter_values[index] + pct_str + qu_str +
+                        or_str + NS_LITERAL_STRING("album") + like_str +
+                        qu_str + pct_str + *filter_values[index] + pct_str +
+                        qu_str + cp_str;
+    }
+    if (any_value)
+      main_query_str += cp_str;
   }
+
+  mon.Exit();
+
+  PRInt32 ret;
+  rv = info->m_Query->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = info->m_Query->AddQuery( main_query_str.get() );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = info->m_Query->Execute( &ret );
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-/* wstring GetFilterOverride (in wstring RefName); */
-NS_IMETHODIMP sbPlaylistsource::GetFilterOverride(const PRUnichar *RefName, PRUnichar **_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetFilterOverride(const PRUnichar *RefName,
+                                    PRUnichar       **_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::GetFilterOverride"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
-    return NS_OK;
-  }
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  PRBool set = PR_FALSE;
-  if ( info )
-  {
-    if ( info->m_Override.Length() )
-    {
-      // Clunky, return the string
-      PRUint32 nLen = info->m_Override.Length() + 1;
-      *_retval = (PRUnichar *)PR_Calloc(nLen, sizeof(PRUnichar));
-      memcpy(*_retval, info->m_Override.get(), (nLen - 1) * sizeof(PRUnichar));
-      (*_retval)[info->m_Override.Length()] = 0;
-      set = PR_TRUE;
-    }
-  }
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  if ( !set )
-  {
-    // "Uh... who?"
+  if (info->m_Override.IsEmpty()) {
     *_retval = (PRUnichar *)PR_Calloc(1, sizeof(PRUnichar));
     **_retval = 0;
+    return NS_OK;
   }
+
+  // Clunky, return the string
+  PRUint32 nLen = info->m_Override.Length() + 1;
+  *_retval = (PRUnichar *)PR_Calloc(nLen, sizeof(PRUnichar));
+  memcpy(*_retval, info->m_Override.get(), (nLen - 1) * sizeof(PRUnichar));
+  (*_retval)[info->m_Override.Length()] = 0;
 
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::SetFilter(const PRUnichar *RefName, PRInt32 Index, const PRUnichar *FilterString, const PRUnichar *FilterRefName, const PRUnichar *FilterColumn)
+NS_IMETHODIMP
+sbPlaylistsource::SetFilter(const PRUnichar *RefName,
+                            PRInt32         Index,
+                            const PRUnichar *FilterString,
+                            const PRUnichar *FilterRefName,
+                            const PRUnichar *FilterColumn)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(FilterString);
+  NS_ENSURE_ARG_POINTER(FilterRefName);
+  NS_ENSURE_ARG_POINTER(FilterColumn);
+
   LOG(("sbPlaylistsource::SetFilter"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName && FilterString && FilterRefName && FilterColumn ) )
-  {
-    return NS_OK;
-  }
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info )
-  {
-    filtermap_t::iterator f = info->m_Filters.find( Index );
-    if ( f != info->m_Filters.end() )
-    {
-      // Change the existing strings
-      (*f).second.m_Filter = FilterString;
-      (*f).second.m_Column = FilterColumn;
-      (*f).second.m_Ref    = FilterRefName;
-    }
-    else
-    {
-      // Make a new one, add it to the playlist feed
-      sbFilterInfo filter;
-      filter.m_Filter = FilterString;
-      filter.m_Column = FilterColumn;
-      filter.m_Ref    = FilterRefName;
-      info->m_Filters[ Index ] = filter;
-    }
-    // Set all the later filters blank.
-    for ( f++; f != info->m_Filters.end(); f++ )
-    {
-      (*f).second.m_Filter = nsString();
-    }
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  filtermap_t::iterator f = info->m_Filters.find(Index);
+  if (f != info->m_Filters.end()) {
+    // Change the existing strings
+    (*f).second.m_Filter = FilterString;
+    (*f).second.m_Column = FilterColumn;
+    (*f).second.m_Ref    = FilterRefName;
+  } else {
+    // Make a new one, add it to the playlist feed
+    sbFilterInfo filter;
+    filter.m_Filter = FilterString;
+    filter.m_Column = FilterColumn;
+    filter.m_Ref    = FilterRefName;
+    info->m_Filters[ Index ] = filter;
+  }
+
+  // Set all the later filters blank.
+  for (f++; f != info->m_Filters.end(); f++) {
+    (*f).second.m_Filter = nsString();
   }
 
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::GetNumFilters(const PRUnichar *RefName, PRInt32 *_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetNumFilters(const PRUnichar *RefName,
+                                PRInt32         *_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::GetNumFilters"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
-    return NS_OK;
-  }
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info )
-  {
-    *_retval = (PRInt32)info->m_Filters.size();
-  }
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+  *_retval = (PRInt32)info->m_Filters.size();
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::ClearFilter(const PRUnichar *RefName, PRInt32 Index)
+NS_IMETHODIMP
+sbPlaylistsource::ClearFilter(const PRUnichar *RefName,
+                              PRInt32         Index)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+
   LOG(("sbPlaylistsource::ClearFilter"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
-    return NS_OK;
-  }
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info )
-  {
-    filtermap_t::iterator f = info->m_Filters.find( Index );
-    if ( f != info->m_Filters.end() )
-    {
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  filtermap_t::iterator f = info->m_Filters.find(Index);
+  if (f != info->m_Filters.end()) {
       // Remember to make the destructor clean up
       info->m_Filters.erase( f );
-    }
   }
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPlaylistsource::GetFilter(const PRUnichar *RefName, PRInt32 Index, PRUnichar **_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetFilter(const PRUnichar *RefName,
+                            PRInt32         Index,
+                            PRUnichar       **_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::GetFilter"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
-    return NS_OK;
-  }
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
-  PRBool set = PR_FALSE;
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info )
-  {
-    if ( ! info->m_Override.Length() )
-    {
-      filtermap_t::iterator f = info->m_Filters.find( Index );
-      if ( f != info->m_Filters.end() )
-      {
-        // Clunky, return the string
-        PRUint32 nLen = (*f).second.m_Filter.Length() + 1;
-        *_retval = (PRUnichar *)PR_Calloc(nLen, sizeof(PRUnichar));
-        memcpy(*_retval, (*f).second.m_Filter.get(), (nLen - 1) * sizeof(PRUnichar));
-        (*_retval)[(*f).second.m_Filter.Length()] = 0;
-        set = PR_TRUE;
-      }
+
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+  if (info->m_Override.IsEmpty()) {
+    filtermap_t::iterator f = info->m_Filters.find(Index);
+    if (f != info->m_Filters.end()) {
+      // Clunky, return the string
+      PRUint32 nLen = (*f).second.m_Filter.Length() + 1;
+      *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
+      memcpy(*_retval, (*f).second.m_Filter.get(),
+             (nLen - 1) * sizeof(PRUnichar));
+      (*_retval)[(*f).second.m_Filter.Length()] = 0;
+      return NS_OK;
     }
   }
-  if ( !set )
-  {
-    // If we have an override, pretend the filter string is blank.
-    *_retval = (PRUnichar *)PR_Calloc(1, sizeof(PRUnichar));
-    **_retval = 0;
-  }
+
+  // If we have an override, pretend the filter string is blank.
+  *_retval = (PRUnichar *)PR_Calloc(1, sizeof(PRUnichar));
+  **_retval = 0;
+
   return NS_OK;
 }
 
 
-NS_IMETHODIMP sbPlaylistsource::GetFilterRef(const PRUnichar *RefName, PRInt32 Index, PRUnichar **_retval)
+NS_IMETHODIMP
+sbPlaylistsource::GetFilterRef(const PRUnichar *RefName,
+                               PRInt32         Index,
+                               PRUnichar       **_retval)
 {
+  NS_ENSURE_ARG_POINTER(RefName);
+  NS_ENSURE_ARG_POINTER(_retval);
+
   LOG(("sbPlaylistsource::GetFilterRef"));
   METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
-    return NS_OK;
-  }
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
-  PRBool set = PR_FALSE;
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
-  if ( info )
-  {
-    filtermap_t::iterator f = info->m_Filters.find( Index );
-    if ( f != info->m_Filters.end() )
-    {
-      // Clunky, return the string
-      PRUint32 nLen = (*f).second.m_Ref.Length() + 1;
-      *_retval = (PRUnichar *)PR_Calloc(nLen, sizeof(PRUnichar));
-      memcpy(*_retval, (*f).second.m_Ref.get(), (nLen - 1) * sizeof(PRUnichar));
-      (*_retval)[(*f).second.m_Ref.Length()] = 0;
-      set = PR_TRUE;
-    }
-  }
-  if ( !set )
-  {
-    // If we have an override, pretend the ref string is blank.
-    *_retval = (PRUnichar *)PR_Calloc(1, sizeof(PRUnichar));
-    **_retval = 0;
-  }
-  return NS_OK;
-}
 
-NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_retval)
-{
-  LOG(("sbPlaylistsource::FeedFilters"));
-  METHOD_SHORTCIRCUIT;
-  if ( ! ( RefName ) )
-  {
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  filtermap_t::iterator f = info->m_Filters.find(Index);
+  if (f != info->m_Filters.end()) {
+    // Clunky, return the string
+    PRUint32 nLen = (*f).second.m_Ref.Length() + 1;
+    *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
+    memcpy(*_retval, (*f).second.m_Ref.get(),
+           (nLen - 1) * sizeof(PRUnichar));
+    (*_retval)[(*f).second.m_Ref.Length()] = 0;
     return NS_OK;
   }
 
+  // If we have an override, pretend the ref string is blank.
+  *_retval = (PRUnichar *)PR_Calloc(1, sizeof(PRUnichar));
+  **_retval = 0;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::FeedFilters(const PRUnichar *RefName,
+                              PRInt32         *_retval)
+{
+  NS_ENSURE_ARG_POINTER(RefName);
+  // NS_ENSURE_ARG_POINTER(_retval);
+
+  LOG(("sbPlaylistsource::FeedFilters"));
+  METHOD_SHORTCIRCUIT;
+
   // No, you don't HAVE to pass in a value.
+  // XXX Why does this need a retval param if we're not going to use it?
   PRInt32 retval;
   if ( !_retval )
   {
@@ -996,183 +1033,185 @@ NS_IMETHODIMP sbPlaylistsource::FeedFilters(const PRUnichar *RefName, PRInt32 *_
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsString strRefName( RefName );
-  sbFeedInfo *info = GetFeedInfo( strRefName );
+  nsDependentString strRefName(RefName);
+  sbFeedInfo *info = GetFeedInfo(strRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  if ( info )
-  {
-    info->m_Override = nsString();
-    nsString table_name( info->m_Table );
+  info->m_Override.Assign(NS_LITERAL_STRING(""));
+  nsAutoString table_name(info->m_Table);
 
-    nsCOMPtr<sbISimplePlaylist> pSimplePlaylist;
-    nsCOMPtr<sbISmartPlaylist> pSmartPlaylist;
-    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
-    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbird.org/Songbird/PlaylistManager;1");
+  nsCOMPtr<sbISimplePlaylist> pSimplePlaylist;
+  nsCOMPtr<sbISmartPlaylist> pSmartPlaylist;
 
-    pQuery->SetAsyncQuery(PR_TRUE);
-    pQuery->SetDatabaseGUID(info->m_GUID.get());
+  nsCOMPtr<sbIDatabaseQuery> pQuery =
+    do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
+  NS_ENSURE_TRUE(pQuery, NS_ERROR_FAILURE);
 
-    mon.Exit();
-    pPlaylistManager->GetSimplePlaylist(table_name.get(), pQuery.get(), getter_AddRefs(pSimplePlaylist));
-    pPlaylistManager->GetSmartPlaylist(table_name.get(), pQuery.get(), getter_AddRefs(pSmartPlaylist));
-    mon.Enter();
+  nsCOMPtr<sbIPlaylistManager> pPlaylistManager =
+    do_CreateInstance("@songbird.org/Songbird/PlaylistManager;1");
+  NS_ENSURE_TRUE(pPlaylistManager, NS_ERROR_FAILURE);
 
-    PRBool isSimplePlaylist = PR_FALSE;
-    if(pSimplePlaylist.get()) isSimplePlaylist = PR_TRUE;
+  nsresult rv;
+  rv = pQuery->SetAsyncQuery(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool isSmartPlaylist = PR_FALSE;
-    if(pSmartPlaylist.get()) isSmartPlaylist = PR_TRUE;
+  rv = pQuery->SetDatabaseGUID(info->m_GUID.get());
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString library_query_str = select_str + row_str + from_str + qu_str + table_name + qu_str + where_str;
-    nsString library_simple_query_str = select_str + row_str + from_str + qu_str + table_name + qu_str;
 
-    // The beginning of the main query string before we dump on it.
-    nsString playlist_simple_query_str = select_str + row_str + from_str + qu_str + table_name + qu_str + left_join_str + library_str + on_str +
-      qu_str + table_name + qu_str + dot_str + playlist_uuid_str + eq_str + library_str + dot_str + uuid_str;
+  mon.Exit();
 
-    nsString simple_query_str = ((table_name == library_str) || isSimplePlaylist || isSmartPlaylist) ? library_simple_query_str : playlist_simple_query_str;
-    nsString main_query_str = simple_query_str + where_str;
-    info->m_SimpleQueryStr = simple_query_str;
-    // The filters for the filters.
-    nsString sub_filter_str;
+  rv = pPlaylistManager->GetSimplePlaylist(table_name.get(),
+                                           pQuery.get(),
+                                           getter_AddRefs(pSimplePlaylist));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // We're going to submit n+1 queries;
-    g_ActiveQueryCount += (PRInt32)info->m_Filters.size() + 1;
+  rv = pPlaylistManager->GetSmartPlaylist(table_name.get(),
+                                          pQuery.get(),
+                                          getter_AddRefs(pSmartPlaylist));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool anything = PR_FALSE;
-    filtermap_t::iterator f = info->m_Filters.begin();
-    for ( ; f != info->m_Filters.end(); f++ )
-    {
-      // Crack the incoming list of filter strings (semicolon delimited)
-      nsString filter_str = (*f).second.m_Filter;
-      std::vector< nsString > filter_values;
-      nsString::const_iterator start, end;
-      filter_str.BeginReading( start );
-      filter_str.EndReading( end );
-      
-      PRInt32 sub_start = 0, count = 0;
-      for ( ; start != end; start++, count++ )
-      {
-        if ( *start == ';' )
-        {
-          if ( count - sub_start )
-          {
-            const nsDependentSubstring sb = Substring( filter_str, sub_start, count - sub_start );
-            nsString sub;
-            sub += sb;
-            filter_values.push_back( sub );
-          }
-          sub_start = count + 1;
-        }
-      }
-      if ( count - sub_start )
-      {
-        const nsDependentSubstring sb = Substring( filter_str, sub_start, count - sub_start );
-        nsString sub;
-        sub += sb;
-        filter_values.push_back( sub );
-        sub_start = count + 1;
-      }
+  mon.Enter();
 
-      // Compose the SQL filter string
-      nsString sql_filter_str;
-      PRBool any_filter = PR_FALSE;
-      for ( std::vector< nsString >::iterator s = filter_values.begin(); s != filter_values.end(); s++ )
-      {
-        if ( any_filter )
-        {
-          sql_filter_str += or_str;
-        }
-        sql_filter_str += (*f).second.m_Column + eq_str + qu_str + *s + qu_str;
-        any_filter = PR_TRUE;
-      }
+  PRBool isSimplePlaylist = pSimplePlaylist != nsnull;
+  PRBool isSmartPlaylist = pSmartPlaylist != nsnull;
 
-      if ( any_filter )
-      {
-        // Append this filter's constraints to the main query
-        if ( anything )
-        {
-          main_query_str += and_str;
-        }
-        main_query_str += op_str + sql_filter_str + cp_str;
-      }
+  nsAutoString library_query_str = select_str + row_str + from_str + qu_str +
+                                   table_name + qu_str + where_str;
+  nsAutoString library_simple_query_str = select_str + row_str + from_str +
+                                          qu_str + table_name + qu_str;
 
-      // Compose the sub query
-      nsString sub_query_str = unique_str + op_str + (*f).second.m_Column + cp_str + from_str + qu_str + table_name + qu_str;
-      if ( anything )
-      {
-        sub_query_str += where_str + sub_filter_str;
-      }
-      sub_query_str += order_str + (*f).second.m_Column;
+  // The beginning of the main query string before we dump on it.
+  nsAutoString playlist_simple_query_str = select_str + row_str + from_str +
+                                           qu_str + table_name + qu_str +
+                                           left_join_str + library_str +
+                                           on_str + qu_str + table_name +
+                                           qu_str + dot_str +
+                                           playlist_uuid_str + eq_str +
+                                           library_str + dot_str + uuid_str;
 
-      // Append this filter's constraints to the next sub query
-      if ( any_filter )
-      {
-        if ( anything )
-        {
-          sub_filter_str += and_str;
-        }
-        sub_filter_str += op_str + sql_filter_str + cp_str; 
-      }
+  PRBool useLibraryQuery = (table_name == library_str ||
+                            isSimplePlaylist ||
+                            isSmartPlaylist);
+  nsAutoString simple_query_str = useLibraryQuery ?
+                                  library_simple_query_str :
+                                  playlist_simple_query_str;
 
-      // Make sure there is a feed for this filter
-      sbFeedInfo *filter_info = GetFeedInfo( (*f).second.m_Ref );
-      if ( !filter_info )
-      {
-        FeedPlaylist( (*f).second.m_Ref.get(), info->m_GUID.get(), info->m_Table.get() );
-        filter_info = GetFeedInfo( (*f).second.m_Ref );
-        if ( !filter_info )
-        {
-//          __asm PRInt32 3;
-        }
-      }
+  nsAutoString main_query_str = simple_query_str + where_str;
 
-      // Remember the column
-      filter_info->m_Column = (*f).second.m_Column;
-      filter_info->m_Override = nsString();
+  info->m_SimpleQueryStr = simple_query_str;
 
-      // Execute the new query for the feed
-      PRBool bret;
-      filter_info->m_Query->IsExecuting( &bret );
-      if ( bret )
-      {
-        mon.Exit();
-        filter_info->m_Query->Abort( &bret ); // Blocks until aborted.
-        mon.Enter();
-      }
-      PRInt32 ret;
-      filter_info->m_Query->ResetQuery();
-      filter_info->m_Query->AddQuery( sub_query_str.get() );
-//      g_Lock.Unlock();
-      filter_info->m_Query->Execute( &ret );
-//      g_Lock.Lock();
+  // The filters for the filters.
+  nsAutoString sub_filter_str;
 
-      // And note that at least one filter exists on the main query?  Maybe?
-      if ( any_filter )
-      {
-        anything = PR_TRUE;
-      }
+  // We're going to submit n+1 queries;
+  g_ActiveQueryCount += (PRInt32)info->m_Filters.size() + 1;
+
+  PRBool anything = PR_FALSE;
+  filtermap_t::iterator f = info->m_Filters.begin();
+  for (; f != info->m_Filters.end(); f++) {
+    // Crack the incoming list of filter strings (semicolon delimited)
+    nsAutoString filter_str((*f).second.m_Filter);
+    nsStringArray filter_values;
+    ParseStringIntoArray(filter_str, &filter_values, NS_L(';'));
+
+    // Compose the SQL filter string
+    nsString sql_filter_str;
+    PRBool any_filter = PR_FALSE;
+    PRInt32 count = filter_values.Count();      
+    for (PRInt32 index = 0; index < count; index++) {
+      if (any_filter)
+        sql_filter_str += or_str;
+      sql_filter_str += (*f).second.m_Column + eq_str + qu_str +
+                        *filter_values[index] + qu_str;
+      any_filter = PR_TRUE;
     }
 
-    // Only alter the main playlist query if we have current filters.
-    if ( ! anything )
-    {
-      main_query_str = simple_query_str;
+    if (any_filter) {
+      // Append this filter's constraints to the main query
+      if (anything)
+        main_query_str += and_str;
+      main_query_str += op_str + sql_filter_str + cp_str;
     }
 
-    // Remove the previous results
-    info->m_Resultset = nsnull;
+    // Compose the sub query
+    nsAutoString sub_query_str = unique_str + op_str + (*f).second.m_Column +
+                                 cp_str + from_str + qu_str + table_name +
+                                 qu_str;
+    if (anything)
+      sub_query_str += where_str + sub_filter_str;
+    sub_query_str += order_str + (*f).second.m_Column;
 
-    // Change the main query and resubmit.
-    info->m_Query->ResetQuery();
-    info->m_Query->AddQuery( main_query_str.get() );
-    //    g_Lock.Unlock();
-    info->m_Query->Execute( _retval );
-    //    g_Lock.Lock();
-  }
+    // Append this filter's constraints to the next sub query
+    if (any_filter) {
+      if (anything)
+        sub_filter_str += and_str;
+      sub_filter_str += op_str + sql_filter_str + cp_str; 
+    }
+
+    // Make sure there is a feed for this filter
+    sbFeedInfo *filter_info = GetFeedInfo((*f).second.m_Ref);
+    if (!filter_info) {
+      FeedPlaylist((*f).second.m_Ref.get(),
+                   info->m_GUID.get(),
+                   info->m_Table.get());
+      filter_info = GetFeedInfo((*f).second.m_Ref);
+      NS_ENSURE_TRUE(filter_info, NS_ERROR_FAILURE);
+    }
+
+    // Remember the column
+    filter_info->m_Column = (*f).second.m_Column;
+    filter_info->m_Override.Assign(NS_LITERAL_STRING(""));
+
+    // Execute the new query for the feed
+    PRBool isExecuting;
+    rv = filter_info->m_Query->IsExecuting(&isExecuting);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isExecuting) {
+      mon.Exit();
+      // This will block until aborted
+      PRBool dummy;
+      rv = filter_info->m_Query->Abort(&dummy);
+      NS_ENSURE_SUCCESS(rv, rv);
+      mon.Enter();
+    }
+
+    rv = filter_info->m_Query->ResetQuery();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = filter_info->m_Query->AddQuery(sub_query_str.get());
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 ret;
+    rv = filter_info->m_Query->Execute(&ret);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // And note that at least one filter exists on the main query?  Maybe?
+    if (any_filter)
+      anything = PR_TRUE;
+  } // for
+
+  // Only alter the main playlist query if we have current filters.
+  if (!anything)
+    main_query_str = simple_query_str;
+
+  // Remove the previous results
+  info->m_Resultset = nsnull;
+
+  // Change the main query and resubmit.
+  rv = info->m_Query->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = info->m_Query->AddQuery(main_query_str.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = info->m_Query->Execute(_retval);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
+
+// End Ben's cleanup
 
 /* void RegisterPlaylistCommands (in wstring ContextGUID, in wstring TableName, in sbIPlaylistCommands CommandObj); */
 NS_IMETHODIMP sbPlaylistsource::RegisterPlaylistCommands(const PRUnichar *ContextGUID, const PRUnichar *TableName, const PRUnichar *PlaylistType, sbIPlaylistCommands *CommandObj)
