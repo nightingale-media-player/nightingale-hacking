@@ -418,7 +418,6 @@ sbPlaylistsource::GetQueryResult(const PRUnichar   *RefName,
   nsAutoMonitor mon(g_pMonitor);
 
   if (info->m_Resultset) {
-    info->m_Resultset->AddRef();
     *_retval = info->m_Resultset;
     return NS_OK;
   }
@@ -450,7 +449,6 @@ sbPlaylistsource::GetRefRowCount(const PRUnichar *RefName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   resultset->GetRowCount(_retval);
-  resultset->Release();
 
   return NS_OK;
 }
@@ -472,7 +470,6 @@ sbPlaylistsource::GetRefColumnCount(const PRUnichar *RefName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   resultset->GetColumnCount(_retval);
-  resultset->Release();
 
   return NS_OK;
 }
