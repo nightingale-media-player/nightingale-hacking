@@ -2239,7 +2239,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value)
 
   // If we already have a where, don't add another one
   nsAutoString aw_str;
-  if (q.Find(NS_L("where"), PR_TRUE) == -1)
+  if (q.Find(NS_LITERAL_STRING("where"), PR_TRUE) == -1)
     aw_str = NS_LITERAL_STRING(" where ");
   else
     aw_str = NS_LITERAL_STRING(" and ");
