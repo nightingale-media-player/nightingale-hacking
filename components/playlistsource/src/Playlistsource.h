@@ -31,30 +31,35 @@
 
 #pragma once
 
-#include "nsISupportsImpl.h"
-#include "nsISupportsUtils.h"
-#include "nsIStringBundle.h"
-#include "nsIRDFLiteral.h"
-#include "nsString.h"
-#include "sbIPlaylistsource.h"
-
-#include "IDatabaseQuery.h"
+#include <nsISupportsImpl.h>
+#include <nsISupportsUtils.h>
+#include <nsIStringBundle.h>
+#include <nsIRDFLiteral.h>
+#include <nsString.h>
 #include <nspr/prmon.h>
+
+#include "sbIPlaylistsource.h"
+#include "IDatabaseQuery.h"
 
 #include <map>
 #include <set>
 #include <vector>
 
-#ifndef NS_DECL_ISUPPORTS
-#error
-#endif
 // DEFINES ====================================================================
-#define SONGBIRD_PLAYLISTSOURCE_CONTRACTID  "@mozilla.org/rdf/datasource;1?name=playlist"
-#define SONGBIRD_PLAYLISTSOURCE_CLASSNAME   "Songbird Media Data Source Component"
-#define SONGBIRD_PLAYLISTSOURCE_CID { 0x836d6ea5, 0xca63, 0x418f, { 0xbf, 0xd8, 0x27, 0x70, 0x45, 0x9, 0xa6, 0xa3 } }
+#define SONGBIRD_PLAYLISTSOURCE_CONTRACTID                                    \
+          "@mozilla.org/rdf/datasource;1?name=playlist"
+#define SONGBIRD_PLAYLISTSOURCE_CLASSNAME                                     \
+          "Songbird Media Data Source Component"
+#define SONGBIRD_PLAYLISTSOURCE_CID                                           \
+          {0x836d6ea5, 0xca63, 0x418f,                                        \
+            {0xbf, 0xd8, 0x27, 0x70, 0x45, 0x9, 0xa6, 0xa3}}
 
+#define NUM_PLAYLIST_ITEMS 0
+
+// FORWARD DECLS ==============================================================
 class MyQueryCallback;
 class nsITimer;
+class nsIRDFService;
 
 // CLASSES ====================================================================
 class sbPlaylistsource : public sbIPlaylistsource
@@ -66,191 +71,165 @@ public:
 
   sbPlaylistsource();
   virtual ~sbPlaylistsource();
-
-public:
-  void Init( void );
-  void DeInit( void );
-  void UpdateObservers();
+  NS_IMETHODIMP UpdateObservers();
 
   struct sbObserver
   {
-    nsCOMPtr<nsIRDFObserver>  m_Observer;
-    void *                    m_Ptr;
-    nsString                  m_Ref;
-
-    PRBool operator == ( const sbPlaylistsource::sbObserver &T ) const { return m_Ptr == T.m_Ptr; }
-    PRBool operator < ( const sbPlaylistsource::sbObserver &T ) const { return m_Ptr < T.m_Ptr; }
-    sbObserver &operator = ( const sbPlaylistsource::sbObserver &T )
+    PRBool operator== (const sbPlaylistsource::sbObserver &T) const
+    {
+      return m_Ptr == T.m_Ptr;
+    }
+    PRBool operator< (const sbPlaylistsource::sbObserver &T) const
+    {
+      return m_Ptr < T.m_Ptr;
+    }
+    sbObserver &operator= (const sbPlaylistsource::sbObserver &T)
     {
       m_Observer = T.m_Observer;
       m_Ptr = T.m_Ptr;
       m_Ref = T.m_Ref;
       return *this;
     }
+
+    nsCOMPtr<nsIRDFObserver> m_Observer;
+    void*                    m_Ptr;
+    nsString                 m_Ref;
   };
-  class observers_t : public std::set< sbObserver > {};
+
+  class observers_t : public std::set<sbObserver> {};
   static observers_t g_Observers;
 
-  static PRInt32 gRefCnt;
-
-  // pseudo-constants
-  static nsIRDFResource       *kNC_Playlist;
-
-#define NUM_PLAYLIST_ITEMS 0 // 10
-//  static nsIRDFResource       *kNC_Metadata[ kNumMetadataColumns ];
-
-  static nsIRDFResource       *kNC_child;
-  static nsIRDFResource       *kNC_pulse;
-
-  static nsIRDFResource       *kRDF_InstanceOf;
-  static nsIRDFResource       *kRDF_type;
-  static nsIRDFResource       *kRDF_nextVal;
-  static nsIRDFResource       *kRDF_Seq;
-
-  static nsIRDFLiteral        *kLiteralTrue;
-  static nsIRDFLiteral        *kLiteralFalse;
-
-  static void ClearPlaylistSTR( const PRUnichar *RefName );
-  static void ClearPlaylistRDF( nsIRDFResource *RefResource );
-
-public:
-  class sbValueInfo;
-  class sbFeedInfo;
+  static void ClearPlaylistSTR(const PRUnichar *RefName);
+  static void ClearPlaylistRDF(nsIRDFResource *RefResource);
 
   struct sbFilterInfo
   {
-    nsString                          m_Ref;
-    nsString                          m_Filter;
-    nsString                          m_Column;
-
-    ~sbFilterInfo()
-    {
-      ClearPlaylistSTR( m_Ref.get() );
-    }
+    ~sbFilterInfo() { ClearPlaylistSTR(m_Ref.get()); }
+    nsString m_Ref;
+    nsString m_Filter;
+    nsString m_Column;
   };
-  class filtermap_t  : public std::map< PRInt32, sbFilterInfo > {};
-  class reslist_t    : public std::vector< nsIRDFResource * > {};
-  class columnmap_t  : public std::map< nsIRDFResource *, PRInt32 > {};
+
+  struct sbValueInfo;
+  struct sbFeedInfo;
+
+  class filtermap_t : public std::map<PRInt32, sbFilterInfo> {};
+  class reslist_t   : public std::vector<nsIRDFResource*> {};
+  class columnmap_t : public std::map<nsIRDFResource*, PRInt32> {};
+
   struct sbResultInfo
   {
-    nsCOMPtr< sbIDatabaseResult >   m_Results;
-    nsCOMPtr< nsIRDFResource >      m_Source;
-    nsCOMPtr< nsISimpleEnumerator > m_OldTarget;
-    nsString                        m_Ref;
-    PRBool                          m_ForceGetTargets;
+    nsCOMPtr<sbIDatabaseResult>   m_Results;
+    nsCOMPtr<nsIRDFResource>      m_Source;
+    nsCOMPtr<nsISimpleEnumerator> m_OldTarget;
+    nsString                      m_Ref;
+    PRBool                        m_ForceGetTargets;
   };
-  class resultlist_t : public std::vector< sbResultInfo > {};
+
+  class resultlist_t : public std::vector<sbResultInfo> {};
+
   struct sbValueInfo
   {
-    sbFeedInfo *  m_Info;
-    PRInt32       m_Row;
-    PRInt32       m_ResMapIndex;
-    PRInt32       m_ResultsRow;
-    nsString      m_Id;
-    PRBool          m_All;
-    nsCOMPtr< sbIDatabaseResult >     m_Resultset;
+    sbFeedInfo*                 m_Info;
+    PRInt32                     m_Row;
+    PRInt32                     m_ResMapIndex;
+    PRInt32                     m_ResultsRow;
+    nsString                    m_Id;
+    PRBool                      m_All;
+    nsCOMPtr<sbIDatabaseResult> m_Resultset;
 
-    sbValueInfo() : m_All( PR_FALSE ), m_Row( -1 ), m_Id(), m_Info( nsnull ), m_Resultset() {}
+    sbValueInfo() : m_All(PR_FALSE),
+                    m_Row(-1),
+                    m_Id(),
+                    m_Info(nsnull),
+                    m_Resultset()
+    { }
   };
-  class values_t     : public std::vector< sbValueInfo * > {};
+
+  class values_t : public std::vector<sbValueInfo*> {};
 
   struct sbFeedInfo
   {
-    PRInt32                           m_RefCount;
-    PRBool                            m_ForceGetTargets;
-    nsString                          m_Ref;
-    nsString                          m_Override;
-    nsString                          m_Table;
-    nsString                          m_GUID;
-    nsString                          m_Column;
-    nsString                          m_SimpleQueryStr;
-    nsCOMPtr< nsIRDFResource >        m_RootResource;
-    nsCOMPtr< nsISimpleEnumerator >   m_RootTargets;
-    nsCOMPtr< nsIRDFResource >        m_RowIdResource;
-    nsCOMPtr< sbIDatabaseQuery >      m_Query;
-    nsCOMPtr< sbIDatabaseResult >     m_Resultset;
-    nsCOMPtr< MyQueryCallback >       m_Callback;
-    filtermap_t                       m_Filters;
-    reslist_t                         m_ResList;
-    columnmap_t                       m_ColumnMap;
-    values_t                          m_Values;
-    nsCOMPtr< sbPlaylistsource >      m_Server;
+    PRInt32                       m_RefCount;
+    PRBool                        m_ForceGetTargets;
+    nsString                      m_Ref;
+    nsString                      m_Override;
+    nsString                      m_Table;
+    nsString                      m_GUID;
+    nsString                      m_Column;
+    nsString                      m_SimpleQueryStr;
+    nsCOMPtr<nsIRDFResource>      m_RootResource;
+    nsCOMPtr<nsISimpleEnumerator> m_RootTargets;
+    nsCOMPtr<nsIRDFResource>      m_RowIdResource;
+    nsCOMPtr<sbIDatabaseQuery>    m_Query;
+    nsCOMPtr<sbIDatabaseResult>   m_Resultset;
+    nsCOMPtr<MyQueryCallback>     m_Callback;
+    filtermap_t                   m_Filters;
+    reslist_t                     m_ResList;
+    columnmap_t                   m_ColumnMap;
+    values_t                      m_Values;
+    nsCOMPtr<sbPlaylistsource>    m_Server;
   };
-  class valuemap_t   : public std::map< nsIRDFResource *, sbValueInfo > {};
-  class infomap_t    : public std::map< nsIRDFResource *, sbFeedInfo > {};
 
-  class commandmap_t : public std::map< nsString, nsCOMPtr< sbIPlaylistCommands > > {};
-  class stringmap_t  : public std::map< nsString, nsIRDFResource *> {};
+  class valuemap_t   : public std::map<nsIRDFResource*, sbValueInfo> {};
+  class infomap_t    : public std::map<nsIRDFResource*, sbFeedInfo> {};
+  class stringmap_t  : public std::map<nsString, nsIRDFResource*> {};
+  class commandmap_t : public std::map<nsString,
+                                       nsCOMPtr<sbIPlaylistCommands> > {};
 
-  static stringmap_t                g_StringMap;
-  static infomap_t                  g_InfoMap;
-  static valuemap_t                 g_ValueMap;
-  static resultlist_t               g_ResultGarbage;
-  static commandmap_t               g_CommandMap;
-  static PRMonitor*                 g_pMonitor;
-  static PRInt32                        g_ActiveQueryCount;
-  static PRBool                       g_NeedUpdate;
-  static nsCOMPtr< nsIStringBundle > m_StringBundle;
+  static stringmap_t  g_StringMap;
+  static infomap_t    g_InfoMap;
+  static valuemap_t   g_ValueMap;
+  static resultlist_t g_ResultGarbage;
+  static commandmap_t g_CommandMap;
+
+  static PRMonitor* g_pMonitor;
+  static PRInt32    sRefCnt;
+  static PRInt32    g_ActiveQueryCount;
+  static PRBool     g_NeedUpdate;
+
+  static nsCOMPtr<nsIStringBundle> m_StringBundle;
 
   // Oh look, I can be a singleton and not use nasty statics.  Woo.
-  nsCOMPtr< sbIDatabaseQuery >      m_SharedQuery;
-  nsString                          m_IncomingObserver;
-  void *                            m_IncomingObserverPtr;
+  nsCOMPtr<sbIDatabaseQuery> m_SharedQuery;
+  nsString                   m_IncomingObserver;
+  void*                      m_IncomingObserverPtr;
 
-  void LoadRowResults( sbPlaylistsource::sbValueInfo & value );
+  NS_IMETHODIMP LoadRowResults(sbPlaylistsource::sbValueInfo& value);
 
 private:
-  inline static sbFeedInfo * GetFeedInfo( nsString &str )
+  NS_IMETHODIMP Init(void);
+  NS_IMETHODIMP DeInit(void);
+
+  inline static sbFeedInfo* GetFeedInfo(nsString& str)
   {
-    sbFeedInfo *retval = nsnull;
-    stringmap_t::iterator s = g_StringMap.find( str );
-    if ( s != g_StringMap.end() )
-    {
-      retval = GetFeedInfo( (*s).second );
-    }
-    return retval;
+    stringmap_t::iterator s = g_StringMap.find(str);
+    if (s != g_StringMap.end())
+      return GetFeedInfo((*s).second);
+    return nsnull;
   }
 
-  inline static sbFeedInfo * GetFeedInfo( nsIRDFResource *res )
+  inline static sbFeedInfo* GetFeedInfo(nsIRDFResource* res)
   {
-    sbFeedInfo *retval = nsnull;
-    infomap_t::iterator i = g_InfoMap.find( res );
-    if ( i != g_InfoMap.end() )
-    {
-      retval = &( (*i).second );
-    }
-    return retval;
+    infomap_t::iterator i = g_InfoMap.find(res);
+    if (i != g_InfoMap.end())
+      return &((*i).second);
+    return nsnull;
   }
 
-  inline static void EraseFeedInfo( nsIRDFResource *res )
-  {
-    /*
-    PRBool doublecheck = PR_FALSE;
-    infomap_t::iterator i = g_InfoMap.find( res );
-    if ( i != g_InfoMap.end() )
-    {
-    g_InfoMap.erase( i );
-    // pLeah, backmap for the string.
-    for ( stringmap_t::iterator s = g_StringMap.begin(); s != g_StringMap.end(); s++ )
-    {
-    if ( (*s).second == res )
-    {
-    g_StringMap.erase( s );
-    NS_RELEASE( res );
-    doublecheck = PR_TRUE;
-    break;
-    }
-    }
-    }
-    if ( doublecheck )
-    {
-    }
-    else
-    {
-    __asm PRInt32 3;
-    }
-    */
-  }
+  inline static void EraseFeedInfo(nsIRDFResource *res)
+  { }
+
+  nsCOMPtr<nsIRDFService>  sRDFService;
+  nsCOMPtr<nsIRDFResource> kNC_Playlist;
+  nsCOMPtr<nsIRDFResource> kNC_child;
+  nsCOMPtr<nsIRDFResource> kNC_pulse;
+  nsCOMPtr<nsIRDFResource> kRDF_InstanceOf;
+  nsCOMPtr<nsIRDFResource> kRDF_type;
+  nsCOMPtr<nsIRDFResource> kRDF_nextVal;
+  nsCOMPtr<nsIRDFResource> kRDF_Seq;
+  nsCOMPtr<nsIRDFLiteral>  kLiteralTrue;
+  nsCOMPtr<nsIRDFLiteral>  kLiteralFalse;
 };
 
 class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
