@@ -22,12 +22,12 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ..
+DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
-SHELL_EXECUTE = make-installer.sh
+SHELL_EXECUTE = $(srcdir)/make-installer.sh
 
 include $(topsrcdir)/build/rules.mk
