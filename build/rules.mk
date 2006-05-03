@@ -142,6 +142,10 @@ ifdef SONGBIRD_CHROME_MANIFEST
 targets += copy_sb_chrome_manifest
 endif
 
+ifdef SHELL_EXECUTE
+targets += shell_execute
+endif
+
 all:   $(targets) \
        garbage \
        $(NULL)
@@ -666,6 +670,19 @@ gunzip_file:
 .PHONY : gunzip_file
 
 endif # GUNZIP_SRC
+
+#------------------------------------------------------------------------------
+# Rules for executing something in a shell (sh)
+#------------------------------------------------------------------------------
+
+ifdef SHELL_EXECUTE
+
+shell_execute:
+	$(SHELL_EXECUTE)
+
+.PHONY : shell_execute
+
+endif #SHELL_EXECUTE
 
 #------------------------------------------------------------------------------
 # Rules for making directories

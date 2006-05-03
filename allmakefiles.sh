@@ -89,6 +89,8 @@ feathers/rubberducky/Makefile
 
 MAKEFILES_installer="
 installer/Makefile
+installer/linux/Makefile
+installer/macosx/Makefile
 "
 
 MAKEFILES_locales="

@@ -26,11 +26,12 @@ DEPTH = ..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
-
 include $(DEPTH)/build/autodefs.mk
 
 ifndef USING_JARS
 SONGBIRD_CHROME_MANIFEST = $(srcdir)/chrome.manifest.dev
 endif
+
+SUBDIRS = $(SB_PLATFORM) 
 
 include $(topsrcdir)/build/rules.mk
