@@ -1,0 +1,13 @@
+#include "nsISupports.idl"
+#include "nsIArray.idl"
+
+/**
+ * The sbIMetrics Interface
+ */
+
+[scriptable, uuid(F64283C0-CDCF-48ec-8502-735B7282981E)]
+interface sbIMetrics : nsISupports
+{
+  void checkUploadMetrics();
+};
+
