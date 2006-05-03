@@ -37,7 +37,7 @@
 #include "nsString.h"
 
 #include <windows.h>
-///#include <ntddstor.h>
+#include <stdio.h>
 
 #include "USBMassStorageDeviceHelper.h"
 
