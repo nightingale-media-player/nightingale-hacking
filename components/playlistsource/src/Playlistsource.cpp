@@ -454,9 +454,9 @@ sbPlaylistsource::GetRefRowCount(const PRUnichar* RefName,
 
   nsCOMPtr<sbIDatabaseResult> resultset;
   rv = GetQueryResult(RefName, getter_AddRefs(resultset));
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  resultset->GetRowCount(_retval);
+  if (NS_SUCCEEDED(rv))
+    resultset->GetRowCount(_retval);
 
   return NS_OK;
 }
