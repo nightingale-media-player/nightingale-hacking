@@ -91,6 +91,7 @@ MAKEFILES_installer="
 installer/Makefile
 installer/linux/Makefile
 installer/macosx/Makefile
+installer/win32/Makefile
 "
 
 MAKEFILES_locales="
