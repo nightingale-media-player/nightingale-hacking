@@ -81,7 +81,8 @@
  */
 static PRLogModuleInfo* gPlaylistsourceLog =
   PR_NewLogModule("sbPlaylistsource");
-#endif
+#endif
+
 #define LOG(args) PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, args)
 
 static sbPlaylistsource* gPlaylistPlaylistsource = nsnull;
