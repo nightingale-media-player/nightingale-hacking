@@ -102,6 +102,11 @@ locales/en-US/Makefile
 #
 # Component makefiles
 #
+MAKEFILES_bundle="
+components/bundle/Makefile
+components/bundle/public/Makefile
+components/bundle/src/Makefile
+"
 
 MAKEFILES_dataremote="
 components/dataremote/Makefile
@@ -173,6 +178,12 @@ components/medialibrary/public/Makefile
 components/medialibrary/src/Makefile
 "
 
+MAKEFILES_metrics="
+components/metrics/Makefile
+components/metrics/public/Makefile
+components/metrics/src/Makefile
+"
+
 MAKEFILES_playlistplayback="
 components/playlistplayback/Makefile
 components/playlistplayback/src/Makefile
@@ -219,6 +230,7 @@ $MAKEFILES_dependencies
 $MAKEFILES_feathers
 $MAKEFILES_installer
 $MAKEFILES_locales
+$MAKEFILES_bundle
 $MAKEFILES_dataremote
 $MAKEFILES_devices
 $MAKEFILES_devicemanager
@@ -229,6 +241,7 @@ $MAKEFILES_usb_mass_storagedevice
 $MAKEFILES_integration
 $MAKEFILES_mediacore
 $MAKEFILES_medialibrary
+$MAKEFILES_metrics
 $MAKEFILES_playlistplayback
 $MAKEFILES_playlistreader
 $MAKEFILES_playlistsource
