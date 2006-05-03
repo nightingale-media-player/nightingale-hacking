@@ -38,7 +38,8 @@ SUBDIRS = dataremote \
           playlistreader \
           playlistsource \
           servicesource \
-          update \
+          bundle \
+          metrics \
           $(NULL)
 
 ifeq ($(SB_PLATFORM), win32)

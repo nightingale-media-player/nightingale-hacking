@@ -98,10 +98,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "locales", "locales\locales.
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "update", "components\update\update.vcproj", "{8DD67C9F-32BA-47fc-AB04-EFFCE0DF1503}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usb_mass_storage", "components\devices\usb_mass_storage\usb_mass_storage.vcproj", "{E61D8808-C882-479C-B447-DD957B60E62C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
@@ -119,6 +115,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatahandlermp4", "components\mediacore\metadata\handler\mp4\metadatahandlermp4.vcproj", "{01D8BF3E-7DEC-4B34-9AAD-DDBBBD8F0EF9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bundle", "components\bundle\bundle.vcproj", "{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metrics", "components\metrics\metrics.vcproj", "{3694E862-C0FE-4339-A6D9-91FB5C4D498C}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -205,10 +209,6 @@ Global
 		{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}.Debug.Build.0 = Debug|Win32
 		{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}.Release.ActiveCfg = Release|Win32
 		{5E8ECFDD-A5D9-4343-8794-C33D17E53F8D}.Release.Build.0 = Release|Win32
-		{8DD67C9F-32BA-47fc-AB04-EFFCE0DF1503}.Debug.ActiveCfg = Debug|Win32
-		{8DD67C9F-32BA-47fc-AB04-EFFCE0DF1503}.Debug.Build.0 = Debug|Win32
-		{8DD67C9F-32BA-47fc-AB04-EFFCE0DF1503}.Release.ActiveCfg = Release|Win32
-		{8DD67C9F-32BA-47fc-AB04-EFFCE0DF1503}.Release.Build.0 = Release|Win32
 		{E61D8808-C882-479C-B447-DD957B60E62C}.Debug.ActiveCfg = Debug|Win32
 		{E61D8808-C882-479C-B447-DD957B60E62C}.Debug.Build.0 = Debug|Win32
 		{E61D8808-C882-479C-B447-DD957B60E62C}.Release.ActiveCfg = Release|Win32
@@ -225,6 +225,14 @@ Global
 		{01D8BF3E-7DEC-4B34-9AAD-DDBBBD8F0EF9}.Debug.Build.0 = Debug|Win32
 		{01D8BF3E-7DEC-4B34-9AAD-DDBBBD8F0EF9}.Release.ActiveCfg = Release|Win32
 		{01D8BF3E-7DEC-4B34-9AAD-DDBBBD8F0EF9}.Release.Build.0 = Release|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.ActiveCfg = Debug|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Debug.Build.0 = Debug|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.ActiveCfg = Release|Win32
+		{8DD67C9F-32BA-47FC-AB04-EFFCE0DF1503}.Release.Build.0 = Release|Win32
+		{3694E862-C0FE-4339-A6D9-91FB5C4D498C}.Debug.ActiveCfg = Debug|Win32
+		{3694E862-C0FE-4339-A6D9-91FB5C4D498C}.Debug.Build.0 = Debug|Win32
+		{3694E862-C0FE-4339-A6D9-91FB5C4D498C}.Release.ActiveCfg = Release|Win32
+		{3694E862-C0FE-4339-A6D9-91FB5C4D498C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

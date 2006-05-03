@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
@@ -60,10 +60,26 @@
   <![CDATA[
     try
     {
-      var nsIUpdate = new Components.Constructor("@songbird.org/Songbird/Update;1", "sbIUpdate");
-      var UpdateService = new nsIUpdate();
-      UpdateService.retrieveUpdateFile();
-      UpdateService.checkUploadMetrics();
+      var nsIBundle = new Components.Constructor("@songbird.org/Songbird/Bundle;1", "sbIBundle");
+      var BundleService = new nsIBundle();
+      BundleService.retrieveBundleFile();
+    }
+    catch ( err )
+    {
+      alert( "App Init - Bundle - " + err );
+    }
+    try
+    {
+      var nsIMetrics = new Components.Constructor("@songbird.org/Songbird/Metrics;1", "sbIMetrics");
+      var MetricsService = new nsIMetrics();
+      MetricsService.checkUploadMetrics();
+    }
+    catch ( err )
+    {
+      alert( "App Init - Metrics - " + err );
+    }
+    try
+    {
       document.__STARTMAINWIN = function( ) { 
         //
         // Stupid pet tricks for when the user loads this page into his mainwin browser.  Duh.
@@ -90,7 +106,7 @@
         }
       };
       
-      if (!doFirstRunTest(document, UpdateService)) document.__STARTMAINWIN();
+      if (!doFirstRunTest(document, BundleService)) document.__STARTMAINWIN();
     }
     catch ( err )
     {

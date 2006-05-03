@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <!--
 /*
 //
@@ -72,7 +72,7 @@
       <field name="interval">null</field>
       <field name="first_windowsize">false</field>
       <field name="state">"closed"</field>
-      <field name="updateInterface">null</field>
+      <field name="bundleInterface">null</field>
 
       <method name="toggleList">
         <body>
@@ -313,16 +313,16 @@
             this.size = vbox.boxObject.height;
 
             var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
-            var n = this.updateInterface.getNumExtensions();
+            var n = this.bundleInterface.getNumExtensions();
             for (var i=0;i<n;i++)
             {
               var item = document.createElement( "richlistitem" );
               var checkbox = document.createElement( "checkbox" );
-              checkbox.setAttribute("checked", this.updateInterface.getExtensionInstallState(i));
+              checkbox.setAttribute("checked", this.bundleInterface.getExtensionInstallState(i));
               item.appendChild(checkbox);
               var label = document.createElement( "label" );
-              label.setAttribute("value", this.updateInterface.getExtensionName(i) + " - " + this.updateInterface.getExtensionDesc(i));
-              item.setAttribute("url", this.updateInterface.getExtensionURL(i));
+              label.setAttribute("value", this.bundleInterface.getExtensionName(i) + " - " + this.bundleInterface.getExtensionDesc(i));
+              item.setAttribute("url", this.bundleInterface.getExtensionURL(i));
               var oncommand = { 
                 _that: null, 
                 _checkbox: null,
@@ -346,7 +346,7 @@
         <parameter name="index"/>
         <parameter name="checkbox"/>
         <body>
-          this.updateInterface.setExtensionInstallState(index, checkbox.checked);
+          this.bundleInterface.setExtensionInstallState(index, checkbox.checked);
         </body>
       </method>
       

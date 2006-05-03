@@ -1,6 +1,6 @@
 var label;
 var progressmeter;
-var upd;
+var bundle;
 var n_ext;
 var cur_ext;
 var destFile;
@@ -9,9 +9,9 @@ function init()
 {
   label = document.getElementById("setupprogress_label");
   progressmeter = document.getElementById("setupprogress_progress");
-  upd = window.arguments[0].QueryInterface(Components.interfaces.sbIUpdate);
-  upd.setNeedRestart(false);
-  n_ext = upd.getNumExtensions();
+  bundle = window.arguments[0].QueryInterface(Components.interfaces.sbIBundle);
+  bundle.setNeedRestart(false);
+  n_ext = bundle.getNumExtensions();
   cur_ext = -1;
   setTimeout(installNextXPI, 0);
 }
@@ -21,46 +21,55 @@ function installNextXPI()
   cur_ext++;
   if (cur_ext+1 > n_ext) { window.close(); return; }
   
-  if (!upd.getExtensionInstallState(cur_ext)) {
+  if (!bundle.getExtensionInstallState(cur_ext)) {
     setTimeout(installNextXPI, 0);
     return;
   }
 
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
   var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var downloading = songbirdStrings.GetStringFromName("setupprogress.downloading");
-  label.setAttribute("value", downloading + " " + upd.getExtensionName(cur_ext));
+  var downloading = "Downloading";
+  try {
+    downloading = songbirdStrings.GetStringFromName("setupprogress.downloading");
+  } catch (e) {}
+  label.setAttribute("value", downloading + " " + bundle.getExtensionName(cur_ext));
   progressmeter.setAttribute("value", 0);
   
-  destFile = upd.downloadFile(upd.getExtensionURL(cur_ext), downloadListener);
+  destFile = bundle.downloadFile(bundle.getExtensionURL(cur_ext), downloadListener);
 }
 
 var downloadListener = 
 {
-  onProgress: function(upd, percent)
+  onProgress: function(bundle, percent)
   {
     progressmeter.setAttribute("value", percent);
   },
   
-  onDownloadComplete: function(upd)
+  onDownloadComplete: function(bundle)
   {
-    var r = upd.installXPI(destFile);
+    var r = bundle.installXPI(destFile);
     if (r == 0) {
       var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
       var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-      var couldnotinstall = songbirdStrings.GetStringFromName("setupprogress.couldnotinstall");
-      sbMessageBox("Error", couldnotinstall + " " + upd.getExtensionName(cur_ext), false); 
-    } else upd.setNeedRestart(true);
-    upd.deleteLastDownloadedFile();
+      var couldnotinstall = "Could not install";
+      try {
+        couldnotinstall = songbirdStrings.GetStringFromName("setupprogress.couldnotinstall");
+      } catch (e) {}
+      sbMessageBox("Error", couldnotinstall + " " + bundle.getExtensionName(cur_ext), false); 
+    } else bundle.setNeedRestart(true);
+    bundle.deleteLastDownloadedFile();
     setTimeout(installNextXPI, 0);
   },
 
-  onError: function(upd)
+  onError: function(bundle)
   {
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var downloading = songbirdStrings.GetStringFromName("setupprogress.couldnotdownload");
-    sbMessageBox("Error", couldnotdownload + upd.getExtensionName(cur_ext), false);
+    var couldnotdownload = "Downloading";
+    try {
+      couldnotdownload = songbirdStrings.GetStringFromName("setupprogress.couldnotdownload");
+    } catch (e) {}
+    sbMessageBox("Error", couldnotdownload + " " + bundle.getExtensionName(cur_ext), false);
     setTimeout(installNextXPI, 0);
   },
 

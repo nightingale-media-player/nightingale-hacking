@@ -24,13 +24,13 @@
 //
  */
 
-var FirstRunUpdateCB = 
+var FirstRunBundleCB = 
 {
-  onLoad: function(upd) { updateDataReady(upd); },
-  onError: function(upd) { updateDataReady(upd); },
+  onLoad: function(bundle) { bundleDataReady(bundle); },
+  onError: function(bundle) { bundleDataReady(bundle); },
   QueryInterface : function(aIID)
   {
-    if (!aIID.equals(Components.interfaces.sbIUpdateObserver) &&
+    if (!aIID.equals(Components.interfaces.sbIBundleObserver) &&
         !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
         !aIID.equals(Components.interfaces.nsISupports)) 
     {
@@ -40,14 +40,14 @@ var FirstRunUpdateCB =
   }
 }
 
-function updateDataReady(upd) {
-  if (upd.getNumExtensions() > 0) {
+function bundleDataReady(bundle) {
+  if (bundle.getNumExtensions() > 0) {
     enableCustomInstall(); 
   } else {
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var errortitle = "setup.networkerrortitle"; // Set these to default english strings
-    var errormsg = "setup.networkerrormsg";
+    var errortitle = "Network Error"; 
+    var errormsg = "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!";
     try  { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
       errortitle = songbirdStrings.GetStringFromName("setup.networkerrortitle");
       errormsg = songbirdStrings.GetStringFromName("setup.networkerrormsg");
@@ -62,18 +62,18 @@ var wanted_locale = "en-US";
  
 function initFirstRun() 
 {
-  var upd = window.arguments[0].update;
-  upd.addUpdateObserver(FirstRunUpdateCB);
-  var s = upd.getStatus();
-  if (s != 0) updateDataReady(upd);
+  var bundle = window.arguments[0].bundle;
+  bundle.addBundleObserver(FirstRunBundleCB);
+  var s = bundle.getStatus();
+  if (s != 0) bundleDataReady(bundle);
   if (window.addEventListener) window.addEventListener("keydown", checkAltF4, true);
   fillLanguageBox();
 }
 
 function shutdownFirstRun()
 {
-  var upd = window.arguments[0].update;
-  upd.removeUpdateObserver(FirstRunUpdateCB);
+  var bundle = window.arguments[0].bundle;
+  bundle.removeBundleObserver(FirstRunBundleCB);
   continueStartup();
 }
 
@@ -157,10 +157,8 @@ function hidePleaseWait()
   pleasewait.setAttribute("hidden", "true");
 }
 
-function doFirstRunTest(doc, upd)
+function doFirstRunTest(doc, bundle)
 {
-  return 0;
-
   // Data remotes not available for this function
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var firstruncheck = "";
@@ -168,7 +166,7 @@ function doFirstRunTest(doc, upd)
   if (firstruncheck != "1")
   {
     var data = new Object();
-    data.update = upd;
+    data.bundle = bundle;
     data.document = document;
     window.openDialog( "chrome://songbird/content/xul/firstrun.xul", "firstrun", "chrome,centerscreen,modal=no", data);
     return 1;
@@ -182,30 +180,30 @@ function continueStartup() {
 
 function customInstall()
 {
-  var upd = window.arguments[0].update;
+  var bundle = window.arguments[0].bundle;
   var extlist = document.getElementById("songbird.extensionlist");
   if (extlist)
   {
-    extlist.updateInterface = upd;
+    extlist.bundleInterface = bundle;
     extlist.toggleList();
   }
 }
 
 function doOK() 
 {
-  var upd = window.arguments[0].update;
+  var bundle = window.arguments[0].bundle;
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var noext = (upd.getNumExtensions() == 0);
+  var noext = (bundle.getNumExtensions() == 0);
   if (!noext) {
     var count=0;
-    for (var i=0;i<upd.getNumExtensions();i++) if (upd.getExtensionInstallState(i)) count++;
+    for (var i=0;i<bundle.getNumExtensions();i++) if (bundle.getExtensionInstallState(i)) count++;
     noext = (count == 0);
   }
   if (noext) {
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var noxpititle = "setup.noxpititle"; // Set these to default english strings
-    var noxpimsg = "setup.noxpimsg";
+    var noxpititle = "No extension"; 
+    var noxpimsg = "Press Ok to keep a minimal installation, or Cancel to go back.";
     try { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
       noxpititle = songbirdStrings.GetStringFromName("setup.noxpititle");
       noxpimsg = songbirdStrings.GetStringFromName("setup.noxpimsg");
@@ -218,11 +216,11 @@ function doOK()
       return false;
     }
   } else {
-    upd.installSelectedExtensions(window);
+    bundle.installSelectedExtensions(window);
     switchLocale(wanted_locale);
     prefs.setCharPref("firstruncheck", "1");  
-    prefs.setCharPref("installedbundle", upd.getBundleVersion());
-    if (upd.getNeedRestart()) {
+    prefs.setCharPref("installedbundle", bundle.getBundleVersion());
+    if (bundle.getNeedRestart()) {
       var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
       if (as)
       {
@@ -239,11 +237,11 @@ function doOK()
 
 function doCancel()
 {
-  var upd = window.arguments[0].update;
+  var bundle = window.arguments[0].bundle;
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
   var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var bypasstitle = "setup.bypasstitle"; // Make these be default english titles.
-  var bypassmsg = "setup.bypassmsg";
+  var bypasstitle = "Proceed ?"; 
+  var bypassmsg = "Are you sure you want to bypass the final setup? (you will be offered another opportunity to revisit this screen the next time you run Songbird).";
   try  { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
     bypasstitle = songbirdStrings.GetStringFromName("setup.bypasstitle");
     bypassmsg = songbirdStrings.GetStringFromName("setup.bypassmsg");
