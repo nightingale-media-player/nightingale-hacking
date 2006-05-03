@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="update"
-	ProjectGUID="{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}"
+	ProjectGUID="{8DD67C9F-32BA-47fc-AB04-EFFCE0DF1503}"
 	RootNamespace="update"
 	Keyword="Win32Proj">
 	<Platforms>
