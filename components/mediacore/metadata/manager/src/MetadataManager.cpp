@@ -79,7 +79,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   nsresult nRet = NS_ERROR_UNEXPECTED;
   if(!_retval) return NS_ERROR_NULL_POINTER;
 
-  nsCOMPtr<sbIMetadataHandler> pHandler;
+  sbIMetadataHandler *pHandler = nsnull;
   nsCOMPtr<nsIChannel> pChannel;
   nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&nRet);
   if(NS_FAILED(nRet)) return nRet;
@@ -124,9 +124,9 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   nsCString u8Url;
   pURI->GetSpec( u8Url );
   nsString url = NS_ConvertUTF8toUTF16(u8Url);
-  PRBool moreAvailable;
-  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK &&
-    moreAvailable)
+  PRBool moreAvailable = PR_FALSE;
+
+  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK && moreAvailable)
   {
     nsCOMPtr<nsISupportsCString> contractString;
     if (simpleEnumerator->GetNext(getter_AddRefs(contractString)) == NS_OK)
@@ -149,6 +149,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
       PR_Free(contractID);
     }
   }
+
   if ( handlerlist.rbegin() != handlerlist.rend() )
   {
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
@@ -164,7 +165,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   nRet = pHandler->SetChannel(pChannel, &nHandlerRet);
   if(nRet != 0) return nRet;
 
-  *_retval = pHandler.get();
+  *_retval = pHandler;
   (*_retval)->AddRef();
 
   nRet = NS_OK;
