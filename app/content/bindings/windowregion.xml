@@ -53,7 +53,7 @@
         }    
         catch ( err )
         {
-          dump( "windowregionset constructor - " + err );
+          dump( "windowregionset constructor - " + err + "\n" );
         }
         ]]>
       </constructor>
@@ -67,7 +67,7 @@
         }    
         catch ( err )
         {
-          dump( "windowregionset destructor - " + err );
+          dump( "windowregionset destructor - " + err + "\n" );
         }
         ]]>
       </destructor>
@@ -101,7 +101,7 @@
           }    
           catch ( err )
           {
-            dump( "windowregionset setRegion - " + err );
+            dump( "windowregionset setRegion - " + err + "\n" );
           }
           ]]>
         </body>
@@ -128,7 +128,7 @@
           }    
           catch ( err )
           {
-            dump( "windowregionset setRegion - " + err );
+            dump( "windowregionset setRegion - " + err + "\n" );
           }
           ]]>
         </body>
@@ -184,7 +184,7 @@
           }    
           catch ( err )
           {
-            dump( "windowregionset setRegion - " + err );
+            dump( "windowregionset setRegion - " + err + "\n" );
           }
           ]]>
         </body>
