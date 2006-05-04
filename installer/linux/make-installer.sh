@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CURRENT_DIR=`pwd`
-CURRENT_DATE=`date +%Y%m%d`
+CURRENT_DATE=`date +%Y%m%d_%k%M%S`
 SONGBIRD_DIR=Songbird_${CURRENT_DATE}
 
 rm -rf ../../../_built_installer
