@@ -45,6 +45,7 @@
         {
           this.makeRegionList();
           var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"]
+          
           if (windowResizeHook)
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
             if (service)
@@ -52,7 +53,7 @@
         }    
         catch ( err )
         {
-          alert( "windowregionset constructor - " + err );
+          dump( "windowregionset constructor - " + err );
         }
         ]]>
       </constructor>
@@ -66,7 +67,7 @@
         }    
         catch ( err )
         {
-          alert( "windowregionset destructor - " + err );
+          dump( "windowregionset destructor - " + err );
         }
         ]]>
       </destructor>
@@ -100,7 +101,7 @@
           }    
           catch ( err )
           {
-            alert( "windowregionset setRegion - " + err );
+            dump( "windowregionset setRegion - " + err );
           }
           ]]>
         </body>
@@ -127,7 +128,7 @@
           }    
           catch ( err )
           {
-            alert( "windowregionset setRegion - " + err );
+            dump( "windowregionset setRegion - " + err );
           }
           ]]>
         </body>
@@ -183,7 +184,7 @@
           }    
           catch ( err )
           {
-            alert( "windowregionset setRegion - " + err );
+            dump( "windowregionset setRegion - " + err );
           }
           ]]>
         </body>
