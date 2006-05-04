@@ -169,7 +169,7 @@ MyQueryCallback::Post()
 
   // XXX This is NOT a safe or reliable way to post events to another thread
   m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, gPlaylistPlaylistsource,
-                                0, 0);
+                                0, nsITimer::TYPE_ONE_SHOT);
   return NS_OK;
 }
 
@@ -203,11 +203,9 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   // Push the old resultset onto the garbage stack.
   sbPlaylistsource::g_ResultGarbage.push_back(result);
 
-  nsresult rv;
-
   // Orphan the result for the query.
-  sbIDatabaseResult* res = nsnull;
-  rv = m_Info->m_Query->GetResultObjectOrphan(&res);
+  nsCOMPtr<sbIDatabaseResult> res;
+  nsresult rv = m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(res));
   NS_ENSURE_SUCCESS(rv, NS_ERROR_NULL_POINTER);
 
   m_Info->m_Resultset = res;
@@ -415,10 +413,9 @@ sbPlaylistsource::GetQueryResult(const PRUnichar*    RefName,
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
-  *_retval = nsnull;
 
   // Find the ref string in the stringmap.
-  nsString strRefName(RefName);
+  nsDependentString strRefName(RefName);
   sbFeedInfo* info = GetFeedInfo(strRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
@@ -426,17 +423,15 @@ sbPlaylistsource::GetQueryResult(const PRUnichar*    RefName,
 
   if (info->m_Resultset) {
     *_retval = info->m_Resultset;
+    NS_ADDREF(*_retval);
     return NS_OK;
   }
 
-  nsresult rv;
+  // _retval is AddRef'd in GetResultObject
+  nsresult rv = info->m_Query->GetResultObject(_retval);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Whoa, failed getting Result Object");
 
-  nsCOMPtr<sbIDatabaseResult> resultObject;
-  rv = info->m_Query->GetResultObject(getter_AddRefs(resultObject));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *_retval = resultObject;
-  return NS_OK;
+  return rv;
 }
 
 NS_IMETHODIMP
@@ -476,9 +471,9 @@ sbPlaylistsource::GetRefColumnCount(const PRUnichar* RefName,
 
   nsCOMPtr<sbIDatabaseResult> resultset;
   rv = GetQueryResult(RefName, getter_AddRefs(resultset));
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  resultset->GetColumnCount(_retval);
+  if (NS_SUCCEEDED(rv))
+    resultset->GetColumnCount(_retval);
 
   return NS_OK;
 }
@@ -1692,11 +1687,8 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   if (info->m_Resultset)
     resultset = info->m_Resultset;
   else {
-    sbIDatabaseResult* res;
-    rv = info->m_Query->GetResultObjectOrphan(&res);
+    rv = info->m_Query->GetResultObjectOrphan(getter_AddRefs(resultset));
     NS_ENSURE_SUCCESS(rv, rv);
-    resultset = res;
-    res->Release(); // ah-hah!
     info->m_Resultset = resultset;
   }
 
@@ -1750,12 +1742,9 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
     mon.Enter();
 
-    sbIDatabaseResult* res;
-    rv = m_SharedQuery->GetResultObjectOrphan(&res);
+    rv = m_SharedQuery->GetResultObjectOrphan(getter_AddRefs(colresults));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    colresults = res;
-    res->Release(); // ah-hah!
     PR_Free(g);
     PR_Free(oq);
   }
@@ -2284,7 +2273,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value)
   rv = result->GetRowCount(&rows);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 end;
+  PRInt32 end = 0;
   if (value.m_ResMapIndex + rows < (PRInt32)value.m_Info->m_ResList.size())
     end = value.m_ResMapIndex + rows;
   else
