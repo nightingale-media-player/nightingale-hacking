@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -83,7 +83,7 @@ class CMediaScanQuery : public sbIMediaScanQuery
 {
 public:
   CMediaScanQuery();
-  CMediaScanQuery(const std::prustring &strDirectory, const PRBool &bRecurse, sbIMediaScanCallback *pCallback);
+  CMediaScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIMediaScanCallback *pCallback);
   
   virtual ~CMediaScanQuery();
 
@@ -91,13 +91,13 @@ public:
   NS_DECL_SBIMEDIASCANQUERY
 
 protected:
-  typedef std::vector<std::prustring> filestack_t;
+  typedef std::vector<nsString> filestack_t;
 
   PRLock* m_pDirectoryLock;
-  std::prustring m_strDirectory;
+  nsString m_strDirectory;
 
   PRLock* m_pCurrentPathLock;
-  std::prustring m_strCurrentPath;
+  nsString m_strCurrentPath;
 
   PRBool m_bRecurse;
 
@@ -134,7 +134,11 @@ public:
 
 protected:
   typedef std::deque<sbIMediaScanQuery *> queryqueue_t;
-  typedef std::deque<nsISimpleEnumerator *> dirstack_t;
+  
+  //typedef std::deque<nsCOMPtr<nsISimpleEnumerator> > dirstack_t;
+  typedef std::deque<nsISimpleEnumerator * > dirstack_t;
+  typedef std::deque<nsCOMPtr<nsIFile> > fileentrystack_t;
+  typedef std::deque<nsCOMPtr<nsISupports> > entrystack_t;
 
   PRMonitor* m_pThreadMonitor;
   nsCOMPtr<nsIThread> m_pThread;

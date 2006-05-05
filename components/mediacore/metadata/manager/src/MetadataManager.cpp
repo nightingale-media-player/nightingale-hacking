@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -153,7 +153,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   if ( handlerlist.rbegin() != handlerlist.rend() )
   {
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
-    pHandler = (*i).m_Handler;
+    pHandler = (*i).m_Handler.get();
   }
 
   if(!pHandler)
@@ -165,8 +165,10 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   nRet = pHandler->SetChannel(pChannel, &nHandlerRet);
   if(nRet != 0) return nRet;
 
+  pHandler->AddRef();
+  pHandler->AddRef();
   *_retval = pHandler;
-  (*_retval)->AddRef();
+  //(*_retval)->AddRef();
 
   nRet = NS_OK;
 

@@ -95,13 +95,14 @@ function onPollScan()
   {
     if ( !aMediaScanQuery.IsScanning() )
     {
+      clearInterval( polling_interval );
+
       var complete = "Complete";
       try
       {
         complete = theSongbirdStrings.getString("media_scan.complete");
       } catch(e) {}
       theLabel.value = complete;
-      clearInterval( polling_interval );
       onScanComplete( aMediaScanQuery );
       document.getElementById("button_ok").removeAttribute( "disabled" );
       document.getElementById("button_ok").focus();

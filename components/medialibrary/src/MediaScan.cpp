@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 Pioneers of the Inevitable LLC
+// Copyright 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the GPL).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -61,11 +61,10 @@ CMediaScanQuery::CMediaScanQuery()
   NS_ASSERTION(m_pCallbackLock, "MediaScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pFileStackLock, "MediaScanQuery.m_pFileStackLock failed");
   NS_ASSERTION(m_pScanningLock, "MediaScanQuery.m_pScanningLock failed");
-  m_FileStack.reserve(0);
 } //ctor
 
 //-----------------------------------------------------------------------------
-CMediaScanQuery::CMediaScanQuery(const std::prustring &strDirectory, const PRBool &bRecurse, sbIMediaScanCallback *pCallback)
+CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIMediaScanCallback *pCallback)
 : m_strDirectory(strDirectory)
 , m_bRecurse(bRecurse)
 , m_bIsScanning(PR_FALSE)
@@ -109,6 +108,7 @@ NS_IMETHODIMP CMediaScanQuery::SetDirectory(const PRUnichar *strDirectory)
   {
     nsAutoLock fileLock(m_pFileStackLock);
     m_FileStack.clear();
+
     m_strDirectory = strDirectory;
   }
   return NS_OK;
@@ -120,8 +120,8 @@ NS_IMETHODIMP CMediaScanQuery::GetDirectory(PRUnichar **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pDirectoryLock);
-  size_t nLen = m_strDirectory.length() + 1;
-  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_strDirectory.c_str(), nLen * sizeof(PRUnichar)));
+  size_t nLen = m_strDirectory.Length() + 1;
+  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_strDirectory.get(), nLen * sizeof(PRUnichar)));
   NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 } //GetDirectory
@@ -172,9 +172,9 @@ NS_IMETHODIMP CMediaScanQuery::GetCallback(sbIMediaScanCallback **_retval)
 NS_IMETHODIMP CMediaScanQuery::GetFileCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  nsAutoLock lock(m_pFileStackLock);
+  //nsAutoLock lock(m_pFileStackLock);
   size_t nSize = m_FileStack.size();
-  *_retval = (PRUint32)nSize;
+  *_retval = (PRUint32) nSize;
   return NS_OK;
 } //GetFileCount
 
@@ -184,7 +184,7 @@ NS_IMETHODIMP CMediaScanQuery::AddFilePath(const PRUnichar *strFilePath)
 {
   NS_ENSURE_ARG_POINTER(strFilePath);
   nsAutoLock lock(m_pFileStackLock);
-  m_FileStack.push_back(strFilePath);
+  m_FileStack.push_back(nsAutoString(strFilePath));
   return NS_OK;
 } //AddFilePath
 
@@ -196,8 +196,8 @@ NS_IMETHODIMP CMediaScanQuery::GetFilePath(PRUint32 nIndex, PRUnichar **_retval)
   NS_ENSURE_ARG_MIN(nIndex, 0);
   nsAutoLock lock(m_pFileStackLock);
   if(nIndex < m_FileStack.size()) {
-    size_t nLen = m_FileStack[nIndex].length() + 1;
-    *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_FileStack[nIndex].c_str(), nLen * sizeof(PRUnichar)));
+    size_t nLen = m_FileStack[nIndex].Length() + 1;
+    *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_FileStack[nIndex].get(), nLen * sizeof(PRUnichar)));
     NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
   }
   return NS_OK;
@@ -229,8 +229,8 @@ NS_IMETHODIMP CMediaScanQuery::GetLastFileFound(PRUnichar **_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pFileStackLock);
   PRInt32 nIndex = (PRInt32)m_FileStack.size() - 1;
-  size_t nLen = m_FileStack[nIndex].length() + 1;
-  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_FileStack[nIndex].c_str(), nLen * sizeof(PRUnichar)));
+  size_t nLen = m_FileStack[nIndex].Length() + 1;
+  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_FileStack[nIndex].get(), nLen * sizeof(PRUnichar)));
   NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 } //GetLastFileFound
@@ -241,8 +241,8 @@ NS_IMETHODIMP CMediaScanQuery::GetCurrentScanPath(PRUnichar **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pCurrentPathLock);
-  size_t nLen = m_strCurrentPath.length() + 1;
-  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_strCurrentPath.c_str(), nLen * sizeof(PRUnichar)));
+  size_t nLen = m_strCurrentPath.Length() + 1;
+  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_strCurrentPath.get(), nLen * sizeof(PRUnichar)));
   NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 } //GetCurrentScanPath
@@ -327,6 +327,8 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
   NS_ENSURE_ARG_POINTER(strDirectory);
 
   dirstack_t dirStack;
+  fileentrystack_t fileEntryStack;
+
   *_retval = 0;
 
   nsresult ret = NS_ERROR_UNEXPECTED;
@@ -335,17 +337,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
   nsString strTheDirectory(strDirectory);
   nsCString cstrTheDirectory;
 
-#if defined(XP_WIN)
-  {
-    NS_UTF16ToCString(strTheDirectory, NS_CSTRING_ENCODING_ASCII, cstrTheDirectory);
-    ret = pFile->InitWithNativePath(cstrTheDirectory);
-  }
-#else
-  {
-    ret = pFile->InitWithPath(strTheDirectory);
-  }
-#endif
-  
+  ret = pFile->InitWithPath(strTheDirectory);
   if(NS_FAILED(ret)) return ret;
 
   PRBool bFlag = PR_FALSE;
@@ -411,6 +403,8 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
                 else if(bIsDirectory && bRecurse)
                 {
                   dirStack.push_back(pDirEntries);
+                  fileEntryStack.push_back(pEntry);
+
                   pEntry->GetDirectoryEntries(&pDirEntries);
                 }
               }
@@ -462,7 +456,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
 {
   while(PR_TRUE)
   {
-    sbIMediaScanQuery* pQuery = nsnull;
+    nsCOMPtr<sbIMediaScanQuery> pQuery;
 
     { // Enter Monitor
       nsAutoMonitor mon(pMediaScan->m_pThreadMonitor);
@@ -488,9 +482,6 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
       pQuery->SetIsScanning(PR_TRUE);
       PRInt32 nCount = pMediaScan->ScanDirectory(pQuery);
       pQuery->SetIsScanning(PR_FALSE);
-      pQuery->Release();
-
-      pQuery = nsnull;
     }
   }
 } //QueryProcessor
@@ -499,6 +490,9 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
 PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
 {
   dirstack_t dirStack;
+  fileentrystack_t fileEntryStack;
+  entrystack_t entryStack;
+
   PRInt32 nFoundCount = 0;
 
   nsresult ret = NS_ERROR_UNEXPECTED;
@@ -516,17 +510,7 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   nsString strTheDirectory(strDirectory);
   nsCString cstrTheDirectory;
 
-#if defined(XP_WIN)
-  {
-    NS_UTF16ToCString(strTheDirectory, NS_CSTRING_ENCODING_ASCII, cstrTheDirectory);
-    ret = pFile->InitWithNativePath(cstrTheDirectory);
-  }
-#else
-  {
-    ret = pFile->InitWithPath(strTheDirectory);
-  }
-#endif
-
+  ret = pFile->InitWithPath(strTheDirectory);
   if(NS_FAILED(ret)) return ret;
 
   PRBool bFlag = PR_FALSE;
@@ -552,7 +536,6 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
 
         if(bHasMore)
         {
-
           nsCOMPtr<nsISupports> pDirEntry;
           pDirEntries->GetNext(getter_AddRefs(pDirEntry));
 
@@ -586,8 +569,17 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
                 }
                 else if(bIsDirectory && bRecurse)
                 {
-                  dirStack.push_back(pDirEntries);
-                  pEntry->GetDirectoryEntries(&pDirEntries);
+                  nsISimpleEnumerator *pMoreEntries = nsnull;
+                  pEntry->GetDirectoryEntries(&pMoreEntries);
+
+                  if(pMoreEntries)
+                  {
+                    dirStack.push_back(pDirEntries);
+                    fileEntryStack.push_back(pEntry);
+                    entryStack.push_back(pDirEntry);
+                    
+                    pDirEntries = pMoreEntries;
+                  }
                 }
               }
             }
