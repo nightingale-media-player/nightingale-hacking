@@ -61,7 +61,7 @@ function sbIDataRemote( key, root )
     //
 
     // Set the strings
-    if ( root = null )
+    if ( root == null )
     {
       this.m_Root = "songbird.dataremotes." + key; // Use key in root string, makes unique observer lists per key (big but fast?).
       this.m_Key = key;
@@ -84,7 +84,7 @@ function sbIDataRemote( key, root )
     this.m_CallbackObserving = false;
     
     // Go connect to the prefs object acting as the data representation of the key.
-    prefs_service = SBBindInterface( null, "@mozilla.org/preferences;1", Components.interfaces.nsIPrefService, true );
+    var prefs_service = SBBindInterface( null, "@mozilla.org/preferences;1", Components.interfaces.nsIPrefService, true );
     if ( prefs_service )
     {
       // Ask for the branch.
