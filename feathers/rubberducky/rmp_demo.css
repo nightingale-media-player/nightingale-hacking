@@ -1551,7 +1551,7 @@ tooltip
 /* the menus */
 #songbird_menu
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important;
   height: 10px !important;
   padding: 0px;
   margin: 0px;
@@ -1559,7 +1559,7 @@ tooltip
 
 #songbird_menu > menu > label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important;
   background-color: transparent;
   color: #999 !important;
   height: 10px !important;
@@ -1581,7 +1581,7 @@ tooltip
 #songbird_menu > menu[_moz-menuactive="true"],
 #songbird_menu > menu[_moz-menuactive="true"] > label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important;
   background-color: #666 !important; /* I feel SUPER important! */
   height: 10px !important;
   color: #EEE !important;
@@ -2026,10 +2026,11 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 #browser_toolbar
 {
-  border-bottom: 1px solid #808583; 
-  background-color: transparent;
-  height: 29px;
-  padding-left: 5px;
+  -moz-appearance: none !important;
+  border-bottom: 1px solid #808583 !important; 
+  background-color: transparent !important;
+  height: 29px !important;
+  padding-left: 5px !important;
 }
 
 #browser_toolbar toolbarbutton 
