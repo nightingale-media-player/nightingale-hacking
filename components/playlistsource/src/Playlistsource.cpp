@@ -309,9 +309,9 @@ sbPlaylistsource::FeedPlaylist(const PRUnichar* RefName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make a resource for it.
-  nsCOMPtr<nsIRDFResource> new_resource;
+  nsIRDFResource *new_resource;
   rv = sRDFService->GetResource(NS_ConvertUTF16toUTF8(strRefName),
-                                getter_AddRefs(new_resource));
+                                &new_resource);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And stuff it.
@@ -1626,7 +1626,8 @@ sbPlaylistsource::ForceGetTargets(const PRUnichar* RefName)
   sbFeedInfo* info = GetFeedInfo(strRefName);
   
   if (info) {
-    // So, like, force it.
+    // So, like, force it. We don't actually want to hang on to
+    //   the enumeration - by design!!
     nsCOMPtr<nsISimpleEnumerator> enumer;
     nsresult rv = GetTargets(info->m_RootResource, kNC_child,
                              PR_TRUE, getter_AddRefs(enumer));
@@ -1788,9 +1789,9 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     // If there is a column for this item, use it instead.
     nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI) +
                                        NS_ConvertUTF16toUTF8(info->m_Column);
-    nsCOMPtr<nsIRDFResource> col_resource;
+    nsIRDFResource *col_resource;
     rv = sRDFService->GetResource(utf8_resource_name,
-                                  getter_AddRefs(col_resource));
+                                  &col_resource);
     NS_ENSURE_SUCCESS(rv, rv);
 
     info->m_ColumnMap[col_resource] = 0;
@@ -1799,9 +1800,10 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     // Add the magic "row_id" column.
     nsCAutoString utf8_resource_name;
     utf8_resource_name.Assign(NS_LITERAL_CSTRING(NC_NAMESPACE_URI "row_id"));
-    nsCOMPtr<nsIRDFResource> col_resource;
+
+    nsIRDFResource *col_resource;
     rv = sRDFService->GetResource(utf8_resource_name,
-                                  getter_AddRefs(col_resource));
+                                  &col_resource);
     NS_ENSURE_SUCCESS(rv, rv);
 
     info->m_ColumnMap[col_resource] = j;
@@ -1840,10 +1842,10 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     }
 
     // Grab the first item (or create it if it doesn't yet exist)
-    nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[0];
+    nsIRDFResource *next_resource = info->m_ResList[0];
     if (!next_resource) {
       // Create a new resource for this item
-      rv = sRDFService->GetAnonymousResource(getter_AddRefs(next_resource));
+      rv = sRDFService->GetAnonymousResource(&next_resource);
       NS_ENSURE_SUCCESS(rv, rv);
 
       info->m_ResList[0] = next_resource;
@@ -1886,11 +1888,11 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     nsDependentString check(ck);
 
     if ((!check.IsEmpty()) || (colcount > 1)) {
-      nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[i];
+      nsIRDFResource *next_resource = info->m_ResList[i];
 
       if (!next_resource) {
         // let's try anonymous ones, eh?
-        rv = sRDFService->GetAnonymousResource(getter_AddRefs(next_resource));
+        rv = sRDFService->GetAnonymousResource(&next_resource);
         NS_ENSURE_SUCCESS(rv, rv);
 
         info->m_ResList[i] = next_resource;
@@ -1913,13 +1915,15 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   }
 
   // Stuff the array into the enumerator
-  nsCOMPtr<nsISimpleEnumerator> result;
-  rv = NS_NewArrayEnumerator(getter_AddRefs(result), nextItemArray);
+  // XXXjgaunt
+  //nsISimpleEnumerator *result;
+  //rv = NS_NewArrayEnumerator(&result, nextItemArray);
+  rv = NS_NewArrayEnumerator(targets, nextItemArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And give it to whomever is calling us
-  *targets = result;
-  info->m_RootTargets = result;
+  //*targets = result;
+  info->m_RootTargets = *targets;
 
   return NS_OK;
 }
