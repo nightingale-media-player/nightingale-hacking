@@ -213,12 +213,6 @@ components/servicesource/public/Makefile
 components/servicesource/src/Makefile
 "
 
-MAKEFILES_update="
-components/update/Makefile
-components/update/public/Makefile
-components/update/src/Makefile
-"
-
 #
 # Put it all together
 #
@@ -247,5 +241,4 @@ $MAKEFILES_playlistplayback
 $MAKEFILES_playlistreader
 $MAKEFILES_playlistsource
 $MAKEFILES_servicesource
-$MAKEFILES_update
 "
