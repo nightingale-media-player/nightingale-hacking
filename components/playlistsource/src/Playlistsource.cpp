@@ -1523,10 +1523,6 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
 
   METHOD_SHORTCIRCUIT;
 
-  nsCAutoString value;
-  source->GetValueUTF8(value);
-  LOG(("   value of source: %s", value.get()));
-
   *target = nsnull;
 
   // we only have positive assertions in the file system data source.
