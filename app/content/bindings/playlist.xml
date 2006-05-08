@@ -721,14 +721,12 @@
         this.source.IncomingObserver( ref, filterlist ); // HEY YOU GUYYYYYYYS!!
         filterlist.source = this.source;
         filterlist.ref_pl = this.ref;
-        filterlist.ref = ref;
+        filterlist.ref = ref; // YOU MUST SET THIS VARIABLE AFTER filterlist.source AND filterlist.ref_pl !!!!!!!!!
         filterlist.index = this.filters.length;
         filterlist.column = meta_column;
         filterlist.datasources = "rdf:playlist";
         filterlist.playlist = this;
 
-        dump("bind -- source: " + filterlist.source + " ref_pl: " + filterlist.ref_pl + " ref: " + filterlist.ref);
-        
         filterlist.addEventListener( "dblclick", this.onFilterDblClick, true );
         
         if ( feed )

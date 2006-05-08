@@ -1774,10 +1774,11 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI) +
                                        NS_ConvertUTF16toUTF8(col_str);
 
-    nsCOMPtr<nsIRDFResource> col_resource;
+    nsIRDFResource* col_resource;
     rv = sRDFService->GetResource(utf8_resource_name,
-                                  getter_AddRefs(col_resource));
+                                  &col_resource);
     NS_ENSURE_SUCCESS(rv, rv);
+
 
     info->m_ColumnMap[col_resource] = j;
     PR_Free(col_name);
