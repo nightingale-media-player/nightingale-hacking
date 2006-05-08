@@ -2287,7 +2287,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value)
   if (value.m_ResMapIndex + rows < (PRInt32)value.m_Info->m_ResList.size())
     end = value.m_ResMapIndex + rows;
   else
-    value.m_Info->m_ResList.size();
+    end = value.m_Info->m_ResList.size();
 
   for (PRInt32 i = value.m_ResMapIndex; i < end; i++) {
     sbValueInfo& val = g_ValueMap[value.m_Info->m_ResList[i]];
