@@ -189,12 +189,13 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   NS_ASSERTION(sbPlaylistsource::g_ActiveQueryCount > 0,
                "MyQueryCallback running with an invalid active query count");
 
-  // sometimes we don't have one yet.
-  if (m_Info->m_Resultset) {
-    sbPlaylistsource::sbResultInfo result;
+  sbPlaylistsource::sbResultInfo result;
 
-    // Copy the old resultset
-    result.m_Results = m_Info->m_Resultset;
+    // sometimes we don't have one yet.
+    if (m_Info->m_Resultset) {
+      // Copy the old resultset
+      result.m_Results = m_Info->m_Resultset;
+    }
     result.m_Source = m_Info->m_RootResource;
     result.m_OldTarget = m_Info->m_RootTargets;
     result.m_Ref = m_Info->m_Ref;
@@ -202,7 +203,6 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
 
     // Push the old resultset onto the garbage stack.
     sbPlaylistsource::g_ResultGarbage.push_back(result);
-  }
 
   // Orphan the result for the query.
   nsCOMPtr<sbIDatabaseResult> res;
@@ -507,7 +507,7 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
   nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[Row];
   valuemap_t::iterator v = g_ValueMap.find(next_resource);
   if (v != g_ValueMap.end()) {
-    sbValueInfo valueInfo = (*v).second;
+    sbValueInfo &valueInfo = (*v).second;
     nsresult rv;
     if (!valueInfo.m_Resultset) {
       LoadRowResults(valueInfo);
@@ -1532,7 +1532,7 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsAutoString outstring;
+  nsAutoString outstring( NS_LITERAL_STRING("") );
   nsresult rv;
 
   // Look in the value map
@@ -1541,7 +1541,7 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
   if (v == g_ValueMap.end())
     return NS_RDF_NO_VALUE;
 
-  sbValueInfo valInfo = (*v).second;
+  sbValueInfo &valInfo = (*v).second;
 
   // If we only have one value for this source ref, always return it.
   // Magic special case for the filter lists.
