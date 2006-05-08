@@ -190,21 +190,19 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
                "MyQueryCallback running with an invalid active query count");
 
   // sometimes we don't have one yet.
-  if (!m_Info->m_Resultset)
-    return NS_OK;
-  //NS_ENSURE_TRUE(m_Info->m_Resultset, NS_ERROR_UNEXPECTED);
+  if (m_Info->m_Resultset) {
+    sbPlaylistsource::sbResultInfo result;
 
-  sbPlaylistsource::sbResultInfo result;
+    // Copy the old resultset
+    result.m_Results = m_Info->m_Resultset;
+    result.m_Source = m_Info->m_RootResource;
+    result.m_OldTarget = m_Info->m_RootTargets;
+    result.m_Ref = m_Info->m_Ref;
+    result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
 
-  // Copy the old resultset
-  result.m_Results = m_Info->m_Resultset;
-  result.m_Source = m_Info->m_RootResource;
-  result.m_OldTarget = m_Info->m_RootTargets;
-  result.m_Ref = m_Info->m_Ref;
-  result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
-
-  // Push the old resultset onto the garbage stack.
-  sbPlaylistsource::g_ResultGarbage.push_back(result);
+    // Push the old resultset onto the garbage stack.
+    sbPlaylistsource::g_ResultGarbage.push_back(result);
+  }
 
   // Orphan the result for the query.
   nsCOMPtr<sbIDatabaseResult> res;
@@ -213,7 +211,8 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
 
   m_Info->m_Resultset = res;
 
-  if (--sbPlaylistsource::g_ActiveQueryCount == 0) {
+  if (--sbPlaylistsource::g_ActiveQueryCount <= 0) {
+    sbPlaylistsource::g_ActiveQueryCount = 0;
     sbPlaylistsource::g_NeedUpdate = PR_TRUE;
     return Post();
   }
