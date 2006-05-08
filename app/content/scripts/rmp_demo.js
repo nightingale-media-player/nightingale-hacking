@@ -412,7 +412,7 @@ function SBInitializeNamedDatabase( db_name )
   try
   {
     // Make an async database query object for the main songbird database
-    aDBQuery = new sbIDatabaseQuery();
+    var aDBQuery = new sbIDatabaseQuery();
     aDBQuery.SetAsyncQuery(true);
     aDBQuery.SetDatabaseGUID(db_name);
     

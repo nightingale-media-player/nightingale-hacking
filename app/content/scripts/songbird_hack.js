@@ -253,7 +253,7 @@ function SBInitialize()
       window.addEventListener("keydown", checkAltF4, true);
 
     // Make sure we have a fake database in which to play
-    aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"];
+    var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"];
     if (aDBQuery)
     {
       aDBQuery = aDBQuery.createInstance();
@@ -295,16 +295,16 @@ function SBInitialize()
     theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
     onServiceTreeRestoreSize();
 
-    theWebPlaylist = document.getElementById( "playlist_web" );
+    var theWebPlaylist = document.getElementById( "playlist_web" );
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
 // no!    theWebPlaylist.addEventListener( "playlist-edit", onPlaylistEdit, true );
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
     theWebPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
-    theWebPlaylistQuery = null;
+    var theWebPlaylistQuery = null;
     
     // Poll the playlist source every 500ms to drive the display update (STOOOOPID!)
     Poll = new sbIPlaylistsource();
-    NumPlaylistItemsRemote = new sbIDataRemote( "playlist.numitems" );
+    var NumPlaylistItemsRemote = new sbIDataRemote( "playlist.numitems" );
     NumPlaylistItemsRemote.setValue( "" );
     function PFU()
     {
