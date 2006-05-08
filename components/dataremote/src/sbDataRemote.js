@@ -97,7 +97,7 @@ DataRemote.prototype = {
   bindEventFunction: function(func) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    this.BindCallbackFunction(func, true);
+    this.bindCallbackFunction(func, true);
   },
       
   bindCallbackFunction: function(func, suppressFirst) {
@@ -279,7 +279,7 @@ DataRemote.prototype = {
         else if (value == "false")
           value = false;
         else
-          value = (this.MakeIntValue(value) != 0);
+          value = (this.makeIntValue(value) != 0);
       }
       // ...we are now!
       if (this._callbackNot)

@@ -52,6 +52,61 @@
 //   not  - Optionally assign the data as a boolean NOT of the value
 //   eval - Optionally apply an eval string where `value = eval( eval_string );`
 
+const sbIRemoteConstructor = new Components.Constructor("@songbird.org/Songbird/DataRemote;1", "sbIDataRemote");
+
+/*  
+function sbIDataRemote( key, root ) // Not your average js object.  :)
+{
+  // This thing is starting to get kinda heavy to construct
+  SBBindInterface( this, "@songbird.org/Songbird/DataRemote;1", Components.interfaces.sbIDataRemote );
+  
+  // Initialize it
+  if ( root == null ) root = "";
+  this.init( key, root );
+
+  // Actual XPCOM layer functions
+  this._bindCallbackFunction = this.bindCallbackFunction;
+  this._bindCallbackProperty = this.bindCallbackProperty;
+  this._bindCallbackAttribute = this.bindCallbackAttribute;
+  this._setValue = this.setValue;
+  
+  // Override for default values
+  this.bindCallbackFunction = function( func, suppress_first )
+  {
+    if ( suppress_first == null ) suppress_first = false;
+    return this._bindCallbackFunction( func, suppress_first );
+  }
+
+  // Override for default values
+  this.bindCallbackProperty = function( obj, prop, bool, not, eval )
+  {
+    if ( bool == null ) bool = false;
+    if ( not == null )  not = false;
+    if ( eval == null ) eval = "";
+    return this._bindCallbackProperty( obj, prop, bool, not, eval );
+  }
+
+  // Override for default values
+  this.bindCallbackAttribute = function( obj, attr, bool, not, eval )
+  {
+    if ( bool == null ) bool = false;
+    if ( not == null )  not = false;
+    if ( eval == null ) eval = "";
+    return this._bindCallbackAttribute( obj, prop, bool, not, eval );
+  }
+
+  // Override for boolean type
+  this.setValue = function( value )
+  {
+    if ( typeof( value ) == "boolean" ) value = value ? "1" : "0";
+    return this._setValue( value );
+  }
+  return this;
+}
+*/  
+
+/*
+*/
 function sbIDataRemote( key, root )
 {
   try
@@ -127,7 +182,7 @@ function sbIDataRemote( key, root )
               return;
             }
             // Get the value (why isn't this a param?)
-            var value = this.GetValue();
+            var value = this.getValue();
             
             // Run the optional evaluation
             if ( this.m_CallbackEval.length )
@@ -151,7 +206,7 @@ function sbIDataRemote( key, root )
                 }
                 else
                 {
-                  value = ( this.MakeIntValue( value ) != 0 );
+                  value = ( this.makeIntValue( value ) != 0 );
                 }
               }
               // ...we are now!
@@ -160,18 +215,6 @@ function sbIDataRemote( key, root )
                 value = ! value;
               }
             }
-            
-/*            
-            if ( this.m_Key == "playlist.repeat" )
-            {
-              var obj = "No object";
-              if ( this.m_CallbackObject )
-              {
-                obj = this.m_CallbackObject.id;
-              }
-              alert( obj + " - " + this.m_CallbackPropery + " - " + this.m_CallbackAttribtue + " - " + value );
-            }  
-*/
             
             // Handle callback states
             if ( this.m_CallbackFunction )
@@ -211,7 +254,7 @@ function sbIDataRemote( key, root )
       }
     };
     
-    this.Unbind = function()
+    this.unbind = function()
     {
       try
       {
@@ -229,12 +272,16 @@ function sbIDataRemote( key, root )
       }
     }
     
-    this.BindEventFunction = function( func )
+    this.bindEventFunction = function( func )
     {
-      this.BindCallbackFunction( func, true );
+      this.bindCallbackFunction( func, true );
     }
     
-    this.BindCallbackFunction = function( func, suppress_first )
+    
+    //
+    // Override this method to handle suppress_first with a default false
+    //
+    this.bindCallbackFunction = function( func, suppress_first )
     {
       try
       {
@@ -259,19 +306,7 @@ function sbIDataRemote( key, root )
           this.m_CallbackEval = "";
           
           // Set the value once
-          this.observe( null, null, this.m_Key );
-            
-/*            
-          if ( this.m_Key == "playlist.repeat" )
-          {
-            var obj = "No object";
-            if ( this.m_CallbackObject )
-            {
-              obj = this.m_CallbackObject.id;
-            }
-            alert( obj + " - " + this.m_CallbackPropery + " - " + this.m_CallbackAttribtue + " - " + value );
-          }  
-*/          
+          this.observe( null, null, this.m_Key );       
         }
       }
       catch ( err )
@@ -280,7 +315,8 @@ function sbIDataRemote( key, root )
       }
     };
     
-    this.BindCallbackProperty = function( obj, prop, bool, not, eval )
+    // override for default values
+    this.bindCallbackProperty = function( obj, prop, bool, not, eval )
     {
       try
       {
@@ -315,18 +351,6 @@ function sbIDataRemote( key, root )
           
           // Set the value once
           this.observe( null, null, this.m_Key );
-
-/*            
-          if ( this.m_Key == "playlist.repeat" )
-          {
-            var obj = "No object";
-            if ( this.m_CallbackObject )
-            {
-              obj = this.m_CallbackObject.id;
-            }
-            alert( obj + " - " + this.m_CallbackPropery + " - " + this.m_CallbackAttribtue + " - " + value );
-          }  
-*/          
         }
       }
       catch ( err )
@@ -335,7 +359,8 @@ function sbIDataRemote( key, root )
       }
     };
     
-    this.BindCallbackAttribute = function( obj, attr, bool, not, eval )
+    // override for default values
+    this.bindCallbackAttribute = function( obj, attr, bool, not, eval )
     {
       try
       {
@@ -378,8 +403,8 @@ function sbIDataRemote( key, root )
       }
     };
 
-    // SetValue - Put the value into the data store, alert everyone watching this data    
-    this.SetValue = function( value )
+    // override for boolean type
+    this.setValue = function( value )
     {
       // Clear the value
       if ( value == null )
@@ -415,7 +440,7 @@ function sbIDataRemote( key, root )
     };
 
     // GetValue - Get the value from the data store
-    this.GetValue = function()
+    this.getValue = function()
     {
       var retval = "";
       try
@@ -436,13 +461,13 @@ function sbIDataRemote( key, root )
     };
     
     // GetIntValue - Get the value from the data store as an int
-    this.GetIntValue = function()
+    this.getIntValue = function()
     {
-      return this.MakeIntValue( this.GetValue() );
+      return this.makeIntValue( this.getValue() );
     }
     
     // MakeIntValue - Get the value from the data store as an int
-    this.MakeIntValue = function( value )
+    this.makeIntValue = function( value )
     {
       var retval = 0;
       try
@@ -477,7 +502,7 @@ function SBDataBindElementProperty( key, elem, prop, bool, not, eval )
     if ( obj )
     {
       retval = new sbIDataRemote( key );
-      retval.BindCallbackProperty( obj, prop, bool, not, eval );
+      retval.bindCallbackProperty( obj, prop, bool, not, eval );
     }
     else
     {
@@ -499,7 +524,7 @@ function SBDataBindElementAttribute( key, elem, attr, bool, not, eval )
     if ( obj )
     {
       retval = new sbIDataRemote( key );
-      retval.BindCallbackAttribute( obj, attr, bool, not, eval );
+      retval.bindCallbackAttribute( obj, attr, bool, not, eval );
     }
     else
     {
@@ -517,23 +542,23 @@ function SBDataBindElementAttribute( key, elem, attr, bool, not, eval )
 function SBDataGetValue( key )
 {
   var data = new sbIDataRemote( key );
-  return data.GetValue();
+  return data.getValue();
 }
 
 function SBDataGetIntValue( key )
 {
   var data = new sbIDataRemote( key );
-  return data.GetIntValue();
+  return data.getIntValue();
 }
 
 function SBDataSetValue( key, value )
 {
   var data = new sbIDataRemote( key );
-  return data.SetValue( value );
+  return data.setValue( value );
 }
 
 function SBDataFireEvent( key )
 {
   var data = new sbIDataRemote( key );
-  return data.SetValue( data.GetIntValue() + 1 );
+  return data.setValue( data.getIntValue() + 1 );
 }

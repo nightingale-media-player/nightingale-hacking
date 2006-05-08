@@ -111,8 +111,8 @@ CPlaylistReaderListener.prototype =
           var downloadTable = {};
           aDownloadDevice.AutoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
           
-          dpDownloadContext.SetValue( aDownloadDevice.GetContext('') );
-          dpDownloadTable.SetValue( downloadTable.value );
+          dpDownloadContext.setValue( aDownloadDevice.GetContext('') );
+          dpDownloadTable.setValue( downloadTable.value );
         }
       }
     }

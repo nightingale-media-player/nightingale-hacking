@@ -289,7 +289,7 @@ function SBAppDeinitialize()
   // Unattach the player repeater. (please deprecate me, soon!)
   //thePlayerRepeater.unbind();
   // Unbind the playback url viewer. (used by the code that uncloaks the video window)
-  rmp_demo_playURL.Unbind();
+  rmp_demo_playURL.unbind();
   // Remember where the video window is.
   onWindowSaveSize();
   SBMetricsAppShutdown();
@@ -315,7 +315,7 @@ function SBAppInitialize()
     SBMetricsAppStart();
     setVideoMinMaxCallback();
     onWindowLoadSize();
-    rmp_demo_playURL.BindCallbackFunction( SBUrlChanged, true )
+    rmp_demo_playURL.bindCallbackFunction( SBUrlChanged, true )
 
     /*
     */

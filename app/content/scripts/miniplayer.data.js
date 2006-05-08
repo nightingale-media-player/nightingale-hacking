@@ -104,7 +104,7 @@ try
       // Unbind the observers!
       for ( var i = 0; i < MiniplayerDataRemotes.length; i++ )
       {
-        MiniplayerDataRemotes[ i ].Unbind();
+        MiniplayerDataRemotes[ i ].unbind();
       }
     }  
     catch ( err )
@@ -124,8 +124,8 @@ try
     // (we get called before they're fully bound)
     if ( MiniplayerArtistRemote && MiniplayerAlbumRemote )
     {
-      var artist = MiniplayerArtistRemote.GetValue();
-      var album = MiniplayerAlbumRemote.GetValue();
+      var artist = MiniplayerArtistRemote.getValue();
+      var album = MiniplayerAlbumRemote.getValue();
       var theAASlash = document.getElementById( "rmp_demo_text_slash" );
       var theAABox = document.getElementById( "rmp_demo_text_artistalbum" );
       if ( album.length || artist.length )
@@ -154,10 +154,10 @@ try
     {
       // Artist/Album Box Complex -- two data items for one callback.
       MiniplayerArtistRemote = new sbIDataRemote( "metadata.artist" );
-      MiniplayerArtistRemote.BindCallbackFunction( onSBArtistAlbumChanged );
+      MiniplayerArtistRemote.bindCallbackFunction( onSBArtistAlbumChanged );
       MiniplayerAdd( MiniplayerArtistRemote );
       MiniplayerAlbumRemote = new sbIDataRemote( "metadata.album" );
-      MiniplayerAlbumRemote.BindCallbackFunction( onSBArtistAlbumChanged );
+      MiniplayerAlbumRemote.bindCallbackFunction( onSBArtistAlbumChanged );
       MiniplayerAdd( MiniplayerAlbumRemote );
       
     }

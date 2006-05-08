@@ -299,7 +299,7 @@
                 var item_url = tree.view.getCellText( i, col );
                 var item_remote = new sbIDataRemote( "collapsed_" + this.strid + "_" + item_url );
 //                alert( item_remote + " - " + item_remote.m_Key + " - " + !tree.view.isContainerOpen(i) );
-                item_remote.SetValue(!tree.view.isContainerOpen(i));
+                item_remote.setValue(!tree.view.isContainerOpen(i));
               }
             }
           }
@@ -324,8 +324,8 @@
               {
                 var item_url = tree.view.getCellText( i, col );
                 var item_remote = new sbIDataRemote( "collapsed_" + this.strid + "_" + item_url );
-//                alert( item_remote + " - " + item_remote.m_Key + " - " + item_remote.GetIntValue() );
-                if (item_remote.GetIntValue())
+//                alert( item_remote + " - " + item_remote.m_Key + " - " + item_remote.getIntValue() );
+                if (item_remote.getIntValue())
                 {
                   if (tree.view.isContainerOpen(i))
                   {

@@ -89,7 +89,7 @@ try
     theVolumeSlider.addEventListener("seekbar-release", onVolumeUp, true);
     window.addEventListener("DOMMouseScroll", onMouseWheel, false);
 
-    playerControls_seekbarTracker.SetValue(false);
+    playerControls_seekbarTracker.setValue(false);
     theSeekbarSlider = document.getElementById( "songbird_seekbar" );
     theSeekbarSlider.maxpos = 0;
     theSeekbarSlider.value = 0;
@@ -109,12 +109,12 @@ try
         welcome = theSongbirdStrings.getString("faceplate.welcome");
       } catch(e) {}
 
-      playerControls_titleText.SetValue( welcome );
-      playerControls_artistText.SetValue( "" );
-      playerControls_albumText.SetValue( "" );
-      playerControls_statusText.SetValue( "" );
-      playerControls_statusStyle.SetValue( "" );
-      playerControls_playbackURL.SetValue( "" );
+      playerControls_titleText.setValue( welcome );
+      playerControls_artistText.setValue( "" );
+      playerControls_albumText.setValue( "" );
+      playerControls_statusText.setValue( "" );
+      playerControls_statusStyle.setValue( "" );
+      playerControls_playbackURL.setValue( "" );
     }
 */
     
@@ -125,39 +125,39 @@ try
   
   function SBSetPlayerControlsDefaults()
   {
-    playerControls_playButton.SetValue( 1 ); // Start on.
-    playerControls_playingRef.SetValue( "" );
-    playerControls_repeat.SetValue( 0 ); // start with no shuffle
-    playerControls_shuffle.SetValue( 0 ); // start with no shuffle
-    playerControls_playURL.SetValue( "" ); 
+    playerControls_playButton.setValue( 1 ); // Start on.
+    playerControls_playingRef.setValue( "" );
+    playerControls_repeat.setValue( 0 ); // start with no shuffle
+    playerControls_shuffle.setValue( 0 ); // start with no shuffle
+    playerControls_playURL.setValue( "" ); 
 
-    playerControls_statusText.SetValue( "" );
-    playerControls_statusStyle.SetValue( "" );
-    playerControls_playbackURL.SetValue( "" );
+    playerControls_statusText.setValue( "" );
+    playerControls_statusStyle.setValue( "" );
+    playerControls_playbackURL.setValue( "" );
   }
 
   function SBFirstVolume()
   {
-    if ( playerControls_lastVolume.GetValue() == "" )
+    if ( playerControls_lastVolume.getValue() == "" )
     {
-      playerControls_lastVolume.SetValue( 128 );
+      playerControls_lastVolume.setValue( 128 );
     }
-    gPPS.setVolume( playerControls_lastVolume.GetIntValue() );
-    var mute = playerControls_muteData.GetIntValue() != 0;
+    gPPS.setVolume( playerControls_lastVolume.getIntValue() );
+    var mute = playerControls_muteData.getIntValue() != 0;
     setMute( mute );
   }
   
   function onVolumeChange( event ) 
   {
-    playerControls_trackerVolume.SetValue(true);
+    playerControls_trackerVolume.setValue(true);
     if ( theVolumeSlider.value > 0 )
     {
-      playerControls_muteData.SetValue( false );
+      playerControls_muteData.setValue( false );
       gPPS.setMute( false );
     }
     else
     {
-      playerControls_muteData.SetValue( true );
+      playerControls_muteData.setValue( true );
       gPPS.setMute( true );
     }
     gPPS.setVolume( theVolumeSlider.value );
@@ -167,18 +167,18 @@ try
   {
     if ( theVolumeSlider.value > 0 )
     {
-      playerControls_muteData.SetValue( false );
+      playerControls_muteData.setValue( false );
       gPPS.setMute( false );
-      playerControls_lastVolume.SetValue( theVolumeSlider.value );
+      playerControls_lastVolume.setValue( theVolumeSlider.value );
     }
     else
     {
-      playerControls_muteData.SetValue( true );
+      playerControls_muteData.setValue( true );
       gPPS.setMute( true );
     }
     gPPS.setVolume( theVolumeSlider.value );
-    playerControls_volumeLastReadback.SetValue(gPPS.getVolume());
-    playerControls_trackerVolume.SetValue(false);
+    playerControls_volumeLastReadback.setValue(gPPS.getVolume());
+    playerControls_trackerVolume.setValue(false);
   }
 
   function onMouseWheel(event)
@@ -210,7 +210,7 @@ try
     
       // walked up to the window
       var s = theVolumeSlider.value;
-      if (s == '') s = playerControls_volume.GetValue();
+      if (s == '') s = playerControls_volume.getValue();
       var v = parseInt(s)+((event.detail > 0) ? -8 : 8);
       if (v < 0) v = 0;
       if (v > 255) v = 255;
@@ -226,7 +226,7 @@ try
 
   function onPlay()
   {
-    if ( playerControls_seenPlaying.GetIntValue() && gPPS.getPaused() )
+    if ( playerControls_seenPlaying.getIntValue() && gPPS.getPaused() )
     {
       gPPS.play();
     }
@@ -239,10 +239,10 @@ try
   function playCurrentUrl( setdisplay )
   {
     // Hide the intro box and show the normal faceplate box
-    sbIDataRemote( "faceplate.state" ).SetValue( 1 );
+    sbIDataRemote( "faceplate.state" ).setValue( 1 );
     
     // No current url?! naughty naughty!
-    if ( playerControls_playURL.GetValue().length == 0 )
+    if ( playerControls_playURL.getValue().length == 0 )
     {
       if ( thePlaylistTree ) // OPTIONAL CONNECTION
       {
@@ -267,21 +267,21 @@ try
     // Stop whatever is currently playing.
     gPPS.stop();
     // Just play the url.
-    gPPS.playUrl( playerControls_playURL.GetValue() );
+    gPPS.playUrl( playerControls_playURL.getValue() );
     // Tell __EVERYBODY__
-    playerControls_playbackURL.SetValue( playerControls_playURL.GetValue() )
+    playerControls_playbackURL.setValue( playerControls_playURL.getValue() )
     // Set our timeout tracking variable
-    playerControls_seenPlaying.SetValue(false);
+    playerControls_seenPlaying.setValue(false);
     
     // Assign to the display if that is desired
     if ( setdisplay )
     {
-      theTitleText.SetValue( ConvertUrlToDisplayName( playerControls_playURL.GetValue() ) );
-      theAlbumText.SetValue( "" );
-      theArtistText.SetValue( "" );
+      theTitleText.setValue( ConvertUrlToDisplayName( playerControls_playURL.getValue() ) );
+      theAlbumText.setValue( "" );
+      theArtistText.setValue( "" );
     }
     // If we've never seen it before, put it in the library
-    SBAddUrlToDatabase( playerControls_playURL.GetValue() );
+    SBAddUrlToDatabase( playerControls_playURL.getValue() );
   }
 
   function ConvertUrlToDisplayName( url )
@@ -338,19 +338,19 @@ try
 {  
     if ( theMute )
     {
-      playerControls_lastVolume.SetValue( theVolumeSlider.value );
+      playerControls_lastVolume.setValue( theVolumeSlider.value );
       theVolumeSlider.value = 0;
     }
     else
     {
-      var value = playerControls_lastVolume.GetValue();
-      theVolumeSlider.value = playerControls_lastVolume.GetValue();
+      var value = playerControls_lastVolume.getValue();
+      theVolumeSlider.value = playerControls_lastVolume.getValue();
     }
-    playerControls_muteData.SetValue( theMute );
+    playerControls_muteData.setValue( theMute );
     //alert( theMute ); ??
     gPPS.setMute( theMute );
     gPPS.setVolume( theVolumeSlider.value );
-    playerControls_volumeLastReadback.SetValue(gPPS.getVolume());
+    playerControls_volumeLastReadback.setValue(gPPS.getVolume());
 }
 catch ( err )    
 {
@@ -461,13 +461,13 @@ catch ( err )
 
   function onSeekbarChange( ) 
   {
-    playerControls_seekbarTracker.SetValue(true);
+    playerControls_seekbarTracker.setValue(true);
   }
 
   function onSeekbarUp( ) 
   {
     gPPS.setPosition( theSeekbarSlider.value );
-    playerControls_seekbarTracker.SetValue(false);
+    playerControls_seekbarTracker.setValue(false);
   }
 
   // Fwd and back skipping.  Pleah.
@@ -505,7 +505,7 @@ catch ( err )
       var num_items = SBGetNumPlaylistItems();
       var cur_index = SBGetCurrentPlaylistIndex();
       var index = -1;
-      if ( playerControls_repeat.GetIntValue() == 1 )
+      if ( playerControls_repeat.getIntValue() == 1 )
       {
         index = cur_index;
       }
@@ -545,11 +545,11 @@ catch ( err )
       var index = -1;
       if ( cur_index != -1 )
       {
-        if ( playerControls_repeat.GetIntValue() == 1 )
+        if ( playerControls_repeat.getIntValue() == 1 )
         {
           index = cur_index;
         }
-        else if ( playerControls_shuffle.GetIntValue() )
+        else if ( playerControls_shuffle.getIntValue() )
         {
           var rand = num_items * Math.random();
           index = parseInt( rand );
@@ -580,16 +580,16 @@ catch ( err )
   // Shuffle state 
   function onShuffle()
   {
-    playerControls_shuffle.SetValue( ( playerControls_shuffle.GetIntValue() + 1 ) % 2 );
+    playerControls_shuffle.setValue( ( playerControls_shuffle.getIntValue() + 1 ) % 2 );
   }
 
   function SBGetNumPlaylistItems()
   {
     var retval = 0;
-    if ( playerControls_playingRef.GetValue().length )
+    if ( playerControls_playingRef.getValue().length )
     {
       var source = new sbIPlaylistsource();
-      retval = source.GetRefRowCount( playerControls_playingRef.GetValue() );
+      retval = source.GetRefRowCount( playerControls_playingRef.getValue() );
     }
     else if ( thePlaylistTree )
     {
@@ -602,12 +602,12 @@ catch ( err )
   function SBGetCurrentPlaylistIndex()
   {
     var retval = -1;
-    if ( playerControls_playingRef.GetValue().length > 0 )
+    if ( playerControls_playingRef.getValue().length > 0 )
     {
       var source = new sbIPlaylistsource();
-      var ref = playerControls_playingRef.GetValue();
+      var ref = playerControls_playingRef.getValue();
       
-      retval = source.GetRefRowByColumnValue( ref, kURL, playerControls_playURL.GetValue() );
+      retval = source.GetRefRowByColumnValue( ref, kURL, playerControls_playURL.getValue() );
     }
     return retval;
   }
@@ -617,7 +617,7 @@ catch ( err )
   {
     // Rob decided to change the order.  Woo.
     var value = 0;
-    switch ( playerControls_repeat.GetIntValue() )
+    switch ( playerControls_repeat.getIntValue() )
     {
       case 0:
         value = 2;
@@ -629,7 +629,7 @@ catch ( err )
         value = 1;
         break;
     }
-    playerControls_repeat.SetValue( value );
+    playerControls_repeat.setValue( value );
   }
 
   function SBPlayPlaylistIndex( index, playlist )
@@ -639,7 +639,7 @@ catch ( err )
       var ref = "";
       if ( playlist == null )
       {
-        ref = playerControls_playingRef.GetValue();
+        ref = playerControls_playingRef.getValue();
       }
       else
       {
@@ -677,18 +677,18 @@ catch ( err )
       // And if it's good, launch it.
       if ( play_url && play_url.length > 0 )
       {
-        playerControls_playURL.SetValue( play_url );
+        playerControls_playURL.setValue( play_url );
         if ( play_name.length > 0 )
         {
-          playerControls_titleText.SetValue( play_name );
-          playerControls_artistText.SetValue( play_artist );
-          playerControls_albumText.SetValue( play_album );
+          playerControls_titleText.setValue( play_name );
+          playerControls_artistText.setValue( play_artist );
+          playerControls_albumText.setValue( play_album );
         }
         else
         {
-          playerControls_titleText.SetValue( playerControls_playURL.GetValue() );
-          playerControls_artistText.SetValue( "" );
-          playerControls_albumText.SetValue( "" );
+          playerControls_titleText.setValue( playerControls_playURL.getValue() );
+          playerControls_artistText.setValue( "" );
+          playerControls_albumText.setValue( "" );
         }
         // Now this guy takes over and plays what needs to be played.
         gPPS.playRef( ref, index );
@@ -724,7 +724,7 @@ catch ( err )
         else
         {
           // Only if we're looking at the same playlist from which we are playing
-          if ( playerControls_playlistRef.GetValue() == playerControls_playingRef.GetValue() )
+          if ( playerControls_playlistRef.getValue() == playerControls_playingRef.getValue() )
           {
             var index = SBGetCurrentPlaylistIndex();
             tree.view.selection.clearSelection();
@@ -748,7 +748,7 @@ catch ( err )
   function onPause()
   {
     
-    if ( playerControls_seenPlaying.GetIntValue() )
+    if ( playerControls_seenPlaying.getIntValue() )
     {
       gPPS.pause();
 
@@ -763,13 +763,13 @@ catch ( err )
     var pos = gPPS.getPosition();
     if ( len > 0 )
     {
-      playerControls_showRemaining.SetValue(!playerControls_showRemaining.GetIntValue());
+      playerControls_showRemaining.setValue(!playerControls_showRemaining.getIntValue());
       SBSetTimeText( len, pos );
     }
     // If you try to toggle it while it is zero, you lose the state.
     else
     {
-      playerControls_showRemaining.SetValue(false);
+      playerControls_showRemaining.setValue(false);
     }
   }
   
@@ -790,7 +790,7 @@ var SBMediaKeyboardCB =
   {
     alert('');
     var s = theVolumeSlider.value;
-    if (s == '') s = playerControls_volume.GetValue();
+    if (s == '') s = playerControls_volume.getValue();
     var v = parseInt(s)+8;
     if (v > 255) v = 255;
     theVolumeSlider.value = v;
@@ -801,7 +801,7 @@ var SBMediaKeyboardCB =
   OnVolumeDown: function()
   {
     var s = theVolumeSlider.value;
-    if (s == '') s = playerControls_volume.GetValue();
+    if (s == '') s = playerControls_volume.getValue();
     var v = parseInt(s)-8;
     if (v < 0) v = 0;
     theVolumeSlider.value = v;

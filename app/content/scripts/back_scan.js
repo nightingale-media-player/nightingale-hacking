@@ -83,7 +83,7 @@ try
       if ( ENABLE_BACKSCAN )
       {
         // Bind a function to let us pause and unpause
-        bsScanningPaused.BindCallbackFunction( BSDataChange );
+        bsScanningPaused.bindCallbackFunction( BSDataChange );
       
         // Go start an async query on the library
         bsDBQuery = new sbIDatabaseQuery();
@@ -125,7 +125,7 @@ try
         return;
       }
 
-      if ( ! bsScanningPaused.GetIntValue() )
+      if ( ! bsScanningPaused.getIntValue() )
       {
         if ( ! bsDBQuery.IsExecuting() && ( SBDataGetIntValue( "media_scan.open" ) == 0 ) )
         {
@@ -142,7 +142,7 @@ try
             // ...we need to resubmit the query.
             bsWaitForExecuting = true;
             setTimeout( BSExecute, 2000 );
-            bsScanningText.SetValue( "" );
+            bsScanningText.setValue( "" );
           }
           else
           {
@@ -189,7 +189,7 @@ try
       {
         scanning = bsSongbirdStrings.getString("back_scan.scanning");
       } catch(e) {}
-      bsScanningText.SetValue( scanning + "..." );
+      bsScanningText.setValue( scanning + "..." );
       
       var bad_url = false;
       var url = result.GetRowCellByColumn( bsLastRow, "url" );
@@ -280,7 +280,7 @@ try
   function BSReadHandlerValues( blank ) 
   {
     var values = null;
-    if ( ! blank )
+    if ( ! blank && bsMDHandler )
     {
       values = bsMDHandler.GetValuesMap();
       // clear the bsMDHandler variable so we don't track it.
@@ -377,15 +377,15 @@ try
       scanning = bsSongbirdStrings.getString("back_scan.scanning");
       paused = bsSongbirdStrings.getString("back_scan.paused");
     } catch(e) {}
-    if ( bsScanningText.GetValue() != "" )
+    if ( bsScanningText.getValue() != "" )
     {
-      if ( bsScanningPaused.GetIntValue() )
+      if ( bsScanningPaused.getIntValue() )
       {
-        bsScanningText.SetValue( scanning + " " + paused );
+        bsScanningText.setValue( scanning + " " + paused );
       }
       else
       {
-        bsScanningText.SetValue( scanning + "..." );
+        bsScanningText.setValue( scanning + "..." );
       }
     }
   }

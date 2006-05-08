@@ -143,7 +143,7 @@ try
       // Unbind the observers!
       for ( var i = 0; i < MainwinDataRemotes.length; i++ )
       {
-        MainwinDataRemotes[ i ].Unbind();
+        MainwinDataRemotes[ i ].unbind();
       }
     }  
     catch ( err )
@@ -163,8 +163,8 @@ try
     // (we get called before they're fully bound)
     if ( MainwinArtistRemote && MainwinAlbumRemote )
     {
-      var artist = MainwinArtistRemote.GetValue();
-      var album = MainwinAlbumRemote.GetValue();
+      var artist = MainwinArtistRemote.getValue();
+      var album = MainwinAlbumRemote.getValue();
       var theAASlash = document.getElementById( "songbird_text_slash" );
       var theAABox = document.getElementById( "songbird_text_artistalbum" );
       if ( album.length || artist.length )
@@ -194,10 +194,10 @@ try
     {
       // Title/<slash>/Album Box Complex -- two data items for one callback.
       MainwinArtistRemote = new sbIDataRemote( "metadata.title" ); // changed to title cuz we like to be odd.
-      MainwinArtistRemote.BindCallbackFunction( onSBArtistAlbumChanged );
+      MainwinArtistRemote.bindCallbackFunction( onSBArtistAlbumChanged );
       MainwinAdd( MainwinArtistRemote );
       MainwinAlbumRemote = new sbIDataRemote( "metadata.album" );
-      MainwinAlbumRemote.BindCallbackFunction( onSBArtistAlbumChanged );
+      MainwinAlbumRemote.bindCallbackFunction( onSBArtistAlbumChanged );
       MainwinAdd( MainwinAlbumRemote );
       
     }
@@ -239,15 +239,15 @@ try
           LaunchMainPaneURL( "chrome://songbird/content/xul/main_pane.xul?library" );
         }
         
-        if ( thePlaylistRef.GetValue().length > 0 )
+        if ( thePlaylistRef.getValue().length > 0 )
         {
           // Feed the new filter into the list.
           var source = new sbIPlaylistsource();
           // Wait until it is done executing
-          if ( ! source.IsQueryExecuting( thePlaylistRef.GetValue() ) )
+          if ( ! source.IsQueryExecuting( thePlaylistRef.getValue() ) )
           {
             // ...before attempting to override.
-            source.FeedPlaylistFilterOverride( thePlaylistRef.GetValue(), widget.list.label );
+            source.FeedPlaylistFilterOverride( thePlaylistRef.getValue(), widget.list.label );
             theLastSearchEventTarget = null;
             return;
           }

@@ -42,14 +42,14 @@ function sbRestartBox( title, message )
     switch (restartbox_data.ret)
     {
       case 0: // restart later
-              restartOnPlaybackEnd.SetValue( false );
+              restartOnPlaybackEnd.setValue( false );
               break;
       case 1: // restart now
-              restartOnPlaybackEnd.SetValue( false );
+              restartOnPlaybackEnd.setValue( false );
               restartApp(); // assumes the current document has this function, bad.
               break;
       case 2: // restart on end of playback
-              restartOnPlaybackEnd.SetValue( true );
+              restartOnPlaybackEnd.setValue( true );
               break;
     }
   }

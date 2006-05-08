@@ -164,21 +164,21 @@ function SBFirstRunPong()
     var firstRun = new sbIDataRemote("application.first_run");
     var firstRunVersion = new sbIDataRemote("application.version");
     
-    var isFirst = firstRun.GetValue();
-    var theVersion = firstRunVersion.GetValue();
+    var isFirst = firstRun.getValue();
+    var theVersion = firstRunVersion.getValue();
 
     if(isFirst != "false" ||
        theVersion != "0.1.1" )
     {
       var playerUUID = new sbIDataRemote("application.uuid");
 
-      var newUUID = playerUUID.GetValue()
+      var newUUID = playerUUID.getValue()
       if(newUUID == "")
       {
         var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
 
         newUUID = aUUIDGenerator.generateUUID();
-        playerUUID.SetValue(newUUID);
+        playerUUID.setValue(newUUID);
       }
 
       var pongRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
@@ -208,8 +208,8 @@ function SBFirstRunPong()
       if(pongRequest.status == 204)
       {
         dump("Success!!!");
-        firstRun.SetValue("false");
-        firstRunVersion.SetValue("0.1.1");
+        firstRun.setValue("false");
+        firstRunVersion.setValue("0.1.1");
       }
       else
       {
@@ -269,7 +269,7 @@ function SBInitialize()
       // ask the user if they would like to fill their empty bucket.
       if ( ret == 0 )
       {
-        theMediaScanIsOpen.SetValue( true );
+        theMediaScanIsOpen.setValue( true );
         setTimeout( SBScanMedia, 1000 );
       }
     }
@@ -305,7 +305,7 @@ function SBInitialize()
     // Poll the playlist source every 500ms to drive the display update (STOOOOPID!)
     Poll = new sbIPlaylistsource();
     NumPlaylistItemsRemote = new sbIDataRemote( "playlist.numitems" );
-    NumPlaylistItemsRemote.SetValue( "" );
+    NumPlaylistItemsRemote.setValue( "" );
     function PFU()
     {
       try
@@ -351,7 +351,7 @@ function SBInitialize()
           }
         }
         
-        NumPlaylistItemsRemote.SetValue( display_string );
+        NumPlaylistItemsRemote.setValue( display_string );
       }
       catch ( err )
       {
@@ -386,7 +386,7 @@ function SBInitialize()
         }
         else
         {
-          var values = aMetadataHandler.GetValuesMap();
+          var values = aMetadataHandler.getValuesMap();
           
           var text = "";
           const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
@@ -567,7 +567,7 @@ var FaceplateStateData = new sbIDataRemote( "faceplate.state" );
 
 function onNextService()
 {
-  FaceplateStateData.SetValue( ( FaceplateStateData.GetIntValue() + 1 ) % 2 ); // can't use boolean, must use integer logic
+  FaceplateStateData.setValue( ( FaceplateStateData.getIntValue() + 1 ) % 2 ); // can't use boolean, must use integer logic
 }
 
 // onServiceTreeResize
@@ -942,23 +942,23 @@ var SBDocStartListener = {
       var theMainPane = document.getElementById( "frame_main_pane" );
       var cur_uri = aLocation.asciiSpec;
       m_CurrentRequestURI = aRequest.name;
-//      if ( SBGetUrlFromService( theBrowserUrlData.GetValue() ) != cur_uri )
+//      if ( SBGetUrlFromService( theBrowserUrlData.getValue() ) != cur_uri )
       {
         // Set the box
-        theBrowserUriData.SetValue( cur_uri );
-        theBrowserUrlData.SetValue( SBGetServiceFromUrl( cur_uri ) );
+        theBrowserUriData.setValue( cur_uri );
+        theBrowserUrlData.setValue( SBGetServiceFromUrl( cur_uri ) );
         var image = SBGetServiceImageFromUrl( cur_uri );
         if ( image.length )
         {
-          theBrowserImageData.SetValue( image );
+          theBrowserImageData.setValue( image );
         }
         
         // Set the buttons based on the session history.
         if ( theMainPane.webNavigation.sessionHistory )
         {
           // Check the buttons
-          theCanGoBackData.SetValue( theMainPane.webNavigation.canGoBack );
-          theCanGoFwdData.SetValue( theMainPane.webNavigation.canGoForward )
+          theCanGoBackData.setValue( theMainPane.webNavigation.canGoBack );
+          theCanGoFwdData.setValue( theMainPane.webNavigation.canGoForward )
         }
         else
         {
@@ -994,7 +994,7 @@ var SBDocStartListener = {
       }
       theServiceTree.UrlFromServicePane = false;
       
-      thePaneLoadingData.SetValue( true );
+      thePaneLoadingData.setValue( true );
       
       // Clear the playlist tree variable so we are not confused.
       thePlaylistTree = null;
@@ -1004,7 +1004,7 @@ var SBDocStartListener = {
       mainpane_listener_set = false;
       
       // Disable the "add to playlist" button until we see that there is anything to add.
-      theCanAddToPlaylistData.SetValue( false );
+      theCanAddToPlaylistData.setValue( false );
       onBrowserPlaylistHide();
 
       // Clear the playlist tree variable so we are not confused.
@@ -1012,7 +1012,7 @@ var SBDocStartListener = {
       theLibraryPlaylist = null;
       
       // Nothing in the status text
-      theStatusText.SetValue( "" );
+      theStatusText.setValue( "" );
       
       theServiceTree.current_url = cur_uri;
     }
@@ -1027,7 +1027,7 @@ var SBDocStartListener = {
 function onBrowserBack()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
-  theCanAddToPlaylistData.SetValue( false );
+  theCanAddToPlaylistData.setValue( false );
   onBrowserPlaylistHide();
   var theMainPane = document.getElementById( "frame_main_pane" );
   mainpane_listener_set = false;
@@ -1038,7 +1038,7 @@ function onBrowserBack()
 function onBrowserFwd()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
-  theCanAddToPlaylistData.SetValue( false );
+  theCanAddToPlaylistData.setValue( false );
   onBrowserPlaylistHide();
   var theMainPane = document.getElementById( "frame_main_pane" );
   mainpane_listener_set = false;
@@ -1372,7 +1372,7 @@ function onBrowserPlaylist()
     }
     
     // Show/hide them
-    theShowWebPlaylistData.SetValue( true );
+    theShowWebPlaylistData.setValue( true );
   }
   else
   {
@@ -1394,8 +1394,8 @@ function onBrowserDownload()
   metrics_inc("player", "downloads", null);
 
   // Work to figure out guid and table
-  var guid = theDownloadContext.GetValue();
-  var table = theDownloadTable.GetValue();
+  var guid = theDownloadContext.getValue();
+  var table = theDownloadTable.getValue();
   aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].createInstance(Components.interfaces.sbIDeviceManager);
   if (aDeviceManager)
   {
@@ -1423,7 +1423,7 @@ function onBrowserDownload()
     }
     
     // Show/hide them
-    theShowWebPlaylistData.SetValue( true );
+    theShowWebPlaylistData.setValue( true );
   }
   else
   {
@@ -1438,7 +1438,7 @@ function onBrowserPlaylistHide()
   theWebPlaylistQuery = null;
   
   // Hide the web table if it exists
-  theShowWebPlaylistData.SetValue( false );
+  theShowWebPlaylistData.setValue( false );
   
   // And unhook the playlist from the database
   var theTree = document.getElementById( "playlist_web" );
@@ -1460,12 +1460,12 @@ function onHTMLUrlChange( evt )
     // Make sure the value is an url
     value = SBGetUrlFromService( value );
     // And then put it back in the box as a service
-    theBrowserUriData.SetValue( value );
-    theBrowserUrlData.SetValue( SBGetServiceFromUrl( value ) );
+    theBrowserUriData.setValue( value );
+    theBrowserUrlData.setValue( SBGetServiceFromUrl( value ) );
     var image = SBGetServiceImageFromUrl( value );
 //    if ( image.length )
     {
-      theBrowserImageData.SetValue( image );
+      theBrowserImageData.setValue( image );
     }
     // And then go to the url.  Easy, no?
     var theServiceTree = document.getElementById( 'frame_servicetree' );
@@ -1509,7 +1509,7 @@ function onHTMLUrlKeypress( evt )
 var mainpane_listener_set = false;
 var thePlaylistRef = new sbIDataRemote( "playlist.ref" );
 var thePaneLoadingData = new sbIDataRemote( "faceplate.loading" );
-thePaneLoadingData.SetValue( false );
+thePaneLoadingData.setValue( false );
 var thePlaylistTree;
 
 var theCurrentMainPaneDocument = null;
@@ -1570,7 +1570,7 @@ function onMainPaneLoad()
           // Remember some values
           theLibraryPlaylist = thePlaylistTree;
           thePlaylistTree = thePlaylistTree.tree;
-          thePlaylistRef.SetValue( thePlaylistTree.getAttribute( "ref" ) ); // is this set yet?
+          thePlaylistRef.setValue( thePlaylistTree.getAttribute( "ref" ) ); // is this set yet?
           
           // Set the current selection
           SBSyncPlaylistIndex();
@@ -1579,7 +1579,7 @@ function onMainPaneLoad()
           installed_listener = true;
           
           // Hide the progress bar now that we're loaded.
-          thePaneLoadingData.SetValue( false );
+          thePaneLoadingData.setValue( false );
           mainpane_listener_set = true;
         }
       }
@@ -1602,7 +1602,7 @@ function onMainPaneLoad()
         AsyncWebDocument( theMainPane.contentDocument );
         
         // Hide the progress bar now that we're loaded.
-        thePaneLoadingData.SetValue( false );
+        thePaneLoadingData.setValue( false );
         mainpane_listener_set = true;
       }
     }
@@ -1717,21 +1717,21 @@ function GetHrefFromEvent( evt )
 function onLinkOver( evt )
 {
   var the_url = GetHrefFromEvent( evt )
-  theStatusText.SetValue( the_url );
+  theStatusText.setValue( the_url );
   if ( IsMediaUrl( the_url ) )
   {
-    theStatusStyle.SetValue( "font-weight: bold;" );
+    theStatusStyle.setValue( "font-weight: bold;" );
   }
   else
   {
-    theStatusStyle.SetValue( "font-weight: normal;" );
+    theStatusStyle.setValue( "font-weight: normal;" );
   }
 }
 
 // Catch a contextual on a media url and attempt to play it
 function onLinkOut( evt )
 {
-  theStatusText.SetValue( "" );
+  theStatusText.setValue( "" );
 }
 
 // Catch a contextual on a media url and attempt to play it
@@ -1768,7 +1768,7 @@ function onMediaClick( evt )
     var the_url = GetHrefFromEvent( evt );
     if ( IsMediaUrl( the_url ) )
     {
-      URL.SetValue(the_url);
+      URL.setValue(the_url);
       playCurrentUrl( true );
       
       evt.stopPropagation();
@@ -2171,13 +2171,13 @@ catch ( err )
       onShuffle();
     break;
     case "control.repa":
-      repeat.SetValue( 2 );
+      repeat.setValue( 2 );
     break;
     case "control.rep1":
-      repeat.SetValue( 1 );
+      repeat.setValue( 1 );
     break;
     case "control.repx":
-      repeat.SetValue( 0 );
+      repeat.setValue( 0 );
     break;
     case "menu.extensions":
       SBExtensionsManagerOpen();
@@ -2261,7 +2261,7 @@ function onHTMLContextMenu( target )
       case "html.context.open":
         if ( IsMediaUrl( theHTMLContextURL ) )
         {
-          URL.SetValue(theHTMLContextURL);
+          URL.setValue(theHTMLContextURL);
           playCurrentUrl( true );
         }
         else
@@ -2271,7 +2271,7 @@ function onHTMLContextMenu( target )
         }
       break;
       case "html.context.play":
-        URL.SetValue(theHTMLContextURL);
+        URL.setValue(theHTMLContextURL);
         playCurrentUrl( true );
       break;
       case "html.context.add":
@@ -2291,7 +2291,7 @@ function onHTMLContextMenu( target )
 var theMediaScanIsOpen = new sbIDataRemote( "media_scan.open" );
 function SBScanMedia( )
 {
-  theMediaScanIsOpen.SetValue( true );
+  theMediaScanIsOpen.setValue( true );
   const nsIFilePicker = Components.interfaces.nsIFilePicker;
   const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
   var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
@@ -2312,7 +2312,7 @@ function SBScanMedia( )
     // Open the non-modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
   }
-  theMediaScanIsOpen.SetValue( false  );
+  theMediaScanIsOpen.setValue( false  );
 }
 
 function SBMabOpen()
@@ -2503,19 +2503,19 @@ function SBDropped()
     // try to add it to the database.
     SBAddUrlToDatabase( theDropPath );
     // and then play it.
-    URL.SetValue(theDropPath);
+    URL.setValue(theDropPath);
     playCurrentUrl( true );
   }
   else if ( theDropIsDir )
   {
-    theMediaScanIsOpen.SetValue( true );
+    theMediaScanIsOpen.setValue( true );
     // otherwise, fire off the media scan page.
     var media_scan_data = new Object();
     media_scan_data.URL = theDropPath;
     media_scan_data.retval = "";
     // Open the non-modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
-    theMediaScanIsOpen.SetValue( false  );
+    theMediaScanIsOpen.setValue( false  );
   }
 }
 
@@ -2796,9 +2796,9 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                   aDownloadDevice.AutoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
                   
                   // Record the current download table
-                  theDownloadContext.SetValue( aDownloadDevice.GetContext('') )
-                  theDownloadTable.SetValue( downloadTable.value );
-                  theDownloadExists.SetValue( true );
+                  theDownloadContext.setValue( aDownloadDevice.GetContext('') )
+                  theDownloadTable.setValue( downloadTable.value );
+                  theDownloadExists.setValue( true );
                   
                   // Register the guid and table with the playlist source to always show special download commands.
                   SBDownloadCommands.m_Device = aDownloadDevice;

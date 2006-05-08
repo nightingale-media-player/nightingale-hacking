@@ -1299,9 +1299,9 @@ PlaylistPlayback.prototype = {
   
   _findCurrentIndex: function () {
     var retval = -1;
-    var ref = this._playingRef.GetValue();
-    if ( this._playingRef.GetValue().length > 0 ) {
-      retval = this._source.GetRefRowByColumnValue( ref, "url", playerControls_playURL.GetValue() );
+    var ref = this._playingRef.getValue();
+    if ( this._playingRef.getValue().length > 0 ) {
+      retval = this._source.GetRefRowByColumnValue( ref, "url", playerControls_playURL.getValue() );
     }
     return retval;
   },

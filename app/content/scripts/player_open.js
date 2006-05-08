@@ -51,12 +51,12 @@ try
     if ( fp_status == nsIFilePicker.returnOK )
     {
       // And if we're good, play it.
-      seen_playing.SetValue(false);
-      URL.SetValue(fp.file.path);
+      seen_playing.setValue(false);
+      URL.setValue(fp.file.path);
       
-      theTitleText.SetValue( fp.file.leafName );
-      theArtistText.SetValue( "" );
-      theAlbumText.SetValue( "" );
+      theTitleText.setValue( fp.file.leafName );
+      theArtistText.setValue( "" );
+      theAlbumText.setValue( "" );
       playCurrentUrl( false );
     }
   }
@@ -65,17 +65,17 @@ try
   {
     // Make a magic data object to get passed to the dialog
     var url_open_data = new Object();
-    url_open_data.URL = URL.GetValue();
+    url_open_data.URL = URL.getValue();
     url_open_data.retval = "";
     // Open the modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/open_url.xul", "open_url", "chrome,modal=yes,centerscreen", url_open_data );
     if ( url_open_data.retval == "ok" )
     {
       // And if we're good, play it.
-      URL.SetValue(url_open_data.URL);
-      theTitleText.SetValue( url_open_data.URL );
-      theArtistText.SetValue( "" );
-      theAlbumText.SetValue( "" );
+      URL.setValue(url_open_data.URL);
+      theTitleText.setValue( url_open_data.URL );
+      theArtistText.setValue( "" );
+      theAlbumText.setValue( "" );
       playCurrentUrl( true );
     }  
   }

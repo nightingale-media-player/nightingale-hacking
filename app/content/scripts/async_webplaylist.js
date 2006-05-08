@@ -167,7 +167,7 @@ catch ( err )
           this.aPlaylistManager.DeletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
           //this.aDBQuery.ResetQuery();
           this.aPlaylist = this.aPlaylistManager.CreatePlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
-          this.data.SetValue( true );
+          this.data.setValue( true );
           theWebPlaylistQuery = this.aDBQuery;
           //this.aDBQuery.ResetQuery();
           // Then pretend like we clicked on it.
