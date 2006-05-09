@@ -231,6 +231,8 @@ function SBFirstRunPong()
 // Core Wrapper Initialization (in XUL, this must happen after the entire page loads). 
 //
 var Poll = null;
+var theWebPlaylist = null;
+var theWebPlaylistQuery = null;
 function SBInitialize()
 {
   dump("SBInitialize *** \n");
@@ -295,12 +297,12 @@ function SBInitialize()
     theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
     onServiceTreeRestoreSize();
 
-    var theWebPlaylist = document.getElementById( "playlist_web" );
+    theWebPlaylist = document.getElementById( "playlist_web" );
+    alert(theWebPlaylist);
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
 // no!    theWebPlaylist.addEventListener( "playlist-edit", onPlaylistEdit, true );
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
     theWebPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
-    var theWebPlaylistQuery = null;
     
     // Poll the playlist source every 500ms to drive the display update (STOOOOPID!)
     Poll = new sbIPlaylistsource();
