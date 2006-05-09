@@ -79,7 +79,7 @@ tree
 #service_edit_popup
 {
   background-color: #FFF !important;
-  color: #CDD4C4 !important;
+  color: #666 !important;
 }
 
 #playlist_edit,
@@ -2615,7 +2615,7 @@ DIALOG BOXES
 {
   height: 7px !important;
   width: 7px !important; 
-  background-image: url(default/check_fff.png) !important;
+  background-image: url(default/check_000.png) !important;
 }
 
 /* Smart Playlist Builder */
