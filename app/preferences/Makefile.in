@@ -29,8 +29,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-CREATEDIRS = $(SONGBIRD_DEFAULTSDIR)/preferences
+CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)
 
-CLONEDIR = $(SONGBIRD_DEFAULTSDIR)/preferences
+SONGBIRD_PREFS = songbird-prefs.js \
+                 songbird-update-prefs.js \
+                 $(NULL)
+
+ifdef DEBUG
+SONGBIRD_PREFS += songbird-debug-prefs.js
+endif
 
 include $(topsrcdir)/build/rules.mk

@@ -126,6 +126,10 @@ ifdef SONGBIRD_DEFAULTS
 targets += copy_sb_defaults
 endif
 
+ifdef SONGBIRD_PREFS
+targets += copy_sb_prefs
+endif
+
 ifdef SONGBIRD_PLUGINS
 targets += copy_sb_plugins
 endif
@@ -537,6 +541,15 @@ copy_sb_defaults:
 	$(CP) -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS  
+
+#-----------------------
+
+ifdef SONGBIRD_PREFS
+songbird_pref_files := $(addprefix $(srcdir)/,$(SONGBIRD_PREFS))
+copy_sb_prefs:
+	$(CP) -dfp $(songbird_pref_files) $(SONGBIRD_PREFERENCESDIR)
+.PHONY : copy_sb_prefs
+endif #SONGBIRD_PREFS
 
 #-----------------------
 
