@@ -298,7 +298,6 @@ function SBInitialize()
     onServiceTreeRestoreSize();
 
     theWebPlaylist = document.getElementById( "playlist_web" );
-    alert(theWebPlaylist);
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
 // no!    theWebPlaylist.addEventListener( "playlist-edit", onPlaylistEdit, true );
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
