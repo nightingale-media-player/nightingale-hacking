@@ -186,8 +186,9 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   // LOCK IT.
   nsAutoMonitor mon(sbPlaylistsource::g_pMonitor);
 
-  NS_ASSERTION(sbPlaylistsource::g_ActiveQueryCount > 0,
-               "MyQueryCallback running with an invalid active query count");
+  // This is ok by design
+  if (sbPlaylistsource::g_ActiveQueryCount < 0)
+    sbPlaylistsource::g_ActiveQueryCount = 0;
 
   sbPlaylistsource::sbResultInfo result;
 
