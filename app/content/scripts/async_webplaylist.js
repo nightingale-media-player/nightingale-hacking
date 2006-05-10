@@ -118,13 +118,14 @@ catch ( err )
   alert( "async_webplaylist - aBodyEval\n\n" + err );
 }
       },
+
       // aFinishedEval
       function()
       {
         if ( !this.m_Interval ) return;
         if ( this.installed_listener )
         {
-          ret = this.aDBQuery.Execute();
+          this.aDBQuery.Execute();
         }
         SBDataSetValue( "media_scan.open", false ); // ?  Don't let this go?
         SBDataSetValue( "webplaylist.total", this.a_array.length );
@@ -132,6 +133,7 @@ catch ( err )
       },
       20 // 20 steps per interval
     );
+    // End of class construction for sbIAsyncPlaylist
     
     // Attach a whole bunch of stuff to it so it can do its job in one pass.
     href_loop.doc = theDocument;
@@ -191,6 +193,7 @@ catch ( err )
           var keys = new Array( "title" );
           var values = new Array( ConvertUrlToDisplayName( url ) );
           var guid = this.aMediaLibrary.AddMedia( url, keys.length, keys, values.length, values, false, false );
+          // XXXredfive
           this.aPlaylist.AddByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
           this.inserted.push( url );
           
