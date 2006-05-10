@@ -1660,6 +1660,53 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
   METHOD_SHORTCIRCUIT;
 
+  nsresult rv;
+  *targets = nsnull;
+
+  // we only have positive assertions in the file system data source.
+  if (!tv)
+    return NS_RDF_NO_VALUE;
+
+  // We only respond targets to children, I guess.
+  if (property != kNC_child)
+    return NS_NewEmptyEnumerator(targets);
+
+  // Make the array to hold our response
+  nsCOMArray<nsIRDFResource> nextItemArray;
+
+  // Store the new row resources in the array 
+  // (and a map for quick lookup to the row PRInt32 -- STOOOOPID)
+
+  for (PRInt32 i = 0; i < 20; i++) {
+    nsIRDFResource *next_resource = NULL;
+    rv = sRDFService->GetAnonymousResource(&next_resource);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nextItemArray.AppendObject(next_resource);
+  }
+
+  // Stuff the array into the enumerator
+  // XXXjgaunt
+  //nsISimpleEnumerator *result;
+  //rv = NS_NewArrayEnumerator(&result, nextItemArray);
+  rv = NS_NewArrayEnumerator(targets, nextItemArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::GetTargets2(nsIRDFResource*       source,
+                             nsIRDFResource*       property,
+                             PRBool                tv,
+                             nsISimpleEnumerator** targets /* out */)
+{
+  LOG(("sbPlaylistsource::GetTargets"));
+  NS_ENSURE_ARG_POINTER(source);
+  NS_ENSURE_ARG_POINTER(property);
+  NS_ENSURE_ARG_POINTER(targets);
+
+  METHOD_SHORTCIRCUIT;
+
   *targets = nsnull;
 
   // we only have positive assertions in the file system data source.

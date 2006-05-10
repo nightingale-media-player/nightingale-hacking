@@ -230,6 +230,11 @@ private:
   nsCOMPtr<nsIRDFResource> kRDF_Seq;
   nsCOMPtr<nsIRDFLiteral>  kLiteralTrue;
   nsCOMPtr<nsIRDFLiteral>  kLiteralFalse;
+
+NS_IMETHODIMP    GetTargets2(nsIRDFResource*       source,
+                             nsIRDFResource*       property,
+                             PRBool                tv,
+                             nsISimpleEnumerator** targets /* out */);
 };
 
 class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
@@ -244,7 +249,6 @@ public:
   NS_IMETHODIMP Post(void);
 
   sbPlaylistsource::sbFeedInfo *m_Info;
-
 private:
   nsCOMPtr<nsITimer> m_Timer;
 };
