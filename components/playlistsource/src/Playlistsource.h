@@ -239,6 +239,7 @@ class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
 
 public:
   MyQueryCallback();
+  void MyTimerCallback(nsITimer *aTimer, void *aClosure);
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
   NS_IMETHODIMP Post(void);
 
