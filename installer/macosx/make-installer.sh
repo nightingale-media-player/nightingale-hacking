@@ -1,20 +1,21 @@
 #!/bin/sh
 
+DEPTH=../../..
 CURRENT_DIR=`pwd`
 
-rm -rf ../../../_built_installer
-mkdir ../../../_built_installer
+rm -rf ${DEPTH}/_built_installer
+mkdir ${DEPTH}/_built_installer
 
-rm -rf _packaging
-mkdir _packaging
-mkdir _packaging/Songbird.app
-cp -RL dist/* _packaging/Songbird.app
-cp -RL ../../../installer/macosx/*.plist ../../_packaging/Songbird.app/Contents/
-cp -RL ../../../installer/macosx/Resources/* ../../_packaging/Songbird.app/Contents/Resources/
-cp ../../../installer/macosx//MacSongbirdInstall.icns ../../_packaging/Songbird.app/Contents/Resources/
-cp ../../../installer/macosx/GPL.txt ../../_packaging/Songbird.app/
-cp ../../../installer/macosx/LICENSE.txt ../../_packaging/Songbird.app/
-cp ../../../installer/macosx/TRADEMARK.txt ../../_packaging/Songbird.app/
+rm -rf ${DEPTH}/compiled/_packaging
+mkdir ${DEPTH}/compiled/_packaging
+mkdir ${DEPTH}/compiled/_packaging/Songbird.app
+cp -RL ${DEPTH}/compiled/dist/* ${DEPTH}/compiled/_packaging/Songbird.app
+cp -RL ${DEPTH}/installer/macosx/*.plist ${DEPTH}/compiled/_packaging/Songbird.app/Contents/
+cp -RL ${DEPTH}/installer/macosx/Resources/* ${DEPTH}/compiled/_packaging/Songbird.app/Contents/Resources/
+cp ${DEPTH}/installer/macosx//MacSongbirdInstall.icns ${DEPTH}/compiled/_packaging/Songbird.app/Contents/Resources/
+cp ${DEPTH}/installer/macosx/GPL.txt ${DEPTH}/compiled/_packaging/Songbird.app/
+cp ${DEPTH}/installer/macosx/LICENSE.txt ${DEPTH}/compiled/_packaging/Songbird.app/
+cp ${DEPTH}/installer/macosx/TRADEMARK.txt ${DEPTH}/compiled/_packaging/Songbird.app/
 
-../../../installer/macosx/make-diskimage ../../../_built_installer/Songbird.dmg ../../../compiled/_packaging Songbird -null- ../../../installer/macosx/songbird.dsstore
+${DEPTH}/installer/macosx/make-diskimage ${DEPTH}/_built_installer/Songbird.dmg ${DEPTH}/compiled/_packaging Songbird -null- ${DEPTH}/installer/macosx/songbird.dsstore
 
