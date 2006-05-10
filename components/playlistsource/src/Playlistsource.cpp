@@ -1667,6 +1667,10 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   if (!tv)
     return NS_RDF_NO_VALUE;
 
+  // mig get rid of this.
+  return NS_NewEmptyEnumerator(targets);
+
+
   // We only respond targets to children, I guess.
   if (property != kNC_child)
     return NS_NewEmptyEnumerator(targets);
