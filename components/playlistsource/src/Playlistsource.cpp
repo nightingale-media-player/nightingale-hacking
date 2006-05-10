@@ -1539,8 +1539,11 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsAutoString outstring( NS_LITERAL_STRING("") );
+  nsAutoString outstring( NS_LITERAL_STRING("test") );
+//  nsAutoString outstring( NS_LITERAL_STRING("") );
   nsresult rv;
+
+#if 0
 
   // Look in the value map
   valuemap_t::iterator v = g_ValueMap.find(source);
@@ -1593,6 +1596,8 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
       }
     }
   }
+
+#endif
 
   if (outstring.IsEmpty())
     return NS_RDF_NO_VALUE;
