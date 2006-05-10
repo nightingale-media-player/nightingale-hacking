@@ -1539,11 +1539,10 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsAutoString outstring( NS_LITERAL_STRING("test") );
-//  nsAutoString outstring( NS_LITERAL_STRING("") );
+  nsAutoString outstring( NS_LITERAL_STRING("") );
   nsresult rv;
 
-#if 0
+#if 1
 
   // Look in the value map
   valuemap_t::iterator v = g_ValueMap.find(source);
@@ -1648,7 +1647,7 @@ sbPlaylistsource::ForceGetTargets(const PRUnichar* RefName)
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetTargets(nsIRDFResource*       source,
+sbPlaylistsource::GetTargets2(nsIRDFResource*       source,
                              nsIRDFResource*       property,
                              PRBool                tv,
                              nsISimpleEnumerator** targets /* out */)
@@ -1666,9 +1665,6 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   // we only have positive assertions in the file system data source.
   if (!tv)
     return NS_RDF_NO_VALUE;
-
-  // mig get rid of this.
-  return NS_NewEmptyEnumerator(targets);
 
 
   // We only respond targets to children, I guess.
@@ -1699,7 +1695,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetTargets2(nsIRDFResource*       source,
+sbPlaylistsource::GetTargets(nsIRDFResource*       source,
                              nsIRDFResource*       property,
                              PRBool                tv,
                              nsISimpleEnumerator** targets /* out */)
