@@ -1677,7 +1677,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   // Store the new row resources in the array 
   // (and a map for quick lookup to the row PRInt32 -- STOOOOPID)
 
-  for (PRInt32 i = 0; i < 20; i++) {
+  for (PRInt32 i = 0; i < 20; i++) { 
     nsIRDFResource *next_resource = NULL;
     rv = sRDFService->GetAnonymousResource(&next_resource);
     NS_ENSURE_SUCCESS(rv, rv);
