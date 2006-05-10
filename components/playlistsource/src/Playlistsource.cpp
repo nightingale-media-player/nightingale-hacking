@@ -1891,6 +1891,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     // allow this to be null for a real playlist.
     PRUnichar* ck;
     rv = resultset->GetRowCellPtr(i - start, 0, &ck);
+    if ( !ck ) continue;
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsDependentString check(ck);

@@ -791,6 +791,94 @@
         <![CDATA[
         try
         {
+          this.stopWatchingDragObjects();
+        
+          // Columns nodes parent
+          var columns_node = document.createElement("treecols");
+
+          // Template nodes parents
+          var template_node = document.createElement("template");
+
+          var rule_node = document.createElement("rule");
+
+          var treechildren_node = document.createElement("treechildren");
+          treechildren_node.setAttribute("flex", "1");
+
+          var treeitem_node = document.createElement("treeitem");
+          treeitem_node.setAttribute("uri", "rdf:*");
+
+          var treerow_node = document.createElement("treerow");
+
+          // Go through all the columns on the table and create nodes accordingly
+          if(this.guid == 'undefined' || this.table == 'undefined' || this.guid == "" || this.table == "") return;
+
+          for (var i = 0; i < 5; i++)
+          {
+            var this_column_node = document.createElement("treecol");
+
+            var name = "column_name " + i;
+            var readableName = "readable_name" + i;
+            var isVisible = 1;
+            var isDefaultVisible = 1;
+            
+            var ordinal = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".ordinal" );
+            if (ordinal == 0) ordinal = 1;
+
+            var isFixed = "false";
+            var size = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".size" );
+
+            this_column_node.setAttribute("id", name);
+            this_column_node.setAttribute("label", readableName);
+            this_column_node.setAttribute("ordinal", ordinal);
+           
+            this_column_node.setAttribute("fixed", "false");
+            this_column_node.setAttribute("flex", "1");
+            this_column_node.setAttribute("minheight", "0");
+            
+            var splitter = document.createElement("splitter");
+            splitter.setAttribute("class", "tree-splitter");
+            splitter.setAttribute("ordinal", ordinal);
+            columns_node.appendChild(splitter);
+            this.registerDragObject(splitter);
+
+            columns_node.appendChild(this_column_node);
+            this.registerDragObject(this_column_node);
+
+            var treecell_node = document.createElement("treecell");
+            treecell_node.setAttribute("label", "rdf:http://home.netscape.com/NC-rdf#"+name);
+            
+            treerow_node.appendChild(treecell_node);
+          }
+          
+        
+          // Now add columns and template node hierarchy to the tree
+          this.tree.insertBefore(columns_node, null);
+
+          treeitem_node.appendChild(treerow_node); 
+          treechildren_node.appendChild(treeitem_node);
+          rule_node.appendChild(treechildren_node);
+          template_node.appendChild(rule_node);
+          this.tree.appendChild(template_node);
+
+          this.startWatchingDragObjects();
+          
+          this.treecols = columns_node;
+        }
+        catch( err )
+        {
+          alert( "playlist.xml - addNewContent - " + err );
+        }
+        ]]>
+      </body>
+    </method>
+     
+    <method name="addNewContent2">
+      <parameter name="source"/>
+      <parameter name="ref"/>
+      <body>
+        <![CDATA[
+        try
+        {
           // See if we need to hide the loading box.
           if ( ! this.loading_box.hidden )
           {
