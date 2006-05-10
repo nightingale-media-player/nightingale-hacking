@@ -812,7 +812,7 @@
           // Go through all the columns on the table and create nodes accordingly
           if(this.guid == 'undefined' || this.table == 'undefined' || this.guid == "" || this.table == "") return;
 
-          for (var i = 0; i < 5; i++)
+          for (var i = 0; i < 0; i++)
           {
             var this_column_node = document.createElement("treecol");
 
