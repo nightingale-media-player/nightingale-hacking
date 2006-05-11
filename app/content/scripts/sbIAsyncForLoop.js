@@ -59,6 +59,8 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     this.m_StepsPer      = aStepsPerInterval;
     this.m_Delay         = aIntervalDelay;
     
+    this.m_Recursive     = false;
+    
     this.cancel = function()
     {
       clearInterval( this.m_Interval );
@@ -67,6 +69,14 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     
     this.step = function( index )
     {
+      if ( this.m_Recursive )
+      {
+        alert("HOLYCRAP!  RECURSIVE IN ASYNCFORLOOP!!");
+        return;
+      }
+      
+      this.m_Recursive = true;
+        
       if ( this.m_Interval )
       {
         for ( var StepsPerCount = 0; StepsPerCount < this.m_StepsPer; StepsPerCount++ )
@@ -133,6 +143,7 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
           }
         }
       }
+      this.m_Recursive = false;
     }
     
     // And start things off

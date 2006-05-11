@@ -98,7 +98,7 @@ try
         {
           var url = this.embed_array[ this.i ].getAttribute("src");
           if ( url )
-            loop_break = this.HandleUrl( url );
+            loop_break |= this.HandleUrl( url );
         }
         // "Object" tags
         if ( 
@@ -108,7 +108,7 @@ try
           // ?
           var url = this.object_array[ this.i ].getAttribute("src");
           if ( url )
-            loop_break = this.HandleUrl( url );
+            loop_break |= this.HandleUrl( url );
         }
         
         return loop_break;
