@@ -912,6 +912,8 @@ sbPlaylistsource::SetFilter(const PRUnichar* RefName,
     filter.m_Column = FilterColumn;
     filter.m_Ref    = FilterRefName;
     info->m_Filters[ Index ] = filter;
+
+    filterIter = info->m_Filters.find(Index);
   }
 
   // Set all the later filters blank.
