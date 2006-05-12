@@ -1281,13 +1281,12 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 scrollbar
 {   
   -moz-appearance: none; 
-  background-color: #EEE; 
+  background-color: #transparent; 
   background-image: none; 
   background-image: none; 
-  padding: 0 0 0 0; 
-  border-left: 1px solid #EEE; 
-  border-right: 1px solid #CCC; 
-  border-bottom: 1px solid #CCC; 
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  border: none; 
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
@@ -1299,8 +1298,8 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 17px;
+  width: 16px;
 } 
  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
@@ -1312,8 +1311,8 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 17px;
+  width: 16px;
 } 
  
 scrollbar > slider > thumb > gripper
@@ -1323,24 +1322,24 @@ scrollbar > slider > thumb > gripper
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
   border: none; 
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
 
 scrollbar > slider > thumb
 {   
   -moz-appearance: none;  
   -moz-border-radius: 3px;  
-  -moz-border-top-colors: #EEE #CCC;
-  -moz-border-left-colors: #EEE #CCC;
-  -moz-border-right-colors: #CCC #999;
-  -moz-border-right-colors: #CCC #999;  
+  -moz-border-top-colors: #FFF #EEE;
+  -moz-border-left-colors: #FFF #EEE;
+  -moz-border-right-colors: #EEE #CCC;
+  -moz-border-bottom-colors: #EEE #CCC;  
   border: 2px solid; 
   background-color: transparent; 
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;  
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
 
 scrollbar > slider
@@ -1358,25 +1357,19 @@ scrollbar > slider
 {   
   -moz-appearance: none; 
   background-color: #FFF;
-  background-image: none; 
-  background-image: none; 
-  padding: 0 0 0 0;
 } 
 
 #frame_service_tree scrollbar > slider > thumb
 {   
   -moz-appearance: none;  
   -moz-border-radius: 3px;  
-  -moz-border-top-colors: #EEE #CCC;
-  -moz-border-left-colors: #EEE #CCC;
-  -moz-border-right-colors: #CCC #999;
-  -moz-border-right-colors: #CCC #999;  
+   
   border: 2px solid; 
   background-color: transparent; 
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;  
-  height: 19px;
-  width: 15px;
+  height: 16px;
+  width: 16px;
 } 
 
 #frame_service_tree scrollbar > slider
@@ -1388,27 +1381,13 @@ scrollbar > slider
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 {   
-  -moz-appearance: none;  
-  background-image: url(default/chrome_scroll_up_svcpane.png);
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;
-  border: none; 
-  height: 19px;
-  width: 15px;
+  
 } 
  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
-  -moz-appearance: none;  
-  background-image: url(default/chrome_scroll_down_svcpane.png);
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;
-  border: none; 
-  height: 19px;
-  width: 15px;
+  
 } 
 
 /** 
@@ -2867,8 +2846,8 @@ menulist > dropmarker
   list-style-image: url(default/chrome_scroll_down.png);
   background-repeat: no-repeat;
   background-color: transparent;
-  height:19px;
-  width:15px;
+  height:16px;
+  width:16px;
   border: none;
   -moz-border-radius: 3px;
   -moz-border-top-colors: #eee #ccc;
