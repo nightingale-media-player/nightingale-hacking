@@ -145,7 +145,20 @@ MyQueryCallback::MyQueryCallback()
   LOG(("MyQueryCallback::MyQueryCallback"));
   m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID);
   NS_ASSERTION(m_Timer, "MyQueryCallback failed to create a timer");
+  m_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
+  m_Count = 0;
 }
+
+/* leak.
+MyQueryCallback::~MyQueryCallback()
+{
+  LOG(("MyQueryCallback::~MyQueryCallback"));
+  if (m_pMonitor) {
+    nsAutoMonitor::DestroyMonitor(m_pMonitor);
+    m_pMonitor = nsnull;
+  }
+}
+*/
 
 void
 MyQueryCallback::MyTimerCallbackFunc(nsITimer* aTimer,
@@ -162,6 +175,13 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
   LOG(("MyQueryCallback::MyTimerCallbackFunc"));
   NS_ASSERTION(gPlaylistPlaylistsource,
     "MyQueryCallback timer fired before Playlistsource initialized");
+
+  PRInt32 count = 0;
+  {
+    nsAutoMonitor mon(m_pMonitor);
+    count = m_Count;
+    m_Count = 0;
+  }
 
   // LOCK IT.
   nsAutoMonitor mon(sbPlaylistsource::g_pMonitor);
@@ -185,13 +205,23 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
   // Push the old resultset onto the garbage stack.
   sbPlaylistsource::g_ResultGarbage.push_back(result);
 
+#if 1
+  if ( ! m_Results.empty() )
+  {
+    m_Info->m_Resultset = *( m_Results.rbegin() );
+    m_Results.clear();
+  }
+#else
   // Orphan the result for the query.
   nsCOMPtr<sbIDatabaseResult> res;
   nsresult rv = m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(res));
   if ( NS_SUCCEEDED( rv ) )
     m_Info->m_Resultset = res;
+#endif
 
-  if (--sbPlaylistsource::g_ActiveQueryCount <= 0) {
+  // Decrement and update if needbe.
+  sbPlaylistsource::g_ActiveQueryCount -= count;
+  if (sbPlaylistsource::g_ActiveQueryCount <= 0) {
     sbPlaylistsource::g_ActiveQueryCount = 0;
     sbPlaylistsource::g_NeedUpdate = PR_TRUE;
     gPlaylistPlaylistsource->UpdateObservers();
@@ -205,12 +235,18 @@ MyQueryCallback::Post()
   NS_ENSURE_TRUE(gPlaylistPlaylistsource, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_Timer, NS_ERROR_OUT_OF_MEMORY);
 
-  // Tell us to wake up in the main thread so we can poke our observers and
-  // take out our garbage.
+  nsAutoMonitor mon(m_pMonitor);
 
-  // XXX This is NOT a safe or reliable way to post events to another thread
-  m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
-                                0, nsITimer::TYPE_ONE_SHOT);
+  if ( m_Count++ == 0 )
+  {
+    // Tell us to wake up in the main thread so we can poke our observers and
+    // take out our garbage.
+
+    // XXX This is NOT a safe or reliable way to post events to another thread
+    m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
+                                  0, nsITimer::TYPE_ONE_SHOT);
+  }
+
   return NS_OK;
 }
 
@@ -223,6 +259,8 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   NS_ENSURE_ARG_POINTER(dbResultObject);
   NS_ENSURE_ARG_POINTER(dbGUID);
   NS_ENSURE_ARG_POINTER(strQuery);
+
+  m_Results.push_back( nsCOMPtr< sbIDatabaseResult >( dbResultObject ) );
 
   return Post();
 }
@@ -574,7 +612,7 @@ sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar* RefName,
 
   // If we already have a where, don't add another one
   nsAutoString aw_str;
-  if (FindInReadable(NS_LITERAL_STRING("where"), start, end))
+  if (!FindInReadable(NS_LITERAL_STRING("where"), start, end))
     aw_str = NS_LITERAL_STRING(" where ");
   else
     aw_str = NS_LITERAL_STRING(" and ");
@@ -600,6 +638,7 @@ sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar* RefName,
 
   PRUnichar* val;
   rv = result->GetRowCell(0, 0, &val);
+  if ( !val ) return NS_OK; // Whoa.
   NS_ENSURE_SUCCESS(rv, rv);
   nsDependentString v(val);
 

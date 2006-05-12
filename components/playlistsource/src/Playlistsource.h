@@ -44,6 +44,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <list>
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLAYLISTSOURCE_CONTRACTID                                    \
@@ -251,4 +252,9 @@ public:
   sbPlaylistsource::sbFeedInfo *m_Info;
 private:
   nsCOMPtr<nsITimer> m_Timer;
+  PRMonitor* m_pMonitor;
+  PRInt32 m_Count;
+
+  class resultslist_t   : public std::list< nsCOMPtr<sbIDatabaseResult> > {};
+  resultslist_t m_Results;
 };
