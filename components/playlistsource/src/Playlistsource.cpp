@@ -231,14 +231,26 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     NS_ASSERTION(gPlaylistPlaylistsource,
       "MyQueryCallback timer fired before Playlistsource initialized");
 
+    // LOCK IT.
+    nsAutoMonitor mon_global(sbPlaylistsource::g_pMonitor);
+
+    PRBool exec;
+    // If we're executing, that means we expect another callback.
+    m_Info->m_Query->IsExecuting( &exec );
+    if ( exec )
+    {
+      // Just ignore this one, but always go on the next one.
+      sbPlaylistsource::g_ActiveQueryCount = 0;
+      m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
+                                    100, nsITimer::TYPE_ONE_SHOT);
+      return;
+    }
+
     nsAutoMonitor mon_local(m_pMonitor);
     {
       count = m_Count;
       m_Count = 0;
     }
-
-    // LOCK IT.
-    nsAutoMonitor mon_global(sbPlaylistsource::g_pMonitor);
 
     // This is ok by design
     if (sbPlaylistsource::g_ActiveQueryCount < 0)
