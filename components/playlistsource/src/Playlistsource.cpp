@@ -1560,12 +1560,14 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
     if (valInfo.m_All)
       outstring += NS_LITERAL_STRING("All");
     else {
-      PRUnichar* val;
+      PRUnichar *val = nsnull;
       rv = valInfo.m_Info->m_Resultset->GetRowCellPtr(valInfo.m_Row,
                                                       0,
                                                       &val);
       NS_ENSURE_SUCCESS(rv, rv);
-      outstring += nsDependentString(val);
+
+      if(val != nsnull)
+        outstring += nsDependentString(val);
     }
   } else {
     // Figure out the metadata column
@@ -1576,13 +1578,13 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
       if (property == valInfo.m_Info->m_RowIdResource)
         outstring.AppendInt(valInfo.m_Row + 1);
       else {
-        PRUnichar* val;
+        PRUnichar *val = nsnull;
         if (valInfo.m_Info->m_Column.IsEmpty()) {
           // Only query the full metadata during get target.
           if (!valInfo.m_Resultset) {
             rv = LoadRowResults(valInfo);
             NS_ENSURE_SUCCESS(rv, rv);
-          }
+          } 
           rv = valInfo.m_Resultset->GetRowCellPtr(valInfo.m_ResultsRow,
                                                   (*c).second,
                                                   &val);
@@ -1593,7 +1595,9 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
                                                           &val);
           NS_ENSURE_SUCCESS(rv, rv);
         }
-        outstring += nsDependentString(val);
+
+        if(val != nsnull)
+          outstring += nsDependentString(val);
       }
     }
   }
