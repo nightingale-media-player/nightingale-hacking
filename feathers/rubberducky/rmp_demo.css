@@ -378,8 +378,7 @@ filterlist > tree
   border-left: none;
   margin: 0px;
   padding: 0px;
-  background-color: #000;
-  background-image: url(default/bkgd_flowers.png);
+  background-color: transparent;
   opacity: .8;
 }
 
