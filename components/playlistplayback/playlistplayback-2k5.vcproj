@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="playlistplayback"
+	ProjectGUID="{4BE75698-527D-4261-96B3-57A80F6CF1D3}"
+	RootNamespace="playlistplayback"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="10"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(OutDir)\BuildLog.htm;$(TargetPath)"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\chrome\content\scripts\&#x0D;&#x0A;copy /y $(InputDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\&#x0D;&#x0A;copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\&#x0D;&#x0A;copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\&#x0D;&#x0A;copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="10"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;*.htm;$(TargetPath)"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\chrome\content\scripts\&#x0D;&#x0A;copy /y $(InputDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\&#x0D;&#x0A;copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\&#x0D;&#x0A;copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\&#x0D;&#x0A;copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="public"
+			>
+			<File
+				RelativePath=".\public\sbICoreWrapper.idl"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\sbIPlaylistPlayback.idl"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="src"
+			>
+			<File
+				RelativePath=".\src\coreVLC.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\coreWMP.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbPlaylistPlayback.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

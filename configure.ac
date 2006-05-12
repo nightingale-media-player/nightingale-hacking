@@ -111,6 +111,9 @@ if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 AC_CHECK_PROG(MKDIR, mkdir, mkdir)
 if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
 
+AC_CHECK_PROG(AWK, awk, awk)
+if test -z "$AWK"; then AC_MSG_ERROR(awk not found); fi
+
 case "$SB_PLATFORM" in
   win32)
     AC_CHECK_PROG(CP, cp, cp)
@@ -292,8 +295,48 @@ AC_SUBST(DLL_SUFFIX)
 case "$SB_PLATFORM" in
   win32)
     # We use MSVC on Windows
+
+    changequote(,)
+    _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+    changequote([,])
     
+    # Determine compiler version
+    CC_VERSION=`"${CC}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
+    _CC_MAJOR_VERSION=`echo ${CC_VERSION} | $AWK -F\. '{ print $1 }'`
+    _CC_MINOR_VERSION=`echo ${CC_VERSION} | $AWK -F\. '{ print $2 }'`
+    _MSC_VER=${_CC_MAJOR_VERSION}${_CC_MINOR_VERSION}
+
+    CXX_VERSION=`"${CXX}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
+    _CXX_MAJOR_VERSION=`echo ${CXX_VERSION} | $AWK -F\. '{ print $1 }'`
+
+    if test "$_CC_MAJOR_VERSION" != "$_CXX_MAJOR_VERSION"; then
+        AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
+    fi
+    if test "$_CC_MAJOR_VERSION" = "12"; then
+        _CC_SUITE=6
+    elif test "$_CC_MAJOR_VERSION" = "13"; then
+        _CC_SUITE=7
+    elif test "$_CC_MAJOR_VERSION" = "14"; then
+        _CC_SUITE=8
+        AC_DEFINE(_CRT_SECURE_NO_DEPRECATE)
+        AC_DEFINE(_CRT_NONSTDC_NO_DEPRECATE)
+    else
+        AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
+    fi
+    
+    # Check linker version
+    _LD_FULL_VERSION=`"${LD}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
+    _LD_MAJOR_VERSION=`echo ${_LD_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
+    if test "$_LD_MAJOR_VERSION" != "$_CC_SUITE"; then
+        AC_MSG_ERROR([The linker major version, $_LD_FULL_VERSION,  does not match the compiler suite version, $_CC_SUITE.])
+    fi
+
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -Wp64 -EHsc -Zi -c"
+    
+    if test "$_CC_SUITE" = "8"; then
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t"
+    fi
+    
     if test "$enable_debug" = "yes"; then
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MDd -Od"
     else
