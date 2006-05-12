@@ -142,6 +142,11 @@ NS_IMPL_ISUPPORTS1(MyQueryCallback, sbIDatabaseSimpleQueryCallback)
 //-----------------------------------------------------------------------------
 MyQueryCallback::MyQueryCallback()
 {
+  //
+  //
+  // IN THE UI THREAD.
+  //
+  //
   LOG(("MyQueryCallback::MyQueryCallback"));
   m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID);
   NS_ASSERTION(m_Timer, "MyQueryCallback failed to create a timer");
@@ -159,83 +164,31 @@ MyQueryCallback::~MyQueryCallback()
   }
 }
 */
-
-void
-MyQueryCallback::MyTimerCallbackFunc(nsITimer* aTimer,
-                                     void*     aClosure)
-{
-  MyQueryCallback *that = reinterpret_cast<MyQueryCallback *>(aClosure);
-  that->MyTimerCallback( aTimer, aClosure );
-}
-
-void
-MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
-                                     void*     aClosure)
-{
-  LOG(("MyQueryCallback::MyTimerCallbackFunc"));
-  NS_ASSERTION(gPlaylistPlaylistsource,
-    "MyQueryCallback timer fired before Playlistsource initialized");
-
-  PRInt32 count = 0;
-  {
-    nsAutoMonitor mon(m_pMonitor);
-    count = m_Count;
-    m_Count = 0;
-  }
-
-  // LOCK IT.
-  nsAutoMonitor mon(sbPlaylistsource::g_pMonitor);
-
-  // This is ok by design
-  if (sbPlaylistsource::g_ActiveQueryCount < 0)
-    sbPlaylistsource::g_ActiveQueryCount = 0;
-
-  sbPlaylistsource::sbResultInfo result;
-
-  // sometimes we don't have one yet.
-  if (m_Info->m_Resultset) {
-    // Copy the old resultset
-    result.m_Results = m_Info->m_Resultset;
-  }
-  result.m_Source = m_Info->m_RootResource;
-  result.m_OldTarget = m_Info->m_RootTargets;
-  result.m_Ref = m_Info->m_Ref;
-  result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
-
-  // Push the old resultset onto the garbage stack.
-  sbPlaylistsource::g_ResultGarbage.push_back(result);
-
-#if 1
-  if ( ! m_Results.empty() )
-  {
-    m_Info->m_Resultset = *( m_Results.rbegin() );
-    m_Results.clear();
-  }
-#else
-  // Orphan the result for the query.
-  nsCOMPtr<sbIDatabaseResult> res;
-  nsresult rv = m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(res));
-  if ( NS_SUCCEEDED( rv ) )
-    m_Info->m_Resultset = res;
-#endif
-
-  // Decrement and update if needbe.
-  sbPlaylistsource::g_ActiveQueryCount -= count;
-  if (sbPlaylistsource::g_ActiveQueryCount <= 0) {
-    sbPlaylistsource::g_ActiveQueryCount = 0;
-    sbPlaylistsource::g_NeedUpdate = PR_TRUE;
-    gPlaylistPlaylistsource->UpdateObservers();
-  }
-}
-
 NS_IMETHODIMP
-MyQueryCallback::Post()
+MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
+                            const PRUnichar*   dbGUID,
+                            const PRUnichar*   strQuery)
 {
-  LOG(("MyQueryCallback::Post"));
+  //
+  //
+  // IN A DATABASE THREAD.
+  //
+  //
+  LOG(("MyQueryCallback::OnQueryEnd"));
+  NS_ENSURE_ARG_POINTER(dbResultObject);
+  NS_ENSURE_ARG_POINTER(dbGUID);
+  NS_ENSURE_ARG_POINTER(strQuery);
+
+  nsAutoMonitor mon_local(m_pMonitor);
+
+  m_Results.push_back( nsCOMPtr< sbIDatabaseResult >( dbResultObject ) );
+
+  PRInt32 rowcount;
+  dbResultObject->GetRowCount( &rowcount );
+  printf( "- MyQueryCallback(0x%08X) -- %d rows\n", dbResultObject, rowcount );
+
   NS_ENSURE_TRUE(gPlaylistPlaylistsource, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_Timer, NS_ERROR_OUT_OF_MEMORY);
-
-  nsAutoMonitor mon(m_pMonitor);
 
   if ( m_Count++ == 0 )
   {
@@ -250,20 +203,86 @@ MyQueryCallback::Post()
   return NS_OK;
 }
 
-NS_IMETHODIMP
-MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
-                            const PRUnichar*   dbGUID,
-                            const PRUnichar*   strQuery)
+void
+MyQueryCallback::MyTimerCallbackFunc(nsITimer* aTimer,
+                                     void*     aClosure)
 {
-  LOG(("MyQueryCallback::OnQueryEnd"));
-  NS_ENSURE_ARG_POINTER(dbResultObject);
-  NS_ENSURE_ARG_POINTER(dbGUID);
-  NS_ENSURE_ARG_POINTER(strQuery);
-
-  m_Results.push_back( nsCOMPtr< sbIDatabaseResult >( dbResultObject ) );
-
-  return Post();
+  //
+  //
+  // IN THE UI THREAD.
+  //
+  //
+  MyQueryCallback *that = reinterpret_cast<MyQueryCallback *>(aClosure);
+  that->MyTimerCallback( aTimer, aClosure );
 }
+
+void
+MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
+                                     void*     aClosure)
+{
+  //
+  //
+  // IN THE UI THREAD.
+  //
+  //
+  PRInt32 count = 0;
+  { // SCOPE ADDED TO CONSTRAIN AUTOMONITORS
+    LOG(("MyQueryCallback::MyTimerCallbackFunc"));
+    NS_ASSERTION(gPlaylistPlaylistsource,
+      "MyQueryCallback timer fired before Playlistsource initialized");
+
+    nsAutoMonitor mon_local(m_pMonitor);
+    {
+      count = m_Count;
+      m_Count = 0;
+    }
+
+    // LOCK IT.
+    nsAutoMonitor mon_global(sbPlaylistsource::g_pMonitor);
+
+    // This is ok by design
+    if (sbPlaylistsource::g_ActiveQueryCount < 0)
+      sbPlaylistsource::g_ActiveQueryCount = 0;
+
+    sbPlaylistsource::sbResultInfo result;
+
+    // sometimes we don't have one yet.
+    if (m_Info->m_Resultset) {
+      // Copy the old resultset
+      result.m_Results = m_Info->m_Resultset;
+    }
+    result.m_Source = m_Info->m_RootResource;
+    result.m_OldTarget = m_Info->m_RootTargets;
+    result.m_Ref = m_Info->m_Ref;
+    result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
+
+    // Push the old resultset onto the garbage stack.
+    sbPlaylistsource::g_ResultGarbage.push_back(result);
+
+#if 1
+    if ( ! m_Results.empty() )
+    {
+      m_Info->m_Resultset = *( m_Results.rbegin() );
+      m_Results.clear();
+    }
+#else
+    // Orphan the result for the query.
+    nsCOMPtr<sbIDatabaseResult> res;
+    nsresult rv = m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(res));
+    if ( NS_SUCCEEDED( rv ) )
+      m_Info->m_Resultset = res;
+#endif
+  }
+  // Decrement and update if needbe.
+  sbPlaylistsource::g_ActiveQueryCount -= count;
+  if (sbPlaylistsource::g_ActiveQueryCount <= 0) {
+    sbPlaylistsource::g_ActiveQueryCount = 0;
+    sbPlaylistsource::g_NeedUpdate = PR_TRUE;
+    gPlaylistPlaylistsource->UpdateObservers();
+  }
+}
+
+
 //-----------------------------------------------------------------------------
 
 // Playlistsource
@@ -1362,7 +1381,7 @@ sbPlaylistsource::UpdateObservers()
     if (g_NeedUpdate) {
       need_update = PR_TRUE;
       g_NeedUpdate = PR_FALSE;
-      old_garbage = g_ResultGarbage; 
+      old_garbage = g_ResultGarbage; // Destroyed when old_garbage goes out of scope.
       g_ResultGarbage.clear();
     }
   }
@@ -1405,6 +1424,11 @@ sbPlaylistsource::UpdateObservers()
            r++) {
         nsAutoString rs((*r).m_Ref);
         if (rs.Equals(os)) {
+
+  PRInt32 rowcount;
+  (*r).m_Results->GetRowCount( &rowcount );
+  printf( "\n+ UpdateObservers(0x%08X) -- %d rows\n\n", (*r).m_Results.get(), rowcount );
+
           rv = (*o).m_Observer->OnBeginUpdateBatch(this);
           NS_ENSURE_SUCCESS(rv, rv);
           rv = (*o).m_Observer->OnEndUpdateBatch(this);
