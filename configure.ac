@@ -84,15 +84,6 @@ if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
 AC_CHECK_PROG(UNZIP, unzip, unzip)
 if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 
-AC_CHECK_PROG(GZIP, gzip, gzip)
-if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
-
-AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
-if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
-
-AC_CHECK_PROG(TAR, tar, tar)
-if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
-
 AC_CHECK_PROG(LN, ln, ln)
 if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 
@@ -112,7 +103,7 @@ AC_CHECK_PROG(MKDIR, mkdir, mkdir)
 if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
 
 AC_CHECK_PROG(AWK, awk, awk)
-if test -z "$AWK"; then AC_MSG_ERROR(awk not found); fi
+if test -z "$AWK"; then AC_MSG_ERROR(Awk not found); fi
 
 case "$SB_PLATFORM" in
   win32)
@@ -124,6 +115,10 @@ case "$SB_PLATFORM" in
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, lib, lib)
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
+    AC_CHECK_PROG(RC, rc, rc)
+    if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
+    AC_CHECK_PROG(MT, mt, mt)
+    if test -z "$MT"; then AC_MSG_ERROR(Mt not found); fi
   ;;
   linux)
     AC_CHECK_PROG(CP, cp, cp)
@@ -133,9 +128,15 @@ case "$SB_PLATFORM" in
     AC_CHECK_PROG(AS, as, as)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, ar, ar)
-		if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
-		AC_CHECK_PROG(RANLIB, ranlib, ranlib)
-		if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+	if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
+	AC_CHECK_PROG(RANLIB, ranlib, ranlib)
+	if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+    AC_CHECK_PROG(GZIP, gzip, gzip)
+    if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
+    AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
+    if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
+    AC_CHECK_PROG(TAR, tar, tar)
+    if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
   ;;
   macosx)
     AC_CHECK_PROG(CP, gcp, gcp)
@@ -145,9 +146,15 @@ case "$SB_PLATFORM" in
     AC_CHECK_PROG(AS, as, as)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, ar, ar)
-		if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
-		AC_CHECK_PROG(RANLIB, ranlib, ranlib)
-		if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+	if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
+	AC_CHECK_PROG(RANLIB, ranlib, ranlib)
+	if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
+    AC_CHECK_PROG(GZIP, gzip, gzip)
+    if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
+    AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
+    if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
+    AC_CHECK_PROG(TAR, tar, tar)
+    if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
   ;;
 esac
 
@@ -323,7 +330,21 @@ case "$SB_PLATFORM" in
     else
         AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
     fi
-    
+
+    if test "$_CC_SUITE" -ge "8"; then
+            MSMT_TOOL=`${MT} 2>&1|grep 'Microsoft (R) Manifest Tool'`
+            if test -n "MSMT_TOOL"; then
+                    MSMANIFEST_TOOL_VERSION=`echo ${MSMANIFEST_TOOL}|grep -Po "(^|\s)[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?(\s|$)"`
+                    if test -z "MSMANIFEST_TOOL_VERSION"; then
+                            AC_MSG_WARN([Unknown version of the Microsoft (R) Manifest Tool.])
+                    fi
+                    MSMANIFEST_TOOL=1
+                    unset MSMT_TOOL
+            else
+                    AC_MSG_ERROR([Microsoft (R) Manifest Tool must be in your \$PATH.])
+            fi
+    fi
+
     # Check linker version
     _LD_FULL_VERSION=`"${LD}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
     _LD_MAJOR_VERSION=`echo ${_LD_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
@@ -338,7 +359,7 @@ case "$SB_PLATFORM" in
     fi
     
     if test "$enable_debug" = "yes"; then
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MDd -Od"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MDd -Od -RTC1 -RTCc"
     else
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MD -Ox"
     fi
@@ -374,6 +395,7 @@ case "$SB_PLATFORM" in
     ARFLAGS_LIB=""
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
+    XULRUNNERDIR="/xulrunner"
   ;;
   macosx)
     GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
@@ -411,6 +433,10 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
+    MACOSX_CONTENTS="/Contents"
+    MACOSX_RESOURCES="/Contents/Resources"
+    MACOSX_FRAMEWORKS="/Contents/Frameworks"
+    XULRUNNERDIR="/XUL.framework"
   ;;
   linux)
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pipe -pthread"
@@ -448,6 +474,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
+    XULRUNNERDIR="/xulrunner"
   ;;
 esac
 
@@ -472,6 +499,10 @@ AC_SUBST(LNFLAGS)
 AC_SUBST(UNZIPFLAGS)
 AC_SUBST(UNZIPFLAGS_EXTRACT)
 AC_SUBST(USING_RANLIB)
+AC_SUBST(MACOSX_CONTENTS)
+AC_SUBST(MACOSX_RESOURCES)
+AC_SUBST(MACOSX_FRAMEWORKS)
+AC_SUBST(XULRUNNERDIR)
 
 #
 # We're going to hardcode our obj and dist directory names for the moment.
