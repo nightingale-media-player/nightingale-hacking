@@ -61,6 +61,7 @@
 class MyQueryCallback;
 class nsITimer;
 class nsIRDFService;
+class nsAutoMonitor;
 
 // CLASSES ====================================================================
 class sbPlaylistsource : public sbIPlaylistsource
@@ -196,7 +197,7 @@ public:
   nsString                   m_IncomingObserver;
   void*                      m_IncomingObserverPtr;
 
-  NS_IMETHODIMP LoadRowResults(sbPlaylistsource::sbValueInfo& value);
+  NS_IMETHODIMP LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMonitor& mon );
 
 private:
   NS_IMETHODIMP Init(void);

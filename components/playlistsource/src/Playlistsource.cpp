@@ -590,12 +590,15 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
     sbValueInfo &valueInfo = (*v).second;
     nsresult rv;
     if (!valueInfo.m_Resultset) {
-      LoadRowResults(valueInfo);
+      LoadRowResults(valueInfo, mon);
     }
-    rv = valueInfo.m_Resultset->GetRowCellByColumn(valueInfo.m_ResultsRow,
-                                                   Column,
-                                                   _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // The LoadRowResults above will fail silently if the table has been deleted and the UI is still asking for values.
+    if (valueInfo.m_Resultset) {
+      rv = valueInfo.m_Resultset->GetRowCellByColumn(valueInfo.m_ResultsRow,
+                                                    Column,
+                                                    _retval);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   return NS_OK;
 }
@@ -1440,11 +1443,6 @@ sbPlaylistsource::UpdateObservers()
            r++) {
         nsAutoString rs((*r).m_Ref);
         if (rs.Equals(os)) {
-
-  PRInt32 rowcount;
-  (*r).m_Results->GetRowCount( &rowcount );
-  printf( "\n+ UpdateObservers(0x%08X) -- %d rows\n\n", (*r).m_Results.get(), rowcount );
-
           rv = (*o).m_Observer->OnBeginUpdateBatch(this);
           NS_ENSURE_SUCCESS(rv, rv);
           rv = (*o).m_Observer->OnEndUpdateBatch(this);
@@ -1661,13 +1659,16 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
         if (valInfo.m_Info->m_Column.IsEmpty()) {
           // Only query the full metadata during get target.
           if (!valInfo.m_Resultset) {
-            rv = LoadRowResults(valInfo);
+            rv = LoadRowResults(valInfo, mon);
             NS_ENSURE_SUCCESS(rv, rv);
-          } 
-          rv = valInfo.m_Resultset->GetRowCellPtr(valInfo.m_ResultsRow,
-                                                  (*c).second,
-                                                  &val);
-          NS_ENSURE_SUCCESS(rv, rv);
+          }
+          // The LoadRowResults above will fail silently if the table has been deleted and the UI is still asking for values.
+          if ( valInfo.m_Resultset ) {
+            rv = valInfo.m_Resultset->GetRowCellPtr(valInfo.m_ResultsRow,
+                                                    (*c).second,
+                                                    &val);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         } else {
           rv = valInfo.m_Info->m_Resultset->GetRowCellPtr(valInfo.m_Row,
                                                           (*c).second,
@@ -2354,13 +2355,13 @@ sbPlaylistsource::EndUpdateBatch()
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value)
+sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMonitor& mon)
 {
   LOG(("sbPlaylistsource::LoadRowResults"));
 
   METHOD_SHORTCIRCUIT;
   
-  nsAutoMonitor mon(g_pMonitor);
+//  nsAutoMonitor mon(g_pMonitor); // NO!  This is called by methods that already lock this monitor.
 
   nsresult rv;
   
@@ -2427,7 +2428,6 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value)
   PRInt32 rows;
   rv = result->GetRowCount(&rows);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ASSERTION( rows, "LoadRowResults got empty results!!" );
 
   PRInt32 end = 0;
   if (value.m_ResMapIndex + rows < (PRInt32)value.m_Info->m_ResList.size())
