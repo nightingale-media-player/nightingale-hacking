@@ -179,6 +179,7 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   NS_ENSURE_ARG_POINTER(dbGUID);
   NS_ENSURE_ARG_POINTER(strQuery);
 
+/*
   nsAutoMonitor mon_local(m_pMonitor);
 
   m_Results.push_back( nsCOMPtr< sbIDatabaseResult >( dbResultObject ) );
@@ -186,6 +187,7 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   PRInt32 rowcount;
   dbResultObject->GetRowCount( &rowcount );
   printf( "- MyQueryCallback(0x%08X) -- %d rows\n", dbResultObject, rowcount );
+*/
 
   NS_ENSURE_TRUE(gPlaylistPlaylistsource, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_Timer, NS_ERROR_OUT_OF_MEMORY);
@@ -262,6 +264,8 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     if (m_Info->m_Resultset) {
       // Copy the old resultset
       result.m_Results = m_Info->m_Resultset;
+    } else {
+      m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(result.m_Results));
     }
     result.m_Source = m_Info->m_RootResource;
     result.m_OldTarget = m_Info->m_RootTargets;
@@ -271,7 +275,7 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     // Push the old resultset onto the garbage stack.
     sbPlaylistsource::g_ResultGarbage.push_back(result);
 
-#if 1
+#if 0
     if ( ! m_Results.empty() )
     {
       m_Info->m_Resultset = *( m_Results.rbegin() );
@@ -2423,6 +2427,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value)
   PRInt32 rows;
   rv = result->GetRowCount(&rows);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ASSERTION( rows, "LoadRowResults got empty results!!" );
 
   PRInt32 end = 0;
   if (value.m_ResMapIndex + rows < (PRInt32)value.m_Info->m_ResList.size())

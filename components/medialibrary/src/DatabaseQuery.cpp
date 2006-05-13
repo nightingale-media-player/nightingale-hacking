@@ -313,9 +313,13 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
   NS_NEWXPCOM(pRes, CDatabaseResult);
   NS_ENSURE_TRUE(pRes, NS_ERROR_OUT_OF_MEMORY);
 
+  int sc = m_QueryResult->m_RowCells.size();
+
   pRes->m_ColumnNames = m_QueryResult->m_ColumnNames;
   pRes->m_RowCells = m_QueryResult->m_RowCells;
   pRes->AddRef();
+
+  NS_ASSERTION(sc == m_QueryResult->m_RowCells.size(), "Query Result Size Changed During Object Orphan Event");
 
   //Transfer references to the callee.
   *_retval = pRes;

@@ -123,10 +123,6 @@ catch ( err )
       function()
       {
         if ( !this.m_Interval ) return;
-        if ( this.installed_listener )
-        {
-          this.aDBQuery.Execute();
-        }
         SBDataSetValue( "media_scan.open", false ); // ?  Don't let this go?
         SBDataSetValue( "webplaylist.total", this.a_array.length );
         SBDataSetValue( "webplaylist.current", this.a_array.length );
