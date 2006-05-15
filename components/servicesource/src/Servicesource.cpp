@@ -50,7 +50,9 @@
 
 #include "nsComponentManagerUtils.h"
 #include "nsServiceManagerUtils.h"
+#include "nsCOMArray.h"
 #include "nsEnumeratorUtils.h"
+#include "nsArrayEnumerator.h"
 
 /*
 #include "nsIRDFFileSystem.h"
@@ -807,48 +809,33 @@ CServicesource::GetTargets(nsIRDFResource *source,
       *targets = NULL;
 
       // Make the array to hold our response
-      nsCOMPtr<nsISupportsArray> nextItemArray;
-      rv = NS_NewISupportsArray(getter_AddRefs(nextItemArray));
-      if (NS_FAILED(rv)) return rv;
+      nsCOMArray<nsIRDFResource> nextItemArray;
 
       // Append items to the array
       for ( int i = 0; i < NUM_PARENTS; i++ )
       {
-        nextItemArray->AppendElement( kNC_Parent[ i ] );
+        nextItemArray.AppendObject( kNC_Parent[ i ] );
         // Magic stuff to list the playlists
         if ( i == nPlaylistsInsert )
         {
           sbIDatabaseResult *resultset;
           m_PlaylistsQuery->GetResultObject( &resultset );
           PRInt32 num_rows;
-          PRInt32 num_cols;
           resultset->GetRowCount( &num_rows );
-          resultset->GetColumnCount( &num_cols );
 
-          PRInt32 j;
-          for( j = 0; j < num_rows; j++ )
+          for( PRInt32 j = 0; j < num_rows; j++ )
           {
             // Create a new resource for this item
             nsIRDFResource *next_resource;
             gRDFService->GetAnonymousResource( &next_resource );
-            nextItemArray->AppendElement( next_resource );
+            nextItemArray.AppendObject( next_resource );
             m_PlaylistMap[ next_resource ] = j;
           }
 
           resultset->Release();
         }
       }
-
-      // Stuff the array into the enumerator
-      nsISimpleEnumerator* result = new nsArrayEnumerator(nextItemArray);
-      if (! result)
-        return NS_ERROR_OUT_OF_MEMORY;
-
-      // And give it to whomever is calling us
-      NS_ADDREF(result);
-      *targets = result;
-
-      return NS_OK;
+      return NS_NewArrayEnumerator(targets, nextItemArray);
     }
   }
   else if (source == kNC_ServicesourceFlat)
@@ -859,9 +846,7 @@ CServicesource::GetTargets(nsIRDFResource *source,
       *targets = NULL;
 
       // Make the array to hold our response
-      nsCOMPtr<nsISupportsArray> nextItemArray;
-      rv = NS_NewISupportsArray(getter_AddRefs(nextItemArray));
-      if (NS_FAILED(rv)) return rv;
+      nsCOMArray<nsIRDFResource> nextItemArray;
 
       // Append items to the array
       for ( int i = 0; i < NUM_PARENTS; i++ )
@@ -869,7 +854,7 @@ CServicesource::GetTargets(nsIRDFResource *source,
         // Only add the parent if it has no children
         if ( ! gChildLabels[ i ][ 0 ].Length() )
         {
-          nextItemArray->AppendElement( kNC_Parent[ i ] );
+          nextItemArray.AppendObject( kNC_Parent[ i ] );
         }
         else
         {
@@ -879,21 +864,12 @@ CServicesource::GetTargets(nsIRDFResource *source,
             // If there is a child, append it.
             if ( gChildLabels[ i ][ j ].Length() )
             {
-              nextItemArray->AppendElement( kNC_Child[ i ][ j ] );
+              nextItemArray.AppendObject( kNC_Child[ i ][ j ] );
             }
           }
         }
       }
-      // Stuff the array into the enumerator
-      nsISimpleEnumerator* result = new nsArrayEnumerator(nextItemArray);
-      if (! result)
-        return NS_ERROR_OUT_OF_MEMORY;
-
-      // And give it to whomever is calling us
-      NS_ADDREF(result);
-      *targets = result;
-
-      return NS_OK;
+      return NS_NewArrayEnumerator(targets, nextItemArray);
     }
   }
   else 
@@ -909,9 +885,7 @@ CServicesource::GetTargets(nsIRDFResource *source,
           *targets = NULL;
 
           // Make the array to hold our response
-          nsCOMPtr<nsISupportsArray> nextItemArray;
-          rv = NS_NewISupportsArray(getter_AddRefs(nextItemArray));
-          if (NS_FAILED(rv)) return rv;
+          nsCOMArray<nsIRDFResource> nextItemArray;
 
           {
             // Append items to the array
@@ -920,21 +894,11 @@ CServicesource::GetTargets(nsIRDFResource *source,
               // If there is a label for this element, append it.
               if ( gChildLabels[ i ][ j ].Length() )
               {
-                nextItemArray->AppendElement( kNC_Child[ i ][ j ] );
+                nextItemArray.AppendObject( kNC_Child[ i ][ j ] );
               }
             }
           }
-
-          // Stuff the array into the enumerator
-          nsISimpleEnumerator* result = new nsArrayEnumerator(nextItemArray);
-          if (! result)
-            return NS_ERROR_OUT_OF_MEMORY;
-
-          // And give it to whomever is calling us
-          NS_ADDREF(result);
-          *targets = result;
-
-          return NS_OK;
+          return NS_NewArrayEnumerator(targets, nextItemArray);
         }
       }
     }
