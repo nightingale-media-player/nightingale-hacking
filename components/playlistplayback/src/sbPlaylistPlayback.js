@@ -833,6 +833,7 @@ PlaylistPlayback.prototype = {
     this._requestedVolume = volume;
     this._calculatedVolume = core.getVolume();
 //    dump( "SetVolume -- req: " + this._requestedVolume + " calc: " + this._calculatedVolume + "\n" );
+    this._onPollVolume();
     return false;
   },
 
@@ -858,7 +859,6 @@ PlaylistPlayback.prototype = {
     // the volume when mute is turned off, this fixes the problem
     if (mute == false) core.setVolume(this._calculatedVolume);
     this._onPollMute(core); // if the core is not playing, the loop is not running, but we still want the new mute state (and possibly volume) to be routed to all the UI controls
-    //this._onPollVolume(core);
     return true;
   },
 
