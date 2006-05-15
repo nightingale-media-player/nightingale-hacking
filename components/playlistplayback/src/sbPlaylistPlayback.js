@@ -376,7 +376,7 @@ PlaylistPlayback.prototype = {
     this._metadataPosText.setValue( "0:00:00" );
     this._metadataLenText.setValue( "0:00:00" );
     this._showRemaining.setBoolValue(false);
-    this._muteData.setBoolValue( false );
+    //this._muteData.setBoolValue( false );
     this._playlistRef.setValue( "" );
     this._playlistIndex.setValue( -1 );
     this._faceplateState.setValue( 0 );
@@ -389,6 +389,7 @@ PlaylistPlayback.prototype = {
     this._playButton.setValue( 1 ); // Start on.
     if (this._repeat.getValue() == '') this._repeat.setValue( 0 ); // start with no shuffle
     if (this._shuffle.getValue() == '') this._shuffle.setBoolValue( false ); // start with no shuffle
+    this._requestedVolume = this._calculatedVolume = this._volume.getIntValue();
   },
   
   _releaseDataRemotes: function() {
@@ -574,8 +575,10 @@ PlaylistPlayback.prototype = {
         LOG("addCore: selecting new core");
         this._currentCoreIndex = 0;
       }
-      core.setVolume(this._volume.getIntValue());
-      core.setMute(this._volume.getBoolValue());
+      var mute = this._muteData.getBoolValue();
+      var volume = this._volume.getIntValue();
+      core.setMute(mute);
+      core.setVolume(volume);
     }
     else
       throw Components.results.NS_ERROR_INVALID_ARG;
@@ -857,7 +860,9 @@ PlaylistPlayback.prototype = {
     core.setMute(mute);
     // some cores set their volume to 0 on setMute(true), but do not restore
     // the volume when mute is turned off, this fixes the problem
-    if (mute == false) core.setVolume(this._calculatedVolume);
+    if (mute == false) {
+      core.setVolume(this._calculatedVolume);
+    }
     this._onPollMute(core); // if the core is not playing, the loop is not running, but we still want the new mute state (and possibly volume) to be routed to all the UI controls
     return true;
   },

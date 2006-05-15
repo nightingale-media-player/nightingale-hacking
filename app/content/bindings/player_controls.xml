@@ -67,7 +67,7 @@
         this.remote_volume.bindCallbackFunction(onremotevolumechange, true);
 
         this.maxpos = 255;
-        this.value = this.remote_lastVolume.getIntValue();
+        this.value = this.remote_volume.getIntValue();
         this.trackingVolume = 0;
       ]]>
     </constructor>
