@@ -175,7 +175,16 @@
         
         this._lastviewsummary = "";
         this.lastfiltersstate = "open";
-        
+
+        this.playingRef = new sbIDataRemote( "playing.ref" );
+        this.playlistRef = new sbIDataRemote( "playlist.ref" );
+        this.playUrl = new sbIDataRemote( "faceplate.play.url" );
+
+        var onplayurlchangechange = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.syncPlaylistIndex(); } 
+        } onplayurlchangechange._that = this;
+        this.playUrl.bindCallbackFunction(onplayurlchangechange, true);
       }
       catch ( err )
       {
@@ -871,7 +880,7 @@
             }
           }
           
-          result = this.m_queryObj.GetResultObject();
+          var result = this.m_queryObj.GetResultObject();
 
           for (var i = 0; i < result.GetRowCount(); i++)
           {
@@ -1741,7 +1750,7 @@
               this.addedObserver = true;
             }
             
-            var delay = evt.timeStamp - this.tree.lastClickTimestamp;
+            var delay = evt.timeStamp - this.lastClickTimestamp;
             if ( delay > 1000 && delay < 2000 )
             {
               if ( this.tree.currentIndex != -1 && this.tree.currentIndex == this.tree.lastClickIndex )
@@ -1760,7 +1769,7 @@
               }
             }
             this.tree.lastClickIndex = this.tree.currentIndex;            
-            this.tree.lastClickTimestamp = evt.timeStamp;            
+            this.lastClickTimestamp = evt.timeStamp;            
           }
           catch( err )
           {
@@ -2527,6 +2536,35 @@
           catch (err)
           {
             alert( "playlist.xml - onFiltersResize - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="syncPlaylistIndex">
+      <body>
+        <![CDATA[
+          try
+          {
+            // if this playlist is the currently playing one, set selection to the playing item
+            if ( this.tree.columns && (this.playlistRef.getValue() == this.playingRef.getValue()) )
+            {
+              var urlcolumn = this.tree.columns.getNamedColumn("url"); 
+              var url = this.playUrl.getValue();
+              if (urlcolumn != null) 
+              {
+                var row = this.findCell(urlcolumn, url);
+                if (row != -1) 
+                {
+                  this.tree.view.selection.clearSelection();
+                  this.tree.view.selection.rangedSelect(row, row, true);
+                }
+              }
+            }
+          }
+          catch (err)
+          {
+            alert( "playlist.xml - onPlayUrlChange - " + err );
           }
         ]]>
       </body>

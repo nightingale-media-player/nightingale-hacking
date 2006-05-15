@@ -31,7 +31,7 @@
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
-  <binding id="seekbar">
+  <binding id="progress_slider">
     <content>
       <xul:stack flex="1">
         <children/>
@@ -128,7 +128,7 @@
     <method name="sendChangeEvent">
       <body>
         var e = document.createEvent("Events");
-        e.initEvent("seekbar-change", false, true);
+        e.initEvent("progress_slider-change", false, true);
         this.dispatchEvent(e);
       </body>
     </method>
@@ -136,7 +136,7 @@
     <method name="sendReleaseEvent">
       <body>
         var e = document.createEvent("Events");
-        e.initEvent("seekbar-release", false, true);
+        e.initEvent("progress_slider-release", false, true);
         this.dispatchEvent(e);
       </body>
     </method>

@@ -50,22 +50,9 @@ try
   var playerControls_playURL = new sbIDataRemote("faceplate.play.url");
   var playerControls_seenPlaying = new sbIDataRemote("faceplate.seenplaying");
 
-  var playerControls_lastVolume = new sbIDataRemote( "faceplate.volume.last" );
-  var playerControls_volumeLastReadback = new sbIDataRemote( "faceplate.volume.lastreadback" );
-  var playerControls_trackerVolume = new sbIDataRemote( "faceplate.volume.tracker" );
-  var playerControls_volume = new sbIDataRemote( "faceplate.volume" );
-  var playerControls_muteData = new sbIDataRemote( "faceplate.mute" );
-
-  var playerControls_seekbarTracker = new sbIDataRemote("faceplate.seek.tracker");
-
   var playerControls_playingRef = new sbIDataRemote( "playing.ref" );
   var playerControls_playlistRef = new sbIDataRemote( "playlist.ref" );
   var playerControls_playlistIndex = new sbIDataRemote( "playlist.index" );
-
-  var playerControls_repeat = new sbIDataRemote( "playlist.repeat" ); 
-  var playerControls_shuffle = new sbIDataRemote( "playlist.shuffle" ); 
-
-  var playerControls_showRemaining = new sbIDataRemote( "faceplate.showremainingtime" );
 
   var playerControls_titleText = new sbIDataRemote( "metadata.title" );
   var playerControls_artistText = new sbIDataRemote( "metadata.artist" );
@@ -75,50 +62,9 @@ try
   var playerControls_statusText = new sbIDataRemote( "faceplate.status.text" );
   var playerControls_statusStyle = new sbIDataRemote( "faceplate.status.style" );
   
-  // The following variables are not set when this file is loaded by the core window (SBInitPlayerControls not called)
-  var theVolumeSlider;
-  var theSeekbarSlider;
-  
   // Called by each faceplate
   function SBInitPlayerControls()
   {
-    theVolumeSlider = document.getElementById( "songbird_volume" );
-    theVolumeSlider.maxpos = 255;
-    theVolumeSlider.value = 0;
-    theVolumeSlider.addEventListener("seekbar-change", onVolumeChange, true);
-    theVolumeSlider.addEventListener("seekbar-release", onVolumeUp, true);
-    window.addEventListener("DOMMouseScroll", onMouseWheel, false);
-
-    playerControls_seekbarTracker.setValue(false);
-    theSeekbarSlider = document.getElementById( "songbird_seekbar" );
-    theSeekbarSlider.maxpos = 0;
-    theSeekbarSlider.value = 0;
-    theSeekbarSlider.addEventListener("seekbar-change", onSeekbarChange, true);
-    theSeekbarSlider.addEventListener("seekbar-release", onSeekbarUp, true);
-
-/*    
-    Hmmm, it should be fine for all this data to come from the skin default values.
-
-
-    if ( ! gPPS.getPlaying() ) 
-    {
-      var welcome = "Welcome";
-
-      try
-      {
-        welcome = theSongbirdStrings.getString("faceplate.welcome");
-      } catch(e) {}
-
-      playerControls_titleText.setValue( welcome );
-      playerControls_artistText.setValue( "" );
-      playerControls_albumText.setValue( "" );
-      playerControls_statusText.setValue( "" );
-      playerControls_statusStyle.setValue( "" );
-      playerControls_playbackURL.setValue( "" );
-    }
-*/
-    
-      setTimeout( SBFirstVolume, 250 );
   }
 
   // Initialize default values (called only by the core window, not by faceplates)
@@ -127,101 +73,10 @@ try
   {
     playerControls_playButton.setValue( 1 ); // Start on.
     playerControls_playingRef.setValue( "" );
-    playerControls_repeat.setValue( 0 ); // start with no shuffle
-    playerControls_shuffle.setValue( 0 ); // start with no shuffle
     playerControls_playURL.setValue( "" ); 
-
     playerControls_statusText.setValue( "" );
     playerControls_statusStyle.setValue( "" );
     playerControls_playbackURL.setValue( "" );
-  }
-
-  function SBFirstVolume()
-  {
-    if ( playerControls_lastVolume.getValue() == "" )
-    {
-      playerControls_lastVolume.setValue( 128 );
-    }
-    gPPS.setVolume( playerControls_lastVolume.getIntValue() );
-    var mute = playerControls_muteData.getIntValue() != 0;
-    setMute( mute );
-  }
-  
-  function onVolumeChange( event ) 
-  {
-    playerControls_trackerVolume.setValue(true);
-    if ( theVolumeSlider.value > 0 )
-    {
-      playerControls_muteData.setValue( false );
-      gPPS.setMute( false );
-    }
-    else
-    {
-      playerControls_muteData.setValue( true );
-      gPPS.setMute( true );
-    }
-    gPPS.setVolume( theVolumeSlider.value );
-  }
-
-  function onVolumeUp( event ) 
-  {
-    if ( theVolumeSlider.value > 0 )
-    {
-      playerControls_muteData.setValue( false );
-      gPPS.setMute( false );
-      playerControls_lastVolume.setValue( theVolumeSlider.value );
-    }
-    else
-    {
-      playerControls_muteData.setValue( true );
-      gPPS.setMute( true );
-    }
-    gPPS.setVolume( theVolumeSlider.value );
-    playerControls_volumeLastReadback.setValue(gPPS.getVolume());
-    playerControls_trackerVolume.setValue(false);
-  }
-
-  function onMouseWheel(event)
-  {
-    try
-    {
-      var node = event.originalTarget;
-      while (node != document && node != null)
-      {
-        // if your object implements an event on the wheel,
-        // but is not one of these, you should prevent the 
-        // event from bubbling
-        if (node.tagName == "tree") return;
-        if (node.tagName == "xul:tree") return;
-        if (node.tagName == "listbox") return;
-        if (node.tagName == "xul:listbox") return;
-        if (node.tagName == "browser") return;
-        if (node.tagName == "xul:browser") return;
-        node = node.parentNode;
-      }
-
-      if (node == null)
-      {
-        // could not walk up to the window before hitting a document, 
-        // we're inside a sub document. the event will continue bubbling, 
-        // and we'll catch it on the next pass
-        return;
-      }
-    
-      // walked up to the window
-      var s = theVolumeSlider.value;
-      if (s == '') s = playerControls_volume.getValue();
-      var v = parseInt(s)+((event.detail > 0) ? -8 : 8);
-      if (v < 0) v = 0;
-      if (v > 255) v = 255;
-      theVolumeSlider.value = v;
-      onVolumeChange();
-      onVolumeUp();
-    }
-    catch (err)
-    {
-      alert("onMouseWheel - " + err);
-    }
   }
 
   function onPlay()
@@ -332,38 +187,6 @@ try
     consoleService.logStringMessage( str );
   }
   
-  function setMute( theMute )
-  {
-try
-{  
-    if ( theMute )
-    {
-      playerControls_lastVolume.setValue( theVolumeSlider.value );
-      theVolumeSlider.value = 0;
-    }
-    else
-    {
-      var value = playerControls_lastVolume.getValue();
-      theVolumeSlider.value = playerControls_lastVolume.getValue();
-    }
-    playerControls_muteData.setValue( theMute );
-    //alert( theMute ); ??
-    gPPS.setMute( theMute );
-    gPPS.setVolume( theVolumeSlider.value );
-    playerControls_volumeLastReadback.setValue(gPPS.getVolume());
-}
-catch ( err )    
-{
-  alert( err );
-}
-  }
-  
-  function onMute()
-  {
-    var theMute = ! gPPS.getMute();
-    setMute( theMute );
-  }
-
   function SBAddUrlToDatabase( the_url )
   {
     retval = -1;
@@ -433,7 +256,7 @@ catch ( err )
         
         if ( ! aDBQuery )
         {
-          return;
+          return false;
         }
         
         aDBQuery.SetAsyncQuery(false);
@@ -457,132 +280,6 @@ catch ( err )
     return retval;
   }
 
-  // The Seek Bar
-
-  function onSeekbarChange( ) 
-  {
-    playerControls_seekbarTracker.setValue(true);
-  }
-
-  function onSeekbarUp( ) 
-  {
-    gPPS.setPosition( theSeekbarSlider.value );
-    playerControls_seekbarTracker.setValue(false);
-  }
-
-  // Fwd and back skipping.  Pleah.
-  var skip = false;
-  var seen_skip = false;
-  var skip_time_min = 300;
-  var skip_time_step = 25;
-  var skip_time = 0;
-  var skip_direction = 1;
-  var skip_interval = null;
-  
-  function onBackDown()
-  {
-    seen_skip = false;
-    if ( gPPS.getPlaying() )
-    {
-      skip = true;
-      skip_direction = -1;
-      if ( ! skip_interval )
-      {
-        skip_interval = setInterval( "SBSkipLoop()", 1000 );
-      }
-    }
-  }
-
-  function onBackUp()
-  {
-    skip = false;
-  }
-
-  function onBack()
-  {
-    if ( !seen_skip )
-    {
-      var num_items = SBGetNumPlaylistItems();
-      var cur_index = SBGetCurrentPlaylistIndex();
-      var index = -1;
-      if ( playerControls_repeat.getIntValue() == 1 )
-      {
-        index = cur_index;
-      }
-      else if ( cur_index != -1 )
-      {
-        index = ( ( cur_index - 1 ) + num_items ) % num_items;
-      }
-      if ( index != -1 )
-      {
-        SBPlayPlaylistIndex( index );
-      }
-    }
-  }
-  function onFwdDown()
-  {
-    seen_skip = false;
-    if ( gPPS.getPlaying() )
-    {
-      skip = true;
-      skip_direction = 1;
-      if ( ! skip_interval )
-      {
-        skip_interval = setInterval( "SBSkipLoop()", 1000 );
-      }
-    }
-  }
-  function onFwdUp()
-  {
-    skip = false;
-  }
-  function onFwd()
-  {
-    if ( !seen_skip )
-    {
-      var num_items = SBGetNumPlaylistItems();
-      var cur_index = SBGetCurrentPlaylistIndex();
-      var index = -1;
-      if ( cur_index != -1 )
-      {
-        if ( playerControls_repeat.getIntValue() == 1 )
-        {
-          index = cur_index;
-        }
-        else if ( playerControls_shuffle.getIntValue() )
-        {
-          var rand = num_items * Math.random();
-          index = parseInt( rand );
-        }
-        else    
-        {
-          index = ( cur_index + 1 ) % num_items;
-        }
-        
-        SBPlayPlaylistIndex( index );
-      }
-    }
-  }
-  function SBSkipLoop( )
-  {
-    if ( skip )
-    {
-      seen_skip = true;
-      gPPS.setPosition( gPPS.getPosition() + ( 15000 * skip_direction ) );
-    }
-    else
-    {
-      clearInterval( skip_interval );
-      skip_interval = null;
-    }
-  }
-
-  // Shuffle state 
-  function onShuffle()
-  {
-    playerControls_shuffle.setValue( ( playerControls_shuffle.getIntValue() + 1 ) % 2 );
-  }
-
   function SBGetNumPlaylistItems()
   {
     var retval = 0;
@@ -597,39 +294,6 @@ catch ( err )
       retval = thePlaylistTree.view.rowCount;
     }
     return retval;  
-  }
-
-  function SBGetCurrentPlaylistIndex()
-  {
-    var retval = -1;
-    if ( playerControls_playingRef.getValue().length > 0 )
-    {
-      var source = new sbIPlaylistsource();
-      var ref = playerControls_playingRef.getValue();
-      
-      retval = source.GetRefRowByColumnValue( ref, kURL, playerControls_playURL.getValue() );
-    }
-    return retval;
-  }
-
-  // Repeat state
-  function onRepeat()
-  {
-    // Rob decided to change the order.  Woo.
-    var value = 0;
-    switch ( playerControls_repeat.getIntValue() )
-    {
-      case 0:
-        value = 2;
-        break;
-      case 1:
-        value = 0;
-        break;
-      case 2:
-        value = 1;
-        break;
-    }
-    playerControls_repeat.setValue( value );
   }
 
   function SBPlayPlaylistIndex( index, playlist )
@@ -694,54 +358,11 @@ catch ( err )
         gPPS.playRef( ref, index );
         // Hide the intro box and show the normal faceplate box
         SBDataSetValue( "faceplate.state", 1 );
-        SBSyncPlaylistIndex();
       }
     }
     catch ( err )
     {
       alert( err );
-    }
-  }
-
-  function SBSyncPlaylistIndex()
-  {
-    try 
-    {
-      // OPTIONAL CONNECTION
-      var tree = thePlaylistTree;
-      if ( !tree )
-      {
-        // EVEN MORE OPTIONAL CONNECTION
-        if (theWebPlaylist) tree = theWebPlaylist.tree;
-      }
-      if ( tree )
-      {
-        if ( ! tree.view.rowCount )
-        {
-          // Keep trying.
-          setTimeout( SBSyncPlaylistIndex, 250 );
-        }
-        else
-        {
-          // Only if we're looking at the same playlist from which we are playing
-          if ( playerControls_playlistRef.getValue() == playerControls_playingRef.getValue() )
-          {
-            var index = SBGetCurrentPlaylistIndex();
-            tree.view.selection.clearSelection();
-            tree.view.selection.currentIndex = index;
-            if ( index > -1 )
-            {
-              tree.view.selection.select( index );
-              tree.treeBoxObject.ensureRowIsVisible( index );
-            }
-          }
-        }
-      }
-    }
-    catch (err)
-    {
-      // The XBL object has not yet been fully created (grrrr...), so keep trying.
-      setTimeout( SBSyncPlaylistIndex, 250 );
     }
   }
 
@@ -751,116 +372,11 @@ catch ( err )
     if ( playerControls_seenPlaying.getIntValue() )
     {
       gPPS.pause();
-
-      // Humm ... I wonder ...
-      // if (document.restartOnPlaybackEnd) restartApp();
     }
   }
-
-  function onTotalDown()
-  {
-    var len = gPPS.getLength();
-    var pos = gPPS.getPosition();
-    if ( len > 0 )
-    {
-      playerControls_showRemaining.setValue(!playerControls_showRemaining.getIntValue());
-      SBSetTimeText( len, pos );
-    }
-    // If you try to toggle it while it is zero, you lose the state.
-    else
-    {
-      playerControls_showRemaining.setValue(false);
-    }
-  }
-  
 }
 catch ( err )
 {
   alert( "player_controls.js\n" + err );
 }
 
-var SBMediaKeyboardCB = 
-{
-  OnMute: function()
-  {
-    onMute();
-  },
-  
-  OnVolumeUp: function()
-  {
-    alert('');
-    var s = theVolumeSlider.value;
-    if (s == '') s = playerControls_volume.getValue();
-    var v = parseInt(s)+8;
-    if (v > 255) v = 255;
-    theVolumeSlider.value = v;
-    onVolumeChange();
-    onVolumeUp();
-  },
-
-  OnVolumeDown: function()
-  {
-    var s = theVolumeSlider.value;
-    if (s == '') s = playerControls_volume.getValue();
-    var v = parseInt(s)-8;
-    if (v < 0) v = 0;
-    theVolumeSlider.value = v;
-    onVolumeChange();
-    onVolumeUp();
-  },
-
-  OnNextTrack: function()
-  {
-    onFwd();
-  },
-
-  OnPreviousTrack: function()
-  {
-    onBack();
-  },
-
-  OnStop: function()
-  {
-    // yeah... no stop state... hmpf
-    onPause();
-  },
-
-  OnPlayPause: function()
-  {
-    if (gPPS.getPaused()) onPlay(); else onPause(); 
-  },
-
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIMediaKeyboardCallback) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    
-    return this;
-  }
-}
-
-function setMediaKeyboardCallback()
-{
-  try {
-    var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"].getService(Components.interfaces.sbIMediaKeyboard);
-    mediakeyboard.AddCallback(SBMediaKeyboardCB);
-  }
-  catch (e) {
-    // No component
-  }
-}
-
-function resetMediaKeyboardCallback()
-{
-  try {
-    var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"].getService(Components.interfaces.sbIMediaKeyboard);
-    mediakeyboard.RemoveCallback(SBMediaKeyboardCB);
-  }
-  catch (e) {
-    // No component
-  }
-}

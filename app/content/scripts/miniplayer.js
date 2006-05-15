@@ -55,6 +55,7 @@ try
 
     // initialize player controls for this faceplate  
     SBInitPlayerControls();
+    SBInitMouseWheel();
 
     var location = "" + window.location; // Grrr.  Dumb objects.
     if ( location.indexOf("?video") == -1 ) setMediaKeyboardCallback();

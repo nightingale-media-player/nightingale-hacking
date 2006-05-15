@@ -57,19 +57,8 @@ DataRemote.prototype = {
     if (root == null) {
     
       // Use key in root string, makes unique observer lists per key (big but fast?).
-      this._root = "songbird.dataremotes." + key;
+      this._root = "songbird.dataremotes." + key + ".";
       this._key = key;
-/*        
-
-  AUGH!
-  
-  So, this code here doesn't actually work in the script version.
-  
-  So, to be compatible, we can't do this.
-
-      this._root = "";
-      this._key = key;
-*/      
     } else {
       // If we're specifying a root, just obey what's asked for.
       this._root = root;

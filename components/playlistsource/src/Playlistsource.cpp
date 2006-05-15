@@ -29,6 +29,9 @@
 * \brief Songbird Playlistsource Component Implementation.
 */
 
+#pragma warning(push)
+#pragma warning(disable:4800)
+
 #include "nscore.h"
 #include "prlog.h"
 #include "nspr.h"
@@ -2448,3 +2451,4 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   return NS_OK;
 }
 
+#pragma warning(pop)

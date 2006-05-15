@@ -53,6 +53,16 @@ NS_IMPL_ISUPPORTS1(CMediaKeyboard, sbIMediaKeyboard)
 #define HOTKEY_MEDIA_STOP          0x105
 #define HOTKEY_MEDIA_PLAY_PAUSE    0x106
 
+#ifndef VK_VOLUME_MUTE
+#define VK_VOLUME_MUTE         0xAD
+#define VK_VOLUME_DOWN         0xAE
+#define VK_VOLUME_UP           0xAF
+#define VK_MEDIA_NEXT_TRACK    0xB0
+#define VK_MEDIA_PREV_TRACK    0xB1
+#define VK_MEDIA_STOP          0xB2
+#define VK_MEDIA_PLAY_PAUSE    0xB3
+#endif
+
 //-----------------------------------------------------------------------------
 static LRESULT CALLBACK MediaKeyboardProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

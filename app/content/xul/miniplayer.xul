@@ -59,40 +59,33 @@
 
 <hbox>
   <vbox><button id="rmp_demo_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>
-  <vbox><button id="rmp_demo_btn_back"    class="sb_faceplate miniplayer" oncommand="onBack( );" onmousedown="onBackDown();" onmouseup="onBackUp();" /></vbox>
+  <vbox><player_back id="rmp_demo_btn_back"    class="sb_faceplate miniplayer" /></vbox>
   <vbox><button id="rmp_demo_btn_play"    class="sb_faceplate miniplayer" oncommand="onPlay( );" /><button id="rmp_demo_btn_pause"   class="sb_faceplate miniplayer" oncommand="onPause( );" /></vbox>
-  <vbox><button id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" oncommand="onFwd( );" onmousedown="onFwdDown();" onmouseup="onFwdUp();" /> </vbox>
+  <vbox><player_forward id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" /> </vbox>
   <vbox id="rmp_demo_dash">
     <hbox id="rmp_demo_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
       <label id="rmp_demo_text_title" value="" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
       <label id="rmp_demo_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       <label id="rmp_demo_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       <label id="rmp_demo_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <label id="rmp_demo_text_time_total"   value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <player_totaltime id="rmp_demo_text_time_total" value="0:00" class="sb_faceplate miniplayer" />
     </hbox>
-    <seekbar id="songbird_seekbar" sliderid="rmp_demo_seekbar_slider" thumbid="rmp_demo_seekbar_thumb" progressid="rmp_demo_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+    <player_seekbar id="songbird_seekbar" sliderid="rmp_demo_seekbar_slider" thumbid="rmp_demo_seekbar_thumb" progressid="rmp_demo_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
   </vbox>  
   <vbox id="rmp_demo_volume">
     <hbox id="volume_box" class="sb_faceplate">
-      <stack class="sb_faceplate" >
-        <button id="mute_off" class="sb_faceplate miniplayer" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
-        <button id="mute_on"  class="sb_faceplate miniplayer" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
-      </stack>
+      <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
       <spacer width="8"/>
       <hbox>
       <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-      <seekbar id="songbird_volume" sliderid="rmp_demo_volume_slider" thumbid="rmp_demo_volume_thumb" progressid="rmp_demo_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+       <player_volume id="songbird_volume" sliderid="rmp_demo_volume_slider" thumbid="rmp_demo_volume_thumb" progressid="rmp_demo_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
        <spacer width="3" height="5" id="songbird_volume_e"/>
       </hbox>
     </hbox>
   </vbox>
   <hbox hidden="true">
-  <button id="rmp_demo_btn_rep1"    class="sb_faceplate miniplayer" oncommand="onRepeat( );" hidden="true"/>
-  <button id="rmp_demo_btn_repa"    class="sb_faceplate miniplayer" oncommand="onRepeat( );" hidden="true" />
-  <button id="rmp_demo_btn_rep"     class="sb_faceplate miniplayer" oncommand="onRepeat( );" hidden="true" />
-  
-  <button id="rmp_demo_btn_shuf"    class="sb_faceplate miniplayer" oncommand="onShuffle( );" hidden="true" />
-  <button id="rmp_demo_btn_shuf_on" class="sb_faceplate miniplayer" oncommand="onShuffle( );" hidden="true" />
+  <player_repeat class="sb_faceplate miniplayer" repid="rmp_demo_btn_rep1" rep1id="rmp_demo_btn_repa" repallid="rmp_demo_btn_rep" hidden="true"/>
+  <player_shuffle class="sb_faceplate" shuffleonid="rmp_demo_btn_shuf_on" shuffleoffid="rmp_demo_btn_shuf" hidden="true"/>
   <button id="rmp_demo_btn_help"    class="sb_faceplate miniplayer" oncommand="onHelp( );" hidden="true" />
   <button id="rmp_demo_btn_min"     class="sb_faceplate miniplayer" oncommand="onMinimize( );" hidden="true" />
   <button id="rmp_demo_btn_max"     class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" hidden="true" />
@@ -108,6 +101,10 @@
    src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/player_controls.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/mousewheel.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/mediakeyboard.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
   <script type="application/x-javascript" 

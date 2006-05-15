@@ -47,19 +47,7 @@ try
 
       // Playlist Items
       MainwinAdd( SBDataBindElementProperty ( "playlist.numitems", "library_text", "value" ) );
-      
-      MainwinAdd( SBDataBindElementAttribute( "playlist.shuffle", "songbird_btn_shuf", "hidden", true ) );
-      MainwinAdd( SBDataBindElementAttribute( "playlist.shuffle", "songbird_btn_shuf_on", "hidden", true, true ) );
       MainwinAdd( SBDataBindElementAttribute( "playlist.shuffle", "control.shuf", "checked", true ) );
-
-      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "songbird_btn_rep", "hidden", true, false, "parseInt( value ) != 0" ) );
-      //aus> Change these later... (swap rep1 and all).
-      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "songbird_btn_rep1", "hidden", true, false, "parseInt( value ) != 1" ) );
-      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "songbird_btn_repall", "hidden", true, false, "parseInt( value ) != 2" ) );
-      
-      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repx", "checked", true, true, "parseInt( value ) != 0" ) );
-      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.rep1", "checked", true, true, "parseInt( value ) != 1" ) );
-      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repa", "checked", true, true, "parseInt( value ) != 2" ) );
       
       // Metadata Items    
       MainwinAdd( SBDataBindElementProperty ( "metadata.title",  "songbird_text_title", "value" ) );
@@ -67,10 +55,6 @@ try
       MainwinAdd( SBDataBindElementProperty ( "metadata.album", "songbird_text_album", "value" ) );
       
       MainwinAdd( SBDataBindElementAttribute( "metadata.position.str", "songbird_text_time_elapsed", "value" ) );
-      MainwinAdd( SBDataBindElementAttribute( "metadata.length.str", "songbird_text_time_total", "value" ) );
-      
-      MainwinAdd( SBDataBindElementProperty ( "metadata.position", "songbird_seekbar", "value", false, false, "parseInt( value )" ) );
-      MainwinAdd( SBDataBindElementAttribute( "metadata.length", "songbird_seekbar", "maxpos" ) );
 
       // Faceplate Items    
       MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "intro_box", "hidden", true ) );
@@ -78,11 +62,6 @@ try
 
       MainwinAdd( SBDataBindElementAttribute( "faceplate.play", "songbird_btn_pause", "hidden", true ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.play", "songbird_btn_play", "hidden", true, true ) );
-
-      MainwinAdd( SBDataBindElementProperty( "faceplate.volume", "songbird_volume", "value", false, false) );
-      
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.mute", "mute_on", "hidden", true, true ) );
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.mute", "mute_off", "hidden", true ) );
       
       MainwinAdd( SBDataBindElementProperty ( "faceplate.status.text", "status_text", "value" ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.status.style", "status_text", "style" ) );

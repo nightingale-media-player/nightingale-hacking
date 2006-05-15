@@ -259,26 +259,23 @@
                 <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
                 <!-- PLAY BUTTONS -->
                 <hbox id="playbutton_box" class="sb_faceplate">
-                  <button id="songbird_btn_back"  class="sb_faceplate" oncommand="onBack( );" onmousedown="onBackDown();" onmouseup="onBackUp();" tooltiptext="&tooltip.control.back;" />
+                  <player_back id="songbird_btn_back"  class="sb_faceplate" tooltiptext="&tooltip.control.back;" />
                   <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                   <stack id="songbird_btn_play_pause" class="sb_faceplate" flex="1">
                     <button id="songbird_btn_play"  class="sb_faceplate" oncommand="onPlay( );" tooltiptext="&tooltip.control.play;" />
                     <button id="songbird_btn_pause" class="sb_faceplate" oncommand="onPause( );" tooltiptext="&tooltip.control.pause;" />
                   </stack>
                   <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                  <button id="songbird_btn_fwd"   class="sb_faceplate" oncommand="onFwd( );" onmousedown="onFwdDown();" onmouseup="onFwdUp();" tooltiptext="&tooltip.control.fwd;" />
+                  <player_forward id="songbird_btn_fwd" class="sb_faceplate" tooltiptext="&tooltip.control.fwd;" /> -->
                 </hbox>
                 <hbox id="volume_box" class="sb_faceplate">
-                  <stack class="sb_faceplate" >
-                    <button id="mute_off" class="sb_faceplate" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
-                    <button id="mute_on"  class="sb_faceplate" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
-                  </stack>
+                  <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
                   <spacer width="2"/>
                   <vbox>
                   <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                     <hbox>
                     <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>                   
-                    <seekbar id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
+                    <player_volume id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
                     <spacer width="3" height="5" id="songbird_volume_e"/>                                   
                     </hbox>
                     <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
@@ -293,16 +290,9 @@
               <hbox id="control_right_box" class="sb_faceplate">
                 <!-- REPEAT/SHUFFLE -->
                 <vbox id="face_left_box" class="sb_faceplate">
-                  <stack class="sb_faceplate" >
-                    <button id="songbird_btn_rep"    class="sb_faceplate" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
-                    <button id="songbird_btn_rep1" class="sb_faceplate" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
-                    <button id="songbird_btn_repall"  class="sb_faceplate" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
-                  </stack>
+                  <player_repeat class="sb_faceplate" repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
                   <spacer height="5"/>
-                  <stack class="sb_faceplate" >
-                    <button id="songbird_btn_shuf"   class="sb_faceplate" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
-                    <button id="songbird_btn_shuf_on"   class="sb_faceplate" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
-                  </stack>
+                  <player_shuffle class="sb_faceplate" shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
                 </vbox>
                 <spacer width="6"/>
         
@@ -344,11 +334,11 @@
                             <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             <vbox flex="1">
                               <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                              <seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" data_tracking="faceplate.seeking" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+                              <player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100"/>
                               <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             </vbox>
                             <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                            <label id="songbird_text_time_total"   class="sb_faceplate" onmousedown="onTotalDown();"/>                        
+                            <player_totaltime id="songbird_text_time_total" class="sb_faceplate" /> 
                             <spacer width="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                           </hbox>
 
@@ -527,6 +517,10 @@
    src="chrome://songbird/content/scripts/sbIPlaylistPlayback.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_controls.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/mousewheel.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/mediakeyboard.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
   <script type="application/x-javascript" 

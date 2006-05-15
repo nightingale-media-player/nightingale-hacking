@@ -300,7 +300,7 @@
             var n = this.tree.view.rowCount;
             for( var c = 0; c < n; c++ )
             {
-              var column = this.tree.columns ? this.tree.columns[ 0 ] : "unknown";
+              //var column = this.tree.columns ? this.tree.columns[ 0 ] : "unknown";
               var cell = this.tree.view.getCellText( c, column );
               if (cell == value) return c;
             }

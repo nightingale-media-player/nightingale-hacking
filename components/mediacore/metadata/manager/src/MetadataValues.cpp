@@ -31,6 +31,9 @@
 
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable:4800)
+
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "MetadataValues.h"
@@ -118,3 +121,4 @@ NS_IMETHODIMP sbMetadataValues::Clear()
   return NS_OK;
 }
 
+#pragma warning(pop)

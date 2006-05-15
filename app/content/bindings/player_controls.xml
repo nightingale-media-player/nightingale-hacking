@@ -1,0 +1,599 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- VOLUME CONTROL -->
+
+  
+  
+  
+  <binding id="volume" extends="chrome://songbird/content/bindings/progress_slider.xml#progress_slider">
+
+   <handlers>
+     <handler event="progress_slider-change" action="this.onTrackVolume();"/>
+     <handler event="progress_slider-release" action="this.onReleaseVolume();"/>
+   </handlers>
+
+  <implementation type="application/x-javascript" name="volume_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.remote_volume = new sbIDataRemote( "faceplate.volume" );
+        this.remote_lastVolume = new sbIDataRemote("faceplate.volume.last");
+        //this.remote_trackerVolume = new sbIDataRemote( "faceplate.volume.tracker" );
+          
+        var onremotevolumechange = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onRemoteVolumeChange(); } 
+        } onremotevolumechange._that = this;
+        this.remote_volume.bindCallbackFunction(onremotevolumechange, true);
+
+        this.maxpos = 255;
+        this.value = this.remote_lastVolume.getIntValue();
+        this.trackingVolume = 0;
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+    
+    <method name="onTrackVolume">
+      <body>
+        <![CDATA[
+          //this.remote_trackerVolume.setValue(true); // prevents the core from updating the volume controls while we move them
+          this.trackingVolume = 1; // prevents this volume control from being updated while it is being moved (but other volume controls are updated with our motion)
+          this.gPPS.setVolume(this.value);
+          this.remote_volume.setValue(this.value);
+          if (this.value == 0) 
+          {
+            // set mute when we bring the volume to 0
+            this.gPPS.setMute(true);
+          }
+          else
+          {
+            // otherwise reset it, and record the last volume
+            this.gPPS.setMute(false);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onReleaseVolume">
+      <body>
+        this.trackingVolume = 0;
+        //this.remote_trackerVolume.setValue(false); 
+        this.gPPS.setVolume(this.value);
+        if (this.value != 0) 
+        {
+          this.remote_lastVolume.setValue(this.value);
+        }
+      </body>
+    </method>
+
+    <method name="onRemoteVolumeChange">
+      <body>
+        if (this.trackingVolume) return; // we are the control changing the volume, ignore this callback
+        this.value = this.remote_volume.getIntValue();
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+  
+  
+  
+  <!-- MUTE CONTROL -->
+
+
+
+
+  <binding id="mute">
+  
+   <content>
+     <xul:stack xbl:inherits="class=class" >
+       <xul:button sbid="mute_off" xbl:inherits="class=class,id=muteoffid" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
+       <xul:button sbid="mute_on"  xbl:inherits="class=class,id=muteonid" oncommand="onMute( );" tooltiptext="&tooltip.control.mute;"/>
+     </xul:stack>
+   </content>
+
+  <implementation type="application/x-javascript" name="mute_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.remote_volume = new sbIDataRemote( "faceplate.volume" );
+        this.remote_lastVolume = new sbIDataRemote( "faceplate.volume.last" );
+        this.remote_mute = new sbIDataRemote( "faceplate.mute" );
+        
+        this.bindmuteon = SBDataBindElementAttribute( "faceplate.mute", this.mute_on, "hidden", true, true );
+        this.bindmuteoff = SBDataBindElementAttribute( "faceplate.mute", this.mute_off, "hidden", true );
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="mute_on">document.getAnonymousElementByAttribute(this, 'sbid', 'mute_on');</field>
+    <field name="mute_off">document.getAnonymousElementByAttribute(this, 'sbid', 'mute_off');</field>
+
+    <method name="onMute">
+      <body>
+        <![CDATA[
+          var newmute = !this.gPPS.getMute(); 
+          this.gPPS.setMute(newmute);
+          if (!newmute) // restore last volume when coming back from mute state
+          {
+            this.gPPS.setVolume(this.remote_lastVolume.getIntValue());
+          } 
+          else
+          {
+            this.gPPS.setVolume(0);
+          }
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+
+  
+
+  <!-- FORWARD BUTTON-->
+
+  
+  
+  
+  <binding id="forward" extends="chrome://global/content/bindings/button.xml#button-base">
+
+   <handlers>
+     <handler event="mousedown" action="this.onFwdMouseDown();"/>
+     <handler event="mouseup" action="this.onFwdMouseUp();"/>
+   </handlers>
+
+  <implementation type="application/x-javascript" name="forward_control">
+
+    <constructor>
+      <![CDATA[
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+
+        this.seen_skip = false;
+        this.skip = false;
+        this.skip_interval = null;
+      ]]>
+    </constructor>
+
+    <destructor>
+    </destructor>
+    
+    <method name="onFwdMouseDown">
+      <body>
+        <![CDATA[
+          this.seen_skip = false;
+          if ( this.gPPS.getPlaying() )
+          {
+            this.skip = true;
+            if ( ! this.skip_interval )
+            {
+              document.__SKIPLOOPOBJECT__ = this;
+              this.skip_interval = setInterval( this.skipLoop, 1000 );
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdMouseUp">
+      <body>
+        <![CDATA[
+          this.skip = false;
+          this.onFwdCommand();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdCommand">
+      <body>
+        <![CDATA[
+          if ( !this.seen_skip )
+          {
+            this.gPPS.next();
+            // this.syncPlaylistIndex();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="skipLoop">
+      <body>
+        <![CDATA[
+          var _this = document.__SKIPLOOPOBJECT__;
+          if ( _this.skip )
+          {
+            _this.seen_skip = true;
+            _this.gPPS.setPosition( _this.gPPS.getPosition() + 15000 );
+          }
+          else
+          {
+            clearInterval( _this.skip_interval );
+            _this.skip_interval = null;
+          }
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+
+  
+  
+  <!-- BACK BUTTON-->
+
+  
+  
+  
+  <binding id="back" extends="chrome://global/content/bindings/button.xml#button-base">
+
+   <handlers>
+     <handler event="mousedown" action="this.onBackMouseDown();"/>
+     <handler event="mouseup" action="this.onBackMouseUp();"/>
+   </handlers>
+
+  <implementation type="application/x-javascript" name="back_control">
+
+    <constructor>
+      <![CDATA[
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+
+        this.seen_skip = false;
+        this.skip = false;
+        this.skip_interval = null;
+      ]]>
+    </constructor>
+
+    <destructor>
+    </destructor>
+    
+    <method name="onBackMouseDown">
+      <body>
+        <![CDATA[
+          this.seen_skip = false;
+          if ( this.gPPS.getPlaying() )
+          {
+            this.skip = true;
+            if ( ! this.skip_interval )
+            {
+              document.__SKIPLOOPOBJECT__ = this;
+              this.skip_interval = setInterval( this.skipLoop, 1000 );
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackMouseUp">
+      <body>
+        <![CDATA[
+          this.skip = false;
+          this.onBackCommand();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackCommand">
+      <body>
+        <![CDATA[
+          if ( !this.seen_skip )
+          {
+            this.gPPS.previous();
+            //this.syncPlaylistIndex();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="skipLoop">
+      <body>
+        <![CDATA[
+          var _this = document.__SKIPLOOPOBJECT__;
+          if ( _this.skip )
+          {
+            _this.seen_skip = true;
+            _this.gPPS.setPosition( _this.gPPS.getPosition() - 15000 );
+          }
+          else
+          {
+            clearInterval( _this.skip_interval );
+            _this.skip_interval = null;
+          }
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+  
+  
+  
+  <!-- REPEAT CONTROL -->
+
+
+
+
+  <binding id="repeat">
+  
+   <content>
+     <xul:stack xbl:inherits="class=class" >
+       <xul:button sbid="repeat_none" xbl:inherits="class=class,id=repid" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
+       <xul:button sbid="repeat_1" xbl:inherits="class=class,id=rep1id" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
+       <xul:button sbid="repeat_all" xbl:inherits="class=class,id=repallid" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
+     </xul:stack>
+   </content>
+
+  <implementation type="application/x-javascript" name="repeat_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        
+        this.remote_repeat = new sbIDataRemote( "playlist.repeat" ); 
+        this.repnonebinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_none, "hidden", true, false, "parseInt( value ) != 0" );
+        this.rep1binding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_1, "hidden", true, false, "parseInt( value ) != 1" );
+        this.repallbinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_all, "hidden", true, false, "parseInt( value ) != 2" );
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="repeat_none">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_none');</field>
+    <field name="repeat_1">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_1');</field>
+    <field name="repeat_all">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_all');</field>
+    
+    <method name="onRepeat">
+      <body>
+        <![CDATA[
+          // Rob decided to change the order.  Woo.
+          var value = 0;
+          switch ( this.remote_repeat.getIntValue() )
+          {
+            case 0:
+              value = 2;
+              break;
+            case 1:
+              value = 0;
+              break;
+            case 2:
+              value = 1;
+              break;
+          }
+          this.remote_repeat.setValue( value );
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+  
+  
+  
+  <!-- SHUFFLE CONTROL -->
+
+
+
+
+  <binding id="shuffle">
+  
+   <content>
+     <xul:stack xbl:inherits="class=class" >
+       <xul:button sbid="shuffle_off" xbl:inherits="class=class,id=shuffleoffid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
+       <xul:button sbid="shuffle_on" xbl:inherits="class=class,id=shuffleonid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
+     </xul:stack>
+   </content>
+
+  <implementation type="application/x-javascript" name="shuffle_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        
+        this.remote_shuffle = new sbIDataRemote( "playlist.shuffle" ); 
+        this.bindshuffleoff = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_off, "hidden", true );
+        this.bindshuffleon = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_on, "hidden", true, true );
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="shuffle_off">document.getAnonymousElementByAttribute(this, 'sbid', 'shuffle_off');</field>
+    <field name="shuffle_on">document.getAnonymousElementByAttribute(this, 'sbid', 'shuffle_on');</field>
+    
+    <method name="onShuffle">
+      <body>
+        <![CDATA[
+          this.remote_shuffle.setValue( ( this.remote_shuffle.getIntValue() + 1 ) % 2 );
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+
+  
+  
+  <!-- SEEK CONTROL -->
+
+  
+  
+  
+  <binding id="seekbar" extends="chrome://songbird/content/bindings/progress_slider.xml#progress_slider">
+
+   <handlers>
+     <handler event="progress_slider-change" action="this.onTrackSeekbar();"/>
+     <handler event="progress_slider-release" action="this.onReleaseSeekbar();"/>
+   </handlers>
+
+  <implementation type="application/x-javascript" name="seekbar_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.remote_position = new sbIDataRemote( "metadata.position" );
+        
+        var onremotepositionchange = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onRemotePositionChange(); } 
+        } onremotepositionchange._that = this;
+        this.remote_position.bindCallbackFunction(onremotepositionchange, true);
+
+        this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
+
+        
+        this.trackingPosition = 0;
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+    
+    <method name="onTrackSeekbar">
+      <body>
+        <![CDATA[
+          this.trackingPosition = 1;
+        ]]>
+      </body>
+    </method>
+
+    <method name="onReleaseSeekbar">
+      <body>
+        this.gPPS.setPosition(this.value);
+        this.trackingPosition = 0;
+      </body>
+    </method>
+
+    <method name="onRemotePositionChange">
+      <body>
+        if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
+        this.value = gPPS.getPosition();
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+  
+  
+  
+  <!-- TOTALTIME CONTROL -->
+
+
+
+
+  <binding id="totaltime">
+  
+   <content>
+     <xul:label sbid="timelabel" xbl:inherits="id=id,class=class" onmousedown="onTotalDown();"/> 
+   </content>
+
+  <implementation type="application/x-javascript" name="totaltime_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        
+        this.remote_showRemaining = new sbIDataRemote( "faceplate.showremainingtime" ); 
+        this.bindtotaltime = SBDataBindElementAttribute( "metadata.length.str", this.label, "value" );
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'timelabel');</field>
+    
+    <method name="onTotalDown">
+      <body>
+        <![CDATA[
+        log("here");
+          var len = gPPS.getLength();
+          if ( len > 0 )
+          {
+            this.remote_showRemaining.setValue(!this.remote_showRemaining.getBoolValue());
+          }
+          // If you try to toggle it while it is zero, you lose the state.
+          else
+          {
+            this.remote_showRemaining.setValue(false);
+          }
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+</bindings>
+

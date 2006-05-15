@@ -43,5 +43,6 @@ function sbMessageBox( title, message, wantcancel )
   {
     alert("sbMessageBox - " + err);
   }
+  return 0;
 }
 

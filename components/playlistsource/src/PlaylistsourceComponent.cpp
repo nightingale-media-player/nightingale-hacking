@@ -29,6 +29,9 @@
 * \brief Songbird Playlistsource Component Factory and Main Entry Point.
 */
 
+#pragma warning(push)
+#pragma warning(disable:4800)
+
 #include "nsIGenericFactory.h"
 #include "Playlistsource.h"
 
@@ -55,3 +58,4 @@ static nsModuleComponentInfo components[] =
 
 NS_IMPL_NSGETMODULE("SongbirdPlaylistsourceComponent", components)
 
+#pragma warning(pop)

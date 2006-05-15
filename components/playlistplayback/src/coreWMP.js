@@ -207,7 +207,7 @@ function CoreWMP() {
   }
   this.setPosition = function(position) {
     this._verifyObject();
-    this._object.controls.currentPosition / 1000;
+    this._object.controls.currentPosition = position / 1000;
   }
 
   /**

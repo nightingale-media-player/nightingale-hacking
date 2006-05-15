@@ -118,7 +118,7 @@ function sbIDataRemote( key, root )
     // Set the strings
     if ( root == null )
     {
-      this.m_Root = "songbird.dataremotes." + key; // Use key in root string, makes unique observer lists per key (big but fast?).
+      this.m_Root = "songbird.dataremotes." + key + "."; // Use key in root string, makes unique observer lists per key (big but fast?).
       this.m_Key = key;
     }
     else
@@ -219,8 +219,17 @@ function sbIDataRemote( key, root )
             // Handle callback states
             if ( this.m_CallbackFunction )
             {
-              // Call the callback function
-              this.m_CallbackFunction( value );
+              // Call the callback function/handlerobject
+              if (this.m_CallbackFunction.handleEvent) 
+              {
+                var e = document.createEvent("Events");
+                e.initEvent("dataremote-change", false, true);
+                this.m_CallbackFunction.handleEvent(e);
+              }
+              else 
+              {
+                this.m_CallbackFunction( value );
+              }
             }
             else if ( this.m_CallbackObject && this.m_CallbackPropery )
             {
@@ -403,6 +412,15 @@ function sbIDataRemote( key, root )
       }
     };
 
+    this.setBoolValue = function(value) 
+    {
+      if (value)
+        value = "1";
+      else
+        value = "0";
+      return this.setValue(value);
+    }
+
     // override for boolean type
     this.setValue = function( value )
     {
@@ -466,6 +484,12 @@ function sbIDataRemote( key, root )
       return this.makeIntValue( this.getValue() );
     }
     
+    // GetIntValue - Get the value from the data store as an int
+    this.getBoolValue = function()
+    {
+      return this.makeIntValue( this.getValue() ) != 0;
+    }
+    
     // MakeIntValue - Get the value from the data store as an int
     this.makeIntValue = function( value )
     {
@@ -498,7 +522,9 @@ function SBDataBindElementProperty( key, elem, prop, bool, not, eval )
   var retval = null;
   try
   {
-    var obj = document.getElementById( elem );
+    var obj;
+    if (typeof(elem) == "object") obj = elem;
+    else obj = document.getElementById( elem );
     if ( obj )
     {
       retval = new sbIDataRemote( key );
@@ -520,7 +546,9 @@ function SBDataBindElementAttribute( key, elem, attr, bool, not, eval )
   var retval = null;
   try
   {
-    var obj = document.getElementById( elem );
+    var obj;
+    if (typeof(elem) == "object") obj = elem;
+    else obj = document.getElementById( elem );
     if ( obj )
     {
       retval = new sbIDataRemote( key );

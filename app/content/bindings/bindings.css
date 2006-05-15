@@ -26,8 +26,8 @@
 
 /* Uh... we should maybe have sb_ prefices or something. */
 
-seekbar {
-  -moz-binding: url("chrome://songbird/content/bindings/seekbar.xml#seekbar");
+progress_slider {
+  -moz-binding: url("chrome://songbird/content/bindings/progress_slider.xml#progress_slider");
 }
 
 smart_conditions {
@@ -69,3 +69,36 @@ servicetree {
 sbextensions {
   -moz-binding: url("chrome://songbird/content/bindings/sbextensions.xml#sbextensions");
 }
+
+player_volume {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#volume");
+}
+
+player_mute {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#mute");
+}
+
+player_forward {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#forward");
+}
+
+player_back {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#back");
+}
+
+player_repeat {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#repeat");
+}
+
+player_shuffle {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#shuffle");
+}
+
+player_seekbar {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#seekbar");
+}
+
+player_totaltime {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#totaltime");
+}
+

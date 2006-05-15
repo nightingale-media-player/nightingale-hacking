@@ -45,14 +45,6 @@ try
       //  5 - Optionally assign the data as a boolean NOT of the value
       //  6 - Optionally apply an eval string where `value = eval( "eval_string" );`
       
-      // Playlist Items
-      MiniplayerAdd( SBDataBindElementAttribute( "playlist.shuffle", "rmp_demo_btn_shuf", "hidden", true ) );
-      MiniplayerAdd( SBDataBindElementAttribute( "playlist.shuffle", "rmp_demo_btn_shuf_on", "hidden", true, true ) );
-
-      MiniplayerAdd( SBDataBindElementAttribute( "playlist.repeat", "rmp_demo_btn_rep", "hidden", true, false, "parseInt( value ) != 0" ) );
-      MiniplayerAdd( SBDataBindElementAttribute( "playlist.repeat", "rmp_demo_btn_rep1", "hidden", true, false, "parseInt( value ) != 1" ) );
-      MiniplayerAdd( SBDataBindElementAttribute( "playlist.repeat", "rmp_demo_btn_repa", "hidden", true, false, "parseInt( value ) != 2" ) );
-      
       // Metadata Items    
       
       MiniplayerAdd( SBDataBindElementProperty ( "metadata.title",  "rmp_demo_text_title", "value" ) );
@@ -61,16 +53,7 @@ try
 //      MiniplayerAdd( SBDataBindElementProperty ( "metadata.album", "rmp_demo_text_album", "value" ) );
       
       MiniplayerAdd( SBDataBindElementAttribute( "metadata.position.str", "rmp_demo_text_time_elapsed", "value" ) );
-      MiniplayerAdd( SBDataBindElementAttribute( "metadata.length.str", "rmp_demo_text_time_total", "value" ) );
       
-      MiniplayerAdd( SBDataBindElementProperty ( "metadata.position", "songbird_seekbar", "value", false, false, "parseInt( value )" ) );
-      MiniplayerAdd( SBDataBindElementProperty ( "metadata.length", "songbird_seekbar", "maxpos" ) );
-
-      MiniplayerAdd( SBDataBindElementProperty( "faceplate.volume", "songbird_volume", "value", false, false) );
-      MiniplayerAdd( SBDataBindElementAttribute( "faceplate.mute", "mute_on", "hidden", true, true ) );
-      MiniplayerAdd( SBDataBindElementAttribute( "faceplate.mute", "mute_off", "hidden", true ) );
-      
-
       // Faceplate Items    
       MiniplayerAdd( SBDataBindElementAttribute( "faceplate.play", "rmp_demo_btn_pause", "hidden", true ) );
       MiniplayerAdd( SBDataBindElementAttribute( "faceplate.play", "rmp_demo_btn_play", "hidden", true, true ) );

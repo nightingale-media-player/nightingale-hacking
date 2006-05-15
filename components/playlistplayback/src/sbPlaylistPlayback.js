@@ -291,11 +291,8 @@ PlaylistPlayback.prototype = {
   _playUrl:            null,
   _seenPlaying:        null,
   _lastVolume:         null,
-  _volumeLastReadback: null,
-  _trackerVolume:      null,
   _volume:             null,
   _muteData:           null,
-  _seekbarTracker:     null,
   _playlistRef:        null,
   _repeat:             null,
   _shuffle:            null,
@@ -311,7 +308,6 @@ PlaylistPlayback.prototype = {
     
   _faceplateState:       null,
   _restartOnPlaybackEnd: null,
-  _seekbarTracker:       null,
   _resetSearchData:      null,
   
   _requestedVolume:      -1,
@@ -351,9 +347,6 @@ PlaylistPlayback.prototype = {
     this._playUrl               = createAndInitDataRemote("faceplate.play.url");
     //actually playing         
     this._seenPlaying           = createAndInitDataRemote("faceplate.seenplaying");
-    this._lastVolume            = createAndInitDataRemote("faceplate.volume.last");
-    this._volumeLastReadback    = createAndInitDataRemote("faceplate.volume.lastreadback");
-    this._trackerVolume         = createAndInitDataRemote("faceplate.volume.tracker");
     this._volume                = createAndInitDataRemote("faceplate.volume");
     //t/f                      
     this._muteData              = createAndInitDataRemote("faceplate.mute");
@@ -370,7 +363,6 @@ PlaylistPlayback.prototype = {
     this._metadataUrl           = createAndInitDataRemote("metadata.url");
     this._metadataPos           = createAndInitDataRemote("metadata.position");
     this._metadataLen           = createAndInitDataRemote("metadata.length");
-    this._seekbarTracker        = createAndInitDataRemote("faceplate.seek.tracker");
     this._resetSearchData       = createAndInitDataRemote("faceplate.search.reset");
     this._metadataPosText       = createAndInitDataRemote("metadata.position.str");
     this._metadataLenText       = createAndInitDataRemote("metadata.length.str");
@@ -384,8 +376,6 @@ PlaylistPlayback.prototype = {
     this._metadataPosText.setValue( "0:00:00" );
     this._metadataLenText.setValue( "0:00:00" );
     this._showRemaining.setBoolValue(false);
-    this._trackerVolume.setBoolValue(false);
-    this._volumeLastReadback.setValue( -1 );
     this._muteData.setBoolValue( false );
     this._playlistRef.setValue( "" );
     this._playlistIndex.setValue( -1 );
@@ -397,8 +387,8 @@ PlaylistPlayback.prototype = {
     this._playingRef.setValue( "" );
     this._playUrl.setValue( "" ); 
     this._playButton.setValue( 1 ); // Start on.
-    this._repeat.setValue( 0 ); // start with no shuffle
-    this._shuffle.setBoolValue( false ); // start with no shuffle
+    if (this._repeat.getValue() == '') this._repeat.setValue( 0 ); // start with no shuffle
+    if (this._shuffle.getValue() == '') this._shuffle.setBoolValue( false ); // start with no shuffle
   },
   
   _releaseDataRemotes: function() {
@@ -406,9 +396,6 @@ PlaylistPlayback.prototype = {
     this._playButton.unbind();
     this._playUrl.unbind();
     this._seenPlaying.unbind();
-    this._lastVolume.unbind();
-    this._volumeLastReadback.unbind();
-    this._trackerVolume.unbind();
     this._volume.unbind();
     this._muteData.unbind();
     this._playingRef.unbind();
@@ -423,7 +410,6 @@ PlaylistPlayback.prototype = {
     this._metadataUrl.unbind();
     this._metadataPos.unbind();
     this._metadataLen.unbind();
-    this._seekbarTracker.unbind();
     this._resetSearchData.unbind();
     this._metadataPosText.unbind();
     this._metadataLenText.unbind();
@@ -588,6 +574,8 @@ PlaylistPlayback.prototype = {
         LOG("addCore: selecting new core");
         this._currentCoreIndex = 0;
       }
+      core.setVolume(this._volume.getIntValue());
+      core.setMute(this._volume.getBoolValue());
     }
     else
       throw Components.results.NS_ERROR_INVALID_ARG;
@@ -774,6 +762,7 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    this._playNextPrev(1);
     return 0;
   },
 
@@ -784,6 +773,7 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    this._playNextPrev(-1);
     return 0;
   },
 
@@ -864,6 +854,11 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     core.setMute(mute);
+    // some cores set their volume to 0 on setMute(true), but do not restore
+    // the volume when mute is turned off, this fixes the problem
+    if (mute == false) core.setVolume(this._calculatedVolume);
+    this._onPollMute(core); // if the core is not playing, the loop is not running, but we still want the new mute state (and possibly volume) to be routed to all the UI controls
+    //this._onPollVolume(core);
     return true;
   },
 
@@ -1130,11 +1125,8 @@ PlaylistPlayback.prototype = {
         this._once = true;
       }
         
-      // Don't update the data if we're currently tracking the seekbar.
-      if ( ! this._seekbarTracker.getBoolValue() ) {
-        this._metadataLen.setValue( len );
-        this._metadataPos.setValue( pos );
-      }
+      this._metadataLen.setValue( len );
+      this._metadataPos.setValue( pos );
       
       // Ignore metadata when paused.
       if ( core.getPlaying() && ! core.getPaused() ) {
@@ -1142,8 +1134,9 @@ PlaylistPlayback.prototype = {
       }
       
       // Call all the wacky poll functions!  yeehaw!
-      this._onPollTimeText( len, pos );
       this._onPollVolume( core );
+      this._onPollMute( core );
+      this._onPollTimeText( len, pos );
       this._onPollButtons( len, core );
       this._onPollCompleted( len, pos, core );
     }       
@@ -1167,18 +1160,20 @@ PlaylistPlayback.prototype = {
 
 
   // Routes volume changes from the core to the volume ui data remote 
-  // (faceplate sets "faceplate.volume.tracker" to true for bypass while user is changing the volume)
   
   _onPollVolume: function ( core ) {
-    if ( ! this._trackerVolume.getBoolValue() ) {
-      var v = core.getVolume();
-      if ( v != this._volumeLastReadback.getIntValue())  {
-        this._volumeLastReadback.setValue( -1 );
-        this._volume.setValue(core.getVolume());
-      }
+      var v = this.getVolume();
+      if ( v != this._volume.getIntValue() ) {
+        this._volume.setValue(v);
     }
   },
-  
+
+  _onPollMute: function ( core ) {
+      var mute = core.getMute();
+      if ( mute != this._muteData.getBoolValue() ) {
+        this._muteData.setBoolValue(mute);
+      }
+  },
 
   // Routes core playback status changes to the play/pause button ui data remote
 
@@ -1250,55 +1245,8 @@ PlaylistPlayback.prototype = {
       // Oh, NOW you say we've stopped, eh?
       this._seenPlaying.setBoolValue(false);
       this._stopPlayerLoop();
-                                                         // GRRRRRR!
-      var cur_index = this._playlistIndex.getIntValue(); // this._findCurrentIndex;
-      var cur_ref = this._playingRef.getValue();
-      this._playlistIndex.setValue( cur_index );
-
-      LOG( "current index: " + cur_index );
       
-      if ( cur_index > -1 ) {
-        // Play the next playlist entry tree index (or whatever, based upon state.)
-        var num_items = this._source.GetRefRowCount( cur_ref );
-        LOG( num_items + " items in the current playlist" );
-        var next_index = -1;
-        // Are we confused?
-        if ( cur_index != -1 ) {
-          // Are we REPEAT ONE?
-          if ( this._repeat.getIntValue() == 1 ) {
-            next_index = cur_index;
-          }
-          // Are we SHUFFLE?
-          else if ( this._shuffle.getBoolValue() ) {
-            var rand = num_items * Math.random();
-            next_index = Math.floor( rand );
-            LOG( "shuffle: " + next_index );
-          }
-          else {
-            // Increment
-            next_index = parseInt( cur_index ) + 1;
-            LOG( "increment: " + next_index );
-            // Are we at the end?
-            if ( next_index >= num_items ) 
-              // Are we REPEAT ALL?
-              if ( this._repeat.getIntValue() == 2 )
-                next_index = 0; // Start over
-              else
-                next_index = -1; // Give up
-          }
-        }
-        
-        // If we think we want to play a track, do so.
-        LOG( "next index: " + next_index );
-        if ( next_index != -1 ) 
-          this.playRef( cur_ref, next_index );
-          
-        // "FIXME" -- mig sez: I think the reason it was broke is because you
-        // basically made it restart on playLIST end.  And that would get confusing,
-        // I assume.
-        if (this._restartOnPlaybackEnd.getBoolValue()) 
-          restartApp();
-      }
+      this._playNextPrev(1);
     }
     else {
       // After 10 seconds or fatal error, give up and go to the next one?
@@ -1308,11 +1256,63 @@ PlaylistPlayback.prototype = {
     
   },
   
+  _playNextPrev: function ( incr ) {
+                                                        // GRRRRRR!
+    var cur_index = this._playlistIndex.getIntValue(); // this._findCurrentIndex;
+    var cur_ref = this._playingRef.getValue();
+    this._playlistIndex.setValue( cur_index );
+
+    LOG( "current index: " + cur_index );
+    
+    if ( cur_index > -1 ) {
+      // Play the next playlist entry tree index (or whatever, based upon state.)
+      var num_items = this._source.GetRefRowCount( cur_ref );
+      LOG( num_items + " items in the current playlist" );
+      var next_index = -1;
+      // Are we confused?
+      if ( cur_index != -1 ) {
+        // Are we REPEAT ONE?
+        if ( this._repeat.getIntValue() == 1 ) {
+          next_index = cur_index;
+        }
+        // Are we SHUFFLE?
+        else if ( this._shuffle.getBoolValue() ) {
+          var rand = num_items * Math.random();
+          next_index = Math.floor( rand );
+          LOG( "shuffle: " + next_index );
+        }
+        else {
+          // Increment / Decrement
+          next_index = parseInt( cur_index ) + parseInt( incr );
+          LOG( "increment: " + next_index );
+          // Are we at the end?
+          if ( next_index >= num_items ) 
+            // Are we REPEAT ALL?
+            if ( this._repeat.getIntValue() == 2 )
+              next_index = 0; // Start over
+            else
+              next_index = -1; // Give up
+        }
+      }
+      
+      // If we think we want to play a track, do so.
+      LOG( "next index: " + next_index );
+      if ( next_index != -1 ) 
+        this.playRef( cur_ref, next_index );
+        
+      // "FIXME" -- mig sez: I think the reason it was broke is because you
+      // basically made it restart on playLIST end.  And that would get confusing,
+      // I assume.
+      if (this._restartOnPlaybackEnd.getBoolValue()) 
+        restartApp();
+    }
+  },
+  
   _findCurrentIndex: function () {
     var retval = -1;
     var ref = this._playingRef.getValue();
     if ( this._playingRef.getValue().length > 0 ) {
-      retval = this._source.GetRefRowByColumnValue( ref, "url", playerControls_playURL.getValue() );
+      retval = this._source.GetRefRowByColumnValue( ref, "url", this._playUrl.getValue() );
     }
     return retval;
   },

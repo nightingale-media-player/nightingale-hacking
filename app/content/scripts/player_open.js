@@ -134,7 +134,7 @@ try
           SBScanServiceTreeNewEntryStart(); // Do this right after you know you have added to the servicelist?
         }
 
-        SBSyncPlaylistIndex();
+        //SBSyncPlaylistIndex();
       }
     }
     catch(err)

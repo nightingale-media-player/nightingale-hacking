@@ -1794,7 +1794,7 @@ Mute and Slider
 
 /*
 */
-#songbird_volume > slider,
+#songbird_volume > progress_slider,
 #songbird_volume gripper
 {  
   -moz-appearance: none;
@@ -2626,7 +2626,7 @@ window#rmp_demo
 
 /*
 */
-#rmp_demo_volume > slider,
+#rmp_demo_volume > progress_slider,
 #rmp_demo_volume gripper
 {  
   -moz-appearance: none;

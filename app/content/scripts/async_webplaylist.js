@@ -124,6 +124,7 @@ try
        {
         alert( "async_webplaylist - aBodyEval\n\n" + err );
        }
+      return 0;
       },
 
       // aFinishedEval

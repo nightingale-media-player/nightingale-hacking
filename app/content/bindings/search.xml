@@ -340,7 +340,7 @@
                 }
               }
               this.list.appendItem( value, null, null )
-              retval = true;
+              //retval = true;
             }
           } 
           this.list.selectedIndex = prev_sel;

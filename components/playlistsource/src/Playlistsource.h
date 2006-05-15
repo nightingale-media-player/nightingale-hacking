@@ -259,3 +259,4 @@ private:
   class resultslist_t   : public std::list< nsCOMPtr<sbIDatabaseResult> > {};
   resultslist_t m_Results;
 };
+
