@@ -35,7 +35,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\&#x0D;&#x0A;echo $(ProjectExt) &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo Release\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo obj\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
@@ -59,7 +59,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\&#x0D;&#x0A;echo $(ProjectExt) &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo Release\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo obj\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>

@@ -118,15 +118,23 @@ try
         return;
       }
       
+      // If we're waiting on an asynchronous read,
       if ( bsMDHandler )
       {
+        // Ask if it is done.
         if ( bsMDHandler.Completed() )
+        {
+          // Always submit after an asynchronous read.  (for now?)
+          bsSubmitQueries = true;
           BSReadHandlerValues();
+        }
         return;
       }
 
+      // People can pause us
       if ( ! bsScanningPaused.getIntValue() )
       {
+        // So can executing queries, or the media scan.
         if ( ! bsDBQuery.IsExecuting() && ( SBDataGetIntValue( "media_scan.open" ) == 0 ) )
         {
           if ( bsSubmitQueries )
@@ -294,7 +302,7 @@ try
     var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
     var url = result.GetRowCellByColumn( bsLastRow, "url" );
     var service_uuid = result.GetRowCellByColumn( bsLastRow, "service_uuid" );
-    BSCalcMaxArray( result.GetRowCount() );
+//    BSCalcMaxArray( result.GetRowCount() ); // leave it at 20.
     
     var metadata = new Array();
     if ( ! blank )

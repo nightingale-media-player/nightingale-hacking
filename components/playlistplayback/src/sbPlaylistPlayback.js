@@ -313,6 +313,9 @@ PlaylistPlayback.prototype = {
   _restartOnPlaybackEnd: null,
   _seekbarTracker:       null,
   _resetSearchData:      null,
+  
+  _requestedVolume:      -1,
+  _calculatedVolume:     -1,
 
   /**
    * ---------------------------------------------
@@ -821,7 +824,12 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return core.getVolume();
+    var retval = core.getVolume();
+    if ( retval == this._calculatedVolume ) {
+      retval = this._requestedVolume;
+    }
+//    dump( "GetVolume -- req: " + this._requestedVolume + " calc: " + this._calculatedVolume + " retval: " + retval + "\n" );
+    return retval;
   },
 
   /**
@@ -832,6 +840,9 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     core.setVolume(volume);
+    this._requestedVolume = volume;
+    this._calculatedVolume = core.getVolume();
+//    dump( "SetVolume -- req: " + this._requestedVolume + " calc: " + this._calculatedVolume + "\n" );
     return false;
   },
 
