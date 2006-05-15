@@ -404,8 +404,12 @@ function SBInitialize()
     {
       alert("songbird_hack.js - SBInitialize - " +  err);
     }
-*/    
-    
+*/
+
+    // XXXredfive - kick off a thread that will just add stuff
+    //       to the web playlist to see if we can crash it.
+    url_counter = 0;
+    //setInterval("SBFillWebPlaylist()", 500);
   }
   catch(err)
   {
@@ -414,6 +418,35 @@ function SBInitialize()
 }
 
 var aMetadataHandler = null;
+
+// XXXredfive - debugging method
+function SBFillWebPlaylist()
+{
+    var aDBQuery = new sbIDatabaseQuery();
+    aDBQuery.SetAsyncQuery( false );
+    aDBQuery.SetDatabaseGUID( WEB_PLAYLIST_CONTEXT );
+
+    var aMediaLibrary = (new sbIMediaLibrary());
+    aMediaLibrary.SetQueryObject( aDBQuery );
+    aMediaLibrary.CreateDefaultLibrary(); // Does WaitForCompletion();
+    aPlaylistManager = (new sbIPlaylistManager());
+    aPlaylistManager.CreateDefaultPlaylistManager( aDBQuery );
+
+    //aPlaylistManager.DeletePlaylist( WEB_PLAYLIST_TABLE, aDBQuery );
+    var aPlaylist = aPlaylistManager.CreatePlaylist( WEB_PLAYLIST_TABLE,
+                                                     WEB_PLAYLIST_TABLE_NAME,
+                                                     WEB_PLAYLIST_TABLE,
+                                                     "browser.uri",
+                                                     aDBQuery );
+
+    var keys = new Array( "title" );
+    var url = "http://www.foobar.com/track" + url_counter++ + ".mp3";
+    var values = new Array( ConvertUrlToDisplayName( url ) );
+    var guid = aMediaLibrary.AddMedia( url, keys.length, keys,
+                                       values.length, values, false, false );
+    aPlaylist.AddByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
+    dump("XXXredfive - just AddedByGUID:" + guid + "\n");
+}
 
 function SBUninitialize()
 {

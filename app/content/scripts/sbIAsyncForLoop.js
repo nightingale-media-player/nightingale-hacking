@@ -58,6 +58,7 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     this.m_FinishedEval  = aFinishedEval;
     this.m_StepsPer      = aStepsPerInterval;
     this.m_Delay         = aIntervalDelay;
+    this.m_Interval      = null;
     
     this.cancel = function()
     {
@@ -72,9 +73,10 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
         for ( var StepsPerCount = 0; StepsPerCount < this.m_StepsPer; StepsPerCount++ )
         {
           var pop = false;
-          var step = false
+          var step = false;
           try
           {
+            // either run a function or code to see if we are done processing
             if ( typeof( this.m_WhileEval ) == 'function' )
               step = this.m_WhileEval();
             else          
@@ -84,10 +86,12 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
           {
             alert( "sbIAsyncForLoop::eval( this.m_WhileEval )\r\n" + this.m_WhileEval + "\r\n" + err );
           }
+          // step will be false if we have processed everything.
           if ( step )
           {
             try
             {
+              // pop will be true if we found media, false otherwise
               if ( typeof( this.m_BodyEval ) == 'function' )
                 pop = this.m_BodyEval() == true;
               else          

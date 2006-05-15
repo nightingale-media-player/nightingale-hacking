@@ -1,5 +1,5 @@
 /*
- //
+//
 // BEGIN SONGBIRD GPL
 // 
 // This file is part of the Songbird web player.
@@ -49,7 +49,7 @@ try
     const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
     const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
     href_loop = new sbIAsyncForLoop
-    (
+    ( // this is an arg list:
       // aInitEval
       function()
       {
@@ -69,11 +69,18 @@ try
       // aBodyEval
       function()
       {
-try 
-{
-        // Don't run while the "main" playlist is up?  This is so gross.  UGH.  MUST REWRITE ENTIRE WORLD.
-        if ( thePlaylistTree ) { this.cancel(); onBrowserPlaylistHide(); } 
-        if ( !this.m_Interval ) return;
+       try 
+       {
+        // Do not run while the "main" playlist is up?  This is so gross.
+        //  UGH.  MUST REWRITE ENTIRE WORLD.
+        if ( thePlaylistTree ) {
+          this.cancel(); 
+          onBrowserPlaylistHide();
+        } 
+
+        // check is clearInterval has been called (see sbIAsyncForLoop.js:66)
+        if ( !this.m_Interval )
+          return true;
 
         var loop_break = false;
         // "A" tags
@@ -112,22 +119,24 @@ try
         }
         
         return loop_break;
-}
-catch ( err )        
-{
-  alert( "async_webplaylist - aBodyEval\n\n" + err );
-}
+       }
+       catch ( err )        
+       {
+        alert( "async_webplaylist - aBodyEval\n\n" + err );
+       }
       },
 
       // aFinishedEval
       function()
       {
-        if ( !this.m_Interval ) return;
+        if ( !this.m_Interval ) 
+          return;
         SBDataSetValue( "media_scan.open", false ); // ?  Don't let this go?
         SBDataSetValue( "webplaylist.total", this.a_array.length );
         SBDataSetValue( "webplaylist.current", this.a_array.length );
       },
-      20 // 20 steps per interval
+      20, // 20 steps per interval
+      0
     );
     // End of class construction for sbIAsyncPlaylist
     
@@ -161,8 +170,8 @@ catch ( err )
         if ( this.aPlaylist == null )
         {
           // When we first find media, flip the webplaylist. 
-//          alert("delete and create");
-          this.aPlaylistManager.DeletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
+          this.aPlaylistManager.DeletePlaylist( WEB_PLAYLIST_TABLE, 
+                                                this.aDBQuery );
           //this.aDBQuery.ResetQuery();
           this.aPlaylist = this.aPlaylistManager.CreatePlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
           this.data.setValue( true );
@@ -191,6 +200,7 @@ catch ( err )
           var guid = this.aMediaLibrary.AddMedia( url, keys.length, keys, values.length, values, false, false );
           // XXXredfive
           this.aPlaylist.AddByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
+          dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
           this.inserted.push( url );
           
           //A***
@@ -199,6 +209,13 @@ catch ( err )
           loop_break = true; // Only one synchronous database call per ui frame.
         }
       }
+      else
+      {
+        // decrement the total to keep the percentage indicator moving
+        var cur_total = SBDataGetValue( "webplaylist.total" );
+        SBDataSetValue( "webplaylist.total", --cur_total );
+      }
+    
       return loop_break;
     }
     SBDataSetValue( "webplaylist.total", href_loop.a_array.length );
