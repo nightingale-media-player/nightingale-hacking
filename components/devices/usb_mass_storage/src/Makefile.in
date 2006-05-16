@@ -84,6 +84,8 @@ ifeq (linux,$(SB_PLATFORM))
 endif
 
 ifeq (win32,$(SB_PLATFORM))
+  CPP_INCLUDES += $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include
+
   DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                                unicharutil_s \
                                $(NULL)

@@ -107,8 +107,13 @@ private:
   virtual void DeviceBusy(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_BUSY;}
 
 private:
+  typedef std::map<nsString, nsString> devicemap_t;
+
   PRUint32 mDeviceState;
   PRInt32 mCurrentTransferRowNumber;
 
   IUSBMassStorageDeviceHelper * m_pHelperImpl;
+  
+  PRLock *mConnectedDevicesLock;
+  devicemap_t mConnectedDevices;
 };

@@ -104,9 +104,16 @@ sbUSBMassStorageDevice::~sbUSBMassStorageDevice()
 /* PRBool OnUSBDeviceEvent (in PRBool deviceAdded, in wstring deviceIdentifier); */
 NS_IMETHODIMP sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded, const PRUnichar *deviceName, const PRUnichar *deviceIdentifier, PRBool *_retval)
 {
+  PRBool bInit = PR_FALSE;
+  
   if(deviceAdded)
   {
+    Initialize(&bInit);
     *_retval = m_pHelperImpl->Initialize(deviceName, deviceIdentifier);
+  }
+  else
+  {
+    
   }
 
   return NS_OK;
@@ -116,8 +123,11 @@ NS_IMETHODIMP sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded, const
 /* PRBool Initialize (); */
 NS_IMETHODIMP sbUSBMassStorageDevice::Initialize(PRBool *_retval)
 {
+  *_retval = PR_TRUE;
+
   // Resume transfer if any pending
-  sbDeviceBase::ResumeAbortedTransfer(NULL);
+  //sbDeviceBase::ResumeAbortedTransfer(NULL);
+
   return NS_OK;
 }
 

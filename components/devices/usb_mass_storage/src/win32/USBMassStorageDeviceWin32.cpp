@@ -54,12 +54,9 @@ PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const PRUnichar *deviceName,
   if(FindInReadable(NS_LITERAL_STRING("USBSTOR"), strDeviceName) == PR_TRUE)
   {
     bCanHandleDevice = PR_TRUE;
+    m_DeviceName = deviceName;
+    m_DeviceIdentifier = deviceIdentifier;
   }
-
-  /*
-  CreateFile()
-  DeviceIoControl()
-  */
 
   return bCanHandleDevice;
 } //Initialize
@@ -87,3 +84,13 @@ PRInt64 CUSBMassStorageDeviceHelperWin32::GetDeviceCapacity()
 {
   return -1;
 } //GetDeviceCapacity
+
+//-----------------------------------------------------------------------------
+PRBool CUSBMassStorageDeviceHelperWin32::GetDeviceInformation()
+{
+  PRBool bRet = PR_FALSE;
+
+  //UsbBuildGetDescriptorRequest();
+
+  return bRet;
+} //GetDeviceInformation

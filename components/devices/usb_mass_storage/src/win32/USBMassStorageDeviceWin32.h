@@ -36,8 +36,14 @@
 #include <string/nsStringAPI.h>
 #include "nsString.h"
 
+//#define WINVER        0x501
+//#define _WIN32_WINNT  0x501
+
 #include <windows.h>
 #include <stdio.h>
+
+#include <usb.h>
+#include <devioctl.h>
 
 #include "USBMassStorageDeviceHelper.h"
 
@@ -54,4 +60,10 @@ public:
   virtual const PRUnichar * GetDeviceSerialNumber();
 
   virtual PRInt64 GetDeviceCapacity();
+
+private:
+  PRBool GetDeviceInformation();
+
+  nsString m_DeviceName;
+  nsString m_DeviceIdentifier;  
 };
