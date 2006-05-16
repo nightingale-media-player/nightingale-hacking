@@ -199,11 +199,15 @@
           try
           {
             // And if it's a good string, launch it.
-            if ( ( the_url ) && ( the_url.indexOf ) && ( the_url.length > 0 ) && ( this.current_url != the_url ) )
+            if ( ( the_url ) &&
+                 ( the_url.indexOf ) &&
+                 ( the_url.length > 0 ) &&
+                 ( this.current_url != the_url ) )
             {
               // No more for loop.
               CancelAsyncWebDocument();
-              if (this.onPlaylistHide) this.onPlaylistHide();
+              if (this.onPlaylistHide)
+                this.onPlaylistHide();
               var theMainPane = this.browser;
               if (theMainPane)
               {
@@ -232,6 +236,44 @@
         ]]>
       </body>
     </method>
+
+    <!-- Launch an url that also exists in the service tree. So that calls
+           from the commands that load the web playlist and download playlist
+           highlight in the service tree.
+      -->
+
+    <method name="LaunchServiceURL">
+      <parameter name="the_url"/>
+      <body>
+        <![CDATA[
+          // get the tree, "hidden" columns object, row count
+          var serviceTree = this.tree;
+          var urlColumn = serviceTree.columns ?
+                          serviceTree.columns["url"] : "url";
+          var rowCount = serviceTree.view.rowCount; 
+
+          var index = 0;
+          for ( ; index < rowCount; index++ ) {
+            if ( serviceTree.view.getCellText(index, urlColumn) ==
+                 the_url )
+              break; 
+          }
+
+          // if we matched something in the serviceTree
+          if (index != rowCount) {
+            // set the selection and save the state
+            serviceTree.view.selection.currentIndex = index;
+            serviceTree.view.selection.select(index);
+            serviceTree.currentIndex = index;
+            this.SBDataSetValue( "servicetree.selection", index );
+          }
+
+          // Launch the URL regardless.
+          this.LaunchURL(the_url);
+       
+        ]]>
+      </body>
+    </method>
     
     <!-- When an item is selected, switch to the corresponding page -->
 
@@ -243,16 +285,26 @@
           { 
             var theServiceTree = this.tree;
             
-            // multiple selection on service tree only happen during the highlighting of an item in drag over, don't switch to the service
-            if (theServiceTree.getAttribute("seltype") == "multiple") return;
-            this.SBDataSetValue( "servicetree.selection", theServiceTree.currentIndex );
+            // multiple selection on service tree only happens during
+            //   the highlighting of an item in drag over, don't switch
+            //   to the service
+            if (theServiceTree.getAttribute("seltype") == "multiple") 
+              return;
+
+            // store the selected index as SB data.
+            this.SBDataSetValue( "servicetree.selection", 
+                                 theServiceTree.currentIndex );
+
             if ( theServiceTree.currentIndex >= 0 )
             {
               // Find the column. 
-              var urlcolumn = theServiceTree.columns ? theServiceTree.columns["url"] : "url";
+              var urlcolumn = theServiceTree.columns ?
+                              theServiceTree.columns["url"] : "url";
               
               // Get the text of the hidden tree cell, this contains the url.
-              var tree_url = theServiceTree.view.getCellText( theServiceTree.currentIndex, urlcolumn );
+              var tree_url = theServiceTree.view
+                                 .getCellText( theServiceTree.currentIndex,
+                                               urlcolumn );
               
               if ( tree_url.length > 0 )
               {
