@@ -11,7 +11,7 @@ mkdir ${DEPTH}/compiled/_packaging
 mkdir ${DEPTH}/compiled/_packaging/Songbird.app
 cp -RL ${DEPTH}/compiled/dist/* ${DEPTH}/compiled/_packaging/Songbird.app
 cp -RL ${DEPTH}/installer/macosx/*.plist ${DEPTH}/compiled/_packaging/Songbird.app/Contents/
-cp -RL ${DEPTH}/installer/macosx/Resources/* ${DEPTH}/compiled/_packaging/Songbird.app/Contents/Resources/
+cp -RL ${DEPTH}/compiled/dist/Contents/Resources/* ${DEPTH}/compiled/_packaging/Songbird.app/Contents/Resources/
 cp ${DEPTH}/installer/macosx//MacSongbirdInstall.icns ${DEPTH}/compiled/_packaging/Songbird.app/Contents/Resources/
 cp ${DEPTH}/installer/macosx/GPL.txt ${DEPTH}/compiled/_packaging/Songbird.app/
 cp ${DEPTH}/installer/macosx/LICENSE.txt ${DEPTH}/compiled/_packaging/Songbird.app/
