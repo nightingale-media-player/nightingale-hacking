@@ -19,6 +19,7 @@ lib_files="*embed_base.*
            *xpcomglue_s.*
            *xul.*
            *XUL*
+           *mozjs*
 "
 
 notice() {
