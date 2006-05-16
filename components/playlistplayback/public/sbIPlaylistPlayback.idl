@@ -133,9 +133,19 @@ interface sbIPlaylistPlayback : nsIObserver
                      in unsigned long index);
 
   /**
-   * This method just clears the internal playlist and plays a single file (for web playback)
+   * This method just clears the internal playlist and plays a single file
    */
   boolean playUrl(in wstring url);
+
+  /**
+   * This method imports the url in the library (if needed) and plays the ml from that point on
+   */
+  boolean playAndImportUrl(in wstring url);
+
+  /**
+   * This method imports the url in the library (if needed) but does not play it (returns item's row in table)
+   */
+  long importUrl(in wstring url);
 
   /**
    *

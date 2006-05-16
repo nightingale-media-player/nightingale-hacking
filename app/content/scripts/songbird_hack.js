@@ -1805,6 +1805,24 @@ function onLinkContext( evt )
   }
 }
 
+function playExternalUrl(the_url, tryweb) 
+{
+  var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+  // figure out if the url is in the webplaylist
+  if (tryweb && theWebPlaylist) 
+  {
+    var row = theWebPlaylist.findRowIdByUrl(the_url);
+    if (row != -1) 
+    {
+      // if so, play the ref, from that entry's index
+      PPS.playRef("NC:webplaylist_webplaylist", row);
+    }
+  } else {
+    // otherwise, play the url as external (added to the db, plays the library from that point on)
+    PPS.playAndImportUrl(the_url); // if the url is already in the lib, it is not added twice
+  }
+}
+
 // Catch a click on a media url and attempt to play it
 function onMediaClick( evt )
 {
@@ -1813,9 +1831,7 @@ function onMediaClick( evt )
     var the_url = GetHrefFromEvent( evt );
     if ( IsMediaUrl( the_url ) )
     {
-      URL.setValue(the_url);
-      playCurrentUrl( true );
-      
+      playExternalUrl(the_url, true);
       evt.stopPropagation();
       evt.preventDefault();
     }
@@ -2306,8 +2322,7 @@ function onHTMLContextMenu( target )
       case "html.context.open":
         if ( IsMediaUrl( theHTMLContextURL ) )
         {
-          URL.setValue(theHTMLContextURL);
-          playCurrentUrl( true );
+          playExternalUrl(theHTMLContextURL, true);
         }
         else
         {
@@ -2316,11 +2331,11 @@ function onHTMLContextMenu( target )
         }
       break;
       case "html.context.play":
-        URL.setValue(theHTMLContextURL);
-        playCurrentUrl( true );
+        playExternalUrl(theHTMLContextURL, true);
       break;
       case "html.context.add":
-        SBAddUrlToDatabase( theHTMLContextURL );
+        var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        PPS.importUrl(theHTMLContextURL);
       break;
       case "html.context.playlist":
         SBScanServiceTreeNewEntryEditable();
@@ -2515,6 +2530,9 @@ var SBDropObserver =
 {
   getSupportedFlavours : function () 
   {
+    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                            .getService(Components.interfaces.nsIConsoleService);
+    consoleService.logStringMessage("get flavours");
     var flavours = new FlavourSet();
     flavours.appendFlavour("application/x-moz-file","nsIFile");
 //    flavours.appendFlavour("application/x-moz-url");
@@ -2545,11 +2563,8 @@ function SBDropped()
 {
   if ( IsMediaUrl( theDropPath ) )
   {
-    // try to add it to the database.
-    SBAddUrlToDatabase( theDropPath );
-    // and then play it.
-    URL.setValue(theDropPath);
-    playCurrentUrl( true );
+    // add it to the db and play it.
+    playExternalUrl(theDropPath, false);
   }
   else if ( theDropIsDir )
   {

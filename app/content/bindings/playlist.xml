@@ -2548,22 +2548,18 @@
           try
           {
             // if this playlist is the currently playing one, set selection to the playing item
-            if ( this.tree.columns && (this.playlistRef.getValue() == this.playingRef.getValue()) )
+            if ( this.playlistRef.getValue() == this.playingRef.getValue() )
             {
-              var urlcolumn = this.tree.columns.getNamedColumn("url"); 
               var url = this.playUrl.getValue();
-              if (urlcolumn != null) 
+              var row = this.findUrl(url);
+              if (row != -1) 
               {
-                var row = this.findCell(urlcolumn, url);
-                if (row != -1) 
+                this.tree.view.selection.clearSelection();
+                this.tree.view.selection.rangedSelect(row, row, true);
+                if (scroll) 
                 {
-                  this.tree.view.selection.clearSelection();
-                  this.tree.view.selection.rangedSelect(row, row, true);
-                  if (scroll) 
-                  {
-                    var box = this.tree.treeBoxObject;
-                    box.ensureRowIsVisible(row);
-                  }
+                  var box = this.tree.treeBoxObject;
+                  box.ensureRowIsVisible(row);
                 }
               }
             }
@@ -2572,6 +2568,55 @@
           {
             alert( "playlist.xml - onPlayUrlChange - " + err );
           }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="findUrl">
+      <parameter name="url"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            if ( this.tree.columns ) {
+              var urlcolumn = this.tree.columns.getNamedColumn("url"); 
+              if (urlcolumn != null) 
+              {
+                var row = this.findCell(urlcolumn, url);
+                return row;
+              }
+            }
+          }
+          catch (err)
+          {
+            alert( "playlist.xml - findUrl - " + err );
+          }
+          return -1;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="findRowIdByUrl">
+      <parameter name="url"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            var i = this.findUrl(url);
+            if (i != -1) {
+              var idcolumn = this.tree.columns.getNamedColumn("row_id"); 
+              if (idcolumn != null) 
+              {
+                var rowid = this.tree.view.getCellText( i, idcolumn );
+                return rowid - 1;
+              }
+            }
+          }
+          catch (err)
+          {
+            alert( "playlist.xml - findRowIdByUrl - " + err );
+          }
+          return -1;
         ]]>
       </body>
     </method>

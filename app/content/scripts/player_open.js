@@ -52,12 +52,11 @@ try
     {
       // And if we're good, play it.
       seen_playing.setValue(false);
-      URL.setValue(fp.file.path);
-      
       theTitleText.setValue( fp.file.leafName );
       theArtistText.setValue( "" );
       theAlbumText.setValue( "" );
-      playCurrentUrl( false );
+      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      PPS.playAndImportUrl(fp.file.path);
     }
   }
 
@@ -72,11 +71,11 @@ try
     if ( url_open_data.retval == "ok" )
     {
       // And if we're good, play it.
-      URL.setValue(url_open_data.URL);
       theTitleText.setValue( url_open_data.URL );
       theArtistText.setValue( "" );
       theAlbumText.setValue( "" );
-      playCurrentUrl( true );
+      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      PPS.playAndImportUrl(url_open_data.URL);
     }  
   }
 

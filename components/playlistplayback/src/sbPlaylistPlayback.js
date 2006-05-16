@@ -749,6 +749,21 @@ PlaylistPlayback.prototype = {
     }
     return true;
   },
+  
+  playAndImportUrl: function(url) {
+    try  {
+      var row = this._importUrlInLibrary(url);
+      this.playRef("NC:songbird_library", row);
+    } catch( err ) {
+      LOG( "playAndImportUrl:\n" + err );
+      return false;
+    }
+    return true;
+  },
+  
+  importUrl: function(url) {
+    return this._importUrlInLibrary(url);
+  },
 
   /**
    * See sbIPlaylistPlayback.idl
@@ -1234,8 +1249,9 @@ PlaylistPlayback.prototype = {
       if ( artist == "null" ) artist = "";
       if ( genre == "null" ) genre = "";
       
-      if ( length == "Error" )
+      if ( length == "Error" ) {
         return;
+      }
       
       var set_metadata = false;
       if ( title.length && ( this._metadataTitle.getValue() != title ) ) {
@@ -1250,8 +1266,11 @@ PlaylistPlayback.prototype = {
         this._resetSearchData.setValue( this._resetSearchData.getIntValue() + 1 );
       }
 */      
-      this._metadataArtist.setValue( artist );
-      this._metadataAlbum.setValue( album );
+      if (title != "" || artist != "" || album != "") {
+        this._metadataTitle.setValue( title );
+        this._metadataArtist.setValue( artist );
+        this._metadataAlbum.setValue( album );
+      }
     }
   },
 
@@ -1345,8 +1364,8 @@ PlaylistPlayback.prototype = {
     return retval;
   },
   
-  _playDefault: function () {
-    
+  _playDefault: function () 
+  {
     // No current playlist?! naughty naughty!
     if ( this._playingRef.getValue().length == 0 )
     {
@@ -1356,6 +1375,24 @@ PlaylistPlayback.prototype = {
     {
       this.playRef(this._playingRef.getValue(), 0);
     }
+  },
+  
+  _importUrlInLibrary: function( the_url )
+  {
+    const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+    var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+    var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+    queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+    queryObj.SetDatabaseGUID("songbird");
+    library.SetQueryObject(queryObj);
+    var keys = new Array( "title" );
+    var values = new Array();
+    values.push( ConvertUrlToDisplayName( the_url ) );
+    var guid = library.AddMedia( the_url, keys.length, keys, values.length, values, false, false );
+    LOG("add media = " + guid);
+    var row = library.GetValueByGUID(guid, "id");
+    LOG("findbyguid = " + row);
+    return row - 1;
   },
   
 /*  
