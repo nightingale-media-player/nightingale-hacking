@@ -1497,35 +1497,32 @@ sbPlaylistsource::Init()
   sRDFService = do_GetService("@mozilla.org/rdf/rdf-service;1");
   NS_ENSURE_TRUE(sRDFService, NS_ERROR_FAILURE);
 
-  // Get the following resources
-  NS_NAMED_LITERAL_CSTRING(ncPlaylist, "NC:Playlist");
-  NS_NAMED_LITERAL_CSTRING(ncChild, NC_NAMESPACE_URI "child");
-  NS_NAMED_LITERAL_CSTRING(ncPulse, NC_NAMESPACE_URI "pulse");
-  NS_NAMED_LITERAL_CSTRING(rdfInstanceOf, RDF_NAMESPACE_URI "instanceOf");
-  NS_NAMED_LITERAL_CSTRING(rdfType, RDF_NAMESPACE_URI "type");
-  NS_NAMED_LITERAL_CSTRING(rdfNextVal, RDF_NAMESPACE_URI "nextVal");
-  NS_NAMED_LITERAL_CSTRING(rdfSeq, RDF_NAMESPACE_URI "Seq");
-
-  rv = sRDFService->GetResource(ncPlaylist, getter_AddRefs(kNC_Playlist));
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING("NC:Playlist"),
+                                       getter_AddRefs(kNC_Playlist));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetResource(ncChild, getter_AddRefs(kNC_child));
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI "child"),
+                                getter_AddRefs(kNC_child));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetResource(ncPulse, getter_AddRefs(kNC_pulse));
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI "pulse"),
+                                getter_AddRefs(kNC_pulse));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetResource(rdfInstanceOf,
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "instanceOf"),
                                 getter_AddRefs(kRDF_InstanceOf));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetResource(rdfType, getter_AddRefs(kRDF_type));
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "type"),
+                                getter_AddRefs(kRDF_type));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetResource(rdfNextVal, getter_AddRefs(kRDF_nextVal));
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "nextVal"),
+                                getter_AddRefs(kRDF_nextVal));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetResource(rdfSeq, getter_AddRefs(kRDF_Seq));
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "Seq"),
+                                getter_AddRefs(kRDF_Seq));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sRDFService->GetLiteral(NS_LITERAL_STRING("PR_TRUE").get(),
