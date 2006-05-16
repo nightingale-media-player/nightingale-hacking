@@ -306,6 +306,8 @@ PlaylistPlayback.prototype = {
   _metadataLen:        null,
   _metadataPosText:    null,
   _metadataLenText:    null,
+  //_statusText:         null,
+  //_statusStyle:        null,
     
   _faceplateState:       null,
   _restartOnPlaybackEnd: null,
@@ -370,6 +372,9 @@ PlaylistPlayback.prototype = {
     this._faceplateState        = createAndInitDataRemote("faceplate.state");
     this._restartOnPlaybackEnd  = createAndInitDataRemote("restart.onplaybackend");
 
+    //this._statusText            = createAndInitDataRemote("faceplate.status.text" );
+    //this._statusStyle           = createAndInitDataRemote("faceplate.status.style" );
+
 // Set startup defaults
     this._metadataPos.setValue( 0 );
     this._metadataLen.setValue( 0 );
@@ -382,9 +387,12 @@ PlaylistPlayback.prototype = {
     this._playlistIndex.setValue( -1 );
     this._faceplateState.setValue( 0 );
     this._restartOnPlaybackEnd.setBoolValue( false );
+//    this._metadataUrl.setValue( "" );
 //    this._metadataTitle.setValue( "" );
 //    this._metadataArtist.setValue( "" );
 //    this._metadataAlbum.setValue( "" );
+    //this._statusText.setValue("");
+    //this._statusStyle.setValue("");
     this._playingRef.setValue( "" );
     this._playUrl.setValue( "" ); 
     this._playButton.setValue( 1 ); // Start on.
@@ -417,6 +425,8 @@ PlaylistPlayback.prototype = {
     this._metadataLenText.unbind();
     this._faceplateState.unbind();
     this._restartOnPlaybackEnd.unbind();
+    //this._statusText.unbind();
+    //this._statusStyle.unbind();
   },
   
   /**
