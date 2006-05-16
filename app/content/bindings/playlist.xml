@@ -182,7 +182,7 @@
 
         var onplayurlchangechange = { 
           _that: null, 
-          handleEvent: function( event ) { this._that.syncPlaylistIndex(); } 
+          handleEvent: function( event ) { this._that.syncPlaylistIndex(false); } 
         } onplayurlchangechange._that = this;
         this.playUrl.bindCallbackFunction(onplayurlchangechange, true);
       }
@@ -2542,6 +2542,7 @@
     </method>
     
     <method name="syncPlaylistIndex">
+      <parameter name="scroll"/>
       <body>
         <![CDATA[
           try
@@ -2558,6 +2559,11 @@
                 {
                   this.tree.view.selection.clearSelection();
                   this.tree.view.selection.rangedSelect(row, row, true);
+                  if (scroll) 
+                  {
+                    var box = this.tree.treeBoxObject;
+                    box.ensureRowIsVisible(row);
+                  }
                 }
               }
             }

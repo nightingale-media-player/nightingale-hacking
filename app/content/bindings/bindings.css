@@ -102,3 +102,7 @@ player_totaltime {
   -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#totaltime");
 }
 
+player_playpause {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#playpause");
+}
+

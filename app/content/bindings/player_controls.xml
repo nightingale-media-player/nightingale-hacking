@@ -240,7 +240,6 @@
           if ( !this.seen_skip )
           {
             this.gPPS.next();
-            // this.syncPlaylistIndex();
           }
         ]]>
       </body>
@@ -330,7 +329,6 @@
           if ( !this.seen_skip )
           {
             this.gPPS.previous();
-            //this.syncPlaylistIndex();
           }
         ]]>
       </body>
@@ -505,8 +503,7 @@
         this.remote_position.bindCallbackFunction(onremotepositionchange, true);
 
         this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
-
-        
+       
         this.trackingPosition = 0;
       ]]>
     </constructor>
@@ -574,7 +571,6 @@
     <method name="onTotalDown">
       <body>
         <![CDATA[
-        log("here");
           var len = gPPS.getLength();
           if ( len > 0 )
           {
@@ -592,6 +588,115 @@
    </implementation>
  
   </binding>
+
+
+
+
+  <!-- PLAY/PAUSE CONTROL -->
+
+
+
+
+  <binding id="playpause">
+  
+   <content>
+     <xul:stack xbl:inherits="id=id,class=class" flex="1">
+       <xul:button sbid="play" xbl:inherits="id=playid,class=class" oncommand="onPlay( );" tooltiptext="&tooltip.control.play;" />
+       <xul:button sbid="pause" xbl:inherits="id=pauseid,class=class" oncommand="onPause( );" tooltiptext="&tooltip.control.play;" />
+     </xul:stack>
+   </content>
+
+  <implementation type="application/x-javascript" name="playpause_control">
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.remote_seenPlaying = new sbIDataRemote( "faceplate.seenplaying" ); 
+        this.remote_playingRef =  new sbIDataRemote( "playing.ref" ); 
+        this.remote_playlistIndex =  new sbIDataRemote( "playlist.index" ); 
+        this.pausebinding = SBDataBindElementAttribute( "faceplate.play", this.pause, "hidden", true );
+        this.playbinding = SBDataBindElementAttribute( "faceplate.play", this.play, "hidden", true, true );
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="play">document.getAnonymousElementByAttribute(this, 'sbid', 'play');</field>
+    <field name="pause">document.getAnonymousElementByAttribute(this, 'sbid', 'pause');</field>
+    
+    <method name="onPlay">
+      <body>
+        <![CDATA[
+          var ref = "";
+          if (this.gPPS.getStarted()) {
+            if (this.gPPS.getPaused()) {
+              gPPS.play();
+            } else {
+              // player is buffering, because the play button is visible (not started) yet pause is not set and the player is started
+              // start the playlist again at the current spot
+              this.gPPS.playRef(this.remote_playingRef.getValue(), this.remote_playlistIndex.getIntValue());
+            }
+          } else {
+            var ref = "";
+            var index = 0;
+            var playlist = this.getCurrentPlaylist();
+            if (playlist) {
+              ref = playlist.ref;
+              index = playlist.index;
+            } 
+            if (ref == "") {
+              ref = "NC:songbird_library";
+              index = 0;
+              this.loadLibrary();
+            }
+            this.gPPS.playRef(ref, index);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPause">
+      <body>
+        <![CDATA[
+          if ( this.remote_seenPlaying.getBoolValue() )
+          {
+            this.gPPS.pause();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="loadLibrary">
+      <body>
+        <![CDATA[
+          // optional connection
+          var theServiceTree = document.getElementById( 'frame_servicetree' );
+          if (theServiceTree) theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?library" );
+        ]]>
+      </body>
+    </method>
+
+    <method name="getCurrentPlaylist">
+      <body>
+        <![CDATA[
+          var pl = document.__CURRENTPLAYLIST__;
+          if (!pl) pl = document.__CURRENTWEBPLAYLIST__;
+          if (!pl) return null;
+          if ( pl.wrappedJSObject )
+            pl = pl.wrappedJSObject;
+          return pl;
+        ]]>
+      </body>
+    </method>
+    
+
+   </implementation>
+ 
+  </binding>
+
 
 
 

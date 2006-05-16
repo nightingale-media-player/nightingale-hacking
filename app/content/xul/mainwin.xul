@@ -261,10 +261,13 @@
                 <hbox id="playbutton_box" class="sb_faceplate">
                   <player_back id="songbird_btn_back"  class="sb_faceplate" tooltiptext="&tooltip.control.back;" />
                   <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                  <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" class="sb_faceplate" flex="1"/>
+                  <!-- 
                   <stack id="songbird_btn_play_pause" class="sb_faceplate" flex="1">
                     <button id="songbird_btn_play"  class="sb_faceplate" oncommand="onPlay( );" tooltiptext="&tooltip.control.play;" />
                     <button id="songbird_btn_pause" class="sb_faceplate" oncommand="onPause( );" tooltiptext="&tooltip.control.pause;" />
                   </stack>
+                  -->
                   <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                   <player_forward id="songbird_btn_fwd" class="sb_faceplate" tooltiptext="&tooltip.control.fwd;" /> -->
                 </hbox>
@@ -515,8 +518,6 @@
    src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIPlaylistPlayback.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_controls.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/mousewheel.js"/>
   <script type="application/x-javascript" 

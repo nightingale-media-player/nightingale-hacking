@@ -1172,14 +1172,16 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
@@ -1281,27 +1283,6 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						Name="Release|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\scripts\player_controls.js">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
 							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>

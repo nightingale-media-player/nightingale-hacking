@@ -54,10 +54,6 @@ try
       
       MiniplayerAdd( SBDataBindElementAttribute( "metadata.position.str", "rmp_demo_text_time_elapsed", "value" ) );
       
-      // Faceplate Items    
-      MiniplayerAdd( SBDataBindElementAttribute( "faceplate.play", "rmp_demo_btn_pause", "hidden", true ) );
-      MiniplayerAdd( SBDataBindElementAttribute( "faceplate.play", "rmp_demo_btn_play", "hidden", true, true ) );
-      
       // Complex Data Items
 //      onSBMiniplayerComplexLoad();
     }

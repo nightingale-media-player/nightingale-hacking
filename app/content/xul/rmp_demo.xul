@@ -203,7 +203,7 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/player_controls.js"/>
+   src="chrome://songbird/content/scripts/player_open.js"/>
    
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
   <script type="application/x-javascript" 

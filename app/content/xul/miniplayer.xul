@@ -60,7 +60,7 @@
 <hbox>
   <vbox><button id="rmp_demo_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>
   <vbox><player_back id="rmp_demo_btn_back"    class="sb_faceplate miniplayer" /></vbox>
-  <vbox><button id="rmp_demo_btn_play"    class="sb_faceplate miniplayer" oncommand="onPlay( );" /><button id="rmp_demo_btn_pause"   class="sb_faceplate miniplayer" oncommand="onPause( );" /></vbox>
+  <vbox><player_playpause id="rmp_demo_btn_playpause" class="sb_faceplate miniplayer" playid="rmp_demo_btn_play" pauseid="rmp_demo_btn_pause"/></vbox>
   <vbox><player_forward id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" /> </vbox>
   <vbox id="rmp_demo_dash">
     <hbox id="rmp_demo_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
@@ -99,8 +99,6 @@
    src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/player_controls.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/mousewheel.js"/>
   <script type="application/x-javascript" 

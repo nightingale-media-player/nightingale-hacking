@@ -248,7 +248,6 @@ function SBInitialize()
   {
     onWindowLoadSize();
     setMinMaxCallback();
-    SBInitPlayerControls();
     SBInitMouseWheel();
     setMediaKeyboardCallback();
 
@@ -299,6 +298,8 @@ function SBInitialize()
     onServiceTreeRestoreSize();
 
     theWebPlaylist = document.getElementById( "playlist_web" );
+    // hack, to let play buttons find the visible playlist if needed
+    document.__CURRENTWEBPLAYLIST__ = theWebPlaylist;
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
 // no!    theWebPlaylist.addEventListener( "playlist-edit", onPlaylistEdit, true );
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
@@ -594,7 +595,7 @@ function onCurrentTrack()
   }
   else
   {
-    theLibraryPlaylist.syncPlaylistIndex();
+    theLibraryPlaylist.syncPlaylistIndex(true);
   }
 }
 
@@ -1034,6 +1035,8 @@ var SBDocStartListener = {
       // Clear the playlist tree variable so we are not confused.
       thePlaylistTree = null;
       theLibraryPlaylist = null;
+      // hack, to let play buttons find the visible playlist if needed
+      document.__CURRENTPLAYLIST__ = null;
       
       // Clear the tracking variable
       mainpane_listener_set = false;
@@ -1045,6 +1048,8 @@ var SBDocStartListener = {
       // Clear the playlist tree variable so we are not confused.
       thePlaylistTree = null;
       theLibraryPlaylist = null;
+      // hack, to let play buttons find the visible playlist if needed
+      document.__CURRENTPLAYLIST__ = null;
       
       // Nothing in the status text
       theStatusText.setValue( "" );
@@ -1594,6 +1599,9 @@ function onMainPaneLoad()
             return;
           }
 
+          // hack, to let play buttons find the visible playlist if needed
+          document.__CURRENTPLAYLIST__ = thePlaylistTree;
+
           // Drag and Drop tracker object
           thePlaylistTree.setDnDSourceTracker(sbDnDSourceTracker);
 
@@ -1608,7 +1616,7 @@ function onMainPaneLoad()
           thePlaylistRef.setValue( thePlaylistTree.getAttribute( "ref" ) ); // is this set yet?
           
           // Set the current selection
-          theLibraryPlaylist.syncPlaylistIndex();
+          theLibraryPlaylist.syncPlaylistIndex(false);
           
           // And remember that we did this
           installed_listener = true;
@@ -1622,6 +1630,8 @@ function onMainPaneLoad()
       {
         thePlaylistTree = null;
         theLibraryPlaylist = null;
+        // hack, to let play buttons find the visible playlist if needed
+        document.__CURRENTPLAYLIST__ = null;
       }
 
       // If we don't install a playlist listener, install an url listener.

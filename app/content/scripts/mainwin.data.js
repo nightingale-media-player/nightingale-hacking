@@ -60,9 +60,6 @@ try
       MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "intro_box", "hidden", true ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "dashboard_box", "hidden", true, true ) );
 
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.play", "songbird_btn_pause", "hidden", true ) );
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.play", "songbird_btn_play", "hidden", true, true ) );
-      
       MainwinAdd( SBDataBindElementProperty ( "faceplate.status.text", "status_text", "value" ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.status.style", "status_text", "style" ) );
       

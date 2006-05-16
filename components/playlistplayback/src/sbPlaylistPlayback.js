@@ -290,6 +290,7 @@ PlaylistPlayback.prototype = {
   _playButton:         null,
   _playUrl:            null,
   _seenPlaying:        null,
+  _started:            0,
   _lastVolume:         null,
   _volume:             null,
   _muteData:           null,
@@ -616,11 +617,17 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    if ((this._seenPlaying.getBoolValue()) &&
-        (core.getPaused() == false))
-      core.pause();
+    if (this._started)
+    { 
+      if (core.getPaused() == false) core.pause();
+      else core.play();
+    }
     else
-      core.play();
+    {
+      this._playDefault();
+    }
+    // Hide the intro box and show the normal faceplate box
+    this._faceplateState.setValue( 1 );
     return true;
   },
   
@@ -628,6 +635,7 @@ PlaylistPlayback.prototype = {
    * See sbIPlaylistPlayback.idl
    */
   playRef: function(source_ref, index) {
+    LOG("source = " + source_ref + " index = " + index);
     if (!source_ref || (index == null) || (index < 0))
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
@@ -653,6 +661,9 @@ PlaylistPlayback.prototype = {
     
     // Then play it
     this.playUrl(url);
+
+    // Hide the intro box and show the normal faceplate box
+    this._faceplateState.setValue( 1 );
   },
 
   /**
@@ -721,6 +732,9 @@ PlaylistPlayback.prototype = {
       // Start the polling loop to feed the metadata dataremotes.
       this._startPlayerLoop();
       
+      // Hide the intro box and show the normal faceplate box
+      this._faceplateState.setValue( 1 );
+
       // metrics
       var s = url.split(".");
       if (s.length > 1)
@@ -808,6 +822,13 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     return core.getPlaying();
+  },
+
+  /**
+   * See sbIPlaylistPlayback.idl
+   */
+  getStarted: function() {
+    return this._started;
   },
 
   /**
@@ -1106,6 +1127,7 @@ PlaylistPlayback.prototype = {
   
   _startPlayerLoop: function () {
     this._stopPlayerLoop();
+    this._started = 1;
     this._seenPlaying.setBoolValue(false);
     this._lookForPlayingCount = 0;
     this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
@@ -1113,6 +1135,7 @@ PlaylistPlayback.prototype = {
   
   _stopPlayerLoop: function () {
     this._timer.cancel();
+    this._started = 0;
   },
   
   // Poll function
@@ -1320,6 +1343,19 @@ PlaylistPlayback.prototype = {
       retval = this._source.GetRefRowByColumnValue( ref, "url", this._playUrl.getValue() );
     }
     return retval;
+  },
+  
+  _playDefault: function () {
+    
+    // No current playlist?! naughty naughty!
+    if ( this._playingRef.getValue().length == 0 )
+    {
+      this.playRef("NC:songbird_library", 0);
+    } 
+    else 
+    {
+      this.playRef(this._playingRef.getValue(), 0);
+    }
   },
   
 /*  

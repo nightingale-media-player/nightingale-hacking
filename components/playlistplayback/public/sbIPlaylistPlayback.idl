@@ -185,6 +185,11 @@ The mute/volume/length/position api here should just call to the current wrapper
   /**
    *
    */
+  boolean getStarted();
+
+  /**
+   *
+   */
   unsigned short getVolume();
 
   /**
