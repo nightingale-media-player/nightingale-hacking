@@ -33,4 +33,8 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content
 
 CLONEDIR = $(SONGBIRD_CHROMEDIR)/content
 
+ifndef USING_JARS
+SONGBIRD_CHROME_MANIFEST = $(srcdir)/chrome.manifest.dev
+endif
+
 include $(topsrcdir)/build/rules.mk
