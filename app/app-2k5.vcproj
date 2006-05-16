@@ -34,7 +34,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;mkdir $(SolutionDir)dist\defaults\preferences&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(InputDir)application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)installer\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\extensions&#x0D;&#x0A;xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;mkdir $(SolutionDir)dist\defaults\preferences&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(InputDir)application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)installer\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\extensions&#x0D;&#x0A;xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
@@ -57,7 +57,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;mkdir $(SolutionDir)dist\defaults\preferences&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(InputDir)application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)installer\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\extensions&#x0D;&#x0A;xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;mkdir $(SolutionDir)dist\defaults\preferences&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(InputDir)application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)installer\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\extensions&#x0D;&#x0A;xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
@@ -816,6 +816,30 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\player_controls.xml"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\bindings\playlist.xml"
 					>
 					<FileConfiguration
@@ -847,7 +871,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -856,7 +880,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -1200,6 +1224,30 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\mediakeyboard.js"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\scripts\messagebox.js"
 					>
 					<FileConfiguration
@@ -1296,7 +1344,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\scripts\player_controls.js"
+					RelativePath=".\content\scripts\mousewheel.js"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1304,7 +1352,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -1314,7 +1362,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 						/>
 					</FileConfiguration>
