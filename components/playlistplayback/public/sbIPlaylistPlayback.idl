@@ -120,6 +120,25 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   boolean playRef(in wstring source_ref,
                   in unsigned long index);
+
+ /**
+  *
+  */
+  boolean playRefByID(in wstring source_ref,
+                      in unsigned long row_id);
+
+  /**
+   *
+   */
+  boolean playRefByUUID(in wstring source_ref,
+                        in wstring media_uuid);
+  
+  /**
+   *
+   */
+  boolean playRefByURL(in wstring source_ref,
+                       in wstring url);
+
  /**
    * Create a new playlistsource ref
    */

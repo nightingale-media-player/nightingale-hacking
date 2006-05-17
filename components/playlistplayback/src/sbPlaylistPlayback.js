@@ -679,6 +679,51 @@ PlaylistPlayback.prototype = {
   /**
    * See sbIPlaylistPlayback.idl
    */
+  playRefByID: function(source_ref, row_id) {
+    LOG("source = " + source_ref + " row_id = " + row_id);
+    if (!source_ref || (row_id == null) || (row_id < 0))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    var index = this._source.GetRefRowByColumnValue(source_ref, "id", row_id);
+    return this.playRef(source_ref, index);
+  },
+
+  /**
+   * See sbIPlaylistPlayback.idl
+   */
+  playRefByUUID: function(source_ref, media_uuid) {
+    LOG("source = " + source_ref + " media_uuid = " + media_uuid);
+    if (!source_ref || (media_uuid == ""))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    var index = this._source.GetRefRowByColumnValue(source_ref, "uuid", media_uuid);
+    return this.playRef(source_ref, index);
+  },
+  
+  /**
+   * See sbIPlaylistPlayback.idl
+   */
+  playRefByURL: function(source_ref, url) {
+    LOG("source = " + source_ref + " url = " + url);
+    if (!source_ref || (url == null) || (url == ""))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    var index = this._source.GetRefRowByColumnValue(source_ref, "url", url);
+    return this.playRef(source_ref, index);
+  },
+
+  /**
+   * See sbIPlaylistPlayback.idl
+   */
   playTable: function(dbGUID, table, index) {
     if (!dbGUID || !table || !index)
       throw Components.results.NS_ERROR_INVALID_ARG;
