@@ -587,6 +587,9 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
   sbFeedInfo* info = GetFeedInfo(strRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
+  NS_ASSERTION(Row < info->m_ResList.size(), "sbPlaylistsource::GetRefRowCellByColumn, Row is out of bounds!");
+  if(Row >= info->m_ResList.size()) Row = info->m_ResList.size() - 1;
+
   nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[Row];
   valuemap_t::iterator v = g_ValueMap.find(next_resource);
   if (v != g_ValueMap.end()) {
@@ -1501,27 +1504,27 @@ sbPlaylistsource::Init()
                                        getter_AddRefs(kNC_Playlist));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI "child"),
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI NS_L("child")),
                                 getter_AddRefs(kNC_child));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI "pulse"),
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI NS_L("pulse")),
                                 getter_AddRefs(kNC_pulse));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "instanceOf"),
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("instanceOf")),
                                 getter_AddRefs(kRDF_InstanceOf));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "type"),
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("type")),
                                 getter_AddRefs(kRDF_type));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "nextVal"),
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("nextVal")),
                                 getter_AddRefs(kRDF_nextVal));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI "Seq"),
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("Seq")),
                                 getter_AddRefs(kRDF_Seq));
   NS_ENSURE_SUCCESS(rv, rv);
 
