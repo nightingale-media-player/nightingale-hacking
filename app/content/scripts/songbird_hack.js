@@ -250,6 +250,7 @@ function SBInitialize()
     setMinMaxCallback();
     SBInitMouseWheel();
     setMediaKeyboardCallback();
+    initJumpToFileHotkey();
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
@@ -452,6 +453,8 @@ function SBFillWebPlaylist()
 
 function SBUninitialize()
 {
+  resetJumpToFileHotkey();
+  closeJumpTo();
   resetMediaKeyboardCallback();
   try
   {

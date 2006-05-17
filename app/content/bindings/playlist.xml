@@ -353,6 +353,7 @@
       <parameter name="commands"/>
       <parameter name="resize"/>
       <parameter name="collapse"/>
+      <parameter name="refsuffix"/>
       <body>
       <![CDATA[
        dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
@@ -401,6 +402,7 @@
         }        
 
         var ref = "NC:" + guid + "_" + table;
+        if (refsuffix) ref += "_" + refsuffix;
         
         var feed = false;
         // If there are no rows already loaded for this ref
@@ -1549,6 +1551,23 @@
       ]]>
       </body>
     </method>
+
+    <method name="sendEscEvent">
+      <body>
+      <![CDATA[
+      try
+      {
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-esc", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - sendEscEvent - " + err )
+      }
+      ]]>
+      </body>
+    </method>
     
     <method name="sendEditEvent">
       <body>
@@ -1667,6 +1686,11 @@
                   if ( this.tree.currentIndex != -1 )
                   {
                     this.sendPlayEvent();
+                  }
+                  break;
+                case 27:
+                  {
+                    this.sendEscEvent();
                   }
                   break;
               }

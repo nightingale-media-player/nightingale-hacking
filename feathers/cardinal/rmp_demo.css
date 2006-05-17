@@ -2473,6 +2473,15 @@ DIALOG BOXES
   /*background-color: transparent; BUGGY*/
 }
 
+#jump_to_file
+{
+  -moz-appearance: none;
+  width: 420px;
+  height: 500px;
+  color: #FFF;
+  /*background-color: transparent; BUGGY*/
+}
+
 #rmp_demo_playlistlist > listitem
 {
   margin: 0px 0px 0px 0px;

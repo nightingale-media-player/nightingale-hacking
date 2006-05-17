@@ -52,20 +52,27 @@ try
     if ( location.indexOf("?video") == -1 )
         SBInitPlayerLoop(); // Don't loop if we're initializing into the video window.
 */
-
+    
     // initialize player controls for this faceplate  
+    window.focus();
     SBInitMouseWheel();
 
     var location = "" + window.location; // Grrr.  Dumb objects.
-    if ( location.indexOf("?video") == -1 ) setMediaKeyboardCallback();
-
+    if ( location.indexOf("?video") == -1 ) {
+      initJumpToFileHotkey();
+      setMediaKeyboardCallback();
+    }
     window.addEventListener( "keydown", checkAltF4, true );
   }
   
   function SBUninitialize()
   {
     var location = "" + window.location; // Grrr.  Dumb objects.
-    if ( location.indexOf("?video") == -1 ) resetMediaKeyboardCallback();
+    if ( location.indexOf("?video") == -1 ) {
+      resetMediaKeyboardCallback();
+      resetJumpToFileHotkey();
+      closeJumpTo();
+    }
   }
    
   //
