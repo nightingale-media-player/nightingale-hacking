@@ -119,7 +119,6 @@ try
 
   function quitApp()
   {
-    thePlayerRepeater.doStop();
     onExit();
 
     var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);

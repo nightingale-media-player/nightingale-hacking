@@ -222,9 +222,7 @@ function sbIDataRemote( key, root )
               // Call the callback function/handlerobject
               if (this.m_CallbackFunction.handleEvent) 
               {
-                var e = document.createEvent("Events");
-                e.initEvent("dataremote-change", false, true);
-                this.m_CallbackFunction.handleEvent(e);
+                this.m_CallbackFunction.handleEvent(null);
               }
               else 
               {
@@ -259,7 +257,8 @@ function sbIDataRemote( key, root )
       }
       catch( err ) 
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - observe: " + err + " (" + this.m_Key + ")\n");
       }
     };
     
@@ -473,7 +472,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - getValue: " + err + " (" + this.m_Key + ")\n");
       }
       return retval;
     };

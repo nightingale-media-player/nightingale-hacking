@@ -40,7 +40,7 @@
   hidechrome="true"
   class="sb_faceplate"
   onload="SBInitialize();onSBMainwinDataLoad();"
-  onunload="SBUninitialize();onSBMainwinDataUnload();thePlayerRepeater.unbind();"
+  onunload="SBUninitialize();onSBMainwinDataUnload();"
   title="&window.main.title;"
   onkeypress="onMainwinKeypress( event );"
   
@@ -322,18 +322,18 @@
                           <spacer flex="1"/>
                           <!-- SONG ARTIST/SONGTITLE DISPLAY -->
                           <hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
-                            <label id="songbird_text_artist" value="" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                            <player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" /> 
                           </hbox>
                           <!-- SONG ALBUM DISPLAY -->
                           <hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
-                            <label align="center" id="songbird_text_title" value="Welcome to Songbird" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                            <player_title align="center" id="songbird_text_title" value="Welcome to Songbird" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             <label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                            <label id="songbird_text_album" value="" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                            <player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                           </hbox>
                           <!-- SEEK BAR -->
                           <hbox class="sb_faceplate">
                             <spacer width="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                            <label id="songbird_text_time_elapsed" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                            <player_timeelapsed id="songbird_text_time_elapsed" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             <spacer width="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             <vbox flex="1">
                               <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
@@ -454,9 +454,9 @@
               <vbox flex="1">
                 <spacer flex="1"/>
                 <hbox>
-                  <description id="status_text" value=" " crop="end" flex="1"/>
-                  <description id="library_text" value=" " crop="end" onmousedown="onBrowserPlaylist();"/>
-                  <description id="scanning_text" value=" " onmousedown="SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );" crop="end" hidden="true"/>
+                  <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
+                  <player_numplaylistitems id="library_text" value=" " crop="end" onmousedown="onBrowserPlaylist();"/>
+                  <player_scanning id="scanning_text" value=" " crop="end" hidden="true"/>
                 </hbox>
                 <!--spacer flex="1"/-->
               </vbox>

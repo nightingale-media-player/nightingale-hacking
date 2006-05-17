@@ -70,6 +70,14 @@ sbextensions {
   -moz-binding: url("chrome://songbird/content/bindings/sbextensions.xml#sbextensions");
 }
 
+sbstatustext {
+  -moz-binding: url("chrome://songbird/content/bindings/statusbar.xml#sbstatustext");
+}
+
+remote_label {
+  -moz-binding: url("chrome://songbird/content/bindings/remote_label.xml#remote_label");
+}
+
 player_volume {
   -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#volume");
 }
@@ -98,6 +106,10 @@ player_seekbar {
   -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#seekbar");
 }
 
+player_timeelapsed {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#timeelapsed");
+}
+
 player_totaltime {
   -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#totaltime");
 }
@@ -105,4 +117,32 @@ player_totaltime {
 player_playpause {
   -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#playpause");
 }
+
+player_artist {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#artist");
+}
+
+player_title {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#title");
+}
+
+player_album {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#album");
+}
+
+player_genre {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#genre");
+}
+
+player_numplaylistitems {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#numplaylistitems");
+}
+
+player_scanning {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#scanning");
+}
+
+
+
+
 

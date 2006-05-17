@@ -35,27 +35,7 @@ try
   {
     try
     {
-      // Do the magic binding stuff here.
-      //
-      // SBDataBindElementProperty Param List
-      //  1 - The data ID to bind upon
-      //  2 - The element ID to be bound
-      //  3 - The name of the property or attribute to change
-      //  4 - Optionally assign the data as BOOLEAN data (true/false props, "true"/"false" attrs)
-      //  5 - Optionally assign the data as a boolean NOT of the value
-      //  6 - Optionally apply an eval string where `value = eval( "eval_string" );`
-      
-      // Metadata Items    
-      
-      MiniplayerAdd( SBDataBindElementProperty ( "metadata.title",  "rmp_demo_text_title", "value" ) );
-      
-//      MiniplayerAdd( SBDataBindElementProperty ( "metadata.artist", "rmp_demo_text_artist", "value" ) );
-//      MiniplayerAdd( SBDataBindElementProperty ( "metadata.album", "rmp_demo_text_album", "value" ) );
-      
-      MiniplayerAdd( SBDataBindElementAttribute( "metadata.position.str", "rmp_demo_text_time_elapsed", "value" ) );
-      
-      // Complex Data Items
-//      onSBMiniplayerComplexLoad();
+      //onSBMiniplayerComplexLoad();
     }
     catch ( err )
     {

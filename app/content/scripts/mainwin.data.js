@@ -46,23 +46,17 @@ try
       //  6 - Optionally apply an eval string where `value = eval( "eval_string" );`
 
       // Playlist Items
-      MainwinAdd( SBDataBindElementProperty ( "playlist.numitems", "library_text", "value" ) );
       MainwinAdd( SBDataBindElementAttribute( "playlist.shuffle", "control.shuf", "checked", true ) );
-      
-      // Metadata Items    
-      MainwinAdd( SBDataBindElementProperty ( "metadata.title",  "songbird_text_title", "value" ) );
-      MainwinAdd( SBDataBindElementProperty ( "metadata.artist", "songbird_text_artist", "value" ) );
-      MainwinAdd( SBDataBindElementProperty ( "metadata.album", "songbird_text_album", "value" ) );
-      
-      MainwinAdd( SBDataBindElementAttribute( "metadata.position.str", "songbird_text_time_elapsed", "value" ) );
 
+      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repx", "checked", true, true, "parseInt( value ) != 0" ) );
+      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.rep1", "checked", true, true, "parseInt( value ) != 1" ) );
+      MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repa", "checked", true, true, "parseInt( value ) != 2" ) );      
+     
       // Faceplate Items    
       MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "intro_box", "hidden", true ) );
       MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "dashboard_box", "hidden", true, true ) );
 
-      MainwinAdd( SBDataBindElementProperty ( "faceplate.status.text", "status_text", "value" ) );
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.status.style", "status_text", "style" ) );
-      
+     
       MainwinAdd( SBDataBindElementProperty ( "faceplate.search.reset", "search_widget", "reset" ) );
       
       MainwinAdd( SBDataBindElementProperty ( "faceplate.loading", "status_progress", "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" ) );
@@ -78,13 +72,8 @@ try
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web", "hidden", true, true ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_split", "hidden", true, true ) );
       
-      // Backscan Item
-      MainwinAdd( SBDataBindElementProperty ( "backscan.status", "scanning_text", "value" ) );
-      MainwinAdd( SBDataBindElementAttribute( "backscan.status", "scanning_text", "hidden", true, false, "value == ''" ) );
-
       // Options
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );
-      MainwinAdd( SBDataBindElementAttribute( "option.skin", "file.skin", "checked", true ) );
 
       // Complex Data Items
       onSBMainwinComplexLoad();

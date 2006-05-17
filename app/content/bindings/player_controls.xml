@@ -48,7 +48,7 @@
      <handler event="progress_slider-release" action="this.onReleaseVolume();"/>
    </handlers>
 
-  <implementation type="application/x-javascript" name="volume_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -109,8 +109,14 @@
 
     <method name="onRemoteVolumeChange">
       <body>
-        if (this.trackingVolume) return; // we are the control changing the volume, ignore this callback
-        this.value = this.remote_volume.getIntValue();
+        <![CDATA[
+          try {
+            if (this.trackingVolume) return; // we are the control changing the volume, ignore this callback
+            this.value = this.remote_volume.getIntValue();
+          } catch (e) {
+            alert("player_controls.xml - onRemoteVolumeChange - " + e);
+          }
+        ]]>
       </body>
     </method>
 
@@ -135,7 +141,7 @@
      </xul:stack>
    </content>
 
-  <implementation type="application/x-javascript" name="mute_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -193,7 +199,7 @@
      <handler event="mouseup" action="this.onFwdMouseUp();"/>
    </handlers>
 
-  <implementation type="application/x-javascript" name="forward_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -282,7 +288,7 @@
      <handler event="mouseup" action="this.onBackMouseUp();"/>
    </handlers>
 
-  <implementation type="application/x-javascript" name="back_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -374,7 +380,7 @@
      </xul:stack>
    </content>
 
-  <implementation type="application/x-javascript" name="repeat_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -439,7 +445,7 @@
      </xul:stack>
    </content>
 
-  <implementation type="application/x-javascript" name="shuffle_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -486,7 +492,7 @@
      <handler event="progress_slider-release" action="this.onReleaseSeekbar();"/>
    </handlers>
 
-  <implementation type="application/x-javascript" name="seekbar_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -527,8 +533,14 @@
 
     <method name="onRemotePositionChange">
       <body>
-        if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
-        this.value = gPPS.getPosition();
+        <![CDATA[
+          try {
+            if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
+            this.value = gPPS.getPosition();
+          } catch (e) {
+            alert("player_controls.xml - onRemotePositionChange - " + e);
+          }
+        ]]>
       </body>
     </method>
 
@@ -547,10 +559,10 @@
   <binding id="totaltime">
   
    <content>
-     <xul:label sbid="timelabel" xbl:inherits="id=id,class=class" onmousedown="onTotalDown();"/> 
+     <xul:label sbid="timelabel" xbl:inherits="id=id,class=class,align=align,crop=crop,disabled=disabled,flex=flex" onmousedown="onTotalDown();"/> 
    </content>
 
-  <implementation type="application/x-javascript" name="totaltime_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -606,7 +618,7 @@
      </xul:stack>
    </content>
 
-  <implementation type="application/x-javascript" name="playpause_control">
+  <implementation>
 
     <constructor>
       <![CDATA[
@@ -699,6 +711,146 @@
 
 
 
+
+
+  <!-- ARTIST DISPLAY -->
+
+
+
+
+  <binding id="artist" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "metadata.artist";
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- TITLE DISPLAY -->
+
+
+
+
+  <binding id="title" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "metadata.title";
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- ALBUM DISPLAY -->
+
+
+
+
+  <binding id="album" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "metadata.album";
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- TIME ELAPSED DISPLAY -->
+
+
+
+
+  <binding id="timeelapsed" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "metadata.position.str";
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- GENRE DISPLAY -->
+
+
+
+
+  <binding id="genre" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "metadata.genre";
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- NUM PLAYLIST ITEMS DISPLAY -->
+
+
+
+
+  <binding id="numplaylistitems" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "playlist.numitems";
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- PLAYER SCANNING DISPLAY -->
+
+
+
+
+  <binding id="scanning" extends="chrome://songbird/content/bindings/remote_label.xml#remote_label">
+  
+  <implementation>
+
+    <constructor>
+      this.data  = "backscan.status";
+      this.bindvisible = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
+      this.setAttribute("onmousedown", "SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
+    </constructor>
+
+   </implementation>
+ 
+  </binding>
 
 </bindings>
 
