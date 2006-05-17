@@ -285,7 +285,6 @@
       <parameter name="commands"/>
       <body>
       <![CDATA[
-       dump("XXXredfive - playlist::load ******************************\n");
       try
       {
 /*      
@@ -356,7 +355,7 @@
       <parameter name="refsuffix"/>
       <body>
       <![CDATA[
-       dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
+       //dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
       try
       {
         // Perhaps we need to reload our columns
@@ -415,7 +414,6 @@
         // If we are loading a new ref into an extant playlist        
         if ( ref != this.ref )
         {
-          dump("XXXredfive - in bind, removing columns/templates\n");
           // New columns from the new feed.
           this.removeColumns();
           this.removeTemplate();
@@ -512,7 +510,6 @@
         // Last last last thing, just force one redraw on the tree.
         if ( need_loadcolumns )
         {
-          dump("XXXredfive - this should get called\n");
           // Load columns upon rebinding.
           this.loadColumns();
         }
@@ -718,7 +715,6 @@
       <parameter name="feed"/>
       <body>
       <![CDATA[
-       dump("XXXredfive - playlist::addFilter\n");
       try
       {
         // These should be shown
@@ -775,7 +771,6 @@
                                   filterlist.column  );
         }
                 
-        dump("XXXredfive builder: " + this.tree.builder + "\n");
         filterlist.builder.refresh();
         
         
@@ -799,7 +794,6 @@
     <method name="loadColumns">
       <body>
       <![CDATA[
-       dump("XXXredfive - playlist::loadColumns source: " + this.source + "\n");
       try
       {
         if (this.source == null)
@@ -807,22 +801,15 @@
         // Don't nuke the columns if the user's currently moving or resizing them, or if the columns picker is open
         if (!this.isAnyDragObjectDown() && !this.isColumnPickerOpen()) {
           // Don't nuke the columns if there's no current query result.  Yipe.
-          dump("XXXredfive - playlist::loadColumns columncount: " +
-               this.source.GetRefColumnCount(this.ref) + "\n");
           if ( this.source.GetRefColumnCount( this.ref ) > 0 )
           {
             this.saveColumnsProperties();
-            dump("XXXredfive - playlist::loadColumns 1\n");
             this.removeColumns();
-            dump("XXXredfive - playlist::loadColumns 2\n");
             this.removeTemplate(); 
-            dump("XXXredfive - playlist::loadColumns 3\n");
             this.createTemplateAndColumns(this.source, this.ref);
-            dump("XXXredfive - playlist::loadColumns 4\n");
           }
           else {
             this.createTemplateAndColumns(this.source, this.ref);
-            dump("XXXredfive - playlist::loadColumns 1.2\n");
           }
         }
       }
@@ -839,16 +826,8 @@
       <parameter name="ref"/>
       <body>
         <![CDATA[
-        dump("XXXredfive - playlist::createTemplateAndColumns\n");
         try
         {
-          // XXXredfive - short circuit the crazy teardown of the template.
-          //if (this.treecols) {
-          //  dump("XXXredfive - shortcircuiting 
-          //          playlist::createTemplateAndColumns\n");
-          //  return;
-          //}
-
           // See if we need to hide the loading box.
           if ( ! this.loading_box.hidden )
           {
@@ -1029,8 +1008,6 @@
           
           this.treecols = columns_node;
 
-          // XXXredfive
-          dump("XXXredfive - rebuild at the end of createTemplate");
           this.builder.rebuild();
         }
         catch( err )
@@ -1045,7 +1022,6 @@
 
     <method name="removeColumns">
       <body>
-          dump("XXXredfive - removeColumns \n");
           this.removeChildByName("treecols");
           //this.treecols = null;
       </body>
@@ -1053,7 +1029,6 @@
 
     <method name="removeTemplate">
       <body>
-          dump("XXXredfive - removeTemplate \n");
           this.removeChildByName("template");
       </body>
     </method>
@@ -1064,10 +1039,7 @@
         <![CDATA[
           for (var i=0; i<this.tree.childNodes.length; i++) {
             var node = this.tree.childNodes.item(i);
-            if (node.tagName == childname ||
-                node.tagName == "xul:"+childname) {
-              dump("XXXredfive - removeChildByName i:" + i + " name:" + node.tagName + "\n");
-              // XXXredfive
+            if (node.tagName == childname || node.tagName == "xul:"+childname) {
               this.tree.removeChild(node);
               i--;
             }
@@ -1080,7 +1052,6 @@
 
     <method name="saveColumnsProperties">
       <body>
-        dump("XXXredfive - saveColumnProperties\n");
         this.saveColumnsWidth(); 
         this.saveColumnsOrdinal();
         this.saveColumnsVisibility();
@@ -1207,7 +1178,6 @@
 
     <method name="findColumns">
       <body>
-        dump("XXXredfive - playlist::findColumns\n");
         return this.findObject(this.tree, "treecols");
       </body>
     </method>
@@ -1215,7 +1185,6 @@
     <method name="saveColumnsOrdinal">
       <body>
         <![CDATA[
-          dump("XXXredfive - playlist::saveColumnsOrdinal\n");
           try
           {
             var columnsNode = this.findColumns();
@@ -1240,7 +1209,6 @@
     <method name="saveColumnsVisibility">
       <body>
         <![CDATA[
-          dump("XXXredfive - playlist::saveColumnsVisiblity\n");
           try
           {
             var columnsNode = this.findColumns();
@@ -1495,9 +1463,9 @@
     <method name="willRebuild">
       <parameter name="builder"/>
       <body>
-        dump("XXXredfive - playlist::willRebuild\n");
         this.saveSelection();
         this.saveColumnsProperties();
+        // XXXredfive - may want to check if columns have changed
         //this.loadColumns(); 
       </body>
     </method>
@@ -1505,7 +1473,6 @@
     <method name="didRebuild">
       <parameter name="builder"/>
       <body>
-        dump("XXXredfive - playlist::didRebuild\n");
         var viewsummary = this.getViewSummary();
         if (this._lastviewsummary == viewsummary) 
         {
