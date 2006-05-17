@@ -948,6 +948,11 @@
             {
               this_column_node.setAttribute("type", "progressmeter");
             }
+
+            if (name == "rating")
+            {
+              this_column_node.setAttribute("type", "progressmeter");
+            }
             
             var savedHidden = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".hidden" );
             
@@ -988,6 +993,11 @@
             
             // hardcode hack for progressmeter
             if (name == "progress") {
+              treecell_node.setAttribute("value", "rdf:http://home.netscape.com/NC-rdf#"+name);
+              treecell_node.setAttribute("mode", "normal");
+            }
+            // hardcode hack for ratings
+            if (name == "rating") {
               treecell_node.setAttribute("value", "rdf:http://home.netscape.com/NC-rdf#"+name);
               treecell_node.setAttribute("mode", "normal");
             }
@@ -1709,7 +1719,7 @@
               {
                 return;
               }
-                                                                    
+              
               // And if it's good, launch the popup for it.
               if ( cell_text.length > 0 )
               {
@@ -1808,21 +1818,35 @@
               this.addedObserver = true;
             }
             
-            var delay = evt.timeStamp - this.lastClickTimestamp;
-            if ( delay > 1000 && delay < 2000 )
+            if ( this.tree.currentIndex != -1 && this.tree.currentIndex == this.tree.lastClickIndex )
             {
-              if ( this.tree.currentIndex != -1 && this.tree.currentIndex == this.tree.lastClickIndex )
+              var obj = {}, row = {}, col = {}; 
+              this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+              // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
+              if ( obj.value )
               {
-                var obj = {}, row = {}, col = {}; 
-                this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
-                // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-                if ( obj.value )
+                // Remember the row and column
+                this.edit_row = row.value;
+                this.edit_col = col.value;
+                if (this.edit_col.id == "rating") 
                 {
-                  // Remember the row and column
-                  this.edit_row = row.value;
-                  this.edit_col = col.value;
-                  // Send the event and see if anyone is there to catch it?
-                  this.sendEditEvent();
+                  var width = this.edit_col.element.boxObject.width;
+                  var dist = evt.screenX - this.edit_col.element.boxObject.screenX;
+                  // 4 pixels offsets
+                  width -= 8;
+                  dist -= 4;
+                  var ret = Math.round(dist / width * 100);
+                  if (ret < 0) ret = 0; if (ret > 100) ret = 100;
+                  this.setCellRating(this.edit_row, this.edit_col, ret);
+                } 
+                else 
+                {
+                  var delay = evt.timeStamp - this.lastClickTimestamp;
+                  if ( delay > 1000 && delay < 2000 )
+                  {
+                    // Send the event and see if anyone is there to catch it?
+                    this.sendEditEvent();
+                  }
                 }
               }
             }
@@ -2680,6 +2704,43 @@
       </body>
     </method>
     
+    <method name="setCellRating">
+      <parameter name="row"/>
+      <parameter name="col"/>
+      <parameter name="rating"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            // Find the url column.
+            var filter = "uuid";
+            var filter_column = this.tree.columns ? this.tree.columns[filter] : filter;
+            var filter_value = this.tree.view.getCellText( this.tree.currentIndex, filter_column );
+
+            var the_table_column = col.id;
+            var the_new_value = rating;
+
+            var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+            var aMediaLibrary = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+            
+            if ( ! aDBQuery || ! aMediaLibrary)
+              return;
+            
+            aDBQuery.SetAsyncQuery(true);
+            aDBQuery.SetDatabaseGUID(this.guid);
+            aMediaLibrary.SetQueryObject(aDBQuery);
+            
+            aMediaLibrary.SetValueByGUID(filter_value, the_table_column, the_new_value, false);
+          }
+          catch (err)
+          {
+            alert( "playlist.xml - setCellRating - " + err );
+          }
+          return -1;
+        ]]>
+      </body>
+    </method>
+
    </implementation> 
  
   </binding>

@@ -65,7 +65,7 @@ try
 
     GetNumCommands: function()
     {
-      return 0;;
+      return 0;
     },
 
     GetCommandId: function( index )
