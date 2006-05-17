@@ -456,7 +456,7 @@
                 <hbox>
                   <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
                   <player_numplaylistitems id="library_text" value=" " crop="end" onmousedown="onBrowserPlaylist();"/>
-                  <player_scanning id="scanning_text" value=" " crop="end" hidden="true"/>
+                  <player_scanning id="scanning_text" value=" " crop="end"/>
                 </hbox>
                 <!--spacer flex="1"/-->
               </vbox>
