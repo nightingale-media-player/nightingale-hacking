@@ -257,8 +257,8 @@ function sbIDataRemote( key, root )
       }
       catch( err ) 
       {
-        //alert( err );
-        dump("!!!! sbiDataRemotes.js - observe: " + err + " (" + this.m_Key + ")\n");
+        alert( err );
+        //dump("!!!! sbiDataRemotes.js - observe: " + err + " (" + this.m_Key + ")\n");
       }
     };
     
@@ -472,8 +472,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        //alert( err );
-        dump("!!!! sbiDataRemotes.js - getValue: " + err + " (" + this.m_Key + ")\n");
+        alert( err );
+        //dump("!!!! sbiDataRemotes.js - getValue: " + err + " (" + this.m_Key + ")\n");
       }
       return retval;
     };

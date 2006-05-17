@@ -468,13 +468,20 @@
         var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
         toolbar.hidden = true;
         
-        // And add the new ones
-        this.commands = commands;
-        // See if there is one registered specifically for this table
-        var cmds = this.source.GetPlaylistCommands( this.guid, this.table, this.type );
-        if ( cmds )
+        if (!this.forcedcommands) 
         {
-          this.commands = cmds;
+          // And add the new ones
+          this.commands = commands;
+          // See if there is one registered specifically for this table
+          var cmds = this.source.GetPlaylistCommands( this.guid, this.table, this.type );
+          if ( cmds )
+          {
+            this.commands = cmds;
+          }
+        } 
+        else 
+        {
+          this.commands = this.forcedcommands; 
         }
         // Make sure it does what we think it does.
         if ( this.commands )

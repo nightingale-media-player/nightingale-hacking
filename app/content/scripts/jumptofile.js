@@ -53,12 +53,80 @@ try
   }
 
   function onKeyPress(evt) {
-    if (evt.charCode == 106 && !evt.ctrlKey && !evt.altKey) {
+    if (evt.charCode == 106 && evt.ctrlKey && !evt.altKey) {
       evt.preventBubble();
       onJumpToFileKey();
     }
   }
-  
+
+  var SBEmptyPlaylistCommands = 
+  {
+    m_Playlist: null,
+
+    GetNumCommands: function()
+    {
+      return 0;;
+    },
+
+    GetCommandId: function( index )
+    {
+      return -1;
+    },
+
+    GetCommandText: function( index )
+    {
+      return "";
+    },
+
+    GetCommandFlex: function( index )
+    {
+      return 0;
+    },
+
+    GetCommandToolTipText: function( index )
+    {
+      return "";
+    },
+
+    GetCommandEnabled: function( index )
+    {
+      return 0;
+    },
+
+    OnCommand: function( event )
+    {
+    },
+    
+    // The object registered with the sbIPlaylistSource interface acts 
+    // as a template for instances bound to specific playlist elements
+    Duplicate: function()
+    {
+      var obj = {};
+      for ( var i in this )
+      {
+        obj[ i ] = this[ i ];
+      }
+      return obj;
+    },
+    
+    SetPlaylist: function( playlist )
+    {
+      this.m_Playlist = playlist;
+    },
+    
+    QueryInterface : function(aIID)
+    {
+      if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
+          !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+          !aIID.equals(Components.interfaces.nsISupports)) 
+      {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+      
+      return this;
+    }
+  }
+ 
   var jumpto_ref;
   var source_ref;
   var editIdleInterval;
@@ -81,6 +149,7 @@ try
     }
     var playlist = document.getElementById("jumpto.playlist");
     playlist.tree.setAttribute("seltype", "single");
+    playlist.forcedcommands = SBEmptyPlaylistCommands;
     playlist.bind(guid, table, null, null, null, null, "jumpto");
     jumpto_ref = playlist.ref;
     var textbox = document.getElementById("jumpto.textbox");
@@ -159,7 +228,6 @@ try
   
   function _applyFilter() {
     var filter = document.getElementById("jumpto.textbox").value;
-    dump("filter = '" + filter + "'\n");
     // Feed the new filter into the list.
     var source = new sbIPlaylistsource();
     // Wait until it is done executing
