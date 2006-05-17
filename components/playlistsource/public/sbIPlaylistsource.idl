@@ -51,6 +51,8 @@ interface sbIPlaylistsource : nsIRDFDataSource
   void ClearPlaylist( in wstring RefName ); // [DEPRECATED!] Clear the query
   void IncomingObserver( in wstring RefName, in nsIDOMNode Observer ); // An observer is about to attach.  Bind to this refname.  STUPID.
   sbIDatabaseResult GetQueryResult( in wstring RefName ); // [DEPRECATED!] Get the results object for the query bound to RefName
+  wstring GetRefGUID( in wstring RefName ); // Get the database GUID for the RefName
+  wstring GetRefTable( in wstring RefName ); // Get the database table for the RefName 
   PRInt32 GetRefRowCount( in wstring RefName ); // Get row count from the results object for the query bound to RefName
   PRInt32 GetRefColumnCount( in wstring RefName ); // Get column count from the results object for the query bound to RefName
   wstring GetRefRowCellByColumn( in wstring RefName, in PRInt32 Row, in wstring Column ); // GetRowCellByColumn on the ref's resultset

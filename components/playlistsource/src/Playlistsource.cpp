@@ -545,6 +545,68 @@ sbPlaylistsource::GetRefRowCount(const PRUnichar* RefName,
   return NS_OK;
 }
 
+/* wstring GetRefGUID (in wstring RefName); */
+NS_IMETHODIMP sbPlaylistsource::GetRefGUID(const PRUnichar *RefName, PRUnichar **_retval)
+{
+  LOG(("sbPlaylistsource::GetRefGUID"));
+  NS_ENSURE_ARG_POINTER(RefName);
+
+  METHOD_SHORTCIRCUIT;
+  nsAutoMonitor mon(g_pMonitor);
+
+  // Find the ref string in the stringmap.
+  nsDependentString strRefName(RefName);
+  sbFeedInfo* info = GetFeedInfo(strRefName);
+
+  if (info) {
+    // Clunky, return the string
+    PRUint32 nLen = info->m_GUID.Length() + 1;
+    *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
+    memcpy(*_retval,
+      info->m_GUID.get(),
+      (nLen - 1) * sizeof(PRUnichar));
+    (*_retval)[info->m_GUID.Length()] = 0;
+    return NS_OK;
+  }
+
+  // in no info, blank string
+  *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
+  **_retval = 0;
+
+  return NS_OK;
+}
+
+/* wstring GetRefTable (in wstring RefName); */
+NS_IMETHODIMP sbPlaylistsource::GetRefTable(const PRUnichar *RefName, PRUnichar **_retval)
+{
+  LOG(("sbPlaylistsource::GetRefTable"));
+  NS_ENSURE_ARG_POINTER(RefName);
+
+  METHOD_SHORTCIRCUIT;
+  nsAutoMonitor mon(g_pMonitor);
+
+  // Find the ref string in the stringmap.
+  nsDependentString strRefName(RefName);
+  sbFeedInfo* info = GetFeedInfo(strRefName);
+
+  if (info) {
+    // Clunky, return the string
+    PRUint32 nLen = info->m_Table.Length() + 1;
+    *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
+    memcpy(*_retval,
+      info->m_Table.get(),
+      (nLen - 1) * sizeof(PRUnichar));
+    (*_retval)[info->m_Table.Length()] = 0;
+    return NS_OK;
+  }
+
+  // in no info, blank string
+  *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
+  **_retval = 0;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbPlaylistsource::GetRefColumnCount(const PRUnichar* RefName,
                                     PRInt32*         _retval)
