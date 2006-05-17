@@ -589,17 +589,38 @@ function onCurrentTrack()
   {
     clearInterval( theCurrentTrackInterval );
   }
-  if ( ! thePlaylistTree )
-  {
-    // This needs to eventually load the "current playing playlist"
-    var theServiceTree = document.getElementById( 'frame_servicetree' );
+
+  var guid;
+  var table;
+  var ref = SBDataGetValue("playing.ref");
+  if (ref != "") {
+    source_ref = ref;
+    var source = new sbIPlaylistsource();
+    guid = source.GetRefGUID( ref );
+    table = source.GetRefTable( ref );
+  } else {
+    source_ref = "NC:songbird_library";
+    guid = "songbird";
+    table = "library";
+  }
+  
+  if ( thePlaylistTree ) {
+    var curplaylist = document.__CURRENTPLAYLIST__;
+    if (curplaylist && curplaylist.ref == source_ref) {
+      curplaylist.syncPlaylistIndex(true);
+      return;
+    }
+  }
+  
+  var theServiceTree = document.getElementById( 'frame_servicetree' );
+  if (guid == "songbird" && table == "library") { 
     theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?library" );
-    theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
   }
-  else
+  else 
   {
-    theLibraryPlaylist.syncPlaylistIndex(true);
-  }
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?" + table+ "," + guid);
+  } 
+  theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
 }
 
 var FaceplateStateData = new sbIDataRemote( "faceplate.state" );
