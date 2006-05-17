@@ -1596,20 +1596,24 @@
         <![CDATA[
           try
           {
-            switch ( evt.keyCode )
-            {
-              case 46: // Del
-                if ( this.tree.currentIndex != -1 )
-                {
-                  this.removeTracks();
-                }
-                break;
-              case 13: // Return
-                if ( this.tree.currentIndex != -1 )
-                {
-                  this.sendPlayEvent();
-                }
-                break;
+            if (evt.charCode == 97 && evt.ctrlKey) {
+              this.tree.view.selection.selectAll();
+            } else {
+              switch ( evt.keyCode )
+              {
+                case 46: // Del
+                  if ( this.tree.currentIndex != -1 )
+                  {
+                    this.removeTracks();
+                  }
+                  break;
+                case 13: // Return
+                  if ( this.tree.currentIndex != -1 )
+                  {
+                    this.sendPlayEvent();
+                  }
+                  break;
+              }
             }
           }
           catch( err )
