@@ -253,10 +253,10 @@ try
     var rowid=0;
     if (idcolumn != null) 
     {
-      rowid = playlist.tree.view.getCellText( first, idcolumn ) - 1;
+      rowid = playlist.tree.view.getCellText( first, idcolumn );
     }
     var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.playRef(source_ref, rowid);
+    PPS.playRefByID(source_ref, rowid);
     onExit();
   }
 
