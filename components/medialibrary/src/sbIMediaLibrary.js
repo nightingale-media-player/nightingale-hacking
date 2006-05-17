@@ -110,6 +110,19 @@ CMediaLibrary.prototype =
       var year = ( "&metadata.year" );
       
       //Fill the Library Description Table.
+      //Here's the library description table schema for quick reference.
+      /*
+      In order, from 0 to 6.
+            
+      0. column name, ie. "artist"
+      1. readable name, ie. "Artist"
+      2. is this column ever visible?, Boolean, 1 (True) or 0 (False).
+      3. by default, is this column visible? Boolean, 1 (True) or 0 (False).
+      4. is this a metadata column? Boolean, 1 (True) or 0 (False).
+      5. default sort weight, signed integer value.
+      6. default column width, in pixels, signed integer value.
+      
+      */
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"id\", \"" + id + "\", 1, 0, 0, 0, -1)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"row_id\", \"" + row_id + "\", 1, 1, 0, -10000, 4)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"uuid\", \"" + uuid + "\", 1, 0, 0, 0, -1)");
