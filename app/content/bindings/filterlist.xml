@@ -346,7 +346,6 @@
             var any_items = false; // Are there any items to find?
             var any_found = false; // Did we find any?
             if (this.source != null) {
-              dump("reselectfilter -- source: " + this.source + " ref_pl: " + this.ref_pl + " ref: " + this.ref);
               var selection_string = this.source.GetFilter(this.ref_pl, this.index);
               if (selection_string != null) {
                 var selection = selection_string.split(";");

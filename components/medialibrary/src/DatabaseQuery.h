@@ -82,7 +82,7 @@ public:
   NS_DECL_SBIDATABASEQUERY
 
 protected:
-  CDatabaseResult *GetResultObject();
+  CDatabaseResult* GetResultObject();
 
   PRBool m_IsPersistentQueryRegistered;
   PRBool m_HasChangedDataOfPersistQuery;
@@ -100,7 +100,7 @@ protected:
   PRInt32 m_LastError;
 
   PRLock* m_pQueryResultLock;
-  CDatabaseResult * m_QueryResult;
+  CDatabaseResult* m_QueryResult;
 
   PRLock* m_pDatabaseGUIDLock;
   std::prustring m_DatabaseGUID;
@@ -126,3 +126,4 @@ protected:
 
   nsCOMPtr<sbIDatabaseEngine> m_Engine;
 };
+

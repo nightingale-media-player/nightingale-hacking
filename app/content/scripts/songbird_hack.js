@@ -590,7 +590,7 @@ function onCurrentTrack()
   {
     // This needs to eventually load the "current playing playlist"
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?library" );
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?library" );
     theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
   }
   else
@@ -948,7 +948,7 @@ var SBDocStartListener = {
       if ( ( ( aState & ( STATE_STOP | STATE_IS_DOCUMENT ) ) != 0 ) && ( aStatus == 0x804B001E ) ) // ? 0x804B001E?
       {
       var theServiceTree = document.getElementById( 'frame_servicetree' );
-      theServiceTree.LaunchURL( "chrome://songbird/content/html/cannot_load.html" );
+      theServiceTree.launchURL( "chrome://songbird/content/html/cannot_load.html" );
       }
     }
     catch ( err )
@@ -1020,7 +1020,7 @@ var SBDocStartListener = {
         }
 */        
       }
-      if ( ! theServiceTree.UrlFromServicePane )
+      if ( ! theServiceTree.urlFromServicePane )
       {
         // Clear the service tree selection (asynchronously?  is this from out of thread?)
         setTimeout( 
@@ -1028,7 +1028,7 @@ var SBDocStartListener = {
                     "document.getElementById( 'frame_servicetree' ).tree.view.selection.clearSelection();",
                     50 );
       }
-      theServiceTree.UrlFromServicePane = false;
+      theServiceTree.urlFromServicePane = false;
       
       thePaneLoadingData.setValue( true );
       
@@ -1120,7 +1120,7 @@ function onBrowserStop()
 function onBrowserHome()
 {
   var theServiceTree = document.getElementById( 'frame_servicetree' );
-  theServiceTree.LaunchURL( "http://songbirdnest.com/player/welcome/" );
+  theServiceTree.launchServiceURL( "http://songbirdnest.com/player/welcome/" );
 }
 
 // onBrowserBookmark
@@ -1417,7 +1417,7 @@ function onBrowserPlaylist()
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?" + WEB_PLAYLIST_TABLE + "," + WEB_PLAYLIST_CONTEXT );
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?" + WEB_PLAYLIST_TABLE + "," + WEB_PLAYLIST_CONTEXT );
   }
 }
 
@@ -1468,7 +1468,7 @@ function onBrowserDownload()
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
   }
 }
 
@@ -1509,7 +1509,7 @@ function onHTMLUrlChange( evt )
     }
     // And then go to the url.  Easy, no?
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( value );
+    theServiceTree.launchURL( value );
   }
 }
 
@@ -2119,7 +2119,7 @@ function onSearchTerm( target, in_term )
   if ( search_url.length )
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( search_url );
+    theServiceTree.launchURL( search_url );
   }
 }
 
@@ -2257,7 +2257,7 @@ catch ( err )
       if ( target.value )
       {
         var theServiceTree = document.getElementById( 'frame_servicetree' );
-        theServiceTree.LaunchURL( target.value );
+        theServiceTree.launchURL( target.value );
       }
     break;
   }
@@ -2327,7 +2327,7 @@ function onHTMLContextMenu( target )
         else
         {
           var theServiceTree = document.getElementById( 'frame_servicetree' );
-          theServiceTree.LaunchURL( theHTMLContextURL );
+          theServiceTree.launchURL( theHTMLContextURL );
         }
       break;
       case "html.context.play":
@@ -2931,7 +2931,8 @@ var SBDownloadCommands =
 
   GetCommandId: function( index )
   {
-    if ( index == 2 )
+    // Ah! magic number - what does it mean???
+    if ( index == 2 ) 
     {
       if ( this.m_Device )
       {

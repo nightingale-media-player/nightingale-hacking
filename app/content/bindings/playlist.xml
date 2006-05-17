@@ -47,7 +47,16 @@
         <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
         </xul:hbox>
         
-        <xul:splitter id="horz_splitter" sbid="filter_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" hidden="true" onmouseup="onFiltersResize();">
+        <xul:splitter
+          id="horz_splitter"
+          sbid="filter_splitter"
+          state="open"
+          collapse="before"
+          resizebefore="closest"
+          resizeafter="closest"
+          hidden="true"
+          onmouseup="onFiltersResize();"
+        >
           <xul:grippy/>
         </xul:splitter>
       
@@ -135,7 +144,13 @@
           <!-- Edit Popup (doesn't work)
           -->
           <xul:popup id="playlist_edit_popup" sbid="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
-            <xul:textbox id="playlist_edit_box" sbid="playlist_edit_box" class="sb_faceplate" onblur="hidePlaylistEdit();" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" flex="1"/>
+            <xul:textbox id="playlist_edit_box"
+                         sbid="playlist_edit_box"
+                         class="sb_faceplate"
+                         onblur="hidePlaylistEdit();"
+                         onchange="onPlaylistEditChange();"
+                         onkeypress="onPlaylistEditKeypress( event );"
+                         flex="1"/>
           </xul:popup>
         </xul:popupset>
       </xul:vbox>
@@ -167,7 +182,7 @@
         this.stringbundle = stringBundleService.createBundle( src );
             
         // Someone explain to me the difference between a builder's listener
-        // and a builderview's observer?  ?!?
+        // and a builderview's observer?  ?!?  -- builderView is deprecated
         this.tree.builder.addListener(this);
 
         // These are all the possible column ids whose cell content we can use as unique ids (for saveSelection/restoreSelection)
@@ -270,6 +285,7 @@
       <parameter name="commands"/>
       <body>
       <![CDATA[
+       dump("XXXredfive - playlist::load ******************************\n");
       try
       {
 /*      
@@ -316,10 +332,8 @@
         const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
         var aPlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
         
-  
         // For some reason, this is the offending method?      
         var success = aPlaylistReader.LoadPlaylist(url, guid, table, name, type, description, content_type, false, null);
-        
         
         // And, lastly, bind ourselves to that playlist being loaded.
         this.bind( guid, table, "", commands );
@@ -341,6 +355,7 @@
       <parameter name="collapse"/>
       <body>
       <![CDATA[
+       dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
       try
       {
         // Perhaps we need to reload our columns
@@ -398,6 +413,7 @@
         // If we are loading a new ref into an extant playlist        
         if ( ref != this.ref )
         {
+          dump("XXXredfive - in bind, removing columns/templates\n");
           // New columns from the new feed.
           this.removeColumns();
           this.removeTemplate();
@@ -440,7 +456,7 @@
           splitter.hidden = true;
         }
         
-        // Tell the playlist source to feed.
+        // Tell the playlist source to feed the filters.
         if ( feed )
         {
           this.source.FeedFilters( ref );
@@ -487,8 +503,9 @@
         // Last last last thing, just force one redraw on the tree.
         if ( need_loadcolumns )
         {
+          dump("XXXredfive - this should get called\n");
           // Load columns upon rebinding.
-          this.loadcolumns();
+          this.loadColumns();
         }
       }
       catch( err )
@@ -692,6 +709,7 @@
       <parameter name="feed"/>
       <body>
       <![CDATA[
+       dump("XXXredfive - playlist::addFilter\n");
       try
       {
         // These should be shown
@@ -730,12 +748,13 @@
         this.source.IncomingObserver( ref, filterlist ); // HEY YOU GUYYYYYYYS!!
         filterlist.source = this.source;
         filterlist.ref_pl = this.ref;
-        filterlist.ref = ref; // YOU MUST SET THIS VARIABLE AFTER filterlist.source AND filterlist.ref_pl !!!!!!!!!
+        filterlist.ref = ref; // YOU MUST SET THIS VARIABLE AFTER 
+                              // filterlist.source AND filterlist.ref_pl !!!!!
         filterlist.index = this.filters.length;
         filterlist.column = meta_column;
         filterlist.datasources = "rdf:playlist";
         filterlist.playlist = this;
-
+        
         filterlist.addEventListener( "dblclick", this.onFilterDblClick, true );
         
         if ( feed )
@@ -747,6 +766,7 @@
                                   filterlist.column  );
         }
                 
+        dump("XXXredfive builder: " + this.tree.builder + "\n");
         filterlist.builder.refresh();
         
         
@@ -767,39 +787,59 @@
 
     <!-- Dynamic Columns/Template -->
 
-    <method name="loadcolumns">
+    <method name="loadColumns">
       <body>
       <![CDATA[
+       dump("XXXredfive - playlist::loadColumns source: " + this.source + "\n");
       try
       {
-        if (this.source == null) { /*alert( "playlist.xml - loadcolumns - source is null");*/ return; }
+        if (this.source == null)
+          return;
         // Don't nuke the columns if the user's currently moving or resizing them, or if the columns picker is open
         if (!this.isAnyDragObjectDown() && !this.isColumnPickerOpen()) {
           // Don't nuke the columns if there's no current query result.  Yipe.
+          dump("XXXredfive - playlist::loadColumns columncount: " +
+               this.source.GetRefColumnCount(this.ref) + "\n");
           if ( this.source.GetRefColumnCount( this.ref ) > 0 )
           {
             this.saveColumnsProperties();
+            dump("XXXredfive - playlist::loadColumns 1\n");
             this.removeColumns();
+            dump("XXXredfive - playlist::loadColumns 2\n");
             this.removeTemplate(); 
-            this.addNewContent(this.source, this.ref);
+            dump("XXXredfive - playlist::loadColumns 3\n");
+            this.createTemplateAndColumns(this.source, this.ref);
+            dump("XXXredfive - playlist::loadColumns 4\n");
+          }
+          else {
+            this.createTemplateAndColumns(this.source, this.ref);
+            dump("XXXredfive - playlist::loadColumns 1.2\n");
           }
         }
       }
       catch( err )
       {
-        alert( "playlist.xml - loadcolumns - " + err );
+        alert( "playlist.xml - loadColumns - " + err );
       }
       ]]>
       </body>
     </method>
     
-    <method name="addNewContent">
+    <method name="createTemplateAndColumns">
       <parameter name="source"/>
       <parameter name="ref"/>
       <body>
         <![CDATA[
+        dump("XXXredfive - playlist::createTemplateAndColumns\n");
         try
         {
+          // XXXredfive - short circuit the crazy teardown of the template.
+          //if (this.treecols) {
+          //  dump("XXXredfive - shortcircuiting 
+          //          playlist::createTemplateAndColumns\n");
+          //  return;
+          //}
+
           // See if we need to hide the loading box.
           if ( ! this.loading_box.hidden )
           {
@@ -833,7 +873,8 @@
           var treerow_node = document.createElement("treerow");
 
           // Go through all the columns on the table and create nodes accordingly
-          if(this.guid == 'undefined' || this.table == 'undefined' || this.guid == "" || this.table == "") return;
+          if(this.guid == 'undefined' || this.table == 'undefined' || this.guid == "" || this.table == "")
+            return;
 
           if(this.m_queryObj == null)
           {          
@@ -882,6 +923,7 @@
           
           var result = this.m_queryObj.GetResultObject();
 
+          // XXXredfive - Row Count is # of columns (19 currently)
           for (var i = 0; i < result.GetRowCount(); i++)
           {
             var this_column_node = document.createElement("treecol");
@@ -977,10 +1019,14 @@
           this.startWatchingDragObjects();
           
           this.treecols = columns_node;
+
+          // XXXredfive
+          dump("XXXredfive - rebuild at the end of createTemplate");
+          this.builder.rebuild();
         }
         catch( err )
         {
-          alert( "playlist.xml - addNewContent - " + err );
+          alert( "playlist.xml - createTemplateAndColumns - " + err );
         }
         ]]>
       </body>
@@ -990,12 +1036,15 @@
 
     <method name="removeColumns">
       <body>
+          dump("XXXredfive - removeColumns \n");
           this.removeChildByName("treecols");
+          //this.treecols = null;
       </body>
     </method>
 
     <method name="removeTemplate">
       <body>
+          dump("XXXredfive - removeTemplate \n");
           this.removeChildByName("template");
       </body>
     </method>
@@ -1004,10 +1053,12 @@
       <parameter name="childname"/>
       <body>
         <![CDATA[
-          for (var i=0;i<this.tree.childNodes.length;i++) {
+          for (var i=0; i<this.tree.childNodes.length; i++) {
             var node = this.tree.childNodes.item(i);
             if (node.tagName == childname ||
                 node.tagName == "xul:"+childname) {
+              dump("XXXredfive - removeChildByName i:" + i + " name:" + node.tagName + "\n");
+              // XXXredfive
               this.tree.removeChild(node);
               i--;
             }
@@ -1020,6 +1071,7 @@
 
     <method name="saveColumnsProperties">
       <body>
+        dump("XXXredfive - saveColumnProperties\n");
         this.saveColumnsWidth(); 
         this.saveColumnsOrdinal();
         this.saveColumnsVisibility();
@@ -1146,6 +1198,7 @@
 
     <method name="findColumns">
       <body>
+        dump("XXXredfive - playlist::findColumns\n");
         return this.findObject(this.tree, "treecols");
       </body>
     </method>
@@ -1153,6 +1206,7 @@
     <method name="saveColumnsOrdinal">
       <body>
         <![CDATA[
+          dump("XXXredfive - playlist::saveColumnsOrdinal\n");
           try
           {
             var columnsNode = this.findColumns();
@@ -1177,6 +1231,7 @@
     <method name="saveColumnsVisibility">
       <body>
         <![CDATA[
+          dump("XXXredfive - playlist::saveColumnsVisiblity\n");
           try
           {
             var columnsNode = this.findColumns();
@@ -1431,16 +1486,17 @@
     <method name="willRebuild">
       <parameter name="builder"/>
       <body>
-//        alert("?");
+        dump("XXXredfive - playlist::willRebuild\n");
         this.saveSelection();
-        this.loadcolumns(); 
+        this.saveColumnsProperties();
+        //this.loadColumns(); 
       </body>
     </method>
 
     <method name="didRebuild">
       <parameter name="builder"/>
       <body>
-//        alert("!");
+        dump("XXXredfive - playlist::didRebuild\n");
         var viewsummary = this.getViewSummary();
         if (this._lastviewsummary == viewsummary) 
         {
@@ -2515,7 +2571,8 @@
               ret = this.guid + ";" + this.table;
               var n = this.source.GetNumFilters(this.ref);
               ret += ";" + n;
-              for (var i=0;i<n;i++) ret += ";" + this.source.GetFilter(this.ref, 0);
+              for (var i=0;i<n;i++)
+                ret += ";" + this.source.GetFilter(this.ref, 0);
             }
           }
           catch( err )

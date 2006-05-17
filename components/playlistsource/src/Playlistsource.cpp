@@ -1817,7 +1817,6 @@ sbPlaylistsource::GetTargets2(nsIRDFResource*       source,
   if (!tv)
     return NS_RDF_NO_VALUE;
 
-
   // We only respond targets to children, I guess.
   if (property != kNC_child)
     return NS_NewEmptyEnumerator(targets);
@@ -1836,9 +1835,6 @@ sbPlaylistsource::GetTargets2(nsIRDFResource*       source,
   }
 
   // Stuff the array into the enumerator
-  // XXXjgaunt
-  //nsISimpleEnumerator *result;
-  //rv = NS_NewArrayEnumerator(&result, nextItemArray);
   rv = NS_NewArrayEnumerator(targets, nextItemArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2066,6 +2062,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     value.m_Row = 0;
     value.m_All = PR_TRUE;
 
+    // copies value
     g_ValueMap[next_resource] = value;
   }
 
@@ -2122,9 +2119,6 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   }
 
   // Stuff the array into the enumerator
-  // XXXjgaunt
-  //nsISimpleEnumerator *result;
-  //rv = NS_NewArrayEnumerator(&result, nextItemArray);
   rv = NS_NewArrayEnumerator(targets, nextItemArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2494,6 +2488,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   rv = result->GetRowCount(&rows);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Make sure we don't run off the end of the m_ResList
   PRInt32 end = 0;
   if (value.m_ResMapIndex + rows < (PRInt32)value.m_Info->m_ResList.size())
     end = value.m_ResMapIndex + rows;
