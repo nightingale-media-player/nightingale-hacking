@@ -136,7 +136,7 @@ CMediaLibrary.prototype =
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"genre\", \"" + genre + "\", 1, 1, 1, -5000, 10)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"composer\", \"" + composer + "\", 1, 0, 1, 0, -1)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"producer\", \"" + producer + "\", 1, 0, 1, 0, -1)");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"rating\", \"" + rating + "\", 1, 0, 1, 0, -1)");
+      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"rating\", \"" + rating + "\", 1, 1, 1, 1000, 10)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_no\", \"" + track_no + "\", 1, 0, 1, 0, -1)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_total\", \"" + track_total + "\", 1, 0, 1, 0, -1)");
       this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_no\", \"" + disc_no + "\", 1, 0, 1, 0, -1)");
