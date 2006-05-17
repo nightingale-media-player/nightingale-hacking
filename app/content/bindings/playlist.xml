@@ -2736,7 +2736,7 @@
           {
             alert( "playlist.xml - setCellRating - " + err );
           }
-          return -1;
+          return;
         ]]>
       </body>
     </method>
