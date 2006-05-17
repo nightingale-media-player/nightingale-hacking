@@ -478,11 +478,20 @@ NS_IMETHODIMP CDatabaseEngine::AddPersistentQuery(CDatabaseQuery * dbQuery, cons
 void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const std::string &strTableName)
 {
   nsAutoLock lock(m_pPersistentQueriesLock);
-    
-  PRUnichar *strDBGUID = nsnull;
-  pQuery->GetDatabaseGUID(&strDBGUID);
 
-  querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(strDBGUID);
+  nsString strTheDBGUID;
+  PRUnichar *strDBGUID = nsnull;
+  
+  pQuery->GetDatabaseGUID(&strDBGUID);
+  NS_ASSERTION(strDBGUID != nsnull, "No DB GUID present in Query that requested persistent execution!");
+
+  //Bad :(
+  if(!strDBGUID) return;
+
+  strTheDBGUID = strDBGUID;
+  PR_Free(strDBGUID);
+
+  querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(strTheDBGUID.get());
   if(itPersistentQueries != m_PersistentQueries.end())
   {
     tablepersistmap_t::iterator itTableQuery = itPersistentQueries->second.find(strTableName);
@@ -518,7 +527,7 @@ void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const st
     tablepersistmap_t tableMap;
     tableMap.insert(std::make_pair<std::string, querylist_t>(strTableName, queryList));
 
-    m_PersistentQueries.insert(std::make_pair<std::prustring, tablepersistmap_t>(strDBGUID, tableMap));
+    m_PersistentQueries.insert(std::make_pair<std::prustring, tablepersistmap_t>(strTheDBGUID.get(), tableMap));
   }
 
   {
@@ -526,8 +535,6 @@ void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const st
     pQuery->m_PersistentQueryTable = strTableName;
     pQuery->m_IsPersistentQueryRegistered = PR_TRUE;
   }
-
-  PR_Free(strDBGUID);
 
 } //AddPersistentQuery
 
