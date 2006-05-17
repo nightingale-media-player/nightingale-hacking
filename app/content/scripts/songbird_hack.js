@@ -1405,7 +1405,9 @@ function onBrowserPlaylist()
   metrics_inc("player", "urlslurp", null);
   if ( ! thePlaylistTree )
   {
-    if ( theWebPlaylist.ref != ( "NC:" + WEB_PLAYLIST_CONTEXT + "_" + WEB_PLAYLIST_TABLE ) )
+    if (!theWebPlaylist.source ||
+        theWebPlaylist.source.GetRefGUID(theWebPlaylist.ref) != WEB_PLAYLIST_CONTEXT ||
+        theWebPlaylist.source.GetRefTable(theWebPlaylist.ref) != WEB_PLAYLIST_TABLE)
     {
       SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
       theWebPlaylist.bind( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, null, SBWebPlaylistCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
@@ -1457,7 +1459,9 @@ function onBrowserDownload()
       return;
     }
 
-    if ( theWebPlaylist.ref != ( "NC:" + guid + "_" + table ) )
+    if (!theWebPlaylist.source ||
+        theWebPlaylist.source.GetRefGUID(theWebPlaylist.ref) != guid ||
+        theWebPlaylist.source.GetRefTable(theWebPlaylist.ref) != table)
     {
       theWebPlaylist.bind( guid, table, null, SBDownloadCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
     }
