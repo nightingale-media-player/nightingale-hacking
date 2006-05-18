@@ -2950,33 +2950,27 @@ Anything with #rmp_demo refers to the skin of the mini player.
 
 window#rmp_demo  
 { 
-  width: 640px;
-  height: 20px;
-  background-color: transparent;
-}
-
-#rmp_demo_btn_max
-{
-  width: 33px;
+  width: 730px;
   height: 30px;
-  background-image: url(mini/rmp_demo.btn.max.png);
   background-color: transparent;
 }
 
 /* the back button */
 #rmp_demo_btn_back
 {
-  width: 61px;
+  width: 63px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.back.n.png);
   background-color: transparent;
 }
-#rmp_demo_btn_back[disabled="true"]
+#rmp_demo_btn_back:hover
 {
-  background-image: url(mini/rmp_demo.btn.back.d.png);
+  width: 63px;
+  height: 30px;
+  background-image: url(mini/rmp_demo.btn.back.h.png);
   background-color: transparent;
 }
-#rmp_demo_btn_back:hover[disabled="true"]
+#rmp_demo_btn_back[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.back.n.png);
   background-color: transparent;
@@ -2996,14 +2990,16 @@ window#rmp_demo
   background-image: url(mini/rmp_demo.btn.play.n.png);
   background-color: transparent;
 }
+#rmp_demo_btn_play:hover
+{
+  width: 81px;
+  height: 30px;
+  background-image: url(mini/rmp_demo.btn.play.h.png);
+  background-color: transparent;
+}
 #rmp_demo_btn_play[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.play.d.png);
-  background-color: transparent;
-}
-#rmp_demo_btn_play:hover[disabled="true"]
-{
-  background-image: url(mini/rmp_demo.btn.play.n.png);
   background-color: transparent;
 }
 #rmp_demo_btn_play:active
@@ -3020,14 +3016,13 @@ window#rmp_demo
   background-image: url(mini/rmp_demo.btn.pause.n.png);
   background-color: transparent;
 }
+#rmp_demo_btn_pause:hover
+{
+  background-image: url(mini/rmp_demo.btn.pause.h.png);
+}
 #rmp_demo_btn_pause[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.pause.d.png);
-  background-color: transparent;
-}
-#rmp_demo_btn_pause:hover[disabled="true"]
-{
-  background-image: url(mini/rmp_demo.btn.pause.n.png);
   background-color: transparent;
 }
 #rmp_demo_btn_pause:active
@@ -3044,14 +3039,16 @@ window#rmp_demo
   background-image: url(mini/rmp_demo.btn.fwd.n.png);
   background-color: transparent;
 }
+#rmp_demo_btn_fwd:hover
+{
+  width: 61px;
+  height: 30px;
+  background-image: url(mini/rmp_demo.btn.fwd.h.png);
+  background-color: transparent;
+}
 #rmp_demo_btn_fwd[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.fwd.d.png);
-  background-color: transparent;
-}
-#rmp_demo_btn_fwd:hover[disabled="true"]
-{
-  background-image: url(mini/rmp_demo.btn.fwd.n.png);
   background-color: transparent;
 }
 #rmp_demo_btn_fwd:active
@@ -3115,8 +3112,8 @@ window#rmp_demo
 
 #rmp_demo_volume
 {
-  width: 160px;
-  height: 27px;
+  width: 145px;
+  height: 30px;
   background-image: url(mini/mini_volume_bkgd.png);
   padding: 3px 0px 0px 15px;
   border: 0px solid #F00;
@@ -3183,6 +3180,26 @@ window#rmp_demo
   background-repeat: no-repeat;
   background-color: transparent;
 }
+
+/* Restore */
+#rmp_demo_btn_max
+{
+  width: 31px;
+  height: 30px;
+  background-image: url(mini/rmp_demo.btn.max.png);
+  background-color: transparent;
+}
+
+/* Close */
+#rmp_demo_close
+{  
+  width: 30px;
+  height: 30px;
+  background-image: url(mini/rmp_demo.btn.close.png);
+  background-repeat: no-repeat;
+  background-color: transparent;
+}
+
 
 /* the texties */
 #rmp_demo_text_title
