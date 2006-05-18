@@ -887,6 +887,7 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
   rv = info->m_Resultset->GetColumnCount(&col_count);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  LOG(("XXXredfive - FeedPlaylistFilterOverride\n"));
   NS_ASSERTION(filter_count || col_count, "Nothing to do here!!!");
 
   if (filter_count) {
@@ -1718,7 +1719,6 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
     // Figure out the metadata column
     columnmap_t::iterator c = valInfo.m_Info->m_ColumnMap.find(property);
     if (c != valInfo.m_Info->m_ColumnMap.end()) {
-      LOG(("  column: %s", valInfo.m_Info->m_Ref));
       // And return that.
       if (property == valInfo.m_Info->m_RowIdResource)
         outstring.AppendInt(valInfo.m_Row + 1);
