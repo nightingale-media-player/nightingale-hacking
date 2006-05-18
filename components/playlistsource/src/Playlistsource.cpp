@@ -641,6 +641,8 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
   NS_ENSURE_ARG_POINTER(Column);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  *_retval = nsnull;
+
   METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
 
@@ -650,7 +652,8 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
   NS_ASSERTION(Row < info->m_ResList.size(), "sbPlaylistsource::GetRefRowCellByColumn, Row is out of bounds!");
-  if(Row >= info->m_ResList.size()) Row = info->m_ResList.size() - 1;
+  if(Row >= info->m_ResList.size() && info->m_ResList.size() != 0) Row = info->m_ResList.size() - 1;
+  else return NS_OK;
 
   nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[Row];
   valuemap_t::iterator v = g_ValueMap.find(next_resource);
