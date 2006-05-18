@@ -58,7 +58,7 @@
    src="chrome://songbird/content/scripts/coreWMP.js"/>
 
 <hbox>
-  <vbox><button id="rmp_demo_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>
+  
   <vbox><player_back id="rmp_demo_btn_back"    class="sb_faceplate miniplayer" /></vbox>
   <vbox><player_playpause id="rmp_demo_btn_playpause" class="sb_faceplate miniplayer" playid="rmp_demo_btn_play" pauseid="rmp_demo_btn_pause"/></vbox>
   <vbox><player_forward id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" /> </vbox>
@@ -83,6 +83,8 @@
       </hbox>
     </hbox>
   </vbox>
+  <vbox><button id="rmp_demo_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>
+  <button id="rmp_demo_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
   <hbox hidden="true">
   <player_repeat class="sb_faceplate miniplayer" repid="rmp_demo_btn_rep1" rep1id="rmp_demo_btn_repa" repallid="rmp_demo_btn_rep" hidden="true"/>
   <player_shuffle class="sb_faceplate" shuffleonid="rmp_demo_btn_shuf_on" shuffleoffid="rmp_demo_btn_shuf" hidden="true"/>
