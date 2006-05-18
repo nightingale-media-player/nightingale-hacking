@@ -107,9 +107,13 @@ THE WINDOW CHROME
 These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
-
-#chrome_bkgd,
 .chrome_bkgd
+{
+  background: #000;
+}
+
+
+#chrome_bkgd
 {
   background-image: url(default/chrome_bkgd.png); /** <img src="defaultchrome_bkgd.png"> */
   background-color: transparent;
