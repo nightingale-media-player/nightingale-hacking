@@ -1,0 +1,20 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(66b4148a-7f06-4c4a-9ede-5c526db8c03c)]
+interface sbIThreadsafeCaseConversion : nsISupports
+{
+  /**
+   * Performs an in-place conversion of the string to lowercase
+   *
+   * @param aString - The string to convert
+   */
+  void ToLowerCase(inout AString aString);
+
+  /**
+   * Performs an in-place conversion of the string to uppercase
+   *
+   * @param aString - The string to convert
+   */
+  void ToUpperCase(inout AString aString);
+
+};
