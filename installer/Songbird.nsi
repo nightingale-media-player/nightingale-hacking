@@ -50,7 +50,7 @@ ShowInstDetails show
 ShowUninstDetails show
 
 Function .onInstSuccess
-  WriteINIStr $APPDATA\Songbird_vlc\vlcrc main plugin-path $INSTDIR\xulrunner\vlcplugins
+  WriteINIStr $APPDATA\Songbird_vlc\vlcrc main plugin-path $INSTDIR\vlcplugins
 FunctionEnd
 
 Section "Songbird Base (Required)"
