@@ -315,6 +315,7 @@ function SBAppInitialize()
     SBMetricsAppStart();
     setVideoMinMaxCallback();
     onWindowLoadSize();
+    createLibraryRef();
     rmp_demo_playURL.bindCallbackFunction( SBUrlChanged, true )
 
     /*
@@ -565,3 +566,8 @@ function setVideoMinMaxCallback()
   }
 }
 
+function createLibraryRef() {
+  // this is so we can playRef the library even if it has never been shown
+  //var source = new sbIPlaylistsource();
+  //source.FeedPlaylist( "NC:songbird_library", "songbird", "library");
+}

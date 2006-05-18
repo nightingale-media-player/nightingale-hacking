@@ -744,7 +744,39 @@
 
     <constructor>
       this.data  = "metadata.title";
+      this.autotip = this.getAttribute("autotip");
+      if (this.autotip) {
+        var onremoteartistalbumchange = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.rebuildTip(); } 
+        } onremoteartistalbumchange._that = this;
+        this.remote_artist = new sbIDataRemote( "metadata.artist" );
+        this.remote_artist.bindCallbackFunction(onremoteartistalbumchange, true);
+        this.remote_album = new sbIDataRemote( "metadata.album" );
+        this.remote_album.bindCallbackFunction(onremoteartistalbumchange, true);
+        this.rebuildTip();
+      }
     </constructor>
+
+    <method name="rebuildTip">
+      <body>
+        <![CDATA[
+          try {
+            var tip = "";
+            if (this.remote_artist.getValue().length > 0) {
+              tip = this.remote_artist.getValue();
+            }
+            if (this.remote_album.getValue().length > 0) {
+              if (tip.length > 0) tip += " / ";
+              tip += this.remote_album.getValue();
+            }
+            this.label.setAttribute("tooltiptext", tip);
+          } catch (e) {
+            alert("player_controls.xml - rebuildTip - " + e);
+          }
+        ]]>
+      </body>
+    </method>
 
    </implementation>
  

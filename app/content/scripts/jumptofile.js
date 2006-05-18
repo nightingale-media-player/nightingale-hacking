@@ -143,9 +143,17 @@ try
       guid = source.GetRefGUID( ref );
       table = source.GetRefTable( ref );
     } else {
-      source_ref = "NC:songbird_library";
-      guid = "songbird";
-      table = "library";
+      var pl = window.arguments[0].__CURRENTPLAYLIST__;
+      if (!pl) pl = window.arguments[0].__CURRENTPLAYLIST__;
+      if (pl) {
+        source_ref = pl.ref;
+        guid = pl.guid;
+        table = pl.table
+      } else {
+        source_ref = "NC:songbird_library";
+        guid = "songbird";
+        table = "library";
+      }
     }
     var playlist = document.getElementById("jumpto.playlist");
     playlist.tree.setAttribute("seltype", "single");

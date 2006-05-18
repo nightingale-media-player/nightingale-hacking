@@ -808,7 +808,7 @@ PlaylistPlayback.prototype = {
   playAndImportUrl: function(url) {
     try  {
       var row = this._importUrlInLibrary(url);
-      this.playRef("NC:songbird_library", row);
+      this.playRefByID("NC:songbird_library", row);
     } catch( err ) {
       LOG( "playAndImportUrl:\n" + err );
       return false;

@@ -41,8 +41,8 @@
  align="start" 
  pack="start"
  hidechrome="true"
- onload="{centerWindowOnScreen();SBInitialize();}onSBMiniplayerDataLoad();"
- onunload="onSBMiniplayerDataUnload();SBUninitialize();"
+ onload="{centerWindowOnScreen();SBInitialize();}"
+ onunload="SBUninitialize();"
  class="sb_faceplate miniplayer"
  onkeypress="onMiniplayerKeypress( event );"
 >
@@ -64,7 +64,7 @@
   <vbox><player_forward id="rmp_demo_btn_fwd"     class="sb_faceplate miniplayer" /> </vbox>
   <vbox id="rmp_demo_dash">
     <hbox id="rmp_demo_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
-      <player_title id="rmp_demo_text_title" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
+      <player_title id="rmp_demo_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
       <label id="rmp_demo_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       <player_timeelapsed id="rmp_demo_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       <label id="rmp_demo_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
@@ -107,8 +107,6 @@
    src="chrome://songbird/content/scripts/player_open.js"/>
   
   <!-- Load the demo-specific scripts -->
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/miniplayer.data.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/miniplayer.js" />
   <script type="application/x-javascript" 
