@@ -8,6 +8,7 @@ targetdir="$2"
 
 list_files() {
   find . -maxdepth 1 -type f \
+  -name "bug*" \
   ! -name "CVS" \
   | sed 's/\.\/\(.*\)/"\1"/'
 }
