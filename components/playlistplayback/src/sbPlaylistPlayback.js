@@ -725,28 +725,40 @@ PlaylistPlayback.prototype = {
    * See sbIPlaylistPlayback.idl
    */
   playTable: function(dbGUID, table, index) {
-    if (!dbGUID || !table || !index)
+    LOG("playTable - db: " + dbGUID + "\ntable: " + table + "\nindex: " + index);
+    
+    if ( !dbGUID || !table || (index == null) )
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
+    try
+    {
     // Create a ref different from what playlist.xml uses as a ref.
     var theRef = "sbPlaylistPlayback.js_" + dbGUID + "_" + table;
-
+    
+    LOG("The Ref: " + theRef);
+    
     // Tell playlistsource to set up that ref to the requested playlist
     this._source.FeedPlaylist( theRef, dbGUID, table );
     this._source.FeedFilters( theRef );
     
     // Synchronous call!  Woo hoo!
-    while( this._source.IsQueryExecuting( theRef ) )
-      ;
-      
+    while( this._source.IsQueryExecuting( theRef ) );
+
     // After the call is done, force GetTargets
     this._source.ForceGetTargets( theRef );
     
     // And then use the source to play that ref.
-    return this.playRef( theRef, index );
+    this.playRef( theRef, index );
+    }
+    catch(err)
+    {
+      LOG(err);
+    }
+    
+    return;
   },
 
   /**
@@ -1436,8 +1448,7 @@ PlaylistPlayback.prototype = {
   {
     const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
     var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-    var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
-    queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+    var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     queryObj.SetDatabaseGUID("songbird");
     library.SetQueryObject(queryObj);
     var keys = new Array( "title" );
@@ -1447,7 +1458,7 @@ PlaylistPlayback.prototype = {
     LOG("add media = " + guid);
     var row = library.GetValueByGUID(guid, "id");
     LOG("findbyguid = " + row);
-    return row - 1;
+    return row;
   },
   
 /*  
