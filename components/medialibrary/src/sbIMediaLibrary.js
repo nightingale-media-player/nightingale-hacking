@@ -316,7 +316,6 @@ CMediaLibrary.prototype =
     aDBQuery.AddQuery("SELECT url FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
       
     aDBQuery.Execute();
-    //aDBQuery.WaitForCompletion();
       
     var resObj = aDBQuery.GetResultObject();
     return resObj.GetRowCell(0, 0);

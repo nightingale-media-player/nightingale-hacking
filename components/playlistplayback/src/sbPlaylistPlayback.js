@@ -733,12 +733,8 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    try
-    {
     // Create a ref different from what playlist.xml uses as a ref.
     var theRef = "sbPlaylistPlayback.js_" + dbGUID + "_" + table;
-    
-    LOG("The Ref: " + theRef);
     
     // Tell playlistsource to set up that ref to the requested playlist
     this._source.FeedPlaylist( theRef, dbGUID, table );
@@ -751,14 +747,7 @@ PlaylistPlayback.prototype = {
     this._source.ForceGetTargets( theRef );
     
     // And then use the source to play that ref.
-    this.playRef( theRef, index );
-    }
-    catch(err)
-    {
-      LOG(err);
-    }
-    
-    return;
+    return this.playRef( theRef, index );
   },
 
   /**

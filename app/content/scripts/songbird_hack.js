@@ -3591,31 +3591,34 @@ var theCDListener =
 
 function OnCDInsert(deviceName)
 {
-    if (aDeviceManager)
+  if (aDeviceManager)
+  {
+    var aCDDevice = aDeviceManager.GetDevice('Songbird CD Device');
+    if (aCDDevice)
     {
-        var aCDDevice = aDeviceManager.GetDevice('Songbird CD Device');
-        if (aCDDevice)
+      SBCDCommands.m_DeviceName = deviceName;
+      SBCDCommands.m_Device = aCDDevice;
+      var cdTable = {};
+      var cdContext = {};
+      aCDDevice.GetTrackTable(SBCDCommands.m_DeviceName, cdContext, cdTable);
+      cdContext = cdContext.value;
+      cdTable = cdTable.value;
+      SBCDCommands.m_Context = cdContext;
+      SBCDCommands.m_Table = cdTable;
+      var source = new sbIPlaylistsource();
+      if ( cdContext && cdTable )
+      {
+        try
         {
-            SBCDCommands.m_DeviceName = deviceName;
-            SBCDCommands.m_Device = aCDDevice;
-            var cdTable = {};
-            var cdContext = {};
-            aCDDevice.GetTrackTable(SBCDCommands.m_DeviceName, cdContext, cdTable);
-            cdContext = cdContext.value;
-            cdTable = cdTable.value;
-            SBCDCommands.m_Context = cdContext;
-            SBCDCommands.m_Table = cdTable;
-            var source = new sbIPlaylistsource();
-            try
-            {
-            source.RegisterPlaylistCommands( cdContext, cdTable, cdTable, SBCDCommands );
-            }
-            catch ( err )
-            {
-            alert( "source.RegisterPlaylistCommands( " + SBCDCommands.m_Context + ", " + SBCDCommands.m_Table+ " );\r\n" + err )
-            }
+          source.RegisterPlaylistCommands( cdContext, cdTable, cdTable, SBCDCommands );
         }
+        catch ( err )
+        {
+          alert( "source.RegisterPlaylistCommands( " + SBCDCommands.m_Context + ", " + SBCDCommands.m_Table+ " );\r\n" + err )
+        }
+      }
     }
+  }
 }
 
 
