@@ -663,8 +663,10 @@
               ref = "NC:songbird_library";
               index = 0;
               this.loadLibrary();
+              this.gPPS.playTable("songbird", "library", index);
+            } else {
+              this.gPPS.playRef(ref, index);
             }
-            this.gPPS.playRef(ref, index);
           }
         ]]>
       </body>
