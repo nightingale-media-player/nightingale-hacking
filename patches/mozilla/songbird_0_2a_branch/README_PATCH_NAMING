@@ -1,0 +1,7 @@
+Patches in this dir get applied to the Mozilla XULRunner build by tools/scripts/common/apply-patches.sh. It applies only the patches that start with 'bug'. 
+
+Which means if you are committing a script that MUST be applied for Songbird to work with XULRunner then you must name it starting with 'bug', preferably follwed by the bug number in the mozilla bugzilla database.
+
+If the patch is only a convenience patch or something to be applied only when extra functionality is needed DO NOT start the patchname with 'bug'.
+
+You have been warned.
