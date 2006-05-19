@@ -310,12 +310,13 @@ CMediaLibrary.prototype =
   FindByGUID: function(mediaGUID)
   {
     var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    aDBQuery.SetAsyncQuery(false);
     aDBQuery.SetDatabaseGUID(this.m_queryObject.GetDatabaseGUID());
 
     aDBQuery.AddQuery("SELECT url FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
       
     aDBQuery.Execute();
-    aDBQuery.WaitForCompletion();
+    //aDBQuery.WaitForCompletion();
       
     var resObj = aDBQuery.GetResultObject();
     return resObj.GetRowCell(0, 0);
