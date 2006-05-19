@@ -653,7 +653,7 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
 
   NS_ASSERTION(Row < info->m_ResList.size(), "sbPlaylistsource::GetRefRowCellByColumn, Row is out of bounds!");
   if(Row >= info->m_ResList.size() && info->m_ResList.size() != 0) Row = info->m_ResList.size() - 1;
-  else if(info->m_resList->size() == 0) return NS_OK;
+  else if(info->m_ResList.size() == 0) return NS_OK;
 
   nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[Row];
   valuemap_t::iterator v = g_ValueMap.find(next_resource);
