@@ -859,6 +859,27 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
   NS_ENSURE_TRUE(info->m_Resultset, NS_ERROR_UNEXPECTED);
 
+  // Check for 0 columns
+  PRInt32 col_count = 0;
+  nsresult rv  = info->m_Resultset->GetColumnCount(&col_count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXredfive may want to pull this out into a helper function later
+  nsAString::const_iterator start, end;
+  filter_str.BeginReading(start);
+  filter_str.EndReading(end);
+
+  // check to see if the new query is more restrictive
+  PRBool subquery = FindInReadable(info->m_Override, start, end);
+
+  if ( col_count == 0 && subquery ) {
+    // we have no results and the filter string is at least as
+    //  restrictive meaning we won't have a chance at getting
+    //  more results if we quering the entire table.
+    mon.Exit();
+    return NS_OK;
+  }
+
   info->m_Override = filter_str;
 
   if (filter_str.IsEmpty()) {
@@ -867,7 +888,6 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
     return FeedFilters(RefName, nsnull);
   }
 
-  nsresult rv;
 
   // Crack the incoming list of filter strings (space delimited)
   nsStringArray filter_values;
@@ -879,17 +899,11 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
   // The beginning of the main query string before we dump on it.
   nsAutoString main_query_str = info->m_SimpleQueryStr +where_str;
 
-  // Compose an override query from the filter string and the columns in the
-  // current results
-  PRInt32 col_count, filter_count = (PRInt32)info->m_Filters.size();
+  PRInt32 filter_count = (PRInt32)info->m_Filters.size();
   PRBool any_column = PR_FALSE;
 
-  rv = info->m_Resultset->GetColumnCount(&col_count);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  LOG(("XXXredfive - FeedPlaylistFilterOverride\n"));
-  NS_ASSERTION(filter_count || col_count, "Nothing to do here!!!");
-
+  // Compose an override query from the filter string and the columns in the
+  // current results
   if (filter_count) {
     // We're going to submit n+1 queries;
     g_ActiveQueryCount += filter_count + 1;
@@ -897,7 +911,7 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
     filtermap_t::iterator f = info->m_Filters.begin();
     for (; f != info->m_Filters.end(); f++) {
       // Compose an override string for the filter query.
-      // XXX Can't we just write it here instead of all this + crap?
+      // select unique ( artist ) from "library" where (
       nsAutoString sub_query_str = unique_str + op_str + (*f).second.m_Column +
                                    cp_str + from_str + qu_str + table_name +
                                    qu_str + where_str + op_str;
@@ -907,10 +921,12 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
         if (any_value)
           sub_query_str += and_str;
         any_value = PR_TRUE;
+        // ( artist like "%cc%" )
         sub_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
                          pct_str + *filter_values[index] + pct_str + qu_str +
                          cp_str;
       }
+      // ) order by artist
       sub_query_str += cp_str + order_str + (*f).second.m_Column;
 
       sbFeedInfo* filter_info = GetFeedInfo((*f).second.m_Ref);
@@ -942,17 +958,19 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
         if (any_column)
           main_query_str += or_str;
         any_column = PR_TRUE;
+        // ( artist like "%cc%" )
         main_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
                           pct_str + *filter_values[index] + pct_str + qu_str +
                           cp_str;
       }
 
+      // or ( title like "%cc%" ) )
       main_query_str += or_str + op_str + NS_LITERAL_STRING("title") +
                         like_str + qu_str + pct_str + *filter_values[index] +
                         pct_str + qu_str + cp_str + cp_str;
     }
   } // filter_count
-  else if (col_count) { 
+  else { 
     // do it from the actual columns if there's no filters.
     PRBool any_value = PR_FALSE;
     PRInt32 count = filter_values.Count();
@@ -963,6 +981,8 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
         main_query_str += op_str;
       any_value = PR_TRUE;
       any_column = PR_FALSE;
+      // ( title like "%cc%" or genre like "%cc%" or artist like "%cc%"
+      //     or album like "%cc%" )
       main_query_str += op_str + NS_LITERAL_STRING("title") + like_str +
                         qu_str + pct_str + *filter_values[index] + pct_str +
                         qu_str + or_str + NS_LITERAL_STRING("genre") +
