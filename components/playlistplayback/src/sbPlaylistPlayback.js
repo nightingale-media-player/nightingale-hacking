@@ -56,8 +56,8 @@ const URI_SONGBIRD_PROPERTIES    = "chrome://songbird/locale/songbird.properties
 const DB_TEST_GUID = "testdb-0000";
 
 // Other XPCOM Stuff
-/*
 const sbIDatabaseQuery = new Components.Constructor("@songbird.org/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
+/*
 const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
 const sbIMediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
 const sbIPlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
@@ -1311,17 +1311,23 @@ PlaylistPlayback.prototype = {
       
       var set_metadata = false;
       if ( title.length && ( this._metadataTitle.getValue() != title ) ) {
-        this._metadataTitle.setValue( title );
         set_metadata = true; 
       }
-/*
+      if ( artist.length && ( this._metadataArtist.getValue() != artist ) ) {
+        set_metadata = true; 
+      }
+      if ( album.length && ( this._metadataAlbum.getValue() != album ) ) {
+        set_metadata = true; 
+      }
+
       if ( set_metadata ) {
         // Set the metadata into the database table
-        SetURLMetadata( this._playUrl.getValue(), title, length, album, artist, genre, true );
+        dump("***** this._setURLMetadata( " + this._playUrl.getValue() + ", " + title + ", " + length + ", " + album + ", " + artist + ", " + genre + ", " + true  + ");\n" );
+        this._setURLMetadata( this._playUrl.getValue(), title, length, album, artist, genre, true );
         // Tell the search popup the metadata has changed
         this._resetSearchData.setValue( this._resetSearchData.getIntValue() + 1 );
       }
-*/      
+
       if (title != "" || artist != "" || album != "") {
         this._metadataTitle.setValue( title );
         this._metadataArtist.setValue( artist );
@@ -1330,8 +1336,7 @@ PlaylistPlayback.prototype = {
     }
   },
 
-  _onPollCompleted: function ( len, pos, core )
-  {
+  _onPollCompleted: function ( len, pos, core ) {
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
     if ( core.getPlaying() && ( len > 0.0 ) ) {
       // First time we see it playing, 
@@ -1356,7 +1361,6 @@ PlaylistPlayback.prototype = {
       if ( ( this._lookForPlayingCount++ > 40 ) || ( len < -1 ) )
         this.next();
     }
-    
   },
   
   _playNextPrev: function ( incr ) {
@@ -1451,56 +1455,47 @@ PlaylistPlayback.prototype = {
   },
   
 /*  
+*/
   // Updates the database with metadata changes
 
-  function SetURLMetadata( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute )
-  {
-    if ( aDBQuery == null )
-    {
+  _setURLMetadata: function( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute ) {
+    if ( aDBQuery == null ) {
       aDBQuery = new sbIDatabaseQuery();
       aDBQuery.SetAsyncQuery(true);
       aDBQuery.SetDatabaseGUID("songbird");
     }
-    if ( execute == null )
-    {
+    if ( execute == null ) {
       execute = true;
     }
       
-    if ( aTitle && aTitle.length )
-    {
+    if ( aTitle && aTitle.length ) {
       var q = 'update library set title="'   + aTitle  + '" where url="' + aURL + '"';
       aDBQuery.AddQuery( q );
     }
-    if ( aLength && aLength.length )
-    {
+    if ( aLength && aLength.length ) {
       var q = 'update library set length="'    + aLength + '" where url="' + aURL + '"';
       aDBQuery.AddQuery( q );
     }
-    if ( aAlbum && aAlbum.length )
-    {
+    if ( aAlbum && aAlbum.length ) {
       var q = 'update library set album="'  + aAlbum  + '" where url="' + aURL + '"';
       aDBQuery.AddQuery( q );
     }
-    if ( aArtist && aArtist.length )
-    {
+    if ( aArtist && aArtist.length ) {
       var q = 'update library set artist="' + aArtist + '" where url="' + aURL + '"';
       aDBQuery.AddQuery( q );
     }
-    if ( aGenre && aGenre.length )
-    {
+    if ( aGenre && aGenre.length ) {
       var q = 'update library set genre="'  + aGenre  + '" where url="' + aURL + '"';
       aDBQuery.AddQuery( q );
     }
     
-    if ( execute )
-    {
+    if ( execute ) {
       var ret = aDBQuery.Execute();
     }
       
     return aDBQuery; // So whomever calls this can keep track if they want.
-  }
+  },
   
-*/
 
   /**
    * QueryInterface is always last, it has no trailing comma.
