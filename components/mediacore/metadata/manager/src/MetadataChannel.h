@@ -74,8 +74,7 @@ class sbMetadataChannel : public sbIMetadataChannel
   inline char *   BUF( PRUint64 i ) { return m_Blocks[ IDX(i) ].buf + POS(i); }
 
   // Self allocating memory block. Works well with the map [] dereference.
-  struct sbBufferBlock
-  {
+  struct sbBufferBlock {
     char *buf;
     sbBufferBlock() { buf = (char *)nsMemory::Alloc( BLOCK_SIZE ); }
     sbBufferBlock( const sbBufferBlock &T ) { buf = T.buf; const_cast<sbBufferBlock &>(T).buf = nsnull; }
@@ -88,4 +87,5 @@ class sbMetadataChannel : public sbIMetadataChannel
   PRUint64 m_Pos;
   PRUint64 m_Buf;
   blockmap_t m_Blocks;
+  PRBool   m_Completed;
 };

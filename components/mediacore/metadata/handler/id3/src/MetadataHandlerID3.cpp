@@ -32,6 +32,10 @@
 #pragma once
 
 // INCLUDES ===================================================================
+#ifdef XP_WIN
+#include <windows.h> // For ansi-code-page character translation.
+#endif
+
 #include <nscore.h>
 #include "MetadataHandlerID3.h"
 
@@ -229,8 +233,10 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
     }
     catch ( const MetadataHandlerID3Exception err )
     {
+      PRBool completed = false;
+      mc->Completed( &completed );
       // If it's a tiny file, it's probably a 404 error
-      if ( err.m_Seek > ( err.m_Size - 1024 ) )
+      if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
         // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
         m_Completed = true;
@@ -305,12 +311,13 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   nRet = m_Channel->GetURI(getter_AddRefs(pURI));
   if(NS_FAILED(nRet)) return nRet;
 
+  PRBool async = true;
+
   nsCString cstrScheme, cstrPath;
   pURI->GetScheme(cstrScheme);
   pURI->GetPath(cstrPath);
   if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
   {
-
 #if defined(XP_WIN)
     nsCString::iterator itBegin, itEnd;
 
@@ -325,8 +332,17 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
       if( (*itBegin) == '/') (*itBegin) = '\\';
       itBegin++;
     }
+
+    if ( cstrPath.Find( NS_LITERAL_CSTRING(":\\") ) == 1 )
+    {
+      async = false;
+    }
 #endif
-    
+  }
+
+  if ( !async )
+  {
+    // Right now, only the fast Windows code uses the synchronous reader on local files.
     ID3_Tag  tag;
     size_t nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get());
     *_retval = nTagSize;
@@ -337,7 +353,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   }
   else
   {
-    // Get a new channel handler.
+    // Get a new channel handler for async operation.
     m_ChannelHandler = do_CreateInstance("@songbird.org/Songbird/MetadataChannel;1");
     if(!m_ChannelHandler.get())
     {
@@ -689,11 +705,23 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           case ID3TE_ISO8859_1:
           {
             nsCString iso_string( pField->GetRawText() );
-            strValue = NS_ConvertASCIItoUTF16(iso_string);
+#ifdef XP_WIN
+            // Just for fun, some systems like to save their values in the current windows codepage.
+            // This doesn't guarantee we'll translate them properly, but we'll at least have a better chance.
+            int size = MultiByteToWideChar( CP_ACP, 0, iso_string.get(), iso_string.Length(), NULL, 0 );
+            PRUnichar *uni_string = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+            int read = MultiByteToWideChar( CP_ACP, 0, iso_string.get(), iso_string.Length(), uni_string, size );
+            NS_ASSERTION(size == read, "Win32 ISO8859 conversion failed.");
+            uni_string[ size ] = 0;
+            strValue.Assign( uni_string );
+            nsMemory::Free( uni_string );
+#else
+            strValue = NS_ConvertUTF8toUTF16(iso_string);
+#endif
             break;
           }
-          case ID3TE_UTF16:
           case ID3TE_UTF16BE: // ?? what do we do with big endian?  cry?
+          case ID3TE_UTF16:
           {
             nsString u16_string( pField->GetRawUnicodeText() );
             strValue = u16_string;

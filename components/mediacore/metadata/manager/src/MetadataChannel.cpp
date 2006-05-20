@@ -47,7 +47,7 @@
 NS_IMPL_ISUPPORTS3(sbMetadataChannel, sbIMetadataChannel, nsIStreamListener, nsIRequestObserver)
 
 //-----------------------------------------------------------------------------
-sbMetadataChannel::sbMetadataChannel() : m_Pos( 0 ), m_Buf( 0 ), m_Blocks()
+sbMetadataChannel::sbMetadataChannel() : m_Pos( 0 ), m_Buf( 0 ), m_Blocks(), m_Completed( false )
 {
 }
 
@@ -232,6 +232,17 @@ NS_IMETHODIMP sbMetadataChannel::IsSeekable(PRBool *_retval)
   return NS_OK;
 }
 
+/* PRBool IsSeekable (); */
+NS_IMETHODIMP sbMetadataChannel::Completed(PRBool *_retval)
+{
+  if ( ! _retval )
+    return NS_ERROR_NULL_POINTER;
+
+  *_retval = m_Completed;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
                                           nsISupports *ctxt,
@@ -287,12 +298,13 @@ sbMetadataChannel::OnStopRequest(nsIRequest *aRequest,
                                         nsISupports *ctxt,
                                         nsresult status)
 {
+  // Okay, we're done.
+  m_Completed = true;
   // Inform the handler that we read data.
   nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt) );
   if ( handler.get() )
   {
     handler->OnChannelData( this );
   }
-
   return NS_OK;
 }

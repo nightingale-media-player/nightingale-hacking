@@ -124,8 +124,10 @@ try
         // Ask if it is done.
         if ( bsMDHandler.Completed() )
         {
-          // Always submit after an asynchronous read.  (for now?)
-          bsSubmitQueries = true;
+          // Always submit after an http read.  (for now?)
+          var channel = bsMDHandler.GetChannel();
+          if ( channel && channel.URI.scheme.indexOf( "http" ) != -1 )
+            bsSubmitQueries = true;
           BSReadHandlerValues();
         }
         return;

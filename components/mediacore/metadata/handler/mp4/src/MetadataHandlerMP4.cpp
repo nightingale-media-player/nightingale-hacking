@@ -118,8 +118,10 @@ NS_IMETHODIMP sbMetadataHandlerMP4::OnChannelData( nsISupports *channel )
     }
     catch ( const MetadataHandlerMP4Exception err )
     {
+      PRBool completed = false;
+      mc->Completed( &completed );
       // If it's a tiny file, it's probably a 404 error
-      if ( err.m_Seek > ( err.m_Size - 1024 ) )
+      if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
         // If it's a big file, this means it's an MP4v1 and it needs to seek to the end of the track?  Ooops.
         m_Completed = true;

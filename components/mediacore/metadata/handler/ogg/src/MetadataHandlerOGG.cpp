@@ -115,7 +115,10 @@ NS_IMETHODIMP sbMetadataHandlerOGG::OnChannelData( nsISupports *channel )
     }
     catch ( const MetadataHandlerOGGException err )
     {
-      if ( err.m_Seek > ( err.m_Size - 1024 ) )
+      PRBool completed = false;
+      mc->Completed( &completed );
+      // If it's a tiny file, it's probably a 404 error
+      if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
         // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
         m_Completed = true;
