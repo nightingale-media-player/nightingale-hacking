@@ -107,12 +107,12 @@ THE WINDOW CHROME
 These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
-.chrome_bkgd
+.chrome_iframe_bkgd
 {
   background: #000;
 }
 
-
+.chrome_bkgd,
 #chrome_bkgd
 {
   background-image: url(default/chrome_bkgd.png); /** <img src="defaultchrome_bkgd.png"> */
@@ -2455,6 +2455,7 @@ DIALOG BOXES
 #download label,
 #smart_playlist label,
 #subscribe,
+#track_editor label,
 #watchfolder
 {
   color: #fff;
@@ -2558,6 +2559,7 @@ DIALOG BOXES
   background-color: #333 !important;
 }
 
+.drawer_box textbox,
 .dialog_textbox,
 .smart_condition_box textbox
 {
@@ -2574,6 +2576,7 @@ DIALOG BOXES
   padding-left: 5px;
 }
 
+.drawer_box input:focus,
 .dialog_textbox input:focus,
 .smart_condition_box input:focus
 {
@@ -2653,6 +2656,7 @@ DIALOG BOXES
   margin: 10px 0px 0px 0px;
 }
 
+.drawer_box,
 .smart_condition_box
 {
   -moz-border-radius: 5px !important; 
@@ -2676,6 +2680,7 @@ DIALOG BOXES
   width: 40px;
 }
 
+.drawer_box,
 .smart_condition_box
 {
   border: 1px solid #99A195;
@@ -2729,6 +2734,12 @@ DIALOG BOXES
   -moz-appearance: none;
   height: 200px;
   /*background-color: transparent; BUGGY*/
+}
+
+#edit_bookmark
+{
+  -moz-appearance: none;
+  width:  550px;
 }
 
 #jump_to_file
