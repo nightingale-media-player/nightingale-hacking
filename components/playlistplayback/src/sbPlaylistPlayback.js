@@ -655,7 +655,7 @@ PlaylistPlayback.prototype = {
     this._updateCurrentInfo(source_ref, index);
 
     // Then play it
-    this.playUrl(url);
+    this.playUrl(this._playUrl.getValue());
 
     // Hide the intro box and show the normal faceplate box
     this._faceplateState.setValue( 1 );
