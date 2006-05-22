@@ -652,23 +652,8 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    // These define what is _actually_ playing
-    this._playingRef.setValue( source_ref );
-    this._playlistIndex.setValue( index )
-    
-    // And from those, we ask the Playlistsource to tell us who to play
-    var url = this._source.GetRefRowCellByColumn( source_ref, index, "url" );
-    var title = this._source.GetRefRowCellByColumn( source_ref, index, "title" );
-    var artist = this._source.GetRefRowCellByColumn( source_ref, index, "artist" );
-    var album = this._source.GetRefRowCellByColumn( source_ref, index, "album" );
-    
-    // Set the data remotes to indicate what's about to play
-    this._playUrl.setValue(url);
-    this._metadataUrl.setValue(url);
-    this._metadataTitle.setValue(title);
-    this._metadataArtist.setValue(artist);
-    this._metadataAlbum.setValue(album);
-    
+    this._updateCurrentInfo(source_ref, index);
+
     // Then play it
     this.playUrl(url);
 
@@ -686,8 +671,9 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-
+  
     var index = this._source.GetRefRowByColumnValue(source_ref, "id", row_id);
+    
     return this.playRef(source_ref, index);
   },
 
@@ -717,8 +703,10 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    var index = this._source.GetRefRowByColumnValue(source_ref, "url", url);
-    return this.playRef(source_ref, index);
+    this.playUrl(url);
+    setTimeout('var index = this._source.GetRefRowByColumnValue(' + source_ref + ', "url",' + url + '); this._updateCurrentInfo(' + source_ref + ', index )', 250);
+   
+    return;
   },
 
   /**
@@ -809,7 +797,7 @@ PlaylistPlayback.prototype = {
   playAndImportUrl: function(url) {
     try  {
       var row = this._importUrlInLibrary(url);
-      this.playRefByID("NC:songbird_library", row);
+      this.playRefByURL("NC:songbird_library", url);
     } catch( err ) {
       LOG( "playAndImportUrl:\n" + err );
       return false;
@@ -1384,6 +1372,8 @@ PlaylistPlayback.prototype = {
         }
         // Are we SHUFFLE?
         else if ( this._shuffle.getBoolValue() ) {
+          //Does shuffle look like it's supposed to be FUCKING RANDOM. Could we *PLEASE* have a real shuffle. *PLEASE*.
+          //Thanks. --aus
           var rand = num_items * Math.random();
           next_index = Math.floor( rand );
           LOG( "shuffle: " + next_index );
@@ -1496,7 +1486,29 @@ PlaylistPlayback.prototype = {
     return aDBQuery; // So whomever calls this can keep track if they want.
   },
   
-
+  
+  _updateCurrentInfo: function(source_ref, index)
+  {
+    // These define what is _actually_ playing
+    this._playingRef.setValue( source_ref );
+    this._playlistIndex.setValue( index )
+    
+    // And from those, we ask the Playlistsource to tell us who to play
+    var url = this._source.GetRefRowCellByColumn( source_ref, index, "url" );
+    var title = this._source.GetRefRowCellByColumn( source_ref, index, "title" );
+    var artist = this._source.GetRefRowCellByColumn( source_ref, index, "artist" );
+    var album = this._source.GetRefRowCellByColumn( source_ref, index, "album" );
+    
+    // Set the data remotes to indicate what's about to play
+    this._playUrl.setValue(url);
+    this._metadataUrl.setValue(url);
+    this._metadataTitle.setValue(title);
+    this._metadataArtist.setValue(artist);
+    this._metadataAlbum.setValue(album);
+    
+    return;
+  },
+  
   /**
    * QueryInterface is always last, it has no trailing comma.
    */
