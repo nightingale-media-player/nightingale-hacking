@@ -275,28 +275,6 @@ function SBInitialize()
         theMediaScanIsOpen.setValue( true );
         setTimeout( SBScanMedia, 1000 );
       }
-      
-      try
-      {
-
-        aDBQuery.ResetQuery();
-        aDBQuery.SetDatabaseGUID("songbird");
-
-        var aMediaLibrary = new MediaLibrary;
-        aMediaLibrary.SetQueryObject( aDBQuery );
-        aMediaLibrary.CreateDefaultLibrary(); // Does WaitForCompletion();
-        
-        var count = new Object;
-        var aValues = aMediaLibrary.GetUniqueValuesByField("artist", count);
-        
-        var stringVal = aValues.join(",");
-        alert(count.value + "\n" + stringVal);
-     
-      }
-      catch(err)
-      {
-        alert(err);
-      }
     }
     
     // Install listeners on the main pane.
