@@ -2461,6 +2461,11 @@ DIALOG BOXES
   color: #fff;
 }
 
+.dialog_label
+{
+  color: #fff;
+}
+
 #smart_playlist
 {
   width:  550px;

@@ -2409,7 +2409,13 @@ DIALOG BOXES
 #download label,
 #smart_playlist label,
 #subscribe,
+track_editor label,
 #watchfolder
+{
+  color: #505154;
+}
+
+.dialog_label
 {
   color: #505154;
 }

@@ -2192,7 +2192,13 @@ DIALOG BOXES
 #open_url label,
 #download label,
 #smart_playlist label,
+#track_editor label,
 #subscribe
+{
+  color: #fff;
+}
+
+.dialog_label
 {
   color: #fff;
 }
