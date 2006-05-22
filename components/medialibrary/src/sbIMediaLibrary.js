@@ -450,6 +450,31 @@ CMediaLibrary.prototype =
     
     return;
   },
+
+  GetUniqueValuesByField: function(strField, nValueCount)
+  {
+    nValueCount.value = 0;
+    var aValues = new Array();
+    
+    if(this.m_queryObject != null)
+    {
+      this.m_queryObject.ResetQuery();
+      this.m_queryObject.AddQuery("SELECT DISTINCT(" + strField + ") FROM " + LIBRARY_TABLE_NAME + " ORDER BY " + strField + " ASC" );
+      
+      this.m_queryObject.Execute();
+      this.m_queryObject.WaitForCompletion();
+      
+      var resObj = this.m_queryObject.GetResultObject();
+      nValueCount.value = resObj.GetRowCount();
+      
+      for(var i = 0; i < nValueCount.value; i++)
+      {
+        aValues.push(resObj.GetRowCell(i, 0));
+      }
+    }
+    
+    return aValues;
+  },
   
   SetValueByIndex: function(mediaIndex, strField, strValue, bWillRunLater)
   {
