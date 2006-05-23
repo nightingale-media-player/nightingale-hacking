@@ -91,14 +91,16 @@ static  CServicesource  *gServicesource = nsnull;
 static  nsIRDFService   *gRDFService = nsnull;
 
 // A callback from the database for when things change and we should repaint.
-class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
+class MyServicesourceQueryCallback : public sbIDatabaseSimpleQueryCallback
 {
   NS_DECL_ISUPPORTS
     NS_DECL_SBIDATABASESIMPLEQUERYCALLBACK
 
-    MyQueryCallback()
+    MyServicesourceQueryCallback()
   {
-    m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID);
+      nsresult rv;
+      m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create timer in servicesource");
   }
 
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure)
@@ -110,9 +112,9 @@ class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
   }
   nsCOMPtr< nsITimer >          m_Timer;
 };
-NS_IMPL_ISUPPORTS1(MyQueryCallback, sbIDatabaseSimpleQueryCallback)
+NS_IMPL_ISUPPORTS1(MyServicesourceQueryCallback, sbIDatabaseSimpleQueryCallback)
 /* void OnQueryEnd (in sbIDatabaseResult dbResultObject, in wstring dbGUID, in wstring strQuery); */
-NS_IMETHODIMP MyQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, const PRUnichar *dbGUID, const PRUnichar *strQuery)
+NS_IMETHODIMP MyServicesourceQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, const PRUnichar *dbGUID, const PRUnichar *strQuery)
 {
   if ( m_Timer.get() )
   {
@@ -501,11 +503,17 @@ void CServicesource::Init(void)
     m_PlaylistsQuery->SetAsyncQuery( PR_TRUE );
     m_PlaylistsQuery->SetDatabaseGUID( NS_LITERAL_STRING("songbird").get() );
 
-    MyQueryCallback *callback = new MyQueryCallback;
-    callback->AddRef();
-    m_PlaylistsQuery->AddSimpleQueryCallback( callback );
-    m_PlaylistsQuery->SetPersistentQuery( true );
+    MyServicesourceQueryCallback *callback;
+    NS_NEWXPCOM(callback, MyServicesourceQueryCallback);
+    if (!callback)
+      NS_WARNING("Couldn't create MyServicesourceQueryCalback");
 
+    if (callback) {
+      callback->AddRef();
+      m_PlaylistsQuery->AddSimpleQueryCallback( callback );
+    }
+    m_PlaylistsQuery->SetPersistentQuery( true );
+    
     nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbird.org/Songbird/PlaylistManager;1" );
     if(pPlaylistManager.get())
       pPlaylistManager->GetAllPlaylistList( m_PlaylistsQuery );
