@@ -113,7 +113,7 @@ CMediaLibrary.prototype =
       //Here's the library description table schema for quick reference.
       /*
       
-      In order, from 0 to 6.
+      In order, from 0 to 7.
             
       0. column name, ie. "artist"
       1. readable name, ie. "Artist"
