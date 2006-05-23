@@ -668,6 +668,54 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\tageditor.xul"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\trackeditor.xul"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\xul\watch_folders.xul"
 					>
 					<FileConfiguration
@@ -744,7 +792,31 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\conditions.xml"
+					RelativePath=".\content\bindings\drawer.xml"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\db_controls.xml"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1028,6 +1100,54 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\tageditor.xml"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\trackeditor.xml"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\bindings\windowregion.xml"
 					>
 					<FileConfiguration
@@ -1249,6 +1369,30 @@
 				</File>
 				<File
 					RelativePath=".\content\scripts\language_scan.js"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\instancetimer.js"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
