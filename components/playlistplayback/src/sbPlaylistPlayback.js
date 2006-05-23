@@ -738,6 +738,16 @@ PlaylistPlayback.prototype = {
     return this.playRef( theRef, index );
   },
 
+  playTableByUrl: function(dbGUID, table, url) {
+    var index = this._source.GetRefRowByColumnValue(source_ref, "url", url);
+    this.playTable(dbGUID, table, index);
+  },
+  
+  playTableByID: function(dbGUID, table, row_id) {
+    var index = this._source.GetRefRowByColumnValue(source_ref, "id", row_id);
+    this.playTable(dbGUID, table, index);
+  },
+  
   /**
    * See sbIPlaylistPlayback.idl
    */

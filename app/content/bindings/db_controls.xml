@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- DB CONTROLS -->
+
+  
+  
+  
+  <binding id="base">
+
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.ml = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+        this.query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+        this.query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
+        this.ml.SetQueryObject(this.query);
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+    
+    <field name="ml">null</field>
+    <field name="query">null</field>
+
+    <property name="guid">
+      <getter>
+        return this.getAttribute("guid");;
+      </getter>
+      <setter>
+        this.setAttribute("guid", val);
+        this.undo();
+        return this.guid;
+      </setter>
+    </property>
+    
+    <property name="column">
+      <getter>
+        return this.getAttribute("column");;
+      </getter>
+      <setter>
+        this.setAttribute("column", val);
+        this.undo();
+        return this.column;
+      </setter>
+    </property>
+
+    <method name="getValueFromDatabase">
+      <body>
+        <![CDATA[
+          this.initMl();
+          return this.ml.GetValueByGUID(this.guid, this.column);
+        ]]>
+      </body>
+    </method>
+    
+    <method name="setValueToDatabase">
+      <parameter name="value"/>
+      <body>
+        <![CDATA[
+          this.initMl();
+          this.ml.SetValueByGUID(this.guid, this.column, value, false);
+        ]]>
+      </body>
+    </method>
+    
+    <method name="apply">
+      <body>
+        this.setValueToDatabase(this.getValueFromControl());
+      </body>
+    </method>
+    
+    <method name="undo">
+      <body>
+        this.setValueToControl(this.getValueFromDatabase());
+      </body>
+    </method>
+
+    <method name="initMl">
+      <body>
+      </body>
+    </method>    
+   
+   </implementation>
+ 
+  </binding>
+
+
+
+
+
+  <!-- DB TEXTBOX CONTROL -->
+
+
+
+
+  <binding id="textbox" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+
+  <content>
+    <xul:textbox flex="1" sid="dbedit.textbox" xbl:inherits="readonly=readonly,class=class" />
+  </content>
+
+  <implementation>
+
+    <constructor>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="textbox">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.textbox');</field>
+
+    <method name="setValueToControl">
+      <parameter name="value"/>
+      <body>
+        this.textbox.value = value;
+      </body>
+    </method>
+    
+    <method name="getValueFromControl">
+      <body>
+        return this.textbox.value;
+      </body>
+    </method>
+    
+    
+    
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- DB COMBOBOX CONTROL -->
+
+
+
+
+  <binding id="menulist" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+
+  <content>
+    <xul:menulist 
+      sid="list"
+      xbl:inherits="editable=editable,class=class,id=listid"
+       onpopupshowing="onPopup();"
+    >
+      <children/>
+    </xul:menulist>
+  </content>
+
+  <implementation>
+
+    <constructor>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <property name="populateuniques">
+      <setter>
+         return this.setAttribute("populateuniques", val);
+      </setter>
+      <getter>
+         return this.getAttribute("populateuniques");
+      </getter>
+    </property>
+
+    <field name="list">document.getAnonymousElementByAttribute(this, 'sid', 'list');</field>
+
+    <method name="setValueToControl">
+      <parameter name="value"/>
+      <body>
+        this.list.selectedIndex = -1;
+        this.list.value = value;
+      </body>
+    </method>
+    
+    <method name="getValueFromControl">
+      <body>
+        return this.list.value;
+      </body>
+    </method>
+    
+    <method name="onPopup">
+      <body>
+         this.fillList();
+      </body>
+    </method>
+    
+    <method name="fillList">
+      <body>
+        <![CDATA[
+          if (this.populateuniques) {
+            this.list.removeAllItems();
+            var nout = {};
+            var array = this.ml.GetUniqueValuesByField(this.column, nout);
+            for (var i=0;i<array.length;i++) {
+              if (array[i] != "")
+                this.list.appendItem(array[i], null, null);
+            }
+          }
+      ]]>
+      </body>
+    </method>
+    
+   </implementation>
+ 
+  </binding>
+
+</bindings>
+

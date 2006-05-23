@@ -2466,6 +2466,13 @@ DIALOG BOXES
   color: #fff;
 }
 
+#track_editor
+{
+  -moz-appearance: none;
+  width: 600px;
+  /*background-color: transparent; BUGGY*/
+}
+
 #smart_playlist
 {
   width:  550px;
@@ -2739,12 +2746,6 @@ DIALOG BOXES
   -moz-appearance: none;
   height: 200px;
   /*background-color: transparent; BUGGY*/
-}
-
-#edit_bookmark
-{
-  -moz-appearance: none;
-  width:  550px;
 }
 
 #jump_to_file

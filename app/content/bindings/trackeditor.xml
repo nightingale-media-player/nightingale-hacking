@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- TRACK EDITOR CONTROL -->
+
+  
+  
+  
+  <binding id="trackeditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <method name="setSelection">
+      <parameter name="guids"/>
+      <body>
+        this.guid = guids[0]; // no multiple edition yet
+        this.updateForm();
+      </body>
+    </method>
+
+    <method name="updateForm">
+      <body>
+        this.updateForm();
+      </body>
+    </method>
+
+    <method name="insertDrawerContent">
+     <body>
+       var ret = document.createElement("iframe");
+       ret.setAttribute("src", "chrome://songbird/content/xul/trackeditor_form.xul");
+       ret.setAttribute("height", this.getContentSize());
+       return ret;
+     </body>
+    </method>
+
+    <method name="getContentSize">
+     <body>
+       return 200;
+     </body>
+    </method>
+   
+   </implementation>
+ 
+  </binding>
+
+
+
+
+  <!-- EXTENDED TRACK EDITOR CONTROL -->
+
+  
+  
+  
+  <binding id="exttrackeditor" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <method name="setSelection">
+      <parameter name="guids"/>
+      <body>
+        this.guid = guids[0]; // no multiple edition yet
+        this.updateForm();
+      </body>
+    </method>
+
+    <method name="updateForm">
+      <body>
+        this.updateForm();
+      </body>
+    </method>
+
+    <method name="insertDrawerContent">
+     <body>
+       var ret = document.createElement("hbox");
+       ret.setAttribute("class", "sb_faceplate");
+       ret.setAttribute("height", this.getContentSize());
+       return ret;
+     </body>
+    </method> 
+
+    <method name="getContentSize">
+     <body>
+       return 100;
+     </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>
+

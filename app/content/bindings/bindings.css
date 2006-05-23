@@ -142,6 +142,25 @@ player_scanning {
   -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#scanning");
 }
 
+tageditor {
+  -moz-binding: url("chrome://songbird/content/bindings/tageditor.xml#tageditor");
+}
+
+trackeditor {
+  -moz-binding: url("chrome://songbird/content/bindings/trackeditor.xml#trackeditor");
+}
+
+exttrackeditor {
+  -moz-binding: url("chrome://songbird/content/bindings/trackeditor.xml#exttrackeditor");
+}
+
+dbedit_textbox {
+  -moz-binding: url("chrome://songbird/content/bindings/db_controls.xml#textbox");
+}
+
+dbedit_menulist {
+  -moz-binding: url("chrome://songbird/content/bindings/db_controls.xml#menulist");
+}
 
 
 

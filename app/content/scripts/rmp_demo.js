@@ -151,6 +151,13 @@ function onWindowSaveSize()
   SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
 }
 
+function onWindowSavePosition()
+{
+  var root = "window." + document.documentElement.id;
+  SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
+  SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+}
+
 function onWindowLoadSize()
 {
   var root = "window." + document.documentElement.id;
@@ -165,6 +172,17 @@ function onWindowLoadSize()
     var diffh = SBDataGetIntValue( root + ".h" ) - document.documentElement.boxObject.height;
     window.resizeTo( SBDataGetIntValue( root + ".w" ) + diffw, SBDataGetIntValue( root + ".h" ) + diffh);
   }
+  window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
+  // do the (more or less) same adjustment for x,y as we did for w,h
+  var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
+  var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
+  window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
+}
+
+function onWindowLoadPosition()
+{
+  var root = "window." + document.documentElement.id;
+  if (SBDataGetValue( root + ".x" ) == "" && SBDataGetValue( root + ".w" ) == "") { return; }
   window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
   // do the (more or less) same adjustment for x,y as we did for w,h
   var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
@@ -567,7 +585,14 @@ function setVideoMinMaxCallback()
 }
 
 function createLibraryRef() {
-  // this is so we can playRef the library even if it has never been shown
-  //var source = new sbIPlaylistsource();
-  //source.FeedPlaylist( "NC:songbird_library", "songbird", "library");
+ /* // this is so we can playRef the library even if it has never been shown
+  var source = new sbIPlaylistsource();
+  source.FeedPlaylist( "NC:songbird_library", "songbird", "library");
+  source.FeedFilters( "NC:songbird_library" );
+  // Synchronous call!  Woo hoo!
+  while( source.IsQueryExecuting( "NC:songbird_library" ) )
+    ;
+  // After the call is done, force GetTargets
+  source.ForceGetTargets( "NC:songbird_library" );
+*/
 }

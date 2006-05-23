@@ -2198,6 +2198,13 @@ DIALOG BOXES
   color: #fff;
 }
 
+#track_editor
+{
+  -moz-appearance: none;
+  width: 600px;
+  /*background-color: transparent; BUGGY*/
+}
+
 .dialog_label
 {
   color: #fff;

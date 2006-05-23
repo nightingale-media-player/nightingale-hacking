@@ -2415,6 +2415,13 @@ track_editor label,
   color: #505154;
 }
 
+#track_editor
+{
+  -moz-appearance: none;
+  width: 600px;
+  /*background-color: transparent; BUGGY*/
+}
+
 .dialog_label
 {
   color: #505154;

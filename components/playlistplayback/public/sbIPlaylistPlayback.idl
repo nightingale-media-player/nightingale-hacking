@@ -145,6 +145,18 @@ interface sbIPlaylistPlayback : nsIObserver
   boolean playTable(in wstring dbGUID,
                     in wstring table,
                     in unsigned long index);
+
+  boolean playTableByURL(in wstring dbGUID,
+                    in wstring table,
+                    in wstring url);
+
+  boolean playTableByID(in wstring dbGUID,
+                    in wstring table,
+                    in unsigned long row_id);
+
+  boolean playTableByUUID(in wstring dbGUID,
+                    in wstring table,
+                    in wstring uuid);
   /**
    *
    */

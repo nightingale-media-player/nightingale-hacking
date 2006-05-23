@@ -1,0 +1,113 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/rmp_demo.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+<window
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  onload="onInit();"
+>
+
+  <hbox class="chrome_iframe_bkgd" flex="1">
+    <spacer width="3"/> 
+    <vbox>
+      <hbox>
+        <label id="trackeditor.label.guid" class="dialog_label" value="Item GUID"/>
+        <spacer width="5"/> 
+        <label id="trackeditor.guid" value="..." class="dialog_label" />
+      </hbox>
+      <hbox>
+        <label id="trackeditor.label.url" class="dialog_label" value="URL"/>
+        <spacer width="5"/> 
+        <dbedit_textbox id="trackeditor.url" column="url" class="dialog_textbox" flex="1"/>
+      </hbox>
+      <hbox>
+        <label id="trackeditor.label.title" class="dialog_label" value="Title"/>
+        <spacer width="5"/> 
+        <dbedit_textbox id="trackeditor.title" column="title" class="dialog_textbox" flex="1"/>
+      </hbox>
+      <hbox>
+        <label id="trackeditor.label.artist" class="dialog_label" value="Artist"/>
+        <spacer width="5"/> 
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" class="sb_faceplate" flex="1" />
+      </hbox>
+      <hbox>
+        <label id="trackeditor.label.album" class="dialog_label" value="Album"/>
+        <spacer width="5"/> 
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" class="sb_faceplate" flex="1"/>
+      </hbox>
+      <hbox>
+        <label id="trackeditor.label.genre" class="dialog_label" value="Genre"/>
+        <spacer width="5"/> 
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" class="sb_faceplate" flex="1"/>
+      </hbox>
+      <hbox>
+        <label id="trackeditor.label.length" class="dialog_label" value="Length"/>
+        <spacer width="5"/> 
+        <dbedit_textbox id="trackeditor.length" readonly="1" column="length" class="dialog_textbox" flex="1"/>
+      </hbox>
+    </vbox>
+    <spacer width="3"/> 
+  </hbox>
+ 
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
+ 
+  <script>
+  <![CDATA[
+  function onInit()
+  {
+    try
+    { 
+      var watcher = new sbIDataRemote("trackeditor.uri");
+      watcher.bindCallbackFunction(onTrackChange, false);
+    }
+    catch ( err )
+    {
+      alert( err );
+    }
+  } 
+  function onTrackChange(guid) {
+    document.getElementById("trackeditor.guid").setAttribute("value", guid);
+    document.getElementById("trackeditor.url").guid = guid;
+    document.getElementById("trackeditor.title").guid = guid;
+    document.getElementById("trackeditor.artist").guid = guid;
+    document.getElementById("trackeditor.album").guid = guid;
+    document.getElementById("trackeditor.genre").guid = guid;
+    document.getElementById("trackeditor.length").guid = guid;
+  }
+ ]]>
+  </script>
+  
+</window>

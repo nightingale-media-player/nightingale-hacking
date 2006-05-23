@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- DRAWER BASE CONTROL -->
+
+  
+  
+  
+  <binding id="drawer">
+
+    <content>
+      
+      <xul:vbox class="drawer_box" sbid="parent" flex="1">
+        <!-- xul:spacer sbid="first" height="3"/ -->
+        
+        <xul:hbox>
+          <xul:vbox flex="1">
+            <xul:spacer flex="1"/>
+            <xul:label class="dialog_box" xbl:inherits="value=title"/>
+            <xul:spacer flex="1"/>
+          </xul:vbox>
+          <xul:spacer flex="1"/>
+          <xul:button class="dialog_button" id="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
+        </xul:hbox>
+            
+        <!-- stuff gets stuffed here -->
+        
+        <xul:spacer sbid="before" height="1"/>
+      </xul:vbox>
+    </content>
+
+   <implementation type="application/x-javascript">
+
+     <constructor>
+       <![CDATA[
+         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+         jsLoader.loadSubScript( "chrome://songbird/content/scripts/instancetimer.js", this );
+         this.boxid = "growbox."+this.getAttribute("id");
+         this.size = this.getContentSize();
+         var drawerstate = this.getAttribute('drawerstate');
+         if (drawerstate == "open") {
+           //this.openDrawer(null, true);
+         }
+         this.hflex = document.getElementById(this.getAttribute("hflex"));
+         if (this.hflex) this.hflex.setAttribute("flex", "0");
+       ]]>
+     </constructor>
+     <destructor>
+     </destructor>
+
+      <field name="tracking">false</field>
+      <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
+      <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
+      <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
+      <field name="size">0</field>  <!-- height of the added content box -->
+      <field name="distance">0</field>
+      <field name="current">0</field>
+      <field name="anim_start">0</field>
+      <field name="anim_time">0.2</field>
+      <field name="anim_complete">null</field>
+      <field name="interval">null</field>
+      <field name="first_windowsize">false</field>
+      <field name="state">"closed"</field>
+      <field name="bundleInterface">null</field>
+      <field name="boxid">null</field>
+
+      <method name="toggleDrawer">
+        <body>
+          <![CDATA[
+          try
+          {
+            if (this.state == "closed") this.openDrawer();
+            else this.closeDrawer();
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - toggleDrawer - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="openDrawer">
+        <parameter name="now"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            // No animations until we finish
+            if ( ! this.tracking )
+            {
+              this.state = "open";
+              
+              if (this.hflex) this.hflex.setAttribute("flex", "1");
+
+              // Make the growbox
+              this.growbox = document.createElement( "box" );
+              this.growbox.setAttribute( "flex", "1" );
+              this.growbox.setAttribute( "sbid", this.boxid );
+              this.parent.insertBefore( this.growbox, this.before );
+              
+              // Set our animation values
+              this.tracking = true;
+              this.distance = this.size;
+              this.current = 0;
+              this.anim_start = now ? -9999 : new Date().getTime();
+              this.anim_time = 0.2;
+              this.anim_complete = this.onGrowComplete;
+              
+              // Start our animation loop
+              var animationcallback = { 
+                _that: null, 
+                handleEvent: function( event ) { this._that.animationCallback(); } 
+              } animationcallback._that = this;
+              this.interval = this.instanceTimer.setInterval( animationcallback, 0 );
+            }
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - openDrawer - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="closeDrawer">
+        <parameter name="now"/>
+        <body>
+          <![CDATA[
+          try
+          {
+            this.state = "closed";
+            // No animations until we finish
+            if ( ! this.tracking )
+            {
+             if (this.hflex) this.hflex.setAttribute("flex", "1");
+
+              // Make the growbox
+              this.growbox = document.createElement( "box" );
+              this.growbox.setAttribute( "flex", "1" );
+              this.growbox.setAttribute( "sbid", this.boxid );
+              this.parent.insertBefore( this.growbox, this.content );
+
+              // Remove the content
+              this.parent.removeChild( this.content );
+              this.content = null;
+              
+              // Set our animation values
+              this.tracking = true;
+              this.distance = - this.size; // removing!
+              this.current = 0;
+              this.anim_start = now ? -9999 : new Date().getTime();
+              this.anim_time = 0.2;
+              this.anim_complete = this.onShrinkComplete;
+              
+              // Start our animation loop
+              var animationcallback = { 
+                _that: null, 
+                handleEvent: function( event ) { this._that.animationCallback(); } 
+              } animationcallback._that = this;
+              this.interval = this.instanceTimer.setInterval( animationcallback, 0 ); // as fast as possible for a quarter second
+              }
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - closeDrawer - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="animationCallback">
+        <body>
+          <![CDATA[
+          try
+          {
+            if ( this.tracking )
+            {
+              // Calculate size to resize window based on timer interpolation
+              var elapsed = ( new Date().getTime() - this.anim_start ) / 1000;
+              var interpolate = elapsed / this.anim_time;
+              var size = parseInt( ( this.distance * interpolate ) - this.current + 0.5 );
+              
+              // We have to track a "current" because we do not resize the window via absolute values
+              if ( Math.abs( this.current + size ) > Math.abs( this.distance ) )
+                size = this.distance - this.current;
+
+              window.resizeBy( 0, size );
+              this.current += size;
+              
+              // Are we done?
+              if ( this.current == this.distance )
+              {
+                if ( this.anim_complete )
+                {
+                  this.anim_complete( );
+                }
+                
+                // Set our values back
+                this.tracking = false;
+                this.distance = 0;
+                this.current = 0;
+                this.instanceTimer.clearInterval( this.interval );
+              }
+            }
+            else
+            {
+              this.instanceTimer.clearInterval( this.interval );
+            }
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - animationCallback - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onGrowComplete">
+        <body>
+          <![CDATA[
+          try
+          {
+            // Replace the grow box with the content item
+            if ( this.growbox )
+            {
+              this.insertContent( this.growbox );
+              this.parent.removeChild( this.growbox );
+            }
+            if (this.hflex) this.hflex.setAttribute("flex", "0");
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - onGrowComplete - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onShrinkComplete">
+        <body>
+          <![CDATA[
+          try
+          {
+            // Replace the grow box with the content item
+            if ( this.growbox )
+            {
+              this.parent.removeChild( this.growbox );
+            }
+            if (this.hflex) this.hflex.setAttribute("flex", "0");
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - onShrinkComplete - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="insertContent">
+        <body>
+          <![CDATA[
+          try
+          {
+            this.content = this.insertDrawerContent();
+            this.parent.insertBefore( this.content, this.before );
+          }
+          catch ( err )
+          {
+            alert( "drawer.xml - insertContent - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+            
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>
+

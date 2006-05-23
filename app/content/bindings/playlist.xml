@@ -1655,6 +1655,7 @@
         <![CDATA[
           try
           {
+            //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
             if (evt.charCode == 97 && evt.ctrlKey) {
               this.tree.view.selection.selectAll();
             } else {
@@ -1773,6 +1774,14 @@
               var end = {};
               this.tree.view.selection.getRangeAt( i, start, end );
               count += end.value - start.value + 1;
+              if (i == 0) {
+                var first = start.value + 1;
+                // Find the guid column. 
+                var guid_column = this.tree.columns ? this.tree.columns["uuid"] : "uuid";
+                // Get the text of the hidden tree cell, this contains the uuid.
+                var guid = this.tree.view.getCellText( first, guid_column );
+                SBDataSetValue( "trackeditor.uuid", guid )
+              }
             }            
             if ( count > 50 )
             {
@@ -2740,7 +2749,7 @@
         ]]>
       </body>
     </method>
-
+    
    </implementation> 
  
   </binding>

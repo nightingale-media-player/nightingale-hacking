@@ -2050,6 +2050,12 @@ function onMainwinKeypress( evt )
         search_widget.onFirstMousedown(); // Sets focus.  Clears "search" text.
       }
       break;
+    case 101:
+      if (evt.ctrlKey) 
+      {
+        SBTrackEditorOpen();
+      }
+      break;
     case 108: // Ctrl-L
       if ( evt.ctrlKey )
       {
@@ -2492,6 +2498,26 @@ function SBExtensionsManagerOpen()
   }
 }
 
+function SBTrackEditorOpen()
+{
+  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Components.interfaces.nsIWindowMediator);
+  var needToOpen = true;
+  var windows = wm.getEnumerator("track_editor");
+  while (windows.hasMoreElements()) {
+    var theTE = windows.getNext().QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+    theTE.focus();
+    needToOpen = false;
+    break;
+  }
+
+  if (needToOpen) {
+    const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
+    const TEFEATURES = "chrome,dialog=no,resizable";
+    window.openDialog(TEURL, "track_editor", TEFEATURES);
+  }
+}
+
 function SBDOMInspectorOpen()
 {
   window.open("chrome://inspector/content/", "", "chrome,dialog=no,resizable");
@@ -2607,9 +2633,10 @@ function SBDropped()
   }
 }
 
-function SBGetServiceFromUrl( url )
+function SBGetServiceFromUrl( url, nodefault )
 {
-  retval = url;
+  var retval;
+  if (!nodefault) retval = url;
   var text = "";
   try
   {

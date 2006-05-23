@@ -1,0 +1,155 @@
+﻿<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/rmp_demo.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+<window
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="track_editor"
+ title="Track Editor !changeme!"
+ hidechrome="true"
+ buttons="none"
+ onload="onLoadTrackEditor();"
+ onunload="onUnloadTrackEditor();"
+ windowtype="track_editor"
+>
+  
+<windowregion/>
+
+<stack flex="1">
+
+  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <hbox class="sb_faceplate">
+        <image id="chrome_nw" class="sb_faceplate"/>
+        <image id="chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="chrome_ne" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+        <image id="chrome_w" class="sb_faceplate"/>
+        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <image id="chrome_e" class="sb_faceplate"/>
+    </hbox>
+    <hbox class="sb_faceplate">
+        <image id="chrome_sw" class="sb_faceplate"/>
+        <image id="chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="chrome_se" class="sb_faceplate"/>
+    </hbox>
+  </vbox>
+  
+  <vbox class="sb_faceplate" flex="1">
+    <hbox class="sb_faceplate" id="frame_top_resizers">
+      <resizer id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
+      <resizer id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
+      <resizer id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
+    </hbox>
+    <hbox class="sb_faceplate" flex="1">
+    
+    <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
+      
+        <vbox class="sb_faceplate">
+          <resizer id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
+          <resizer id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
+          <resizer id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
+        </vbox>
+        
+        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
+        
+          <hbox id="window_top" class="sb_faceplate" >
+            <label id="app_title" value="Track Editor !changeme!" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+          </hbox>
+
+          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+
+          <hbox id="trackeditor.hflex">
+            <trackeditor drawerstate="open" id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="Tracks Data" flex="1" />
+          </hbox>
+          
+          <hbox id="exttrackeditor.hflex">
+            <exttrackeditor id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="Extended Data" flex="1" />
+          </hbox>
+          
+          <hbox id="tageditor.hflex">
+            <tageditor id="trackeditor.tageditor" hflex="tageditor.hflex" title="Tags" flex="1" />
+          </hbox>
+          
+          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <hbox>
+            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/> 
+          </hbox>
+         </vbox>      
+
+        <vbox class="sb_faceplate">
+          <resizer id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
+          <resizer id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
+          <resizer id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
+        </vbox>
+        
+      </hbox> <!-- frame_middle_resizers -->
+    </hbox>
+    <hbox class="sb_faceplate" id="frame_bottom_resizers">
+      <resizer id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
+      <resizer id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
+      <resizer id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
+    </hbox>
+  </vbox>
+
+
+   
+</stack>
+  
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbird_interfaces.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbIDataRemote.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/rmp_demo.js" />
+  
+  <script>
+  
+  function onLoadTrackEditor() {
+    onWindowLoadPosition();
+  }
+  
+  function onUnloadTrackEditor() {
+    onWindowSavePosition();
+  }
+  
+  
+  </script>
+
+</window>

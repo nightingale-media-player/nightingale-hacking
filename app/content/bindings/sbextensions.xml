@@ -89,6 +89,7 @@
           ]]>
         </body>
       </method>
+
       <method name="openList">
         <parameter name="before"/>
         <body>
@@ -141,16 +142,16 @@
             // No animations until we finish
             if ( ! this.tracking )
             {
+              var content = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_box' );
+
               // Make the growbox
               var growbox = document.createElement( "box" );
               growbox.setAttribute( "flex", "1" );
               growbox.setAttribute( "sbid", "growbox" );
-              this.parent.insertBefore( growbox, cond );
+              this.parent.insertBefore( growbox, content );
 
-              var cond = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_box' );
-              
-              // Remove the condition
-              this.parent.removeChild( cond );
+              // Remove the content
+              this.parent.removeChild( content);
               
               // Set our animation values
               this.tracking = true;
