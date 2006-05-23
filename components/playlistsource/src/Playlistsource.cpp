@@ -151,9 +151,11 @@ MyQueryCallback::MyQueryCallback()
   //
   //
   LOG(("MyQueryCallback::MyQueryCallback"));
-  m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID);
-  NS_ASSERTION(m_Timer, "MyQueryCallback failed to create a timer");
+  nsresult rv;
+  m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create timer for MyQueryCallback!");
   m_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
+  NS_ASSERTION(m_pMonitor, "Failed to create local monitor");
   m_Count = 0;
 }
 
@@ -239,6 +241,11 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     // LOCK IT.
     nsAutoMonitor mon_global(sbPlaylistsource::g_pMonitor);
 
+    if (!m_Info) {
+      NS_WARNING("No m_Info on this Playlistsource::MyQueryCallback object!!!");
+      return;
+    }
+    
     PRBool exec;
     // If we're executing, that means we expect another callback.
     m_Info->m_Query->IsExecuting( &exec );
