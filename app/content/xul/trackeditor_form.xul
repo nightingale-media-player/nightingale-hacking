@@ -35,6 +35,7 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   onload="onInit();"
+  onunload="onDeinit();"
 >
 
   <hbox class="chrome_iframe_bkgd" flex="1">
@@ -86,11 +87,12 @@
  
   <script>
   <![CDATA[
+  var watcher = null;
   function onInit()
   {
     try
     { 
-      var watcher = new sbIDataRemote("trackeditor.uri");
+      watcher = new sbIDataRemote("trackeditor.uri");
       watcher.bindCallbackFunction(onTrackChange, false);
     }
     catch ( err )
@@ -106,6 +108,10 @@
     document.getElementById("trackeditor.album").guid = guid;
     document.getElementById("trackeditor.genre").guid = guid;
     document.getElementById("trackeditor.length").guid = guid;
+  }
+  function onDeinit()
+  {
+    watcher.unbind();
   }
  ]]>
   </script>

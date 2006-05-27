@@ -570,23 +570,31 @@ function SBDataBindElementAttribute( key, elem, attr, bool, not, eval )
 function SBDataGetValue( key )
 {
   var data = new sbIDataRemote( key );
-  return data.getValue();
+  var ret = data.getValue();
+  data.unbind();
+  return ret;
 }
 
 function SBDataGetIntValue( key )
 {
   var data = new sbIDataRemote( key );
-  return data.getIntValue();
+  var ret = data.getIntValue();
+  data.unbind();
+  return ret;
 }
 
 function SBDataSetValue( key, value )
 {
   var data = new sbIDataRemote( key );
-  return data.setValue( value );
+  var ret = data.setValue( value );
+  data.unbind();
+  return ret;
 }
 
 function SBDataFireEvent( key )
 {
   var data = new sbIDataRemote( key );
-  return data.setValue( data.getIntValue() + 1 );
+  var ret = data.setValue( data.getIntValue() + 1 );
+  data.unbind();
+  return ret;
 }

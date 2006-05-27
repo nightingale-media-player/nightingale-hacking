@@ -212,6 +212,7 @@
       if (this.m_dndSourceTracker != null) this.m_dndSourceTracker.unregisterDnDSource(this);
       this.stopWatchingDragObjects();
       this.tree.builder.removeListener(this);
+      this.playUrl.unbind();
     </destructor>
 
     <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_tree');</field>
