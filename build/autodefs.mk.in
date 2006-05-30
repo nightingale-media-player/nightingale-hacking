@@ -68,11 +68,13 @@ XULRUNNER_DIR      = @top_srcdir@/dependencies/@SB_PLATFORM@/xulrunner/@SB_CONFI
 COMPONENTS_DIR     = @top_srcdir@/components
 ID3LIB_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/id3lib/@SB_CONFIGURATION@
 SQLITE_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/sqlite/@SB_CONFIGURATION@
+
 MOZSDK_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@
-MOZSDK_INCLUDE_DIR = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/include
-MOZSDK_LIB_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/lib
-MOZSDK_BIN_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin
-MOZSDK_IDL_DIR     = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/idl
+MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
+MOZSDK_LIB_DIR     = $(MOZSDK_DIR)/lib
+MOZSDK_BIN_DIR     = $(MOZSDK_DIR)/bin
+MOZSDK_IDL_DIR     = $(MOZSDK_DIR)/idl
+
 PLUGINS_DIR        = @top_srcdir@/dependencies/@SB_PLATFORM@/plugins
 
 SONGBIRD_OBJDIR         = @top_srcdir@/@OBJDIRNAME@
@@ -114,10 +116,10 @@ AWK       = @CYGWIN_WRAPPER@ @AWK@@BIN_SUFFIX@
 
 AUTOCONF_TOOLS = @top_srcdir@/build/autoconf
 
-XPIDL     = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpidl@BIN_SUFFIX@
-XPTLINK   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/xpt_link@BIN_SUFFIX@
-MAR       = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/mar@BIN_SUFFIX@
-MSBDIFF   = @CYGWIN_WRAPPER@ @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@/bin/msbdiff@BIN_SUFFIX@
+XPIDL     = @CYGWIN_WRAPPER@ $(MOZSDK_DIR)/bin/xpidl@BIN_SUFFIX@
+XPTLINK   = @CYGWIN_WRAPPER@ $(MOZSDK_DIR)/bin/xpt_link@BIN_SUFFIX@
+MAR       = @CYGWIN_WRAPPER@ $(MOZSDK_DIR)/bin/mar@BIN_SUFFIX@
+MSBDIFF   = @CYGWIN_WRAPPER@ $(MOZSDK_DIR)/bin/msbdiff@BIN_SUFFIX@
 
 #
 # Tool flags
