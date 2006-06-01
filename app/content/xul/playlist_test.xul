@@ -238,7 +238,7 @@ try
       return this;
     }
     
-  }
+  } // end of sbPlaylistCommands
   
   function LocalLoad()
   {
@@ -254,11 +254,11 @@ try
       if ( qm > -1 )
       {
         var str = data.substr( qm + 1, data.length );
-        var qm = str.lastIndexOf( ',' );
-        if ( qm > -1 )
+        var divider = str.lastIndexOf( ',' );
+        if ( divider > -1 )
         {
-          table = str.substr( 0, qm );
-          guid = str.substr( qm + 1, str.length );
+          table = str.substr( 0, divider );
+          guid = str.substr( divider + 1, str.length );
         }
         else
         {
