@@ -216,9 +216,9 @@
             // Concatenate all of the selections into a semicolon delimited filter string
             var filter_string = "";      
             var rangeCount = this.tree.view.selection.getRangeCount();
-            var column = this.tree.columns ? this.tree.columns[ 0 ] : "unknown";
+            var column = this.tree.columns ? ( this.tree.columns[ 0 ] ? this.tree.columns[ 0 ] : null ) : "unknown";
             var anything_besides_zero = false;
-            for ( var i=0; i < rangeCount; i++ )
+            for ( var i=0; column != null && i < rangeCount; i++ )
             {
               var start = {};
               var end = {};
