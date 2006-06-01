@@ -532,10 +532,14 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
     PRInt32 rowcount;
     resultset->GetRowCount( &rowcount );
 
+/*
+    mig - This does not seem to be an error.
+
     if ((rowcount > 0) && (prevTransferRowNumber == -1))
     {
       NS_NOTREACHED("(rowcount > 0) && (prevTransferRowNumber == -1)");
     }
+*/
 
     // Iterate thru the list of download track records to
     // find the first available track to download.
