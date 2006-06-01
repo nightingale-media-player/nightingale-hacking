@@ -171,8 +171,7 @@ try
       alert( err );
     }
   }
-/*  
-*/  
+
   var theLastSearchEventTarget = null;
   var theSearchEventInterval = null;
   function onSBMainwinSearchEvent( evt )
@@ -191,17 +190,13 @@ try
     {
       widget = evt.target;
     }
-    else
-    {
-      // ???
-    }
     if ( widget )
     {
       if ( widget.is_songbird )
       {
         if ( !thePlaylistTree && !theLastSearchEventTarget )
         {
-          LaunchMainPaneURL( "chrome://songbird/content/xul/main_pane.xul?library" );
+          launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?library" );
         }
         
         if ( thePlaylistRef.getValue().length > 0 )
@@ -236,3 +231,4 @@ catch ( err )
 {
   alert( err );
 }
+
