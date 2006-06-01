@@ -179,7 +179,7 @@ function onScanComplete( mediaScanQuery )
         } catch(e) {}
         theTitle.value = adding + " (" + count + ")";
         theLabel.value = "";
-        ret = msDBQuery.Execute();
+        msDBQuery.Execute();
         polling_interval = setInterval( onPollQuery, 333 );
       }
       else
