@@ -47,7 +47,7 @@ const sbIMediaScan = new Components.Constructor("@songbird.org/Songbird/MediaSca
 const sbIMediaScanQuery = new Components.Constructor("@songbird.org/Songbird/MediaScanQuery;1", "sbIMediaScanQuery");
 
 //
-// SBBindInterface - take an object and make it a wrapper of the given type. (doesn't crash)
+// SBBindInterface - take an object and make it a wrapper of the given type.
 //
 function SBBindInterface( obj, contract_id, cid, as_service )
 {
