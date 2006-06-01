@@ -87,8 +87,8 @@ Metrics.prototype = {
                       .getService(Components.interfaces.nsIPrefService);   
     var branch = ps.getBranch("metrics.");
     var metrics = branch.getChildList("", { value: 0 });
-    var xml;
-    xml += '<metrics guid="' + user_install_uuid + '" user_agent="' + user_agent_version + '" user_os="' + user_os + '">';
+    var xml = "";
+    xml += '<metrics schema_version="1.0" guid="' + user_install_uuid + '" user_agent="' + user_agent_version + '" user_os="' + user_os + '">';
     for (var i = 0; i < metrics.length; i++) 
     {
       var val = branch.getCharPref(metrics[i]);
