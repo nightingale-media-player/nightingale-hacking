@@ -279,7 +279,7 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
   },
   // Group 11
   {
-    nsString( NS_LITERAL_STRING("http://www.google.com/musicsearch") ),
+    nsString( NS_LITERAL_STRING("http://www.google.com/musicsearch?q=") ),
     nsString( NS_LITERAL_STRING("http://audio.search.yahoo.com/") ),
     nsString( NS_LITERAL_STRING("http://search.creativecommons.org/") ),
     nsString( ),
