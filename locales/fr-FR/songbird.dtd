@@ -119,7 +119,7 @@
 <!ENTITY download.always          "Toujours utiliser ce répertoire" >
 
 
-<!ENTITY textbox.rmp_demo_open_url "Entrez l'URL or le chemin vers les médias que vous souhaitez jouer:">
+<!ENTITY textbox.songbird_open_url "Entrez l'URL or le chemin vers les médias que vous souhaitez jouer:">
 
 <!ENTITY open_url.title           "Ouvrir une URL">
 <!ENTITY subscribe.title          "Souscrire">

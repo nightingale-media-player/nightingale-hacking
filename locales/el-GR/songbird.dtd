@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Επιλογή Καταλόγου Προορισμού:" >
 <!ENTITY download.always          "Πάντα χρήση αυτού του καταλόγου" >
 
-<!ENTITY textbox.rmp_demo_open_url "Εισάγετε το URL ή τη διαδρομή των πολυμέσων που θέλετε να αναπαράγετε:">
+<!ENTITY textbox.songbird_open_url "Εισάγετε το URL ή τη διαδρομή των πολυμέσων που θέλετε να αναπαράγετε:">
 
 <!ENTITY open_url.title           "Άνοιγμα URL">
 <!ENTITY subscribe.title          "Συνδρομή">

@@ -117,7 +117,7 @@
 <!ENTITY download.select          "Sel&middot;leccioni la carpeta on desar-ho:" >
 <!ENTITY download.always          "Sempre fer servir aquesta carpeta" >
 
-<!ENTITY textbox.rmp_demo_open_url "Introdueixi la URL o l'ubicaci&oacute; al vostre ordinador del fitxer que voleu reprodu&iuml;r:"&gt;
+<!ENTITY textbox.songbird_open_url "Introdueixi la URL o l'ubicaci&oacute; al vostre ordinador del fitxer que voleu reprodu&iuml;r:"&gt;
 
 <!ENTITY open_url.title           "Obrir URL"&gt;
 <!ENTITY subscribe.title          "Subscriure"&gt;

@@ -118,7 +118,7 @@
 <!ENTITY download.select                  "Vyberte cieľový priečinok:" >
 <!ENTITY download.always                  "Vždy použiť tento priečinok" >
 
-<!ENTITY textbox.rmp_demo_open_url        "Zadajte URL alebo cestu k médiu, ktoré chcete prehrať:">
+<!ENTITY textbox.songbird_open_url        "Zadajte URL alebo cestu k médiu, ktoré chcete prehrať:">
 
 <!ENTITY open_url.title                   "Otvoriť URL">
 <!ENTITY subscribe.title                  "Prihlásiť">

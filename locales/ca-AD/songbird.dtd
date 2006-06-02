@@ -123,7 +123,7 @@
 
 <!ENTITY menu.file.dlfolder "Set Download Folder..." >
 <!ENTITY menu.file.watch "Set Watched Folders..." >
-<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
 <!ENTITY open_url.title "Open URL" >
 <!ENTITY subscribe.title "Subscribe" >
 <!ENTITY subscribe.minutes "Minute(s)" >

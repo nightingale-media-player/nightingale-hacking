@@ -6,13 +6,13 @@
   </RDF:Seq>
   <!-- locale information -->
   <RDF:Description about="urn:mozilla:locale:ca-AD"
-        chrome:displayName="Català"
+        chrome:displayName="Catal"
         chrome:author="Jaume Sala Soler"
         chrome:name="ca-AD"
         chrome:previewURL="http://www.mozilla.org/locales/en-US.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:ca-AD:packages">
-        <RDF:li resource="urn:mozilla:locale:ca-AD:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:ca-AD:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

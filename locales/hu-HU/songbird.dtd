@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Válassz célkönyvtárat:" >
 <!ENTITY download.always          "Mindig ezt a könyvtárat használd" >
 
-<!ENTITY textbox.rmp_demo_open_url "Írd be a lejátszandó média URL-jét vagy elérési útját:">
+<!ENTITY textbox.songbird_open_url "Írd be a lejátszandó média URL-jét vagy elérési útját:">
 
 <!ENTITY open_url.title           "URL megnyitása">
 <!ENTITY subscribe.title          "Feliratkozás">

@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Выбрать директорию для загруженных файлов:" >
 <!ENTITY download.always          "всегда использовать эту директорию" >
 
-<!ENTITY textbox.rmp_demo_open_url "Введите интернет адрес или путь к композиции для проигрывания:">
+<!ENTITY textbox.songbird_open_url "Введите интернет адрес или путь к композиции для проигрывания:">
 
 <!ENTITY open_url.title           "Открыть интернет адрес">
 <!ENTITY subscribe.title          "Подписаться">

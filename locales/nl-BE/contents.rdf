@@ -12,7 +12,7 @@
         chrome:previewURL="http://www.mozilla.org/locales/nl-BE.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:nl-BE:packages">
-        <RDF:li resource="urn:mozilla:locale:nl-BE:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:nl-BE:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

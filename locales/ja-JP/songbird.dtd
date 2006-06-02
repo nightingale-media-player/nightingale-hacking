@@ -117,7 +117,7 @@
 <!ENTITY download.select          "対象のフォルダを選択:" >
 <!ENTITY download.always          "常にこのフォルダを使う" >
 
-<!ENTITY textbox.rmp_demo_open_url "再生したいメディアのURLかパスを入力してください。:">
+<!ENTITY textbox.songbird_open_url "再生したいメディアのURLかパスを入力してください。:">
 
 <!ENTITY open_url.title           "URLを開く">
 <!ENTITY subscribe.title          "登録">

@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Seleccionar Carpeta de Destino:" >
 <!ENTITY download.always          "Always use this folder" >
 
-<!ENTITY textbox.rmp_demo_open_url "Ingrese el destino o URL de los Medios que desea Reproducir:">
+<!ENTITY textbox.songbird_open_url "Ingrese el destino o URL de los Medios que desea Reproducir:">
 
 <!ENTITY open_url.title           "Abrir URL">
 <!ENTITY subscribe.title          "Subscribir">

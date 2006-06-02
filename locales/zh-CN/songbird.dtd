@@ -127,7 +127,7 @@
 <!ENTITY menu.file.watch "Set Watched Folders..." >
 <!ENTITY menu.preferences "Preferences..." >
 <!ENTITY menu.extensions "Extensions..." >
-<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
 <!ENTITY open_url.title "Open URL" >
 <!ENTITY subscribe.title "Subscribe" >
 <!ENTITY subscribe.minutes "Minute(s)" >

@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Označi odabrani direktorij:" >
 <!ENTITY download.always          "Uvijek koristi ovu mapu" >
 
-<!ENTITY textbox.rmp_demo_open_url "Unesite  URL ili putanju medija koji želite reproducirati:">
+<!ENTITY textbox.songbird_open_url "Unesite  URL ili putanju medija koji želite reproducirati:">
 
 <!ENTITY open_url.title           "Otvori URL">
 <!ENTITY subscribe.title          "Pretplata">

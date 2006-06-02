@@ -120,7 +120,7 @@
 <!ENTITY download.select          "Избери папката:" >
 <!ENTITY download.always          "Винаги използвай тази папка" >
 
-<!ENTITY textbox.rmp_demo_open_url "Въведете URL или пътя към медията която искате да прослушате:">
+<!ENTITY textbox.songbird_open_url "Въведете URL или пътя към медията която искате да прослушате:">
 
 <!ENTITY open_url.title           "Отвори URL">
 <!ENTITY subscribe.title          "Абонирай се">

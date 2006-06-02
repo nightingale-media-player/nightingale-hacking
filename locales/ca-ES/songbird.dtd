@@ -117,7 +117,7 @@
 <!ENTITY download.select          "Selleccioni la carpeta on desar-ho:" >
 <!ENTITY download.always          "Sempre fer servir aquesta carpeta" >
 
-<!ENTITY textbox.rmp_demo_open_url "Introdueixi la URL o l'ubicacir:">
+<!ENTITY textbox.songbird_open_url "Introdueixi la URL o l'ubicacir:">
 
 <!ENTITY open_url.title           "Obrir URL">
 <!ENTITY subscribe.title          "Subscriure">

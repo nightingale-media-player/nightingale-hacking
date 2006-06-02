@@ -6,13 +6,13 @@
   </RDF:Seq>
   <!-- locale information -->
   <RDF:Description about="urn:mozilla:locale:zh-CN"
-        chrome:displayName="¼òÌåÖÐÎÄ(CN)"
+        chrome:displayName="ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(CN)"
         chrome:author="Pioneers of the Inevitable"
         chrome:name="zh-CN"
         chrome:previewURL="http://www.mozilla.org/locales/zh-CN.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:zh-CN:packages">
-        <RDF:li resource="urn:mozilla:locale:zh-CN:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:zh-CN:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

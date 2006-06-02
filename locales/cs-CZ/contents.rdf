@@ -7,12 +7,12 @@
   <!-- locale information -->
   <RDF:Description about="urn:mozilla:locale:cs-CZ"
         chrome:displayName="Czech(CZ)"
-        chrome:author="Lukáš Kroupa"
+        chrome:author="Luk Kroupa"
         chrome:name="cs-CZ"
         chrome:previewURL="http://www.mozilla.org/locales/cs-CZ.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:cs-CZ:packages">
-        <RDF:li resource="urn:mozilla:locale:cs-CZ:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:cs-CZ:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

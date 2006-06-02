@@ -6,13 +6,13 @@
   </RDF:Seq>
   <!-- locale information -->
   <RDF:Description about="urn:mozilla:locale:es-AR"
-        chrome:displayName="Español(AR)"
+        chrome:displayName="Espaol(AR)"
         chrome:author="sryo"
         chrome:name="es-AR"
         chrome:previewURL="http://www.mozilla.org/locales/es-AR.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:es-AR:packages">
-        <RDF:li resource="urn:mozilla:locale:es-AR:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:es-AR:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

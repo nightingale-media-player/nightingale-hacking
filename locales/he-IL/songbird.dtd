@@ -118,7 +118,7 @@
 <!ENTITY download.select          ":שמור הורדות לתיקיה" >
 <!ENTITY download.always          "תמיד השתמש בתיקיה זו" >
 
-<!ENTITY textbox.rmp_demo_open_url ":הכנס את מיקום המדיה שברצונך לנגן">
+<!ENTITY textbox.songbird_open_url ":הכנס את מיקום המדיה שברצונך לנגן">
 
 <!ENTITY open_url.title           "פתח מיקום">
 <!ENTITY subscribe.title          "צור מנוי">

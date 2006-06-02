@@ -118,8 +118,8 @@
 <!ENTITY download.select          "Välj målmapp:" >
 <!ENTITY download.always          "Använd alltid denna mapp" >
 
-<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:">
-<!ENTITY textbox.rmp_demo_open_url "Skriv in URL eller sökväg till musiken du vill spela:">
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:">
+<!ENTITY textbox.songbird_open_url "Skriv in URL eller sökväg till musiken du vill spela:">
 
 <!ENTITY open_url.title           "Öppna URL">
 <!ENTITY subscribe.title          "Prenumerera">

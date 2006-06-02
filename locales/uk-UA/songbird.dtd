@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Обрати теку для завантажених файлів:" >
 <!ENTITY download.always          "завжди використовувати цю теку" >
 
-<!ENTITY textbox.rmp_demo_open_url "Введіть веб-адресу чи шлях до композицій, які ви хочете грати:">
+<!ENTITY textbox.songbird_open_url "Введіть веб-адресу чи шлях до композицій, які ви хочете грати:">
 
 <!ENTITY open_url.title           "Відкрити веб-адресу">
 <!ENTITY subscribe.title          "Передплатити">

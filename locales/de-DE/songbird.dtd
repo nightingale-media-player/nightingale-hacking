@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Zielordner wählen:" >
 <!ENTITY download.always          "Immer diesen Ordner wählen" >
 
-<!ENTITY textbox.rmp_demo_open_url "Adresse oder Pfad zur Mediendatei die du wiedergeben willst:">
+<!ENTITY textbox.songbird_open_url "Adresse oder Pfad zur Mediendatei die du wiedergeben willst:">
 
 <!ENTITY open_url.title           "Öffne URL">
 <!ENTITY subscribe.title          "Abonieren">

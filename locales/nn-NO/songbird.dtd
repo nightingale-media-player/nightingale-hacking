@@ -119,7 +119,7 @@
 <!ENTITY download.select          "Vel målmappe:" >
 <!ENTITY download.always          "Bruk alltid denne mappa" >
 
-<!ENTITY textbox.rmp_demo_open_url "Skriv inn adressa eller filbana til mediet du ønskjer å spela:">
+<!ENTITY textbox.songbird_open_url "Skriv inn adressa eller filbana til mediet du ønskjer å spela:">
 
 <!ENTITY open_url.title           "Opna adresse">
 <!ENTITY subscribe.title          "Abonner">

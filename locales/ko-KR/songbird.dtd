@@ -118,7 +118,7 @@
 <!ENTITY download.select          "목적지 폴더 선택 :" >
 <!ENTITY download.always          "항상 이 폴더 사용" >
 
-<!ENTITY textbox.rmp_demo_open_url "재생하기 원하는 미디어의 URL 혹은 경로를 입력하세요:">
+<!ENTITY textbox.songbird_open_url "재생하기 원하는 미디어의 URL 혹은 경로를 입력하세요:">
 
 <!ENTITY open_url.title           "URL 열기">
 <!ENTITY subscribe.title          "구독">

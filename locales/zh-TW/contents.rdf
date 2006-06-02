@@ -12,7 +12,7 @@
         chrome:previewURL=""><!-- no image yet -->
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:zh-TW:packages">
-        <RDF:li resource="urn:mozilla:locale:zh-TW:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:zh-TW:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Valitse kohde kansio:" >
 <!ENTITY download.always          "Käytä aina valittua kansiota" >
 
-<!ENTITY textbox.rmp_demo_open_url "Kirjoita toistettavan median URL-osoite:">
+<!ENTITY textbox.songbird_open_url "Kirjoita toistettavan median URL-osoite:">
 
 <!ENTITY open_url.title           "Avaa URL">
 <!ENTITY subscribe.title          "Tilaa">

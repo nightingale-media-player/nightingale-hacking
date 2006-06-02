@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Zvolit cílový adresář:" >
 <!ENTITY download.always          "Vždy používat tento adresář" >
 
-<!ENTITY textbox.rmp_demo_open_url "Zadejte adresu URL nebo cestu k souboru který chcete přehrát:">
+<!ENTITY textbox.songbird_open_url "Zadejte adresu URL nebo cestu k souboru který chcete přehrát:">
 
 <!ENTITY open_url.title           "Otevřít adresu URL">
 <!ENTITY subscribe.title          "Přihlásit">

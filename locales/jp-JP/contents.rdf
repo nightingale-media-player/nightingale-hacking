@@ -12,7 +12,7 @@
         chrome:previewURL="http://www.mozilla.org/locales/ja-JP.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:ja-JP:packages">
-        <RDF:li resource="urn:mozilla:locale:ja-JP:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:ja-JP:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

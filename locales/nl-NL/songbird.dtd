@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Selecteer doelmap:" >
 <!ENTITY download.always          "Altijd naar deze map downloaden" >
 
-<!ENTITY textbox.rmp_demo_open_url "Geef het pad of de URL van het media bestand dat u wilt afspelen:">
+<!ENTITY textbox.songbird_open_url "Geef het pad of de URL van het media bestand dat u wilt afspelen:">
 
 <!ENTITY open_url.title           "URL openen">
 <!ENTITY subscribe.title          "Abonneer">

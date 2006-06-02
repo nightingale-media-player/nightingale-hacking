@@ -116,8 +116,8 @@
 <!ENTITY download.select          "Seleccione directorio de destino:" >
 <!ENTITY download.always          "Usar siempre este directorio" >
 
-<!ENTITY textbox.rmp_demo_open_url "Enter the URL or path of the media you wish to playback:">
-<!ENTITY textbox.rmp_demo_open_url "Escriba la dirección  del medio a reproducir:">
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:">
+<!ENTITY textbox.songbird_open_url "Escriba la dirección  del medio a reproducir:">
 
 <!ENTITY open_url.title           "Abrir URL">
 <!ENTITY subscribe.title          "Suscribir">

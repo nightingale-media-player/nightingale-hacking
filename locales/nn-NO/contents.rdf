@@ -12,7 +12,7 @@
         chrome:previewURL="http://www.mozilla.org/locales/nn-NO.gif">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:locale:nn-NO:packages">
-        <RDF:li resource="urn:mozilla:locale:nn-NO:rmp_demo"/>
+        <RDF:li resource="urn:mozilla:locale:nn-NO:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>

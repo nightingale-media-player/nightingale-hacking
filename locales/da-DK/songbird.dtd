@@ -118,7 +118,7 @@
 <!ENTITY download.select          "Vælg destinationsmappe:" >
 <!ENTITY download.always          "Brug altid denne mappe" >
 
-<!ENTITY textbox.rmp_demo_open_url "Indtast URL'en eller stien på mediefilen du ønsker at spille:">
+<!ENTITY textbox.songbird_open_url "Indtast URL'en eller stien på mediefilen du ønsker at spille:">
 
 <!ENTITY open_url.title           "Åbn URL">
 <!ENTITY subscribe.title          "Abonner">

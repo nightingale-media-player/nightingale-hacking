@@ -599,52 +599,52 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				RelativePath=".\mini\mini_volume_mute_on.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.bkg.dashboard.png">
+				RelativePath=".\mini\mini.bkg.dashboard.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.back.a.png">
+				RelativePath=".\mini\mini.btn.back.a.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.back.d.png">
+				RelativePath=".\mini\mini.btn.back.d.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.back.h.png">
+				RelativePath=".\mini\mini.btn.back.h.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.back.n.png">
+				RelativePath=".\mini\mini.btn.back.n.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.fwd.a.png">
+				RelativePath=".\mini\mini.btn.fwd.a.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.fwd.d.png">
+				RelativePath=".\mini\mini.btn.fwd.d.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.fwd.h.png">
+				RelativePath=".\mini\mini.btn.fwd.h.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.fwd.n.png">
+				RelativePath=".\mini\mini.btn.fwd.n.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.max.png">
+				RelativePath=".\mini\mini.btn.max.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.pause.a.png">
+				RelativePath=".\mini\mini.btn.pause.a.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.pause.h.png">
+				RelativePath=".\mini\mini.btn.pause.h.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.pause.n.png">
+				RelativePath=".\mini\mini.btn.pause.n.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.play.a.png">
+				RelativePath=".\mini\mini.btn.play.a.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.play.h.png">
+				RelativePath=".\mini\mini.btn.play.h.png">
 			</File>
 			<File
-				RelativePath=".\mini\rmp_demo.btn.play.n.png">
+				RelativePath=".\mini\mini.btn.play.n.png">
 			</File>
 			<File
 				RelativePath=".\mini\seekbar_progress.png">
@@ -715,7 +715,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			RelativePath=".\contents.rdf">
 		</File>
 		<File
-			RelativePath=".\rmp_demo.css">
+			RelativePath=".\songbird.css">
 		</File>
 	</Files>
 	<Globals>

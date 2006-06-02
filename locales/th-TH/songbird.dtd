@@ -118,7 +118,7 @@
 <!ENTITY download.select          "เลือกโฟลเดอร์ปลายทาง:" >
 <!ENTITY download.always          "ใช้โฟลเดอร์นี้ตลอด" >
 
-<!ENTITY textbox.rmp_demo_open_url "ใส่ URL หรือที่อยู่ของสื่อที่ต้องการเล่น:">
+<!ENTITY textbox.songbird_open_url "ใส่ URL หรือที่อยู่ของสื่อที่ต้องการเล่น:">
 
 <!ENTITY open_url.title           "เปิด URL">
 <!ENTITY subscribe.title          "สมัคร">
