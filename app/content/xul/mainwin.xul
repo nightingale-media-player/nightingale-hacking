@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <!--?xml-stylesheet href="chrome://songbird/skin/cardinal.css" type="text/css" title="Other Skin"?-->
-<?xml-stylesheet href="chrome://songbird/skin/rmp_demo.css" type="text/css" title="Skin"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
 
