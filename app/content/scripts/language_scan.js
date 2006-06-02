@@ -31,7 +31,7 @@ try
   
   var lsLocaleFolder = "c:\\projects\\svn\\locales";
   
-  var lsDTDFileName = "rmp_demo.dtd";
+  var lsDTDFileName = "songbird.dtd";
   var lsDTDMasterFile = lsLocaleFolder + "\\en-US\\" + lsDTDFileName;
 
   var lsPropFileName = "songbird.properties";

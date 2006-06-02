@@ -27,7 +27,7 @@
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/rmp_demo.dtd" >
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
