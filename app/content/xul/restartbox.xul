@@ -41,13 +41,13 @@
   
   <vbox>
     <spacer height="16"/>
-    <label id="rmp_demo_restartbox_label" value="" />
+    <label id="songbird_restartbox_label" value="" />
     <spacer height="16"/>
     <hbox>
       <spacer flex="1"/>
-      <button id="rmp_demo_restartbox_restartnow" label="Restart Now" oncommand="doExit(1);"/>
-      <button id="rmp_demo_restartbox_restartonplaybackend" label="Restart on End of Playback" oncommand="doExit(2);"/>
-      <button id="rmp_demo_restartbox_restartlater" label="Restart Later" oncommand="doExit(0);"/>
+      <button id="songbird_restartbox_restartnow" label="Restart Now" oncommand="doExit(1);"/>
+      <button id="songbird_restartbox_restartonplaybackend" label="Restart on End of Playback" oncommand="doExit(2);"/>
+      <button id="songbird_restartbox_restartlater" label="Restart Later" oncommand="doExit(0);"/>
     </hbox>
   </vbox>
   
@@ -61,8 +61,8 @@
       if ( typeof( window.arguments[0] ) != 'undefined' )
       {
         document.getElementById("restartbox").setAttribute("title", window.arguments[0].title);
-        document.getElementById("rmp_demo_restartbox_label").setAttribute("value", window.arguments[0].message);
-        if (!window.arguments[0].playing) document.getElementById("rmp_demo_restartbox_restartonplaybackend").setAttribute("hidden", "true");
+        document.getElementById("songbird_restartbox_label").setAttribute("value", window.arguments[0].message);
+        if (!window.arguments[0].playing) document.getElementById("songbird_restartbox_restartonplaybackend").setAttribute("hidden", "true");
       }
     }
     catch( err )

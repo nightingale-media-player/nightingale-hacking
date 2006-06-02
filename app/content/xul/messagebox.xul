@@ -41,7 +41,7 @@
   
   <!-- Astounding complexity! -->  
   
-  <description flex="1" id="rmp_demo_messagebox_label"></description>
+  <description flex="1" id="songbird_messagebox_label"></description>
   
   <!-- And intrepid instructions! -->  
   <script>
@@ -51,7 +51,7 @@
       if ( typeof( window.arguments[0] ) != 'undefined' )
       {
         document.getElementById("messagebox").setAttribute("title", window.arguments[0].title);
-        document.getElementById("rmp_demo_messagebox_label").appendChild(document.createTextNode(window.arguments[0].message));
+        document.getElementById("songbird_messagebox_label").appendChild(document.createTextNode(window.arguments[0].message));
         if (!window.arguments[0].wantcancel) document.getAnonymousElementByAttribute(document.getElementById("messagebox"), "dlgtype", "cancel").setAttribute("hidden", "true");
       }
     }

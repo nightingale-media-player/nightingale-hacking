@@ -34,13 +34,13 @@ var polling_interval = null;
 
 var aQueryFileArray = new Array();
 
-var theTitle = document.getElementById( "rmp_demo_media_scan_title" );
+var theTitle = document.getElementById( "songbird_media_scan_title" );
 theTitle.value = "";
 
-var theLabel = document.getElementById( "rmp_demo_media_scan_label" );
+var theLabel = document.getElementById( "songbird_media_scan_label" );
 theLabel.value = "";
 
-var theProgress = document.getElementById( "rmp_demo_media_scan" );
+var theProgress = document.getElementById( "songbird_media_scan" );
 theProgress.setAttribute( "mode", "undetermined" );
 theProgress.value = 0;
 

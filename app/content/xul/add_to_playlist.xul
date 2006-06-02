@@ -79,9 +79,9 @@
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
         <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        <listbox class="dialog_listbox" id="rmp_demo_playlistlist" onselect="enableOK();" />
+        <listbox class="dialog_listbox" id="songbird_playlistlist" onselect="enableOK();" />
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        <button id="rmp_demo_makenewplaylist" label="&addtoplaylist.create;" oncommand="doCreateNew();"/>
+        <button id="songbird_makenewplaylist" label="&addtoplaylist.create;" oncommand="doCreateNew();"/>
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
         <hbox>
           <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
@@ -121,7 +121,7 @@
     {
       document.getElementById("button_ok").setAttribute("disabled", "true");
 
-      var list = document.getElementById("rmp_demo_playlistlist");
+      var list = document.getElementById("songbird_playlistlist");
       if (list != null)
       {
         var result = getListOfPlaylists();
@@ -146,7 +146,7 @@
     
     function initFocus()
     {
-      var list = document.getElementById("rmp_demo_playlistlist");
+      var list = document.getElementById("songbird_playlistlist");
       if (list != null) list.focus();
     }
     
@@ -188,7 +188,7 @@
       if ( typeof( window.arguments[0] ) != 'undefined' )
       {
         window.arguments[0].playlist = "";
-        var list = document.getElementById("rmp_demo_playlistlist");
+        var list = document.getElementById("songbird_playlistlist");
         if (list != null)
         {
           window.arguments[0].playlist = list.selectedItem.getAttribute("playlist_name");
@@ -264,7 +264,7 @@
           var playlistguid = newGuid();
           var playlist = playlistManager.CreatePlaylist( playlistguid, name, "Playlist", "user", queryObj );
 
-          var list = document.getElementById("rmp_demo_playlistlist");
+          var list = document.getElementById("songbird_playlistlist");
           if (list != null)
           {
             var listitem = document.createElement("listitem");

@@ -82,8 +82,8 @@
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
         <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        <label id="rmp_demo_playlist_label" value="&new_playlist.name;"/>
-        <textbox class="dialog_textbox" id="rmp_demo_playlist_name"/>
+        <label id="songbird_playlist_label" value="&new_playlist.name;"/>
+        <textbox class="dialog_textbox" id="songbird_playlist_name"/>
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
         <hbox>
           <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
@@ -112,7 +112,7 @@
     
     function initFocus()
     {
-      var textbox = document.getElementById("rmp_demo_playlist_name");
+      var textbox = document.getElementById("songbird_playlist_name");
       if (textbox) textbox.focus();
     }
         
@@ -121,7 +121,7 @@
       if ( typeof( window.arguments[0] ) != 'undefined' )
       {
         window.arguments[0].playlistname = "";
-        var label = document.getElementById("rmp_demo_playlist_name");
+        var label = document.getElementById("songbird_playlist_name");
         if (label != null) window.arguments[0].playlistname = label.value;
         window.arguments[0].retval = "ok";
       }

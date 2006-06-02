@@ -2526,8 +2526,8 @@ DIALOG BOXES
 #button_browse:hover[disabled="true"],
 #button_cancel[disabled="true"],
 #button_cancel:hover[disabled="true"],
-#rmp_demo_makenewplaylist[disabled="true"],
-#rmp_demo_makenewplaylist:hover[disabled="true"]
+#songbird_makenewplaylist[disabled="true"],
+#songbird_makenewplaylist:hover[disabled="true"]
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px;
@@ -2544,7 +2544,7 @@ DIALOG BOXES
 #button_ok,
 #button_browse,
 #button_cancel,
-#rmp_demo_makenewplaylist
+#songbird_makenewplaylist
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px;
@@ -2560,11 +2560,11 @@ DIALOG BOXES
 
 #button_ok:hover,
 #button_cancel:hover,
-#rmp_demo_makenewplaylist:hover,
+#songbird_makenewplaylist:hover,
 #button_browse:hover,
 #button_ok:focus,
 #button_cancel:focus,
-#rmp_demo_makenewplaylist:focus,
+#songbird_makenewplaylist:focus,
 #button_browse:focus
 {
   color: #FFF;
@@ -2718,7 +2718,7 @@ DIALOG BOXES
   color: #FFF;
 }
 
-#rmp_demo_media_scan 
+#songbird_media_scan 
 { 
    -moz-appearance: none; 
    margin: 2px 0px 0px 0px;
@@ -2727,17 +2727,17 @@ DIALOG BOXES
    color: #FFF;
 } 
 
-#rmp_demo_media_scan .progress-bar { 
+#songbird_media_scan .progress-bar { 
    -moz-appearance: none; 
    background-color: #666;
 } 
   
-#rmp_demo_media_scan[mode="undetermined"] { 
+#songbird_media_scan[mode="undetermined"] { 
   background-color: #333;
 } 
 
-#rmp_demo_media_scan_title,
-#rmp_demo_media_scan_label
+#songbird_media_scan_title,
+#songbird_media_scan_label
 {color: #FFF;}
 
 /* Add to Playlist */
@@ -2757,7 +2757,7 @@ DIALOG BOXES
   /*background-color: transparent; BUGGY*/
 }
 
-#rmp_demo_playlistlist > listitem
+#songbird_playlistlist > listitem
 {
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px !important;
@@ -2765,7 +2765,7 @@ DIALOG BOXES
   color: #333;
 }
 
-#rmp_demo_playlistlist > listitem[selected=true]
+#songbird_playlistlist > listitem[selected=true]
 {
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px !important;
@@ -2781,7 +2781,7 @@ DIALOG BOXES
 }
 
 #subscribe_url,
-#rmp_demo_open_url
+#songbird_open_url
 {
   width: 420px;
 }
@@ -2973,26 +2973,26 @@ window#rmp_demo
 }
 
 /* the back button */
-#rmp_demo_btn_back
+#mini_btn_back
 {
   width: 63px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.back.n.png);
   background-color: transparent;
 }
-#rmp_demo_btn_back:hover
+#mini_btn_back:hover
 {
   width: 63px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.back.h.png);
   background-color: transparent;
 }
-#rmp_demo_btn_back[disabled="true"]
+#mini_btn_back[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.back.n.png);
   background-color: transparent;
 }
-#rmp_demo_btn_back:active
+#mini_btn_back:active
 {
   background-image: url(mini/rmp_demo.btn.back.a.png);
   background-color: transparent;
@@ -3000,75 +3000,75 @@ window#rmp_demo
 
 /* the play button */
 
-#rmp_demo_btn_play
+#mini_btn_play
 {
   width: 81px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.play.n.png);
   background-color: transparent;
 }
-#rmp_demo_btn_play:hover
+#mini_btn_play:hover
 {
   width: 81px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.play.h.png);
   background-color: transparent;
 }
-#rmp_demo_btn_play[disabled="true"]
+#mini_btn_play[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.play.d.png);
   background-color: transparent;
 }
-#rmp_demo_btn_play:active
+#mini_btn_play:active
 {
   background-image: url(mini/rmp_demo.btn.play.a.png);
   background-color: transparent;
 }
 
 /* the pause button */
-#rmp_demo_btn_pause
+#mini_btn_pause
 {
   width: 81px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.pause.n.png);
   background-color: transparent;
 }
-#rmp_demo_btn_pause:hover
+#mini_btn_pause:hover
 {
   background-image: url(mini/rmp_demo.btn.pause.h.png);
 }
-#rmp_demo_btn_pause[disabled="true"]
+#mini_btn_pause[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.pause.d.png);
   background-color: transparent;
 }
-#rmp_demo_btn_pause:active
+#mini_btn_pause:active
 {
   background-image: url(mini/rmp_demo.btn.pause.a.png);
   background-color: transparent;
 }
 
 /* the fwd button */
-#rmp_demo_btn_fwd
+#mini_btn_fwd
 {
   width: 61px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.fwd.n.png);
   background-color: transparent;
 }
-#rmp_demo_btn_fwd:hover
+#mini_btn_fwd:hover
 {
   width: 61px;
   height: 30px;
   background-image: url(mini/rmp_demo.btn.fwd.h.png);
   background-color: transparent;
 }
-#rmp_demo_btn_fwd[disabled="true"]
+#mini_btn_fwd[disabled="true"]
 {
   background-image: url(mini/rmp_demo.btn.fwd.d.png);
   background-color: transparent;
 }
-#rmp_demo_btn_fwd:active
+#mini_btn_fwd:active
 {
   background-image: url(mini/rmp_demo.btn.fwd.a.png);
   background-color: transparent;
@@ -3081,7 +3081,7 @@ window#rmp_demo
   -moz-appearance: none;
   height: 10px;
 }
-#rmp_demo_seekbar_thumb
+#mini_seekbar_thumb
 {
   -moz-appearance: none;
   width: 10px;
@@ -3090,7 +3090,7 @@ window#rmp_demo
   background-color: transparent;
   background-repeat: no-repeat;
 }
-#rmp_demo_seekbar_thumb > gripper
+#mini_seekbar_thumb > gripper
 {
   -moz-appearance: none;
   height: 10px;
@@ -3120,14 +3120,14 @@ window#rmp_demo
   background-color: transparent;
 }
 
-#rmp_demo_dash
+#mini_dash
 {
   background-image: url(mini/rmp_demo.bkg.dashboard.png);
 }
 
 /* volume */
 
-#rmp_demo_volume
+#mini_volume
 {
   width: 145px;
   height: 30px;
@@ -3138,8 +3138,8 @@ window#rmp_demo
 
 /*
 */
-#rmp_demo_volume > progress_slider,
-#rmp_demo_volume gripper
+#mini_volume > progress_slider,
+#mini_volume gripper
 {  
   -moz-appearance: none;
   background-image: none;
@@ -3149,7 +3149,7 @@ window#rmp_demo
   background-color: transparent;
 }
 
-#rmp_demo_volume_thumb
+#mini_volume_thumb
 {
   width: 36px;
   height: 14px;
@@ -3158,7 +3158,7 @@ window#rmp_demo
   background-repeat: no-repeat;
 }
 
-#rmp_demo_volume_progress
+#mini_volume_progress
 {
   top: 0px;
   left: 0px; /* previously 20px, 1 thumb-width in */
@@ -3166,20 +3166,20 @@ window#rmp_demo
   height: 14px;
   background-color: transparent;
 }
-#rmp_demo_volume_progress > .progress-bar
+#mini_volume_progress > .progress-bar
 {
   -moz-appearance: none;
   background-image: url(default/volume_progress_bar.png);
   background-color: transparent;
 }
-#rmp_demo_volume_progress > .progress-remainder
+#mini_volume_progress > .progress-remainder
 {
   -moz-appearance: none;
   background-image: url(default/volume_progress_remainder.png);
   background-color: transparent;
 }
 
-#rmp_demo_volume_e
+#mini_volume_e
 {
   background-image: url(default/volume_e.png);
   margin: 0px 0px 0px 0px;
@@ -3188,7 +3188,7 @@ window#rmp_demo
   background-repeat: no-repeat;
   background-color: transparent;
 }
-#rmp_demo_volume_w
+#mini_volume_w
 {
   background-image: url(default/volume_w.png);
   margin: 0px 0px 0px 0px;
@@ -3199,7 +3199,7 @@ window#rmp_demo
 }
 
 /* Restore */
-#rmp_demo_btn_max
+#mini_btn_max
 {
   width: 31px;
   height: 30px;
@@ -3208,7 +3208,7 @@ window#rmp_demo
 }
 
 /* Close */
-#rmp_demo_close
+#mini_close
 {  
   width: 30px;
   height: 30px;
@@ -3219,14 +3219,14 @@ window#rmp_demo
 
 
 /* the texties */
-#rmp_demo_text_title
+#mini_text_title
 {
   width: 220px;
   height: 15px;
   color: #E4EADF;
  
 }
-#rmp_demo_text_time
+#mini_text_time
 {
   width: 160px;
   height: 15px;

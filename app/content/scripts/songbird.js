@@ -264,7 +264,7 @@ function quitApp()
   }
 }
 
-var rmp_demo_playURL = new sbIDataRemote("faceplate.play.url");
+var songbird_playURL = new sbIDataRemote("faceplate.play.url");
 function SBUrlChanged( value )
 {
   if (!coreInitialCloakDone) return;
@@ -307,7 +307,7 @@ function SBAppDeinitialize()
   // Unattach the player repeater. (please deprecate me, soon!)
   //thePlayerRepeater.unbind();
   // Unbind the playback url viewer. (used by the code that uncloaks the video window)
-  rmp_demo_playURL.unbind();
+  songbird_playURL.unbind();
   // Remember where the video window is.
   onWindowSaveSize();
   SBMetricsAppShutdown();
@@ -334,7 +334,7 @@ function SBAppInitialize()
     setVideoMinMaxCallback();
     onWindowLoadSize();
     createLibraryRef();
-    rmp_demo_playURL.bindCallbackFunction( SBUrlChanged, true )
+    songbird_playURL.bindCallbackFunction( SBUrlChanged, true )
 
     /*
     */

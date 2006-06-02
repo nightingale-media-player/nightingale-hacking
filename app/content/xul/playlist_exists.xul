@@ -77,7 +77,7 @@
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
         <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        <label id="rmp_demo_playlist_label" value="&exists.exists;"/>
+        <label id="songbird_playlist_label" value="&exists.exists;"/>
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
         <hbox>
           <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
@@ -100,7 +100,7 @@
   <script>
   <![CDATA[
     // Prepend the playlist name to the localized label value.  
-    var label = document.getElementById("rmp_demo_playlist_label");
+    var label = document.getElementById("songbird_playlist_label");
     if (label != null && typeof( window.arguments[0] ) != 'undefined') 
       label.setAttribute("value", "(" + window.arguments[0].playlistname + ") " + label.getAttribute("value") );
     

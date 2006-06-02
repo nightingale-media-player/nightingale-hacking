@@ -39,7 +39,7 @@
  hidechrome="true"
  ondialogaccept="return doOK();"
  ondialogcancel="return doCancel();"
- onload="document.getElementById('rmp_demo_open_url').focus();"
+ onload="document.getElementById('songbird_open_url').focus();"
 >
 <!-- Astounding complexity! -->
 <!--windowregion/-->
@@ -77,11 +77,11 @@
           <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
-         <label id="rmp_demo_open_url_label" value="&textbox.rmp_demo_open_url;"/>
+         <label id="songbird_open_url_label" value="&textbox.songbird_open_url;"/>
         
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
         <hbox>          
-         <textbox class="dialog_textbox" id="rmp_demo_open_url"/> 
+         <textbox class="dialog_textbox" id="songbird_open_url"/> 
         </hbox>
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
         <hbox>
@@ -104,7 +104,7 @@
   <script>
   <![CDATA[
     // Init the text box to the last url played (shrug).
-    var theTextbox = document.getElementById( "rmp_demo_open_url" );
+    var theTextbox = document.getElementById( "songbird_open_url" );
     if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
     {
       theTextbox.value = window.arguments[0].URL;

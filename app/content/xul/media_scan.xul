@@ -83,17 +83,17 @@
         <spacer flex="1"/>
         <hbox style="overflow: hidden;"> 
           <spacer flex="1"/>
-          <label id="rmp_demo_media_scan_title" value="" control="rmp_demo_media_scan"/>
+          <label id="songbird_media_scan_title" value="" control="songbird_media_scan"/>
           <spacer flex="1"/>
         </hbox> 
         <hbox style="overflow: hidden;"> 
           <spacer flex="1"/>
-          <label id="rmp_demo_media_scan_label" value="" control="rmp_demo_media_scan"/>
+          <label id="songbird_media_scan_label" value="" control="songbird_media_scan"/>
           <spacer flex="1"/>
         </hbox> 
         <hbox>
           <spacer flex="1"/>
-          <progressmeter id="rmp_demo_media_scan" flex="1"/>
+          <progressmeter id="songbird_media_scan" flex="1"/>
           <spacer flex="1"/>
         </hbox>
         <hbox>
