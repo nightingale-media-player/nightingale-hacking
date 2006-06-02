@@ -96,7 +96,7 @@
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/rmp_demo.js" />
+   src="chrome://songbird/content/scripts/songbird.js" />
   <script>
   <![CDATA[
     // Prepend the playlist name to the localized label value.  

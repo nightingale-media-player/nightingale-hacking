@@ -202,7 +202,7 @@
 </stack>
  
 <!-- SCRIPTS -->
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/rmp_demo.js" />
+<script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird.js" />
   <script>
   <![CDATA[
     function doLoad()

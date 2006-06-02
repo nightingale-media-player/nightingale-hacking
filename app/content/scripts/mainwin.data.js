@@ -25,7 +25,7 @@
  */
 
 //
-//  This file binds UI objects from the mainwin.xul (currently rmp_demo.xul)
+//  This file binds UI objects from the mainwin.xul
 //  to data remotes that will automatically update them to reflect the proper value.
 //
 

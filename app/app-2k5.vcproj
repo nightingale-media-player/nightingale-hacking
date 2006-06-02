@@ -572,30 +572,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\rmp_demo.xul"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\xul\setup_progress.xul"
 					>
 					<FileConfiguration
@@ -621,6 +597,30 @@
 				</File>
 				<File
 					RelativePath=".\content\xul\smart_playlist.xul"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\songbird.xul"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1656,30 +1656,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\scripts\rmp_demo.js"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\scripts\sbIAsyncForLoop.js"
 					>
 					<FileConfiguration
@@ -1775,6 +1751,30 @@
 				</File>
 				<File
 					RelativePath=".\content\scripts\smilScript.js"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\songbird.js"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
