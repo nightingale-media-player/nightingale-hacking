@@ -912,7 +912,7 @@ These let the user resize the frames in your box model.
 #resize
 {
   -moz-appearance: none;
-  background-image: url(mini/rmp_demo.progbkgdfill.png);
+  background-image: url(mini/mini.progbkgdfill.png);
   list-style-image: none;
 }
 
@@ -2447,11 +2447,11 @@ The ABOUT BOX
 /** 
 ************************************************************************************************************************************************
 MINI PLAYER SKIN
-Anything with #rmp_demo refers to the skin of the mini player.
+Anything with #mini refers to the skin of the mini player.
 ************************************************************************************************************************************************
 */  
 
-window#rmp_demo  
+window#mini  
 { 
   width: 640px;
   height: 20px;
@@ -2462,7 +2462,7 @@ window#rmp_demo
 {
   width: 33px;
   height: 30px;
-  background-image: url(mini/rmp_demo.btn.max.png);
+  background-image: url(mini/mini.btn.max.png);
   background-color: transparent;
 }
 
@@ -2471,22 +2471,22 @@ window#rmp_demo
 {
   width: 61px;
   height: 30px;
-  background-image: url(mini/rmp_demo.btn.back.n.png);
+  background-image: url(mini/mini.btn.back.n.png);
   background-color: transparent;
 }
 #mini_btn_back[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.back.d.png);
+  background-image: url(mini/mini.btn.back.d.png);
   background-color: transparent;
 }
 #mini_btn_back:hover[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.back.n.png);
+  background-image: url(mini/mini.btn.back.n.png);
   background-color: transparent;
 }
 #mini_btn_back:active
 {
-  background-image: url(mini/rmp_demo.btn.back.a.png);
+  background-image: url(mini/mini.btn.back.a.png);
   background-color: transparent;
 }
 
@@ -2496,22 +2496,22 @@ window#rmp_demo
 {
   width: 81px;
   height: 30px;
-  background-image: url(mini/rmp_demo.btn.play.n.png);
+  background-image: url(mini/mini.btn.play.n.png);
   background-color: transparent;
 }
 #mini_btn_play[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.play.d.png);
+  background-image: url(mini/mini.btn.play.d.png);
   background-color: transparent;
 }
 #mini_btn_play:hover[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.play.n.png);
+  background-image: url(mini/mini.btn.play.n.png);
   background-color: transparent;
 }
 #mini_btn_play:active
 {
-  background-image: url(mini/rmp_demo.btn.play.a.png);
+  background-image: url(mini/mini.btn.play.a.png);
   background-color: transparent;
 }
 
@@ -2520,22 +2520,22 @@ window#rmp_demo
 {
   width: 81px;
   height: 30px;
-  background-image: url(mini/rmp_demo.btn.pause.n.png);
+  background-image: url(mini/mini.btn.pause.n.png);
   background-color: transparent;
 }
 #mini_btn_pause[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.pause.d.png);
+  background-image: url(mini/mini.btn.pause.d.png);
   background-color: transparent;
 }
 #mini_btn_pause:hover[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.pause.n.png);
+  background-image: url(mini/mini.btn.pause.n.png);
   background-color: transparent;
 }
 #mini_btn_pause:active
 {
-  background-image: url(mini/rmp_demo.btn.pause.a.png);
+  background-image: url(mini/mini.btn.pause.a.png);
   background-color: transparent;
 }
 
@@ -2544,22 +2544,22 @@ window#rmp_demo
 {
   width: 61px;
   height: 30px;
-  background-image: url(mini/rmp_demo.btn.fwd.n.png);
+  background-image: url(mini/mini.btn.fwd.n.png);
   background-color: transparent;
 }
 #mini_btn_fwd[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.fwd.d.png);
+  background-image: url(mini/mini.btn.fwd.d.png);
   background-color: transparent;
 }
 #mini_btn_fwd:hover[disabled="true"]
 {
-  background-image: url(mini/rmp_demo.btn.fwd.n.png);
+  background-image: url(mini/mini.btn.fwd.n.png);
   background-color: transparent;
 }
 #mini_btn_fwd:active
 {
-  background-image: url(mini/rmp_demo.btn.fwd.a.png);
+  background-image: url(mini/mini.btn.fwd.a.png);
   background-color: transparent;
 }
 
@@ -2611,7 +2611,7 @@ window#rmp_demo
 
 #mini_dash
 {
-  background-image: url(mini/rmp_demo.bkg.dashboard.png);
+  background-image: url(mini/mini.bkg.dashboard.png);
 }
 
 /* volume */
