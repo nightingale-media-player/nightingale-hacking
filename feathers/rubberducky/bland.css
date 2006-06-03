@@ -468,18 +468,18 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-playlist > stack > vbox > hbox > toolbar > toolbarbutton 
+playlist > stack > vbox > hbox button 
 {
   padding-left: 7px;
   padding-right: 8px;
   margin: 0px;
 }
-playlist > stack > vbox > hbox > toolbar > toolbarbutton:hover
+playlist > stack > vbox > hbox button:hover
 {
 
 }
-playlist > stack > vbox > hbox > toolbar > toolbarbutton:hover[disabled="true"],
-playlist > stack > vbox > hbox > toolbar > toolbarbutton[disabled="true"]
+playlist > stack > vbox > button:hover[disabled="true"],
+playlist > stack > vbox > button[disabled="true"]
 {
 
 }
@@ -492,15 +492,15 @@ playlist > stack > vbox > hbox > toolbar > toolbarbutton[disabled="true"]
 */
 
 /* Toolbar: Play Button */
-toolbarbutton#library_cmd_play
+button#library_cmd_play
 {
   list-style-image: url(default/toolbar_play_normal.png);  
 }
-toolbarbutton#library_cmd_play:hover
+button#library_cmd_play:hover
 {
   list-style-image: url(default/toolbar_play_hover.png);
 }
-toolbarbutton#library_cmd_play[disabled="true"]
+button#library_cmd_play[disabled="true"]
 {
   list-style-image: url(default/toolbar_play_disabled.png);
   padding-left: 8px; /* stops this button from shifting on the library view */
@@ -520,15 +520,15 @@ menuitem#library_cmd_play[disabled="true"]
 }
 
 /* Toolbar: remove Button */
-toolbarbutton#library_cmd_remove
+button#library_cmd_remove
 {
   list-style-image: url(default/toolbar_remove_normal.png);
 }
-toolbarbutton#library_cmd_remove:hover
+button#library_cmd_remove:hover
 {
   list-style-image: url(default/toolbar_remove_hover.png);
 }
-toolbarbutton#library_cmd_remove[disabled="true"]
+button#library_cmd_remove[disabled="true"]
 {
   list-style-image: url(default/toolbar_remove_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -548,15 +548,15 @@ menuitem#library_cmd_remove[disabled="true"]
 }
 
 /* Toolbar: edit Button */
-toolbarbutton#library_cmd_edit
+button#library_cmd_edit
 {
   list-style-image: url(default/toolbar_info_normal.png);
 }
-toolbarbutton#library_cmd_edit:hover
+button#library_cmd_edit:hover
 {
   list-style-image: url(default/toolbar_info_hover.png);
 }
-toolbarbutton#library_cmd_edit[disabled="true"]
+button#library_cmd_edit[disabled="true"]
 {
   list-style-image: url(default/toolbar_info_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -576,15 +576,15 @@ menuitem#library_cmd_edit[disabled="true"]
 
 
 /* Toolbar: addtoplaylist Button */
-toolbarbutton#library_cmd_addtoplaylist
+button#library_cmd_addtoplaylist
 {
   list-style-image: url(default/toolbar_addtoplaylist_normal.png);
 }
-toolbarbutton#library_cmd_addtoplaylist:hover
+button#library_cmd_addtoplaylist:hover
 {
   list-style-image: url(default/toolbar_addtoplaylist_hover.png);
 }
-toolbarbutton#library_cmd_addtoplaylist[disabled="true"]
+button#library_cmd_addtoplaylist[disabled="true"]
 {
   list-style-image: url(default/toolbar_addtoplaylist_disabled.png);
 
@@ -603,15 +603,15 @@ menuitem#library_cmd_addtoplaylist[disabled="true"]
 }
 
 /* Toolbar: burntocd Button */
-toolbarbutton#library_cmd_burntocd
+button#library_cmd_burntocd
 {
   list-style-image: url(default/toolbar_burntocd_normal.png);
 }
-toolbarbutton#library_cmd_burntocd:hover
+button#library_cmd_burntocd:hover
 {
   list-style-image: url(default/toolbar_burntocd_hover.png);
 }
-toolbarbutton#library_cmd_burntocd[disabled="true"]
+button#library_cmd_burntocd[disabled="true"]
 {
   list-style-image: url(default/toolbar_burntocd_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -633,15 +633,15 @@ menuitem#library_cmd_burntocd[disabled="true"]
 }
 
 /* Toolbar: device Button */
-toolbarbutton#library_cmd_device
+button#library_cmd_device
 {
   list-style-image: url(default/toolbar_device_normal.png);
 }
-toolbarbutton#library_cmd_device:hover
+button#library_cmd_device:hover
 {
   list-style-image: url(default/toolbar_device_hover.png);
 }
-toolbarbutton#library_cmd_device[disabled="true"]
+button#library_cmd_device[disabled="true"]
 {
   list-style-image: url(default/toolbar_device_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -660,17 +660,17 @@ menuitem#library_cmd_device[disabled="true"]
 }
 
 /* Toolbar: addtolibrary Button */
-toolbarbutton#library_cmd_addtolibrary
+button#library_cmd_addtolibrary
 {
   list-style-image: url(default/toolbar_addtolibrary_normal.png);
 
 }
-toolbarbutton#library_cmd_addtolibrary:hover
+button#library_cmd_addtolibrary:hover
 {
   list-style-image: url(default/toolbar_addtolibrary_hover.png);
   
 }
-toolbarbutton#library_cmd_addtolibrary[disabled="true"]
+button#library_cmd_addtolibrary[disabled="true"]
 {
   list-style-image: url(default/toolbar_addtolibrary_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -693,17 +693,17 @@ menuitem#library_cmd_addtolibrary[disabled="true"]
 }
 
 /* Toolbar: download Button */
-toolbarbutton#library_cmd_download
+button#library_cmd_download
 {
   list-style-image: url(default/toolbar_download_normal.png);
   
 }
-toolbarbutton#library_cmd_download:hover
+button#library_cmd_download:hover
 {
   list-style-image: url(default/toolbar_download_hover.png);
   
 }
-toolbarbutton#library_cmd_download[disabled="true"]
+button#library_cmd_download[disabled="true"]
 {
   list-style-image: url(default/toolbar_download_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -726,17 +726,17 @@ menuitem#library_cmd_download[disabled="true"]
 }
 
 /* Toolbar: subscribe Button */
-toolbarbutton#library_cmd_subscribe
+button#library_cmd_subscribe
 {
   list-style-image: url(default/toolbar_subscribe_normal.png);
   
 }
-toolbarbutton#library_cmd_subscribe:hover
+button#library_cmd_subscribe:hover
 {
   list-style-image: url(default/toolbar_subscribe_hover.png);
   
 }
-toolbarbutton#library_cmd_subscribe[disabled="true"]
+button#library_cmd_subscribe[disabled="true"]
 {
   list-style-image: url(default/toolbar_subscribe_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -759,17 +759,17 @@ menuitem#library_cmd_subscribe[disabled="true"]
 }
 
 /* Toolbar: pause Button */
-toolbarbutton#library_cmd_pause
+button#library_cmd_pause
 {
   list-style-image: url(default/toolbar_pause_normal.png);
   
 }
-toolbarbutton#library_cmd_pause:hover
+button#library_cmd_pause:hover
 {
   list-style-image: url(default/toolbar_pause_hover.png);
   
 }
-toolbarbutton#library_cmd_pause[disabled="true"]
+button#library_cmd_pause[disabled="true"]
 {
   list-style-image: url(default/toolbar_pause_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */
@@ -792,17 +792,17 @@ menuitem#library_cmd_pause[disabled="true"]
 }
 
 /* Toolbar: resume Button */
-toolbarbutton#library_cmd_resume
+button#library_cmd_resume
 {
   list-style-image: url(default/toolbar_resume_normal.png);
   
 }
-toolbarbutton#library_cmd_resume:hover
+button#library_cmd_resume:hover
 {
   list-style-image: url(default/toolbar_resume_hover.png);
   
 }
-toolbarbutton#library_cmd_resume[disabled="true"]
+button#library_cmd_resume[disabled="true"]
 {
   list-style-image: url(default/toolbar_resume_disabled.png);
   padding-left: 9px; /* stops this button from shifting on the library view */

@@ -257,8 +257,8 @@ function sbIDataRemote( key, root )
       }
       catch( err ) 
       {
-        alert( err );
-        //dump("!!!! sbiDataRemotes.js - observe: " + err + " (" + this.m_Key + ")\n");
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - observe: " + err + " (" + this.m_Key + ")\n");
       }
     };
     
@@ -276,7 +276,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - unbind: " + err + " (" + this.m_Key + ")\n");
       }
     }
     
@@ -319,7 +320,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+//        alert( err );
+        dump("!!!! sbiDataRemotes.js - bindCallbackFunction: " + err + " (" + this.m_Key + ")\n");
       }
     };
     
@@ -363,7 +365,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - bindCallbackProperty: " + err + " (" + this.m_Key + ")\n");
       }
     };
     
@@ -407,7 +410,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - bindCallbackAttribute: " + err + " (" + this.m_Key + ")\n");
       }
     };
 
@@ -452,7 +456,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - setValue: " + err + " (" + this.m_Key + ")\n");
       }
     };
 
@@ -472,8 +477,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
-        //dump("!!!! sbiDataRemotes.js - getValue: " + err + " (" + this.m_Key + ")\n");
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - getValue: " + err + " (" + this.m_Key + ")\n");
       }
       return retval;
     };
@@ -503,7 +508,8 @@ function sbIDataRemote( key, root )
       }
       catch ( err )
       {
-        alert( err );
+        //alert( err );
+        dump("!!!! sbiDataRemotes.js - makeIntValue: " + err + " (" + this.m_Key + ")\n");
       }
       return retval;
     };

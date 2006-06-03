@@ -212,30 +212,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\inner_frame.xul"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\xul\jumptofile.xul"
 					>
 					<FileConfiguration

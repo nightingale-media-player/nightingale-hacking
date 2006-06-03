@@ -83,8 +83,8 @@
         <!-- Playlist Toolbar
         -->
         <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
-          <xul:toolbar id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
-          </xul:toolbar>                 
+          <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
+          </xul:hbox>
         </xul:hbox>
         
         <!-- Popupset
@@ -572,7 +572,7 @@
               // What id?
               var obj_id = this.commands.GetCommandId( i );
               
-              var toolbarbutton_type = "toolbarbutton";
+              var toolbarbutton_type = "button";
               var menuitem_type = "menuitem";
               
               if ( obj_id == "*separator*" )
@@ -585,6 +585,7 @@
               toolbarbutton = document.createElement( toolbarbutton_type );
               toolbarbutton.setAttribute( "id", obj_id );
               toolbarbutton.setAttribute( "sbtype", "command" ); // to find it easily, later
+              toolbarbutton.setAttribute( "class", "sb_faceplate" ); // Make them fully skinned buttons.
 
               // And a menuitem
               menuitem = document.createElement( menuitem_type );

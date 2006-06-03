@@ -1269,7 +1269,7 @@ var SBWebPlaylistCommands =
     if ( event.target && event.target.id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "toolbarbutton" || event.target.tagName == "xul:toolbarbutton" );
+      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
       switch( event.target.id )
       {
         case "library_cmd_play":
@@ -3042,7 +3042,7 @@ var SBDownloadCommands =
     if ( this.m_Device && event.target && event.target.id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "toolbarbutton" || event.target.tagName == "xul:toolbarbutton" );
+      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
       switch( event.target.id )
       {
         case "library_cmd_play":
@@ -3245,7 +3245,7 @@ var SBCDCommands =
     if ( this.m_Device && event.target && event.target.id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "toolbarbutton" || event.target.tagName == "xul:toolbarbutton" );
+      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
       switch( event.target.id )
       {
         case "library_cmd_play":
@@ -3426,7 +3426,7 @@ var SBRippingCommands =
     if ( this.m_Device && event.target && event.target.id )
     {
       // Was it from the toolbarbutton?
-      var tbb = ( event.target.tagName == "toolbarbutton" || event.target.tagName == "xul:toolbarbutton" );
+      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
       switch( event.target.id )
       {
         case "library_cmd_remove":
