@@ -2036,16 +2036,20 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   padding-left: 5px !important;
 }
 
-#browser_toolbar toolbarbutton 
+#browser_toolbar button 
+{
+  -moz-appearance: none;
+  height: 16px;
+  width: 16px;
+  background-color: Transparent;
+ }
+
+#browser_toolbar button:hover
 {
   -moz-appearance: none;
   border: none;
   height: 16px;
   width: 16px;
- }
-
-#browser_toolbar toolbarbutton:hover
-{
 }
 
 #browser_back
