@@ -102,7 +102,14 @@
         
         if ( pop )
         {
-          setTimeout( 'window.open( "chrome://songbird/content/xul/mainwin.xul", "mainwin", "chrome,modal=no" );', 0 ); // (sigh)
+          // Get mainwin URL
+          var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+          var mainwin = "chrome://songbird/content/xul/mainwin.xul";
+          try {
+            mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
+          } catch (err) {}
+
+          setTimeout( 'window.open( "' + mainwin + '", "mainwin", "chrome,modal=no" );', 0 ); // (sigh)
         }
       };
       

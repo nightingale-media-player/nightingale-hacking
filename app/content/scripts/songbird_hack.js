@@ -433,6 +433,26 @@ function SBUninitialize()
   
   }
 }
+
+
+/**
+ * Closes the current window and launches the selected mainwin url
+ */
+function SBMainWindowReopen()
+{
+  // Get mainwin URL
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  var mainwin = "chrome://songbird/content/xul/mainwin.xul";
+  try {
+    mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
+  } catch (err) {}
+
+  // Open the window
+  window.open( mainwin, "", "chrome,modal=no" );
+  setTimeout( "onExit();", 1000 );
+}
+
+
  
 //
 // XUL Event Methods
@@ -500,8 +520,8 @@ function switchFeathers(internalName)
   if (curfeathers == internalName) return;
   onMinimize();
   prefs.setCharPref("general.skins.selectedSkin", internalName);  
-  window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
-  setTimeout( "onExit();", 1000 );
+  
+  SBMainWindowReopen();
 }
 
 // old version, just in case
@@ -2172,33 +2192,7 @@ function onMenu( target )
       }
     break;
 */    
-    case "file.skin":
-try    
-{
-      saveWindowPosition();
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-      if ( SBDataGetIntValue( "option.skin" ) == 0 )
-      {
-        onMinimize();
-        SBDataSetValue( "option.skin", 1 );
-        prefs.setCharPref("general.skins.selectedSkin", "cardinal");  
-        window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
-        setTimeout( "onExit();", 1000 );
-      }
-      else
-      {
-        onMinimize();
-        SBDataSetValue( "option.skin", 0 );
-        prefs.setCharPref("general.skins.selectedSkin", "songbird");  
-        window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
-        setTimeout( "onExit();", 1000 );
-      }
-}
-catch ( err )      
-{
-  alert( err );
-}
-    break;
+
     case "file.window":
       SBMiniplayerOpen();
     break;

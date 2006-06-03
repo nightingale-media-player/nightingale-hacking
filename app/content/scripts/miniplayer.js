@@ -196,8 +196,15 @@ try
     var location = "" + window.location; // Grrr.  Dumb objects.
     if ( location.indexOf("?video") == -1 )
     {
+      // Get mainwin URL
+      var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+      var mainwin = "chrome://songbird/content/xul/mainwin.xul";
+      try {
+        mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
+      } catch (err) {}
+     
       // Open the window
-      window.open( "chrome://songbird/content/xul/mainwin.xul", "", "chrome,modal=no" );
+      window.open( mainwin, "", "chrome,modal=no" );
       onExit();
     }
   }
