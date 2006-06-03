@@ -2041,13 +2041,13 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-appearance: none;
   height: 16px;
   width: 16px;
+  margin: 2px;
   background-color: Transparent;
  }
 
 #browser_toolbar button:hover
 {
   -moz-appearance: none;
-  border: none;
   height: 16px;
   width: 16px;
 }
