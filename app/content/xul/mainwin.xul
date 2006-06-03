@@ -401,13 +401,13 @@
                 <vbox class="sb_faceplate" flex="1" id="main_pane_border"> 
                   <vbox class="sb_faceplate" id="frame_main_pane_html" hidden="false" > 
                     <!-- WEB BAR -->
-                    <toolbar id="browser_toolbar" class="sb_faceplate" flex="1">
-                      <toolbarbutton disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/> 
-                      <toolbarbutton disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/> 
-                      <toolbarbutton disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="Refresh"/>
-                      <toolbarbutton disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
-                      <toolbarbutton disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
-                      <toolbarbutton disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>                                           
+                    <hbox id="browser_toolbar" class="sb_faceplate" flex="1">
+                      <button class="sb_faceplate" disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
+                      <button class="sb_faceplate" disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
+                      <button class="sb_faceplate" disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="Refresh"/>
+                      <button class="sb_faceplate" disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
+                      <button class="sb_faceplate" disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
+                      <button class="sb_faceplate" disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
                       <hbox class="sb_faceplate" id="browser_url_box" flex="1">
                       <image id="browser_url_image" class="sb_faceplate" src=""/>                      
                       <textbox id="browser_url" class="sb_faceplate" onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" flex="1" onfocus="onHTMLURLFocus( event );"/>
@@ -419,7 +419,7 @@
                         buttonid="search_service_button"
                         tooltiptext="&tooltip.search;"
                       />
-                    </toolbar>                 
+                    </hbox>                 
                   </vbox>
                   
                   <browser id="frame_main_pane" x_type="content-primary" type="content" flex="1"/>
