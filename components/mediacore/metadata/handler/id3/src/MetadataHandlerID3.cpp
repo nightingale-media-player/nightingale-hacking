@@ -228,10 +228,10 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         mc->SetPos( 0 );
         PRUint64 buf = 0;
         mc->GetBuf(&buf);
-        PRUint32 read, size = min( 65535, (PRUint32)buf );
-        PRUint64 file_size = 0;
+        PRUint32 read, size = min( 8096, (PRUint32)buf );
         char *buffer = (char *)nsMemory::Alloc(size);
         mc->Read(buffer, size, &read);
+        PRUint64 file_size = 0;
         mc->GetSize(&file_size);
         CalculateBitrate(buffer, read, file_size);
         nsMemory::Free(buffer);
@@ -860,6 +860,12 @@ const PRInt32 gFrequencies[3][4] =
 //-----------------------------------------------------------------------------
 void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length, PRUint64 file_size)
 {
+  // Skip ID3v2
+  if ( length > 2048 )
+  {
+    length -= 2048;
+    buffer += 2048;
+  }
   const char byte_zero = 0xFF;
   const char byte_one = 0xE0;
   PRBool found = false;
