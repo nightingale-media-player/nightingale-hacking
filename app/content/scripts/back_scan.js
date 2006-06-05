@@ -353,7 +353,7 @@ try
     }
     else
     {
-      metadata[1] = BSStripHoursFromTimeString( metadata[1] );
+      metadata[1] = BSEmitSecondsToTimeString( metadata[1] / 1000 );
     }
     if ( metadata[1] == "0" )
     {
@@ -410,6 +410,30 @@ try
       retval = str.substring( 2, str.length );
     }
     return retval;
+  }
+
+  // Just a useful function to parse down some seconds.
+  function BSEmitSecondsToTimeString( seconds )
+  {
+    if ( seconds < 0 )
+      return "00:00";
+    seconds = parseFloat( seconds );
+    var minutes = parseInt( seconds / 60 );
+    seconds = parseInt( seconds ) % 60;
+    var hours = parseInt( minutes / 60 );
+    if ( hours > 50 ) // lame
+      return "Error";
+    minutes = parseInt( minutes ) % 60;
+    var text = ""
+    if ( hours > 0 )
+      text += hours + ":";
+    if ( minutes < 10 )
+      text += "0";
+    text += minutes + ":";
+    if ( seconds < 10 )
+      text += "0";
+    text += seconds;
+    return text;
   }
 }
 catch ( err )

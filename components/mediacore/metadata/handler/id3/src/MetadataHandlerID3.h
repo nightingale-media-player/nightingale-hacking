@@ -68,6 +68,7 @@ protected:
   PRInt32 ReadTag(ID3_Tag &tag);
   PRInt32 ReadFrame(ID3_Frame *frame);
   PRInt32 ReadFields(ID3_Field *field);
+  void CalculateBitrate(const char *buffer, PRUint32 length, PRUint64 file_size);
 
   nsCOMPtr<sbIMetadataValues> m_Values;
   nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;

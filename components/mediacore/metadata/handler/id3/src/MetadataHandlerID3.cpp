@@ -221,6 +221,25 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         ID3_ChannelReader channel_reader( mc.get() );
         bool ok = tag.Parse( channel_reader );
         ReadTag(tag);
+
+
+        // If we get here, everything is okay.
+        // Reset the channel and read a block to calc the bitrate.
+        mc->SetPos( 0 );
+        PRUint64 buf = 0;
+        mc->GetBuf(&buf);
+        PRUint32 read, size = min( 65535, (PRUint32)buf );
+        PRUint64 file_size = 0;
+        char *buffer = (char *)nsMemory::Alloc(size);
+        mc->Read(buffer, size, &read);
+        mc->GetSize(&file_size);
+        CalculateBitrate(buffer, read, file_size);
+        nsMemory::Free(buffer);
+
+
+
+
+
 /*
         // How do I calculate length without bitrate?
         PRUnichar *bitrate;
@@ -348,6 +367,34 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     *_retval = nTagSize;
 
     ReadTag(tag);
+
+    // Handle the bitrate
+    {
+      // Then alloc the buffer.
+      const PRUint32 size = 8096;
+      char *buffer = (char *)nsMemory::Alloc(size);
+
+      // Read the first chunk of the file to get bitrate, etc.
+      // Then open a file with it.
+      nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1");
+      file->InitWithNativePath(NS_UnescapeURL(cstrPath));
+
+      // Then open an input stream with it.
+      nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1");
+      stream->Init( file, PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
+
+      // Then read.
+      PRUint32 read = 0;
+      stream->Read(buffer, size, &read);
+
+      // Then get the file size.
+      PRInt64 file_size = 0;
+      file->GetFileSize(&file_size);
+
+      // And finally calculate the bitrate.
+      CalculateBitrate(buffer, read, file_size);
+      nsMemory::Free(buffer);
+    }
 
     nRet = NS_OK;
   }
@@ -783,3 +830,115 @@ PRInt32 sbMetadataHandlerID3::ReadFields(ID3_Field *field)
  
   return ret;
 } //ReadField
+
+const PRInt32 gBitrates[3][3][16] = // This is stupid.
+{
+  { // V1
+    {0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 0}, // L1
+    {0, 32, 48, 56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 384, 0}, // L2
+    {0, 32, 40, 48,  56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 0}  // L3
+  },
+  { // V2
+    {0, 32, 48, 56,  64,  80,  96, 112, 128, 144, 160, 176, 192, 224, 256, 0}, // L1
+    {0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0}, // L2
+    {0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0}  // L3
+  },
+  { // V2.5
+    {0, 32, 48, 56,  64,  80,  96, 112, 128, 144, 160, 176, 192, 224, 256, 0}, // L1
+    {0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0}, // L2
+    {0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0}  // L3
+  }
+};
+
+const PRInt32 gFrequencies[3][4] =
+{
+  {44100, 48000, 32000, 0}, // V1
+  {22050, 24000, 16000, 0}, // V2
+  {11025, 12000,  8000, 0}  // V2.5
+};
+
+//-----------------------------------------------------------------------------
+void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length, PRUint64 file_size)
+{
+  const char byte_zero = 0xFF;
+  const char byte_one = 0xE0;
+  PRBool found = false;
+  PRInt32 version = -1; // 0 = V1, 1 = V2, 2 = V2.5
+  PRInt32 layer = -1; // 0 = L1, 1 = L2, 2 = L3
+  PRInt32 bitrate = -1;
+  PRInt32 frequency = -1;
+  for (PRUint32 count = 0; count < length; ++count, ++buffer)
+  {
+    // Scan forward in the buffer, till we find a header match
+    if ( buffer[0] == byte_zero ) 
+      if ( ( buffer[1] & byte_one ) == byte_one )
+      {
+        // Check the version bits.
+        char v = ( buffer[1] & 0x18 ) >> 3;
+        if ( v == 0 )
+          version = 2; // MPEG Version 2.5
+        else if ( v == 1 )
+          continue; // RESERVED -- ERROR, NOT A HEADER
+        else if ( v == 2 )
+          version = 1; // MPEG Version 2 (ISO/IEC 13818-3)
+        else
+          version = 0; // MPEG Version 1 (ISO/IEC 11172-3)
+
+        // Check the layer bits.
+        char l = ( buffer[1] & 0x06 ) >> 1;
+        if ( l == 0 )
+          continue; // RESERVED -- ERROR, NOT A HEADER
+        else if ( l == 1 )
+          layer = 2; // Layer III
+        else if ( l == 2 )
+          layer = 1; // Layer II
+        else
+          layer = 0; // Layer I
+      }
+      else
+        version = layer = -1;
+    else
+      version = layer = -1;
+
+    // NO BAD DEREFERENCES!
+    if ( version >= 0 && layer >= 0 && version < 3 && layer < 3 )
+    {
+      char b = ( buffer[2] & 0xF0 ) >> 4;
+      bitrate = gBitrates[version][layer][b];
+      char f = ( buffer[2] & 0x0C ) >> 2;
+      frequency = gFrequencies[version][f];
+
+      if ( bitrate > 0 && frequency > 0 )
+      {
+        // Okay, we're done!
+        found = true;
+        break;
+      }
+    }
+  }
+
+  if (found)
+  {
+    nsAutoString br;
+    br.AppendInt(bitrate);
+    m_Values->SetValue(NS_LITERAL_STRING("bitrate").get(), br.get(), 0);
+
+    nsAutoString fr;
+    fr.AppendInt(frequency);
+    m_Values->SetValue(NS_LITERAL_STRING("frequency").get(), fr.get(), 0);
+
+    PRUnichar *value = NULL;
+    m_Values->GetValue(NS_LITERAL_STRING("length").get(), &value);
+    if (*value == 0 && bitrate > 0 && file_size > 0)
+    {
+      // Okay, so, the id3 didn't specify length.  Calculate that, too.
+      PRUint32 length_in_ms = (PRUint32)( ( ( file_size * (PRUint64)8 ) ) / (PRUint64)bitrate );
+      nsAutoString ln;
+      ln.AppendInt(length_in_ms);
+      m_Values->SetValue(NS_LITERAL_STRING("length").get(), ln.get(), 0);
+    }
+    nsMemory::Free( value );
+  }
+} //CalculateBitrate
+
+
