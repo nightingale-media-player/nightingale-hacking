@@ -89,7 +89,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 			Name="content"
 			Filter="">
 			<File
-				RelativePath=".\content\songbird.mn">
+				RelativePath=".\content\jar.mn">
 			</File>
 			<Filter
 				Name="html"
@@ -99,6 +99,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 				</File>
 				<File
 					RelativePath=".\content\html\cannot_load.html">
+				</File>
+				<File
+					RelativePath=".\content\html\jar.mn">
 				</File>
 				<File
 					RelativePath=".\content\html\not_connected.html">
@@ -232,6 +235,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 "
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\jar.mn">
 				</File>
 				<File
 					RelativePath=".\content\xul\jumptofile.xul">
@@ -567,7 +573,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -575,7 +582,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
@@ -813,6 +821,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 "
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\jar.mn">
 				</File>
 				<File
 					RelativePath=".\content\bindings\multistatebutton.xml">
@@ -1284,6 +1295,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\jar.mn">
+				</File>
+				<File
 					RelativePath=".\content\scripts\jumptofile.js">
 					<FileConfiguration
 						Name="Release|Win32">
@@ -1677,7 +1691,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1685,7 +1700,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>

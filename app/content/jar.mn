@@ -1,0 +1,3 @@
+songbird.jar:
+% locale    branding    en-US   jar:songbird.jar!locale/branding/
+% content   songbird            jar:songbird.jar!content/songbird/
