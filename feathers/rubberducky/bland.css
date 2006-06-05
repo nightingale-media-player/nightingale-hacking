@@ -41,14 +41,14 @@ Love the window.
 page
 {
   -moz-user-focus: ignore;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
 }
 
 tree
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
 }
@@ -56,7 +56,7 @@ tree
 .sb_faceplate
 {
   -moz-user-focus: ignore;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding;
   border: none;
   margin: 0px;
@@ -91,7 +91,7 @@ tree
 .empty_frame
 {
   -moz-user-focus: ignore;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding;
   border: none;
   margin: 0px;
@@ -115,7 +115,7 @@ These pieces paint the resizeable window for Songbird.
 
 #chrome_nw
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 25px;
   width: 25px;
   background-color: transparent;
@@ -201,7 +201,7 @@ Love the box.
 
 #frame_middle_pane
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
 }
 
@@ -273,7 +273,7 @@ Love the box.
 
 #frame_service_tree_label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -363,7 +363,7 @@ THE PLAYLIST
 
 playlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -371,7 +371,7 @@ playlist
 
 playlist > stack > vbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -381,7 +381,7 @@ playlist > stack > vbox
 
 playlist > stack > vbox > tree
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -391,14 +391,14 @@ playlist > stack > vbox > tree
 
 #playlist_toolbar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
 }
 
 #playlist_toolbar_bkg,
 playlist > stack > vbox > toolbar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #000 !important;
   height: 27px;
 }
@@ -450,7 +450,7 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
- -moz-appearance: none;
+ -moz-appearance: none !important; /* grrrr! */
   border: none;
 }
 
@@ -874,7 +874,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_t
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 9px;
   
   background-image: none;
@@ -883,7 +883,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_to
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 16px;
   height: 9px;
   
@@ -893,7 +893,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_m
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 9px;  
   background-image: none;
   list-style-image: none;
@@ -901,7 +901,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_mo
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 16px;
   width: 9px;
   
@@ -911,7 +911,7 @@ These let the user resize the frames in your box model.
 
 #resize
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/mini.progbkgdfill.png);
   list-style-image: none;
 }
@@ -948,7 +948,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 #sysbtn_maximize hbox,
 #sysbtn_maximize
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 9px;
   height: 9px;
   max-width: 9px;
@@ -972,7 +972,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   border: none;
   margin: 0px;
   padding: 0px;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   background-image: none;
   list-style-image: none;
@@ -1112,7 +1112,7 @@ scrollbar > slider
 }
 
 #status_progress { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    margin: 2px 0px 0px 0px;
    background-color: #333; 
    border: none;
@@ -1120,7 +1120,7 @@ scrollbar > slider
 } 
 
 #status_progress .progress-bar { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    background-color: #666;
 } 
   
@@ -1136,7 +1136,7 @@ scrollbar > slider
 /* tooltips */
 tooltip
 {
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
   background-color: #EEE;
   color: #333;   
 }
@@ -1145,7 +1145,7 @@ tooltip
 /* the menus */
 #songbird_menu
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px !important;
   padding: 0px;
   margin: 0px;
@@ -1153,7 +1153,7 @@ tooltip
 
 #songbird_menu > menu > label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   height: 10px !important;
   
@@ -1174,7 +1174,7 @@ tooltip
 #songbird_menu > menu[_moz-menuactive="true"],
 #songbird_menu > menu[_moz-menuactive="true"] > label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px !important;
 
   padding-left: 2px !important;
@@ -1189,7 +1189,7 @@ tooltip
 
 #songbird_menu > menu#songbird_menu_spacer
 {
- -moz-appearance: none;
+ -moz-appearance: none !important; /* grrrr! */
   width: 14px !important;
 }
 
@@ -1580,7 +1580,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-border-right-colors: #4F5054;
   border: 1px solid #4F5054;
   border-left: none;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   color: #CCC;
 
@@ -1606,7 +1606,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-border-bottom-colors: #4F5054;
   border: 1px solid #4F5054;
   border-right: none;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   color: #CCC;
   
@@ -1645,109 +1645,109 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 #browser_back
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_back_normal.png);
 }
 #browser_back:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_back_hover.png);
 }
 #browser_back[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_back_disabled.png);
 }
 #browser_stop
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_stop_normal.png);
 }
 #browser_stop:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_stop_hover.png);
 }
 #browser_stop[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_stop_disabled.png);
 }
 #browser_fwd
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_forward_normal.png);
 }
 #browser_fwd:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_forward_hover.png);
 }
 #browser_fwd[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_forward_disabled.png);
 }
 #browser_home
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_home_normal.png);
 }
 #browser_home:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_home_hover.png);
 }
 #browser_home[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_home_disabled.png);
 }
 #browser_playlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_normal.png);
 }
 #browser_playlist:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_hover.png);
 }
 #browser_playlist[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_disabled.png);
 }
 #browser_download
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_normal.png);
 }
 #browser_download:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_hover.png);
 }
 #browser_download[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_disabled.png);
 }
@@ -1797,7 +1797,7 @@ Mute and Slider
 #songbird_volume > progress_slider,
 #songbird_volume gripper
 {  
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
   padding: 0 0 0 0;
@@ -1844,12 +1844,12 @@ Mute and Slider
 /* the seekbar slider */
 #songbird_seekbar_slider
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #songbird_seekbar_thumb
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 21px;
   height: 10px;
   background-image: url(default/seekbar_thumb.png);
@@ -1858,7 +1858,7 @@ Mute and Slider
 }
 #songbird_seekbar_thumb > gripper
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #songbird_seekbar_progress
@@ -1867,13 +1867,13 @@ Mute and Slider
 }
 #songbird_seekbar_progress > .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background: #333;
   height: 10px;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background: #999;
   height: 10px;
 }
@@ -1929,14 +1929,14 @@ DASHBOARD
 }
 #playlist_edit_popup
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #FFFFFF;
   background-image: none;
   list-style-image: none;
 }
 #playlist_edit
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #FFFFFF;
   background-image: none;
   list-style-image: none;
@@ -2072,7 +2072,7 @@ DIALOG BOXES
 .dialog_textbox,
 .smart_condition_box textbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px;
   -moz-border-top-colors: #535751 #333;
   -moz-border-left-colors: #535751 #333;
@@ -2088,7 +2088,7 @@ DIALOG BOXES
 .dialog_textbox input:focus,
 .smart_condition_box input:focus
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px;
   -moz-border-top-colors: #535751 #333;
   -moz-border-left-colors: #535751 #333;
@@ -2105,7 +2105,7 @@ DIALOG BOXES
 
 .dialog_listbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px;
   -moz-border-top-colors: #535751 #333;
   -moz-border-left-colors: #535751 #333;
@@ -2134,7 +2134,7 @@ DIALOG BOXES
 
 .dialog_checkbox .checkbox-check
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #535751 #333;
   -moz-border-left-colors: #535751 #333;
   -moz-border-right-colors: #99A195 #333;
@@ -2144,7 +2144,7 @@ DIALOG BOXES
 
 .dialog_checkbox:focus
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
   background-color: #4A4E48; 
 }
@@ -2160,7 +2160,7 @@ DIALOG BOXES
 /* Smart Playlist Builder */
 #smartpl_select_library
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   margin: 10px 0px 0px 0px;
 }
 
@@ -2214,7 +2214,7 @@ DIALOG BOXES
 
 #songbird_media_scan 
 { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    margin: 2px 0px 0px 0px;
    background-color: #333; 
    border: none;
@@ -2222,7 +2222,7 @@ DIALOG BOXES
 } 
 
 #songbird_media_scan .progress-bar { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    background-color: #666;
 } 
   
@@ -2237,7 +2237,7 @@ DIALOG BOXES
 /* Add to Playlist */
 #add_to_playlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 200px;
   /*background-color: transparent; BUGGY*/
 }
@@ -2296,7 +2296,7 @@ MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 menupopup, 
 popup
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #333 #333;
   -moz-border-right-colors: #333 #333;
   -moz-border-bottom-colors: #333 #333;
@@ -2307,7 +2307,7 @@ popup
 
 menuseparator
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border-top: 1px solid #999;
   border-bottom: 1px solid #333;
 }
@@ -2315,14 +2315,14 @@ menuseparator
 menupopup > menu,
 popup > menu
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #333;
   
 }
 
 popup, menuitem, popup > menuitem
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   
 }
 
@@ -2331,14 +2331,14 @@ popup > menuitem[_moz-menuactive="true"],
 popup > menu[_moz-menuactive="true"],
 menupopup > menu[_moz-menuactive="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #4A4E48;
   
 }
 
 .menu-right[_moz-menuactive="true"] 
 {
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 0px;
   height: 9px;
   width: 7px;
@@ -2348,7 +2348,7 @@ menupopup > menu[_moz-menuactive="true"]
 
 .menu-right
 {   
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 0px;
   height: 9px;
   width: 7px;
@@ -2364,7 +2364,7 @@ menuitem[selected="true"]
 
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 2px;
   height: 7px;
   width: 7px;
@@ -2374,7 +2374,7 @@ menuitem[checked="true"] > hbox[checked="true"]
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 2px;
   height: 7px;
   width: 7px;
@@ -2387,7 +2387,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
 
 menulist
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 25px; 
   background-color: #242527;
   border: 1px solid #4F5052; 
@@ -2401,7 +2401,7 @@ menulist
 
 menulist > dropmarker
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   list-style-image: url(default/chrome_scroll_down.png);
   background-repeat: no-repeat;
   background-color: transparent;
@@ -2567,12 +2567,12 @@ window#mini
 /* the seekbar slider */
 #songbird_seekbar_slider.miniplayer
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #mini_seekbar_thumb
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 10px;
   height: 8px;
   background-image: url(mini/seekbar_thumb.png);
@@ -2581,7 +2581,7 @@ window#mini
 }
 #mini_seekbar_thumb > gripper
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #songbird_seekbar_progress
@@ -2590,19 +2590,19 @@ window#mini
 }
 #songbird_seekbar.miniplayer .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_progress.png);
   height: 8px;
 }
 #songbird_seekbar.miniplayer .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_remainder.png);
   height: 8px;
 }
 #songbird_seekbar.miniplayer
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 8px;
   border: none;
   margin-bottom: 2px;
@@ -2629,7 +2629,7 @@ window#mini
 #mini_volume > progress_slider,
 #mini_volume gripper
 {  
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
   padding: 0 0 0 0;
@@ -2656,13 +2656,13 @@ window#mini
 }
 #mini_volume_progress > .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_bar.png);
   background-color: transparent;
 }
 #mini_volume_progress > .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_remainder.png);
   background-color: transparent;
 }

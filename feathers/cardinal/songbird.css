@@ -34,14 +34,14 @@ Love the window.
 page
 {
   -moz-user-focus: ignore;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
 }
 
 tree
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
 }
@@ -49,7 +49,7 @@ tree
 .sb_faceplate
 {
   -moz-user-focus: ignore;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding;
   border: none;
   margin: 0px;
@@ -86,7 +86,7 @@ tree
 .empty_frame
 {
   -moz-user-focus: ignore;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding;
   border: none;
   margin: 0px;
@@ -115,7 +115,7 @@ These pieces paint the resizeable window for Songbird.
 
 #chrome_nw
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 25px;
   width: 25px;
   background-image: url(default/chrm_nw_25x25.png); /** <img src="default/chrm_nw_25x25.png"> */
@@ -210,7 +210,7 @@ Love the box.
 
 #frame_middle_pane
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
 }
 
@@ -293,7 +293,7 @@ Love the box.
 
 #frame_service_tree_label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -303,7 +303,7 @@ Love the box.
 
 tree .treecol-image
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #000 #000;
   -moz-border-right-colors: #000 #000;
   -moz-border-bottom-colors: #000 #000;
@@ -317,7 +317,7 @@ tree .treecol-image
 
 tree .tree-columnpicker-icon
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #000 #000;
   -moz-border-right-colors: #000 #000;
   -moz-border-bottom-colors: #000 #000;
@@ -331,7 +331,7 @@ tree .tree-columnpicker-icon
 
 tree treecol
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   margin: 0px;
   padding: 0px 0px 0px 5px;
   background-image: url(default/treecol.png);
@@ -357,14 +357,14 @@ Organize your collection with genre/artist/album filterlists.  Somehow Apple see
 
 filterlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   margin: 0px;
   padding: 0px;
 }
 
 filterlist > tree
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-right-colors: none;
   -moz-border-bottom-colors: none;
   -moz-border-top-colors: none;
@@ -397,7 +397,7 @@ filterlist > tree > treechildren::-moz-tree-row( selected )
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
   background-color: #8F0000;
 }
@@ -415,7 +415,7 @@ THE PLAYLIST
 
 playlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -425,7 +425,7 @@ playlist
 
 playlist > stack > vbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -435,7 +435,7 @@ playlist > stack > vbox
 
 playlist > stack > vbox > tree
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -446,7 +446,7 @@ playlist > stack > vbox > tree
 /* The Toolbar at the bottom of the 4 Pane Library View */
 #playlist_toolbar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
 }
 
@@ -454,7 +454,7 @@ playlist > stack > vbox > tree
 #playlist_toolbar_bkg,
 playlist > stack > vbox > hbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #8F0000 !important;
   border-top: 1px solid #490000;
   height: 27px;
@@ -490,7 +490,7 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
 }
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
   background-color: #8F0000;
 }
@@ -502,7 +502,7 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
 {
- -moz-appearance: none;
+ -moz-appearance: none !important; /* grrrr! */
  border: none;
  background-color: #191919;
  color: #6B0000;
@@ -519,7 +519,7 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
- -moz-appearance: none;
+ -moz-appearance: none !important; /* grrrr! */
   border: none;
   color: #6B0000;
   background-color: #191919;
@@ -548,7 +548,7 @@ contextual menu.
 /* the generic style for all playlist toolbarbuttons */
 playlist > stack > vbox button 
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 5px;
   border-width: 1px;
   color: #FFF;
@@ -560,14 +560,14 @@ playlist > stack > vbox button
 }
 playlist > stack > vbox button:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: 1px solid #FFF;
   margin: 0px;
 }
 playlist > stack > vbox button:hover[disabled="true"],
 playlist > stack > vbox button[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none !important;
   margin: 0px;
 }
@@ -956,7 +956,7 @@ These let the user resize the frames in your box model.
 
 #filter_splitter
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 0px;
   background-color: #8F0000;
   border: none;
@@ -965,7 +965,7 @@ These let the user resize the frames in your box model.
 .vert_splitter,
 #vert_splitter
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 2px;
   background-color: transparent;
   border: none;
@@ -974,7 +974,7 @@ These let the user resize the frames in your box model.
 .horz_splitter,
 #horz_splitter
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 6px;
   background-color: #8F0000;
   /*background-image: url(default/gripper.png);*/
@@ -1009,7 +1009,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_t
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 9px;
   
   background-image: none;
@@ -1018,7 +1018,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_to
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 16px;
   height: 9px;
   
@@ -1028,7 +1028,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_m
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 9px;  
   background-image: none;
   list-style-image: none;
@@ -1036,7 +1036,7 @@ These let the user resize the frames in your box model.
 
 #frame_resize_mo
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 16px;
   width: 9px;
   
@@ -1046,7 +1046,7 @@ These let the user resize the frames in your box model.
 
 #resize
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/mini.progbkgdfill.png);
   list-style-image: none;
 }
@@ -1083,7 +1083,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 #sysbtn_maximize hbox,
 #sysbtn_maximize
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 9px;
   height: 9px;
   max-width: 9px;
@@ -1107,7 +1107,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   border: none;
   margin: 0px;
   padding: 0px;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   background-image: none;
   list-style-image: none;
@@ -1163,7 +1163,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 
 scrollbar
 {   
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   background-color: #8F0000; 
   background-image: none; 
   background-image: none; 
@@ -1176,7 +1176,7 @@ scrollbar
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 {   
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
   background-image: url(default/chrome_scroll_up.png);
   background-color: transparent; 
   padding: 0px 0px 0px 0px;
@@ -1189,7 +1189,7 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
   background-image: url(default/chrome_scroll_down.png);
   background-color: transparent; 
   padding: 0px 0px 0px 0px;
@@ -1201,7 +1201,7 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
  
 scrollbar > slider > thumb > gripper
 {   
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent; 
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
@@ -1212,7 +1212,7 @@ scrollbar > slider > thumb > gripper
 
 scrollbar > slider > thumb
 {   
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
   -moz-border-radius: 3px;  
   -moz-border-top-colors: #FFC8C8 #6B0000;
   -moz-border-right-colors: #6B0000 #6B0000;
@@ -1228,7 +1228,7 @@ scrollbar > slider > thumb
 
 scrollbar > slider
 {   
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   background-color: #8F0000; 
   background-image: none; 
   list-style-image: none; 
@@ -1260,7 +1260,7 @@ scrollbar > slider
 
 #search_service_list > dropmarker
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   list-style-image: url(default/chrome_scroll_down.png);
   background-repeat: no-repeat;
   margin: 1px 2px 0px 0px;
@@ -1287,7 +1287,7 @@ scrollbar > slider
 
 .button-menu-dropmarker
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   background-image: url(default/dropmarker.png);
   background-repeat: no-repeat;
@@ -1304,7 +1304,7 @@ scrollbar > slider
 }
 
 #status_progress { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    margin: 2px 0px 0px 0px;
    background-color: #6B0000; 
    border: none;
@@ -1312,7 +1312,7 @@ scrollbar > slider
 } 
 
 #status_progress .progress-bar { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    background-color: #6B0000;
 } 
   
@@ -1328,7 +1328,7 @@ scrollbar > slider
 /* tooltips */
 tooltip
 {
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
   background-color: #EEE;
   color: #6B0000;   
 }
@@ -1337,7 +1337,7 @@ tooltip
 /* the menus */
 #songbird_menu
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px !important;
   padding: 0px;
   margin: 0px;
@@ -1345,7 +1345,7 @@ tooltip
 
 #songbird_menu > menu > label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   color: #490000 !important;
   height: 10px !important;
@@ -1367,7 +1367,7 @@ tooltip
 #songbird_menu > menu[_moz-menuactive="true"],
 #songbird_menu > menu[_moz-menuactive="true"] > label
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #6B0000 !important; /* I feel SUPER important! */
   height: 10px !important;
   color: #EEE !important;
@@ -1384,7 +1384,7 @@ tooltip
 
 #songbird_menu > menu#songbird_menu_spacer
 {
- -moz-appearance: none;
+ -moz-appearance: none !important; /* grrrr! */
   width: 14px !important;
 }
 
@@ -1777,7 +1777,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 #browser_url
 {
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
   -moz-border-top-colors: #6B0000;
   -moz-border-bottom-colors: #6B0000;
   -moz-border-right-colors: #6B0000;
@@ -1811,7 +1811,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-border-bottom-colors: #6B0000;
   border: 1px solid #6B0000;
   border-right: none;
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: transparent;
   color: #CCC;  
   -moz-border-radius-topleft: 2px;
@@ -1844,127 +1844,127 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 #browser_back
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_back_normal.png);
 }
 #browser_back:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_back_hover.png);
 }
 #browser_back[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_back_disabled.png);
 }
 #browser_refresh
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_refresh_normal.png);
 }
 #browser_refresh:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_refresh_hover.png);
 }
 #browser_refresh[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_refresh_disabled.png);
 }
 #browser_stop
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_stop_normal.png);
 }
 #browser_stop:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_stop_hover.png);
 }
 #browser_stop[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_stop_disabled.png);
 }
 #browser_fwd
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_forward_normal.png);
 }
 #browser_fwd:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_forward_hover.png);
 }
 #browser_fwd[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_forward_disabled.png);
 }
 #browser_home
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_home_normal.png);
 }
 #browser_home:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_home_hover.png);
 }
 #browser_home[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_home_disabled.png);
 }
 #browser_playlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_normal.png);
 }
 #browser_playlist:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_hover.png);
 }
 #browser_playlist[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_addtoplaylist_disabled.png);
 }
 #browser_download
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_normal.png);
 }
 #browser_download:hover
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_hover.png);
 }
 #browser_download[disabled="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   padding-left: 10px;
   list-style-image: url(default/webbar_dlplaylist_disabled.png);
 }
@@ -2014,7 +2014,7 @@ Mute and Slider
 #songbird_volume > progress_slider,
 #songbird_volume gripper
 {  
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
   padding: 0 0 0 0;
@@ -2042,13 +2042,13 @@ Mute and Slider
 }
 #songbird_volume_progress > .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_bar.png);
   background-color: transparent;
 }
 #songbird_volume_progress > .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_remainder.png);
   background-color: transparent;
 }
@@ -2075,12 +2075,12 @@ Mute and Slider
 /* the seekbar slider */
 #songbird_seekbar_slider
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #songbird_seekbar_thumb
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 21px;
   height: 10px;
   background-image: url(default/seekbar_thumb.png);
@@ -2089,7 +2089,7 @@ Mute and Slider
 }
 #songbird_seekbar_thumb > gripper
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #songbird_seekbar_progress
@@ -2098,13 +2098,13 @@ Mute and Slider
 }
 #songbird_seekbar_progress > .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/seekbar_progress.png);
   height: 10px;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/seekbar_remainder.png);
   height: 10px;
 }
@@ -2156,14 +2156,14 @@ Artist Name, Album Title, Elapsed Time, Total Time
 
 #playlist_edit_popup
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #FFFFFF;
   background-image: none;
   list-style-image: none;
 }
 #playlist_edit
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #FFFFFF;
   background-image: none;
   list-style-image: none;
@@ -2200,7 +2200,7 @@ DIALOG BOXES
 
 #track_editor
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 600px;
   /*background-color: transparent; BUGGY*/
 }
@@ -2316,7 +2316,7 @@ DIALOG BOXES
 .dialog_textbox,
 .smart_condition_box textbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px;
   -moz-border-top-colors: #6B0000 #6B0000;
   -moz-border-left-colors: #6B0000 #6B0000;
@@ -2332,7 +2332,7 @@ DIALOG BOXES
 .dialog_textbox input:focus,
 .smart_condition_box input:focus
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px;
   -moz-border-top-colors: #6B0000 #6B0000;
   -moz-border-left-colors: #6B0000 #6B0000;
@@ -2349,7 +2349,7 @@ DIALOG BOXES
 
 .dialog_listbox
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px;
   -moz-border-top-colors: #6B0000 #6B0000;
   -moz-border-left-colors: #6B0000 #6B0000;
@@ -2378,12 +2378,12 @@ DIALOG BOXES
 
 .dialog_checkbox
 {
-  -moz-appearance: none;  
+  -moz-appearance: none !important; /* grrrr! */  
 }
 
 .checkbox-check
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #6B0000 #6B0000;
   -moz-border-left-colors: #6B0000 #6B0000;
   -moz-border-right-colors: #FFC8C8 #6B0000;
@@ -2393,7 +2393,7 @@ DIALOG BOXES
 
 .dialog_checkbox:focus
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border: none;
   background-color: #490000; 
 }
@@ -2409,7 +2409,7 @@ DIALOG BOXES
 /* Smart Playlist Builder */
 #smartpl_select_library
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   margin: 10px 0px 0px 0px;
 }
 
@@ -2462,7 +2462,7 @@ DIALOG BOXES
 
 #songbird_media_scan 
 { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    margin: 2px 0px 0px 0px;
    background-color: #6B0000; 
    border: none;
@@ -2470,7 +2470,7 @@ DIALOG BOXES
 } 
 
 #songbird_media_scan .progress-bar { 
-   -moz-appearance: none; 
+   -moz-appearance: none !important; /* grrrr! */ 
    background-color: #6B0000;
 } 
   
@@ -2485,14 +2485,14 @@ DIALOG BOXES
 /* Add to Playlist */
 #add_to_playlist
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 200px;
   /*background-color: transparent; BUGGY*/
 }
 
 #jump_to_file
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 420px;
   height: 500px;
   color: #FFF;
@@ -2553,7 +2553,7 @@ MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 menupopup, 
 popup
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #6B0000 #6B0000;
   -moz-border-right-colors: #6B0000 #6B0000;
   -moz-border-bottom-colors: #6B0000 #6B0000;
@@ -2564,7 +2564,7 @@ popup
 
 menuseparator
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   border-top: 1px solid #490000;
   border-bottom: 1px solid #6B0000;
 }
@@ -2572,14 +2572,14 @@ menuseparator
 menupopup > menu,
 popup > menu
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #6B0000;
   color: #FFF;
 }
 
 popup, menuitem, popup > menuitem
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   color: #FFF;
 }
 
@@ -2588,14 +2588,14 @@ popup > menuitem[_moz-menuactive="true"],
 popup > menu[_moz-menuactive="true"],
 menupopup > menu[_moz-menuactive="true"]
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #490000;
   color: #FFF;
 }
 
 .menu-right[_moz-menuactive="true"] 
 {
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 0px;
   height: 9px;
   width: 7px;
@@ -2605,7 +2605,7 @@ menupopup > menu[_moz-menuactive="true"]
 
 .menu-right
 {   
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 0px;
   height: 9px;
   width: 7px;
@@ -2621,7 +2621,7 @@ menuitem[selected="true"]
 
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 2px;
   height: 7px;
   width: 7px;
@@ -2631,7 +2631,7 @@ menuitem[checked="true"] > hbox[checked="true"]
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
-  -moz-appearance: none; 
+  -moz-appearance: none !important; /* grrrr! */ 
   margin: 0px 0px 0px 2px;
   height: 7px;
   width: 7px;
@@ -2644,7 +2644,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
 
 menulist
 { 
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 25px; 
   background-color: #8F0000;
   border: 1px solid #6B0000; 
@@ -2658,7 +2658,7 @@ menulist
 
 menulist > dropmarker
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   list-style-image: url(default/chrome_scroll_down.png);
   background-repeat: no-repeat;
   background-color: transparent;
@@ -2806,12 +2806,12 @@ window#mini
 /* the seekbar slider */
 #songbird_seekbar_slider.miniplayer
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #mini_seekbar_thumb
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   width: 10px;
   height: 8px;
   background-image: url(mini/seekbar_thumb.png);
@@ -2820,7 +2820,7 @@ window#mini
 }
 #mini_seekbar_thumb > gripper
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 10px;
 }
 #songbird_seekbar_progress
@@ -2829,19 +2829,19 @@ window#mini
 }
 #songbird_seekbar.miniplayer .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_progress.png);
   height: 8px;
 }
 #songbird_seekbar.miniplayer .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_remainder.png);
   height: 8px;
 }
 #songbird_seekbar.miniplayer
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   height: 8px;
   border: none;
   margin-bottom: 2px;
@@ -2869,7 +2869,7 @@ window#mini
 #mini_volume > progress_slider,
 #mini_volume gripper
 {  
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: none;
   list-style-image: none;
   padding: 0 0 0 0;
@@ -2896,13 +2896,13 @@ window#mini
 }
 #mini_volume_progress > .progress-bar
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_bar.png);
   background-color: transparent;
 }
 #mini_volume_progress > .progress-remainder
 {
-  -moz-appearance: none;
+  -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_remainder.png);
   background-color: transparent;
 }
