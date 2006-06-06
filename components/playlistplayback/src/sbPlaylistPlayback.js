@@ -316,6 +316,8 @@ PlaylistPlayback.prototype = {
   _requestedVolume:      -1,
   _calculatedVolume:     -1,
 
+  _set_metadata:      false,
+  
   /**
    * ---------------------------------------------
    * Private Methods
@@ -776,7 +778,8 @@ PlaylistPlayback.prototype = {
       this._playUrl.setValue(url);
       this._metadataUrl.setValue(url);
       
-      LOG("playUrl: " + url);
+      LOG("playUrl(" + url.length + "): " + url);
+      var text = ""; for (var i = 0; i < url.length; i++) { text += url[i] + " "; if (i%8==0) text += "\n"; } LOG( text );
       
       core.stop();
       core.playUrl( url );
@@ -1222,6 +1225,8 @@ PlaylistPlayback.prototype = {
         this._once = true;
       }
         
+      if (this._metadataLen.getValue() != len)
+        this._set_metadata = true;
       this._metadataLen.setValue( len );
       this._metadataPos.setValue( pos );
       
@@ -1307,23 +1312,23 @@ PlaylistPlayback.prototype = {
         return;
       }
       
-      var set_metadata = false;
       if ( title.length && ( this._metadataTitle.getValue() != title ) ) {
-        set_metadata = true; 
+        this._set_metadata = true; 
       }
       if ( artist.length && ( this._metadataArtist.getValue() != artist ) ) {
-        set_metadata = true; 
+        this._set_metadata = true; 
       }
       if ( album.length && ( this._metadataAlbum.getValue() != album ) ) {
-        set_metadata = true; 
+        this._set_metadata = true; 
       }
 
-      if ( set_metadata ) {
+      if ( this._set_metadata ) {
         // Set the metadata into the database table
         dump("***** this._setURLMetadata( " + this._playUrl.getValue() + ", " + title + ", " + length + ", " + album + ", " + artist + ", " + genre + ", " + true  + ");\n" );
         this._setURLMetadata( this._playUrl.getValue(), title, length, album, artist, genre, true );
         // Tell the search popup the metadata has changed
         this._resetSearchData.setValue( this._resetSearchData.getIntValue() + 1 );
+        this._set_metadata = false;
       }
 
       if (title != "" || artist != "" || album != "") {

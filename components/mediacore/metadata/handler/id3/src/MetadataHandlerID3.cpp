@@ -222,7 +222,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         bool ok = tag.Parse( channel_reader );
         ReadTag(tag);
 
-
+#if 1
         // If we get here, everything is okay.
         // Reset the channel and read a block to calc the bitrate.
         mc->SetPos( 0 );
@@ -238,19 +238,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
           CalculateBitrate(buffer, read, file_size);
           nsMemory::Free(buffer);
         }
-
-
-
-
-
-/*
-        // How do I calculate length without bitrate?
-        PRUnichar *bitrate;
-        m_Values->GetValue( NS_LITERAL_STRING("bitrate").get(), &bitrate );
-        if ( bitrate )
-        {
-        }
-*/
+#endif
       }
     }
     catch ( const MetadataHandlerID3Exception err )
@@ -863,14 +851,14 @@ const PRInt32 gFrequencies[3][4] =
 //-----------------------------------------------------------------------------
 void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length, PRUint64 file_size)
 {
-  // Skip ID3v2
-  if ( length > 2048 )
+  const char byte_zero = 0xFF;
+  const char byte_one = 0xE0;
+  // Skip ID3v2 2k block.
+  if ( length > 2048 && buffer[2048] == byte_zero )
   {
     length -= 2048;
     buffer += 2048;
   }
-  const char byte_zero = 0xFF;
-  const char byte_one = 0xE0;
   PRBool found = false;
   PRInt32 version = -1; // 0 = V1, 1 = V2, 2 = V2.5
   PRInt32 layer = -1; // 0 = L1, 1 = L2, 2 = L3
@@ -941,7 +929,7 @@ void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length,
     if (*value == 0 && bitrate > 0 && file_size > 0)
     {
       // Okay, so, the id3 didn't specify length.  Calculate that, too.
-      PRUint32 length_in_ms = (PRUint32)( ( ( file_size * (PRUint64)8 ) ) / (PRUint64)bitrate );
+      PRUint32 length_in_ms = (PRUint32)( ( ( ( file_size * (PRUint64)8 ) ) / (PRUint64)bitrate ) & 0x00000000FFFFFFFF );
       nsAutoString ln;
       ln.AppendInt(length_in_ms);
       m_Values->SetValue(NS_LITERAL_STRING("length").get(), ln.get(), 0);

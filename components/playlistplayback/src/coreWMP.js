@@ -242,7 +242,8 @@ function CoreWMP() {
     this._verifyObject();
     if (!url)
       throw Components.results.NS_ERROR_INVALID_ARG;
-    LOG( "Trying to play url: " + url );
+    LOG( "Trying to play url(" + url.length + "): " + url );
+    var text = ""; for (var i = 0; i < url.length; i++) { text += (url[i]) + " "; if (i%8==0) text += "\n"; } LOG( text );
     this._url = url;
     this._object.controls.stop();
     this._object.URL = url;
