@@ -40,39 +40,39 @@ Love the window.
 */ 
 page
 {
-  -moz-user-focus: ignore;
+  -moz-user-focus: ignore !important;
   -moz-appearance: none !important; /* grrrr! */
-  background-image: none;
-  list-style-image: none;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 tree
 { 
   -moz-appearance: none !important; /* grrrr! */
-  background-image: none;
-  list-style-image: none;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 .sb_faceplate
 {
-  -moz-user-focus: ignore;
+  -moz-user-focus: ignore !important;
   -moz-appearance: none !important; /* grrrr! */
-  -moz-background-clip: padding;
-  border: none;
-  margin: 0px;
-  padding: 0px;
-  min-width: 0px;
-  min-height: 0px;
-  border-width: 0px;
-  font-family: tahoma;
-  font-size: 11;
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  border-width: 0px !important;
+  font-family: tahoma !important;
+  font-size: 11 !important;
 }  
 
 /* Edit-in-place popups overlapping the entries in the service pane tree */
 
 .sb_faceplate_edit
 {
-  -moz-appearance:none;
+  -moz-appearance:none !important;
 }
 
 #service_edit,
@@ -92,13 +92,13 @@ tree
 
 .empty_frame
 {
-  -moz-user-focus: ignore;
+  -moz-user-focus: ignore !important;
   -moz-appearance: none !important; /* grrrr! */
-  -moz-background-clip: padding;
-  border: none;
-  margin: 0px;
-  padding: 0px;
-  border-width: 0px;
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  border-width: 0px !important;
 }  
 
 /** 
@@ -110,80 +110,80 @@ These pieces paint the resizeable window for Songbird.
 
 .chrome_iframe_bkgd
 {
-  background: #000;
+  background: #000 !important;
 }
 
 .chrome_bkgd,
 #chrome_bkgd
 {
-  background-image: url(default/chrome_bkgd.png); /** <img src="default/chrome_bkgd.png"> */
-  background-color: transparent;
+  background-image: url(default/chrome_bkgd.png) !important; /** <img src="default/chrome_bkgd.png"> */
+  background-color: transparent !important;
 }
 
 
 #chrome_nw
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_nw_25x25.png); /** <img src="default/chrm_nw_25x25.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_nw_25x25.png) !important; /** <img src="default/chrm_nw_25x25.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_n
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_n.png); /** <img src="default/chrm_n.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_n.png) !important; /** <img src="default/chrm_n.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_ne
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_ne_25x25.png); /** <img src="default/chrm_ne_25x25.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_ne_25x25.png) !important; /** <img src="default/chrm_ne_25x25.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_w
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_w.png); /** <img src="default/chrm_w.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_w.png) !important; /** <img src="default/chrm_w.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_e
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_e.png); /** <img src="default/chrm_e.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_e.png) !important; /** <img src="default/chrm_e.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_sw
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_sw_25x25.png); /** <img src="default/chrm_sw_25x25.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_sw_25x25.png) !important; /** <img src="default/chrm_sw_25x25.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_s
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_s.png); /** <img src="default/chrm_s.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_s.png) !important; /** <img src="default/chrm_s.png"> */
+  background-color: transparent !important;
 }
 
 #chrome_se
 {
-  height: 25px;
-  width: 25px;
-  background-image: url(default/chrm_se_25x25.png); /** <img src="default/chrm_se_25x25.png"> */
-  background-color: transparent;
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_se_25x25.png) !important; /** <img src="default/chrm_se_25x25.png"> */
+  background-color: transparent !important;
 }
 
 /** 
@@ -195,66 +195,66 @@ Love the box.
 
 #frame_outer
 {
-  width:  924px;
-  height: 668px;
-  background-color: none;
+  width:  924px !important;
+  height: 668px !important;
+  background-color: none !important;
 }
 
 
 #frame_top_pane
 {
-  top: 0px;
-  left: 0px;
-  height: 40px;
+  top: 0px !important;
+  left: 0px !important;
+  height: 40px !important;
 }
 
 #frame_control_pane
 {
-  top: 0px;
-  left: 0px;
-  height: 45px;
+  top: 0px !important;
+  left: 0px !important;
+  height: 45px !important;
 }
 
 #frame_middle_pane
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none;
+  border: none !important;
 }
 
 #frame_service_tree
 {
-  -moz-border-radius: 3px;
-  border: 1px solid #666;
-  margin: 0px;
-  padding: 6px 0px 0px 0px;
-  width: 135px;
-  background-color: #EEE;
-  color: #505154;
+  -moz-border-radius: 3px !important;
+  border: 1px solid #666 !important;
+  margin: 0px !important;
+  padding: 6px 0px 0px 0px !important;
+  width: 135px !important;
+  background-color: #EEE !important;
+  color: #505154 !important;
 }
 
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
-  -moz-border-radius: 3px;
-  border: 1px solid #333;
-  margin: 0px 0px 0px 0px;
-  padding: 0px;
-  background-color: #333;
+  -moz-border-radius: 3px !important;
+  border: 1px solid #333 !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-color: #333 !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #CCC;
+  color: #CCC !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text
 {
-  margin: 0px 0px 0px 3px;
+  margin: 0px 0px 0px 3px !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-twisty
 {
-  list-style-image: url(default/twisty_closed.png);
+  list-style-image: url(default/twisty_closed.png) !important;
 }
 
 /**
@@ -263,90 +263,90 @@ Love the box.
 
 #frame_service_tree > treechildren::-moz-tree-twisty( open )
 {
-  list-style-image: url(default/twisty_open.png);
+  list-style-image: url(default/twisty_open.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist )
 {
-  list-style-image: url(default/icon_playlist_16x16.png);
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist smart )
 {
-  list-style-image: url(default/icon_smplaylist_16x16.png);
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
 {
-  list-style-image: url(default/icon_dynplaylist_16x16.png);
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist download )
 {
-  list-style-image: url(default/icon_downloads_16x16.png);
+  list-style-image: url(default/icon_downloads_16x16.png) !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
 {
-  list-style-image: url(default/icon_webplaylist_16x16.png);
+  list-style-image: url(default/icon_webplaylist_16x16.png) !important;
 }
 
 #frame_service_tree_label
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  height: 0px;
-  background-color: transparent; 
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  height: 0px !important;
+  background-color: transparent !important; 
 }
 
 tree .treecol-image
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #000 #000;
-  -moz-border-right-colors: #000 #000;
-  -moz-border-bottom-colors: #000 #000;
-  -moz-border-left-colors: #000 #000;
-  margin: 0px 0px 0px 0px;
-  padding: 0px;
-  background-image: url(default/treecol.png);
-  border: none;
-  background-color: transparent;
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-image: url(default/treecol.png) !important;
+  border: none !important;
+  background-color: transparent !important;
 }
 
 tree .tree-columnpicker-icon
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #FFF #FFF;
-  -moz-border-right-colors: #FFF #FFF;
-  -moz-border-bottom-colors: #FFF #FFF;
-  -moz-border-left-colors: #FFF #FFF;
-  margin: 0px;
-  padding: 0px;
-  border: none;
-  width: 15px;
-  list-style-image: url(default/column_picker.png);
-  background-color: transparent;
+  -moz-border-top-colors: #FFF #FFF !important;
+  -moz-border-right-colors: #FFF #FFF !important;
+  -moz-border-bottom-colors: #FFF #FFF !important;
+  -moz-border-left-colors: #FFF #FFF !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  width: 15px !important;
+  list-style-image: url(default/column_picker.png) !important;
+  background-color: transparent !important;
 }
 
 tree treecol
 {
   -moz-appearance: none !important; /* grrrr! */
-  margin: 0px;
-  padding: 0px 0px 0px 5px;
-  background-image: url(default/treecol.png);
-  color: #808583;  
-  -moz-border-right-colors: none;
-  -moz-border-bottom-colors: none;
-  -moz-border-top-colors: none;
-  -moz-border-left-colors: none;
-  height: 20px;  
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-topleft: 5px;
-  border: 1px solid #FFF;
-  border-bottom: none;
-  background-color: transparent;
+  margin: 0px !important;
+  padding: 0px 0px 0px 5px !important;
+  background-image: url(default/treecol.png) !important;
+  color: #808583 !important;  
+  -moz-border-right-colors: none !important;
+  -moz-border-bottom-colors: none !important;
+  -moz-border-top-colors: none !important;
+  -moz-border-left-colors: none !important;
+  height: 20px !important;  
+  -moz-border-radius-topright: 5px !important;
+  -moz-border-radius-topleft: 5px !important;
+  border: 1px solid #FFF !important;
+  border-bottom: none !important;
+  background-color: transparent !important;
 }
 
 /** 
@@ -359,52 +359,52 @@ Organize your collection with genre/artist/album filterlists.  Somehow Apple see
 filterlist
 {
   -moz-appearance: none !important; /* grrrr! */
-  margin: 0px;
-  padding: 0px;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 filterlist > tree
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-right-colors: none;
-  -moz-border-bottom-colors: none;
-  -moz-border-top-colors: none;
-  -moz-border-left-colors: none;
-  border-top: none;
-  border-right: none;
-  border-bottom: none;
-  border-left: none;
-  margin: 0px;
-  padding: 0px;
-  background-color: #DBE1D8;
+  -moz-border-right-colors: none !important;
+  -moz-border-bottom-colors: none !important;
+  -moz-border-top-colors: none !important;
+  -moz-border-left-colors: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-color: #DBE1D8 !important;
 }
 
 /* striping for genre filter */
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #EDF3F0;
+  background-color: #EDF3F0 !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #FFF;
+  background-color: #FFF !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #99A195;
+  background-color: #99A195 !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none;
-  background-color: #4A4E48;
+  border: none !important;
+  background-color: #4A4E48 !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #EEE;
+  color: #EEE !important;
 }
 
 /** 
@@ -417,18 +417,18 @@ playlist
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  background-color: #DBE1D8;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  background-color: #DBE1D8 !important;
 }
 
 playlist > stack > vbox
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  background-color: transparent;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  background-color: transparent !important;
 }
 
 
@@ -436,9 +436,9 @@ playlist > stack > vbox > tree
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  background-color: transparent;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  background-color: transparent !important;
   
 }
 
@@ -453,84 +453,84 @@ playlist > stack > vbox > hbox
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: #FFF !important;
-  height: 27px;
+  height: 27px !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row
 {
-  margin: 0px;
-  padding: 0px 0px 0px 0px;
-  border: 0px solid #000;
+  margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  border: 0px solid #000 !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #EDF3F0;
+  background-color: #EDF3F0 !important;
 }
 
 playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #FFF;
+  background-color: #FFF !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell
 {
-  margin: 0px;
-  padding: 0px 0px 0px 5px;
-  border-right: 1px solid #DBE1D8;
+  margin: 0px !important;
+  padding: 0px 0px 0px 5px !important;
+  border-right: 1px solid #DBE1D8 !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #99A195;
+  background-color: #99A195 !important;
 }
 playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none;
-  background-color: #4A4E48;
+  border: none !important;
+  background-color: #4A4E48 !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #EEE;
+  color: #EEE !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
 {
  -moz-appearance: none !important; /* grrrr! */
- border: none;
- background-color: #eee;
- color: #333;
- margin-top: 6px;
- margin-bottom: 6px;
+ border: none !important;
+ background-color: #eee !important;
+ color: #333 !important;
+ margin-top: 6px !important;
+ margin-bottom: 6px !important;
  height: 10px !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
 {
- background-color: #DAE0DD;
- color: #000;
+ background-color: #DAE0DD !important;
+ color: #000 !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
  -moz-appearance: none !important; /* grrrr! */
-  border: none;
-  color: #333;
-  background-color: #676D65;
+  border: none !important;
+  color: #333 !important;
+  background-color: #676D65 !important;
 }
 
 /*  This is the box shown while a playlist is loading */
 #loading_box
 {
-  background-image: url(default/spinner.gif);
-  background-repeat: no-repeat;
-  border: 0px solid #F00;
-  width: 54px;
-  height: 54px;
-  margin: 0px 20px 45px 0px;
-  background-position: right bottom;
+  background-image: url(default/spinner.gif) !important;
+  background-repeat: no-repeat !important;
+  border: 0px solid #F00 !important;
+  width: 54px !important;
+  height: 54px !important;
+  margin: 0px 20px 45px 0px !important;
+  background-position: right bottom !important;
 }
 
 /** 
@@ -547,27 +547,27 @@ contextual menu.
 playlist > stack > vbox > hbox button 
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 5px;
-  border-width: 1px;
-  color: #FFF;
+  -moz-border-radius: 5px !important;
+  border-width: 1px !important;
+  color: #FFF !important;
   background-color: transparent !important;
-  height: 27px;
-  padding-left: 7px;
-  padding-right: 8px;
-  margin: 0px;
+  height: 27px !important;
+  padding-left: 7px !important;
+  padding-right: 8px !important;
+  margin: 0px !important;
 }
 playlist > stack > vbox > hbox button:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: 1px solid #808583;
-  margin: 0px;
+  border: 1px solid #808583 !important;
+  margin: 0px !important;
 }
 playlist > stack > vbox > hbox button:hover[disabled="true"],
 playlist > stack > vbox > hbox button[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
   border: none !important;
-  margin: 0px;
+  margin: 0px !important;
 }
 
 /* 
@@ -580,19 +580,19 @@ playlist > stack > vbox > hbox button[disabled="true"]
 /* Toolbar: Play Button */
 button#library_cmd_play
 {
-  list-style-image: url(default/toolbar_play_normal.png);  
-  color: #99A195;
+  list-style-image: url(default/toolbar_play_normal.png) !important;  
+  color: #99A195 !important;
 }
 button#library_cmd_play:hover
 {
-  list-style-image: url(default/toolbar_play_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_play_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_play[disabled="true"]
 {
-  list-style-image: url(default/toolbar_play_hover.png);
-  padding-left: 8px; /* stops this button from shifting on the library view */
-  padding-right: 9px; /* stops the play button from shifting the rest of the buttons on the url slurper  */
+  list-style-image: url(default/toolbar_play_hover.png) !important;
+  padding-left: 8px !important; /* stops this button from shifting on the library view */
+  padding-right: 9px !important; /* stops the play button from shifting the rest of the buttons on the url slurper  */
   color: #CCC !important;
 }
 menuitem#library_cmd_play
@@ -602,30 +602,30 @@ menuitem#library_cmd_play
 }
 menuitem#library_cmd_play:hover
 {
-  list-style-image: url(default/toolbar_play_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_play_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_play[disabled="true"]
 {
-  list-style-image: url(default/toolbar_play_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_play_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: remove Button */
 button#library_cmd_remove
 {
-  list-style-image: url(default/toolbar_remove_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_remove_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_remove:hover
 {
-  list-style-image: url(default/toolbar_remove_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_remove_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_remove[disabled="true"]
 {
-  list-style-image: url(default/toolbar_remove_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_remove_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_remove
@@ -635,31 +635,31 @@ menuitem#library_cmd_remove
 }
 menuitem#library_cmd_remove:hover
 {
-  list-style-image: url(default/toolbar_remove_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_remove_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_remove[disabled="true"]
 {
-  list-style-image: url(default/toolbar_remove_normal.png);
-  padding-left: 9px;
-  color: #99A195;
+  list-style-image: url(default/toolbar_remove_normal.png) !important;
+  padding-left: 9px !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: edit Button */
 button#library_cmd_edit
 {
-  list-style-image: url(default/toolbar_info_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_info_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_edit:hover
 {
-  list-style-image: url(default/toolbar_info_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_info_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_edit[disabled="true"]
 {
-  list-style-image: url(default/toolbar_info_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_info_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_edit
@@ -669,31 +669,31 @@ menuitem#library_cmd_edit
 }
 menuitem#library_cmd_edit:hover
 {
-  list-style-image: url(default/toolbar_info_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_info_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_edit[disabled="true"]
 {
-  list-style-image: url(default/toolbar_info_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_info_normal.png) !important;
+  color: #99A195 !important;
 }
 
 
 /* Toolbar: addtoplaylist Button */
 button#library_cmd_addtoplaylist
 {
-  list-style-image: url(default/toolbar_addtoplaylist_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_addtoplaylist_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_addtoplaylist:hover
 {
-  list-style-image: url(default/toolbar_addtoplaylist_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_addtoplaylist[disabled="true"]
 {
-  list-style-image: url(default/toolbar_addtoplaylist_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_addtoplaylist_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_addtoplaylist
@@ -703,30 +703,30 @@ menuitem#library_cmd_addtoplaylist
 }
 menuitem#library_cmd_addtoplaylist:hover
 {
-  list-style-image: url(default/toolbar_addtoplaylist_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_addtoplaylist[disabled="true"]
 {
-  list-style-image: url(default/toolbar_addtoplaylist_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_addtoplaylist_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: burntocd Button */
 button#library_cmd_burntocd
 {
-  list-style-image: url(default/toolbar_burntocd_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_burntocd_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_burntocd:hover
 {
-  list-style-image: url(default/toolbar_burntocd_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_burntocd[disabled="true"]
 {
-  list-style-image: url(default/toolbar_burntocd_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_burntocd_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_burntocd
@@ -736,30 +736,30 @@ menuitem#library_cmd_burntocd
 }
 menuitem#library_cmd_burntocd:hover
 {
-  list-style-image: url(default/toolbar_burntocd_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_burntocd[disabled="true"]
 {
-  list-style-image: url(default/toolbar_burntocd_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_burntocd_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: device Button */
 button#library_cmd_device
 {
-  list-style-image: url(default/toolbar_device_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_device_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_device:hover
 {
-  list-style-image: url(default/toolbar_device_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_device_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_device[disabled="true"]
 {
-  list-style-image: url(default/toolbar_device_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_device_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_device
@@ -769,30 +769,30 @@ menuitem#library_cmd_device
 }
 menuitem#library_cmd_device:hover
 {
-  list-style-image: url(default/toolbar_device_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_device_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_device[disabled="true"]
 {
-  list-style-image: url(default/toolbar_device_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_device_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: addtolibrary Button */
 button#library_cmd_addtolibrary
 {
-  list-style-image: url(default/toolbar_addtolibrary_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_addtolibrary:hover
 {
-  list-style-image: url(default/toolbar_addtolibrary_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_addtolibrary[disabled="true"]
 {
-  list-style-image: url(default/toolbar_addtolibrary_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_addtolibrary
@@ -802,30 +802,30 @@ menuitem#library_cmd_addtolibrary
 }
 menuitem#library_cmd_addtolibrary:hover
 {
-  list-style-image: url(default/toolbar_addtolibrary_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_addtolibrary[disabled="true"]
 {
-  list-style-image: url(default/toolbar_addtolibrary_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: download Button */
 button#library_cmd_download
 {
-  list-style-image: url(default/toolbar_download_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_download_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_download:hover
 {
-  list-style-image: url(default/toolbar_download_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_download_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_download[disabled="true"]
 {
-  list-style-image: url(default/toolbar_download_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_download_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_download
@@ -835,30 +835,30 @@ menuitem#library_cmd_download
 }
 menuitem#library_cmd_download:hover
 {
-  list-style-image: url(default/toolbar_download_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_download_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_download[disabled="true"]
 {
-  list-style-image: url(default/toolbar_download_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_download_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: subscribe Button */
 button#library_cmd_subscribe
 {
-  list-style-image: url(default/toolbar_subscribe_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_subscribe_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_subscribe:hover
 {
-  list-style-image: url(default/toolbar_subscribe_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_subscribe[disabled="true"]
 {
-  list-style-image: url(default/toolbar_subscribe_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_subscribe_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_subscribe
@@ -868,30 +868,30 @@ menuitem#library_cmd_subscribe
 }
 menuitem#library_cmd_subscribe:hover
 {
-  list-style-image: url(default/toolbar_subscribe_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_subscribe[disabled="true"]
 {
-  list-style-image: url(default/toolbar_subscribe_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_subscribe_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: pause Button */
 button#library_cmd_pause
 {
-  list-style-image: url(default/toolbar_pause_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_pause_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_pause:hover
 {
-  list-style-image: url(default/toolbar_pause_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_pause_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_pause[disabled="true"]
 {
-  list-style-image: url(default/toolbar_pause_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_pause_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_pause
@@ -901,30 +901,30 @@ menuitem#library_cmd_pause
 }
 menuitem#library_cmd_pause:hover
 {
-  list-style-image: url(default/toolbar_pause_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_pause_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_pause[disabled="true"]
 {
-  list-style-image: url(default/toolbar_pause_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_pause_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: resume Button */
 button#library_cmd_resume
 {
-  list-style-image: url(default/toolbar_resume_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_resume_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_resume:hover
 {
-  list-style-image: url(default/toolbar_resume_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_resume_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_resume[disabled="true"]
 {
-  list-style-image: url(default/toolbar_resume_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_resume_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_resume
@@ -934,30 +934,30 @@ menuitem#library_cmd_resume
 }
 menuitem#library_cmd_resume:hover
 {
-  list-style-image: url(default/toolbar_resume_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_resume_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_resume[disabled="true"]
 {
-  list-style-image: url(default/toolbar_resume_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_resume_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: switch to downloads Button */
 button#library_cmd_showdlplaylist
 {
-  list-style-image: url(default/toolbar_downloads_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_downloads_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_showdlplaylist:hover
 {
-  list-style-image: url(default/toolbar_downloads_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_downloads_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_showdlplaylist[disabled="true"]
 {
-  list-style-image: url(default/toolbar_downloads_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_downloads_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_showdlplaylist
@@ -967,30 +967,30 @@ menuitem#library_cmd_showdlplaylist
 }
 menuitem#library_cmd_showdlplaylist:hover
 {
-  list-style-image: url(default/toolbar_downloads_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_downloads_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_showdlplaylist[disabled="true"]
 {
-  list-style-image: url(default/toolbar_downloads_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_downloads_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /* Toolbar: switch to webplaylist Button */
 button#library_cmd_showwebplaylist
 {
-  list-style-image: url(default/toolbar_webplaylist_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_webplaylist_normal.png) !important;
+  color: #99A195 !important;
 }
 button#library_cmd_showwebplaylist:hover
 {
-  list-style-image: url(default/toolbar_webplaylist_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
+  color: #505154 !important;
 }
 button#library_cmd_showwebplaylist[disabled="true"]
 {
-  list-style-image: url(default/toolbar_webplaylist_hover.png);
-  padding-left: 9px; /* stops this button from shifting on the library view */
+  list-style-image: url(default/toolbar_webplaylist_hover.png) !important;
+  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #CCC !important;
 }
 menuitem#library_cmd_showwebplaylist
@@ -1000,13 +1000,13 @@ menuitem#library_cmd_showwebplaylist
 }
 menuitem#library_cmd_showwebplaylist:hover
 {
-  list-style-image: url(default/toolbar_webplaylist_disabled.png);
-  color: #505154;
+  list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
+  color: #505154 !important;
 }
 menuitem#library_cmd_showwebplaylist[disabled="true"]
 {
-  list-style-image: url(default/toolbar_webplaylist_normal.png);
-  color: #99A195;
+  list-style-image: url(default/toolbar_webplaylist_normal.png) !important;
+  color: #99A195 !important;
 }
 
 /** 
@@ -1023,36 +1023,36 @@ These let the user resize the frames in your box model.
 #filter_splitter
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 7px;
-  height: 50px;
-  background-color: #d9d9d9;
-  background-image: url(default/grippy.png);
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: none;
+  width: 7px !important;
+  height: 50px !important;
+  background-color: #d9d9d9 !important;
+  background-image: url(default/grippy.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
 }
 
 #vert_splitter
 {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 #vert_splitter[state="collapsed"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 10px;
-  background-color: #FFF;
-  background-image: url(default/grippy_svcpane.png);
-  -moz-border-radius-topleft: 3px;
-  -moz-border-radius-bottomleft: 3px;
-  -moz-border-radius-topright: 3px;
-  -moz-border-radius-bottomright: 3px;
-  -moz-border-top-colors: #999;
-  -moz-border-left-colors: #999;
-  -moz-border-bottom-colors: #ccc;
-  -moz-border-right-colors: #ccc;
-  border: 1px solid #FFF;
-  margin-right: 7px;
+  width: 10px !important;
+  background-color: #FFF !important;
+  background-image: url(default/grippy_svcpane.png) !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  -moz-border-top-colors: #999 !important;
+  -moz-border-left-colors: #999 !important;
+  -moz-border-bottom-colors: #ccc !important;
+  -moz-border-right-colors: #ccc !important;
+  border: 1px solid #FFF !important;
+  margin-right: 7px !important;
 }
 
 .horz_splitter,
@@ -1060,27 +1060,27 @@ These let the user resize the frames in your box model.
 #playlist_web_split > grippy
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 50px;
-  height: 7px;
-  background-color: #d9d9d9;
-  background-image: url(default/grippy.png);
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: none;
+  width: 50px !important;
+  height: 7px !important;
+  background-color: #d9d9d9 !important;
+  background-image: url(default/grippy.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
 }
 
 #horz_splitter[state="collapsed"]
 {
-  height: 7px;
-  background-color: #d9d9d9;
-  background-image: url(default/grippy_filterlist.png);
+  height: 7px !important;
+  background-color: #d9d9d9 !important;
+  background-image: url(default/grippy_filterlist.png) !important;
 }
 
 #playlist_web_split[state="collapsed"]
 {
-  height: 7px;
-  background-color: #d9d9d9;
-  background-image: url(default/grippy_webplaylist.png);
+  height: 7px !important;
+  background-color: #d9d9d9 !important;
+  background-image: url(default/grippy_webplaylist.png) !important;
 }
 
 
@@ -1093,9 +1093,9 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-topleft: 5px;
-  border: 1px solid #CCC;
+  -moz-border-radius-topright: 5px !important;
+  -moz-border-radius-topleft: 5px !important;
+  border: 1px solid #CCC !important;
 }
 
 #frame_main_pane
@@ -1110,56 +1110,56 @@ THE MAIN PANE
 
 #frame_main_pane_over
 {
-  background-color: #EEE;
+  background-color: #EEE !important;
 }
 
 #frame_status_pane
 {
-  height: 10px;
+  height: 10px !important;
 }
 
 #frame_resize_t
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 9px;
+  height: 9px !important;
   
-  background-image: none;
-  list-style-image: none;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 #frame_resize_to
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 16px;
-  height: 9px;
+  width: 16px !important;
+  height: 9px !important;
   
-  background-image: none;
-  list-style-image: none;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 #frame_resize_m
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 9px;  
-  background-image: none;
-  list-style-image: none;
+  width: 9px !important;  
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 #frame_resize_mo
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px;
-  width: 9px;
+  height: 16px !important;
+  width: 9px !important;
   
-  background-image: none;
-  list-style-image: none;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 #resize
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(mini/mini.progbkgdfill.png);
-  list-style-image: none;
+  background-image: url(mini/mini.progbkgdfill.png) !important;
+  list-style-image: none !important;
 }
 
 /** 
@@ -1175,110 +1175,110 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 
 #app_icon
 {
-  background-image: url(default/app_close.png);
-  background-repeat: no-repeat;
-  position: relative;
-  height: 9px;
-  width: 9px;
-  margin: 1px 5px 0px 2px;
+  background-image: url(default/app_close.png) !important;
+  background-repeat: no-repeat !important;
+  position: relative !important;
+  height: 9px !important;
+  width: 9px !important;
+  margin: 1px 5px 0px 2px !important;
 }
 
 #app_title,
 #video_window_title
 {
-  margin: 0px 0px 0px 0px;
-  font-family: tahoma;
-  font-weight: bold;
-  font-size: 11;
-  color: #666;
+  margin: 0px 0px 0px 0px !important;
+  font-family: tahoma !important;
+  font-weight: bold !important;
+  font-size: 11 !important;
+  color: #666 !important;
 }
 
 #sysbtn_close
 {
-  width: 9px;
-  height: 9px;
-  background-image: url(default/sysbtn_close_9x9.png); /** <img src="default/sysbtn_close_9x9.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 9px !important;
+  height: 9px !important;
+  background-image: url(default/sysbtn_close_9x9.png) !important; /** <img src="default/sysbtn_close_9x9.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #sysbtn_maximize hbox,
 #sysbtn_maximize
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 9px;
-  height: 9px;
-  max-width: 9px;
-  max-height: 9px;
-  border: none;
-  margin: -2px 0px 0px 0px;
-  padding: 0px;
-  background-color: transparent;  
-  background-image: none;
-  list-style-image: none;
+  width: 9px !important;
+  height: 9px !important;
+  max-width: 9px !important;
+  max-height: 9px !important;
+  border: none !important;
+  margin: -2px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-color: transparent !important;  
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 #sysbtn_maximize > hbox > image,
 #sysbtn_maximize > hbox > label,
 #sysbtn_maximize > hbox
 {
-  width: 0px;
-  height: 0px;
-  max-width: 0px;
-  max-height: 0px;
-  border: none;
-  margin: 0px;
-  padding: 0px;
+  width: 0px !important;
+  height: 0px !important;
+  max-width: 0px !important;
+  max-height: 0px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent;
-  background-image: none;
-  list-style-image: none;
+  background-color: transparent !important;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 
 #sysbtn_maximize > image
 {
-  -moz-appearance:none;
-  width: 9px;
-  height: 9px;
-  border: none;
-  margin: 0px;
-  padding: 0px;
-  list-style-image: none;
-  background-image: url(default/sysbtn_maximize_9x9.png); /** <img src="default/sysbtn_maximize_9x9.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  -moz-appearance:none !important;
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  list-style-image: none !important;
+  background-image: url(default/sysbtn_maximize_9x9.png) !important; /** <img src="default/sysbtn_maximize_9x9.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #sysbtn_maximize[checked="true"] > image /* Restore */
 {
-  width: 9px;
-  height: 9px;
-  border: none;
-  margin: 0px;
-  padding: 0px;
-  list-style-image: none;
-  background-image: url(default/sysbtn_restore_9x9.png); /** <img src="default/sysbtn_restore_9x9.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  list-style-image: none !important;
+  background-image: url(default/sysbtn_restore_9x9.png) !important; /** <img src="default/sysbtn_restore_9x9.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #sysbtn_minimize
 {
-  width: 9px;
-  height: 9px;
-  list-style-image: none;
-  background-image: url(default/sysbtn_minimize_9x9.png); /** <img src="default/sysbtn_minimize_9x9.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 9px !important;
+  height: 9px !important;
+  list-style-image: none !important;
+  background-image: url(default/sysbtn_minimize_9x9.png) !important; /** <img src="default/sysbtn_minimize_9x9.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #sysbtn_minimode
 {
-  width: 9px;
-  height: 9px;
-  background-image: url(default/sysbtn_minimode_9x9.png); /** <img src="default/sysbtn_minimode_9x9.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 9px !important;
+  height: 9px !important;
+  background-image: url(default/sysbtn_minimode_9x9.png) !important; /** <img src="default/sysbtn_minimode_9x9.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 /* Scroll Bars */
@@ -1286,101 +1286,101 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 scrollbar
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #transparent; 
-  background-image: none; 
-  background-image: none; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;
-  border: none; 
+  background-color: #transparent !important; 
+  background-image: none !important; 
+  background-image: none !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_up.png);
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;
-  border: none; 
-  height: 17px;
-  width: 16px;
+  background-image: url(default/chrome_scroll_up.png) !important;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 17px !important;
+  width: 16px !important;
 } 
  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_down.png);
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;
-  border: none; 
-  height: 17px;
-  width: 16px;
+  background-image: url(default/chrome_scroll_down.png) !important;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 17px !important;
+  width: 16px !important;
 } 
  
 scrollbar > slider > thumb > gripper
 {   
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;
-  border: none; 
-  height: 16px;
-  width: 16px;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 16px !important;
+  width: 16px !important;
 } 
 
 scrollbar > slider > thumb
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 3px;  
-  -moz-border-top-colors: #FFF #EEE;
-  -moz-border-left-colors: #FFF #EEE;
-  -moz-border-right-colors: #EEE #CCC;
-  -moz-border-bottom-colors: #EEE #CCC;  
-  border: 2px solid; 
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;  
-  height: 16px;
-  width: 16px;
+  -moz-border-radius: 3px !important;  
+  -moz-border-top-colors: #FFF #EEE !important;
+  -moz-border-left-colors: #FFF #EEE !important;
+  -moz-border-right-colors: #EEE #CCC !important;
+  -moz-border-bottom-colors: #EEE #CCC !important;  
+  border: 2px solid !important; 
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  height: 16px !important;
+  width: 16px !important;
 } 
 
 scrollbar > slider
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #FFF; 
-  background-image: none; 
-  list-style-image: none; 
-  padding: 0 0 0 0; 
-  border: none; 
+  background-color: #FFF !important; 
+  background-image: none !important; 
+  list-style-image: none !important; 
+  padding: 0 0 0 0 !important; 
+  border: none !important; 
 } 
 
 /* service pane scrollbar*/
 #frame_service_tree scrollbar
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #FFF;
+  background-color: #FFF !important;
 } 
 
 #frame_service_tree scrollbar > slider > thumb
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 3px;  
+  -moz-border-radius: 3px !important;  
    
-  border: 2px solid; 
-  background-color: transparent; 
-  padding: 0px 0px 0px 0px;
-  margin: 0px 0px 0px 0px;  
-  height: 16px;
-  width: 16px;
+  border: 2px solid !important; 
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  height: 16px !important;
+  width: 16px !important;
 } 
 
 #frame_service_tree scrollbar > slider
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #FFF; 
+  background-color: #FFF !important; 
 } 
 
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
@@ -1403,96 +1403,96 @@ SEARCH WIDGET
 
 #search_temp
 {
-  width: 143px;
-  height: 21px;
-  background-image: url(default/search_temp.png);
+  width: 143px !important;
+  height: 21px !important;
+  background-image: url(default/search_temp.png) !important;
 }
 
 #search_service_button
 {
-  background-color: transparent;
-  width: 10px; /* doesn't work.  grr. */
+  background-color: transparent !important;
+  width: 10px !important; /* doesn't work.  grr. */
 }
 
 #search_service_list
 {
-  width: 120px;
-  background-color: transparent;
+  width: 120px !important;
+  background-color: transparent !important;
 }
 
 #search_service_list > dropmarker
 {
   -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/chrome_scroll_down.png);
-  background-repeat: no-repeat;
-  margin: 1px 2px 0px 0px;
-  height:19px;
-  width:15px;
-  border: none;
-  background-color: transparent;
+  list-style-image: url(default/chrome_scroll_down.png) !important;
+  background-repeat: no-repeat !important;
+  margin: 1px 2px 0px 0px !important;
+  height:19px !important;
+  width:15px !important;
+  border: none !important;
+  background-color: transparent !important;
 }
 
 
 #search_widget
 { 
-  background-color: transparent;
-  border: 1px solid #808583; 
-  -moz-border-radius: 5px;
-  margin: 2px 2px 2px 2px; 
+  background-color: transparent !important;
+  border: 1px solid #808583 !important; 
+  -moz-border-radius: 5px !important;
+  margin: 2px 2px 2px 2px !important; 
 } 
 
 #search_widget input
 {
-  -moz-appearance:none;
-  color: #808583;
+  -moz-appearance:none !important;
+  color: #808583 !important;
 }
 
 .button-menu-dropmarker
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent;
-  background-image: url(default/dropmarker.png);
-  background-repeat: no-repeat;
+  background-color: transparent !important;
+  background-image: url(default/dropmarker.png) !important;
+  background-repeat: no-repeat !important;
 }
 
 /* Status Pane */
 
 #status_progress_box
 {
-  -moz-appearance:none;
-  height: 5px;
-  width: 100px;
-  overflow: hidden;
+  -moz-appearance:none !important;
+  height: 5px !important;
+  width: 100px !important;
+  overflow: hidden !important;
 }
 
 #status_progress { 
    -moz-appearance: none !important; /* grrrr! */ 
-   margin: 2px 0px 0px 0px;
-   background-color: #FFF; 
-   border: none;
-   min-width: 100px; 
+   margin: 2px 0px 0px 0px !important;
+   background-color: #FFF !important; 
+   border: none !important;
+   min-width: 100px !important; 
 } 
 
 #status_progress .progress-bar { 
    -moz-appearance: none !important; /* grrrr! */ 
-   background-color: #666;
+   background-color: #666 !important;
 } 
   
 #status_progress[mode="undetermined"] { 
-  background-color: #FFF;
+  background-color: #FFF !important;
 } 
   
 #status_text, #library_text, #scanning_text
 {
-  color: #808583;
+  color: #808583 !important;
 }
 
 /* tooltips */
 tooltip
 {
   -moz-appearance: none !important; /* grrrr! */  
-  background-color: #EEE;
-  color: #333;   
+  background-color: #EEE !important;
+  color: #333 !important;   
 }
 
 
@@ -1501,14 +1501,14 @@ tooltip
 {
   -moz-appearance: none !important; /* grrrr! */
   height: 10px !important;
-  padding: 0px;
-  margin: 0px;
+  padding: 0px !important;
+  margin: 0px !important;
 }
 
 #songbird_menu > menu > label
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent;
+  background-color: transparent !important;
   color: #999 !important;
   height: 10px !important;
   
@@ -1536,7 +1536,7 @@ tooltip
 
   padding-left: 2px !important;
   padding-right: 3px !important;
-  padding-top: 1px;
+  padding-top: 1px !important;
   padding-bottom: 0px !important;
   margin-left: -1px !important;
   margin-top: -1px !important;
@@ -1553,88 +1553,88 @@ tooltip
 
 #control_left_box
 {
-  width: 138px;
+  width: 138px !important;
 }
 
 #control_right_box
 {
- width: 580px;
+ width: 580px !important;
 }
 
 #face_left_box
 {
-  width: 35px;
+  width: 35px !important;
 }
 
 #face_middle_box
 {
 
-  height: 45px;
+  height: 45px !important;
 }
 
 #face_right_box
 {
-  width: 35px;
+  width: 35px !important;
 }
 
 #dashboard_box
 {
-  background-color: transparent;
-  height: 45px;
+  background-color: transparent !important;
+  height: 45px !important;
 }
 
 #dashboard_bkgd
 {
-  height: 45px;
-  background-image: url(default/dashboard_bkgd.png);
+  height: 45px !important;
+  background-image: url(default/dashboard_bkgd.png) !important;
 }
 
 #dashboard_w
 {
-  width: 25px;
-  height: 45px;
-  background-image: url(default/dashboard_w.png);
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 25px !important;
+  height: 45px !important;
+  background-image: url(default/dashboard_w.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 #dashboard_e
 {
-  width: 25px;
-  height: 45px;
-  background-image: url(default/dashboard_e.png);
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 25px !important;
+  height: 45px !important;
+  background-image: url(default/dashboard_e.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #intro_box
 {
-  height: 45px;
+  height: 45px !important;
 }
 
 #intro_box_bkgd
 {
-  height: 45px;
-  background-image: url(default/dashboard_bkgd.png);
+  height: 45px !important;
+  background-image: url(default/dashboard_bkgd.png) !important;
 }
 
 #intro_box_image
 {
-  width: 45px;
-  height: 45px;
-  background-image: url(default/default_bkgd_logo.png);
-  background-repeat: no-repeat;
+  width: 45px !important;
+  height: 45px !important;
+  background-image: url(default/default_bkgd_logo.png) !important;
+  background-repeat: no-repeat !important;
 }
 
 #dashboard_line_h
 {
-  height: 1px;
-  background-color: #CCCCCC;
+  height: 1px !important;
+  background-color: #CCCCCC !important;
 }
 
 #dashboard_line_v
 {
-  width: 1px;
-  background-color: #CCCCCC;
+  width: 1px !important;
+  background-color: #CCCCCC !important;
 }
 
 /** 
@@ -1647,288 +1647,288 @@ Play/Pause, Previous (back), Next (forward)
 /* the play button */
 #playbutton_box
 {
-  background-color: transparent;
-  width: 130px;
-  height: 36px;
-  padding-left: 7px;
+  background-color: transparent !important;
+  width: 130px !important;
+  height: 36px !important;
+  padding-left: 7px !important;
 }
 #songbird_btn_play
 {  
-  background-image: url(default/play_normal.png); /** <img src="default/play_normal.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
-  background-position: center center;
+  background-image: url(default/play_normal.png) !important; /** <img src="default/play_normal.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  background-position: center center !important;
 }
 
 #songbird_btn_play[disabled="true"]
 {
-  background-image: url(default/play_active.png); /** <img src="default/play_active.png"> */
-  background-color: transparent;
+  background-image: url(default/play_active.png) !important; /** <img src="default/play_active.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_play:hover
 {
-  background-image: url(default/play_normal.png); /** <img src="default/play_normal.png"> */
-  background-color: transparent;
+  background-image: url(default/play_normal.png) !important; /** <img src="default/play_normal.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_play:active
 {
-  background-image: url(default/play_active.png); /** <img src="default/play_active.png"> */
-  background-color: transparent;
+  background-image: url(default/play_active.png) !important; /** <img src="default/play_active.png"> */
+  background-color: transparent !important;
 }
 
 /* the pause button */
 #songbird_btn_pause
 {
-  background-image: url(default/pause_normal.png); /** <img src="default/pause_normal.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
-  background-position: center center;
+  background-image: url(default/pause_normal.png) !important; /** <img src="default/pause_normal.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  background-position: center center !important;
 }
 #songbird_btn_pause[disabled="true"]
 {
-  background-image: url(default/pause_normal.png); /** <img src="default/pause_normal.png"> */
-  background-color: transparent;
+  background-image: url(default/pause_normal.png) !important; /** <img src="default/pause_normal.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_pause:hover
 {
-  background-image: url(default/pause_normal.png); /** <img src="default/pause_normal.png"> */
-  background-color: transparent;
+  background-image: url(default/pause_normal.png) !important; /** <img src="default/pause_normal.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_pause:active
 {
-  background-image: url(default/pause_active.png); /** <img src="default/pause_active.png"> */
-  background-color: transparent;
+  background-image: url(default/pause_active.png) !important; /** <img src="default/pause_active.png"> */
+  background-color: transparent !important;
 }
 
 /* the back button */
 
 #songbird_btn_back
 {
-  margin: 2px 0px 0px 4px;
-  width: 32px;
-  height: 32px;
-  background-image: url(default/back_normal.png); /** <img src="default/back_normal.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  margin: 2px 0px 0px 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-image: url(default/back_normal.png) !important; /** <img src="default/back_normal.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 #songbird_btn_back[disabled="true"]
 {
-  background-image: url(default/back_disabled.png); /** <img src="default/back_disabled.png"> */
-  background-color: transparent;
+  background-image: url(default/back_disabled.png) !important; /** <img src="default/back_disabled.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_back:hover
 {
-  background-image: url(default/back_normal.png); /** <img src="default/back_normal.png"> */
-  background-color: transparent;
+  background-image: url(default/back_normal.png) !important; /** <img src="default/back_normal.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_back:active
 {
-  background-image: url(default/back_active.png); /** <img src="default/back_active.png"> */
-  background-color: transparent;
+  background-image: url(default/back_active.png) !important; /** <img src="default/back_active.png"> */
+  background-color: transparent !important;
 }
 
 /* the fwd button */
 #songbird_btn_fwd
 {
-  margin: 2px 13px 0px 0px;
-  width: 32px;
-  height: 32px;
-  background-image: url(default/forward_normal.png); /** <img src="default/forward_normal.png"> */
-  background-repeat: no-repeat;
-  background-color: transparent;
+  margin: 2px 13px 0px 0px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-image: url(default/forward_normal.png) !important; /** <img src="default/forward_normal.png"> */
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 #songbird_btn_fwd[disabled="true"]
 {
-  background-image: url(default/forward_disabled.png); /** <img src="default/forward_disabled.png"> */
-  background-color: transparent;
+  background-image: url(default/forward_disabled.png) !important; /** <img src="default/forward_disabled.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_fwd:hover
 {
-  background-image: url(default/forward_normal.png); /** <img src="default/forward_normal.png"> */
-  background-color: transparent;
+  background-image: url(default/forward_normal.png) !important; /** <img src="default/forward_normal.png"> */
+  background-color: transparent !important;
 }
 #songbird_btn_fwd:active
 {
-  background-image: url(default/forward_active.png); /** <img src="default/forward_active.png"> */
-  background-color: transparent;
+  background-image: url(default/forward_active.png) !important; /** <img src="default/forward_active.png"> */
+  background-color: transparent !important;
 }
 
 /* the curr button */
 #songbird_btn_curr
 {
-  width: 35px;
-  height: 20px;
-  background-image: url(default/currenttrack_normal.png);
-  background-color: transparent;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/currenttrack_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_curr[disabled="true"]
 {
-  background-image: url(default/currenttrack_disabled.png);
-  background-color: transparent;
+  background-image: url(default/currenttrack_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_curr:hover
 {
-  background-image: url(default/currenttrack_normal.png);
-  background-color: transparent;
+  background-image: url(default/currenttrack_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_curr:active
 {
-  background-image: url(default/currenttrack_active.png);
-  background-color: transparent;
+  background-image: url(default/currenttrack_active.png) !important;
+  background-color: transparent !important;
 }
 
 /* the next button */
 #songbird_btn_next
 {
-  width: 35px;
-  height: 20px;
-  background-image: url(default/nextsvc_normal.png);
-  background-color: transparent;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/nextsvc_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_next[disabled="true"]
 {
-  background-image: url(default/nextsvc_disabled.png);
-  background-color: transparent;
+  background-image: url(default/nextsvc_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_next:hover
 {
-  background-image: url(default/nextsvc_normal.png);
-  background-color: transparent;
+  background-image: url(default/nextsvc_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_next:active
 {
-  background-image: url(default/nextsvc_active.png);
-  background-color: transparent;
+  background-image: url(default/nextsvc_active.png) !important;
+  background-color: transparent !important;
 }
 
 /* the rep1 button */
 #songbird_btn_rep
 {
-  top: 0px;
-  left: 0px;
-  width: 35px;
-  height: 20px;
-  background-image: url(default/rep1_normal.png);
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/rep1_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_rep[disabled="true"]
 {
-  background-image: url(default/rep1_disabled.png);
-  background-color: transparent;
+  background-image: url(default/rep1_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_rep:hover[disabled="true"]
 {
-  background-image: url(default/rep1_normal.png);
-  background-color: transparent;
+  background-image: url(default/rep1_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_rep:active
 {
-  background-image: url(default/rep1_active.png);
-  background-color: transparent;
+  background-image: url(default/rep1_active.png) !important;
+  background-color: transparent !important;
 }
 
 /* the rep1_on button */
 #songbird_btn_rep1
 {
-  top: 0px;
-  left: 0px;
-  width: 35px;
-  height: 20px;
-  background-image: url(default/rep1_on_normal.png);
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/rep1_on_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_rep1[disabled="true"]
 {
-  background-image: url(default/rep1_on_disabled.png);
-  background-color: transparent;
+  background-image: url(default/rep1_on_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_rep1:hover[disabled="true"]
 {
-  background-image: url(default/rep1_on_normal.png);
-  background-color: transparent;
+  background-image: url(default/rep1_on_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_rep1:active
 {
-  background-image: url(default/rep1_on_active.png);
-  background-color: transparent;
+  background-image: url(default/rep1_on_active.png) !important;
+  background-color: transparent !important;
 }
 
 /* the repall button */
 #songbird_btn_repall
 {
-  top: 0px;
-  left: 0px;
-  width: 35px;
-  height: 20px;
-  background-image: url(default/repall_normal.png);
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/repall_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_repall[disabled="true"]
 {
-  background-image: url(default/repall_disabled.png);
-  background-color: transparent;
+  background-image: url(default/repall_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_repall:hover[disabled="true"]
 {
-  background-image: url(default/repall_normal.png);
-  background-color: transparent;
+  background-image: url(default/repall_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_repall:active
 {
-  background-image: url(default/repall_active.png);
-  background-color: transparent;
+  background-image: url(default/repall_active.png) !important;
+  background-color: transparent !important;
 }
 
 /* the shuf button */
 #songbird_btn_shuf
 {
-  top: 0px;
-  left: 0px;
-  width: 35px;
-  height: 20px;
-  background-image: url(default/shuf_normal.png);
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/shuf_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_shuf[disabled="true"]
 {
-  background-image: url(default/shuf_disabled.png);
-  background-color: transparent;
+  background-image: url(default/shuf_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_shuf:hover[disabled="true"]
 {
-  background-image: url(default/shuf_normal.png);
-  background-color: transparent;
+  background-image: url(default/shuf_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_shuf:active
 {
-  background-image: url(default/shuf_active.png);
-  background-color: transparent;
+  background-image: url(default/shuf_active.png) !important;
+  background-color: transparent !important;
 }
 
 /* the shuf_on button */
 #songbird_btn_shuf_on
 {
-  top: 0px;
-  left: 0px;
-  width: 35px;
-  height: 20px;
-  background-image: url(default/shuf_on_normal.png);
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+  background-image: url(default/shuf_on_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_shuf_on[disabled="true"]
 {
-  background-image: url(default/shuf_disabled.png);
-  background-color: transparent;
+  background-image: url(default/shuf_disabled.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_shuf_on:hover[disabled="true"]
 {
-  background-image: url(default/shuf_normal.png);
-  background-color: transparent;
+  background-image: url(default/shuf_normal.png) !important;
+  background-color: transparent !important;
 }
 #songbird_btn_shuf_on:active
 {
-  background-image: url(default/shuf_on_active.png);
-  background-color: transparent;
+  background-image: url(default/shuf_on_active.png) !important;
+  background-color: transparent !important;
 }
 
 /** 
@@ -1942,216 +1942,216 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 
 #browser_url
 {
-  margin: 2px 0px 2px 0px;
-  padding-top: 4px;
-  -moz-border-top-colors: #808583;
-  -moz-border-bottom-colors: #808583;
-  -moz-border-right-colors: #808583;
-  border: 1px solid #808583;
-  border-left: none;
+  margin: 2px 0px 2px 0px !important;
+  padding-top: 4px !important;
+  -moz-border-top-colors: #808583 !important;
+  -moz-border-bottom-colors: #808583 !important;
+  -moz-border-right-colors: #808583 !important;
+  border: 1px solid #808583 !important;
+  border-left: none !important;
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent;
-  color: #808583;
-  -moz-border-radius-topright: 3px;
-  -moz-border-radius-bottomright: 3px;
+  background-color: transparent !important;
+  color: #808583 !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
   
 /*  
-  border-bottom: none;
-  -moz-border-radius: 2px;
-  -moz-border-left-colors: #808583;
+  border-bottom: none !important;
+  -moz-border-radius: 2px !important;
+  -moz-border-left-colors: #808583 !important;
 */
 }
 
 #browser_url_image
 {
-  margin: 2px 0px 2px 0px;
-  padding: 4px 2px 2px 2px;
-  -moz-background-origin: padding;
-  -moz-border-top-colors: #808583;
-  -moz-border-left-colors: #808583;
-  -moz-border-bottom-colors: #808583;
-  border: 1px solid #F00;/*4F5054*/
-  border-right: none;
+  margin: 2px 0px 2px 0px !important;
+  padding: 4px 2px 2px 2px !important;
+  -moz-background-origin: padding !important;
+  -moz-border-top-colors: #808583 !important;
+  -moz-border-left-colors: #808583 !important;
+  -moz-border-bottom-colors: #808583 !important;
+  border: 1px solid #F00 !important;/*4F5054*/
+  border-right: none !important;
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent;
-  color: #CCC;  
-  -moz-border-radius-topleft: 3px;
-  -moz-border-radius-bottomleft: 3px;
+  background-color: transparent !important;
+  color: #CCC !important;  
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
   
 /*  
-  border-bottom: none;
-  -moz-border-right-colors: #808583;
+  border-bottom: none !important;
+  -moz-border-right-colors: #808583 !important;
 */
 }
 
 #browser_toolbar
 {
-  border-bottom: 1px solid #CCC; 
-  background-color: transparent;
-  height: 29px;
+  border-bottom: 1px solid #CCC !important; 
+  background-color: transparent !important;
+  height: 29px !important;
 }
 
 #browser_toolbar toolbarbutton 
 {
 /*  
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-topright: 5px;
-  border-bottom: none;
+  -moz-border-radius-topleft: 5px !important;
+  -moz-border-radius-topright: 5px !important;
+  border-bottom: none !important;
 */
-  -moz-border-radius: 5px;
-  border-width: 1px;
-  color: #FFF;
+  -moz-border-radius: 5px !important;
+  border-width: 1px !important;
+  color: #FFF !important;
 }
 
 #browser_toolbar toolbarbutton:hover
 {
-  background-color: Transparent;
-  color: #000;
+  background-color: Transparent !important;
+  color: #000 !important;
 }
 
 #browser_back
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_back_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_back_normal.png) !important;
 }
 #browser_back:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_back_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_back_hover.png) !important;
 }
 #browser_back[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_back_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_back_disabled.png) !important;
 }
 #browser_refresh
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_refresh_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_refresh_normal.png) !important;
 }
 #browser_refresh:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_refresh_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_refresh_hover.png) !important;
 }
 #browser_refresh[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_refresh_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_refresh_disabled.png) !important;
 }
 #browser_stop
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_stop_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_stop_normal.png) !important;
 }
 #browser_stop:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_stop_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_stop_hover.png) !important;
 }
 #browser_stop[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_stop_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_stop_disabled.png) !important;
 }
 #browser_fwd
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_forward_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_forward_normal.png) !important;
 }
 #browser_fwd:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_forward_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_forward_hover.png) !important;
 }
 #browser_fwd[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_forward_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_forward_disabled.png) !important;
 }
 #browser_home
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_home_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_home_normal.png) !important;
 }
 #browser_home:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_home_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_home_hover.png) !important;
 }
 #browser_home[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_home_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_home_disabled.png) !important;
 }
 #browser_bookmark
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_bookmark_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_bookmark_normal.png) !important;
 }
 #browser_bookmark:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_bookmark_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_bookmark_hover.png) !important;
 }
 #browser_bookmark[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_bookmark_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_bookmark_disabled.png) !important;
 }
 #browser_playlist
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_addtoplaylist_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_addtoplaylist_normal.png) !important;
 }
 #browser_playlist:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_addtoplaylist_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_addtoplaylist_hover.png) !important;
 }
 #browser_playlist[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_addtoplaylist_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_addtoplaylist_disabled.png) !important;
 }
 #browser_download
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_dlplaylist_normal.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_dlplaylist_normal.png) !important;
 }
 #browser_download:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_dlplaylist_hover.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_dlplaylist_hover.png) !important;
 }
 #browser_download[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  padding-left: 10px;
-  list-style-image: url(default/webbar_dlplaylist_disabled.png);
+  padding-left: 10px !important;
+  list-style-image: url(default/webbar_dlplaylist_disabled.png) !important;
 }
 
 
@@ -2163,36 +2163,36 @@ Mute and Slider
 */
 #mute_off
 {
-  width: 12px;
-  height: 12px;
-  background-image: url(default/mute_off.png);
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 12px !important;
+  height: 12px !important;
+  background-image: url(default/mute_off.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #mute_on
 {
-  width: 12px;
-  height: 12px;
-  background-image: url(default/mute_on.png);
-  background-repeat: no-repeat;
-  background-color: transparent;
+  width: 12px !important;
+  height: 12px !important;
+  background-image: url(default/mute_on.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 #volume_box
 {
-  height: 16px;    
-  padding-top: 0px;
-  margin-top: 5px;
-  background-color: transparent;
+  height: 16px !important;    
+  padding-top: 0px !important;
+  margin-top: 5px !important;
+  background-color: transparent !important;
 }
 
 #songbird_volume
 {
-  top: 5px;
-  left: 5px;
-  width: 104px;
-  height: 14px;
+  top: 5px !important;
+  left: 5px !important;
+  width: 104px !important;
+  height: 14px !important;
 }
 
 /*
@@ -2201,103 +2201,103 @@ Mute and Slider
 #songbird_volume gripper
 {  
   -moz-appearance: none !important; /* grrrr! */
-  background-image: none;
-  list-style-image: none;
-  padding: 0 0 0 0;
-  border: none;
-  background-color: transparent;
+  background-image: none !important;
+  list-style-image: none !important;
+  padding: 0 0 0 0 !important;
+  border: none !important;
+  background-color: transparent !important;
 }
 
 
 
 #songbird_volume_thumb
 {
-  width: 36px;
-  height: 14px;
-  background-image: url(default/volume_thumb.png);
-  background-color: transparent;
+  width: 36px !important;
+  height: 14px !important;
+  background-image: url(default/volume_thumb.png) !important;
+  background-color: transparent !important;
 }
 
 #songbird_volume_progress
 {
-  top: 0px;
-  left: 0px; /* previously 20px, 1 thumb-width in */
-  width: 104px; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
-  height: 14px;
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important; /* previously 20px, 1 thumb-width in */
+  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  height: 14px !important;
+  background-color: transparent !important;
 }
 #songbird_volume_progress > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/volume_progress_bar.png);
-  background-color: transparent;
+  background-image: url(default/volume_progress_bar.png) !important;
+  background-color: transparent !important;
 }
 #songbird_volume_progress > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/volume_progress_remainder.png);
-  background-color: transparent;
+  background-image: url(default/volume_progress_remainder.png) !important;
+  background-color: transparent !important;
 }
 
 #songbird_volume_e
 {
-  background-image: url(default/volume_e.png);
-  margin: 0px 0px 0px 0px;
-  height: 5px;
-  width: 3px;
-  background-repeat: no-repeat;
-  background-color: transparent;
+  background-image: url(default/volume_e.png) !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 #songbird_volume_w
 {
-  background-image: url(default/volume_w.png);
-  margin: 0px 0px 0px 0px;
-  height: 5px;
-  width: 3px;
-  background-repeat: no-repeat;
-  background-color: transparent;
+  background-image: url(default/volume_w.png) !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 /* the seekbar slider */
 #songbird_seekbar_slider
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px;
+  height: 10px !important;
 }
 #songbird_seekbar_thumb
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 21px;
-  height: 10px;
-  background-image: url(default/seekbar_thumb.png);
-  background-color: transparent;
-  background-repeat: no-repeat;
+  width: 21px !important;
+  height: 10px !important;
+  background-image: url(default/seekbar_thumb.png) !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
 }
 #songbird_seekbar_thumb > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px;
+  height: 10px !important;
 }
 #songbird_seekbar_progress
 {
-  height: 10px;
+  height: 10px !important;
 }
 #songbird_seekbar_progress > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/seekbar_progress.png);
-  height: 10px;
+  background-image: url(default/seekbar_progress.png) !important;
+  height: 10px !important;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/seekbar_remainder.png);
-  height: 10px;
+  background-image: url(default/seekbar_remainder.png) !important;
+  height: 10px !important;
 }
 #songbird_seekbar
 {
-  border: 1px solid #7e847b;
-  height: 10px;
+  border: 1px solid #7e847b !important;
+  height: 10px !important;
 }
 
 /** 
@@ -2309,82 +2309,82 @@ DASHBOARD
 /* the texties */
 #songbird_text_title
 {
-  max-width: auto;
-  color: #1F292B;
+  max-width: auto !important;
+  color: #1F292B !important;
 }
 #songbird_text_artist
 {
-  color: #1F292B;
+  color: #1F292B !important;
 }
 #songbird_text_album
 {
-  color: #1F292B;
+  color: #1F292B !important;
 }
 #songbird_text_slash
 {
-  color: #1F292B;
+  color: #1F292B !important;
 }
 #songbird_text_time
 {
-  color: #1F292B; 
+  color: #1F292B !important; 
 }
 
 #songbird_text_time_total
 {
-  color: #1F292B;
+  color: #1F292B !important;
 }
 
 #songbird_text_time_elapsed
 {
-  color: #1F292B;
+  color: #1F292B !important;
 }
 
 #songbird_text_rep1
 {
-  top: 51px;
-  left: 294px;
-  width: 100px;
-  height: 15px;
-  color: #1F292B;
+  top: 51px !important;
+  left: 294px !important;
+  width: 100px !important;
+  height: 15px !important;
+  color: #1F292B !important;
  
-  text-align: right;
+  text-align: right !important;
 }
 #songbird_text_rep
 {
-  top: 51px;
-  left: 294px;
-  width: 100px;
-  height: 15px;
-  color: #1F292B;
+  top: 51px !important;
+  left: 294px !important;
+  width: 100px !important;
+  height: 15px !important;
+  color: #1F292B !important;
  
-  text-align: right;
+  text-align: right !important;
 }
 #songbird_text_shuf
 {
-  top: 66px;
-  left: 294px;
-  width: 100px;
-  height: 15px;
-  color: #1F292B;
+  top: 66px !important;
+  left: 294px !important;
+  width: 100px !important;
+  height: 15px !important;
+  color: #1F292B !important;
  
-  text-align: right;
+  text-align: right !important;
 }
 #playlist_edit_popup
 { 
   -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF;
-  background-image: none;
-  list-style-image: none;
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+  list-style-image: none !important;
 }
 #playlist_edit
 { 
   -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF;
-  background-image: none;
-  list-style-image: none;
-  border-style: solid;
-  border-color: black;
-  border-width: 1px;
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+  list-style-image: none !important;
+  border-style: solid !important;
+  border-color: black !important;
+  border-width: 1px !important;
 }
 
 
@@ -2400,7 +2400,7 @@ DIALOG BOXES
   border-bottom: 1px solid #CCC !important; /* this draws the line under the title bar */
   padding-bottom: 6px !important;
   margin-bottom: 4px !important;
-  background-color: Transparent;
+  background-color: Transparent !important;
 }
 
 #new_playlist label,
@@ -2412,38 +2412,38 @@ DIALOG BOXES
 track_editor label,
 #watchfolder
 {
-  color: #505154;
+  color: #505154 !important;
 }
 
 #track_editor
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 600px;
-  /*background-color: transparent; BUGGY*/
+  width: 600px !important;
+  /*background-color: transparent !important; BUGGY*/
 }
 
 .dialog_label
 {
-  color: #505154;
+  color: #505154 !important;
 }
 
 #smart_playlist
 {
-  width:  550px;
-  background-color: transparent; /*this breaks the red flash in the Inspector*/
+  width:  550px !important;
+  background-color: transparent !important; /*this breaks the red flash in the Inspector*/
 }
 
 #open_url
 {
-  width:  460px;
-  background-color: transparent; /*this breaks the red flash in the Inspector*/
+  width:  460px !important;
+  background-color: transparent !important; /*this breaks the red flash in the Inspector*/
 }
 
 #watchfolder,
 #new_playlist,
 #playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
 {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 /* Dialog Form Elements */
@@ -2453,25 +2453,25 @@ track_editor label,
 .dialog_button 
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 3px;
-  padding: 3px 20px 3px 20px;
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
   border: 1px solid !important;
-  -moz-border-top-colors: #CCC;
-  -moz-border-left-colors: #CCC;
-  -moz-border-bottom-colors: #999;
-  -moz-border-right-colors: #999;
+  -moz-border-top-colors: #CCC !important;
+  -moz-border-left-colors: #CCC !important;
+  -moz-border-bottom-colors: #999 !important;
+  -moz-border-right-colors: #999 !important;
   background-color: #EEE !important;
-  color: #99A195;
+  color: #99A195 !important;
 }
 
 .backless_button 
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 0px;
-  padding: 0px 0px 0px 0px;
+  -moz-border-radius: 0px !important;
+  padding: 0px 0px 0px 0px !important;
   border: 0px solid !important;
   background-color: transparent !important;
-  color: #99A195;
+  color: #99A195 !important;
 }
 
 #button_ok[disabled="true"],
@@ -2484,15 +2484,15 @@ track_editor label,
 #songbird_makenewplaylist:hover[disabled="true"]
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 3px;
-  padding: 3px 20px 3px 20px;
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #CCC !important;
   -moz-border-left-colors: #CCC !important;
   -moz-border-bottom-colors: #CCC !important;
   -moz-border-right-colors: #CCC !important;
   background-color: #EEE !important;
-  color: #CCC;
+  color: #CCC !important;
 }
 
 #button_ok,
@@ -2501,15 +2501,15 @@ track_editor label,
 #songbird_makenewplaylist
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 3px;
-  padding: 3px 20px 3px 20px;
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
   border: 1px solid !important;
-  -moz-border-top-colors: #CCC;
-  -moz-border-left-colors: #CCC;
-  -moz-border-bottom-colors: #999;
-  -moz-border-right-colors: #999;
+  -moz-border-top-colors: #CCC !important;
+  -moz-border-left-colors: #CCC !important;
+  -moz-border-bottom-colors: #999 !important;
+  -moz-border-right-colors: #999 !important;
   background-color: #EEE !important;
-  color: #99A195;
+  color: #99A195 !important;
 }
 
 #button_ok:hover,
@@ -2521,7 +2521,7 @@ track_editor label,
 #songbird_makenewplaylist:focus,
 #button_browse:focus
 {
-  color: #99A195;
+  color: #99A195 !important;
   background-color: #FFF !important;
 }
 
@@ -2529,32 +2529,32 @@ track_editor label,
 .smart_condition_box textbox
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 3px;
-  -moz-border-top-colors: #EEE #CCC;
-  -moz-border-left-colors: #EEE #CCC;
-  -moz-border-right-colors: #999 #CCC;
-  -moz-border-bottom-colors: #999 #CCC;
-  background-color: #FFF; 
-  color: #99A195;
-  height: 25px;
-  padding-top: 3px;
-  padding-left: 5px;
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #EEE #CCC !important;
+  -moz-border-left-colors: #EEE #CCC !important;
+  -moz-border-right-colors: #999 #CCC !important;
+  -moz-border-bottom-colors: #999 #CCC !important;
+  background-color: #FFF !important; 
+  color: #99A195 !important;
+  height: 25px !important;
+  padding-top: 3px !important;
+  padding-left: 5px !important;
 }
 
 .dialog_textbox input:focus,
 .smart_condition_box input:focus
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 3px;
-  -moz-border-top-colors: #EEE #CCC;
-  -moz-border-left-colors: #EEE #CCC;
-  -moz-border-right-colors: #999 #CCC;
-  -moz-border-bottom-colors: #999 #CCC;
-  background-color: #99A195; 
-  color: #FFF;
-  height: 25px;
-  padding-top: 3px;
-  padding-left: 5px;
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #EEE #CCC !important;
+  -moz-border-left-colors: #EEE #CCC !important;
+  -moz-border-right-colors: #999 #CCC !important;
+  -moz-border-bottom-colors: #999 #CCC !important;
+  background-color: #99A195 !important; 
+  color: #FFF !important;
+  height: 25px !important;
+  padding-top: 3px !important;
+  padding-left: 5px !important;
 }
 
 /* Listboxes for dialogs */
@@ -2562,12 +2562,12 @@ track_editor label,
 .dialog_listbox
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 3px;
-  -moz-border-top-colors: #EEE #CCC;
-  -moz-border-left-colors: #EEE #CCC;
-  -moz-border-right-colors: #999 #CCC;
-  -moz-border-bottom-colors: #999 #CCC;
-  background-color: #FFF; 
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #EEE #CCC !important;
+  -moz-border-left-colors: #EEE #CCC !important;
+  -moz-border-right-colors: #999 #CCC !important;
+  -moz-border-bottom-colors: #999 #CCC !important;
+  background-color: #FFF !important; 
 }
 
 .dialog_listbox > listitem
@@ -2579,31 +2579,31 @@ track_editor label,
 .dialog_listbox > listitem[selected=true]
 {
   background-color: #333 !important;
-  color: #FFF;
+  color: #FFF !important;
 }
 
 .formgrouping
 {
-  padding: 5px; 
-  -moz-border-radius: 5px; 
-  border: 1px solid #CCC;
+  padding: 5px !important; 
+  -moz-border-radius: 5px !important; 
+  border: 1px solid #CCC !important;
 }
 
 .dialog_checkbox .checkbox-check
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #EEE #CCC;
-  -moz-border-left-colors: #EEE #CCC;
-  -moz-border-right-colors: #999 #CCC;
-  -moz-border-bottom-colors: #999 #CCC;
-  background-color: #FFF; 
+  -moz-border-top-colors: #EEE #CCC !important;
+  -moz-border-left-colors: #EEE #CCC !important;
+  -moz-border-right-colors: #999 #CCC !important;
+  -moz-border-bottom-colors: #999 #CCC !important;
+  background-color: #FFF !important; 
 }
 
 .dialog_checkbox:focus
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none;
-  background-color: #EEE; 
+  border: none !important;
+  background-color: #EEE !important; 
 }
 
 
@@ -2618,36 +2618,36 @@ track_editor label,
 #smartpl_select_library
 {
   -moz-appearance: none !important; /* grrrr! */
-  margin: 10px 0px 0px 0px;
+  margin: 10px 0px 0px 0px !important;
 }
 
 .smart_condition_box
 {
   -moz-border-radius: 5px !important; 
   border: 1px solid #CCC !important;
-  padding-right: 5px;
+  padding-right: 5px !important;
 }
 
 #smart_playlist_name_label
 {
-  margin-top: 7px; /* lines this label with it's textbox counterpart in the smart playlist builder */
+  margin-top: 7px !important; /* lines this label with it's textbox counterpart in the smart playlist builder */
 }
 
 #smart_songs_check,
 #smart_match_check
 {
-  margin-top: 0px; /* the align="center" of the parent needs this to have no top margin. */
+  margin-top: 0px !important; /* the align="center" of the parent needs this to have no top margin. */
 }
 
 #smart_songs_count
 {
-  width: 40px;
+  width: 40px !important;
 }
 
 .smart_condition_box
 {
-  border: 1px solid #99A195;
-  -moz-border-radius: 5px; 
+  border: 1px solid #99A195 !important;
+  -moz-border-radius: 5px !important; 
 }
 
 .smart_condition_plus
@@ -2664,87 +2664,87 @@ track_editor label,
 
 #media_scan
 {
-  background-color: transparent;
-  width: 500px;
-  color: #FFF;
+  background-color: transparent !important;
+  width: 500px !important;
+  color: #FFF !important;
 }
 
 #songbird_media_scan 
 { 
    -moz-appearance: none !important; /* grrrr! */ 
-   margin: 2px 0px 0px 0px;
-   background-color: #333; 
-   border: none;
-   color: #FFF;
+   margin: 2px 0px 0px 0px !important;
+   background-color: #333 !important; 
+   border: none !important;
+   color: #FFF !important;
 } 
 
 #songbird_media_scan .progress-bar { 
    -moz-appearance: none !important; /* grrrr! */ 
-   background-color: #666;
+   background-color: #666 !important;
 } 
   
 #songbird_media_scan[mode="undetermined"] { 
-  background-color: #333;
+  background-color: #333 !important;
 } 
 
 #songbird_media_scan_title,
 #songbird_media_scan_label
-{color: #FFF;}
+{color: #FFF !important;}
 
 /* Add to Playlist */
 #add_to_playlist
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 200px;
-  /*background-color: transparent; BUGGY*/
+  height: 200px !important;
+  /*background-color: transparent !important; BUGGY*/
 }
 
 #jump_to_file
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 420px;
-  height: 500px;
-  color: #FFF;
-  /*background-color: transparent; BUGGY*/
+  width: 420px !important;
+  height: 500px !important;
+  color: #FFF !important;
+  /*background-color: transparent !important; BUGGY*/
 }
 
 #songbird_playlistlist > listitem
 {
-  margin: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px !important;
   padding: 0px 0px 0px 0px !important;
-  background-color: #FFF;
-  color: #333;
+  background-color: #FFF !important;
+  color: #333 !important;
 }
 
 #songbird_playlistlist > listitem[selected=true]
 {
-  margin: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px !important;
   padding: 0px 0px 0px 0px !important;
-  background-color: #4A4E48;
-  color: #FFF;
+  background-color: #4A4E48 !important;
+  color: #FFF !important;
 }
 
 /* Download Dialog */
 #subscribe_folder_path,
 #download_folder_path
 {
-  width: 365px;
+  width: 365px !important;
 }
 
 #subscribe_url,
 #songbird_open_url
 {
-  width: 420px;
+  width: 420px !important;
 }
 
 #subscribe_interval
 {
-  width: 40px;
+  width: 40px !important;
 }
 
 #watchfolder
 {
-  width: 400px;
+  width: 400px !important;
 }
 
 textbox,
@@ -2764,33 +2764,33 @@ menupopup,
 popup
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #eee #ccc;
-  -moz-border-left-colors: #eee #ccc;
-  -moz-border-right-colors: #999 #ccc;
-  -moz-border-bottom-colors: #999 #ccc;  
-  background-color: #EEE;
-  color: #808583;
+  -moz-border-top-colors: #eee #ccc !important;
+  -moz-border-left-colors: #eee #ccc !important;
+  -moz-border-right-colors: #999 #ccc !important;
+  -moz-border-bottom-colors: #999 #ccc !important;  
+  background-color: #EEE !important;
+  color: #808583 !important;
 }
 
 menuseparator
 {
   -moz-appearance: none !important; /* grrrr! */
-  border-top: 1px solid #FFF;
-  border-bottom: 1px solid #EEE;
+  border-top: 1px solid #FFF !important;
+  border-bottom: 1px solid #EEE !important;
 }
 
 menupopup > menu,
 popup > menu
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: #EEE;
-  color: #808583;
+  background-color: #EEE !important;
+  color: #808583 !important;
 }
 
 popup, menuitem, popup > menuitem
 {
   -moz-appearance: none !important; /* grrrr! */
-  color: #808583;
+  color: #808583 !important;
 }
 
 menuitem[_moz-menuactive="true"],  
@@ -2799,54 +2799,54 @@ popup > menu[_moz-menuactive="true"],
 menupopup > menu[_moz-menuactive="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: #99a195;
-  color: #FFF;
+  background-color: #99a195 !important;
+  color: #FFF !important;
 }
 
 .menu-right[_moz-menuactive="true"] 
 {
   -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 0px;
-  height: 9px;
-  width: 7px;
-  list-style-image: url(default/menu-arrow-hover.png);
-  background-repeat: no-repeat;
+  margin: 0px 0px 0px 0px !important;
+  height: 9px !important;
+  width: 7px !important;
+  list-style-image: url(default/menu-arrow-hover.png) !important;
+  background-repeat: no-repeat !important;
 }
 
 .menu-right
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 0px;
-  height: 9px;
-  width: 7px;
-  list-style-image: url(default/menu-arrow.png);
-  background-repeat: no-repeat;
+  margin: 0px 0px 0px 0px !important;
+  height: 9px !important;
+  width: 7px !important;
+  list-style-image: url(default/menu-arrow.png) !important;
+  background-repeat: no-repeat !important;
 }
 
 menuitem[selected="true"]
 {
-  background-color: #99a195;
-  color: #FFF;
+  background-color: #99a195 !important;
+  color: #FFF !important;
 }
 
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
   -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 2px;
-  height: 7px;
-  width: 7px;
-  list-style-image: url(default/check_fff.png);
-  background-repeat: no-repeat;
+  margin: 0px 0px 0px 2px !important;
+  height: 7px !important;
+  width: 7px !important;
+  list-style-image: url(default/check_fff.png) !important;
+  background-repeat: no-repeat !important;
 }
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
   -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 2px;
-  height: 7px;
-  width: 7px;
-  list-style-image: url(default/check_fff.png);
-  background-repeat: no-repeat;
+  margin: 0px 0px 0px 2px !important;
+  height: 7px !important;
+  width: 7px !important;
+  list-style-image: url(default/check_fff.png) !important;
+  background-repeat: no-repeat !important;
 }
 
 /* Menulist */
@@ -2855,41 +2855,41 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
 menulist
 { 
   -moz-appearance: none !important; /* grrrr! */
-  height: 25px; 
-  background-color: #FFF;
-  border: 1px solid; 
+  height: 25px !important; 
+  background-color: #FFF !important;
+  border: 1px solid !important; 
   color: #99A195 !important;
-  -moz-border-radius: 3px;
-  -moz-border-top-colors: #eee #ccc;
-  -moz-border-left-colors: #eee #ccc;
-  -moz-border-right-colors: #999 #ccc;
-  -moz-border-bottom-colors: #999 #ccc;
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #eee #ccc !important;
+  -moz-border-left-colors: #eee #ccc !important;
+  -moz-border-right-colors: #999 #ccc !important;
+  -moz-border-bottom-colors: #999 #ccc !important;
 } 
 
 menulist > dropmarker
 {
   -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/chrome_scroll_down.png);
-  background-repeat: no-repeat;
-  background-color: transparent;
-  height:16px;
-  width:16px;
-  border: none;
-  -moz-border-radius: 3px;
-  -moz-border-top-colors: #eee #ccc;
-  -moz-border-left-colors: #eee #ccc;
-  -moz-border-right-colors: #999 #ccc;
-  -moz-border-bottom-colors: #999 #ccc; 
+  list-style-image: url(default/chrome_scroll_down.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  height:16px !important;
+  width:16px !important;
+  border: none !important;
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #eee #ccc !important;
+  -moz-border-left-colors: #eee #ccc !important;
+  -moz-border-right-colors: #999 #ccc !important;
+  -moz-border-bottom-colors: #999 #ccc !important; 
 }
 
 menulist:focus
 {
-  background-color: #99a195;
+  background-color: #99a195 !important;
 }
 
 menulist:focus > hbox
 {
-  background-color: #99a195;
+  background-color: #99a195 !important;
 }
 
 /** 
@@ -2899,13 +2899,13 @@ The ABOUT BOX
 */  
 #about
 {
-  background-color: #FFF;
+  background-color: #FFF !important;
 }
 #about_browser
 {
-  height: 180px;
-  width: 390px;
-  border: 0px solid #F00;
+  height: 180px !important;
+  width: 390px !important;
+  border: 0px solid #F00 !important;
   
 }
 
@@ -2918,114 +2918,114 @@ Anything with #mini refers to the skin of the mini player.
 
 window#mini  
 { 
-  width: 640px;
-  height: 20px;
-  background-color: transparent;
+  width: 640px !important;
+  height: 20px !important;
+  background-color: transparent !important;
 }
 
 #mini_btn_max
 {
-  width: 33px;
-  height: 30px;
-  background-image: url(mini/mini.btn.max.png);
-  background-color: transparent;
+  width: 33px !important;
+  height: 30px !important;
+  background-image: url(mini/mini.btn.max.png) !important;
+  background-color: transparent !important;
 }
 
 /* the back button */
 #mini_btn_back
 {
-  width: 61px;
-  height: 30px;
-  background-image: url(mini/mini.btn.back.n.png);
-  background-color: transparent;
+  width: 61px !important;
+  height: 30px !important;
+  background-image: url(mini/mini.btn.back.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_back[disabled="true"]
 {
-  background-image: url(mini/mini.btn.back.d.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.back.d.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_back:hover[disabled="true"]
 {
-  background-image: url(mini/mini.btn.back.n.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.back.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_back:active
 {
-  background-image: url(mini/mini.btn.back.a.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.back.a.png) !important;
+  background-color: transparent !important;
 }
 
 /* the play button */
 
 #mini_btn_play
 {
-  width: 81px;
-  height: 30px;
-  background-image: url(mini/mini.btn.play.n.png);
-  background-color: transparent;
+  width: 81px !important;
+  height: 30px !important;
+  background-image: url(mini/mini.btn.play.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_play[disabled="true"]
 {
-  background-image: url(mini/mini.btn.play.d.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.play.d.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_play:hover[disabled="true"]
 {
-  background-image: url(mini/mini.btn.play.n.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.play.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_play:active
 {
-  background-image: url(mini/mini.btn.play.a.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.play.a.png) !important;
+  background-color: transparent !important;
 }
 
 /* the pause button */
 #mini_btn_pause
 {
-  width: 81px;
-  height: 30px;
-  background-image: url(mini/mini.btn.pause.n.png);
-  background-color: transparent;
+  width: 81px !important;
+  height: 30px !important;
+  background-image: url(mini/mini.btn.pause.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_pause[disabled="true"]
 {
-  background-image: url(mini/mini.btn.pause.d.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.pause.d.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_pause:hover[disabled="true"]
 {
-  background-image: url(mini/mini.btn.pause.n.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.pause.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_pause:active
 {
-  background-image: url(mini/mini.btn.pause.a.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.pause.a.png) !important;
+  background-color: transparent !important;
 }
 
 /* the fwd button */
 #mini_btn_fwd
 {
-  width: 61px;
-  height: 30px;
-  background-image: url(mini/mini.btn.fwd.n.png);
-  background-color: transparent;
+  width: 61px !important;
+  height: 30px !important;
+  background-image: url(mini/mini.btn.fwd.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_fwd[disabled="true"]
 {
-  background-image: url(mini/mini.btn.fwd.d.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.fwd.d.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_fwd:hover[disabled="true"]
 {
-  background-image: url(mini/mini.btn.fwd.n.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.fwd.n.png) !important;
+  background-color: transparent !important;
 }
 #mini_btn_fwd:active
 {
-  background-image: url(mini/mini.btn.fwd.a.png);
-  background-color: transparent;
+  background-image: url(mini/mini.btn.fwd.a.png) !important;
+  background-color: transparent !important;
 }
 
 
@@ -3033,61 +3033,61 @@ window#mini
 #songbird_seekbar_slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px;
+  height: 10px !important;
 }
 #mini_seekbar_thumb
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 10px;
-  height: 8px;
-  background-image: url(mini/seekbar_thumb.png);
-  background-color: transparent;
-  background-repeat: no-repeat;
+  width: 10px !important;
+  height: 8px !important;
+  background-image: url(mini/seekbar_thumb.png) !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
 }
 #mini_seekbar_thumb > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px;
+  height: 10px !important;
 }
 #songbird_seekbar_progress
 {
-  height: 10px;
+  height: 10px !important;
 }
 #songbird_seekbar.miniplayer .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(mini/seekbar_progress.png);
-  height: 8px;
+  background-image: url(mini/seekbar_progress.png) !important;
+  height: 8px !important;
 }
 #songbird_seekbar.miniplayer .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(mini/seekbar_remainder.png);
-  height: 8px;
+  background-image: url(mini/seekbar_remainder.png) !important;
+  height: 8px !important;
 }
 #songbird_seekbar.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 8px;
-  border: none;
-  margin-bottom: 2px;
-  background-color: transparent;
+  height: 8px !important;
+  border: none !important;
+  margin-bottom: 2px !important;
+  background-color: transparent !important;
 }
 
 #mini_dash
 {
-  background-image: url(mini/mini.bkg.dashboard.png);
+  background-image: url(mini/mini.bkg.dashboard.png) !important;
 }
 
 /* volume */
 
 #mini_volume
 {
-  width: 160px;
-  height: 27px;
-  background-image: url(mini/mini_volume_bkgd.png);
-  padding: 3px 0px 0px 15px;
-  border: 0px solid #F00;
+  width: 160px !important;
+  height: 27px !important;
+  background-image: url(mini/mini_volume_bkgd.png) !important;
+  padding: 3px 0px 0px 15px !important;
+  border: 0px solid #F00 !important;
 }
 
 /*
@@ -3096,76 +3096,76 @@ window#mini
 #mini_volume gripper
 {  
   -moz-appearance: none !important; /* grrrr! */
-  background-image: none;
-  list-style-image: none;
-  padding: 0 0 0 0;
-  border: none;
-  background-color: transparent;
+  background-image: none !important;
+  list-style-image: none !important;
+  padding: 0 0 0 0 !important;
+  border: none !important;
+  background-color: transparent !important;
 }
 
 #mini_volume_thumb
 {
-  width: 36px;
-  height: 14px;
-  background-image: url(default/volume_thumb.png);
-  background-color: transparent;
-  background-repeat: no-repeat;
+  width: 36px !important;
+  height: 14px !important;
+  background-image: url(default/volume_thumb.png) !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
 }
 
 #mini_volume_progress
 {
-  top: 0px;
-  left: 0px; /* previously 20px, 1 thumb-width in */
-  width: 104px; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
-  height: 14px;
-  background-color: transparent;
+  top: 0px !important;
+  left: 0px !important; /* previously 20px, 1 thumb-width in */
+  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  height: 14px !important;
+  background-color: transparent !important;
 }
 #mini_volume_progress > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/volume_progress_bar.png);
-  background-color: transparent;
+  background-image: url(default/volume_progress_bar.png) !important;
+  background-color: transparent !important;
 }
 #mini_volume_progress > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/volume_progress_remainder.png);
-  background-color: transparent;
+  background-image: url(default/volume_progress_remainder.png) !important;
+  background-color: transparent !important;
 }
 
 #mini_volume_e
 {
-  background-image: url(default/volume_e.png);
-  margin: 0px 0px 0px 0px;
-  height: 5px;
-  width: 3px;
-  background-repeat: no-repeat;
-  background-color: transparent;
+  background-image: url(default/volume_e.png) !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 #mini_volume_w
 {
-  background-image: url(default/volume_w.png);
-  margin: 0px 0px 0px 0px;
-  height: 5px;
-  width: 3px;
-  background-repeat: no-repeat;
-  background-color: transparent;
+  background-image: url(default/volume_w.png) !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
 }
 
 /* the texties */
 #mini_text_title
 {
-  width: 220px;
-  height: 15px;
-  color: #E4EADF;
+  width: 220px !important;
+  height: 15px !important;
+  color: #E4EADF !important;
  
 }
 #mini_text_time
 {
-  width: 160px;
-  height: 15px;
-  color: #E4EADF;
-  padding: 3px 3px 0px 5px;
+  width: 160px !important;
+  height: 15px !important;
+  color: #E4EADF !important;
+  padding: 3px 3px 0px 5px !important;
 }
 
 
@@ -3181,21 +3181,21 @@ MISCELLANEOUS
 /*koshi_test.xul*/
 #koshi_test
 {
-  color: #99A195;
-  width:  460px;
-  background-color: transparent;
+  color: #99A195 !important;
+  width:  460px !important;
+  background-color: transparent !important;
 }
 
 /* sample multistate button with custom content (svg/xul, etc) */
 
 #songbird_multistatebuttontest {
-  -moz-binding: url("chrome://songbird/skin/bindings.xml#samplebutton");
+  -moz-binding: url("chrome://songbird/skin/bindings.xml#samplebutton") !important;
 }
 
 /* window region */
 
 windowregion {
-  -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion");
+  -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion") !important;
 }
 
 /** 
@@ -3206,16 +3206,16 @@ VIDEO WINDOW
 
 #video_window
 {
-  -moz-appearance:none;
-  height: 590px;
-  width: 714px;
-  background: #FFF; /* When this style is deleted or set to transparent, the video doesn't show; it plays, but it doesn't display.*/
+  -moz-appearance:none !important;
+  height: 590px !important;
+  width: 714px !important;
+  background: #FFF !important; /* When this style is deleted or set to transparent, the video doesn't show !important; it plays, but it doesn't display.*/
 }
 
 #video_chrome_bkgd
 {
-  background-image: url(default/chrome_bkgd.png); /** <img src="default/chrome_bkgd.png"> */
-  background-position: 0px -15px;
+  background-image: url(default/chrome_bkgd.png) !important; /** <img src="default/chrome_bkgd.png"> */
+  background-position: 0px -15px !important;
 }
 
 #video_controls
