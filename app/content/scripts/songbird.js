@@ -264,7 +264,7 @@ function quitApp()
   }
 }
 
-var songbird_playURL = new sbIDataRemote("faceplate.play.url");
+var songbird_playURL;
 function SBUrlChanged( value )
 {
   if (!coreInitialCloakDone) return;
@@ -334,6 +334,7 @@ function SBAppInitialize()
     setVideoMinMaxCallback();
     onWindowLoadSize();
     createLibraryRef();
+    songbird_playURL = new sbIDataRemote("faceplate.play.url");
     songbird_playURL.bindCallbackFunction( SBUrlChanged, true )
 
     /*

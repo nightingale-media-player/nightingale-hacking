@@ -1781,7 +1781,7 @@
               this.tree.view.selection.getRangeAt( i, start, end );
               count += end.value - start.value + 1;
               if (i == 0) {
-                var first = start.value + 1;
+                var first = start.value;
                 // Find the guid column. 
                 var guid_column = this.tree.columns ? this.tree.columns["uuid"] : "uuid";
                 // Get the text of the hidden tree cell, this contains the uuid.

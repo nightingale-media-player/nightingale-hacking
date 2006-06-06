@@ -40,39 +40,39 @@
 
   <hbox class="chrome_iframe_bkgd" flex="1">
     <spacer width="3"/> 
-    <vbox>
-      <hbox>
-        <label id="trackeditor.label.guid" class="dialog_label" value="Item GUID"/>
+    <vbox flex="1">
+      <hbox height="32">
+        <label id="trackeditor.label.guid" class="dialog_label" value="Item GUID" width="96"/>
         <spacer width="5"/> 
-        <label id="trackeditor.guid" value="..." class="dialog_label" />
+        <dbedit_label id="trackeditor.guid" column="uuid" class="dialog_label" />
       </hbox>
-      <hbox>
-        <label id="trackeditor.label.url" class="dialog_label" value="URL"/>
+      <hbox height="32">
+        <label id="trackeditor.label.url" class="dialog_label" value="URL" width="96"/>
         <spacer width="5"/> 
         <dbedit_textbox id="trackeditor.url" column="url" class="dialog_textbox" flex="1"/>
       </hbox>
-      <hbox>
-        <label id="trackeditor.label.title" class="dialog_label" value="Title"/>
+      <hbox height="32">
+        <label id="trackeditor.label.title" class="dialog_label" value="Title" width="96"/>
         <spacer width="5"/> 
         <dbedit_textbox id="trackeditor.title" column="title" class="dialog_textbox" flex="1"/>
       </hbox>
-      <hbox>
-        <label id="trackeditor.label.artist" class="dialog_label" value="Artist"/>
+      <hbox height="32">
+        <label id="trackeditor.label.artist" class="dialog_label" value="Artist" width="96"/>
         <spacer width="5"/> 
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" class="sb_faceplate" flex="1" />
       </hbox>
-      <hbox>
-        <label id="trackeditor.label.album" class="dialog_label" value="Album"/>
+      <hbox height="32">
+        <label id="trackeditor.label.album" class="dialog_label" value="Album" width="96"/>
         <spacer width="5"/> 
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" class="sb_faceplate" flex="1"/>
       </hbox>
-      <hbox>
-        <label id="trackeditor.label.genre" class="dialog_label" value="Genre"/>
+      <hbox height="32">
+        <label id="trackeditor.label.genre" class="dialog_label" value="Genre" width="96"/>
         <spacer width="5"/> 
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" class="sb_faceplate" flex="1"/>
       </hbox>
-      <hbox>
-        <label id="trackeditor.label.length" class="dialog_label" value="Length"/>
+      <hbox height="32">
+        <label id="trackeditor.label.length" class="dialog_label" value="Length" width="96"/>
         <spacer width="5"/> 
         <dbedit_textbox id="trackeditor.length" readonly="1" column="length" class="dialog_textbox" flex="1"/>
       </hbox>
@@ -88,27 +88,51 @@
   <script>
   <![CDATA[
   var watcher = null;
+  var controls = Array();
+
+  function apply() 
+  {
+    for (var i=0;i<controls.length;i++)
+      controls[i].apply();
+  }
+  
+  function undo() 
+  {
+    for (var i=0;i<controls.length;i++)
+      controls[i].undo();
+  }
+  
   function onInit()
   {
     try
     { 
-      watcher = new sbIDataRemote("trackeditor.uri");
+      loadControls();
+      watcher = new sbIDataRemote("trackeditor.uuid");
       watcher.bindCallbackFunction(onTrackChange, false);
+      document.__APPLY_FUNCTION__ = apply;
+      document.__UNDO_FUNCTION__ = undo;
     }
     catch ( err )
     {
       alert( err );
     }
   } 
-  function onTrackChange(guid) {
-    document.getElementById("trackeditor.guid").setAttribute("value", guid);
-    document.getElementById("trackeditor.url").guid = guid;
-    document.getElementById("trackeditor.title").guid = guid;
-    document.getElementById("trackeditor.artist").guid = guid;
-    document.getElementById("trackeditor.album").guid = guid;
-    document.getElementById("trackeditor.genre").guid = guid;
-    document.getElementById("trackeditor.length").guid = guid;
+  
+  function loadControls() {
+    controls.push(document.getElementById("trackeditor.guid"));
+    controls.push(document.getElementById("trackeditor.url"));
+    controls.push(document.getElementById("trackeditor.title"));
+    controls.push(document.getElementById("trackeditor.artist"));
+    controls.push(document.getElementById("trackeditor.album"));
+    controls.push(document.getElementById("trackeditor.genre"));
+    controls.push(document.getElementById("trackeditor.length"));
   }
+  
+  function onTrackChange(guid) {
+    for (var i=0;i<controls.length;i++)
+      controls[i].guid = guid;
+  }
+
   function onDeinit()
   {
     watcher.unbind();

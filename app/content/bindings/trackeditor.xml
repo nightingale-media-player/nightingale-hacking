@@ -52,20 +52,6 @@
     <destructor>
     </destructor>
 
-    <method name="setSelection">
-      <parameter name="guids"/>
-      <body>
-        this.guid = guids[0]; // no multiple edition yet
-        this.updateForm();
-      </body>
-    </method>
-
-    <method name="updateForm">
-      <body>
-        this.updateForm();
-      </body>
-    </method>
-
     <method name="insertDrawerContent">
      <body>
        var ret = document.createElement("iframe");
@@ -74,10 +60,40 @@
        return ret;
      </body>
     </method>
+    
+    <method name="apply">
+      <body>
+        <![CDATA[
+          var iframe = this.getContent();
+          if (iframe) {
+            var doc = iframe.contentDocument;
+            var func = doc.__APPLY_FUNCTION__;
+            if (func) {
+              func();
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="undo">
+      <body>
+        <![CDATA[
+          var iframe = this.getContent();
+          if (iframe) {
+            var doc = iframe.contentDocument;
+            var func = doc.__UNDO_FUNCTION__;
+            if (func) {
+              func();
+            }
+          }
+        ]]>
+      </body>
+    </method>
 
     <method name="getContentSize">
      <body>
-       return 200;
+       return 225;
      </body>
     </method>
    
@@ -99,30 +115,50 @@
 
     <constructor>
       <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+
+        this.controls = Array();
+
+        var ontrackchange = { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onTrackChange(); } 
+        } ontrackchange._that = this;
+        this.editedtrack = new sbIDataRemote( "trackeditor.uuid" );
+        this.editedtrack.bindCallbackFunction(ontrackchange, true);
+
       ]]>
     </constructor>
     <destructor>
     </destructor>
-
-    <method name="setSelection">
-      <parameter name="guids"/>
-      <body>
-        this.guid = guids[0]; // no multiple edition yet
-        this.updateForm();
-      </body>
-    </method>
-
-    <method name="updateForm">
-      <body>
-        this.updateForm();
-      </body>
-    </method>
+    
+    <field name="controls">null</field>
+    
+    <property name="exclude">
+      <getter>
+        return this.getAttribute("exclude");
+      </getter>
+      <setter>
+        return this.setAttribute("exclude", val);
+      </setter>
+    </property>
 
     <method name="insertDrawerContent">
      <body>
+       // fixed size parent for the drawer content
        var ret = document.createElement("hbox");
        ret.setAttribute("class", "sb_faceplate");
        ret.setAttribute("height", this.getContentSize());
+       
+       // scrollable container for the controls
+       var container = document.createElement("vbox");
+       container.setAttribute("flex", "1");
+       container.setAttribute("style", "overflow: auto;");
+       ret.appendChild(container);
+       
+       // db controls
+       this.appendControls(container);
+
        return ret;
      </body>
     </method> 
@@ -131,6 +167,117 @@
      <body>
        return 100;
      </body>
+    </method>
+
+    <method name="apply">
+      <body>
+        <![CDATA[
+          for (var i=0;i<this.controls.length;i++)
+            this.controls[i].apply();
+        ]]>
+      </body>
+    </method>
+
+    <method name="undo">
+      <body>
+        <![CDATA[
+          for (var i=0;i<this.controls.length;i++)
+            this.controls[i].undo();
+        ]]>
+      </body>
+    </method>
+    
+    <method name="appendControls">
+      <parameter name="parent"/>
+      <body>
+        <![CDATA[
+          // Load up the string bundle
+          var src = "chrome://songbird/locale/songbird.properties";
+          var stringBundleService =
+              Components.classes["@mozilla.org/intl/stringbundle;1"]
+              .getService(Components.interfaces.nsIStringBundleService);
+          var stringbundle = stringBundleService.createBundle( src );
+
+          // enumerate the list of metadata columns and for each of them, check if it is in the exclusion list
+          var ml = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+          var query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+          query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
+          ml.SetQueryObject(query);
+          
+          ml.GetColumnInfo();
+          var destcols = query.GetResultObject();
+          for (var i=0;i<destcols.GetRowCount();i++) {
+            // if not, create a control for that column using its data type and readonly status
+            var name = destcols.GetRowCellByColumn(i, "column_name");
+            if (this.isExcluded(name)) continue;
+            var readablename = destcols.GetRowCellByColumn(i, "readable_name");
+            var type = destcols.GetRowCellByColumn(i, "type");
+            //var ro = destcols.GetRowCellByColumn(i, "readonly");
+            var elem = document.createElement("dbedit_textbox");
+            if (type == 'numeric') elem.setAttribute("numeric", true);
+            //if (ro) elem.setAttribute("readonly", "true");
+            elem.setAttribute("column", name);
+            elem.setAttribute("class", "dialog_textbox");
+            elem.setAttribute("flex", "1");
+            // create a container for the element, add a descriptive label and a spacer to it
+            var hbox = document.createElement("hbox");
+            hbox.setAttribute("height", "32");
+            var label = document.createElement("label");
+            label.setAttribute("class", "dialog_label");
+            if (readablename.slice(0, 1) == "&") 
+            {
+              try
+              {
+                readablename = stringbundle.GetStringFromName( readablename.substr( 1, readablename.length ) );
+              }
+              catch( err )
+              {
+              }
+            }
+            label.setAttribute("value", readablename);
+            label.setAttribute("width", "96");
+            var spacer = document.createElement("spacer");
+            spacer.setAttribute("width", "5");
+            hbox.appendChild(label);
+            hbox.appendChild(spacer);
+            hbox.appendChild(elem);
+            // add the container to the parent
+            parent.appendChild(hbox);
+            // register the db control
+            this.controls.push(elem);
+            // do not set the guid yet, the controls are not inserted in the dom at this point, so the xbl has not been instantiated, wait for onContentInserted
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="onContentInserted">
+      <body>
+        // set controls guids
+        this.onTrackChange();
+      </body>
+    </method>
+    
+    <method name="onTrackChange">
+      <body>
+        <![CDATA[
+          for (var i=0;i<this.controls.length;i++) 
+            this.controls[i].guid = this.editedtrack.getValue();
+        ]]>
+      </body>
+    </method>
+    
+    <method name="isExcluded">
+      <parameter name="col"/>
+      <body>
+        <![CDATA[
+          var excludelist = this.exclude;
+          var excludearray = excludelist.split(";");
+          for (var i=0;i<excludearray.length;i++)
+            if (excludearray[i].toUpperCase() == col.toUpperCase()) return true;
+          return false;
+        ]]>
+      </body>
     </method>
 
    </implementation>

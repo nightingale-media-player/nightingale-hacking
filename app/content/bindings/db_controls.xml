@@ -47,12 +47,8 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
-        this.ml = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-        this.query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-        this.query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
-        this.ml.SetQueryObject(this.query);
+        //var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        //jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
       ]]>
     </constructor>
     <destructor>
@@ -61,6 +57,16 @@
     <field name="ml">null</field>
     <field name="query">null</field>
 
+    <property name="readonly">
+      <getter>
+        return this.getAttribute("readonly");;
+      </getter>
+      <setter>
+        this.setAttribute("readonly", val);
+        return val;
+      </setter>
+    </property>
+
     <property name="guid">
       <getter>
         return this.getAttribute("guid");;
@@ -68,7 +74,7 @@
       <setter>
         this.setAttribute("guid", val);
         this.undo();
-        return this.guid;
+        return val;
       </setter>
     </property>
     
@@ -79,7 +85,7 @@
       <setter>
         this.setAttribute("column", val);
         this.undo();
-        return this.column;
+        return val;
       </setter>
     </property>
 
@@ -96,6 +102,8 @@
       <parameter name="value"/>
       <body>
         <![CDATA[
+          var ro = this.getAttribute("readonly");
+          if (ro == "1" || ro == "true") return;
           this.initMl();
           this.ml.SetValueByGUID(this.guid, this.column, value, false);
         ]]>
@@ -104,7 +112,11 @@
     
     <method name="apply">
       <body>
-        this.setValueToDatabase(this.getValueFromControl());
+        <![CDATA[
+          var ro = this.getAttribute("readonly");
+          if (ro == "1" || ro == "true") return;
+          this.setValueToDatabase(this.getValueFromControl());
+        ]]>
       </body>
     </method>
     
@@ -116,6 +128,15 @@
 
     <method name="initMl">
       <body>
+        <![CDATA[
+        if (!this.ml) 
+        {
+          this.ml = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+          this.query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+          this.query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
+          this.ml.SetQueryObject(this.query);
+        }
+        ]]>
       </body>
     </method>    
    
@@ -123,6 +144,48 @@
  
   </binding>
 
+
+
+
+  <!-- DB LABEL CONTROL -->
+
+
+
+
+  <binding id="label" extends="chrome://songbird/content/bindings/db_controls.xml#base">
+
+  <content>
+    <xul:label flex="1" sid="dbedit.label" xbl:inherits="class=class" />
+  </content>
+
+  <implementation>
+
+    <constructor>
+      this.setAttribute("readonly", "1");
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <field name="label">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.label');</field>
+
+    <method name="setValueToControl">
+      <parameter name="value"/>
+      <body>
+        this.label.setAttribute("value", value);
+      </body>
+    </method>
+    
+    <method name="getValueFromControl">
+      <body>
+        return this.label.getAttribute("value");
+      </body>
+    </method>
+    
+    
+    
+   </implementation>
+ 
+  </binding>
 
 
 
@@ -135,7 +198,7 @@
   <binding id="textbox" extends="chrome://songbird/content/bindings/db_controls.xml#base">
 
   <content>
-    <xul:textbox flex="1" sid="dbedit.textbox" xbl:inherits="readonly=readonly,class=class" />
+    <xul:textbox flex="1" sid="dbedit.textbox" xbl:inherits="class=class" />
   </content>
 
   <implementation>
@@ -179,6 +242,7 @@
   <content>
     <xul:menulist 
       sid="list"
+      flex="1"
       xbl:inherits="editable=editable,class=class,id=listid"
        onpopupshowing="onPopup();"
     >

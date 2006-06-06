@@ -55,7 +55,7 @@
             <xul:spacer flex="1"/>
           </xul:vbox>
           <xul:spacer flex="1"/>
-          <xul:button class="dialog_button" id="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
+          <xul:button class="dialog_button" sbid="drawer_openclose" label="+" oncommand="toggleDrawer();"/>
         </xul:hbox>
             
         <!-- stuff gets stuffed here -->
@@ -72,10 +72,6 @@
          jsLoader.loadSubScript( "chrome://songbird/content/scripts/instancetimer.js", this );
          this.boxid = "growbox."+this.getAttribute("id");
          this.size = this.getContentSize();
-         var drawerstate = this.getAttribute('drawerstate');
-         if (drawerstate == "open") {
-           //this.openDrawer(null, true);
-         }
          this.hflex = document.getElementById(this.getAttribute("hflex"));
          if (this.hflex) this.hflex.setAttribute("flex", "0");
        ]]>
@@ -87,6 +83,7 @@
       <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
       <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
       <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
+      <field name="openclosebutton">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer_openclose');</field>
       <field name="size">0</field>  <!-- height of the added content box -->
       <field name="distance">0</field>
       <field name="current">0</field>
@@ -125,6 +122,7 @@
             if ( ! this.tracking )
             {
               this.state = "open";
+              this.openclosebutton.label = "-";
               
               if (this.hflex) this.hflex.setAttribute("flex", "1");
 
@@ -165,6 +163,7 @@
           try
           {
             this.state = "closed";
+            this.openclosebutton.label = "+";
             // No animations until we finish
             if ( ! this.tracking )
             {
@@ -179,6 +178,12 @@
               // Remove the content
               this.parent.removeChild( this.content );
               this.content = null;
+
+              try 
+              {
+                this.onContentRemoved();
+              }
+              catch (e) { }
               
               // Set our animation values
               this.tracking = true;
@@ -299,12 +304,23 @@
           {
             this.content = this.insertDrawerContent();
             this.parent.insertBefore( this.content, this.before );
+            try 
+            {
+              this.onContentInserted();
+            }
+            catch (e) { }
           }
           catch ( err )
           {
             alert( "drawer.xml - insertContent - " + err );
           }
           ]]>
+        </body>
+      </method>
+      
+      <method name="getContent">
+        <body>
+          return this.content;
         </body>
       </method>
             

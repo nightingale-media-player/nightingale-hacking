@@ -154,6 +154,10 @@ exttrackeditor {
   -moz-binding: url("chrome://songbird/content/bindings/trackeditor.xml#exttrackeditor") !important;
 }
 
+dbedit_label {
+  -moz-binding: url("chrome://songbird/content/bindings/db_controls.xml#label");
+}
+
 dbedit_textbox {
   -moz-binding: url("chrome://songbird/content/bindings/db_controls.xml#textbox") !important;
 }

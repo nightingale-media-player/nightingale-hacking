@@ -216,7 +216,8 @@
       if ( new_playlist_data.retval == "ok" )
       {
         var playlistname = new_playlist_data.playlistname;
-        if (playlistname.replace(/ /g, "") != "") 
+        playlistname = playlistname.replace(/ /g, "");
+        if (playlistname != "") 
         {
           // create it !
           createNewPlaylist(playlistname);

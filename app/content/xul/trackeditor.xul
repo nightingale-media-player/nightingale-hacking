@@ -37,6 +37,7 @@
  title="Track Editor !changeme!"
  hidechrome="true"
  buttons="none"
+ onkeydown="handleKeyDown(event);"
  onload="onLoadTrackEditor();"
  onunload="onUnloadTrackEditor();"
  windowtype="track_editor"
@@ -93,11 +94,12 @@
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
 
           <hbox id="trackeditor.hflex">
-            <trackeditor drawerstate="open" id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="Tracks Data" flex="1" />
+            <trackeditor id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="Track Data" flex="1" />
           </hbox>
           
           <hbox id="exttrackeditor.hflex">
-            <exttrackeditor id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="Extended Data" flex="1" />
+            <exttrackeditor id="trackeditor.exttrackeditor" hflex="exttrackeditor.hflex" title="Extended Data" flex="1" 
+             exclude="uuid;url;title;artist;album;genre;length"/>
           </hbox>
           
           <hbox id="tageditor.hflex">
@@ -108,6 +110,8 @@
           <hbox>
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
             <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="button_undo" label="Undo" class="dialog_button sb_faceplate" oncommand="doUndo();"/> <!-- internationalize -->
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/> 
           </hbox>
@@ -140,16 +144,56 @@
    src="chrome://songbird/content/scripts/songbird.js" />
   
   <script>
+
+  <![CDATA[
+
+  const VK_ESCAPE = 27;
+  const VK_ENTER = 13;
   
   function onLoadTrackEditor() {
+    SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') + 1 );
     onWindowLoadPosition();
+    document.getElementById("trackeditor.trackeditor").openDrawer();
   }
   
   function onUnloadTrackEditor() {
+    var pause = SBDataGetIntValue('backscan.paused') - 1;
+    if ( pause < 0 ) pause = 0;
+    SBDataSetValue('backscan.paused', pause );
     onWindowSavePosition();
   }
   
+  function doOK() {
+    document.getElementById("trackeditor.trackeditor").apply();
+    document.getElementById("trackeditor.exttrackeditor").apply();
+    document.getElementById("trackeditor.tageditor").apply();
+    return true;
+  }
+
+  function doUndo() {
+    document.getElementById("trackeditor.trackeditor").undo();
+    document.getElementById("trackeditor.exttrackeditor").undo();
+    document.getElementById("trackeditor.tageditor").undo();
+  }
   
+  function doCancel() {
+    return true;
+  }
+
+  function handleKeyDown(event) 
+  {
+    switch (event.keyCode)
+    {
+      case VK_ESCAPE:
+        document.getElementById("button_cancel").doCommand();
+        break;
+      case VK_ENTER:
+        document.getElementById("button_ok").doCommand();
+        break;
+    }
+  }
+  
+  ]]>
   </script>
 
 </window>

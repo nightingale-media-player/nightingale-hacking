@@ -47,30 +47,21 @@
 
     <constructor>
       <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
       ]]>
     </constructor>
     <destructor>
     </destructor>
-
-    <method name="setSelection">
-      <parameter name="guids"/>
-      <body>
-        this.guid = guids[0]; // no multiple edition yet
-        this.updateForm();
-      </body>
-    </method>
-
-    <method name="updateForm">
-      <body>
-        this.updateForm();
-      </body>
-    </method>
 
     <method name="insertDrawerContent">
      <body>
        var ret = document.createElement("hbox");
        ret.setAttribute("class", "sb_faceplate");
        ret.setAttribute("height", this.getContentSize());
+       
+       this.appendControls(ret);
+       
        return ret;
      </body>
     </method>
@@ -79,6 +70,264 @@
      <body>
        return 150;
      </body>
+    </method>
+
+    <method name="appendControls">
+      <parameter name="parent"/>
+      <body>
+        <![CDATA[
+          var lspacer = document.createElement("spacer");
+          var rspacer = document.createElement("spacer");
+          var vbox = document.createElement("vbox");
+          var hbox = document.createElement("hbox");
+          var remove = document.createElement("button");
+          var add = document.createElement("button");
+          var clear = document.createElement("button");
+          var list = document.createElement("listbox");
+          lspacer.setAttribute("flex", "1");
+          rspacer.setAttribute("flex", "1");
+          add.setAttribute("class", "dialog_button");
+          add.setAttribute("label", "Add"); // todo: internationalize
+          clear.setAttribute("class", "dialog_button");
+          clear.setAttribute("label", "Clear"); // todo: internationalize
+          remove.setAttribute("class", "dialog_button");
+          remove.setAttribute("label", "Remove"); // todo: internationalize
+          list.setAttribute("class", "dialog_listbox");
+          list.setAttribute("height", "128");
+          parent.appendChild(lspacer);
+          parent.appendChild(vbox);
+          parent.appendChild(rspacer);
+          vbox.appendChild(list);
+          vbox.appendChild(hbox);
+          hbox.appendChild(clear);
+          hbox.appendChild(remove);
+          hbox.appendChild(add);
+          
+          this.list = list;
+          this.remove = remove;
+          this.clear = clear;
+
+          var onlistselect = { 
+            _that: null, 
+            handleEvent: function( event ) { this._that.onListSelect(); } 
+          } onlistselect._that = this;
+          list.addEventListener("select", onlistselect, false);
+
+          var onclickadd = { 
+            _that: null, 
+            handleEvent: function( event ) { this._that.onClickAdd(); } 
+          } onclickadd._that = this;
+          add.addEventListener("command", onclickadd, false);
+
+          var onclickremove = { 
+            _that: null, 
+            handleEvent: function( event ) { this._that.onClickRemove(); } 
+          } onclickremove._that = this;
+          remove.addEventListener("command", onclickremove, false);
+
+          var onclickclear = { 
+            _that: null, 
+            handleEvent: function( event ) { this._that.onClickClear(); } 
+          } onclickclear._that = this;
+          clear.addEventListener("command", onclickclear, false);
+          
+          // do not insert the items now, the elements have not yet been created, wait for onContentInserted
+        ]]>
+      </body>
+    </method>
+
+    <method name="onClickAdd">
+      <body>
+        <![CDATA[
+          var new_tag_data = new Object();
+          // Open the modal dialog
+          var retval = window.openDialog( "chrome://songbird/content/xul/add_tag.xul", "add_tag", "chrome,modal=yes, centerscreen", new_tag_data );
+          if ( new_tag_data.retval == "ok" )
+          {
+            var tagname = new_tag_data.tagname;
+            tagname = tagname.replace(/ /g, "");
+            if (tagname != "") 
+            {
+              if (this.isInList(tagname)) {
+                this.messagebox("tagseditor.tagexists.title", "tagseditor.tagexists.msg", "Add Tag", "This tag is already in the list", false);
+                return;
+              }
+              this.list.appendItem(tagname);
+              this.enableClearButton();
+            }
+          }  
+        ]]>
+      </body>
+    </method>
+
+    <method name="messagebox">
+      <parameter name="titlestring"/>
+      <parameter name="msgstring"/>
+      <parameter name="deftitle"/>
+      <parameter name="defmsg"/>
+      <parameter name="wantcancel"/>
+      <body>
+        <![CDATA[
+          var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+          var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+          var msg = defmsg;
+          var title = deftitle;
+          try {
+            msg = songbirdStrings.GetStringFromName(msgstring);
+            title = songbirdStrings.GetStringFromName(titlestring);
+          } catch (e) {}
+          return this.sbMessageBox(title, msg, wantcancel);
+        ]]>
+      </body>
+    </method>
+
+    <method name="onClickClear">
+      <body>
+        <![CDATA[
+          if (this.messagebox("tagseditor.clear.title", "tagseditor.clear.msg", "Clear", "Clear all tags ?", true) == "accept") {
+            this.clearAllTags();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="clearAllTags">
+      <body>
+        <![CDATA[
+          if (this.list) {
+	          while (this.list.getRowCount() > 0) {
+		          this.list.removeItemAt(0);
+		        }
+		      }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onClickRemove">
+      <body>
+        <![CDATA[
+          var i = this.list.selectedItem;
+          this.list.removeItemAt(i);
+          if (this.list.getRowCount() <= 0) this.disableClearButton();
+          if (!this.list.selectedItem) this.disableRemoveButton();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onListSelect">
+      <body>
+        <![CDATA[
+          if (this.list.selectedItem != -1)
+            this.enableRemoveButton();
+          else
+            this.disableRemoveButton();
+        ]]>
+      </body>
+    </method>
+
+    <method name="enableRemoveButton">
+      <body>
+        <![CDATA[
+          if (this.remove) {
+            this.remove.setAttribute("disabled", "false");
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="disableRemoveButton">
+      <body>
+        <![CDATA[
+          if (this.remove) {
+            this.remove.setAttribute("disabled", "true");
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="disableClearButton">
+      <body>
+        <![CDATA[
+          if (this.remove) {
+            this.clear.setAttribute("disabled", "true");
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="enableClearButton">
+      <body>
+        <![CDATA[
+          if (this.remove) {
+            this.clear.setAttribute("disabled", "false");
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onContentInserted">
+      <body>
+        <![CDATA[
+          this.initList();
+        ]]>
+      </body>
+    </method>
+    
+    <method name="initList">
+      <body>
+        <![CDATA[
+          if (this.list) {
+            this.clearAllTags();
+            this.loadFromDB();
+            if (this.list.getRowCount() <= 0) this.clear.setAttribute("disabled", "true");
+            this.remove.setAttribute("disabled", "true");
+          }
+        ]]>
+      </body>
+    </method>
+    
+    <method name="isInList">
+      <parameter name="val"/>
+      <body>
+        <![CDATA[
+          if (this.list) {
+            for (var i=0;i<this.list.getRowCount();i++) {
+              var item = this.list.getItemAtIndex(i);
+              alert (item.value);
+              if (item.label.toUpperCase() == val.toUpperCase()) return true;
+            }
+          }
+          return false;
+        ]]>
+      </body>
+    </method>
+
+    <method name="apply">
+      <body>
+        <![CDATA[
+          this.saveToDB();
+        ]]>
+      </body>
+    </method>
+
+    <method name="undo">
+      <body>
+        this.initList();
+      </body>
+    </method>
+
+    <method name="loadFromDB">
+      <body>
+        <![CDATA[
+        ]]>
+      </body>
+    </method>
+
+    <method name="saveToDB">
+      <body>
+        <![CDATA[
+        ]]>
+      </body>
     </method>
 
    </implementation>
