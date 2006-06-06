@@ -31,13 +31,14 @@
 
 #pragma once
 
-#ifdef WIN32
+#ifdef XP_WIN
 #include <windows.h>
 #include <dbt.h>
 #define NATIVEWINDOW HWND
-#define NATVIVEDEVICENOTIFY HDEVNOTIFY 
+#define NATIVEDEVICENOTIFY HDEVNOTIFY 
 #else
 #define NATIVEWINDOW void*
+#define NATIVEDEVICENOTIFY void* 
 #endif
 
 // INCLUDES ===================================================================

@@ -33,6 +33,7 @@
 
 // INCLUDES ===================================================================
 
+/*
 // XXX Remove Me !!!
 #ifndef PRUSTRING_DEFINED
 #define PRUSTRING_DEFINED
@@ -43,6 +44,7 @@ namespace std
   typedef basic_string< PRUnichar > prustring;
 };
 #endif
+*/
 
 #include "NativeWindowFromNode.h"
 
@@ -70,7 +72,7 @@ protected:
   
   WNDPROC m_prevWndProc;
   NATIVEWINDOW m_hwnd;
-  NATVIVEDEVICENOTIFY m_hDevNotify;
+  NATIVEDEVICENOTIFY m_hDevNotify;
   nsISupports *m_window;
   sbIWindowMinMaxCallback *m_callback;
   
