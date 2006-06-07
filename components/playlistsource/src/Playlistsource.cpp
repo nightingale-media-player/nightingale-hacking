@@ -154,7 +154,7 @@ MyQueryCallback::MyQueryCallback()
   nsresult rv;
   m_Timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create timer for MyQueryCallback!");
-  m_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
+  m_pMonitor = nsAutoMonitor::NewMonitor("myquerycallback.m_pMonitor");
   NS_ASSERTION(m_pMonitor, "Failed to create local monitor");
   m_Count = 0;
 }
