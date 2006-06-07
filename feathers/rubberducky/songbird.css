@@ -620,11 +620,13 @@ button#library_cmd_play
 {
   list-style-image: url(default/toolbar_play_normal.png) !important;  
   color: #99A195 !important;
+  padding-left: 3px;
 }
 button#library_cmd_play:hover
 {
   list-style-image: url(default/toolbar_play_hover.png) !important;
   color: #FFF !important;
+  padding-left: 3px;
 }
 button#library_cmd_play[disabled="true"]
 {
@@ -632,19 +634,23 @@ button#library_cmd_play[disabled="true"]
   padding-left: 8px !important; /* stops this button from shifting on the library view */
   padding-right: 9px !important; /* stops the play button from shifting the rest of the buttons on the url slurper  */
   color: #505154 !important;
+  padding-left: 3px;
 }
 menuitem#library_cmd_play
 {
+  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_hover.png) !important;
-  color: #FFF !important;
+  color: #FFF !important;  
 }
-menuitem#library_cmd_play:hover
+menuitem#library_cmd_play[active="true"]:hover
 {
+  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_disabled.png) !important;
   color: #505154 !important;
 }
 menuitem#library_cmd_play[disabled="true"]
 {
+  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_normal.png) !important;
   color: #99A195 !important;
 }
@@ -671,7 +677,7 @@ menuitem#library_cmd_remove
   list-style-image: url(default/toolbar_remove_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_remove:hover
+menuitem#library_cmd_remove[active="true"]:hover
 {
   list-style-image: url(default/toolbar_remove_disabled.png) !important;
   color: #505154 !important;
@@ -705,7 +711,7 @@ menuitem#library_cmd_edit
   list-style-image: url(default/toolbar_info_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_edit:hover
+menuitem#library_cmd_edit[active="true"]:hover
 {
   list-style-image: url(default/toolbar_info_disabled.png) !important;
   color: #505154 !important;
@@ -739,7 +745,7 @@ menuitem#library_cmd_addtoplaylist
   list-style-image: url(default/toolbar_addtoplaylist_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_addtoplaylist:hover
+menuitem#library_cmd_addtoplaylist[active="true"]:hover
 {
   list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
   color: #505154 !important;
@@ -772,7 +778,7 @@ menuitem#library_cmd_burntocd
   list-style-image: url(default/toolbar_burntocd_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_burntocd:hover
+menuitem#library_cmd_burntocd[active="true"]:hover
 {
   list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
   color: #505154 !important;
@@ -805,7 +811,7 @@ menuitem#library_cmd_device
   list-style-image: url(default/toolbar_device_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_device:hover
+menuitem#library_cmd_device[active="true"]:hover
 {
   list-style-image: url(default/toolbar_device_disabled.png) !important;
   color: #505154 !important;
@@ -822,7 +828,7 @@ button#library_cmd_addtolibrary
   list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
   color: #99A195 !important;
 }
-button#library_cmd_addtolibrary:hover
+button#library_cmd_addtolibrary[active="true"]:hover
 {
   list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
   color: #FFF !important;
@@ -838,7 +844,7 @@ menuitem#library_cmd_addtolibrary
   list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_addtolibrary:hover
+menuitem#library_cmd_addtolibrary[active="true"]:hover
 {
   list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
   color: #505154 !important;
@@ -871,7 +877,7 @@ menuitem#library_cmd_download
   list-style-image: url(default/toolbar_download_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_download:hover
+menuitem#library_cmd_download[active="true"]:hover
 {
   list-style-image: url(default/toolbar_download_disabled.png) !important;
   color: #505154 !important;
@@ -904,7 +910,7 @@ menuitem#library_cmd_subscribe
   list-style-image: url(default/toolbar_subscribe_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_subscribe:hover
+menuitem#library_cmd_subscribe[active="true"]:hover
 {
   list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
   color: #505154 !important;
@@ -937,7 +943,7 @@ menuitem#library_cmd_pause
   list-style-image: url(default/toolbar_pause_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_pause:hover
+menuitem#library_cmd_pause[active="true"]:hover
 {
   list-style-image: url(default/toolbar_pause_disabled.png) !important;
   color: #505154 !important;
@@ -970,7 +976,7 @@ menuitem#library_cmd_resume
   list-style-image: url(default/toolbar_resume_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_resume:hover
+menuitem#library_cmd_resume[active="true"]:hover
 {
   list-style-image: url(default/toolbar_resume_disabled.png) !important;
   color: #505154 !important;
@@ -1003,7 +1009,7 @@ menuitem#library_cmd_showdlplaylist
   list-style-image: url(default/toolbar_downloads_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_showdlplaylist:hover
+menuitem#library_cmd_showdlplaylist[active="true"]:hover
 {
   list-style-image: url(default/toolbar_downloads_disabled.png) !important;
   color: #505154 !important;
@@ -1036,7 +1042,7 @@ menuitem#library_cmd_showwebplaylist
   list-style-image: url(default/toolbar_webplaylist_hover.png) !important;
   color: #FFF !important;
 }
-menuitem#library_cmd_showwebplaylist:hover
+menuitem#library_cmd_showwebplaylist[active="true"]:hover
 {
   list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
   color: #505154 !important;
