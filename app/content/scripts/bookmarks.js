@@ -127,7 +127,7 @@ var bmManager = {
       SBDataSetValue("bookmarks.bookmark2.label", "Swedelife");
       SBDataSetValue("bookmarks.bookmark2.url", "http://www.swedelife.com/");
       SBDataSetValue("bookmarks.bookmark2.icon", "http://www.swedelife.com/favicon.ico");
-      SBDataSetValue("bookmarks.bookmark3.label", "La Blogothèque");
+      SBDataSetValue("bookmarks.bookmark3.label", "La Blogotheque");
       SBDataSetValue("bookmarks.bookmark3.url", "http://www.blogotheque.net/mp3/");
       SBDataSetValue("bookmarks.bookmark3.icon", "chrome://songbird/skin/serviceicons/pogues.ico");
       SBDataSetValue("bookmarks.bookmark4.label", "Medicine");
