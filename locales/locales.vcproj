@@ -85,6 +85,9 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				RelativePath=".\en-US\songbird.properties">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\jar.mn">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

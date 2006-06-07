@@ -1,4 +1,5 @@
 songbird.jar:
+% content   songbird            jar:songbird.jar!/content/songbird/
   content/songbird/xul/about.xul            (about.xul)
   content/songbird/xul/add_to_playlist.xul  (add_to_playlist.xul)
   content/songbird/xul/control_pane.xul     (control_pane.xul)

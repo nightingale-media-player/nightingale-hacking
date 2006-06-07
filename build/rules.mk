@@ -142,6 +142,10 @@ ifdef SONGBIRD_XULRUNNER
 targets += copy_sb_xulrunner
 endif
 
+ifdef JAR_MANIFEST
+targets += make_jar
+endif
+
 ifdef SONGBIRD_CHROME_MANIFEST
 targets += copy_sb_chrome_manifest
 endif
@@ -227,12 +231,12 @@ endif
 compiler_objects = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 $(compiler_objects) :%$(OBJ_SUFFIX): %.cpp
-	$(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $<
+	$(CYGWIN_WRAPPER) $(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $<
 
 cpp_compile: $(compiler_objects)
 
 cpp_clean:
-	$(RM) -f $(compiler_objects) vc70.pdb
+	$(CYGWIN_WRAPPER) $(RM) -f $(compiler_objects) vc70.pdb vc71.pdb
 
 .PHONY : cpp_compile cpp_clean
 
@@ -292,15 +296,15 @@ endif
 
 linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 
-makelink_cmd = $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
+makelink_cmd = $(CYGWIN_WRAPPER) $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
 
 dll_link: $(DYNAMIC_LIB_OBJS)
-	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(linker_objs)
-	$(CHMOD) +x $(DYNAMIC_LIB)
+	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(linker_objs)
+	$(CYGWIN_WRAPPER) $(CHMOD) +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
 
 dll_clean:
-	$(RM) -f $(DYNAMIC_LIB) \
+	$(CYGWIN_WRAPPER) $(RM) -f $(DYNAMIC_LIB) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
 	      $(DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
@@ -333,22 +337,21 @@ linker_out = $(ARFLAGS_OUT_PREFIX)$(STATIC_LIB)$(ARFLAGS_OUT_SUFFIX)
 static_lib_deps = $(STATIC_LIB_OBJS)
 
 ifdef USING_RANLIB
-ranlib_cmd = $(RANLIB) $(linker_out)
+ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(linker_out)
 static_lib_deps += lib_clean
 else
 ranlib_cmd = @echo Not using ranlib
 endif
 
-makelink_cmd = $(LN) $(LNFLAGS) $(STATIC_LIB) $(addprefix lib,$(STATIC_LIB))
+makelink_cmd = $(CYGWIN_WRAPPER) $(LN) $(LNFLAGS) $(STATIC_LIB) $(addprefix lib,$(STATIC_LIB))
 
 lib_link: $(static_lib_deps)
-	$(AR) $(linker_flags) $(linker_out) $(STATIC_LIB_OBJS)
+	$(CYGWIN_WRAPPER) $(AR) $(linker_flags) $(linker_out) $(STATIC_LIB_OBJS)
 	$(ranlib_cmd)
 	$(makelink_cmd)
 
 lib_clean:
-	$(RM) -f $(STATIC_LIB) \
-        $(NULL)
+	$(CYGWIN_WRAPPER) $(RM) -f $(STATIC_LIB)
 
 .PHONY : lib_clean
 
@@ -381,10 +384,10 @@ xpidl_includes = $(addprefix $(XPIDLFLAGS_INCLUDE), $(xpidl_includes_temp))
 xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
 
 $(xpidl_headers): %.h: %.idl
-	$(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
+	$(CYGWIN_WRAPPER) $(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 
 xpidl_clean_headers:
-	$(RM) -f $(xpidl_headers)
+	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_headers)
 
 .PHONY : xpidl_compile_headers xpidl_clean_headers
 
@@ -406,10 +409,10 @@ xpidl_includes = $(addprefix $(XPIDLFLAGS_INCLUDE), $(xpidl_includes_temp))
 xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
 
 $(xpidl_typelibs): %.xpt: %.idl
-	$(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
+	$(CYGWIN_WRAPPER) $(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
 
 xpidl_clean_typelibs:
-	$(RM) -f $(xpidl_typelibs)
+	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_typelibs)
 
 .PHONY : xpidl_compile_typelibs xpidl_clean_typelibs
 
@@ -422,10 +425,10 @@ ifdef XPIDL_MODULE
 xpidl_module_typelibs = $(XPIDL_MODULE_TYPELIBS)
 
 xpidl_link: $(xpidl_module_typelibs)
-	$(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
+	$(CYGWIN_WRAPPER) $(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
 
 xpidl_clean_link:
-	$(RM) -f $(XPIDL_MODULE)
+	$(CYGWIN_WRAPPER) $(RM) -f $(XPIDL_MODULE)
 
 .PHONY : xpidl_link xpidl_clean_link
 
@@ -454,7 +457,7 @@ $(SUBDIRDEPS6)
 endif
 
 $(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+	$(CYGWIN_WRAPPER) $(MAKE) -C $@ $(MAKECMDGOALS)
 
 .PHONY : make_subdirs $(SUBDIRS)
 
@@ -491,7 +494,13 @@ else
     clone_exclude_dir := $(addprefix ! -wholename "*/,$(clone_exclude_dir))
   endif
 
-  find_exp = -type f ! -path "*.svn*" $(clone_exclude_dir) ! -name "Makefile.in" $(clone_exclude_name)
+  find_exp = -type f ! \
+             -path "*.svn*" \
+             $(clone_exclude_dir) \
+             ! -name "Makefile.in"  \
+             ! -name "jar.mn" \
+             $(clone_exclude_name) \
+             $(NULL)
 
 endif
 
@@ -499,7 +508,7 @@ files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))
 
 ifdef files_list
 clone_dir_cmd = cd $(srcdir) && \
-                $(CP) -P -f -p --parents $(files_list) $(CLONEDIR) \
+                $(CYGWIN_WRAPPER) $(CP) -P -f -p --parents $(files_list) $(CLONEDIR) \
                 $(NULL)
 endif
 
@@ -514,7 +523,7 @@ endif #CLONEDIR
 
 ifdef SONGBIRD_DIST
 copy_sb_dist:
-	$(CP) -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
 
@@ -522,7 +531,7 @@ endif #SONGBIRD_DIST
 
 ifdef SONGBIRD_CHROME
 copy_sb_chrome:
-	$(CP) -dfp $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_CHROME) $(SONGBIRD_CHROMEDIR)
 .PHONY : copy_sb_chrome
 endif #SONGBIRD_CHROME
 
@@ -530,7 +539,7 @@ endif #SONGBIRD_CHROME
 
 ifdef SONGBIRD_COMPONENTS
 copy_sb_components:
-	$(CP) -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_COMPONENTS) $(SONGBIRD_COMPONENTSDIR)
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
 
@@ -538,7 +547,7 @@ endif #SONGBIRD_COMPONENTS
 
 ifdef SONGBIRD_DEFAULTS
 copy_sb_defaults:
-	$(CP) -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_DEFAULTS) $(SONGBIRD_DEFAULTSDIR)
 .PHONY : copy_sb_defaults
 endif #SONGBIRD_DEFAULTS  
 
@@ -547,7 +556,7 @@ endif #SONGBIRD_DEFAULTS
 ifdef SONGBIRD_PREFS
 songbird_pref_files := $(addprefix $(srcdir)/,$(SONGBIRD_PREFS))
 copy_sb_prefs:
-	$(CP) -dfp $(songbird_pref_files) $(SONGBIRD_PREFERENCESDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(songbird_pref_files) $(SONGBIRD_PREFERENCESDIR)
 .PHONY : copy_sb_prefs
 endif #SONGBIRD_PREFS
 
@@ -555,7 +564,7 @@ endif #SONGBIRD_PREFS
 
 ifdef SONGBIRD_PLUGINS
 copy_sb_plugins:
-	$(CP) -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_PLUGINS) $(SONGBIRD_PLUGINSDIR)
 .PHONY : copy_sb_plugins
 endif #SONGBIRD_PLUGINS
 
@@ -563,7 +572,7 @@ endif #SONGBIRD_PLUGINS
 
 ifdef SONGBIRD_VLCPLUGINS
 copy_sb_vlcplugins:
-	$(CP) -dfp $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_VLCPLUGINS) $(SONGBIRD_VLCPLUGINSDIR)
 .PHONY : copy_sb_vlcplugins
 endif #SONGBIRD_VLCPLUGINS
 
@@ -571,7 +580,7 @@ endif #SONGBIRD_VLCPLUGINS
 
 ifdef SONGBIRD_XULRUNNER
 copy_sb_xulrunner:
-	$(CP) -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
 
@@ -579,13 +588,33 @@ endif #SONGBIRD_XULRUNNER
 # Rules for packaging things nicely
 #------------------------------------------------------------------------------
 
+ifdef JAR_MANIFEST
+MAKE_JARS_FLAGS = -s $(srcdir) \
+                  -t $(topsrcdir) \
+                  -j $(SONGBIRD_CHROMEDIR) \
+                  -d $(SONGBIRD_CHROMEDIR)/stage \
+                  -z $(ZIP) \
+                  -p $(topsrcdir)/build/preprocessor.pl \
+                  -v \
+                  $(NULL)
+make_jar:
+	@$(PERL) -I$(BUILDDIR) \
+           $(BUILDDIR)/make-jars.pl \
+           $(MAKE_JARS_FLAGS) \
+           < $(srcdir)/$(JAR_MANIFEST) \
+           $(NULL)
+	@$(CYGWIN_WRAPPER) $(RM) -rf $(SONGBIRD_CHROMEDIR)/stage
+
+.PHONY : make_jar
+endif
+
 ifdef SONGBIRD_CHROME_MANIFEST
 ifneq (1,$(words $(SONGBIRD_CHROME_MANIFEST)))
 $(error You can only have one file as your chrome.manifest)
 endif
 chrome_manifest = $(SONGBIRD_CHROMEDIR)/chrome.manifest
 copy_sb_chrome_manifest: $(SONGBIRD_CHROME_MANIFEST)
-	$(CP) -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
+	$(CYGWIN_WRAPPER) $(CP) -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
 #.PHONY : copy_sb_chrome_manifest
 endif
 
@@ -611,8 +640,8 @@ endif
 endif
 
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
-	$(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable)
-	$(CHMOD) +x $(sb_executable)
+	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable)
+	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable)
 
 #.PHONY : move_sb_stub_executable
 
@@ -624,7 +653,7 @@ endif
 
 ifdef EXECUTABLE
 chmod_add_executable:
-	$(CHMOD) +x $(EXECUTABLE)
+	$(CYGWIN_WRAPPER) $(CHMOD) +x $(EXECUTABLE)
 .PHONY : chmod_add_executable
 endif
 
@@ -657,7 +686,7 @@ endif
 endif
 
 unzip_file:
-	$(UNZIP) $(unzip_flags) $(UNZIP_SRC) $(UNZIPFLAGS_EXTRACT) $(UNZIP_DEST_DIR)
+	$(CYGWIN_WRAPPER) $(UNZIP) $(unzip_flags) $(UNZIP_SRC) $(UNZIPFLAGS_EXTRACT) $(UNZIP_DEST_DIR)
 
 .PHONY : unzip_file
 
@@ -678,7 +707,7 @@ $(error You can only have one file specified by GUNZIP_SRC)
 endif
 
 gunzip_file:
-	$(TAR) -z -x -f $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
+	$(CYGWIN_WRAPPER) $(TAR) -z -x -f $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
 
 .PHONY : gunzip_file
 
@@ -706,14 +735,14 @@ endif #SHELL_EXECUTE
 ifdef CREATEDIRS
 
 create_dirs:
-	mkdir -p $(CREATEDIRS)
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(CREATEDIRS)
 
 .PHONY : create_dirs
 
 endif #CREATEDIRS
 
 create_dirs_clean:
-	$(RM) -rf $(CREATEDIRS)
+	$(CYGWIN_WRAPPER) $(RM) -rf $(CREATEDIRS)
 
 .PHONY : create_dirs_clean
 
@@ -725,7 +754,7 @@ create_dirs_clean:
 
 ifdef GARBAGE
 
-remove_cmd = $(RM) -f $(GARBAGE)
+remove_cmd = $(CYGWIN_WRAPPER) $(RM) -f $(GARBAGE)
 
 out:
 	$(warning garbage string: $(GARBAGE))

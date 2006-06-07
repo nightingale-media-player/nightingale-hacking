@@ -1,0 +1,127 @@
+locales.jar:
+% locale  branding  en-US   jar:locales.jar!/locale/branding/
+% locale  songbird  bg-BG   jar:locales.jar!/locale/bg-BG/songbird/
+% locale  songbird  bs-BA   jar:locales.jar!/locale/bs-BA/songbird/
+% locale  songbird  ca-AD   jar:locales.jar!/locale/ca-AD/songbird/
+% locale  songbird  ca-ES   jar:locales.jar!/locale/ca-ES/songbird/
+% locale  songbird  cs-CZ   jar:locales.jar!/locale/cs-CZ/songbird/
+% locale  songbird  cs-ES   jar:locales.jar!/locale/cs-ES/songbird/
+% locale  songbird  da-DK   jar:locales.jar!/locale/da-DK/songbird/
+% locale  songbird  de-DE   jar:locales.jar!/locale/de-DE/songbird/
+% locale  songbird  el-GR   jar:locales.jar!/locale/el-GR/songbird/
+% locale  songbird  en-AU   jar:locales.jar!/locale/en-AU/songbird/
+% locale  songbird  en-EN   jar:locales.jar!/locale/en-EN/songbird/
+% locale  songbird  en-NZ   jar:locales.jar!/locale/en-NZ/songbird/
+% locale  songbird  en-US   jar:locales.jar!/locale/en-US/songbird/
+% locale  songbird  es-AR   jar:locales.jar!/locale/es-AR/songbird/
+% locale  songbird  es-ES   jar:locales.jar!/locale/es-ES/songbird/
+% locale  songbird  es-MX   jar:locales.jar!/locale/es-MX/songbird/
+% locale  songbird  eu-ES   jar:locales.jar!/locale/eu-ES/songbird/
+% locale  songbird  fi-FI   jar:locales.jar!/locale/fi-FI/songbird/
+% locale  songbird  fr-FR   jar:locales.jar!/locale/fr-FR/songbird/
+% locale  songbird  gl-ES   jar:locales.jar!/locale/gl-ES/songbird/
+% locale  songbird  he-IL   jar:locales.jar!/locale/he-IL/songbird/
+% locale  songbird  hr-HR   jar:locales.jar!/locale/hr-HR/songbird/
+% locale  songbird  hu-HU   jar:locales.jar!/locale/hu-HU/songbird/
+% locale  songbird  it-IT   jar:locales.jar!/locale/it-IT/songbird/
+% locale  songbird  ja-JP   jar:locales.jar!/locale/ja-JP/songbird/
+% locale  songbird  jp-JP   jar:locales.jar!/locale/jp-JP/songbird/
+% locale  songbird  ko-KR   jar:locales.jar!/locale/ko-KR/songbird/
+% locale  songbird  nl-BE   jar:locales.jar!/locale/nl-BE/songbird/
+% locale  songbird  nl-NL   jar:locales.jar!/locale/nl-NL/songbird/
+% locale  songbird  nn-NO   jar:locales.jar!/locale/nn-NO/songbird/
+% locale  songbird  no-NO   jar:locales.jar!/locale/no-NO/songbird/
+% locale  songbird  pl-PL   jar:locales.jar!/locale/pl-PL/songbird/
+% locale  songbird  pt-BR   jar:locales.jar!/locale/pt-BR/songbird/
+% locale  songbird  ru-RU   jar:locales.jar!/locale/ru-RU/songbird/
+% locale  songbird  sk-SK   jar:locales.jar!/locale/sk-SK/songbird/
+% locale  songbird  sv-SE   jar:locales.jar!/locale/sv-SE/songbird/
+% locale  songbird  th-TH   jar:locales.jar!/locale/th-TH/songbird/
+% locale  songbird  tr-TR   jar:locales.jar!/locale/tr-TR/songbird/
+% locale  songbird  uk-UA   jar:locales.jar!/locale/uk-UA/songbird/
+% locale  songbird  zh-CN   jar:locales.jar!/locale/zh-CN/songbird/
+% locale  songbird  zh-TW   jar:locales.jar!/locale/zh-TW/songbird/
+  locale/branding/brand.dtd                     (branding/brand.dtd)
+  locale/branding/brand.properties              (branding/brand.properties)
+  locale/bg-BG/songbird/songbird.dtd            (bg-BG/songbird.dtd)
+  locale/bg-BG/songbird/songbird.properties     (bg-BG/songbird.properties)
+  locale/bs-BA/songbird/songbird.dtd            (bs-BA/songbird.dtd)
+  locale/bs-BA/songbird/songbird.properties     (bs-BA/songbird.properties)
+  locale/ca-AD/songbird/songbird.dtd            (ca-AD/songbird.dtd)
+  locale/ca-AD/songbird/songbird.properties     (ca-AD/songbird.properties)
+  locale/ca-ES/songbird/songbird.dtd            (ca-ES/songbird.dtd)
+  locale/ca-ES/songbird/songbird.properties     (ca-ES/songbird.properties)
+  locale/cs-CZ/songbird/songbird.dtd            (cs-CZ/songbird.dtd)
+  locale/cs-CZ/songbird/songbird.properties     (cs-CZ/songbird.properties)
+  locale/cs-ES/songbird/songbird.dtd            (cs-ES/songbird.dtd)
+  locale/cs-ES/songbird/songbird.properties     (cs-ES/songbird.properties)
+  locale/da-DK/songbird/songbird.dtd            (da-DK/songbird.dtd)
+  locale/da-DK/songbird/songbird.properties     (da-DK/songbird.properties)
+  locale/de-DE/songbird/songbird.dtd            (de-DE/songbird.dtd)
+  locale/de-DE/songbird/songbird.properties     (de-DE/songbird.properties)
+  locale/el-GR/songbird/songbird.dtd            (el-GR/songbird.dtd)
+  locale/el-GR/songbird/songbird.properties     (el-GR/songbird.properties)
+  locale/en-AU/songbird/songbird.dtd            (en-AU/songbird.dtd)
+  locale/en-AU/songbird/songbird.properties     (en-AU/songbird.properties)
+  locale/en-EN/songbird/songbird.dtd            (en-EN/songbird.dtd)
+  locale/en-EN/songbird/songbird.properties     (en-EN/songbird.properties)
+  locale/en-NZ/songbird/songbird.dtd            (en-NZ/songbird.dtd)
+  locale/en-NZ/songbird/songbird.properties     (en-NZ/songbird.properties)
+  locale/en-US/songbird/songbird.dtd            (en-US/songbird.dtd)
+  locale/en-US/songbird/songbird.properties     (en-US/songbird.properties)
+  locale/es-AR/songbird/songbird.dtd            (es-AR/songbird.dtd)
+  locale/es-AR/songbird/songbird.properties     (es-AR/songbird.properties)
+  locale/es-ES/songbird/songbird.dtd            (es-ES/songbird.dtd)
+  locale/es-ES/songbird/songbird.properties     (es-ES/songbird.properties)
+  locale/es-MX/songbird/songbird.dtd            (es-MX/songbird.dtd)
+  locale/es-MX/songbird/songbird.properties     (es-MX/songbird.properties)
+  locale/eu-ES/songbird/songbird.dtd            (eu-ES/songbird.dtd)
+  locale/eu-ES/songbird/songbird.properties     (eu-ES/songbird.properties)
+  locale/fi-FI/songbird/songbird.dtd            (fi-FI/songbird.dtd)
+  locale/fi-FI/songbird/songbird.properties     (fi-FI/songbird.properties)
+  locale/fr-FR/songbird/songbird.dtd            (fr-FR/songbird.dtd)
+  locale/fr-FR/songbird/songbird.properties     (fr-FR/songbird.properties)
+  locale/gl-ES/songbird/songbird.dtd            (gl-ES/songbird.dtd)
+  locale/gl-ES/songbird/songbird.properties     (gl-ES/songbird.properties)
+  locale/he-IL/songbird/songbird.dtd            (he-IL/songbird.dtd)
+  locale/he-IL/songbird/songbird.properties     (he-IL/songbird.properties)
+  locale/hr-HR/songbird/songbird.dtd            (hr-HR/songbird.dtd)
+  locale/hr-HR/songbird/songbird.properties     (hr-HR/songbird.properties)
+  locale/hu-HU/songbird/songbird.dtd            (hu-HU/songbird.dtd)
+  locale/hu-HU/songbird/songbird.properties     (hu-HU/songbird.properties)
+  locale/it-IT/songbird/songbird.dtd            (it-IT/songbird.dtd)
+  locale/it-IT/songbird/songbird.properties     (it-IT/songbird.properties)
+  locale/ja-JP/songbird/songbird.dtd            (ja-JP/songbird.dtd)
+  locale/ja-JP/songbird/songbird.properties     (ja-JP/songbird.properties)
+  locale/jp-JP/songbird/songbird.dtd            (jp-JP/songbird.dtd)
+  locale/jp-JP/songbird/songbird.properties     (jp-JP/songbird.properties)
+  locale/ko-KR/songbird/songbird.dtd            (ko-KR/songbird.dtd)
+  locale/ko-KR/songbird/songbird.properties     (ko-KR/songbird.properties)
+  locale/nl-BE/songbird/songbird.dtd            (nl-BE/songbird.dtd)
+  locale/nl-BE/songbird/songbird.properties     (nl-BE/songbird.properties)
+  locale/nl-NL/songbird/songbird.dtd            (nl-NL/songbird.dtd)
+  locale/nl-NL/songbird/songbird.properties     (nl-NL/songbird.properties)
+  locale/nn-NO/songbird/songbird.dtd            (nn-NO/songbird.dtd)
+  locale/nn-NO/songbird/songbird.properties     (nn-NO/songbird.properties)
+  locale/no-NO/songbird/songbird.dtd            (no-NO/songbird.dtd)
+  locale/no-NO/songbird/songbird.properties     (no-NO/songbird.properties)
+  locale/pl-PL/songbird/songbird.dtd            (pl-PL/songbird.dtd)
+  locale/pl-PL/songbird/songbird.properties     (pl-PL/songbird.properties)
+  locale/pt-BR/songbird/songbird.dtd            (pt-BR/songbird.dtd)
+  locale/pt-BR/songbird/songbird.properties     (pt-BR/songbird.properties)
+  locale/ru-RU/songbird/songbird.dtd            (ru-RU/songbird.dtd)
+  locale/ru-RU/songbird/songbird.properties     (ru-RU/songbird.properties)
+  locale/sk-SK/songbird/songbird.dtd            (sk-SK/songbird.dtd)
+  locale/sk-SK/songbird/songbird.properties     (sk-SK/songbird.properties)
+  locale/sv-SE/songbird/songbird.dtd            (sv-SE/songbird.dtd)
+  locale/sv-SE/songbird/songbird.properties     (sv-SE/songbird.properties)
+  locale/th-TH/songbird/songbird.dtd            (th-TH/songbird.dtd)
+  locale/th-TH/songbird/songbird.properties     (th-TH/songbird.properties)
+  locale/tr-TR/songbird/songbird.dtd            (tr-TR/songbird.dtd)
+  locale/tr-TR/songbird/songbird.properties     (tr-TR/songbird.properties)
+  locale/uk-UA/songbird/songbird.dtd            (uk-UA/songbird.dtd)
+  locale/uk-UA/songbird/songbird.properties     (uk-UA/songbird.properties)
+  locale/zh-CN/songbird/songbird.dtd            (zh-CN/songbird.dtd)
+  locale/zh-CN/songbird/songbird.properties     (zh-CN/songbird.properties)
+  locale/zh-TW/songbird/songbird.dtd            (zh-TW/songbird.dtd)
+  locale/zh-TW/songbird/songbird.properties     (zh-TW/songbird.properties)

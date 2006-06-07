@@ -1,4 +1,5 @@
 songbird.jar:
+% content   songbird            jar:songbird.jar!/content/songbird/
   content/songbird/scripts/async_webplaylist.js         (async_webplaylist.js)
   content/songbird/scripts/back_scan.js                 (back_scan.js)
   content/songbird/scripts/core_qt.js                   (core_qt.js)

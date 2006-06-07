@@ -241,8 +241,8 @@ AC_SUBST(SB_CONFIGURATION)
 #
 
 AC_ARG_ENABLE(jars,
-              [  --enable-jars           whether or not to create jar files (disabled by default)])
-if test "$enable_jars" = "yes"; then
+              [  --enable-jars           whether or not to create jar files (enabled by default)])
+if test "$enable_jars" != "no"; then
   USING_JARS=1
 fi
 AC_SUBST(USING_JARS)

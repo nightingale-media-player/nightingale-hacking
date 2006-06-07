@@ -1,4 +1,5 @@
 songbird.jar:
+% content   songbird            jar:songbird.jar!/content/songbird/
   content/songbird/html/about.html          (about.html)
   content/songbird/html/cannot_load.html    (cannot_load.html)
   content/songbird/html/not_connected.html  (not_connected.html)

@@ -1,6 +1,7 @@
 //Songbird Default Prefs.
 pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
+pref("general.skins.selectedSkin", "rubberducky/0.2");
 
 pref("browser.sessionhistory.max_total_viewers", 0);
 
@@ -29,4 +30,3 @@ pref("capability.policy.default.ClassID.CID22D6F312-B0F6-11D0-94AB-0080C74C7E95"
 pref("signon.rememberSignons", true);
 pref("signon.expireMasterPassword", false);
 pref("signon.SignonFileName", "signons.txt");
-

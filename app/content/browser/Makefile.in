@@ -22,18 +22,16 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef USING_JARS
-JAR_MANIFEST = jar.mn
-else
-CREATEDIRS = $(SONGBIRD_CHROMEDIR)/feathers/rubberducky
-CLONEDIR = $(SONGBIRD_CHROMEDIR)/feathers/rubberducky
-endif
+SUBDIRS = content \
+          locale \
+          skin \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

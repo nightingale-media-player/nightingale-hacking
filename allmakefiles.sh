@@ -64,6 +64,14 @@ MAKEFILES_app="
 Makefile
 app/Makefile
 app/content/Makefile
+app/content/bindings/Makefile
+app/content/browser/Makefile
+app/content/browser/content/Makefile
+app/content/browser/locale/Makefile
+app/content/browser/skin/Makefile
+app/content/html/Makefile
+app/content/scripts/Makefile
+app/content/xul/Makefile
 app/icons/Makefile
 app/preferences/Makefile
 "

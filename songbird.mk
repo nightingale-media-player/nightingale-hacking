@@ -45,12 +45,22 @@ OBJDIR       = $(TOPSRCDIR)/$(OBJDIRNAME)
 DISTDIR      = $(OBJDIR)/$(DISTDIRNAME)
 CONFIGSTATUS = $(OBJDIR)/config.status
 
+CONFIGURE_ARGS = $(NULL)
+
 ifeq (debug,$(MAKECMDGOALS))
 DEBUG = 1
 endif
 
+ifeq (nojars,$(MAKECMDGOALS))
+NOJARS = 1
+endif
+
 ifdef DEBUG
-CONFIGURE_ARGS = --enable-debug
+CONFIGURE_ARGS += --enable-debug
+endif
+
+ifdef NOJARS
+CONFIGURE_ARGS += --disable-jars
 endif
 
 ifndef AUTOCONF

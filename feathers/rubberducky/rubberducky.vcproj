@@ -590,15 +590,6 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			Name="mini"
 			Filter="">
 			<File
-				RelativePath=".\mini\mini_volume_bkgd.png">
-			</File>
-			<File
-				RelativePath=".\mini\mini_volume_mute_off.png">
-			</File>
-			<File
-				RelativePath=".\mini\mini_volume_mute_on.png">
-			</File>
-			<File
 				RelativePath=".\mini\mini.bkg.dashboard.png">
 			</File>
 			<File
@@ -645,6 +636,15 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			</File>
 			<File
 				RelativePath=".\mini\mini.btn.play.n.png">
+			</File>
+			<File
+				RelativePath=".\mini\mini_volume_bkgd.png">
+			</File>
+			<File
+				RelativePath=".\mini\mini_volume_mute_off.png">
+			</File>
+			<File
+				RelativePath=".\mini\mini_volume_mute_on.png">
 			</File>
 			<File
 				RelativePath=".\mini\seekbar_progress.png">
@@ -712,7 +712,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			RelativePath=".\bland.css">
 		</File>
 		<File
-			RelativePath=".\contents.rdf">
+			RelativePath=".\jar.mn">
 		</File>
 		<File
 			RelativePath=".\songbird.css">

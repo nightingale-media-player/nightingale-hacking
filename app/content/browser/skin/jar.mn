@@ -1,0 +1,4 @@
+feathers.jar:
+% skin  browser   classic/1.0       jar:feathers.jar!/feathers/classic/browser/
+  feathers/classic/browser/preferences/Options.png      (classic/browser/preferences/Options.png)
+  feathers/classic/browser/preferences/preferences.css  (classic/browser/preferences/preferences.css)

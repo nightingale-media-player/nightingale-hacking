@@ -29,8 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifdef USING_JARS
+JAR_MANIFEST = jar.mn
+else
 CREATEDIRS = $(SONGBIRD_CHROMEDIR)/feathers/dove
-
 CLONEDIR = $(SONGBIRD_CHROMEDIR)/feathers/dove
+endif
 
 include $(topsrcdir)/build/rules.mk

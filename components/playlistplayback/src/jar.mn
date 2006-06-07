@@ -1,0 +1,5 @@
+songbird.jar:
+% content   songbird            jar:songbird.jar!/content/songbird/
+  content/songbird/scripts/coreQT.js    (coreQT.js)
+  content/songbird/scripts/coreVLC.js   (coreVLC.js)
+  content/songbird/scripts/coreWMP.js   (coreWMP.js)

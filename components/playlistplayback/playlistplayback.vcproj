@@ -157,6 +157,9 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\jar.mn">
+			</File>
+			<File
 				RelativePath=".\src\sbPlaylistPlayback.js">
 				<FileConfiguration
 					Name="Debug|Win32">

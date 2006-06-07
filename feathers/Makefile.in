@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = cardinal \
-          dove \
+SUBDIRS = dove \
           rubberducky \
           $(NULL)
 

@@ -88,9 +88,6 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 		<Filter
 			Name="content"
 			Filter="">
-			<File
-				RelativePath=".\content\jar.mn">
-			</File>
 			<Filter
 				Name="html"
 				Filter="">
@@ -1810,6 +1807,31 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
+			</Filter>
+			<Filter
+				Name="browser"
+				Filter="">
+				<Filter
+					Name="content"
+					Filter="">
+					<File
+						RelativePath=".\content\browser\content\jar.mn">
+					</File>
+				</Filter>
+				<Filter
+					Name="locale"
+					Filter="">
+					<File
+						RelativePath=".\content\browser\locale\jar.mn">
+					</File>
+				</Filter>
+				<Filter
+					Name="skin"
+					Filter="">
+					<File
+						RelativePath=".\content\browser\skin\jar.mn">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

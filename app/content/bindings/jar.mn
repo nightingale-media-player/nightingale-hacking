@@ -1,4 +1,5 @@
 songbird.jar:
+% content   songbird            jar:songbird.jar!/content/songbird/
   content/songbird/bindings/bindings.css          (bindings.css)
   content/songbird/bindings/conditions.xml        (conditions.xml)
   content/songbird/bindings/db_controls.xml       (db_controls.xml)

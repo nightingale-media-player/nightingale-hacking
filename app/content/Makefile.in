@@ -29,11 +29,16 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifdef USING_JARS
+SUBDIRS = bindings \
+          browser \
+          html \
+          scripts \
+          xul \
+          $(NULL)
+else
 CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content
-
 CLONEDIR = $(SONGBIRD_CHROMEDIR)/content
-
-ifndef USING_JARS
 SONGBIRD_CHROME_MANIFEST = $(srcdir)/chrome.manifest.dev
 endif
 

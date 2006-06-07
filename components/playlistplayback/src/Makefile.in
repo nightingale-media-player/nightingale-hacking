@@ -29,10 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifdef USING_JARS
+JAR_MANIFEST = jar.mn
+else
 CREATEDIRS = $(SONGBIRD_CHROMEDIR)/content/scripts
-                
 CLONEDIR = $(SONGBIRD_CHROMEDIR)/content/scripts
 CLONE_EXCLUDE_NAME = sbPlaylistPlayback.js
+endif
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbPlaylistPlayback.js
 
