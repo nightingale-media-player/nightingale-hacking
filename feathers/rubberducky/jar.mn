@@ -48,7 +48,6 @@ feathers.jar:
   feathers/rubberducky/songbird/default/grippy_svcpane.png                  (default/grippy_svcpane.png)
   feathers/rubberducky/songbird/default/grippy_vert.png                     (default/grippy_vert.png)
   feathers/rubberducky/songbird/default/grippy_webplaylist.png              (default/grippy_webplaylist.png)
-  feathers/rubberducky/songbird/default/icon_bookmark.ico                   (default/icon_bookmark.ico)
   feathers/rubberducky/songbird/default/icon_cd_16x16.png                   (default/icon_cd_16x16.png)
   feathers/rubberducky/songbird/default/icon_device_16x16.png               (default/icon_device_16x16.png)
   feathers/rubberducky/songbird/default/icon_downloads_16x16.png            (default/icon_downloads_16x16.png)
@@ -223,3 +222,4 @@ feathers.jar:
   feathers/rubberducky/songbird/serviceicons/songbird.ico                   (serviceicons/songbird.ico)
   feathers/rubberducky/songbird/serviceicons/u2.ico                         (serviceicons/u2.ico)
   feathers/rubberducky/songbird/serviceicons/yahoo.ico                      (serviceicons/yahoo.ico)
+
