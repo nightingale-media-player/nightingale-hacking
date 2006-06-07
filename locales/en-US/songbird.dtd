@@ -197,3 +197,9 @@
 <!ENTITY menu.help.accesskey          "H" >
 <!ENTITY menu.help.help.accesskey     "H" >
 <!ENTITY menu.help.about.accesskey    "A" >
+
+<!ENTITY bookmarks.edit.title  "Edit Bookmark" >
+<!ENTITY bookmarks.edit.url    "URL:" >
+<!ENTITY bookmarks.edit.label  "Name:" >
+<!ENTITY bookmarks.edit.icon   "Icon:" >
+

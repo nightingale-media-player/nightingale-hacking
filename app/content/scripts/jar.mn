@@ -2,6 +2,8 @@ songbird.jar:
 % content   songbird            jar:songbird.jar!/content/songbird/
   content/songbird/scripts/async_webplaylist.js         (async_webplaylist.js)
   content/songbird/scripts/back_scan.js                 (back_scan.js)
+  content/songbird/scripts/bookmarks.js                 (bookmarks.js)
+  content/songbird/scripts/bookmarks_proxy.js           (bookmarks_proxy.js)
   content/songbird/scripts/core_qt.js                   (core_qt.js)
   content/songbird/scripts/dndSourceTracker.js          (dndSourceTracker.js)
   content/songbird/scripts/dragAndDrop.js               (dragAndDrop.js)

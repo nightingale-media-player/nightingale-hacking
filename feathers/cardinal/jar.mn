@@ -35,6 +35,7 @@ feathers.jar:
   feathers/cardinal/songbird/default/forward_disabled_32x32.png           (default/forward_disabled_32x32.png)
   feathers/cardinal/songbird/default/forward_normal.png                   (default/forward_normal.png)
   feathers/cardinal/songbird/default/gripper_vert.png                     (default/gripper_vert.png)
+  feathers/cardinal/songbird/default/icon_bookmark.ico                    (default/icon_bookmark.ico)
   feathers/cardinal/songbird/default/icon_cd_16x16.png                    (default/icon_cd_16x16.png)
   feathers/cardinal/songbird/default/icon_device_16x16.png                (default/icon_device_16x16.png)
   feathers/cardinal/songbird/default/icon_downloads_16x16.png             (default/icon_downloads_16x16.png)

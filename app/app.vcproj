@@ -129,7 +129,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\add_to_playlist.xul">
+					RelativePath=".\content\xul\add_tag.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -150,7 +150,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\add_tag.xul">
+					RelativePath=".\content\xul\add_to_playlist.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -210,6 +210,27 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
 "
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\editbookmark.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
 				<File
@@ -1114,6 +1135,46 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							Description="Performing Custom Build Step $(InputFileName)"
 							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\bookmarks.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\bookmarks_proxy.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>

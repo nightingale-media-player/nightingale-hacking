@@ -563,6 +563,11 @@
    src="chrome://songbird/content/scripts/metrics.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/jumptofile.js" />
+
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/bookmarks.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/bookmarks_proxy.js" />
    
 </window>
 

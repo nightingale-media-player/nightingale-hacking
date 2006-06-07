@@ -47,6 +47,7 @@ feathers.jar:
   feathers/dove/songbird/default/grippy_vert.png                      (default/grippy_vert.png)
   feathers/dove/songbird/default/grippy_webplaylist.png               (default/grippy_webplaylist.png)
   feathers/dove/songbird/default/icon_cd_16x16.png                    (default/icon_cd_16x16.png)
+  feathers/dove/songbird/default/icon_bookmark.ico                    (default/icon_bookmark.ico)
   feathers/dove/songbird/default/icon_device_16x16.png                (default/icon_device_16x16.png)
   feathers/dove/songbird/default/icon_downloads_16x16.png             (default/icon_downloads_16x16.png)
   feathers/dove/songbird/default/icon_dynplaylist_16x16.png           (default/icon_dynplaylist_16x16.png)

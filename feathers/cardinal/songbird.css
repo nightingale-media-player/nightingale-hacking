@@ -83,6 +83,12 @@ tree
   border: none !important;
 }
 
+#edit_bookmark
+{
+  width:  400px;
+  background-color: transparent !important; /*this breaks the red flash in the Inspector*/
+}
+
 .empty_frame
 {
   -moz-user-focus: ignore !important;
