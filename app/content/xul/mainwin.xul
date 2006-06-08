@@ -381,11 +381,12 @@
  
               <!-- SPACER -->
               <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" height="60"/>
-  
             </hbox>
-      
-            <!-- SPACER -->
-            <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+
+           
+            <splitter id="control_pane_splitter" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" collapse="before">
+              <grippy/>
+            </splitter>
             
             <vbox class="sb_faceplate" id="frame_middle_pane" flex="1"> 
               <hbox class="sb_faceplate" flex="1">
