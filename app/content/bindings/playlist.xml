@@ -1576,6 +1576,23 @@
       </body>
     </method>
     
+    <method name="sendBurnToCDEvent">
+      <body>
+      <![CDATA[
+      try
+      {
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-burntocd", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - sendEditEvent - " + err )
+      }
+      ]]>
+      </body>
+    </method>
+
     <!-- Tree event listeners -->
     
     <method name="onToolbarCommand">
