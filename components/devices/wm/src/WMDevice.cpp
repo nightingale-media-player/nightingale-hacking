@@ -51,8 +51,8 @@
 #define NAME_WINDOWS_MEDIA_DEVICE_LEN NS_LITERAL_STRING("Songbird Windows Media Device").Length()
 #define NAME_WINDOWS_MEDIA_DEVICE NS_LITERAL_STRING("Songbird Windows Media Device").get()
 
-#define CONTEXT_WINDOWS_MEDIA_DEVICE_LEN  NS_LITERAL_STRING("windowsm]ediaDB-1108").Length()
-#define CONTEXT_WINDOWS_MEDIA_DEVICE      NS_LITERAL_STRING("windowsmediaDB-1108").get()
+#define CONTEXT_WINDOWS_MEDIA_DEVICE_LEN  NS_LITERAL_STRING("windowsmediaDB").Length()
+#define CONTEXT_WINDOWS_MEDIA_DEVICE      NS_LITERAL_STRING("windowsmediaDB").get()
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
