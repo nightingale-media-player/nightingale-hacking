@@ -3901,10 +3901,10 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
 function CheckCDAvailableForBurn()
 {
     cdAvailableForWrite = 0;
-    aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].createInstance(Components.interfaces.sbIDeviceManager);
+    aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].getService(Components.interfaces.sbIDeviceManager);
     if (aDeviceManager)
     {
-        aCDDevice = aDeviceManager.GetDevice('Songbird CD Device');
+        aCDDevice = aDeviceManager.getDeviceByString('Songbird CD Device');
     }
 
     if (!aCDDevice)
