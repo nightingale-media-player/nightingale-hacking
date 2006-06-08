@@ -149,7 +149,6 @@ try
         {
           switch ( this.m_Ids[index] )
           {
-            case "library_cmd_burntocd":
             case "library_cmd_device":
               retval = false;
             break;
@@ -203,6 +202,13 @@ try
             {
               // remove the currently select tracks
               this.m_Playlist.removeTracks();
+            }
+          break;
+          case "library_cmd_burntocd":
+            if ( this.m_Playlist.tree.currentIndex != -1 )
+            {
+              // Repurpose the command to act as if a doubleclick
+              this.m_Playlist.sendBurnToCDEvent();
             }
           break;
         }
