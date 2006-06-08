@@ -228,6 +228,7 @@ Love the box.
 
 #frame_service_tree
 {
+  -moz-appearance: none !important;
   -moz-border-radius-topleft: 3px !important;
   -moz-border-radius-bottomleft: 3px !important;
   -moz-border-radius-topright: 3px !important;
