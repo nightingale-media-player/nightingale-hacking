@@ -215,9 +215,7 @@ Love the box.
 
 #frame_control_pane
 {
-  top: 0px !important;
-  left: 0px !important;
-  height: 45px !important;
+  max-height: 45px !important;
 }
 
 #frame_middle_pane
@@ -241,24 +239,27 @@ Love the box.
   margin: 0px !important;
   padding: 6px 0px 0px 0px !important;
   width: 135px !important;
-  background-color: #686A6A !important;
-  background-image: url(default/bkgd_clouds.png) !important;
+  background-color: #505154 !important;
+  /*background-image: url(default/bkgd_clouds.png) !important;*/
   color: #CDD4C4 !important;
 }
 
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
-  -moz-border-radius: 3px !important;
-  border: 1px solid #333 !important;
+  -moz-appearance: none !important;
+  -moz-border-radius: 5px !important;
+  border: 1px solid #eee !important;
   margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
-  background-color: #333 !important;
+  background-color: #FFF !important;
+  font-size: larger;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #CCC !important;
+  color: #333 !important;
+  font-weight: bold;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text
@@ -424,6 +425,7 @@ filterlist > tree > treechildren::-moz-tree-cell-text
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #FFF !important;
+  font-weight: bold !important;
 }
 
 /** 
@@ -514,12 +516,13 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text
 {
-  color: #EEE !important;
+  color: #CCC !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #FFF !important;
+  font-weight: bold !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
@@ -583,30 +586,36 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-playlist > stack > vbox button 
+playlist > stack > vbox > hbox > hbox > button[disabled="true"]
 {
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 5px !important;
-  border-width: 1px !important;
-  color: #FFF !important;
-  background-color: transparent !important;
-  height: 27px !important;
-  padding-left: 7px !important;
-  padding-right: 8px !important;
-  margin: 0px !important;
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  border: 1px solid !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  -moz-border-top-colors: #444 !important;
+  -moz-border-left-colors: #444 !important;
+  -moz-border-bottom-colors: #444 !important;
+  -moz-border-right-colors: #444 !important;
+  background-color: #333 !important;
+  color: #99A195 !important;
+  height: 25px !important;  
 }
-playlist > stack > vbox button:hover
+
+playlist > stack > vbox > hbox > hbox > button[disabled="false"]
 {
-  -moz-appearance: none !important; /* grrrr! */
-  border: 1px solid #FFF !important;
-  margin: 0px !important;
-}
-playlist > stack > vbox button:hover[disabled="true"],
-playlist > stack > vbox button[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  margin: 0px !important;
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #333 !important;
+  height: 25px !important;  
+  color: #99A195 !important;  
 }
 
 /* 
@@ -619,39 +628,34 @@ playlist > stack > vbox button[disabled="true"]
 /* Toolbar: Play Button */
 button#library_cmd_play
 {
+  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_normal.png) !important;  
   color: #99A195 !important;
-  padding-left: 3px;
 }
 button#library_cmd_play:hover
 {
+  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_hover.png) !important;
   color: #FFF !important;
-  padding-left: 3px;
 }
 button#library_cmd_play[disabled="true"]
 {
+  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_disabled.png) !important;
-  padding-left: 8px !important; /* stops this button from shifting on the library view */
-  padding-right: 9px !important; /* stops the play button from shifting the rest of the buttons on the url slurper  */
   color: #505154 !important;
-  padding-left: 3px;
 }
 menuitem#library_cmd_play
 {
-  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_hover.png) !important;
   color: #FFF !important;  
 }
 menuitem#library_cmd_play[active="true"]:hover
 {
-  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_disabled.png) !important;
   color: #505154 !important;
 }
 menuitem#library_cmd_play[disabled="true"]
 {
-  -moz-appearance: none !important;
   list-style-image: url(default/toolbar_play_normal.png) !important;
   color: #99A195 !important;
 }
@@ -660,7 +664,7 @@ menuitem#library_cmd_play[disabled="true"]
 button#library_cmd_remove
 {
   list-style-image: url(default/toolbar_remove_normal.png) !important;
-  color: #99A195 !important;
+  color: #99A195 !important;  
 }
 button#library_cmd_remove:hover
 {
@@ -670,7 +674,6 @@ button#library_cmd_remove:hover
 button#library_cmd_remove[disabled="true"]
 {
   list-style-image: url(default/toolbar_remove_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_remove
@@ -704,7 +707,6 @@ button#library_cmd_edit:hover
 button#library_cmd_edit[disabled="true"]
 {
   list-style-image: url(default/toolbar_info_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_edit
@@ -738,7 +740,6 @@ button#library_cmd_addtoplaylist:hover
 button#library_cmd_addtoplaylist[disabled="true"]
 {
   list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_addtoplaylist
@@ -771,7 +772,6 @@ button#library_cmd_burntocd:hover
 button#library_cmd_burntocd[disabled="true"]
 {
   list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_burntocd
@@ -804,7 +804,6 @@ button#library_cmd_device:hover
 button#library_cmd_device[disabled="true"]
 {
   list-style-image: url(default/toolbar_device_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_device
@@ -837,7 +836,6 @@ button#library_cmd_addtolibrary[active="true"]:hover
 button#library_cmd_addtolibrary[disabled="true"]
 {
   list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_addtolibrary
@@ -870,7 +868,6 @@ button#library_cmd_download:hover
 button#library_cmd_download[disabled="true"]
 {
   list-style-image: url(default/toolbar_download_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_download
@@ -903,7 +900,6 @@ button#library_cmd_subscribe:hover
 button#library_cmd_subscribe[disabled="true"]
 {
   list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_subscribe
@@ -936,7 +932,6 @@ button#library_cmd_pause:hover
 button#library_cmd_pause[disabled="true"]
 {
   list-style-image: url(default/toolbar_pause_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_pause
@@ -969,7 +964,6 @@ button#library_cmd_resume:hover
 button#library_cmd_resume[disabled="true"]
 {
   list-style-image: url(default/toolbar_resume_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_resume
@@ -1002,7 +996,6 @@ button#library_cmd_showdlplaylist:hover
 button#library_cmd_showdlplaylist[disabled="true"]
 {
   list-style-image: url(default/toolbar_downloads_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_showdlplaylist
@@ -1035,7 +1028,6 @@ button#library_cmd_showwebplaylist:hover
 button#library_cmd_showwebplaylist[disabled="true"]
 {
   list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
-  padding-left: 9px !important; /* stops this button from shifting on the library view */
   color: #505154 !important;
 }
 menuitem#library_cmd_showwebplaylist
@@ -1101,6 +1093,7 @@ These let the user resize the frames in your box model.
 }
 
 .horz_splitter,
+#control_pane_splitter,
 #horz_splitter,
 #playlist_web_split > grippy
 {
@@ -1112,6 +1105,32 @@ These let the user resize the frames in your box model.
   background-repeat: no-repeat !important;
   background-position: center center !important;
   border: none !important;
+}
+
+#control_pane_splitter
+{
+  -moz-appearance: none !important; /* grrrr! */
+  width: 50px !important;
+  height: 7px !important;
+  background-color: transparent !important;
+  background-image: url(default/grippy.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 0px 3px 0px;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  -moz-appearance: none !important; /* grrrr! */
+  width: 50px !important;
+  height: 7px !important;
+  background-color: transparent !important;
+  background-image: url(default/grippy.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 3px 3px 3px;
 }
 
 #horz_splitter[state="collapsed"]
@@ -2009,8 +2028,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 /* the box with the url image and the url textbox */
 #browser_url_box
 {
-  margin: 2px 0px 2px 0px !important;
-  padding: 3px !important;
+  margin: 2px 0px 2px 3px !important;
+  padding: 3px 3px 3px 3px !important;
   -moz-border-radius: 5px !important;
   border: 1px solid #4A4E48 !important;
   background-color: transparent !important;
@@ -2046,7 +2065,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border-bottom: 1px solid #808583 !important; 
   background-color: transparent !important;
   height: 29px !important;
-  padding-left: 5px !important;
+  padding-left: 2px !important;
 }
 
 #browser_toolbar button 
@@ -2054,16 +2073,36 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-appearance: none !important; /* grrrr! */
   height: 16px !important;
   width: 16px !important;
-  background-color: Transparent !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: #333 !important;   
  }
-
-#browser_toolbar button:hover
+ 
+#browser_toolbar button[disabled="true"],
+#browser_toolbar button[disabled="true"]:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
   height: 16px !important;
   width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #transparent !important;
+  -moz-border-left-colors: #transparent !important;
+  -moz-border-bottom-colors: #transparent !important;
+  -moz-border-right-colors: #transparent !important;
+  background-color: transparent !important; 
 }
+
+
+
 
 #browser_back
 {
@@ -2073,11 +2112,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_back:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_back_hover.png) !important;
 }
 #browser_back[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_back_disabled.png) !important;
 }
 #browser_back[active="true"]
@@ -2093,11 +2147,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_refresh:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_refresh_hover.png) !important;
 }
 #browser_refresh[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_refresh_disabled.png) !important;
 }
 #browser_refresh[active="true"]
@@ -2113,11 +2182,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_stop:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_stop_hover.png) !important;
 }
 #browser_stop[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_stop_disabled.png) !important;
 }
 #browser_stop[active="true"]
@@ -2133,11 +2217,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_fwd:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_forward_hover.png) !important;
 }
 #browser_fwd[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_forward_disabled.png) !important;
 }
 #browser_fwd[active="true"]
@@ -2153,11 +2252,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_home:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_home_hover.png) !important;
 }
 #browser_home[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_home_disabled.png) !important;
 }
 #browser_home[active="true"]
@@ -2173,11 +2287,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_bookmark:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_bookmark_hover.png) !important;
 }
 #browser_bookmark[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_bookmark_disabled.png) !important;
 }
 #browser_bookmark[active="true"]
@@ -2193,11 +2322,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_playlist:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_addtoplaylist_hover.png) !important;
 }
 #browser_playlist[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_addtoplaylist_disabled.png) !important;
 }
 #browser_download
@@ -2208,11 +2352,26 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_download:hover
 {
   -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   list-style-image: url(default/webbar_dlplaylist_hover.png) !important;
 }
 #browser_download[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
   list-style-image: url(default/webbar_dlplaylist_disabled.png) !important;
 }
 
