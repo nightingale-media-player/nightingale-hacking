@@ -200,6 +200,9 @@
           handleEvent: function( event ) { this._that.syncPlaylistIndex(false); } 
         } onplayurlchangechange._that = this;
         this.playUrl.bindCallbackFunction(onplayurlchangechange, true);
+        
+        if ( this._constructed ) dump("playlist.xml - constructor - THIS SHOULD NEVER GET CALLED\n"); // ???
+        this._constructed = true; // ???
       }
       catch ( err )
       {
@@ -209,14 +212,16 @@
     </constructor>
 
     <destructor>
+      if ( ! this._constructed ) dump("playlist.xml - destructor - THIS SHOULD NEVER GET CALLED\n"); return; // ???
       var ref = this.tree.getAttribute("ref");
       this.source.RemoveObserver(this);
-      
+
       if (this.m_dndSourceTracker != null) this.m_dndSourceTracker.unregisterDnDSource(this);
-      
+
       this.stopWatchingDragObjects();
       this.tree.builder.removeListener(this);
       this.playUrl.unbind();
+      this._constructed = false; // ???
     </destructor>
 
     <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_tree');</field>
