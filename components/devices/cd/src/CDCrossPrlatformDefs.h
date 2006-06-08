@@ -51,6 +51,9 @@ public:
   virtual PRBool      SetCDRipFormat(const PRUnichar*  DeviceString, PRUint32 format) = 0;
   virtual PRUint32    GetCDRipFormat(const PRUnichar*  DeviceString) = 0;
   virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString) = 0;
+  virtual PRBool      SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds) = 0;
+  virtual PRBool      GetWritableCDDrive(PRUnichar **deviceString) = 0;
+  virtual PRBool      UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName) = 0;
 
   virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState) = 0;
 
@@ -61,11 +64,10 @@ public:
   virtual PRBool      IsDownloadPaused(const PRUnichar* deviceString) = 0;
   virtual PRBool      IsUploadPaused(const PRUnichar* deviceString) = 0;
   virtual PRBool      IsTransferPaused(const PRUnichar* deviceString) = 0;
+  virtual void        TransferComplete(const PRUnichar* deviceString) = 0;
 
   virtual ~sbCDObjectManager(){}
 
   virtual void Initialize() = 0;
   virtual void Finalize() = 0;
 };
-
-

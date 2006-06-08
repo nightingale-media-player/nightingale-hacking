@@ -51,10 +51,14 @@
 #define NAME_COMPACT_DISC_DEVICE      NS_LITERAL_STRING("Songbird CD Device").get()
 
 #define COMPACT_DISC_DEVICE_TABLE_NAME        NS_LITERAL_STRING("compactDisc").get()
-#define COMPACT_DISC_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("&compactDisc.download").get()
-#define COMPACT_DISC_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("compactDisc").get()
-#define COMPACT_DISC_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("compactDisc").get()
+#define COMPACT_DISC_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("compactDisc.trackstable.readable").get()
+#define COMPACT_DISC_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("compactDisc.trackstable.description").get()
+#define COMPACT_DISC_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("compactDisc.trackstable.type").get()
 
+#define COMPACT_DISC_DEVICE_RIP_TABLE           NS_LITERAL_STRING("CDRip").get()
+#define COMPACT_DISC_DEVICE_RIP_TABLE_READABLE  NS_LITERAL_STRING("compactDisc.cdrip").get()
+#define COMPACT_DISC_DEVICE_BURN_TABLE          NS_LITERAL_STRING("CDBurn").get()
+#define COMPACT_DISC_DEVICE_BURN_TABLE_READABLE NS_LITERAL_STRING("compactDisc.cdburn").get()
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
@@ -64,6 +68,18 @@ sbCDDevice::sbCDDevice()
 : sbDeviceBase(PR_TRUE),
 mCDManagerObject(this)
 {
+  nsresult rv = NS_OK;
+  // Get the string bundle for our strings
+  if ( ! m_StringBundle.get() )
+  {
+    nsIStringBundleService *  StringBundleService = nsnull;
+    rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
+    if ( NS_SUCCEEDED(rv) )
+    {
+      rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
+    }
+  }
+
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -140,7 +156,8 @@ NS_IMETHODIMP sbCDDevice::GetSupportedFormats(const PRUnichar *deviceString, PRU
 /* PRBool IsUploadSupported (); */
 NS_IMETHODIMP sbCDDevice::IsUploadSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-  return sbDeviceBase::IsUploadSupported(deviceString, _retval);
+  *_retval = mCDManagerObject.IsUploadSupported(deviceString);
+  return NS_OK;
 }
 
 /* PRBool IsTransfering (); */
@@ -254,10 +271,10 @@ NS_IMETHODIMP sbCDDevice::GetNumDestinations(const PRUnichar *DeviceString, PRUn
   return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
 }
 
-/* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
-NS_IMETHODIMP sbCDDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, PRUnichar **TransferTable, PRBool *_retval)
+/* PRBool MakeTransferTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval); */
+NS_IMETHODIMP sbCDDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval)
 {
-  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
+  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, bDownloading, TransferTableName, _retval);
 }
 
 /* PRBool SuspendTransfer (); */
@@ -304,7 +321,7 @@ NS_IMETHODIMP sbCDDevice::AutoDownloadTable(const PRUnichar *DeviceString, const
   if (!IsDownloadInProgress(DeviceString))
   {
     // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(DeviceString);
+    RemoveExistingTransferTableEntries(DeviceString, PR_TRUE);
   }
 
   return sbDeviceBase::AutoDownloadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, filterValues, sourcePath, destPath, TransferTable, _retval);
@@ -315,7 +332,7 @@ NS_IMETHODIMP sbCDDevice::AutoUploadTable(const PRUnichar *DeviceString, const P
 {
   if (IsDeviceIdle(DeviceString))
   {
-    RemoveExistingTransferTableEntries(nsnull);
+    RemoveExistingTransferTableEntries(DeviceString, PR_FALSE);
     sbDeviceBase::AutoUploadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, filterValues, sourcePath, destPath, TransferTable, _retval);
   }
 
@@ -325,7 +342,9 @@ NS_IMETHODIMP sbCDDevice::AutoUploadTable(const PRUnichar *DeviceString, const P
 /* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
 NS_IMETHODIMP sbCDDevice::UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
 {
-  return sbDeviceBase::UploadTable(DeviceString, TableName, _retval);
+  //return sbDeviceBase::UploadTable(DeviceString, TableName, _retval);
+  *_retval = mCDManagerObject.UploadTable(DeviceString, TableName);
+  return NS_OK;
 }
 
 /* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
@@ -363,42 +382,84 @@ PRBool sbCDDevice::DeviceEventSync(PRBool mediaInserted)
 // Transfer related
 nsString sbCDDevice::GetDeviceDownloadTableDescription(const PRUnichar* deviceString)
 { 
-  return nsString(NS_LITERAL_STRING("cd-rip"));
+  nsString displayString;
+  PRUnichar *value = nsnull;
+
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_RIP_TABLE_READABLE, &value);
+  displayString = value;
+  PR_Free(value);
+
+  return displayString;
 }
 
 nsString sbCDDevice::GetDeviceUploadTableDescription(const PRUnichar* deviceString)
 { 
-  return nsString(); 
+  nsString displayString;
+  PRUnichar *value = nsnull;
+
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_BURN_TABLE_READABLE, &value);
+  displayString = value;
+  PR_Free(value);
+
+  return displayString;
 }
 
 nsString sbCDDevice::GetDeviceDownloadTableType(const PRUnichar* deviceString)
 { 
-  return nsString(NS_LITERAL_STRING("cd-rip")); 
+  nsString displayString;
+  PRUnichar *value = nsnull;
+
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_RIP_TABLE_READABLE, &value);
+  displayString = value;
+  PR_Free(value);
+
+  return displayString;
 }
 
 nsString sbCDDevice::GetDeviceUploadTableType(const PRUnichar* deviceString)
 { 
-  return nsString(); 
+  nsString displayString;
+  PRUnichar *value = nsnull;
+
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_BURN_TABLE_READABLE, &value);
+  displayString = value;
+  PR_Free(value);
+
+  return displayString;
 }
 
 nsString sbCDDevice::GetDeviceDownloadReadable(const PRUnichar* deviceString)
 { 
-  return nsString(NS_LITERAL_STRING("CD Ripping")); 
+  nsString displayString;
+  PRUnichar *value = nsnull;
+
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_RIP_TABLE_READABLE, &value);
+  displayString = value;
+  PR_Free(value);
+
+  return displayString;
 }
 
 nsString sbCDDevice::GetDeviceUploadTableReadable(const PRUnichar* deviceString)
 { 
-  return nsString(); 
+  nsString displayString;
+  PRUnichar *value = nsnull;
+
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_BURN_TABLE_READABLE, &value);
+  displayString = value;
+  PR_Free(value);
+
+  return displayString;
 }
 
 nsString sbCDDevice::GetDeviceDownloadTable(const PRUnichar* deviceString)
 { 
-  return nsString(NS_LITERAL_STRING("cdrip"));
+  return nsString(COMPACT_DISC_DEVICE_RIP_TABLE);
 }
 
 nsString sbCDDevice::GetDeviceUploadTable(const PRUnichar* deviceString)
 { 
-  return nsString(); 
+  return nsString(COMPACT_DISC_DEVICE_BURN_TABLE); 
 }
 
 PRBool sbCDDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
@@ -452,6 +513,26 @@ NS_IMETHODIMP sbCDDevice::GetUploadFileType(const PRUnichar *deviceString, PRUin
 PRUint32 sbCDDevice::GetCurrentTransferRowNumber(const PRUnichar* deviceString)
 {
   return mCDManagerObject.GetCurrentTransferRowNumber(deviceString);
+}
+
+void sbCDDevice::TransferComplete(const PRUnichar* deviceString)
+{
+  return mCDManagerObject.TransferComplete(deviceString);
+}
+
+/* PRBool SetGap (in PRUint32 numSeconds); */
+NS_IMETHODIMP sbCDDevice::SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds, PRBool *_retval)
+{
+  *_retval = mCDManagerObject.SetGapBurnedTrack(deviceString, numSeconds);
+  return NS_OK;
+}
+
+
+/* PRBool GetWritableCDDrive (out wstring deviceString); */
+NS_IMETHODIMP sbCDDevice::GetWritableCDDrive(PRUnichar **deviceString, PRBool *_retval)
+{
+  *_retval = mCDManagerObject.GetWritableCDDrive(deviceString);
+  return NS_OK;
 }
 
 /* End of implementation class template. */

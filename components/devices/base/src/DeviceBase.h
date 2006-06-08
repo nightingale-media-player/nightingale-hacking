@@ -72,9 +72,9 @@ public:
     sbDeviceBase(PRBool usingThread = PR_TRUE);
   virtual ~sbDeviceBase();
 
-  PRBool CreateTrackTable(nsString& deviceString, nsString& tableName);
-  PRBool AddTrack(nsString& deviceString, nsString& tableName, nsString& url, nsString& name, nsString& tim, nsString& artist, nsString& album, nsString& genre, PRUint32 length);
-  void DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index);
+  PRBool  CreateTrackTable(nsString& deviceString, nsString& tableName);
+  PRBool  AddTrack(nsString& deviceString, nsString& tableName, nsString& url, nsString& name, nsString& tim, nsString& artist, nsString& album, nsString& genre, PRUint32 length);
+  void    DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index);
 
   void DoDeviceConnectCallback(const PRUnichar* deviceString);
   void DoDeviceDisconnectCallback(const PRUnichar* deviceString);
@@ -92,10 +92,10 @@ public:
   PRBool  UpdateIOProgress(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index, PRUint32 percentComplete);
   PRBool  UpdateIOStatus(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index, const PRUnichar* status);
   PRBool  TransferNextFile(PRInt32 prevDownloadRowNumber, void *data);
-  void    RemoveExistingTransferTableEntries(const PRUnichar* DeviceString, PRBool dropTable = false);
+  void    RemoveExistingTransferTableEntries(const PRUnichar* DeviceString, PRBool downloadTable, PRBool dropTable = false);
   PRBool  GetFileExtension(PRUint32 fileFormat, nsString& fileExtension);
   
-  PRBool  GetNextTransferFileEntry(PRInt32 prevIndex, const PRUnichar *deviceString, PRInt32& curIndex, nsString& source, nsString& destination);
+  PRBool  GetNextTransferFileEntry(PRInt32 prevIndex, const PRUnichar *deviceString, PRBool bDownloading, PRInt32& curIndex, nsString& source, nsString& destination);
 
 protected:
 
@@ -125,11 +125,11 @@ protected:
     void*    data2;
   } ThreadMessage;
 
-  PRBool CreateTransferTable(const PRUnichar *DeviceString, const PRUnichar* ContextInput, const PRUnichar* TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **filterValues, const PRUnichar* sourcePath, const PRUnichar* destPath, PRUnichar **TransferTableName);
-  void AddQuotedString(nsString &destinationString, const PRUnichar* sourceString, PRBool suffixWithComma = PR_TRUE);
-  PRBool GetFileNameFromURL(const PRUnichar *DeviceString, nsString& url, nsString& fileName);
-  nsString GetTransferTable(const PRUnichar* deviceString);
-  PRBool StartTransfer(const PRUnichar *deviceString, const PRUnichar *tableName);
+  PRBool    CreateTransferTable(const PRUnichar *DeviceString, const PRUnichar* ContextInput, const PRUnichar* TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **filterValues, const PRUnichar* sourcePath, const PRUnichar* destPath, PRBool isDownloading, PRUnichar **TransferTableName);
+  void      AddQuotedString(nsString &destinationString, const PRUnichar* sourceString, PRBool suffixWithComma = PR_TRUE);
+  PRBool    GetFileNameFromURL(const PRUnichar *DeviceString, nsString& url, nsString& fileName);
+  nsString  GetTransferTable(const PRUnichar* deviceString, PRBool getDownloadTable);
+  PRBool    StartTransfer(const PRUnichar *deviceString, const PRUnichar *tableName);
 
   PRBool GetSourceAndDestinationURL(const PRUnichar* dbContext, const PRUnichar* table, const PRUnichar* index, nsString& sourceURL, nsString& destURL);
 
@@ -161,6 +161,7 @@ protected:
 
   virtual PRBool GetUploadFileFormat(PRUint32& fileFormat);
   virtual PRBool GetDownloadFileFormat(PRUint32& fileFormat);
+  virtual void   TransferComplete();
 
   static void PR_CALLBACK DeviceProcess(sbDeviceBase* pData);
 

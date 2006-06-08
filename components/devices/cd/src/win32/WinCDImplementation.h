@@ -31,13 +31,14 @@
 #include "CDCrossPrlatformDefs.h"
 #include "nsCOMPtr.h"
 #include "nsITimer.h"
+#include "nsIStringBundle.h"
 
 #include <list>
 
 class WinCDObject
 {
 public:
-  struct RipDBInfo
+  struct DBInfoForTransfer
   {
     nsString table;
     nsString index;
@@ -47,38 +48,39 @@ public:
   WinCDObject(class PlatformCDObjectManager* parent, char driveLetter);
   ~WinCDObject();
 
-  void Initialize();
+  void        Initialize();
 
-  PRUint32  GetDriveID();
-  char      GetDriveLetter();
-  PRUint32  GetDriveSpeed();
-  PRBool    SetDriveSpeed(PRUint32 driveSpeed);
-  PRUint32  GetUsedDiscSpace();
-  PRUint32  GetFreeDiscSpace();
+  PRUint32    GetDriveID();
+  char        GetDriveLetter();
+  PRUint32    GetDriveSpeed();
+  PRBool      SetDriveSpeed(PRUint32 driveSpeed);
+  PRUint32    GetUsedDiscSpace();
+  PRUint32    GetFreeDiscSpace();
 
-  PRBool    IsDriveWritable();
+  PRBool      IsDriveWritable();
 
-  PRBool    IsAudioDiscInDrive();
-  PRBool    IsDiscAvailableForWrite();
+  PRBool      IsAudioDiscInDrive();
+  PRBool      IsDiscAvailableForWrite();
 
-  nsString& GetCDTracksTable();
+  nsString&   GetCDTracksTable();
 
-  nsString& GetDeviceString();
-  nsString& GetDeviceContext();
+  nsString&   GetDeviceString();
+  nsString&   GetDeviceContext();
 
-  void      EvaluateCDDrive();
+  void        EvaluateCDDrive();
 
-  PRBool    RipTrack(const PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 );
-  void      UpdateIOProgress(RipDBInfo *ripInfo);
+  void        UpdateIOProgress(DBInfoForTransfer *ripInfo);
 
+  PRBool      RipTrack(const PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 );
   void        SetCDRipFormat(PRUint32 format) {} // Not yet implemented
-  PRUint32    GetCDRipFormat() { return kSB_DEVICE_FILE_FORMAT_WAV; }  // Not yet implemented
+  PRUint32    GetCDRipFormat() { return kSB_DEVICE_FILE_FORMAT_WAV; }  // Not yet implemented so default to wave format
   PRUint32    GetCurrentTransferRowNumber() { return mCurrentTransferRowNumber; }
 
-  void        SetTransferState(PRInt32 newState) { mDeviceState = newState; }
-  void        StopRip();
-  void        StopBurn();
+  PRBool      BurnTrack(const PRUnichar* source, char* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 );
+  PRBool      BurnTable(const PRUnichar* table);
 
+  void        StopTransfer();
+  void        SetTransferState(PRInt32 newState) { mDeviceState = newState; }
   PRBool      IsDeviceIdle() { return mDeviceState == kSB_DEVICE_STATE_IDLE; }
   PRBool      IsDownloadInProgress() { return mDeviceState == kSB_DEVICE_STATE_DOWNLOADING; }
   PRBool      IsUploadInProgress() { return mDeviceState == kSB_DEVICE_STATE_UPLOADING; }
@@ -86,14 +88,19 @@ public:
   PRBool      IsDownloadPaused() { return mDeviceState == kSB_DEVICE_STATE_UPLOAD_PAUSED; }
   PRBool      IsUploadPaused() { return mDeviceState == kSB_DEVICE_STATE_DELETING; }
   PRBool      IsTransferPaused() { return mDeviceState == kSB_DEVICE_STATE_BUSY; }
+  void        TransferComplete();
+  bool        SetGapBurnedTrack(PRUint32 numSeconds);
 
 private:
   WinCDObject() {}
-  void ReadDriveAttributes();
-  void ReadDiscAttributes(PRBool& mediaChanged);
-  PRBool UpdateCDLibraryData();
-  void ClearCDLibraryData();
-  PRUint32 GetCDTrackNumber(const PRUnichar* trackName);
+  void      ReadDriveAttributes();
+  void      ReadDiscAttributes(PRBool& mediaChanged);
+  PRBool    UpdateCDLibraryData();
+  void      ClearCDLibraryData();
+  PRUint32  GetCDTrackNumber(const PRUnichar* trackName);
+  PRBool    SetupCDBurnResources();
+  void      ReleaseCDBurnResources();
+  PRUint32  GetWeightTrack(nsString& trackPath);
 
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
 
@@ -114,10 +121,19 @@ private:
   nsString mDeviceContext;
   PRUint32 mCurrentTransferRowNumber;
   PRInt32  mDeviceState;
-  PRBool   mStopRip;
-  PRBool   mStopBurn;
+  PRBool   mStopTransfer;
+  PRUint32 mBurnGap;
+  nsCOMPtr<nsIStringBundle> m_StringBundle;
 
   nsCOMPtr<nsITimer> mTimer;
+  
+  struct BurnTrackInfo
+  {
+    PRUint32 index;
+    PRUint32 weight;
+  };
+
+  std::list<BurnTrackInfo> mBurnTracksWeight;
 
   class PlatformCDObjectManager* mParentCDManager;
 };
@@ -154,8 +170,10 @@ public:
   virtual PRBool      SetCDRipFormat(const PRUnichar*  deviceString, PRUint32 format);
   virtual PRUint32    GetCDRipFormat(const PRUnichar*  deviceString);
   virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString);
+  virtual PRBool      SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds);
+  virtual PRBool      GetWritableCDDrive(PRUnichar **deviceString);
 
-  virtual bool TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
+  virtual bool        TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
 
   virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState);
 
@@ -166,13 +184,17 @@ public:
   virtual PRBool      IsDownloadPaused(const PRUnichar* deviceString);
   virtual PRBool      IsUploadPaused(const PRUnichar* deviceString);
   virtual PRBool      IsTransferPaused(const PRUnichar* deviceString);
+  virtual void        TransferComplete(const PRUnichar* deviceString);
+  virtual PRBool      UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName);
 
-  class sbCDDevice* GetBasesbDevice() { return mParentDevice; };
+  class sbCDDevice*   GetBasesbDevice() { return mParentDevice; };
 
 private:
   WinCDObject* GetDeviceMatchingString(const PRUnichar* deviceString);
   PlatformCDObjectManager() {}
   void EnumerateDrives();
+  void RemoveTransferEntries(const PRUnichar* deviceString);
+
   std::list<WinCDObject *> mCDDrives;
   class sbCDDevice* mParentDevice;
 };

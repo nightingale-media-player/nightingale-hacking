@@ -36,6 +36,7 @@
 #include "nsIRDFLiteral.h"
 #include "sbICDDevice.h"
 #include "DeviceBase.h"
+#include "nsIStringBundle.h"
 
 #ifndef NS_DECL_ISUPPORTS
 #error
@@ -84,6 +85,7 @@ public:
   virtual PRBool IsDownloadPaused(const PRUnichar* deviceString) { return mCDManagerObject.IsDownloadPaused(deviceString); }
   virtual PRBool IsUploadPaused(const PRUnichar* deviceString) { return mCDManagerObject.IsUploadPaused(deviceString); }
   virtual PRBool IsTransferPaused(const PRUnichar* deviceString) { return mCDManagerObject.IsTransferPaused(deviceString); }
+  virtual void   TransferComplete(const PRUnichar* deviceString);
 
   virtual void DeviceIdle(const PRUnichar* deviceString){ mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_IDLE); }
   virtual void DeviceDownloading(const PRUnichar* deviceString) {mCDManagerObject.SetTransferState(deviceString, kSB_DEVICE_STATE_DOWNLOADING);}
@@ -106,4 +108,5 @@ private:
   ~sbCDDevice();
 
   PlatformCDObjectManager mCDManagerObject;
+  nsCOMPtr<nsIStringBundle> m_StringBundle;
 };

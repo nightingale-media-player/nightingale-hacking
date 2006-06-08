@@ -331,9 +331,9 @@ NS_IMETHODIMP sbUSBMassStorageDevice::GetNumDestinations(const PRUnichar *Device
 
 //-----------------------------------------------------------------------------
 /* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
-NS_IMETHODIMP sbUSBMassStorageDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, PRUnichar **TransferTable, PRBool *_retval)
+NS_IMETHODIMP sbUSBMassStorageDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval)
 {
-  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
+  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, bDownloading, TransferTableName, _retval);
 }
  
 //-----------------------------------------------------------------------------
@@ -343,7 +343,7 @@ NS_IMETHODIMP sbUSBMassStorageDevice::AutoDownloadTable(const PRUnichar *DeviceS
   if (!IsDownloadInProgress(DeviceString))
   {
     // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(nsnull);
+    RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
   }
 
   return sbDeviceBase::AutoDownloadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTable, _retval);
@@ -356,7 +356,7 @@ NS_IMETHODIMP sbUSBMassStorageDevice::AutoUploadTable(const PRUnichar *DeviceStr
   if (!IsUploadInProgress(DeviceString))
   {
     // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(nsnull);
+    RemoveExistingTransferTableEntries(nsnull, PR_FALSE);
   }
 
   return sbDeviceBase::AutoUploadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTable, _retval);

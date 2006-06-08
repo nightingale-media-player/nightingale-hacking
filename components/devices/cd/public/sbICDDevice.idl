@@ -31,11 +31,13 @@
 [scriptable, uuid(FED4919E-213F-4448-A689-F22DD1C56994)]
 interface sbICDDevice : sbIDeviceBase
 {
+  PRBool GetWritableCDDrive(out wstring deviceString);
   // This method is provided so that on Windows, OS specific
   // message for a media insert or eject can be passed to 
   // sbICDDevice object (note ... caller should use sbIDeviceManager in
   // obtaining sbICDDevice object and not instantiate sbICDDevice
   // directly, same applies to all other devices).
   PRBool OnCDDriveEvent(in PRBool mediaInserted);
+  PRBool SetGapBurnedTrack(in wstring deviceString, in PRUint32 numSeconds);
 };
 

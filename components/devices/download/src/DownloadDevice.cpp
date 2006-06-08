@@ -474,10 +474,10 @@ NS_IMETHODIMP sbDownloadDevice::GetNumDestinations(const PRUnichar *DeviceString
   return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
 }
 
-/* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
-NS_IMETHODIMP sbDownloadDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, PRUnichar **TransferTable, PRBool *_retval)
+/* PRBool MakeTransferTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval); */
+NS_IMETHODIMP sbDownloadDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval)
 {
-  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
+  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, bDownloading, TransferTableName, _retval);
 }
  
 /* PRBool AutoDownloadTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval); */
@@ -486,7 +486,7 @@ NS_IMETHODIMP sbDownloadDevice::AutoDownloadTable(const PRUnichar *DeviceString,
   if (!IsDownloadInProgress(DeviceString))
   {
     // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(nsnull);
+    RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
   }
 
   return sbDeviceBase::AutoDownloadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTable, _retval);
@@ -498,7 +498,7 @@ NS_IMETHODIMP sbDownloadDevice::AutoUploadTable(const PRUnichar *DeviceString, c
   if (!IsUploadInProgress(DeviceString))
   {
     // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(nsnull);
+    RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
   }
 
   return sbDeviceBase::AutoUploadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTable, _retval);

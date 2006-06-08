@@ -51,7 +51,7 @@
 #define NAME_WINDOWS_MEDIA_DEVICE_LEN NS_LITERAL_STRING("Songbird Windows Media Device").Length()
 #define NAME_WINDOWS_MEDIA_DEVICE NS_LITERAL_STRING("Songbird Windows Media Device").get()
 
-#define CONTEXT_WINDOWS_MEDIA_DEVICE_LEN  NS_LITERAL_STRING("windowsmediaDB-1108").Length()
+#define CONTEXT_WINDOWS_MEDIA_DEVICE_LEN  NS_LITERAL_STRING("windowsm]ediaDB-1108").Length()
 #define CONTEXT_WINDOWS_MEDIA_DEVICE      NS_LITERAL_STRING("windowsmediaDB-1108").get()
 
 // CLASSES ====================================================================
@@ -263,10 +263,10 @@ NS_IMETHODIMP sbWMDevice::GetNumDestinations(const PRUnichar *DeviceString, PRUn
   return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
 }
 
-/* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
-NS_IMETHODIMP sbWMDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, PRUnichar **TransferTable, PRBool *_retval)
+/* PRBool MakeTransferTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval); */
+NS_IMETHODIMP sbWMDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval)
 {
-  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, TransferTable, _retval);
+  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, bDownloading, TransferTableName, _retval);
 }
 
 /* PRBool SuspendTransfer (); */

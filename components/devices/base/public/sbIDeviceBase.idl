@@ -99,7 +99,7 @@ interface sbIDeviceBase : nsISupports
   // If calling DownloadTable() or UploadTable() then MakeTransferTable() can be called to create
   // a transfer table. Or AutoDownloadTable() and AutoUploadTable() can be called to create transfer
   // table and begin transfer right away.
-	PRBool MakeTransferTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable);
+	PRBool MakeTransferTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, in wstring FilterColumn, in PRUint32 FilterCount, [array, size_is(FilterCount)] in wstring FilterValues, in wstring sourcePath, in wstring destPath, in PRBool bDownloading, out wstring TransferTable);
   
   PRBool DownloadTable(in wstring DeviceString, in wstring TableName);
   PRBool UploadTable(in wstring DeviceString, in wstring TableName);
