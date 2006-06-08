@@ -517,8 +517,6 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIPlaylistPlayback.js"/>
-  <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/mousewheel.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/mediakeyboard.js"/>
