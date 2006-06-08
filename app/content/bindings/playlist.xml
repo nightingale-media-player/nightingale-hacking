@@ -1091,7 +1091,7 @@
         <![CDATA[
           try
           {
-            if (this.tree.columns && this.tree.columns.count > 0) {
+            if (this.tree.columns && this.tree.columns.count && this.tree.columns.count > 0) {
               for (var i=0;i<this.tree.columns.count;i++) {
                 var id = this.tree.columns[i].id;
                 var width = this.tree.columns[i].width;
