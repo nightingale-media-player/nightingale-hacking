@@ -232,6 +232,12 @@ function CoreQT()
   this.getPlaying   = function ()
   {
     this._verifyObject();
+    
+    if( this.getLength() == this.getPosition() )
+    {
+      this.stop();
+    }
+    
     return this._playing;
   }
   
