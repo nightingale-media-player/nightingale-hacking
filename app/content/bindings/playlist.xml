@@ -932,6 +932,11 @@
             var isVisible = result.GetRowCellByColumn(i, "is_visible");
             var isDefaultVisible = result.GetRowCellByColumn(i, "default_visibility");
             
+            if ( name == null ) name = "";
+            if ( readableName == null ) readableName = "";
+            if ( isVisible == null ) isVisible = "";
+            if ( isDefaultVisible == null ) isDefaultVisible = "";
+            
             if ( readableName[ 0 ] == "&" )
             {
               try
