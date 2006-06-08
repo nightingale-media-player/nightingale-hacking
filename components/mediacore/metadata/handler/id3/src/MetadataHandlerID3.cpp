@@ -228,7 +228,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         mc->SetPos( 0 );
         PRUint64 buf = 0;
         mc->GetBuf(&buf);
-        PRUint32 read, size = PR_MIN( 8096, (PRUint32)buf );
+        PRUint32 read = 0, size = PR_MIN( 8096, (PRUint32)buf );
         char *buffer = (char *)nsMemory::Alloc(size);
         if (buffer)
         {

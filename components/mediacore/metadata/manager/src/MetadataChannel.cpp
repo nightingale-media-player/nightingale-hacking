@@ -126,7 +126,7 @@ NS_IMETHODIMP sbMetadataChannel::GetSize(PRUint64 *_retval)
   if ( ! _retval )
     return NS_ERROR_NULL_POINTER;
 
-  PRInt32 ret;
+  PRInt32 ret = 0;
   this->m_Channel->GetContentLength( &ret ); 
 
   *_retval = (PRInt64)ret; // preserve sign.
