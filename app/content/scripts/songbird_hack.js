@@ -3873,7 +3873,7 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
         theWebPlaylistQuery = null; 
         // deviceName is ignored for now and we ask cd device for the writable cd drive
         CheckCDAvailableForBurn();
-        if (cdAvailableForWrite = 0)
+        if (cdAvailableForWrite == 0)
            return; 
                 
         var burnTable = {};
@@ -3947,9 +3947,7 @@ function onStopCDBurn(deviceName, aCDDevice)
 }
 
 function onBrowserCDTransfer(cdDevice, deviceString, ripping)
-{
-  var ripping;
-    
+{  
   if  (ripping == 1)
 	metrics_inc("player", "cd ripping", null);
   else
