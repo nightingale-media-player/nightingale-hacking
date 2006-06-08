@@ -1168,8 +1168,8 @@ var SBWebPlaylistCommands =
     "library_cmd_addtoplaylist",
     "library_cmd_addtolibrary",
     "*separator*",
-    "library_cmd_showdlplaylist"
-//    "library_cmd_burntocd",
+    "library_cmd_showdlplaylist",
+    "library_cmd_burntocd"
 //    "library_cmd_device"
   ),
   
@@ -1182,8 +1182,8 @@ var SBWebPlaylistCommands =
     "&command.addtoplaylist",
     "&command.addtolibrary",
     "*separator*",
-    "&command.showdlplaylist"
-//    "&command.burntocd",
+    "&command.showdlplaylist",
+    "&command.burntocd"
 //    "&command.device"
   ),
   
@@ -1196,8 +1196,8 @@ var SBWebPlaylistCommands =
     "&command.tooltip.addtoplaylist",
     "&command.tooltip.addtolibrary",
     "*separator*",
-    "&command.tooltip.showdlplaylist"
-//    "&command.tooltip.burntocd",
+    "&command.tooltip.showdlplaylist",
+    "&command.tooltip.burntocd"
 //    "&command.tooltip.device"
   ),
 
@@ -1253,7 +1253,6 @@ var SBWebPlaylistCommands =
     var retval = false;
     switch ( this.m_Ids[index] )
     {
-      case "library_cmd_burntocd":
       case "library_cmd_device":
         retval = false; // not yet implemented
       break;
@@ -1627,6 +1626,7 @@ function onMainPaneLoad()
           // Events on the playlist object itself.            
           thePlaylistTree.addEventListener( "playlist-edit", onPlaylistEdit, true );
           thePlaylistTree.addEventListener( "playlist-play", onPlaylistPlay, true );
+          thePlaylistTree.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
           thePlaylistTree.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
             
           // Remember some values
@@ -1880,6 +1880,42 @@ function onPlaylistPlay( evt )
     target = target.wrappedJSObject;
   }
   SBPlayPlaylistIndex( target.tree.currentIndex, target );
+}
+
+function onPlaylistBurnToCD( evt )
+{
+  var target = evt.target;
+  if ( target.wrappedJSObject )
+  {
+    target = target.wrappedJSObject;
+  }
+  
+  playlist = target;
+  playlistTree = target.tree;
+  
+	var filterCol = "uuid";
+	var filterVals = new Array();
+
+	var columnObj = playlistTree.columns.getNamedColumn(filterCol);
+	var rangeCount = playlistTree.view.selection.getRangeCount();
+	for (var i=0; i < rangeCount; i++) 
+	{
+		var start = {};
+		var end = {};
+		playlistTree.view.selection.getRangeAt( i, start, end );
+		for( var c = start.value; c <= end.value; c++ )
+		{
+			if (c >= playlistTree.view.rowCount) 
+			{
+			continue; 
+			}
+	        
+			var value = playlistTree.view.getCellText(c, columnObj);
+			filterVals.push(value);
+		}
+	}
+	
+    onAddToCDBurn( playlist.guid, playlist.table, filterCol, filterVals.length, filterVals );
 }
 
 function onPlaylistDblClick( evt )
@@ -3659,8 +3695,301 @@ if (aDeviceManager)
 }
 
 
+var SBCDBurningCommands = 
+{
+  DEVICE_IDLE :               0,
+  DEVICE_BUSY :               1,
+  DEVICE_DOWNLOADING :        2,
+  DEVICE_UPLOADING :          3,
+  DEVICE_DOWNLOAD_PAUSED :    4,
+  DEVICE_UPLOAD_PAUSED :      5,
+  DEVICE_DELETING :           6,
+  
+  m_Playlist: null,
+  m_Device: null,
+  m_DeviceName: null,
+  m_TableName: null,
 
-// END
+  m_Ids: new Array
+  (
+    "library_cmd_start",
+    "library_cmd_stop"
+  ),
+  
+  m_Names: new Array
+  (
+    "&command.start",
+    "&command.stop"
+  ),
+  
+  m_Tooltips: new Array
+  (
+    "&command.tooltip.start",
+    "&command.tooltip.stop"
+  ),
+
+  GetNumCommands: function()
+  {
+    if ( 
+        ( this.m_Tooltips.length != this.m_Ids.length ) ||
+        ( this.m_Names.length != this.m_Ids.length ) ||
+        ( this.m_Tooltips.length != this.m_Names.length )
+       )
+    {
+      alert( "PlaylistCommands - Array lengths do not match!" );
+      return 0;
+    }
+    return this.m_Ids.length;
+  },
+
+  GetCommandId: function( index )
+  {
+    if ( index >= this.m_Ids.length )
+    {
+      return "";
+    }
+    return this.m_Ids[ index ];
+  },
+
+  GetCommandText: function( index )
+  {
+    if ( index >= this.m_Names.length )
+    {
+      return "";
+    }
+    return this.m_Names[ index ];
+  },
+
+  GetCommandFlex: function( index )
+  {
+    if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+    return 0;
+  },
+
+  GetCommandToolTipText: function( index )
+  {
+    if ( index >= this.m_Tooltips.length )
+    {
+      return "";
+    }
+    return this.m_Tooltips[ index ];
+  },
+
+  GetCommandEnabled: function( index )
+  {
+    var retval = false;
+    if ( this.m_Device )
+    {
+      switch( index )
+      {
+        default:
+          retval = true;
+        break;
+      }
+    }
+    return retval;
+  },
+
+  OnCommand: function( event )
+  {
+    if ( this.m_Device && event.target && event.target.id )
+    {
+      // Was it from the toolbarbutton?
+      var tbb = ( event.target.tagName == "toolbarbutton" || event.target.tagName == "xul:toolbarbutton" );
+      switch( event.target.id )
+      {
+        case "library_cmd_start":
+            // start CD rip
+            //onBrowserCDTransfer(this.m_Device, this.m_DeviceName, 0 );
+            onStartCDBurn(this.m_Device, this.m_DeviceName, this.m_TableName);
+        break;
+        case "library_cmd_stop":
+            // stop CD rip
+            onStopCDBurn(this.m_DeviceName, this.m_Device);
+        break;
+      }
+      event.stopPropagation();
+    }
+  },
+  
+  // The object registered with the sbIPlaylistSource interface acts 
+  // as a template for instances bound to specific playlist elements
+  Duplicate: function()
+  {
+    var obj = {};
+    for ( var i in this )
+    {
+      obj[ i ] = this[ i ];
+    }
+    return obj;
+  },
+  
+  SetPlaylist: function( playlist )
+  {
+    this.m_Playlist = playlist;
+  },
+  
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+
+};
+
+function onStartCDBurn(cdDevice, deviceName, table)
+{
+  try
+  {
+    if (cdDevice != null)
+    {
+      CheckCDAvailableForBurn();
+      if (cdAvailableForWrite)
+      {
+        cdDevice.UploadTable(deviceName, table);
+      }
+    }
+  }
+  
+  catch (err)
+  {
+    alert(err);
+  }
+}
+
+var cdAvailableForWrite = 0;
+var writableCDDeviceString = '';
+
+function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterValues)
+{
+    try
+    {
+        theWebPlaylistQuery = null; 
+        // deviceName is ignored for now and we ask cd device for the writable cd drive
+        CheckCDAvailableForBurn();
+        if (cdAvailableForWrite = 0)
+           return; 
+                
+        var burnTable = {};
+        
+        // CD burning will be a two step process, user has to click the 'burn' button to initiate a CD burn
+        aCDDevice.MakeTransferTable(writableCDDeviceString, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', '', false, burnTable);
+        
+        // Register the guid and table with the playlist source to always show special burn commands.
+        SBCDBurningCommands.m_Device = aCDDevice;
+        SBCDBurningCommands.m_DeviceName = writableCDDeviceString;
+        SBCDBurningCommands.m_TableName = burnTable.value;
+        var source = new sbIPlaylistsource();
+        source.RegisterPlaylistCommands( aCDDevice.GetContext(writableCDDeviceString), burnTable.value, burnTable.value, SBCDBurningCommands );
+
+        // And show the download table in the chrome playlist.
+        //onBrowserCDTransfer(aCDDevice, writableCDDeviceString, 0 /*Burning*/);
+    }
+    
+    catch ( err )
+    {
+        alert( err );
+    }
+}
+
+function CheckCDAvailableForBurn()
+{
+    cdAvailableForWrite = 0;
+    aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].createInstance(Components.interfaces.sbIDeviceManager);
+    if (aDeviceManager)
+    {
+        aCDDevice = aDeviceManager.GetDevice('Songbird CD Device');
+    }
+
+    if (!aCDDevice)
+    {
+        return;
+    }
+	aCDDevice = aCDDevice.QueryInterface(Components.interfaces.sbICDDevice);
+    if (!aCDDevice)
+    {
+        return;
+    }
+
+    var temp = {};
+    if (!aCDDevice.GetWritableCDDrive(temp))
+    {
+        return;
+    }
+    writableCDDeviceString = temp.value;
+    
+    if (!aCDDevice.IsUploadSupported(writableCDDeviceString))
+    {
+        return;
+    }
+
+    if (aCDDevice.GetAvailableSpace(writableCDDeviceString) == 0)
+    {
+        return;
+    }
+    
+	alert("Writable CD Found at " + writableCDDeviceString);
+    cdAvailableForWrite = 1;
+}
+
+function onStopCDBurn(deviceName, aCDDevice)
+{
+  if (aCDDevice)
+  {
+    aCDDevice.AbortTransfer(deviceName);
+  }
+}
+
+function onBrowserCDTransfer(cdDevice, deviceString, ripping)
+{
+  var ripping;
+    
+  if  (ripping == 1)
+	metrics_inc("player", "cd ripping", null);
+  else
+	metrics_inc("player", "cd burning", null);
+    
+  // Work to figure out guid and table
+  var guid = cdDevice.GetContext(deviceString);
+  var table;
+  if (ripping)
+    table = cdDevice.GetDownloadTable(deviceString);
+  else
+    table = cdDevice.GetUploadTable(deviceString);
+
+  // Actual functionality
+  if ( ! thePlaylistTree )
+  {
+    // Errrr, nope?
+    if ( ( guid == "" ) || ( table == "" ) )
+    {
+      return;
+    }
+
+    if ( theWebPlaylist.ref != ( "NC:" + guid + "_" + table ) )
+    {
+      if (ripping)
+        theWebPlaylist.bind( guid, table, null, SBCDRippingCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
+      else
+        theWebPlaylist.bind( guid, table, null, SBCDBurningCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
+    }
+    
+    // Show/hide them
+    theShowWebPlaylistData.SetValue( true );
+  }
+  else
+  {
+    var theServiceTree = document.getElementById( 'frame_servicetree' );
+    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
+  }
+
+}// END
 
 }
 catch ( err )
