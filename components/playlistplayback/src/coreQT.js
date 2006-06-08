@@ -98,25 +98,22 @@ function EmitSecondsToTimeString( seconds )
   return text;
 }
 
-// The QT ActiveX Control Wrapper
+// The QT Plugin Wrapper
 function CoreQT()
 {
-	this._object = null;
-	
-	this._url = "";
-	
+  this._object = null;
+  this._url = "";
+  this._id = "";
   this._playing = false;
-  
   this._paused  = false;
 
   /**
    *
    */
   this._verifyObject = function() {
-    // Like, actually verify that we think it's a wmp object.  Not just that it's defined.
-    if ( (this._object === undefined) || ( ! this._object ) || ( ! this._object.uiMode ) )
+    if ( (this._object == undefined) || ( ! this._object ) || ( ! this._object instanceof Components.interfaces.nsIQTScriptablePlugin ) )
     {
-      LOG("VERIFY OBJECT FAILED.  OBJECT DOES NOT HAVE PROPER WMP API.")
+      LOG("VERIFY OBJECT FAILED.  OBJECT DOES NOT HAVE PROPER QT API.")
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     }
   }  
@@ -124,15 +121,21 @@ function CoreQT()
   // When another core wrapper takes over, stop.
   this.onSwappedOut = function onSwappedOut()
   {
-  	this._verifyObject();
-    this._object.stop();
-    this._object.Rewind();
+    this._verifyObject();
+    try
+    {
+      this._object.Stop();
+    }
+    catch(e)
+    {
+      LOG(e);
+    }
   } 
   
   // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
   this.playUrl = function ( url )
   {
-  	this._verifyObject();
+    this._verifyObject();
 
     if (!url)
       throw Components.results.NS_ERROR_INVALID_ARG;
@@ -140,107 +143,165 @@ function CoreQT()
     LOG( "Trying to play url: " + url );
     this._url = url;
 
-    this._url.SetURL( url );
-    setTimeout('gQTCore.play()', 250);
+    this._paused = false;
+    this._playing = true;
+
+    this._object.setAttribute("src", "file://" + url );
+    
+    LOG("Movie URL: " + this._object.getAttribute("url"));
+    LOG("Movie Size: " + this._object.getAttribute("moviesize"));
+    LOG("Movie Duration: " + this._object.getAttribute("duration"));
+    LOG("Movie Bytes Loaded: " + this._object.getAttribute("maxbytesloaded"));
+
+    this.play();
+
+    return true;
   }
 
   this.play      = function ()
   {
-  	this._verifyObject();
+    this._verifyObject();
   	
     this._paused = false;
     this._playing = true;
+  
+    try
+    {
+      this._object.Play();
+    }
+    catch(e)
+    {
+      LOG(e);
+    }
     
-    return this._object.Play();
+    return true;
   }
   
   this.pause     = function ()
   {
-  	this._verifyObject();
+    if(this._paused == true)
+      return;
 
-		if( this._object._paused )
-		  return this._object.play();
+    this._verifyObject();
     
-    this._object.m_Paused = true;
-    this._object.m_Playing = false;
+    this._paused = true;
+    this._playing = false;
 
-    return this._object.Stop();
+    this._object.Stop();
+
+    return true;
   }
   
   this.stop = function ()
   {
+    this._paused = false;
+    this._playing = false;
+
     this._verifyObject();
-    
-    this._object._paused = false;
-    this._object._playing = false;
-    
-    this._object.Stop();
-    return this._object.Rewind();
+
+    try
+    {
+      this._object.Rewind();
+    }
+    catch(e)
+    {
+      LOG(e);
+      return false;
+    }
+
+    return true;
   }
   
   this.next = function ()
   {
-  	this._verifyObject();
+    this._verifyObject();
     return CNullStub();
   }
   
   this.prev = function ()
   {
-  	this._verifyObject();
+    this._verifyObject();
     return CNullStub();
   }
   
   this.getPlaying   = function ()
   {
-  	this._verifyObject();
-    return this._object._playing;
+    this._verifyObject();
+    return this._playing;
   }
   
   this.getPaused    = function ()
   {
-  	this._verifyObject();
-    return this._object._paused;
+    this._verifyObject();
+    return this._paused;
   }
   
   this.getLength = function ()
   {
-  	this._verifyObject();
-    return this._object.GetEndTime();
+    this._verifyObject();
+    if( this._object.GetPluginStatus() == "Playable" ||
+        this._object.GetPluginStatus() == "Complete" ||
+        this._object.GetPluginStatus() == null )
+      return this._object.GetEndTime();
+
+    return -1;
   }
   
   this.getPosition = function ()
   {
-  	this._verifyObject();
-    return this._object.GetTime();
+    this._verifyObject();
+    if( this._object.GetPluginStatus() == "Playable" ||
+        this._object.GetPluginStatus() == "Complete" || 
+        this._object.GetPluginStatus() == null )
+      return this._object.GetTime();
+    return 0;
   }
   
   this.setPosition = function ( pos )
   {
-  	this._verifyObject();
+    this._verifyObject();
+    this._object.Pause();
     this._object.SetTime( pos );
-    this._object.doPlay();
+    this._object.Play();
   }
   
   this.getVolume   = function ()
   {
-    return ( this._object.GetVolume() );
+    this._verifyObject();
+    var curVol = this._object.getAttribute("volume");
+    
+    return curVol;
   }
   
   this.setVolume   = function ( vol )
   {
-  	this._verifyObject();
-    this._object.SetVolume( vol );
+    this._verifyObject();
+    //this._object.SetVolume( vol );
+    this._object.setAttribute("volume", vol);
+
+    LOG(this.getVolume());
   }
   
   this.getMute     = function ()
   {
-    return this._object.GetMute();
+    this._verifyObject();
+    //return this._object.GetMute();
+    var isMuted = this._object.getAttribute("mute");
+    return isMuted;
   }
   
   this.setMute     = function ( mute )
   {
-  	this._verifyObject();
-    this._object.SetMute( mute );
+    this._verifyObject();
+    //this._object.SetMute( mute );
+    this._object.setAttribute("mute", mute);
+    LOG(this.getMute());
+  }
+
+  this.getMetadata = function ( key )
+  {
+    this._verifyObject();
+    return "";
   }
   
   /**
@@ -299,13 +360,20 @@ function CoreQTDocumentInit( id )
   {
     var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
-    var theQTInstance = document.getElementById( id );
+    var theDocumentQTInstance = document.getElementById( id );
+    
+    //XXXaus: Debug Code.
+    for(var methodName in theDocumentQTInstance)
+    {
+      LOG(methodName + " on the QTInstance");
+    }
 
-    gCoreQT.setId("QT1");
-    gCoreQT.setObject(theQTInstance);
-    gPPS.addCore(gCoreQT, true);
+    theDocumentQTInstance.SetAutoPlay(true);
 
-  }
+    gQTCore.setId("QT1");
+    gQTCore.setObject(theDocumentQTInstance);
+    gPPS.addCore(gQTCore, true);
+ }
   catch ( err )
   {
     LOG( "\n!!! coreQT failed to bind properly\n" + err );

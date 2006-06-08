@@ -343,8 +343,8 @@ function SBAppInitialize()
 
     /*
     */
-    var theQTInstance = document.getElementById( "core_qt" );
-    
+    //var theQTInstance = document.getElementById( "core_qt" );
+
     /*
     */
     var theVLCInstance = document.getElementById( "core_vlc" );
@@ -362,6 +362,7 @@ function SBAppInitialize()
     // Let the sbIPlaylistPlayback interface play in the game, too, maaaan.
     CoreVLCDocumentInit( "core_vlc" );
     //CoreWMPDocumentInit( "core_wm" );
+    //CoreQTDocumentInit( "core_qt" );
     //setTimeout("CoreWMPDocumentInit( 'core_wm' );", 0);
     
     // Reset this on application startup. 
