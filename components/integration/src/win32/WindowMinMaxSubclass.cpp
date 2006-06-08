@@ -42,7 +42,8 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsComponentManagerUtils.h>
-#include "nsString.h"
+#include <nsServiceManagerUtils.h>
+#include <nsString.h>
 
 #include "sbIDeviceManager.h"
 #include "sbICDDevice.h"
@@ -262,14 +263,14 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     // for receiving media insert and removal notifications.
     case WM_DEVICECHANGE:
       {
-        nsCOMPtr<sbIDeviceManager> deviceManager = do_CreateInstance("@songbird.org/Songbird/DeviceManager;1");
+        nsCOMPtr<sbIDeviceManager> deviceManager = do_GetService("@songbird.org/Songbird/DeviceManager;1");
         if (deviceManager)
         {
           PRBool retVal;
           nsCOMPtr<sbIDeviceBase> cdDeviceBaseObject;
           nsCOMPtr<sbIDeviceBase> usbDeviceBaseObject;
 
-          deviceManager->GetDevice(NS_L("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
+          deviceManager->GetDeviceByString(NS_LITERAL_STRING("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
           if (cdDeviceBaseObject)
           {
             nsCOMPtr<sbICDDevice> cdDevice;
@@ -303,7 +304,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
               strDeviceGUID = wszGUID;
             }
 
-            deviceManager->GetDevice(NS_L("Songbird USBMassStorage Device"), getter_AddRefs(usbDeviceBaseObject));
+            deviceManager->GetDeviceByString(NS_LITERAL_STRING("Songbird USBMassStorage Device"), getter_AddRefs(usbDeviceBaseObject));
             if ( usbDeviceBaseObject && strDeviceName.get() && (deviceGUID != GUID_NULL) )
             {
               nsCOMPtr<sbIUSBMassStorageDevice> usbDevice;

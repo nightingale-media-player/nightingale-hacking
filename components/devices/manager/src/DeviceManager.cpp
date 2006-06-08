@@ -29,193 +29,215 @@
 * \Windows Media device Component Implementation.
 */
 #include "DeviceManager.h"
-#include "nspr.h"
+#include "DeviceBase.h"
 
-#if defined(XP_WIN)
-#include "objbase.h"
-#endif
+#include <nsIComponentRegistrar.h>
+#include <nsComponentManagerUtils.h>
+#include <nsSupportsPrimitives.h>
+#include <nsISimpleEnumerator.h>
+#include <nsString.h>
+#include <nsAutoLock.h>
 
-#include <xpcom/nscore.h>
-#include <xpcom/nsXPCOM.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsComponentManagerUtils.h>
-#include <necko/nsIURI.h>
-#include <webbrowserpersist/nsIWebBrowserPersist.h>
-#include <xpcom/nsILocalFile.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsIComponentRegistrar.h>
-#include <xpcom/nsSupportsPrimitives.h>
-#include <xpconnect/xpccomponents.h>
-#include <string/nsStringAPI.h>
-#include "nsIWebProgressListener.h"
-// #include "../sbIDownloadDevice/sbIDownloadDevice.h" // no.
+#define SB_DEVICE_PREFIX "@songbird.org/Songbird/Device/"
 
-#include "IDatabaseResult.h"
-#include "IDatabaseQuery.h"
-#include "DeviceManager.h"
+// This allows us to be initialized once and only once.
+PRBool sbDeviceManager::sServiceInitialized = PR_FALSE;
 
-#define NAME_WINDOWS_MEDIA_DEVICE NS_LITERAL_STRING("Songbird Device Manager").get()
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceManager, sbIDeviceManager)
 
-const PRInt32 NUM_DEVICES_SUPPORTED = 1;
-
-sbDeviceManager* sbDeviceManager::mSingleton = NULL;
-
-NS_IMPL_ISUPPORTS1(sbDeviceManager, sbIDeviceManager)
-
-sbDeviceManager* sbDeviceManager::GetSingleton()
+sbDeviceManager::sbDeviceManager()
+: mLock(nsnull)
 {
-  NS_IF_ADDREF( mSingleton? mSingleton : mSingleton = new sbDeviceManager() );
-  return mSingleton;  
-}
-
-sbDeviceManager::sbDeviceManager():
-  mIntialized(false),
-  mFinalized(false)
-{
-  InializeInternal();
+  // All initialization handled in Initialize()
 }
 
 sbDeviceManager::~sbDeviceManager()
 {
-  FinalizeInternal();
+  // Loop through the array and call Finalize() on all the devices.
+  nsresult rv;
+
+  { // Scope for the lock
+    nsAutoLock autoLock(mLock);
+
+    PRInt32 count = mSupportedDevices.Count();
+    for (PRInt32 index = 0; index < count; index++) {
+      nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
+      NS_ASSERTION(device, "Null pointer in mSupportedDevices");
+
+      PRBool retval;
+      rv = device->Finalize(&retval);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
+    }
+  }
+  PR_DestroyLock(mLock);
 }
 
-void sbDeviceManager::InializeInternal()
+// Instantiate all supported devices.
+// This is done by iterating through all registered XPCOM components and
+// finding the components with @songbird.org/Songbird/Device/ prefix for the 
+// contract ID for the interface.
+NS_IMETHODIMP
+sbDeviceManager::Initialize()
 {
-  if (mIntialized)
-    return; // Already initialized
+  // Test to make sure that we haven't been initialized yet. If consumers are
+  // doing the right thing (using getService) then we should never get here
+  // more than once. If they do the wrong thing (createInstance) then we'll
+  // fail on them so that they fix their code.
+  NS_ENSURE_FALSE(sbDeviceManager::sServiceInitialized,
+                  NS_ERROR_ALREADY_INITIALIZED);
 
-  // Instantiate all supported devices
-  // This is done by iterating through all registered
-  // XPCOM components and finding the components with
-  // @songbird.org/Songbird/Device/ prefix for the 
-  // contract ID for the interface.
+  // Set the static variable so that we won't initialize again.
+  sbDeviceManager::sServiceInitialized = PR_TRUE;
 
+  mLock = PR_NewLock();
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the component registrar
   nsresult rv;
   nsCOMPtr<nsIComponentRegistrar> registrar;
   rv = NS_GetComponentRegistrar(getter_AddRefs(registrar));
-  if (rv != NS_OK)
-    return;
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISimpleEnumerator> simpleEnumerator;
   rv = registrar->EnumerateContractIDs(getter_AddRefs(simpleEnumerator));
-  if (rv != NS_OK)
-    return;
+  NS_ENSURE_SUCCESS(rv, rv);
   
-  PRBool moreAvailable;
+  // Enumerate through the contractIDs and look for our prefix
+  nsCOMPtr<nsISupports> element;
+  PRBool more = PR_FALSE;
+  while(NS_SUCCEEDED(simpleEnumerator->HasMoreElements(&more)) && more) {
 
-  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK &&
-    moreAvailable)
-  {
-    nsCOMPtr<nsISupportsCString> contractString;
-    if (simpleEnumerator->GetNext(getter_AddRefs(contractString)) == NS_OK)
-    {
-      char* contractID = NULL;
-      contractString->ToString(&contractID);
-      if (strstr(contractID, "@songbird.org/Songbird/Device/"))
-      {
-        nsCOMPtr<sbIDeviceBase> device(do_CreateInstance(contractID));
-        if (device.get())
-        {
-          ((sbIDeviceBase *) device.get())->AddRef();
-          PRBool retVal = false;
-          device->Initialize(&retVal);
-          mSupportedDevices.push_front(device);
-        }
-      }
-      PR_Free(contractID);
+    rv = simpleEnumerator->GetNext(getter_AddRefs(element));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsISupportsCString> contractString =
+      do_QueryInterface(element, &rv);
+    if NS_FAILED(rv) {
+      NS_WARNING("QueryInterface failed");
+      continue;
+    }
+
+    nsCAutoString contractID;
+    rv = contractString->GetData(contractID);
+    if NS_FAILED(rv) {
+      NS_WARNING("GetData failed");
+      continue;
+    }
+
+    NS_NAMED_LITERAL_CSTRING(prefix, SB_DEVICE_PREFIX);
+
+    if (!StringBeginsWith(contractID, prefix))
+      continue;
+
+    // Create an instance of the device
+    nsCOMPtr<sbIDeviceBase> device =
+      do_CreateInstance(contractID.get(), &rv);
+    if (!device) {
+      NS_WARNING("Failed to create device!");
+      continue;
+    }
+
+    // And initialize the device
+    PRBool deviceInitialized;
+    rv = device->Initialize(&deviceInitialized);
+    if (!deviceInitialized) {
+      NS_WARNING("Device failed to initialize!");
+      continue;
+    }
+
+    nsAutoLock autoLock(mLock);
+
+    // If everything has succeeded then we can add it to our array
+    PRBool ok = mSupportedDevices.AppendObject(device);
+    
+    // Make sure that our array is behaving properly. If not we're in trouble.
+    NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::GetDeviceCategoriesCount(PRUint32* aDeviceCategoriesCount)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceCategoriesCount);
+
+  nsAutoLock autoLock(mLock);
+
+	*aDeviceCategoriesCount = (PRUint32)mSupportedDevices.Count();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::GetDeviceCategoryString(PRUint32 aIndex,
+                                         nsAString& _retval)
+{
+  nsAutoLock autoLock(mLock);
+
+  NS_ENSURE_ARG_MAX(aIndex, (PRUint32)mSupportedDevices.Count());
+
+  nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(aIndex);
+  NS_ENSURE_TRUE(device, NS_ERROR_NULL_POINTER);
+
+  PRUnichar* stringBuffer;
+  nsresult rv = device->GetDeviceCategory(&stringBuffer);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval.Assign(stringBuffer);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::GetDeviceByIndex(PRUint32 aIndex,
+                                  sbIDeviceBase** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoLock autoLock(mLock);
+
+  NS_ENSURE_ARG_MAX(aIndex, (PRUint32)mSupportedDevices.Count());
+
+  nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(aIndex);
+  NS_ENSURE_TRUE(device, NS_ERROR_UNEXPECTED);
+
+  NS_ADDREF(*_retval = device);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::GetDeviceByString(const nsAString& aDeviceCategory,
+                                   sbIDeviceBase** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoLock autoLock(mLock);
+
+  PRInt32 count = mSupportedDevices.Count();
+  for (PRInt32 index = 0; index < count; index++) {
+    nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
+    if (!device) {
+      NS_WARNING("Null pointer in mSupportedDevices");
+      continue;
+    }
+
+    PRUnichar* categoryBuffer;
+    nsresult rv = device->GetDeviceCategory(&categoryBuffer);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("GetDeviceCategory Failed");
+      continue;
+    }
+
+    nsDependentString category(categoryBuffer);
+
+    if (category.Equals(aDeviceCategory)) {
+      NS_ADDREF(*_retval = device);
+      return NS_OK;
     }
   }
 
-  mIntialized = true;
-  mFinalized = false;
-
-}
-void sbDeviceManager::FinalizeInternal()
-{
-  if (mFinalized)
-    return; // Already finalized
-
-  std::list<_Device>::iterator deviceIterator = mSupportedDevices.begin();
-  while (deviceIterator != mSupportedDevices.end())
-  {
-    PRBool retVal = false;
-    (*deviceIterator)->Finalize(&retVal);
-
-    deviceIterator ++;
-  }
-
-  mIntialized = false;
-  mFinalized = true;
-}
-
-/* PRUint32 GetNumDeviceCategories (); */
-NS_IMETHODIMP sbDeviceManager::GetNumDeviceCategories(PRUint32 *_retval)
-{
-	*_retval = (PRUint32) mSupportedDevices.size();
-    return NS_OK;
-}
-
-/* void Initialize (); */
-NS_IMETHODIMP sbDeviceManager::Initialize()
-{
-  InializeInternal();
+  // Not found
+  *_retval = nsnull;
   return NS_OK;
 }
-
-/* void Finalize (); */
-NS_IMETHODIMP sbDeviceManager::Finalize()
-{
-  FinalizeInternal();
-  return NS_OK;
-}
-
-/* wstring EnumDeviceCategoryString (in PRUint32 Index); */
-NS_IMETHODIMP sbDeviceManager::EnumDeviceCategoryString(PRUint32 Index, PRUnichar **_retval)
-{
-	std::list<_Device>::iterator deviceIterator = mSupportedDevices.begin();
-	while (deviceIterator != mSupportedDevices.end())
-	{
-		if (Index -- == 0)
-		{
-			(*deviceIterator)->GetDeviceCategory(_retval);
-			break;
-		}
-		deviceIterator ++;
-	}
-	return NS_OK;
-}
-
-/* sbIDeviceBase GetDevice (in wstring DeviceCategory); */
-NS_IMETHODIMP sbDeviceManager::GetDevice(const PRUnichar *DeviceCategory, sbIDeviceBase **_retval)
-{
-	*_retval = GetDeviceMatchingCategory(DeviceCategory);
-  
-  if (*_retval)
-    (*_retval)->AddRef();
-
-    return NS_OK;
-}
-
-sbIDeviceBase* sbDeviceManager::GetDeviceMatchingCategory(const PRUnichar *DeviceCategory)
-{
-	// Find the device with matching DeviceCategory
-	std::list<_Device>::iterator deviceIterator = mSupportedDevices.begin();
-	while (deviceIterator != mSupportedDevices.end())
-	{
-		PRUnichar *category = NULL;
-		(*deviceIterator)->GetDeviceCategory(&category);
-		if (category)
-		{
-			if (nsString(category) == nsString(DeviceCategory))
-			{
-				return (*deviceIterator).get();
-			}
-		}
-
-		deviceIterator ++;
-	}
-
-	return NULL;
-}
-

@@ -40,6 +40,7 @@ CPP_SRCS = DeviceManager.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
+               $(topsrcdir)/components/devices/base/src \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR) \

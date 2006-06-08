@@ -22,19 +22,42 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 #include "nsISupports.idl"
-#include "sbIDeviceBase.idl"
 
-[scriptable, uuid(937075DF-1597-45f4-97C7-D32397CD0D62)]
+interface sbIDeviceBase;
+
+/**
+ * This is the DeviceManager service.
+ * Make sure to use getService rather than createInstance when using.
+ */
+[scriptable, uuid(4403C45D-0BB8-47cb-AB89-2221F62E5614)]
 interface sbIDeviceManager : nsISupports
 {
-  void Initialize();
-  void Finalize();
+  /**
+   * The number of device categories currently registered
+   */
+	readonly attribute PRUint32 deviceCategoriesCount;
 
-	PRUint32 GetNumDeviceCategories();
-	wstring EnumDeviceCategoryString(in PRUint32 Index);
-	sbIDeviceBase GetDevice(in wstring DeviceCategory);
+  /**
+   * Gets the category (nsAString) of the device at the specified index
+   *
+   * @param aIndex - the index of the device
+   */
+	AString getDeviceCategoryString(in PRUint32 aIndex);
+
+  /**
+   * Returns a registered and initialized device
+   *
+   * @param aIndex - the index of the device
+   */
+	sbIDeviceBase getDeviceByIndex(in PRUint32 aIndex);
+
+  /**
+   * Returns a registered and initialized device
+   *
+   * @param aDeviceCategory - a category string identifying the device
+   */
+	sbIDeviceBase getDeviceByString(in AString aDeviceCategory);
 };
-

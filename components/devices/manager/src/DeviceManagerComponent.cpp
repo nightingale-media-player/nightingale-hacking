@@ -32,27 +32,16 @@
 #include "nsIGenericFactory.h"
 #include "DeviceManager.h"
 
-#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
-  static _Interface * _Interface##SimpletonConstructor( void )                  \
-  {                                                                             \
-    static _Interface * m_Simpleton = NULL;                                     \
-    NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
-    return m_Simpleton;                                                         \
-  }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
-
-  NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(sbDeviceManager)
-//NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbDeviceManager, sbDeviceManager::GetSingleton);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceManager, Initialize);
 
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_DeviceManager_CLASSNAME, 
-    SONGBIRD_DeviceManager_CID,
-    SONGBIRD_DeviceManager_CONTRACTID,
+    SONGBIRD_DEVICEMANAGER_CLASSNAME, 
+    SONGBIRD_DEVICEMANAGER_CID,
+    SONGBIRD_DEVICEMANAGER_CONTRACTID,
     sbDeviceManagerConstructor,
   }
 };
 
-NS_IMPL_NSGETMODULE("SongbirdDeviceManagerComponent", components)
-
+NS_IMPL_NSGETMODULE(SONGBIRD_DEVICEMANAGER_DESCRIPTION, components)

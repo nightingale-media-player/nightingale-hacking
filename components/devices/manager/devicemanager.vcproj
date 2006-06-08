@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DeviceManager_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -81,7 +81,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdf&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\rdfutil&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\uriloader&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\src&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DeviceManager_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -144,8 +144,8 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
-$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -v -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -v -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
 "
 						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
 				</FileConfiguration>
@@ -154,8 +154,8 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
-$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -v -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -v -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\devices\base\public -o $(OutDir)\$(InputName) $(InputPath)
 "
 						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
 				</FileConfiguration>

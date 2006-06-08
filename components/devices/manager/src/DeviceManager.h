@@ -29,30 +29,32 @@
  * \brief Songbird WMDevice Component Definition.
  */
 
-#pragma once
+#ifndef __DeviceManager_h__
+#define __DeviceManager_h__
 
-#include "nsISupportsImpl.h"
-#include "nsISupportsUtils.h"
-#include "nsIRDFLiteral.h"
 #include "sbIDeviceManager.h"
-#include "nsString.h"
 
-#include <xpcom/nsCOMPtr.h>
+#include <nsCOMArray.h>
+#include <prlock.h>
 
-#include <list>
-
-#ifndef NS_DECL_ISUPPORTS
-#error
-#endif
 // DEFINES ====================================================================
-#define SONGBIRD_DeviceManager_CONTRACTID  "@songbird.org/Songbird/DeviceManager;1"
-#define SONGBIRD_DeviceManager_CLASSNAME   "Songbird Device Manager"
-#define SONGBIRD_DeviceManager_CID { 0x937075df, 0x1597, 0x45f4, { 0x97, 0xc7, 0xd3, 0x23, 0x97, 0xcd, 0xd, 0x62 } }
-// {937075DF-1597-45f4-97C7-D32397CD0D62}
+#define SONGBIRD_DEVICEMANAGER_DESCRIPTION                 \
+  "Songbird DeviceManager Service"
+#define SONGBIRD_DEVICEMANAGER_CONTRACTID                  \
+  "@songbird.org/Songbird/DeviceManager;1"
+#define SONGBIRD_DEVICEMANAGER_CLASSNAME                   \
+  "Songbird Device Manager"
+#define SONGBIRD_DEVICEMANAGER_CID                         \
+{ /* 4403c45d-0bb8-47cb-ab89-2221f62e5614 */               \
+  0x4403c45d,                                              \
+  0x0bb8,                                                  \
+  0x47cb,                                                  \
+  { 0xab, 0x89, 0x22, 0x21, 0xf6, 0x2e, 0x56, 0x14 }       \
+}
 
 // CLASSES ====================================================================
 
-class sbDeviceManager :  public sbIDeviceManager
+class sbDeviceManager : public sbIDeviceManager
 {
 public:
   NS_DECL_ISUPPORTS
@@ -60,21 +62,23 @@ public:
 
   sbDeviceManager();
 
-  static sbDeviceManager* GetSingleton();
+  // Initializes the service. This will fail if we have already been
+  // initialized, even thought that should never happen with getService.
+  NS_IMETHOD Initialize();
 
 private:
   ~sbDeviceManager();
 
+  // This is a simple static to make sure that we aren't initialized more than
+  // once. Consumers should use getService instead of createInstance, but we do
+  // this just in case they forget. 
+  static PRBool sServiceInitialized;
 
-  sbIDeviceBase* GetDeviceMatchingCategory(const PRUnichar *DeviceCategory);
-  
-  void InializeInternal();
-  void FinalizeInternal();
+  // The lock that protects mSupportedDevices
+  PRLock* mLock;
 
-  static sbDeviceManager* mSingleton;
-
-  typedef nsCOMPtr<sbIDeviceBase> _Device;
-  std::list<_Device> mSupportedDevices;
-  bool mIntialized;
-  bool mFinalized;
+  // An array of the supported devices that have been initialized.
+  nsCOMArray<sbIDeviceBase> mSupportedDevices;
 };
+
+#endif /* __DeviceManager_h__ */
