@@ -339,7 +339,7 @@ function SBAppInitialize()
 
     /*
     */
-    var theWMPInstance = document.getElementById( "core_wm" );
+    //var theWMPInstance = document.getElementById( "core_wm" );
 
     /*
     */
