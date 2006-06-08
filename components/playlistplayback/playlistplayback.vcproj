@@ -28,6 +28,7 @@
 mkdir $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\
+copy /y $(InputDir)src\coreQT.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\
 copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
@@ -53,6 +54,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 mkdir $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\coreVLC.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\coreWMP.js $(SolutionDir)dist\chrome\content\scripts\
+copy /y $(InputDir)src\coreQT.js $(SolutionDir)dist\chrome\content\scripts\
 copy /y $(InputDir)src\sbPlaylistPlayback.js $(SolutionDir)dist\components\
 copy /y $(InputDir)$(OutDir)\sbICoreWrapper.xpt $(SolutionDir)dist\components
 copy /y $(InputDir)$(OutDir)\sbIPlaylistPlayback.xpt $(SolutionDir)dist\components
@@ -139,6 +141,25 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			</File>
 			<File
 				RelativePath=".\src\coreWMP.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\coreQT.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

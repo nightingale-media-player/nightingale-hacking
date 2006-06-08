@@ -177,6 +177,32 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\coreQT.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\src\sbPlaylistPlayback.js"
 				>
 				<FileConfiguration

@@ -140,19 +140,24 @@ function CoreQT()
     if (!url)
       throw Components.results.NS_ERROR_INVALID_ARG;
 
-    LOG( "Trying to play url: " + url );
     this._url = url;
 
     this._paused = false;
     this._playing = true;
 
-    this._object.setAttribute("src", "file://" + url );
+    if( url.search(/[A-Za-z].*\:\/\//g) < 0 )
+    {
+      url = "file://" + url;
+    }
     
-    LOG("Movie URL: " + this._object.getAttribute("url"));
-    LOG("Movie Size: " + this._object.getAttribute("moviesize"));
-    LOG("Movie Duration: " + this._object.getAttribute("duration"));
-    LOG("Movie Bytes Loaded: " + this._object.getAttribute("maxbytesloaded"));
+    if( url.search(/\\/g))
+    {
+      url.replace(/\\/, '/');
+    }
 
+    LOG( "Trying to play url: " + url );
+    
+    this._object.SetURL( url );
     this.play();
 
     return true;
@@ -165,12 +170,9 @@ function CoreQT()
     this._paused = false;
     this._playing = true;
   
-    try
-    {
+    try {
       this._object.Play();
-    }
-    catch(e)
-    {
+    } catch(e) {
       LOG(e);
     }
     
@@ -179,34 +181,37 @@ function CoreQT()
   
   this.pause     = function ()
   {
-    if(this._paused == true)
-      return;
-
+    if( this._paused )
+      return this._paused;
+  
     this._verifyObject();
-    
+
+    try {
+      this._object.Stop();
+    } catch(e) {
+      LOG(e);
+    }
+
     this._paused = true;
-    this._playing = false;
-
-    this._object.Stop();
-
-    return true;
+    
+    return this._paused;
   }
   
   this.stop = function ()
   {
+    this._verifyObject();
+    
+    if( !this._playing )
+      return true;
+      
     this._paused = false;
     this._playing = false;
 
-    this._verifyObject();
-
-    try
-    {
+    try {
+      this._object.Stop();
       this._object.Rewind();
-    }
-    catch(e)
-    {
+    } catch(e) {
       LOG(e);
-      return false;
     }
 
     return true;
@@ -239,36 +244,48 @@ function CoreQT()
   this.getLength = function ()
   {
     this._verifyObject();
-    if( this._object.GetPluginStatus() == "Playable" ||
-        this._object.GetPluginStatus() == "Complete" ||
-        this._object.GetPluginStatus() == null )
-      return this._object.GetEndTime();
-
-    return -1;
+    var playLength = 0;
+    
+    try {
+      playLength = this._object.GetEndTime();
+    } catch(e) {
+      LOG(e);
+    }
+    
+    return playLength;
   }
   
   this.getPosition = function ()
   {
     this._verifyObject();
-    if( this._object.GetPluginStatus() == "Playable" ||
-        this._object.GetPluginStatus() == "Complete" || 
-        this._object.GetPluginStatus() == null )
-      return this._object.GetTime();
-    return 0;
+    var curPos = 0;
+    
+    try {
+      curPos = this._object.GetTime();
+    } catch(e) {
+      LOG(e);
+    }
+    
+    return curPos;
   }
   
   this.setPosition = function ( pos )
   {
     this._verifyObject();
-    this._object.Pause();
-    this._object.SetTime( pos );
-    this._object.Play();
+    
+    try {
+      this._object.Stop();
+      this._object.SetTime( pos );
+      this._object.Play();
+    } catch(e) {
+      LOG(e);
+    }
   }
   
   this.getVolume   = function ()
   {
     this._verifyObject();
-    var curVol = this._object.getAttribute("volume");
+    var curVol = this._object.GetVolume();
     
     return curVol;
   }
@@ -276,8 +293,7 @@ function CoreQT()
   this.setVolume   = function ( vol )
   {
     this._verifyObject();
-    //this._object.SetVolume( vol );
-    this._object.setAttribute("volume", vol);
+    this._object.SetVolume(vol);
 
     LOG(this.getVolume());
   }
@@ -285,17 +301,15 @@ function CoreQT()
   this.getMute     = function ()
   {
     this._verifyObject();
-    //return this._object.GetMute();
-    var isMuted = this._object.getAttribute("mute");
+    var isMuted = this._object.GetMute();
+    
     return isMuted;
   }
   
   this.setMute     = function ( mute )
   {
     this._verifyObject();
-    //this._object.SetMute( mute );
-    this._object.setAttribute("mute", mute);
-    LOG(this.getMute());
+    this._object.SetMute( mute );
   }
 
   this.getMetadata = function ( key )
@@ -361,14 +375,8 @@ function CoreQTDocumentInit( id )
     var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     var theDocumentQTInstance = document.getElementById( id );
-    
-    //XXXaus: Debug Code.
-    for(var methodName in theDocumentQTInstance)
-    {
-      LOG(methodName + " on the QTInstance");
-    }
 
-    theDocumentQTInstance.SetAutoPlay(true);
+    theDocumentQTInstance.SetAutoPlay(false);
 
     gQTCore.setId("QT1");
     gQTCore.setObject(theDocumentQTInstance);
