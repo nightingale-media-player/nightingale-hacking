@@ -181,8 +181,7 @@
             .getService(Components.interfaces.nsIStringBundleService);
         this.stringbundle = stringBundleService.createBundle( src );
             
-        // Someone explain to me the difference between a builder's listener
-        // and a builderview's observer?  ?!?  -- builderView is deprecated
+        // register to get the willRebuild and didRebuild messages
         this.tree.builder.addListener(this);
 
         // These are all the possible column ids whose cell content we can use as unique ids (for saveSelection/restoreSelection)
@@ -212,16 +211,37 @@
     </constructor>
 
     <destructor>
-      if ( ! this._constructed ) dump("playlist.xml - destructor - THIS SHOULD NEVER GET CALLED\n"); return; // ???
-      var ref = this.tree.getAttribute("ref");
-      this.source.RemoveObserver(this);
+      <![CDATA[
+      try {
+        if ( ! this._constructed )
+        {
+          dump("playlist.xml - destructor - THIS SHOULD NEVER GET CALLED\n");
+          return; // ???
+        }
 
-      if (this.m_dndSourceTracker != null) this.m_dndSourceTracker.unregisterDnDSource(this);
+        // no more didRebuild/willRebuild messages
+        if (this.tree.builder)
+          this.tree.builder.removeListener(this);
 
-      this.stopWatchingDragObjects();
-      this.tree.builder.removeListener(this);
-      this.playUrl.unbind();
-      this._constructed = false; // ???
+        // remove ourself from watching the tree's view (toggle state, selection notification... )
+        if (this.tree.view && this.addedObserver) {
+          this.tree.view.removeObserver(this);
+          this.addedObserver = false;
+        }
+
+        if (this.m_dndSourceTracker)
+          this.m_dndSourceTracker.unregisterDnDSource(this);
+     
+        // detach mouse listeners from drag list 
+        this.stopWatchingDragObjects();
+
+        // detach from the sbIDataRemote
+        this.playUrl.unbind();
+        this._constructed = false; // ???
+      } catch (err) {
+        dump("playlist.xml - destructor: " + err + "\n");
+      }
+      ]]>
     </destructor>
 
     <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_tree');</field>
@@ -937,7 +957,8 @@
             if ( isVisible == null ) isVisible = "";
             if ( isDefaultVisible == null ) isDefaultVisible = "";
             
-            if ( readableName[ 0 ] == "&" )
+            dump("XXXredfive name:" + name + "\n");
+            if ( readableName && readableName[ 0 ] == "&" )
             {
               try
               {
@@ -1093,8 +1114,8 @@
           {
             if (this.tree.columns && this.tree.columns.count && this.tree.columns.count > 0) {
               for (var i=0;i<this.tree.columns.count;i++) {
-                var id = this.tree.columns[i].id;
-                var width = this.tree.columns[i].width;
+                var id = this.tree.columns.getColumnAt(i).id;
+                var width = this.tree.columns.getColumnAt(i).width;
                 if (width == 0) continue; // first rebuild when coming back from a url doesn't have time to show the columns and still has all their widths to 0, don't save that
                 this.SBDataSetValue( "playlist." + this.ref + ".column." + id + ".size", width );
               }
@@ -1861,7 +1882,7 @@
             
             if ( ! this.addedObserver )
             {
-              // And then listen to the tree?
+              // And then listen to the tree? (togglecell, selectionChange)
               this.tree.view.addObserver(this);
               this.addedObserver = true;
             }
