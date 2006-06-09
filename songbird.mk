@@ -47,21 +47,39 @@ CONFIGSTATUS = $(OBJDIR)/config.status
 
 CONFIGURE_ARGS = $(NULL)
 
+# MAKECMDGOALS contains the targets passed on the command line:
+#    example:  make -f songbird.mk debug
+#    - $(MAKECMDGOALS) would contain debug
 ifeq (debug,$(MAKECMDGOALS))
 DEBUG = 1
 endif
 
-ifeq (nojars,$(MAKECMDGOALS))
-NOJARS = 1
-endif
 
+#
+# Check environment variables
+#
+
+# debug builds
 ifdef DEBUG
 CONFIGURE_ARGS += --enable-debug
-endif
-
-ifdef NOJARS
+# debug builds turn off jars by default, unless SB_ENABLE_JARS is set
+ifndef SB_ENABLE_JARS
 CONFIGURE_ARGS += --disable-jars
 endif
+endif  # ifdef DEBUG
+
+# release builds
+ifndef DEBUG
+# release builds have jars by default, unless SB_DISABLE_JARS is set
+ifdef SB_DISABLE_JARS 
+CONFIGURE_ARGS += --disable-jars
+endif
+endif #ifndef DEBUG
+
+
+#
+# Set some needed commands
+#
 
 ifndef AUTOCONF
 AUTOCONF := autoconf
