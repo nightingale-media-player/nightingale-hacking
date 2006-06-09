@@ -2,6 +2,7 @@
 pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
+pref("config.trim_on_minimize", true); // Dump the current ram footprint when minimized.
 
 pref("browser.sessionhistory.max_total_viewers", 0);
 
