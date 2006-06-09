@@ -1,0 +1,61 @@
+#
+# BEGIN SONGBIRD GPL
+# 
+# This file is part of the Songbird web player.
+#
+# Copyright© 2006 Pioneers of the Inevitable LLC
+# http://www.songbirdnest.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the “GPL”).
+# 
+# Software distributed under the License is distributed 
+# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+# express or implied. See the GPL for the specific language 
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this 
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc., 
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# 
+# END SONGBIRD GPL
+#
+
+DEPTH = ..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+include $(DEPTH)/build/autodefs.mk
+
+#
+# These scripts have problems with absolute paths, so use $(DEPTH) instead
+#
+
+STAGE_DIR	= $(DEPTH)/update
+
+full-update:: complete-patch
+
+complete-patch::
+	$(MKDIR) -p $(STAGE_DIR)
+	MAR=$(MAR_BIN) \
+	  $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
+	  "$(STAGE_DIR)/$(SB_APPNAME).complete.mar" \
+	  "$(DEPTH)/$(DISTDIRNAME)"
+
+#
+# Partial patches disabled until we figure out the buildID stuff. See bug 255.
+#
+
+#partial-update:: partial-patch
+
+#partial-patch::
+#	$(MKDIR) -p $(STAGE_DIR)
+#	MAR=$(MAR_BIN) \
+#	MBSDIFF=$(MBSDIFF_BIN) \
+#	  $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
+#	  "$(STAGE_DIR)/$(SB_APPNAME).partial.$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+#	  "$(SRC_BUILD)" \
+#	  "$(DST_BUILD)"
+
+include $(topsrcdir)/build/rules.mk

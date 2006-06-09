@@ -38,6 +38,7 @@ AUTODEFS_MK_INCLUDED=1
 SB_APPNAME       = @SB_APPNAME@
 SB_PLATFORM      = @SB_PLATFORM@
 SB_CONFIGURATION = @SB_CONFIGURATION@
+SB_BUILDID       = @SB_BUILDID@
 
 BIN_SUFFIX       = @BIN_SUFFIX@
 OBJ_SUFFIX       = @OBJ_SUFFIX@
@@ -74,8 +75,12 @@ MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
 MOZSDK_LIB_DIR     = $(MOZSDK_DIR)/lib
 MOZSDK_BIN_DIR     = $(MOZSDK_DIR)/bin
 MOZSDK_IDL_DIR     = $(MOZSDK_DIR)/idl
+MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
 
 PLUGINS_DIR        = @top_srcdir@/dependencies/@SB_PLATFORM@/plugins
+
+OBJDIRNAME         = @OBJDIRNAME@
+DISTDIRNAME        = @DISTDIRNAME@
 
 SONGBIRD_OBJDIR         = @top_srcdir@/@OBJDIRNAME@
 SONGBIRD_DISTDIR        = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@@MACOSX_RESOURCES@
@@ -119,8 +124,9 @@ AUTOCONF_TOOLS = @top_srcdir@/build/autoconf
 
 XPIDL     = $(MOZSDK_DIR)/bin/xpidl@BIN_SUFFIX@
 XPTLINK   = $(MOZSDK_DIR)/bin/xpt_link@BIN_SUFFIX@
-MAR       = $(MOZSDK_DIR)/bin/mar@BIN_SUFFIX@
-MSBDIFF   = $(MOZSDK_DIR)/bin/msbdiff@BIN_SUFFIX@
+
+MAR_BIN     = $(MOZSDK_DIR)/bin/mar@BIN_SUFFIX@
+MBSDIFF_BIN = $(MOZSDK_DIR)/bin/mbsdiff@BIN_SUFFIX@
 
 #
 # Tool flags
