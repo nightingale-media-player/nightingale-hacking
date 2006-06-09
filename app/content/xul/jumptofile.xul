@@ -34,7 +34,7 @@
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="jump_to_file"
- title="Jump to !changeme!"
+ title="&jumptofile.title;"
  hidechrome="true"
  buttons="none"
  onload="onLoadJumpToFile();"
@@ -80,7 +80,7 @@
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
         
           <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="Jump to file !changeme!" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&jumptofile.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>

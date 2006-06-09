@@ -219,3 +219,14 @@
 <!ENTITY bookmarks.edit.icon "Icon:" >
 
 
+
+
+<!ENTITY trackeditor.title "Track Editor" >
+<!ENTITY trackeditor.trackdata "Track Data" >
+<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.tags "Tags" >
+<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY jumptofile.title "Jump to" >
+
+

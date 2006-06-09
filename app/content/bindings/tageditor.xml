@@ -302,7 +302,6 @@
           if (this.list) {
             for (var i=0;i<this.list.getRowCount();i++) {
               var item = this.list.getItemAtIndex(i);
-              alert (item.value);
               if (item.label.toUpperCase() == val.toUpperCase()) return true;
             }
           }
