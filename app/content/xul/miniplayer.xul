@@ -62,7 +62,7 @@
   <vbox><player_back id="mini_btn_back"    class="sb_faceplate miniplayer" /></vbox>
   <vbox><player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/></vbox>
   <vbox><player_forward id="mini_btn_fwd"     class="sb_faceplate miniplayer" /> </vbox>
-  <vbox id="mini_dash">
+  <vbox id="mini_dash" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
     <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
       <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
       <label id="mini_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
