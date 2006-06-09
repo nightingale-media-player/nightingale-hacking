@@ -97,7 +97,7 @@
           <!-- DRAGGER AND SYSTEM BUTTONS -->
           <hbox id="songbird_top" class="sb_faceplate" >
             <image id="app_icon" ondblclick="quitApp( );"/>
-            <label id="app_title" value="&window.main.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&window.dev.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <menubar id="songbird_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)">
               <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
