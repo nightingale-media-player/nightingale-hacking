@@ -49,6 +49,13 @@
       <![CDATA[
         //var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         //jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        if (this.checkbox) {
+          var oncommand = { 
+            _that: null, 
+            handleEvent: function( event ) { this._that.onToggleMultiEdition(); } 
+          } oncommand._that = this; 
+          this.checkbox.addEventListener("command", oncommand, true);
+        }
       ]]>
     </constructor>
     <destructor>
@@ -56,6 +63,9 @@
     
     <field name="ml">null</field>
     <field name="query">null</field>
+    <field name="guids">null</field>
+    <field name="ismultiedit">false</field>
+    <field name="multieditdisabled">false</field>
 
     <property name="readonly">
       <getter>
@@ -67,17 +77,6 @@
       </setter>
     </property>
 
-    <property name="guid">
-      <getter>
-        return this.getAttribute("guid");;
-      </getter>
-      <setter>
-        this.setAttribute("guid", val);
-        this.undo();
-        return val;
-      </setter>
-    </property>
-    
     <property name="column">
       <getter>
         return this.getAttribute("column");;
@@ -88,12 +87,124 @@
         return val;
       </setter>
     </property>
+    
+    <method name="onToggleMultiEdition">
+      <body>
+        <![CDATA[
+          if (this.checkbox && !this.isSingleEdition())
+          {
+            if (this.checkbox.getAttribute("checked")) this.enableMultiEdition(); else { this.disableMultiEdition(); this.setValueToControl(this.getValueFromDatabase(false)); }
+          }
+        ]]>
+      </body>
+    </method>
+
+
+    <method name="setSingleEdition">
+      <body>
+        <![CDATA[
+          this.ismultiedit = false;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("hidden", "true");
+            if (this.spacer) this.spacer.setAttribute("hidden", "true");
+            if (this.editcontrol) this.editcontrol.removeAttribute("disabled");
+            this.onSetSingleEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="isSingleEdition">
+      <body>
+        <![CDATA[
+          return !this.ismultiedit;
+        ]]>
+      </body>
+    </method>
+
+    <method name="setMultiEdition">
+      <body>
+        <![CDATA[
+          this.ismultiedit = true;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("hidden", "false");
+            if (this.spacer) this.spacer.setAttribute("hidden", "false");
+            this.onSetMultiEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="enableMultiEdition">
+      <body>
+        <![CDATA[
+          this.multieditdisabled = false;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("checked", "true");
+            if (this.editcontrol) this.editcontrol.removeAttribute("disabled");
+            this.onEnableMultiEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="disableMultiEdition">
+      <body>
+        <![CDATA[
+          this.multieditdisabled = true;
+          try {
+            if (this.checkbox) this.checkbox.setAttribute("checked", "false");
+            if (this.editcontrol) this.editcontrol.setAttribute("disabled", "true");
+            this.onDisableMultiEdition();
+          } catch (e) {}
+        ]]>
+      </body>
+    </method>
+
+    <method name="isMultiEditionEnabled">
+      <body>
+        <![CDATA[
+          return !this.multieditdisabled;
+        ]]>
+      </body>
+    </method>
 
     <method name="getValueFromDatabase">
+      <parameter name="setmultistate"/>
       <body>
         <![CDATA[
           this.initMl();
-          return this.ml.GetValueByGUID(this.guid, this.column);
+          var value;
+          if (setmultistate)
+          {
+            if (this.guids.length == 1) 
+            {
+              this.setSingleEdition(); 
+            }
+            else 
+            {
+              this.setMultiEdition();
+              this.enableMultiEdition();
+            }
+          }
+          for (var i=0;i<this.guids.length;i++)
+          {
+            var thisval = this.ml.GetValueByGUID(this.guids[i], this.column);
+            if (i==0) 
+            {
+              value = thisval;
+            }
+            else 
+            {
+              if (thisval != value)
+              {
+                if (setmultistate) this.disableMultiEdition();
+                value = ""; // could return the first found too
+                break;
+              }
+            }
+          }
+          return value;
         ]]>
       </body>
     </method>
@@ -105,7 +216,14 @@
           var ro = this.getAttribute("readonly");
           if (ro == "1" || ro == "true") return;
           this.initMl();
-          this.ml.SetValueByGUID(this.guid, this.column, value, false);
+          if (this.isSingleEdition() || this.isMultiEditionEnabled())
+          {
+            for (var i=0;i<this.guids.length;i++)
+            {
+              this.ml.SetValueByGUID(this.guids[i], this.column, value, true);
+            }
+            this.query.Execute();
+          }
         ]]>
       </body>
     </method>
@@ -122,7 +240,7 @@
     
     <method name="undo">
       <body>
-        this.setValueToControl(this.getValueFromDatabase());
+        this.setValueToControl(this.getValueFromDatabase(true));
       </body>
     </method>
 
@@ -198,6 +316,8 @@
   <binding id="textbox" extends="chrome://songbird/content/bindings/db_controls.xml#base">
 
   <content>
+    <xul:checkbox sid="dbedit.checkbox" hidden="true"/>
+    <xul:spacer sid="dbedit.spacer" width="2" hidden="true"/>
     <xul:textbox flex="1" sid="dbedit.textbox" xbl:inherits="class=class" />
   </content>
 
@@ -208,18 +328,20 @@
     <destructor>
     </destructor>
 
-    <field name="textbox">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.textbox');</field>
+    <field name="editcontrol">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.textbox');</field>
+    <field name="checkbox">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.checkbox');</field>
+    <field name="spacer">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.spacer');</field>
 
     <method name="setValueToControl">
       <parameter name="value"/>
       <body>
-        this.textbox.value = value;
+        this.editcontrol.value = value;
       </body>
     </method>
     
     <method name="getValueFromControl">
       <body>
-        return this.textbox.value;
+        return this.editcontrol.value;
       </body>
     </method>
     
@@ -240,8 +362,10 @@
   <binding id="menulist" extends="chrome://songbird/content/bindings/db_controls.xml#base">
 
   <content>
+    <xul:checkbox sid="dbedit.checkbox" hidden="true"/>
+    <xul:spacer sid="dbedit.spacer" width="2" hidden="true"/>
     <xul:menulist 
-      sid="list"
+      sid="dbedit.list"
       flex="1"
       xbl:inherits="editable=editable,class=class,id=listid"
        onpopupshowing="onPopup();"
@@ -256,7 +380,7 @@
     </constructor>
     <destructor>
     </destructor>
-
+    
     <property name="populateuniques">
       <setter>
          return this.setAttribute("populateuniques", val);
@@ -266,19 +390,21 @@
       </getter>
     </property>
 
-    <field name="list">document.getAnonymousElementByAttribute(this, 'sid', 'list');</field>
+    <field name="editcontrol">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.list');</field>
+    <field name="checkbox">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.checkbox');</field>
+    <field name="spacer">document.getAnonymousElementByAttribute(this, 'sid', 'dbedit.spacer');</field>
 
     <method name="setValueToControl">
       <parameter name="value"/>
       <body>
-        this.list.selectedIndex = -1;
-        this.list.value = value;
+        this.editcontrol.selectedIndex = -1;
+        this.editcontrol.value = value;
       </body>
     </method>
     
     <method name="getValueFromControl">
       <body>
-        return this.list.value;
+        return this.editcontrol.value;
       </body>
     </method>
     
@@ -292,12 +418,12 @@
       <body>
         <![CDATA[
           if (this.populateuniques) {
-            this.list.removeAllItems();
+            this.editcontrol.removeAllItems();
             var nout = {};
             var array = this.ml.GetUniqueValuesByField(this.column, nout);
             for (var i=0;i<array.length;i++) {
               if (array[i] != "")
-                this.list.appendItem(array[i], null, null);
+                this.editcontrol.appendItem(array[i], null, null);
             }
           }
       ]]>

@@ -2080,7 +2080,8 @@ function onMainwinKeypress( evt )
     case 101:
       if (evt.ctrlKey) 
       {
-        SBTrackEditorOpen();
+        // for now only allow editing the main db
+        if (theLibraryPlaylist && theLibraryPlaylist.guid == "songbird") SBTrackEditorOpen();
       }
       break;
     case 108: // Ctrl-L
@@ -2515,7 +2516,7 @@ function SBTrackEditorOpen()
   if (needToOpen) {
     const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable";
-    window.openDialog(TEURL, "track_editor", TEFEATURES);
+    window.openDialog(TEURL, "track_editor", TEFEATURES, document);
   }
 }
 

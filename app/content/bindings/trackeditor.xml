@@ -51,6 +51,15 @@
     </constructor>
     <destructor>
     </destructor>
+    
+    <field name="basedoc">null</field>
+
+    <method name="setBaseDocument">
+      <parameter name="doc"/>
+      <body>
+        this.basedoc = doc;
+      </body>
+    </method>
 
     <method name="insertDrawerContent">
      <body>
@@ -59,6 +68,35 @@
        ret.setAttribute("height", this.getContentSize());
        return ret;
      </body>
+    </method>
+    
+    <method name="onContentInserted">
+      <body>
+        <![CDATA[
+          this.setBaseDocToContentDoc();
+        ]]>
+      </body>
+    </method>
+    
+    <method name="setBaseDocToContentDoc">
+      <body>
+        <![CDATA[
+          var iframe = this.getContent();
+          if (iframe) {
+            var doc = iframe.contentDocument;
+            var func = doc.__SETBASEDOC_FUNCTION__;
+            if (func) {
+              func(this.basedoc);
+            } else {
+              var setbasedoc = { 
+                _that: null, 
+                handleEvent: function( event ) { this._that.setBaseDocToContentDoc(); } 
+              } setbasedoc._that = this;
+              this.instanceTimer.setTimeout( setbasedoc, 0 );
+            }
+          }
+        ]]>
+      </body>
     </method>
     
     <method name="apply">
@@ -115,24 +153,24 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
-
         this.controls = Array();
-
-        var ontrackchange = { 
-          _that: null, 
-          handleEvent: function( event ) { this._that.onTrackChange(); } 
-        } ontrackchange._that = this;
-        this.editedtrack = new sbIDataRemote( "trackeditor.uuid" );
-        this.editedtrack.bindCallbackFunction(ontrackchange, true);
-
       ]]>
     </constructor>
     <destructor>
+      if (this.playlistevt) this.playlistevt.removeEventListener("playlist-selchange", this.selchangeevt, false);
     </destructor>
     
     <field name="controls">null</field>
+    <field name="basedoc">null</field>
+    <field name="guids">null</field>
+
+    <method name="setBaseDocument">
+      <parameter name="doc"/>
+      <body>
+        this.basedoc = doc;
+        this.watchPlaylist();
+      </body>
+    </method>
     
     <property name="exclude">
       <getter>
@@ -254,16 +292,13 @@
     <method name="onContentInserted">
       <body>
         // set controls guids
-        this.onTrackChange();
+        this.loadSelection();
       </body>
     </method>
     
-    <method name="onTrackChange">
+    <method name="onPlaylistSelectionChanged">
       <body>
-        <![CDATA[
-          for (var i=0;i<this.controls.length;i++) 
-            this.controls[i].guid = this.editedtrack.getValue();
-        ]]>
+        this.loadSelection();
       </body>
     </method>
     
@@ -276,6 +311,66 @@
           for (var i=0;i<excludearray.length;i++)
             if (excludearray[i].toUpperCase() == col.toUpperCase()) return true;
           return false;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="watchPlaylist">
+      <body>
+        <![CDATA[
+          var playlist = this.basedoc.__CURRENTPLAYLIST__;
+          if (playlist)
+          {
+            var onselchange = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.onPlaylistSelectionChanged(); } 
+            } onselchange._that = this;
+            this.selchangeevt = onselchange;
+            this.playlistevt = playlist;
+            playlist.addEventListener("playlist-selchange", this.selchangeevt, false);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="loadSelection">
+      <body>
+        <![CDATA[
+          this.guids = Array();
+          var playlist = this.basedoc.__CURRENTPLAYLIST__;
+          if (playlist && playlist.tree.columns) 
+          {
+            var guid_column = playlist.tree.columns["uuid"];
+            if (guid_column && playlist.tree.view && playlist.tree.view.selection)
+            {
+              var rangeCount = playlist.tree.view.selection.getRangeCount();
+              for (var i=0; i < rangeCount; i++) 
+              {
+                var start = {};
+                var end = {};
+                playlist.tree.view.selection.getRangeAt( i, start, end );
+                for (var j=start.value;j<=end.value;j++)
+                {
+                  // Get the text of the hidden tree cell, this contains the uuid.
+                  var guid = playlist.tree.view.getCellText( j, guid_column );
+                  this.guids.push(guid);
+                }
+              }
+            }
+          }
+          this.onTrackChange();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onTrackChange">
+      <body>
+        <![CDATA[
+          for (var i=0;i<this.controls.length;i++)
+          {
+            this.controls[i].guids = this.guids;
+            this.controls[i].undo();
+          }
         ]]>
       </body>
     </method>

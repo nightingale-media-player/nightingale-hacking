@@ -219,6 +219,10 @@
           return; // ???
         }
 
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-destroy", false, true);
+        this.dispatchEvent(e);
+
         // no more didRebuild/willRebuild messages
         if (this.tree.builder)
           this.tree.builder.removeListener(this);
@@ -1830,17 +1834,6 @@
                 var end = {};
                 this.tree.view.selection.getRangeAt( i, start, end );
                 count += end.value - start.value + 1;
-                if (i == 0) {
-                  var first = start.value;
-                  // Find the guid column. 
-                  if (this.tree.columns) 
-                  {
-                    var guid_column = this.tree.columns ? this.tree.columns["uuid"] : "uuid";
-                    // Get the text of the hidden tree cell, this contains the uuid.
-                    var guid = this.tree.view.getCellText( first, guid_column );
-                    SBDataSetValue( "trackeditor.uuid", guid )
-                  }
-                }
               }
             }
             if ( count > 50 )
@@ -1863,6 +1856,9 @@
                 this.paused_scanning = false;
               }
             }
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-selchange", false, true);
+            this.dispatchEvent(e);
           }
           catch( err )
           {

@@ -150,13 +150,35 @@
   const VK_ESCAPE = 27;
   const VK_ENTER = 13;
   
+  var playlist = null;
+  
   function onLoadTrackEditor() {
     SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') + 1 );
+
+    var doc = window.arguments[0];
+    document.getElementById("trackeditor.trackeditor").setBaseDocument(doc);
+    document.getElementById("trackeditor.exttrackeditor").setBaseDocument(doc);
+    document.getElementById("trackeditor.tageditor").setBaseDocument(doc);
+
+    playlist = doc.__CURRENTPLAYLIST__;
+    if (playlist)
+    {
+      playlist.addEventListener("playlist-destroy", onDestroyPlaylist, false);
+    }
+
     onWindowLoadPosition();
     document.getElementById("trackeditor.trackeditor").openDrawer();
   }
   
+  function onDestroyPlaylist() {
+    onExit();
+  }
+  
   function onUnloadTrackEditor() {
+    if (playlist)
+    {
+      playlist.removeEventListener("playlist-destroy", onDestroyPlaylist, false);
+    }
     var pause = SBDataGetIntValue('backscan.paused') - 1;
     if ( pause < 0 ) pause = 0;
     SBDataSetValue('backscan.paused', pause );

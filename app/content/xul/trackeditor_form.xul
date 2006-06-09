@@ -87,8 +87,9 @@
  
   <script>
   <![CDATA[
-  var watcher = null;
   var controls = Array();
+  var basedoc = null;
+  var guids = Array();
 
   function apply() 
   {
@@ -102,22 +103,28 @@
       controls[i].undo();
   }
   
+  function setBaseDocument(doc) {
+    basedoc = doc;
+    watchPlaylist();
+    loadSelection();
+  }
+
+  document.__APPLY_FUNCTION__ = apply;
+  document.__UNDO_FUNCTION__ = undo;
+  document.__SETBASEDOC_FUNCTION__ = setBaseDocument;
+  
   function onInit()
   {
     try
     { 
       loadControls();
-      watcher = new sbIDataRemote("trackeditor.uuid");
-      watcher.bindCallbackFunction(onTrackChange, false);
-      document.__APPLY_FUNCTION__ = apply;
-      document.__UNDO_FUNCTION__ = undo;
     }
     catch ( err )
     {
       alert( err );
     }
   } 
-  
+ 
   function loadControls() {
     controls.push(document.getElementById("trackeditor.guid"));
     controls.push(document.getElementById("trackeditor.url"));
@@ -128,15 +135,63 @@
     controls.push(document.getElementById("trackeditor.length"));
   }
   
-  function onTrackChange(guid) {
-    for (var i=0;i<controls.length;i++)
-      controls[i].guid = guid;
+  function onTrackChange() {
+    for (var i=0;i<controls.length;i++) {
+      controls[i].guids = guids;
+      controls[i].undo();
+    }
   }
 
   function onDeinit()
   {
-    watcher.unbind();
+    var playlist = basedoc.__CURRENTPLAYLIST__;
+    if (playlist)
+    {
+      playlist.removeEventListener("playlist-selchange", onPlaylistSelectionChanged, false);
+    }
   }
+  
+  function watchPlaylist()
+  {
+    var playlist = basedoc.__CURRENTPLAYLIST__;
+    if (playlist)
+    {
+      playlist.addEventListener("playlist-selchange", onPlaylistSelectionChanged, false);
+    }
+  }
+  
+  function onPlaylistSelectionChanged()
+  {
+    loadSelection();
+  }
+  
+  function loadSelection()
+  {
+    guids = Array();
+    var playlist = basedoc.__CURRENTPLAYLIST__;
+    if (playlist && playlist.tree.columns) 
+    {
+      var guid_column = playlist.tree.columns["uuid"];
+      if (guid_column && playlist.tree.view && playlist.tree.view.selection)
+      {
+        var rangeCount = playlist.tree.view.selection.getRangeCount();
+        for (var i=0; i < rangeCount; i++) 
+        {
+          var start = {};
+          var end = {};
+          playlist.tree.view.selection.getRangeAt( i, start, end );
+          for (var j=start.value;j<=end.value;j++)
+          {
+            // Get the text of the hidden tree cell, this contains the uuid.
+            var guid = playlist.tree.view.getCellText( j, guid_column );
+            guids.push(guid);
+          }
+        }
+      }
+    }
+    onTrackChange();
+  }
+  
  ]]>
   </script>
   

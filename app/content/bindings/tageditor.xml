@@ -54,6 +54,15 @@
     <destructor>
     </destructor>
 
+    <field name="basedoc">null</field>
+
+    <method name="setBaseDocument">
+      <parameter name="doc"/>
+      <body>
+        this.basedoc = doc;
+      </body>
+    </method>
+
     <method name="insertDrawerContent">
      <body>
        var ret = document.createElement("hbox");
