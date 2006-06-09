@@ -232,3 +232,9 @@
 <!ENTITY jumptofile.title "Jump to" >
 
 
+
+
+<!ENTITY window.undo "Undo" >
+<!ENTITY window.apply "Apply" >
+
+

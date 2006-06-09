@@ -4,6 +4,8 @@
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://songbirdnest.com/player/welcome/" >
 <!ENTITY window.ok          "Okay" >
+<!ENTITY window.undo        "Undo" >
+<!ENTITY window.apply       "Apply" >
 <!ENTITY window.cancel      "Cancel" >
 <!ENTITY window.browse      "Browse..." >
 
