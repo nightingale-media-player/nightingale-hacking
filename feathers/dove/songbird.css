@@ -1292,7 +1292,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 scrollbar
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #transparent !important; 
+  background-color: transparent !important; 
   background-image: none !important; 
   background-image: none !important; 
   padding: 0px 0px 0px 0px !important;
