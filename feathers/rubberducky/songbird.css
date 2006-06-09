@@ -227,6 +227,21 @@ Love the box.
 #frame_service_tree
 {
   -moz-appearance: none !important;
+  -moz-border-top-colors: transparent !important;
+  -moz-border-left-colors: transparent !important;
+  -moz-border-bottom-colors: transparent !important;
+  -moz-border-right-colors: transparent !important;
+  border: 1px solid #666 !important;
+  margin: 0px !important;
+  padding: 6px 0px 0px 0px !important;
+  background-color: #505154 !important;
+  /*background-image: url(default/bkgd_clouds.png) !important;*/
+  color: #CDD4C4 !important;
+}
+
+#frame_service_box
+{
+  -moz-appearance: none !important;
   -moz-border-radius-topleft: 3px !important;
   -moz-border-radius-bottomleft: 3px !important;
   -moz-border-radius-topright: 3px !important;
@@ -244,6 +259,21 @@ Love the box.
   color: #CDD4C4 !important;
 }
 
+button#service_pane
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  background-color: #505154 !important;
+  height: 25px !important;  
+  color: #99A195 !important;  
+}
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
@@ -375,6 +405,7 @@ filterlist
   -moz-appearance: none !important; /* grrrr! */
   margin: 0px !important;
   padding: 0px !important;
+  background-image: url(default/bkgd_clouds.png) !important;
 }
 
 filterlist > tree
@@ -390,8 +421,8 @@ filterlist > tree
   border-left: none !important;
   margin: 0px !important;
   padding: 0px !important;
-  background-color: transparent !important;
-  opacity: .8 !important;
+  background-color: transparent !important;  
+  opacity: 0.8 !important;
 }
 
 /* striping for genre filter */
@@ -559,7 +590,6 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected
   height: 54px !important;
   margin: 0px 20px 45px 0px !important;
   background-position: right bottom !important;*/
-  background-image: url(default/bkgd_flowers.png) !important;
   width: 2000px !important;
   height: 2000px !important;
 }
@@ -1126,7 +1156,7 @@ These let the user resize the frames in your box model.
   width: 50px !important;
   height: 7px !important;
   background-color: transparent !important;
-  background-image: url(default/grippy.png) !important;
+  background-image: url(default/grippy_filterlist.png) !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   border: none !important;
@@ -2094,10 +2124,10 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
-  -moz-border-top-colors: transparent !important;
-  -moz-border-left-colors: transparent !important;
-  -moz-border-bottom-colors: transparent !important;
-  -moz-border-right-colors: transparent !important;
+  -moz-border-top-colors: #transparent !important;
+  -moz-border-left-colors: #transparent !important;
+  -moz-border-bottom-colors: #transparent !important;
+  -moz-border-right-colors: #transparent !important;
   background-color: transparent !important; 
 }
 
