@@ -191,7 +191,9 @@
         }
         this.list.setAttribute( "focused", "true" );
         this.list.mInputField.focus();
-        this.list.mInputField.select();
+        
+        // Why select?  This was causing some funky behaviour..
+        //this.list.mInputField.select();
       }
       catch( err )
       {
@@ -227,9 +229,23 @@
         var empty_space = " ";
         var search_term = this.list.label;
         if ( ( search_term.length > 0 ) && ( search_term != empty_space ) )
-        {
+        {          
           this.sendSearchEvent();
           this.metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
+          
+          // Keep last 4 search terms for display in popup
+          var recentSearches = new sbIDataRemote( "searchwidget.recentstrings" ); 
+          searchStrings = recentSearches.getValue().split("\n");
+          if (searchStrings.indexOf(search_term) == -1) 
+          {
+            if (searchStrings.length > 3 || (searchStrings.length == 1 && searchStrings[0] == ""))
+            {
+              searchStrings.pop();
+            }
+            searchStrings.unshift(search_term);
+            recentSearches.setValue(searchStrings.join("\n"));
+            this.onSearchPopup();
+          }
         }
         else
         {
@@ -299,18 +315,25 @@
       ]]>
       </body>
     </method>
-    
+
     <method name="onSearchPopup">
       <body>
       <![CDATA[
       try
       {
         var empty_space = " ";
-        var thePlaybackURL = new sbIDataRemote( "metadata.url" );
+
+        var prev_sel = this.list.selectedIndex;
+        var prev_label = this.list.label;
+        
+        var modified = false;
+        
+  
+        // Look for metadata that might be worth searching
+        var thePlaybackURL = new sbIDataRemote( "metadata.url" );      
         if ( thePlaybackURL.getValue().length )
         {
-          var prev_sel = this.list.selectedIndex;
-          var prev_label = this.list.label;
+
           this.list.removeAllItems();
           
           var aDBQuery = new sbIDatabaseQuery();
@@ -341,8 +364,40 @@
               }
               this.list.appendItem( value, null, null )
               //retval = true;
+              modified = true;
             }
           } 
+        }
+        
+        
+        // Add previous searches
+        var recentSearches = new sbIDataRemote( "searchwidget.recentstrings" ); 
+        recentSearches = recentSearches.getValue();       
+        if (recentSearches.length)
+        {
+          if (!modified) 
+          {
+            this.list.removeAllItems();
+          }
+          else 
+          {
+            var item = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuseparator");
+            this.list.menupopup.appendChild(item);
+          }
+          
+          recentSearches = recentSearches.split("\n");
+          for (var i = 0; i < recentSearches.length; i++)
+          {
+            this.list.appendItem( recentSearches[i], null, null )
+          }
+          
+          modified = true;
+        }
+        
+        
+        // If the list was modified, fix/restore the selected item
+        if (modified) 
+        {
           this.list.selectedIndex = prev_sel;
           if ( prev_sel == -1 )
           {
