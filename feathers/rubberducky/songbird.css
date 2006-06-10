@@ -3174,7 +3174,6 @@ Anything with #mini refers to the skin of the mini player.
 window#mini  
 { 
   background-color: transparent !important;
-  max-width: 800px;
 }
 
 #frame_mini
