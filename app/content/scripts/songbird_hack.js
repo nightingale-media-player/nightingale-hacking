@@ -769,7 +769,12 @@ function SBScanServiceTreeNewEntryCallback()
     {
       // This must be the new one?
       theServiceTree_tree.view.selection.currentIndex = i;
+      
+      // HACK: flag to prevent the empty playlist from launching on select
+      theServiceTree_tree.newPlaylistCreated = true;
       theServiceTree_tree.view.selection.select( i );
+      theServiceTree_tree.newPlaylistCreated = false;
+      
       onServiceEdit();
       done = true;
       break;

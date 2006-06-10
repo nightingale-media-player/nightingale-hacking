@@ -274,8 +274,13 @@
             //   to the service
             if (theServiceTree.getAttribute("seltype") == "multiple") 
               return;
+              
+            // HACK: If a new playlist was just created, 
+            // then ignore this select.
+            if (theServiceTree.newPlaylistCreated) return;
           
             if ( theServiceTree.currentIndex >= 0 ) {
+           
               // Find the column. 
               var urlcolumn = theServiceTree.columns ?
                               theServiceTree.columns["url"] : "url";
