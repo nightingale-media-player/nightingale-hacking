@@ -439,7 +439,8 @@
                     </hbox>
                     <!-- Service Pane Button Bar, Buttons for adding a new service or playlist-->
                     <hbox class="sb_faceplate" id="frame_service_buttonbar">
-                      <button class="sb_faceplate" disabled="true" id="service_pane" flex="1"/>
+                      <button class="sb_faceplate" style="visibility:hidden;display:none;" disabled="true" id="service_pane" flex="1" type="menu">
+                      </button>
                     </hbox>
 
                   </vbox>

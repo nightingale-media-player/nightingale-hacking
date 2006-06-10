@@ -622,7 +622,8 @@ function onServiceTreeResize()
 {
   var theServiceTree = document.getElementById( "frame_servicetree" );
   SBDataSetValue( "servicetree.width", theServiceTree.width );
-  var collapsed = theServiceTree.nextSibling.getAttribute( "state" ) == "collapsed";
+  var serviceTreeSplitter = document.getElementById( "vert_splitter" );
+  var collapsed = serviceTreeSplitter.getAttribute( "state" ) == "collapsed";
   if (collapsed && SBDataGetIntValue("servicetree.collapsed") == 0) metrics_inc("player", "collapse.servicetree", null);
   SBDataSetValue( "servicetree.collapsed", collapsed );
 }
@@ -662,7 +663,8 @@ function onServiceTreeRestoreSize()
   if ( width != "" )
   {
     theServiceTree.width = width;
-    theServiceTree.nextSibling.setAttribute( "state", SBDataGetIntValue( "servicetree.collapsed" ) ? "collapsed" : "open" );
+    var serviceTreeSplitter = document.getElementById( "vert_splitter" );
+    serviceTreeSplitter.setAttribute( "state", SBDataGetIntValue( "servicetree.collapsed" ) ? "collapsed" : "open" );
   }
 }
 
