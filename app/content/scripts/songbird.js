@@ -501,10 +501,15 @@ function SBOpenModalDialog( url, param1, param2, param3 )
 
 function IsVideoUrl( the_url )
 {
+
   if ( ( the_url.indexOf ) && 
         (
           ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) ) ||
+          
+          // A better solution is needed, as asx files are not always video..
+          // The following hack brought to you by Nivi:
+          ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) && the_url.indexOf( "allmusic.com" ) == -1 ) ||
+          
           ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
           ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
           ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
