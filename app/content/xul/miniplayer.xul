@@ -38,8 +38,6 @@
 
  id="mini"
  title="Songbird Partner Preview"
- align="start" 
- pack="start"
  hidechrome="true"
  onload="{centerWindowOnScreen();SBInitialize();}"
  onunload="SBUninitialize();"
@@ -47,7 +45,7 @@
  onkeypress="onMiniplayerKeypress( event );"
 >
 
-  <!-- Load the Mozilla helpers -->  
+  <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" />
 
@@ -57,45 +55,55 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreWMP.js"/>
 
-<hbox>
-  
-  <vbox><player_back id="mini_btn_back"    class="sb_faceplate miniplayer" /></vbox>
-  <vbox><player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/></vbox>
-  <vbox><player_forward id="mini_btn_fwd"     class="sb_faceplate miniplayer" /> </vbox>
-  <vbox id="mini_dash" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
-    <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
-      <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
-      <label id="mini_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate miniplayer" />
-    </hbox>
-    <player_seekbar id="songbird_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
-  </vbox>  
-  <vbox id="mini_volume">
-    <hbox id="volume_box" class="sb_faceplate">
-      <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
-      <spacer width="8"/>
-      <hbox>
-      <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-       <player_volume id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
-       <spacer width="3" height="5" id="songbird_volume_e"/>
-      </hbox>
-    </hbox>
-  </vbox>
-  <vbox><button id="mini_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" /></vbox>
-  <button id="mini_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
-  <hbox hidden="true">
-  <player_repeat class="sb_faceplate miniplayer" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
-  <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
-  <button id="mini_btn_help"    class="sb_faceplate miniplayer" oncommand="onHelp( );" hidden="true" />
-  <button id="mini_btn_min"     class="sb_faceplate miniplayer" oncommand="onMinimize( );" hidden="true" />
-  <button id="mini_btn_max"     class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" hidden="true" />
-  <button id="mini_btn_exit"    class="sb_faceplate miniplayer" oncommand="quitApp( );" hidden="true" />
-  </hbox>
-</hbox>
+  <hbox id="frame_mini" flex="1">
+    <resizer id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
+    <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
+    <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
+    <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
 
-    
+    <vbox id="mini_volume">
+      <hbox id="mini_volume_box" class="sb_faceplate">
+        <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
+        <spacer width="8"/>
+        <hbox>
+          <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
+          <player_volume id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+          <spacer width="3" height="5" id="songbird_volume_e"/>
+        </hbox>
+      </hbox>
+    </vbox>
+
+    <hbox flex="1">
+      <spacer width="4" height="18" id="mini_dash_w"/>
+      <vbox id="mini_dash" flex="1">        
+          <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
+            <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right" flex="1"/>
+            <label id="mini_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate miniplayer" />
+          </hbox>
+        <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+      </vbox>
+      <spacer width="4" height="18" id="mini_dash_e"/>
+    </hbox>
+    <vbox>
+      <button id="mini_btn_max"  class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" />
+    </vbox>
+    <button id="mini_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
+    <hbox hidden="true">
+      <player_repeat class="sb_faceplate miniplayer" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
+      <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
+      <button id="mini_btn_help"    class="sb_faceplate miniplayer" oncommand="onHelp( );" hidden="true" />
+      <button id="mini_btn_min"     class="sb_faceplate miniplayer" oncommand="onMinimize( );" hidden="true" />
+      <button id="mini_btn_max"     class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" hidden="true" />
+      <button id="mini_btn_exit"    class="sb_faceplate miniplayer" oncommand="quitApp( );" hidden="true" />
+    </hbox>
+    <resizer id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
+  </hbox>
+  
+
+
   <!-- Load the interface code -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
@@ -107,11 +115,11 @@
    src="chrome://songbird/content/scripts/mediakeyboard.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
-  
+
   <!-- Load the demo-specific scripts -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/miniplayer.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/jumptofile.js" />
-  
+
 </window>
