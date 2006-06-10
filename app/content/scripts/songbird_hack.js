@@ -627,6 +627,33 @@ function onServiceTreeResize()
   SBDataSetValue( "servicetree.collapsed", collapsed );
 }
 
+// onControlPaneResize
+function onControlPaneResizeLoad()
+{
+  var splitter = document.getElementById( "control_pane_splitter" );
+  splitter.addEventListener("mousemove", onControlPaneResize, true);
+}
+// onControlPaneResize
+function onControlPaneResize()
+{
+  var mini = document.getElementById( "frame_mini" );
+  var splitter = document.getElementById( "control_pane_splitter" );
+  var state = splitter.getAttribute( "state" );
+  var collapsed = false;
+  switch (state) {
+    case "open":
+    case "dragging":
+      mini.hidden = true;
+      break;
+    case "collapsed":
+      mini.hidden = false;
+      collapsed = true;
+      break;
+  }
+  if (collapsed && SBDataGetIntValue("servicetree.collapsed") == 0) metrics_inc("player", "collapse.controlpane", null);
+  SBDataSetValue( "controlpane.collapsed", collapsed );
+}
+
 // onServiceTreeRestoreSize
 function onServiceTreeRestoreSize()
 {
