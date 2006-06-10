@@ -90,11 +90,15 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   pIOService->NewURI(cstrURL, nsnull, nsnull, getter_AddRefs(pURI));
   if(!pURI) return nRet;
 
+  //
+  // Apparently, somewhere in here, it fails for local mp3 files on linux and mac.
+  //
+
+
   nsCString cstrScheme;
   nRet = pURI->GetScheme(cstrScheme);
   if(NS_FAILED(nRet)) return nRet;
-//  if(cstrScheme.Length() <= 1 || cstrURL[0] == (PRUnichar)'/' )
-  if(cstrScheme.Length() == 1)
+  if(cstrScheme.Length() <= 1)
   {
     nsCString cstrFixedURL = NS_LITERAL_CSTRING("file://");
     cstrFixedURL += cstrURL;
