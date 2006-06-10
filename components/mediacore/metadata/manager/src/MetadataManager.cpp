@@ -93,7 +93,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   nsCString cstrScheme;
   nRet = pURI->GetScheme(cstrScheme);
   if(NS_FAILED(nRet)) return nRet;
-  if(cstrScheme.Length() <= 1 || cstrURL[0] == (PRUnichar)'/' );
+  if(cstrScheme.Length() <= 1 || cstrURL[0] == (PRUnichar)'/' )
   {
     nsCString cstrFixedURL = NS_LITERAL_CSTRING("file://");
     cstrFixedURL += cstrURL;
