@@ -1659,6 +1659,7 @@ function onMainPaneLoad()
 
           // Events on the playlist object itself.            
           thePlaylistTree.addEventListener( "playlist-edit", onPlaylistEdit, true );
+          thePlaylistTree.addEventListener( "playlist-editor", onPlaylistEditor, true );
           thePlaylistTree.addEventListener( "playlist-play", onPlaylistPlay, true );
           thePlaylistTree.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
           thePlaylistTree.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
@@ -1995,6 +1996,18 @@ catch ( err )
 {
   alert( err );
 }
+}
+
+// Sigh.  The track editor assumes this document object will be populated with
+// special info.  So we have to pop the track editor from this DOM, not XBL.
+function onPlaylistEditor( evt )
+{
+  var playlist = evt.target;
+  if ( playlist.wrappedJSObject )
+    playlist = playlist.wrappedJSObject;
+  
+  if (playlist && playlist.guid == "songbird") 
+    SBTrackEditorOpen();
 }
 
 var theCurrentlyEditingPlaylist = null;

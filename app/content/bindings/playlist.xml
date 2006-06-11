@@ -1593,10 +1593,10 @@
       ]]>
       </body>
     </method>
-    
+
     <method name="sendEditEvent">
       <body>
-      <![CDATA[
+        <![CDATA[
       try
       {
         var e = document.createEvent("Events");
@@ -1610,7 +1610,24 @@
       ]]>
       </body>
     </method>
-    
+
+    <method name="sendEditorEvent">
+      <body>
+        <![CDATA[
+      try
+      {
+        var e = document.createEvent("Events");
+        e.initEvent("playlist-editor", false, true);
+        this.dispatchEvent(e);
+      }
+      catch( err )
+      {
+        alert( "playlist.xml - sendEditEvent - " + err )
+      }
+      ]]>
+      </body>
+    </method>
+
     <method name="sendBurnToCDEvent">
       <body>
       <![CDATA[

@@ -181,7 +181,8 @@ try
             {
               if ( tbb )
               {
-                // Open the editor for the whole track
+                // Edit the entire track
+                this.m_Playlist.sendEditorEvent();
               }
               else
               {
