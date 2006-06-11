@@ -27,7 +27,7 @@
     <!-- Front End Integration Hooks (used by Theme Manager)-->
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <em:internalName>rubberducky</em:internalName>
+    <em:internalName>rubberducky/0.2</em:internalName>
   </Description>      
 
 </RDF>

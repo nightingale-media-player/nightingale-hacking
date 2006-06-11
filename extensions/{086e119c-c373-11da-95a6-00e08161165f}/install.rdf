@@ -27,7 +27,7 @@
     <!-- Front End Integration Hooks (used by Theme Manager)-->
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <em:internalName>dove</em:internalName>
+    <em:internalName>dove/0.1</em:internalName>
   </Description>      
 
 </RDF>
