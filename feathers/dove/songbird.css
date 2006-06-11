@@ -1075,6 +1075,34 @@ These let the user resize the frames in your box model.
   border: none !important;
 }
 
+
+#control_pane_splitter
+{
+  -moz-appearance: none !important; /* grrrr! */
+  width: 50px !important;
+  height: 7px !important;
+  background-color: transparent !important;
+  background-image: url(default/grippy.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 0px 3px 0px;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  -moz-appearance: none !important; /* grrrr! */
+  width: 50px !important;
+  height: 7px !important;
+  background-color: transparent !important;
+  background-image: url(default/grippy_filterlist.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 3px 3px 3px;
+}
+
+
 #horz_splitter[state="collapsed"]
 {
   height: 7px !important;
