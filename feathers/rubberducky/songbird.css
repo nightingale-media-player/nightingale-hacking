@@ -3183,6 +3183,10 @@ window#mini
   background-color: #000 !important;
   padding: 2px 2px 2px 2px !important;
   height: 22px;
+  border-top: 1px solid #333;
+  border-right: 1px solid #333;
+  border-bottom: 1px solid #333;
+  border-left: 1px solid #333;
 }
 
 #mini_resize_w,
