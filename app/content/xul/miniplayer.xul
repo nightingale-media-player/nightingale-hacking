@@ -49,12 +49,6 @@
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" />
 
-  <!-- Load the core wrappers -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/coreVLC.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/coreWMP.js"/>
-
   <hbox id="frame_mini" flex="1">
     <resizer id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
     <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
