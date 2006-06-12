@@ -1481,21 +1481,18 @@ function onBrowserDownload()
   // Work to figure out guid and table
   var guid = theDownloadContext.getValue();
   var table = theDownloadTable.getValue();
-  var aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+  var deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
                                   getService(Components.interfaces.sbIDeviceManager);
-  if (aDeviceManager)
+  if (deviceManager)
   {
-    var aDownloadDevice = null;
-    try {
-      aDownloadDevice = aDeviceManager.getDeviceByString('Songbird Download Device');
-    }
-    catch (e) {}
-    
-    if (aDownloadDevice)
+    var downloadCategory = 'Songbird Download Device';
+    if (deviceManager.hasDeviceForCategory(downloadCategory))
     {
-      SBDownloadCommands.m_Device = aDownloadDevice;
-      guid = aDownloadDevice.GetContext('');
-      table = "download"; // aDownloadDevice.GetTransferTableName('');
+      var downloadDevice =
+        deviceManager.getDeviceByCategory(downloadCategory);
+      SBDownloadCommands.m_Device = downloadDevice;
+      guid = downloadDevice.GetContext('');
+      table = "download";
     }
   }
   
@@ -1975,19 +1972,19 @@ function SBDownloadDeviceTest()
 {
 try
 {
-  var aDownloadDevice = Components.classes["@songbird.org/Songbird/DownloadDevice;1"];
-  if (aDownloadDevice)
+  var downloadDevice = Components.classes["@songbird.org/Songbird/DownloadDevice;1"];
+  if (downloadDevice)
   {
-    aDownloadDevice = aDownloadDevice.createInstance();
-    aDownloadDevice = aDownloadDevice.QueryInterface(Components.interfaces.sbIDeviceBase);
+    downloadDevice = downloadDevice.createInstance();
+    downloadDevice = downloadDevice.QueryInterface(Components.interfaces.sbIDeviceBase);
     
-    if (aDownloadDevice)
+    if (downloadDevice)
     {
-      listProperties( aDownloadDevice, "aDownloadDevice" );
+      listProperties( downloadDevice, "downloadDevice" );
       alert( Components.interfaces.sbIDownloadDevice );
-          aDownloadDevice.name;
-          aDownloadDevice.IsDownloadSupported();
-          t = aDownloadDevice.DownloadTrackTable('testdb-0000','download');
+          downloadDevice.name;
+          downloadDevice.IsDownloadSupported();
+          t = downloadDevice.DownloadTrackTable('testdb-0000','download');
     }
   }
 }
@@ -2927,18 +2924,16 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
     {
         theWebPlaylistQuery = null; 
           
-        aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+        deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
                                     getService(Components.interfaces.sbIDeviceManager);
-        if (aDeviceManager)
+        if (deviceManager)
         {
-            var aDownloadDevice = null;
-            try {
-              aDownloadDevice = aDeviceManager.getDeviceByString('Songbird Download Device');
-            }
-            catch (e) {}
-            
-            if (aDownloadDevice)
+            var downloadCategory = 'Songbird Download Device';
+            if (deviceManager.hasDeviceForCategory(downloadCategory))
             {
+                var downloadDevice =
+                  deviceManager.getDeviceByCategory(downloadCategory);
+                
                 // Make a magic data object to get passed to the dialog
                 var download_data = new Object();
                 download_data.retval = "";
@@ -2960,19 +2955,19 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                   var downloadTable = {};
                   // Passing empty string for device name as download device has just one device
                   // Prepare table for download & get the name for newly prepared download table
-                  //aDownloadDevice.AddCallback(theDownloadListener);
+                  //downloadDevice.AddCallback(theDownloadListener);
                   
-                  aDownloadDevice.AutoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
+                  downloadDevice.AutoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
                   
                   // Record the current download table
-                  theDownloadContext.setValue( aDownloadDevice.GetContext('') )
+                  theDownloadContext.setValue( downloadDevice.GetContext('') )
                   theDownloadTable.setValue( downloadTable.value );
                   theDownloadExists.setValue( true );
                   
                   // Register the guid and table with the playlist source to always show special download commands.
-                  SBDownloadCommands.m_Device = aDownloadDevice;
+                  SBDownloadCommands.m_Device = downloadDevice;
                   var source = new sbIPlaylistsource();
-                  source.RegisterPlaylistCommands( aDownloadDevice.GetContext(''), downloadTable.value, "download", SBDownloadCommands );
+                  source.RegisterPlaylistCommands( downloadDevice.GetContext(''), downloadTable.value, "download", SBDownloadCommands );
                 }
             }
         }
@@ -3210,22 +3205,19 @@ var SBDownloadCommands =
 
 
 // Register the download commands at startup if we know what the download table is.
-var aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+var deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
                                 getService(Components.interfaces.sbIDeviceManager);
 
-if (aDeviceManager)
+if (deviceManager)
 {
-  var aDownloadDevice = null;
-  try {
-    aDownloadDevice = aDeviceManager.getDeviceByString('Songbird Download Device');
-  }
-  catch (e) {}
-  
-  if (aDownloadDevice)
+  var downloadCategory = 'Songbird Download Device';
+  if (deviceManager.hasDeviceForCategory(downloadCategory))
   {
-    SBDownloadCommands.m_Device = aDownloadDevice;
-    var guid = aDownloadDevice.GetContext('');
-    var table = "download"; // aDownloadDevice.GetTransferTableName('');
+    var downloadDevice =
+      deviceManager.getDeviceByCategory(downloadCategory);
+    SBDownloadCommands.m_Device = downloadDevice;
+    var guid = downloadDevice.GetContext('');
+    var table = "download"; // downloadDevice.GetTransferTableName('');
     var source = new sbIPlaylistsource();
     try
     {
@@ -3603,7 +3595,7 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
                 var rippingTable = {};
                 // Passing empty string for device name as download device has just one device
                 // Prepare table for download & get the name for newly prepared download table
-                //aDownloadDevice.AddCallback(theDownloadListener);
+                //downloadDevice.AddCallback(theDownloadListener);
                 
                 aCDDevice.AutoDownloadTable(deviceName, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', ripping_data.value, rippingTable);
                 
@@ -3678,16 +3670,13 @@ var theCDListener =
 
 function OnCDInsert(deviceName)
 {
-  if (aDeviceManager)
+  if (deviceManager)
   {
-    var aCDDevice = null;
-    try {
-      aCDDevice = aDeviceManager.getDeviceByString('Songbird CD Device');
-    }
-    catch (e) {}
-    
-    if (aCDDevice)
+    var CDCategory = 'Songbird CD Device';
+    if (deviceManager.hasDeviceForCategory(CDCategory))
     {
+      var aCDDevice =
+        deviceManager.getDeviceByCategory(CDCategory);
       SBCDCommands.m_DeviceName = deviceName;
       SBCDCommands.m_Device = aCDDevice;
       var cdTable = {};
@@ -3715,16 +3704,12 @@ function OnCDInsert(deviceName)
 
 
 // Register for CD notifications
-if (aDeviceManager)
+if (deviceManager)
 {
-    var aCDDevice = null;
-    try {
-      aCDDevice = aDeviceManager.getDeviceByString('Songbird CD Device');
-    }
-    catch (e) {}
-    
-    if (aCDDevice)
+    var CDCategory = 'Songbird CD Device';
+    if (deviceManager.hasDeviceForCategory(CDCategory))
     {
+        var aCDDevice = deviceManager.getDeviceByCategory(CDCategory);
         try
         {
             aCDDevice.AddCallback(theCDListener);
@@ -3948,10 +3933,13 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
 function CheckCDAvailableForBurn()
 {
     cdAvailableForWrite = 0;
-    aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].getService(Components.interfaces.sbIDeviceManager);
-    if (aDeviceManager)
+    var aCDDevice = null;
+    deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].getService(Components.interfaces.sbIDeviceManager);
+    if (deviceManager)
     {
-        aCDDevice = aDeviceManager.getDeviceByString('Songbird CD Device');
+        var CDCategory = 'Songbird CD Device';
+        if (deviceManager.hasDeviceForCategory(CDCategory))
+          aCDDevice = deviceManager.getDeviceByCategory(CDCategory);
     }
 
     if (!aCDDevice)

@@ -56,7 +56,7 @@ sbDeviceManager::~sbDeviceManager()
   // Loop through the array and call Finalize() on all the devices.
   nsresult rv;
 
-  { // Scope for the lock
+  if (mLock) { // Scope for the lock
     nsAutoLock autoLock(mLock);
 
     PRInt32 count = mSupportedDevices.Count();
@@ -69,7 +69,8 @@ sbDeviceManager::~sbDeviceManager()
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
     }
   }
-  PR_DestroyLock(mLock);
+  if (mLock)
+    PR_DestroyLock(mLock);
 }
 
 // Instantiate all supported devices.
@@ -158,19 +159,19 @@ sbDeviceManager::Initialize()
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetDeviceCategoriesCount(PRUint32* aDeviceCategoriesCount)
+sbDeviceManager::GetDeviceCount(PRUint32* aDeviceCount)
 {
-  NS_ENSURE_ARG_POINTER(aDeviceCategoriesCount);
+  NS_ENSURE_ARG_POINTER(aDeviceCount);
 
   nsAutoLock autoLock(mLock);
 
-	*aDeviceCategoriesCount = (PRUint32)mSupportedDevices.Count();
+	*aDeviceCount = (PRUint32)mSupportedDevices.Count();
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetDeviceCategoryString(PRUint32 aIndex,
-                                         nsAString& _retval)
+sbDeviceManager::GetCategoryByIndex(PRUint32 aIndex,
+                                    nsAString& _retval)
 {
   nsAutoLock autoLock(mLock);
 
@@ -207,12 +208,48 @@ sbDeviceManager::GetDeviceByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetDeviceByString(const nsAString& aDeviceCategory,
-                                   sbIDeviceBase** _retval)
+sbDeviceManager::HasDeviceForCategory(const nsAString& aCategory,
+                                      PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoLock autoLock(mLock);
+
+  PRUint32 dummy;
+  nsresult rv = GetIndexForCategory(aCategory, &dummy);
+  
+  *_retval = NS_SUCCEEDED(rv);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::GetDeviceByCategory(const nsAString& aCategory,
+                                     sbIDeviceBase** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoLock autoLock(mLock);
+
+  PRUint32 index;
+  nsresult rv = GetIndexForCategory(aCategory, &index);
+
+  // If a supporting device wasn't found then return an error
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_NOT_AVAILABLE);
+
+  nsCOMPtr<sbIDeviceBase> device =
+    do_QueryInterface(mSupportedDevices.ObjectAt(index));
+  NS_ENSURE_TRUE(device, NS_ERROR_UNEXPECTED);
+
+  NS_ADDREF(*_retval = device);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
+                                     PRUint32* _retval)
+{
+  // We don't bother checking arguments or locking because we assume that we
+  // have already done so in our public methods.
 
   PRInt32 count = mSupportedDevices.Count();
   for (PRInt32 index = 0; index < count; index++) {
@@ -231,13 +268,12 @@ sbDeviceManager::GetDeviceByString(const nsAString& aDeviceCategory,
 
     nsDependentString category(categoryBuffer);
 
-    if (category.Equals(aDeviceCategory)) {
-      NS_ADDREF(*_retval = device);
+    if (category.Equals(aCategory)) {
+      *_retval = index;
       return NS_OK;
     }
   }
 
   // Not found
-  *_retval = nsnull;
-  return NS_OK;
+  return NS_ERROR_NOT_AVAILABLE;
 }

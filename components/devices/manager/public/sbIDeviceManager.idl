@@ -36,28 +36,39 @@ interface sbIDeviceBase;
 interface sbIDeviceManager : nsISupports
 {
   /**
-   * The number of device categories currently registered
+   * The number of devices currently registered
    */
-	readonly attribute PRUint32 deviceCategoriesCount;
+	readonly attribute PRUint32 deviceCount;
 
   /**
-   * Gets the category (nsAString) of the device at the specified index
+   * Gets the category of the device at the specified index
    *
    * @param aIndex - the index of the device
+   * @throws NS_ERROR_INVALID_INDEX if the index is > deviceCount
    */
-	AString getDeviceCategoryString(in PRUint32 aIndex);
+	AString getCategoryByIndex(in PRUint32 aIndex);
 
   /**
-   * Returns a registered and initialized device
+   * Returns a registered and initialized device at the specified index
    *
    * @param aIndex - the index of the device
+   * @throws NS_ERROR_INVALID_INDEX if the index is > deviceCount
    */
 	sbIDeviceBase getDeviceByIndex(in PRUint32 aIndex);
 
   /**
-   * Returns a registered and initialized device
+   * Determines whether or not a device exists for the given category.
    *
-   * @param aDeviceCategory - a category string identifying the device
+   * @param aCategory - a category string to test
    */
-	sbIDeviceBase getDeviceByString(in AString aDeviceCategory);
+  PRBool hasDeviceForCategory(in AString aCategory);
+
+  /**
+   * Returns a registered and initialized device.
+   *
+   * @param aCategory - a category string identifying the device
+   * @throws NS_ERROR_NOT_AVAILABLE if no device exists to handle the category.
+   * @throws NS_ERROR_UNEXPECTED if the internal array returns garbage
+   */
+	sbIDeviceBase getDeviceByCategory(in AString aCategory);
 };

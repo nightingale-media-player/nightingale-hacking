@@ -102,24 +102,25 @@ CPlaylistReaderListener.prototype =
           const SUBSCRIBE_FOLDER_KEY = "download.folder";
           var destFolder = this.SBDataGetValue(SUBSCRIBE_FOLDER_KEY);
  
-          aDeviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+          deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
                                       getService(Components.interfaces.sbIDeviceManager);
-          if (!aDeviceManager)
+          if (!deviceManager)
             return false;
         
-          aDownloadDevice = null;
-          try {
-            aDownloadDevice = aDeviceManager.getDeviceByString('Songbird Download Device');
+          var downloadDevice = null;
+          var downloadCategory = 'Songbird Download Device';
+          if (deviceManager.hasDeviceForCategory(downloadCategory)) {
+            downloadDevice =
+              deviceManager.getDeviceByCategory(downloadCategory);
           }
-          catch (e) {}
           
-          if( !aDownloadDevice)
+          if( !downloadDevice)
             return false;
 
           var downloadTable = {};
-          aDownloadDevice.AutoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
+          downloadDevice.AutoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
           
-          dpDownloadContext.setValue( aDownloadDevice.GetContext('') );
+          dpDownloadContext.setValue( downloadDevice.GetContext('') );
           dpDownloadTable.setValue( downloadTable.value );
         }
       }

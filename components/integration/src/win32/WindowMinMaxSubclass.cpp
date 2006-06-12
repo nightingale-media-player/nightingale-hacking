@@ -270,7 +270,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
           nsCOMPtr<sbIDeviceBase> cdDeviceBaseObject;
           nsCOMPtr<sbIDeviceBase> usbDeviceBaseObject;
 
-          deviceManager->GetDeviceByString(NS_LITERAL_STRING("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
+          deviceManager->GetDeviceByCategory(NS_LITERAL_STRING("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
           if (cdDeviceBaseObject)
           {
             nsCOMPtr<sbICDDevice> cdDevice;
@@ -304,7 +304,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
               strDeviceGUID = wszGUID;
             }
 
-            deviceManager->GetDeviceByString(NS_LITERAL_STRING("Songbird USBMassStorage Device"), getter_AddRefs(usbDeviceBaseObject));
+            deviceManager->GetDeviceByCategory(NS_LITERAL_STRING("Songbird USBMassStorage Device"), getter_AddRefs(usbDeviceBaseObject));
             if ( usbDeviceBaseObject && strDeviceName.get() && (deviceGUID != GUID_NULL) )
             {
               nsCOMPtr<sbIUSBMassStorageDevice> usbDevice;

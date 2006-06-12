@@ -69,6 +69,9 @@ public:
 private:
   ~sbDeviceManager();
 
+  NS_IMETHOD GetIndexForCategory(const nsAString& aCategory,
+                                 PRUint32* _retval);
+
   // This is a simple static to make sure that we aren't initialized more than
   // once. Consumers should use getService instead of createInstance, but we do
   // this just in case they forget. 
