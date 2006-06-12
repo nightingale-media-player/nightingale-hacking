@@ -202,7 +202,7 @@ Love the box.
 {
   width:  924px !important;
   height: 668px !important;
-  /*background-color: transparent !important;*/
+  background-color: transparent !important;
 }
 
 
@@ -3522,7 +3522,7 @@ VIDEO WINDOW
   -moz-appearance:none !important;
   height: 590px !important;
   width: 714px !important;
-  background: #FFF !important; /* When this style is deleted or set to transparent, the video doesn't show !important; it plays, but it doesn't display.*/
+  background: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
 #video_chrome_bkgd

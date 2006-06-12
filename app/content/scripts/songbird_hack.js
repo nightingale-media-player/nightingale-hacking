@@ -37,7 +37,6 @@
 //                  - mig
 //
 
-
 try
 {
 const LOAD_FLAGS_BYPASS_HISTORY = 64;

@@ -31,6 +31,24 @@
 
 try
 {
+
+  // Figure out what platform we're on.
+  var user_agent = navigator.userAgent;
+  var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
+  var PLATFORM_MACOSX = user_agent.indexOf("OSX") != -1;
+  var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
+
+  // If we are running under windows, there's a bug with background-color: transparent;
+  if (PLATFORM_WIN32)
+  {
+    // During script initialization, set the background color to black.
+    // Otherwise, all iframes are blank.  Dumb bug.
+    var win = document.getElementById("frame_outer");
+    if (win)
+      win.setAttribute("style","background-color: #000 !important;");
+    // At least this fixes it.
+  }
+
   function onSBMainwinDataLoad()
   {
     try

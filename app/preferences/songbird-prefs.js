@@ -1,5 +1,5 @@
 //Songbird Default Prefs.
-pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
+pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");  // DON'T CHANGE THIS.  THIS IS * NOT * BONES.
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
 pref("config.trim_on_minimize", true); // Dump the current ram footprint when minimized.
