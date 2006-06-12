@@ -202,7 +202,7 @@ Love the box.
 {
   width:  924px !important;
   height: 668px !important;
-  background: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+  background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
 
@@ -3522,7 +3522,7 @@ VIDEO WINDOW
   -moz-appearance:none !important;
   height: 590px !important;
   width: 714px !important;
-  background: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+  background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
 #video_chrome_bkgd
