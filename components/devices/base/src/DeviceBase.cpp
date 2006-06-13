@@ -898,6 +898,10 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     PRUnichar *strCurDest = nsnull;
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("destination").get(), &strCurDest);
 
+    // Default to what's already there
+    if(nsString(strCurSource).Length()) sourcePathFile = strCurSource;
+    if(nsString(strCurDest).Length()) destinationPathFile = strCurDest;
+
     if (isSourceGiven) 
     {
       sourcePathFile = sourcePath;
@@ -931,9 +935,6 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
       sourcePathFile = data;
     else
       sourcePathFile += fileName;
-
-    if(nsString(strCurSource).Length()) sourcePathFile = strCurSource;
-    if(nsString(strCurDest).Length()) destinationPathFile = strCurDest;
 
     // These are filled intelligently, well at least not a blind copy!
     AddQuotedString(updateDataQuery, sourcePathFile.get());
@@ -1027,12 +1028,12 @@ inline void sbDeviceBase::AddQuotedString(nsString &destinationString, const PRU
 PRBool sbDeviceBase::GetFileNameFromURL(const PRUnichar *DeviceString, nsString& url, nsString& fileName)
 {
   // Extract file name from the url(path) string
-  const PRUnichar frontSlash = *(NS_LITERAL_STRING("\\").get());
-  const PRUnichar backSlash = *(NS_LITERAL_STRING("/").get());
+  const PRUnichar backSlash = *(NS_LITERAL_STRING("\\").get());
+  const PRUnichar frontSlash = *(NS_LITERAL_STRING("/").get());
   const PRUnichar dot = *(NS_LITERAL_STRING(".").get());
 
   PRInt32 foundPosition = url.RFindChar(frontSlash);
-  if(foundPosition || (foundPosition = url.RFindChar(backSlash)))
+  if((foundPosition != -1) || ((foundPosition = url.RFindChar(backSlash))!=-1))
   {
     fileName = Substring(url, ++foundPosition);
     // Now add the extension if the device changes the format
