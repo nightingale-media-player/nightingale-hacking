@@ -108,6 +108,7 @@
     <field name="current_url">null</field>
     <field name="browser">null</field>
     <field name="urlFromServicePane">false</field>
+    <field name="ignoreOnSelect">false</field>
     <field name="onPlaylistHide">null</field>
 
     <!-- CONSTRUCTOR/DESTRUCTOR -->
@@ -267,6 +268,7 @@
       <body>
         <![CDATA[
           try {
+            if (this.ignoreOnSelect) return; // Don't do this.
             var theServiceTree = this.tree;
             
             // multiple selection on service tree only happens during
@@ -608,8 +610,10 @@
       <parameter name="builder"/>
       <body>
         try {
+          this.ignoreOnSelect = true;
           this.restoreSelection();
           this.restoreCollapsedStates();
+          this.ignoreOnSelect = false;
         }
         catch (err) {
           alert( "servicetree.xml - didRebuild - " + err );
