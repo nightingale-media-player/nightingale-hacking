@@ -111,6 +111,8 @@ function LOG(string) {
 
 function ConvertUrlToDisplayName(url)
 {
+  url = decodeURI( url );
+  
   var ret = "";
   
   if (url.lastIndexOf('/') != -1)

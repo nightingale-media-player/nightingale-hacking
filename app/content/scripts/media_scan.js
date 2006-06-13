@@ -162,7 +162,7 @@ function onScanComplete( mediaScanQuery )
         {
           var keys = new Array( "title" );
           var values = new Array();
-          values.push( ConvertUrlToDisplayName( the_url ) );
+          values.push( MSConvertUrlToDisplayName( the_url ) );
           aMediaLibrary.AddMedia( the_url, keys.length, keys, values.length, values, false, true );
           aQueryFileArray.push( values[0] );
         }
@@ -266,8 +266,9 @@ function doCancel()
   return true;
 }
 
-function ConvertUrlToDisplayName( url )
+function MSConvertUrlToDisplayName( url )
 {
+  url = decodeURI( url );
   // Set the title display  
   var the_value = "";
   if ( url.lastIndexOf('/') != -1 )

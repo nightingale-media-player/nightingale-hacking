@@ -192,6 +192,7 @@ function onWindowLoadPosition()
 
 function ConvertUrlToDisplayName( url )
 {
+  url = decodeURI( url );
   // Set the title display  
   var the_value = "";
   if ( url.lastIndexOf('/') != -1 )

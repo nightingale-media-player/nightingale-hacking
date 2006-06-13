@@ -145,6 +145,7 @@ try
   function ConvertUrlToDisplayName( url )
   {
     // Set the title display  
+    url = decodeURI( url );
     var the_value = "";
     if ( url.lastIndexOf('/') != -1 )
     {
