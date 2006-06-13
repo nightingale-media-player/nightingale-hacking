@@ -1,0 +1,20 @@
+#ifndef __sbBuildIDs_h__
+#define __sbBuildIDs_h__
+
+/**
+ * This uniquely identifies the build (format: YYYYMMDDhhmmss). It will only be
+ * set if SONGBIRD_OFFICIAL is defined.
+ */ 
+#define SB_BUILD_ID 00000000000000
+
+/**
+ * These identify the target milestone
+ */
+#define SB_MILESTONE 0.2
+
+/**
+ * This identifies the mozilla.org tag used to build XULRunner
+ */
+#define SB_MOZILLA_TAG SONGBIRD_0_2A_20060518_BRANCH
+
+#endif /* __sbBuildIDs_h__ */

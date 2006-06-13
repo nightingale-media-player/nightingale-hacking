@@ -34,6 +34,10 @@ ifndef RULES_MK_INCLUDED
 RULES_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
+# include config.mk to pick up extra variables
+
+include $(topsrcdir)/build/config.mk
+
 #
 # Collect a list of rules to run. We use two variables so that 'make clean'
 # does what you'd expect.
@@ -153,6 +157,9 @@ endif
 ifdef SHELL_EXECUTE
 targets += shell_execute
 endif
+
+# Right now this system is not compatible with parallel make.
+.NOTPARALLEL : all clean
 
 all:   $(targets) \
        garbage \

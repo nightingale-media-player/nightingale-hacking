@@ -54,6 +54,39 @@ AC_SUBST(DEBUG)
 AC_SUBST(SB_CONFIGURATION)
 
 #
+# Check for --enable-jars
+#
+
+AC_ARG_ENABLE(jars,
+              [  --enable-jars           whether or not to create jar files (enabled by default)])
+if test "$enable_jars" != "no"; then
+  USING_JARS=1
+fi
+AC_SUBST(USING_JARS)
+
+#
+#  Check for --enable-installer
+#
+
+AC_ARG_ENABLE(installer,
+              [  --enable-installer      whether or not to create installer (disabled by default)])
+if test "$enable_installer" == "yes"; then
+  MAKE_INSTALLER=1
+fi
+AC_SUBST(MAKE_INSTALLER)
+
+#
+#  Check for --enable-official
+#
+
+AC_ARG_ENABLE(official,
+              [  --enable-official       whether or not to create an official build (disabled by default)])
+if test "$enable_official" == "yes"; then
+  SONGBIRD_OFFICIAL=1
+fi
+AC_SUBST(SONGBIRD_OFFICIAL)
+
+#
 # Check platform
 #
 
@@ -235,28 +268,6 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #AC_FUNC_STRFTIME
 #AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([ftruncate getcwd gethostbyaddr gethostname getpagesize gettimeofday memchr memmove memset munmap putenv select socket strcasecmp strdup strncasecmp strndup strstr strtol])
-
-#
-# Check for --enable-jars
-#
-
-AC_ARG_ENABLE(jars,
-              [  --enable-jars           whether or not to create jar files (enabled by default)])
-if test "$enable_jars" != "no"; then
-  USING_JARS=1
-fi
-AC_SUBST(USING_JARS)
-
-#
-#  Check for --enable-installer
-#
-
-AC_ARG_ENABLE(installer,
-              [  --enable-installer           whether or not to create installer(disabled by default)])
-if test "$enable_installer" == "yes"; then
-  MAKE_INSTALLER=1
-fi
-AC_SUBST(MAKE_INSTALLER)
 
 #
 # Generic defines
@@ -525,6 +536,14 @@ DISTDIRNAME="dist"
 
 AC_SUBST(OBJDIRNAME)
 AC_SUBST(DISTDIRNAME)
+
+#
+# Set the name of the file to be generated containing the build ID. It will
+# always be created in the /build subdirectory.
+#
+
+BUILD_ID_FILENAME="build_id.txt"
+AC_SUBST(BUILD_ID_FILENAME)
 
 #
 # Use the mozilla perl method for generating makefiles quickly. This script

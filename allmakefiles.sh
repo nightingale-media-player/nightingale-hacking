@@ -78,6 +78,7 @@ app/preferences/Makefile
 
 MAKEFILES_build="
 build/autodefs.mk
+build/Makefile
 "
 
 MAKEFILES_components="

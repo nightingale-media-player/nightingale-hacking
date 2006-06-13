@@ -65,6 +65,10 @@ ifdef SB_ENABLE_INSTALLER
 CONFIGURE_ARGS += --enable-installer
 endif
 
+ifdef SONGBIRD_OFFICIAL
+CONFIGURE_ARGS += --enable-official
+endif
+
 # debug build options
 ifdef DEBUG
 CONFIGURE_ARGS += --enable-debug
