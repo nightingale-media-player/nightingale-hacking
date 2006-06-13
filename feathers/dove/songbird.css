@@ -3259,6 +3259,7 @@ window#mini
 {
   width: 16px !important;
   height: 16px !important;
+  margin-left: 3px !important;
   background-image: url(mini/mini.btn.max.png) !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
