@@ -94,6 +94,10 @@ var gOS         = null;
  * ----------------------------------------------------------------------------
  */
 
+// This will create the component and call init with the args
+const createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, SONGBIRD_DATAREMOTE_IID, "init");
+
+
 /**
  * Logs a string to the error console. 
  * @param   string
@@ -180,23 +184,6 @@ function listProperties(obj, objName) {
   dump(result + "\n");
 }
 
-
-// Quick tool to make this process more friendly
-function createAndInitDataRemote(key, root) {
-  var newDataRemote = Components.classes[SONGBIRD_DATAREMOTE_CONTRACTID]
-                              .createInstance(SONGBIRD_DATAREMOTE_IID);
-  if (!newDataRemote)
-    throw Components.results.NS_ERROR_FAILURE;
-    
-  if (root)
-    newDataRemote.init(key, root);
-  else
-    newDataRemote.init(key, null);
-  
-  return newDataRemote;
-} // createAndInitDataRemote
-
-
 /**
  * ----------------------------------------------------------------------------
  * The PlaylistPlayback Component
@@ -226,6 +213,7 @@ function PlaylistPlayback() {
 
   var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
+
 } // PlaylistPlayback
 PlaylistPlayback.prototype.constructor = PlaylistPlayback;
 
@@ -347,35 +335,35 @@ PlaylistPlayback.prototype = {
     // HOLY SMOKES we use lots of data elements.
   
     // Play/Pause image toggle
-    this._playButton            = createAndInitDataRemote("faceplate.play");
+    this._playButton            = createDataRemote("faceplate.play", null);
     //string current           
-    this._playUrl               = createAndInitDataRemote("faceplate.play.url");
+    this._playUrl               = createDataRemote("faceplate.play.url", null);
     //actually playing         
-    this._seenPlaying           = createAndInitDataRemote("faceplate.seenplaying");
-    this._volume                = createAndInitDataRemote("faceplate.volume");
+    this._seenPlaying           = createDataRemote("faceplate.seenplaying", null);
+    this._volume                = createDataRemote("faceplate.volume", null);
     //t/f                      
-    this._muteData              = createAndInitDataRemote("faceplate.mute");
-    this._playingRef            = createAndInitDataRemote("playing.ref");
-    this._playlistRef           = createAndInitDataRemote("playlist.ref");
-    this._playlistIndex         = createAndInitDataRemote("playlist.index");
-    this._repeat                = createAndInitDataRemote("playlist.repeat");
-    this._shuffle               = createAndInitDataRemote("playlist.shuffle");
-    this._showRemaining         = createAndInitDataRemote("faceplate.showremainingtime");
+    this._muteData              = createDataRemote("faceplate.mute", null);
+    this._playingRef            = createDataRemote("playing.ref", null);
+    this._playlistRef           = createDataRemote("playlist.ref", null);
+    this._playlistIndex         = createDataRemote("playlist.index", null);
+    this._repeat                = createDataRemote("playlist.repeat", null);
+    this._shuffle               = createDataRemote("playlist.shuffle", null);
+    this._showRemaining         = createDataRemote("faceplate.showremainingtime", null);
                                
-    this._metadataTitle         = createAndInitDataRemote("metadata.title");
-    this._metadataArtist        = createAndInitDataRemote("metadata.artist");
-    this._metadataAlbum         = createAndInitDataRemote("metadata.album");
-    this._metadataUrl           = createAndInitDataRemote("metadata.url");
-    this._metadataPos           = createAndInitDataRemote("metadata.position");
-    this._metadataLen           = createAndInitDataRemote("metadata.length");
-    this._resetSearchData       = createAndInitDataRemote("faceplate.search.reset");
-    this._metadataPosText       = createAndInitDataRemote("metadata.position.str");
-    this._metadataLenText       = createAndInitDataRemote("metadata.length.str");
-    this._faceplateState        = createAndInitDataRemote("faceplate.state");
-    this._restartOnPlaybackEnd  = createAndInitDataRemote("restart.onplaybackend");
+    this._metadataTitle         = createDataRemote("metadata.title", null);
+    this._metadataArtist        = createDataRemote("metadata.artist", null);
+    this._metadataAlbum         = createDataRemote("metadata.album", null);
+    this._metadataUrl           = createDataRemote("metadata.url", null);
+    this._metadataPos           = createDataRemote("metadata.position", null);
+    this._metadataLen           = createDataRemote("metadata.length", null);
+    this._resetSearchData       = createDataRemote("faceplate.search.reset", null);
+    this._metadataPosText       = createDataRemote("metadata.position.str", null);
+    this._metadataLenText       = createDataRemote("metadata.length.str", null);
+    this._faceplateState        = createDataRemote("faceplate.state", null);
+    this._restartOnPlaybackEnd  = createDataRemote("restart.onplaybackend", null);
 
-    this._statusText            = createAndInitDataRemote("faceplate.status.text" );
-    this._statusStyle           = createAndInitDataRemote("faceplate.status.style" );
+    this._statusText            = createDataRemote("faceplate.status.text", null );
+    this._statusStyle           = createDataRemote("faceplate.status.style", null );
 
 // Set startup defaults
     this._metadataPos.setValue( 0 );
