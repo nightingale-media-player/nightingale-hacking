@@ -179,10 +179,10 @@ SUBMAKEFILES            := $(addsuffix /Makefile, $(SUBDIRS))
 endif
 
 $(SUBMAKEFILES): % : $(srcdir)/%.in
-	$(PERL) $(AUTOCONF_TOOLS)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR) $@
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR) $@
 
 Makefile: Makefile.in
-	@$(PERL) $(AUTOCONF_TOOLS)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR)
+	@$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR)
 
 makefiles: $(SUBMAKEFILES)
 ifneq (,$(SUBDIRS))
@@ -594,12 +594,12 @@ MAKE_JARS_FLAGS = -s $(srcdir) \
                   -j $(SONGBIRD_CHROMEDIR) \
                   -d $(SONGBIRD_CHROMEDIR)/stage \
                   -z $(ZIP) \
-                  -p $(topsrcdir)/build/preprocessor.pl \
+                  -p $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
                   -v \
                   $(NULL)
 make_jar:
-	@$(PERL) -I$(BUILDDIR) \
-           $(BUILDDIR)/make-jars.pl \
+	@$(PERL) -I$(MOZSDK_SCRIPTS_DIR) \
+           $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
            $(MAKE_JARS_FLAGS) \
            < $(srcdir)/$(JAR_MANIFEST) \
            $(NULL)

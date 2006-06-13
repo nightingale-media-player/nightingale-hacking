@@ -120,9 +120,6 @@ RM        = @RM@@BIN_SUFFIX@
 MKDIR     = @MKDIR@@BIN_SUFFIX@
 AWK       = @AWK@@BIN_SUFFIX@
 
-BUILDDIR       = @top_srcdir@/build
-AUTOCONF_TOOLS = @top_srcdir@/build/autoconf
-
 XPIDL     = $(MOZSDK_DIR)/bin/xpidl@BIN_SUFFIX@
 XPTLINK   = $(MOZSDK_DIR)/bin/xpt_link@BIN_SUFFIX@
 

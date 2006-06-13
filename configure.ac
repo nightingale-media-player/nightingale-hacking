@@ -35,6 +35,25 @@ SB_APPNAME="Songbird"
 AC_SUBST(SB_APPNAME)
 
 #
+# Check for --enable-debug
+#
+
+AC_ARG_ENABLE(debug,
+              [  --enable-debug          whether or not to compile a debug version (disabled by default)])
+if test "$enable_debug" = "yes"; then
+  DEBUG=1
+  SB_CONFIGURATION="debug"
+  AC_DEFINE(DEBUG)
+  AC_DEFINE(_DEBUG)
+else
+  DEBUG=
+  SB_CONFIGURATION="release"
+  AC_DEFINE(NDEBUG)
+fi
+AC_SUBST(DEBUG)
+AC_SUBST(SB_CONFIGURATION)
+
+#
 # Check platform
 #
 
@@ -48,10 +67,10 @@ case "$target" in
         # no cygwin wrapper for mingw
       ;;  
       *)
-        CYGWIN_WRAPPER="${srcdir}/build/cygwin-wrapper"
+        CYGWIN_WRAPPER="${srcdir}/dependencies/win32/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         if test "`echo ${srcdir} | grep -c ^/ 2>/dev/null`" = 0; then
           _pwd=`pwd`
-          CYGWIN_WRAPPER="${_pwd}/${srcdir}/build/cygwin-wrapper"
+          CYGWIN_WRAPPER="${_pwd}/${srcdir}/dependencies/win32/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         fi
         CYGDRIVE_MOUNT=`mount -p | awk '{ if (/^\//) { print $1; exit } }'`
       ;;
@@ -216,25 +235,6 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #AC_FUNC_STRFTIME
 #AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([ftruncate getcwd gethostbyaddr gethostname getpagesize gettimeofday memchr memmove memset munmap putenv select socket strcasecmp strdup strncasecmp strndup strstr strtol])
-
-#
-# Check for --enable-debug
-#
-
-AC_ARG_ENABLE(debug,
-              [  --enable-debug          whether or not to compile a debug version (disabled by default)])
-if test "$enable_debug" = "yes"; then
-  DEBUG=1
-  SB_CONFIGURATION="debug"
-  AC_DEFINE(DEBUG)
-  AC_DEFINE(_DEBUG)
-else
-  DEBUG=
-  SB_CONFIGURATION="release"
-  AC_DEFINE(NDEBUG)
-fi
-AC_SUBST(DEBUG)
-AC_SUBST(SB_CONFIGURATION)
 
 #
 # Check for --enable-jars
@@ -533,7 +533,7 @@ AC_SUBST(DISTDIRNAME)
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $srcdir/build/autoconf/acoutput-fast.pl > ./conftest.sh
+echo $MAKEFILES | ${PERL} $srcdir/dependencies/$SB_PLATFORM/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 
