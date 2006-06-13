@@ -111,7 +111,7 @@ function CoreQT()
    *
    */
   this._verifyObject = function() {
-    if ( (this._object == undefined) || ( ! this._object ) || ( ! this._object instanceof Components.interfaces.nsIQTScriptablePlugin ) )
+    if ( (this._object == undefined) || ( ! this._object ) /*|| ( ! this._object instanceof Components.interfaces.nsIQTScriptablePlugin )*/ )
     {
       LOG("VERIFY OBJECT FAILED.  OBJECT DOES NOT HAVE PROPER QT API.")
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -157,8 +157,7 @@ function CoreQT()
 
     LOG( "Trying to play url: " + url );
     
-    this._object.SetURL( url );
-    this.play();
+    this._object.playURL( url );
 
     return true;
   }
@@ -171,7 +170,7 @@ function CoreQT()
     this._playing = true;
   
     try {
-      this._object.Play();
+      this._object.playPlayer();
     } catch(e) {
       LOG(e);
     }
@@ -187,7 +186,7 @@ function CoreQT()
     this._verifyObject();
 
     try {
-      this._object.Stop();
+      this._object.pausePlayer();
     } catch(e) {
       LOG(e);
     }
@@ -208,8 +207,7 @@ function CoreQT()
     this._playing = false;
 
     try {
-      this._object.Stop();
-      this._object.Rewind();
+      this._object.stopPlayer();
     } catch(e) {
       LOG(e);
     }
@@ -253,7 +251,7 @@ function CoreQT()
     var playLength = 0;
     
     try {
-      playLength = this._object.GetEndTime();
+      playLength = this._object.getPlayerLength();
     } catch(e) {
       LOG(e);
     }
@@ -267,7 +265,7 @@ function CoreQT()
     var curPos = 0;
     
     try {
-      curPos = this._object.GetTime();
+      curPos = this._object.getPlayerPosition();
     } catch(e) {
       LOG(e);
     }
@@ -280,9 +278,7 @@ function CoreQT()
     this._verifyObject();
     
     try {
-      this._object.Stop();
-      this._object.SetTime( pos );
-      this._object.Play();
+      this._object.seekPlayer( pos );
     } catch(e) {
       LOG(e);
     }
@@ -291,7 +287,7 @@ function CoreQT()
   this.getVolume   = function ()
   {
     this._verifyObject();
-    var curVol = this._object.GetVolume();
+    var curVol = this._object.getPlayerVolume();
     
     return curVol;
   }
@@ -299,7 +295,7 @@ function CoreQT()
   this.setVolume   = function ( vol )
   {
     this._verifyObject();
-    this._object.SetVolume(vol);
+    this._object.setPlayerVolume(vol);
 
     LOG(this.getVolume());
   }
@@ -307,7 +303,7 @@ function CoreQT()
   this.getMute     = function ()
   {
     this._verifyObject();
-    var isMuted = this._object.GetMute();
+    var isMuted = this._object.isMuted;
     
     return isMuted;
   }
@@ -315,7 +311,7 @@ function CoreQT()
   this.setMute     = function ( mute )
   {
     this._verifyObject();
-    this._object.SetMute( mute );
+    this._object.mutePlayer( mute );
   }
 
   this.getMetadata = function ( key )
@@ -381,11 +377,9 @@ function CoreQTDocumentInit( id )
     var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     var theDocumentQTInstance = document.getElementById( id );
-
-    theDocumentQTInstance.SetAutoPlay(false);
-
+   
     gQTCore.setId("QT1");
-    gQTCore.setObject(theDocumentQTInstance);
+    gQTCore.setObject(theDocumentQTInstance.contentWindow);
     gPPS.addCore(gQTCore, true);
  }
   catch ( err )
