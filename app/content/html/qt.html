@@ -1,0 +1,128 @@
+<html>
+<body onload="bindPlayer();">
+<script language="JavaScript">
+
+var theQTCore = null;
+
+var isPlaying = false;
+var isPaused = false;
+var isMuted = false;
+
+function bindPlayer()
+{
+  initPlayer();
+}
+
+function initPlayer()
+{
+  if(!theQTCore) {
+    var theCore = document.getElementById("core_qt");
+    theQTCore = theCore;
+  }
+}
+
+function playURL(url)
+{
+  initPlayer();
+
+  theQTCore.SetURL(url);
+
+  var tryAgain = false;
+  try {
+    playPlayer();
+  } catch(e) {
+    tryAgain = true;
+    dump(e + "\n");
+  }
+    
+  if(tryAgain)
+  {
+    try {
+      playPlayer();
+    } catch(e) {
+      tryAgain = true;
+      dump(e + "\n");
+    }
+  }
+}
+
+function playPlayer()
+{
+  initPlayer();
+  
+  if(!isPlaying || isPaused)
+  { 
+    theQTCore.Play();
+    isPlaying = true;
+    isPaused = false;
+  }
+}
+
+function pausePlayer()
+{
+  initPlayer();
+
+  if(!isPaused)
+  {
+    theQTCore.Stop();
+    isPaused = true;
+  }
+  else
+  {
+    theQTCore.Play();
+    isPaused = false;
+  }
+}
+
+function stopPlayer()
+{
+  initPlayer();
+  
+  isPlaying = false;
+  isPaused = false;
+  
+  theQTCore.Stop();
+  theQTCore.Rewind();
+}
+
+function getPlayerVolume()
+{
+  initPlayer();
+  return theQTCore.GetVolume();
+}
+
+function setPlayerVolume(vol)
+{
+  initPlayer();
+  theQTCore.SetVolume(vol);
+}
+
+function mutePlayer( mute )
+{
+  initPlayer();
+  theQTCore.SetMute(mute);
+  isMuted = mute;
+}
+
+function getPlayerLength()
+{
+  initPlayer();
+  return theQTCore.GetDuration();
+}
+
+function getPlayerPosition()
+{
+  initPlayer();
+  return theQTCore.GetTime();
+}
+
+function seekPlayer(pos)
+{
+  initPlayer();
+  theQTCore.SetTime(pos);
+}
+</script>
+<embed id="core_qt" name="core_qt" EnableJavaScript="true" AllowEmbedTagOverrides="true" SaveEmbedTags="true" autoplay="false" controller="false" target="myself" type="video/quicktime">
+</embed>
+</body>
+</html>
