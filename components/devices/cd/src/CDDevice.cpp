@@ -47,30 +47,18 @@
 
 /* Implementation file */
 
-#define NAME_CDDEVICE \
-  "Songbird CD Device"
+#define NAME_COMPACT_DISC_DEVICE_LEN  NS_LITERAL_STRING("Songbird CD Device").Length()
+#define NAME_COMPACT_DISC_DEVICE      NS_LITERAL_STRING("Songbird CD Device").get()
 
-#define CDDEVICE_TABLE_NAME \
-  "compactDisc"
+#define COMPACT_DISC_DEVICE_TABLE_NAME        NS_LITERAL_STRING("compactDisc").get()
+#define COMPACT_DISC_DEVICE_TABLE_READABLE    NS_LITERAL_STRING("compactDisc.trackstable.readable").get()
+#define COMPACT_DISC_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("compactDisc.trackstable.description").get()
+#define COMPACT_DISC_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("compactDisc.trackstable.type").get()
 
-#define CDDEVICE_TABLE_READABLE \
-  "compactDisc.trackstable.readable"
-#define CDDEVICE_TABLE_DESCRIPTION \
-  "compactDisc.trackstable.description"
-#define CDDEVICE_TABLE_TYPE \
-  "compactDisc.trackstable.type"
-
-#define CDDEVICE_RIP_TABLE \
-  "CDRip"
-#define CDDEVICE_RIP_TABLE_READABLE \
-  "compactDisc.cdrip"
-#define CDDEVICE_BURN_TABLE \
-  "CDBurn"
-#define CDDEVICE_BURN_TABLE_READABLE \
-  "compactDisc.cdburn"
-
-#define SONGBIRD_PROPERTIES \
-  "chrome://songbird/locale/songbird.properties"
+#define COMPACT_DISC_DEVICE_RIP_TABLE           NS_LITERAL_STRING("CDRip").get()
+#define COMPACT_DISC_DEVICE_RIP_TABLE_READABLE  NS_LITERAL_STRING("compactDisc.cdrip").get()
+#define COMPACT_DISC_DEVICE_BURN_TABLE          NS_LITERAL_STRING("CDBurn").get()
+#define COMPACT_DISC_DEVICE_BURN_TABLE_READABLE NS_LITERAL_STRING("compactDisc.cdburn").get()
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
@@ -78,22 +66,18 @@ NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
 //-----------------------------------------------------------------------------
 sbCDDevice::sbCDDevice()
 : sbDeviceBase(PR_TRUE),
-  mCDManagerObject(this)
+mCDManagerObject(this)
 {
+  nsresult rv = NS_OK;
   // Get the string bundle for our strings
-  if (!m_StringBundle) {
-    nsresult rv;
-    nsCOMPtr<nsIStringBundleService> stringBundleService =
-      do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
-
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Failed to get StringBundleService");
-      return;
+  if ( ! m_StringBundle.get() )
+  {
+    nsIStringBundleService *  StringBundleService = nsnull;
+    rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
+    if ( NS_SUCCEEDED(rv) )
+    {
+      rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
     }
-
-    rv = stringBundleService->CreateBundle(SONGBIRD_PROPERTIES,
-                                           getter_AddRefs(m_StringBundle));
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to create bundle");
   }
 
 } //ctor
@@ -236,17 +220,15 @@ NS_IMETHODIMP sbCDDevice::EjectDevice(const PRUnichar *deviceString, PRBool *_re
 
 NS_IMETHODIMP sbCDDevice::GetDeviceCategory(PRUnichar **_retval)
 {
-  nsAutoString nameString(NS_LITERAL_STRING(NAME_CDDEVICE));
-  size_t nLen = nameString.Length() + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(nameString.get(), nLen * sizeof(PRUnichar));
+  size_t nLen = NAME_COMPACT_DISC_DEVICE_LEN + 1;
+  *_retval = (PRUnichar *) nsMemory::Clone(NAME_COMPACT_DISC_DEVICE, nLen * sizeof(PRUnichar));
   return NS_OK;
 }
 
 NS_IMETHODIMP sbCDDevice::GetName(PRUnichar * *aName)
 {
-  nsAutoString deviceString(NS_LITERAL_STRING(NAME_CDDEVICE));
-  size_t nLen = deviceString.Length() + 1;
-  *aName = (PRUnichar *) nsMemory::Clone(deviceString.get(), nLen * sizeof(PRUnichar));
+  size_t nLen = NAME_COMPACT_DISC_DEVICE_LEN + 1;
+  *aName = (PRUnichar *) nsMemory::Clone(NAME_COMPACT_DISC_DEVICE, nLen * sizeof(PRUnichar));
   return NS_OK;
 }
 
@@ -403,9 +385,7 @@ nsString sbCDDevice::GetDeviceDownloadTableDescription(const PRUnichar* deviceSt
   nsString displayString;
   PRUnichar *value = nsnull;
 
-  nsAutoString bundleString(NS_LITERAL_STRING(CDDEVICE_RIP_TABLE_READABLE));
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_RIP_TABLE_READABLE, &value);
   displayString = value;
   PR_Free(value);
 
@@ -417,9 +397,7 @@ nsString sbCDDevice::GetDeviceUploadTableDescription(const PRUnichar* deviceStri
   nsString displayString;
   PRUnichar *value = nsnull;
 
-  nsAutoString bundleString(NS_LITERAL_STRING(CDDEVICE_BURN_TABLE_READABLE));
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_BURN_TABLE_READABLE, &value);
   displayString = value;
   PR_Free(value);
 
@@ -431,9 +409,7 @@ nsString sbCDDevice::GetDeviceDownloadTableType(const PRUnichar* deviceString)
   nsString displayString;
   PRUnichar *value = nsnull;
 
-  nsAutoString bundleString(NS_LITERAL_STRING(CDDEVICE_RIP_TABLE_READABLE));
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_RIP_TABLE_READABLE, &value);
   displayString = value;
   PR_Free(value);
 
@@ -445,9 +421,7 @@ nsString sbCDDevice::GetDeviceUploadTableType(const PRUnichar* deviceString)
   nsString displayString;
   PRUnichar *value = nsnull;
 
-  nsAutoString bundleString(NS_LITERAL_STRING(CDDEVICE_RIP_TABLE_READABLE));
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_BURN_TABLE_READABLE, &value);
   displayString = value;
   PR_Free(value);
 
@@ -459,9 +433,7 @@ nsString sbCDDevice::GetDeviceDownloadReadable(const PRUnichar* deviceString)
   nsString displayString;
   PRUnichar *value = nsnull;
 
-  nsAutoString bundleString(NS_LITERAL_STRING(CDDEVICE_RIP_TABLE_READABLE));
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_RIP_TABLE_READABLE, &value);
   displayString = value;
   PR_Free(value);
 
@@ -473,9 +445,7 @@ nsString sbCDDevice::GetDeviceUploadTableReadable(const PRUnichar* deviceString)
   nsString displayString;
   PRUnichar *value = nsnull;
 
-  nsAutoString bundleString(NS_LITERAL_STRING(CDDEVICE_BURN_TABLE_READABLE));
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
+  m_StringBundle->GetStringFromName(COMPACT_DISC_DEVICE_BURN_TABLE_READABLE, &value);
   displayString = value;
   PR_Free(value);
 
@@ -484,12 +454,12 @@ nsString sbCDDevice::GetDeviceUploadTableReadable(const PRUnichar* deviceString)
 
 nsString sbCDDevice::GetDeviceDownloadTable(const PRUnichar* deviceString)
 { 
-  return nsString(NS_LITERAL_STRING(CDDEVICE_RIP_TABLE));
+  return nsString(COMPACT_DISC_DEVICE_RIP_TABLE);
 }
 
 nsString sbCDDevice::GetDeviceUploadTable(const PRUnichar* deviceString)
 { 
-  return nsString(NS_LITERAL_STRING(CDDEVICE_BURN_TABLE)); 
+  return nsString(COMPACT_DISC_DEVICE_BURN_TABLE); 
 }
 
 PRBool sbCDDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
