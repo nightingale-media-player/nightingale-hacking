@@ -137,7 +137,7 @@ try
         SBDataSetValue( "webplaylist.current", this.a_array.length );
       },
       20, // 20 steps per interval
-      0
+      0 // No pause per interval (each UI frame)
     );
     // End of class construction for sbIAsyncPlaylist
     

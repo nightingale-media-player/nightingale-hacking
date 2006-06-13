@@ -34,7 +34,7 @@ try
 var sbIAsyncForLoopCount = 0;
 var sbIAsyncForLoopArray = {};
 
-function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinishedEval, aStepsPerInterval, aIntervalDelay )
+function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinishedEval, aStepsPerInterval, aIntervalDelay, aIndex )
 {
   if ( ( aStepsPerInterval == null ) || ( aStepsPerInterval == 0 ) )
   {
@@ -47,7 +47,11 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
   try
   {
     // Assign ourselves to the global space so we can have a proper "this" pointer.
-    this.m_Index         = sbIAsyncForLoopCount++;
+    if (!aIndex)
+      aIndex = sbIAsyncForLoopCount++; // Anonymous
+    this.m_Index = aIndex;
+    if (sbIAsyncForLoopArray[ this.m_Index ])
+      sbIAsyncForLoopArray[ this.m_Index ].cancel();
     sbIAsyncForLoopArray[ this.m_Index ] = this;
 
     // Set the eval strings variables
@@ -64,6 +68,7 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     {
       clearInterval( this.m_Interval );
       this.m_Interval = null;
+      sbIAsyncForLoopArray[ this.m_Index ] = null; // Release things when we're done.
     }
     
     this.step = function( index )
