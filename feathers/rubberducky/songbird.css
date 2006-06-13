@@ -1526,14 +1526,13 @@ SEARCH WIDGET
 #search_service_button
 {
   background-color: transparent !important;
-  width: 10px !important; /* doesn't work.  grr. */
 }
 
 #search_service_list
 {
   width: 120px !important;
+  margin: 3px 0px 3px 0px !important; 
   background-color: transparent !important;
-  color: #0F0 !important;
 }
 
 #search_service_list > dropmarker
@@ -1564,7 +1563,6 @@ SEARCH WIDGET
 
 #search_widget input:focus
 {
-  border: 1px solid #C0C8BB !important;
   background-color: #99A195 !important;
   color: #FFF !important;
 }
@@ -2064,7 +2062,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url_box
 {
   margin: 2px 0px 2px 3px !important;
-  padding: 3px 3px 3px 3px !important;
+  padding: 6px 3px 6px 3px !important;
   -moz-border-radius: 5px !important;
   border: 1px solid #4A4E48 !important;
   background-color: transparent !important;
@@ -2099,7 +2097,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-appearance: none !important;
   border-bottom: 1px solid #808583 !important; 
   background-color: transparent !important;
-  height: 29px !important;
+  height: 35px !important;
   padding-left: 2px !important;
 }
 
