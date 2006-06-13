@@ -40,7 +40,7 @@ DataRemote.prototype = {
   _key: null,
   _callbackFunction: null,
   _callbackObject: null,
-  _callbackPropery: null,
+  _callbackProperty: null,
   _callbackAttribute: null,
   _callbackBool: false,
   _callbackNot: false,
@@ -104,7 +104,7 @@ DataRemote.prototype = {
     // Now we're observing for a function.        
     this._callbackFunction = func;
     this._callbackObject = null;
-    this._callbackPropery = null;
+    this._callbackProperty = null;
     this._callbackAttribute = null;
     this._callbackBool = false;
     this._callbackNot = false;
@@ -134,7 +134,7 @@ DataRemote.prototype = {
     // Now we're observing for an object's property.        
     this._callbackFunction = null;
     this._callbackObject = obj;
-    this._callbackPropery = prop;
+    this._callbackProperty = prop;
     this._callbackAttribute = null;
     this._callbackBool = bool;
     this._callbackNot = not;
@@ -164,7 +164,7 @@ DataRemote.prototype = {
     // Now we're observing for an object's attribute.        
     this._callbackFunction = null;
     this._callbackObject = obj;
-    this._callbackPropery = null;
+    this._callbackProperty = null;
     this._callbackAttribute = attr;
     this._callbackBool = bool;
     this._callbackNot = not;
@@ -280,9 +280,9 @@ DataRemote.prototype = {
       // Call the callback function
       this._callbackFunction(value);
     }
-    else if (this._callbackObject && this._callbackPropery) {
+    else if (this._callbackObject && this._callbackProperty) {
       // Set the callback object's property
-      this._callbackObject[this._callbackPropery] = value;
+      this._callbackObject[this._callbackProperty] = value;
     }
     else if (this._callbackObject && this._callbackAttribute) {
       var valStr = value;
