@@ -245,7 +245,7 @@
               <button id="sysbtn_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
             </hbox>
 
-            <spacer height="4" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer height="7" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
             <hbox id="frame_mini" hidden="true">
