@@ -231,30 +231,30 @@ Love the box.
   -moz-border-left-colors: transparent !important;
   -moz-border-bottom-colors: transparent !important;
   -moz-border-right-colors: transparent !important;
-  border: 1px solid #666 !important;
+  border: 1px solid #333 !important;
   margin: 0px !important;
   padding: 6px 0px 0px 0px !important;
-  background-color: #505154 !important;
+  background-color: #686A6A !important;
   /*background-image: url(default/bkgd_clouds.png) !important;*/
   color: #CDD4C4 !important;
 }
 
-#frame_service_box
+#frame_service_box /* aka The Service Pane, The Left Pane **/
 {
   -moz-appearance: none !important;
   -moz-border-radius-topleft: 3px !important;
   -moz-border-radius-bottomleft: 3px !important;
   -moz-border-radius-topright: 3px !important;
   -moz-border-radius-bottomright: 3px !important;
-  -moz-border-top-colors: #666 !important;
-  -moz-border-left-colors: #666 !important;
-  -moz-border-bottom-colors: #666 !important;
-  -moz-border-right-colors: #666 !important;
+  -moz-border-top-colors: #7a7c7c !important;
+  -moz-border-left-colors: #474848 !important;
+  -moz-border-bottom-colors: #474848 !important;
+  -moz-border-right-colors: #474848 !important;
   border: 1px solid #666 !important;
   margin: 0px !important;
-  padding: 6px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
   width: 135px !important;
-  background-color: #505154 !important;
+  background-color: #686A6A !important;
   /*background-image: url(default/bkgd_clouds.png) !important;*/
   color: #CDD4C4 !important;
 }
@@ -270,7 +270,7 @@ button#service_pane
   -moz-border-left-colors: #99A195 !important;
   -moz-border-bottom-colors: #333 !important;
   -moz-border-right-colors: #333 !important;
-  background-color: #505154 !important;
+  background-color: #686A6A !important;
   height: 25px !important;  
   color: #99A195 !important;  
 }
@@ -503,11 +503,12 @@ playlist > stack > vbox > tree
 }
 
 #playlist_toolbar_bkg,
-playlist > stack > vbox > hbox
+playlist > stack > vbox > hbox#playlist_toolbar_bkg
 {
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #000 !important;
-  height: 27px !important;
+  -moz-appearance: none !important;
+  -moz-border-radius-bottomright: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;  
+  border-top: 1px solid #686a6a;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row
@@ -1187,14 +1188,19 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  -moz-border-radius-topright: 5px !important;
-  -moz-border-radius-topleft: 5px !important;
-  border: 1px solid #666 !important;
+  -moz-appearance: none !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-top-colors: #7a7c7c !important;
+  -moz-border-left-colors: #474848 !important;
+  -moz-border-bottom-colors: #474848 !important;
+  -moz-border-right-colors: #474848 !important;
+  border: 1px solid #000 !important;
 }
 
 #frame_main_pane
 {
-
+  
 }
 
 #frame_main_pane_html
@@ -1203,8 +1209,7 @@ THE MAIN PANE
 }
 
 #frame_main_pane_over
-{
-  background-color: Black !important; /* #EEE !important; */
+{  
 }
 
 #frame_status_pane
@@ -3181,7 +3186,7 @@ window#mini
   -moz-appearance: none !important;
   -moz-border-radius: 10px !important;
   background-color: #000 !important;
-  padding: 2px 2px 2px 2px !important;
+  padding: 2px 2px 1px 2px !important;
   height: 22px;
   border-top: 1px solid #333;
   border-right: 1px solid #333;
@@ -3524,8 +3529,6 @@ VIDEO WINDOW
 #video_window
 {
   -moz-appearance:none !important;
-  height: 590px !important;
-  width: 714px !important;
   background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
@@ -3535,11 +3538,12 @@ VIDEO WINDOW
   background-position: 0px -15px !important;
 }
 
-#video_controls
+iframe#video_controls
 {
-  height: 30px !important;
-  width: 696px !important;
-  
+  -moz-appearance: none !important;
+  background-color: #000 !important;
+  height: 24px !important;
+  width: 700px !important;
 }
 
 /** 
