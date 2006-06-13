@@ -139,7 +139,7 @@ function sbIDataRemote( key, root )
     this.m_CallbackObserving = false;
     
     // Go connect to the prefs object acting as the data representation of the key.
-    var prefs_service = SBBindInterface( null, "@mozilla.org/preferences;1", Components.interfaces.nsIPrefService, true );
+    var prefs_service = Components.classes["@mozilla.org/preferences;1"].getService(Components.interfaces.nsIPrefService);
     if ( prefs_service )
     {
       // Ask for the branch.
