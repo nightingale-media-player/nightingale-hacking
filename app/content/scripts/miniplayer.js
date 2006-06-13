@@ -79,6 +79,45 @@ try
   // XUL Event Methods
   //
 
+  //Necessary when WindowDragger is not available on the current platform.
+  var trackerBkg = false;
+  var offsetScrX = 0;
+  var offsetScrY = 0;
+
+  // The background image allows us to move the window around the screen
+  function onBkgDown( theEvent ) 
+  {
+    try
+    {
+      var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
+      windowDragger.BeginWindowDrag(0); // automatically ends
+    }
+    catch(e)
+    {
+      trackerBkg = true;
+      offsetScrX = document.defaultView.screenX - theEvent.screenX;
+      offsetScrY = document.defaultView.screenY - theEvent.screenY;
+      document.addEventListener( "mousemove", onBkgMove, true );
+    }
+  }
+
+  function onBkgMove( theEvent ) 
+  {
+    if ( trackerBkg )
+    {
+      document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
+    }
+  }
+
+  function onBkgUp( ) 
+  {
+    if ( trackerBkg )
+    {
+      trackerBkg = false;
+      document.removeEventListener( "mousemove", onBkgMove, true );
+    }
+  }
+/*
   // The background image allows us to move the window around the screen
   function onBkgDown( theEvent ) 
   {
@@ -95,7 +134,7 @@ try
       SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
     }
   }
-
+*/
   function checkAltF4(evt)
   {
     if (evt.keyCode == 0x73 && evt.altKey) 
