@@ -470,7 +470,7 @@
                           listid="search_service_list"
                           buttonid="search_service_button"
                           tooltiptext="&tooltip.search;"
-                      />
+                        />
                       </hbox>
                     </vbox>
 
