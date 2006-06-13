@@ -68,7 +68,7 @@ function sbIAsyncForLoop( aInitEval, aWhileEval, aStepEval, aBodyEval, aFinished
     {
       clearInterval( this.m_Interval );
       this.m_Interval = null;
-//      sbIAsyncForLoopArray[ this.m_Index ] = null; // Release things when we're done.
+      sbIAsyncForLoopArray[ this.m_Index ] = null; // Release things when we're done.
     }
     
     this.step = function( index )
