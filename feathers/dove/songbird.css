@@ -116,7 +116,7 @@ These pieces paint the resizeable window for Songbird.
 
 .chrome_iframe_bkgd
 {
-  background: #000 !important;
+  background: #FFF !important;
 }
 
 .chrome_bkgd,
@@ -2953,40 +2953,57 @@ Anything with #mini refers to the skin of the mini player.
 
 window#mini  
 { 
-  width: 640px !important;
-  height: 20px !important;
   background-color: transparent !important;
 }
 
-#mini_btn_max
+#frame_mini
 {
-  width: 33px !important;
-  height: 30px !important;
-  background-image: url(mini/mini.btn.max.png) !important;
-  background-color: transparent !important;
+  -moz-appearance: none !important;
+  -moz-border-radius: 10px !important;
+  background-color: #FFF !important;
+  padding: 2px 2px 1px 2px !important;
+  height: 22px;
+  border-top: 1px solid #eee;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-left: 1px solid #eee;
+}
+
+#mini_resize_w,
+#mini_resize_e
+{
+  -moz-appearance: none;
+  height: 10px !important;
+  width: 1px !important;
 }
 
 /* the back button */
 #mini_btn_back
 {
-  width: 61px !important;
-  height: 30px !important;
+  width: 50px !important;
+  height: 18px !important;
   background-image: url(mini/mini.btn.back.n.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+}
+#mini_btn_back:hover
+{
+  width: 50px !important;
+  height: 18px !important;
+  background-image: url(mini/mini.btn.back.h.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 #mini_btn_back[disabled="true"]
 {
-  background-image: url(mini/mini.btn.back.d.png) !important;
-  background-color: transparent !important;
-}
-#mini_btn_back:hover[disabled="true"]
-{
   background-image: url(mini/mini.btn.back.n.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 #mini_btn_back:active
 {
   background-image: url(mini/mini.btn.back.a.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 
@@ -2994,72 +3011,89 @@ window#mini
 
 #mini_btn_play
 {
-  width: 81px !important;
-  height: 30px !important;
+  width: 70px !important;
+  height: 18px !important;
   background-image: url(mini/mini.btn.play.n.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  margin: 0px 1px 0px 1px !important;
+}
+#mini_btn_play:hover
+{
+  width: 70px !important;
+  height: 18px !important;
+  background-image: url(mini/mini.btn.play.h.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 #mini_btn_play[disabled="true"]
 {
   background-image: url(mini/mini.btn.play.d.png) !important;
-  background-color: transparent !important;
-}
-#mini_btn_play:hover[disabled="true"]
-{
-  background-image: url(mini/mini.btn.play.n.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 #mini_btn_play:active
 {
   background-image: url(mini/mini.btn.play.a.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 
 /* the pause button */
 #mini_btn_pause
 {
-  width: 81px !important;
-  height: 30px !important;
+  width: 70px !important;
+  height: 18px !important;
   background-image: url(mini/mini.btn.pause.n.png) !important;
+  background-repeat: no-repeat !important;
+  margin: 0px 1px 0px 1px !important;
   background-color: transparent !important;
+}
+#mini_btn_pause:hover
+{
+  background-repeat: no-repeat !important;
+  background-image: url(mini/mini.btn.pause.h.png) !important;
 }
 #mini_btn_pause[disabled="true"]
 {
   background-image: url(mini/mini.btn.pause.d.png) !important;
-  background-color: transparent !important;
-}
-#mini_btn_pause:hover[disabled="true"]
-{
-  background-image: url(mini/mini.btn.pause.n.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 #mini_btn_pause:active
 {
   background-image: url(mini/mini.btn.pause.a.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 
 /* the fwd button */
 #mini_btn_fwd
 {
-  width: 61px !important;
-  height: 30px !important;
+  width: 50px !important;
+  height: 18px !important;
   background-image: url(mini/mini.btn.fwd.n.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+}
+#mini_btn_fwd:hover
+{
+  width: 50px !important;
+  height: 18px !important;
+  background-repeat: no-repeat !important;
+  background-image: url(mini/mini.btn.fwd.h.png) !important;
   background-color: transparent !important;
 }
 #mini_btn_fwd[disabled="true"]
 {
   background-image: url(mini/mini.btn.fwd.d.png) !important;
-  background-color: transparent !important;
-}
-#mini_btn_fwd:hover[disabled="true"]
-{
-  background-image: url(mini/mini.btn.fwd.n.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 #mini_btn_fwd:active
 {
   background-image: url(mini/mini.btn.fwd.a.png) !important;
+  background-repeat: no-repeat !important;
   background-color: transparent !important;
 }
 
@@ -3068,13 +3102,21 @@ window#mini
 #songbird_seekbar_slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px !important;
+  height: 6px !important;
+  width: auto !important;
+}
+#mini_seekbar
+{
+  -moz-appearance: none !important;
+  height: 6px !important;
+  border-bottom: 1px solid #FFF !important;
+  
 }
 #mini_seekbar_thumb
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 10px !important;
-  height: 8px !important;
+  width: 11px !important;
+  height: 6px !important;
   background-image: url(mini/seekbar_thumb.png) !important;
   background-color: transparent !important;
   background-repeat: no-repeat !important;
@@ -3082,47 +3124,71 @@ window#mini
 #mini_seekbar_thumb > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px !important;
+  height: 6px !important;
 }
-#songbird_seekbar_progress
+#mini_seekbar_progress
 {
-  height: 10px !important;
+  -moz-appearance: none !important;
+  height: 6px !important;
 }
-#songbird_seekbar.miniplayer .progress-bar
+#mini_seekbar_progress .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_progress.png) !important;
-  height: 8px !important;
+  height: 6px !important;
 }
-#songbird_seekbar.miniplayer .progress-remainder
+#mini_seekbar_progress .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(mini/seekbar_remainder.png) !important;
-  height: 8px !important;
+  height: 6px !important;
 }
 #songbird_seekbar.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 8px !important;
+  height: 6px !important;
   border: none !important;
-  margin-bottom: 2px !important;
   background-color: transparent !important;
 }
 
+/* mini dashboard */
+
 #mini_dash
 {
+  -moz-appearance: none !important; /* grrrr! */
+  height: 18px !important;
   background-image: url(mini/mini.bkg.dashboard.png) !important;
+  background-repeat: repeat-x !important;
+  padding: 0px 3px 0px 3px !important;
+}
+
+#mini_dash_e
+{
+  -moz-appearance: none !important; /* grrrr! */
+  width: 4px !important;
+  height: 18px !important;
+  background-repeat: no-repeat !important;
+  background-image: url(mini/mini.bkg.dashboard_e.png) !important;
+}
+
+#mini_dash_w
+{
+  -moz-appearance: none !important; /* grrrr! */
+  height: 18px !important;
+  width: 4px !important;
+  background-repeat: no-repeat !important;
+  background-image: url(mini/mini.bkg.dashboard_w.png) !important;
 }
 
 /* volume */
 
-#mini_volume
+#mini_volume > #mini_volume_box
 {
-  width: 160px !important;
-  height: 27px !important;
-  background-image: url(mini/mini_volume_bkgd.png) !important;
-  padding: 3px 0px 0px 15px !important;
-  border: 0px solid #F00 !important;
+  -moz-appearance: none!important;
+  width: 145px !important;
+  height: 18px !important;
+  background-color: #FFF !important;
+  padding: 2px 0px 2px 7px !important;
 }
 
 /*
@@ -3135,7 +3201,8 @@ window#mini
   list-style-image: none !important;
   padding: 0 0 0 0 !important;
   border: none !important;
-  background-color: transparent !important;
+  background-color: #FFF !important;
+  height: 14px !important;
 }
 
 #mini_volume_thumb
@@ -3143,7 +3210,7 @@ window#mini
   width: 36px !important;
   height: 14px !important;
   background-image: url(default/volume_thumb.png) !important;
-  background-color: transparent !important;
+  background-color: #FFF !important;
   background-repeat: no-repeat !important;
 }
 
@@ -3153,19 +3220,19 @@ window#mini
   left: 0px !important; /* previously 20px, 1 thumb-width in */
   width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
   height: 14px !important;
-  background-color: transparent !important;
+  background-color: #FFF !important;
 }
 #mini_volume_progress > .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_bar.png) !important;
-  background-color: transparent !important;
+  background-color: #FFF !important;
 }
 #mini_volume_progress > .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(default/volume_progress_remainder.png) !important;
-  background-color: transparent !important;
+  background-color: #FFF !important;
 }
 
 #mini_volume_e
@@ -3175,7 +3242,7 @@ window#mini
   height: 5px !important;
   width: 3px !important;
   background-repeat: no-repeat !important;
-  background-color: transparent !important;
+  background-color: #FFF !important;
 }
 #mini_volume_w
 {
@@ -3184,54 +3251,47 @@ window#mini
   height: 5px !important;
   width: 3px !important;
   background-repeat: no-repeat !important;
+  background-color: #FFF !important;
+}
+
+/* Restore */
+#mini_btn_max
+{
+  width: 16px !important;
+  height: 16px !important;
+  background-image: url(mini/mini.btn.max.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  background-position: center center;
+}
+
+/* Close */
+#mini_close
+{  
+  width: 16px !important;
+  height: 16px !important;
+  background-image: url(mini/mini.btn.close.png) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center;
   background-color: transparent !important;
 }
+
 
 /* the texties */
 #mini_text_title
 {
-  width: 220px !important;
+  width: 100px !important;
   height: 15px !important;
   color: #E4EADF !important;
- 
+  overflow: hidden;
 }
 #mini_text_time
 {
-  width: 160px !important;
+  width: auto !important;
   height: 15px !important;
   color: #E4EADF !important;
-  padding: 3px 3px 0px 5px !important;
 }
 
-
-
-
-/** 
-************************************************************************************************************************************************
-MISCELLANEOUS
-************************************************************************************************************************************************
-*/  
-
-
-/*koshi_test.xul*/
-#koshi_test
-{
-  color: #99A195 !important;
-  width:  460px !important;
-  background-color: transparent !important;
-}
-
-/* sample multistate button with custom content (svg/xul, etc) */
-
-#songbird_multistatebuttontest {
-  -moz-binding: url("chrome://songbird/skin/bindings.xml#samplebutton") !important;
-}
-
-/* window region */
-
-windowregion {
-  -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion") !important;
-}
 
 /** 
 ************************************************************************************************************************************************
@@ -3242,21 +3302,21 @@ VIDEO WINDOW
 #video_window
 {
   -moz-appearance:none !important;
-  height: 590px !important;
-  width: 714px !important;
   background-color: #000 !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
   /*background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+  min-width: 700px;
 }
 
 #video_chrome_bkgd
 {
-  background-image: url(default/chrome_bkgd.png) !important; /** <img src="default/chrome_bkgd.png"> */
+  background-image: url(default//chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
   background-position: 0px -15px !important;
 }
 
-#video_controls
+iframe#video_controls
 {
-  height: 30px !important;
-  width: 696px !important;
-  
+  -moz-appearance: none !important;
+  background-color: #FFF !important;
+  height: 24px !important;
+  width: 700px !important;
 }
