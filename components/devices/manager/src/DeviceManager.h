@@ -36,6 +36,7 @@
 
 #include <nsCOMArray.h>
 #include <prlock.h>
+#include <nsString.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DEVICEMANAGER_DESCRIPTION                 \
@@ -82,6 +83,12 @@ private:
 
   // An array of the supported devices that have been initialized.
   nsCOMArray<sbIDeviceBase> mSupportedDevices;
+
+  // Variables that are set to optimize for the case when consumers call
+  // hasDeviceForCategory immediately followed by getDeviceForCategory.
+  PRUint32 mLastRequestedIndex;
+  nsString mLastRequestedCategory;
+
 };
 
 #endif /* __DeviceManager_h__ */

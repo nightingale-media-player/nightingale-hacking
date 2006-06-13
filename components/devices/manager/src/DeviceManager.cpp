@@ -35,7 +35,6 @@
 #include <nsComponentManagerUtils.h>
 #include <nsSupportsPrimitives.h>
 #include <nsISimpleEnumerator.h>
-#include <nsString.h>
 #include <nsAutoLock.h>
 
 #define SB_DEVICE_PREFIX "@songbird.org/Songbird/Device/"
@@ -46,7 +45,8 @@ PRBool sbDeviceManager::sServiceInitialized = PR_FALSE;
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceManager, sbIDeviceManager)
 
 sbDeviceManager::sbDeviceManager()
-: mLock(nsnull)
+: mLock(nsnull),
+  mLastRequestedIndex(nsnull)
 {
   // All initialization handled in Initialize()
 }
@@ -92,6 +92,8 @@ sbDeviceManager::Initialize()
 
   mLock = PR_NewLock();
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+
+  nsAutoLock autoLock(mLock);
 
   // Get the component registrar
   nsresult rv;
@@ -146,14 +148,14 @@ sbDeviceManager::Initialize()
       continue;
     }
 
-    nsAutoLock autoLock(mLock);
-
     // If everything has succeeded then we can add it to our array
     PRBool ok = mSupportedDevices.AppendObject(device);
     
     // Make sure that our array is behaving properly. If not we're in trouble.
     NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
   }
+
+  mLastRequestedCategory = EmptyString();
 
   return NS_OK;
 }
@@ -251,6 +253,14 @@ sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
   // We don't bother checking arguments or locking because we assume that we
   // have already done so in our public methods.
 
+  // First check to see if we've already looked up the result.
+  if (!mLastRequestedCategory.IsEmpty() &&
+      aCategory.Equals(mLastRequestedCategory)) {
+    *_retval = mLastRequestedIndex;
+    return NS_OK;
+  }
+
+  // Otherwise loop through the array and try to find the category.
   PRInt32 count = mSupportedDevices.Count();
   for (PRInt32 index = 0; index < count; index++) {
     nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
@@ -269,11 +279,13 @@ sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
     nsDependentString category(categoryBuffer);
 
     if (category.Equals(aCategory)) {
-      *_retval = index;
+      mLastRequestedCategory = category;
+      *_retval = mLastRequestedIndex = index;
       return NS_OK;
     }
   }
 
   // Not found
+  mLastRequestedCategory = EmptyString();
   return NS_ERROR_NOT_AVAILABLE;
 }
