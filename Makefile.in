@@ -46,10 +46,13 @@ SUBDIRS = app \
           components \
           dependencies \
           feathers \
-          installer \
           locales \
           $(NULL)
 
+ifdef MAKE_INSTALLER
+SUBDIRS += installer 
 SUBDIRDEPS = installer : components app extensions feathers locales
+endif
+
 
 include $(topsrcdir)/build/rules.mk

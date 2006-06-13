@@ -59,7 +59,13 @@ endif
 # Check environment variables
 #
 
-# debug builds
+# Global, debug/release build options
+# building installer is off by default
+ifdef SB_ENABLE_INSTALLER
+CONFIGURE_ARGS += --enable-installer
+endif
+
+# debug build options
 ifdef DEBUG
 CONFIGURE_ARGS += --enable-debug
 # debug builds turn off jars by default, unless SB_ENABLE_JARS is set
@@ -68,7 +74,7 @@ CONFIGURE_ARGS += --disable-jars
 endif
 endif  # ifdef DEBUG
 
-# release builds
+# release build options
 ifndef DEBUG
 # release builds have jars by default, unless SB_DISABLE_JARS is set
 ifdef SB_DISABLE_JARS 

@@ -47,6 +47,7 @@ DLL_SUFFIX       = @DLL_SUFFIX@
 
 DEBUG            = @DEBUG@
 USING_JARS       = @USING_JARS@
+MAKE_INSTALLER   = @MAKE_INSTALLER@
 
 DEFS             = @DEFS@
 
