@@ -36,6 +36,8 @@
 #include <nspr/prmem.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsAutoLock.h>
+#include <necko/nsIIOService.h>
+#include <necko/nsIURI.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -497,6 +499,7 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
 
   nsresult ret = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
+  nsCOMPtr<nsIIOService> pIOService = do_GetService("@mozilla.org/network/io-service;1");
 
   sbIMediaScanCallback *pCallback = nsnull;
   pQuery->GetCallback(&pCallback);
@@ -557,7 +560,16 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
                 if(bIsFile)
                 {
                   nsString strPath;
+#if 0
                   pEntry->GetPath(strPath);
+#else
+                  // Get the file:// uri from the file object.
+                  nsCOMPtr<nsIURI> pURI;
+                  pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
+                  nsCString u8spec;
+                  pURI->GetSpec(u8spec);
+                  strPath = NS_ConvertUTF8toUTF16(u8spec);
+#endif
 
                   pQuery->AddFilePath(strPath.get());
                   nFoundCount += 1;
