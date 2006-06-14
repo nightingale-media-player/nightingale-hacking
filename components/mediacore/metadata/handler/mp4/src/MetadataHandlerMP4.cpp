@@ -295,6 +295,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
     quicktime_t *file;
     file = quicktime_open( url, 1, 0, 0 );
     quicktime_dump_info(file, static_callback, this);
+    m_Completed = true;
   }
   else
   {
