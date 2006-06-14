@@ -425,9 +425,9 @@
                 <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" height="60"/>
               </hbox>
 
-              <splitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" xonload="onControlPaneResizeLoad();" onmousemove="onControlPaneResize();">
+              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="controlpane.collapsed">
                 <grippy/>
-              </splitter>
+              </smartsplitter>
 
               <vbox class="sb_faceplate" id="frame_middle_pane" flex="1">
                 <hbox class="sb_faceplate" flex="1">
@@ -445,9 +445,9 @@
 
                   </vbox>
 
-                  <splitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" onmouseup="onServiceTreeResize();">
+                  <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="servicepane.collapsed">
                     <grippy/>
-                  </splitter>
+                  </smartsplitter>
 
                   <!-- MAIN PANE -->
                   <vbox class="sb_faceplate" flex="1" id="main_pane_border">

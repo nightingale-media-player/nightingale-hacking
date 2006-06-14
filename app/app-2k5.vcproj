@@ -1195,6 +1195,30 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath=".\content\bindings\smartsplitter.xml"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
 			</Filter>
 			<Filter
 				Name="scripts"

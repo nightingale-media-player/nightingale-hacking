@@ -295,7 +295,6 @@ function SBInitialize()
     //theServiceTree.setDefaultPopup(document.getElementById( "?" ));
     theServiceTree.setNotAnItemPopup(document.getElementById( "service_popup_none" ));
     theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
-    onServiceTreeRestoreSize();
 
     theWebPlaylist = document.getElementById( "playlist_web" );
     // hack, to let play buttons find the visible playlist if needed
@@ -614,57 +613,6 @@ var FaceplateStateData = new sbIDataRemote( "faceplate.state" );
 function onNextService()
 {
   FaceplateStateData.setValue( ( FaceplateStateData.getIntValue() + 1 ) % 2 ); // can't use boolean, must use integer logic
-}
-
-// onServiceTreeResize
-function onServiceTreeResize()
-{
-  var theServiceTree = document.getElementById( "frame_servicetree" );
-  SBDataSetValue( "servicetree.width", theServiceTree.width );
-  var serviceTreeSplitter = document.getElementById( "vert_splitter" );
-  var collapsed = serviceTreeSplitter.getAttribute( "state" ) == "collapsed";
-  if (collapsed && SBDataGetIntValue("servicetree.collapsed") == 0) metrics_inc("player", "collapse.servicetree", null);
-  SBDataSetValue( "servicetree.collapsed", collapsed );
-}
-
-// onControlPaneResize
-function onControlPaneResizeLoad()
-{
-  var splitter = document.getElementById( "control_pane_splitter" );
-  splitter.addEventListener("mousemove", onControlPaneResize, true);
-}
-// onControlPaneResize
-function onControlPaneResize()
-{
-  var mini = document.getElementById( "frame_mini" );
-  var splitter = document.getElementById( "control_pane_splitter" );
-  var state = splitter.getAttribute( "state" );
-  var collapsed = false;
-  switch (state) {
-    case "open":
-    case "dragging":
-      mini.hidden = true;
-      break;
-    case "collapsed":
-      mini.hidden = false;
-      collapsed = true;
-      break;
-  }
-  if (collapsed && SBDataGetIntValue("servicetree.collapsed") == 0) metrics_inc("player", "collapse.controlpane", null);
-  SBDataSetValue( "controlpane.collapsed", collapsed );
-}
-
-// onServiceTreeRestoreSize
-function onServiceTreeRestoreSize()
-{
-  var theServiceTree = document.getElementById( "frame_servicetree" );
-  var width = SBDataGetValue( "servicetree.width" );
-  if ( width != "" )
-  {
-    theServiceTree.width = width;
-    var serviceTreeSplitter = document.getElementById( "vert_splitter" );
-    serviceTreeSplitter.setAttribute( "state", SBDataGetIntValue( "servicetree.collapsed" ) ? "collapsed" : "open" );
-  }
 }
 
 function onServiceTreeCommand( theEvent )

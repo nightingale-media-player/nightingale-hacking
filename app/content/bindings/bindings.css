@@ -166,6 +166,8 @@ dbedit_menulist {
   -moz-binding: url("chrome://songbird/content/bindings/db_controls.xml#menulist") !important;
 }
 
-
+smartsplitter {
+  -moz-binding: url("chrome://songbird/content/bindings/smartsplitter.xml#smartsplitter") !important;
+}
 
 
