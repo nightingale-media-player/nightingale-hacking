@@ -85,7 +85,7 @@ NoUninstall:
 
 RequiresMSVCP71:
   SetOutPath $SYSDIR
-  File xulrunner\msvcp71.dll
+  File msvcp71.dll
 
 NoRequireMSVCP71:
   FindClose $0
