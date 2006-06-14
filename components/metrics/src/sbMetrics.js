@@ -29,10 +29,14 @@ const SONGBIRD_METRICS_CLASSNAME = "Songbird Metrics Service Interface";
 const SONGBIRD_METRICS_CID = Components.ID("{F64283C0-CDCF-48ec-8502-735B7282981E}");
 const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;
 
-const SONGBIRD_POSTMETRICS_URL = 'http://www.songbirdnest.com/metrics/post.php';
+const SONGBIRD_POSTMETRICS_URL = 'http://metrics.songbirdnest.com/post';
+//const SONGBIRD_POSTMETRICS_URL = 'http://localhost:3003/metrics/post';
+
 const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 7; // every week
 
 function Metrics() {
+    this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                      .getService(Components.interfaces.nsIPrefBranch);
 }
 
 Metrics.prototype = {
@@ -44,49 +48,49 @@ Metrics.prototype = {
     consoleService.logStringMessage(str);
   },
 
+
+  /**
+   * Check to see if metrics should be submitted.
+   */
   checkUploadMetrics: function()
   {
-    var ps = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefBranch);
-    var disabled = 0;
-    try 
-    {
-      disabled = parseInt(ps.getCharPref("metrics_disabled"));
-    }
-    catch (e) { }
-    if (disabled) return;
-    var timenow = new Date();
-    var now = timenow.getTime();
-    var last = 0;
-    try 
-    {
-      last = parseInt(ps.getCharPref("last_metrics_upload"));
-    }
-    catch (e)
-    {
-      // first start, pretend we just uploaded so we'll trigger the next upload in n days
-      ps.setCharPref("last_metrics_upload", now);
-      last = now;
-    }
-    var diff = now - last;
-    if (diff > (1000 /*one second*/ * 60 /*one minute*/ * 60 /*one hour*/ * 24 /*one day*/ * SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS))
+    if (!this._isEnabled()) return;
+    
+    var updated = this._checkUpgradeOccurred();
+    var timeUp = this._isWaitPeriodUp();
+    
+    if (timeUp || updated)
     {
       this.uploadMetrics();
     } 
   },
   
+  
+  
+  /**
+   * Bundle all metrics info and send it to the server.
+   *
+   * TODO: Rethink version and OS strings
+   */
   uploadMetrics: function()
   {
-    var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
-    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);
-    var user_install_uuid = appInfo.ID;
-    var user_agent_version = appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;
+
+    var user_agent_version = this._getCurrentVersion();
+    var user_install_uuid = this._getPlayerUUID();
+    
+    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);    
     var user_os = xulRuntime.OS;
+
     
     var ps = Components.classes["@mozilla.org/preferences-service;1"]
                       .getService(Components.interfaces.nsIPrefService);   
+                                      
     var branch = ps.getBranch("metrics.");
     var metrics = branch.getChildList("", { value: 0 });
+    
+    
+    // build xml
+    
     var xml = "";
     xml += '<metrics schema_version="1.0" guid="' + user_install_uuid + '" user_agent="' + user_agent_version + '" user_os="' + user_os + '">';
     for (var i = 0; i < metrics.length; i++) 
@@ -95,6 +99,7 @@ Metrics.prototype = {
       xml += '<item key="' + metrics[i] + '" value="' + val + '"/>';
     }
     xml += '</metrics>';
+    
     
     // upload xml
 
@@ -120,26 +125,149 @@ Metrics.prototype = {
   },
 
   onPostLoad: function() {
+    this.LOG("POST metrics done: "  + this._postreq.status + " - " + this._postreq.responseText);
+    
     // POST successful, reset all metrics to 0
-    this.LOG("POST metrics done");
-    var ps = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefService);   
-    var branch = ps.getBranch("metrics.");
-    var metrics = branch.getChildList("", { value: 0 });
-    for (var i = 0; i < metrics.length; i++) 
+    if (this._postreq.status == 200 && this._postreq.responseText == "OK") 
     {
-      branch.setCharPref(metrics[i], "0");
+        var ps = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefService);   
+        var branch = ps.getBranch("metrics.");
+        var metrics = branch.getChildList("", { value: 0 });
+        for (var i = 0; i < metrics.length; i++) 
+        {
+          branch.setCharPref(metrics[i], "0");
+        }
+        var pref = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefBranch);
+        var timenow = new Date();
+        var now = timenow.getTime();
+        
+        pref.setCharPref("app.metrics.last_upload", now);
+        pref.setCharPref("app.metrics.last_version", this._getCurrentVersion());
+        
+        this.LOG("metrics reset");
+    }    
+    else 
+    {
+        this.LOG("POST metrics failed: " + this._postreq.responseText);
     }
-    var pref = Components.classes["@mozilla.org/preferences-service;1"]
-                      .getService(Components.interfaces.nsIPrefBranch);
-    var timenow = new Date();
-    var now = timenow.getTime();
-    pref.setCharPref("last_metrics_upload", now);
   },
 
   onPostError: function() {
     this.LOG("POST metrics error");
   },
+  
+  
+  
+  /**
+   * Return true unless metrics have been 
+   * explicitly disabled.
+   */
+  _isEnabled: function() {
+  
+    // Make sure we are allowed to send metrics
+    var disabled = 0;
+    try 
+    {
+      disabled = parseInt(this.prefs.getCharPref("app.metrics.disabled"));
+    }
+    catch (e) { }
+    
+    return !disabled;
+  },
+  
+  
+  /**
+   * Return true if SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS days have passed
+   * since last submission
+   */
+  _isWaitPeriodUp: function() { 
+                  
+    var timenow = new Date();
+    var now = timenow.getTime();
+    var last = 0;
+    try 
+    {
+      last = parseInt(this.prefs.getCharPref("app.metrics.last_upload"));
+    }
+    catch (e)
+    {
+      // first start, pretend we just uploaded so we'll trigger the next upload in n days
+      this.prefs.setCharPref("app.metrics.last_upload", now);
+      last = now;
+    }
+    
+    var diff = now - last;
+    
+    return (diff > (1000 /*one second*/ * 60 /*one minute*/ * 60 /*one hour*/ * 24 /*one day*/ * SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS))
+  },
+
+
+  /**
+   * Has the version changed since last metrics submission
+   */
+  _checkUpgradeOccurred: function() {
+  
+    var upgraded = false;
+    
+    var currentVersion = this._getCurrentVersion();
+    var lastVersion = null;
+    
+    try 
+    {
+      lastVersion = this.prefs.getCharPref("app.metrics.last_version");
+    }
+    catch (e) { }    
+    
+    if (currentVersion != lastVersion) 
+    {
+        upgraded = true;
+    }
+    
+    return upgraded;
+  },
+  
+ 
+  
+  /**
+   * TODO: REPLACE WITH SOMETHING OFFICIAL
+   */  
+  _getCurrentVersion: function() {
+  
+    var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+    return appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;    
+  },
+  
+  
+  /**
+   * TODO: REPLACE WITH SOMETHING OFFICIAL
+   */  
+  _getPlayerUUID: function() {
+  
+    var uuid = "";
+   
+    try 
+    {
+      uuid = this.prefs.getCharPref("app.player_uuid");
+    }
+    catch (e)
+    {
+      uuid = "";
+    }   
+    
+    if (uuid == "")
+    {
+        var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
+        uuid = aUUIDGenerator.generateUUID();
+        this.prefs.setCharPref("app.player_uuid", uuid);
+    }
+    
+    return uuid;     
+  },  
+  
+  
+  
   
   /**
    * See nsISupports.idl

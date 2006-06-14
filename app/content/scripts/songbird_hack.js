@@ -154,77 +154,6 @@ function binaryToHex(input)
   return result;
 }
 
-function SBFirstRunPong()
-{
-  try
-  {
-    const pongURL = "http://www.songbirdnest.com/player/pong/";
-    
-    var firstRun = new sbIDataRemote("application.first_run");
-    var firstRunVersion = new sbIDataRemote("application.version");
-    
-    var isFirst = firstRun.getValue();
-    var theVersion = firstRunVersion.getValue();
-
-    if(isFirst != "false" ||
-       theVersion != "0.1.1" )
-    {
-      var playerUUID = new sbIDataRemote("application.uuid");
-
-      var newUUID = playerUUID.getValue()
-      if(newUUID == "")
-      {
-        var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
-
-        newUUID = aUUIDGenerator.generateUUID();
-        playerUUID.setValue(newUUID);
-      }
-
-      var pongRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
-      var pongHash = Components.classes["@mozilla.org/security/hash;1"].createInstance(Components.interfaces.nsICryptoHash);
-      var inputStream = Components.classes["@mozilla.org/io/string-input-stream;1"].createInstance(Components.interfaces.nsIStringInputStream);
-      const confirmShakePhrase = "army of darkness rulez";
-      
-      inputStream.setData(newUUID, -1);
-      
-      pongHash.initWithString("SHA1");
-      pongHash.updateFromStream(inputStream, -1);
-      var uuidHash = binaryToHex(pongHash.finish(false));
-      
-      var confirmShake = uuidHash + confirmShakePhrase;
-      inputStream.setData(confirmShake, -1);
-      
-      pongHash.initWithString("SHA1");
-      pongHash.updateFromStream(inputStream, -1);
-      var confirmHash = binaryToHex(pongHash.finish(false));
-     
-      var message = "&i=" + uuidHash + "&c=" + confirmHash + "&v=0_1_1";
-      var requestURL = pongURL + "?" + message;
-       
-      pongRequest.open("GET", requestURL, false);
-      pongRequest.send(null);
-      
-      if(pongRequest.status == 204)
-      {
-        dump("Success!!!");
-        firstRun.setValue("false");
-        firstRunVersion.setValue("0.1.1");
-      }
-      else
-      {
-        dump(newUUID + "\n");
-        dump(message + "\n");
-        dump(requestURL + "\n");
-        dump(pongRequest.status + "\n");
-      }
-    }
-  }
-  catch ( err )
-  {
-    // This can happen if there is not internet connection.  Yay.  Fail silent.
-    alert( "*** SBFirstRun ***\n\n" + err );
-  }
-}
 
 //
 // Core Wrapper Initialization (in XUL, this must happen after the entire page loads). 
@@ -235,8 +164,6 @@ var theWebPlaylistQuery = null;
 function SBInitialize()
 {
   dump("SBInitialize *** \n");
-
-  SBFirstRunPong();
 
   const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
   const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
