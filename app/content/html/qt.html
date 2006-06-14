@@ -7,6 +7,7 @@ var theQTCore = null;
 var isPlaying = false;
 var isPaused = false;
 var isMuted = false;
+var lastVolume = 0;
 
 function bindPlayer()
 {
@@ -44,6 +45,8 @@ function playURL(url)
       dump(e + "\n");
     }
   }
+  
+  setPlayerVolume(lastVolume);
 }
 
 function playPlayer()
@@ -94,6 +97,7 @@ function getPlayerVolume()
 function setPlayerVolume(vol)
 {
   initPlayer();
+  lastVolume = vol;
   theQTCore.SetVolume(vol);
 }
 

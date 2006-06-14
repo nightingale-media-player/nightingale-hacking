@@ -173,7 +173,7 @@
             <spacer width="10"/>
               <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
               <!--html:object id="core_wm" flex="1" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="application/asx" /-->
-              <!--html:embed src="file:///test.mp3" name="core_qt" id="core_qt" EnableJavaScript="True" AllowEmbedTagOverrides="True" SaveEmbedTags="True" autoplay="False" controller="False" target="myself" pluginspage="www.apple.com/quicktime/download" width="320" height="240" type="video/quicktime" /-->
+              <!--html:iframe id="core_qt_document" src="chrome://songbird/content/html/qt.html" type="content" flex="1" /-->
             <spacer width="10"/>
             </hbox>
             <spacer height="5"/>
@@ -214,16 +214,15 @@
    src="chrome://songbird/content/scripts/player_open.js"/>
    
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
-
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreVLC.js"/>
- <!-- 
+<!--
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreWMP.js"/>
-
+-->
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/coreQT.js"/>
--->
+
   <!-- Load the "background" scripts -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/>

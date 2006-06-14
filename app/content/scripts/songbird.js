@@ -361,9 +361,9 @@ function SBAppInitialize()
     //thePlayerRepeater.setPlaybackCore( theVLCCore );
 
     // Let the sbIPlaylistPlayback interface play in the game, too, maaaan.
-    CoreVLCDocumentInit( "core_vlc" );
+    //CoreVLCDocumentInit( "core_vlc" );
     //CoreWMPDocumentInit( "core_wm" );
-    //CoreQTDocumentInit( "core_qt" );
+    CoreQTDocumentInit( "core_qt_document" );
     //setTimeout("CoreWMPDocumentInit( 'core_wm' );", 0);
     
     // Reset this on application startup. 
