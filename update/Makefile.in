@@ -38,7 +38,7 @@ full-update:: complete-patch
 
 complete-patch::
 	$(MKDIR) -p $(STAGE_DIR)
-	MAR=$(MAR_BIN) \
+	MAR=$(MAR) \
 	  $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
 	  "$(STAGE_DIR)/$(SB_APPNAME).complete.mar" \
 	  "$(DEPTH)/$(DISTDIRNAME)"
@@ -51,8 +51,8 @@ complete-patch::
 
 #partial-patch::
 #	$(MKDIR) -p $(STAGE_DIR)
-#	MAR=$(MAR_BIN) \
-#	MBSDIFF=$(MBSDIFF_BIN) \
+#	MAR=$(MAR) \
+#	MBSDIFF=$(MBSDIFF) \
 #	  $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
 #	  "$(STAGE_DIR)/$(SB_APPNAME).partial.$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
 #	  "$(SRC_BUILD)" \

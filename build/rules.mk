@@ -154,6 +154,10 @@ ifdef SONGBIRD_CHROME_MANIFEST
 targets += copy_sb_chrome_manifest
 endif
 
+ifdef PREFERENCES
+targets += preferences_preprocess
+endif
+
 ifdef SHELL_EXECUTE
 targets += shell_execute
 endif
@@ -590,6 +594,32 @@ copy_sb_xulrunner:
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
+
+#------------------------------------------------------------------------------
+# Rules for preprocessing prefs
+#------------------------------------------------------------------------------
+
+ifdef PREFERENCES
+
+# on win32, pref files need CRLF line endings
+ifeq (win32,$(SB_PLATFORM))
+PREF_PPFLAGS = --line-endings=crlf
+endif
+
+ifndef PREFERENCES_STRIP_SUFFIXES
+PREFERENCES_STRIP_SUFFIXES = .in \
+                             $(NULL)
+endif
+                             
+preferences_preprocess:
+	@$(MKDIR) -p $(SONGBIRD_PREFERENCESDIR)
+	for item in $(PREFERENCES); \
+	do $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+	  $(PREF_PPFLAGS) $(ACDEFINES) $(XULPPFLAGS) -- $(srcdir)/$$item > \
+	  $(SONGBIRD_PREFERENCESDIR)/`basename $$item $(PREFERENCES_STRIP_SUFFIXES)`; \
+	done
+.PHONY : preferences_preprocess
+endif #PREFERENCES
 
 #------------------------------------------------------------------------------
 # Rules for packaging things nicely

@@ -87,6 +87,19 @@ fi
 AC_SUBST(SONGBIRD_OFFICIAL)
 
 #
+# Check for --enable-update-channel
+#
+
+AC_ARG_ENABLE(update-channel,
+              [  --enable-update-channel=CHANNEL      which update channel to use ("default")],
+              SB_UPDATE_CHANNEL=`echo $enableval | tr A-Z a-z`)
+if test -z "$SB_UPDATE_CHANNEL"; then
+  SB_UPDATE_CHANNEL=default
+fi
+AC_DEFINE_UNQUOTED(SB_UPDATE_CHANNEL, $SB_UPDATE_CHANNEL)
+AC_SUBST(SB_UPDATE_CHANNEL)
+
+#
 # Check platform
 #
 
