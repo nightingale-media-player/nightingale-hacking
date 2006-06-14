@@ -79,8 +79,8 @@
           var state = this.getAttribute( "state" );
           var collapsed = state == "collapsed";
           var metricsid = this.getAttribute("metricsid");
-          if (metricsid != "") {
-            var metricscategory = this.getAttribute("metricscategory");
+          var metricscategory = this.getAttribute("metricscategory");
+          if (metricsid != "" && metricscategory != "") {
             if (collapsed && this.SBDataGetIntValue(root + "collapsed") == 0) this.metrics_inc(metricscategory, metricsid, null);
           }
           this.SBDataSetValue( root + "collapsed", collapsed );
