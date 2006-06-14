@@ -425,7 +425,7 @@
                 <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" height="60"/>
               </hbox>
 
-              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="controlpane.collapsed">
+              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane">
                 <grippy/>
               </smartsplitter>
 
@@ -445,7 +445,7 @@
 
                   </vbox>
 
-                  <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="servicepane.collapsed">
+                  <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
                     <grippy/>
                   </smartsplitter>
 
