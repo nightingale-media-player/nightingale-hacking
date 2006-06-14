@@ -159,24 +159,6 @@ try
     {
       the_value = url;
     }
-    // Convert any %XX to space
-    var percent = the_value.indexOf('%');
-    if ( percent != -1 )
-    {
-      var remainder = the_value;
-      the_value = "";
-      while ( percent != -1 )
-      {
-        the_value += remainder.substring( 0, percent );
-        remainder = remainder.substring( percent + 3, url.length );
-        percent = remainder.indexOf('%');
-        the_value += " ";
-        if ( percent == -1 )
-        {
-          the_value += remainder;
-        }
-      }
-    }
     if ( ! the_value.length )
     {
       the_value = url;
