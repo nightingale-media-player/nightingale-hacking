@@ -29,7 +29,6 @@ echo obj &gt;&gt; _EXCLUDE
 echo .dev &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\
-xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
 copy /y $(InputDir)application.ini $(SolutionDir)dist
@@ -64,7 +63,6 @@ echo obj &gt;&gt; _EXCLUDE
 echo .dev &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\
-xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\preferences $(SolutionDir)dist\defaults\preferences\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
 copy /y $(InputDir)application.ini $(SolutionDir)dist
@@ -1015,7 +1013,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1928,13 +1927,83 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 			Name="preferences"
 			Filter="">
 			<File
-				RelativePath=".\preferences\activex.js">
+				RelativePath=".\preferences\songbird-channel-prefs.js.in">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\preferences\songbird-prefs.js">
+				RelativePath=".\preferences\songbird-debug-prefs.js.in">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\preferences\songbird-update-prefs.js">
+				RelativePath=".\preferences\songbird-prefs.js.in">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\preferences\songbird-update-prefs.js.in">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Copying $(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<File
