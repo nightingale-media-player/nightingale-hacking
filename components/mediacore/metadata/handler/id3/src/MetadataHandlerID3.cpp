@@ -220,25 +220,26 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         ID3_Tag  tag;
         ID3_ChannelReader channel_reader( mc.get() );
         bool ok = tag.Parse( channel_reader );
+        const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
         ReadTag(tag);
 
-#if 1
-        // If we get here, everything is okay.
-        // Reset the channel and read a block to calc the bitrate.
-        mc->SetPos( 0 );
-        PRUint64 buf = 0;
-        mc->GetBuf(&buf);
-        PRUint32 read = 0, size = PR_MIN( 8096, (PRUint32)buf );
-        char *buffer = (char *)nsMemory::Alloc(size);
-        if (buffer)
+        if (!headerinfo)
         {
-          mc->Read(buffer, size, &read);
-          PRUint64 file_size = 0;
-          mc->GetSize(&file_size);
-          CalculateBitrate(buffer, read, file_size);
-          nsMemory::Free(buffer);
+          // (sigh) Do it by hand.
+          mc->SetPos( 0 );
+          PRUint64 buf = 0;
+          mc->GetBuf(&buf);
+          PRUint32 read = 0, size = PR_MIN( 8096, (PRUint32)buf );
+          char *buffer = (char *)nsMemory::Alloc(size);
+          if (buffer)
+          {
+            mc->Read(buffer, size, &read);
+            PRUint64 file_size = 0;
+            mc->GetSize(&file_size);
+            CalculateBitrate(buffer, read, file_size);
+            nsMemory::Free(buffer);
+          }
         }
-#endif
       }
     }
     catch ( const MetadataHandlerID3Exception err )
@@ -354,12 +355,18 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   {
     // Right now, only the fast Windows code uses the synchronous reader on local files.
     ID3_Tag  tag;
-    size_t nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get());
+    size_t nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ID3V2);
+    if ( nTagSize == 0 )
+    {
+      nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ALL);
+    }
     *_retval = nTagSize;
 
+    const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
     ReadTag(tag);
 
-    // Handle the bitrate
+    // Handle the bitrate, if they can't do it for us.
+    if (!headerinfo)
     {
       // Then alloc the buffer.
       const PRUint32 size = 8096;
@@ -761,8 +768,66 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           case ID3TE_UTF16BE: // ?? what do we do with big endian?  cry?
           case ID3TE_UTF16:
           {
-            nsString u16_string( pField->GetRawUnicodeText() );
+            size_t size = pField->Size() + 1;
+            unicode_t *buffer = (unicode_t *)nsMemory::Alloc( (size+1) * sizeof(unicode_t) );
+            size_t read = pField->Get( buffer, size );
+            buffer[read] = 0;
+            for (size_t i = 0; i < read; i++)  // Okay, so this is REALLY BAD.  How do I know it's unicode data?
+            {
+              char *p = (char *)(buffer+i);
+              char temp = p[0];
+              p[0] = p[1];
+              p[1] = temp;
+              if ( // This is REALLY stupid.
+                ( ( buffer[i] == 0x00F0 ) && ( buffer[i+1] == 0xBAAD ) ) ||
+                ( ( buffer[i] == 0x00F0 ) && ( buffer[i+1] == 0xABAB ) ) ||
+                ( ( buffer[i] == 0x00BA ) && ( buffer[i+1] == 0xF00D ) ) ||
+                ( ( buffer[i] == 0x00BA ) && ( buffer[i+1] == 0xABAB ) )
+                 )
+              {
+                buffer[i] = 0;
+                break;
+              }
+            }
+            nsString u16_string( buffer );
+//            nsString test_string = NS_ConvertUTF8toUTF16( NS_ConvertUTF16toUTF8( u16_string ) );
+            // If we have a bad conversion, flip the bytes.  We can't trust if it's big endian or not.
+            bool flipped = false;
+            bool failed = false;
+//            if ( test_string != u16_string )
+            {
+              flipped = true;
+              if ( sizeof(PRUnichar) == 2 )
+              {
+              }
+              else if ( sizeof(PRUnichar) == 4 ) // grrr.
+              {
+                for (PRUint32 i = 0; i < u16_string.Length(); i++)
+                {
+                  char *p = (char *)(u16_string.get()+i);
+                  char temp = p[0];
+                  p[0] = p[2];
+                  p[2] = temp;
+                  temp = p[1];
+                  p[1] = p[3];
+                  p[3] = temp;
+                }
+              }
+            }
+//            test_string = NS_ConvertUTF8toUTF16( NS_ConvertUTF16toUTF8( u16_string ) );
+//            if ( test_string != u16_string )
+            {
+              failed = true;
+            }
+            nsString chars;
+            for (PRUint32 i = 0; i < u16_string.Length(); i++)
+            {
+              chars.AppendInt(u16_string.get()[i]);
+              chars += NS_LITERAL_STRING(" ");
+            }
+//            ::MessageBoxW(NULL,u16_string.get(),(failed)?L"FAILED":(flipped)?L"BIG_ENDIAN":L"LITTLE_ENDIAN",MB_OK);
             strValue = u16_string;
+            nsMemory::Free(buffer);
             break;
           }
           case ID3TE_UTF8:
@@ -778,10 +843,58 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
   }
 
   // For now, leak this?
-
+  // We crash when we delete it?
 //  delete itFrame;
 
-  // We crash when we delete it?
+  // Parse up the happy header info.
+  const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
+  if ( headerinfo )
+  {
+    // Bitrate.
+    nsString br;
+    br.AppendInt( (PRInt32)headerinfo->bitrate );
+    m_Values->SetValue( NS_LITERAL_STRING("bitrate").get(), br.get(), 0 );
+
+    // Frequency.
+    nsString fr;
+    fr.AppendInt( (PRInt32)headerinfo->frequency );
+    m_Values->SetValue( NS_LITERAL_STRING("frequency").get(), fr.get(), 0 );
+
+    // Length.
+    PRUnichar *value = NULL;
+    m_Values->GetValue(NS_LITERAL_STRING("length").get(), &value);
+    if (*value == 0)
+    {
+      nsString ln;
+      ln.AppendInt( (PRInt32)headerinfo->time * 1000 );
+      m_Values->SetValue( NS_LITERAL_STRING("length").get(), ln.get(), 0 );
+    }
+    nsMemory::Free( value );
+  }
+
+  // Fixup the genre info because iTunes is stupid.
+  PRUnichar *genre = NULL;
+  m_Values->GetValue(NS_LITERAL_STRING("genre").get(), &genre);
+  if (*genre != 0)
+  {
+    nsString gn( genre );
+    PRInt32 lparen = gn.Find(NS_LITERAL_CSTRING("("));
+    PRInt32 rparen = gn.Find(NS_LITERAL_CSTRING(")"));
+    if ( lparen != -1 && rparen != -1 )
+    {
+      nsString gen;
+      gn.Mid( gen, lparen + 1, rparen - 1 );
+      PRInt32 aErrorCode;
+      PRInt32 g = gen.ToInteger(&aErrorCode);
+      if ( !aErrorCode && g < ID3_NR_OF_V1_GENRES )
+      {
+        nsCString u8genre( ID3_v1_genre_description[g] );
+        m_Values->SetValue( NS_LITERAL_STRING("genre").get(), NS_ConvertUTF8toUTF16(u8genre).get(), 0 );
+      }
+    }
+  }
+  nsMemory::Free( genre );
+
 
   m_Completed = true;  // And, we're done.
   return ret;
