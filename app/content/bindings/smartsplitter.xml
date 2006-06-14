@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+ 
+  <binding id="smartsplitter" extends="xul:splitter">
+  
+  <implementation>
+
+    <constructor>
+      <![CDATA[
+        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
+        var onmouseevent= { 
+          _that: null, 
+          handleEvent: function( event ) { this._that.onMouseEvent(event); } 
+        } onmouseevent._that = this; 
+        this.addEventListener( "mousemove", onmouseevent, false);
+        this.addEventListener( "mouseup", onmouseevent, false);
+        this.addEventListener( "mousedown", onmouseevent, false);
+        this.restoreLastState();
+      ]]>
+    </constructor>
+    <destructor>
+    </destructor>
+
+    <method name="getResizeBefore">
+      <body>
+        <![CDATA[
+          var keyword = this.getAttribute("resizebefore");
+          if (keyword == "farthest") return this.parentNode.firstChild;
+          if (keyword == "closest") return this.previousSibling;
+          return NULL;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="onMouseEvent">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var root = "splitter." + this.id + ".";
+          var resizebefore = this.getResizeBefore();
+          if (resizebefore) this.SBDataSetValue( root + "before.width", resizebefore.width );
+          this.doAutoShowHide();
+          var state = this.getAttribute( "state" );
+          var collapsed = state == "collapsed";
+          var metricsid = this.getAttribute("metricsid");
+          if (metricsid != "") {
+            var metricscategory = this.getAttribute("metricscategory");
+            if (collapsed && this.SBDataGetIntValue(root + "collapsed") == 0) this.metrics_inc(metricscategory, metricsid, null);
+          }
+          this.SBDataSetValue( root + "collapsed", collapsed );
+          // trigger an event (name of the event is the name of the state) for custom handlers
+          var e = document.createEvent("Events");
+          e.initEvent(state, false, true);
+          this.dispatchEvent(e);
+        ]]>
+      </body>
+    </method>
+
+    <method name="doAutoShowHide">
+      <parameter name=""/>
+      <body>
+        <![CDATA[
+          var state = this.getAttribute( "state" );
+          var collapsed = state == "collapsed";
+          switch (state) {
+            case "open":
+            case "dragging":
+              var hideonopen = this.getAttribute("hideonopen");
+              if (hideonopen != "") {
+                var element = document.getElementById(hideonopen);
+                if (element) element.hidden = true;
+              }
+              var showonopen = this.getAttribute("showonopen");
+              if (showonopen != "") {
+                var element = document.getElementById(showonopen);
+                if (element) element.hidden = false;
+              }
+              break;
+            case "collapsed":
+              var hideoncollapse = this.getAttribute("hideoncollapse");
+              if (hideoncollapse != "") {
+                var element = document.getElementById(hideoncollapse);
+                if (element) element.hidden = true;
+              }
+              var showoncollapse = this.getAttribute("showoncollapse");
+              if (showoncollapse != "") {
+                var element = document.getElementById(showoncollapse);
+                if (element) element.hidden = false;
+              }
+              break;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="restoreLastState">
+      <parameter name=""/>
+      <body>
+        <![CDATA[
+          var root = "splitter." + this.id + ".";
+          var resizebefore = this.getResizeBefore();
+          if (resizebefore) {
+            var width = this.SBDataGetValue( root + "before.width" );
+            if ( width != "" ) resizebefore.width = width;
+          }
+          this.setAttribute( "state", this.SBDataGetIntValue( root + "collapsed" ) ? "collapsed" : "open" );
+          this.doAutoShowHide();
+        ]]>
+      </body>
+    </method>
+    
+   </implementation>
+ 
+  </binding>
+
+</bindings>
+
