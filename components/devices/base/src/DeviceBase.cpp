@@ -985,6 +985,9 @@ void sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceStr
   GetContext(DeviceString, &deviceContext);
 
   nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  if (query == nsnull) // May be that we are shutting down and sbIDatabaseQuery can't be instantiated?
+    return;
+
   query->SetAsyncQuery(PR_FALSE); 
   query->SetDatabaseGUID(deviceContext);
 
