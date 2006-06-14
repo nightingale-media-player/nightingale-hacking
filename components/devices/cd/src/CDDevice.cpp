@@ -45,6 +45,10 @@
 #include "nsIWebProgressListener.h"
 #include "nsNetUtil.h"
 
+#ifdef XP_WIN
+#pragma warning(disable : 4355) // To suppress the "warning C4355: 'this' : used in base member initializer list" message
+#endif
+
 /* Implementation file */
 
 #define NAME_CDDEVICE                "Songbird CD Device"
