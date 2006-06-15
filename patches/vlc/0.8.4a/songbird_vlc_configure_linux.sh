@@ -1,0 +1,57 @@
+#!/bin/bash
+./bootstrap &&
+./configure \
+  --enable-release \
+  --disable-debug \
+  --enable-strip \
+  --enable-mozilla \
+  --with-mozilla-sdk-path=/home/songbird/projects/songbird/trunk/dependencies/linux/mozilla/release/ \
+  --enable-ffmpeg --with-ffmpeg-faac --with-ffmpeg-mp3lame --with-ffmpeg-zlib \
+  --with-ffmpeg-tree=/home/songbird/projects/vlc/dependencies/ffmpeg-20051126/ \
+  --enable-mad \
+  --disable-a52 \
+  --enable-faad \
+  --enable-flac \
+  --enable-vorbis \
+  --enable-ogg \
+  --enable-speex \
+  --enable-optimizations \
+  --disable-activex \
+  --disable-sdl \
+  --disable-gtk \
+  --disable-cddax \
+  --disable-vcdx \
+  --disable-goom \
+  --disable-twolame \
+  --disable-wxwidgets \
+  --disable-skins2 \
+  --disable-debug \
+  --disable-dvdread \
+  --disable-dvdnav \
+  --disable-screen \
+  --disable-visual \
+  --disable-bonjour \
+  --disable-joystick \
+  --disable-httpd \
+  --disable-vlm \
+  --disable-gnutls \
+  --disable-dvbpsi \
+  --disable-cdda \
+  --disable-libcddb \
+  --disable-png \
+  --disable-x11 \
+  --disable-glx \
+  --disable-opengl \
+  --disable-alsa \
+  --disable-mkv \
+  --disable-cmml \
+  --disable-freetype \
+  --disable-mod \
+  --disable-mpc \
+  --disable-dts \
+  --disable-x264 \
+  --disable-h264 \
+  --disable-real \
+  --disable-libmpeg2
+
+
