@@ -63,6 +63,8 @@ try
       setMediaKeyboardCallback();
     }
     window.addEventListener( "keydown", checkAltF4, true );
+    
+    onWindowLoadSize();
   }
   
   function SBUninitialize()
@@ -151,14 +153,13 @@ try
       var location = "" + window.location; // Grrr.  Dumb objects.
       if ( location.indexOf("?video") == -1 )
       {
-        var root = "window." + document.documentElement.id;
-        SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-        SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+        onWindowSaveSize();
       }
     }
     catch ( err )
     {
       // If you don't have data functions, just close.
+      alert(err);
     }
     document.defaultView.close();
   }
@@ -295,8 +296,38 @@ try
     }
   }
 
+  function onWindowSaveSize()
+  {
+    var root = "window." + document.documentElement.id;
+    SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
+    SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+    SBDataSetValue( root + ".w", document.documentElement.boxObject.width );
+    SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
+  }
+
+  function onWindowLoadSize()
+  {
+    var root = "window." + document.documentElement.id;
+    if (SBDataGetValue( root + ".x" ) == "" && SBDataGetValue( root + ".w" ) == "") { return; }
+    if ( SBDataGetIntValue( root + ".w" ) && SBDataGetIntValue( root + ".h" ) )
+    {
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
+      // YAY YAY YAY the windowregion hack actualy fixes this :D
+      window.resizeTo( SBDataGetIntValue( root + ".w" ), SBDataGetIntValue( root + ".h" ) );
+      // for some reason, the resulting size isn't what we're asking (window currently has a border?) so determine what the difference is and add it to the resize
+      var diffw = SBDataGetIntValue( root + ".w" ) - document.documentElement.boxObject.width;
+      var diffh = SBDataGetIntValue( root + ".h" ) - document.documentElement.boxObject.height;
+      window.resizeTo( SBDataGetIntValue( root + ".w" ) + diffw, SBDataGetIntValue( root + ".h" ) + diffh);
+    }
+    window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
+    // do the (more or less) same adjustment for x,y as we did for w,h
+    var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
+    var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
+    window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
+  }
 }
 catch ( err )
 {
   alert( err );
 }
+
