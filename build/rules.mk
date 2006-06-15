@@ -228,7 +228,7 @@ endif
 ifdef CPP_DEFS
 compile_defs = $(CPP_DEFS)
 else
-compile_defs = $(DEFS)
+compile_defs = $(ACDEFINES)
 ifdef CPP_EXTRA_DEFS
 compile_defs += $(CPP_EXTRA_DEFS)
 endif
