@@ -376,8 +376,8 @@ function CoreMPLAYERDocumentInit( id )
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     var theDocumentMPLAYERInstance = document.getElementById( id );
    
-    gQTCore.setId("MPLAYER1");
-    gQTCore.setObject(theDocumentMPLAYERInstance);
+    gMPLAYERCore.setId("MPLAYER1");
+    gMPLAYERCore.setObject(theDocumentMPLAYERInstance.contentWindow);
     gPPS.addCore(gMPLAYERCore, true);
  }
   catch ( err )
