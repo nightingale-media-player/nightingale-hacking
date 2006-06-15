@@ -24,7 +24,8 @@
 //
 */
 
-#pragma once
+#ifndef __WIN_CD_IMPLEMENTATION_H__
+#define __WIN_CD_IMPLEMENTATION_H__
 
 #include "windows.h"
 #include "nsISupportsUtils.h"
@@ -198,3 +199,6 @@ private:
   std::list<WinCDObject *> mCDDrives;
   class sbCDDevice* mParentDevice;
 };
+
+#endif // __WIN_CD_IMPLEMENTATION_H__
+

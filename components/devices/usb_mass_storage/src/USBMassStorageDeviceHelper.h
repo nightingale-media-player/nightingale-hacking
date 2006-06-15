@@ -24,7 +24,8 @@
 //
 */
 
-#pragma once
+#ifndef __USB_MASS_STORAGE_DEVICE_HELPER_H__
+#define __USB_MASS_STORAGE_DEVICE_HELPER_H__
 
 /** 
 * \file  USBMassStorageDeviceHelper.h
@@ -60,3 +61,6 @@ public:
 
   virtual PRInt64 GetDeviceCapacity() { return -1; };
 };
+
+#endif // __USB_MASS_STORAGE_DEVICE_HELPER_H__
+

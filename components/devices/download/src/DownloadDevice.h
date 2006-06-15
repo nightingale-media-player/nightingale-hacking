@@ -29,7 +29,8 @@
 * \brief Songbird DownloadDevice Component Definition.
 */
 
-#pragma once
+#ifndef __DOWNLOAD_DEVICE_H__
+#define __DOWNLOAD_DEVICE_H__
 
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
@@ -113,3 +114,6 @@ private:
 
   void ReleaseListener();
 };
+
+#endif // __DOWNLOAD_DEVICE_H__
+

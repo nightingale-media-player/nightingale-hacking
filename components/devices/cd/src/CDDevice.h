@@ -29,7 +29,8 @@
 * \brief Songbird CDDevice Component Definition.
 */
 
-#pragma once
+#ifndef __CD_DEVICE_H__
+#define __CD_DEVICE_H__
 
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
@@ -110,3 +111,6 @@ private:
   PlatformCDObjectManager mCDManagerObject;
   nsCOMPtr<nsIStringBundle> m_StringBundle;
 };
+
+#endif // __CD_DEVICE_H__
+

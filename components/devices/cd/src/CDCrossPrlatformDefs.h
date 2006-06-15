@@ -24,7 +24,8 @@
 //
 */
 
-#pragma once
+#ifndef __CD_CROSS_PLATFORM_DEFS_H__
+#define __CD_CROSS_PLATFORM_DEFS_H__
 
 class sbCDObjectManager
 {
@@ -71,3 +72,6 @@ public:
   virtual void Initialize() = 0;
   virtual void Finalize() = 0;
 };
+
+#endif // __CD_CROSS_PLATFORM_DEFS_H__
+

@@ -24,7 +24,8 @@
 //
 */
 
-#pragma once
+#ifndef __USB_MASS_STORAGE_DEVICE_H__
+#define __USB_MASS_STORAGE_DEVICE_H__
 
 /** 
 * \file  USBMassStorageDevice.h
@@ -117,3 +118,6 @@ private:
   PRLock *mConnectedDevicesLock;
   devicemap_t mConnectedDevices;
 };
+
+#endif // __USB_MASS_STORAGE_DEVICE_H__
+

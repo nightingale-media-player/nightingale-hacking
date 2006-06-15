@@ -29,7 +29,8 @@
 * \brief Songbird DeviceBase Component Definition.
 */
 
-#pragma once
+#ifndef __DEVICE_BASE_H__
+#define __DEVICE_BASE_H__
 
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
@@ -199,3 +200,6 @@ public:
 private:
   sbDeviceBase* mpDevice;
 };
+
+#endif // __DEVICE_BASE_H__
+

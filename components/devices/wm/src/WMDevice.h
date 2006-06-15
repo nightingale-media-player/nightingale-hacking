@@ -29,7 +29,8 @@
  * \brief Songbird WMDevice Component Definition.
  */
 
-#pragma once
+#ifndef __WM_DEVICE_H__
+#define __WM_DEVICE_H__
 
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
@@ -70,3 +71,6 @@ private:
   ~sbWMDevice();
 
 };
+
+#endif // __WM_DEVICE_H__
+

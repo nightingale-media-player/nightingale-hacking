@@ -24,7 +24,8 @@
 //
 */
 
-#pragma once
+#ifndef __USB_MASS_STORAGE_DEVICE_WIN32_H__
+#define __USB_MASS_STORAGE_DEVICE_WIN32_H__
 
 /** 
  * \file  USBMassStorageDeviceWin32.h
@@ -67,3 +68,6 @@ private:
   nsString m_DeviceName;
   nsString m_DeviceIdentifier;  
 };
+
+#endif // __USB_MASS_STORAGE_DEVICE_WIN32_H__
+
