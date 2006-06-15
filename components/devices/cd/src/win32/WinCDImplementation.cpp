@@ -246,8 +246,12 @@ PRBool WinCDObject::UpdateCDLibraryData()
     // Create record for each track
     for (unsigned int trackNum = 1; trackNum <= mNumTracks; trackNum ++)
     {
-      DWORD sessionNumber, trackType, prepGap, start, length;
-      PrimoSDK_TrackInfo(mSonicHandle, trackNum, &sessionNumber, &trackType, &prepGap, &start, &length);
+      DWORD sessionNumber, trackType, prepGap, start, lengthSectors;
+      PrimoSDK_TrackInfo(mSonicHandle, trackNum, &sessionNumber, &trackType, &prepGap, &start, &lengthSectors);
+      // These magic numbers are based on,
+      // an audio CD sector size = 2352
+      // and audio CD encoded at 44.1KHz, Stereo, with 16-bit/sample
+      DWORD numSeconds = (lengthSectors*2352)/(2*2*44100);
 
       PRUnichar driveLetter = (PRUnichar) mDriveLetter;
       nsString url(driveLetter);
@@ -269,8 +273,9 @@ PRBool WinCDObject::UpdateCDLibraryData()
       nsString strTitle(NS_LITERAL_STRING("CD Track "));
       strTitle.AppendInt(trackNum);
 
-      nsString strLength;
-      strLength.AppendInt((unsigned int) length);
+      PRUnichar formattedLength[10];
+      wsprintf(formattedLength, L"%d:%02d", numSeconds/60, numSeconds%60);
+      nsString strLength(formattedLength);
 
       PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
       aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strLength.get(), (strLength.Length() + 1) * sizeof(PRUnichar));
