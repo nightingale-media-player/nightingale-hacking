@@ -26,7 +26,8 @@
 # config.mk
 #
 # This file is included in rules.mk and contains variables not set by
-# autoconf.
+# autoconf. It's primary use is to set PPDEFINES, a list of definitions that
+# are passed to the preprocessor.
 ###############################################################################
 
 #------------------------------------------------------------------------------
@@ -36,9 +37,15 @@ CONFIG_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
 #
+# Create a list of defines for the preprocessor. These are collected in the
+# PPDEFINES variable. You need to prefix with -D.
+#
+
+#
 # We want to pull this info out of the sbBuildIDs.h file, but if we're just
 # starting then that file may not have been generated yet. In that case these
-# variables will be empty.
+# variables will be empty and the preprocessor will FAIL if one of them is
+# referenced.
 #
 # SB_BUILD_ID
 # SB_MILESTONE
@@ -46,12 +53,9 @@ CONFIG_MK_INCLUDED=1
 #
 
 BUILD_ID_DEFS = $(DEPTH)/build/sbBuildIDs.h
-
-TEST_CMD := if test -f $(BUILD_ID_DEFS); then \
-              echo 1; \
-            fi;
-
-BUILD_ID_DEFS_EXISTS := $(shell $(TEST_CMD))
+BUILD_ID_DEFS_EXISTS := $(shell if test -f $(BUILD_ID_DEFS); then \
+                                  echo 1; \
+                                fi;)
 
 ifneq (,$(BUILD_ID_DEFS_EXISTS))
 
@@ -66,6 +70,11 @@ SB_MILESTONE := $(shell $(AWK_CMD))
 AWK_EXPR = '/\#define SB_MOZILLA_TAG/ { gsub(/"/, "", $$3); print $$3 }'
 SB_MOZILLA_TAG := $(shell $(AWK_CMD))
 
+PPDEFINES += -DSB_BUILD_ID="$(SB_BUILD_ID)" \
+             -DSB_MILESTONE="$(SB_MILESTONE)" \
+             -DSB_MOZILLA_TAG="$(SB_MOZILLA_TAG)" \
+             $(NULL)
+
 endif
 
 #
@@ -77,6 +86,28 @@ endif
 AWK_CMD = $(AWK) $(AWK_EXPR) < $(MOZSDK_INCLUDE_DIR)/mozilla-config.h
 AWK_EXPR = '/\#define MOZILLA_VERSION_U/ { gsub(/"/, "", $$3); print $$3 }'
 SB_MOZILLA_VERSION := $(shell $(AWK_CMD))
+
+PPDEFINES += -DSB_MOZILLA_VERSION="$(SB_MOZILLA_VERSION)"
+
+#
+# Need some others from autodefs.mk
+#
+
+PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
+             -DSB_UPDATE_CHANNEL="$(SB_UPDATE_CHANNEL)" \
+             $(NULL)
+
+ifdef USING_JARS
+PPDEFINES += -DUSING_JARS="$(USING_JARS)"
+endif
+
+ifdef MAKE_INSTALLER
+PPDEFINES += -DMAKE_INSTALLER="$(MAKE_INSTALLER)"
+endif
+
+ifdef SONGBIRD_OFFICIAL
+PPDEFINES += -DSONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)"
+endif
 
 #------------------------------------------------------------------------------
 endif #CONFIG_MK_INCLUDED

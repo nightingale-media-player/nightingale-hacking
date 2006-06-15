@@ -158,6 +158,10 @@ ifdef PREFERENCES
 targets += preferences_preprocess
 endif
 
+ifdef APPINI
+targets += appini_preprocess
+endif
+
 ifdef SHELL_EXECUTE
 targets += shell_execute
 endif
@@ -596,7 +600,7 @@ copy_sb_xulrunner:
 endif #SONGBIRD_XULRUNNER
 
 #------------------------------------------------------------------------------
-# Rules for preprocessing prefs
+# Rules for preprocessing
 #------------------------------------------------------------------------------
 
 ifdef PREFERENCES
@@ -607,19 +611,36 @@ PREF_PPFLAGS = --line-endings=crlf
 endif
 
 ifndef PREFERENCES_STRIP_SUFFIXES
-PREFERENCES_STRIP_SUFFIXES = .in \
-                             $(NULL)
+PREFERENCES_STRIP_SUFFIXES = .in
 endif
                              
 preferences_preprocess:
 	@$(MKDIR) -p $(SONGBIRD_PREFERENCESDIR)
 	for item in $(PREFERENCES); \
-	do $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
-	  $(PREF_PPFLAGS) $(ACDEFINES) $(XULPPFLAGS) -- $(srcdir)/$$item > \
-	  $(SONGBIRD_PREFERENCESDIR)/`basename $$item $(PREFERENCES_STRIP_SUFFIXES)`; \
-	done
+    do $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+      $(PREF_PPFLAGS) $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$$item > \
+      $(SONGBIRD_PREFERENCESDIR)/`basename $$item $(PREFERENCES_STRIP_SUFFIXES)`; \
+    done
 .PHONY : preferences_preprocess
 endif #PREFERENCES
+
+#-----------------------
+
+ifdef APPINI
+
+ifndef APPINI_STRIP_SUFFIXES
+APPINI_STRIP_SUFFIXES = .in
+endif
+
+appini_preprocess:
+	@$(MKDIR) -p $(SONGBIRD_DISTDIR)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+    $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(APPINI) > \
+    $(SONGBIRD_DISTDIR)/`basename $(APPINI) $(APPINI_STRIP_SUFFIXES)`; \
+
+.PHONY : appini_preprocess
+
+endif #APPINI
 
 #------------------------------------------------------------------------------
 # Rules for packaging things nicely

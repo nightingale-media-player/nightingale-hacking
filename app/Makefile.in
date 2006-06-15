@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_DIST = $(srcdir)/application.ini
+APPINI = application.ini.in
 
 SONGBIRD_XULRUNNER = $(srcdir)/updater.ini
 
