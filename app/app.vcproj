@@ -31,7 +31,7 @@ echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
-copy /y $(InputDir)application.ini $(SolutionDir)dist
+copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
 copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
@@ -65,7 +65,7 @@ echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
-copy /y $(InputDir)application.ini $(SolutionDir)dist
+copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
 copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
@@ -1934,7 +1934,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1943,7 +1944,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
@@ -1954,7 +1956,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1963,7 +1966,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
@@ -1974,7 +1978,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1982,7 +1987,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
@@ -1993,7 +1999,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2001,14 +2008,12 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\application.ini">
-		</File>
 		<File
 			RelativePath=".\xulrunner\updater.ini">
 		</File>
