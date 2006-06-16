@@ -231,6 +231,10 @@ Love the box.
 #frame_service_tree
 {
   -moz-border-radius: 3px !important;
+  -moz-border-top-colors: transparent !important;
+  -moz-border-left-colors: transparent !important;
+  -moz-border-bottom-colors: transparent !important;
+  -moz-border-right-colors: transparent !important;
   border: 1px solid #666 !important;
   margin: 0px !important;
   padding: 6px 0px 0px 0px !important;
@@ -239,14 +243,89 @@ Love the box.
   color: #505154 !important;
 }
 
+#frame_service_box /* aka The Service Pane, The Left Pane **/
+{
+  -moz-appearance: none !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  -moz-border-top-colors: #666 !important;
+  -moz-border-left-colors: #666 !important;
+  -moz-border-bottom-colors: #666 !important;
+  -moz-border-right-colors: #666 !important;
+  border: 1px solid #666 !important;
+  margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 135px !important;
+  background-color: #EEE !important;
+  /*background-image: url(default/bkgd_clouds.png) !important;*/
+  color: #505154 !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  -moz-appearance: none !important;  
+  -moz-border-top-colors: #EEE !important;
+  -moz-border-left-colors: #EEE !important;
+  -moz-border-bottom-colors: #EEE !important;
+  -moz-border-right-colors: #EEE !important;
+  background-color: #EEE !important;
+}
+
+/*
+button#service_pane
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  background-color: #686A6A !important;
+  height: 25px !important;  
+  color: #99A195 !important;  
+}
+*/
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
-  -moz-border-radius: 3px !important;
-  border: 1px solid #333 !important;
+  -moz-appearance: none !important;
+  -moz-border-radius: 5px !important;
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important; 
   margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
+  border: 1px solid #333 !important;
   background-color: #333 !important;
+  font-size: larger;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell
+{
+  -moz-appearance: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  background-color: #EEE !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell( selected )
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 5px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  background-color: #333 !important;
+  font-size: larger;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text( selected )
@@ -387,6 +466,13 @@ filterlist > tree
 }
 
 /* striping for genre filter */
+filterlist > tree > treechildren::-moz-tree-row
+{
+  -moz-appearance: none !important;
+  background-color: #EDF3F0 !important;
+  -moz-border-top-colors: #EDF3F0 !important;
+}
+
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #EDF3F0 !important;

@@ -202,8 +202,7 @@ Love the box.
 {
   width:  924px !important;
   height: 668px !important;
-  background-color: #000 !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
-  /*background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+  background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
 
@@ -260,6 +259,19 @@ Love the box.
   color: #CDD4C4 !important;
 }
 
+#frame_service_tree > treechildren::-moz-tree-row
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  -moz-appearance: none !important;  
+  -moz-border-top-colors: #686A6A !important;
+  -moz-border-left-colors: #686A6A !important;
+  -moz-border-bottom-colors: #686A6A !important;
+  -moz-border-right-colors: #686A6A !important;
+  background-color: #686A6A !important;
+}
+
+/*
 button#service_pane
 {
   -moz-appearance: none !important;
@@ -275,14 +287,39 @@ button#service_pane
   height: 25px !important;  
   color: #99A195 !important;  
 }
+*/
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
   -moz-appearance: none !important;
   -moz-border-radius: 5px !important;
-  border: 1px solid #eee !important;
+  -moz-border-top-colors: #eee !important;
+  -moz-border-left-colors: #eee !important;
+  -moz-border-bottom-colors: #eee !important;
+  -moz-border-right-colors: #eee !important; 
   margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
+  border: 1px solid #eee !important;
+  background-color: #FFF !important;
+  font-size: larger;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell
+{
+  -moz-appearance: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  background-color: #686A6A !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell( selected )
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 5px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
   background-color: #FFF !important;
   font-size: larger;
 }
@@ -427,6 +464,13 @@ filterlist > tree
 }
 
 /* striping for genre filter */
+filterlist > tree > treechildren::-moz-tree-row
+{
+  -moz-appearance: none !important;
+  background-color: #1d272d !important;
+  -moz-border-top-colors: #1d272d !important;
+}
+
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
   background-color: #1d272d !important;
@@ -510,6 +554,13 @@ playlist > stack > vbox > hbox#playlist_toolbar_bkg
   -moz-border-radius-bottomright: 3px !important;
   -moz-border-radius-bottomleft: 3px !important;  
   border-top: 1px solid #686a6a;
+}
+
+playlist > stack > vbox > hbox
+{
+  -moz-appearance: none !important; /* grrrr! */
+  background-color: #000 !important;
+  height: 27px !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-row
