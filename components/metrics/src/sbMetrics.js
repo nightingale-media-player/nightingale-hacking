@@ -30,7 +30,7 @@ const SONGBIRD_METRICS_CID = Components.ID("{F64283C0-CDCF-48ec-8502-735B7282981
 const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;
 
 const SONGBIRD_POSTMETRICS_URL = 'http://metrics.songbirdnest.com/post';
-//const SONGBIRD_POSTMETRICS_URL = 'http://localhost:3003/metrics/post';
+//const SONGBIRD_POSTMETRICS_URL = 'http://192.168.239.128:3000/metrics/post';
 
 const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 7; // every week
 
@@ -75,7 +75,6 @@ Metrics.prototype = {
   uploadMetrics: function()
   {
 
-    var user_agent_version = this._getCurrentVersion();
     var user_install_uuid = this._getPlayerUUID();
     
     var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);    
@@ -87,12 +86,39 @@ Metrics.prototype = {
                                       
     var branch = ps.getBranch("metrics.");
     var metrics = branch.getChildList("", { value: 0 });
+
+    
+    var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+    // appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;    
+
+    var abi = "Unknown";
+    // Not all builds have a known ABI
+    try {
+      abi = appInfo.XPCOMABI;
+      
+      // TODO: Throwing an exception every time is bad.. should probably detect os x
+      
+      // Mac universal build should report a different ABI than either macppc
+      // or mactel.
+      var macutils = Components.classes["@mozilla.org/xpcom/mac-utils;1"]
+                               .getService(Components.interfaces.nsIMacUtils); 
+      if (macutils.isUniversalBinary)  abi = "Universal-gcc3";
+    }
+    catch (e) {}
+
+    var platform = appInfo.OS + "_" + abi;
     
     
     // build xml
     
     var xml = "";
-    xml += '<metrics schema_version="1.0" guid="' + user_install_uuid + '" user_agent="' + user_agent_version + '" user_os="' + user_os + '">';
+    xml += '<metrics schema_version="1.0" guid="' + user_install_uuid 
+            + '" version="' + appInfo.version 
+            + '" build="' + appInfo.appBuildID
+            + '" product="' + appInfo.name
+            + '" platform="' + platform
+            + '" os="' + user_os 
+            + '">';
     for (var i = 0; i < metrics.length; i++) 
     {
       var val = branch.getCharPref(metrics[i]);
