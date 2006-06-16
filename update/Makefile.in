@@ -26,6 +26,7 @@ DEPTH = ..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+
 include $(DEPTH)/build/autodefs.mk
 
 #
@@ -34,28 +35,42 @@ include $(DEPTH)/build/autodefs.mk
 
 STAGE_DIR	= $(DEPTH)/update
 
-full-update:: complete-patch
+tasks: complete-patch \
+       complete-snippet \
+       all \
+       $(NULL)
 
 complete-patch::
 	$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) \
-	  $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
-	  "$(STAGE_DIR)/$(SB_APPNAME).complete.mar" \
-	  "$(DEPTH)/$(DISTDIRNAME)"
+    $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
+    "$(STAGE_DIR)/$(SB_APPNAME).complete.mar" \
+    "$(DEPTH)/$(DISTDIRNAME)"
 
-#
-# Partial patches disabled until we figure out the buildID stuff. See bug 255.
-#
 
-#partial-update:: partial-patch
+complete-snippet::
+	$(MKDIR) -p $(STAGE_DIR)
+	$(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
+    $(STAGE_DIR)/$(SB_APPNAME).complete.mar \
+    "complete" \
+    $(STAGE_DIR)/$(SB_APPNAME).complete.snippet \
+    "http://updates.songbirdnest.com/update.mar" \
+    $(SB_BUILD_ID) \
+    $(SB_MILESTONE) \
+    "sha1" \
+    $(NULL)
 
-#partial-patch::
-#	$(MKDIR) -p $(STAGE_DIR)
-#	MAR=$(MAR) \
-#	MBSDIFF=$(MBSDIFF) \
-#	  $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
-#	  "$(STAGE_DIR)/$(SB_APPNAME).partial.$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
-#	  "$(SRC_BUILD)" \
-#	  "$(DST_BUILD)"
+$(SB_APPNAME).complete.mar:: complete-patch
+$(SB_APPNAME).complete.snippet.0:: complete-snippet
+$(SB_APPNAME).complete.snippet.1:: complete-snippet
+
+partial-patch::
+	$(MKDIR) -p $(STAGE_DIR)
+	MAR=$(MAR) \
+  MBSDIFF=$(MBSDIFF) \
+    $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
+    "$(STAGE_DIR)/$(SB_APPNAME).partial.$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    "$(SRC_BUILD)" \
+    "$(DST_BUILD)"
 
 include $(topsrcdir)/build/rules.mk
