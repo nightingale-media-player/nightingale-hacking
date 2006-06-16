@@ -24,7 +24,7 @@
 //
 */
 
-#include "nsISupports.idl"
+#include "nsIObserver.idl"
 
 interface sbIDeviceBase;
 
@@ -32,8 +32,8 @@ interface sbIDeviceBase;
  * This is the DeviceManager service.
  * Make sure to use getService rather than createInstance when using.
  */
-[scriptable, uuid(4403C45D-0BB8-47cb-AB89-2221F62E5614)]
-interface sbIDeviceManager : nsISupports
+[scriptable, uuid(d0b017c4-f388-4e78-abf3-5f48ca616a94)]
+interface sbIDeviceManager : nsIObserver
 {
   /**
    * The number of devices currently registered

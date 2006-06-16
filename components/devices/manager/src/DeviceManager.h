@@ -29,14 +29,15 @@
  * \brief Songbird WMDevice Component Definition.
  */
 
-#ifndef __DeviceManager_h__
-#define __DeviceManager_h__
+#ifndef __SB_DEVICEMANAGER_H__
+#define __SB_DEVICEMANAGER_H__
 
 #include "sbIDeviceManager.h"
 
 #include <nsCOMArray.h>
-#include <prlock.h>
+#include <nsIObserver.h>
 #include <nsString.h>
+#include <prlock.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DEVICEMANAGER_DESCRIPTION                 \
@@ -46,19 +47,19 @@
 #define SONGBIRD_DEVICEMANAGER_CLASSNAME                   \
   "Songbird Device Manager"
 #define SONGBIRD_DEVICEMANAGER_CID                         \
-{ /* 4403c45d-0bb8-47cb-ab89-2221f62e5614 */               \
-  0x4403c45d,                                              \
-  0x0bb8,                                                  \
-  0x47cb,                                                  \
-  { 0xab, 0x89, 0x22, 0x21, 0xf6, 0x2e, 0x56, 0x14 }       \
+{ /* d0b017c4-f388-4e78-abf3-5f48ca616a94 */               \
+  0xd0b017c4,                                              \
+  0xf388,                                                  \
+  0x4e78,                                                  \
+  { 0xab, 0xf3, 0x5f, 0x48, 0xca, 0x61, 0x6a, 0x94 }       \
 }
-
 // CLASSES ====================================================================
 
 class sbDeviceManager : public sbIDeviceManager
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBIDEVICEMANAGER
 
   sbDeviceManager();
@@ -70,6 +71,10 @@ public:
 private:
   ~sbDeviceManager();
 
+  // Finalizes the service and informs all devices that they need to quit.
+  NS_IMETHOD Finalize();
+
+  // A helper function to handle has/get device requests
   NS_IMETHOD GetIndexForCategory(const nsAString& aCategory,
                                  PRUint32* _retval);
 
@@ -77,6 +82,9 @@ private:
   // once. Consumers should use getService instead of createInstance, but we do
   // this just in case they forget. 
   static PRBool sServiceInitialized;
+
+  // This is a sanity check to make sure that we're finalizing properly
+  static PRBool sServiceFinalized;
 
   // The lock that protects mSupportedDevices
   PRLock* mLock;
@@ -88,7 +96,6 @@ private:
   // hasDeviceForCategory immediately followed by getDeviceForCategory.
   PRUint32 mLastRequestedIndex;
   nsString mLastRequestedCategory;
-
 };
 
-#endif /* __DeviceManager_h__ */
+#endif /* __SB_DEVICEMANAGER_H__ */

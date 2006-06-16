@@ -31,18 +31,28 @@
 #include "DeviceManager.h"
 #include "DeviceBase.h"
 
-#include <nsIComponentRegistrar.h>
-#include <nsComponentManagerUtils.h>
-#include <nsSupportsPrimitives.h>
-#include <nsISimpleEnumerator.h>
 #include <nsAutoLock.h>
+#include <nsCRT.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIComponentRegistrar.h>
+#include <nsIObserverService.h>
+#include <nsISimpleEnumerator.h>
+#include <nsServiceManagerUtils.h>
+#include <nsSupportsPrimitives.h>
+
+#define NS_OBSERVERSERVICE_CONTRACTID "@mozilla.org/observer-service;1"
+static const char kQuitApplicationTopic[] = "quit-application";
+static const char kXPCOMShutdownTopic[] = "xpcom-shutdown";
 
 #define SB_DEVICE_PREFIX "@songbird.org/Songbird/Device/"
 
 // This allows us to be initialized once and only once.
 PRBool sbDeviceManager::sServiceInitialized = PR_FALSE;
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceManager, sbIDeviceManager)
+// This is a sanity check to make sure that we're finalizing properly
+PRBool sbDeviceManager::sServiceFinalized = PR_FALSE;
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceManager, sbIDeviceManager, nsIObserver)
 
 sbDeviceManager::sbDeviceManager()
 : mLock(nsnull),
@@ -53,22 +63,8 @@ sbDeviceManager::sbDeviceManager()
 
 sbDeviceManager::~sbDeviceManager()
 {
-  // Loop through the array and call Finalize() on all the devices.
-  nsresult rv;
-
-  if (mLock) { // Scope for the lock
-    nsAutoLock autoLock(mLock);
-
-    PRInt32 count = mSupportedDevices.Count();
-    for (PRInt32 index = 0; index < count; index++) {
-      nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
-      NS_ASSERTION(device, "Null pointer in mSupportedDevices");
-
-      PRBool retval;
-      rv = device->Finalize(&retval);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
-    }
-  }
+  NS_ASSERTION(sbDeviceManager::sServiceFinalized,
+               "DeviceManager never finalized!");
   if (mLock)
     PR_DestroyLock(mLock);
 }
@@ -84,6 +80,11 @@ sbDeviceManager::Initialize()
   // doing the right thing (using getService) then we should never get here
   // more than once. If they do the wrong thing (createInstance) then we'll
   // fail on them so that they fix their code.
+  
+  // XXXBen If someone calls createInstance *before* getService then this
+  //        component will be dead once the first instance is destroyed. We
+  //        need to make this a startup observer.
+
   NS_ENSURE_FALSE(sbDeviceManager::sServiceInitialized,
                   NS_ERROR_ALREADY_INITIALIZED);
 
@@ -156,6 +157,52 @@ sbDeviceManager::Initialize()
   }
 
   mLastRequestedCategory = EmptyString();
+
+  // Now that everything has succeeded we'll register ourselves to observe
+  // XPCOM shutdown so that we can finalize our devices properly.
+
+  nsCOMPtr<nsIObserverService> observerService = 
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this, kXPCOMShutdownTopic, PR_FALSE);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add XPCOMShutdown observer");
+
+  rv = observerService->AddObserver(this, kQuitApplicationTopic, PR_FALSE);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add QuitApplication observer");
+
+  // XXX Don't add any calls here that could possibly fail! We've already added
+  //     ourselves to the observer service so if we fail now the observer
+  //     service will hold an invalid pointer and later cause a crash at
+  //     shutdown. Add any dangerous calls above *before* the call to
+  //     AddObserver.
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::Finalize()
+{
+  // Make sure we aren't called more than once
+  NS_ENSURE_FALSE(sbDeviceManager::sServiceFinalized,
+                  NS_ERROR_UNEXPECTED);
+
+  sbDeviceManager::sServiceFinalized = PR_TRUE;
+
+  // Loop through the array and call Finalize() on all the devices.
+  nsresult rv;
+
+  nsAutoLock autoLock(mLock);
+
+  PRInt32 count = mSupportedDevices.Count();
+  for (PRInt32 index = 0; index < count; index++) {
+    nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
+    NS_ASSERTION(device, "Null pointer in mSupportedDevices");
+
+    PRBool retval;
+    rv = device->Finalize(&retval);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
+  }
 
   return NS_OK;
 }
@@ -288,4 +335,33 @@ sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
   // Not found
   mLastRequestedCategory = EmptyString();
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+NS_IMETHODIMP
+sbDeviceManager::Observe(nsISupports* aSubject,
+                         const char* aTopic,
+                         const PRUnichar* aData)
+{
+  nsresult rv;
+  if (nsCRT::strcmp(aTopic, kQuitApplicationTopic) == 0) {
+    // The app is shutting down so it's time for our devices to finalize
+    rv = Finalize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (nsCRT::strcmp(aTopic, kXPCOMShutdownTopic) == 0) {
+    // Remove ourselves from the observer service
+    nsCOMPtr<nsIObserverService> observerService = 
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = observerService->RemoveObserver(this, kXPCOMShutdownTopic);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Failed to remove XPCOMShutdown observer");
+
+    rv = observerService->RemoveObserver(this, kQuitApplicationTopic);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Failed to remove QuitApplication observer");
+  }
+
+  return NS_OK;
 }
