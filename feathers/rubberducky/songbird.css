@@ -1494,6 +1494,8 @@ scrollbar > slider > thumb
   padding: 0px 0px 0px 0px !important;
   margin: 0px 0px 0px 0px !important;  
   width: 16px !important;
+  background-image: none !important;
+  list-style-image: none !important;
 } 
 
 scrollbar > slider
