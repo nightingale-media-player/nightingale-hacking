@@ -35,7 +35,6 @@ ifndef AUTODEFS_MK_INCLUDED
 AUTODEFS_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
-SB_APPNAME       = @SB_APPNAME@
 SB_PLATFORM      = @SB_PLATFORM@
 SB_CONFIGURATION = @SB_CONFIGURATION@
 

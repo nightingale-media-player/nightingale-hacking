@@ -39,7 +39,7 @@
 # This is a slightly modified excerpt from post-mozilla-rel.pl
 #   (http://lxr.mozilla.org/mozilla/source/tools/tinderbox/post-mozilla-rel.pl)
 #
-# Specifically, it has been modified to only create update snippets.
+# Specifically, it has been modified to only create third-gen update snippets.
 
 use strict;
 use IO::File;
@@ -79,27 +79,10 @@ sub update_create_stats {
   $output .= "$hashvalue\n";
   $output .= "$size\n";
   $output .= "$buildid\n";
-
-  $output_file = "$output_file_base.0";
-  if (defined($output_file)) {
-    open(UPDATE_FILE, ">$output_file")
-      or die "ERROR: Can't open '$output_file' for writing!";
-    print UPDATE_FILE $output;
-    close(OUTPUT_FILE);
-  } else {
-    printf($output);
-  }
-
-  $output  = "$type\n";
-  $output .= "$url\n";
-  $output .= "$hashfunction\n";
-  $output .= "$hashvalue\n";
-  $output .= "$size\n";
-  $output .= "$buildid\n";
   $output .= "$appversion\n";
   $output .= "$extversion\n";
 
-  $output_file = "$output_file_base.1";
+  $output_file = "$output_file_base";
   if (defined($output_file)) {
     open(UPDATE_FILE, ">$output_file")
       or die "ERROR: Can't open '$output_file' for writing!";

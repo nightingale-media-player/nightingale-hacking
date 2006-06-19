@@ -35,6 +35,15 @@ include $(DEPTH)/build/autodefs.mk
 
 STAGE_DIR	= $(DEPTH)/update
 
+SERVER_BASE = http://download.songbirdnest.com/songbird/nightly
+SERVER_PATH = $(SERVER_BASE)/$(SB_BUILD_ID)-$(SB_BRANCHNAME)
+
+ifdef DEBUG
+DEBUG_EXT = .debug
+endif
+
+UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE).$(SB_PLATFORM)$(DEBUG_EXT)
+
 tasks: complete-patch \
        complete-snippet \
        all \
@@ -44,25 +53,21 @@ complete-patch::
 	$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
-    "$(STAGE_DIR)/$(SB_APPNAME).complete.mar" \
+    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar" \
     "$(DEPTH)/$(DISTDIRNAME)"
 
 
 complete-snippet::
 	$(MKDIR) -p $(STAGE_DIR)
 	$(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
-    $(STAGE_DIR)/$(SB_APPNAME).complete.mar \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar \
     "complete" \
-    $(STAGE_DIR)/$(SB_APPNAME).complete.snippet \
-    "http://updates.songbirdnest.com/update.mar" \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).snippet \
+    "$(SERVER_PATH)/$(UPDATE_FILENAME_BASE).mar" \
     $(SB_BUILD_ID) \
     $(SB_MILESTONE) \
     "sha1" \
     $(NULL)
-
-$(SB_APPNAME).complete.mar:: complete-patch
-$(SB_APPNAME).complete.snippet.0:: complete-snippet
-$(SB_APPNAME).complete.snippet.1:: complete-snippet
 
 partial-patch::
 	$(MKDIR) -p $(STAGE_DIR)

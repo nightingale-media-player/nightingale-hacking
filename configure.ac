@@ -30,10 +30,6 @@ AC_PREREQ(2.59)
 AC_INIT(build/rules.mk)
 AC_CONFIG_AUX_DIR(${srcdir}/build/autoconf)
 
-SB_APPNAME="Songbird"
-
-AC_SUBST(SB_APPNAME)
-
 #
 # Check for --enable-debug
 #
