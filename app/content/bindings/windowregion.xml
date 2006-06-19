@@ -43,6 +43,7 @@
         <![CDATA[
         try
         {
+          this.is_hidden = false;
           this.makeRegionList();
           var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"]
           
@@ -71,6 +72,16 @@
         }
         ]]>
       </destructor>
+      
+      <property name="hidden">
+        <getter>
+          return this.is_hidden;
+        </getter>
+        <setter>
+          this.is_hidden = val;
+          this.setRegion();
+        </setter>
+      </property>
       
       <method name="OnResize">
         <parameter name="x"/>
@@ -142,41 +153,50 @@
             var region;
             region = Components.classes["@mozilla.org/gfx/region;1"].createInstance(Components.interfaces.nsIScriptableRegion);
             region.init();
-            for (var i=0;i<this.regionList.length;i++)
+            if (this.is_hidden) 
             {
-              var rect = this.regionList[i];
-              var x,y,w,h;
               var dw = document.documentElement.boxObject.width;
               var dh = document.documentElement.boxObject.height;
-              if (rect[0] == "window")
+              region.unionRect(0, 0, dw, dh);
+            } 
+            else 
+            {
+              for (var i=0;i<this.regionList.length;i++)
               {
-                x = 0;
-                y = 0;
-                w = dw;
-                h = dh;
-              }
-              else
-              {
-                w = rect[0][0];
-                h = rect[0][1];
-                var ox = rect[3];
-                var oy = rect[4];
-                switch (rect[2])
+                var rect = this.regionList[i];
+                var x,y,w,h;
+                var dw = document.documentElement.boxObject.width;
+                var dh = document.documentElement.boxObject.height;
+                if (rect[0] == "window")
                 {
-                  case "topleft": x = ox; y = oy; break;
-                  case "topright": x = dw - ox - w; y = oy; break;
-                  case "bottomleft": x = ox; y = dh - oy - h; break;
-                  case "bottomright": x = dw - ox - w; y = dh - oy - h; break;
+                  x = 0;
+                  y = 0;
+                  w = dw;
+                  h = dh;
                 }
-              }
-              switch (rect[1])
-              {
-                case "add":
-                  region.unionRect(x, y, w, h);
-                  break;
-                case "sub":
-                  region.subtractRect(x, y, w, h);
-                  break;
+                else
+                {
+                  w = rect[0][0];
+                  h = rect[0][1];
+                  var ox = rect[3];
+                  var oy = rect[4];
+                  switch (rect[2])
+                  {
+                    case "topleft": x = ox; y = oy; break;
+                    case "topright": x = dw - ox - w; y = oy; break;
+                    case "bottomleft": x = ox; y = dh - oy - h; break;
+                    case "bottomright": x = dw - ox - w; y = dh - oy - h; break;
+                  }
+                }
+                switch (rect[1])
+                {
+                  case "add":
+                    region.unionRect(x, y, w, h);
+                    break;
+                  case "sub":
+                    region.subtractRect(x, y, w, h);
+                    break;
+                }
               }
             }
             var windowRegion = Components.classes["@songbird.org/Songbird/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
