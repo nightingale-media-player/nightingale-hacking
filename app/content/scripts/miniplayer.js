@@ -61,6 +61,9 @@ try
     if ( location.indexOf("?video") == -1 ) {
       initJumpToFileHotkey();
       setMediaKeyboardCallback();
+    } else {
+      document.getElementById("mini_close").hidden = true;
+      document.getElementById("mini_btn_max").setAttribute("oncommand", "SBFullscreen();");
     }
     window.addEventListener( "keydown", checkAltF4, true );
     
@@ -80,6 +83,11 @@ try
   //
   // XUL Event Methods
   //
+  
+  function SBFullscreen() 
+  {
+    gPPS.goFullscreen();
+  }
 
   //Necessary when WindowDragger is not available on the current platform.
   var trackerBkg = false;

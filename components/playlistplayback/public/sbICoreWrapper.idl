@@ -67,6 +67,11 @@ interface sbICoreWrapper : nsISupports
   void setPosition(in unsigned long long position);
 
   /**
+   *
+   */
+  void goFullscreen();
+
+  /**
    * Generic id string
    */
   wstring getId();

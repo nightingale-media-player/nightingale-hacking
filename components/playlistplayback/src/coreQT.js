@@ -319,6 +319,12 @@ function CoreQT()
     this._verifyObject();
     return "";
   }
+
+  this.goFullscreen = function ()
+  {
+    this._verifyObject();
+    // QT has no fullscreen functionality exposed to its plugin :(
+  }
   
   /**
    *

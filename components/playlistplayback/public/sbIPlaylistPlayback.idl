@@ -266,6 +266,11 @@ The mute/volume/length/position api here should just call to the current wrapper
   /**
    *
    */
+  void goFullscreen();
+
+  /**
+   *
+   */
   void setRepeat(in unsigned short repeatMode);
 
   /**

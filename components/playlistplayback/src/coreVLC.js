@@ -180,6 +180,14 @@ function CoreVLC() {
   /**
    *
    */
+  this.goFullscreen = function() {
+    this._verifyObject();
+    return this._object.fullscreen();
+  }
+
+  /**
+   *
+   */
   this.getId = function() {
     return this._id;
   }

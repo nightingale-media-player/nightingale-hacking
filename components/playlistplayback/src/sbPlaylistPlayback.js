@@ -1036,6 +1036,17 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     return false;
   },
+  
+  /**
+   * See sbIPlaylistPlayback.idl
+   */
+  goFullscreen: function() {
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    core.goFullscreen();
+  },
+  
 
   /**
    * See sbIPlaylistPlayback.idl
