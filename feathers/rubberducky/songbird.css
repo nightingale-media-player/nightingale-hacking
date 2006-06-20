@@ -202,7 +202,7 @@ Love the box.
 {
   width:  924px !important;
   height: 668px !important;
-  background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+  /* background-color: transparent !important;  mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
 
