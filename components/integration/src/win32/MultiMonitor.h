@@ -29,7 +29,8 @@
 * \brief Songbird Multiple Monitor Support - Definition.
 */
 
-#pragma once
+#ifndef __MULTI_MONITOR_H__
+#define __MULTI_MONITOR_H__
 
 #ifdef WIN32
 #include <windows.h>
@@ -62,3 +63,6 @@ class CMultiMonitor
 public:
   static void GetMonitorFromPoint(RECT *r, POINT *pt, bool excludeTaskbar);
 };
+
+#endif // __MULTI_MONITOR_H__
+

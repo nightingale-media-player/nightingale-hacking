@@ -25,11 +25,12 @@
  */
 
 /** 
-* \file  WindowCloak.h
+* \file  WindowMinMaxSubclass.h
 * \brief Window subclasser object for WindowMinMax service - Prototypes.
 */
 
-#pragma once
+#ifndef __WINDOW_MIN_MAX_SUBCLASS_H__
+#define __WINDOW_MIN_MAX_SUBCLASS_H__
 
 // INCLUDES ===================================================================
 
@@ -78,4 +79,6 @@ protected:
   
   int m_dx, m_ix, m_dy, m_iy;
 };
+
+#endif // __WINDOW_MIN_MAX_SUBCLASS_H__
 

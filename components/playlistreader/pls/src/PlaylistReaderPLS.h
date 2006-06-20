@@ -29,7 +29,8 @@
  * \brief 
  */
 
-#pragma once
+#ifndef __PLAYLIST_READER_PLS_H__
+#define __PLAYLIST_READER_PLS_H__
 
 // INCLUDES ===================================================================
 
@@ -77,3 +78,6 @@ protected:
 
   PRBool m_Replace;
 };
+
+#endif // __PLAYLIST_READER_PLS_H__
+

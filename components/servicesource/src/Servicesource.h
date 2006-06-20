@@ -29,7 +29,8 @@
  * \brief Songbird Servicesource Component Definition.
  */
 
-#pragma once
+#ifndef __SERVICE_SOURCE_H__
+#define __SERVICE_SOURCE_H__
 
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
@@ -104,3 +105,6 @@ private:
   class resmap_t : public std::map< nsIRDFResource *, int > {};
   resmap_t m_PlaylistMap;
 };
+
+#endif // __SERVICE_SOURCE_H__
+

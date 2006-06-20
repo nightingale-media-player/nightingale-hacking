@@ -29,7 +29,8 @@
 * \brief Songbird Window Dragger Object Definition.
 */
 
-#pragma once
+#ifndef __WINDOW_DRAGGER_H__
+#define __WINDOW_DRAGGER_H__
 
 // INCLUDES ===================================================================
 
@@ -93,4 +94,6 @@ protected:
 
   POINT m_relativeClickPos;
 };
+
+#endif // __WINDOW_DRAGGER_H__
 

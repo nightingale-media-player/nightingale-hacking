@@ -29,7 +29,8 @@
  * \brief 
  */
 
-#pragma once
+#ifndef __MEDIA_SCAN_H__
+#define __MEDIA_SCAN_H__
 
 // INCLUDES ===================================================================
 #include <vector>
@@ -162,3 +163,6 @@ public:
 protected:
   CMediaScan* mpMediaScan;
 };
+
+#endif // __MEDIA_SCAN_H__
+

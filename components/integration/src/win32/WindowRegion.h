@@ -29,7 +29,8 @@
 * \brief Songbird Window Region Object Definition.
 */
 
-#pragma once
+#ifndef __WINDOW_REGION_H__
+#define __WINDOW_REGION_H__
 
 // INCLUDES ===================================================================
 
@@ -64,4 +65,6 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIWINDOWREGION
 };
+
+#endif // __WINDOW_REGION_H__
 

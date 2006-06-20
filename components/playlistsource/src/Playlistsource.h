@@ -29,7 +29,8 @@
  * \brief Songbird Playlistsource Component Definition.
  */
 
-#pragma once
+#ifndef __PLAYLIST_SOURCE_H__
+#define __PLAYLIST_SOURCE_H__
 
 #include <nsISupportsImpl.h>
 #include <nsISupportsUtils.h>
@@ -260,4 +261,6 @@ private:
   class resultslist_t   : public std::list< nsCOMPtr<sbIDatabaseResult> > {};
   resultslist_t m_Results;
 };
+
+#endif // __PLAYLIST_SOURCE_H__
 

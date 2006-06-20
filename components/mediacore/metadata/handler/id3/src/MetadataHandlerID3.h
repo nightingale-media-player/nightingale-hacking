@@ -29,7 +29,8 @@
 * \brief 
 */
 
-#pragma once
+#ifndef __METADATA_HANDLER_ID3_H__
+#define __METADATA_HANDLER_ID3_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -76,3 +77,6 @@ protected:
   ID3_Tag              m_ID3Tag;
   PRBool               m_Completed;
 };
+
+#endif // __METADATA_HANDLER_ID3_H__
+

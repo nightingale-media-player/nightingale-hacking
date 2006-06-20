@@ -29,7 +29,8 @@
  * \brief 
  */
 
-#pragma once
+#ifndef __DATABASE_ENGINE_H__
+#define __DATABASE_ENGINE_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -158,3 +159,6 @@ public:
 protected:
   CDatabaseEngine* mpEngine;
 };
+
+#endif // __DATABASE_ENGINE_H__
+

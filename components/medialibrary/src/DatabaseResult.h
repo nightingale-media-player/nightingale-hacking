@@ -25,11 +25,12 @@
  */
 
 /** 
-* \file  DatabaseQuery.h
+* \file  DatabaseResult.h
 * \brief Songbird Database Object Definition.
 */
 
-#pragma once
+#ifndef __DATABASE_RESULT_H__
+#define __DATABASE_RESULT_H__
 
 // INCLUDES ===================================================================
 #include "IDatabaseResult.h"
@@ -92,3 +93,6 @@ protected:
   PRLock* m_pRowCellsLock;
   
 };
+
+#endif // __DATABASE_RESULT_H__
+

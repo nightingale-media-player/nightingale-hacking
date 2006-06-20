@@ -29,7 +29,8 @@
 * \brief Service for setting min/max limit callbacks to a window position and size - Prototypes.
 */
 
-#pragma once
+#ifndef __WINDOW_RESIZE_HOOK_H__
+#define __WINDOW_RESIZE_HOOK_H__
 
 // INCLUDES ===================================================================
 
@@ -85,4 +86,6 @@ protected:
   static CWindowResizeHookItem *findItemByCallback(sbIWindowResizeHookCallback *cb);
   static std::list<CWindowResizeHookItem *> m_items;
 };
+
+#endif // __WINDOW_RESIZE_HOOK_H__
 

@@ -29,7 +29,8 @@
 * \brief 
 */
 
-#pragma once
+#ifndef __METADATA_HANDLER_OGG_H__
+#define __METADATA_HANDLER_OGG_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -96,3 +97,6 @@ protected:
   nsCOMPtr<nsIChannel>          m_Channel;
   PRBool                        m_Completed;
 };
+
+#endif // __METADATA_HANDLER_OGG_H__
+

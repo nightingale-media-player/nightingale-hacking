@@ -29,7 +29,8 @@
 * \brief 
 */
 
-#pragma once
+#ifndef __METADATA_MANAGER_H__
+#define __METADATA_MANAGER_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -73,3 +74,6 @@ class sbMetadataManager : public sbIMetadataManager
   class handlerlist_t : public std::set< sbMetadataHandlerItem > {};
 
 };
+
+#endif // __METADATA_MANAGER_H__
+

@@ -29,7 +29,8 @@
 * \brief 
 */
 
-#pragma once
+#ifndef __METADATA_CHANNEL_H__
+#define __METADATA_CHANNEL_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -89,3 +90,6 @@ class sbMetadataChannel : public sbIMetadataChannel
   blockmap_t m_Blocks;
   PRBool   m_Completed;
 };
+
+#endif // __METADATA_CHANNEL_H__
+

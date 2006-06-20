@@ -29,7 +29,8 @@
 * \brief Songbird Media Keyboard Manager.
 */
 
-#pragma once
+#ifndef __MEDIA_KEYBOARD_H__
+#define __MEDIA_KEYBOARD_H__
 
 
 // INCLUDES ===================================================================
@@ -88,4 +89,6 @@ protected:
   
   static std::list<sbIMediaKeyboardCallback*> m_callbacks;
 };
+
+#endif // __MEDIA_KEYBOARD_H__
 

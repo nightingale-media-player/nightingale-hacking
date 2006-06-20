@@ -29,7 +29,8 @@
 * \brief 
 */
 
-#pragma once
+#ifndef __METADATA_VALUES_H__
+#define __METADATA_VALUES_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -66,3 +67,6 @@ class sbMetadataValues : public sbIMetadataValues
   class t_map : public std::map< nsString, sbMetadataValue > {};
   t_map m_Map;
 };
+
+#endif // __METADATA_VALUES_H__
+

@@ -29,7 +29,8 @@
 * \brief Service for setting min/max limit callbacks to a window position and size - Prototypes.
 */
 
-#pragma once
+#ifndef __WINDOW_MIN_MAX_H__
+#define __WINDOW_MIN_MAX_H__
 
 // INCLUDES ===================================================================
 
@@ -70,4 +71,6 @@ protected:
   CWindowMinMaxSubclass *findSubclassByWindow(nsISupports *window);
   std::list<CWindowMinMaxSubclass*> m_subclasses;
 };
+
+#endif // __WINDOW_MIN_MAX_H__
 

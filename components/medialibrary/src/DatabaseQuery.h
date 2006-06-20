@@ -29,7 +29,8 @@
 * \brief Songbird Database Object Definition.
 */
 
-#pragma once
+#ifndef __DATABASE_QUERY_H__
+#define __DATABASE_QUERY_H__
 
 // FORWARD REFERENCES =========================================================
 class CDatabaseQuery;
@@ -126,4 +127,6 @@ protected:
 
   nsCOMPtr<sbIDatabaseEngine> m_Engine;
 };
+
+#endif // __DATABASE_QUERY_H__
 

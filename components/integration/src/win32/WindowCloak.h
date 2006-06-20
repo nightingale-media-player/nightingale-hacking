@@ -29,7 +29,8 @@
 * \brief Songbird Window Cloaker Object Definition.
 */
 
-#pragma once
+#ifndef __WINDOW_CLOAK_H__
+#define __WINDOW_CLOAK_H__
 
 
 // INCLUDES ===================================================================
@@ -78,4 +79,6 @@ public:
 protected:
   static std::list<WindowCloakEntry*> m_items;
 };
+
+#endif // __WINDOW_CLOAK_H__
 

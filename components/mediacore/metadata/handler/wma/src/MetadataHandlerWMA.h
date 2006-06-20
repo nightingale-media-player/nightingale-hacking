@@ -29,7 +29,8 @@
 * \brief 
 */
 
-#pragma once
+#ifndef __METADATA_HANDLER_WMA_H__
+#define __METADATA_HANDLER_WMA_H__
 
 // INCLUDES ===================================================================
 #include <nscore.h>
@@ -75,3 +76,6 @@ protected:
   IWMSyncReader * m_pReader;
   void ReadMetadata( const nsString &ms_key, const nsString &sb_key, IWMHeaderInfo3 *hi3 );
 };
+
+#endif // __METADATA_HANDLER_WMA_H__
+

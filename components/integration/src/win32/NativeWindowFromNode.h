@@ -29,7 +29,8 @@
 * \brief Finds the Native window handle associated with a DOM node - Prototypes.
 */
 
-#pragma once
+#ifndef __NATIVE_WINDOW_FROM_NODE_H__
+#define __NATIVE_WINDOW_FROM_NODE_H__
 
 #ifdef XP_WIN
 #include <windows.h>
@@ -53,4 +54,6 @@ public:
 
 protected:
 };
+
+#endif // __NATIVE_WINDOW_FROM_NODE_H__
 
