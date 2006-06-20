@@ -70,7 +70,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib id3lib.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerID3_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\release\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\$(ConfigurationName)\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerID3.pdb"
 				SubSystem="2"
@@ -100,7 +100,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\id3lib\release\bin\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\id3lib\$(ConfigurationName)\bin\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -153,7 +153,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib id3lib.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerID3.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\release\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\$(ConfigurationName)\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerID3.pdb"
 				SubSystem="2"
@@ -185,7 +185,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\id3lib\release\bin\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\id3lib\$(ConfigurationName)\bin\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

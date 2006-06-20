@@ -324,14 +324,14 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
   PRBool async = true;
 
-  nsCString cstrScheme, cstrPath;
+  nsCString cstrScheme, cstrPath, cstrSpec;
   pURI->GetScheme(cstrScheme);
   pURI->GetPath(cstrPath);
+  pURI->GetSpec(cstrSpec);
   if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
   {
 #if defined(XP_WIN)
     nsCString::iterator itBegin, itEnd;
-
     if(StringBeginsWith(cstrPath, NS_LITERAL_CSTRING("/")))
       cstrPath.Cut(0, 1);
 
@@ -351,6 +351,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 #endif
   }
 
+  // Attempt to do it locally, without using the channel.
   if ( !async )
   {
     // Right now, only the fast Windows code uses the synchronous reader on local files.
@@ -362,41 +363,48 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     }
     *_retval = nTagSize;
 
-    const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
-    ReadTag(tag);
-
-    // Handle the bitrate, if they can't do it for us.
-    if (!headerinfo)
+    if ( nTagSize > 0 )
     {
-      // Then alloc the buffer.
-      const PRUint32 size = 8096;
-      char *buffer = (char *)nsMemory::Alloc(size);
+      const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
+      ReadTag(tag);
 
-      // Read the first chunk of the file to get bitrate, etc.
-      // Then open a file with it.
-      nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1");
-      file->InitWithNativePath(NS_UnescapeURL(cstrPath));
+      // Handle the bitrate, if they can't do it for us.
+      if (!headerinfo)
+      {
+        // Then alloc the buffer.
+        const PRUint32 size = 8096;
+        char *buffer = (char *)nsMemory::Alloc(size);
 
-      // Then open an input stream with it.
-      nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1");
-      stream->Init( file, PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
+        // Read the first chunk of the file to get bitrate, etc.
+        // Then open a file with it.
+        nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1");
+        file->InitWithNativePath(NS_UnescapeURL(cstrPath));
 
-      // Then read.
-      PRUint32 read = 0;
-      stream->Read(buffer, size, &read);
+        // Then open an input stream with it.
+        nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1");
+        stream->Init( file, PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
 
-      // Then get the file size.
-      PRInt64 file_size = 0;
-      file->GetFileSize(&file_size);
+        // Then read.
+        PRUint32 read = 0;
+        stream->Read(buffer, size, &read);
 
-      // And finally calculate the bitrate.
-      CalculateBitrate(buffer, read, file_size);
-      nsMemory::Free(buffer);
+        // Then get the file size.
+        PRInt64 file_size = 0;
+        file->GetFileSize(&file_size);
+
+        // And finally calculate the bitrate.
+        CalculateBitrate(buffer, read, file_size);
+        nsMemory::Free(buffer);
+      }
     }
-
+    else
+    {
+      async = true; // Try again, using the nsIChannel
+    }
     nRet = NS_OK;
   }
-  else
+
+  if (async)
   {
     // Get a new channel handler for async operation.
     m_ChannelHandler = do_CreateInstance("@songbird.org/Songbird/MetadataChannel;1");
@@ -744,6 +752,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       if (nsnull != pField)
       {
         ID3_TextEnc enc = pField->GetEncoding();
+        PRBool swap = true;
         switch( enc )
         {
           case ID3TE_NONE:
@@ -761,72 +770,27 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
             strValue.Assign( uni_string );
             nsMemory::Free( uni_string );
 #else
-            strValue = NS_ConvertUTF8toUTF16(iso_string);
+            strValue = NS_ConvertUTF8toUTF16(iso_string); // This probably won't work at all.
 #endif
             break;
           }
           case ID3TE_UTF16BE: // ?? what do we do with big endian?  cry?
+            swap = false; // maybe id3lib is just backwards?
           case ID3TE_UTF16:
           {
             size_t size = pField->Size() + 1;
             unicode_t *buffer = (unicode_t *)nsMemory::Alloc( (size+1) * sizeof(unicode_t) );
             size_t read = pField->Get( buffer, size );
             buffer[read] = 0;
-            for (size_t i = 0; i < read; i++)  // Okay, so this is REALLY BAD.  How do I know it's unicode data?
-            {
-              char *p = (char *)(buffer+i);
-              char temp = p[0];
-              p[0] = p[1];
-              p[1] = temp;
-              if ( // This is REALLY stupid.
-                ( ( buffer[i] == 0x00F0 ) && ( buffer[i+1] == 0xBAAD ) ) ||
-                ( ( buffer[i] == 0x00F0 ) && ( buffer[i+1] == 0xABAB ) ) ||
-                ( ( buffer[i] == 0x00BA ) && ( buffer[i+1] == 0xF00D ) ) ||
-                ( ( buffer[i] == 0x00BA ) && ( buffer[i+1] == 0xABAB ) )
-                 )
+            if (swap)
+              for (size_t i = 0; i < read; i++)  // Am I sure this is the rules for when I'm supposed to swap?
               {
-                buffer[i] = 0;
-                break;
+                char *p = (char *)(buffer+i);
+                char temp = p[0];
+                p[0] = p[1];
+                p[1] = temp;
               }
-            }
-            nsString u16_string( buffer );
-//            nsString test_string = NS_ConvertUTF8toUTF16( NS_ConvertUTF16toUTF8( u16_string ) );
-            // If we have a bad conversion, flip the bytes.  We can't trust if it's big endian or not.
-            bool flipped = false;
-            bool failed = false;
-//            if ( test_string != u16_string )
-            {
-              flipped = true;
-              if ( sizeof(PRUnichar) == 2 )
-              {
-              }
-              else if ( sizeof(PRUnichar) == 4 ) // grrr.
-              {
-                for (PRUint32 i = 0; i < u16_string.Length(); i++)
-                {
-                  char *p = (char *)(u16_string.get()+i);
-                  char temp = p[0];
-                  p[0] = p[2];
-                  p[2] = temp;
-                  temp = p[1];
-                  p[1] = p[3];
-                  p[3] = temp;
-                }
-              }
-            }
-//            test_string = NS_ConvertUTF8toUTF16( NS_ConvertUTF16toUTF8( u16_string ) );
-//            if ( test_string != u16_string )
-            {
-              failed = true;
-            }
-            nsString chars;
-            for (PRUint32 i = 0; i < u16_string.Length(); i++)
-            {
-              chars.AppendInt(u16_string.get()[i]);
-              chars += NS_LITERAL_STRING(" ");
-            }
-//            ::MessageBoxW(NULL,u16_string.get(),(failed)?L"FAILED":(flipped)?L"BIG_ENDIAN":L"LITTLE_ENDIAN",MB_OK);
-            strValue = u16_string;
+            strValue.Assign(buffer);
             nsMemory::Free(buffer);
             break;
           }
