@@ -29,10 +29,54 @@
 * \brief Songbird DeviceManager Component Factory and Main Entry Point.
 */
 
-#include "nsIGenericFactory.h"
+#include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsIAppStartupNotifier.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
+
 #include "DeviceManager.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceManager, Initialize);
+
+// Registration functions for becoming a startup observer
+static NS_METHOD
+sbDeviceManagerRegisterSelf(nsIComponentManager* aCompMgr,
+                            nsIFile* aPath,
+                            const char* registryLocation,
+                            const char* componentType,
+                            const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->
+         AddCategoryEntry(APPSTARTUP_CATEGORY,
+                          SONGBIRD_DEVICEMANAGER_DESCRIPTION,
+                          "service," SONGBIRD_DEVICEMANAGER_CONTRACTID,
+                          PR_TRUE, PR_TRUE, nsnull);
+  return rv;
+}
+
+static NS_METHOD
+sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
+                              nsIFile* aPath,
+                              const char* registryLocation,
+                              const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
+                                            SONGBIRD_DEVICEMANAGER_DESCRIPTION,
+                                            PR_TRUE);
+
+  return rv;
+}
 
 static nsModuleComponentInfo components[] =
 {
@@ -41,6 +85,8 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_DEVICEMANAGER_CID,
     SONGBIRD_DEVICEMANAGER_CONTRACTID,
     sbDeviceManagerConstructor,
+    sbDeviceManagerRegisterSelf,
+    sbDeviceManagerUnregisterSelf
   }
 };
 

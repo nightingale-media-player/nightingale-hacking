@@ -71,6 +71,9 @@ public:
 private:
   ~sbDeviceManager();
 
+  // Iterate through the registered contractIDs looking for supported devices.
+  NS_IMETHOD LoadSupportedDevices();
+
   // Finalizes the service and informs all devices that they need to quit.
   NS_IMETHOD Finalize();
 
@@ -82,6 +85,9 @@ private:
   // once. Consumers should use getService instead of createInstance, but we do
   // this just in case they forget. 
   static PRBool sServiceInitialized;
+
+  // Set after our LoadSupportedDevices has been called. 
+  static PRBool sDevicesLoaded;
 
   // This is a sanity check to make sure that we're finalizing properly
   static PRBool sServiceFinalized;
