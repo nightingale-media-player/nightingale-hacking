@@ -45,9 +45,7 @@
 #include "nsIWebProgressListener.h"
 #include "nsNetUtil.h"
 
-#ifdef XP_WIN
-#pragma warning(disable : 4355) // To suppress the "warning C4355: 'this' : used in base member initializer list" message
-#endif
+#include "win32/WinCDImplementation.h"
 
 /* Implementation file */
 
@@ -68,9 +66,10 @@ NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
 
 //-----------------------------------------------------------------------------
 sbCDDevice::sbCDDevice()
-: sbDeviceBase(PR_TRUE),
-  mCDManagerObject(this)
+: sbDeviceBase(PR_TRUE)
 {
+  mCDManagerObject = new WinCDDeviceManager(this);
+
   // Get the string bundle for our strings
   if (!m_StringBundle) {
     nsresult rv;
@@ -92,6 +91,7 @@ sbCDDevice::sbCDDevice()
 //-----------------------------------------------------------------------------
 /*virtual*/ sbCDDevice::~sbCDDevice() 
 {
+  delete mCDManagerObject;
 } //dtor
 
 // ***************************
@@ -102,7 +102,7 @@ sbCDDevice::sbCDDevice()
 NS_IMETHODIMP sbCDDevice::Initialize(PRBool *_retval)
 {
   // Post a message to handle this event asynchronously
-  mCDManagerObject.Initialize();
+  mCDManagerObject->Initialize();
   return NS_OK;
 }
 
@@ -129,7 +129,7 @@ NS_IMETHODIMP sbCDDevice::RemoveCallback(sbIDeviceBaseCallback *pCallback, PRBoo
 /* wstring EnumDeviceString (in PRUint32 index); */
 NS_IMETHODIMP sbCDDevice::EnumDeviceString(PRUint32 index, PRUnichar **_retval)
 {
-  *_retval = mCDManagerObject.EnumDeviceString(index);
+  *_retval = mCDManagerObject->EnumDeviceString(index);
 
   return NS_OK;
 }
@@ -143,7 +143,7 @@ NS_IMETHODIMP sbCDDevice::SetName(const PRUnichar * aName)
 /* wstring GetContext (in wstring deviceString); */
 NS_IMETHODIMP sbCDDevice::GetContext(const PRUnichar *deviceString, PRUnichar **_retval)
 {
-  *_retval = mCDManagerObject.GetContext(deviceString);
+  *_retval = mCDManagerObject->GetContext(deviceString);
   return NS_OK;
 }
 
@@ -163,7 +163,7 @@ NS_IMETHODIMP sbCDDevice::GetSupportedFormats(const PRUnichar *deviceString, PRU
 /* PRBool IsUploadSupported (); */
 NS_IMETHODIMP sbCDDevice::IsUploadSupported(const PRUnichar *deviceString, PRBool *_retval)
 {
-  *_retval = mCDManagerObject.IsUploadSupported(deviceString);
+  *_retval = mCDManagerObject->IsUploadSupported(deviceString);
   return NS_OK;
 }
 
@@ -188,14 +188,14 @@ NS_IMETHODIMP sbCDDevice::GetUsedSpace(const PRUnichar *deviceString, PRUint32 *
 /* PRUint32 GetAvailableSpace (); */
 NS_IMETHODIMP sbCDDevice::GetAvailableSpace(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-  *_retval = mCDManagerObject.GetAvailableSpace(deviceString);
+  *_retval = mCDManagerObject->GetAvailableSpace(deviceString);
   return NS_OK;
 }
 
 /* PRBool GetTrackTable (out wstring dbContext, out wstring tableName); */
 NS_IMETHODIMP sbCDDevice::GetTrackTable(const PRUnichar *deviceString, PRUnichar **dbContext, PRUnichar **tableName, PRBool *_retval)
 {
-  *_retval = mCDManagerObject.GetTrackTable(deviceString, dbContext, tableName);
+  *_retval = mCDManagerObject->GetTrackTable(deviceString, dbContext, tableName);
   return NS_OK;
 }
 
@@ -348,7 +348,7 @@ NS_IMETHODIMP sbCDDevice::AutoUploadTable(const PRUnichar *DeviceString, const P
 NS_IMETHODIMP sbCDDevice::UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
 {
   //return sbDeviceBase::UploadTable(DeviceString, TableName, _retval);
-  *_retval = mCDManagerObject.UploadTable(DeviceString, TableName);
+  *_retval = mCDManagerObject->UploadTable(DeviceString, TableName);
   return NS_OK;
 }
 
@@ -368,19 +368,19 @@ NS_IMETHODIMP sbCDDevice::OnCDDriveEvent(PRBool mediaInserted, PRBool *_retval)
 
 PRBool sbCDDevice::InitializeSync()
 {
-  mCDManagerObject.Initialize();
+  mCDManagerObject->Initialize();
   return PR_TRUE;
 }
 
 PRBool sbCDDevice::FinalizeSync()
 {
-  mCDManagerObject.Finalize();
+  mCDManagerObject->Finalize();
   return PR_TRUE;
 }
 
 PRBool sbCDDevice::DeviceEventSync(PRBool mediaInserted)
 {
-  return mCDManagerObject.OnCDDriveEvent(mediaInserted);
+  return mCDManagerObject->OnCDDriveEvent(mediaInserted);
 }
 
 
@@ -481,12 +481,12 @@ nsString sbCDDevice::GetDeviceUploadTable(const PRUnichar* deviceString)
 
 PRBool sbCDDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
 {
-  return mCDManagerObject.TransferFile(deviceString, source, destination, dbContext, table, index, curDownloadRowNumber);
+  return mCDManagerObject->TransferFile(deviceString, source, destination, dbContext, table, index, curDownloadRowNumber);
 }
 
 PRBool sbCDDevice::StopCurrentTransfer(const PRUnichar* deviceString)
 {
-  return mCDManagerObject.StopCurrentTransfer(deviceString);
+  return mCDManagerObject->StopCurrentTransfer(deviceString);
 }
 
 PRBool sbCDDevice::SuspendCurrentTransfer(const PRUnichar* deviceString)
@@ -502,7 +502,7 @@ PRBool sbCDDevice::ResumeTransfer(const PRUnichar* deviceString)
 /* PRBool SetDownloadFileType (in PRUint32 fileType); */
 NS_IMETHODIMP sbCDDevice::SetDownloadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
 {
-  *_retval = mCDManagerObject.SetCDRipFormat(deviceString, fileType);
+  *_retval = mCDManagerObject->SetCDRipFormat(deviceString, fileType);
 
   return NS_OK;
 }
@@ -516,7 +516,7 @@ NS_IMETHODIMP sbCDDevice::SetUploadFileType(const PRUnichar *deviceString, PRUin
 /* PRUint32 GetDownloadFileType (in wstring deviceString); */
 NS_IMETHODIMP sbCDDevice::GetDownloadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
 {
-  *_retval = mCDManagerObject.GetCDRipFormat(deviceString);
+  *_retval = mCDManagerObject->GetCDRipFormat(deviceString);
 
   return NS_OK;
 }
@@ -529,18 +529,18 @@ NS_IMETHODIMP sbCDDevice::GetUploadFileType(const PRUnichar *deviceString, PRUin
 
 PRUint32 sbCDDevice::GetCurrentTransferRowNumber(const PRUnichar* deviceString)
 {
-  return mCDManagerObject.GetCurrentTransferRowNumber(deviceString);
+  return mCDManagerObject->GetCurrentTransferRowNumber(deviceString);
 }
 
 void sbCDDevice::TransferComplete(const PRUnichar* deviceString)
 {
-  return mCDManagerObject.TransferComplete(deviceString);
+  return mCDManagerObject->TransferComplete(deviceString);
 }
 
 /* PRBool SetGap (in PRUint32 numSeconds); */
 NS_IMETHODIMP sbCDDevice::SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds, PRBool *_retval)
 {
-  *_retval = mCDManagerObject.SetGapBurnedTrack(deviceString, numSeconds);
+  *_retval = mCDManagerObject->SetGapBurnedTrack(deviceString, numSeconds);
   return NS_OK;
 }
 
@@ -548,7 +548,7 @@ NS_IMETHODIMP sbCDDevice::SetGapBurnedTrack(const PRUnichar* deviceString, PRUin
 /* PRBool GetWritableCDDrive (out wstring deviceString); */
 NS_IMETHODIMP sbCDDevice::GetWritableCDDrive(PRUnichar **deviceString, PRBool *_retval)
 {
-  *_retval = mCDManagerObject.GetWritableCDDrive(deviceString);
+  *_retval = mCDManagerObject->GetWritableCDDrive(deviceString);
   return NS_OK;
 }
 

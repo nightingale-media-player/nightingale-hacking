@@ -46,7 +46,7 @@ public:
     WinCDObject* cdObject;
   };
 
-  WinCDObject(class PlatformCDObjectManager* parent, char driveLetter);
+  WinCDObject(class WinCDDeviceManager* parent, char driveLetter);
   ~WinCDObject();
 
   void        Initialize();
@@ -136,14 +136,14 @@ private:
 
   std::list<BurnTrackInfo> mBurnTracksWeight;
 
-  class PlatformCDObjectManager* mParentCDManager;
+  class WinCDDeviceManager* mParentCDManager;
 };
 
-class PlatformCDObjectManager : public sbCDObjectManager
+class WinCDDeviceManager : public sbCDDeviceManager
 {
 public:
-  PlatformCDObjectManager(class sbCDDevice* parent);
-  ~PlatformCDObjectManager();
+  WinCDDeviceManager(class sbCDDevice* parent);
+  ~WinCDDeviceManager();
 
   void Initialize();
   void Finalize();
@@ -192,7 +192,7 @@ public:
 
 private:
   WinCDObject* GetDeviceMatchingString(const PRUnichar* deviceString);
-  PlatformCDObjectManager() {}
+  WinCDDeviceManager() {}
   void EnumerateDrives();
   void RemoveTransferEntries(const PRUnichar* deviceString);
 

@@ -27,7 +27,7 @@
 #ifndef __CD_CROSS_PLATFORM_DEFS_H__
 #define __CD_CROSS_PLATFORM_DEFS_H__
 
-class sbCDObjectManager
+class sbCDDeviceManager
 {
 public:
   virtual PRUnichar*  GetContext(const PRUnichar* deviceString) = 0;
@@ -49,6 +49,7 @@ public:
   virtual PRBool      StopCurrentTransfer(const PRUnichar*  DeviceString) = 0;
   virtual PRBool      SuspendTransfer(const PRUnichar*  DeviceString) = 0;
   virtual PRBool      ResumeTransfer(const PRUnichar*  DeviceString) = 0;
+  virtual PRBool      OnCDDriveEvent(PRBool mediaInserted) = 0;
   virtual PRBool      SetCDRipFormat(const PRUnichar*  DeviceString, PRUint32 format) = 0;
   virtual PRUint32    GetCDRipFormat(const PRUnichar*  DeviceString) = 0;
   virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString) = 0;
@@ -57,6 +58,7 @@ public:
   virtual PRBool      UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName) = 0;
 
   virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState) = 0;
+  virtual bool        TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber) = 0;
 
   virtual PRBool      IsDeviceIdle(const PRUnichar* deviceString) = 0;
   virtual PRBool      IsDownloadInProgress(const PRUnichar* deviceString) = 0;
@@ -67,7 +69,7 @@ public:
   virtual PRBool      IsTransferPaused(const PRUnichar* deviceString) = 0;
   virtual void        TransferComplete(const PRUnichar* deviceString) = 0;
 
-  virtual ~sbCDObjectManager(){}
+  virtual ~sbCDDeviceManager(){}
 
   virtual void Initialize() = 0;
   virtual void Finalize() = 0;
