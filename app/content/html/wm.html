@@ -1,0 +1,153 @@
+<html>
+<body onload="bindPlayer();">
+<script language="JavaScript">
+
+var theWMPCore = null;
+
+var isPlaying = false;
+var isPaused = false;
+var isMuted = false;
+var lastVolume = 0;
+
+// Debugging Tool
+function listProperties(obj, objName) 
+{
+    var columns = 3;
+    var count = 0;
+    var result = "";
+    for (var i in obj) 
+    {
+        result += objName + "." + i + " = " + obj[i] + "\t\t\t";
+        count = ++count % columns;
+        if ( count == columns - 1 )
+        {
+          result += "\n";
+        }
+    }
+    alert(result);
+}
+
+
+function bindPlayer()
+{
+  initPlayer();
+}
+
+function initPlayer()
+{
+  if(!theWMPCore) {
+    var theCore = document.getElementById("core_wmp");
+    theWMPCore = theCore;
+    alert("core: " + theCore + "\ncontrols: " + theCore.URL);
+  }
+}
+
+function playURL(url)
+{
+  initPlayer();
+
+  theWMPCore.SetURL(url);
+
+  var tryAgain = false;
+  try {
+    playPlayer();
+  } catch(e) {
+    tryAgain = true;
+    dump(e + "\n");
+  }
+    
+  if(tryAgain)
+  {
+    try {
+      playPlayer();
+    } catch(e) {
+      tryAgain = true;
+      dump(e + "\n");
+    }
+  }
+  
+  setPlayerVolume(lastVolume);
+}
+
+function playPlayer()
+{
+  initPlayer();
+  
+  if(!isPlaying || isPaused)
+  { 
+    theWMPCore.Play();
+    isPlaying = true;
+    isPaused = false;
+  }
+}
+
+function pausePlayer()
+{
+  initPlayer();
+
+  if(!isPaused)
+  {
+    theWMPCore.Stop();
+    isPaused = true;
+  }
+  else
+  {
+    theWMPCore.Play();
+    isPaused = false;
+  }
+}
+
+function stopPlayer()
+{
+  initPlayer();
+  
+  isPlaying = false;
+  isPaused = false;
+  
+  theWMPCore.Stop();
+  theWMPCore.Rewind();
+}
+
+function getPlayerVolume()
+{
+  initPlayer();
+  return theWMPCore.GetVolume();
+}
+
+function setPlayerVolume(vol)
+{
+  initPlayer();
+  lastVolume = vol;
+  theWMPCore.SetVolume(vol);
+}
+
+function mutePlayer( mute )
+{
+  initPlayer();
+  theWMPCore.SetMute(mute);
+  isMuted = mute;
+}
+
+function getPlayerLength()
+{
+  initPlayer();
+  return theWMPCore.GetDuration();
+}
+
+function getPlayerPosition()
+{
+  initPlayer();
+  return theWMPCore.GetTime();
+}
+
+function seekPlayer(pos)
+{
+  initPlayer();
+  theWMPCore.SetTime(pos);
+}
+</script>
+  <!--object id="core_wmp" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/-->
+
+  <object id="core_wmp" flex="1" height="100" width="100" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="video/x-ms-asf-plugin"/>
+</body>
+</html>
