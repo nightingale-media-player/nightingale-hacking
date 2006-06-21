@@ -48,14 +48,17 @@
 #include "sbIMetadataChannel.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAHANDLEROGG_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/OGG;1"
-#define SONGBIRD_METADATAHANDLEROGG_CLASSNAME   "Songbird OGG Metadata Handler Interface"
-
-// {1DB86685-8965-400f-99A0-F2A18C38C605}
-#define SONGBIRD_METADATAHANDLEROGG_CID { 0x1db86685, 0x8965, 0x400f, { 0x99, 0xa0, 0xf2, 0xa1, 0x8c, 0x38, 0xc6, 0x5 } }
-
-// FUNCTIONS ==================================================================
-
+#define SONGBIRD_METADATAHANDLEROGG_CONTRACTID            \
+  "@songbird.org/Songbird/MetadataHandler/OGG;1"
+#define SONGBIRD_METADATAHANDLEROGG_CLASSNAME             \
+  "Songbird OGG Metadata Handler Interface"
+#define SONGBIRD_METADATAHANDLEROGG_CID                   \
+{ /* 6370485c-93d6-4de7-bacc-72ab7498f3bb */              \
+  0x6370485c,                                             \
+  0x93d6,                                                 \
+  0x4de7,                                                 \
+  {0xba, 0xcc, 0x72, 0xab, 0x74, 0x98, 0xf3, 0xbb}        \
+}
 // CLASSES ====================================================================
 class sbMetadataHandlerOGG : public sbIMetadataHandler
 {

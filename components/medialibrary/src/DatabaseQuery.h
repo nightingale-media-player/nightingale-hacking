@@ -60,15 +60,20 @@ namespace std
 #endif
 
 // DEFINES ====================================================================
-#define SONGBIRD_DATABASEQUERY_CONTRACTID  "@songbird.org/Songbird/DatabaseQuery;1"
-#define SONGBIRD_DATABASEQUERY_CLASSNAME   "Songbird Database Query Interface"
-
-// {192FE564-1D86-49c8-A31A-5798D62B2525}
-#define SONGBIRD_DATABASEQUERY_CID { 0x192fe564, 0x1d86, 0x49c8, { 0xa3, 0x1a, 0x57, 0x98, 0xd6, 0x2b, 0x25, 0x25 } }
-
+#define SONGBIRD_DATABASEQUERY_CONTRACTID                 \
+  "@songbird.org/Songbird/DatabaseQuery;1"
+#define SONGBIRD_DATABASEQUERY_CLASSNAME                  \
+  "Songbird Database Query Interface"
+#define SONGBIRD_DATABASEQUERY_CID                        \
+{ /* 377a6592-64bd-4a6b-a941-d488abb5a8aa */              \
+  0x377a6592,                                             \
+  0x64bd,                                                 \
+  0x4a6b,                                                 \
+  {0xa9, 0x41, 0xd4, 0x88, 0xab, 0xb5, 0xa8, 0xaa}        \
+}
+// CLASSES ====================================================================
 class sbIDatabaseEngine;
 
-// CLASSES ====================================================================
 class CDatabaseQuery : public sbIDatabaseQuery
 {
 friend class CDatabaseEngine;

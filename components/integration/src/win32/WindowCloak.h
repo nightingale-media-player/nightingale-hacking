@@ -51,12 +51,17 @@ namespace std
 #include "NativeWindowFromNode.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWCLOAK_CONTRACTID  "@songbird.org/Songbird/WindowCloak;1"
-#define SONGBIRD_WINDOWCLOAK_CLASSNAME   "Songbird Window Cloak Interface"
-
-// {F1387DC0-4F82-4d8d-8671-C8EB03D27271}
-#define SONGBIRD_WINDOWCLOAK_CID { 0xf1387dc0, 0x4f82, 0x4d8d, { 0x86, 0x71, 0xc8, 0xeb, 0x3, 0xd2, 0x72, 0x71 } }
-
+#define SONGBIRD_WINDOWCLOAK_CONTRACTID                   \
+  "@songbird.org/Songbird/WindowCloak;1"
+#define SONGBIRD_WINDOWCLOAK_CLASSNAME                    \
+  "Songbird Window Cloak Interface"
+#define SONGBIRD_WINDOWCLOAK_CID                          \
+{ /* d5267aa4-f3ba-4b7b-b136-c1861c410ee5 */              \
+  0xd5267aa4,                                             \
+  0xf3ba,                                                 \
+  0x4b7b,                                                 \
+  {0xb1, 0x36, 0xc1, 0x86, 0x1c, 0x41, 0xe, 0xe5}         \
+}
 // CLASSES ====================================================================
 class WindowCloakEntry 
 {

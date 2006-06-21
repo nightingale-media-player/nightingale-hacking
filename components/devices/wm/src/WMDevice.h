@@ -42,10 +42,17 @@
 #error
 #endif
 // DEFINES ====================================================================
-#define SONGBIRD_WMDevice_CONTRACTID  "@songbird.org/Songbird/Device/WMDevice;1"
-#define SONGBIRD_WMDevice_CLASSNAME   "Songbird Download Device"
-#define SONGBIRD_WMDevice_CID { 0x58061a82, 0x8ae7, 0x4d6b, { 0x95, 0xe4, 0x50, 0xc2, 0xa3, 0x1d, 0xef, 0x97 } }
-// {58061A82-8AE7-4d6b-95E4-50C2A31DEF97}
+#define SONGBIRD_WMDevice_CONTRACTID                      \
+  "@songbird.org/Songbird/Device/WMDevice;1"
+#define SONGBIRD_WMDevice_CLASSNAME                       \
+  "Songbird Download Device"
+#define SONGBIRD_WMDevice_CID                             \
+{ /* 3cc1058a-9fc6-4dd7-bfda-778cf482c13b */              \
+  0x3cc1058a,                                             \
+  0x9fc6,                                                 \
+  0x4dd7,                                                 \
+  {0xbf, 0xda, 0x77, 0x8c, 0xf4, 0x82, 0xc1, 0x3b}        \
+}
 
 // CLASSES ====================================================================
 

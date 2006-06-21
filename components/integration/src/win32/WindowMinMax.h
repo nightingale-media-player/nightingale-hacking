@@ -51,12 +51,17 @@ namespace std
 class CWindowMinMaxSubclass;
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWMINMAX_CONTRACTID  "@songbird.org/Songbird/WindowMinMax;1"
-#define SONGBIRD_WINDOWMINMAX_CLASSNAME   "Songbird Window MinMax Interface"
-
-// {5F4ABE1E-76D2-43b5-8D5E-E6E272A49C50}
-#define SONGBIRD_WINDOWMINMAX_CID { 0x5f4abe1e, 0x76d2, 0x43b5, { 0x8d, 0x5e, 0xe6, 0xe2, 0x72, 0xa4, 0x9c, 0x50 } }
-
+#define SONGBIRD_WINDOWMINMAX_CONTRACTID                  \
+  "@songbird.org/Songbird/WindowMinMax;1"
+#define SONGBIRD_WINDOWMINMAX_CLASSNAME                   \
+  "Songbird Window MinMax Interface"
+#define SONGBIRD_WINDOWMINMAX_CID                         \
+{ /* 97115dee-8454-49e9-9e24-4f8c04e87fe2 */              \
+  0x97115dee,                                             \
+  0x8454,                                                 \
+  0x49e9,                                                 \
+  {0x9e, 0x24, 0x4f, 0x8c, 0x04, 0xe8, 0x7f, 0xe2}        \
+}
 // CLASSES ====================================================================
 class CWindowMinMax : public sbIWindowMinMax
 {

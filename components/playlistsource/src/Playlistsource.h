@@ -48,13 +48,17 @@
 #include <list>
 
 // DEFINES ====================================================================
-#define SONGBIRD_PLAYLISTSOURCE_CONTRACTID                                    \
-          "@mozilla.org/rdf/datasource;1?name=playlist"
-#define SONGBIRD_PLAYLISTSOURCE_CLASSNAME                                     \
-          "Songbird Media Data Source Component"
-#define SONGBIRD_PLAYLISTSOURCE_CID                                           \
-          {0x836d6ea5, 0xca63, 0x418f,                                        \
-            {0xbf, 0xd8, 0x27, 0x70, 0x45, 0x9, 0xa6, 0xa3}}
+#define SONGBIRD_PLAYLISTSOURCE_CONTRACTID                \
+  "@mozilla.org/rdf/datasource;1?name=playlist"
+#define SONGBIRD_PLAYLISTSOURCE_CLASSNAME                 \
+  "Songbird Media Data Source Component"
+#define SONGBIRD_PLAYLISTSOURCE_CID                       \
+{ /* 46d6999a-7584-4e21-b1c4-c170ec8236e8 */              \
+  0x46d6999a,                                             \
+  0x7584,                                                 \
+  0x4e21,                                                 \
+  {0xb1, 0xc4, 0xc1, 0x70, 0xec, 0x82, 0x36, 0xe8}        \
+}
 
 #define NUM_PLAYLIST_ITEMS 0
 

@@ -41,13 +41,17 @@
 #include <map>
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATACHANNEL_CONTRACTID  "@songbird.org/Songbird/MetadataChannel;1"
-#define SONGBIRD_METADATACHANNEL_CLASSNAME   "Songbird Metadata Channel Helper"
-
-// {6CB7F8A0-29ED-424b-AEF6-B491A8784AF4}
-#define SONGBIRD_METADATACHANNEL_CID { 0x6cb7f8a0, 0x29ed, 0x424b, { 0xae, 0xf6, 0xb4, 0x91, 0xa8, 0x78, 0x4a, 0xf4 } }
-
-
+#define SONGBIRD_METADATACHANNEL_CONTRACTID               \
+  "@songbird.org/Songbird/MetadataChannel;1"
+#define SONGBIRD_METADATACHANNEL_CLASSNAME                \
+  "Songbird Metadata Channel Helper"
+#define SONGBIRD_METADATACHANNEL_CID                      \
+{ /* 37595d88-f49e-4309-89a1-376749a4b285 */              \
+  0x37595d88,                                             \
+  0xf49e,                                                 \
+  0x4309,                                                 \
+  {0x89, 0xa1, 0x37, 0x67, 0x49, 0xa4, 0xb2, 0x85}        \
+}
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================

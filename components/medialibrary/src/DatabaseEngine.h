@@ -60,12 +60,17 @@ namespace std
 #endif
 
 // DEFINES ====================================================================
-#define SONGBIRD_DATABASEENGINE_CONTRACTID  "@songbird.org/Songbird/DatabaseEngine;1"
-#define SONGBIRD_DATABASEENGINE_CLASSNAME   "Songbird Database Engine Interface"
-
-// {3E3D92D6-EF65-4b76-8670-93A025C3D76B}
-#define SONGBIRD_DATABASEENGINE_CID { 0x3e3d92d6, 0x3f65, 0x4b76, { 0x86, 0x70, 0x93, 0xa0, 0x25, 0xc3, 0xd7, 0x6b } }
-
+#define SONGBIRD_DATABASEENGINE_CONTRACTID                \
+  "@songbird.org/Songbird/DatabaseEngine;1"
+#define SONGBIRD_DATABASEENGINE_CLASSNAME                 \
+  "Songbird Database Engine Interface"
+#define SONGBIRD_DATABASEENGINE_CID                       \
+{ /* 67d9edfd-9a76-4d60-9d76-59181801e193 */              \
+  0x67d9edfd,                                             \
+  0x9a76,                                                 \
+  0x4d60,                                                 \
+  {0x9d, 0x76, 0x59, 0x18, 0x18, 0x1, 0xe1, 0x93}         \
+}
 // FUNCTIONS ==================================================================
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
 

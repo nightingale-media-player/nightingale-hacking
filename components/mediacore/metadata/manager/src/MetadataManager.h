@@ -41,12 +41,17 @@
 #include <set>
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAMANAGER_CONTRACTID  "@songbird.org/Songbird/MetadataManager;1"
-#define SONGBIRD_METADATAMANAGER_CLASSNAME   "Songbird Metadata Manager Interface"
-
-// {3EBC067F-E52D-4041-A5E4-5C217D4A5FBE}
-#define SONGBIRD_METADATAMANAGER_CID { 0x3ebc067f, 0xe52d, 0x4041, { 0xa5, 0xe4, 0x5c, 0x21, 0x7d, 0x4a, 0x5f, 0xbe } }
-
+#define SONGBIRD_METADATAMANAGER_CONTRACTID               \
+  "@songbird.org/Songbird/MetadataManager;1"
+#define SONGBIRD_METADATAMANAGER_CLASSNAME                \
+  "Songbird Metadata Manager Interface"
+#define SONGBIRD_METADATAMANAGER_CID                      \
+{ /* 32bfdede-854d-448f-bada-7a3b4b192034 */              \
+  0x32bfdede,                                             \
+  0x854d,                                                 \
+  0x448f,                                                 \
+  {0xba, 0xda, 0x7a, 0x3b, 0x4b, 0x19, 0x20, 0x34}        \
+}
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================

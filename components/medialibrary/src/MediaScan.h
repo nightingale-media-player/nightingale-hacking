@@ -66,15 +66,29 @@ namespace std
 
 
 // DEFINES ====================================================================
-#define SONGBIRD_MEDIASCAN_CONTRACTID  "@songbird.org/Songbird/MediaScan;1"
-#define SONGBIRD_MEDIASCAN_CLASSNAME   "Songbird Media Scan Interface"
-#define SONGBIRD_MEDIASCAN_CID { 0x12bc75d3, 0x8fd4, 0x4b19, { 0x8f, 0x5b, 0xce, 0xf3, 0x53, 0xe5, 0x16, 0x8d } }
+#define SONGBIRD_MEDIASCAN_CONTRACTID                     \
+  "@songbird.org/Songbird/MediaScan;1"
+#define SONGBIRD_MEDIASCAN_CLASSNAME                      \
+  "Songbird Media Scan Interface"
+#define SONGBIRD_MEDIASCAN_CID                            \
+{ /* 28516ce7-fdee-4947-aad0-e5403c7866d5 */              \
+  0x28516ce7,                                             \
+  0xfdee,                                                 \
+  0x4947,                                                 \
+  {0xaa, 0xd0, 0xe5, 0x40, 0x3c, 0x78, 0x66, 0xd5}        \
+}
 
-// {32CD5811-77BF-4800-A4A8-FE764B8DDFD1}
-#define SONGBIRD_MEDIASCANQUERY_CONTRACTID "@songbird.org/Songbird/MediaScanQuery;1"
-#define SONGBIRD_MEDIASCANQUERY_CLASSNAME  "Songbird Media Scan Query Interface"
-#define SONGBIRD_MEDIASCANQUERY_CID { 0x32cd5811, 0x77bf, 0x4800, { 0xa4, 0xa8, 0xfe, 0x76, 0x4b, 0x8d, 0xdf, 0xd1 } }
-
+#define SONGBIRD_MEDIASCANQUERY_CONTRACTID                \
+  "@songbird.org/Songbird/MediaScanQuery;1"
+#define SONGBIRD_MEDIASCANQUERY_CLASSNAME                 \
+  "Songbird Media Scan Query Interface"
+#define SONGBIRD_MEDIASCANQUERY_CID                       \
+{ /* 4d72b67f-3eba-4621-a053-4881fcfbf667 */              \
+  0x4d72b67f,                                             \
+  0x3eba,                                                 \
+  0x4621,                                                 \
+  {0xa0, 0x53, 0x48, 0x81, 0xfc, 0xfb, 0xf6, 0x67}        \
+}
 // CLASSES ====================================================================
 /**
  * \class CMediaScanQuery

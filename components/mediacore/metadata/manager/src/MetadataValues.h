@@ -39,12 +39,17 @@
 #include <map>
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAVALUES_CONTRACTID  "@songbird.org/Songbird/MetadataValues;1"
-#define SONGBIRD_METADATAVALUES_CLASSNAME   "Songbird Metadata Values Container"
-
-// {EC39DE03-8918-4369-951E-0A04BD9CF663}
-#define SONGBIRD_METADATAVALUES_CID { 0xec39de03, 0x8918, 0x4369, { 0x95, 0x1e, 0xa, 0x4, 0xbd, 0x9c, 0xf6, 0x63 } }
-
+#define SONGBIRD_METADATAVALUES_CONTRACTID                \
+  "@songbird.org/Songbird/MetadataValues;1"
+#define SONGBIRD_METADATAVALUES_CLASSNAME                 \
+  "Songbird Metadata Values Container"
+#define SONGBIRD_METADATAVALUES_CID                       \
+{ /* 105e3af3-eef3-4b1b-900e-ccc1a9259ceb */              \
+  0x105e3af3,                                             \
+  0xeef3,                                                 \
+  0x4b1b,                                                 \
+  {0x90, 0xe, 0xcc, 0xc1, 0xa9, 0x25, 0x9c, 0xeb}         \
+}
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================

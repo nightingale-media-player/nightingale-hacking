@@ -47,10 +47,17 @@
 #error
 #endif
 // DEFINES ====================================================================
-#define SONGBIRD_Servicesource_CONTRACTID  "@mozilla.org/rdf/datasource;1?name=Servicesource"
-#define SONGBIRD_Servicesource_CLASSNAME   "Songbird Service Source Component"
-#define SONGBIRD_Servicesource_CID { 0x646a07d, 0x2697, 0x4998, { 0xa4, 0xf3, 0xd5, 0xf7, 0x79, 0x38, 0xa7, 0xbe } }
-
+#define SONGBIRD_Servicesource_CONTRACTID                 \
+  "@mozilla.org/rdf/datasource;1?name=Servicesource"
+#define SONGBIRD_Servicesource_CLASSNAME                  \
+  "Songbird Service Source Component"
+#define SONGBIRD_Servicesource_CID                        \
+{ /* 5c0ebb3e-ae05-4b26-8cdf-483573bca888 */              \
+  0x5c0ebb3e,                                             \
+  0xae05,                                                 \
+  0x4b26,                                                 \
+  {0x8c, 0xdf, 0x48, 0x35, 0x73, 0xbc, 0xa8, 0x88}        \
+}
 // CLASSES ====================================================================
 class CServicesource : public sbIServicesource
 {

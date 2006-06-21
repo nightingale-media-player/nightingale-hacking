@@ -55,11 +55,17 @@ namespace std
 class sbIDataRemote;
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWDRAGGER_CONTRACTID  "@songbird.org/Songbird/WindowDragger;1"
-#define SONGBIRD_WINDOWDRAGGER_CLASSNAME   "Songbird Window Dragger Interface"
-
-// {880147D8-8DE1-44ae-AB4E-FC3D52C048BE}
-#define SONGBIRD_WINDOWDRAGGER_CID { 0x880147d8, 0x8de1, 0x44ae, { 0xab, 0x4e, 0xfc, 0x3d, 0x52, 0xc0, 0x48, 0xbe } }
+#define SONGBIRD_WINDOWDRAGGER_CONTRACTID                 \
+  "@songbird.org/Songbird/WindowDragger;1"
+#define SONGBIRD_WINDOWDRAGGER_CLASSNAME                  \
+  "Songbird Window Dragger Interface"
+#define SONGBIRD_WINDOWDRAGGER_CID                        \
+{ /* cf132153-958a-4070-a829-5596fd665b5f */              \
+  0xcf132153,                                             \
+  0x958a,                                                 \
+  0x4070,                                                 \
+  {0xa8, 0x29, 0x55, 0x96, 0xfd, 0x66, 0x5b, 0x5f}        \
+}
 
 // CLASSES ====================================================================
 class CWindowDragger : public sbIWindowDragger

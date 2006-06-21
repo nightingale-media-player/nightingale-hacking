@@ -43,10 +43,17 @@
 #error
 #endif
 // DEFINES ====================================================================
-#define SONGBIRD_CDDevice_CONTRACTID  "@songbird.org/Songbird/Device/CDDevice;1"
-#define SONGBIRD_CDDevice_CLASSNAME   "Songbird CD Device"
-#define SONGBIRD_CDDevice_CID { 0xfed4919e, 0x213f, 0x4448, { 0xa6, 0x89, 0xf2, 0x2d, 0xd1, 0xc5, 0x69, 0x94 } }
-// {FED4919E-213F-4448-A689-F22DD1C56994}
+#define SONGBIRD_CDDevice_CONTRACTID                      \
+  "@songbird.org/Songbird/Device/CDDevice;1"
+#define SONGBIRD_CDDevice_CLASSNAME                       \
+  "Songbird CD Device"
+#define SONGBIRD_CDDevice_CID                             \
+{ /* 23c714a8-dff3-481e-bc4c-61ece265c7f8 */              \
+  0x23c714a8,                                             \
+  0xdff3,                                                 \
+  0x481e,                                                 \
+  {0xbc, 0x4c, 0x61, 0xec, 0xe2, 0x65, 0xc7, 0xf8}        \
+}
 
 #define CONTEXT_COMPACT_DISC_DEVICE NS_LITERAL_STRING("compactdiscDB-").get()
 

@@ -49,12 +49,17 @@ namespace std
 #include "NativeWindowFromNode.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWREGION_CONTRACTID  "@songbird.org/Songbird/WindowRegion;1"
-#define SONGBIRD_WINDOWREGION_CLASSNAME   "Songbird Window Region Interface"
-
-// {02C17B60-FE25-4082-BD2A-A8E720428433}
-#define SONGBIRD_WINDOWREGION_CID { 0x2c17b60, 0xfe25, 0x4082, { 0xbd, 0x2a, 0xa8, 0xe7, 0x20, 0x42, 0x84, 0x33 } }
-
+#define SONGBIRD_WINDOWREGION_CONTRACTID                  \
+  "@songbird.org/Songbird/WindowRegion;1"
+#define SONGBIRD_WINDOWREGION_CLASSNAME                   \
+  "Songbird Window Region Interface"
+#define SONGBIRD_WINDOWREGION_CID                         \
+{ /* 3aec3cbb-cba8-4a51-a028-4b28a4719bff */              \
+  0x3aec3cbb,                                             \
+  0xcba8,                                                 \
+  0x4a51,                                                 \
+  {0xa0, 0x28, 0x4b, 0x28, 0xa4, 0x71, 0x9b, 0xff}        \
+}
 // CLASSES ====================================================================
 class CWindowRegion : public sbIWindowRegion
 {

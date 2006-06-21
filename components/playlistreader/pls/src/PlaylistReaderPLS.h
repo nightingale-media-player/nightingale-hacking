@@ -51,12 +51,17 @@ namespace std
 #include <string>
 
 // DEFINES ====================================================================
-#define SONGBIRD_PLREADERPLS_CONTRACTID  "@songbird.org/Songbird/Playlist/Reader/PLS;1"
-#define SONGBIRD_PLREADERPLS_CLASSNAME   "Songbird Playlist Reader for PLS Playlists"
-
-// {89CB756E-299A-4146-8ABA-2A6554D143C0}
-#define SONGBIRD_PLREADERPLS_CID { 0x89cb756e, 0x299a, 0x4146, { 0x8a, 0xba, 0x2a, 0x65, 0x54, 0xd1, 0x43, 0xc0 } }
-
+#define SONGBIRD_PLREADERPLS_CONTRACTID                   \
+  "@songbird.org/Songbird/Playlist/Reader/PLS;1"
+#define SONGBIRD_PLREADERPLS_CLASSNAME                    \
+  "Songbird Playlist Reader for PLS Playlists"
+#define SONGBIRD_PLREADERPLS_CID                          \
+{ /* efe1b6b0-fb9a-40a1-8876-42d9a035291f */              \
+  0xefe1b6b0,                                             \
+  0xfb9a,                                                 \
+  0x40a1,                                                 \
+  {0x88, 0x76, 0x42, 0xd9, 0xa0, 0x35, 0x29, 0x1f}        \
+}
 // CLASSES ====================================================================
 class CPlaylistReaderPLS : public sbIPlaylistReader
 {

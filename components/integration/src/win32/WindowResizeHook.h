@@ -50,12 +50,17 @@ namespace std
 #include <list>
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWRESIZEHOOK_CONTRACTID  "@songbird.org/Songbird/WindowResizeHook;1"
-#define SONGBIRD_WINDOWRESIZEHOOK_CLASSNAME   "Songbird Window Resize Hook Interface"
-
-// {D44A410E-70A1-4932-8F5A-B1D644356401}
-#define SONGBIRD_WINDOWRESIZEHOOK_CID { 0xd44a410e, 0x70a1, 0x4932, { 0x8f, 0x5a, 0xb1, 0xd6, 0x44, 0x35, 0x64, 0x1 } }
-
+#define SONGBIRD_WINDOWRESIZEHOOK_CONTRACTID              \
+  "@songbird.org/Songbird/WindowResizeHook;1"
+#define SONGBIRD_WINDOWRESIZEHOOK_CLASSNAME               \
+  "Songbird Window Resize Hook Interface"
+#define SONGBIRD_WINDOWRESIZEHOOK_CID                     \
+{ /* 147cfe40-cbbf-43e9-9225-b5caf9fe2955 */              \
+  0x147cfe40,                                             \
+  0xcbbf,                                                 \
+  0x43e9,                                                 \
+  {0x92, 0x25, 0xb5, 0xca, 0xf9, 0xfe, 0x29, 0x55}        \
+}
 // CLASSES ====================================================================
 
 class CWindowResizeHookItem

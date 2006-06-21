@@ -50,12 +50,17 @@
 #include "funcprotos.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAHANDLERMP4_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/MP4;1"
-#define SONGBIRD_METADATAHANDLERMP4_CLASSNAME   "Songbird MP4 Metadata Handler Interface"
-
-// {39B0F740-5E3B-4016-8834-CEC55B6E2967}
-#define SONGBIRD_METADATAHANDLERMP4_CID { 0x39b0f740, 0x5e3b, 0x4016, { 0x88, 0x34, 0xce, 0xc5, 0x5b, 0x6e, 0x29, 0x67 } }
-
+#define SONGBIRD_METADATAHANDLERMP4_CONTRACTID            \
+  "@songbird.org/Songbird/MetadataHandler/MP4;1"
+#define SONGBIRD_METADATAHANDLERMP4_CLASSNAME             \
+  "Songbird MP4 Metadata Handler Interface"
+#define SONGBIRD_METADATAHANDLERMP4_CID                   \
+{ /* 6f289ead-9ec8-4230-ad6b-fd8873987fee */              \
+  0x6f289ead,                                             \
+  0x9ec8,                                                 \
+  0x4230,                                                 \
+  {0xad, 0x6b, 0xfd, 0x88, 0x73, 0x98, 0x7f, 0xee}        \
+}
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================

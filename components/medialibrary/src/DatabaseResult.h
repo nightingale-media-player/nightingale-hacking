@@ -54,12 +54,17 @@ namespace std
 
 
 // DEFINES ====================================================================
-#define SONGBIRD_DATABASERESULT_CONTRACTID  "@songbird.org/Songbird/DatabaseResult;1"
-#define SONGBIRD_DATABASERESULT_CLASSNAME   "Songbird Database Result Interface"
-
-// {D711447E-B6B0-4e63-A50E-3523794E08DF}
-#define SONGBIRD_DATABASERESULT_CID { 0xd711447e, 0xb6b0, 0x4e63, { 0xa5, 0xe, 0x35, 0x23, 0x79, 0x4e, 0x8, 0xdf } }
-
+#define SONGBIRD_DATABASERESULT_CONTRACTID                \
+  "@songbird.org/Songbird/DatabaseResult;1"
+#define SONGBIRD_DATABASERESULT_CLASSNAME                 \
+  "Songbird Database Result Interface"
+#define SONGBIRD_DATABASERESULT_CID                       \
+{ /* 9079e1b1-01e9-4cb8-9f2a-08fdf69597cf */              \
+  0x9079e1b1,                                             \
+  0x1e9,                                                  \
+  0x4cb8,                                                 \
+  {0x9f, 0x2a, 0x8, 0xfd, 0xf6, 0x95, 0x97, 0xcf}         \
+}
 // CLASSES ====================================================================
 class CDatabaseResult : public sbIDatabaseResult
 {

@@ -54,12 +54,17 @@ namespace std
 #include <list>
 
 // DEFINES ====================================================================
-#define SONGBIRD_MEDIAKEYBOARD_CONTRACTID  "@songbird.org/Songbird/MediaKeyboard;1"
-#define SONGBIRD_MEDIAKEYBOARD_CLASSNAME   "Songbird Media Keyboard Manager"
-
-// {7007FD60-E3A8-46a0-9FF7-2B025E44D725}
-#define SONGBIRD_MEDIAKEYBOARD_CID { 0x7007fd60, 0xe3a8, 0x46a0, { 0x9f, 0xf7, 0x2b, 0x2, 0x5e, 0x44, 0xd7, 0x25 } }
-
+#define SONGBIRD_MEDIAKEYBOARD_CONTRACTID                 \
+  "@songbird.org/Songbird/MediaKeyboard;1"
+#define SONGBIRD_MEDIAKEYBOARD_CLASSNAME                  \
+  "Songbird Media Keyboard Manager"
+#define SONGBIRD_MEDIAKEYBOARD_CID                        \
+{ /* d55b25ec-4c04-4453-b3fa-641b6e8a5a87 */              \
+  0xd55b25ec,                                             \
+  0x4c04,                                                 \
+  0x4453,                                                 \
+  {0xb3, 0xfa, 0x64, 0x1b, 0x6e, 0x8a, 0x5a, 0x87}        \
+}
 // CLASSES ====================================================================
 class CMediaKeyboard : public sbIMediaKeyboard
 {

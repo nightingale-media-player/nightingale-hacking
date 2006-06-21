@@ -47,9 +47,17 @@
 #include <nsIThread.h>
 #include <nsIRunnable.h>
 
-#define SONGBIRD_DeviceBase_CONTRACTID  "@songbird.org/Songbird/Device/DeviceBase;1"
-#define SONGBIRD_DeviceBase_CLASSNAME   "Songbird Device Base"
-#define SONGBIRD_DeviceBase_CID { 0x8a4f139a, 0xc504, 0x4470, { 0x8b, 0xb4, 0xa4, 0x3f, 0x33, 0x32, 0x8b, 0x41 } }
+#define SONGBIRD_DeviceBase_CONTRACTID                    \
+  "@songbird.org/Songbird/Device/DeviceBase;1"
+#define SONGBIRD_DeviceBase_CLASSNAME                     \
+  "Songbird Device Base"
+#define SONGBIRD_DeviceBase_CID                           \
+{ /* 937d0ae7-9ba1-475d-82fd-609ff5f78508 */              \
+  0x937d0ae7,                                             \
+  0x9ba1,                                                 \
+  0x475d,                                                 \
+  {0x82, 0xfd, 0x60, 0x9f, 0xf5, 0xf7, 0x85, 0x8}         \
+}
 
 namespace 
 {

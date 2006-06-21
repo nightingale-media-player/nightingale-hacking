@@ -43,9 +43,17 @@
 #error
 #endif
 // DEFINES ====================================================================
-#define SONGBIRD_DownloadDevice_CONTRACTID  "@songbird.org/Songbird/Device/DownloadDevice;1"
-#define SONGBIRD_DownloadDevice_CLASSNAME   "Songbird Download Device"
-#define SONGBIRD_DownloadDevice_CID { 0x5918440D, 0xAF8B, 0x40e9, { 0x80, 0xC4, 0xF1, 0x13, 0x2B, 0xD8, 0x93, 0xA9 } }
+#define SONGBIRD_DownloadDevice_CONTRACTID                \
+  "@songbird.org/Songbird/Device/DownloadDevice;1"
+#define SONGBIRD_DownloadDevice_CLASSNAME                 \
+  "Songbird Download Device"
+#define SONGBIRD_DownloadDevice_CID                       \
+{ /* 961da3f4-5ef1-4ad0-818d-622c7bd17447 */              \
+  0x961da3f4,                                             \
+  0x5ef1,                                                 \
+  0x4ad0,                                                 \
+  {0x81, 0x8d, 0x62, 0x2c, 0x7b, 0xd1, 0x74, 0x47}        \
+}
 
 // CLASSES ====================================================================
 

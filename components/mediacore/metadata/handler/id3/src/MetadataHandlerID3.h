@@ -48,11 +48,17 @@
 #include <id3/tag.h>
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAHANDLERID3_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/ID3;1"
-#define SONGBIRD_METADATAHANDLERID3_CLASSNAME   "Songbird ID3 Metadata Handler Interface"
-
-// {D83C6CE1-DDCE-49ad-ABF3-430A5C223C3B}
-#define SONGBIRD_METADATAHANDLERID3_CID { 0xd83c6ce1, 0xddce, 0x49ad, { 0xab, 0xf3, 0x43, 0xa, 0x5c, 0x22, 0x3c, 0x3b } }
+#define SONGBIRD_METADATAHANDLERID3_CONTRACTID            \
+  "@songbird.org/Songbird/MetadataHandler/ID3;1"
+#define SONGBIRD_METADATAHANDLERID3_CLASSNAME             \
+  "Songbird ID3 Metadata Handler Interface"
+#define SONGBIRD_METADATAHANDLERID3_CID                   \
+{ /* a8fc38c2-a309-4f45-b76b-cbb0fa935637 */              \
+  0xa8fc38c2,                                             \
+  0xa309,                                                 \
+  0x4f45,                                                 \
+  {0xb7, 0x6b, 0xcb, 0xb0, 0xfa, 0x93, 0x56, 0x37}        \
+}
 
 // FUNCTIONS ==================================================================
 

@@ -53,9 +53,17 @@ namespace std
 #include <string>
 
 // DEFINES ====================================================================
-#define SONGBIRD_PLREADERM3U_CONTRACTID  "@songbird.org/Songbird/Playlist/Reader/M3U;1"
-#define SONGBIRD_PLREADERM3U_CLASSNAME   "Songbird Playlist Reader for M3U Playlists"
-#define SONGBIRD_PLREADERM3U_CID { 0x7295bde2, 0xcb17, 0x4bf3, { 0x88, 0x33, 0x68, 0xf5, 0x17, 0x20, 0x0, 0xa7 } }
+#define SONGBIRD_PLREADERM3U_CONTRACTID                   \
+  "@songbird.org/Songbird/Playlist/Reader/M3U;1"
+#define SONGBIRD_PLREADERM3U_CLASSNAME                    \
+  "Songbird Playlist Reader for M3U Playlists"
+#define SONGBIRD_PLREADERM3U_CID                          \
+{ /* 87cb8a38-d664-49a6-9bcf-ce2d26deb0fd */              \
+  0x87cb8a38,                                             \
+  0xd664,                                                 \
+  0x49a6,                                                 \
+  {0x9b, 0xcf, 0xce, 0x2d, 0x26, 0xde, 0xb0, 0xfd}        \
+}
 
 // CLASSES ====================================================================
 class CPlaylistReaderM3U : public sbIPlaylistReader
