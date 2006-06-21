@@ -157,7 +157,7 @@ protected:
   virtual nsString GetDeviceDownloadReadable(const PRUnichar* deviceString){ return nsString(); }
   virtual nsString GetDeviceUploadTableReadable(const PRUnichar* deviceString){ return nsString(); }
 
-  // Needs to overridden in the derived class to return the row number for currently transferring track
+  // Should be overridden in the derived class to return the row number for currently transferring track
   virtual PRUint32  GetCurrentTransferRowNumber(const PRUnichar* deviceString) { return 0;  }
 
   virtual PRBool GetUploadFileFormat(PRUint32& fileFormat);
