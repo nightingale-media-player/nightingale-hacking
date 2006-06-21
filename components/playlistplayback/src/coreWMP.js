@@ -364,11 +364,13 @@ function CoreWMPDocumentInit( id )
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     var theWMPInstance = document.getElementById( id );
 
+   
+    alert( theWMPInstance.controls );
+    
     gCoreWMP.setId("WMP1");
     gCoreWMP.setObject(theWMPInstance);
     gPPS.addCore(gCoreWMP, true);
     
-    alert( theWMPInstance.controls );
   }
   catch ( err )
   {

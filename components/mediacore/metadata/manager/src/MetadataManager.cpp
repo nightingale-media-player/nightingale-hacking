@@ -145,18 +145,23 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
         {
           PRInt32 vote;
           handler->Vote( url.get(), &vote );
-          sbMetadataHandlerItem item;
-          item.m_Handler = handler;
-          item.m_Vote = vote;
-          handlerlist.insert( item );
+          if (vote >= 0) // If everyone returns -1, give up.
+          {
+            sbMetadataHandlerItem item;
+            item.m_Handler = handler;
+            item.m_Vote = vote;
+            handlerlist.insert( item ); // Sorted list
+          }
         }
       }
       PR_Free(contractID);
     }
   }
 
+  // If there's anything in the list
   if ( handlerlist.rbegin() != handlerlist.rend() )
   {
+    // The end of the list had the highest vote
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
     pHandler = (*i).m_Handler.get();
   }
@@ -167,6 +172,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     return nRet;
   }
 
+  // So, if we have anything, set it up and send it back.
   nRet = pHandler->SetChannel(pChannel, &nHandlerRet);
   if(nRet != 0) return nRet;
 

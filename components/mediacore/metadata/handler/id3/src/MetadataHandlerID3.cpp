@@ -284,9 +284,18 @@ NS_IMETHODIMP sbMetadataHandlerID3::Vote(const PRUnichar *url, PRInt32 *_retval 
   nsString strUrl( url );
 
   if ( strUrl.Find( ".mp3", PR_TRUE ) != -1 )
-    *_retval = 1;
+    *_retval = 1; // Yes, we want this.
+  else if ( 
+    ( strUrl.Find( ".mov", PR_TRUE ) != -1 ) ||
+    ( strUrl.Find( ".avi", PR_TRUE ) != -1 ) ||
+    ( strUrl.Find( ".wma", PR_TRUE ) != -1 ) ||
+    ( strUrl.Find( ".wmv", PR_TRUE ) != -1 ) ||
+    ( strUrl.Find( ".asf", PR_TRUE ) != -1 ) ||
+    ( strUrl.Find( ".wav", PR_TRUE ) != -1 )
+  )
+    *_retval = -1; // Ones we _know_ we don't want
   else
-    *_retval = 0;
+    *_retval = 0; // Otherwise, go ahead and try to be the default
 
   return NS_OK;
 } //Close

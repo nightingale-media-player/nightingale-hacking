@@ -27,10 +27,11 @@ pref("plugin.scan.WindowsMediaPlayer", "10.0");
 
 pref("general.useragent.vendorComment", "ax");
 pref("security.xpconnect.activex.global.hosting_flags", 9);
-pref("security.classID.allowByDefault", false);
+pref("security.classID.allowByDefault", true);
 
 /* Windows Media Player */
 pref("capability.policy.default.ClassID.CID6BF52A52-394A-11D3-B153-00C04F79FAA6", "AllAccess");
+pref("capability.policy.default.ClassID.CID74C09E02-F828-11d2-A74B-00A0C905F36E", "AllAccess");
 /* QuickTime Player */
 pref("capability.policy.default.ClassID.CID22D6F312-B0F6-11D0-94AB-0080C74C7E95", "AllAccess");
 

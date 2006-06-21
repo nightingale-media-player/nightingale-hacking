@@ -24,6 +24,8 @@
 //
  */
 
+#include <windows.h>
+
 /** 
 * \file  DeviceManager.cpp
 * \Windows Media device Component Implementation.
@@ -220,6 +222,9 @@ sbDeviceManager::LoadSupportedDevices()
       NS_WARNING("GetData failed");
       continue;
     }
+
+    ::OutputDebugStringA( contractID.get() );
+    ::OutputDebugStringA( "\n" );
 
     NS_NAMED_LITERAL_CSTRING(prefix, SB_DEVICE_PREFIX);
 
