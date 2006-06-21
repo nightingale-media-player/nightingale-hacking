@@ -319,7 +319,10 @@ CPlaylistManager.prototype =
         
         if(strSourceFilterColumn != "" && nSourceFilterValueCount && aSourceFilterValues)
         {
-          strFilterQuery += "playlist_" + strSourceFilterColumn + " IN (";
+          if(strSourceName != "library")
+            strFilterQuery += "playlist_";
+            
+          strFilterQuery += strSourceFilterColumn + " IN (";
           for(var i = 0; i < nSourceFilterValueCount; ++i)
           {
             strFilterQuery += "\"" + aSourceFilterValues[i] + "\"";
