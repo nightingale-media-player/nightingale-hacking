@@ -25,26 +25,27 @@
  */
 
 //
-// Formal constructors to get interfaces because I'm lazy.
+// Formal constructors to get interfaces - all creations in js should use these unless
+//   getting the object as a service, then you should use the proper getService call.
+// alpha-sorted!!
 //
 
 const sbIDatabaseQuery = new Components.Constructor("@songbird.org/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
-
-const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
-
-const sbIMediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-
-const sbIPlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-const sbIPlaylist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
-const sbISimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+const sbIDataRemote = new Components.Constructor("@songbird.org/Songbird/DataRemote;1", "sbIDataRemote", "init");
 const sbIDynamicPlaylist = new Components.Constructor("@songbird.org/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
-const sbISmartPlaylist = new Components.Constructor("@songbird.org/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
-
-const sbIPlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-const sbIPlaylistReaderListener = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
-
+// XXX isnt this a service?
+const sbIMediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
 const sbIMediaScan = new Components.Constructor("@songbird.org/Songbird/MediaScan;1", "sbIMediaScan");
 const sbIMediaScanQuery = new Components.Constructor("@songbird.org/Songbird/MediaScanQuery;1", "sbIMediaScanQuery");
+// XXX isnt this a service?
+const sbIPlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+const sbIPlaylist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
+const sbIPlaylistReaderListener = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
+// XXX isnt this a service?
+const sbIPlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
+const sbISimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+const sbISmartPlaylist = new Components.Constructor("@songbird.org/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
 
 //
 // SBBindInterface - take an object and make it a wrapper of the given type.
