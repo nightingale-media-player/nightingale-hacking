@@ -339,7 +339,7 @@ function SBAppInitialize()
 
     /*
     */
-    //var theWMPInstance = document.getElementById( "core_wm" );
+    var theWMPInstance = document.getElementById( "core_wm" );
 
     /*
     */
@@ -362,14 +362,26 @@ function SBAppInitialize()
     // Let the sbIPlaylistPlayback interface play in the game, too, maaaan.
     //Windows, prefer VLC.
     if ( PLATFORM_WIN32 ) {
+      // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
-      theQTInstance.hidden = true;
+      // Hide Quicktime
+      var theQTBox = document.getElementById( "box_qt" );
+      if (theQTBox)
+        theQTBox.setAttribute("hidden","true");
+      if (theQTInstance)
+        theQTInstance.setAttribute("hidden","true");
     }
 
     //MacOSX, prefer QT.
     if( PLATFORM_MACOSX ) {
+      // Initialize with Quicktime
       CoreQTDocumentInit( "core_qt_document" );
-      theVLCInstance.hidden = true;
+      // Hide VLC
+      var theVLCBox = document.getElementById( "box_vlc" );
+      if (theVLCBox)
+        theVLCBox.setAttribute("hidden","true");
+      if (theVLCInstance)
+        theVLCInstance.setAttribute("hidden","true");
     }
     
     //Linux, prefer...?
