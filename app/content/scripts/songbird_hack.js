@@ -1407,8 +1407,8 @@ function onBrowserPlaylistHide()
   var theTree = document.getElementById( "playlist_web" );
   if ( theTree )
   {
+    // get this as a service? -redfive
     var source = new sbIPlaylistsource();
-    source.ClearPlaylist( theTree.ref );  // this call is deprecated 
     theTree.datasources = "";
     theTree.ref = "";
   }
