@@ -355,7 +355,7 @@ PRBool sbDeviceBase::StartTransfer(const PRUnichar *deviceString, const PRUnicha
   data->dbTable = tableName;
 
   // Send a thread message if using a thread otherwise just call the Transfer function.
-  PRBool retval = (mUsingThread)?SubmitMessage(MSG_DEVICE_TRANSFER, (void*)-1, (void*)data):TransferNextFile(-1, data);
+  PRBool retval = (mUsingThread == PR_TRUE)?SubmitMessage(MSG_DEVICE_TRANSFER, (void*)-1, (void*)data):TransferNextFile(-1, data);
 
   return retval;
 }
