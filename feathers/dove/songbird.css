@@ -2390,9 +2390,9 @@ Mute and Slider
   -moz-appearance: none !important; /* grrrr! */
   width: 21px !important;
   height: 10px !important;
-  background-image: url(default/seekbar_thumb.png) !important;
-  background-color: transparent !important;
-  background-repeat: no-repeat !important;
+  background-color: #7e847b !important;
+  background-image: url(default/seekbar_progress.png) !important;
+  border: 1px solid #a7afa2 !important;
 }
 #songbird_seekbar_thumb > gripper
 {
@@ -2417,6 +2417,7 @@ Mute and Slider
 }
 #songbird_seekbar
 {
+  -moz-appearance: none !important;
   border: 1px solid #7e847b !important;
   height: 10px !important;
 }
