@@ -170,20 +170,30 @@
             <spacer height="10"/>
             <hbox flex="1">
               <spacer width="10"/>
+              <!-- HEY!  If you add new objects or iframes to this list,
+                   you need to make sure you hide them per platform in Songbird.js -->
               <hbox id="box_vlc" flex="1">
                 <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
               </hbox>
               <hbox id="box_qt" flex="1">
                 <html:iframe id="core_qt_document" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
               </hbox>
-              <hbox id="box_qt" flex="1">
+              <hbox id="box_flash" flex="1">
                 <html:iframe id="core_flash_frame" src="chrome://songbird/content/html/flash.html" type="content" flex="1" />
               </hbox>
               <!-- things that might be needed when we finally sort out the playback jumble
-                <html:iframe id="core_vlc_document" src="chrome://songbird/content/html/vlc.html" type="content" flex="1" />
+              <hbox id="box_wm" flex="1">
                 <html:object id="core_wm" flex="1" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="application/asx" />
+              </hbox>
+              <hbox id="box_vlc" flex="1">
+                <html:iframe id="core_vlc_document" src="chrome://songbird/content/html/vlc.html" type="content" flex="1" />
+              </hbox>
+              <hbox id="box_mp" flex="1">
                 <html:embed id="core_mplayer" flex="1" autoplay="0" loop="0" repeat="0" type="audio/mpeg"/>
+              </hbox>
+              <hbox id="box_mp" flex="1">
                 <html:iframe id="core_mp_frame" src="chrome://songbird/content/html/mplayer.html" type="content" flex="1" />
+              </hbox>
               -->
               <spacer width="10"/>
             </hbox>
@@ -227,9 +237,9 @@
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/baseCore.js"/>
-<!--
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreVLC.js"/>
+<!--
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreMPlayer.js"/>
 -->

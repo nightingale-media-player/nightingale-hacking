@@ -340,14 +340,22 @@ function SBAppInitialize()
     /*
     */
     var theWMPInstance = document.getElementById( "core_wm" );
+    var theWMPBox = document.getElementById( "box_wm" );
 
     /*
     */
     var theQTInstance = document.getElementById( "core_qt_document" );
+    var theQTBox = document.getElementById( "box_qt" );
 
     /*
     */
-    var theVLCInstance = document.getElementById( "core_vlc_document" );
+    var theVLCInstance = document.getElementById( "core_vlc" );
+    var theVLCBox = document.getElementById( "box_vlc" );
+
+    /*
+    */
+    var theFLInstance = document.getElementById( "core_flash_frame" );
+    var theFLBox = document.getElementById( "box_flash" );
 
     // Bind the core instances to the core objects (I really should make these use createElementNS, if we can get it to work)      
     //theWMPCore.bindInstance( theWMPInstance );
@@ -365,11 +373,9 @@ function SBAppInitialize()
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
       // Hide Quicktime
-      var theQTBox = document.getElementById( "box_qt" );
-      if (theQTBox)
-        theQTBox.setAttribute("hidden","true");
-      if (theQTInstance)
-        theQTInstance.setAttribute("hidden","true");
+      if (theQTBox) theQTBox.hidden = true;
+      // Hide Flash
+      if (theFLBox) theFLBox.hidden = true;
     }
 
     //MacOSX, prefer QT.
@@ -377,11 +383,9 @@ function SBAppInitialize()
       // Initialize with Quicktime
       CoreQTDocumentInit( "core_qt_document" );
       // Hide VLC
-      var theVLCBox = document.getElementById( "box_vlc" );
-      if (theVLCBox)
-        theVLCBox.setAttribute("hidden","true");
-      if (theVLCInstance)
-        theVLCInstance.setAttribute("hidden","true");
+      if (theVLCBox) theVLCBox.hidden = true;
+      // Hide Flash
+      if (theFLBox) theFLBox.hidden = true;
     }
     
     //Linux, prefer...?
@@ -389,6 +393,10 @@ function SBAppInitialize()
       //CoreVLCDocumentInit( "core_vlc_document" );
       //InitPlaybackCoreMPlayer( "core_mp_frame" );
       InitPlaybackCoreFlash( "core_flash_frame" );
+      // Hide VLC
+      if (theVLCBox) theVLCBox.hidden = true;
+      // Hide Quicktime
+      if (theQTBox) theQTBox.hidden = true;
     }
     
     //CoreWMPDocumentInit( "core_wm" );
