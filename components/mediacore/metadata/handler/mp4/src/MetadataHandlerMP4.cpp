@@ -285,16 +285,10 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
     // ?? Local file
     char *url = const_cast<char *>(NS_UnescapeURL(cstrPath).get());
 
-/*
-  Atomic Parsley is GPL and less-desireable, but it seems to know where the proper data atoms are.
-
-    APar_ScanAtoms(url);    
-    AtomicInfo info = APar_FindAtom("moov.udta.meta.ilst.©nam.data", false, false, true, false);
-*/
-    
     quicktime_t *file;
     file = quicktime_open( url, 1, 0, 0 );
-    quicktime_dump_info(file, static_callback, this);
+    if (file)
+      quicktime_dump_info(file, static_callback, this);
     m_Completed = true;
   }
   else
