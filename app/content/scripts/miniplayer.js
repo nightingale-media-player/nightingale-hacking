@@ -64,7 +64,7 @@ try
     } else {
       document.getElementById("mini_close").hidden = true;
       document.getElementById("mini_btn_max").setAttribute("oncommand", "SBFullscreen();");
-      document.getElementById("mini").setAttribute("style", "background-color: #000 !important;");
+      document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important;");
     }
     window.addEventListener( "keydown", checkAltF4, true );
     
