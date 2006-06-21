@@ -271,8 +271,9 @@ Love the box.
   background-color: #686A6A !important;
 }
 
-/*
-button#service_pane
+
+
+#frame_service_buttonbar button
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
@@ -285,9 +286,36 @@ button#service_pane
   -moz-border-right-colors: #333 !important;
   background-color: #686A6A !important;
   height: 25px !important;  
-  color: #99A195 !important;  
+  color: #99A195 !important; 
 }
-*/
+#frame_service_buttonbar button:hover
+{
+  color: #FFF !important;
+}
+
+
+/** Offset menu a to account for rounded button **/
+#frame_service_buttonbar clickholdbutton menupopup
+{
+ margin-left: 8px;
+}
+
+/** Bind images to the popup and button */
+/** NOTE: IDs containing periods are bad.. */
+#frame_service_buttonbar clickholdbutton[id="file.new"]
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important; 
+}
+#frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.smart"] {
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.remote"]{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {

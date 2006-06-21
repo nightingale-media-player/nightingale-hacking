@@ -816,6 +816,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\clickholdbutton.xml"
+					>
+				</File>
+				<File
 					RelativePath=".\content\bindings\db_controls.xml"
 					>
 					<FileConfiguration

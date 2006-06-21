@@ -438,9 +438,14 @@
                       <servicetree id="frame_servicetree" flex="1"/>                  
                     </hbox>
                     <!-- Service Pane Button Bar, Buttons for adding a new service or playlist-->
+                    <!-- For now just hijacking the file menu implementation.. -->
+                    <!-- TODO: over state, up arrow, remove periods from all IDs -->
                     <hbox class="sb_faceplate" id="frame_service_buttonbar">
-                      <button class="sb_faceplate" style="visibility:hidden;display:none;" disabled="true" id="service_pane" flex="1" type="menu">
-                      </button>
+                      <clickholdbutton id="file.new"  flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft"   oncommand="onMenu(event.target)">
+                        <menuitem id="file.new" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+                        <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+                        <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+                      </clickholdbutton>
                     </hbox>
 
                   </vbox>

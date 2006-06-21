@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 Pioneers of the Inevitable LLC
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!--
+  /**
+   * A normal button, except that clicking and holding triggers a popup menu.
+   */
+  -->
+  <binding id="clickholdbutton">
+
+    <content>
+        <xul:button id="button" xbl:inherits="label" flex="1" />
+        <xul:menupopup id="popup" xbl:inherits="position,popupanchor,popupalign">
+          <children/>
+        </xul:menupopup>
+    </content>
+
+   <implementation type="application/x-javascript">
+
+     <constructor>
+       <![CDATA[
+       this.popupInterval = null;
+       this.popup = document.getElementById('popup');
+       this.button = document.getElementById('button');
+
+       this.popupShowing = false;
+       ]]>
+     </constructor>
+
+     <destructor>
+       <![CDATA[
+       // Ah what the hell, why not
+       clearInterval(this.popupInterval);
+       ]]>
+     </destructor>
+
+     <method name="showPopup">
+       <body>
+         <![CDATA[
+         if (!this.popupShowing) 
+         {
+          var anchor = this.popup.getAttribute("popupanchor");
+          var align = this.popup.getAttribute("popupalign");
+          // anchor = 'topleft';
+          // align = 'bottomleft';
+          this.popup.showPopup(this, -1, -1, 'popup', anchor, align);
+         }
+         ]]>
+       </body>
+     </method>
+
+     <method name="delayPopup">
+       <parameter name="delay"/>
+       <body>
+         <![CDATA[
+         var controller = this;
+         var onTimeout = function()
+         {
+            controller.showPopup();
+         };
+         this.popupInterval = setTimeout(onTimeout, delay);
+         ]]>
+       </body>
+     </method>
+
+   </implementation>
+
+
+   <handlers>
+     <handler event="popupshown">
+       <![CDATA[
+       
+       // Centered?
+       // If we want to use anchoring (which we do) then we can only
+       // position via css.
+       
+       //var offset = (this.button.boxObject.width - this.popup.boxObject.width) / 2;
+       //this.popup.style.marginLeft = offset + "px";
+       //this.popup.style.visibility = "visible";
+       
+       this.popupShowing = true;
+        ]]>
+     </handler>
+     <handler event="popuphiding">
+       <![CDATA[
+       this.popupShowing = false;
+        ]]>
+     </handler>
+     
+     <handler event="mousedown">
+       <![CDATA[
+       clearInterval(this.popupInterval);
+       this.delayPopup(300);
+       ]]>
+     </handler>
+     <handler event="mouseup">
+       <![CDATA[
+       clearInterval(this.popupInterval);
+       ]]>
+     </handler>
+     <handler event="mouseout">
+       <![CDATA[
+       clearInterval(this.popupInterval);
+       ]]>
+     </handler>
+     
+     <handler event="command" phase="capturing">
+       <![CDATA[
+       // Suppress button command if the popup was just triggered
+       if (event.target == this && this.popupShowing )  event.stopPropagation();
+       ]]>
+     </handler>
+
+     
+   </handlers> 
+  </binding>
+</bindings>
+
