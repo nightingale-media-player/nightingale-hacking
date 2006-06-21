@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbird.org/Songbird/PlaylistReaderManager;1";
 const SONGBIRD_PLAYLISTREADERMANAGER_CLASSNAME = "Songbird Playlist Reader Manager Interface"
-const SONGBIRD_PLAYLISTREADERMANAGER_CID = Components.ID('{18032AD6-CB1F-403d-B3F5-7FE8EB579C28}');
+const SONGBIRD_PLAYLISTREADERMANAGER_CID = Components.ID("{ced5902c-bd90-4099-acee-77487a5b1d13}");
 const SONGBIRD_PLAYLISTREADERMANAGER_IID = Components.interfaces.sbIPlaylistReaderManager;
 
 function CPlaylistReaderManager()

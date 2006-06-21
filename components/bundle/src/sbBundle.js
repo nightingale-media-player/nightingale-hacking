@@ -25,7 +25,7 @@
  */
 const SONGBIRD_BUNDLE_CONTRACTID = "@songbird.org/Songbird/Bundle;1";
 const SONGBIRD_BUNDLE_CLASSNAME = "Songbird Bundle Service Interface";
-const SONGBIRD_BUNDLE_CID = Components.ID("{34C5873F-E5C1-4448-9B02-5AF47F36B36F}");
+const SONGBIRD_BUNDLE_CID = Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}");
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
 const SONGBIRD_GETBUNDLE_URL_WIN32 = 'http://www.songbirdnest.com/bundle/firstrun_win32.xml';

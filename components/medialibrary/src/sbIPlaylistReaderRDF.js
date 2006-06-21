@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLISTRDF_CONTRACTID = "@songbird.org/Songbird/Playlist/Reader/RDF;1";
 const SONGBIRD_PLAYLISTRDF_CLASSNAME = "Songbird RDF Playlist Interface";
-const SONGBIRD_PLAYLISTRDF_CID = Components.ID("{5778E746-3435-4f7e-9201-99898E9A916A}");
+const SONGBIRD_PLAYLISTRDF_CID = Components.ID("{68008842-0c55-4c53-8e9f-5eb00e31adf6}");
 const SONGBIRD_PLAYLISTRDF_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistRDF()

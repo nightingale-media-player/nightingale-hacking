@@ -30,7 +30,7 @@
 
 const SONGBIRD_SIMPLEPLAYLIST_CONTRACTID = "@songbird.org/Songbird/SimplePlaylist;1";
 const SONGBIRD_SIMPLEPLAYLIST_CLASSNAME = "Songbird SimplePlaylist Interface"
-const SONGBIRD_SIMPLEPLAYLIST_CID = Components.ID('{7B2945F6-6A00-4489-AD2F-95BA25F4D1EA}');
+const SONGBIRD_SIMPLEPLAYLIST_CID = Components.ID("{c5a2a53c-8ded-4043-9d5b-2747bc3a72ce}");
 const SONGBIRD_SIMPLEPLAYLIST_IID = Components.interfaces.sbISimplePlaylist;
 
 const SIMPLEPLAYLIST_LIST_TABLE_NAME = "simpleplaylist_list";

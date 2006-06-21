@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLISTATOM_CONTRACTID = "@songbird.org/Songbird/Playlist/Reader/Atom;1";
 const SONGBIRD_PLAYLISTATOM_CLASSNAME = "Songbird Atom Playlist Interface";
-const SONGBIRD_PLAYLISTATOM_CID = Components.ID("{9618AFE8-37CA-4fc9-A700-88205294F637}");
+const SONGBIRD_PLAYLISTATOM_CID = Components.ID("{de42abd8-993e-4f68-ad50-bffab2a66c12}");
 const SONGBIRD_PLAYLISTATOM_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistAtom()

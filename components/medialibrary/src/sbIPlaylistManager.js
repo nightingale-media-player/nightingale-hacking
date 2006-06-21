@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLISTMANAGER_CONTRACTID = "@songbird.org/Songbird/PlaylistManager;1";
 const SONGBIRD_PLAYLISTMANAGER_CLASSNAME = "Songbird PlaylistManager Interface"
-const SONGBIRD_PLAYLISTMANAGER_CID = Components.ID('{0BE3A41A-6673-494A-A53E-9740A98ACFF7}');
+const SONGBIRD_PLAYLISTMANAGER_CID = Components.ID("{88823823-6b51-400f-b376-7e651ecbd924}");
 const SONGBIRD_PLAYLISTMANAGER_IID = Components.interfaces.sbIPlaylistManager;
 
 const PLAYLIST_TABLE_NAME = "__table__";

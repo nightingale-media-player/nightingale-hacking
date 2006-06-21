@@ -31,7 +31,7 @@
 
 const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbird.org/Songbird/MediaLibrary;1";
 const SONGBIRD_MEDIALIBRARY_CLASSNAME = "Songbird Media Library Interface";
-const SONGBIRD_MEDIALIBRARY_CID = Components.ID("{ca5c9b2c-e061-4c98-8333-9c839efc0d7f}");
+const SONGBIRD_MEDIALIBRARY_CID = Components.ID("{05eceb55-7c84-4341-93d3-d19ed3620d13}");
 const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
 
 const LIBRARY_TABLE_NAME = "library";

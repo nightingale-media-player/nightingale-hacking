@@ -32,7 +32,7 @@ const SONGBIRD_PLAYLIST_IID = Components.interfaces.sbIPlaylist;
 
 const SONGBIRD_DYNAMICPLAYLIST_CONTRACTID = "@songbird.org/Songbird/DynamicPlaylist;1";
 const SONGBIRD_DYNAMICPLAYLIST_CLASSNAME = "Songbird Dynamic Playlist Interface"
-const SONGBIRD_DYNAMICPLAYLIST_CID = Components.ID('{8A1A3D68-E3A4-484b-B9A5-4088ADEDA5B3}');
+const SONGBIRD_DYNAMICPLAYLIST_CID = Components.ID("{6322a435-1e78-4825-91c8-520e829c23b8}");
 const SONGBIRD_DYNAMICPLAYLIST_IID = Components.interfaces.sbIDynamicPlaylist;
 
 const DYNAMICPLAYLIST_LIST_TABLE_NAME = "dynamicplaylist_list";

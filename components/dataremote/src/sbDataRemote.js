@@ -25,7 +25,7 @@
  */
 const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbird.org/Songbird/DataRemote;1";
 const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Service Interface";
-const SONGBIRD_DATAREMOTE_CID = Components.ID("{79eece3f-d661-4f03-83dd-5764a0f77088}");
+const SONGBIRD_DATAREMOTE_CID = Components.ID("{9e6c2f00-b727-443f-88a6-1f4e2beb65cd}");
 const SONGBIRD_DATAREMOTE_IID = Components.interfaces.sbIDataRemote;
 
 function DataRemote() {

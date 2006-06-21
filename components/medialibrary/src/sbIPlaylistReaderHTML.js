@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLISTHTML_CONTRACTID = "@songbird.org/Songbird/Playlist/Reader/HTML;1";
 const SONGBIRD_PLAYLISTHTML_CLASSNAME = "Songbird HTML Playlist Interface";
-const SONGBIRD_PLAYLISTHTML_CID = Components.ID("{63607801-7CA1-45fe-BD31-8659E43173D4}");
+const SONGBIRD_PLAYLISTHTML_CID = Components.ID("{2a9656c6-ba21-4fa1-8578-3c8a11aecab8}");
 const SONGBIRD_PLAYLISTHTML_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistHTML()

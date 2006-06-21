@@ -33,7 +33,7 @@
 // XPCOM Registration
 const SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID = "@songbird.org/Songbird/PlaylistPlayback;1";
 const SONGBIRD_PLAYLISTPLAYBACK_CLASSNAME = "Songbird Playlist Playback Interface";
-const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{190b1e87-8769-43b4-a362-4065eb6730e5}");
+const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{000e2465-58b7-4922-bdfb-9ab1492c6037}");
 const SONGBIRD_PLAYLISTPLAYBACK_IID = Components.interfaces.sbIPlaylistPlayback;
 
 // Songbird ContractID Stuff

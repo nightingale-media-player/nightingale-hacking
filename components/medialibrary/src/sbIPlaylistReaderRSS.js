@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLISTRSS_CONTRACTID = "@songbird.org/Songbird/Playlist/Reader/RSS;1";
 const SONGBIRD_PLAYLISTRSS_CLASSNAME = "Songbird RSS Playlist Interface";
-const SONGBIRD_PLAYLISTRSS_CID = Components.ID("{E22A572D-BA5F-4e00-93B5-9C8DF3E28A41}");
+const SONGBIRD_PLAYLISTRSS_CID = Components.ID("{4c55f911-0174-4a73-8a41-949459585aec}");
 const SONGBIRD_PLAYLISTRSS_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistRSS()
