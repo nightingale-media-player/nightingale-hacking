@@ -4,10 +4,13 @@
 
 var theQTCore = null;
 
+var isBuffering = false;
 var isPlaying = false;
 var isPaused = false;
 var isMuted = false;
 var lastVolume = 0;
+
+var waitForPlayInterval = null;
 
 function bindPlayer()
 {
@@ -22,31 +25,50 @@ function initPlayer()
   }
 }
 
+function waitForPlayer()
+{
+  initPlayer();
+  
+  var playerStatus = theQTCore.GetPluginStatus();
+  
+  switch(playerStatus)
+  {
+    case "Waiting":
+    break;
+    
+    case "Loading":
+    break;
+    
+    case "Playable":
+    case "Complete":
+      isBuffering = false;
+      clearInterval(waitForPlayInterval);
+      waitForPlayInterval = 0;
+      playPlayer();
+    break;
+    
+    default:
+      if(playerStatus == null || playerStatus.indexOf("Error") != -1)
+      {
+        //Probably an error :(
+        isBuffering = false;
+        isPlaying = false;
+        isPaused = false;
+        clearInterval(waitForPlayInterval);
+        waitForPlayInterval = 0;
+      }
+  }
+}
+
 function playURL(url)
 {
   initPlayer();
 
+  isBuffering = true;  
   theQTCore.SetURL(url);
-
-  var tryAgain = false;
-  try {
-    playPlayer();
-  } catch(e) {
-    tryAgain = true;
-    dump(e + "\n");
-  }
-    
-  if(tryAgain)
-  {
-    try {
-      playPlayer();
-    } catch(e) {
-      tryAgain = true;
-      dump(e + "\n");
-    }
-  }
   
   setPlayerVolume(lastVolume);
+  waitForPlayInterval = setInterval("waitForPlayer();", 50);
 }
 
 function playPlayer()
@@ -111,6 +133,13 @@ function mutePlayer( mute )
 function getPlayerLength()
 {
   initPlayer();
+  
+  //If we're buffering, we don't have the length, but we don't want
+  //playlist playback to go to the next track while we're buffering so
+  //we fake a 1ms length when buffering.
+
+  if(isBuffering) return 1;
+  
   return theQTCore.GetDuration();
 }
 
