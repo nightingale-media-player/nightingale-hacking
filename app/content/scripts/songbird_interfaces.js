@@ -31,7 +31,7 @@
 //
 
 const sbIDatabaseQuery = new Components.Constructor("@songbird.org/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
-const sbIDataRemote = new Components.Constructor("@songbird.org/Songbird/DataRemote;1", "sbIDataRemote", "init");
+const SB_NewDataRemote = new Components.Constructor("@songbird.org/Songbird/DataRemote;1", "sbIDataRemote", "init");
 const sbIDynamicPlaylist = new Components.Constructor("@songbird.org/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
 // XXX isnt this a service?
 const sbIMediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
