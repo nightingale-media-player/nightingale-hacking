@@ -85,18 +85,9 @@ GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 
-#SONGBIRD_COMPONENTS = $(DEPS_DIR)/plugins/vlc/components/*.xpt \
-#                      $(DEPS_DIR)/plugins/flash/components/*.xpt \
-#                      $(NULL)
-                      
-#SONGBIRD_PLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX) \
-#                   $(DEPS_DIR)/plugins/flash/plugins/*$(DLL_SUFFIX) \
-#                   $(NULL)
-
-#SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/vlcplugins/*$(DLL_SUFFIX) \
-#                      $(NULL)
-
 SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+                     $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                      $(NULL)
 endif
 
