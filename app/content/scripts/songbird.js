@@ -347,7 +347,7 @@ function SBAppInitialize()
 
     /*
     */
-    var theVLCInstance = document.getElementById( "core_vlc" );
+    var theVLCInstance = document.getElementById( "core_vlc_document" );
 
     // Bind the core instances to the core objects (I really should make these use createElementNS, if we can get it to work)      
     //theWMPCore.bindInstance( theWMPInstance );
@@ -386,7 +386,9 @@ function SBAppInitialize()
     
     //Linux, prefer...?
     if( PLATFORM_LINUX ) {
-      
+      //CoreVLCDocumentInit( "core_vlc_document" );
+      //InitPlaybackCoreMPlayer( "core_mp_frame" );
+      InitPlaybackCoreFlash( "core_flash_frame" );
     }
     
     //CoreWMPDocumentInit( "core_wm" );

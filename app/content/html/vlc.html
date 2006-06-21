@@ -1,0 +1,159 @@
+<html>
+<body onload="bindPlayer();">
+<script language="JavaScript">
+
+var vlcCoreObj = null;
+
+var isPlaying = false;
+var isPaused = false;
+var isMuted = false;
+var lastVolume = 0;
+
+function bindPlayer()
+{
+  initPlayer();
+}
+
+function initPlayer(force)
+{
+  if(!vlcCoreObj || force) {
+    var core = document.getElementById("core_vlc");
+    vlcCoreObj = core;
+    for (var stuff in vlcCoreObj)
+      dump("XXXredfive vlcCoreObj has: " + stuff  + "\n");
+      //dump("XXXredfive vlcCoreObj has: " + stuff + ":" + vlcCoreObj[stuff] + "\n");
+  }
+}
+
+function playURL(url)
+{
+  initPlayer();
+
+  //vlcCoreObj.SetURL(url);
+  vlcCoreObj.add_item(url);
+
+  var tryAgain = false;
+  try {
+    play();
+  } catch(e) {
+    tryAgain = true;
+    dump(e + "\n");
+  }
+    
+  if(tryAgain)
+  {
+    try {
+      play();
+    } catch(e) {
+      tryAgain = true;
+      dump(e + "\n");
+    }
+  }
+  
+  set_volume(lastVolume);
+}
+
+function play()
+{
+  initPlayer();
+  
+  if(!isPlaying || isPaused)
+  { 
+    vlcCoreObj.play();
+    isPlaying = true;
+    isPaused = false;
+  }
+}
+
+function pause()
+{
+  initPlayer();
+
+  if(!isPaused)
+  {
+    vlcCoreObj.pause();
+    isPaused = true;
+  }
+  else
+  {
+    vlcCoreObj.play();
+    isPaused = false;
+  }
+}
+
+function stop()
+{
+  initPlayer();
+  
+  isPlaying = false;
+  isPaused = false;
+  
+  vlcCoreObj.stop();
+}
+
+function isplaying()
+{
+  return isPlaying;
+}
+
+function get_volume()
+{
+  initPlayer();
+  return vlcCoreObj.get_volume();
+}
+
+function set_volume(vol)
+{
+  initPlayer();
+  lastVolume = vol;
+  vlcCoreObj.Set_volume(vol);
+}
+
+function mute(doMute)
+{
+  initPlayer();
+  if (doMute && !isMuted) {
+    lastVolume = vlcCoreObj.get_volume();
+    vlcCoreObj.mute();
+  }
+  else if ( !doMute && isMuted ) {
+    vlcCoreObj.Set_volume(lastVolume); 
+  }
+  isMuted = doMute;
+}
+
+function get_time()
+{
+  initPlayer();
+  return vlcCoreObj.get_time();
+}
+
+function get_length()
+{
+  initPlayer();
+  return vlcCoreObj.get_length();
+}
+
+
+function get_position()
+{
+  initPlayer();
+  return vlcCoreObj.get_position();
+}
+
+// XXXredfive - does this do the right thing?
+function seek(pos, rel)
+{
+  initPlayer();
+  vlcCoreObj.seek(pos, rel);
+}
+ 
+</script>
+<embed id="core_vlc" name="core_vlc" autoplay="0" repeat="0" loop="0" type="application/x-vlc-plugin">
+</embed>
+ <a href="javascript:;" onclick='document.video1.play()'>Play video1</a>
+  <a href="javascript:;" onclick='document.video1.pause()'>Pause video1</a>
+  <a href="javascript:;" onclick='document.video1.stop()'>Stop video1</a>
+  <a href="javascript:;" onclick='document.video1.fullscreen()'>Fullscreen</a>
+</body>
+</html>

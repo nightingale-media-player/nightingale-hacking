@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script language="JavaScript">
+      function LOG(string) {
+        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+        var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
+                       .getService(Components.interfaces.nsIConsoleService);
+        //Components.utils.reportError(string);
+        gConsole.logStringMessage(string);
+      }
+
+      function dumpPlayer() {
+        LOG("FLASHCORE - dumping player ******************************");
+        var core = document.getElementById("core_fp");
+        for (var stuff in core)
+          LOG("FLASHCORE flash plugin has: " + stuff  + "\n");
+      }
+    </script>
+  </head>
+  <!--<body onload="dumpPlayer();">-->
+  <body>
+    <embed id="core_fp" name="core_fp" autoplay="0" repeat="0" loop="0" type="application/x-shockwave-flash" />
+  </body>
+</html>
