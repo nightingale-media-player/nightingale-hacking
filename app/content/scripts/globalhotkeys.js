@@ -200,12 +200,24 @@ function loadHotkeysFromPrefs() {
   var count = SBDataGetValue("globalhotkey.count");
   if (count == 0) count = setDefaultGlobalHotkeys();
   for (var i=0;i<count;i++) {
-    // todo:
-    // - read pref data string for 'globalhotkey.n.key' and 'globalhotkey.n.action'
-    // - parse out key code and modifier flags
-    // - register hotkey (hotkey_service.AddHotkey(DOM_VK_*, altflag, ctrlflag, shiftflag, metaflag, action_string, hotkeyHandler);
+    var root = "globalhotkey." + i + ".";
+    var keycombo = SBDataGetValue(root + "key");
+    var action = SBDataGetValue(root + "action");
+    var keys = keycombo.split("-");
+    var alt = false;
+    var ctrl = false;
+    var shift = false;
+    var meta = false;
+    var keyCode = 0;
+    for (var j=0;j<keys.length;j++) {
+      if (keys[j] == "alt") alt = true;
+      else if (keys[j] == "shift") shift = true;
+      else if (keys[j] == "control") ctrl = true;
+      else if (keys[j] == "meta") meta = true;
+      else keyCode = stringToKeyCode(keys[j]);
+    }
+    if (keyCode != 0) hotkey_service.AddHotkey(keyCode, alt, ctrl, shift, meta, action, hotkeyHandler);
   }
-  //hotkey_service.AddHotkey(0x71, 0, 0, 0, 1, "hello", hotkeyHandler);
 }
 
 function setDefaultGlobalHotkeys() {
@@ -343,6 +355,12 @@ function stringToKeyCode( str ) {
   return 0;
 }
 
+function log(str) {
+  var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                          .getService(Components.interfaces.nsIConsoleService);
+  consoleService.logStringMessage(str);
+}
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Hotkey Actions
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -352,20 +370,26 @@ function stringToKeyCode( str ) {
 // todo
 
 function hotkey_volumeUp() {
+  log("volume up");
 }
 
 function hotkey_volumeDown() {
+  log("volume down");
 }
 
 function hotkey_nextTrack() {
+  log("next track");
 }
 
 function hotkey_previousTrack() {
+  log("prev track");
 }
 
 function hotkey_playPause() {
+  log("play/pause");
 }
 
 function hotkey_pause() {
+  log("pause");
 }
 
