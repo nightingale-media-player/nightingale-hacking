@@ -256,6 +256,7 @@
           }
           catch (err) {
             alert( "servicetree.xml - launchServiceURL " + err );
+            return null;
           }
         ]]>
       </body>

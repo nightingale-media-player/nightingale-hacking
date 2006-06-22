@@ -55,15 +55,21 @@ function onBkgDown( theEvent )
 {
   try
   {
-    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-    windowDragger.BeginWindowDrag(0); // automatically ends
+    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
+    if (windowDragger) {
+      var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
+      if (service)
+        service.BeginWindowDrag(0); // automatically ends
+    }
+    else {
+      trackerBkg = true;
+      offsetScrX = document.defaultView.screenX - theEvent.screenX;
+      offsetScrY = document.defaultView.screenY - theEvent.screenY;
+      document.addEventListener( "mousemove", onBkgMove, true );
+    }
   }
-  catch(e)
-  {
-    trackerBkg = true;
-    offsetScrX = document.defaultView.screenX - theEvent.screenX;
-    offsetScrY = document.defaultView.screenY - theEvent.screenY;
-    document.addEventListener( "mousemove", onBkgMove, true );
+  catch(err) {
+    dump("Error. Songbird.js::onBkDown() \n" + err + "\n");
   }
 }
 
@@ -271,14 +277,17 @@ function SBUrlChanged( value )
   
   try
   {
-    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"].getService(Components.interfaces.sbIWindowCloak);
-    if ( IsVideoUrl( value ) )
-    {
-      windowCloak.Uncloak( document ); 
-    }
-    else
-    {
-      windowCloak.Cloak( document ); 
+    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"];
+    if (windowCloak) {
+      var service = windowCloack.getService(Components.interfaces.sbIWindowCloak);
+      if (service) {
+        if ( IsVideoUrl( value ) ) {
+          service.Uncloak( document ); 
+        }
+        else {
+          service.Cloak( document ); 
+        }
+      }
     }
   }
   catch(e)
@@ -493,11 +502,16 @@ var coreInitialCloakDone = 0;
 function HideCoreWindow() 
 {
   try {
-    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"].getService(Components.interfaces.sbIWindowCloak);
-    windowCloak.Cloak( document ); 
+    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"];
+    if (windowCloak) {
+      var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
+      if (service)
+        serivce.Cloak( document ); 
+    }
   }
-  catch (e) {
+  catch (err) {
     //No component
+    dump("Error. Songbird.js:HideCoreWindow \n" + err + "\n");
   }
   coreInitialCloakDone = 1;
 }
@@ -620,11 +634,16 @@ var SBVideoMinMaxCB =
 function setVideoMinMaxCallback()
 {
   try {
-    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-    windowMinMax.SetCallback(document, SBVideoMinMaxCB);
+    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"];
+    if (windowMinMax) {
+      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+      if (service)
+        service.SetCallback(document, SBVideoMinMaxCB);
+    }
   }
-  catch (e) {
+  catch (err) {
     // No component
+    dump("Error. No WindowMinMax component available." + err + "\n");
   }
 }
 

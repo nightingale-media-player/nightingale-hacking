@@ -113,22 +113,32 @@ try
   function setMediaKeyboardCallback()
   {
     try {
-      var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"].getService(Components.interfaces.sbIMediaKeyboard);
-      mediakeyboard.AddCallback(SBMediaKeyboardCB);
+      var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"];
+      if (mediakeyboard) {
+        var service = mediakeyboard.getService(Components.interfaces.sbIMediaKeyboard);
+        if (service)
+          service.AddCallback(SBMediaKeyboardCB);
+      }
     }
-    catch (e) {
+    catch (err) {
       // No component
+      dump("Error. mediakeyboard.js:setMediaKeyboardCallback() \n" + err + "\n");
     }
   }
 
   function resetMediaKeyboardCallback()
   {
     try {
-      var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"].getService(Components.interfaces.sbIMediaKeyboard);
-      mediakeyboard.RemoveCallback(SBMediaKeyboardCB);
+      var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"];
+      if (mediakeyboard) {
+        var service = mediakeyboard.getService(Components.interfaces.sbIMediaKeyboard);
+        if (service)
+          service.RemoveCallback(SBMediaKeyboardCB);
+      }
     }
-    catch (e) {
+    catch (err) {
       // No component
+      dump("Error. mediakeyboard.js:resetMediaKeyboardCallback() \n" + err + "\n");
     }
   }
 }

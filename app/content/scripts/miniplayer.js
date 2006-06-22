@@ -100,15 +100,21 @@ try
   {
     try
     {
-      var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-      windowDragger.BeginWindowDrag(0); // automatically ends
+      var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
+      if (windowDragger) {
+        var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
+        if (service)
+          service.BeginWindowDrag(0); // automatically ends
+      }
+      else {
+        trackerBkg = true;
+        offsetScrX = document.defaultView.screenX - theEvent.screenX;
+        offsetScrY = document.defaultView.screenY - theEvent.screenY;
+        document.addEventListener( "mousemove", onBkgMove, true );
+      }
     }
-    catch(e)
-    {
-      trackerBkg = true;
-      offsetScrX = document.defaultView.screenX - theEvent.screenX;
-      offsetScrY = document.defaultView.screenY - theEvent.screenY;
-      document.addEventListener( "mousemove", onBkgMove, true );
+    catch(err) {
+      dump("Error. miniplayer.js:onBkgDown() \n" + err + "\n");
     }
   }
 

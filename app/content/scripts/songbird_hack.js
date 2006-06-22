@@ -103,7 +103,7 @@ var SBWindowMinMaxCB =
 
   QueryInterface : function(aIID)
   {
-    if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallbacl) &&
+    if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
         !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
         !aIID.equals(Components.interfaces.nsISupports)) 
     {
@@ -117,11 +117,16 @@ var SBWindowMinMaxCB =
 function setMinMaxCallback()
 {
   try {
-    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-    windowMinMax.SetCallback(document, SBWindowMinMaxCB);
+    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"];
+    if (windowMinMax) {
+      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+      if (service)
+        service.SetCallback(document, SBWindowMinMaxCB);
+    }
   }
-  catch (e) {
+  catch (err) {
     // No component
+    dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
   }
 }
 
@@ -348,14 +353,16 @@ function SBUninitialize()
   resetJumpToFileHotkey();
   closeJumpTo();
   resetMediaKeyboardCallback();
-  try
-  {
-    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"].getService(Components.interfaces.sbIWindowMinMax);
-    windowMinMax.ResetCallback(document);  
+  try {
+    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"];
+    if (windowMinMax) {
+      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+      if (service)
+        service.ResetCallback(document);
+    }
   }
-  catch(e)
-  {
-  
+  catch(err) {
+    dump("Error. songbird_hack.js: SBUnitialize() \n" + err + "\n");
   }
 }
 
@@ -393,15 +400,21 @@ function onBkgDown( theEvent )
 {
   try
   {
-    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-    windowDragger.BeginWindowDrag(0); // automatically ends
+    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
+    if (windowDragger) {
+      var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
+      if (service)
+        service.BeginWindowDrag(0); // automatically ends
+    }
+    else {
+      trackerBkg = true;
+      offsetScrX = document.defaultView.screenX - theEvent.screenX;
+      offsetScrY = document.defaultView.screenY - theEvent.screenY;
+      document.addEventListener( "mousemove", onBkgMove, true );
+    }
   }
-  catch(e)
-  {
-    trackerBkg = true;
-    offsetScrX = document.defaultView.screenX - theEvent.screenX;
-    offsetScrY = document.defaultView.screenY - theEvent.screenY;
-    document.addEventListener( "mousemove", onBkgMove, true );
+  catch(err) {
+    dump("Error. songbird_hack.js:onBkgDown() \n" + err + "\n");
   }
 }
 

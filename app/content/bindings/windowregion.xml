@@ -45,12 +45,13 @@
         {
           this.is_hidden = false;
           this.makeRegionList();
-          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"]
+          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"];
           
-          if (windowResizeHook)
+          if (windowResizeHook) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
             if (service)
               service.SetCallback(document, this);
+          }
         }    
         catch ( err )
         {
@@ -63,8 +64,12 @@
         <![CDATA[
         try
         {
-          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"].getService(Components.interfaces.sbIWindowResizeHook);
-          windowResizeHook.ResetCallback(this);
+          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"];
+          if ( windowResizeHook ) {
+            var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
+            if (service) 
+              service.ResetCallback(this);
+          }
         }    
         catch ( err )
         {
