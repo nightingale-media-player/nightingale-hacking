@@ -204,7 +204,7 @@
 			Name="public"
 			>
 			<File
-				RelativePath=".\public\GlobalHotkeys.idl"
+				RelativePath=".\public\IGlobalHotkeys.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
