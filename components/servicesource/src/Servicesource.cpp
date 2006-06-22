@@ -267,7 +267,7 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
   },
   // Group 7
   {
-    nsString( NS_LITERAL_STRING("http://www.pitchforkmedia.com/mp3/")),
+    nsString( NS_LITERAL_STRING("http://www.pitchforkmedia.com/page/downloads")),
     nsString( NS_LITERAL_STRING("http://podbop.org/")),
     nsString( NS_LITERAL_STRING("http://www.swedelife.com/")),
     nsString( NS_LITERAL_STRING("http://www.blogotheque.net/mp3/")),
