@@ -1,10 +1,10 @@
-Index: install.rdf
+Index: extensions/inspector/install.rdf
 ===================================================================
 RCS file: /cvsroot/mozilla/extensions/inspector/install.rdf,v
 retrieving revision 1.3.2.3
 diff -u -r1.3.2.3 install.rdf
---- install.rdf	13 May 2006 14:28:10 -0000	1.3.2.3
-+++ install.rdf	25 May 2006 20:48:22 -0000
+--- extensions/inspector/install.rdf	13 May 2006 14:28:10 -0000	1.3.2.3
++++ extensions/inspector/install.rdf	22 Jun 2006 18:14:53 -0000
 @@ -35,6 +35,19 @@
        </Description>
      </em:targetApplication>
