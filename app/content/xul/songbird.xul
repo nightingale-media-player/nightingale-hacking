@@ -199,9 +199,9 @@
             </hbox>
             <spacer height="5"/>
             <hbox>
-            <spacer flex="1"/>
-            <iframe id="video_controls" src="chrome://songbird/content/xul/miniplayer.xul?video"/>         
-            <spacer flex="1"/>
+              <spacer width="5"/>
+              <iframe id="video_controls" src="chrome://songbird/content/xul/miniplayer.xul?video" flex="1"/>         
+              <spacer width="5"/>
             </hbox>
         </vbox>
         <vbox class="sb_faceplate">

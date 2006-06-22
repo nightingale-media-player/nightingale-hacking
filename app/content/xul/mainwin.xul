@@ -270,6 +270,8 @@
                 <spacer width="4" height="18" id="mini_dash_w"/>
                 <vbox id="mini_dash" flex="1">
                   <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
+                    <player_artist id="mini_text_artist" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
+                    <spacer width="20" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                     <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right" flex="1"/>
                     <label id="mini_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                     <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>

@@ -3368,7 +3368,7 @@ window#mini
 /* the texties */
 #mini_text_title
 {
-  width: 100px !important;
+  min-width: 100px !important;
   height: 15px !important;
   color: #E4EADF !important;
   overflow: hidden;

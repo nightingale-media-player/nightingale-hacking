@@ -70,13 +70,15 @@
     <hbox flex="1">
       <spacer width="4" height="18" id="mini_dash_w"/>
       <vbox id="mini_dash" flex="1">        
-          <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
-            <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right" flex="1"/>
-            <label id="mini_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate miniplayer" />
-          </hbox>
+        <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
+          <player_artist id="mini_text_artist" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
+          <spacer width="20" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right" flex="1"/>
+          <label id="mini_text_time_e_txt" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate miniplayer" />
+        </hbox>
         <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
       </vbox>
       <spacer width="4" height="18" id="mini_dash_e"/>
