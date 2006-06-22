@@ -102,9 +102,11 @@ try
     {
       var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
       if (windowDragger) {
+        var location = "" + window.location; // Grrr.  Dumb objects.
+        var isvideo = location.indexOf("?video") != -1;
         var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
         if (service)
-          service.BeginWindowDrag(0); // automatically ends
+          service.BeginWindowDrag(isvideo ? 0 : 10); // automatically ends
       }
       else {
         trackerBkg = true;
