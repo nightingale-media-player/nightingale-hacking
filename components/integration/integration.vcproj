@@ -36,7 +36,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt
 "
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"/>
@@ -97,7 +97,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt
 "
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"/>
@@ -147,6 +147,52 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 		<Filter
 			Name="public"
 			Filter="">
+			<File
+				RelativePath=".\public\IGlobalHotkeys.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\public\IMediaKeyboard.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
+"
+						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
+				</FileConfiguration>
+			</File>
 			<File
 				RelativePath=".\public\IWindowCloak.idl">
 				<FileConfiguration
@@ -262,29 +308,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\public\IMediaKeyboard.idl">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
-$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
-"
-						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
-$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)
-"
-						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="src"
@@ -295,6 +318,18 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			<Filter
 				Name="win32"
 				Filter="">
+				<File
+					RelativePath=".\src\win32\GlobalHotkeys.cpp">
+				</File>
+				<File
+					RelativePath=".\src\win32\GlobalHotkeys.h">
+				</File>
+				<File
+					RelativePath=".\src\win32\MediaKeyboard.cpp">
+				</File>
+				<File
+					RelativePath=".\src\win32\MediaKeyboard.h">
+				</File>
 				<File
 					RelativePath=".\src\win32\MultiMonitor.cpp">
 				</File>
@@ -342,12 +377,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</File>
 				<File
 					RelativePath=".\src\win32\WindowResizeHook.h">
-				</File>
-				<File
-					RelativePath=".\src\win32\MediaKeyboard.cpp">
-				</File>
-				<File
-					RelativePath=".\src\win32\MediaKeyboard.h">
 				</File>
 			</Filter>
 			<Filter

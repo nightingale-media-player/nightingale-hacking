@@ -44,6 +44,7 @@ CPP_SRCS = $(SB_PLATFORM)/MultiMonitor.cpp \
            $(SB_PLATFORM)/WindowRegion.cpp \
            $(SB_PLATFORM)/WindowResizeHook.cpp \
            $(SB_PLATFORM)/MediaKeyboard.cpp \
+           $(SB_PLATFORM)/GlobalHotkeys.cpp \
            IntegrationComponent.cpp \
            $(NULL)
 

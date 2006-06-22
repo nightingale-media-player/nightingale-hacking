@@ -263,6 +263,9 @@
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/metrics.js" />
+   
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/globalhotkeys.js" />
 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/songbird.js"/>

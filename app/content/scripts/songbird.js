@@ -318,6 +318,7 @@ function SBAppDeinitialize()
   // Unbind the playback url viewer. (used by the code that uncloaks the video window)
   songbird_playURL.unbind();
   // Remember where the video window is.
+  resetGlobalHotkeys();
   onWindowSaveSize();
   SBMetricsAppShutdown();
 }
@@ -343,6 +344,7 @@ function SBAppInitialize()
     setVideoMinMaxCallback();
     onWindowLoadSize();
     createLibraryRef();
+    initGlobalHotkeys();
     songbird_playURL = new sbIDataRemote("faceplate.play.url");
     songbird_playURL.bindCallbackFunction( SBUrlChanged, true )
 

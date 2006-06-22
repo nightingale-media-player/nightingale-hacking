@@ -8,6 +8,7 @@ songbird.jar:
   content/songbird/scripts/dragAndDrop.js               (dragAndDrop.js)
   content/songbird/scripts/dynamic_playlist_updater.js  (dynamic_playlist_updater.js)
   content/songbird/scripts/firstrun.js                  (firstrun.js)
+  content/songbird/scripts/globalhotkeys.js             (globalhotkeys.js)
   content/songbird/scripts/instancetimer.js             (instancetimer.js)
   content/songbird/scripts/jumptofile.js                (jumptofile.js)
   content/songbird/scripts/language_scan.js             (language_scan.js)
