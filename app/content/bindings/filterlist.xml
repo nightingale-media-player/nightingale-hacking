@@ -216,8 +216,9 @@
             // Concatenate all of the selections into a semicolon delimited filter string
             var filter_string = "";      
             var rangeCount = this.tree.view.selection.getRangeCount();
-            var column = this.tree.columns ? ( this.tree.columns[ 0 ] ? this.tree.columns[ 0 ] : null ) : "unknown";
+            var column = this.tree.columns ? ( this.tree.columns[ 0 ] ? this.tree.columns[ 0 ] : null ) : null;
             var anything_besides_zero = false;
+            var including_zero = false;
             for ( var i=0; column != null && i < rangeCount; i++ )
             {
               var start = {};
@@ -228,14 +229,18 @@
                 filter_string += ";" + this.tree.view.getCellText( c, column );
                 // Zero is "All" -- multiselecting it does nothing.
                 if ( c != 0 )
-                {
                   anything_besides_zero = true;
-                }
+                else
+                  including_zero = true;
               }
             }
-            if ( ! anything_besides_zero )
+            if ( ! anything_besides_zero || including_zero )
             {
               filter_string = "";
+            }
+            if ( anything_besides_zero && including_zero )
+            {
+              this.tree.view.selection.rangedSelect(0, 0, false);
             }
             
             if ( rangeCount )
