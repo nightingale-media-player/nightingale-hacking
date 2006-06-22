@@ -1,0 +1,26 @@
+Index: xpcom/io/nsStringStream.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/io/nsStringStream.cpp,v
+retrieving revision 1.19
+diff -u -8 -p -r1.19 nsStringStream.cpp
+--- xpcom/io/nsStringStream.cpp	17 Jun 2005 03:47:11 -0000	1.19
++++ xpcom/io/nsStringStream.cpp	21 Jun 2006 19:00:49 -0000
+@@ -213,18 +213,16 @@ NS_IMETHODIMP nsStringInputStream::Read(
+         bytesRead = maxCount;
+     else
+         bytesRead = aCount;
+   
+     memcpy(aBuf, mConstString + mOffset, bytesRead);
+     mOffset += bytesRead;
+ 
+     *aReadCount = bytesRead;
+-    if (bytesRead < aCount)
+-        SetEOF();
+     return NS_OK;
+ }
+ 
+ 
+ NS_IMETHODIMP
+ nsStringInputStream::ReadSegments(nsWriteSegmentFun writer, void * closure,
+                                   PRUint32 aCount, PRUint32 * result)
+ {
