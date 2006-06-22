@@ -274,12 +274,11 @@ var songbird_playURL;
 function SBUrlChanged( value )
 {
   if (!coreInitialCloakDone) return;
-  
   try
   {
     var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"];
     if (windowCloak) {
-      var service = windowCloack.getService(Components.interfaces.sbIWindowCloak);
+      var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
       if (service) {
         if ( IsVideoUrl( value ) ) {
           service.Uncloak( document ); 
