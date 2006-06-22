@@ -504,9 +504,9 @@ function HideCoreWindow()
   try {
     var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"];
     if (windowCloak) {
-      var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
+      var service = windowCloak.createInstance(Components.interfaces.sbIWindowCloak);
       if (service)
-        serivce.Cloak( document ); 
+        service.Cloak( document ); 
     }
   }
   catch (err) {
