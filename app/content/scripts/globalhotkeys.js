@@ -155,6 +155,7 @@ const DOM_VK_META           = 0xE0;
 var   hotkey_service;
 
 function initGlobalHotkeys() {
+  // Access global hotkeys component (if it exists)
   var globalHotkeys = Components.classes["@songbird.org/Songbird/GlobalHotkeys;1"];
   if (globalHotkeys) {
     hotkey_service = globalHotkeys.getService(Components.interfaces.sbIGlobalHotkeys);
@@ -163,16 +164,18 @@ function initGlobalHotkeys() {
 }
 
 function resetGlobalHotkeys() {
+  // Remove all hotkey bindings
   if (hotkey_service) hotkey_service.RemoveAllHotkeys();
-  
 }
 
+// Hotkey handler, this gets called back when the user presses a hotkey that has been registered in loadHotkeysFromPrefs
 var hotkeyHandler = 
 {
     OnHotkey: function( hotkeyid )
     {
       switch ( hotkeyid )
       {
+        // Call the appropriate action 
         case "Playback: Volume up": hotkey_volumeUp(); break;
         case "Playback: Volume down": hotkey_volumeDown(); break;
         case "Playback: Next in playlist": hotkey_nextTrack(); break;
@@ -196,14 +199,18 @@ var hotkeyHandler =
     }
 }
 
+// Load hotkeys
 function loadHotkeysFromPrefs() {
   var count = SBDataGetValue("globalhotkey.count");
   if (count == 0) count = setDefaultGlobalHotkeys();
   for (var i=0;i<count;i++) {
+    // Read hotkey binding from user preferences
     var root = "globalhotkey." + i + ".";
     var keycombo = SBDataGetValue(root + "key");
     var action = SBDataGetValue(root + "action");
+    // Split key combination string
     var keys = keycombo.split("-");
+    // Parse its components
     var alt = false;
     var ctrl = false;
     var shift = false;
@@ -216,10 +223,12 @@ function loadHotkeysFromPrefs() {
       else if (keys[j] == "meta") meta = true;
       else keyCode = stringToKeyCode(keys[j]);
     }
+    // If we had a key code (and possibly modifiers), register the corresponding action for it
     if (keyCode != 0) hotkey_service.AddHotkey(keyCode, alt, ctrl, shift, meta, action, hotkeyHandler);
   }
 }
 
+// Sets the default hotkey settings
 function setDefaultGlobalHotkeys() {
   SBDataSetValue("globalhotkey.count", 5);
   SBDataSetValue("globalhotkey.0.key",    "meta-up");
@@ -234,6 +243,7 @@ function setDefaultGlobalHotkeys() {
   SBDataSetValue("globalhotkey.4.action", "Playback: Play/Pause");
 }
 
+// Returns the key code for a given key string
 function stringToKeyCode( str ) {
   switch (str.toLowerCase()) {
     case "cancel": return DOM_VK_CANCEL;
@@ -355,11 +365,13 @@ function stringToKeyCode( str ) {
   return 0;
 }
 
+/*
 function log(str) {
   var consoleService = Components.classes['@mozilla.org/consoleservice;1']
                           .getService(Components.interfaces.nsIConsoleService);
   consoleService.logStringMessage(str);
 }
+*/
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Hotkey Actions
@@ -367,29 +379,34 @@ function log(str) {
 
 // Playback
 
-// todo
+var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+                      .getService(Components.interfaces.sbIPlaylistPlayback);
 
 function hotkey_volumeUp() {
-  log("volume up");
+  var volume = gPPS.getVolume() + 8;
+  if (volume > 255) volume = 255;
+  gPPS.setVolume(volume);
 }
 
 function hotkey_volumeDown() {
-  log("volume down");
+  var volume = gPPS.getVolume() - 8;
+  if (volume < 0) volume = 0;
+  gPPS.setVolume(volume);
 }
 
 function hotkey_nextTrack() {
-  log("next track");
+  gPPS.next();
 }
 
 function hotkey_previousTrack() {
-  log("prev track");
+  gPPS.previous();
 }
 
 function hotkey_playPause() {
-  log("play/pause");
+  gPPS.play(); // automatically selects play or pause depending on current state
 }
 
 function hotkey_pause() {
-  log("pause");
+  gPPS.pause();
 }
 
