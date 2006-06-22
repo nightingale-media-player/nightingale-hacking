@@ -902,13 +902,21 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     if (isSourceGiven) 
     {
       sourcePathFile = sourcePath;
+#if defined(XP_WIN)
       sourcePathFile += NS_LITERAL_STRING("\\");
+#else
+      sourcePathFile += NS_LITERAL_STRING("/");
+#endif
     }
 
     if (isDestinationGiven) 
     {
       destinationPathFile = destPath;
+#if defined(XP_WIN)
       destinationPathFile += NS_LITERAL_STRING("\\");
+#else
+      destinationPathFile += NS_LITERAL_STRING("/");
+#endif
     }
 
     PRUnichar* data;
