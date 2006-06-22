@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/root/make-code-tarball.sh /var/www/sites/developer.songbirdnest.com/nightly/snapshots
+
+/root/make-dependencies-tarball.sh /var/www/sites/developer.songbirdnest.com/nightly/dependency_snapshots
+
