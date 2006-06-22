@@ -309,7 +309,6 @@
             var n = this.tree.view.rowCount;
             for( var c = 0; c < n; c++ )
             {
-              //var column = this.tree.columns ? this.tree.columns[ 0 ] : "unknown";
               var cell = this.tree.view.getCellText( c, column );
               if (cell == value) return c;
             }
@@ -359,7 +358,7 @@
               if (selection_string != null) {
                 var selection = selection_string.split(";");
                 this._disable_selevent = true;
-                var column = this.tree.columns[ 0 ];
+                var column = this.tree.columns.getColumnAt(0);
                 while (selection.length > 0) {
                   var value = selection.pop();
                   if (value != "" && value != null) {
@@ -408,7 +407,7 @@
       <param name="builder"/>
       <body>
         if (this.tree.view.rowCount > 0) {
-          var column = this.tree.columns[ 0 ];
+          var column = this.tree.columns.getColumnAt(0);
           if (column != null) {
             var label = column.element.__filterlist_original_label__;
             if ( this.source.GetRefColumnCount( this.ref ) > 0 ) {
