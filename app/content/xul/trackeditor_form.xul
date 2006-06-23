@@ -41,37 +41,37 @@
   <hbox class="chrome_iframe_bkgd" flex="1">
     <spacer width="3"/> 
     <vbox flex="1">
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.guid" class="dialog_label" value="Item GUID" width="96"/>
         <spacer width="5"/> 
         <dbedit_label id="trackeditor.guid" column="uuid" class="dialog_label" />
       </hbox>
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.url" class="dialog_label" value="URL" width="96"/>
         <spacer width="5"/> 
         <dbedit_textbox id="trackeditor.url" column="url" class="dialog_textbox" flex="1"/>
       </hbox>
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.title" class="dialog_label" value="Title" width="96"/>
         <spacer width="5"/> 
         <dbedit_textbox id="trackeditor.title" column="title" class="dialog_textbox" flex="1"/>
       </hbox>
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.artist" class="dialog_label" value="Artist" width="96"/>
         <spacer width="5"/> 
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" class="dialog_textbox" flex="1" />
       </hbox>
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.album" class="dialog_label" value="Album" width="96"/>
         <spacer width="5"/> 
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" class="dialog_textbox" flex="1"/>
       </hbox>
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.genre" class="dialog_label" value="Genre" width="96"/>
         <spacer width="5"/> 
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" class="dialog_textbox" flex="1"/>
       </hbox>
-      <hbox height="32">
+      <hbox>
         <label id="trackeditor.label.length" class="dialog_label" value="Length" width="96"/>
         <spacer width="5"/> 
         <dbedit_textbox id="trackeditor.length" readonly="1" column="length" class="dialog_textbox" flex="1"/>
