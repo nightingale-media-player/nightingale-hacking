@@ -24,13 +24,26 @@
 //
  */
 
-@import url("chrome://global/skin/xulscrollbars.css");
+/* You can only use the @ at the top of the file. **/
+@import url("chrome://global/skin/xulscrollbars.css"); 
  
 /** 
 ************************************************************************************************************************************************
 COLOR SCHEME: BLACK
 ************************************************************************************************************************************************
 */ 
+
+/** 
+************************************************************************************************************************************************
+Playback Cores are brokered via the browser for now.
+************************************************************************************************************************************************
+*/ 
+
+#core_wmp,
+#core_qt,
+#core_vlc
+{
+}
  
  /** 
 ************************************************************************************************************************************************
@@ -304,7 +317,7 @@ Love the box.
 /** NOTE: IDs containing periods are bad.. */
 #frame_service_buttonbar clickholdbutton[id="file.new"]
 {
-  list-style-image: url(default/icon_playlist_16x16.png) !important; 
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
 }
 #frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
   list-style-image: url(default/icon_playlist_16x16.png) !important;
@@ -487,8 +500,8 @@ filterlist > tree
   border-left: none !important;
   margin: 0px !important;
   padding: 0px !important;
-  background-color: transparent !important;  
-  opacity: 0.8 !important;
+  background-color: transparent !important;
+  /* opacity: 0.8; slow on the mac :( **/
 }
 
 /* striping for genre filter */
@@ -496,7 +509,7 @@ filterlist > tree > treechildren::-moz-tree-row
 {
   -moz-appearance: none !important;
   background-color: #1d272d !important;
-  -moz-border-top-colors: #1d272d !important;
+  border: none !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( odd )
@@ -565,7 +578,7 @@ playlist > stack > vbox > tree
   margin: 0px 0px 0px 0px !important;
   padding: 0px 0px 0px 0px !important;
   background-color: transparent !important;
-  opacity: .8 !important;
+  /* opacity: .8 !important; slow on the mac :( **/
   
 }
 
@@ -702,7 +715,7 @@ playlist > stack > vbox > hbox > hbox > button[disabled="true"]
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
   border: 1px solid !important;
-  padding: 0px !important;
+  padding: 0px 5px 0px 5px !important;
   margin: 2px 0px 2px 2px !important;
   -moz-border-top-colors: #444 !important;
   -moz-border-left-colors: #444 !important;
@@ -717,7 +730,7 @@ playlist > stack > vbox > hbox > hbox > button[disabled="false"]
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
+  padding: 0px 5px 0px 5px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #99A195 !important;
@@ -1178,6 +1191,7 @@ These let the user resize the frames in your box model.
   background-repeat: no-repeat !important;
   background-position: center center !important;
   border: none !important;
+  cursor: w-resize;
 }
 
 #vert_splitter
@@ -1215,6 +1229,7 @@ These let the user resize the frames in your box model.
   background-repeat: no-repeat !important;
   background-position: center center !important;
   border: none !important;
+  cursor: n-resize;
 }
 
 #control_pane_splitter
@@ -1230,6 +1245,7 @@ These let the user resize the frames in your box model.
   background-position: center center !important;
   border: none !important;
   margin: 3px 0px 3px 0px;
+  cursor: n-resize;
 }
 
 #control_pane_splitter[state="collapsed"]
@@ -1243,6 +1259,7 @@ These let the user resize the frames in your box model.
   background-position: center center !important;
   border: none !important;
   margin: 3px 3px 3px 3px;
+  cursor: n-resize;
 }
 
 #horz_splitter[state="collapsed"]
@@ -1551,10 +1568,10 @@ scrollbar > slider
 {   
   -moz-appearance: none !important; /* grrrr! */  
   -moz-border-radius: 3px !important;  
-  -moz-border-top-colors: #747775 #666 !important;
-  -moz-border-right-colors: #666 #5D5F5F !important;
-  -moz-border-bottom-colors: #666 #5D5F5F !important;
-  -moz-border-left-colors: #747775 #666 !important;
+  -moz-border-top-colors: #999 #666 !important;
+  -moz-border-right-colors: #666 #333 !important;
+  -moz-border-bottom-colors: #666 #333 !important;
+  -moz-border-left-colors: #999 #666 !important;
   border: 2px solid !important; 
   background-color: transparent !important; 
   padding: 0px 0px 0px 0px !important;
