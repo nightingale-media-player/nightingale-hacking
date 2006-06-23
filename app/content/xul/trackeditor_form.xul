@@ -59,17 +59,17 @@
       <hbox height="32">
         <label id="trackeditor.label.artist" class="dialog_label" value="Artist" width="96"/>
         <spacer width="5"/> 
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" class="sb_faceplate" flex="1" />
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" class="dialog_textbox" flex="1" />
       </hbox>
       <hbox height="32">
         <label id="trackeditor.label.album" class="dialog_label" value="Album" width="96"/>
         <spacer width="5"/> 
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" class="sb_faceplate" flex="1"/>
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" class="dialog_textbox" flex="1"/>
       </hbox>
       <hbox height="32">
         <label id="trackeditor.label.genre" class="dialog_label" value="Genre" width="96"/>
         <spacer width="5"/> 
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" class="sb_faceplate" flex="1"/>
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" class="dialog_textbox" flex="1"/>
       </hbox>
       <hbox height="32">
         <label id="trackeditor.label.length" class="dialog_label" value="Length" width="96"/>
