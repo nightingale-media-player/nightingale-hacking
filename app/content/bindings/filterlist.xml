@@ -226,6 +226,9 @@
               this.tree.view.selection.getRangeAt( i, start, end );
               for( var c = start.value; c <= end.value; c++ )
               {
+                // Check for stupid things.
+                if ( c >= this.tree.view.rowCount )
+                  return; // WTF?
                 filter_string += ";" + this.tree.view.getCellText( c, column );
                 // Zero is "All"
                 if ( c != 0 )
