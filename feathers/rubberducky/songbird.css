@@ -2955,7 +2955,8 @@ dbedit_textbox
 
 .checkbox-label-box
 {
-  visibility: hidden;
+  -moz-appearance: none !important;
+  background-color: #000 !important;
 }
 
 .dialog_checkbox,
@@ -2966,7 +2967,7 @@ dbedit_textbox
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
   -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #333 !important; 
+  background-color: #000 !important; 
 }
 
 .dialog_checkbox:focus
@@ -2977,7 +2978,6 @@ dbedit_textbox
 }
 
 
-.dialog_checkbox,
 .checkbox-check[checked="true"]
 {
   height: 7px !important;
@@ -3046,7 +3046,7 @@ dbedit_textbox
 { 
    -moz-appearance: none !important; /* grrrr! */ 
    margin: 2px 0px 0px 0px !important;
-   background-color: #333 !important; 
+   background-color: #000 !important; 
    border: none !important;
    color: #FFF !important;
 } 
