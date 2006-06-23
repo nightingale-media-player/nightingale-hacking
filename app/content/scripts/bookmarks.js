@@ -119,7 +119,7 @@ var bmManager = {
     if (!done) {
       SBDataSetValue("bookmarks.count", 7);
       SBDataSetValue("bookmarks.bookmark0.label", "Pitchfork");
-      SBDataSetValue("bookmarks.bookmark0.url", "http://www.pitchforkmedia.com/mp3/");
+      SBDataSetValue("bookmarks.bookmark0.url", "http://www.pitchforkmedia.com/page/downloads/");
       SBDataSetValue("bookmarks.bookmark0.icon", "http://www.pitchforkmedia.com/favicon.ico");
       SBDataSetValue("bookmarks.bookmark1.label", "Podbop");
       SBDataSetValue("bookmarks.bookmark1.url", "http://podbop.org/");
