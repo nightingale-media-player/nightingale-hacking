@@ -184,6 +184,8 @@ feathers.jar:
   feathers/rubberducky/songbird/default/webbar_stop_hover.png               (default/webbar_stop_hover.png)
   feathers/rubberducky/songbird/default/webbar_stop_normal.png              (default/webbar_stop_normal.png)
   feathers/rubberducky/songbird/mini/mini.bkg.dashboard.png                 (mini/mini.bkg.dashboard.png)
+  feathers/rubberducky/songbird/mini/mini.bkg.dashboard_e.png               (mini/mini.bkg.dashboard_e.png)
+  feathers/rubberducky/songbird/mini/mini.bkg.dashboard_w.png               (mini/mini.bkg.dashboard_w.png)
   feathers/rubberducky/songbird/mini/mini.btn.back.a.png                    (mini/mini.btn.back.a.png)
   feathers/rubberducky/songbird/mini/mini.btn.back.d.png                    (mini/mini.btn.back.d.png)
   feathers/rubberducky/songbird/mini/mini.btn.back.h.png                    (mini/mini.btn.back.h.png)
