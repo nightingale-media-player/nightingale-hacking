@@ -2889,7 +2889,8 @@ DIALOG BOXES
 
 .drawer_box textbox,
 .dialog_textbox,
-.smart_condition_box textbox
+.smart_condition_box textbox,
+dbedit_textbox
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px !important;
@@ -2899,9 +2900,9 @@ DIALOG BOXES
   -moz-border-bottom-colors: #99A195 #333 !important;
   background-color: #000 !important; 
   color: #FFF !important;
-  height: 25px !important;
-  padding-top: 3px !important;
-  padding-left: 5px !important;
+  height: 30px !important;
+  padding-top: 2px !important;
+  padding-left: 3px !important;
 }
 
 .drawer_box input:focus,
@@ -2952,7 +2953,13 @@ DIALOG BOXES
   border: 1px solid #3B3C3F !important;
 }
 
-.dialog_checkbox .checkbox-check
+.checkbox-label-box
+{
+  visibility: hidden;
+}
+
+.dialog_checkbox,
+.checkbox-check
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-border-top-colors: #535751 #333 !important;
@@ -2970,7 +2977,8 @@ DIALOG BOXES
 }
 
 
-.dialog_checkbox .checkbox-check[checked="true"]
+.dialog_checkbox,
+.checkbox-check[checked="true"]
 {
   height: 7px !important;
   width: 7px !important; 
