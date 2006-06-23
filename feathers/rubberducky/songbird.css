@@ -2882,6 +2882,11 @@ DIALOG BOXES
   background-color: #333 !important;
 }
 
+.menulist-editable-input
+{
+  color: #fff !important;
+}
+
 .drawer_box textbox,
 .dialog_textbox,
 .smart_condition_box textbox
@@ -2892,7 +2897,7 @@ DIALOG BOXES
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
   -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #242527 !important; 
+  background-color: #000 !important; 
   color: #FFF !important;
   height: 25px !important;
   padding-top: 3px !important;
