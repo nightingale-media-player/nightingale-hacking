@@ -1204,7 +1204,6 @@ These let the user resize the frames in your box model.
 }
 
 .horz_splitter,
-#control_pane_splitter,
 #horz_splitter,
 #playlist_web_split > grippy
 {
@@ -1223,6 +1222,8 @@ These let the user resize the frames in your box model.
   -moz-appearance: none !important; /* grrrr! */
   width: 50px !important;
   height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important; /* Mac doesn't want to respect my height value without this? */
   background-color: transparent !important;
   background-image: url(default/grippy.png) !important;
   background-repeat: no-repeat !important;
