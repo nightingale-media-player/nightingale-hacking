@@ -94,10 +94,6 @@ var gOS         = null;
  * ----------------------------------------------------------------------------
  */
 
-// This will create the component and call init with the args
-const createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, SONGBIRD_DATAREMOTE_IID, "init");
-
-
 /**
  * Logs a string to the error console. 
  * @param   string
@@ -334,6 +330,9 @@ PlaylistPlayback.prototype = {
   },
 
   _attachDataRemotes: function() {
+    // This will create the component and call init with the args
+    var createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, SONGBIRD_DATAREMOTE_IID, "init");
+
     // HOLY SMOKES we use lots of data elements.
   
     // Play/Pause image toggle
