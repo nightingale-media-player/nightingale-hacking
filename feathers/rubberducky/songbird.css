@@ -98,7 +98,7 @@ tree
 {
   background-color: #686A6A !important;
   color: #CDD4C4 !important;
-  overflow: -moz-scrollbars-none !important;
+  overflow: hidden !important;
 }
 
 #playlist_edit,
@@ -107,7 +107,7 @@ tree
   background-color: #99A195 !important;
   color: #333 !important;
   border: none !important;
-  overflow: -moz-scrollbars-none !important;
+  overflow: hidden !important;
 }
 
 #edit_bookmark
