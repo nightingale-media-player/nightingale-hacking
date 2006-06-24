@@ -98,6 +98,7 @@ tree
 {
   background-color: #686A6A !important;
   color: #CDD4C4 !important;
+  overflow: -moz-scrollbars-none !important;
 }
 
 #playlist_edit,
@@ -106,6 +107,7 @@ tree
   background-color: #99A195 !important;
   color: #333 !important;
   border: none !important;
+  overflow: -moz-scrollbars-none !important;
 }
 
 #edit_bookmark
@@ -2991,7 +2993,7 @@ checkbox {
   -moz-box-align: center;
   background: #000 !important;
   -moz-box-align: center;   
-  opacity: 0.7 !important;
+  opacity: 0.7 !important; /* When it's not focused, dim it slightly. */
 }
 
 .checkbox-label-box {
