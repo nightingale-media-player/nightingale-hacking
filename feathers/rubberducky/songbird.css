@@ -3231,6 +3231,7 @@ checkbox[checked="true"][disabled="true"] > .checkbox-check {
 textbox,
 checkbox
 {
+  -moz-appearance: none !important;
   -moz-user-focus: normal !important;
 }
 
