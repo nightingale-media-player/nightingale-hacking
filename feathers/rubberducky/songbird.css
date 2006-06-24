@@ -2887,7 +2887,20 @@ DIALOG BOXES and their buttons
   background-color: #333 !important;
 }
 
-
+/** 
+************************************************************************************************************************************************
+TEXTBOXES for dialogs and forms.
+************************************************************************************************************************************************
+*/
+textbox-input-box
+{
+  -moz-appearance: none !important;
+  background-color: #000 !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;  
+}
 
 .drawer_box textbox,
 .dialog_textbox,
@@ -2927,10 +2940,11 @@ DIALOG BOXES and their buttons
 .dialog_textbox[disabled="true"],
 .smart_condition_box[disabled="true"]
 {
-  -moz-border-top-colors: #333 #333 !important;
-  -moz-border-left-colors: #333 #333 !important;
-  -moz-border-right-colors: #333 #333 !important;
-  -moz-border-bottom-colors: #333 #333 !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  -moz-border-bottom-colors: #333 !important;
   color: #666 !important;
 }
 
