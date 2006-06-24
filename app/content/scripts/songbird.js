@@ -382,6 +382,7 @@ function SBAppInitialize()
     if ( PLATFORM_WIN32 ) {
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
+      //InitPlaybackCoreFlash( "core_flash_frame" );
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
       // Hide Flash

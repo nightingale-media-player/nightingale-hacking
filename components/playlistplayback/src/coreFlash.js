@@ -56,8 +56,8 @@ CoreFlash.prototype.playUrl = function ( aURL )
 
     //this.LOG( "Trying to play url: " + aURL );
   
-    this._object.LoadMovie( 0, aURL );
-    this._object.Play();
+    this._object.SetVariable("url", aURL);
+
     this._paused = false;
     this._playing = true;
 
@@ -73,11 +73,8 @@ CoreFlash.prototype.play = function ()
 {
   this._verifyObject();
   	
-  //for ( var stuff in this._object )
-  //  this.LOG("XXXredfive obj has: " + stuff + "\n");
-  
   try {
-    this._object.Play();
+    this._object.SetVariable("action", "play");
     this._paused = false;
     this._playing = true;
   }
@@ -96,7 +93,7 @@ CoreFlash.prototype.pause = function ()
   this._verifyObject();
 
   try {
-    this._object.StopPlay();
+    this._object.SetVariable("action", "pause");
   }
   catch(err) {
     this.LOG(err);
@@ -115,7 +112,7 @@ CoreFlash.prototype.stop = function ()
   this._verifyObject();
     
   try {
-    this._object.StopPlay();
+    this._object.SetVariable("action", "stop");
     this._paused = false;
     this._playing = false;
   }
@@ -128,54 +125,71 @@ CoreFlash.prototype.stop = function ()
  
 CoreFlash.prototype.getPaused = function ()
 {
+  this._verifyObject();
+      
+  try {
+    this._paused = this._object.GetVariable("isPaused") == "1";
+  }
+  catch(err) {
+    this.LOG(err);
+    return false;
+  }
+
   return this._paused;
 };
 
 CoreFlash.prototype.getPlaying = function ()
 {
+  try {
+    this._playing = this._object.GetVariable("isPlaying") == "1";
+  }
+  catch(err) {
+    this.LOG(err);
+    return false;
+  }
+  
   return this._playing;
 };
 
 CoreFlash.prototype.getMute = function ()
 {
-  return false;
+  return this._object.GetVariable("volume") == "0";
 };
 
 CoreFlash.prototype.setMute = function (aMute)
 {
-  // XXXredfive - there is no volume aspect to the flash api
+  this._object.SetVariable("volume", "0");
   return;
 };
 
 
 CoreFlash.prototype.getVolume = function ()
 {
-  // XXXredfive - there is no volume aspect to the flash api
-  return 100;
+  return parseInt(this._object.GetVariable("volume"));
 };
 
 
 CoreFlash.prototype.setVolume = function (aVolume)
 {
-  // XXXredfive - there is no volume aspect to the flash api
-  return;
+  this._object.SetVariable("volume", "" + aVolume)
 };
 
 CoreFlash.prototype.getLength = function ()
 {
   this._verifyObject();
-  return this._object.TotalFrames();
+  return parseInt(this._object.GetVariable("duration"));
 };
 
 CoreFlash.prototype.getPosition = function ()
 {
   this._verifyObject();
-  return true;
+  return parseInt(this._object.GetVariable("position"));
 };
 
 CoreFlash.prototype.setPosition = function (aPosition)
 {
   this._verifyObject();
+  this._object.SetVariable("position", "" + aPosition)
   return true;
 };
 
@@ -188,7 +202,7 @@ CoreFlash.prototype.goFullscreen = function ()
 CoreFlash.prototype.getMetadata = function (aKey)
 {
   this._verifyObject();
-  return true;
+  return null;
 };
 
 /**
@@ -225,7 +239,7 @@ function InitPlaybackCoreFlash ( aElementId )
     var flashIFrame = document.getElementById( aElementId );
 
     // get the nsHTMLDOMObjectElement
-    gFlashCore.setObject(flashIFrame.contentWindow.document.getElementById("core_fp"));
+    gFlashCore.setObject(flashIFrame.contentWindow.document.core_fp);
     gFlashCore.setId("FLASH1");
 
     // add the core to the playback service

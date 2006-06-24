@@ -3,4 +3,6 @@ songbird.jar:
   content/songbird/scripts/coreQT.js    (coreQT.js)
   content/songbird/scripts/coreVLC.js   (coreVLC.js)
   content/songbird/scripts/coreWMP.js   (coreWMP.js)
-  content/songbird/scripts/coreMPLAYER.js   (coreMPLAYER.js)
+  content/songbird/scripts/coreMPlayer.js   (coreMPlayer.js)
+  content/songbird/scripts/baseCore.js   (baseCore.js)
+  content/songbird/scripts/coreFlash.js   (coreFlash.js)  

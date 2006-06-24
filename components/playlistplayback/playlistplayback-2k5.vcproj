@@ -77,7 +77,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputName).xpt"
 					/>
@@ -88,7 +88,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputName).xpt"
 					/>
@@ -103,7 +103,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputName).xpt"
 					/>
@@ -114,7 +114,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -I $(SolutionDir)components\medialibrary\public -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputName).xpt"
 					/>
@@ -125,7 +125,7 @@
 			Name="src"
 			>
 			<File
-				RelativePath=".\src\coreVLC.js"
+				RelativePath=".\src\baseCore.js"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -133,7 +133,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 					/>
@@ -144,7 +144,112 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\coreFlash.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\coreMPlayer.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+
+			</File>
+			<File
+				RelativePath=".\src\coreQT.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\coreVLC.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="$(InputFileName) --"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 					/>
@@ -159,7 +264,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 					/>
@@ -170,33 +275,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
-						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
-						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\src\coreQT.js"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
-						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
-						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 					/>
@@ -211,7 +290,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
 					/>
@@ -222,7 +301,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
 					/>

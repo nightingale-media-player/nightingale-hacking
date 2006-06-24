@@ -179,7 +179,7 @@
                 <html:iframe id="core_qt_document" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
               </hbox>
               <hbox id="box_flash" flex="1">
-                <html:iframe id="core_flash_frame" src="chrome://songbird/content/html/flash.html" type="content" flex="1" />
+                <html:iframe id="core_flash_frame" style="border: 0px none;"  src="chrome://songbird/content/html/flash.html" type="content" flex="1" />
               </hbox>
               <!-- things that might be needed when we finally sort out the playback jumble
               <hbox id="box_wm" flex="1">
