@@ -3394,7 +3394,7 @@ menulist[disabled="true"] > dropmarker
 .menulist-editable-box
 {
   color: #fff !important;
-  background-color: #4A4E48 !important;
+  background-color: #000 !important;
 }
 
 .menulist-editable-box
@@ -3404,7 +3404,7 @@ menulist[disabled="true"] > dropmarker
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
   -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #4A4E48 !important;
+  background-color: #000 !important;
 }
 
 .menulist-editable-input[disabled="true"]
