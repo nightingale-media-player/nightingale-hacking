@@ -19,3 +19,4 @@ songbird.jar:
   content/songbird/bindings/trackeditor.xml       (trackeditor.xml)
   content/songbird/bindings/windowregion.xml      (windowregion.xml)
   content/songbird/bindings/smartsplitter.xml      (smartsplitter.xml)
+  content/songbird/bindings/clickholdbutton.xml      (clickholdbutton.xml)
