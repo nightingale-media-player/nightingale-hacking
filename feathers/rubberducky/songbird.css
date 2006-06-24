@@ -3392,6 +3392,7 @@ menulist[disabled="true"] > dropmarker
 .menulist-editable-input
 {
   color: #fff !important;
+  background-color: #4A4E48 !important;
 }
 
 .menulist-editable-input[disabled="true"]
