@@ -2975,12 +2975,6 @@ CHECKBOXES, boxes, labels, images, states.
 
 checkbox {
   -moz-box-align: center;
-  border: 2px solid;
-  -moz-appearance: none !important; 
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
   background: #000 !important;
   -moz-box-align: center;   
   opacity: 0.7 !important;
