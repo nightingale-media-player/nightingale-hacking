@@ -66,9 +66,9 @@ tree
   list-style-image: none !important;
 }
 
-.sb_faceplate
+.sb_faceplate,
+.sb_faceplate_dialog
 {
-  -moz-user-focus: ignore !important;
   -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding !important;
   border: none !important;
@@ -79,6 +79,11 @@ tree
   border-width: 0px !important;
   font-family: tahoma, arial !important; /*arial is the fallback font*/
   font-size: 11px !important;
+}
+
+.sb_faceplate
+{
+  -moz-user-focus: ignore !important;
 }  
 
 /* Edit-in-place popups overlapping the entries in the service pane tree */
@@ -2748,7 +2753,7 @@ DASHBOARD
 
 /** 
 ************************************************************************************************************************************************
-DIALOG BOXES
+DIALOG BOXES and their buttons
 ************************************************************************************************************************************************
 */
 
@@ -2882,10 +2887,7 @@ DIALOG BOXES
   background-color: #333 !important;
 }
 
-.menulist-editable-input
-{
-  color: #fff !important;
-}
+
 
 .drawer_box textbox,
 .dialog_textbox,
@@ -2922,6 +2924,17 @@ dbedit_textbox
   padding-left: 5px !important;
 }
 
+.drawer_box[disabled="true"],
+.dialog_textbox[disabled="true"],
+.smart_condition_box[disabled="true"]
+{
+  -moz-border-top-colors: #333 #333 !important;
+  -moz-border-left-colors: #333 #333 !important;
+  -moz-border-right-colors: #333 #333 !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  color: #666 !important;
+}
+
 /* Listboxes for dialogs */
 
 .dialog_listbox
@@ -2953,16 +2966,117 @@ dbedit_textbox
   border: 1px solid #3B3C3F !important;
 }
 
+/** 
+************************************************************************************************************************************************
+CHECKBOXES, boxes, labels, images, states.
+************************************************************************************************************************************************
+*/
+
+/* ::::: checkbox ::::: */
+
+checkbox {
+  -moz-box-align: center;
+  border: 2px solid;
+  -moz-appearance: none !important; 
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background: #000 !important;
+  -moz-box-align: center;   
+}
+
+.checkbox-label-box {
+  -moz-margin-start: 2px;
+  border: 1px solid transparent;
+  padding: 0px 1px;
+}
+
+.checkbox-icon {
+  -moz-margin-end: 2px;
+}
+
+.checkbox-label {
+  margin: 0 !important;
+}
+
+/* ..... focused state ..... */
+
+checkbox:focus{
+  -moz-appearance: none !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  -moz-border-bottom-colors: #333 !important;
+  margin: 0px 0px 0px -6px !important;
+  padding:  0px 0px 0px 5px !important;
+}
+
+checkbox:focus > .checkbox-label-box {
+  -moz-appearance: none !important;
+}
+
+/* ..... disabled state ..... */
+
+checkbox[disabled="true"] > .checkbox-check {
+  -moz-appearance: none !important;
+  background-color: #333 !important;
+}
+
+checkbox[disabled="true"] {
+  color: #666 !important;
+}
+
+/* ::::: checkmark image ::::: */
+
+.checkbox-check {
+  -moz-box-align: center;
+  border: 2px solid;
+  -moz-appearance: none !important; 
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #000 !important; 
+  min-width: 13px;
+  min-height: 13px;
+  background: -moz-Field no-repeat 50% 50%;
+}
+  
+checkbox:hover:active > .checkbox-check {
+  -moz-appearance: none !important;
+  background-color: #000 !important;
+}
+
+/* ..... checked state ..... */
+
+checkbox[checked="true"] > .checkbox-check 
+{
+  -moz-appearance: none !important;
+  background-color: #000 !important;
+  background-image: url("default/check_fff.png") !important;
+}
+
+checkbox[checked="true"][disabled="true"] > .checkbox-check {
+  background-color: #000 !important;
+}
+
+
+/* OLD STUFF checkboxes 
 .checkbox-label-box
 {
   -moz-appearance: none !important;
   background-color: #000 !important;
+  height: 16px !important;
+  width: 16px !important;
+ 
 }
 
 .dialog_checkbox,
 .checkbox-check
 {
-  -moz-appearance: none !important; /* grrrr! */
+  -moz-appearance: none !important; 
   -moz-border-top-colors: #535751 #333 !important;
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
@@ -2970,9 +3084,15 @@ dbedit_textbox
   background-color: #000 !important; 
 }
 
+.checkbox-icon
+{
+  -moz-appearance: none !important; 
+  background: red !important;
+}
+
 .dialog_checkbox:focus
 {
-  -moz-appearance: none !important; /* grrrr! */
+  -moz-appearance: none !important;
   border: none !important;
   background-color: #4A4E48 !important; 
 }
@@ -2984,6 +3104,7 @@ dbedit_textbox
   width: 7px !important; 
   background-image: url(default/check_fff.png) !important;
 }
+/* end OLD STUFF **/
 
 /* Smart Playlist Builder */
 #smartpl_select_library
@@ -3264,6 +3385,29 @@ menulist:focus > hbox
 {
   background-color: #4A4E48 !important;
 }
+
+menulist[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #333 #333 !important;
+  -moz-border-left-colors: #333 #333 !important;
+  -moz-border-right-colors: #333 #333 !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  color: #666 !important;
+}
+
+menulist[disabled="true"] > dropmarker
+{
+  opacity: 0.5 !important;
+}
+
+
+.menulist-editable-input
+{
+  color: #fff !important;
+}
+
+
 
 /** 
 ************************************************************************************************************************************************
