@@ -3399,11 +3399,6 @@ menulist[disabled="true"] > dropmarker
 
 .menulist-editable-box
 {
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
   background-color: #000 !important;
 }
 
