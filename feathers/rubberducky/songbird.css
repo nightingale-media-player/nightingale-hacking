@@ -3396,6 +3396,16 @@ menulist[disabled="true"] > dropmarker
   background-color: #4A4E48 !important;
 }
 
+.menulist-editable-box
+{
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #4A4E48 !important;
+}
+
 .menulist-editable-input[disabled="true"]
 {
   color: #666 !important;
