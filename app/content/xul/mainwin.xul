@@ -199,41 +199,41 @@
                   </menupopup>
                 </menu>
 
-
-                <!-- STUCK THIS IN THE MENU SO IT WOULDN'T POP STUPID -->
-                <popupset>
-                  <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
-                  <popup id="html_context_menu" oncommand="onHTMLContextMenu(event.target)">
-                    <menuitem id="html.context.open" label="&html.context.open;"/>
-                    <menuitem id="html.context.play" label="&html.context.play;"/>
-                    <menuitem id="html.context.add"  label="&html.context.add;"/>
-                    <menuitem id="html.context.playlist"  label="Open as Playlist"/>
-                  </popup>
-                  <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
-                  <popup id="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
-                    <textbox id="playlist_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="HidePlaylistEdit()"/>
-                  </popup>
-                  <!-- EDIT POPUP FOR THE SERVICE PANE -->
-                  <popup id="service_edit_popup" class="sb_faceplate" ignorekeys="true">
-                    <textbox id="service_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onServiceEditChange();" onkeypress="onServiceEditKeypress( event );" onblur="HideServiceEdit()"/>
-                  </popup>
-                  <!-- PLAYLIST POPUP FOR THE SERVICE PANE PLAYLISTS -->
-                  <popup id="service_popup_playlist" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
-                    <menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
-                    <menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
-                  </popup>
-                  <popup id="service_popup_smart" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
-                    <menuitem id="playlist_context_smartedit" label="&menu.edit;"/>
-                    <menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
-                    <menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
-                  </popup>
-                  <popup id="service_popup_none" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
-                    <menuitem id="service_popup_new" label="&menu.file.new;"/>
-                    <menuitem id="service_popup_new_smart" label="&menu.file.smart;"/>
-                    <menuitem id="service_popup_new_remote" label="&menu.file.remote;"/>
-                  </popup>
-                </popupset>
               </menubar>
+
+              <!-- STUCK THIS NEXT TO THE MENU SO IT WOULDN'T POP STUPID -->
+              <popupset>
+                <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
+                <popup id="html_context_menu" oncommand="onHTMLContextMenu(event.target)">
+                  <menuitem id="html.context.open" label="&html.context.open;"/>
+                  <menuitem id="html.context.play" label="&html.context.play;"/>
+                  <menuitem id="html.context.add"  label="&html.context.add;"/>
+                  <menuitem id="html.context.playlist"  label="Open as Playlist"/>
+                </popup>
+                <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
+                <popup id="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
+                  <textbox id="playlist_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="HidePlaylistEdit()"/>
+                </popup>
+                <!-- EDIT POPUP FOR THE SERVICE PANE -->
+                <popup id="service_edit_popup" class="sb_faceplate" ignorekeys="true">
+                  <textbox id="service_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onServiceEditChange();" onkeypress="onServiceEditKeypress( event );" onblur="HideServiceEdit()"/>
+                </popup>
+                <!-- PLAYLIST POPUP FOR THE SERVICE PANE PLAYLISTS -->
+                <popup id="service_popup_playlist" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
+                  <menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
+                  <menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
+                </popup>
+                <popup id="service_popup_smart" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
+                  <menuitem id="playlist_context_smartedit" label="&menu.edit;"/>
+                  <menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
+                  <menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
+                </popup>
+                <popup id="service_popup_none" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
+                  <menuitem id="service_popup_new" label="&menu.file.new;"/>
+                  <menuitem id="service_popup_new_smart" label="&menu.file.smart;"/>
+                  <menuitem id="service_popup_new_remote" label="&menu.file.remote;"/>
+                </popup>
+              </popupset>
 
               <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
               <button id="sysbtn_minimode" class="sb_faceplate" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
