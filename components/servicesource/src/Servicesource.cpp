@@ -223,6 +223,8 @@ static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("CD Baby") ),
     nsString( NS_LITERAL_STRING("Selectric Records") ),
     nsString( NS_LITERAL_STRING("Arts and Crafts Records") ),
+    nsString( NS_LITERAL_STRING("Calabash Music") ),
+    nsString( NS_LITERAL_STRING("Project Opus") ),
     nsString( ),
   },
   // Group 9
@@ -246,6 +248,8 @@ static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("MP3Tunes Locker") ),
     nsString( NS_LITERAL_STRING("Streampad") ),
     nsString( NS_LITERAL_STRING("Tables Turned") ),
+    nsString( NS_LITERAL_STRING("Music Strands") ),
+    nsString( NS_LITERAL_STRING("Jamendo") ),
     nsString( ),
   },
   {
@@ -295,6 +299,8 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("http://cdbaby.com/") ),
     nsString( NS_LITERAL_STRING("http://www.selectricrecords.com/") ),
     nsString( NS_LITERAL_STRING("http://www.galleryac.com/") ),
+    nsString( NS_LITERAL_STRING("http://calabashmusic.com/") ),
+    nsString( NS_LITERAL_STRING("http://projectopus.com/") ),
     nsString( ),
   },
   // Group 9
@@ -318,6 +324,8 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("http://www.mp3tunes.com/locker/") ),
     nsString( NS_LITERAL_STRING("http://www.streampad.com/") ),
     nsString( NS_LITERAL_STRING("http://tablesturned.com/") ),
+    nsString( NS_LITERAL_STRING("http://musicstrands.com/") ),
+    nsString( NS_LITERAL_STRING("http://jamendo.com/") ),
     nsString( ),
   },
   {
@@ -367,6 +375,8 @@ static nsString     gChildIcons[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/cdbaby.ico") ),
     nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
+    nsString( NS_LITERAL_STRING("http://calabashmusic.com/favicon.ico") ),
+    nsString( NS_LITERAL_STRING("http://projectopus.com/favicon.ico") ),
     nsString( ),
   },
   // Group 9
@@ -390,6 +400,8 @@ static nsString     gChildIcons[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("http://mp3tunes.com/favicon.ico") ),
     nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("http://tablesturned.com/favicon.ico") ),
+    nsString( NS_LITERAL_STRING("http://musicstrands.com/favicon.ico") ),
+    nsString( NS_LITERAL_STRING("http://jamendo.com/favicon.ico") ),
     nsString( ),
   },
   {
