@@ -57,6 +57,15 @@ interface sbIMediaLibrary : nsISupports
   void AddMetadataField(in wstring strField, in wstring strDataType, in PRBool bWillRunLater);
   PRBool DeleteMetadataField(in wstring strField, in PRBool bWillRunLater);
 
+  /*
+  PRBool AddTagByIndex()
+  PRBool AddTagByGUID();
+
+  PRBool DeleteTag
+  GetUniqueTags();
+  GetUniqueTagsCount();
+  */
+
   void GetUniqueValuesByField(in wstring strField, out PRUint32 nValueCount, [array, size_is (nValueCount), retval] out wstring aUniqueValues);
 
   PRBool SetValueByIndex(in PRInt32 mediaIndex, in wstring strField, in wstring strValue, in PRBool bWillRunLater);

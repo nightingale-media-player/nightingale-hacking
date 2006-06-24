@@ -263,7 +263,7 @@ try
     {
       rowid = playlist.tree.view.getCellText( first, idcolumn );
     }
-    var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
     PPS.playRefByID(source_ref, rowid);
     onExit();
   }

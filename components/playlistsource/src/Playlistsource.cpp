@@ -373,7 +373,7 @@ sbPlaylistsource::FeedPlaylist(const PRUnichar* RefName,
 
   // A new feed.  Fire a new Query object and stuff it in the tables.
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ENSURE_TRUE(query, NS_ERROR_FAILURE);
 
   nsresult rv;
@@ -1253,11 +1253,11 @@ sbPlaylistsource::FeedFilters(const PRUnichar* RefName,
   nsCOMPtr<sbISmartPlaylist> pSmartPlaylist;
 
   nsCOMPtr<sbIDatabaseQuery> pQuery =
-    do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ENSURE_TRUE(pQuery, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIPlaylistManager> pPlaylistManager =
-    do_CreateInstance("@songbird.org/Songbird/PlaylistManager;1");
+    do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1");
   NS_ENSURE_TRUE(pPlaylistManager, NS_ERROR_FAILURE);
 
   nsresult rv;
@@ -1574,7 +1574,7 @@ sbPlaylistsource::Init()
   METHOD_SHORTCIRCUIT;
 
   // Make the shared query
-  m_SharedQuery = do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1");
+  m_SharedQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
   NS_ENSURE_TRUE(m_SharedQuery, NS_ERROR_FAILURE);
 
   nsresult rv;

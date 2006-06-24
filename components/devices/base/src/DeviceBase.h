@@ -48,7 +48,7 @@
 #include <nsIRunnable.h>
 
 #define SONGBIRD_DeviceBase_CONTRACTID                    \
-  "@songbird.org/Songbird/Device/DeviceBase;1"
+  "@songbirdnest.com/Songbird/Device/DeviceBase;1"
 #define SONGBIRD_DeviceBase_CLASSNAME                     \
   "Songbird Device Base"
 #define SONGBIRD_DeviceBase_CID                           \

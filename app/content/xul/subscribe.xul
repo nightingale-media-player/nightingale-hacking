@@ -177,7 +177,7 @@
     function doOK()
     {
       const SUBSCRIBE_FOLDER_KEY = "download.folder";
-      const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       try
       {
         // Make sure the folder is valid?
@@ -218,7 +218,7 @@
         }
         
         var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-        var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+        var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
         aDBQuery.SetAsyncQuery( false );
         aDBQuery.SetDatabaseGUID( "songbird" );
         

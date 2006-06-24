@@ -55,7 +55,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASERESULT_CONTRACTID                \
-  "@songbird.org/Songbird/DatabaseResult;1"
+  "@songbirdnest.com/Songbird/DatabaseResult;1"
 #define SONGBIRD_DATABASERESULT_CLASSNAME                 \
   "Songbird Database Result Interface"
 #define SONGBIRD_DATABASERESULT_CID                       \

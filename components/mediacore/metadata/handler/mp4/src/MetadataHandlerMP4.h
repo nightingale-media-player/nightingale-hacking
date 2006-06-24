@@ -51,7 +51,7 @@
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAHANDLERMP4_CONTRACTID            \
-  "@songbird.org/Songbird/MetadataHandler/MP4;1"
+  "@songbirdnest.com/Songbird/MetadataHandler/MP4;1"
 #define SONGBIRD_METADATAHANDLERMP4_CLASSNAME             \
   "Songbird MP4 Metadata Handler Interface"
 #define SONGBIRD_METADATAHANDLERMP4_CID                   \

@@ -82,7 +82,7 @@ function IsMediaUrl( the_url )
 
 function WFInit()
 {
-  const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
   
   if(!wfMediaLibrary)
     wfMediaLibrary = new MediaLibrary();

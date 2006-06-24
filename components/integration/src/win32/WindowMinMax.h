@@ -52,7 +52,7 @@ class CWindowMinMaxSubclass;
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWMINMAX_CONTRACTID                  \
-  "@songbird.org/Songbird/WindowMinMax;1"
+  "@songbirdnest.com/Songbird/WindowMinMax;1"
 #define SONGBIRD_WINDOWMINMAX_CLASSNAME                   \
   "Songbird Window MinMax Interface"
 #define SONGBIRD_WINDOWMINMAX_CID                         \

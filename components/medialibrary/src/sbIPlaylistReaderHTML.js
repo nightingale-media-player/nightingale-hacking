@@ -28,7 +28,7 @@
 // sbIPlaylistReader Object (HTML)
 //
 
-const SONGBIRD_PLAYLISTHTML_CONTRACTID = "@songbird.org/Songbird/Playlist/Reader/HTML;1";
+const SONGBIRD_PLAYLISTHTML_CONTRACTID = "@songbirdnest.com/Songbird/Playlist/Reader/HTML;1";
 const SONGBIRD_PLAYLISTHTML_CLASSNAME = "Songbird HTML Playlist Interface";
 const SONGBIRD_PLAYLISTHTML_CID = Components.ID("{2a9656c6-ba21-4fa1-8578-3c8a11aecab8}");
 const SONGBIRD_PLAYLISTHTML_IID = Components.interfaces.sbIPlaylistReader;
@@ -260,9 +260,9 @@ CPlaylistHTML.prototype =
         pQuery.SetAsyncQuery(true);
         pQuery.SetDatabaseGUID(strGUID);
 
-        const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+        const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
         var pLibrary = new MediaLibrary();
-        const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+        const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var pPlaylistManager = new PlaylistManager();
         
         pLibrary.SetQueryObject(pQuery);

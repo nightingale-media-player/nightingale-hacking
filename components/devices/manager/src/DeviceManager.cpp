@@ -56,7 +56,7 @@ static PRLogModuleInfo* gDevicemanagerLog = nsnull;
 #define NS_PROFILE_STARTUP_OBSERVER_ID "profile-after-change"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
 
-#define SB_DEVICE_PREFIX "@songbird.org/Songbird/Device/"
+#define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/Device/"
 
 // This allows us to be initialized once and only once.
 PRBool sbDeviceManager::sServiceInitialized = PR_FALSE;
@@ -175,7 +175,7 @@ sbDeviceManager::Finalize()
 
 // Instantiate all supported devices.
 // This is done by iterating through all registered XPCOM components and
-// finding the components with @songbird.org/Songbird/Device/ prefix for the 
+// finding the components with @songbirdnest.com/Songbird/Device/ prefix for the 
 // contract ID for the interface.
 NS_IMETHODIMP
 sbDeviceManager::LoadSupportedDevices()

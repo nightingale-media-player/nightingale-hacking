@@ -499,7 +499,7 @@ void CServicesource::Init(void)
     }
 
     // Setup the list of playlists as a persistent query
-    m_PlaylistsQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+    m_PlaylistsQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     m_PlaylistsQuery->SetAsyncQuery( PR_TRUE );
     m_PlaylistsQuery->SetDatabaseGUID( NS_LITERAL_STRING("songbird").get() );
 
@@ -514,7 +514,7 @@ void CServicesource::Init(void)
     }
     m_PlaylistsQuery->SetPersistentQuery( true );
     
-    nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbird.org/Songbird/PlaylistManager;1" );
+    nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
     if(pPlaylistManager.get())
       pPlaylistManager->GetAllPlaylistList( m_PlaylistsQuery );
 

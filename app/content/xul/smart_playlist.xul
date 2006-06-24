@@ -219,10 +219,10 @@
             window.arguments[0].table)
         {
         
-          const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
           var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
           
-          var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+          var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
           aDBQuery = aDBQuery.QueryInterface(Components.interfaces.sbIDatabaseQuery);
 
           var strGUID = window.arguments[0].guid;
@@ -296,10 +296,10 @@
     }
     function doOK()
     {
-      const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
       
-      var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+      var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
       queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
       
       var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance();

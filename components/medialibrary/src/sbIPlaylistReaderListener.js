@@ -28,7 +28,7 @@
 // sbIPlaylistReaderListener Object
 //
 
-const SONGBIRD_PLAYLISTREADERLISTENER_CONTRACTID = "@songbird.org/Songbird/PlaylistReaderListener;1";
+const SONGBIRD_PLAYLISTREADERLISTENER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderListener;1";
 const SONGBIRD_PLAYLISTREADERLISTENER_CLASSNAME = "Songbird Playlist Reader Listener"
 const SONGBIRD_PLAYLISTREADERLISTENER_IID = Components.interfaces.sbIPlaylistReaderListener;
 const SONGBIRD_PLAYLISTREADERLISTENER_CID = Components.ID("{b4fac7ab-7d23-47c5-98e0-7e59266e2a28}");
@@ -69,10 +69,10 @@ CPlaylistReaderListener.prototype =
   {
     if (aStateFlags & 16 /*this.STATE_STOP*/)
     {
-      const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+      const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
       var aPlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
       
-      const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
       
       var strContentType = "";
@@ -102,7 +102,7 @@ CPlaylistReaderListener.prototype =
           const SUBSCRIBE_FOLDER_KEY = "download.folder";
           var destFolder = this.SBDataGetValue(SUBSCRIBE_FOLDER_KEY);
  
-          deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+          deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                       getService(Components.interfaces.sbIDeviceManager);
           if (!deviceManager)
             return false;

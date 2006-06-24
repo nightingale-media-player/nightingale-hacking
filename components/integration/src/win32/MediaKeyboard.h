@@ -55,7 +55,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_MEDIAKEYBOARD_CONTRACTID                 \
-  "@songbird.org/Songbird/MediaKeyboard;1"
+  "@songbirdnest.com/Songbird/MediaKeyboard;1"
 #define SONGBIRD_MEDIAKEYBOARD_CLASSNAME                  \
   "Songbird Media Keyboard Manager"
 #define SONGBIRD_MEDIAKEYBOARD_CID                        \

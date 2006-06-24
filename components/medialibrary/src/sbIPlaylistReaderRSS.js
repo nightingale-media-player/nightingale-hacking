@@ -28,7 +28,7 @@
 // sbIPlaylistReader Object (RSS)
 //
 
-const SONGBIRD_PLAYLISTRSS_CONTRACTID = "@songbird.org/Songbird/Playlist/Reader/RSS;1";
+const SONGBIRD_PLAYLISTRSS_CONTRACTID = "@songbirdnest.com/Songbird/Playlist/Reader/RSS;1";
 const SONGBIRD_PLAYLISTRSS_CLASSNAME = "Songbird RSS Playlist Interface";
 const SONGBIRD_PLAYLISTRSS_CID = Components.ID("{4c55f911-0174-4a73-8a41-949459585aec}");
 const SONGBIRD_PLAYLISTRSS_IID = Components.interfaces.sbIPlaylistReader;
@@ -84,8 +84,8 @@ CPlaylistRSS.prototype =
             
             if(document)
             {
-              const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-              const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+              const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+              const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
 
               this.m_guid = strGUID;
               this.m_table = strDestTable;

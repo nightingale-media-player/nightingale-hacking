@@ -51,7 +51,7 @@
 #endif
 
 // DEFINES ====================================================================
-#define SONGBIRD_GLOBALHOTKEYS_CONTRACTID  "@songbird.org/Songbird/GlobalHotkeys;1"
+#define SONGBIRD_GLOBALHOTKEYS_CONTRACTID  "@songbirdnest.com/Songbird/GlobalHotkeys;1"
 #define SONGBIRD_GLOBALHOTKEYS_CLASSNAME   "Songbird Global Hotkeys Manager"
 
 // {284E14BF-5CE4-4434-A733-4379D27D799E}

@@ -229,7 +229,7 @@ function InitPlaybackCoreFlash ( aElementId )
     gFlashCore.setId("FLASH1");
 
     // add the core to the playback service
-    var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+    var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     gPPS.addCore(gFlashCore, true);
   }

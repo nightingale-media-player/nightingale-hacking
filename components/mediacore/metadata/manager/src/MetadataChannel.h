@@ -42,7 +42,7 @@
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATACHANNEL_CONTRACTID               \
-  "@songbird.org/Songbird/MetadataChannel;1"
+  "@songbirdnest.com/Songbird/MetadataChannel;1"
 #define SONGBIRD_METADATACHANNEL_CLASSNAME                \
   "Songbird Metadata Channel Helper"
 #define SONGBIRD_METADATACHANNEL_CID                      \

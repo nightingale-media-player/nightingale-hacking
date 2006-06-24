@@ -138,7 +138,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     {
       char* contractID = NULL;
       contractString->ToString(&contractID);
-      if (strstr(contractID, "@songbird.org/Songbird/MetadataHandler/"))
+      if (strstr(contractID, "@songbirdnest.com/Songbird/MetadataHandler/"))
       {
         nsCOMPtr<sbIMetadataHandler> handler(do_CreateInstance(contractID));
         if (handler.get())

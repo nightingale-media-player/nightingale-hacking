@@ -42,7 +42,7 @@
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAMANAGER_CONTRACTID               \
-  "@songbird.org/Songbird/MetadataManager;1"
+  "@songbirdnest.com/Songbird/MetadataManager;1"
 #define SONGBIRD_METADATAMANAGER_CLASSNAME                \
   "Songbird Metadata Manager Interface"
 #define SONGBIRD_METADATAMANAGER_CID                      \

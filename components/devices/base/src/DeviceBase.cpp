@@ -413,7 +413,7 @@ PRBool sbDeviceBase::GetNextTransferFileEntry(PRInt32 prevIndex, const PRUnichar
   nsString transferTable = bDownloading?GetDeviceDownloadTable(deviceString):GetDeviceUploadTable(deviceString);
 
   sbIDatabaseResult* resultset;
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
 
   if (!query)
     return PR_FALSE;
@@ -475,7 +475,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 
   // Read the table for Transferring files
   sbIDatabaseResult* resultset;
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
 
   // This can happen when the app is shutting down
   if (!query)
@@ -603,7 +603,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
 
 PRBool sbDeviceBase::UpdateIOProgress(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index, PRUint32 percentComplete)
 {
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   nsString query_str;
   PRInt32 ret = -1;
   PRUnichar* dbContext;
@@ -672,7 +672,7 @@ PRBool sbDeviceBase::UpdateIOProgress(PRUnichar* deviceString, PRUnichar* table,
 
 PRBool sbDeviceBase::UpdateIOStatus(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index, const PRUnichar* status)
 {
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   PRUnichar* dbContext;
   GetContext(deviceString, &dbContext);
 
@@ -819,11 +819,11 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
   // for creating a similar table in device's database context.
   nsCOMPtr<sbIDatabaseResult> resultset;
 
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   query->SetAsyncQuery(PR_FALSE); 
   query->SetDatabaseGUID(ContextInput);
 
-  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbird.org/Songbird/PlaylistManager;1");
+  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1");
   nsCOMPtr<sbISimplePlaylist> pPlaylistSource;
   nsCOMPtr<sbISimplePlaylist> pPlaylistDest;
 
@@ -991,7 +991,7 @@ void sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceStr
 
   nsresult rv;
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance("@songbird.org/Songbird/DatabaseQuery;1" , &rv);
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1" , &rv);
   if (NS_FAILED(rv)) {
     NS_WARNING("Failed to create a DatabaseQuery object");
     return;
@@ -1019,7 +1019,7 @@ void sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceStr
   }
   else
   {
-    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbird.org/Songbird/PlaylistManager;1");
+    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1");
     PRInt32 retVal = 0;
     pPlaylistManager->DeleteSimplePlaylist(transferTable.get(), query.get(), &retVal);
   }
@@ -1121,7 +1121,7 @@ PRBool sbDeviceBase::GetSourceAndDestinationURL(const PRUnichar* dbContext, cons
   PRBool bRet = PR_FALSE;
   PRInt32 nRet = 0;
 
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   if (query == nsnull)
     return PR_FALSE;
 
@@ -1256,7 +1256,7 @@ NS_IMETHODIMP sbDeviceBase::RemoveTranferTracks(const PRUnichar *deviceString, P
   PRUnichar* deviceContext = nsnull;
   GetContext(deviceString, &deviceContext);
 
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   nsString deleteEntriesSQL(NS_LITERAL_STRING("delete from "));
   deleteEntriesSQL += GetTransferTable(deviceString, PR_TRUE);
 
@@ -1302,7 +1302,7 @@ void sbDeviceBase::ResumeAbortedDownload(const PRUnichar* deviceString)
 
   // Read the table for Transferring files
   sbIDatabaseResult* resultset;
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   nsString query_str(NS_LITERAL_STRING("select * from "));
   query_str += transferTable;
   query->SetAsyncQuery(PR_FALSE); 
@@ -1347,7 +1347,7 @@ void sbDeviceBase::ResumeAbortedUpload(const PRUnichar* deviceString)
 
   // Read the table for Transferring files
   sbIDatabaseResult* resultset;
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   nsString query_str(NS_LITERAL_STRING("select * from "));
   query_str += transferTable;
   query->SetAsyncQuery(PR_FALSE); 
@@ -1473,7 +1473,7 @@ PRBool sbDeviceBase::CreateTrackTable(nsString& deviceString, nsString& tableNam
   PRUnichar* dbContext;
   GetContext((PRUnichar *) deviceString.get(), &dbContext);
 
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
 
   // First get rid of any existing table by that name
   nsString dropTableQuery(NS_LITERAL_STRING("DROP TABLE "));
@@ -1515,7 +1515,7 @@ PRBool sbDeviceBase::AddTrack(nsString& deviceString,
   PRUnichar* dbContext;
   GetContext((PRUnichar *) deviceString.get(), &dbContext);
 
-  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   nsString addRecordQuery(NS_LITERAL_STRING("INSERT INTO "));
   addRecordQuery += tableName;
   addRecordQuery += NS_LITERAL_STRING("(url, name, tim, artist, album, genre, length) VALUES (");
@@ -1588,11 +1588,11 @@ void sbDeviceBase::DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUni
     PRUnichar *pGUID = NULL;
     PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
     aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strFile.get(), (strFile.Length() + 1) * sizeof(PRUnichar));
-    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     pQuery->SetAsyncQuery(PR_FALSE);
     pQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird").get());
 
-    nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbird.org/Songbird/MediaLibrary;1" );
+    nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
     pLibrary->SetQueryObject(pQuery.get());
 
     //Make sure the filename is unique when download an item from a remote source.

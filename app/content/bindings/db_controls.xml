@@ -249,8 +249,8 @@
         <![CDATA[
         if (!this.ml) 
         {
-          this.ml = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-          this.query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+          this.ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+          this.query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
           this.query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
           this.ml.SetQueryObject(this.query);
         }

@@ -67,7 +67,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_MEDIASCAN_CONTRACTID                     \
-  "@songbird.org/Songbird/MediaScan;1"
+  "@songbirdnest.com/Songbird/MediaScan;1"
 #define SONGBIRD_MEDIASCAN_CLASSNAME                      \
   "Songbird Media Scan Interface"
 #define SONGBIRD_MEDIASCAN_CID                            \
@@ -79,7 +79,7 @@ namespace std
 }
 
 #define SONGBIRD_MEDIASCANQUERY_CONTRACTID                \
-  "@songbird.org/Songbird/MediaScanQuery;1"
+  "@songbirdnest.com/Songbird/MediaScanQuery;1"
 #define SONGBIRD_MEDIASCANQUERY_CLASSNAME                 \
   "Songbird Media Scan Query Interface"
 #define SONGBIRD_MEDIASCANQUERY_CID                       \

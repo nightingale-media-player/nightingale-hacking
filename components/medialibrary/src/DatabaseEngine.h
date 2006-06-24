@@ -61,7 +61,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
-  "@songbird.org/Songbird/DatabaseEngine;1"
+  "@songbirdnest.com/Songbird/DatabaseEngine;1"
 #define SONGBIRD_DATABASEENGINE_CLASSNAME                 \
   "Songbird Database Engine Interface"
 #define SONGBIRD_DATABASEENGINE_CID                       \

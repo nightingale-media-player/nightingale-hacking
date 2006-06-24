@@ -52,7 +52,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWCLOAK_CONTRACTID                   \
-  "@songbird.org/Songbird/WindowCloak;1"
+  "@songbirdnest.com/Songbird/WindowCloak;1"
 #define SONGBIRD_WINDOWCLOAK_CLASSNAME                    \
   "Songbird Window Cloak Interface"
 #define SONGBIRD_WINDOWCLOAK_CID                          \

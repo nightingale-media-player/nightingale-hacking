@@ -46,8 +46,8 @@ try
   function AsyncWebDocument( theDocument )
   {
     CancelAsyncWebDocument();
-    const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-    const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+    const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+    const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
     href_loop = new sbIAsyncForLoop
     ( // this is an arg list:
       // aInitEval

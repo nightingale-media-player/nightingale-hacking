@@ -52,7 +52,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLREADERPLS_CONTRACTID                   \
-  "@songbird.org/Songbird/Playlist/Reader/PLS;1"
+  "@songbirdnest.com/Songbird/Playlist/Reader/PLS;1"
 #define SONGBIRD_PLREADERPLS_CLASSNAME                    \
   "Songbird Playlist Reader for PLS Playlists"
 #define SONGBIRD_PLREADERPLS_CID                          \

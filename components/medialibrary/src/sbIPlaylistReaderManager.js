@@ -28,7 +28,7 @@
 // sbIPlaylistReaderManager Object
 // 
 
-const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbird.org/Songbird/PlaylistReaderManager;1";
+const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderManager;1";
 const SONGBIRD_PLAYLISTREADERMANAGER_CLASSNAME = "Songbird Playlist Reader Manager Interface"
 const SONGBIRD_PLAYLISTREADERMANAGER_CID = Components.ID("{ced5902c-bd90-4099-acee-77487a5b1d13}");
 const SONGBIRD_PLAYLISTREADERMANAGER_IID = Components.interfaces.sbIPlaylistReaderManager;
@@ -45,7 +45,7 @@ CPlaylistReaderManager.prototype =
 {
   originalURL: "",
   
-  m_rootContractID: "@songbird.org/Songbird/Playlist/Reader/",
+  m_rootContractID: "@songbirdnest.com/Songbird/Playlist/Reader/",
   m_interfaceID: Components.interfaces.sbIPlaylistReader,
   m_Browser: null,
   m_Listener: null,
@@ -92,8 +92,8 @@ CPlaylistReaderManager.prototype =
   //sbIPlaylistReaderManager
   LoadPlaylist: function(strURL, strGUID, strName, strReadableName, strPlaylistType, strDescription, strContentType, bAppendOrReplace, playlistReaderListener)
   {
-    const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-    const PlaylistReaderListener = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
+    const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+    const PlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
     
     var err = new Object();
     var theExtension = this.GetFileExtension(strURL);
@@ -116,7 +116,7 @@ CPlaylistReaderManager.prototype =
       var aPlaylistManager = new PlaylistManager();
       aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
 
-      var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+      var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       
       aDBQuery.SetAsyncQuery(false);
       aDBQuery.SetDatabaseGUID(strGUID);

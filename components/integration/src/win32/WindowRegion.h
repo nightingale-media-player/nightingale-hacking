@@ -50,7 +50,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWREGION_CONTRACTID                  \
-  "@songbird.org/Songbird/WindowRegion;1"
+  "@songbirdnest.com/Songbird/WindowRegion;1"
 #define SONGBIRD_WINDOWREGION_CLASSNAME                   \
   "Songbird Window Region Interface"
 #define SONGBIRD_WINDOWREGION_CID                         \

@@ -52,13 +52,13 @@
 //   not  - Optionally assign the data as a boolean NOT of the value
 //   eval - Optionally apply an eval string where `value = eval( eval_string );`
 
-const sbIRemoteConstructor = new Components.Constructor("@songbird.org/Songbird/DataRemote;1", "sbIDataRemote");
+const sbIRemoteConstructor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote");
 
 /*  
 function sbIDataRemote( key, root ) // Not your average js object.  :)
 {
   // This thing is starting to get kinda heavy to construct
-  SBBindInterface( this, "@songbird.org/Songbird/DataRemote;1", Components.interfaces.sbIDataRemote );
+  SBBindInterface( this, "@songbirdnest.com/Songbird/DataRemote;1", Components.interfaces.sbIDataRemote );
   
   // Initialize it
   if ( root == null ) root = "";

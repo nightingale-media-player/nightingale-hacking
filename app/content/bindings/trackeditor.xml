@@ -237,8 +237,8 @@
           var stringbundle = stringBundleService.createBundle( src );
 
           // enumerate the list of metadata columns and for each of them, check if it is in the exclusion list
-          var ml = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-          var query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+          var ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+          var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
           query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
           ml.SetQueryObject(query);
           

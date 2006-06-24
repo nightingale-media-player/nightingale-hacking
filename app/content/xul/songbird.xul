@@ -60,7 +60,7 @@
   <![CDATA[
     try
     {
-      var nsIBundle = new Components.Constructor("@songbird.org/Songbird/Bundle;1", "sbIBundle");
+      var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
       var BundleService = new nsIBundle();
       BundleService.retrieveBundleFile();
     }
@@ -70,7 +70,7 @@
     }
     try
     {
-      var nsIMetrics = new Components.Constructor("@songbird.org/Songbird/Metrics;1", "sbIMetrics");
+      var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
       var MetricsService = new nsIMetrics();
       MetricsService.checkUploadMetrics();
     }

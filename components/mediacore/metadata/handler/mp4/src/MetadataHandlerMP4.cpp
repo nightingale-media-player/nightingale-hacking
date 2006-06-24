@@ -247,7 +247,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
   }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbird.org/Songbird/MetadataValues;1");
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
   m_Values->Clear();
   if(!m_Values.get())
   {

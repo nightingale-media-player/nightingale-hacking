@@ -29,7 +29,7 @@
 //
 
 
-const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbird.org/Songbird/MediaLibrary;1";
+const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbirdnest.com/Songbird/MediaLibrary;1";
 const SONGBIRD_MEDIALIBRARY_CLASSNAME = "Songbird Media Library Interface";
 const SONGBIRD_MEDIALIBRARY_CID = Components.ID("{05eceb55-7c84-4341-93d3-d19ed3620d13}");
 const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
@@ -161,7 +161,7 @@ CMediaLibrary.prototype =
       var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
       var guid = aUUIDGenerator.generateUUID();
       var dbguid = this.m_queryObject.GetDatabaseGUID();
-      var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+      var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       var strQuery = "SELECT uuid FROM library WHERE ";
       
       if(bCheckForUniqueFileName)
@@ -270,7 +270,7 @@ CMediaLibrary.prototype =
         
       this.m_queryObject.AddQuery("DELETE FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
       
-      const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
       aPlaylistManager.PurgeTrackByGUIDFromPlaylists(mediaGUID, this.m_queryObject.GetDatabaseGUID());
       
@@ -309,7 +309,7 @@ CMediaLibrary.prototype =
   
   FindByGUID: function(mediaGUID)
   {
-    var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     aDBQuery.SetAsyncQuery(false);
     aDBQuery.SetDatabaseGUID(this.m_queryObject.GetDatabaseGUID());
 
@@ -323,7 +323,7 @@ CMediaLibrary.prototype =
   
   FindByURL: function(strURL)
   {
-    var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     aDBQuery.SetDatabaseGUID(this.m_queryObject.GetDatabaseGUID());
 
     aDBQuery.AddQuery("SELECT uuid FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + strURL + "\"");

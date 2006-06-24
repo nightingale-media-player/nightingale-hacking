@@ -44,7 +44,7 @@
 #endif
 // DEFINES ====================================================================
 #define SONGBIRD_DownloadDevice_CONTRACTID                \
-  "@songbird.org/Songbird/Device/DownloadDevice;1"
+  "@songbirdnest.com/Songbird/Device/DownloadDevice;1"
 #define SONGBIRD_DownloadDevice_CLASSNAME                 \
   "Songbird Download Device"
 #define SONGBIRD_DownloadDevice_CID                       \

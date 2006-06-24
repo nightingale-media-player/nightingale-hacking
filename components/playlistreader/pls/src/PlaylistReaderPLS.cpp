@@ -316,14 +316,14 @@ PRInt32 CPlaylistReaderPLS::ParsePLSFromBuffer(PRUnichar *pPathToFile, PRUnichar
   PRBool bExtraInfo = _wtoi( list[NS_LITERAL_STRING("version").get()].c_str() )>1;
   if ( nURLs > 0 )
   {
-    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     pQuery->SetAsyncQuery(PR_FALSE);
     pQuery->SetDatabaseGUID(strGUID);
 
-    nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbird.org/Songbird/MediaLibrary;1" );
+    nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
     pLibrary->SetQueryObject(pQuery.get());
 
-    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbird.org/Songbird/PlaylistManager;1" );
+    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
     nsCOMPtr<sbIPlaylist> pPlaylist;
     
     pPlaylistManager->GetPlaylist(strDestTable, pQuery.get(), getter_AddRefs(pPlaylist));

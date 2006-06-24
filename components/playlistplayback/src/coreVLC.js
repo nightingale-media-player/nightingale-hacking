@@ -334,7 +334,7 @@ function CoreVLCDocumentInit( id )
 {
   try
   {
-    var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+    var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     var theVLCInstance = document.getElementById( id );
 

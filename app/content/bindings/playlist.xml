@@ -332,12 +332,12 @@
         "   content_type: " + content_type + "\n" );
 */
         // Get a query object to handle the database transactions.
-        aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+        aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
         aDBQuery.SetAsyncQuery(false); // hard and slow.  should only have to happen once.
         aDBQuery.SetDatabaseGUID(guid);
         
         // Get the library interface, make sure there is a default library (fast if already exists)
-        const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+        const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
         var aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
         aMediaLibrary.SetQueryObject(aDBQuery);
         aMediaLibrary.CreateDefaultLibrary();
@@ -362,7 +362,7 @@
         aDBQuery.ResetQuery();
 
         // Now it is safe to load up that playlist.    
-        const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+        const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
         var aPlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
         
         // For some reason, this is the offending method?      
@@ -414,10 +414,10 @@
         this.base_type = "";
 
         // Find the table in the playlistlist if possible.
-        var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+        var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
         queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
         queryObj.SetDatabaseGUID(guid);
-        var PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+        var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var playlistManager = new PlaylistManager();
         playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
         playlistManager.GetAllPlaylistList( queryObj );
@@ -872,10 +872,10 @@
             }
           }
       
-          const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-          const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-          const SimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
-          const Playlist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
+          const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+          const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+          const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
         
           this.stopWatchingDragObjects();
         
@@ -901,7 +901,7 @@
 
           if(this.m_queryObj == null)
           {          
-            this.m_queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+            this.m_queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
             this.m_queryObj = this.m_queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
             this.m_queryObj.SetDatabaseGUID(this.guid);
           }
@@ -2238,16 +2238,16 @@
         <![CDATA[
           try
           {
-            var MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+            var MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
             mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
             
-            var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+            var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
             queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
             queryObj.SetDatabaseGUID("songbird");
             
             mediaLibrary.SetQueryObject(queryObj);
             
-            var PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+            var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
             var playlistManager = new PlaylistManager();
             playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
             
@@ -2441,13 +2441,13 @@
         <![CDATA[
           try
           {
-            const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+            const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
             if (this.table == "library")
             {
               var column = this.tree.columns.getNamedColumn("uuid");
               if (column)
               {
-                const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+                const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
                 var library = new MediaLibrary();    
                 library = library.QueryInterface(Components.interfaces.sbIMediaLibrary);
                 library.SetQueryObject(this.m_queryObj);
@@ -2802,8 +2802,8 @@
             var the_table_column = col.id;
             var the_new_value = rating;
 
-            var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-            var aMediaLibrary = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+            var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+            var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
             
             if ( ! aDBQuery || ! aMediaLibrary)
               return;

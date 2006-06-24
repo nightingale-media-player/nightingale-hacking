@@ -47,7 +47,7 @@
 #include "sbIMetadataChannel.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAHANDLERWMA_CONTRACTID  "@songbird.org/Songbird/MetadataHandler/WMA;1"
+#define SONGBIRD_METADATAHANDLERWMA_CONTRACTID  "@songbirdnest.com/Songbird/MetadataHandler/WMA;1"
 #define SONGBIRD_METADATAHANDLERWMA_CLASSNAME   "Songbird WMA Metadata Handler Interface"
 
 // {2D42C52D-3B4E-4085-99F6-53DB14C5996C}

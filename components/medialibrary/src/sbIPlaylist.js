@@ -29,7 +29,7 @@
 //
 
 
-const SONGBIRD_PLAYLIST_CONTRACTID = "@songbird.org/Songbird/Playlist;1";
+const SONGBIRD_PLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/Playlist;1";
 const SONGBIRD_PLAYLIST_CLASSNAME = "Songbird Playlist Interface"
 const SONGBIRD_PLAYLIST_CID = Components.ID("{c3c120f4-5ab6-4402-8cab-9b8f1d788769}");
 const SONGBIRD_PLAYLIST_IID = Components.interfaces.sbIPlaylist;
@@ -38,7 +38,7 @@ const PLAYLIST_LIST_TABLE_NAME = "playlist_list";
 
 function CPlaylist()
 {
-  var query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+  var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
   query = query.QueryInterface(Components.interfaces.sbIDatabaseQuery);
 
   this.m_internalQueryObject = query;

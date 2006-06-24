@@ -247,7 +247,7 @@ void CWindowDragger::InitPause()
   //
   // ?? Kinda hacky.... pause the background scanner.
   //
-  m_pauseScan = do_CreateInstance("@songbird.org/Songbird/DataRemote;1");
+  m_pauseScan = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1");
   m_pauseScan->Init( NS_LITERAL_STRING( "backscan.paused" ).get(), NULL );
   m_backscanPaused = false;
 }

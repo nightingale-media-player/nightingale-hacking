@@ -55,7 +55,7 @@ function onBkgDown( theEvent )
 {
   try
   {
-    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
+    var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
     if (windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service)
@@ -276,7 +276,7 @@ function SBUrlChanged( value )
   if (!coreInitialCloakDone) return;
   try
   {
-    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"];
+    var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
     if (windowCloak) {
       var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
       if (service) {
@@ -306,7 +306,7 @@ function SBMetricsAppShutdown()
 function SBAppDeinitialize()
 {
   // Make sure we stop before shutdown or our timer kills us.
-  var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+  var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
   try {
     gPPS.stop(); // else we crash?
@@ -503,7 +503,7 @@ var coreInitialCloakDone = 0;
 function HideCoreWindow() 
 {
   try {
-    var windowCloak = Components.classes["@songbird.org/Songbird/WindowCloak;1"];
+    var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
     if (windowCloak) {
       var service = windowCloak.createInstance(Components.interfaces.sbIWindowCloak);
       if (service)
@@ -635,7 +635,7 @@ var SBVideoMinMaxCB =
 function setVideoMinMaxCallback()
 {
   try {
-    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"];
+    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)

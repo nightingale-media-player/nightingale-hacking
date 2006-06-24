@@ -174,7 +174,7 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
   }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbird.org/Songbird/MetadataValues;1");
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
   m_Values->Clear();
   if(!m_Values.get())
   {
@@ -183,7 +183,7 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
   }
 
   // Get a new channel handler.
-  m_ChannelHandler = do_CreateInstance("@songbird.org/Songbird/MetadataChannel;1");
+  m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1");
   if(!m_ChannelHandler.get())
   {
     *_retval = -1;

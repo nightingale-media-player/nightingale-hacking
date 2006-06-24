@@ -30,7 +30,7 @@
 
 const SONGBIRD_PLAYLIST_IID = Components.interfaces.sbIPlaylist;
 
-const SONGBIRD_SMARTPLAYLIST_CONTRACTID = "@songbird.org/Songbird/SmartPlaylist;1";
+const SONGBIRD_SMARTPLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/SmartPlaylist;1";
 const SONGBIRD_SMARTPLAYLIST_CLASSNAME = "Songbird Smart Playlist Interface"
 const SONGBIRD_SMARTPLAYLIST_CID = Components.ID("{a81b9c4d-e578-4737-840f-43d404c98423}");
 const SONGBIRD_SMARTPLAYLIST_IID = Components.interfaces.sbISmartPlaylist;
@@ -39,7 +39,7 @@ const SMARTPLAYLIST_LIST_TABLE_NAME = "smartplaylist_list";
 
 function CSmartPlaylist()
 {
-  var query = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance();
+  var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
   query = query.QueryInterface(Components.interfaces.sbIDatabaseQuery);
 
   this.m_internalQueryObject = query;

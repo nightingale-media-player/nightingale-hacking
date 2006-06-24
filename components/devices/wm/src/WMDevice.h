@@ -43,7 +43,7 @@
 #endif
 // DEFINES ====================================================================
 #define SONGBIRD_WMDevice_CONTRACTID                      \
-  "@songbird.org/Songbird/Device/WMDevice;1"
+  "@songbirdnest.com/Songbird/Device/WMDevice;1"
 #define SONGBIRD_WMDevice_CLASSNAME                       \
   "Songbird Download Device"
 #define SONGBIRD_WMDevice_CID                             \

@@ -28,7 +28,7 @@
 // sbIPlaylist Object
 //
 
-const SONGBIRD_PLAYLISTMANAGER_CONTRACTID = "@songbird.org/Songbird/PlaylistManager;1";
+const SONGBIRD_PLAYLISTMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistManager;1";
 const SONGBIRD_PLAYLISTMANAGER_CLASSNAME = "Songbird PlaylistManager Interface"
 const SONGBIRD_PLAYLISTMANAGER_CID = Components.ID("{88823823-6b51-400f-b376-7e651ecbd924}");
 const SONGBIRD_PLAYLISTMANAGER_IID = Components.interfaces.sbIPlaylistManager;
@@ -79,7 +79,7 @@ CPlaylistManager.prototype =
   
   CreateSimplePlaylist: function(strName, strReadableName, strDescription, strType, nMetaFieldCount, aMetaFields, queryObj)
   {
-    const SimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+    const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
 
     if(queryObj != null)
     {
@@ -122,7 +122,7 @@ CPlaylistManager.prototype =
   
   CreatePlaylist: function(strName, strReadableName, strDescription, strType, queryObj)
   {
-    const Playlist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
+    const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
     
     if(queryObj != null)
     {
@@ -154,7 +154,7 @@ CPlaylistManager.prototype =
 
   CreateDynamicPlaylist: function(strName, strReadableName, strDescription, strType, strURL, nPeriodicity, queryObj)
   {
-    const DynamicPlaylist = new Components.Constructor("@songbird.org/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
+    const DynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
     
     if(queryObj != null)
     {
@@ -187,7 +187,7 @@ CPlaylistManager.prototype =
   
   CreateSmartPlaylist: function(strName, strReadableName, strDescription, strType, strLibrary, nLimit, strLimitType, strSelectedBy, strMatchOn, queryObj)
   {
-    const SmartPlaylist = new Components.Constructor("@songbird.org/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
+    const SmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
     
     if(queryObj != null)
     {
@@ -228,7 +228,7 @@ CPlaylistManager.prototype =
   
   CopySimplePlaylist: function(strSourceDB, strSourceName, strSourceFilterColumn, nSourceFilterValueCount, aSourceFilterValues, strDestDB, strDestName, strReadableName, strDescription, strType, queryObj)
   {
-    const SimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+    const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
     
     if(queryObj != null)
     {
@@ -361,7 +361,7 @@ CPlaylistManager.prototype =
 
   CopyPlaylist: function(strSourceDB, strSourceName, strDestDB, strDestName, strReadableName, strDescription, strType, queryObj)
   {
-    const Playlist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
+    const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
 
     if(queryObj != null)
     {
@@ -591,7 +591,7 @@ CPlaylistManager.prototype =
  
   GetSimplePlaylist: function(strName, queryObj)
   {
-    const SimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+    const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
 
     if(queryObj != null)
     {
@@ -617,7 +617,7 @@ CPlaylistManager.prototype =
   
   GetPlaylist: function(strName, queryObj)
   {
-    const Playlist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
+    const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
 
     if(queryObj != null)
     {
@@ -656,7 +656,7 @@ CPlaylistManager.prototype =
 
   GetDynamicPlaylist: function(strName, queryObj)
   {
-    const DynamicPlaylist = new Components.Constructor("@songbird.org/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
+    const DynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
 
     if(queryObj != null)
     {
@@ -686,7 +686,7 @@ CPlaylistManager.prototype =
   
   GetSmartPlaylist: function(strName, queryObj)
   {
-    const SmartPlaylist = new Components.Constructor("@songbird.org/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
+    const SmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
 
     if(queryObj != null)
     {
@@ -787,7 +787,7 @@ CPlaylistManager.prototype =
 
   PurgeTrackByGUIDFromPlaylists: function(mediaGUID, strDBGUID)
   {
-    var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     if(queryObj)
     {
       queryObj.SetAsyncQuery(false);
@@ -802,7 +802,7 @@ CPlaylistManager.prototype =
       var resObj = queryObj.GetResultObject();
       var rowCount = resObj.GetRowCount();
       
-      var q = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+      var q = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       q.SetAsyncQuery(false);
       q.SetDatabaseGUID(strDBGUID);
       

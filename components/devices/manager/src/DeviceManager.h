@@ -43,7 +43,7 @@
 #define SONGBIRD_DEVICEMANAGER_DESCRIPTION                 \
   "Songbird DeviceManager Service"
 #define SONGBIRD_DEVICEMANAGER_CONTRACTID                  \
-  "@songbird.org/Songbird/DeviceManager;1"
+  "@songbirdnest.com/Songbird/DeviceManager;1"
 #define SONGBIRD_DEVICEMANAGER_CLASSNAME                   \
   "Songbird Device Manager"
 #define SONGBIRD_DEVICEMANAGER_CID                         \

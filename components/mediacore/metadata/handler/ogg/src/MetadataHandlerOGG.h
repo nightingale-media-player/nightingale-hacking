@@ -49,7 +49,7 @@
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAHANDLEROGG_CONTRACTID            \
-  "@songbird.org/Songbird/MetadataHandler/OGG;1"
+  "@songbirdnest.com/Songbird/MetadataHandler/OGG;1"
 #define SONGBIRD_METADATAHANDLEROGG_CLASSNAME             \
   "Songbird OGG Metadata Handler Interface"
 #define SONGBIRD_METADATAHANDLEROGG_CID                   \

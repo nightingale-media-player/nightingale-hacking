@@ -114,8 +114,8 @@
     
     const PLAYLIST_LIST_TABLE_NAME = "playlist_list";
     const PLAYLIST_DB_GUID = "songbird";
-    const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-    const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+    const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+    const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
   
     try
     {
@@ -164,7 +164,7 @@
     
     function newQuery()
     {
-      var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"];
+      var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"];
       queryObj = queryObj.createInstance();
       queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
       return queryObj;

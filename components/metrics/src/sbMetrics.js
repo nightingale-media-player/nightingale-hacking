@@ -24,7 +24,7 @@
 //
  */
 
-const SONGBIRD_METRICS_CONTRACTID = "@songbird.org/Songbird/Metrics;1";
+const SONGBIRD_METRICS_CONTRACTID = "@songbirdnest.com/Songbird/Metrics;1";
 const SONGBIRD_METRICS_CLASSNAME = "Songbird Metrics Service Interface";
 const SONGBIRD_METRICS_CID = Components.ID("{1066527d-b135-4e0c-9ea4-f6109ae97d02}");
 const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;

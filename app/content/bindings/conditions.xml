@@ -437,20 +437,20 @@
                 
             // Go fill the metadata array with the current library columns
             // XXXredfive
-            //const DBQuery = new Components.Constructor("@songbird.org/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");        
+            //const DBQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");        
             //var metadataDBQuery = new DBQuery();
             //metadataDBQuery = metadataDBQuery.QueryInterface( Components.interfaces.sbIDatabaseQuery );
 
             var metadataDBQuery =
-                Components.classes["@songbird.org/Songbird/DatabaseQuery;1"]
+                Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
                 .createInstance( Components.interfaces.sbIDatabaseQuery );
 
-            //const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");        
+            //const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");        
             //var mediaLibrary = new MediaLibrary();
             //mediaLibrary = mediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
 
             var mediaLibrary =
-                Components.classes["@songbird.org/Songbird/MediaLibrary;1"]
+                Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
                 .createInstance( Components.interfaces.sbIMediaLibrary );
             metadataDBQuery.SetAsyncQuery( false );
             metadataDBQuery.SetDatabaseGUID( "songbird" );

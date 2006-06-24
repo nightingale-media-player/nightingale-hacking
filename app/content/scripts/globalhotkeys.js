@@ -156,7 +156,7 @@ var   hotkey_service;
 
 function initGlobalHotkeys() {
   // Access global hotkeys component (if it exists)
-  var globalHotkeys = Components.classes["@songbird.org/Songbird/GlobalHotkeys;1"];
+  var globalHotkeys = Components.classes["@songbirdnest.com/Songbird/GlobalHotkeys;1"];
   if (globalHotkeys) {
     hotkey_service = globalHotkeys.getService(Components.interfaces.sbIGlobalHotkeys);
     if (hotkey_service) loadHotkeysFromPrefs()
@@ -379,7 +379,7 @@ function log(str) {
 
 // Playback
 
-var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
 
 function hotkey_volumeUp() {

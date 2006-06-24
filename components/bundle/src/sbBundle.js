@@ -23,7 +23,7 @@
 // END SONGBIRD GPL
 //
  */
-const SONGBIRD_BUNDLE_CONTRACTID = "@songbird.org/Songbird/Bundle;1";
+const SONGBIRD_BUNDLE_CONTRACTID = "@songbirdnest.com/Songbird/Bundle;1";
 const SONGBIRD_BUNDLE_CLASSNAME = "Songbird Bundle Service Interface";
 const SONGBIRD_BUNDLE_CID = Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}");
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;

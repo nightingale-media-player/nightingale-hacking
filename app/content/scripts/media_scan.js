@@ -24,7 +24,7 @@
 //
  */
 
-const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
 
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
 

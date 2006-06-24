@@ -31,9 +31,9 @@ try
 //  const sbDatabaseGUID = "songbird";
   const sbDatabaseGUID = "*";
 
-  const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
+  const MetadataManager = new Components.Constructor("@songbirdnest.com/Songbird/MetadataManager;1", "sbIMetadataManager");
   var aMetadataManager = new MetadataManager();
-  const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
   var aMediaLibrary = new MediaLibrary();
   const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "service_uuid");
   const bsDBGuidIdx = 7;

@@ -56,7 +56,7 @@ class sbIDataRemote;
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWDRAGGER_CONTRACTID                 \
-  "@songbird.org/Songbird/WindowDragger;1"
+  "@songbirdnest.com/Songbird/WindowDragger;1"
 #define SONGBIRD_WINDOWDRAGGER_CLASSNAME                  \
   "Songbird Window Dragger Interface"
 #define SONGBIRD_WINDOWDRAGGER_CID                        \

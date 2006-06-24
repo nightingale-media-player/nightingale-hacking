@@ -54,7 +54,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLREADERM3U_CONTRACTID                   \
-  "@songbird.org/Songbird/Playlist/Reader/M3U;1"
+  "@songbirdnest.com/Songbird/Playlist/Reader/M3U;1"
 #define SONGBIRD_PLREADERM3U_CLASSNAME                    \
   "Songbird Playlist Reader for M3U Playlists"
 #define SONGBIRD_PLREADERM3U_CID                          \

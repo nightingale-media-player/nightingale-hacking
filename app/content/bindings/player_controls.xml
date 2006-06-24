@@ -55,7 +55,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         this.remote_volume = new sbIDataRemote( "faceplate.volume" );
         this.remote_lastVolume = new sbIDataRemote("faceplate.volume.last");
         //this.remote_trackerVolume = new sbIDataRemote( "faceplate.volume.tracker" );
@@ -148,7 +148,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         this.remote_volume = new sbIDataRemote( "faceplate.volume" );
         this.remote_lastVolume = new sbIDataRemote( "faceplate.volume.last" );
         this.remote_mute = new sbIDataRemote( "faceplate.mute" );
@@ -203,7 +203,7 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
         this.seen_skip = false;
         this.skip = false;
@@ -292,7 +292,7 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
         this.seen_skip = false;
         this.skip = false;
@@ -387,7 +387,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         
         this.remote_repeat = new sbIDataRemote( "playlist.repeat" ); 
         this.repnonebinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_none, "hidden", true, false, "parseInt( value ) != 0" );
@@ -452,7 +452,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         
         this.remote_shuffle = new sbIDataRemote( "playlist.shuffle" ); 
         this.bindshuffleoff = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_off, "hidden", true );
@@ -499,7 +499,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         this.remote_position = new sbIDataRemote( "metadata.position" );
         
         var onremotepositionchange = { 
@@ -569,7 +569,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         
         this.remote_showRemaining = new sbIDataRemote( "faceplate.showremainingtime" ); 
         this.bindtotaltime = SBDataBindElementAttribute( "metadata.length.str", this.label, "value" );
@@ -625,7 +625,7 @@
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 
-        this.gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         this.remote_seenPlaying = new sbIDataRemote( "faceplate.seenplaying" ); 
         this.remote_playingRef =  new sbIDataRemote( "playing.ref" ); 
         this.remote_playlistIndex =  new sbIDataRemote( "playlist.index" ); 

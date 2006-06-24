@@ -28,7 +28,7 @@
 // sbIPlaylist Object
 //
 
-const SONGBIRD_SIMPLEPLAYLIST_CONTRACTID = "@songbird.org/Songbird/SimplePlaylist;1";
+const SONGBIRD_SIMPLEPLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/SimplePlaylist;1";
 const SONGBIRD_SIMPLEPLAYLIST_CLASSNAME = "Songbird SimplePlaylist Interface"
 const SONGBIRD_SIMPLEPLAYLIST_CID = Components.ID("{c5a2a53c-8ded-4043-9d5b-2747bc3a72ce}");
 const SONGBIRD_SIMPLEPLAYLIST_IID = Components.interfaces.sbISimplePlaylist;

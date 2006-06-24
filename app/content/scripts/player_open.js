@@ -55,7 +55,7 @@ try
       theTitleText.setValue( fp.file.leafName );
       theArtistText.setValue( "" );
       theAlbumText.setValue( "" );
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportUrl(fp.file.path);
     }
   }
@@ -74,7 +74,7 @@ try
       theTitleText.setValue( url_open_data.URL );
       theArtistText.setValue( "" );
       theAlbumText.setValue( "" );
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportUrl(url_open_data.URL);
     }  
   }
@@ -178,7 +178,7 @@ try
     var retval = false;
     try
     {
-      aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"];
+      aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"];
       if (aDBQuery)
       {
         aDBQuery = aDBQuery.createInstance();
@@ -219,7 +219,7 @@ try
       if (!playlist) playlist = document.__CURRENTWEBPLAYLIST__;
       if (!playlist) return;
       
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playRef(playlist.ref, index);
     }
     catch ( err )

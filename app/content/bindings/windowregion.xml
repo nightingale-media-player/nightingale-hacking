@@ -45,7 +45,7 @@
         {
           this.is_hidden = false;
           this.makeRegionList();
-          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"];
+          var windowResizeHook = Components.classes["@songbirdnest.com/Songbird/WindowResizeHook;1"];
           
           if (windowResizeHook) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
@@ -64,7 +64,7 @@
         <![CDATA[
         try
         {
-          var windowResizeHook = Components.classes["@songbird.org/Songbird/WindowResizeHook;1"];
+          var windowResizeHook = Components.classes["@songbirdnest.com/Songbird/WindowResizeHook;1"];
           if ( windowResizeHook ) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
             if (service) 
@@ -204,7 +204,7 @@
                 }
               }
             }
-            var windowRegion = Components.classes["@songbird.org/Songbird/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
+            var windowRegion = Components.classes["@songbirdnest.com/Songbird/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
             windowRegion.SetWindowRegion(document, region);
           }    
           catch ( err )

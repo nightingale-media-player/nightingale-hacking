@@ -37,7 +37,7 @@ try
   }
 
   // NOW we have the playlist playback service!
-  var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+  var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                        .getService(Components.interfaces.sbIPlaylistPlayback);
 
   //
@@ -100,7 +100,7 @@ try
   {
     try
     {
-      var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
+      var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
       if (windowDragger) {
         var location = "" + window.location; // Grrr.  Dumb objects.
         var isvideo = location.indexOf("?video") != -1;
@@ -140,7 +140,7 @@ try
   // The background image allows us to move the window around the screen
   function onBkgDown( theEvent ) 
   {
-    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
+    var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
     windowDragger.BeginWindowDrag(10); // automatically ends
   }
   function onBkgUp( ) 

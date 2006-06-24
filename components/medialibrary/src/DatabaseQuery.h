@@ -61,7 +61,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEQUERY_CONTRACTID                 \
-  "@songbird.org/Songbird/DatabaseQuery;1"
+  "@songbirdnest.com/Songbird/DatabaseQuery;1"
 #define SONGBIRD_DATABASEQUERY_CLASSNAME                  \
   "Songbird Database Query Interface"
 #define SONGBIRD_DATABASEQUERY_CID                        \

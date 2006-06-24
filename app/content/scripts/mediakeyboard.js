@@ -35,7 +35,7 @@ try
   {
     OnMute: function()
     {
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       if (SBDataGetIntValue("faceplate.volume") == 0 && !PPS.getMute())  // fake mute state ? (volume is 0, faceplate indicates mute but core mute flag is not on)
       {
         // get out of fake mute state
@@ -51,7 +51,7 @@ try
     
     OnVolumeUp: function()
     {
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       var s = PPS.getVolume();
       var v = parseInt(s)+8;
       if (v > 255) v = 255;
@@ -61,7 +61,7 @@ try
 
     OnVolumeDown: function()
     {
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       var s = PPS.getVolume();
       var v = parseInt(s)-8;
       if (v < 0) v = 0;
@@ -71,13 +71,13 @@ try
 
     OnNextTrack: function()
     {
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.next();
     },
 
     OnPreviousTrack: function()
     {
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.previous();
     },
 
@@ -86,14 +86,14 @@ try
       // yeah... no stop state... hmpf
       if ( SBDataGetIntValue("faceplate.seenplaying") )
       {
-        var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         PPS.pause();
       }
     },
 
     OnPlayPause: function()
     {
-      var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.play(); // automatically selects the right behavior
     },
 
@@ -113,7 +113,7 @@ try
   function setMediaKeyboardCallback()
   {
     try {
-      var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"];
+      var mediakeyboard = Components.classes["@songbirdnest.com/Songbird/MediaKeyboard;1"];
       if (mediakeyboard) {
         var service = mediakeyboard.getService(Components.interfaces.sbIMediaKeyboard);
         if (service)
@@ -129,7 +129,7 @@ try
   function resetMediaKeyboardCallback()
   {
     try {
-      var mediakeyboard = Components.classes["@songbird.org/Songbird/MediaKeyboard;1"];
+      var mediakeyboard = Components.classes["@songbirdnest.com/Songbird/MediaKeyboard;1"];
       if (mediakeyboard) {
         var service = mediakeyboard.getService(Components.interfaces.sbIMediaKeyboard);
         if (service)

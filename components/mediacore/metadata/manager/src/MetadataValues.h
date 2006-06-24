@@ -40,7 +40,7 @@
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAVALUES_CONTRACTID                \
-  "@songbird.org/Songbird/MetadataValues;1"
+  "@songbirdnest.com/Songbird/MetadataValues;1"
 #define SONGBIRD_METADATAVALUES_CLASSNAME                 \
   "Songbird Metadata Values Container"
 #define SONGBIRD_METADATAVALUES_CID                       \

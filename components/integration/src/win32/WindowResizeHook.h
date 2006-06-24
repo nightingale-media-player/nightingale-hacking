@@ -51,7 +51,7 @@ namespace std
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWRESIZEHOOK_CONTRACTID              \
-  "@songbird.org/Songbird/WindowResizeHook;1"
+  "@songbirdnest.com/Songbird/WindowResizeHook;1"
 #define SONGBIRD_WINDOWRESIZEHOOK_CLASSNAME               \
   "Songbird Window Resize Hook Interface"
 #define SONGBIRD_WINDOWRESIZEHOOK_CID                     \

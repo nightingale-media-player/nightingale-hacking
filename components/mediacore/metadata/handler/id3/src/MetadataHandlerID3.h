@@ -49,7 +49,7 @@
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAHANDLERID3_CONTRACTID            \
-  "@songbird.org/Songbird/MetadataHandler/ID3;1"
+  "@songbirdnest.com/Songbird/MetadataHandler/ID3;1"
 #define SONGBIRD_METADATAHANDLERID3_CLASSNAME             \
   "Songbird ID3 Metadata Handler Interface"
 #define SONGBIRD_METADATAHANDLERID3_CID                   \

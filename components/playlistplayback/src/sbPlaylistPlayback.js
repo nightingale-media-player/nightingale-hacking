@@ -31,22 +31,22 @@
  */
 
 // XPCOM Registration
-const SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID = "@songbird.org/Songbird/PlaylistPlayback;1";
+const SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistPlayback;1";
 const SONGBIRD_PLAYLISTPLAYBACK_CLASSNAME = "Songbird Playlist Playback Interface";
 const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{000e2465-58b7-4922-bdfb-9ab1492c6037}");
 const SONGBIRD_PLAYLISTPLAYBACK_IID = Components.interfaces.sbIPlaylistPlayback;
 
 // Songbird ContractID Stuff
-const SONGBIRD_COREWRAPPER_CONTRACTID = "@songbird.org/Songbird/CoreWrapper;1";
+const SONGBIRD_COREWRAPPER_CONTRACTID = "@songbirdnest.com/Songbird/CoreWrapper;1";
 const SONGBIRD_COREWRAPPER_IID = Components.interfaces.sbICoreWrapper;
 
-const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbird.org/Songbird/DataRemote;1";
+const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
 const SONGBIRD_DATAREMOTE_IID = Components.interfaces.sbIDataRemote;
 
-const SONGBIRD_DATABASEQUERY_CONTRACTID = "@songbird.org/Songbird/DatabaseQuery;1";
+const SONGBIRD_DATABASEQUERY_CONTRACTID = "@songbirdnest.com/Songbird/DatabaseQuery;1";
 const SONGBIRD_DATABASEQUERY_IID = Components.interfaces.sbIDatabaseQuery;
 
-const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbird.org/Songbird/MediaLibrary;1";
+const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbirdnest.com/Songbird/MediaLibrary;1";
 const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
 
 // String Bundles
@@ -56,19 +56,19 @@ const URI_SONGBIRD_PROPERTIES    = "chrome://songbird/locale/songbird.properties
 const DB_TEST_GUID = "testdb-0000";
 
 // Other XPCOM Stuff
-const sbIDatabaseQuery = new Components.Constructor("@songbird.org/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
+const sbIDatabaseQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
 /*
 const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
-const sbIMediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-const sbIPlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-const sbIPlaylist = new Components.Constructor("@songbird.org/Songbird/Playlist;1", "sbIPlaylist");
-const sbISimplePlaylist = new Components.Constructor("@songbird.org/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
-const sbIDynamicPlaylist = new Components.Constructor("@songbird.org/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
-const sbISmartPlaylist = new Components.Constructor("@songbird.org/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
-const sbIPlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-const sbIPlaylistReaderListener = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
-const sbIMediaScan = new Components.Constructor("@songbird.org/Songbird/MediaScan;1", "sbIMediaScan");
-const sbIMediaScanQuery = new Components.Constructor("@songbird.org/Songbird/MediaScanQuery;1", "sbIMediaScanQuery");
+const sbIMediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+const sbIPlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+const sbIPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
+const sbISimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
+const sbIDynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
+const sbISmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
+const sbIPlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+const sbIPlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
+const sbIMediaScan = new Components.Constructor("@songbirdnest.com/Songbird/MediaScan;1", "sbIMediaScan");
+const sbIMediaScanQuery = new Components.Constructor("@songbirdnest.com/Songbird/MediaScanQuery;1", "sbIMediaScanQuery");
 */
 
 // Regular const's
@@ -1144,7 +1144,7 @@ PlaylistPlayback.prototype = {
       if ( the_url.indexOf )
       {
         // Make the playlist reader manager.
-        const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+        const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
         var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
         
         // Tell it what filters to be using
@@ -1445,9 +1445,9 @@ PlaylistPlayback.prototype = {
   
   _importUrlInLibrary: function( the_url )
   {
-    const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+    const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
     var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-    var queryObj = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     queryObj.SetDatabaseGUID("songbird");
     library.SetQueryObject(queryObj);
     var keys = new Array( "title" );

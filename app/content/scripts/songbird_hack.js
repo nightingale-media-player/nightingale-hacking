@@ -50,7 +50,7 @@ function myPlaybackEvent( key, value )
 }
 
 // NOW we have the playlist playback service!
-var gPPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"]
+var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
 
 
@@ -117,7 +117,7 @@ var SBWindowMinMaxCB =
 function setMinMaxCallback()
 {
   try {
-    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"];
+    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)
@@ -170,9 +170,9 @@ function SBInitialize()
 {
   dump("SBInitialize *** \n");
 
-  const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-  const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-  const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+  const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+  const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
   thePlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
 
   try
@@ -187,7 +187,7 @@ function SBInitialize()
       window.addEventListener("keydown", checkAltF4, true);
 
     // Make sure we have a fake database in which to play
-    var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"];
+    var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"];
     if (aDBQuery)
     {
       aDBQuery = aDBQuery.createInstance();
@@ -306,7 +306,7 @@ function SBInitialize()
 /*
     try
     {
-      const MetadataManager = new Components.Constructor("@songbird.org/Songbird/MetadataManager;1", "sbIMetadataManager");
+      const MetadataManager = new Components.Constructor("@songbirdnest.com/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
       aMetadataHandler = aMetadataManager.GetHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
       //aMetadataHandler = aMetadataManager.GetHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
@@ -354,7 +354,7 @@ function SBUninitialize()
   closeJumpTo();
   resetMediaKeyboardCallback();
   try {
-    var windowMinMax = Components.classes["@songbird.org/Songbird/WindowMinMax;1"];
+    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)
@@ -400,7 +400,7 @@ function onBkgDown( theEvent )
 {
   try
   {
-    var windowDragger = Components.classes["@songbird.org/Songbird/WindowDragger;1"];
+    var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
     if (windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service)
@@ -605,7 +605,7 @@ function onServiceTreeCommand( theEvent )
         if ( guid && guid.length > 0 && table && table.length > 0 )
         {
           // Assume we'll need this...
-          const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
           var aPlaylistManager = new PlaylistManager();
           aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
           var aDBQuery = new sbIDatabaseQuery();
@@ -781,7 +781,7 @@ function onServiceEditChange( evt )
           var type = properties[ 3 ];
           var base_type = properties[ 4 ];
           
-          const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
           var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
           var aDBQuery = new sbIDatabaseQuery();
           
@@ -1369,7 +1369,7 @@ function onBrowserDownload()
   // Work to figure out guid and table
   var guid = theDownloadContext.getValue();
   var table = theDownloadTable.getValue();
-  var deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+  var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                   getService(Components.interfaces.sbIDeviceManager);
   if (deviceManager)
   {
@@ -1649,7 +1649,7 @@ function IsPlaylistUrl( the_url )
     if ( the_url.indexOf )
     {
       // Make the playlist reader manager.
-      const PlaylistReaderManager = new Components.Constructor("@songbird.org/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+      const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
       var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
       
       // Tell it what filters to be using
@@ -1745,7 +1745,7 @@ function onLinkContext( evt )
 
 function playExternalUrl(the_url, tryweb) 
 {
-  var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+  var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
   // figure out if the url is in the webplaylist
   if (tryweb && theWebPlaylist) 
   {
@@ -1860,7 +1860,7 @@ function SBDownloadDeviceTest()
 {
 try
 {
-  var downloadDevice = Components.classes["@songbird.org/Songbird/DownloadDevice;1"];
+  var downloadDevice = Components.classes["@songbirdnest.com/Songbird/DownloadDevice;1"];
   if (downloadDevice)
   {
     downloadDevice = downloadDevice.createInstance();
@@ -1958,8 +1958,8 @@ function onPlaylistEditChange( evt )
     var the_table_column = theCurrentlyEditingPlaylist.edit_col.id;
     var the_new_value = theEditBox.value
     
-    var aDBQuery = Components.classes["@songbird.org/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-    var aMediaLibrary = Components.classes["@songbird.org/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+    var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
     
     if ( ! aDBQuery || ! aMediaLibrary)
       return;
@@ -2301,7 +2301,7 @@ function onHTMLContextMenu( target )
         playExternalUrl(theHTMLContextURL, true);
       break;
       case "html.context.add":
-        var PPS = Components.classes["@songbird.org/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+        var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         PPS.importUrl(theHTMLContextURL);
       break;
       case "html.context.playlist":
@@ -2470,7 +2470,7 @@ function SBSubscribe( url, guid, table, readable_name )
   {
     if ( guid && table )
     {
-      const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = new PlaylistManager();
       aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
       var aDBQuery = new sbIDatabaseQuery();
@@ -2763,7 +2763,7 @@ var theDownloadListener =
   {
     if(this.m_libraryObj == null)
     {
-      const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+      const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
       this.m_libraryObj = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     
       if(this.m_queryObj == null)
@@ -2812,7 +2812,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
     {
         theWebPlaylistQuery = null; 
           
-        deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+        deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                     getService(Components.interfaces.sbIDeviceManager);
         if (deviceManager)
         {
@@ -3093,7 +3093,7 @@ var SBDownloadCommands =
 
 
 // Register the download commands at startup if we know what the download table is.
-var deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].
+var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                 getService(Components.interfaces.sbIDeviceManager);
 
 if (deviceManager)
@@ -3518,7 +3518,7 @@ var theCDListener =
   {
     if(this.m_libraryObj == null)
     {
-      const MediaLibrary = new Components.Constructor("@songbird.org/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+      const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
       this.m_libraryObj = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     
       if(this.m_queryObj == null)
@@ -3822,7 +3822,7 @@ function CheckCDAvailableForBurn()
 {
     cdAvailableForWrite = 0;
     var aCDDevice = null;
-    deviceManager = Components.classes["@songbird.org/Songbird/DeviceManager;1"].getService(Components.interfaces.sbIDeviceManager);
+    deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].getService(Components.interfaces.sbIDeviceManager);
     if (deviceManager)
     {
         var CDCategory = 'Songbird CD Device';

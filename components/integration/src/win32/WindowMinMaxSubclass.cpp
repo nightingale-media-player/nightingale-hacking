@@ -263,7 +263,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     // for receiving media insert and removal notifications.
     case WM_DEVICECHANGE:
       {
-        nsCOMPtr<sbIDeviceManager> deviceManager = do_GetService("@songbird.org/Songbird/DeviceManager;1");
+        nsCOMPtr<sbIDeviceManager> deviceManager = do_GetService("@songbirdnest.com/Songbird/DeviceManager;1");
         if (deviceManager)
         {
           PRBool retVal;

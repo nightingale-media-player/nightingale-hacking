@@ -76,7 +76,7 @@ CPlaylistReaderListener.prototype =
 
 function CPlaylistReader()
 {
-  this.m_rootContractID = "@songbird.org/Songbird/Playlist/Reader/";
+  this.m_rootContractID = "@songbirdnest.com/Songbird/Playlist/Reader/";
   this.m_interfaceID = Components.interfaces.sbIPlaylistReader;
 
   this.m_browserObj = null;
@@ -113,7 +113,7 @@ function CPlaylistReader()
       
       if(aLocalURI.scheme == "file")
       {
-        const PlaylistManager = new Components.Constructor("@songbird.org/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+        const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var aPlaylistManager = new PlaylistManager();
         aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
 

@@ -50,7 +50,7 @@
 #endif
 
 // DEFINES ====================================================================
-#define SONGBIRD_USBMassStorageDevice_CONTRACTID  "@songbird.org/Songbird/Device/USBMassStorageDevice;1"
+#define SONGBIRD_USBMassStorageDevice_CONTRACTID  "@songbirdnest.com/Songbird/Device/USBMassStorageDevice;1"
 #define SONGBIRD_USBMassStorageDevice_CLASSNAME   "Songbird USBMassStorage Device"
 #define SONGBIRD_USBMassStorageDevice_CID { 0xa20bf454, 0x673b, 0x4308, { 0x88, 0x98, 0x93, 0xf2, 0xb0, 0x1, 0xd4, 0xe9 } }
 

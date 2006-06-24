@@ -320,7 +320,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbird.org/Songbird/MetadataValues;1");
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
   if(!m_Values.get())
   {
     *_retval = -1;
@@ -416,7 +416,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   if (async)
   {
     // Get a new channel handler for async operation.
-    m_ChannelHandler = do_CreateInstance("@songbird.org/Songbird/MetadataChannel;1");
+    m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1");
     if(!m_ChannelHandler.get())
     {
       *_retval = -1;
@@ -787,8 +787,8 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
             swap = false; // maybe id3lib is just backwards?
           case ID3TE_UTF16:
           {
-            size_t size = pField->Size() + 1;
-            unicode_t *buffer = (unicode_t *)nsMemory::Alloc( (size+1) * sizeof(unicode_t) );
+            size_t size = pField->Size();
+            unicode_t *buffer = (unicode_t *)nsMemory::Alloc( ( size + 1) * sizeof(unicode_t) );
             size_t read = pField->Get( buffer, size );
             buffer[read] = 0;
             if (swap)

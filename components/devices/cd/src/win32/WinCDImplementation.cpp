@@ -127,14 +127,14 @@ void WinCDObject::EvaluateCDDrive()
 // Clears any previous entries in the database for this CD Drive.
 void WinCDObject::ClearCDLibraryData()
 {
-  nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   pQuery->SetAsyncQuery(PR_FALSE);
   pQuery->SetDatabaseGUID(GetDeviceContext().get());
 
   PRBool retVal;
 
-  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbird.org/Songbird/PlaylistManager;1" );
-  nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbird.org/Songbird/MediaLibrary;1" );
+  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
+  nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
 
   if(pPlaylistManager.get())
   {
@@ -223,15 +223,15 @@ PRBool WinCDObject::UpdateCDLibraryData()
   PRBool bRet = PR_FALSE;
   if (mNumTracks)
   {
-    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbird.org/Songbird/DatabaseQuery;1" );
+    nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     pQuery->SetAsyncQuery(PR_FALSE);
     pQuery->SetDatabaseGUID(GetDeviceContext().get());
 
-    nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbird.org/Songbird/MediaLibrary;1" );
+    nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
     pLibrary->SetQueryObject(pQuery.get());
     pLibrary->CreateDefaultLibrary();
 
-    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbird.org/Songbird/PlaylistManager;1" );
+    nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
     pPlaylistManager->CreateDefaultPlaylistManager(pQuery);
 
     nsCOMPtr<sbIPlaylist> pPlaylist;
