@@ -2891,8 +2891,7 @@ DIALOG BOXES and their buttons
 
 .drawer_box textbox,
 .dialog_textbox,
-.smart_condition_box textbox,
-dbedit_textbox
+.smart_condition_box textbox
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-border-radius: 3px !important;
@@ -2984,6 +2983,7 @@ checkbox {
   -moz-border-bottom-colors: #99A195 #333 !important;
   background: #000 !important;
   -moz-box-align: center;   
+  opacity: 0.7 !important;
 }
 
 .checkbox-label-box {
@@ -3003,14 +3003,7 @@ checkbox {
 /* ..... focused state ..... */
 
 checkbox:focus{
-  -moz-appearance: none !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #333 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  -moz-border-bottom-colors: #333 !important;
-  margin: 0px 0px 0px -6px !important;
-  padding:  0px 0px 0px 5px !important;
+  opacity: 1 !important;
 }
 
 checkbox:focus > .checkbox-label-box {
@@ -3405,6 +3398,11 @@ menulist[disabled="true"] > dropmarker
 .menulist-editable-input
 {
   color: #fff !important;
+}
+
+.menulist-editable-input[disabled="true"]
+{
+  color: #666 !important;
 }
 
 
