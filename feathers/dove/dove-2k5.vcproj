@@ -767,18 +767,6 @@
 			Name="mini"
 			>
 			<File
-				RelativePath=".\mini\mini_volume_bkgd.png"
-				>
-			</File>
-			<File
-				RelativePath=".\mini\mini_volume_mute_off.png"
-				>
-			</File>
-			<File
-				RelativePath=".\mini\mini_volume_mute_on.png"
-				>
-			</File>
-			<File
 				RelativePath=".\mini\mini.bkg.dashboard.png"
 				>
 			</File>
@@ -840,6 +828,18 @@
 			</File>
 			<File
 				RelativePath=".\mini\mini.btn.play.n.png"
+				>
+			</File>
+			<File
+				RelativePath=".\mini\mini_volume_bkgd.png"
+				>
+			</File>
+			<File
+				RelativePath=".\mini\mini_volume_mute_off.png"
+				>
+			</File>
+			<File
+				RelativePath=".\mini\mini_volume_mute_on.png"
 				>
 			</File>
 			<File
@@ -930,6 +930,26 @@
 		<File
 			RelativePath=".\songbird.css"
 			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
