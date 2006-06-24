@@ -3228,7 +3228,7 @@ checkbox[checked="true"][disabled="true"] > .checkbox-check {
   width: 400px !important;
 }
 
-textbox,
+input,
 checkbox
 {
   -moz-appearance: none !important;
