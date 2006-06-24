@@ -98,7 +98,6 @@ tree
 {
   background-color: #686A6A !important;
   color: #CDD4C4 !important;
-  overflow: hidden !important;
 }
 
 #playlist_edit,
@@ -107,7 +106,21 @@ tree
   background-color: #99A195 !important;
   color: #333 !important;
   border: none !important;
-  overflow: hidden !important;
+}
+
+/* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
+#service_edit_popup autorepeatbutton,
+#service_edit_popup arrowscrollbox,
+#playlist_edit_popup autorepeatbutton,
+#playlist_edit_popup arrowscrollbox
+{
+  -moz-appearance: none !important;
+  -moz-binding: none !important; /* like, yea, take out the binding and everything */
+  border: none !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
 }
 
 #edit_bookmark
