@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#
-# Add tasks for this makefile here
-#
+JAR_MANIFEST = jar.mn
 
 include $(topsrcdir)/build/rules.mk
