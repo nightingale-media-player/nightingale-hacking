@@ -63,6 +63,7 @@ fi
 MAKEFILES_app="
 Makefile
 app/Makefile
+app/branding/Makefile
 app/content/Makefile
 app/content/bindings/Makefile
 app/content/browser/Makefile
@@ -72,7 +73,6 @@ app/content/browser/skin/Makefile
 app/content/html/Makefile
 app/content/scripts/Makefile
 app/content/xul/Makefile
-app/icons/Makefile
 app/preferences/Makefile
 "
 
