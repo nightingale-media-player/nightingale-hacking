@@ -191,6 +191,7 @@ function customInstall()
 
 function doOK() 
 {
+  handleOptOut(); // set the pref based upon the opt-out state.
   var bundle = window.arguments[0].bundle;
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var noext = (bundle.getNumExtensions() == 0);
@@ -278,3 +279,12 @@ function checkAltF4(evt)
     if (doCancel()) onExit();
   }
 }
+
+function handleOptOut()
+{
+  try {
+    var metrics_disabled = document.getElementById("metrics_optout").checked ? 0 : 1;
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    prefs.setCharPref("app.metrics.disabled", metrics_disabled);
+  } catch (e) {}; // Stuff likes to throw.
+};

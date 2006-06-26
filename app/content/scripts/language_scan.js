@@ -29,7 +29,7 @@ try
   // Don't turn this on unless you change the locale folder to your own hd.
   var ENABLE_LANGUAGESCAN = 1;
   
-  var lsLocaleFolder = "c:\\projects\\songbird\\locales";
+  var lsLocaleFolder = "c:\\projects\\songbird\\locales"; // Change this to whatever your local trunk folder is + locales
   
   var lsDTDFileName = "songbird.dtd";
   var lsDTDMasterFile = lsLocaleFolder + "\\en-US\\" + lsDTDFileName;

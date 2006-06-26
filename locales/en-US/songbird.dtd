@@ -216,3 +216,5 @@
 
 <!ENTITY jumptofile.title             "Jump to" >
 
+<!ENTITY metrics.optout               "Allow Songbird to send anonymous usage metrics (recommended)" >
+

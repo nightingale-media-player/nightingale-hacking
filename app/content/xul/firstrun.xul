@@ -63,7 +63,8 @@
               <label id="pleasewait" flex="1" value="&setup.retrievingxpilist;"/>
             </vbox>
           </hbox>
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <checkbox id="metrics_optout" class="dialog_checkbox dialog_label" checked="true" label="&metrics.optout;" />
           <sbextensions id="songbird.extensionlist"/>
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
           <hbox>

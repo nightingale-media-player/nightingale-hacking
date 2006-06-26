@@ -241,3 +241,8 @@
 <!ENTITY window.dev.title "Songbird 0.2 alpha" >
 
 
+
+
+<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
+
+

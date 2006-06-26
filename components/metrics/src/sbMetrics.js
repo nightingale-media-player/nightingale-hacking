@@ -194,9 +194,9 @@ Metrics.prototype = {
   
     // Make sure we are allowed to send metrics
     var disabled = 0;
-    try 
-    {
+    try {
       disabled = parseInt(this.prefs.getCharPref("app.metrics.disabled"));
+      if (disabled) dump("*** METRICS ARE DISABLED ***\n");
     }
     catch (e) { }
     
