@@ -65,7 +65,7 @@ tree
   min-height: 0px !important;
   border-width: 0px !important;
   font-family: tahoma !important;
-  font-size: 11 !important;
+  font-size: 11px !important;
 }  
 
 /* Edit-in-place popups overlapping the entries in the service pane tree */
@@ -75,19 +75,49 @@ tree
   -moz-appearance:none !important;
 }
 
+/* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
+#service_edit_popup autorepeatbutton,
+#service_edit_popup arrowscrollbox,
+#playlist_edit_popup autorepeatbutton,
+#playlist_edit_popup arrowscrollbox
+{
+  -moz-appearance: none !important;
+  -moz-binding: none !important; /* like, yea, take out the binding and everything */
+  border: none !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
 #service_edit,
+#service_edit *,
 #service_edit_popup
 {
-  background-color: #FFF !important;
-  color: #666 !important;
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
+  background-color: #333 !important;
+  color: #CCC !important;
+  font-weight: bold !important;
+  border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
 }
 
 #playlist_edit,
+#playlist_edit *,
 #playlist_edit_popup
 {
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
   background-color: #99A195 !important;
   color: #333 !important;
+  font-weight: bold !important;
   border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
 }
 
 #edit_bookmark
@@ -305,7 +335,6 @@ button#service_pane
   padding: 0px !important;
   border: 1px solid #333 !important;
   background-color: #333 !important;
-  font-size: larger;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell
@@ -325,12 +354,12 @@ button#service_pane
   padding: 0px !important;
   border: none !important;
   background-color: #333 !important;
-  font-size: larger;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #CCC !important;
+  font-weight: bold !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-cell-text
@@ -498,6 +527,7 @@ filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #EEE !important;
+  font-weight: bold !important;
 }
 
 /** 
@@ -587,6 +617,7 @@ playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
 playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
 {
   color: #EEE !important;
+  font-weight: bold !important;
 }
 
 playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
@@ -1312,7 +1343,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   margin: 0px 0px 0px 0px !important;
   font-family: tahoma !important;
   font-weight: bold !important;
-  font-size: 11 !important;
+  font-size: 11px !important;
   color: #666 !important;
 }
 
@@ -2433,7 +2464,6 @@ DASHBOARD
 /* the texties */
 #songbird_text_title
 {
-  max-width: auto !important;
   color: #1F292B !important;
 }
 #songbird_text_artist
@@ -2493,24 +2523,6 @@ DASHBOARD
  
   text-align: right !important;
 }
-#playlist_edit_popup
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-}
-#playlist_edit
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-  border-style: solid !important;
-  border-color: black !important;
-  border-width: 1px !important;
-}
-
 
 
 /** 

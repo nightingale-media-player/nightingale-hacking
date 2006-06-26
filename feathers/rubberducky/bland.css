@@ -1927,25 +1927,6 @@ DASHBOARD
 {
 
 }
-#playlist_edit_popup
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-}
-#playlist_edit
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-  border-style: solid !important;
-  border-color: black !important;
-  border-width: 1px !important;
-}
-
-
 
 /** 
 ************************************************************************************************************************************************

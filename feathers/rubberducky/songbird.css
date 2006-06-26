@@ -93,21 +93,6 @@ tree
   -moz-appearance:none !important;
 }
 
-#service_edit,
-#service_edit_popup
-{
-  background-color: #686A6A !important;
-  color: #CDD4C4 !important;
-}
-
-#playlist_edit,
-#playlist_edit_popup
-{
-  background-color: #99A195 !important;
-  color: #333 !important;
-  border: none !important;
-}
-
 /* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
 #service_edit_popup autorepeatbutton,
 #service_edit_popup arrowscrollbox,
@@ -119,6 +104,36 @@ tree
   border: none !important;
   height: 0px !important;
   max-height: 0px !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
+#service_edit,
+#service_edit *,
+#service_edit_popup
+{
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
+  background-color: #FFF !important;
+  color: #333 !important;
+  font-weight: bold;
+  border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
+#playlist_edit,
+#playlist_edit *,
+#playlist_edit_popup
+{
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
+  background-color: #4A4E48 !important;
+  color: #FFF !important;
+  font-weight: bold;
+  border: none !important;
+  height: 100% !important;
   margin: 0px 0px 0px 0px !important; 
   padding: 0px 0px 0px 0px !important; 
 }
@@ -398,15 +413,17 @@ Love the box.
 
 #frame_service_tree > treechildren::-moz-tree-twisty
 {
+  -moz-appearance: none !important;
+  margin: 0px 3px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
   list-style-image: url(default/twisty_closed.png) !important;
 }
 
-/**
-<img src="defaulttwisty_closed.png">
-*/
-
 #frame_service_tree > treechildren::-moz-tree-twisty( open )
 {
+  -moz-appearance: none !important;
+  margin: 0px 3px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
   list-style-image: url(default/twisty_open.png) !important;
 }
 
@@ -2746,25 +2763,6 @@ DASHBOARD
  
   text-align: right !important;
 }
-#playlist_edit_popup
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-}
-#playlist_edit
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-  border-style: solid !important;
-  border-color: black !important;
-  border-width: 1px !important;
-}
-
-
 
 /** 
 ************************************************************************************************************************************************

@@ -68,19 +68,49 @@ tree
   -moz-appearance:none !important;
 }
 
+/* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
+#service_edit_popup autorepeatbutton,
+#service_edit_popup arrowscrollbox,
+#playlist_edit_popup autorepeatbutton,
+#playlist_edit_popup arrowscrollbox
+{
+  -moz-appearance: none !important;
+  -moz-binding: none !important; /* like, yea, take out the binding and everything */
+  border: none !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
 #service_edit,
+#service_edit *,
 #service_edit_popup
 {
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
   background-color: #8F0000 !important;
   color: #CDD4C4 !important;
+  font-weight: bold;
+  border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
 }
 
 #playlist_edit,
+#playlist_edit *,
 #playlist_edit_popup
 {
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
   background-color: #8F0000 !important;
   color: #6B0000 !important;
+  font-weight: bold;
   border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
 }
 
 #edit_bookmark
@@ -2159,26 +2189,6 @@ Artist Name, Album Title, Elapsed Time, Total Time
 {
   color: #FFF !important;
 }
-
-#playlist_edit_popup
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-}
-#playlist_edit
-{ 
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #FFFFFF !important;
-  background-image: none !important;
-  list-style-image: none !important;
-  border-style: solid !important;
-  border-color: black !important;
-  border-width: 1px !important;
-}
-
-
 
 /** 
 ************************************************************************************************************************************************

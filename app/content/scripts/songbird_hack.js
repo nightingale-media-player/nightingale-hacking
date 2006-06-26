@@ -739,9 +739,9 @@ function onServiceEdit()
         var theEditPopup = document.getElementById( "service_edit_popup" );
         var theEditBox = document.getElementById( "service_edit" );
         var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
-        var extra_y = 8; // Why do I have to give it extra?  What am I calculating wrong?
+        var extra_y = 6; // Why do I have to give it extra?  What am I calculating wrong?
         var less_w  = 5;
-        var less_h  = 0;
+        var less_h  = -2;
         var pos_x = extra_x + theServiceTree_tree.boxObject.screenX + out_x.value;
         var pos_y = extra_y + theServiceTree_tree.boxObject.screenY + out_y.value;
         theEditBox.setAttribute( "hidden", "false" );
@@ -1923,9 +1923,9 @@ function onPlaylistEdit( evt )
     var theMainPane = document.getElementById( "frame_main_pane" );
     var theEditPopup = document.getElementById( "playlist_edit_popup" );
     var theEditBox = document.getElementById( "playlist_edit" );
-    var extra_x = 4; // Why do I have to give it extra?  What am I calculating wrong?
+    var extra_x = 5; // Why do I have to give it extra?  What am I calculating wrong?
     var extra_y = 21; // Why do I have to give it extra?  What am I calculating wrong?
-    var less_w  = 5;
+    var less_w  = 6;
     var less_h  = 0;
     var pos_x = extra_x + playlist.tree.boxObject.screenX + out_x.value;
     var pos_y = extra_y + playlist.tree.boxObject.screenY + out_y.value;
