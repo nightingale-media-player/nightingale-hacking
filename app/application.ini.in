@@ -5,7 +5,7 @@ Name=@SB_APPNAME@
 Version=@SB_MILESTONE@
 BuildID=@SB_BUILD_ID@
 Copyright=Copyright (c) 2005 Pioneers of the Inevitable
-ID={758DAD28-FDE9-4ab8-A301-3FFFAB3A697A}
+ID=songbird@songbirdnest.com
  
 [Gecko]
 MinVersion=1.8.0

@@ -12,7 +12,7 @@
         with minimum and maximum supported versions. --> 
     <em:targetApplication>
       <Description>
-        <em:id>{758DAD28-FDE9-4ab8-A301-3FFFAB3A697A}</em:id>
+        <em:id>songbird@songbirdnest.com</em:id>
         <em:minVersion>0.1</em:minVersion>
         <em:maxVersion>1.0</em:maxVersion>
       </Description>
