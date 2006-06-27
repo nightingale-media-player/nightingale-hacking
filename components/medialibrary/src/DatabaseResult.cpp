@@ -194,11 +194,11 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellByColumnPtr(PRInt32 dbRow, const PRUnic
 NS_IMETHODIMP CDatabaseResult::ClearResultSet()
 {
   nsAutoLock cLock(m_pColumnNamesLock);
-  {
-    nsAutoLock rLock(m_pRowCellsLock);
-    m_ColumnNames.clear();
-    m_RowCells.clear();
-  }
+  nsAutoLock rLock(m_pRowCellsLock);
+
+  m_ColumnNames.clear();
+  m_RowCells.clear();
+
   return NS_OK;
 } //ClearResultSet
 
