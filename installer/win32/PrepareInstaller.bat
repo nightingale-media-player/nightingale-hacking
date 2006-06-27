@@ -36,19 +36,19 @@ if "%2"=="package" goto package
 @copy /y GPL.txt %DEPTH%\dist\
 @copy /y TRADEMARK.txt %DEPTH%\dist\
 
-cd %DEPTH%\dist
-%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
-%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
-%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, 32512, 1033
-%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
-%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
+@cd %DEPTH%\dist
+@%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
+@%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
+@%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, 32512, 1033
+@%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
+@%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
 @cd %DIST_DEPTH%\installer\win32
 
 if "%2"=="prepare" goto end
 
 :package
 @cd %DEPTH%\dist
-%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
+@%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
 @cd %DIST_DEPTH%\installer\win32
 
 if exist "%DEPTH%\dist\Songbird_%BUILD_ID%.exe" goto success
