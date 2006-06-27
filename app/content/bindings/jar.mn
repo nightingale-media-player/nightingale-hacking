@@ -18,5 +18,7 @@ songbird.jar:
   content/songbird/bindings/tageditor.xml         (tageditor.xml)
   content/songbird/bindings/trackeditor.xml       (trackeditor.xml)
   content/songbird/bindings/windowregion.xml      (windowregion.xml)
-  content/songbird/bindings/smartsplitter.xml      (smartsplitter.xml)
-  content/songbird/bindings/clickholdbutton.xml      (clickholdbutton.xml)
+  content/songbird/bindings/smartsplitter.xml     (smartsplitter.xml)
+  content/songbird/bindings/clickholdbutton.xml   (clickholdbutton.xml)
+  content/songbird/bindings/hotkey.xml            (hotkey.xml)
+  

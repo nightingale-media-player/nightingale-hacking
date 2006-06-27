@@ -33,3 +33,4 @@ songbird.jar:
   content/songbird/scripts/switch_feathers.js           (switch_feathers.js)
   content/songbird/scripts/switch_locale.js             (switch_locale.js)
   content/songbird/scripts/watch_folders.js             (watch_folders.js)
+  content/songbird/scripts/preferences/hotkeys.js       (preferences/hotkeys.js)

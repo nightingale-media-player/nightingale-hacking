@@ -29,3 +29,5 @@ songbird.jar:
   content/songbird/xul/trackeditor_form.xul (trackeditor_form.xul)
   content/songbird/xul/watch_folders.xul    (watch_folders.xul)
   content/songbird/xul/yahoo_hybrid.xul     (yahoo_hybrid.xul)
+  content/songbird/xul/preferences/hotkeys.xul      (preferences/hotkeys.xul)
+  content/songbird/xul/preferences/main_overlay.xul (preferences/main_overlay.xul)

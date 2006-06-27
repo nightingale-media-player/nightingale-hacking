@@ -787,6 +787,34 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<Filter
+					Name="preferences"
+					>
+					<File
+						RelativePath=".\content\xul\preferences\hotkeys.xul"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)&#x0D;&#x0A;"
+								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)&#x0D;&#x0A;"
+								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="bindings"
@@ -893,6 +921,30 @@
 				</File>
 				<File
 					RelativePath=".\content\bindings\folders.xml"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\hotkey.xml"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -2017,6 +2069,34 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<Filter
+					Name="preferences"
+					>
+					<File
+						RelativePath=".\content\scripts\preferences\hotkeys.js"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)&#x0D;&#x0A;"
+								Outputs="$(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)&#x0D;&#x0A;"
+								Outputs="$(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<!-- todo: internationalize -->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+
+<overlay id="HotkeysPaneOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefpane id="paneHotkeys" onpaneload="gHotkeysPane.init();">
+
+    <preferences>
+      <preference id="hotkeys.usehotkeys"  name="songbird.dataremotes.globalhotkeys.enabled"  type="bool"/>
+    </preferences> 
+    
+    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotkeys.js"/>
+
+    <groupbox flex="1"> 
+      <checkbox id="hotkeys.enabled" label="Use Global Hotkeys" accesskey="U" preference="hotkeys.usehotkeys"/>
+      <listbox id="hotkey.list" onselect="gHotkeysPane.onSelectHotkey();">
+        <listhead>
+          <listheader label="Action"/>
+          <listheader label="Hotkey"/>
+        </listhead>
+        <listcols>
+          <listcol width="200"/>
+          <listcol width="200"/>
+        </listcols>
+      </listbox>
+      <hbox align="center">
+        <label value="Action"/>
+        <menulist id="hotkey.actions" flex="1">
+          <menupopup>
+            <!-- This should eventually be loaded off a hotkey api -->
+            <menuitem label="Playback: Volume up"/>
+            <menuitem label="Playback: Volume down"/>
+            <menuitem label="Playback: Next in playlist"/>
+            <menuitem label="Playback: Previous in playlist"/>
+            <menuitem label="Playback: Play/Pause"/>
+            <menuitem label="Playback: Pause"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <hbox align="center">
+        <label value="Hotkey"/>
+        <hotkey id="hotkey.hotkey" flex="1"/>
+        <button id="hotkey.add" label="Add" oncommand="gHotkeysPane.addHotkey();"/>
+        <button id="hotkey.set" label="Set" oncommand="gHotkeysPane.setHotkey();"/>
+        <button id="hotkey.remove" label="Remove" oncommand="gHotkeysPane.removeHotkey();"/>
+      </hbox>
+    </groupbox>
+
+  </prefpane>
+
+</overlay>

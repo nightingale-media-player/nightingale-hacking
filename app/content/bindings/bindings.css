@@ -173,3 +173,7 @@ smartsplitter {
 clickholdbutton {
   -moz-binding: url("chrome://songbird/content/bindings/clickholdbutton.xml#clickholdbutton") !important;
 }
+
+hotkey {
+  -moz-binding: url("chrome://songbird/content/bindings/hotkey.xml#hotkey") !important;
+}

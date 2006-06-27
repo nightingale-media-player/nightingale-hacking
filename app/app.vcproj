@@ -708,6 +708,50 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
+				<Filter
+					Name="preferences"
+					Filter="">
+					<File
+						RelativePath=".\content\xul\preferences\hotkeys.xul">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"
+								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"
+								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\content\xul\preferences\main_overlay.xul">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
+								Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
+								Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="bindings"
@@ -819,6 +863,27 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 				</File>
 				<File
 					RelativePath=".\content\bindings\folders.xml">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\hotkey.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -1910,6 +1975,31 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
+				<Filter
+					Name="preferences"
+					Filter="">
+					<File
+						RelativePath=".\content\scripts\preferences\hotkeys.js">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)
+"
+								Outputs="$(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCustomBuildTool"
+								Description="Performing Custom Build Step $(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)
+"
+								Outputs="$(SolutionDir)dist\chrome\content\scripts\preferences\$(InputFileName)"/>
+						</FileConfiguration>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="browser"

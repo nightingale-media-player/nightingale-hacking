@@ -45,3 +45,7 @@ locale	songbird	bs-BA	        locales/bs-BA/
 locale  browser   en-US         content/browser/locale/browser/ 
 content browser                 content/browser/content/
 skin    browser   classic/1.0   content/browser/skin/classic/browser/ 
+
+overlay chrome://browser/content/preferences/preferences.xul chrome://songbird/content/xul/preferences/main_overlay.xul
+
+
