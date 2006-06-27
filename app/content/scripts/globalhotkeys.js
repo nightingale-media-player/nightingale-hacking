@@ -50,6 +50,7 @@ function initGlobalHotkeys() {
 function resetGlobalHotkeys() {
   // Remove all hotkey bindings
   if (hotkey_service) hotkey_service.RemoveAllHotkeys();
+  stopWatchingHotkeyRemotes();
 }
 
 // Hotkey handler, this gets called back when the user presses a hotkey that has been registered in loadHotkeysFromPrefs
@@ -86,8 +87,11 @@ var hotkeyHandler =
 // Load hotkeys
 function loadHotkeysFromPrefs() {
   if (!hotkey_service) return;
+  beginWatchingHotkeyRemotes();
   setDefaultGlobalHotkeys();
-  if (!SBDataGetIntValue("globalhotkeys.enabled")) return;
+  var enabled = SBDataGetIntValue("globalhotkeys.enabled");
+  //log("(re)init - hotkeys are " + (enabled ? "enabled" : "disabled"));
+  if (!enabled) return;
   var count = SBDataGetIntValue("globalhotkeys.count");
   for (var i=0;i<count;i++) {
     // Read hotkey binding from user preferences
@@ -113,14 +117,13 @@ function loadHotkeysFromPrefs() {
     // If we had a key code (and possibly modifiers), register the corresponding action for it
     if (keyCode != 0) hotkey_service.AddHotkey(keyCode, alt, ctrl, shift, meta, action, hotkeyHandler);
   }
-  beginWatchingHotkeys();
 }
 
 // Sets the default hotkey settings
 function setDefaultGlobalHotkeys() {
   if (!SBDataGetIntValue("globalhotkeys.changed")) {
     SBDataSetValue("globalhotkeys.changed", 1);
-    SBDataSetValue("globalhotkeys.enabled", 1);
+    SBDataSetValue("globalhotkeys.enabled", true);
 
     SBDataSetValue("globalhotkeys.count", 5);
     
@@ -152,11 +155,19 @@ function stringToKeyCode( str ) {
   return 0;
 }
 
-var songbird_hotkeys_event;
+var songbird_hotkeys_event1;
+var songbird_hotkeys_event2;
 
-function beginWatchingHotkeys() {
-  songbird_hotkeys_event = new sbIDataRemote("globalhotkeys.changed");
-  songbird_hotkeys_event.bindCallbackFunction( globalHotkeysChanged, true )
+function beginWatchingHotkeyRemotes() {
+  songbird_hotkeys_event1 = new sbIDataRemote("globalhotkeys.changed");
+  songbird_hotkeys_event1.bindCallbackFunction( globalHotkeysChanged, true )
+  songbird_hotkeys_event2 = new sbIDataRemote("globalhotkeys.enabled");
+  songbird_hotkeys_event2.bindCallbackFunction( globalHotkeysChanged, true )
+}
+
+function stopWatchingHotkeyRemotes() {
+  songbird_hotkeys_event1.unbind();
+  songbird_hotkeys_event2.unbind();
 }
 
 function globalHotkeysChanged(v) {

@@ -7,19 +7,31 @@ var gHotkeysPane = {
   _set: null,
   _action: null,
   _hotkey: null,
+  _binding_enabled: null,
+  _enabled: null,
 
   init: function ()
   {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+    
+    document.defaultView.addEventListener("unload", onHotkeysUnload, true);
+    
+    this._binding_enabled = this.SBDataBindElementAttribute("globalhotkeys.enabled", "hotkeys.enabled", "checked", true);
 
     this._list = document.getElementById("hotkey.list");
     this._set = document.getElementById("hotkey.set");
     this._remove = document.getElementById("hotkey.remove");
     this._action = document.getElementById("hotkey.actions");
     this._hotkey = document.getElementById("hotkey.hotkey");
+    this._enabled = document.getElementById("hotkeys.enabled");
 
     this.loadHotkeys();
+  },
+  
+  onUnload: function()
+  {
+    this._binding_enabled.unbind();
   },
   
   loadHotkeys: function()
@@ -166,6 +178,17 @@ var gHotkeysPane = {
     if (index >= this._list.getRowCount()) index = this._list.getRowCount()-1;
     this._list.selectedIndex = index;
     this.saveHotkeys();
+  },
+  
+  onEnableDisable: function()
+  {
+    this.SBDataSetValue("globalhotkeys.enabled", (this._enabled.getAttribute("checked") == "true"));
   }
   
 };
+
+function onHotkeysUnload() 
+{
+  gHotkeysPane.onUnload();
+}
+
