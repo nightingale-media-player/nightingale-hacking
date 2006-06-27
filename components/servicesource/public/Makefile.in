@@ -3,7 +3,7 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright 2006 Pioneers of the Inevitable LLC
+# Copyright 2006 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
