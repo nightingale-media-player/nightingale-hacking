@@ -12,43 +12,46 @@ REM
 if "%1"=="" goto usage
 
 set BUILD_ID=%1
+set ICON_FILE=PublicSVNInstall.ico
+set DEPTH=..\..
+set DIST_DEPTH=..
 
 if "%2"=="prepare" goto prepare
 
 if "%2"=="package" goto package
 
 :prepare
-@del /s /f /q ..\_built_installer\*.*
-@del /q /f ..\dist\Songbird_*.exe
-@rd /s /q ..\_built_installer
+@del /s /f /q %DEPTH%\_built_installer\*.*
+@del /q /f %DEPTH%\dist\Songbird_*.exe
+@rd /s /q %DEPTH%\_built_installer
 
-@copy /y Songbird.nsi ..\dist\
-@copy /y PublicSVNInstall.ico ..\dist\
+@copy /y Songbird.nsi %DEPTH%\dist\
+@copy /y %ICON_FILE% %DEPTH%\dist\
 
-@mkdir ..\dist\chrome\icons\default
-@copy  ..\app\icons\songbird.ico ..\dist\chrome\icons\default\frame_outer.ico
-@copy  ..\app\icons\songbird.ico ..\dist\songbird.ico
+@mkdir %DEPTH%\dist\chrome\icons\default
+@copy  %DEPTH%\app\branding\songbird.ico %DEPTH%\dist\chrome\icons\default\frame_outer.ico
+@copy  %DEPTH%\app\branding\songbird.ico %DEPTH%\dist\songbird.ico
 
-@copy /y LICENSE.txt ..\dist\
-@copy /y GPL.txt ..\dist\
-@copy /y TRADEMARK.txt ..\dist\
+@copy /y LICENSE.txt %DEPTH%\dist\
+@copy /y GPL.txt %DEPTH%\dist\
+@copy /y TRADEMARK.txt %DEPTH%\dist\
 
-@cd ..\dist
-@..\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, songbird.ico, icongroup, IDI_APPICON, 1033
-@..\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, songbird.ico, icongroup, IDI_DOCUMENT, 1033
-@..\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, songbird.ico, icongroup, 32512, 1033
-@..\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, songbird.ico, icongroup, IDI_APPICON, 1033
-@..\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, songbird.ico, icongroup, IDI_DOCUMENT, 1033
-@cd ..\installer
+cd %DEPTH%\dist
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, 32512, 1033
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
+%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
+@cd %DIST_DEPTH%\installer\win32
 
 if "%2"=="prepare" goto end
 
 :package
-@cd ..\dist
-@..\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
-@cd ..\installer
+@cd %DEPTH%\dist
+%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
+@cd %DIST_DEPTH%\installer\win32
 
-if exist "..\dist\Songbird_%BUILD_ID%.exe" goto success
+if exist "%DEPTH%\dist\Songbird_%BUILD_ID%.exe" goto success
 goto failure
 
 :success
@@ -59,9 +62,9 @@ goto failure
 @echo =====================================================
 @echo.
 
-@mkdir ..\_built_installer
-@copy /y ..\dist\Songbird_%BUILD_ID%.exe ..\_built_installer
-@..\tools\win32\fsum\fsum.exe -d..\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%.exe > ..\_built_installer\Songbird_%BUILD_ID%.exe.md5
+@mkdir %DEPTH%\_built_installer
+@copy /y %DEPTH%\dist\Songbird_%BUILD_ID%.exe %DEPTH%\_built_installer
+@%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%.exe > %DEPTH%\_built_installer\Songbird_%BUILD_ID%.exe.md5
 
 if "%2"=="publish" goto publish
 goto nopublish
