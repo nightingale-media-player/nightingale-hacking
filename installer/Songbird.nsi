@@ -8,8 +8,8 @@
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
-Name "Songbird 0.1 (Win32)"
-Caption "Songbird 0.1 (Win32)"
+Name "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
+Caption "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
 
 ComponentText "You may customize the Songbird installation below. Click next when you're ready to continue the installation process." \
 "" \
@@ -17,7 +17,7 @@ ComponentText "You may customize the Songbird installation below. Click next whe
 
 CompletedText ""
 
-DirText "The installation will install the Songbird 0.1 (Win32) in the folder indicated below. You may change it if you wish to install to a different folder." \
+DirText "The installation will install the Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32) in the folder indicated below. You may change it if you wish to install to a different folder." \
 "Current Destination Folder" \
 "Browse ..." \
 "Choose a folder for Songbird ..."
@@ -27,8 +27,8 @@ SpaceTexts "Required Disk Space: " \
 
 InstallColors /windows
 
-Icon "SongbirdInstall.ico"
-UninstallIcon "SongbirdInstall.ico"
+Icon "PublicSVNInstall.ico"
+UninstallIcon "PublicSVNInstall.ico"
 
 XPStyle on
 
@@ -85,7 +85,7 @@ NoUninstall:
 
 RequiresMSVCP71:
   SetOutPath $SYSDIR
-  File msvcp71.dll
+  File xulrunner\msvcp71.dll
 
 NoRequireMSVCP71:
   FindClose $0

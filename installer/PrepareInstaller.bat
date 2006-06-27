@@ -23,7 +23,7 @@ if "%2"=="package" goto package
 @rd /s /q ..\_built_installer
 
 @copy /y Songbird.nsi ..\dist\
-@copy /y SongbirdInstall.ico ..\dist\
+@copy /y PublicSVNInstall.ico ..\dist\
 
 @mkdir ..\dist\chrome\icons\default
 @copy  ..\app\icons\songbird.ico ..\dist\chrome\icons\default\frame_outer.ico
