@@ -1,17 +1,17 @@
-Certain files in this binary application (“binary”) are Copyright© 2006 Pioneers 
-of the Inevitable LLC.
 
-Certain files in this binary contain code from VLC and XUL Runner which is 
+Certain files in this binary application (“binary”) are Copyright © 2006 POTI Inc.
+
+Certain files in this binary may contain code from VLC and XUL Runner which is 
 copyright their respective copyright holders. These files may include 
-modifications which are Copyright© 2006 Pioneers of the Inevitable LLC.
-
-This binary also contains trademarks of Pioneers of the Inevitable LLC 
-including, but not limited to, the name “Songbird”, logos, and page layout files 
-(“skins”). Pioneers of the Inevitable LLC does not express or imply any 
-permission to use or distribute these trademarks.
-
-This binary is licensed to you under the GNU General Public License Version 2 as 
-follows:
+modifications which are Copyright © 2006 POTI Inc.
+ 
+This binary also contains trademarks of POTI Inc. including, but not limited to, 
+the name “Songbird”, logos, icons, and page layout files (“feathers”). POTI Inc. 
+does not express or imply any permission to use or distribute these trademarks.
+ 
+This binary is licensed to you under the GNU General Public License Version 2 
+as follows:
+ 
 
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
