@@ -33,6 +33,10 @@ APPINI = application.ini.in
 
 SONGBIRD_XULRUNNER = $(srcdir)/updater.ini
 
+ifeq (macosx,$(SB_PLATFORM))
+SONGBIRD_CONTENTS = $(srcdir)/Info.plist
+endif
+
 SUBDIRS = branding \
           content \
           preferences \

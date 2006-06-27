@@ -29,6 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifeq (macosx,$(SB_PLATFORM))
+SONGBIRD_DIST = $(srcdir)/songbird.icns
+endif
+
 JAR_MANIFEST = jar.mn
 
 include $(topsrcdir)/build/rules.mk

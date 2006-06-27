@@ -463,9 +463,10 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
-    MACOSX_CONTENTS="/Contents"
-    MACOSX_RESOURCES="/Contents/Resources"
-    MACOSX_FRAMEWORKS="/Contents/Frameworks"
+    MACOSX_APPBUNDLE="/Songbird.app"
+    MACOSX_CONTENTS="$MACOSX_APPBUNDLE/Contents"
+    MACOSX_RESOURCES="$MACOSX_CONTENTS/Resources"
+    MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
   ;;
   linux)

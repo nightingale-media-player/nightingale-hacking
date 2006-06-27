@@ -146,6 +146,10 @@ ifdef SONGBIRD_XULRUNNER
 targets += copy_sb_xulrunner
 endif
 
+ifdef SONGBIRD_CONTENTS
+targets += copy_sb_macoscontents
+endif
+
 ifdef JAR_MANIFEST
 targets += make_jar
 endif
@@ -598,6 +602,14 @@ copy_sb_xulrunner:
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_XULRUNNER) $(SONGBIRD_XULRUNNERDIR)
 .PHONY : copy_sb_xulrunner
 endif #SONGBIRD_XULRUNNER
+
+#-----------------------
+
+ifdef SONGBIRD_CONTENTS
+copy_sb_macoscontents:
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_CONTENTS) $(SONGBIRD_CONTENTSDIR)
+.PHONY : copy_sb_macoscontents
+endif #SONGBIRD_CONTENTS
 
 #------------------------------------------------------------------------------
 # Rules for preprocessing
