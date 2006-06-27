@@ -225,6 +225,7 @@ static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("Arts and Crafts Records") ),
     nsString( NS_LITERAL_STRING("Calabash Music") ),
     nsString( NS_LITERAL_STRING("Project Opus") ),
+    nsString( NS_LITERAL_STRING("Birdman Records") ),
     nsString( ),
   },
   // Group 9
@@ -301,6 +302,7 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("http://www.galleryac.com/") ),
     nsString( NS_LITERAL_STRING("http://calabashmusic.com/") ),
     nsString( NS_LITERAL_STRING("http://projectopus.com/") ),
+    nsString( NS_LITERAL_STRING("http://www.birdmanrecords.com/") ),
     nsString( ),
   },
   // Group 9
@@ -377,6 +379,7 @@ static nsString     gChildIcons[ NUM_PARENTS ][ MAX_CHILDREN ] =
     nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
     nsString( NS_LITERAL_STRING("http://calabashmusic.com/favicon.ico") ),
     nsString( NS_LITERAL_STRING("http://projectopus.com/favicon.ico") ),
+    nsString( NS_LITERAL_STRING("http://www.birdmanrecords.com/favicon.ico") ),
     nsString( ),
   },
   // Group 9
