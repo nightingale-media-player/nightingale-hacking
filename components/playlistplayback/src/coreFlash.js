@@ -141,7 +141,8 @@ CoreFlash.prototype.getPaused = function ()
 CoreFlash.prototype.getPlaying = function ()
 {
   try {
-    this._playing = this._object.GetVariable("isPlaying") == "1";
+    this._playing = ( this._object.GetVariable("isPlaying") == "1" ||
+                      this._object.GetVariable("isPaused") == "1" );
   }
   catch(err) {
     this.LOG(err);
