@@ -14,6 +14,7 @@ var gHotkeysPane = {
   {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+    jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
     
     document.defaultView.addEventListener("unload", onHotkeysUnload, true);
     
@@ -161,7 +162,7 @@ var gHotkeysPane = {
       if (i == ignoreentry) continue;
       var item = this._list.getItemAtIndex(i);
       if (item.keycombo == keycombo) {
-        alert("This hotkey is already taken");
+        this.sbMessageBox_strings("hotkeys.hotkeyexists.title", "hotkeys.hotkeyexists.msg", "Hotkey", "This hotkey is already taken", false);
         return true;
       }
     }

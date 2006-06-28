@@ -158,7 +158,7 @@
             if (tagname != "") 
             {
               if (this.isInList(tagname)) {
-                this.messagebox("tagseditor.tagexists.title", "tagseditor.tagexists.msg", "Add Tag", "This tag is already in the list", false);
+                this.sbMessageBox_strings("tagseditor.tagexists.title", "tagseditor.tagexists.msg", "Add Tag", "This tag is already in the list", false);
                 return;
               }
               this.list.appendItem(tagname);
@@ -169,31 +169,10 @@
       </body>
     </method>
 
-    <method name="messagebox">
-      <parameter name="titlestring"/>
-      <parameter name="msgstring"/>
-      <parameter name="deftitle"/>
-      <parameter name="defmsg"/>
-      <parameter name="wantcancel"/>
-      <body>
-        <![CDATA[
-          var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-          var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-          var msg = defmsg;
-          var title = deftitle;
-          try {
-            msg = songbirdStrings.GetStringFromName(msgstring);
-            title = songbirdStrings.GetStringFromName(titlestring);
-          } catch (e) {}
-          return this.sbMessageBox(title, msg, wantcancel);
-        ]]>
-      </body>
-    </method>
-
     <method name="onClickClear">
       <body>
         <![CDATA[
-          if (this.messagebox("tagseditor.clear.title", "tagseditor.clear.msg", "Clear", "Clear all tags ?", true) == "accept") {
+          if (this.sbMessageBox_strings("tagseditor.clear.title", "tagseditor.clear.msg", "Clear", "Clear all tags ?", true) == "accept") {
             this.clearAllTags();
           }
         ]]>

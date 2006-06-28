@@ -13,7 +13,7 @@
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences_overlay.js" />
 
  <prefWindow id="BrowserPreferences">
-  <prefpane id="paneHotkeys" label="Hotkeys" insertafter="paneContent" src="chrome://songbird/content/xul/preferences/hotkeys.xul" />
+  <prefpane id="paneHotkeys" label="&hotkeys.prefpane;" insertafter="paneContent" src="chrome://songbird/content/xul/preferences/hotkeys.xul" />
  </prefWindow>
 
 </overlay>

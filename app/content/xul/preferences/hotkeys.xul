@@ -13,11 +13,11 @@
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotkeys.js"/>
 
     <groupbox flex="1"> 
-      <checkbox id="hotkeys.enabled" label="Use Global Hotkeys" accesskey="U" oncommand="gHotkeysPane.onEnableDisable();"/>
+      <checkbox id="hotkeys.enabled" label="&hotkeys.useglobalhotkeys;" accesskey="&hotkeys.useglobalhotkeys.accesskey;" oncommand="gHotkeysPane.onEnableDisable();"/>
       <listbox id="hotkey.list" onselect="gHotkeysPane.onSelectHotkey();">
         <listhead>
-          <listheader label="Action"/>
-          <listheader label="Hotkey"/>
+          <listheader label="&hotkeys.action;"/>
+          <listheader label="&hotkeys.hotkey;"/>
         </listhead>
         <listcols>
           <listcol width="200"/>
@@ -25,7 +25,7 @@
         </listcols>
       </listbox>
       <hbox align="center">
-        <label value="Action"/>
+        <label value="&hotkeys.action;"/>
         <menulist id="hotkey.actions" flex="1">
           <menupopup>
             <!-- This should eventually be loaded off a hotkey api -->
@@ -39,11 +39,11 @@
         </menulist>
       </hbox>
       <hbox align="center">
-        <label value="Hotkey"/>
+        <label value="&hotkeys.hotkey;"/>
         <hotkey id="hotkey.hotkey" flex="1"/>
-        <button id="hotkey.add" label="Add" oncommand="gHotkeysPane.addHotkey();"/>
-        <button id="hotkey.set" label="Set" oncommand="gHotkeysPane.setHotkey();"/>
-        <button id="hotkey.remove" label="Remove" oncommand="gHotkeysPane.removeHotkey();"/>
+        <button id="hotkey.add" label="&hotkeys.add;" oncommand="gHotkeysPane.addHotkey();"/>
+        <button id="hotkey.set" label="&hotkeys.set;" oncommand="gHotkeysPane.setHotkey();"/>
+        <button id="hotkey.remove" label="&hotkeys.remove;" oncommand="gHotkeysPane.removeHotkey();"/>
       </hbox>
     </groupbox>
 

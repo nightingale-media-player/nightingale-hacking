@@ -249,3 +249,15 @@
 <!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
 
 
+
+
+<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.hotkey "Hotkey" >
+<!ENTITY hotkeys.add "Add" >
+<!ENTITY hotkeys.set "Set" >
+<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.prefpane "Hotkeys" >
+
+
