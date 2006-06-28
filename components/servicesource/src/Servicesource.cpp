@@ -159,7 +159,7 @@ static nsString     gParentIcons[ NUM_PARENTS ] =
 
 static nsString     gParentUrls[ NUM_PARENTS ] =
 {
-  nsString( NS_LITERAL_STRING("http://songbirdnest.com/player/welcome2/") ),
+  nsString( NS_LITERAL_STRING("http://songbirdnest.com/player0.2/welcome/") ),
   nsString( NS_LITERAL_STRING("chrome://songbird/content/xul/main_pane.xul?library") ),
   nsString( ),
   nsString( ),
