@@ -5,7 +5,6 @@ locales.jar:
 % locale  songbird  ca-AD   jar:locales.jar!/locale/ca-AD/songbird/
 % locale  songbird  ca-ES   jar:locales.jar!/locale/ca-ES/songbird/
 % locale  songbird  cs-CZ   jar:locales.jar!/locale/cs-CZ/songbird/
-% locale  songbird  cs-ES   jar:locales.jar!/locale/cs-ES/songbird/
 % locale  songbird  da-DK   jar:locales.jar!/locale/da-DK/songbird/
 % locale  songbird  de-DE   jar:locales.jar!/locale/de-DE/songbird/
 % locale  songbird  el-GR   jar:locales.jar!/locale/el-GR/songbird/
@@ -53,8 +52,6 @@ locales.jar:
   locale/ca-ES/songbird/songbird.properties     (ca-ES/songbird.properties)
   locale/cs-CZ/songbird/songbird.dtd            (cs-CZ/songbird.dtd)
   locale/cs-CZ/songbird/songbird.properties     (cs-CZ/songbird.properties)
-  locale/cs-ES/songbird/songbird.dtd            (cs-ES/songbird.dtd)
-  locale/cs-ES/songbird/songbird.properties     (cs-ES/songbird.properties)
   locale/da-DK/songbird/songbird.dtd            (da-DK/songbird.dtd)
   locale/da-DK/songbird/songbird.properties     (da-DK/songbird.properties)
   locale/de-DE/songbird/songbird.dtd            (de-DE/songbird.dtd)
