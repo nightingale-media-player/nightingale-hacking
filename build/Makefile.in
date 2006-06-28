@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 tasks : sbBuildIDs.h all
 
-sbBuildIDs.h: $$@.in $(SB_BUILDID_FILENAME)
+sbBuildIDs.h: sbBuildIDs.h.in $(SB_BUILDID_FILENAME)
 	$(RM) -f $@
 	$(PERL) -I$(SCRIPTS_DIR) $(SCRIPTS_DIR)/generate-build-defs.pl \
 	  $@ $(srcdir)/$@.in $(SB_BUILDID_FILENAME)
