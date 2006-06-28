@@ -2361,6 +2361,11 @@ function SBNewPlaylist()
     var playlistmanager = new sbIPlaylistManager();
     var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
     var playlistguid = aUUIDGenerator.generateUUID();
+    var name = "Playlist";
+    try
+    {
+      name = theSongbirdStrings.getString("playlist");
+    } catch(e) {}
     var playlist = playlistmanager.CreatePlaylist( playlistguid, name, "Playlist", "user", query );
     SBScanServiceTreeNewEntryStart();
   }
