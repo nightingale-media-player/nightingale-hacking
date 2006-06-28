@@ -267,3 +267,14 @@
 <!ENTITY hotkeys.prefpane "Hotkeys" >
 
 
+
+
+<!ENTITY metadata.uuid "Media UUID" >
+<!ENTITY metadata.url "Location" >
+<!ENTITY metadata.artist "Artist" >
+<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.genre "Genre" >
+<!ENTITY metadata.length "Length" >
+
+

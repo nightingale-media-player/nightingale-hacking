@@ -48,7 +48,7 @@
 >
   <!-- Sometimes we need to convince the DTD files to not be stupid
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/language_scan.js" />
+  src="chrome://songbird/content/scripts/language_scan.js" />
    -->
 
   <script type="application/x-javascript"   
