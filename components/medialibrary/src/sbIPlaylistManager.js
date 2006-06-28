@@ -60,6 +60,28 @@ CPlaylistManager.prototype.constructor = CPlaylistManager;
 /* the CPlaylistManager class def */
 CPlaylistManager.prototype = 
 {
+  /**
+   * see nsIClassInfo
+   */
+  getInterfaces: function (count) {
+    var ifaces = [
+      Components.interfaces.nsISupports,
+      Components.interfaces.nsIClassInfo,
+      SONGBIRD_PLAYLISTMANAGER_IID
+    ];
+    count.value = ifaces.length;
+    return ifaces;
+  },
+  getHelperForLanguage: function (language) {
+    return null;
+  },
+  contractID: SONGBIRD_PLAYLISTMANAGER_CONTRACTID,
+  classDescription: SONGBIRD_PLAYLISTMANAGER_CLASSNAME,
+  classID: SONGBIRD_PLAYLISTMANAGER_CID,
+  implementationLanguage:
+    Components.interfaces.nsIProgrammingLanguage.JAVASCRIPT,
+  flags: Components.interfaces.nsIClassInfo.THREADSAFE,
+
   CreateDefaultPlaylistManager: function(queryObj)
   {
     if(queryObj != null)
@@ -818,10 +840,11 @@ CPlaylistManager.prototype =
 
   QueryInterface: function(iid)
   {
-      if (!iid.equals(Components.interfaces.nsISupports) &&
-          !iid.equals(SONGBIRD_PLAYLISTMANAGER_IID))
-          throw Components.results.NS_ERROR_NO_INTERFACE;
-      return this;
+    if (!iid.equals(Components.interfaces.nsISupports) &&
+        !iid.equals(Components.interfaces.nsIClassInfo) &&
+        !iid.equals(SONGBIRD_PLAYLISTMANAGER_IID))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    return this;
   }
 };
 
@@ -831,26 +854,32 @@ CPlaylistManager.prototype =
  */
 var sbPlaylistManagerModule = 
 {
+  QueryInterface: function(iid)
+  {
+    if (!iid.equals(Components.interfaces.nsISupports) &&
+        !iid.equals(Components.interfaces.nsIModule))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    return this;
+  },
+
   registerSelf: function(compMgr, fileSpec, location, type)
   {
-      compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-      compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTMANAGER_CID, 
-                                      SONGBIRD_PLAYLISTMANAGER_CLASSNAME, 
-                                      SONGBIRD_PLAYLISTMANAGER_CONTRACTID, 
-                                      fileSpec, 
-                                      location,
-                                      type);
+    compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
+    compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTMANAGER_CID, 
+                                    SONGBIRD_PLAYLISTMANAGER_CLASSNAME, 
+                                    SONGBIRD_PLAYLISTMANAGER_CONTRACTID, 
+                                    fileSpec, location, type);
   },
 
   getClassObject: function(compMgr, cid, iid) 
   {
-      if (!cid.equals(SONGBIRD_PLAYLISTMANAGER_CID))
-          throw Components.results.NS_ERROR_NO_INTERFACE;
+    if (!cid.equals(SONGBIRD_PLAYLISTMANAGER_CID))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
 
-      if (!iid.equals(Components.interfaces.nsIFactory))
-          throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    if (!iid.equals(Components.interfaces.nsIFactory))
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 
-      return sbPlaylistManagerFactory;
+    return sbPlaylistManagerFactory;
   },
 
   canUnload: function(compMgr)
@@ -865,17 +894,18 @@ var sbPlaylistManagerModule =
  */
 var sbPlaylistManagerFactory =
 {
-    createInstance: function(outer, iid)
-    {
-        if (outer != null)
-            throw Components.results.NS_ERROR_NO_AGGREGATION;
-    
-        if (!iid.equals(SONGBIRD_PLAYLISTMANAGER_IID) &&
-            !iid.equals(Components.interfaces.nsISupports))
-            throw Components.results.NS_ERROR_INVALID_ARG;
+  createInstance: function(outer, iid)
+  {
+    if (outer != null)
+      throw Components.results.NS_ERROR_NO_AGGREGATION;
 
-        return (new CPlaylistManager()).QueryInterface(iid);
-    }
+    if (!iid.equals(SONGBIRD_PLAYLISTMANAGER_IID) &&
+        !iid.equals(Components.interfaces.nsIClassInfo) &&
+        !iid.equals(Components.interfaces.nsISupports))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+
+    return new CPlaylistManager().QueryInterface(iid);
+  }
 } //sbPlaylistFactory
 
 /**
