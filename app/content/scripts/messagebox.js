@@ -46,3 +46,16 @@ function sbMessageBox( title, message, wantcancel )
   return 0;
 }
 
+function sbMessageBox_strings(titlestring, msgstring, deftitle, defmsg, wantcancel)
+{
+  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+  var msg = defmsg;
+  var title = deftitle;
+  try {
+    msg = songbirdStrings.GetStringFromName(msgstring);
+    title = songbirdStrings.GetStringFromName(titlestring);
+  } catch (e) {}
+  return sbMessageBox(title, msg, wantcancel);
+}
+
