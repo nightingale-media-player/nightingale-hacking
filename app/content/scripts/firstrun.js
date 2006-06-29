@@ -223,6 +223,7 @@ function firstRunDialog()
     window.openDialog( "chrome://songbird/content/xul/firstrun.xul", "firstrun", "chrome,centerscreen,modal=no", data);
     return 1;
   }
+  if (eula_data.do_eula) document.__STARTMAINWIN();
   return 0;
 }
 
