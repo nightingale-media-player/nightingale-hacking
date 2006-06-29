@@ -64,14 +64,15 @@ NS_IMPL_ISUPPORTS1(CPlaylistReaderM3U, sbIPlaylistReader)
 
 //-----------------------------------------------------------------------------
 CPlaylistReaderM3U::CPlaylistReaderM3U()
-: m_Name(NS_LITERAL_STRING("Songbird M3U Reader").get())
-, m_Description(NS_LITERAL_STRING("Loads M3U playlists from remote and local locations.").get())
-, m_Replace(PR_FALSE)
+: m_Replace(PR_FALSE)
 , m_pDescriptionLock(PR_NewLock())
 , m_pNameLock(PR_NewLock())
 {
   NS_ASSERTION(m_pDescriptionLock, "PlaylistReaderPLS.m_pDescriptionLock failed");
   NS_ASSERTION(m_pNameLock, "PlaylistReaderPLS.m_pNameLock failed");
+
+  m_Name.AssignLiteral("Songbird M3U Reader");
+  m_Description.AssignLiteral("Loads M3U playlists from remote and local locations.");
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -101,77 +102,86 @@ NS_IMETHODIMP CPlaylistReaderM3U::Read(const PRUnichar *strURL, const PRUnichar 
 {
   *_retval = PR_FALSE;
   *errorCode = 0;
-  nsresult ret = NS_ERROR_UNEXPECTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
   
-  nsString strTheURL(strURL);
-  nsCString cstrURL;
+  nsAutoString strTheURL(strURL);
+  nsCAutoString cstrURL;
   
   nsCOMPtr<nsIFileInputStream> pFileReader = do_GetService("@mozilla.org/network/file-input-stream;1");
   nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
   nsCOMPtr<nsIURI> pURI = do_GetService("@mozilla.org/network/simple-uri;1");
 
-  if(!pFile || !pURI || !pFileReader) return ret;
+  if(!pFile || !pURI || !pFileReader) return rv;
+  rv = pURI->SetSpec(NS_ConvertUTF16toUTF8(strURL));
+  if(NS_FAILED(rv)) return rv;
 
-  NS_UTF16ToCString(strTheURL, NS_CSTRING_ENCODING_ASCII, cstrURL);
-  pURI->SetSpec(cstrURL);
+  nsCAutoString cstrScheme;
+  rv = pURI->GetScheme(cstrScheme);
+  if(NS_FAILED(rv)) return rv;
 
-  nsCString cstrScheme;
-  pURI->GetScheme(cstrScheme);
-
-  nsCString cstrPathToPLS;
-  if(!cstrScheme.Equals(nsCString("file")))
-  {
-    //Yeah... it's supposed to be on disk by now, oops?
+  nsCAutoString cstrPathToPLS;
+  if(!cstrScheme.EqualsLiteral("file"))
     return NS_ERROR_UNEXPECTED;
-  }
   else
   {
     pURI->GetPath(cstrPathToPLS);
     cstrPathToPLS.Cut(0, 3); //remove '///'
 
-    ret = pFile->InitWithNativePath(cstrPathToPLS);
+    rv = pFile->InitWithNativePath(cstrPathToPLS);
+    if(NS_FAILED(rv)) return rv;
   }
 
-  if(NS_FAILED(ret)) return ret;
-
   PRBool bIsFile = PR_FALSE;
-  pFile->IsFile(&bIsFile);
+  rv = pFile->IsFile(&bIsFile);
 
-  if(!bIsFile) return NS_ERROR_NOT_IMPLEMENTED;
+  if(NS_FAILED(rv) || !bIsFile) return NS_ERROR_UNEXPECTED;
 
-  ret = pFileReader->Init(pFile.get(), PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF);
-  if(NS_FAILED(ret)) return ret;
+  rv = pFileReader->Init(pFile.get(), PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF);
+  if(NS_FAILED(rv)) return rv;
 
   PRInt64 nFileSize = 0;
-  pFile->GetFileSize(&nFileSize);
+  rv = pFile->GetFileSize(&nFileSize);
+  if(NS_FAILED(rv)) return rv;
 
-  char *pBuffer = (char *)PR_Calloc(nFileSize, 1);
-  pFileReader->Read(pBuffer, nFileSize, &ret);
+  nsCString buffer;
+  buffer.SetLength(nFileSize);
+  pFileReader->Read(NS_CONST_CAST(char *, buffer.get()), nFileSize, &rv);
   pFileReader->Close();
-  pBuffer[nFileSize - 1] = 0;
 
-  if(NS_SUCCEEDED(ret))
+  if(NS_SUCCEEDED(rv))
   {
-    nsCString cstrBuffer(pBuffer);
-    nsString strPathToPLS;
     nsString strBuffer;
+    NS_ConvertASCIItoUTF16 strPathToPLS(cstrPathToPLS);
 
-    NS_CStringToUTF16(cstrPathToPLS, NS_CSTRING_ENCODING_ASCII, strPathToPLS);
-    NS_CStringToUTF16(cstrBuffer, NS_CSTRING_ENCODING_ASCII, strBuffer);
+    if(IsASCII(buffer))
+    {
+      strBuffer = NS_ConvertASCIItoUTF16(buffer);
+    }
+    else if(IsUTF8(buffer))
+    {
+      strBuffer = NS_ConvertUTF8toUTF16(buffer);
+    }
+    else //IsUTF16
+    {
+      strBuffer.SetLength(buffer.Length() / sizeof(PRUnichar));
+      strBuffer.Assign(NS_REINTERPRET_CAST(const PRUnichar *, buffer.get()), strBuffer.Length());
+    }
 
     m_Replace = bReplace;
-    *errorCode = ParseM3UFromBuffer(const_cast<PRUnichar *>(strPathToPLS.get()), const_cast<PRUnichar *>(strBuffer.get()), strBuffer.Length() + 1, const_cast<PRUnichar *>(strGUID), const_cast<PRUnichar *>(strDestTable));
+    *errorCode = ParseM3UFromBuffer(NS_CONST_CAST(PRUnichar *, strPathToPLS.get()), 
+                                    NS_CONST_CAST(PRUnichar *, strBuffer.get()), 
+                                    strBuffer.Length(), 
+                                    NS_CONST_CAST(PRUnichar *, strGUID), 
+                                    NS_CONST_CAST(PRUnichar *, strDestTable));
 
     if(!*errorCode)
     {
-      ret = NS_OK;
+      rv = NS_OK;
       *_retval = PR_TRUE;
     }
   }
 
-  PR_Free(pBuffer);
-
-  return ret;
+  return rv;
 } //Read
 
 //-----------------------------------------------------------------------------
@@ -187,9 +197,7 @@ NS_IMETHODIMP CPlaylistReaderM3U::Vote(const PRUnichar *strUrl, PRInt32 *_retval
 NS_IMETHODIMP CPlaylistReaderM3U::Name(PRUnichar **_retval)
 {
   nsAutoLock lock(m_pNameLock);
-
-  size_t nLen = m_Name.length() + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(m_Name.c_str(), nLen * sizeof(PRUnichar));
+  *_retval = ToNewUnicode(m_Name);
   
   if(*_retval == nsnull)
     return NS_ERROR_OUT_OF_MEMORY;
@@ -202,9 +210,7 @@ NS_IMETHODIMP CPlaylistReaderM3U::Name(PRUnichar **_retval)
 NS_IMETHODIMP CPlaylistReaderM3U::Description(PRUnichar **_retval)
 {
   nsAutoLock lock(m_pDescriptionLock);
-  
-  size_t nLen = m_Description.length() + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(m_Description.c_str(), nLen * sizeof(PRUnichar));
+  *_retval = ToNewUnicode(m_Description);
 
   if(*_retval == nsnull)
     return NS_ERROR_OUT_OF_MEMORY;
@@ -216,23 +222,22 @@ NS_IMETHODIMP CPlaylistReaderM3U::Description(PRUnichar **_retval)
 /* void SupportedMIMETypes (out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out string aMIMETypes); */
 NS_IMETHODIMP CPlaylistReaderM3U::SupportedMIMETypes(PRUint32 *nMIMECount, PRUnichar ***aMIMETypes)
 { 
-  const static PRUnichar *MIMETypes[] = {NS_L("audio/mpegurl"), NS_L("audio/x-mpegurl")};
-  const static PRUint32 MIMETypesCount = sizeof(MIMETypes) / sizeof(MIMETypes[0]);
-
-  PRUnichar** out = (PRUnichar **) nsMemory::Alloc(MIMETypesCount * sizeof(PRUnichar *));
+  NS_NAMED_LITERAL_STRING(m3uMime0, "audio/mpegurl");
+  NS_NAMED_LITERAL_STRING(m3uMime1, "audio/x-mpegurl");
+  PRUnichar** out = (PRUnichar **) nsMemory::Alloc(2 * sizeof(PRUnichar *));
 
   if(!out)
     return NS_ERROR_OUT_OF_MEMORY;
 
-  for(PRUint32 i = 0; i < MIMETypesCount; ++i)
-  {
-    out[i] = (PRUnichar *) nsMemory::Clone(MIMETypes[i], (wcslen(MIMETypes[i]) + 1) * sizeof(PRUnichar));
+  out[0] = ToNewUnicode(m3uMime0);
+  if(!out[0])
+    return NS_ERROR_OUT_OF_MEMORY;
 
-    if(!out[i])
-      return NS_ERROR_OUT_OF_MEMORY;
-  }
+  out[1] = ToNewUnicode(m3uMime1);
+  if(!out[1])
+    return NS_ERROR_OUT_OF_MEMORY;
 
-  *nMIMECount = MIMETypesCount;
+  *nMIMECount = 2;
   *aMIMETypes = out;
 
   return NS_OK;
@@ -242,23 +247,17 @@ NS_IMETHODIMP CPlaylistReaderM3U::SupportedMIMETypes(PRUint32 *nMIMECount, PRUni
 /* void SupportedFileExtensions (out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out string aExts); */
 NS_IMETHODIMP CPlaylistReaderM3U::SupportedFileExtensions(PRUint32 *nExtCount, PRUnichar ***aExts)
 {
-  const static PRUnichar *Exts[] = {NS_L("m3u")};
-  const static PRUint32 ExtsCount = sizeof(Exts) / sizeof(Exts[0]);
-
-  PRUnichar** out = (PRUnichar **) nsMemory::Alloc(ExtsCount * sizeof(PRUnichar *));
+  NS_NAMED_LITERAL_STRING(m3uExt, "m3u");
+  PRUnichar** out = (PRUnichar **) nsMemory::Alloc(1 * sizeof(PRUnichar *));
 
   if(!out)
     return NS_ERROR_OUT_OF_MEMORY;
 
-  for(PRUint32 i = 0; i < ExtsCount; ++i)
-  {
-    out[i] = (PRUnichar *) nsMemory::Clone(Exts[i], (wcslen(Exts[i]) + 1) * sizeof(PRUnichar));
+  out[0] = ToNewUnicode(m3uExt);
+  if(!out[0])
+    return NS_ERROR_OUT_OF_MEMORY;
 
-    if(!out[i])
-      return NS_ERROR_OUT_OF_MEMORY;
-  }
-
-  *nExtCount = ExtsCount;
+  *nExtCount = 1;
   *aExts = out;
 
   return NS_OK;
@@ -267,131 +266,176 @@ NS_IMETHODIMP CPlaylistReaderM3U::SupportedFileExtensions(PRUint32 *nExtCount, P
 //-----------------------------------------------------------------------------
 PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable)
 {
-  PRInt32 ret = 0;
-  wchar_t *strNextLine = nsnull;
-  std::prustring strURL = NS_LITERAL_STRING("").get();
-  std::prustring strTitle = NS_LITERAL_STRING("").get();
-  std::prustring strLength = NS_LITERAL_STRING("-1").get();
-  int nAvail = 0;
+  PRInt32 convError = 0;
+  PRInt32 rv = 0;
+ 
+  NS_NAMED_LITERAL_STRING(carReturn, "\r");
+  NS_NAMED_LITERAL_STRING(lineFeed, "\n");
+  NS_NAMED_LITERAL_STRING(tabChar, "\t");
+  NS_NAMED_LITERAL_STRING(spaceChar, " ");
+  NS_NAMED_LITERAL_STRING(zeroChar, "0");
+  NS_NAMED_LITERAL_STRING(nineChar, "9");
+  NS_NAMED_LITERAL_STRING(dashSymbol, "-");
+  NS_NAMED_LITERAL_STRING(timeSeperator, ":");
+  NS_NAMED_LITERAL_STRING(extm3uToken, "#EXTM3U");
+  NS_NAMED_LITERAL_STRING(extm3uInfoToken, "#EXTINF:");
+  NS_NAMED_LITERAL_STRING(asfToken, "ASF ");
+  NS_NAMED_LITERAL_STRING(lengthMetadata, "length");
+  NS_NAMED_LITERAL_STRING(titleMetadata, "title");
+
+  nsAutoString strURL, strTitle;
+  nsAutoString strLength(NS_LITERAL_STRING("-1"));
+  
+  PRInt32 nAvail = 0;
 
   nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
+  if(!pQuery) return NS_ERROR_UNEXPECTED;
+
   pQuery->SetAsyncQuery(PR_TRUE);
   pQuery->SetDatabaseGUID(strGUID);
 
   nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
+  if(!pLibrary) return NS_ERROR_UNEXPECTED;
   pLibrary->SetQueryObject(pQuery.get());
 
   nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
   nsCOMPtr<sbIPlaylist> pPlaylist;
+  if(!pPlaylistManager) return NS_ERROR_UNEXPECTED;
 
   pPlaylistManager->GetPlaylist(strDestTable, pQuery.get(), getter_AddRefs(pPlaylist));
+  if(!pPlaylist) return NS_ERROR_UNEXPECTED;
+
+  nsDependentString playlistBuffer(pBuffer);
+  nsDependentString::const_iterator fileStart, lineStart, lineEnd, fileEnd;
+  playlistBuffer.BeginReading(fileStart); playlistBuffer.BeginReading(lineStart);
+  playlistBuffer.EndReading(lineEnd); playlistBuffer.EndReading(fileEnd);
+
+  nsAutoString theline;
 
   do
   {
-    strNextLine = wcsstr( (wchar_t *)pBuffer, NS_L("\n"));
-    if ( strNextLine )
-    {
-      *strNextLine++ = '\0';
-    }
-    
-    while( *pBuffer && *pBuffer == ' ' || *pBuffer == '\t' || *pBuffer == '\r')
-      pBuffer++;
+    PRBool bFound = FindInReadable(lineFeed, lineStart, lineEnd);
 
-    if ( !wcsncmp( (wchar_t *)pBuffer, NS_L("#EXTM3U"), 7 ) )
+    if(bFound)
+      theline = Substring(fileStart, lineEnd);
+    else
+      theline = Substring(fileStart, fileEnd);
+
+    while( (lineStart != fileEnd) && 
+           (*lineStart == carReturn[0] || 
+            *lineStart == lineFeed[0] || 
+            *lineStart == tabChar[0] || 
+            *lineStart == spaceChar[0]) ) 
+      lineStart++;    
+
+    nsAutoString::const_iterator start, end;
+    theline.BeginReading(start); 
+    theline.EndReading(end);
+
+    if( FindInReadable(extm3uToken, start, end) )
     {
       nAvail = 1;
-    } 
-    else if ( nAvail && ! wcsncmp( (wchar_t *)pBuffer, NS_L("#EXTINF:"), 8 ) )
-    {
-      wchar_t *title = (wchar_t *)pBuffer + 8;
-      strLength = NS_LITERAL_STRING("").get();
-
-      while( (*title >= '0' && *title <= '9') || *title == '-' )
-        strLength += *title++;
-      title++;
-
-      {
-        int nLen = _wtoi((wchar_t *)strLength.c_str());
-        if(nLen > 0)
-        {
-          int nMins = nLen / 60;
-          int nSecs = nLen % 60;
-          wchar_t wszBuf[64] = {0};
-
-          _itow(nMins, wszBuf, 10);
-
-          strLength = wszBuf;
-          strLength += ':';
-
-          _itow(nSecs, wszBuf, 10);
-
-          if(nSecs < 10)
-            strLength += '0';
-
-          strLength += wszBuf;
-        }
-      }
-
-      //chop pesky \r or \n.
-      int len = wcslen(title);
-      if(title[len - 1] == '\r') title[len - 1] = 0;
-
-      strTitle = title;
     }
-
-    if ( ! wcsncmp( (wchar_t *)pBuffer, NS_L("ASF "), 4 ) )
-      pBuffer += 4;
-
-    if ( *pBuffer && *pBuffer != '#' && *pBuffer != '\r' && *pBuffer != '\n')
+    else 
     {
-      strURL = pBuffer;
-      size_t nPos = strURL.find('\r');
-      if(nPos != strURL.npos) strURL = strURL.substr(0, nPos);
+      theline.BeginReading(start); 
+      theline.EndReading(end);
+
+      if ( nAvail && FindInReadable(extm3uInfoToken, start, end) )
+      {
+        start = end;
+        strLength = EmptyString();
+
+        while( (*start >= zeroChar[0] && *start <= nineChar[0]) || *start == dashSymbol[0] )
+          strLength += *start++;
+
+        *start++;
+
+        {
+          PRInt32 nLen = strLength.ToInteger(&convError);
+          if(nLen > 0)
+          {
+            PRInt32 nMins = nLen / 60;
+            PRInt32 nSecs = nLen % 60;
+
+            strLength = EmptyString();
+
+            strLength.AppendInt(nMins);
+            strLength += timeSeperator;
+
+            if(nSecs < 10) strLength.AppendLiteral("0");
+            strLength.AppendInt(nSecs);
+          }
+        }
+
+        //chop pesky \r or \n.
+        theline.EndReading(end);
+        strTitle = Substring(start, end);
+        strTitle.CompressWhitespace();
+      }
+      else
+      {
+        theline.EndReading(end);
+        if ( FindInReadable(asfToken, start, end) )
+          start = end;
+        else
+          theline.BeginReading(start);
+
+        theline.EndReading(end);
+        if ( *start && *start != extm3uToken[0] && *start != carReturn[0] && *start != lineFeed[0])
+        {
+          strURL = Substring(start, end);
+          strURL.CompressWhitespace();
 
 #if defined(XP_WIN)
-      if(strURL.length() && (*strURL.begin()) == '\\')
-      {
-        std::prustring strPath(pPathToFile);
-        //Drive letter is missing, append it.
-        strURL = strPath.substr(0, 2) + strURL;
-      }
+          if(!strURL.IsEmpty() && strURL.First() == '\\')
+          {
+            nsDependentString strPath(pPathToFile);
+            //Drive letter is missing, append it.
+            strURL = Substring(strPath, 0, 2) + strURL;
+          }
 #endif
 
-      // Try and load the entry as a playlist
-      // If it's not a playlist add it as a playstring
-      {
-        const static PRUnichar *aMetaKeys[] = {NS_L("length"), NS_L("title")};
-        const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
+          // Try and load the entry as a playlist
+          // If it's not a playlist add it as a playstring
+          {
+            const static PRUnichar *aMetaKeys[] = {lengthMetadata.get(), titleMetadata.get()};
+            const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
 
-        PRBool bRet = PR_FALSE;
-        PRUnichar *pGUID = nsnull;
+            PRBool bRet = PR_FALSE;
+            PRUnichar *pGUID = nsnull;
 
-        if(strTitle.empty()) strTitle = strURL;
+            if(strTitle.IsEmpty()) strTitle = strURL;
 
-        PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
-        aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strLength.c_str(), (wcslen((wchar_t *)strLength.c_str()) + 1) * sizeof(PRUnichar));
-        aMetaValues[1] = (PRUnichar *) nsMemory::Clone(strTitle.c_str(), (wcslen((wchar_t *)strTitle.c_str()) + 1) * sizeof(PRUnichar));
+            PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
+            aMetaValues[0] = ToNewUnicode(strLength);
+            aMetaValues[1] = ToNewUnicode(strTitle);
 
-        pLibrary->AddMedia(strURL.c_str(), nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), m_Replace, PR_TRUE, &pGUID);
+            pLibrary->AddMedia(strURL.get(), nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), m_Replace, PR_TRUE, &pGUID);
 
-        if(pGUID && pPlaylist.get())
-        {
-          pPlaylist->AddByGUID(pGUID, strGUID, -1, m_Replace, PR_TRUE, &bRet);
-          nsMemory::Free(pGUID);
+            if(pGUID && pPlaylist)
+            {
+              pPlaylist->AddByGUID(pGUID, strGUID, -1, m_Replace, PR_TRUE, &bRet);
+              nsMemory::Free(pGUID);
+            }
+
+            nsMemory::Free(aMetaValues[0]);
+            nsMemory::Free(aMetaValues[1]);
+            nsMemory::Free(aMetaValues);
+          }
+
+          strTitle = EmptyString();
+          strURL = EmptyString();
         }
-
-        nsMemory::Free(aMetaValues[0]);
-        nsMemory::Free(aMetaValues[1]);
-        nsMemory::Free(aMetaValues);
       }
-
-      strTitle.clear();
-      strURL.clear();
     }
+
+    fileStart = lineStart;
+    playlistBuffer.EndReading(lineEnd);
   } 
-  while( (pBuffer = (PRUnichar *)strNextLine) != nsnull && *pBuffer );
+  while( fileStart != fileEnd );
 
-  pQuery->Execute(&ret);
+  pQuery->Execute(&rv);
 
-  return ret;
+  return rv;
 } //ParseM3UFromBuffer

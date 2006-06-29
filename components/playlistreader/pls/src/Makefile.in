@@ -44,6 +44,7 @@ CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/webbrowserpersist \
                $(MOZSDK_INCLUDE_DIR)/uriloader \
@@ -63,14 +64,17 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 ifeq ($(SB_PLATFORM), macosx)
   DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
-else
+endif
+
+ifeq ($(SB_PLATFORM), linux)
+  DYNAMIC_LIB_STATIC_IMPORTS += unicharutil_s \
+                                $(NULL)
   DYNAMIC_LIB_EXTRA_IMPORTS += xul \
-                               unicharutil_s \
                                $(NULL)
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                          $(NULL)
+                           $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 

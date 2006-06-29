@@ -33,24 +33,11 @@
 #define __PLAYLIST_READER_M3U_H__
 
 // INCLUDES ===================================================================
-
-// XXX Remove Me !!!
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-}
-#endif
-
 #include "IPlaylistReader.h"
 
+#include <string/nsString.h>
 #include <xpcom/nsIFile.h>
 #include <nspr/prlock.h>
-
-#include <string>
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLREADERM3U_CONTRACTID                   \
@@ -79,10 +66,10 @@ public:
 
 protected:
   PRLock* m_pNameLock;
-  std::prustring m_Name;
+  nsString m_Name;
 
   PRLock* m_pDescriptionLock;
-  std::prustring m_Description;
+  nsString m_Description;
 
   PRBool m_Replace;
 };

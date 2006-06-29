@@ -34,21 +34,10 @@
 
 // INCLUDES ===================================================================
 
-// XXX Remove Me !!!
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-}
-#endif
-
 #include "IPlaylistReader.h"
+#include <string/nsString.h>
 #include <xpcom/nsIFile.h>
 #include <nspr/prlock.h>
-#include <string>
 
 // DEFINES ====================================================================
 #define SONGBIRD_PLREADERPLS_CONTRACTID                   \
@@ -75,11 +64,11 @@ public:
   PRInt32 ParsePLSFromBuffer(PRUnichar *pPathToFile, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable);
 
 protected:
-  PRLock* m_pNameLock;
-  std::prustring m_Name;
+  PRLock*   m_pNameLock;
+  nsString  m_Name;
 
-  PRLock* m_pDescriptionLock;
-  std::prustring m_Description;
+  PRLock*   m_pDescriptionLock;
+  nsString  m_Description;
 
   PRBool m_Replace;
 };
