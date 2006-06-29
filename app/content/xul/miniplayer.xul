@@ -38,7 +38,7 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
  id="mini"
- title="Songbird Partner Preview"
+ title="&window.dev.title;"
  hidechrome="true"
  onload="{centerWindowOnScreen();SBInitialize();}"
  onunload="SBUninitialize();"

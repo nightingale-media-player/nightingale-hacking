@@ -41,7 +41,7 @@
   class="sb_faceplate"
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();"
-  title="&window.main.title;"
+  title="&window.dev.title;"
   onkeypress="onMainwinKeypress( event );"
   
   xmlns:html="http://www.w3.org/1999/xhtml"
