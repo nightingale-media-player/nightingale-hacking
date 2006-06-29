@@ -35,7 +35,7 @@ try
   // Figure out what platform we're on.
   var user_agent = navigator.userAgent;
   var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
-  var PLATFORM_MACOSX = user_agent.indexOf("OSX") != -1;
+  var PLATFORM_MACOSX = user_agent.indexOf("Mac OS X") != -1;
   var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
 
   // If we are running under windows, there's a bug with background-color: transparent;
