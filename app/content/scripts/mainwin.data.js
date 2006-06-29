@@ -49,6 +49,14 @@ try
     // At least this fixes it.
   }
 
+  // If we are running under mac, hide the topbar.
+  if (PLATFORM_MACOSX)
+  {
+    var top = document.getElementById("songbird_top");
+    if (top)
+      top.setAttribute("hidden","true");
+  }
+
   function onSBMainwinDataLoad()
   {
     try
