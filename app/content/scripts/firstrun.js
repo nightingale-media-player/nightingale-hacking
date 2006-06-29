@@ -157,8 +157,60 @@ function hidePleaseWait()
   pleasewait.setAttribute("hidden", "true");
 }
 
+var eula_data = Object();
+var fwd_bundle;
+
 function doFirstRunTest(doc, bundle)
 {
+  fwd_bundle = bundle;
+  // Data remotes not available for this function
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  var eulacheck = "";
+  try { eulacheck = prefs.getCharPref("eulacheck"); } catch (e) { }
+  if (eulacheck != "1")
+  {
+    eula_data.do_eula = 1;
+    // Why will modal=yes prevent the centerscreen flag from working ? even centerWindowOnScreen() wont work ! Is this related to the fact that we're starting up... ?
+    window.openDialog( "chrome://songbird/content/xul/eula.xul", "eula", "chrome,centerscreen,modal=no", eula_data);
+    // simulate modal flag
+    setTimeout(firstRunDialog, 100);
+    return 1;
+  } 
+  eula_data.do_eula = 0;
+  return firstRunDialog();
+}
+
+function firstRunDialog()
+{
+  if (eula_data.do_eula) 
+  {
+    if (!eula_data.retval) 
+    { 
+      setTimeout(firstRunDialog, 100); 
+      return 1;
+    } 
+    else 
+    {
+      if (eula_data.retval == "accept") 
+      {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+        prefs.setCharPref("eulacheck", "1");
+      }
+      else
+      {
+        // eula was not accepted, exit app !
+        var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
+        if (as)
+        {
+          // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
+          SBDataSetValue("metrics_ignorenextstartup", 1); // do not count next startup in metrics, since we counted this one, but it was aborted
+          const V_ATTEMPT = 2;
+          as.quit(V_ATTEMPT);
+          return 0;
+        }
+      }
+    }
+  }
   // Data remotes not available for this function
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var firstruncheck = "";
@@ -166,7 +218,7 @@ function doFirstRunTest(doc, bundle)
   if (firstruncheck != "1")
   {
     var data = new Object();
-    data.bundle = bundle;
+    data.bundle = fwd_bundle;
     data.document = document;
     window.openDialog( "chrome://songbird/content/xul/firstrun.xul", "firstrun", "chrome,centerscreen,modal=no", data);
     return 1;

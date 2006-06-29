@@ -96,6 +96,9 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					RelativePath=".\content\html\cannot_load.html">
 				</File>
 				<File
+					RelativePath=".\content\html\eula.html">
+				</File>
+				<File
 					RelativePath=".\content\html\jar.mn">
 				</File>
 				<File
@@ -232,6 +235,27 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\eula.xul">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
+							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\xul\firstrun.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -261,7 +285,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -725,7 +750,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							<Tool
 								Name="VCCustomBuildTool"
 								Description="Performing Custom Build Step $(InputFileName)"
-								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)
+"
 								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -733,7 +759,8 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 							<Tool
 								Name="VCCustomBuildTool"
 								Description="Performing Custom Build Step $(InputFileName)"
-								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"
+								CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)
+"
 								Outputs="$(SolutionDir)dist\chrome\content\xul\preferences\$(InputFileName)"/>
 						</FileConfiguration>
 					</File>

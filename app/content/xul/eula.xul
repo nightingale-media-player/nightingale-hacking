@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<dialog 
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="eula"
+ title="End User License Agreement"
+ buttons="accept,cancel"
+ width="480"
+ height="360"
+ onload="return doInit();"
+ ondialogaccept="return doClose('accept');"
+ ondialogcancel="return doClose('cancel');"
+>
+
+  <!-- Astounding complexity! -->
+  <browser id="songbird.eula" src="chrome://songbird/content/html/eula.html" flex="1"/>
+  <checkbox id="songbird.accepteula" label="By clicking the “I Agree” button, I accept the terms of the license agreement" oncommand="onAcceptChanged()"/>
+
+  <!-- And intrepid instructions! -->  
+  <script>
+  <![CDATA[
+    function doInit() {
+      var dialog = document.documentElement;
+      dialog.getButton("accept").setAttribute("label", "I Agree");
+      dialog.getButton("cancel").setAttribute("label", "I Decline");
+      var dialog = document.documentElement;
+      onAcceptChanged();
+    }
+    function doClose(ret) {
+      if ( typeof( window.arguments[0] ) != 'undefined' )
+        window.arguments[0].retval = ret;
+      return true;
+    }
+    
+    function onAcceptChanged() {
+      var checked = document.getElementById("songbird.accepteula").getAttribute("checked") == "true";
+      var dialog = document.documentElement;
+      dialog.getButton("accept").setAttribute("disabled", !checked);
+    }
+  ]]>
+  </script>
+</dialog>
