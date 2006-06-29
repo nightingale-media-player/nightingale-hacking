@@ -2212,8 +2212,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: transparent !important;
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
 }
 
 #browser_url
@@ -2243,8 +2243,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_toolbar button 
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2260,8 +2260,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_toolbar button[disabled="true"]:hover
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2293,8 +2293,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_back[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2328,8 +2328,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_refresh[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2363,8 +2363,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_stop[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2398,8 +2398,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_fwd[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2433,8 +2433,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_home[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2468,8 +2468,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_bookmark[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2503,8 +2503,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_playlist[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -2533,8 +2533,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_download[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 30px !important;
+  width: 30px !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
