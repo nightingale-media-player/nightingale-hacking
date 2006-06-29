@@ -1226,8 +1226,9 @@ PlaylistPlayback.prototype = {
         this._once = true;
       }
         
-      if (this._metadataLen.getValue() != len)
-        this._set_metadata = true;
+      // When the length changes, always set metadata.
+      if ( this._metadataLen.getValue() != len ) 
+        this._set_metadata = true; 
       this._metadataLen.setValue( len );
       this._metadataPos.setValue( pos );
       
@@ -1313,15 +1314,24 @@ PlaylistPlayback.prototype = {
         return;
       }
       
-      if ( title.length && ( this._metadataTitle.getValue() != title ) ) {
+      // If the current title is part of the url, it's okay to overwrite the title.
+      if ( title.length && ( 
+          ( this._metadataTitle.getValue() != title ) &&
+          ( this._playUrl.getValue().indexOf( this._metadataTitle.getValue() ) != -1 )
+         ) )
         this._set_metadata = true; 
-      }
-      if ( artist.length && ( this._metadataArtist.getValue() != artist ) ) {
+      else
+        title = "";
+      // Only if we have no known artist.
+      if ( artist.length && ( this._metadataArtist.getValue() == "" ) )
         this._set_metadata = true; 
-      }
-      if ( album.length && ( this._metadataAlbum.getValue() != album ) ) {
+      else
+        artist = "";
+      // Only if we have no known album.
+      if ( album.length && ( this._metadataAlbum.getValue() == "" ) )
         this._set_metadata = true; 
-      }
+      else
+        album = "";
 
       if ( this._set_metadata ) {
         // Set the metadata into the database table
@@ -1332,11 +1342,12 @@ PlaylistPlayback.prototype = {
         this._set_metadata = false;
       }
 
-      if (title != "" || artist != "" || album != "") {
+      if (title != "")
         this._metadataTitle.setValue( title );
+      if (artist != "")
         this._metadataArtist.setValue( artist );
+      if (album != "")
         this._metadataAlbum.setValue( album );
-      }
     }
   },
 
