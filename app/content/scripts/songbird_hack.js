@@ -2377,8 +2377,15 @@ function SBNewPlaylist()
 
 function SBMiniplayerOpen()
 {
+  // Get miniplayer URL
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  var miniwin = "chrome://songbird/content/xul/miniplayer.xul";
+  try {
+    miniwin = prefs.getCharPref("general.bones.selectedMiniPlayerURL", miniwin);  
+  } catch (err) {}
+
   // Open the window
-  window.open( "chrome://songbird/content/xul/miniplayer.xul", "", "chrome,modal=no,popup=yes" );
+  window.open( miniwin, "", "chrome,modal=no,popup=yes" );
   onExit();
 }
 
