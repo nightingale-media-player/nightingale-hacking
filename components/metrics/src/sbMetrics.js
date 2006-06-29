@@ -74,7 +74,7 @@ Metrics.prototype = {
    */
   uploadMetrics: function()
   {
-
+    dump("*** UPLOADING METRICS ***");
     var user_install_uuid = this._getPlayerUUID();
     
     var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);    
@@ -193,14 +193,14 @@ Metrics.prototype = {
   _isEnabled: function() {
   
     // Make sure we are allowed to send metrics
-    var disabled = 0;
+    var enabled = 0;
     try {
-      disabled = parseInt(this.prefs.getCharPref("app.metrics.disabled"));
-      if (disabled) dump("*** METRICS ARE DISABLED ***\n");
+      enabled = parseInt(this.prefs.getCharPref("app.metrics.enabled"));
     }
     catch (e) { }
+    if (!enabled) dump("*** METRICS ARE DISABLED ***\n");
     
-    return !disabled;
+    return enabled;
   },
   
   
@@ -246,7 +246,7 @@ Metrics.prototype = {
     }
     catch (e) { }    
     
-    if (currentVersion != lastVersion) 
+    if (lastVersion && currentVersion != lastVersion) 
     {
         upgraded = true;
     }

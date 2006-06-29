@@ -336,8 +336,8 @@ function checkAltF4(evt)
 function handleOptOut()
 {
   try {
-    var metrics_disabled = document.getElementById("metrics_optout").checked ? 0 : 1;
+    var metrics_enabled = document.getElementById("metrics_optout").checked ? 1 : 0;
     var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    prefs.setCharPref("app.metrics.disabled", metrics_disabled);
+    prefs.setCharPref("app.metrics.enabled", metrics_enabled);
   } catch (e) {}; // Stuff likes to throw.
 };
