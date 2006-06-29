@@ -389,6 +389,7 @@ PlaylistPlayback.prototype = {
     this._playButton.setValue( 1 ); // Start on.
     if (this._repeat.getValue() == '') this._repeat.setValue( 0 ); // start with no shuffle
     if (this._shuffle.getValue() == '') this._shuffle.setBoolValue( false ); // start with no shuffle
+    if (this._volume.getValue() == '') this._volume.setValue(128);
     this._requestedVolume = this._calculatedVolume = this._volume.getIntValue();
   },
   
