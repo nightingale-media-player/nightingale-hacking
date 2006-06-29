@@ -246,7 +246,7 @@ Metrics.prototype = {
     }
     catch (e) { }    
     
-    if (lastVersion && currentVersion != lastVersion) 
+    if (currentVersion != lastVersion) 
     {
         upgraded = true;
     }

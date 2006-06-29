@@ -61,8 +61,8 @@ function metrics_add( category, unique_id, extra, intvalue )
 {
   try 
   {
-    var disabled = getValue("metrics_disabled");
-    if (disabled) return;
+    var enabled = getValue("app.metrics.enabled");
+    if (!enabled) return;
 
     // only integers allowed
     intvalue = parseInt(intvalue);
