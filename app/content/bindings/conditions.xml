@@ -178,16 +178,7 @@
                 size = target.distance - target.current;
               window.resizeBy( 0, size );
               target.current += size;
-              
-              // The first time we change the window size, 
-              // ensure that the box fits the conditions.
-              if ( ! target.first_windowsize ) {
-                if ( target.current < target.parent.boxObject.height ) {
-                  window.resizeBy( 0, target.current - target.parent.boxObject.height + 8 ); // +8 ? wtf?
-                }
-                target.first_windowsize = true;
-              }
-  
+
               // Are we done?
               if ( target.current == target.distance ) {
                 if ( target.anim_complete ) {
@@ -340,7 +331,12 @@
             hbox.appendChild( minus );
             hbox.appendChild( plus );
             this.parent.insertBefore( hbox, aBefore );
-            this.size = hbox.boxObject.height;
+            
+            // See if we're overshooting and fix it.
+            var box_size = hbox.boxObject.height;
+            var miscalculation = box_size - this.size;
+            window.resizeBy( 0, miscalculation );
+            this.size = box_size;
             
             // Set the values based on the incoming condition data
             if ( aCondition ) {
