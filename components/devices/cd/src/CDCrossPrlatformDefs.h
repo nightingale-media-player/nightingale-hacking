@@ -54,7 +54,7 @@ public:
   virtual PRUint32    GetCDRipFormat(const PRUnichar*  DeviceString) = 0;
   virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString) = 0;
   virtual PRBool      SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds) = 0;
-  virtual PRBool      GetWritableCDDrive(PRUnichar **deviceString) = 0;
+  virtual PRBool      GetWritableCDDrive(nsAString& aDeviceString) = 0;
   virtual PRBool      UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName) = 0;
 
   virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState) = 0;

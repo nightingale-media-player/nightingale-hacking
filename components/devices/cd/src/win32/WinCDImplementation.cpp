@@ -91,7 +91,7 @@ WinCDObject::WinCDObject(WinCDDeviceManager *parent, char driveLetter):
   mDeviceString += driveLetter;
   mDeviceString += DEVICE_STRING_SUFFIX;
 
-  mDeviceContext = CONTEXT_COMPACT_DISC_DEVICE;
+  mDeviceContext.AssignLiteral(CONTEXT_COMPACT_DISC_DEVICE);
   mDeviceContext += driveLetter;
 }
 
@@ -1109,19 +1109,14 @@ PRBool WinCDDeviceManager::SetGapBurnedTrack(const PRUnichar* deviceString, PRUi
   return PR_TRUE;
 }
 
-PRBool WinCDDeviceManager::GetWritableCDDrive(PRUnichar **deviceString)
+PRBool WinCDDeviceManager::GetWritableCDDrive(nsAString& aDeviceString)
 {
-  *deviceString = nsnull;
   // This should return the actual designated CD Drive for CD writes
   // But for now return the first available drive!
   std::list<WinCDObject *>::iterator iteratorCDObjectects = mCDDrives.begin();
   if (iteratorCDObjectects != mCDDrives.end())
   {
-    nsString tempDeviceString = (*iteratorCDObjectects)->GetDeviceString();
-    size_t nLen = tempDeviceString.Length() + 1;
-    *deviceString = (PRUnichar *) nsMemory::Clone(tempDeviceString.get(), nLen * sizeof(PRUnichar));
-    *deviceString[nLen-1] = NULL;
-
+    aDeviceString.Assign((*iteratorCDObjectects)->GetDeviceString());
     return PR_TRUE;
   }
 

@@ -172,7 +172,7 @@ public:
   virtual PRUint32    GetCDRipFormat(const PRUnichar*  deviceString);
   virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString);
   virtual PRBool      SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds);
-  virtual PRBool      GetWritableCDDrive(PRUnichar **deviceString);
+  virtual PRBool      GetWritableCDDrive(nsAString& aDeviceString);
 
   virtual bool        TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
 
