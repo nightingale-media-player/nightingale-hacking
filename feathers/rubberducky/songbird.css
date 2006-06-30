@@ -2214,6 +2214,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   background-color: transparent !important;
   height: 16px !important;
   width: 16px !important;
+  margin: 0px 0px 0px 5px !important;
 }
 
 #browser_url
@@ -2221,12 +2222,22 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   background-color: transparent !important;
   color: #CCC !important;  
   margin-left: 3px !important;
+  margin: 0px 0px 0px 5px !important;
+  font-size: larger !important;
 }
 
 #browser_url input:focus
 {
   background-color: #99A195 !important;
   color: #FFF !important;
+  font-weight: bolder !important;
+}
+
+#browser_url input[selected="true"]
+{
+  background-color: #F00 !important;
+  color: #FFF !important;
+  font-weight: bolder !important;
 }
 
 
