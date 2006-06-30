@@ -136,7 +136,7 @@ interface sbIDeviceBase : nsISupports
    *        renamed to FILE_TYPE_XXX or should we change the other funcs to use
    *        FileFormat?
    */
-  const PRUint32 FILE_FORMAT_UNDEFINED = -1;
+  const PRUint32 FILE_FORMAT_UNDEFINED = 9999;
   const PRUint32 FILE_FORMAT_WAV       = 0;
   const PRUint32 FILE_FORMAT_MP3       = 1;
   const PRUint32 FILE_FORMAT_WMA       = 2;
