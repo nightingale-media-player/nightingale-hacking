@@ -12,7 +12,7 @@ REM
 if "%1"=="" goto usage
 
 set BUILD_ID=%1
-set ICON_FILE=PublicSVNInstall.ico
+set ICON_FILE=songbird.ico
 set DEPTH=..\..
 set DIST_DEPTH=..
 

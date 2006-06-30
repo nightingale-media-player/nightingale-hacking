@@ -28,6 +28,6 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
-#SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/PrepareInstaller.bat
+#SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/PrepareInstaller.bat 
 
 include $(topsrcdir)/build/rules.mk
