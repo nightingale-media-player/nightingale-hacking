@@ -368,7 +368,7 @@ Love the box.
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 5px !important;
+  -moz-border-radius: 3px !important;
   -moz-border-top-colors: #eee !important;
   -moz-border-left-colors: #eee !important;
   -moz-border-bottom-colors: #eee !important;
