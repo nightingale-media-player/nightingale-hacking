@@ -50,7 +50,7 @@
 >
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
-  <windowregion/>
+  <!-- <windowregion/> -->
 
   <stack flex="1" id="window_parent"
     ondragover="nsDragAndDrop.dragOver( event, SBDropObserver )"
