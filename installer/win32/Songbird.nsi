@@ -85,7 +85,7 @@ NoUninstall:
 
 RequiresMSVCP71:
   SetOutPath $SYSDIR
-  File xulrunner\msvcp71.dll
+  File msvcp71.dll
 
 NoRequireMSVCP71:
   FindClose $0
@@ -147,11 +147,13 @@ Section "Uninstall"
   Delete $INSTDIR\*.dll
   Delete $INSTDIR\*.exe
   Delete $INSTDIR\*.ico
-  
-  ;I commented this out, because I don't think we *truly* want to do this.
-  ;But we might have to later.
-  
+
   Delete $APPDATA\Songbird_vlc\vlcrc
+  
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; I commented this out, because I don't think we *truly* want to do this. 
+  ;; But we might have to later.
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
   ;RMDir /r "$APPDATA\Pioneers of the Inevitable\Songbird"
   

@@ -50,8 +50,11 @@ SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/vlcplugins/*$(DLL_SUFFIX) \
 
 SONGBIRD_XULRUNNER = $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
-                     $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                      $(NULL)
+                     
+SONGBIRD_DIST = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
+								$(NULL)
+                     
 endif
 
 ifeq (linux,$(SB_PLATFORM))
