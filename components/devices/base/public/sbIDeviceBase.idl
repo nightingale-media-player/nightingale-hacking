@@ -24,16 +24,67 @@
 //
  */
 
+/**
+ * \file  sbIDeviceBase.idl
+ *
+ * \brief The IDL for sbIDeviceBase.
+ */
+
 #include "nsISupports.idl"
 
-[scriptable, uuid(D5043150-734E-4e54-943A-80068DE665EF)]
+/**
+ * \interface sbIDeviceBaseCallback
+ *
+ * \brief <TODO:Brief>.
+ * 
+ * <TODO:Detail>.
+ *
+ */
+[scriptable, uuid(d5043150-734e-4e54-943a-80068de665ef)]
 interface sbIDeviceBaseCallback : nsISupports
 {
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] A string that describes the device.
+   */
   void onDeviceConnect(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] A string that describes the device.
+   */
   void onDeviceDisconnect(in wstring deviceString);
-  void onTransferStart(in wstring strSourceURL, in wstring strDestinationURL);
-  void onTransferComplete(in wstring strSourceURL, in wstring strDestinationURL, in PRInt32 nStatus);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] A string that describes the device.
+   */
+  void onTransferStart(in wstring strSourceURL,
+                       in wstring strDestinationURL);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] A string that describes the device.
+   */
+  void onTransferComplete(in wstring strSourceURL,
+                          in wstring strDestinationURL,
+                          in PRInt32 nStatus);
 };
+
+
+// XXXben These are left here for the time being so the world doesn't break
 
 %{ C++
 // File format constants
@@ -42,14 +93,6 @@ interface sbIDeviceBaseCallback : nsISupports
 #define kSB_DEVICE_FILE_FORMAT_MP3        1
 #define kSB_DEVICE_FILE_FORMAT_WMA        2
 
-%}
-
-// Generally speaking I/O commands can be issued to a device if, device state is kSB_DEVICE_STATE_IDLE for the device. 
-// But if kSB_DEVICE_STATE_DOWNLOADING then it can be asked to transfer more tracks, and the same applies 
-// to kSB_DEVICE_STATE_UPLOADING and kSB_DEVICE_STATE_DELETING. kSB_DEVICE_STATE_TRANSFERRING_PAUSED indicates 
-// a paused transfer state.
-//
-%{ C++
 // Device State constants
 #define kSB_DEVICE_STATE_IDLE             0
 #define kSB_DEVICE_STATE_BUSY             1
@@ -61,94 +104,555 @@ interface sbIDeviceBaseCallback : nsISupports
 
 %}
 
-// Base interface for all supported devices. The supported devices can be
-// CD, Windows Media Device, iPod, .. and even a download device for downloading
-// and uploading files.
-// All devices implement this base interface to perform the basic operations such as
-// enumerating tracks (media files) and perform supported I/O operations.
-// In addition, a device class instance, not to be confused with a device instance,
-// can provide extended information about a device, for example recording speed for a CD drive.
-// "Device Category" is used in identifying device class instances (using sbIDeviceManager)
-// and "Device String" is for identifying a device.
-// For instance "Songbird CD Device" is the Device Category and "D:\" is the Device String.
-//
+/**
+ * \interface sbIDeviceBase
+ * \brief <TODO:Brief>.
+ *
+ * Base interface for all supported devices. The supported devices can be CD,
+ * Windows Media Device, iPod, etc., and even a download device for downloading
+ * and uploading files.
+ *
+ * All devices implement this base interface to perform the basic operations
+ * such as enumerating tracks (media files) and perform supported I/O
+ * operations.
+ *
+ * In addition, a device class instance, not to be confused with a device
+ * instance, can provide extended information about a device, for example
+ * recording speed for a CD drive.
+ *
+ * "Device Category" is used in identifying device class instances (using
+ * sbIDeviceManager) and "Device String" is for identifying a device. For
+ * instance "Songbird CD Device" is the Device Category and "D:\" is the Device
+ * String.
+ */
 [scriptable, uuid(8A4F139A-C504-4470-8BB4-A43F33328B41)]
 interface sbIDeviceBase : nsISupports
 {
+  /**
+   * File format constants
+   *
+   * XXXben We have an explicit -1 here but later we have PRUint32 as a param
+   *        for get/set Upload and Download FileType. Also, should these be
+   *        renamed to FILE_TYPE_XXX or should we change the other funcs to use
+   *        FileFormat?
+   */
+  const PRUint32 FILE_FORMAT_UNDEFINED = -1;
+  const PRUint32 FILE_FORMAT_WAV       = 0;
+  const PRUint32 FILE_FORMAT_MP3       = 1;
+  const PRUint32 FILE_FORMAT_WMA       = 2;
+
+  /**
+   * Device State constants
+   *
+   * Generally speaking I/O commands can be issued to a device if device state
+   * is STATE_IDLE for the device. But if STATE_DOWNLOADING then it can be
+   * asked to transfer more tracks, and the same applies to STATE_UPLOADING and
+   * STATE_DELETING. STATE_TRANSFERRING_PAUSED indicates a paused transfer.
+   *
+   * XXXben STATE_TRANSFERRING_PAUSED no longer exists
+   */
+  const PRUint32 STATE_IDLE            = 0;
+  const PRUint32 STATE_BUSY            = 1;
+  const PRUint32 STATE_DOWNLOADING     = 2;
+  const PRUint32 STATE_UPLOADING       = 3;
+  const PRUint32 STATE_DOWNLOAD_PAUSED = 4;
+  const PRUint32 STATE_UPLOAD_PAUSED   = 5;
+  const PRUint32 STATE_DELETING        = 6;
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   */
 	attribute wstring name;
 
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \return [PRBool] <TODO>.
+   */
   PRBool Initialize();
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \return [PRBool] <TODO>.
+   */
   PRBool Finalize();
 
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param pCallback [in sbIDeviceBaseCallback] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
   PRBool AddCallback(in sbIDeviceBaseCallback pCallback);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param pCallback [in sbIDeviceBaseCallback] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
   PRBool RemoveCallback(in sbIDeviceBaseCallback pCallback);
 
-  // Device category name for this class of devices
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * Device category name for this class of devices
+   *
+   * \return [wstring] <TODO>.
+   */
 	wstring GetDeviceCategory();
 
-	// Device identifying string for a device at index
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * Device identifying string for a device at index
+   *
+   * \param index [in PRUint32] <TODO>.
+   *
+   * \return [wstring] <TODO>.
+   */
 	wstring EnumDeviceString(in PRUint32 index);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
 	PRUint32 GetNumDevices();
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param DeviceString [in wstring] <TODO>.
+   *
+   * \return [wstring] <TODO>.
+   */
 	wstring GetNumDestinations(in wstring DeviceString); 
 
-	// To get the database context for a device
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * To get the database context for a device
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [wstring] <TODO>.
+   */
 	wstring GetContext(in wstring deviceString);
 
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
   PRUint32 GetDeviceState(in wstring deviceString);
 
-  // If calling DownloadTable() or UploadTable() then MakeTransferTable() can be called to create
-  // a transfer table. Or AutoDownloadTable() and AutoUploadTable() can be called to create transfer
-  // table and begin transfer right away.
-	PRBool MakeTransferTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, in wstring FilterColumn, in PRUint32 FilterCount, [array, size_is(FilterCount)] in wstring FilterValues, in wstring sourcePath, in wstring destPath, in PRBool bDownloading, out wstring TransferTable);
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * If calling DownloadTable() or UploadTable() then MakeTransferTable() can
+   * be called to create a transfer table. Or AutoDownloadTable() and
+   * AutoUploadTable() can be called to create transfer table and begin
+   * transfer right away.
+   *
+   * \param DeviceString [in wstring] <TODO>.
+   * \param ContextInput [in wstring] <TODO>.
+   * \param TableName [in wstring] <TODO>.
+   * \param FilterColumn [in wstring] <TODO>.
+   * \param FilterCount [in PRUint32] <TODO>.
+   * \param FilterValues [in wstring[]] <TODO>.
+   * \param sourcePath [in wstring] <TODO>.
+   * \param destPath [in wstring] <TODO>.
+   * \param bDownloading [in PRBool] <TODO>.
+   * \param TransferTable [out wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+	PRBool MakeTransferTable(in wstring DeviceString,
+                           in wstring ContextInput,
+                           in wstring TableName,
+                           in wstring FilterColumn,
+                           in PRUint32 FilterCount,
+                           [array, size_is(FilterCount)] in wstring FilterValues,
+                           in wstring sourcePath,
+                           in wstring destPath,
+                           in PRBool bDownloading,
+                           out wstring TransferTable);
   
-  PRBool DownloadTable(in wstring DeviceString, in wstring TableName);
-  PRBool UploadTable(in wstring DeviceString, in wstring TableName);
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param DeviceString [in wstring] <TODO>.
+   * \param TableName [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool DownloadTable(in wstring DeviceString,
+                       in wstring TableName);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param DeviceString [in wstring] <TODO>.
+   * \param TableName [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool UploadTable(in wstring DeviceString,
+                     in wstring TableName);
 	
-  PRBool AutoDownloadTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, in wstring FilterColumn, in PRUint32 FilterCount, [array, size_is(FilterCount)] in wstring FilterValues, in wstring sourcePath, in wstring destPath, out wstring TransferTable);
-  PRBool AutoUploadTable(in wstring DeviceString, in wstring ContextInput, in wstring TableName, in wstring FilterColumn, in PRUint32 FilterCount, [array, size_is(FilterCount)] in wstring FilterValues, in wstring sourcePath, in wstring destPath, out wstring TransferTable);
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param DeviceString [in wstring] <TODO>.
+   * \param ContextInput [in wstring] <TODO>.
+   * \param TableName [in wstring] <TODO>.
+   * \param FilterColumn [in wstring] <TODO>.
+   * \param FilterCount [in PRUint32] <TODO>.
+   * \param FilterValues [in wstring[]] <TODO>.
+   * \param sourcePath [in wstring] <TODO>.
+   * \param destPath [in wstring] <TODO>.
+   * \param TransferTable [out wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool AutoDownloadTable(in wstring DeviceString,
+                           in wstring ContextInput,
+                           in wstring TableName,
+                           in wstring FilterColumn,
+                           in PRUint32 FilterCount,
+                           [array, size_is(FilterCount)] in wstring FilterValues,
+                           in wstring sourcePath,
+                           in wstring destPath,
+                           out wstring TransferTable);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param DeviceString [in wstring] <TODO>.
+   * \param ContextInput [in wstring] <TODO>.
+   * \param TableName [in wstring] <TODO>.
+   * \param FilterColumn [in wstring] <TODO>.
+   * \param FilterCount [in PRUint32] <TODO>.
+   * \param FilterValues [in wstring[]] <TODO>.
+   * \param sourcePath [in wstring] <TODO>.
+   * \param destPath [in wstring] <TODO>.
+   * \param TransferTable [out wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool AutoUploadTable(in wstring DeviceString,
+                         in wstring ContextInput,
+                         in wstring TableName,
+                         in wstring FilterColumn,
+                         in PRUint32 FilterCount,
+                         [array, size_is(FilterCount)] in wstring FilterValues,
+                         in wstring sourcePath,
+                         in wstring destPath,
+                         out wstring TransferTable);
 	
+  // XXXben seems like we should be able to turn these all into attributes if
+  //        we can get rid of the parameter...
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [wstring] <TODO>.
+   */
   wstring GetDownloadTable(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [wstring] <TODO>.
+   */
   wstring GetUploadTable(in wstring deviceString);
 
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
   PRUint32 GetDownloadFileType(in wstring deviceString);
-  PRBool SetDownloadFileType(in wstring deviceString, in PRUint32 fileType);
-  PRUint32 GetUploadFileType(in wstring deviceString);
-  PRBool SetUploadFileType(in wstring deviceString, in PRUint32 fileType);
 
-	PRUint32 GetUsedSpace(in wstring deviceString);
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   * \param fileType [in PRUint32] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool SetDownloadFileType(in wstring deviceString,
+                             in PRUint32 fileType);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
+  PRUint32 GetUploadFileType(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   * \param fileType [in PRUint32] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool SetUploadFileType(in wstring deviceString,
+                           in PRUint32 fileType);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
+  PRUint32 GetUsedSpace(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
 	PRUint32 GetAvailableSpace(in wstring deviceString);
 
-  // Get all tracks
-  PRBool GetTrackTable(in wstring deviceString, out wstring dbContext, out wstring tableName);
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * Get all tracks
+   *
+   * \param deviceString [in wstring] <TODO>.
+   * \param dbContext [out wstring] <TODO>.
+   * \param tableName [out wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool GetTrackTable(in wstring deviceString,
+                       out wstring dbContext,
+                       out wstring tableName);
 
-	// Enumerating tracks
-	//[noscript] PRUint32 GetNumTracks(); 
-	//[noscript] PRBool GetFirstTrack(TrackInfo* trackInfo);
-	//[noscript] PRBool GetNextTrack(TrackInfo* trackInfo);
-	
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   * \param index [in PRUint32] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool RemoveTranferTracks(in wstring deviceString,
+                             in PRUint32 index);
 
-  PRBool RemoveTranferTracks(in wstring deviceString, in PRUint32 index);
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
 	PRBool AbortTransfer(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
   PRBool SuspendTransfer(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
   PRBool ResumeTransfer(in wstring deviceString);
 
-	// Download is to copy a track from the device to the host
+  // XXXben Again possible to become attributes?
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * Download is to copy a track from the device to the host
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
 	PRBool IsDownloadSupported(in wstring deviceString);
-    // Upload is to copy a track from host to the device
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * Upload is to copy a track from host to the device
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
 	PRBool IsUploadSupported(in wstring deviceString);
 
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
 	PRBool IsTransfering(in wstring deviceString);
 
-	PRUint32 GetSupportedFormats(in wstring deviceString); // This could be the codecs installed on the device
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * This could be the codecs installed on the device
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRUint32] <TODO>.
+   */
+	PRUint32 GetSupportedFormats(in wstring deviceString);
 
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
 	PRBool IsDeleteSupported(in wstring deviceString);
-	PRBool DeleteTable(in wstring deviceString, in wstring dbContext, in wstring tableName);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   * \param dbContext [in wstring] <TODO>.
+   * \param tableName [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+	PRBool DeleteTable(in wstring deviceString,
+                     in wstring dbContext,
+                     in wstring tableName);
 	
-	// This method could be used for updating tracks on a device
-	// or applying CDDB match for a CD.
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * This method could be used for updating tracks on a device
+	 * or applying CDDB match for a CD.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
 	PRBool IsUpdateSupported(in wstring deviceString);
-	PRBool UpdateTable(in wstring deviceString, in wstring tableName);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   * \param tableName [in wstring] <TODO>.
+   *
+   * \return [PRBool] <TODO>.
+   */
+  PRBool UpdateTable(in wstring deviceString,
+                     in wstring tableName);
 	
-	PRBool IsEjectSupported(in wstring deviceString); // Returns false if eject is not supported
-	PRBool EjectDevice(in wstring deviceString); // Returns false if eject is not supported
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * <TODO:Detail>.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] PR_FALSE if eject is not supported.
+   */
+	PRBool IsEjectSupported(in wstring deviceString);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+	 * This method could be used for updating tracks on a device
+	 * or applying CDDB match for a CD.
+   *
+   * \param deviceString [in wstring] <TODO>.
+   *
+   * \return [PRBool] PR_FALSE if eject is not supported.
+   */
+  PRBool EjectDevice(in wstring deviceString);
 };
