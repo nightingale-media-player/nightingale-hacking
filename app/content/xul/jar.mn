@@ -6,6 +6,7 @@ songbird.jar:
   content/songbird/xul/control_pane.xul     (control_pane.xul)
   content/songbird/xul/download.xul         (download.xul)
   content/songbird/xul/editbookmark.xul     (editbookmark.xul)
+  content/songbird/xul/eula.xul							(eula.xul)
   content/songbird/xul/firstrun.xul         (firstrun.xul)
   content/songbird/xul/jumptofile.xul       (jumptofile.xul)
   content/songbird/xul/koshi_test.xul       (koshi_test.xul)
