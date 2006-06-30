@@ -1680,8 +1680,8 @@ SEARCH WIDGET
   list-style-image: url(default/chrome_scroll_down.png) !important;
   background-repeat: no-repeat !important;
   margin: 1px 2px 0px 0px !important;
-  height:19px !important;
-  width:15px !important;
+  height:16px !important;
+  width:16px !important;
   border: none !important;
   background-color: #242527 !important;
 }
@@ -2212,8 +2212,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: transparent !important;
-  height: 30px !important;
-  width: 30px !important;
+  height: 16px !important;
+  width: 16px !important;
 }
 
 #browser_url
