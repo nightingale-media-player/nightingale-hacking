@@ -66,89 +66,89 @@ public:
   sbCDDevice();
 
   // Transfer related
-  virtual nsString GetDeviceDownloadTable(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTable(const PRUnichar* deviceString);
-  virtual nsString GetDeviceDownloadTableDescription(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTableDescription(const PRUnichar* deviceString);
-  virtual nsString GetDeviceDownloadTableType(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTableType(const PRUnichar* deviceString);
-  virtual nsString GetDeviceDownloadReadable(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTableReadable(const PRUnichar* deviceString);
+  virtual nsString GetDeviceDownloadTable(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceUploadTable(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceDownloadTableDescription(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceUploadTableDescription(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceDownloadTableType(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceUploadTableType(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceDownloadReadable(const PRUnichar* aDeviceString);
+  virtual nsString GetDeviceUploadTableReadable(const PRUnichar* aDeviceString);
 
-  virtual PRBool TransferFile(PRUnichar* deviceString,
-                              PRUnichar* source,
-                              PRUnichar* destination,
-                              PRUnichar* dbContext,
-                              PRUnichar* table,
-                              PRUnichar* index,
-                              PRInt32 curDownloadRowNumber);
+  virtual PRBool TransferFile(PRUnichar* aDeviceString,
+                              PRUnichar* aSource,
+                              PRUnichar* aDestination,
+                              PRUnichar* aDBContext,
+                              PRUnichar* aTable,
+                              PRUnichar* aIndex,
+                              PRInt32 aCurDownloadRowNumber);
 
-  virtual void TransferComplete(const PRUnichar* deviceString);
-  virtual PRBool StopCurrentTransfer(const PRUnichar* deviceString);
-  virtual PRBool SuspendCurrentTransfer(const PRUnichar* deviceString);
-  virtual PRBool ResumeTransfer(const PRUnichar* deviceString);
-  virtual PRUint32 GetCurrentTransferRowNumber(const PRUnichar* deviceString);
+  virtual void TransferComplete(const PRUnichar* aDeviceString);
+  virtual PRBool StopCurrentTransfer(const PRUnichar* aDeviceString);
+  virtual PRBool SuspendCurrentTransfer(const PRUnichar* aDeviceString);
+  virtual PRBool ResumeTransfer(const PRUnichar* aDeviceString);
+  virtual PRUint32 GetCurrentTransferRowNumber(const PRUnichar* aDeviceString);
 
-  virtual PRBool IsDeviceIdle(const PRUnichar* deviceString) {
-    return mCDManagerObject->IsDeviceIdle(deviceString);
+  virtual PRBool IsDeviceIdle(const PRUnichar* aDeviceString) {
+    return mCDManagerObject->IsDeviceIdle(aDeviceString);
   }
 
-  virtual PRBool IsDownloadInProgress(const PRUnichar* deviceString) {
-    return mCDManagerObject->IsDownloadInProgress(deviceString);
+  virtual PRBool IsDownloadInProgress(const PRUnichar* aDeviceString) {
+    return mCDManagerObject->IsDownloadInProgress(aDeviceString);
   }
 
-  virtual PRBool IsUploadInProgress(const PRUnichar* deviceString) {
-    return mCDManagerObject->IsUploadInProgress(deviceString);
+  virtual PRBool IsUploadInProgress(const PRUnichar* aDeviceString) {
+    return mCDManagerObject->IsUploadInProgress(aDeviceString);
   }
 
-  virtual PRBool IsTransferInProgress(const PRUnichar* deviceString) {
-    return (mCDManagerObject->IsDownloadInProgress(deviceString) ||
-            mCDManagerObject->IsUploadInProgress(deviceString));
+  virtual PRBool IsTransferInProgress(const PRUnichar* aDeviceString) {
+    return (mCDManagerObject->IsDownloadInProgress(aDeviceString) ||
+            mCDManagerObject->IsUploadInProgress(aDeviceString));
   }
 
-  virtual PRBool IsDownloadPaused(const PRUnichar* deviceString) {
-    return mCDManagerObject->IsDownloadPaused(deviceString);
+  virtual PRBool IsDownloadPaused(const PRUnichar* aDeviceString) {
+    return mCDManagerObject->IsDownloadPaused(aDeviceString);
   }
 
-  virtual PRBool IsUploadPaused(const PRUnichar* deviceString) {
-    return mCDManagerObject->IsUploadPaused(deviceString);
+  virtual PRBool IsUploadPaused(const PRUnichar* aDeviceString) {
+    return mCDManagerObject->IsUploadPaused(aDeviceString);
   }
 
-  virtual PRBool IsTransferPaused(const PRUnichar* deviceString) {
-    return mCDManagerObject->IsTransferPaused(deviceString);
+  virtual PRBool IsTransferPaused(const PRUnichar* aDeviceString) {
+    return mCDManagerObject->IsTransferPaused(aDeviceString);
   }
 
-  virtual void DeviceIdle(const PRUnichar* deviceString){
-    mCDManagerObject->SetTransferState(deviceString, kSB_DEVICE_STATE_IDLE);
+  virtual void DeviceIdle(const PRUnichar* aDeviceString){
+    mCDManagerObject->SetTransferState(aDeviceString, kSB_DEVICE_STATE_IDLE);
   }
 
-  virtual void DeviceDownloading(const PRUnichar* deviceString) {
-    mCDManagerObject->SetTransferState(deviceString,
+  virtual void DeviceDownloading(const PRUnichar* aDeviceString) {
+    mCDManagerObject->SetTransferState(aDeviceString,
                                        kSB_DEVICE_STATE_DOWNLOADING);
   }
 
-  virtual void DeviceUploading(const PRUnichar* deviceString) {
-    mCDManagerObject->SetTransferState(deviceString,
+  virtual void DeviceUploading(const PRUnichar* aDeviceString) {
+    mCDManagerObject->SetTransferState(aDeviceString,
                                        kSB_DEVICE_STATE_UPLOADING);
   }
 
-  virtual void DeviceDownloadPaused(const PRUnichar* deviceString) {
-    mCDManagerObject->SetTransferState(deviceString,
+  virtual void DeviceDownloadPaused(const PRUnichar* aDeviceString) {
+    mCDManagerObject->SetTransferState(aDeviceString,
                                        kSB_DEVICE_STATE_DOWNLOAD_PAUSED);
   }
 
-  virtual void DeviceUploadPaused(const PRUnichar* deviceString) {
-    mCDManagerObject->SetTransferState(deviceString,
+  virtual void DeviceUploadPaused(const PRUnichar* aDeviceString) {
+    mCDManagerObject->SetTransferState(aDeviceString,
                                        kSB_DEVICE_STATE_UPLOAD_PAUSED);
   }
 
-  virtual void DeviceDeleting(const PRUnichar* deviceString) {
-    mCDManagerObject->SetTransferState(deviceString,
+  virtual void DeviceDeleting(const PRUnichar* aDeviceString) {
+    mCDManagerObject->SetTransferState(aDeviceString,
                                        kSB_DEVICE_STATE_DELETING);
   }
 
-  virtual void DeviceBusy(const PRUnichar* deviceString) {
-    mCDManagerObject->SetTransferState(deviceString, kSB_DEVICE_STATE_BUSY);
+  virtual void DeviceBusy(const PRUnichar* aDeviceString) {
+    mCDManagerObject->SetTransferState(aDeviceString, kSB_DEVICE_STATE_BUSY);
   }
 
 private:
@@ -161,7 +161,7 @@ private:
 
   virtual PRBool InitializeSync();
   virtual PRBool FinalizeSync();
-  virtual PRBool DeviceEventSync(PRBool mediaInserted);
+  virtual PRBool DeviceEventSync(PRBool aMediaInserted);
 
   sbCDDeviceManager* mCDManagerObject;
   nsCOMPtr<nsIStringBundle> m_StringBundle;
