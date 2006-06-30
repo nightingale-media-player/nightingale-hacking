@@ -254,7 +254,7 @@
             {
               // Set the filter and relaunch the queries
               this.source.SetFilter( this.ref_pl, this.index, filter_string, this.ref, this.column );
-              this.source.FeedFilters( this.ref_pl );
+              this.source.ExecuteFeed( this.ref_pl );
 
               // Fire an event, in case someone wants it          
               var e = document.createEvent("Events");

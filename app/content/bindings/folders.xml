@@ -176,18 +176,7 @@
                 size = that.distance - that.current;
               window.resizeBy( 0, size );
               that.current += size;
-  
-              // The first time we change the window size, 
-              // ensure that the box fits the conditions.
-              if ( ! that.first_windowsize )
-              {
-                if ( that.current < that.parent.boxObject.height )
-                {
-                  window.resizeBy( 0, that.current - that.parent.boxObject.height + 8 ); // +8 ? wtf
-                }
-                that.first_windowsize = true;
-              }
-  
+
               // Are we done?
               if ( that.current == that.distance )
               {
@@ -344,7 +333,12 @@
             hbox.appendChild( minus );
             hbox.appendChild( plus );
             this.parent.insertBefore( hbox, before );
-            this.size = hbox.boxObject.height;
+            
+            // See if we're overshooting and fix it.
+            var box_size = hbox.boxObject.height;
+            var miscalculation = box_size - this.size;
+            window.resizeBy( 0, miscalculation );
+            this.size = box_size;
             
             // Set the value based on the incoming data
             if ( value )
