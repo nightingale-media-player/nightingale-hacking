@@ -24,20 +24,64 @@
 //
  */
 
+/**
+ * \file  sbICDDevice.idl
+ * \brief The IDL for sbICDDevice.
+ */
+
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
-
-[scriptable, uuid(FED4919E-213F-4448-A689-F22DD1C56994)]
+/**
+ * \interface sbICDDevice sbICDDevice.h
+ *
+ * \brief Songbird CDDevice Interface.
+ *
+ * <TODO: Detail>.
+ *
+ * \sa sbIDeviceBase.idl
+ */
+[scriptable, uuid(6d5f2046-7e6b-4005-b9af-00135eecd2c5)]
 interface sbICDDevice : sbIDeviceBase
 {
-  PRBool GetWritableCDDrive(out wstring deviceString);
-  // This method is provided so that on Windows, OS specific
-  // message for a media insert or eject can be passed to 
-  // sbICDDevice object (note ... caller should use sbIDeviceManager in
-  // obtaining sbICDDevice object and not instantiate sbICDDevice
-  // directly, same applies to all other devices).
-  PRBool OnCDDriveEvent(in PRBool mediaInserted);
-  PRBool SetGapBurnedTrack(in wstring deviceString, in PRUint32 numSeconds);
-};
+  /**
+   * \brief Finds the first CD device capable of writing.
+   *
+   *
+   * <TODO: Detail>
+   *
+   * \param aDeviceString [out AString] A string describing the writable
+   *                      device.
+   *
+   * \return [PRBool] A nice boolean value indicating success or failure.
+   */
+  PRBool getWritableCDDrive(out AString aDeviceString);
 
+  /**
+   * \brief Allows OS-specific drive event notification.
+   *
+   * This method is provided so that on Windows, OS specific message for a
+   * media insert or eject can be passed to sbICDDevice object (note that
+   * caller should use sbIDeviceManager in obtaining sbICDDevice object and not
+   * instantiate sbICDDevice directly, same applies to all other devices).
+   *
+   * \param aMediaInserted [in PRBool] A boolean indicating whether media was
+   *                       inserted or not.
+   *
+   * \return [PRBool] A nice boolean value indicating success or failure.
+   */
+  PRBool onCDDriveEvent(in PRBool aMediaInserted);
+
+  /**
+   * \brief Set the amount of time to insert between burned tracks.
+   *
+   * <TODO: Detail>
+   *
+   * \param aDeviceString [in AString] A string describing the device.
+   * \param aNumSeconds [in PRUint32] The number of seconds to insert.
+   *
+   * \return [PRBool] A nice boolean value indicating success or failure.
+   */
+  PRBool setGapBurnedTrack(in AString aDeviceString,
+                           in PRUint32 aNumSeconds);
+};
