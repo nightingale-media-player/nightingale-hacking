@@ -34,6 +34,7 @@ xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plu
 copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
 copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\
+copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
 move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
@@ -68,6 +69,7 @@ xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plu
 copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
 copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\
+copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
 move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
