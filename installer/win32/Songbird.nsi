@@ -27,8 +27,8 @@ SpaceTexts "Required Disk Space: " \
 
 InstallColors /windows
 
-Icon "PublicSVNInstall.ico"
-UninstallIcon "PublicSVNInstall.ico"
+Icon "songbird.ico"
+UninstallIcon "songbird.ico"
 
 XPStyle on
 
@@ -36,7 +36,7 @@ OutFile "Songbird_${BUILD_ID}.exe"
 InstallDir "$PROGRAMFILES\Songbird\"
 ;InstallDirRegKey HKLM SOFTWARE\Songbird "Install_Dir"
 
-LicenseData LICENSE.txt
+;LicenseData LICENSE.txt
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; License / EULA is displayed on first run.
@@ -68,9 +68,16 @@ Section "Songbird Base (Required)"
   ExecWait '$R1 /S _?=$INSTDIR'
   
 NoUninstall:
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Force creation of new profile / cache for Songbird
+  ;; for nightly / developer builds.
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  RMDir /r "$APPDATA\Pioneers of the Inevitable\Songbird"
+  RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\Songbird"
   
   File *.ini
   File *.exe
+  File *.dll
   File *.ico
   File LICENSE.txt
   File GPL.txt
@@ -158,8 +165,9 @@ Section "Uninstall"
   ;; I commented this out, because I don't think we *truly* want to do this. 
   ;; But we might have to later.
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  
   ;RMDir /r "$APPDATA\Pioneers of the Inevitable\Songbird"
+  ;RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\Songbird"
+
   
   RMDir /r $INSTDIR\chrome
   RMDir /r $INSTDIR\components
