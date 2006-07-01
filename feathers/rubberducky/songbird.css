@@ -1660,6 +1660,7 @@ SEARCH WIDGET
   width: 143px !important;
   height: 21px !important;
   background-image: url(default/search_temp.png) !important;
+  background-color: transparent !important;
 }
 
 #search_service_button
@@ -1677,7 +1678,7 @@ SEARCH WIDGET
 
 #search_widget
 { 
-  background-color: #242527 !important;
+  background-color: #000 !important;
   border: 1px solid #4A4E48 !important; 
   -moz-border-radius: 5px !important;
   margin: 2px 2px 2px 2px !important; 
@@ -3363,7 +3364,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
 menulist
 { 
   -moz-appearance: none !important; /* grrrr! */
-  height: 25px !important; 
+  height: 24px !important; 
   background-color: #242527 !important;
   border: 1px solid #4F5052 !important; 
   color: #FFF !important;
@@ -3378,7 +3379,7 @@ menulist
 .menulist-dropmarker
 {
   -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/chrome_scroll_down.png) !important;
+  list-style-image: url(default/chrome_scroll_down.png) !important; 
   background-repeat: no-repeat !important;
   background-color: transparent !important;
   height:16px !important;
