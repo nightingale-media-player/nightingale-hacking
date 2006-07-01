@@ -1674,18 +1674,6 @@ SEARCH WIDGET
   background-color: transparent !important;
 }
 
-#search_service_list > dropmarker
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/chrome_scroll_down.png) !important;
-  background-repeat: no-repeat !important;
-  margin: 1px 2px 0px 0px !important;
-  height:16px !important;
-  width:16px !important;
-  border: none !important;
-  background-color: #242527 !important;
-}
-
 
 #search_widget
 { 
@@ -2201,7 +2189,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url_box
 {
   margin: 2px 0px 2px 3px !important;
-  padding: 6px 3px 6px 3px !important;
+  padding: 5px 3px 3px 3px !important;
   -moz-border-radius: 5px !important;
   border: 1px solid #4A4E48 !important;
   background-color: transparent !important;
@@ -2214,7 +2202,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   background-color: transparent !important;
   height: 16px !important;
   width: 16px !important;
-  margin: 0px 0px 0px 5px !important;
+  margin: 1px 0px 3px 5px !important;
 }
 
 #browser_url
@@ -3386,20 +3374,17 @@ menulist
   -moz-border-bottom-colors: #99A195 #333 !important; 
 } 
 
-menulist > dropmarker
+
+.menulist-dropmarker
 {
   -moz-appearance: none !important; /* grrrr! */
   list-style-image: url(default/chrome_scroll_down.png) !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
-  height:19px !important;
-  width:15px !important;
+  height:16px !important;
+  width:16px !important;
   border: none !important;
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important; 
+  margin: 0px 4px 0px 0px !important;
 }
 
 menulist:focus
@@ -3432,7 +3417,7 @@ menulist[disabled="true"] > dropmarker
 .menulist-editable-box
 {
   color: #fff !important;
-  background-color: #000 !important;
+  background-color: transparent !important;
 }
 
 .menulist-editable-box
