@@ -38,7 +38,11 @@ InstallDir "$PROGRAMFILES\Songbird\"
 
 LicenseData LICENSE.txt
 
-Page license
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; License / EULA is displayed on first run.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Page license
+
 Page components
 Page directory
 Page instfiles
