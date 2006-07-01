@@ -1668,6 +1668,11 @@ SEARCH WIDGET
   background-color: transparent !important;
 }
 
+.button-icon
+{
+  margin: 0px 0px 0px 5px !important; 
+}
+
 #search_service_list
 {
   width: 120px !important;
@@ -1703,6 +1708,8 @@ SEARCH WIDGET
   background-color: transparent !important;
   background-image: url(default/dropmarker.png) !important;
   background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
 }
 
 /* Status Pane */
