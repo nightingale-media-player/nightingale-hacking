@@ -1687,12 +1687,14 @@ SEARCH WIDGET
 #search_widget input
 {
   color: #CCC !important;
+  padding-top: 2px !important;
 }
 
 #search_widget input:focus
 {
   background-color: #99A195 !important;
   color: #FFF !important;
+  padding-top: 2px !important;
 }
 
 .button-menu-dropmarker
@@ -3382,10 +3384,8 @@ menulist
   list-style-image: url(default/chrome_scroll_down.png) !important; 
   background-repeat: no-repeat !important;
   background-color: transparent !important;
-  height:16px !important;
-  width:16px !important;
   border: none !important;
-  margin: 0px 4px 0px 0px !important;
+  margin: 2px 4px 2px 0px !important;
 }
 
 menulist:focus
