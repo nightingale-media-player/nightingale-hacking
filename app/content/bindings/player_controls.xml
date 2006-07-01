@@ -629,8 +629,12 @@
         this.remote_seenPlaying = new sbIDataRemote( "faceplate.seenplaying" ); 
         this.remote_playingRef =  new sbIDataRemote( "playing.ref" ); 
         this.remote_playlistIndex =  new sbIDataRemote( "playlist.index" ); 
+
+        // MC June 30 06:  Binding "hidden" on both play and pause causes flickering in the mini player
+        // during the split second where neither button is visible.  Since the pause button sits on top of
+        // play, I am just hiding pause and disabling play. This appears to work, but may cause other issues.
+        this.playbinding = SBDataBindElementAttribute( "faceplate.play", this.play, "disabled", true, true );
         this.pausebinding = SBDataBindElementAttribute( "faceplate.play", this.pause, "hidden", true );
-        this.playbinding = SBDataBindElementAttribute( "faceplate.play", this.play, "hidden", true, true );
       ]]>
     </constructor>
     <destructor>
