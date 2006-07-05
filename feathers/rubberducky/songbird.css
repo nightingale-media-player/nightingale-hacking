@@ -2908,7 +2908,7 @@ DIALOG BOXES and their buttons
 TEXTBOXES for dialogs and forms.
 ************************************************************************************************************************************************
 */
-textbox-input-box
+.textbox-input-box
 {
   -moz-appearance: none !important;
   background-color: #000 !important;
@@ -2947,9 +2947,9 @@ textbox-input-box
   -moz-border-bottom-colors: #99A195 #333 !important;
   background-color: #4A4E48 !important; 
   color: #FFF !important;
-  height: 25px !important;
-  padding-top: 3px !important;
-  padding-left: 5px !important;
+  height: 30px !important;
+  padding-top: 0px !important;
+  padding-left: 0px !important;
 }
 
 .drawer_box[disabled="true"],
@@ -3391,11 +3391,13 @@ menulist
 
 menulist:focus
 {
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #4A4E48 !important;
 }
 
 menulist:focus > hbox
 {
+  -moz-appearance: none !important; /* grrrr! */
   background-color: #4A4E48 !important;
 }
 
@@ -3845,4 +3847,5 @@ MISCELLANEOUS
 windowregion {
   -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion") !important;
 }
+
 
