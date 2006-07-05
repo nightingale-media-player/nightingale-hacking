@@ -155,8 +155,6 @@ function CoreQT()
       url.replace(/\\/, '/');
     }
 
-    LOG( "Trying to play url: " + url );
-    
     this._object.playURL( url );
 
     return true;

@@ -664,7 +664,7 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
   
-    var index = this._source.GetRefRowByColumnValue(source_ref, "id", row_id);
+    var index = this._source.getRefRowByColumnValue(source_ref, "id", row_id);
     
     return this.playRef(source_ref, index);
   },
@@ -680,7 +680,7 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    var index = this._source.GetRefRowByColumnValue(source_ref, "uuid", media_uuid);
+    var index = this._source.getRefRowByColumnValue(source_ref, "uuid", media_uuid);
     return this.playRef(source_ref, index);
   },
   
@@ -696,7 +696,7 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     this.playUrl(url);
-    setTimeout('var index = this._source.GetRefRowByColumnValue(' + source_ref + ', "url",' + url + '); this._updateCurrentInfo(' + source_ref + ', index )', 250);
+    setTimeout('var index = this._source.getRefRowByColumnValue(' + source_ref + ', "url",' + url + '); this._updateCurrentInfo(' + source_ref + ', index )', 250);
    
     return;
   },
@@ -717,26 +717,26 @@ PlaylistPlayback.prototype = {
     var theRef = "sbPlaylistPlayback.js_" + dbGUID + "_" + table;
     
     // Tell playlistsource to set up that ref to the requested playlist
-    this._source.FeedPlaylist( theRef, dbGUID, table );
-    this._source.FeedFilters( theRef );
+    this._source.feedPlaylist( theRef, dbGUID, table );
+    this._source.executeFeed( theRef );
     
     // Synchronous call!  Woo hoo!
-    while( this._source.IsQueryExecuting( theRef ) );
+    while( this._source.isQueryExecuting( theRef ) );
 
     // After the call is done, force GetTargets
-    this._source.ForceGetTargets( theRef );
+    this._source.forceGetTargets( theRef );
     
     // And then use the source to play that ref.
     return this.playRef( theRef, index );
   },
 
   playTableByUrl: function(dbGUID, table, url) {
-    var index = this._source.GetRefRowByColumnValue(source_ref, "url", url);
+    var index = this._source.getRefRowByColumnValue(source_ref, "url", url);
     this.playTable(dbGUID, table, index);
   },
   
   playTableByID: function(dbGUID, table, row_id) {
-    var index = this._source.GetRefRowByColumnValue(source_ref, "id", row_id);
+    var index = this._source.getRefRowByColumnValue(source_ref, "id", row_id);
     this.playTable(dbGUID, table, index);
   },
   
@@ -767,9 +767,6 @@ PlaylistPlayback.prototype = {
         
       this._playUrl.setValue(url);
       this._metadataUrl.setValue(url);
-      
-      LOG("playUrl(" + url.length + "): " + url);
-      var text = ""; for (var i = 0; i < url.length; i++) { text += url[i] + " "; if (i%8==0) text += "\n"; } LOG( text );
       
       core.stop();
       core.playUrl( url );
@@ -1335,7 +1332,6 @@ PlaylistPlayback.prototype = {
 
       if ( this._set_metadata ) {
         // Set the metadata into the database table
-        dump("***** this._setURLMetadata( " + this._playUrl.getValue() + ", " + title + ", " + length + ", " + album + ", " + artist + ", " + genre + ", " + true  + ");\n" );
         this._setURLMetadata( this._playUrl.getValue(), title, length, album, artist, genre, true );
         // Tell the search popup the metadata has changed
         this._resetSearchData.setValue( this._resetSearchData.getIntValue() + 1 );
@@ -1388,7 +1384,7 @@ PlaylistPlayback.prototype = {
     
     if ( cur_index > -1 ) {
       // Play the next playlist entry tree index (or whatever, based upon state.)
-      var num_items = this._source.GetRefRowCount( cur_ref );
+      var num_items = this._source.getRefRowCount( cur_ref );
       LOG( num_items + " items in the current playlist" );
       var next_index = -1;
       // Are we confused?
@@ -1436,7 +1432,7 @@ PlaylistPlayback.prototype = {
     var retval = -1;
     var ref = this._playingRef.getValue();
     if ( this._playingRef.getValue().length > 0 ) {
-      retval = this._source.GetRefRowByColumnValue( ref, "url", this._playUrl.getValue() );
+      retval = this._source.getRefRowByColumnValue( ref, "url", this._playUrl.getValue() );
     }
     return retval;
   },
@@ -1521,10 +1517,10 @@ PlaylistPlayback.prototype = {
     this._playlistIndex.setValue( index )
     
     // And from those, we ask the Playlistsource to tell us who to play
-    var url = this._source.GetRefRowCellByColumn( source_ref, index, "url" );
-    var title = this._source.GetRefRowCellByColumn( source_ref, index, "title" );
-    var artist = this._source.GetRefRowCellByColumn( source_ref, index, "artist" );
-    var album = this._source.GetRefRowCellByColumn( source_ref, index, "album" );
+    var url = this._source.getRefRowCellByColumn( source_ref, index, "url" );
+    var title = this._source.getRefRowCellByColumn( source_ref, index, "title" );
+    var artist = this._source.getRefRowCellByColumn( source_ref, index, "artist" );
+    var album = this._source.getRefRowCellByColumn( source_ref, index, "album" );
     
     // Set the data remotes to indicate what's about to play
     this._playUrl.setValue(url);

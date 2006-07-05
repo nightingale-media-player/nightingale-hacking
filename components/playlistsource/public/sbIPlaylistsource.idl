@@ -24,49 +24,474 @@
 //
  */
 
+/**
+* \file sbIPlaylistsource.idl
+* \brief The internal RDF Data Source that sends playlist data to the UI.
+* \sa playlist.xml
+*/
 #include "nsISupports.idl"
 #include "nsIRDFDataSource.idl"
-#include "nsIDOMEvent.idl"
-#include "nsIDOMNode.idl"
-#include "IDatabaseResult.idl"
 
+interface nsIDOMNode;
+interface nsIDOMEvent;
+interface sbIDatabaseResult;
+
+/**
+* \interface sbIPlaylistCommands sbIPlaylistsource.h
+* \brief An interface that represents the set of command buttons and context menu items available on a displayed playlist.
+*
+* This interface is meant to be implemented by user code.
+*
+* Implementors that create their own specific database libraries and playlists
+* (eg: sbIDeviceBase) may also specify a commands object to be shown when the
+* tables are displayed in a <playlist> element.  This object's purpose is to
+* return abstract information that can be used by the playlist element to
+* autogenerate its xul button and menuitm elements.
+*
+* These objects ought to be created in javascript.  When a new playlist is
+* created, it will query sbIPlaylistsource for a commands object, and the
+* playlist source will call duplicate() on the object it has stored and
+* return the newly duplicated object.
+*
+* The duplicate() method should be implemented like so:
+*
+* \code
+duplicate: function() {
+  var obj = {};
+  for ( var i in this )
+    obj[ i ] = this[ i ];
+  return obj;
+},
+* \endcode
+* 
+* \sa playlist.xml, playlist_test.xul
+*/
 [scriptable, uuid(A0C79C6C-BED5-4b13-8567-37D105FA12E1)]
 interface sbIPlaylistCommands : nsISupports 
 {
-  void SetPlaylist( in nsIDOMNode node );
-  PRInt32 GetNumCommands( );
-  wstring GetCommandId( in PRInt32 index );
-  wstring GetCommandText( in PRInt32 index );
-  PRInt32 GetCommandFlex( in PRInt32 index );
-  wstring GetCommandToolTipText( in PRInt32 index );
-  PRBool GetCommandEnabled( in PRInt32 index );
-  void OnCommand( in nsIDOMEvent event );
-  sbIPlaylistCommands Duplicate( );
+  /**
+  * \brief Be informed when a set of commands are attached to a playlist element.
+  *
+  * When a playlist element is about to use an sbIPlaylistCommands instance,
+  * after it has been duplicated, the element will pass itself as the param
+  * to this method.  The implementor may save the playlist object for later
+  * reference and use.
+  *
+  * \param node The playlist object
+  */
+  void setPlaylist( in nsIDOMNode node );
+
+  /**
+  * \brief Return the number of command elements to be displayed.
+  *
+  * The implementor should return the number of commands to be created
+  *
+  * The other functions will be called in turn with the index value that
+  * represents each specific command element
+  *
+  * \return The number of commands to be created
+  */
+  PRInt32 getNumCommands( );
+
+  /**
+  * \brief Return the id string for the requested command element index
+  *
+  * Each command id should be unique within this commands object.  The
+  * visual style of the command can be set in the CSS.
+  *
+  * Some id strings are parsed to create different objects:
+  *
+  * "*separator*" - Create a menuseparator or an empty box
+  *
+  * \param index The index of the element for which the data is being requested
+  * \return The string for the command id
+  */
+  AString getCommandId( in PRInt32 index );
+
+  /**
+  * \brief Return the human readable text for the requested command element index
+  *
+  * If the string begins with an "&" character, the remaining portion of the
+  * string will be used as an index into the current localization's properties
+  * file.
+  *
+  * \param index The index of the element for which the data is being requested
+  * \return The string for the displayed text
+  */
+  AString getCommandText( in PRInt32 index );
+
+  /**
+  * \brief Return the flex value for the requested command element index
+  *
+  * For instance, you can make your "*separator*" element have a flex of 1 and
+  * then right-justify all the command buttons after it.  By default, command
+  * buttons will adjust their width to the width of their human readable text.
+  *
+  * \param index The index of the element for which the data is being requested
+  * \return The value for the flex
+  */
+  PRInt32 getCommandFlex( in PRInt32 index );
+
+  /**
+  * \brief Return the human readable text for the requested command element's tooltip
+  *
+  * If the string begins with an "&" character, the remaining portion of the
+  * string will be used as an index into the current localization's properties
+  * file.
+  *
+  * \TODO The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip.
+  * \param index The index of the element for which the data is being requested
+  * \return The string for the tooltip
+  */
+  AString getCommandToolTipText( in PRInt32 index );
+
+  /**
+  * \brief Return the enabled state for the requested command element index
+  *
+  * When the selection of the playlist changes state, or the tree is rebuilt,
+  * this method will be called to allow the code to enable or disable commands
+  * based upon the state of the playlist.
+  *
+  * \param index The index of the element for which the data is being requested
+  * \return True if the command should display as enabled
+  */
+  PRBool getCommandEnabled( in PRInt32 index );
+
+  /**
+  * \brief Handle the fact that a command was activated
+  *
+  * When the user activates the command button or menuitem, this method will
+  * be called with the event generated.
+  *
+  * \param event The event generated by the user's action
+  */
+  void onCommand( in nsIDOMEvent event );
+
+  /**
+  * \brief Duplicate the command object
+  *
+  * When a command object is to be given to a playlist, the object registered
+  * with sbIPlaylistsource will have this method called.  The method should be
+  * implemented like this:
+  *
+  * \code
+  duplicate: function() {
+    var obj = {};
+    for ( var i in this )
+      obj[ i ] = this[ i ];
+    return obj;
+  },
+  * \endcode
+  *
+  * It creates a new object instance and copies the methods over to it.
+  *
+  * \return A new copy of this object
+  */
+  sbIPlaylistCommands duplicate( );
 };
 
+/**
+* \interface sbIPlaylistsource sbIPlaylistsource.h
+* \brief The internal RDF Data Source that sends playlist data to the UI
+*
+* sbIPlaylistsource acts as the intermediary between the database table that
+* represents a library or a playlist and the display of that info into a
+* <playlist> UI element.
+*
+* When a playlist element is told to bind to a specific database table, the
+* playlist asks sbIPlaylistsource to create a new RDF ref that can properly
+* feed data to its internal xul tree (see: feedPlaylist(), executeFeed()).
+* A table may be fed and made available to this interface without involving a
+* playlist element by calling forceGetTargets() for that RefName.
+*
+* The RefName param passed to feedPlaylist() is used from then on to identify
+* each specific source for further modification or information.  If you would
+* like to obtain specific information about the data currently displayed in a
+* playlist object, use that object's .ref property as the RefName parameter to
+* these methods.
+*
+* sbIPlaylistsource provides methods to implement various modifications to
+* the underlying SQL queries that drive the display of a playlist table.
+* Filters may be specified that feed a dependent RDF source and are used by
+* the <filterlist> UI element when displaying a standard libaray (see:
+* setFilter(), getNumFilters(), clearFilter(), getFilter(), getFilterRef())
+* and an override string may be specified to support a direct search feature
+* (see: setSearchString(), getSearchString()).
+*
+* This interface also allows direct access to the underlying data returned
+* by the database, avoiding additional queries (see: getRefRowCount(),
+* getRefColumnCount(), getRefRowCellByColumn(), getRefRowByColumnValue())
+* and can also return the table and guid of the query (see: getRefGUID(),
+* getRefTable()).
+*
+* Lastly, it acts as a centralized storehouse for sbIPlaylistCommands
+* implementations.  Registering a custom commands object into this interface
+* will specify rules to be used to determine if those commands should be shown
+* in any specific playlist element's display (see: registerPlaylistCommands(),
+* getPlaylistCommands()).
+* 
+* \sa playlist.xml
+*/
 [scriptable, uuid(836D6EA5-CA63-418f-BFD8-27704509A6A3)]
 interface sbIPlaylistsource : nsIRDFDataSource
 {
-  void FeedPlaylist( in wstring RefName, in wstring ContextGUID, in wstring TableName ); // Publish a playlist/library as an autoXUL and an RDF datafeed, both named "TableName". Possibly load a saved filter set. 
-  void ClearPlaylist( in wstring RefName ); // [DEPRECATED!] Clear the query
-  void IncomingObserver( in wstring RefName, in nsIDOMNode Observer ); // An observer is about to attach.  Bind to this refname.  STUPID.
-  sbIDatabaseResult GetQueryResult( in wstring RefName ); // [DEPRECATED!] Get the results object for the query bound to RefName
-  wstring GetRefGUID( in wstring RefName ); // Get the database GUID for the RefName
-  wstring GetRefTable( in wstring RefName ); // Get the database table for the RefName 
-  PRInt32 GetRefRowCount( in wstring RefName ); // Get row count from the results object for the query bound to RefName
-  PRInt32 GetRefColumnCount( in wstring RefName ); // Get column count from the results object for the query bound to RefName
-  wstring GetRefRowCellByColumn( in wstring RefName, in PRInt32 Row, in wstring Column ); // GetRowCellByColumn on the ref's resultset
-  PRInt32 GetRefRowByColumnValue( in wstring RefName, in wstring Column, in wstring Value ); // Lookup the rowid for the value of a column (usually url, but might as well make it generic)
-  PRBool IsQueryExecuting( in wstring RefName ); // Is the query currently executing
-  void FeedPlaylistFilterOverride( in wstring RefName, in wstring FilterString ); // Add or change the filter at the Index'th level. 
-  wstring GetFilterOverride( in wstring RefName ); // Get the filter override on a table's feed. 
-  void SetFilter( in wstring RefName, in PRInt32 Index, in wstring FilterString, in wstring FilterRefName, in wstring FilterColumn  ); // Add or change the filter at the Index'th level. 
-  PRInt32 GetNumFilters( in wstring RefName ); // Get the number of filters on a table's feed. 
-  void ClearFilter( in wstring RefName, in PRInt32 Index); // Clear a filter
-  wstring GetFilter( in wstring RefName, in PRInt32 Index ); // Get a filter in wstring on a table's feed. 
-  wstring GetFilterRef( in wstring RefName, in PRInt32 Index ); // Get a filter in wstring on a table's feed. 
-  PRInt32 FeedFilters( in wstring RefName ); // Resubmit the table queries required to build the feeds.
-  void RegisterPlaylistCommands( in wstring ContextGUID, in wstring TableName, in wstring PlaylistType, in sbIPlaylistCommands CommandObj );
-  sbIPlaylistCommands GetPlaylistCommands( in wstring ContextGUID, in wstring TableName, in wstring PlaylistType );
-  void ForceGetTargets( in wstring RefName ); // Force "GetTargets" to be called on the ref to set up the innards.
+  /**
+  * \brief Prepare a database table to be made available to the UI as an RDFDataSource
+  *
+  * This method is called with the guid and table of a playlist and a string
+  * to be used as the ref="XXXXXX" param for the tree.  The string must begin
+  * with "NC:" (don't look at me, that's what moz demands).
+  *
+  * The string passed to this method will then be used as a reference to the
+  * underlying data source in all the other methods on this interface.
+  *
+  * The datasource is not actually published until executeFeed() is called.
+  * This allows the coder to setup filters with setFilter() first.
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aContextGUID The database identifier string
+  * \param aTableName The playlist table name
+  */
+  void feedPlaylist( in AString aRefName, in AString aContextGUID, in AString aTableName );
+
+  /**
+  * \brief [DEPRECATED]
+  *
+  * \param aRefName The unique identifier for the datasource 
+  */
+  void clearPlaylist( in AString aRefName );
+
+  /**
+  * \brief Prepare and execute the SQL queries required for a datasource to make the playlist available to the UI
+  *
+  * After calling feedPlaylist() and optionally calling setFilter(), call this
+  * method to launch the SQL queries and present the data to whomever is
+  * observing the feed.
+  *
+  * \param aRefName The unique identifier for the datasource 
+  */
+  PRInt32 executeFeed( in AString aRefName );
+  
+  /**
+  * \brief Set a filter to act upon a datasource
+  *
+  * This method is used to set or modify a filter on the datasource output.
+  *
+  * A datasource may have a number of hierarchical column filters applied to
+  * it.  These feed the filterlist elements in a library display.
+  *
+  * Each filter creates its own datasource to feed a filterlist element, with
+  * its own unique FilterRefName (usually just the playlist RefName plus the
+  * FilterColumn string).  It also must begin with "NC:" or it won't work.
+  *
+  * The Index parameter specifies the hierarchy of the filters.  Filters with
+  * lower indices will act upon the output of ones with higher indices.  While
+  * any int values may be passed as indices, the getFilter() function must be
+  * called with that value to retrieve the filter.  If they are not contiguous
+  * values, you cannot iterate them using getNumFilters().
+  *
+  * The FilterString parameter is a semicolon delimited list of values that
+  * are matched via OR to the playlist itself.  A blank string is analogous
+  * to the "All" selection in the filterlist element.
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aIndex The hierarchical level of the filter to be set
+  * \param aFilterString A semicolon list of values to filter against 
+  * \param aFilterRefName The unique identifier for the filter datasource
+  * \param aFilterColumn The column name to filter against
+  */
+  void setFilter( in AString aRefName, in PRInt32 aIndex, in AString aFilterString, in AString aFilterRefName, in AString aFilterColumn  );
+  
+  /**
+  * \brief Return the count of filters on a datasource
+  *
+  * This value can only be used for enumeration if setFilter() was properly
+  * called with its indices in order from 0
+  *
+  * \param aRefName The unique identifier for the datasource 
+  */
+  PRInt32 getNumFilters( in AString aRefName );
+  
+  /**
+  * \brief Remove a filter from a datasource
+  *
+  * This value can only be used for enumeration if setFilter() was properly
+  * called with its indices in order from 0
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aIndex The index value of the filter to be referenced
+  */
+  void clearFilter( in AString aRefName, in PRInt32 aIndex);
+  
+  /**
+  * \brief Get the filter string from a datasource's filter
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aIndex The index value of the filter to be referenced
+  * \return The filter string
+  */
+  AString getFilter( in AString aRefName, in PRInt32 aIndex ); 
+  
+  /**
+  * \brief Get the ref for the filter's published RDF datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aIndex The index value of the filter to be referenced
+  * \return The filter's ref string
+  */
+  AString getFilterRef( in AString aRefName, in PRInt32 aIndex );
+
+  /**
+  * \brief Set the search string on a datasource
+  *
+  * The syntax of the string should be a space-delimited list search terms.
+  * The results will only be items that match all the terms in displayed 
+  * columns.
+  *
+  * Pass a blank string to clear this value.
+  *
+  * \TODO This currently overrides the filters.  Make it work along with them.
+  * \param aRefName The unique identifier for the datasource 
+  * \param aSearchString The string defining the search
+  */
+  void setSearchString( in AString aRefName, in AString aSearchString );
+  
+  /**
+  * \brief Get the search string on a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The search string
+  */
+  AString getSearchString( in AString aRefName );
+
+  /**
+  * \brief Get the database guid string on a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The guid string
+  */
+  AString getRefGUID( in AString aRefName );
+  
+  /**
+  * \brief Get the database table string on a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The table string
+  */
+  AString getRefTable( in AString aRefName ); 
+  
+  /**
+  * \brief Get the row count on a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The row count
+  */
+  PRInt32 getRefRowCount( in AString aRefName );
+  
+  /**
+  * \brief Get the column count on a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The column count
+  */
+  PRInt32 getRefColumnCount( in AString aRefName );
+  
+  /**
+  * \brief Get the value of a cell on a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aRow The row index of the cell 
+  * \param aColumn The column name of the cell 
+  * \return The cell value
+  */
+  AString getRefRowCellByColumn( in AString aRefName, in PRInt32 aRow, in AString aColumn );
+  
+  /**
+  * \brief Calculate the row index of a cell based upon the value of a column
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aColumn The column name of the cell 
+  * \param aValue The value to test against
+  * \return The row index, or -1
+  */
+  PRInt32 getRefRowByColumnValue( in AString aRefName, in AString aColumn, in AString aValue );
+  
+  /**
+  * \brief Determine if a datasource is currently executing its internal queries
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return True, if the query is executing
+  */
+  PRBool isQueryExecuting( in AString aRefName );
+
+  /**
+  * \brief Force the nsIRDFDataSource::GetTargets() method to be called
+  *
+  * At times, it may be convenient to feed a playlist, without actually
+  * displaying the playlist (for instance, sbIPlaylistPlayback operates
+  * upon datasources).
+  *
+  * This method forces the internal RDF method called by the consumers of its
+  * data in RDF format, and properly constructs the internal structures
+  * necessary to properly query this interface for its information.
+  *
+  * \TODO I'm pretty sure this is broken right now
+  * \param aRefName The unique identifier for the datasource 
+  */
+  void forceGetTargets( in AString aRefName );
+
+  /**
+  * \brief Hint to the interface that an observer is about to be attached.
+  *
+  * Because the nsIRDFObserver interface does not include information about
+  * the observing object, this method may be called before setting the
+  * datasources and ref attributes on a xul element to scope updates to
+  * the element's observer to a particular RefName string.
+  *
+  * If code does not call this method, the accepted observer will be told to
+  * update for all changes to all refs published by this object.  That's
+  * probably ugly and definitely a performance drain.
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aObject The object acting as the observer 
+  */
+  void incomingObserver( in AString aRefName, in nsIDOMNode aObject );
+
+  /**
+  * \brief Register sbIPlaylistCommands objects to be shown for specific playlists
+  *
+  * The sbIPlaylistCommands interface is used to algorithmically define a set
+  * of commands to be rendered arbitrarily by a playlist ui object (currently,
+  * playlist.xml).
+  *
+  * Commands can be registered for an entire database (by setting ContextGUID
+  * and leaving TableName null), or for any "type" characteristic.
+  *
+  * \TODO Currently, new registrations overwrite previous registrations.  BAD.  Make them save and return an array.  Please don't overwrite our standard commands.
+  * \param aContextGUID The guid string for the database to register against
+  * \param aTableName The name of the table to register against
+  * \param aPlaylistType The arbitrary type string to register against
+  * \param aCommandObj The command object instance to be used for these playlists
+  * \sa sbIPlaylistCommands, playlist.xml
+  */
+  void registerPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
+  
+  /**
+  * \brief Retrieve the sbIPlaylistCommands object to be shown for a specific playlist
+  *
+  * Given the guid, table, and type strings, return a duplicate instance of
+  * the sbIPlaylistCommands object registered.
+  *
+  * The "type" string has precedence over the "guid"/"table" pair.
+  *
+  * This method is only called by the playlist UI object, in playlist.xml
+  *
+  * \TODO Currently, new registrations overwrite previous registrations.  BAD.  Make them save and return an array.  Please don't overwrite our standard commands.
+  * \param aContextGUID The guid string for the playlist
+  * \param aTableName The name of the playlist
+  * \param aPlaylistType The type of the playlist
+  * \return A newly duplicated command object instance to be used for this playlist
+  * \sa sbIPlaylistCommands, playlist.xml
+  */
+  sbIPlaylistCommands getPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType );
 };

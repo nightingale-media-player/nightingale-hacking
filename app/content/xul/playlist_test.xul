@@ -88,7 +88,7 @@ try
       "&command.tooltip.device"
     ),
   
-    GetNumCommands: function()
+    getNumCommands: function()
     {
       if ( 
           ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -102,7 +102,7 @@ try
       return this.m_Ids.length;
     },
   
-    GetCommandId: function( index )
+    getCommandId: function( index )
     {
       if ( index >= this.m_Ids.length )
       {
@@ -111,7 +111,7 @@ try
       return this.m_Ids[ index ];
     },
   
-    GetCommandText: function( index )
+    getCommandText: function( index )
     {
       if ( index >= this.m_Names.length )
       {
@@ -120,13 +120,13 @@ try
       return this.m_Names[ index ];
     },
   
-    GetCommandFlex: function( index )
+    getCommandFlex: function( index )
     {
       if ( this.m_Ids[ index ] == "*separator*" ) return 1;
       return 0;
     },
 
-    GetCommandToolTipText: function( index )
+    getCommandToolTipText: function( index )
     {
       if ( index >= this.m_Tooltips.length )
       {
@@ -135,7 +135,7 @@ try
       return this.m_Tooltips[ index ];
     },
   
-    GetCommandEnabled: function( index )
+    getCommandEnabled: function( index )
     {
       var retval = false;
       if ( this.m_Playlist )
@@ -161,7 +161,7 @@ try
       return retval;
     },
   
-    OnCommand: function( event )
+    onCommand: function( event )
     {
       if ( event.target && event.target.id )
       {
@@ -218,7 +218,7 @@ try
     
     // The object registered with the sbIPlaylistSource interface acts 
     // as a template for instances bound to specific playlist elements
-    Duplicate: function()
+    duplicate: function()
     {
       var obj = {};
       for ( var i in this )
@@ -228,7 +228,7 @@ try
       return obj;
     },
     
-    SetPlaylist: function( playlist )
+    setPlaylist: function( playlist )
     {
       this.m_Playlist = playlist;
     },

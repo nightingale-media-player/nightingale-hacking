@@ -230,10 +230,10 @@ try
           // Feed the new filter into the list.
           var source = new sbIPlaylistsource();
           // Wait until it is done executing
-          if ( ! source.IsQueryExecuting( thePlaylistRef.getValue() ) )
+          if ( ! source.isQueryExecuting( thePlaylistRef.getValue() ) )
           {
             // ...before attempting to override.
-            source.FeedPlaylistFilterOverride( thePlaylistRef.getValue(), widget.list.label );
+            source.setSearchString( thePlaylistRef.getValue(), widget.list.label );
             theLastSearchEventTarget = null;
             return;
           }

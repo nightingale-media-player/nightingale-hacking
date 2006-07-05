@@ -345,28 +345,23 @@ sbPlaylistsource::~sbPlaylistsource()
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::FeedPlaylist(const PRUnichar* RefName,
-                               const PRUnichar* ContextGUID,
-                               const PRUnichar* TableName)
+sbPlaylistsource::FeedPlaylist(const nsAString &aRefName,
+                               const nsAString &aContextGUID,
+                               const nsAString &aTableName)
 {
   LOG(("sbPlaylistsource::FeedPlaylist"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(ContextGUID);
-  NS_ENSURE_ARG_POINTER(TableName);
 
   METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-
   // See if the feed is already there.
-  sbFeedInfo* testinfo = GetFeedInfo(strRefName);
+  sbFeedInfo* testinfo = GetFeedInfo(aRefName);
   if (testinfo) {
     // Found it.  Get the refcount and increment it.
     testinfo->m_RefCount++;
+    // Clear whatever might have been there before.
     testinfo->m_Resultset = nsnull;
     return NS_OK;
   }
@@ -381,7 +376,7 @@ sbPlaylistsource::FeedPlaylist(const PRUnichar* RefName,
   rv = query->SetAsyncQuery(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->SetDatabaseGUID(ContextGUID);
+  rv = query->SetDatabaseGUID(nsPromiseFlatString(aContextGUID).get());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // New callback for a new query.
@@ -400,7 +395,7 @@ sbPlaylistsource::FeedPlaylist(const PRUnichar* RefName,
 
   // Make a resource for it.
   nsIRDFResource *new_resource;
-  rv = sRDFService->GetResource(NS_ConvertUTF16toUTF8(strRefName),
+  rv = sRDFService->GetResource(NS_ConvertUTF16toUTF8(aRefName),
                                 &new_resource);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -408,56 +403,55 @@ sbPlaylistsource::FeedPlaylist(const PRUnichar* RefName,
   sbFeedInfo info;
   info.m_Query = query;
   info.m_RefCount = 1;
-  info.m_Ref = strRefName;
-  info.m_Table = TableName;
-  info.m_GUID = ContextGUID;
+  info.m_Ref = aRefName;
+  info.m_Table = aTableName;
+  info.m_GUID = aContextGUID;
   info.m_RootResource = new_resource;
   info.m_Server = this;
   info.m_Callback = callback;
   info.m_ForceGetTargets = PR_FALSE;
   g_InfoMap[new_resource] = info;
   callback->m_Info = &g_InfoMap[new_resource];
-  g_StringMap[strRefName] = new_resource;
+  g_StringMap[nsPromiseFlatString(aRefName)] = new_resource;
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::ClearPlaylist(const PRUnichar* RefName)
+sbPlaylistsource::ClearPlaylist(const nsAString &aRefName)
 {
   LOG(("sbPlaylistsource::ClearPlaylist"));
-  NS_ENSURE_ARG_POINTER(RefName);
 
   METHOD_SHORTCIRCUIT;
 
-  ClearPlaylistSTR(RefName);
+  ClearPlaylistSTR(nsPromiseFlatString(aRefName).get());
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::IncomingObserver(const PRUnichar* RefName,
-                                   nsIDOMNode*      Observer)
+sbPlaylistsource::IncomingObserver(const nsAString &aRefName,
+                                   nsIDOMNode*      aObject)
 {
   LOG(("sbPlaylistsource::IncomingObserver %s %x", NS_ConvertUTF16toUTF8(RefName).get(), Observer));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(Observer);
+  NS_ENSURE_ARG_POINTER(aObject);
 
   METHOD_SHORTCIRCUIT;
 
+  // See if the object is already observing us
   for (observers_t::iterator oi = g_Observers.begin();
        oi != g_Observers.end();
        oi++ ) {
     // Find the pointer?
-    if ((*oi).m_Ptr == Observer) {
-      const_cast<sbObserver&>(*oi).m_Ref = RefName;
-      // Assume that no AddObserver call will occur.
+    if ((*oi).m_Ptr == aObject) {
+      const_cast<sbObserver&>(*oi).m_Ref = aRefName;
+      // Assume that no AddObserver call will occur, since we're already in the list.
       return NS_OK;
     }
   }
-  // Not found
-  m_IncomingObserver = RefName;
-  m_IncomingObserverPtr = Observer;
+  // Not found.  Prep the object to assign these to the next incoming observer.
+  m_IncomingObserver = aRefName;
+  m_IncomingObserverPtr = aObject;
   return NS_OK;
 }
 
@@ -497,44 +491,10 @@ sbPlaylistsource::ClearPlaylistRDF(nsIRDFResource* RefResource)
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetQueryResult(const PRUnichar*    RefName,
-                                 sbIDatabaseResult** _retval)
-{
-  LOG(("sbPlaylistsource::GetQueryResult %s", NS_ConvertUTF16toUTF8(RefName).get()));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  METHOD_SHORTCIRCUIT;
-
-  // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
-
-  // not finding a Feed is "ok"
-  if (!info)
-    return NS_OK;
-
-  nsAutoMonitor mon(g_pMonitor);
-
-  if (info->m_Resultset) {
-    *_retval = info->m_Resultset;
-    NS_ADDREF(*_retval);
-    return NS_OK;
-  }
-
-  // _retval is AddRef'd in GetResultObject
-  nsresult rv = info->m_Query->GetResultObject(_retval);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Whoa, failed getting Result Object");
-
-  return rv;
-}
-
-NS_IMETHODIMP
-sbPlaylistsource::GetRefRowCount(const PRUnichar* RefName,
+sbPlaylistsource::GetRefRowCount(const nsAString &aRefName,
                                  PRInt32*         _retval)
 {
   LOG(("sbPlaylistsource::GetRefRowCount %s", NS_ConvertUTF16toUTF8(RefName).get()));
-  NS_ENSURE_ARG_POINTER(RefName);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
@@ -543,7 +503,7 @@ sbPlaylistsource::GetRefRowCount(const PRUnichar* RefName,
   nsresult rv;
 
   nsCOMPtr<sbIDatabaseResult> resultset;
-  rv = GetQueryResult(RefName, getter_AddRefs(resultset));
+  rv = GetQueryResult(aRefName, getter_AddRefs(resultset));
 
   if (NS_SUCCEEDED(rv) && resultset)
     resultset->GetRowCount(_retval);
@@ -553,73 +513,54 @@ sbPlaylistsource::GetRefRowCount(const PRUnichar* RefName,
 }
 
 /* wstring GetRefGUID (in wstring RefName); */
-NS_IMETHODIMP sbPlaylistsource::GetRefGUID(const PRUnichar *RefName, PRUnichar **_retval)
+NS_IMETHODIMP sbPlaylistsource::GetRefGUID(const nsAString &aRefName, nsAString &_retval)
 {
   LOG(("sbPlaylistsource::GetRefGUID"));
-  NS_ENSURE_ARG_POINTER(RefName);
 
   METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
 
   // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
 
   if (info) {
-    // Clunky, return the string
-    PRUint32 nLen = info->m_GUID.Length() + 1;
-    *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
-    memcpy(*_retval,
-      info->m_GUID.get(),
-      (nLen - 1) * sizeof(PRUnichar));
-    (*_retval)[info->m_GUID.Length()] = 0;
+    _retval = info->m_GUID;
     return NS_OK;
   }
 
   // in no info, blank string
-  *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
-  **_retval = 0;
+  _retval = NS_LITERAL_STRING("");
 
   return NS_OK;
 }
 
 /* wstring GetRefTable (in wstring RefName); */
-NS_IMETHODIMP sbPlaylistsource::GetRefTable(const PRUnichar *RefName, PRUnichar **_retval)
+NS_IMETHODIMP sbPlaylistsource::GetRefTable(const nsAString &aRefName, nsAString &_retval)
 {
   LOG(("sbPlaylistsource::GetRefTable"));
-  NS_ENSURE_ARG_POINTER(RefName);
 
   METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
 
   // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
 
   if (info) {
-    // Clunky, return the string
-    PRUint32 nLen = info->m_Table.Length() + 1;
-    *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
-    memcpy(*_retval,
-      info->m_Table.get(),
-      (nLen - 1) * sizeof(PRUnichar));
-    (*_retval)[info->m_Table.Length()] = 0;
+    _retval = info->m_Table;
     return NS_OK;
   }
 
   // in no info, blank string
-  *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
-  **_retval = 0;
+  _retval = NS_LITERAL_STRING("");
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetRefColumnCount(const PRUnichar* RefName,
+sbPlaylistsource::GetRefColumnCount(const nsAString &aRefName,
                                     PRInt32*         _retval)
 {
   LOG(("sbPlaylistsource::GetRefColumnCount %s", NS_ConvertUTF16toUTF8(RefName).get()));
-  NS_ENSURE_ARG_POINTER(RefName);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
@@ -628,7 +569,7 @@ sbPlaylistsource::GetRefColumnCount(const PRUnichar* RefName,
   nsresult rv;
 
   nsCOMPtr<sbIDatabaseResult> resultset;
-  rv = GetQueryResult(RefName, getter_AddRefs(resultset));
+  rv = GetQueryResult(aRefName, getter_AddRefs(resultset));
 
   if (NS_SUCCEEDED(rv) && resultset)
     resultset->GetColumnCount(_retval);
@@ -638,31 +579,27 @@ sbPlaylistsource::GetRefColumnCount(const PRUnichar* RefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
-                                        PRInt32          Row,
-                                        const PRUnichar* Column,
-                                        PRUnichar**      _retval)
+sbPlaylistsource::GetRefRowCellByColumn(const nsAString &aRefName,
+                                        PRInt32          aRow,
+                                        const nsAString &aColumn,
+                                        nsAString       &_retval)
 {
   LOG(("sbPlaylistsource::GetRefRowCellByColumn"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(Column);
-  NS_ENSURE_ARG_POINTER(_retval);
 
-  *_retval = nsnull;
+  _retval = NS_LITERAL_STRING("");
 
   METHOD_SHORTCIRCUIT;
   nsAutoMonitor mon(g_pMonitor);
 
   // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  NS_ASSERTION(Row < info->m_ResList.size(), "sbPlaylistsource::GetRefRowCellByColumn, Row is out of bounds!");
-  if(Row >= info->m_ResList.size() && info->m_ResList.size() != 0) Row = info->m_ResList.size() - 1;
+  NS_ASSERTION(aRow < info->m_ResList.size(), "sbPlaylistsource::GetRefRowCellByColumn, Row is out of bounds!");
+  if(aRow >= (PRInt32)info->m_ResList.size() && info->m_ResList.size() != 0) aRow = info->m_ResList.size() - 1;
   else if(info->m_ResList.size() == 0) return NS_OK;
 
-  nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[Row];
+  nsCOMPtr<nsIRDFResource> next_resource = info->m_ResList[aRow];
   valuemap_t::iterator v = g_ValueMap.find(next_resource);
   if (v != g_ValueMap.end()) {
     sbValueInfo &valueInfo = (*v).second;
@@ -672,9 +609,12 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
     }
     // The LoadRowResults above will fail silently if the table has been deleted and the UI is still asking for values.
     if (valueInfo.m_Resultset) {
+      PRUnichar *val = nsnull;
       rv = valueInfo.m_Resultset->GetRowCellByColumn(valueInfo.m_ResultsRow,
-                                                    Column,
-                                                    _retval);
+                                                    nsPromiseFlatString(aColumn).get(),
+                                                    &val);
+      _retval = val;
+      nsMemory::Free(val);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -683,15 +623,12 @@ sbPlaylistsource::GetRefRowCellByColumn(const PRUnichar* RefName,
 
 
 NS_IMETHODIMP
-sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar* RefName,
-                                         const PRUnichar* Column,
-                                         const PRUnichar* Value,
+sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
+                                         const nsAString &aColumn,
+                                         const nsAString &aValue,
                                          PRInt32*         _retval)
 {
   LOG(("sbPlaylistsource::GetRefRowByColumnValue"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(Column);
-  NS_ENSURE_ARG_POINTER(Value);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
@@ -700,8 +637,7 @@ sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar* RefName,
   *_retval = -1;
 
   // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
   nsresult rv;
@@ -734,9 +670,7 @@ sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar* RefName,
     aw_str = NS_LITERAL_STRING(" and ");
 
   // Append the metadata column restraint
-  nsDependentString value_str(Value);
-  nsDependentString column_str(Column);
-  query += aw_str + column_str + eq_str +qu_str + value_str + qu_str;
+  query += aw_str + aColumn + eq_str + qu_str + aValue + qu_str;
 
   PRInt32 exeReturn;
   rv = m_SharedQuery->AddQuery(query.get());
@@ -790,19 +724,17 @@ sbPlaylistsource::GetRefRowByColumnValue(const PRUnichar* RefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::IsQueryExecuting(const PRUnichar* RefName,
+sbPlaylistsource::IsQueryExecuting(const nsAString &aRefName,
                                    PRBool*          _retval)
 {
   LOG(("sbPlaylistsource::IsQueryExecuting"));
-  NS_ENSURE_ARG_POINTER(RefName);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
   *_retval = PR_FALSE;
 
   // Find the ref string in the stringmap.
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
   return info->m_Query->IsExecuting(_retval);
@@ -848,21 +780,16 @@ ParseStringIntoArray(const nsString& aString,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
-                                             const PRUnichar* FilterString)
+sbPlaylistsource::SetSearchString(const nsAString &aRefName,
+                                  const nsAString &aSearchString)
 {
-  LOG(("sbPlaylistsource::FeedPlaylistFilterOverride"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(FilterString);
+  LOG(("sbPlaylistsource::SetSearchString"));
 
   METHOD_SHORTCIRCUIT;
 
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  nsDependentString filter_str(FilterString);
-
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
   NS_ENSURE_TRUE(info->m_Resultset, NS_ERROR_UNEXPECTED);
 
@@ -873,8 +800,8 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
 
   // XXXredfive may want to pull this out into a helper function later
   nsAString::const_iterator start, end;
-  filter_str.BeginReading(start);
-  filter_str.EndReading(end);
+  aSearchString.BeginReading(start);
+  aSearchString.EndReading(end);
 
   // check to see if the new query is more restrictive
   PRBool subquery = FindInReadable(info->m_Override, start, end);
@@ -887,24 +814,23 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
     return NS_OK;
   }
 
-  info->m_Override = filter_str;
+  info->m_Override = aSearchString;
 
-  if (filter_str.IsEmpty()) {
+  if (aSearchString.IsEmpty()) {
     // Revert to the normal override.
     mon.Exit();
-    return FeedFilters(RefName, nsnull);
+    return ExecuteFeed(aRefName, nsnull);
   }
-
 
   // Crack the incoming list of filter strings (space delimited)
   nsStringArray filter_values;
-  rv = ParseStringIntoArray(filter_str, &filter_values, NS_L(' '));
+  rv = ParseStringIntoArray(nsPromiseFlatString(aSearchString), &filter_values, NS_L(' '));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsDependentString table_name(info->m_Table);
 
   // The beginning of the main query string before we dump on it.
-  nsAutoString main_query_str = info->m_SimpleQueryStr +where_str;
+  nsAutoString main_query_str = info->m_SimpleQueryStr + where_str;
 
   PRInt32 filter_count = (PRInt32)info->m_Filters.size();
   PRBool any_column = PR_FALSE;
@@ -939,7 +865,7 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
       sbFeedInfo* filter_info = GetFeedInfo((*f).second.m_Ref);
       NS_ENSURE_TRUE(filter_info, NS_ERROR_NULL_POINTER);
 
-      filter_info->m_Override = filter_str;
+      filter_info->m_Override = aSearchString;
       rv = filter_info->m_Query->ResetQuery();
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1021,75 +947,56 @@ sbPlaylistsource::FeedPlaylistFilterOverride(const PRUnichar* RefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetFilterOverride(const PRUnichar* RefName,
-                                    PRUnichar**      _retval)
+sbPlaylistsource::GetSearchString(const nsAString &aRefName,
+                                  nsAString       &_retval)
 {
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  LOG(("sbPlaylistsource::GetFilterOverride"));
+  LOG(("sbPlaylistsource::GetSearchString"));
   METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  if (info->m_Override.IsEmpty()) {
-    *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
-    **_retval = 0;
-    return NS_OK;
-  }
-
-  // Clunky, return the string
-  PRUint32 nLen = info->m_Override.Length() + 1;
-  *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
-  memcpy(*_retval, info->m_Override.get(), (nLen - 1) * sizeof(PRUnichar));
-  (*_retval)[info->m_Override.Length()] = 0;
+  _retval = info->m_Override;
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::SetFilter(const PRUnichar* RefName,
-                            PRInt32          Index,
-                            const PRUnichar* FilterString,
-                            const PRUnichar* FilterRefName,
-                            const PRUnichar* FilterColumn)
+sbPlaylistsource::SetFilter(const nsAString &aRefName,
+                            PRInt32          aIndex,
+                            const nsAString &aFilterString,
+                            const nsAString &aFilterRefName,
+                            const nsAString &aFilterColumn)
 {
   LOG(("sbPlaylistsource::SetFilter"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(FilterString);
-  NS_ENSURE_ARG_POINTER(FilterRefName);
-  NS_ENSURE_ARG_POINTER(FilterColumn);
 
   METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   if (!info)
     return NS_OK;
 
-  filtermap_t::iterator filterIter = info->m_Filters.find(Index);
+  filtermap_t::iterator filterIter = info->m_Filters.find(aIndex);
   if (filterIter != info->m_Filters.end()) {
     // Change the existing strings
-    (*filterIter).second.m_Filter = FilterString;
-    (*filterIter).second.m_Column = FilterColumn;
-    (*filterIter).second.m_Ref    = FilterRefName;
+    (*filterIter).second.m_Filter = aFilterString;
+    (*filterIter).second.m_Column = aFilterColumn;
+    (*filterIter).second.m_Ref    = aFilterRefName;
   } else {
     // Make a new one, add it to the playlist feed
     sbFilterInfo filter;
-    filter.m_Filter = FilterString;
-    filter.m_Column = FilterColumn;
-    filter.m_Ref    = FilterRefName;
-    info->m_Filters[ Index ] = filter;
+    filter.m_Filter = aFilterString;
+    filter.m_Column = aFilterColumn;
+    filter.m_Ref    = aFilterRefName;
+    info->m_Filters[ aIndex ] = filter;
 
-    filterIter = info->m_Filters.find(Index);
+    filterIter = info->m_Filters.find(aIndex);
   }
 
   // Set all the later filters blank.
@@ -1101,11 +1008,10 @@ sbPlaylistsource::SetFilter(const PRUnichar* RefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetNumFilters(const PRUnichar* RefName,
+sbPlaylistsource::GetNumFilters(const nsAString &aRefName,
                                 PRInt32*         _retval)
 {
   LOG(("sbPlaylistsource::GetNumFilters"));
-  NS_ENSURE_ARG_POINTER(RefName);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
@@ -1114,33 +1020,29 @@ sbPlaylistsource::GetNumFilters(const PRUnichar* RefName,
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
 
   if (info)
     *_retval = (PRInt32)info->m_Filters.size();
 
-  LOG(("   count: %d", *_retval));
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::ClearFilter(const PRUnichar* RefName,
-                              PRInt32          Index)
+sbPlaylistsource::ClearFilter(const nsAString &aRefName,
+                              PRInt32          aIndex)
 {
   LOG(("sbPlaylistsource::ClearFilter"));
-  NS_ENSURE_ARG_POINTER(RefName);
 
   METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  filtermap_t::iterator f = info->m_Filters.find(Index);
+  filtermap_t::iterator f = info->m_Filters.find(aIndex);
   if (f != info->m_Filters.end()) {
       // Remember to make the destructor clean up
       info->m_Filters.erase(f);
@@ -1149,92 +1051,74 @@ sbPlaylistsource::ClearFilter(const PRUnichar* RefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetFilter(const PRUnichar* RefName,
-                            PRInt32          Index,
-                            PRUnichar**      _retval)
+sbPlaylistsource::GetFilter(const nsAString &aRefName,
+                            PRInt32          aIndex,
+                            nsAString       &_retval)
 {
   LOG(("sbPlaylistsource::GetFilter"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   if (info && info->m_Override.IsEmpty()) {
-    filtermap_t::iterator f = info->m_Filters.find(Index);
+    // Find the specific filter
+    filtermap_t::iterator f = info->m_Filters.find(aIndex);
     if (f != info->m_Filters.end()) {
-      // Clunky, return the string
-      PRUint32 nLen = (*f).second.m_Filter.Length() + 1;
-      *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
-      memcpy(*_retval,
-             (*f).second.m_Filter.get(),
-             (nLen - 1) * sizeof(PRUnichar));
-      (*_retval)[(*f).second.m_Filter.Length()] = 0;
+      // And return the filter string
+      _retval = (*f).second.m_Filter;
       return NS_OK;
     }
   }
 
   // If we have an override, pretend the filter string is blank.
-  *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
-  **_retval = 0;
+  _retval = NS_LITERAL_STRING("");
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetFilterRef(const PRUnichar* RefName,
-                               PRInt32          Index,
-                               PRUnichar**      _retval)
+sbPlaylistsource::GetFilterRef(const nsAString &aRefName,
+                               PRInt32          aIndex,
+                               nsAString       &_retval)
 {
   LOG(("sbPlaylistsource::GetFilterRef"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
 
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
 
   if (info) {
-    filtermap_t::iterator f = info->m_Filters.find(Index);
+    filtermap_t::iterator f = info->m_Filters.find(aIndex);
     if (f != info->m_Filters.end()) {
-      // Clunky, return the string
-      PRUint32 nLen = (*f).second.m_Ref.Length() + 1;
-      *_retval = (PRUnichar*)PR_Calloc(nLen, sizeof(PRUnichar));
-      memcpy(*_retval,
-             (*f).second.m_Ref.get(),
-             (nLen - 1) * sizeof(PRUnichar));
-      (*_retval)[(*f).second.m_Ref.Length()] = 0;
+      _retval = (*f).second.m_Ref;
       return NS_OK;
     }
   }
 
   // in no info, blank string
-  *_retval = (PRUnichar*)PR_Calloc(1, sizeof(PRUnichar));
-  **_retval = 0;
+  _retval = NS_LITERAL_STRING("");
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::FeedFilters(const PRUnichar* RefName,
+sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
                               PRInt32*         _retval)
 {
-  LOG(("sbPlaylistsource::FeedFilters"));
-  NS_ENSURE_ARG_POINTER(RefName);
-  // NS_ENSURE_ARG_POINTER(_retval);
+  LOG(("sbPlaylistsource::ExecuteFeed"));
 
   METHOD_SHORTCIRCUIT;
 
-  // No, you don't HAVE to pass in a value.
   // XXX Why does this need a retval param if we're not going to use it?
+  // MIG Because it is used.  Waaaaaay down at the bottom.  You just don't
+  // __have__ to care.  So if you pass in a null, we set this pointer to a
+  // stack variable and discard it at the end of the function.
   PRInt32 retval;
   if (!_retval)
     _retval = &retval;
@@ -1242,8 +1126,7 @@ sbPlaylistsource::FeedFilters(const PRUnichar* RefName,
   // LOCK IT.
   nsAutoMonitor mon(g_pMonitor);
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
   info->m_Override.Assign(NS_LITERAL_STRING(""));
@@ -1325,7 +1208,7 @@ sbPlaylistsource::FeedFilters(const PRUnichar* RefName,
     ParseStringIntoArray(filter_str, &filter_values, NS_L(';'));
 
     // Compose the SQL filter string
-    nsString sql_filter_str;
+    nsAutoString sql_filter_str;
     PRBool any_filter = PR_FALSE;
     PRInt32 count = filter_values.Count();      
     for (PRInt32 index = 0; index < count; index++) {
@@ -1361,9 +1244,9 @@ sbPlaylistsource::FeedFilters(const PRUnichar* RefName,
     // Make sure there is a feed for this filter
     sbFeedInfo* filter_info = GetFeedInfo((*filterIter).second.m_Ref);
     if (!filter_info) {
-      FeedPlaylist((*filterIter).second.m_Ref.get(),
-                   info->m_GUID.get(),
-                   info->m_Table.get());
+      FeedPlaylist((*filterIter).second.m_Ref,
+                   info->m_GUID,
+                   info->m_Table);
       filter_info = GetFeedInfo((*filterIter).second.m_Ref);
       NS_ENSURE_TRUE(filter_info, NS_ERROR_FAILURE);
     }
@@ -1421,54 +1304,50 @@ sbPlaylistsource::FeedFilters(const PRUnichar* RefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::RegisterPlaylistCommands(const PRUnichar*     ContextGUID,
-                                           const PRUnichar*     TableName,
-                                           const PRUnichar*     PlaylistType,
-                                           sbIPlaylistCommands* CommandObj)
+sbPlaylistsource::RegisterPlaylistCommands(const nsAString     &aContextGUID,
+                                           const nsAString     &aTableName,
+                                           const nsAString     &aPlaylistType,
+                                           sbIPlaylistCommands *aCommandObj)
 {
   LOG(("sbPlaylistsource::RegisterPlaylistCommands"));
-  NS_ENSURE_ARG_POINTER(ContextGUID);
-  NS_ENSURE_ARG_POINTER(TableName);
-  NS_ENSURE_ARG_POINTER(PlaylistType);
-  NS_ENSURE_ARG_POINTER(CommandObj);
+  NS_ENSURE_ARG_POINTER(aCommandObj);
 
   METHOD_SHORTCIRCUIT;
 
-  nsDependentString key(ContextGUID);
-  nsDependentString type(PlaylistType);
+  // Yes, I'm copying strings 1 time too many here.  I can live with that.
+  nsString key(aContextGUID);
+  nsString type(aPlaylistType);
 
   // Hah, uh, NO.
   if (key.Equals(NS_LITERAL_STRING("songbird")))
     return NS_OK;
 
-  key += TableName;
+  key += aTableName;
 
-  g_CommandMap[type] = CommandObj;
-  g_CommandMap[key] = CommandObj;
+  g_CommandMap[type] = aCommandObj;
+  g_CommandMap[key] = aCommandObj;
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::GetPlaylistCommands(const PRUnichar*      ContextGUID,
-                                      const PRUnichar*      TableName,
-                                      const PRUnichar*      PlaylistType,
-                                      sbIPlaylistCommands** _retval)
+sbPlaylistsource::GetPlaylistCommands(const nsAString      &aContextGUID,
+                                      const nsAString      &aTableName,
+                                      const nsAString      &aPlaylistType,
+                                      sbIPlaylistCommands **_retval)
 {
   LOG(("sbPlaylistsource::GetPlaylistCommands"));
-  NS_ENSURE_ARG_POINTER(ContextGUID);
-  NS_ENSURE_ARG_POINTER(TableName);
-  NS_ENSURE_ARG_POINTER(PlaylistType);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
 
 
-  nsDependentString key(ContextGUID);
-  nsDependentString type(PlaylistType);
+  nsString key(aContextGUID);
+  nsString type(aPlaylistType);
 
-  key += TableName;
+  key += aTableName;
 
+  // "type" takes precedence over specific table names
   commandmap_t::iterator c = g_CommandMap.find(type);
   if (c != g_CommandMap.end()) {
     (*c).second->Duplicate(_retval);
@@ -1514,7 +1393,7 @@ sbPlaylistsource::UpdateObservers()
        r != old_garbage.end();
        r++) {
     if ((*r).m_ForceGetTargets) {
-      rv = ForceGetTargets((*r).m_Ref.get());
+      rv = ForceGetTargets((*r).m_Ref);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -1803,15 +1682,13 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::ForceGetTargets(const PRUnichar* RefName)
+sbPlaylistsource::ForceGetTargets(const nsAString &aRefName)
 {
   LOG(("sbPlaylistsource::ForceGetTargets"));
-  NS_ENSURE_ARG_POINTER(RefName);
 
   METHOD_SHORTCIRCUIT;
 
-  nsDependentString strRefName(RefName);
-  sbFeedInfo* info = GetFeedInfo(strRefName);
+  sbFeedInfo* info = GetFeedInfo(aRefName);
   
   if (info) {
     // So, like, force it. We don't actually want to hang on to
@@ -2537,5 +2414,37 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
 
   return NS_OK;
 }
+
+// This is now an internal method.
+NS_IMETHODIMP
+sbPlaylistsource::GetQueryResult(const nsAString    &aRefName,
+                                 sbIDatabaseResult** _retval)
+{
+  LOG(("sbPlaylistsource::GetQueryResult %s", NS_ConvertUTF16toUTF8(aRefName).get()));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  METHOD_SHORTCIRCUIT;
+
+  // Find the ref string in the stringmap.
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+
+  if (!info)
+    return NS_ERROR_FAILURE;  // Since JS doesn't call it, use the return codes
+
+  nsAutoMonitor mon(g_pMonitor);
+
+  if (info->m_Resultset) {
+    *_retval = info->m_Resultset;
+    NS_ADDREF(*_retval);
+    return NS_OK;
+  }
+
+  // _retval is AddRef'd in GetResultObject
+  nsresult rv = info->m_Query->GetResultObject(_retval);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Whoa, failed getting Result Object");
+
+  return rv;
+}
+
 
 #pragma warning(pop)

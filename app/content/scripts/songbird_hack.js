@@ -273,7 +273,7 @@ function SBInitialize()
         
         if ( tree_ref.length )
         {
-          var rows = Poll.GetRefRowCount( tree_ref );
+          var rows = Poll.getRefRowCount( tree_ref );
           if ( rows > 0 )
           {
             var items = "items";
@@ -521,8 +521,8 @@ function onCurrentTrack()
   if (ref != "") {
     source_ref = ref;
     var source = new sbIPlaylistsource();
-    guid = source.GetRefGUID( ref );
-    table = source.GetRefTable( ref );
+    guid = source.getRefGUID( ref );
+    table = source.getRefTable( ref );
   } else {
     source_ref = "NC:songbird_library";
     guid = "songbird";
@@ -1122,7 +1122,7 @@ var SBWebPlaylistCommands =
 //    "&command.tooltip.device"
   ),
 
-  GetNumCommands: function()
+  getNumCommands: function()
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -1136,7 +1136,7 @@ var SBWebPlaylistCommands =
     return this.m_Ids.length;
   },
 
-  GetCommandId: function( index )
+  getCommandId: function( index )
   {
     if ( index >= this.m_Ids.length )
     {
@@ -1145,7 +1145,7 @@ var SBWebPlaylistCommands =
     return this.m_Ids[ index ];
   },
 
-  GetCommandText: function( index )
+  getCommandText: function( index )
   {
     if ( index >= this.m_Names.length )
     {
@@ -1154,13 +1154,13 @@ var SBWebPlaylistCommands =
     return this.m_Names[ index ];
   },
 
-  GetCommandFlex: function( index )
+  getCommandFlex: function( index )
   {
     if ( this.m_Ids[ index ] == "*separator*" ) return 1;
     return 0;
   },
 
-  GetCommandToolTipText: function( index )
+  getCommandToolTipText: function( index )
   {
     if ( index >= this.m_Tooltips.length )
     {
@@ -1169,7 +1169,7 @@ var SBWebPlaylistCommands =
     return this.m_Tooltips[ index ];
   },
 
-  GetCommandEnabled: function( index )
+  getCommandEnabled: function( index )
   {
     var retval = false;
     switch ( this.m_Ids[index] )
@@ -1184,7 +1184,7 @@ var SBWebPlaylistCommands =
     return retval;
   },
 
-  OnCommand: function( event )
+  onCommand: function( event )
   {
     if ( event.target && event.target.id )
     {
@@ -1296,7 +1296,7 @@ var SBWebPlaylistCommands =
   
   // The object registered with the sbIPlaylistSource interface acts 
   // as a template for instances bound to specific playlist elements
-  Duplicate: function()
+  duplicate: function()
   {
     var obj = {};
     for ( var i in this )
@@ -1306,7 +1306,7 @@ var SBWebPlaylistCommands =
     return obj;
   },
   
-  SetPlaylist: function( playlist )
+  setPlaylist: function( playlist )
   {
     this.m_Playlist = playlist;
   },
@@ -1328,7 +1328,7 @@ var SBWebPlaylistCommands =
 if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
 {
   var source = new sbIPlaylistsource();
-  source.RegisterPlaylistCommands( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
+  source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
 }
 
 function onBrowserPlaylist()
@@ -1337,8 +1337,8 @@ function onBrowserPlaylist()
   if ( ! thePlaylistTree )
   {
     if (!theWebPlaylist.source ||
-        theWebPlaylist.source.GetRefGUID(theWebPlaylist.ref) != WEB_PLAYLIST_CONTEXT ||
-        theWebPlaylist.source.GetRefTable(theWebPlaylist.ref) != WEB_PLAYLIST_TABLE)
+        theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != WEB_PLAYLIST_CONTEXT ||
+        theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != WEB_PLAYLIST_TABLE)
     {
       SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
       theWebPlaylist.bind( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, null, SBWebPlaylistCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
@@ -1394,8 +1394,8 @@ function onBrowserDownload()
     }
 
     if (!theWebPlaylist.source ||
-        theWebPlaylist.source.GetRefGUID(theWebPlaylist.ref) != guid ||
-        theWebPlaylist.source.GetRefTable(theWebPlaylist.ref) != table)
+        theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != guid ||
+        theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != table)
     {
       theWebPlaylist.bind( guid, table, null, SBDownloadCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
     }
@@ -2867,7 +2867,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                   // Register the guid and table with the playlist source to always show special download commands.
                   SBDownloadCommands.m_Device = downloadDevice;
                   var source = new sbIPlaylistsource();
-                  source.RegisterPlaylistCommands( downloadDevice.GetContext(''), downloadTable.value, "download", SBDownloadCommands );
+                  source.registerPlaylistCommands( downloadDevice.GetContext(''), downloadTable.value, "download", SBDownloadCommands );
                 }
             }
         }
@@ -2919,7 +2919,7 @@ var SBDownloadCommands =
     "&command.tooltip.showwebplaylist"
   ),
 
-  GetNumCommands: function()
+  getNumCommands: function()
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -2933,7 +2933,7 @@ var SBDownloadCommands =
     return this.m_Ids.length;
   },
 
-  GetCommandId: function( index )
+  getCommandId: function( index )
   {
     // Ah! magic number - what does it mean???
     if ( index == 2 ) 
@@ -2957,7 +2957,7 @@ var SBDownloadCommands =
     return this.m_Ids[ index ];
   },
 
-  GetCommandText: function( index )
+  getCommandText: function( index )
   {
     if ( index == 2 )
     {
@@ -2980,13 +2980,13 @@ var SBDownloadCommands =
     return this.m_Names[ index ];
   },
 
-  GetCommandFlex: function( index )
+  getCommandFlex: function( index )
   {
     if ( this.m_Ids[ index ] == "*separator*" ) return 1;
     return 0;
   },
 
-  GetCommandToolTipText: function( index )
+  getCommandToolTipText: function( index )
   {
     if ( index == 2 )
     {
@@ -3009,7 +3009,7 @@ var SBDownloadCommands =
     return this.m_Tooltips[ index ];
   },
 
-  GetCommandEnabled: function( index )
+  getCommandEnabled: function( index )
   {
     var retval = false;
     if ( this.m_Device )
@@ -3027,7 +3027,7 @@ var SBDownloadCommands =
     return retval;
   },
 
-  OnCommand: function( event )
+  onCommand: function( event )
   {
     if ( this.m_Device && event.target && event.target.id )
     {
@@ -3074,7 +3074,7 @@ var SBDownloadCommands =
   
   // The object registered with the sbIPlaylistSource interface acts 
   // as a template for instances bound to specific playlist elements
-  Duplicate: function()
+  duplicate: function()
   {
     var obj = {};
     for ( var i in this )
@@ -3084,7 +3084,7 @@ var SBDownloadCommands =
     return obj;
   },
   
-  SetPlaylist: function( playlist )
+  setPlaylist: function( playlist )
   {
     this.m_Playlist = playlist;
   },
@@ -3121,11 +3121,11 @@ if (deviceManager)
     var source = new sbIPlaylistsource();
     try
     {
-      source.RegisterPlaylistCommands( guid, table, "download", SBDownloadCommands );
+      source.registerPlaylistCommands( guid, table, "download", SBDownloadCommands );
     }
     catch ( err )
     {
-      alert( "source.RegisterPlaylistCommands( " + guid+ ", " + table+ " );\r\n" + err )
+      alert( "source.registerPlaylistCommands( " + guid+ ", " + table+ " );\r\n" + err )
     }
   }
 }
@@ -3168,7 +3168,7 @@ var SBCDCommands =
     "&command.tooltip.edit"
   ),
 
-  GetNumCommands: function()
+  getNumCommands: function()
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -3182,7 +3182,7 @@ var SBCDCommands =
     return this.m_Ids.length;
   },
 
-  GetCommandId: function( index )
+  getCommandId: function( index )
   {
     if ( index >= this.m_Ids.length )
     {
@@ -3191,7 +3191,7 @@ var SBCDCommands =
     return this.m_Ids[ index ];
   },
 
-  GetCommandText: function( index )
+  getCommandText: function( index )
   {
     if ( index >= this.m_Names.length )
     {
@@ -3200,14 +3200,14 @@ var SBCDCommands =
     return this.m_Names[ index ];
   },
 
-  GetCommandFlex: function( index )
+  getCommandFlex: function( index )
   {
     if ( this.m_Ids[ index ] == "*separator*" ) return 1;
     return 0;
   },
 
 
-  GetCommandToolTipText: function( index )
+  getCommandToolTipText: function( index )
   {
     if ( index >= this.m_Tooltips.length )
     {
@@ -3216,7 +3216,7 @@ var SBCDCommands =
     return this.m_Tooltips[ index ];
   },
 
-  GetCommandEnabled: function( index )
+  getCommandEnabled: function( index )
   {
     var retval = false;
     if ( this.m_Device )
@@ -3233,7 +3233,7 @@ var SBCDCommands =
     return retval;
   },
 
-  OnCommand: function( event )
+  onCommand: function( event )
   {
     if ( this.m_Device && event.target && event.target.id )
     {
@@ -3294,7 +3294,7 @@ var SBCDCommands =
   
   // The object registered with the sbIPlaylistSource interface acts 
   // as a template for instances bound to specific playlist elements
-  Duplicate: function()
+  duplicate: function()
   {
     var obj = {};
     for ( var i in this )
@@ -3304,7 +3304,7 @@ var SBCDCommands =
     return obj;
   },
   
-  SetPlaylist: function( playlist )
+  setPlaylist: function( playlist )
   {
     this.m_Playlist = playlist;
   },
@@ -3352,7 +3352,7 @@ var SBRippingCommands =
     "&command.tooltip.remove"
   ),
 
-  GetNumCommands: function()
+  getNumCommands: function()
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -3366,7 +3366,7 @@ var SBRippingCommands =
     return this.m_Ids.length;
   },
 
-  GetCommandId: function( index )
+  getCommandId: function( index )
   {
     if ( index >= this.m_Ids.length )
     {
@@ -3375,7 +3375,7 @@ var SBRippingCommands =
     return this.m_Ids[ index ];
   },
 
-  GetCommandText: function( index )
+  getCommandText: function( index )
   {
     if ( index >= this.m_Names.length )
     {
@@ -3384,13 +3384,13 @@ var SBRippingCommands =
     return this.m_Names[ index ];
   },
 
-  GetCommandFlex: function( index )
+  getCommandFlex: function( index )
   {
     if ( this.m_Ids[ index ] == "*separator*" ) return 1;
     return 0;
   },
 
-  GetCommandToolTipText: function( index )
+  getCommandToolTipText: function( index )
   {
     if ( index >= this.m_Tooltips.length )
     {
@@ -3399,7 +3399,7 @@ var SBRippingCommands =
     return this.m_Tooltips[ index ];
   },
 
-  GetCommandEnabled: function( index )
+  getCommandEnabled: function( index )
   {
     var retval = false;
     if ( this.m_Device )
@@ -3414,7 +3414,7 @@ var SBRippingCommands =
     return retval;
   },
 
-  OnCommand: function( event )
+  onCommand: function( event )
   {
     if ( this.m_Device && event.target && event.target.id )
     {
@@ -3436,7 +3436,7 @@ var SBRippingCommands =
   
   // The object registered with the sbIPlaylistSource interface acts 
   // as a template for instances bound to specific playlist elements
-  Duplicate: function()
+  duplicate: function()
   {
     var obj = {};
     for ( var i in this )
@@ -3446,7 +3446,7 @@ var SBRippingCommands =
     return obj;
   },
   
-  SetPlaylist: function( playlist )
+  setPlaylist: function( playlist )
   {
     this.m_Playlist = playlist;
   },
@@ -3503,7 +3503,7 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
                 SBRippingCommands.m_Device = aCDDevice;
                 SBRippingCommands.m_DeviceName = deviceName;
                 var source = new sbIPlaylistsource();
-                source.RegisterPlaylistCommands( guid, rippingTable.value, "download", SBRippingCommands );
+                source.registerPlaylistCommands( guid, rippingTable.value, "download", SBRippingCommands );
             }
         }
     }
@@ -3591,11 +3591,11 @@ function OnCDInsert(deviceName)
       {
         try
         {
-          source.RegisterPlaylistCommands( cdContext, cdTable, cdTable, SBCDCommands );
+          source.registerPlaylistCommands( cdContext, cdTable, cdTable, SBCDCommands );
         }
         catch ( err )
         {
-          alert( "source.RegisterPlaylistCommands( " + SBCDCommands.m_Context + ", " + SBCDCommands.m_Table+ " );\r\n" + err )
+          alert( "source.registerPlaylistCommands( " + SBCDCommands.m_Context + ", " + SBCDCommands.m_Table+ " );\r\n" + err )
         }
       }
     }
@@ -3660,7 +3660,7 @@ var SBCDBurningCommands =
     "&command.tooltip.stop"
   ),
 
-  GetNumCommands: function()
+  getNumCommands: function()
   {
     if ( 
         ( this.m_Tooltips.length != this.m_Ids.length ) ||
@@ -3674,7 +3674,7 @@ var SBCDBurningCommands =
     return this.m_Ids.length;
   },
 
-  GetCommandId: function( index )
+  getCommandId: function( index )
   {
     if ( index >= this.m_Ids.length )
     {
@@ -3683,7 +3683,7 @@ var SBCDBurningCommands =
     return this.m_Ids[ index ];
   },
 
-  GetCommandText: function( index )
+  getCommandText: function( index )
   {
     if ( index >= this.m_Names.length )
     {
@@ -3692,13 +3692,13 @@ var SBCDBurningCommands =
     return this.m_Names[ index ];
   },
 
-  GetCommandFlex: function( index )
+  getCommandFlex: function( index )
   {
     if ( this.m_Ids[ index ] == "*separator*" ) return 1;
     return 0;
   },
 
-  GetCommandToolTipText: function( index )
+  getCommandToolTipText: function( index )
   {
     if ( index >= this.m_Tooltips.length )
     {
@@ -3707,7 +3707,7 @@ var SBCDBurningCommands =
     return this.m_Tooltips[ index ];
   },
 
-  GetCommandEnabled: function( index )
+  getCommandEnabled: function( index )
   {
     var retval = false;
     if ( this.m_Device )
@@ -3722,7 +3722,7 @@ var SBCDBurningCommands =
     return retval;
   },
 
-  OnCommand: function( event )
+  onCommand: function( event )
   {
     if ( this.m_Device && event.target && event.target.id )
     {
@@ -3746,7 +3746,7 @@ var SBCDBurningCommands =
   
   // The object registered with the sbIPlaylistSource interface acts 
   // as a template for instances bound to specific playlist elements
-  Duplicate: function()
+  duplicate: function()
   {
     var obj = {};
     for ( var i in this )
@@ -3756,7 +3756,7 @@ var SBCDBurningCommands =
     return obj;
   },
   
-  SetPlaylist: function( playlist )
+  setPlaylist: function( playlist )
   {
     this.m_Playlist = playlist;
   },
@@ -3818,7 +3818,7 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
         SBCDBurningCommands.m_DeviceName = writableCDDeviceString;
         SBCDBurningCommands.m_TableName = burnTable.value;
         var source = new sbIPlaylistsource();
-        source.RegisterPlaylistCommands( aCDDevice.GetContext(writableCDDeviceString), burnTable.value, burnTable.value, SBCDBurningCommands );
+        source.registerPlaylistCommands( aCDDevice.GetContext(writableCDDeviceString), burnTable.value, burnTable.value, SBCDBurningCommands );
 
         // And show the download table in the chrome playlist.
         //onBrowserCDTransfer(aCDDevice, writableCDDeviceString, 0 /*Burning*/);

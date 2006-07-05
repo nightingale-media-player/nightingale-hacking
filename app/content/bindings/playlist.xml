@@ -439,7 +439,7 @@
         
         var feed = false;
         // If there are no rows already loaded for this ref
-        if ( this.source.GetRefRowCount( ref ) <= 0 )
+        if ( this.source.getRefRowCount( ref ) <= 0 )
         {
           // We must feed from the sbIPlaylistsource interface
           feed = true;
@@ -457,11 +457,11 @@
         // Tell the playlist source to feed.
         if ( feed )
         {
-          this.source.FeedPlaylist( ref, guid, table );
+          this.source.feedPlaylist( ref, guid, table );
         }
 
         // Tell the tree to listen for the datasource
-        this.source.IncomingObserver( ref, this ); // HI!  We're about to stick an observer on you!
+        this.source.incomingObserver( ref, this ); // HI!  We're about to stick an observer on you!
         this.tree.setAttribute("ref", ref);
         this.tree.setAttribute("datasources", "rdf:playlist");
         this.builder.refresh();
@@ -493,7 +493,7 @@
         // Tell the playlist source to feed the filters.
         if ( feed )
         {
-          this.source.FeedFilters( ref );
+          this.source.executeFeed( ref );
         }
 
         // Clear out the old commands
@@ -505,7 +505,7 @@
           // And add the new ones
           this.commands = commands;
           // See if there is one registered specifically for this table
-          var cmds = this.source.GetPlaylistCommands( this.guid, this.table, this.type );
+          var cmds = this.source.getPlaylistCommands( this.guid, this.table, this.type );
           if ( cmds )
           {
             this.commands = cmds;
@@ -585,10 +585,10 @@
         if ( this.commands )
         {
           // Once we get here, tell the commands who we are.
-          if (!stateonly) this.commands.SetPlaylist( this );
+          if (!stateonly) this.commands.setPlaylist( this );
           
           // And make all the new stuff
-          var num = this.commands.GetNumCommands();
+          var num = this.commands.getNumCommands();
           for ( var i = 0; i < num; i++ )
           {
             var toolbarbutton;
@@ -599,7 +599,7 @@
               toolbar.hidden = false;
               
               // What id?
-              var obj_id = this.commands.GetCommandId( i );
+              var obj_id = this.commands.getCommandId( i );
               
               var toolbarbutton_type = "button";
               var menuitem_type = "menuitem";
@@ -623,7 +623,7 @@
               menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
               
               // No label unless you have a label
-              var cmd_text = this.commands.GetCommandText( i );
+              var cmd_text = this.commands.getCommandText( i );
               if ( cmd_text.length > 0 )
               {
                 if ( cmd_text[ 0 ] == "&" )
@@ -641,7 +641,7 @@
               }
 
               // No label unless you have a label
-              var cmd_flex = this.commands.GetCommandFlex( i );
+              var cmd_flex = this.commands.getCommandFlex( i );
               if ( cmd_flex > 0 )
               {
                 toolbarbutton.setAttribute( "flex", cmd_flex );
@@ -649,7 +649,7 @@
               }
 
               // No tooltip unless you have a tooltip
-              var tooltip_text = this.commands.GetCommandToolTipText( i );
+              var tooltip_text = this.commands.getCommandToolTipText( i );
               if ( tooltip_text.length > 0 )
               {
                 if ( tooltip_text[ 0 ] == "&" )
@@ -676,7 +676,7 @@
               menuitem = this.menuitems[i];
             }
 
-            if ( this.commands.GetCommandEnabled( i ) )
+            if ( this.commands.getCommandEnabled( i ) )
             {
               toolbarbutton.setAttribute( "disabled", "false" );
               menuitem.setAttribute( "disabled", "false" );
@@ -697,7 +697,7 @@
             }
           }
 
-          if ( this.toolbarbuttons.length != this.commands.GetNumCommands() )
+          if ( this.toolbarbuttons.length != this.commands.getNumCommands() )
           {
             dump( "ERROR: TOOLBARBUTTONS OUT OF SYNCH!" );
           }
@@ -785,7 +785,7 @@
         
         // And set it up properly.
         var ref = this.ref + "_" + meta_column;
-        this.source.IncomingObserver( ref, filterlist ); // HEY YOU GUYYYYYYYS!!
+        this.source.incomingObserver( ref, filterlist ); // HEY YOU GUYYYYYYYS!!
         filterlist.source = this.source;
         filterlist.ref_pl = this.ref;
         filterlist.ref = ref; // YOU MUST SET THIS VARIABLE AFTER 
@@ -799,7 +799,7 @@
         
         if ( feed )
         {
-          this.source.SetFilter(  this.ref, 
+          this.source.setFilter(  this.ref, 
                                   filterlist.index, 
                                   "", 
                                   filterlist.ref,
@@ -811,7 +811,7 @@
         
         if ( feed )
         {
-          this.source.FeedFilters( this.ref );
+          this.source.executeFeed( this.ref );
         }
         
         this.filters.push( filterlist );
@@ -836,7 +836,7 @@
         // Don't nuke the columns if the user's currently moving or resizing them, or if the columns picker is open
         if (!this.isAnyDragObjectDown() && !this.isColumnPickerOpen()) {
           // Don't nuke the columns if there's no current query result.  Yipe.
-          if ( this.source.GetRefColumnCount( this.ref ) > 0 )
+          if ( this.source.getRefColumnCount( this.ref ) > 0 )
           {
             this.saveColumnsProperties();
             this.removeColumns();
@@ -866,7 +866,7 @@
           // See if we need to hide the loading box.
           if ( ! this.loading_box.hidden )
           {
-            if ( ! this.source.IsQueryExecuting( this.ref ) )
+            if ( ! this.source.isQueryExecuting( this.ref ) )
             {
               this.loading_box.hidden = true;
             }
@@ -1655,7 +1655,7 @@
           {
             if ( this.commands )
             {
-              this.commands.OnCommand( evt );
+              this.commands.onCommand( evt );
             }
           }
           catch( err )
@@ -1977,7 +1977,7 @@
             {
               if ( this.commands ) // I hope so!
               {
-                this.commands.OnCommand( evt );
+                this.commands.onCommand( evt );
               }
             }
           }
@@ -2673,10 +2673,10 @@
             if (this.source && this.ref != "")
             {
               ret = this.guid + ";" + this.table;
-              var n = this.source.GetNumFilters(this.ref);
+              var n = this.source.getNumFilters(this.ref);
               ret += ";" + n;
               for (var i=0;i<n;i++)
-                ret += ";" + this.source.GetFilter(this.ref, 0);
+                ret += ";" + this.source.getFilter(this.ref, 0);
             }
           }
           catch( err )

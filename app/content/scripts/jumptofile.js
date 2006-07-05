@@ -63,43 +63,43 @@ try
   {
     m_Playlist: null,
 
-    GetNumCommands: function()
+    getNumCommands: function()
     {
       return 0;
     },
 
-    GetCommandId: function( index )
+    getCommandId: function( index )
     {
       return -1;
     },
 
-    GetCommandText: function( index )
+    getCommandText: function( index )
     {
       return "";
     },
 
-    GetCommandFlex: function( index )
+    getCommandFlex: function( index )
     {
       return 0;
     },
 
-    GetCommandToolTipText: function( index )
+    getCommandToolTipText: function( index )
     {
       return "";
     },
 
-    GetCommandEnabled: function( index )
+    getCommandEnabled: function( index )
     {
       return 0;
     },
 
-    OnCommand: function( event )
+    onCommand: function( event )
     {
     },
     
     // The object registered with the sbIPlaylistSource interface acts 
     // as a template for instances bound to specific playlist elements
-    Duplicate: function()
+    duplicate: function()
     {
       var obj = {};
       for ( var i in this )
@@ -109,7 +109,7 @@ try
       return obj;
     },
     
-    SetPlaylist: function( playlist )
+    setPlaylist: function( playlist )
     {
       this.m_Playlist = playlist;
     },
@@ -140,8 +140,8 @@ try
     if (ref != "") {
       source_ref = ref;
       var source = new sbIPlaylistsource();
-      guid = source.GetRefGUID( ref );
-      table = source.GetRefTable( ref );
+      guid = source.getRefGUID( ref );
+      table = source.getRefTable( ref );
     } else {
       var pl = window.arguments[0].__CURRENTPLAYLIST__;
       if (!pl) pl = window.arguments[0].__CURRENTPLAYLIST__;
@@ -239,10 +239,10 @@ try
     // Feed the new filter into the list.
     var source = new sbIPlaylistsource();
     // Wait until it is done executing
-    if ( ! source.IsQueryExecuting( jumpto_ref ) )
+    if ( ! source.isQueryExecuting( jumpto_ref ) )
     {
       // ...before attempting to override.
-      source.FeedPlaylistFilterOverride( jumpto_ref, filter );
+      source.setSearchString( jumpto_ref, filter );
     }
   }
   

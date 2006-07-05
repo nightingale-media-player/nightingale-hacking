@@ -55,8 +55,6 @@ CoreMPlayer.prototype.playUrl = function ( aURL )
 
     aURL = this.sanitizeURL(aURL);
 
-    this.LOG( "Trying to play url: " + aURL );
-
     for (var stuff in this._object)
       this.LOG("XXXredfive obj has: " + stuff + "\n");
     this.LOG("XXXredfive obj id:" + this._object.id + "\n");

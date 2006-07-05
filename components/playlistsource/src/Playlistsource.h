@@ -208,8 +208,9 @@ private:
   NS_IMETHODIMP Init(void);
   NS_IMETHODIMP DeInit(void);
 
-  inline static sbFeedInfo* GetFeedInfo(nsString& str)
+  inline static sbFeedInfo* GetFeedInfo(const nsAString& as)
   {
+    nsString str( as );
     stringmap_t::iterator s = g_StringMap.find(str);
     if (s != g_StringMap.end())
       return GetFeedInfo((*s).second);
@@ -226,6 +227,9 @@ private:
 
   inline static void EraseFeedInfo(nsIRDFResource *res)
   { }
+
+  NS_IMETHODIMP GetQueryResult(const nsAString &RefName,
+    sbIDatabaseResult** _retval);
 
   nsCOMPtr<nsIRDFService>  sRDFService;
   nsCOMPtr<nsIRDFResource> kNC_Playlist;

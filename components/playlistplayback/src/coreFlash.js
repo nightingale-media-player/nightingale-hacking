@@ -54,8 +54,6 @@ CoreFlash.prototype.playUrl = function ( aURL )
     // remove "\\" and add "file:" if neccessary   
     aURL = this.sanitizeURL(aURL);
 
-    //this.LOG( "Trying to play url: " + aURL );
-  
     this._object.SetVariable("url", aURL);
 
     this._paused = false;

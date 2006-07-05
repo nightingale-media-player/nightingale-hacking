@@ -88,15 +88,12 @@
       <body>
       try
       {
-        if (this.source == null) { /*alert("<playlist/>: source is null");*/ return; }
-//        // Don't nuke the columns if there's no current query result.  Yipe.
-//        var result = this.source.GetQueryResult( this.ref ); 
-//        if ( result.GetColumnCount() )
-        {
-          this.removeColumns();
-          this.removeTemplate(); 
-          this.addNewContent(this.source, this.ref);
-        }
+        if (this.source == null || this.ref == null) 
+          return;
+          
+        this.removeColumns();
+        this.removeTemplate(); 
+        this.addNewContent(this.source, this.ref);
       }
       catch( err )
       {
@@ -127,26 +124,12 @@
 
           var treerow_node = document.createElement("treerow");
 
-          // Go through all the columns on the table and create nodes accordingly
-          var result = source.GetQueryResult( ref );
-          
-          if ( !result )
-          {
-//            alert( "List " + ref + " has no resultset available?!" );
+          // Ooops, the data isn't ready yet!
+          if ( source.getRefRowCount( ref ) == 0 )
             return;
-          } 
 
-          var name = "";
-          if ( this.column )
-          {
-            name = this.column;
-          }
-          else if ( result.GetColumnCount() ) 
-          {
-            this.column = result.GetColumnName( 0 );
-            name = this.column;
-          }
-          
+          // Fill in the necessary information for the tree column.
+          var name = "" + this.column;
           if ( name.length )
           {
             var this_column_node = document.createElement("treecol");
@@ -253,8 +236,8 @@
             if ( rangeCount )
             {
               // Set the filter and relaunch the queries
-              this.source.SetFilter( this.ref_pl, this.index, filter_string, this.ref, this.column );
-              this.source.FeedFilters( this.ref_pl );
+              this.source.setFilter( this.ref_pl, this.index, filter_string, this.ref, this.column );
+              this.source.executeFeed( this.ref_pl );
 
               // Fire an event, in case someone wants it          
               var e = document.createEvent("Events");
@@ -357,7 +340,7 @@
             var any_items = false; // Are there any items to find?
             var any_found = false; // Did we find any?
             if (this.source != null) {
-              var selection_string = this.source.GetFilter(this.ref_pl, this.index);
+              var selection_string = this.source.getFilter(this.ref_pl, this.index);
               if (selection_string != null) {
                 var selection = selection_string.split(";");
                 this._disable_selevent = true;
@@ -413,7 +396,7 @@
           var column = this.tree.columns.getColumnAt(0);
           if (column != null) {
             var label = column.element.__filterlist_original_label__;
-            if ( this.source.GetRefColumnCount( this.ref ) > 0 ) {
+            if ( this.source.getRefColumnCount( this.ref ) > 0 ) {
               label += " (" + (this.tree.view.rowCount-1) + " item";
               if (this.tree.view.rowCount > 1) label += "s";
               label += ")";
