@@ -1,73 +1,272 @@
 #include "nsISupports.idl"
 #include "nsIArray.idl"
 
-/**
- * The sbIBundle Interface
+/**       
+ * \file sbIBundle.idl
+ * \brief Songbird Bundle Interface file
+ * This file contains interfaces used by the bundle management, whose purpose is to offer 
+ * the user to install pre-bundled extensions.
+ * \sa sbBundle.js
  */
+  
 interface sbIBundleObserver;
 interface sbIDownloadObserver;
 
+/**
+ * \interface sbIBundle sbIBundle.h
+ * \brief Songbird Bundle Interface
+ * This is the main bundle management interface, used to get the bundle data, perform and
+ * observe the download process, list the bundle content and install bundled extensions.
+ * \sa sbIBundleObserver, sbIDownloadObserver
+ */
+      
 [scriptable, uuid(34C5873F-E5C1-4448-9B02-5AF47F36B36F)]
 interface sbIBundle : nsISupports
 {
-  // first retrieveBundleFile should be called
+  /**
+   * \brief Begin downloading the bundle data asynchronously
+   * This method begins the asynchronous download of bundle data. Use sbIBundleObserver
+   * to monitor progress.
+   * \sa addBundleObserver, removeBundleObserver, sbIBundleObserver
+   */
   void retrieveBundleFile();
-  // use this to watch for onload/onerror events during the download of the xml bundle file
-  void addBundleObserver(in sbIBundleObserver obs);
-  void removeBundleObserver(in sbIBundleObserver obs);
-  // status is 0 while downloading xml, 1 after success, -1 after error
+
+  /**
+   * \brief Add a bundle observer
+   * This method registers a bundle observer object associated with the download
+   * of bundle data in order to get error and completion callbacks
+   * \param observer The observer object to register
+   * \sa sbIBundleObserver
+   */
+  void addBundleObserver(in sbIBundleObserver observer);
+
+  /**
+   * \brief Remove a bundle observer
+   * This method unregisters a bundle observer object from the list of bundle callbacks
+   * \param observer The observer object to unregister
+   * \sa sbIBundleObserver
+   */
+  void removeBundleObserver(in sbIBundleObserver observer);
+
+  /**
+   * \brief Gets the status of bundle download
+   * This method returns the status of the asynchronous bundle download process
+   * \return The state of the bundle download process: 0 while downloading, 1 after success, -1 after error
+   */
   long getStatus();
-  // the DOM for the bundle document
+
+  /**
+   * \brief Gets the DOM document describing the downloaded bundle
+   * This method returns an interface to the bundle DOM document describing
+   * each bundled extension.
+   * \return A Document interface to the bundle DOM document
+   */
   nsISupports getBundleDocument();
-  // the xml document text
+
+  /**
+   * \brief Gets the bundle document xml in text format
+   * This method returns the xml for the bundle document describing each 
+   * bundled extension in text format
+   * \return An XML bundle document
+   */
   wstring getTextData();
-  // version of the bundle described by the bundle document
+
+  /**
+   * \brief Gets the version of the downloaded bundle
+   * This method returns the version extracted from the xml for 
+   * the bundle document
+   * \return The bundle's version
+   */
   wstring getBundleVersion();
   
-  // set/get extension install flag
+  /**
+   * \brief Gets the installation flag for a bundled extension
+   * This method returns the installation flag associated with a particular bundled extension
+   * \param idx Index of the extension whose flag you wish to retrieve
+   * \return The extension's installation flag (boolean)
+   * \sa setExtensionInstallState, installSelectedExtensions
+   */
   boolean getExtensionInstallState(in long idx);
+  
+  /**
+   * \brief Sets the installation flag for a bundled extension
+   * This method sets the installation flag associated with a particular bundled extension
+   * \param idx Index of the extension whose flag you wish to set
+   * \sa getExtensionInstallState, installSelectedExtensions
+   */
   void setExtensionInstallState(in long idx, in boolean installstate);
-  // installs all the extensions whose installstate is true, window is the parent for the progress dialog
+
+  /**
+   * \brief Install specified bundled extensions
+   * This method installs the extensions whose install flags are set to true. A dialog box showing 
+   * the installer's progress will be spawned
+   * \param window The parent for the progress dialog box
+   * \sa setExtensionInstallState, getExtensionInstallState
+   */
   void installSelectedExtensions(in nsISupports window);
-  // download a file under a temporary local filename, returns it. use sbIDownloadObservers for progress/done/error events
+
+  /**
+   * \brief Download a file
+   * This method asynchronously downloads a file from a URL and sends progress callbacks to the 
+   * specified sbiDownloadObserver object.
+   * \param url The url for the file to download
+   * \param observer The observer object for progress and error callbacks
+   * \return The local temporary filename which will be used to store the downloaded file.
+   * \sa deleteLastDownloadedFile, sbIDownloadObserver
+   */
   wstring downloadFile(in wstring url, in sbIDownloadObserver observer);
-  // delete the last file that was downloaded via downloadFile
+
+  /**
+   * \brief Deletes a temporary download file
+   * This method deletes the local file associated with the last downloadFile call
+   * \param url The url for the file to download
+   * \param observer The observer object for progress and error callbacks
+   * \return The local temporary filename which will be used to store the downloaded file.
+   * \sa downloadFile
+   */
   void deleteLastDownloadedFile();
-  // install an XPI from a local filename, returns 1 for success, 0 for failure (ie, not a valid xpi, could not be installed)
+
+  /**
+   * \brief Install an extension
+   * This method installs an XPI extension previously downloaded locally.
+   * \param localFilenale The local filenale for the XPI to install
+   * \return Indicates the installation's success (1) or failure (0, ie: not a valid XPI, could not be installed).
+   * \sa downloadFile
+   */
   long installXPI(in wstring localFilename);
-  // set/get restart flag, set to true if at least one xpi got installed
-  void setNeedRestart(in boolean need);
+
+  /**
+   * \brief Sets the flag indicating that a restart is needed
+   * This method sets the flag indicating that a restart of the application is 
+   * needed in order for installed extensions to take effect.
+   * \param needed Value of the flag to set
+   * \sa getNeedRestart
+   */
+  void setNeedRestart(in boolean needed);
+
+  /**
+   * \brief Gets the flag indicating that a restart is needed
+   * This method gets the flag indicating wether a restart of the application is 
+   * needed in order for installed extensions to take effect.
+   * \return Value of the flag
+   * \sa setNeedRestart
+   */
   long getNeedRestart();
   
   // convenience functions (zero based)
+
+  /**
+   * \brief Gets the number of extensions in the bundle document
+   * This method returns the number of extensions listed in the bundled document
+   * \return Number of extensions
+   * \sa getBundleDocument, getExtensionName, getExtensionDesc, getExtensionURL, getExtensionId
+   */
   long getNumExtensions(); 
+
+  /**
+   * \brief Gets the name of an extension from the bundle document
+   * This method returns the name of a an extensions listed in the bundled document
+   * \param index The index of the extension within the bundle document (zero based)
+   * \return Name of the extension
+   * \sa getBundleDocument, getExtensionDesc, getExtensionURL, getExtensionId
+   */
   wstring getExtensionName(in long index);
+
+  /**
+   * \brief Gets the description of an extension from the bundle document
+   * This method returns the description of a an extensions listed in the bundled document
+   * \param index The index of the extension within the bundle document (zero based)
+   * \return description of the extension
+   * \sa getBundleDocument, getExtensionName, getExtensionURL, getExtensionId
+   */
   wstring getExtensionDesc(in long index);
+
+  /**
+   * \brief Gets the URL of an extension from the bundle document
+   * This method returns the URL of a an extensions listed in the bundled document
+   * \param index The index of the extension within the bundle document (zero based)
+   * \return URL of the extension
+   * \sa getBundleDocument, getExtensionName, getExtensionDesc, getExtensionId
+   */
   wstring getExtensionURL(in long index);
+
+  /**
+   * \brief Gets the Id of an extension from the bundle document
+   * This method returns the Id of a an extensions listed in the bundled document
+   * \param index The index of the extension within the bundle document (zero based)
+   * \return Id for the extension
+   * \sa getBundleDocument, getExtensionName, getExtensionDesc, getExtensionURL
+   */
   wstring getExtesionId(in long index);
 
-  // create a temporary filename
+  /**
+   * \brief Creates a temporary filename
+   * This method returns a temporary filename that is guaranteed not to already exist and points to 
+   * the user's temporary files' directory
+   * \return Temporary filename
+   * \sa downloadFile, deleteLastDownloadedFile
+   */
   wstring getTempFilename();
 };
 
+/**
+ * \interface sbIBundleObserver sbIBundle.h
+ * \brief Songbird Bundle Observer Interface
+ * This interface is used to receive bundle download notification upon error or completion
+ * \sa sbIBundle, sbIBundle::addBundleObserver(), sbIBundle::removeBundleObserver()
+ */
 [scriptable, uuid(62DF6C33-2523-471e-A9AF-A8BA876CF36F)]
 interface sbIBundleObserver : nsISupports
 {
-  // bundle document done loading
-  void onLoad(in sbIBundle upd); 
-  // error downloading bundle document
-  void onError(in sbIBundle upd); 
+  /**
+   * \brief Bundle download completion callback
+   * This method is called upon completion of the bundle download 
+   * \param bundle An interface to the bundle manager
+   * \sa onError, sbIBundle
+   */
+  void onLoad(in sbIBundle bundle); 
+  /**
+   * \brief Bundle download error callback
+   * This method is called upon error while download the bundle data
+   * \param bundle An interface to the bundle manager
+   * \sa onLoad, sbIBundle
+   */
+  void onError(in sbIBundle bundle); 
 };
 
+/**
+ * \interface sbIDownloadObserver sbIBundle.h
+ * \brief Songbird bundle extension download interface
+ * This interface is used to receive bundle extension download progress notifications
+ * \sa sbIBundle, sbIBundle::downloadFile()
+ */
 [scriptable, uuid(D143A14A-266B-48aa-A15E-94BD4F027BF0)]
 interface sbIDownloadObserver : nsISupports
 {
-  // download progress
-  void onProgress(in sbIBundle upd, in long percent); 
-  // download is complete
-  void onDownloadComplete(in sbIBundle upd);
-  // error downloading
-  void onError(in sbIBundle upd);
+  /**
+   * \brief Bundle download progress callback
+   * This method is called to notify the observer of the download progress
+   * \param bundle An interface to the bundle manager
+   * \param percent The percentage of the file that has been downloaded
+   * \sa onDownloadComplete, sbIBundle, sbIBundle::downloadFile()
+   */
+  void onProgress(in sbIBundle bundle, in long percent); 
+
+  /**
+   * \brief Bundle download complete callback
+   * This method is called to notify the observer of the download's completion
+   * \param bundle An interface to the bundle manager
+   * \sa onError, sbIBundle, sbIBundle::downloadFile()
+   */
+  void onDownloadComplete(in sbIBundle bundle);
+
+  /**
+   * \brief Bundle download error callback
+   * This method is called to notify the observer of an error while downloading
+   * \param bundle An interface to the bundle manager
+   * \sa onDownloadComplete, sbIBundle, sbIBundle::downloadFile()
+   */
+  void onError(in sbIBundle bundle);
 };
 
 
