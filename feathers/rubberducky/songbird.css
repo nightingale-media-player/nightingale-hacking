@@ -512,7 +512,7 @@ tree treecol
 /** 
 ************************************************************************************************************************************************
 THE FILTERLISTS
-Organize your collection with genre/artist/album filterlists.  Somehow Apple seems to have patented this already common place UI.
+Organize your collection with genre/artist/album filterlists.  
 ************************************************************************************************************************************************
 */ 
 
@@ -752,7 +752,7 @@ playlist > stack > vbox > hbox > hbox > button[disabled="true"]
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
   border: 1px solid !important;
-  padding: 0px 5px 0px 5px !important;
+  padding: 0px 5px 0px 0px !important;
   margin: 2px 0px 2px 2px !important;
   -moz-border-top-colors: #444 !important;
   -moz-border-left-colors: #444 !important;
@@ -767,7 +767,7 @@ playlist > stack > vbox > hbox > hbox > button[disabled="false"]
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
-  padding: 0px 5px 0px 5px !important;
+  padding: 0px 5px 0px 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #99A195 !important;
@@ -2255,7 +2255,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
+  padding: 0px 3px 0px 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2272,7 +2272,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: transparent !important;
@@ -2305,7 +2304,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2340,7 +2338,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2375,7 +2372,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2410,7 +2406,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2445,7 +2440,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2480,7 +2474,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2515,7 +2508,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
@@ -2545,7 +2537,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   height: 30px !important;
   width: 30px !important;
   -moz-border-radius: 3px !important;
-  padding: 0px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   -moz-border-top-colors: #000 !important;
