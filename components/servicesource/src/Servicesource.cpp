@@ -133,34 +133,34 @@ static nsString gPlaylistUrl( NS_LITERAL_STRING("chrome://songbird/content/xul/m
 
 static nsString     gParentLabels[ NUM_PARENTS ] =
 {
-  nsString( NS_LITERAL_STRING("&servicesource.welcome") ),
-  nsString( NS_LITERAL_STRING("&servicesource.library") ),
-  nsString( NS_LITERAL_STRING("&servicesource.bookmarks") ),
-  nsString( NS_LITERAL_STRING("&servicesource.searches") ),
-  nsString( NS_LITERAL_STRING("&servicesource.music_stores") ),
-  nsString( NS_LITERAL_STRING("&servicesource.podcasts") ),
-  nsString( NS_LITERAL_STRING("&servicesource.radio") ),
-  nsString( NS_LITERAL_STRING("Network Services") ),
-  nsString( NS_LITERAL_STRING("Network Devices") ),
+  NS_LITERAL_STRING("&servicesource.welcome"),
+  NS_LITERAL_STRING("&servicesource.library"),
+  NS_LITERAL_STRING("&servicesource.bookmarks"),
+  NS_LITERAL_STRING("&servicesource.searches"),
+  NS_LITERAL_STRING("&servicesource.music_stores"),
+  NS_LITERAL_STRING("&servicesource.podcasts"),
+  NS_LITERAL_STRING("&servicesource.radio"),
+  NS_LITERAL_STRING("Network Services"),
+  NS_LITERAL_STRING("Network Devices"),
 };
 
 static nsString     gParentIcons[ NUM_PARENTS ] =
 {
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/logo_16.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_lib_16x16.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png") ),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/logo_16.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_lib_16x16.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
+  NS_LITERAL_STRING("chrome://songbird/skin/default/icon_folder.png"),
 };
 
 static nsString     gParentUrls[ NUM_PARENTS ] =
 {
-  nsString( NS_LITERAL_STRING("http://songbirdnest.com/player0.2/welcome/") ),
-  nsString( NS_LITERAL_STRING("chrome://songbird/content/xul/main_pane.xul?library") ),
+  NS_LITERAL_STRING("http://songbirdnest.com/player0.2/welcome/"),
+  NS_LITERAL_STRING("chrome://songbird/content/xul/main_pane.xul?library"),
   nsString( ),
   nsString( ),
   nsString( ),
@@ -172,15 +172,15 @@ static nsString     gParentUrls[ NUM_PARENTS ] =
 
 static nsString     gParentOpen[ NUM_PARENTS ] =
 {
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("true") ), // true
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("false") ),
-  nsString( NS_LITERAL_STRING("false") ),
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("true"), // true
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("false"),
+  NS_LITERAL_STRING("false"),
 };
 
 static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
@@ -195,67 +195,67 @@ static nsString     gChildLabels[ NUM_PARENTS ][ MAX_CHILDREN ] =
   },
   // Group 7
   {
-    nsString( NS_LITERAL_STRING("Pitchfork") ),
-    nsString( NS_LITERAL_STRING("Podbop") ),
-    nsString( NS_LITERAL_STRING("Swedelife") ),
-    nsString( NS_LITERAL_STRING("La Blogothèque") ),
-    nsString( NS_LITERAL_STRING("Medicine") ),
-    nsString( NS_LITERAL_STRING("OpenBSD") ),
-    nsString( NS_LITERAL_STRING("Songbirdnest") ),
-    nsString( NS_LITERAL_STRING("Autodownload") ),
+    NS_LITERAL_STRING("Pitchfork"),
+    NS_LITERAL_STRING("Podbop"),
+    NS_LITERAL_STRING("Swedelife"),
+    NS_LITERAL_STRING("La Blogothèque"),
+    NS_LITERAL_STRING("Medicine"),
+    NS_LITERAL_STRING("OpenBSD"),
+    NS_LITERAL_STRING("Songbirdnest"),
+    NS_LITERAL_STRING("Autodownload"),
     nsString( ),
   },
   // Group 11
   {
-    nsString( NS_LITERAL_STRING("Google") ),
-    nsString( NS_LITERAL_STRING("Yahoo!") ),
-    nsString( NS_LITERAL_STRING("Creative Commons") ),
+    NS_LITERAL_STRING("Google"),
+    NS_LITERAL_STRING("Yahoo!"),
+    NS_LITERAL_STRING("Creative Commons"),
     nsString( ),
   },
   // Group 8
   {
-    nsString( NS_LITERAL_STRING("Connect") ),
-    nsString( NS_LITERAL_STRING("Amazon") ),
-    nsString( NS_LITERAL_STRING("Audible") ),
-    nsString( NS_LITERAL_STRING("Beatport") ),
-    nsString( NS_LITERAL_STRING("MP3Tunes") ),
-    nsString( NS_LITERAL_STRING("eMusic") ),
-    nsString( NS_LITERAL_STRING("CD Baby") ),
-    nsString( NS_LITERAL_STRING("Selectric Records") ),
-    nsString( NS_LITERAL_STRING("Arts and Crafts Records") ),
-    nsString( NS_LITERAL_STRING("Calabash Music") ),
-    nsString( NS_LITERAL_STRING("Project Opus") ),
-    nsString( NS_LITERAL_STRING("Birdman Records") ),
+    NS_LITERAL_STRING("Connect"),
+    NS_LITERAL_STRING("Amazon"),
+    NS_LITERAL_STRING("Audible"),
+    NS_LITERAL_STRING("Beatport"),
+    NS_LITERAL_STRING("MP3Tunes"),
+    NS_LITERAL_STRING("eMusic"),
+    NS_LITERAL_STRING("CD Baby"),
+    NS_LITERAL_STRING("Selectric Records"),
+    NS_LITERAL_STRING("Arts and Crafts Records"),
+    NS_LITERAL_STRING("Calabash Music"),
+    NS_LITERAL_STRING("Project Opus"),
+    NS_LITERAL_STRING("Birdman Records"),
     nsString( ),
   },
   // Group 9
   {
-    nsString( NS_LITERAL_STRING("Odeo Featured") ),
-    nsString( NS_LITERAL_STRING("Podemus") ),
+    NS_LITERAL_STRING("Odeo Featured"),
+    NS_LITERAL_STRING("Podemus"),
     nsString( ),
   },
   // Group 10
   {
-    nsString( NS_LITERAL_STRING("SHOUTcast") ),
-    nsString( NS_LITERAL_STRING("Radiotime") ),
-    nsString( NS_LITERAL_STRING("MVY Radio") ),
+    NS_LITERAL_STRING("SHOUTcast"),
+    NS_LITERAL_STRING("Radiotime"),
+    NS_LITERAL_STRING("MVY Radio"),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("Ninjam") ),
-    nsString( NS_LITERAL_STRING("last.fm") ),
-    nsString( NS_LITERAL_STRING("Memotrax") ),
-    nsString( NS_LITERAL_STRING("AllMusic") ),
-    nsString( NS_LITERAL_STRING("MP3Tunes Locker") ),
-    nsString( NS_LITERAL_STRING("Streampad") ),
-    nsString( NS_LITERAL_STRING("Tables Turned") ),
-    nsString( NS_LITERAL_STRING("Music Strands") ),
-    nsString( NS_LITERAL_STRING("Jamendo") ),
+    NS_LITERAL_STRING("Ninjam"),
+    NS_LITERAL_STRING("last.fm"),
+    NS_LITERAL_STRING("Memotrax"),
+    NS_LITERAL_STRING("AllMusic"),
+    NS_LITERAL_STRING("MP3Tunes Locker"),
+    NS_LITERAL_STRING("Streampad"),
+    NS_LITERAL_STRING("Tables Turned"),
+    NS_LITERAL_STRING("Music Strands"),
+    NS_LITERAL_STRING("Jamendo"),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("SlimDevices") ),
-    nsString( NS_LITERAL_STRING("Sonos") ),
+    NS_LITERAL_STRING("SlimDevices"),
+    NS_LITERAL_STRING("Sonos"),
     nsString( ),
   },
 };
@@ -272,67 +272,67 @@ static nsString     gChildUrls[ NUM_PARENTS ][ MAX_CHILDREN ] =
   },
   // Group 7
   {
-    nsString( NS_LITERAL_STRING("http://www.pitchforkmedia.com/page/downloads/")),
-    nsString( NS_LITERAL_STRING("http://podbop.org/")),
-    nsString( NS_LITERAL_STRING("http://www.swedelife.com/")),
-    nsString( NS_LITERAL_STRING("http://www.blogotheque.net/mp3/")),
-    nsString( NS_LITERAL_STRING("http://takeyourmedicinemp3.blogspot.com/")),
-    nsString( NS_LITERAL_STRING("http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/")),
-    nsString( NS_LITERAL_STRING("http://songbirdnest.com/")),
-    nsString( NS_LITERAL_STRING("chrome://songbird/content/xul/remote_download.xul")),
+    NS_LITERAL_STRING("http://www.pitchforkmedia.com/page/downloads/"),
+    NS_LITERAL_STRING("http://podbop.org/"),
+    NS_LITERAL_STRING("http://www.swedelife.com/"),
+    NS_LITERAL_STRING("http://www.blogotheque.net/mp3/"),
+    NS_LITERAL_STRING("http://takeyourmedicinemp3.blogspot.com/"),
+    NS_LITERAL_STRING("http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/"),
+    NS_LITERAL_STRING("http://songbirdnest.com/"),
+    NS_LITERAL_STRING("chrome://songbird/content/xul/remote_download.xul"),
     nsString( ),
   },
   // Group 11
   {
-    nsString( NS_LITERAL_STRING("http://www.google.com/musicsearch?q=") ),
-    nsString( NS_LITERAL_STRING("http://audio.search.yahoo.com/") ),
-    nsString( NS_LITERAL_STRING("http://search.creativecommons.org/") ),
+    NS_LITERAL_STRING("http://www.google.com/musicsearch?q="),
+    NS_LITERAL_STRING("http://audio.search.yahoo.com/"),
+    NS_LITERAL_STRING("http://search.creativecommons.org/"),
     nsString( ),
   },
   // Group 8
   {
-    nsString( NS_LITERAL_STRING("http://musicstore.connect.com/promos/dc/take_tour.html") ),
-    nsString( NS_LITERAL_STRING("http://www.faser.net/mab/chrome/content/mab.xul") ),
-    nsString( NS_LITERAL_STRING("http://audible.com/") ),
-    nsString( NS_LITERAL_STRING("http://beatport.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.mp3tunes.com/store.php") ),
-    nsString( NS_LITERAL_STRING("http://emusic.com/") ),
-    nsString( NS_LITERAL_STRING("http://cdbaby.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.selectricrecords.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.galleryac.com/") ),
-    nsString( NS_LITERAL_STRING("http://calabashmusic.com/") ),
-    nsString( NS_LITERAL_STRING("http://projectopus.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.birdmanrecords.com/") ),
+    NS_LITERAL_STRING("http://musicstore.connect.com/promos/dc/take_tour.html"),
+    NS_LITERAL_STRING("http://www.faser.net/mab/chrome/content/mab.xul"),
+    NS_LITERAL_STRING("http://audible.com/"),
+    NS_LITERAL_STRING("http://beatport.com/"),
+    NS_LITERAL_STRING("http://www.mp3tunes.com/store.php"),
+    NS_LITERAL_STRING("http://emusic.com/"),
+    NS_LITERAL_STRING("http://cdbaby.com/"),
+    NS_LITERAL_STRING("http://www.selectricrecords.com/"),
+    NS_LITERAL_STRING("http://www.galleryac.com/"),
+    NS_LITERAL_STRING("http://calabashmusic.com/"),
+    NS_LITERAL_STRING("http://projectopus.com/"),
+    NS_LITERAL_STRING("http://www.birdmanrecords.com/"),
     nsString( ),
   },
   // Group 9
   {
-    nsString( NS_LITERAL_STRING("http://odeo.com/listen/featured/") ),
-    nsString( NS_LITERAL_STRING("http://podemus.fr/") ),
+    NS_LITERAL_STRING("http://odeo.com/listen/featured/"),
+    NS_LITERAL_STRING("http://podemus.fr/"),
     nsString( ),
   },
   // Group 10
   {
-    nsString( NS_LITERAL_STRING("http://www.shoutcast.com/") ),
-    nsString( NS_LITERAL_STRING("http://radiotime.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.mvyradio.com/") ),
+    NS_LITERAL_STRING("http://www.shoutcast.com/"),
+    NS_LITERAL_STRING("http://radiotime.com/"),
+    NS_LITERAL_STRING("http://www.mvyradio.com/"),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("http://ninjam.com/samples.php") ),
-    nsString( NS_LITERAL_STRING("http://last.fm/group/Songbird") ),
-    nsString( NS_LITERAL_STRING("http://memotrax.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.allmusic.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.mp3tunes.com/locker/") ),
-    nsString( NS_LITERAL_STRING("http://www.streampad.com/") ),
-    nsString( NS_LITERAL_STRING("http://tablesturned.com/") ),
-    nsString( NS_LITERAL_STRING("http://musicstrands.com/") ),
-    nsString( NS_LITERAL_STRING("http://jamendo.com/") ),
+    NS_LITERAL_STRING("http://ninjam.com/samples.php"),
+    NS_LITERAL_STRING("http://last.fm/group/Songbird"),
+    NS_LITERAL_STRING("http://memotrax.com/"),
+    NS_LITERAL_STRING("http://www.allmusic.com/"),
+    NS_LITERAL_STRING("http://www.mp3tunes.com/locker/"),
+    NS_LITERAL_STRING("http://www.streampad.com/"),
+    NS_LITERAL_STRING("http://tablesturned.com/"),
+    NS_LITERAL_STRING("http://musicstrands.com/"),
+    NS_LITERAL_STRING("http://jamendo.com/"),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("http://www.slimdevices.com/") ),
-    nsString( NS_LITERAL_STRING("http://www.sonos.com/") ),
+    NS_LITERAL_STRING("http://www.slimdevices.com/"),
+    NS_LITERAL_STRING("http://www.sonos.com/"),
     nsString( ),
   },
 };
@@ -349,67 +349,67 @@ static nsString     gChildIcons[ NUM_PARENTS ][ MAX_CHILDREN ] =
   },
   // Group 7
   {
-    nsString( NS_LITERAL_STRING("http://www.pitchforkmedia.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://podbop.org/favicon.ico")),
-    nsString( NS_LITERAL_STRING("http://www.swedelife.com/favicon.ico")),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/default/logo_16.png") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
+    NS_LITERAL_STRING("http://www.pitchforkmedia.com/favicon.ico"),
+    NS_LITERAL_STRING("http://podbop.org/favicon.ico"),
+    NS_LITERAL_STRING("http://www.swedelife.com/favicon.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/default/logo_16.png"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
     nsString( ),
   },
   // Group 11
   {
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/google.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/yahoo.ico") ),
-    nsString( NS_LITERAL_STRING("http://creativecommons.org/favicon.ico") ),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/google.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/yahoo.ico"),
+    NS_LITERAL_STRING("http://creativecommons.org/favicon.ico"),
     nsString( ),
   },
   // Group 8
   {
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/connect.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/amazon.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("https://www.beatport.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://www.mp3tunes.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/emusic.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/cdbaby.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("http://calabashmusic.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://projectopus.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://www.birdmanrecords.com/favicon.ico") ),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/connect.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/amazon.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("https://www.beatport.com/favicon.ico"),
+    NS_LITERAL_STRING("http://www.mp3tunes.com/favicon.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/emusic.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/cdbaby.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("http://calabashmusic.com/favicon.ico"),
+    NS_LITERAL_STRING("http://projectopus.com/favicon.ico"),
+    NS_LITERAL_STRING("http://www.birdmanrecords.com/favicon.ico"),
     nsString( ),
   },
   // Group 9
   {
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/odeo.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/odeo.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
     nsString( ),
   },
   // Group 10
   {
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/shoutcast.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/radiotime.ico") ),
-    nsString( NS_LITERAL_STRING("http://www.mvyradio.com/favicon.ico") ),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/shoutcast.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/radiotime.ico"),
+    NS_LITERAL_STRING("http://www.mvyradio.com/favicon.ico"),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/ninjam_gui_win.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("http://www.allmusic.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://mp3tunes.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/pogues.ico") ),
-    nsString( NS_LITERAL_STRING("http://tablesturned.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://musicstrands.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://jamendo.com/favicon.ico") ),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/ninjam_gui_win.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("http://www.allmusic.com/favicon.ico"),
+    NS_LITERAL_STRING("http://mp3tunes.com/favicon.ico"),
+    NS_LITERAL_STRING("chrome://songbird/skin/serviceicons/default.ico"),
+    NS_LITERAL_STRING("http://tablesturned.com/favicon.ico"),
+    NS_LITERAL_STRING("http://musicstrands.com/favicon.ico"),
+    NS_LITERAL_STRING("http://jamendo.com/favicon.ico"),
     nsString( ),
   },
   {
-    nsString( NS_LITERAL_STRING("http://slimdevices.com/favicon.ico") ),
-    nsString( NS_LITERAL_STRING("http://www.sonos.com/favicon.ico") ),
+    NS_LITERAL_STRING("http://slimdevices.com/favicon.ico"),
+    NS_LITERAL_STRING("http://www.sonos.com/favicon.ico"),
     nsString( ),
   },
 };
@@ -653,7 +653,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
   if (! tv)
     return NS_RDF_NO_VALUE;
 
-  nsString outstring;
+  nsAutoString outstring;
 
   if ( ! outstring.Length() )
   {
@@ -739,10 +739,10 @@ CServicesource::GetTarget(nsIRDFResource *source,
       {
         PRUnichar* data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name").get(), &data);
-        outstring = gPlaylistUrl + nsString( data );
+        outstring = gPlaylistUrl + nsDependentString( data );
         PR_Free( data );
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid").get(), &data);
-        outstring += NS_LITERAL_STRING(",") + nsString( data );
+        outstring += NS_LITERAL_STRING(",") + nsDependentString( data );
         PR_Free( data );
       }
       else if (property == kNC_Properties)
@@ -751,16 +751,16 @@ CServicesource::GetTarget(nsIRDFResource *source,
         outstring = NS_LITERAL_STRING( "playlist" );
         PRUnichar* data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsString( data );
+        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
         PR_Free( data );
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsString( data );
+        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
         PR_Free( data );
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("type").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsString( data );
+        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
         PR_Free( data );
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("base_type").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsString( data );
+        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
         PR_Free( data );
       }
       else if (property == kNC_Open)
@@ -772,7 +772,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
 
   if ( outstring.Length() )
   {
-    // Recompose from the stringbundle
+    // Recompose from the stringbundle (hey, look, stringbundle code uses 'wstring' idl)
     if ( outstring[ 0 ] == '&' )
     {
       PRUnichar *key = (PRUnichar *)outstring.get() + 1;
