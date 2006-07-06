@@ -49,14 +49,14 @@ function initGlobalHotkeys() {
 
 function resetGlobalHotkeys() {
   // Remove all hotkey bindings
-  if (hotkey_service) hotkey_service.RemoveAllHotkeys();
+  if (hotkey_service) hotkey_service.removeAllHotkeys();
   stopWatchingHotkeyRemotes();
 }
 
 // Hotkey handler, this gets called back when the user presses a hotkey that has been registered in loadHotkeysFromPrefs
 var hotkeyHandler = 
 {
-    OnHotkey: function( hotkeyid )
+    onHotkey: function( hotkeyid )
     {
       switch ( hotkeyid.toLowerCase() )
       {
@@ -115,7 +115,7 @@ function loadHotkeysFromPrefs() {
       else keyCode = stringToKeyCode(keys[j]);
     }
     // If we had a key code (and possibly modifiers), register the corresponding action for it
-    if (keyCode != 0) hotkey_service.AddHotkey(keyCode, alt, ctrl, shift, meta, action, hotkeyHandler);
+    if (keyCode != 0) hotkey_service.addHotkey(keyCode, alt, ctrl, shift, meta, action, hotkeyHandler);
   }
 }
 

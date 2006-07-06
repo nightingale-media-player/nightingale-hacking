@@ -51,9 +51,9 @@ interface sbIGlobalHotkeyCallback : nsISupports
    * This method is called when a registered global hotkey has been pressed anywhere in the system
    * (not just when the application is focused)
    * \param key_id The id for the hotkey, specified when the hotkey was registered
-   * \sa sbIGlobalHotkeys, sbIGlobalHotkeys::AddHotkey()
+   * \sa sbIGlobalHotkeys, sbIGlobalHotkeys::addHotkey()
    */
-  void OnHotkey( in wstring key_id );
+  void onHotkey( in wstring key_id );
 };
 
 /**
@@ -79,23 +79,23 @@ interface sbIGlobalHotkeys : nsISupports
    * \param metaKey The state of the Meta key in combination with the keyboard code
    * \param key_id The arbitrary id associated with this hotkey
    * \param cb The callback object to call when the hotkey is pressed
-   * \sa RemoveHotkey, sbIGlobalHotkeyCallback, sbIGlobalHotkeyCallback::OnHotkey()
+   * \sa removeHotkey, sbIGlobalHotkeyCallback, sbIGlobalHotkeyCallback::onHotkey()
    */
-  void AddHotkey( in PRInt32 keyCode, in PRBool altKey, in PRBool ctrlKey, in PRBool shiftKey, in PRBool metaKey, in wstring key_id, in sbIGlobalHotkeyCallback cb );
+  void addHotkey( in PRInt32 keyCode, in PRBool altKey, in PRBool ctrlKey, in PRBool shiftKey, in PRBool metaKey, in wstring key_id, in sbIGlobalHotkeyCallback cb );
 
   /**
    * \brief Global hotkey unregistration method
    * This method is used to unregister a hotkey that has been previously registered with AddHotkey.
    * \param key_id The id of the key to unregister
-   * \sa AddHotkey, RemoveAllHotkeys
+   * \sa addHotkey, removeAllHotkeys
    */
-  void RemoveHotkey( in wstring key_id );
+  void removeHotkey( in wstring key_id );
 
   /**
    * \brief Global hotkeys unregistration method
-   * This method is used to unregister all hotkeys that have been previously registered with AddHotkey.
-   * \sa AddHotkey, RemoveHotkey
+   * This method is used to unregister all hotkeys that have been previously registered with addHotkey.
+   * \sa addHotkey, removeHotkey
    */
-  void RemoveAllHotkeys();
+  void removeAllHotkeys();
 };
 
