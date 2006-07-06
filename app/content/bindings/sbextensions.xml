@@ -295,8 +295,8 @@
             // Make the labels
             var label1 = document.createElement( "label" );
             var label2 = document.createElement( "label" );
-            label1.setAttribute( "value", "Make my Songbird do tricks!" );
-            label2.setAttribute( "value", "Install those extensions:" );
+            label1.setAttribute( "value", "To fully experience the Media Web your Songbird may need a few extensions." );
+            label2.setAttribute( "value", "" );
             
             // Make the extension droplist
             var listbox = document.createElement( "richlistbox" );
