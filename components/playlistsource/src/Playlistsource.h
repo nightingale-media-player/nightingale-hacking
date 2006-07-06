@@ -191,7 +191,7 @@ public:
   PRInt32 sRefCnt;
   PRBool g_NeedUpdate;
 
-  nsCOMPtr<nsIStringBundle> sbPlaylistsource::m_StringBundle;
+  nsCOMPtr<nsIStringBundle> m_StringBundle;
 
   // Oh look, I can be a singleton and not use nasty statics.  Woo.
   nsCOMPtr<sbIDatabaseQuery> m_SharedQuery;
