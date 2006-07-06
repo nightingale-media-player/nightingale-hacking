@@ -32,9 +32,6 @@
 #pragma warning(push)
 #pragma warning(disable:4800)
 
-#include <nsServiceManagerUtils.h>
-#include <nsIAppStartupNotifier.h>
-#include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
 #include "Playlistsource.h"
