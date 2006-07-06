@@ -1360,7 +1360,7 @@ PlaylistPlayback.prototype = {
       this._seenPlaying.setBoolValue(true);
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
-    else if ( this._seenPlaying.getBoolValue() ) {
+    else if ( this._seenPlaying.getBoolValue() || ( len < 0.0 ) ) {
       // Oh, NOW you say we've stopped, eh?
       this._seenPlaying.setBoolValue(false);
       this._stopPlayerLoop();
