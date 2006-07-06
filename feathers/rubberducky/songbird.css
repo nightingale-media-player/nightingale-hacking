@@ -2978,8 +2978,8 @@ TEXTBOXES for dialogs and forms.
 richlistbox
 {
   -moz-appearance: none !important;
-  background: #000 !important;
-  color: #FFF !important;
+  background: transparent !important;
+  padding: 10px 10px 10px 10px !important;
   
 }
 
@@ -2990,13 +2990,15 @@ richlistitem[selected="true"]
   color: #fff !important;
 }
 
-richlistitem > checkbox
+richlistitem > checkbox,
+richlistitem > checkbox[selected="false"]
 {
   -moz-appearance: none !important;
   background: transparent !important;
-  opacity: .8 !important;
+  opacity: .6 !important;
 }
-richlistitem[selected="true"] > checkbox
+richlistitem:focus > checkbox,
+richlistitem:focus > checkbox[selected="true"]
 {
   -moz-appearance: none !important;
   background: transparent !important;  
@@ -3432,6 +3434,10 @@ menulist
   -moz-border-bottom-colors: #99A195 #333 !important; 
 } 
 
+.menulist-label
+{
+  color: #fff !important;
+}
 
 .menulist-dropmarker
 {
@@ -3447,6 +3453,7 @@ menulist:focus
 {
   -moz-appearance: none !important; /* grrrr! */
   background-color: #4A4E48 !important;
+  color: #fff !important;
 }
 
 menulist:focus > hbox
