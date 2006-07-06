@@ -160,11 +160,11 @@ var songbird_hotkeys_event2;
 
 function beginWatchingHotkeyRemotes() {
   var global_hotkeys_changed = {
-    observer : function ( aSubject, aTopic, aData ) { globalHotkeysChanged(); }
+    observe : function ( aSubject, aTopic, aData ) { globalHotkeysChanged(); }
   }
-  songbird_hotkeys_event1 = SB_NewDataRemote ("globalhotkeys.changed");
+  songbird_hotkeys_event1 = SB_NewDataRemote ("globalhotkeys.changed", null);
   songbird_hotkeys_event1.bindObserver( global_hotkeys_changed, true )
-  songbird_hotkeys_event2 = SB_NewDataRemote("globalhotkeys.enabled");
+  songbird_hotkeys_event2 = SB_NewDataRemote("globalhotkeys.enabled", null);
   songbird_hotkeys_event2.bindObserver( global_hotkeys_changed, true )
 }
 

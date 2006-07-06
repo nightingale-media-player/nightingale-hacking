@@ -301,7 +301,7 @@ DataRemote.prototype = {
         this._boundObserver.observe( this, "", value );
       }
       catch (err) {
-        dump("ERROR! Could not call boundObserver.observe().\n" + err + "\n");
+        dump("ERROR! Could not call boundObserver.observe(). Key = " + this._key + "\n" + err + "\n");
       }
     }
     else if (this._boundElement && this._boundProperty) {

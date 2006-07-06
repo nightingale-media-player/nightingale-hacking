@@ -248,7 +248,7 @@ void CWindowDragger::InitPause()
   // ?? Kinda hacky.... pause the background scanner.
   //
   m_pauseScan = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1");
-  m_pauseScan->Init( NS_LITERAL_STRING( "backscan.paused" ).get(), NULL );
+  m_pauseScan->Init( NS_LITERAL_STRING( "backscan.paused" ), NS_LITERAL_STRING( "" ) );
   m_backscanPaused = false;
 }
 
@@ -261,14 +261,7 @@ void CWindowDragger::IncPause()
     m_backscanPaused = true;
     PRInt32 scan_pause_level = -1;
     m_pauseScan->GetIntValue( &scan_pause_level );
-    PRUnichar *val = NULL;
-    m_pauseScan->GetValue( &val );
-    nsString value;
-    value.AppendInt( scan_pause_level + 1 );
-    m_pauseScan->SetValue( value.get() );
-    PR_Free( val );
-    m_pauseScan->GetValue( &val );
-    PR_Free( val );
+    m_pauseScan->SetIntValue( scan_pause_level + 1 );
   }
 }
 
@@ -278,13 +271,9 @@ void CWindowDragger::DecPause()
   // Decrement the scan pause level.
   if ( m_backscanPaused )
   {
-    m_backscanPaused = false;
     PRInt32 scan_pause_level = -1;
     m_pauseScan->GetIntValue( &scan_pause_level );
-    nsString value;
-    scan_pause_level = max( 0, scan_pause_level - 1 );
-    value.AppendInt( scan_pause_level );
-    m_pauseScan->SetValue( value.get() );
+    m_pauseScan->SetIntValue( max( 0, scan_pause_level - 1 ) + 1 );
   }
 }
 
