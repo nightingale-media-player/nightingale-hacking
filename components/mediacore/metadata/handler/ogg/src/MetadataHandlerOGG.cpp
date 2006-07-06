@@ -31,7 +31,9 @@
 
 #pragma once
 
+#ifdef XP_WIN
 #include <windows.h>
+#endif
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "MetadataHandlerOGG.h"
