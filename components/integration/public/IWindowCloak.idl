@@ -25,9 +25,36 @@
  */
 #include "nsISupports.idl"
 
+/**       
+ * \file IWindowCloak.idl
+ * \brief Window cloaking service interface file
+ * This file contains the interface to the window cloaking service, used to hide a xul
+ * window without closing it, and to unhide it at a later time.
+ */
+
+
+/**
+ * \interface sbIWindowCloak IWindowCloak.h
+ * \brief Window cloaking service interface
+ * This is an interface to the window cloaking service, used to hide a xul window without 
+ * closing it, and to unhide it at a later time.
+ */
 [scriptable, uuid(F1387DC0-4F82-4d8d-8671-C8EB03D27271)]
 interface sbIWindowCloak : nsISupports
 {
-  void Cloak( in nsISupports window );
-  void Uncloak( in nsISupports window );
+  /**
+   * \brief Cloak a window
+   * This method cloaks a xul window without closing it
+   * \param window The document associated with the xul window to cloak
+   * \sa uncloak
+   */
+  void cloak( in nsISupports window );
+
+  /**
+   * \brief Uncloak a window
+   * This method uncloaks a xul window previous cloaked via a call to cloak()
+   * \param window The document associated with the xul window to uncloak
+   * \sa cloak
+   */
+  void uncloak( in nsISupports window );
 };

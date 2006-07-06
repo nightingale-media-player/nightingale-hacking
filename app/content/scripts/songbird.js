@@ -281,10 +281,10 @@ function SBUrlChanged( value )
       var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
       if (service) {
         if ( IsVideoUrl( value ) ) {
-          service.Uncloak( document ); 
+          service.uncloak( document ); 
         }
         else {
-          service.Cloak( document ); 
+          service.cloak( document ); 
         }
       }
     }
@@ -508,7 +508,7 @@ function HideCoreWindow()
     if (windowCloak) {
       var service = windowCloak.createInstance(Components.interfaces.sbIWindowCloak);
       if (service)
-        service.Cloak( document ); 
+        service.cloak( document ); 
     }
   }
   catch (err) {
