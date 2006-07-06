@@ -2964,6 +2964,60 @@ TEXTBOXES for dialogs and forms.
   color: #666 !important;
 }
 
+/** 
+*FIRST RUN dialog, aka, the Bundle Picker.
+************************************************************************************************************************************************
+*/
+.sbextensions_box
+{
+  -moz-appearance: none !important;
+  background: #000 !important;
+  color: #CCC !important;
+}
+
+richlistbox
+{
+  -moz-appearance: none !important;
+  background: #000 !important;
+  color: #FFF !important;
+  
+}
+
+richlistitem[selected="true"]
+{
+  -moz-appearance: none !important;
+  background: transparent !important;
+  color: #fff !important;
+}
+
+richlistitem > checkbox
+{
+  -moz-appearance: none !important;
+  background: transparent !important;
+  opacity: .8 !important;
+}
+richlistitem[selected="true"] > checkbox
+{
+  -moz-appearance: none !important;
+  background: transparent !important;  
+  opacity: 1 !important;  
+}
+
+richlistitem > label
+{
+  -moz-appearance: none !important;
+  background: transparent !important;
+  color: #ccc !important;
+  margin: 2px 0px 0px -3px !important;
+}
+richlistitem[selected="true"] > label
+{
+  -moz-appearance: none !important;
+  background: transparent !important;  
+  color: #ccc !important;
+}
+  
+
 /* Listboxes for dialogs */
 
 .dialog_listbox
