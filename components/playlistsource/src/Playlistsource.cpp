@@ -90,22 +90,6 @@ static PRLogModuleInfo* gPlaylistsourceLog =
 
 static sbPlaylistsource* gPlaylistPlaylistsource = nsnull;
 
-sbPlaylistsource::observers_t  sbPlaylistsource::g_Observers;
-sbPlaylistsource::stringmap_t  sbPlaylistsource::g_StringMap;
-sbPlaylistsource::infomap_t    sbPlaylistsource::g_InfoMap;
-sbPlaylistsource::valuemap_t   sbPlaylistsource::g_ValueMap;
-sbPlaylistsource::resultlist_t sbPlaylistsource::g_ResultGarbage;
-sbPlaylistsource::commandmap_t sbPlaylistsource::g_CommandMap;
-
-PRMonitor* sbPlaylistsource::g_pMonitor = nsnull;
-
-PRInt32 sbPlaylistsource::g_ActiveQueryCount = 0;
-PRInt32 sbPlaylistsource::sRefCnt = 0;
-
-PRBool sbPlaylistsource::g_NeedUpdate = PR_FALSE;
-
-nsCOMPtr<nsIStringBundle> sbPlaylistsource::m_StringBundle;
-
 // Strings that we'll use to compose all the goofy queries.
 NS_NAMED_LITERAL_STRING(select_str, "select ");
 NS_NAMED_LITERAL_STRING(unique_str, "select distinct");
@@ -225,7 +209,7 @@ MyQueryCallback::MyTimerCallbackFunc(nsITimer* aTimer,
 
 void
 MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
-                                     void*     aClosure)
+                                     void* aClosure)
 {
   //
   //
@@ -239,7 +223,7 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
       "MyQueryCallback timer fired before Playlistsource initialized");
 
     // LOCK IT.
-    nsAutoMonitor mon_global(sbPlaylistsource::g_pMonitor);
+    nsAutoMonitor mon_global(gPlaylistPlaylistsource->g_pMonitor);
 
     if (!m_Info) {
       NS_WARNING("No m_Info on this Playlistsource::MyQueryCallback object!!!");
@@ -252,7 +236,7 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     if ( exec )
     {
       // Just ignore this one, but always go on the next one.
-      sbPlaylistsource::g_ActiveQueryCount = 0;
+      gPlaylistPlaylistsource->g_ActiveQueryCount = 0;
       m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
                                     100, nsITimer::TYPE_ONE_SHOT);
       return;
@@ -265,8 +249,8 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     }
 
     // This is ok by design
-    if (sbPlaylistsource::g_ActiveQueryCount < 0)
-      sbPlaylistsource::g_ActiveQueryCount = 0;
+    if (gPlaylistPlaylistsource->g_ActiveQueryCount < 0)
+      gPlaylistPlaylistsource->g_ActiveQueryCount = 0;
 
     sbPlaylistsource::sbResultInfo result;
 
@@ -283,7 +267,7 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
 
     // Push the old resultset onto the garbage stack.
-    sbPlaylistsource::g_ResultGarbage.push_back(result);
+    gPlaylistPlaylistsource->g_ResultGarbage.push_back(result);
 
 #if 0
     if ( ! m_Results.empty() )
@@ -300,10 +284,10 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
 #endif
   }
   // Decrement and update if needbe.
-  sbPlaylistsource::g_ActiveQueryCount -= count;
-  if (sbPlaylistsource::g_ActiveQueryCount <= 0) {
-    sbPlaylistsource::g_ActiveQueryCount = 0;
-    sbPlaylistsource::g_NeedUpdate = PR_TRUE;
+  gPlaylistPlaylistsource->g_ActiveQueryCount -= count;
+  if (gPlaylistPlaylistsource->g_ActiveQueryCount <= 0) {
+    gPlaylistPlaylistsource->g_ActiveQueryCount = 0;
+    gPlaylistPlaylistsource->g_NeedUpdate = PR_TRUE;
     gPlaylistPlaylistsource->UpdateObservers();
   }
 }
@@ -314,7 +298,11 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
 // Playlistsource
 NS_IMPL_ISUPPORTS2(sbPlaylistsource, sbIPlaylistsource, nsIRDFDataSource)
 //-----------------------------------------------------------------------------
-sbPlaylistsource::sbPlaylistsource()
+sbPlaylistsource::sbPlaylistsource() :
+  g_pMonitor(nsnull),
+  g_ActiveQueryCount(0),
+  sRefCnt(0),
+  g_NeedUpdate(false)
 {
   LOG(("sbPlaylistsource::sbPlaylistsource"));
 
@@ -433,7 +421,7 @@ NS_IMETHODIMP
 sbPlaylistsource::IncomingObserver(const nsAString &aRefName,
                                    nsIDOMNode*      aObject)
 {
-  LOG(("sbPlaylistsource::IncomingObserver %s %x", NS_ConvertUTF16toUTF8(RefName).get(), Observer));
+  LOG(("sbPlaylistsource::IncomingObserver %s %x", NS_ConvertUTF16toUTF8(aRefName).get(), aObject));
   NS_ENSURE_ARG_POINTER(aObject);
 
   METHOD_SHORTCIRCUIT;
@@ -494,7 +482,7 @@ NS_IMETHODIMP
 sbPlaylistsource::GetRefRowCount(const nsAString &aRefName,
                                  PRInt32*         _retval)
 {
-  LOG(("sbPlaylistsource::GetRefRowCount %s", NS_ConvertUTF16toUTF8(RefName).get()));
+  LOG(("sbPlaylistsource::GetRefRowCount %s", NS_ConvertUTF16toUTF8(aRefName).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
@@ -560,7 +548,7 @@ NS_IMETHODIMP
 sbPlaylistsource::GetRefColumnCount(const nsAString &aRefName,
                                     PRInt32*         _retval)
 {
-  LOG(("sbPlaylistsource::GetRefColumnCount %s", NS_ConvertUTF16toUTF8(RefName).get()));
+  LOG(("sbPlaylistsource::GetRefColumnCount %s", NS_ConvertUTF16toUTF8(aRefName).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;

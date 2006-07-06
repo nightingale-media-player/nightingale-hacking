@@ -59,6 +59,7 @@
   0x4e21,                                                 \
   {0xb1, 0xc4, 0xc1, 0x70, 0xec, 0x82, 0x36, 0xe8}        \
 }
+#define SONGBIRD_PLAYLISTSOURCE_DESCRIPTION SONGBIRD_PLAYLISTSOURCE_CLASSNAME
 
 #define NUM_PLAYLIST_ITEMS 0
 
@@ -71,6 +72,7 @@ class nsAutoMonitor;
 // CLASSES ====================================================================
 class sbPlaylistsource : public sbIPlaylistsource
 {
+  friend MyQueryCallback;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPLAYLISTSOURCE
@@ -104,14 +106,13 @@ public:
   };
 
   class observers_t : public std::set<sbObserver> {};
-  static observers_t g_Observers;
 
-  static void ClearPlaylistSTR(const PRUnichar *RefName);
-  static void ClearPlaylistRDF(nsIRDFResource *RefResource);
+  void ClearPlaylistSTR(const PRUnichar *RefName);
+  void ClearPlaylistRDF(nsIRDFResource *RefResource);
 
   struct sbFilterInfo
   {
-    ~sbFilterInfo() { ClearPlaylistSTR(m_Ref.get()); }
+    ~sbFilterInfo() { /*ClearPlaylistSTR(m_Ref.get());*/ }
     nsString m_Ref;
     nsString m_Filter;
     nsString m_Column;
@@ -184,18 +185,13 @@ public:
   class commandmap_t : public std::map<nsString,
                                        nsCOMPtr<sbIPlaylistCommands> > {};
 
-  static stringmap_t  g_StringMap;
-  static infomap_t    g_InfoMap;
-  static valuemap_t   g_ValueMap;
-  static resultlist_t g_ResultGarbage;
-  static commandmap_t g_CommandMap;
 
-  static PRMonitor* g_pMonitor;
-  static PRInt32    sRefCnt;
-  static PRInt32    g_ActiveQueryCount;
-  static PRBool     g_NeedUpdate;
+  PRMonitor* g_pMonitor;
+  PRInt32 g_ActiveQueryCount;
+  PRInt32 sRefCnt;
+  PRBool g_NeedUpdate;
 
-  static nsCOMPtr<nsIStringBundle> m_StringBundle;
+  nsCOMPtr<nsIStringBundle> sbPlaylistsource::m_StringBundle;
 
   // Oh look, I can be a singleton and not use nasty statics.  Woo.
   nsCOMPtr<sbIDatabaseQuery> m_SharedQuery;
@@ -205,10 +201,18 @@ public:
   NS_IMETHODIMP LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMonitor& mon );
 
 private:
+  // Make these no longer be static globals, so they can destruct
+  observers_t  g_Observers;
+  stringmap_t  g_StringMap;
+  infomap_t    g_InfoMap;
+  valuemap_t   g_ValueMap;
+  resultlist_t g_ResultGarbage;
+  commandmap_t g_CommandMap;
+
   NS_IMETHODIMP Init(void);
   NS_IMETHODIMP DeInit(void);
 
-  inline static sbFeedInfo* GetFeedInfo(const nsAString& as)
+  inline sbFeedInfo* GetFeedInfo(const nsAString& as)
   {
     nsString str( as );
     stringmap_t::iterator s = g_StringMap.find(str);
@@ -217,7 +221,7 @@ private:
     return nsnull;
   }
 
-  inline static sbFeedInfo* GetFeedInfo(nsIRDFResource* res)
+  inline sbFeedInfo* GetFeedInfo(nsIRDFResource* res)
   {
     infomap_t::iterator i = g_InfoMap.find(res);
     if (i != g_InfoMap.end())
@@ -225,7 +229,7 @@ private:
     return nsnull;
   }
 
-  inline static void EraseFeedInfo(nsIRDFResource *res)
+  inline void EraseFeedInfo(nsIRDFResource *res)
   { }
 
   NS_IMETHODIMP GetQueryResult(const nsAString &RefName,
@@ -246,6 +250,7 @@ NS_IMETHODIMP    GetTargets2(nsIRDFResource*       source,
                              nsIRDFResource*       property,
                              PRBool                tv,
                              nsISimpleEnumerator** targets /* out */);
+
 };
 
 class MyQueryCallback : public sbIDatabaseSimpleQueryCallback

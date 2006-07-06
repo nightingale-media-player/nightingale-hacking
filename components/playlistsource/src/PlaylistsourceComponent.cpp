@@ -32,19 +32,33 @@
 #pragma warning(push)
 #pragma warning(disable:4800)
 
-#include "nsIGenericFactory.h"
+#include <nsServiceManagerUtils.h>
+#include <nsIAppStartupNotifier.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
+
 #include "Playlistsource.h"
 
+#include <windows.h>
+
 #define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
+  static _Interface * g_Simpleton = NULL;                                       \
   static _Interface * _Interface##SimpletonConstructor( void )                  \
   {                                                                             \
-    static _Interface * m_Simpleton = NULL;                                     \
-    NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
-    return m_Simpleton;                                                         \
+    NS_IF_ADDREF( g_Simpleton ? g_Simpleton : ( NS_IF_ADDREF( g_Simpleton = new _Interface() ), g_Simpleton ) ); \
+    return g_Simpleton;                                                         \
   }                                                                             \
   NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
 
 NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(sbPlaylistsource)
+
+// When everything else shuts down, delete the playlistsource.
+static void sbPlaylistsourceDTOR(nsIModule* me)
+{
+  // Hey, look, I can make it go away now!
+  g_Simpleton ? delete g_Simpleton : g_Simpleton;
+}
+
 
 static nsModuleComponentInfo components[] =
 {
@@ -52,10 +66,10 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_PLAYLISTSOURCE_CLASSNAME, 
     SONGBIRD_PLAYLISTSOURCE_CID,
     SONGBIRD_PLAYLISTSOURCE_CONTRACTID,
-    sbPlaylistsourceConstructor,
+    sbPlaylistsourceConstructor
   }
 };
 
-NS_IMPL_NSGETMODULE("SongbirdPlaylistsourceComponent", components)
+NS_IMPL_NSGETMODULE_WITH_DTOR("SongbirdPlaylistsourceComponent", components, sbPlaylistsourceDTOR)
 
 #pragma warning(pop)
