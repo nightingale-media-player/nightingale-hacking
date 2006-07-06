@@ -59,7 +59,7 @@ function onBkgDown( theEvent )
     if (windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service)
-        service.BeginWindowDrag(0); // automatically ends
+        service.beginWindowDrag(0); // automatically ends
     }
     else {
       trackerBkg = true;

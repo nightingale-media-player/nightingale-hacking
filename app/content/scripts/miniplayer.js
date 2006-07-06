@@ -106,7 +106,7 @@ try
         var isvideo = location.indexOf("?video") != -1;
         var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
         if (service)
-          service.BeginWindowDrag(isvideo ? 0 : 10); // automatically ends
+          service.beginWindowDrag(isvideo ? 0 : 10); // automatically ends
       }
       else {
         trackerBkg = true;
@@ -141,7 +141,7 @@ try
   function onBkgDown( theEvent ) 
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"].getService(Components.interfaces.sbIWindowDragger);
-    windowDragger.BeginWindowDrag(10); // automatically ends
+    windowDragger.beginWindowDrag(10); // automatically ends
   }
   function onBkgUp( ) 
   {
