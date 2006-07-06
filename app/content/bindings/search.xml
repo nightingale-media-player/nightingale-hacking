@@ -222,7 +222,7 @@
         if ( ( search_term.length > 0 ) && ( search_term != empty_space ) )
         {          
           this.sendSearchEvent();
-          this.metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
+          metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
           
           // Keep last 4 search terms for display in popup
           var recentSearches = SB_NewDataRemote( "searchwidget.recentstrings", null ); 
@@ -295,7 +295,7 @@
         {
           // Only do key timeouts when the library is selected
           document.__SEARCH_WIDGET__.sendSearchEvent();
-          this.metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
+          metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
         }
         clearInterval( document.__SEARCH_WIDGET__.editIdleInterval );
       }
