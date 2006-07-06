@@ -26,7 +26,7 @@
 #include "nsISupports.idl"
 
 /**       
- * \file IWindowDrag.idl
+ * \file IWindowDragger.idl
  * \brief Window dragging service interface file
  * This file contains the interface to the window dragging service, used to drag a window
  * without losing mousemove messages when the mouse moves outside the rect of the window
@@ -34,7 +34,7 @@
  */
 
 /**
- * \interface sbIWindowDrag IWindowDrag.h
+ * \interface sbIWindowDragger IWindowDragger.h
  * \brief Window dragging service interface
  * This is an interface to the window dragging service, , used to drag a window without 
  * losing mousemove messages when the mouse moves outside the rect of the window being 
