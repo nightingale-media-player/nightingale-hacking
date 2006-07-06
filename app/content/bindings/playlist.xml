@@ -108,7 +108,7 @@
                   label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
                 />
                 <xul:menuitem id="search.popup.wiki" 
-                  label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/pogues.ico"
+                  label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
                 />
                 <xul:menuitem id="search.popup.yahoo" 
                   label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"

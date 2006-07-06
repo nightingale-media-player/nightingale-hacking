@@ -129,13 +129,13 @@ var bmManager = {
       SBDataSetValue("bookmarks.bookmark2.icon", "http://www.swedelife.com/favicon.ico");
       SBDataSetValue("bookmarks.bookmark3.label", "La Blogotheque");
       SBDataSetValue("bookmarks.bookmark3.url", "http://www.blogotheque.net/mp3/");
-      SBDataSetValue("bookmarks.bookmark3.icon", "chrome://songbird/skin/serviceicons/pogues.ico");
+      SBDataSetValue("bookmarks.bookmark3.icon", "chrome://songbird/skin/serviceicons/default.ico");
       SBDataSetValue("bookmarks.bookmark4.label", "Medicine");
       SBDataSetValue("bookmarks.bookmark4.url", "http://takeyourmedicinemp3.blogspot.com/");
-      SBDataSetValue("bookmarks.bookmark4.icon", "chrome://songbird/skin/serviceicons/pogues.ico");
+      SBDataSetValue("bookmarks.bookmark4.icon", "chrome://songbird/skin/serviceicons/default.ico");
       SBDataSetValue("bookmarks.bookmark5.label", "OpenBSD");
       SBDataSetValue("bookmarks.bookmark5.url", "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/");
-      SBDataSetValue("bookmarks.bookmark5.icon", "chrome://songbird/skin/serviceicons/pogues.ico");
+      SBDataSetValue("bookmarks.bookmark5.icon", "chrome://songbird/skin/serviceicons/default.ico");
       SBDataSetValue("bookmarks.bookmark6.label", "Songbirdnest");
       SBDataSetValue("bookmarks.bookmark6.url", "http://songbirdnest.com/");
       SBDataSetValue("bookmarks.bookmark6.icon", "chrome://songbird/skin/default/logo_16.png");
