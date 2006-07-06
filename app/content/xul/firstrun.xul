@@ -37,7 +37,7 @@
       </hbox>
     </vbox>
 
-    <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+    <vbox class="sb_faceplate" flex="1" >
       <hbox class="sb_faceplate">
         <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
       </hbox>
