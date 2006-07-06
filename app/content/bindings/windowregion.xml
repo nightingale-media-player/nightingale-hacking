@@ -88,7 +88,7 @@
         </setter>
       </property>
       
-      <method name="OnResize">
+      <method name="onResize">
         <parameter name="x"/>
         <parameter name="y"/>
         <parameter name="w"/>

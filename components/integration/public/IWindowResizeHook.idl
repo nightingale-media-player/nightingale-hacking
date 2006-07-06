@@ -25,16 +25,63 @@
  */
 #include "nsISupports.idl"
 
+/**       
+ * \file IWindowResizeHook.idl
+ * \brief WindowResizeHook service interface file
+ * This file contains the interfaces to the windowresizehook service, used to receive notifications
+ * of window resizing events.
+ */
+
+/**
+ * \interface sbIWindowResizeHookCallback IWindowResizeHook.h
+ * \brief WindowResizeHook callback interface
+ * This interface describes a callback for the WindowResizeHook service, used to receive
+ * notifications of window resizing events
+ * \sa sbIWindowResizeHook
+ */
+
 [scriptable, uuid(4D11C61E-8623-4b1b-B7CB-094B5E774609)]
 interface sbIWindowResizeHookCallback : nsISupports
 {
-  void OnResize( in PRInt32 x, in PRInt32 y, in PRInt32 w, in PRInt32 h);
+  /**
+   * \brief Window resize callback
+   * This method is called by the WindowResizeHook service to notify the callback object
+   * that the window being monitored has been resized.
+   * \param x The new x position of the window.
+   * \param y The new y position of the window.
+   * \param w The new width of the window.
+   * \param h The new height of the window.
+   */
+  void onResize( in PRInt32 x, in PRInt32 y, in PRInt32 w, in PRInt32 h);
 };
 
+/**
+ * \interface sbIWindowResizeHook IWindowResizeHook.h
+ * \brief WindowResizeHook service interface
+ * This is an interface to the WindowResizeHook service, used to used to register 
+ * callback notifications of window resizing events
+ * \sa sbIWindowResizeHook
+ */
 [scriptable, uuid(D44A410E-70A1-4932-8F5A-B1D644356401)]
 interface sbIWindowResizeHook : nsISupports
 {
-  void SetCallback( in nsISupports window, in sbIWindowResizeHookCallback cb );
-  void ResetCallback( in sbIWindowResizeHookCallback cb);
+  /**
+   * \brief Set window resize hook callback
+   * This method assigns a WindowResizeHook Callback object to the specified window. When the user
+   * resizes this window, the callback object is notified of the new position and size for the window
+   * \param window The document associated with the window whose position and dimensions should be monitored.
+   * \param cb The callback object used to receive notifications
+   * \sa resetCallback, sbIWindowResizeHookCallback
+   */
+  void setCallback( in nsISupports window, in sbIWindowResizeHookCallback cb );
+
+  /**
+   * \brief Remove window resize hook callback
+   * This method removes the WindowResizeHookCallback object from the specified window. 
+   * \param window The document associated with the window which had previously been assigned 
+   * a WindowResizeHook callback object.
+   * \sa setCallback, sbIWindowResizeHookCallback
+   */
+  void resetCallback( in sbIWindowResizeHookCallback cb);
 };
 

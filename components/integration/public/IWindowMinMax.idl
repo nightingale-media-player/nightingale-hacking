@@ -38,6 +38,7 @@
  * This interface describes a callback for the WindowMinMax service, used to query the 
  * application for minimum and maximum dimensions. The callback is also used to trap 
  * the closing of the window.
+ * \sa sbIWindowMinMaxCallback
  */
 [scriptable, uuid(10EB215D-D70A-4eee-B5CE-39990B16706C)]
 interface sbIWindowMinMaxCallback : nsISupports
