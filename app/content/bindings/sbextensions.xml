@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 /*
 //
@@ -293,10 +293,10 @@
             vbox.setAttribute( "sbid", "extensions_box" );
             
             // Make the labels
-            var label1 = document.createElement( "label" );
-            var label2 = document.createElement( "label" );
-            label1.setAttribute( "value", "To fully experience the Media Web your Songbird may need a few extensions." );
-            label2.setAttribute( "value", "" );
+            var label = document.createElement( "label" );
+            var spacer = document.createElement( "spacer" );
+            label.setAttribute( "value", "To fully experience the Media Web your Songbird may need a few extensions." );
+            spacer.setAttribute( "height", "5" );
             
             // Make the extension droplist
             var listbox = document.createElement( "richlistbox" );
@@ -306,8 +306,8 @@
             listbox.setAttribute("class", "sb_faceplate");
             
             // Hook them up.
-            vbox.appendChild( label1 );
-            vbox.appendChild( label2 );
+            vbox.appendChild( label );
+            vbox.appendChild( spacer );
             vbox.appendChild( listbox );
             
             this.parent.insertBefore( vbox, before );
