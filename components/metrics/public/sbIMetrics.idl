@@ -1,13 +1,56 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
 #include "nsISupports.idl"
 #include "nsIArray.idl"
 
-/**
- * The sbIMetrics Interface
+/**       
+ * \file sbIMetrics.idl
+ * \brief Metrics service interface file
+ * This file contains the interfaces to the songbird metrics service, used to phone
+ * home and send metrics gathered since the last report was sent.
  */
 
+/**
+ * \interface sbIMetrics sbIMetrics.h
+ * \brief Metrics service interface
+ * This is an interface to the songbird metrics service, used to phone home and send 
+ * metrics gathered since the last report was sent.
+ */
 [scriptable, uuid(F64283C0-CDCF-48ec-8502-735B7282981E)]
 interface sbIMetrics : nsISupports
 {
+  /**
+   * \brief Perform anonymous metrics upload if needed
+   * This method checks how much time has elapsed since the last time metrics were uploaded.
+   * If enough time has elapsed, metrics data is extracted from the user's dataremote repository
+   * and sent to the metrics server. The metrics repository is then emptied and a new metrics 
+   * gathering session begins. 
+   * This function may return without performing any task if the user has disabled metrics gathering.
+   */
   void checkUploadMetrics();
 };
 

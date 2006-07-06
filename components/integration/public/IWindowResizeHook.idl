@@ -39,7 +39,6 @@
  * notifications of window resizing events
  * \sa sbIWindowResizeHook
  */
-
 [scriptable, uuid(4D11C61E-8623-4b1b-B7CB-094B5E774609)]
 interface sbIWindowResizeHookCallback : nsISupports
 {
