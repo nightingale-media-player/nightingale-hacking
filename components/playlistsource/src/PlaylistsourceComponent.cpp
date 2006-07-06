@@ -51,7 +51,11 @@ NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(sbPlaylistsource)
 static void sbPlaylistsourceDTOR(nsIModule* me)
 {
   // Hey, look, I can make it go away now!
-  g_Simpleton ? delete g_Simpleton : g_Simpleton;
+  if( g_Simpleton )
+  {
+    delete g_Simpleton;
+    g_Simpleton = nsnull;
+  }
 }
 
 

@@ -72,7 +72,7 @@ class nsAutoMonitor;
 // CLASSES ====================================================================
 class sbPlaylistsource : public sbIPlaylistsource
 {
-  friend MyQueryCallback;
+  friend class MyQueryCallback;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPLAYLISTSOURCE
