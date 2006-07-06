@@ -69,8 +69,8 @@ interface sbIGlobalHotkeys : nsISupports
    * \brief Global hotkey registration method
    * This method is used to register a hotkey.
    *
-   *  Hotkeys are specified via key code and modifiers, and an arbitrary id string is given 
-   *  in the callback method.
+   * Hotkeys are specified via key code and modifiers, and an arbitrary id string is given 
+   * back to the callback method.
    *
    * \param keyCode The keyboard code for the hotkey
    * \param altKey The state of the Alt key in combination with the keyboard code
