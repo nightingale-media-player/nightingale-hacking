@@ -68,10 +68,10 @@ try
     bsMaxArray = ( bsMaxArray < bsMaxArrayMin ) ? bsMaxArrayMin : bsMaxArray;
   }
 
-  var bsScanningText = new sbIDataRemote( "backscan.status" );
-  var bsPlaylistRef = new sbIDataRemote( "playlist.ref" );
+  var bsScanningText = SB_NewDataRemote( "backscan.status", null );
+  var bsPlaylistRef = SB_NewDataRemote( "playlist.ref", null );
+  var bsScanningPaused = SB_NewDataRemote( "backscan.paused", null );
   var bsSongbirdStrings = document.getElementById( "songbird_strings" );
-  var bsScanningPaused = new sbIDataRemote( "backscan.paused" );
   
   var bsQueryString = "SELECT uuid, url, length, title, service_uuid FROM library where length=\"0\"";
   
@@ -83,7 +83,10 @@ try
       if ( ENABLE_BACKSCAN )
       {
         // Bind a function to let us pause and unpause
-        bsScanningPaused.bindCallbackFunction( BSDataChange );
+        var bs_data_change = {
+          observe: function ( aSubject, aTopic, aData) { BSDataChange(aData); }
+        };
+        bsScanningPaused.bindObserver( bs_data_change, true );
       
         // Go start an async query on the library
         bsDBQuery = new sbIDatabaseQuery();
@@ -101,6 +104,16 @@ try
     catch ( err )
     {
       alert( err );
+    }
+  }
+
+  function BSDeInitialize()
+  {
+    try {
+      bsScanningPaused.unbind();
+    }
+    catch ( err ) {
+      dump("ERROR! SBDeInitialized()\n" + err + "\n");
     }
   }
 
@@ -134,7 +147,7 @@ try
       }
 
       // People can pause us
-      if ( ! bsScanningPaused.getIntValue() )
+      if ( ! bsScanningPaused.intValue )
       {
         // So can executing queries, or the media scan.
         if ( ! bsDBQuery.IsExecuting() && ( SBDataGetIntValue( "media_scan.open" ) == 0 ) )
@@ -152,7 +165,7 @@ try
             // ...we need to resubmit the query.
             bsWaitForExecuting = true;
             setTimeout( BSExecute, 2000 );
-            bsScanningText.setValue( "" );
+            bsScanningText.stringValue = "";
           }
           else
           {
@@ -199,7 +212,7 @@ try
       {
         scanning = bsSongbirdStrings.getString("back_scan.scanning");
       } catch(e) {}
-      bsScanningText.setValue( scanning + "..." );
+      bsScanningText.stringValue = scanning + "...";
       
       var bad_url = false;
       var url = result.GetRowCellByColumn( bsLastRow, "url" );
@@ -377,25 +390,24 @@ try
     }
   }
   
-  function BSDataChange()
+  function BSDataChange( aIsPaused )
   {
     var scanning = "Scanning";
     var paused = "Paused";
-    
-    try
-    {
+    try {
       scanning = bsSongbirdStrings.getString("back_scan.scanning");
       paused = bsSongbirdStrings.getString("back_scan.paused");
-    } catch(e) {}
-    if ( bsScanningText.getValue() != "" )
+    } catch(e) { /* ignore the error, we have default strings */ }
+
+    if ( bsScanningText.stringValue.length )
     {
-      if ( bsScanningPaused.getIntValue() )
+      if ( aIsPaused )
       {
-        bsScanningText.setValue( scanning + " " + paused );
+        bsScanningText.stringValue = scanning + " " + paused;
       }
       else
       {
-        bsScanningText.setValue( scanning + "..." );
+        bsScanningText.stringValue = scanning + "...";
       }
     }
   }

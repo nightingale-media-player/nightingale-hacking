@@ -136,7 +136,7 @@ try
     window.arguments[0].__JUMPTO__ = document;
     var guid;
     var table;
-    var ref = SBDataGetValue("playing.ref");
+    var ref = SBDataGetStringValue("playing.ref");
     if (ref != "") {
       source_ref = ref;
       var source = new sbIPlaylistsource();

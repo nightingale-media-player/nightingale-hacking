@@ -203,7 +203,7 @@ function SBInitialize()
       // ask the user if they would like to fill their empty bucket.
       if ( ret == 0 )
       {
-        theMediaScanIsOpen.setValue( true );
+        theMediaScanIsOpen.boolValue = true;
         setTimeout( SBScanMedia, 1000 );
       }
     }
@@ -238,8 +238,8 @@ function SBInitialize()
     
     // Poll the playlist source every 500ms to drive the display update (STOOOOPID!)
     Poll = new sbIPlaylistsource();
-    var NumPlaylistItemsRemote = new sbIDataRemote( "playlist.numitems" );
-    NumPlaylistItemsRemote.setValue( "" );
+    var NumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
+    NumPlaylistItemsRemote.stringValue = "";
     function PFU()
     {
       try
@@ -254,13 +254,12 @@ function SBInitialize()
         }
         else if ( theWebPlaylistQuery )
         {
-          // If there's a web playlist query, then we can pop the webplaylist.
-          var mediafound = "Media Found";
-          try
-          {
+          // If there is a web playlist query, then we can pop the webplaylist.
+          var mediafound = "Media Found"; 
+          try {
             mediafound = theSongbirdStrings.getString("faceplate.mediafound");
-          } catch(e) {}
-          var pct = parseInt( SBDataGetValue( "webplaylist.current" ) * 100 / SBDataGetValue( "webplaylist.total" ) );
+          } catch(e) { /* ignore error, we have a default string*/ }
+          var pct = parseInt( SBDataGetIntValue( "webplaylist.current" ) * 100 / SBDataGetIntValue( "webplaylist.total" ) );
           if ( pct < 100 )
           {
             display_string = mediafound + " " + pct + "%";
@@ -277,15 +276,14 @@ function SBInitialize()
           if ( rows > 0 )
           {
             var items = "items";
-            try
-            {
+            try {
               items = theSongbirdStrings.getString("faceplate.items");
-            } catch(e) {}
+            } catch(e) { /* ignore error, we have a default string*/ }
             display_string = rows + " " + items;
           }
         }
         
-        NumPlaylistItemsRemote.setValue( display_string );
+        NumPlaylistItemsRemote.stringValue = display_string;
       }
       catch ( err )
       {
@@ -429,8 +427,8 @@ function onBkgMove( theEvent )
 function onBkgUp( ) 
 {
   var root = "window." + document.documentElement.id;
-  SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
   
   if ( trackerBkg )
   {
@@ -442,10 +440,10 @@ function onBkgUp( )
 function saveWindowPosition()
 {
   var root = "window." + document.documentElement.id;
-  SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
-  SBDataSetValue( root + ".w", document.documentElement.boxObject.width );
-  SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
+  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
+  SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
+  SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
 }
 
 function switchFeathers(internalName)
@@ -490,16 +488,14 @@ function onBkgUp( )
   }
 }*/
 
-
-var URL = new sbIDataRemote("faceplate.play.url");
-var thePlaylistIndex = new sbIDataRemote( "playlist.index" );
-var seen_playing = new sbIDataRemote("faceplate.seenplaying");
-
-var theTitleText = new sbIDataRemote( "metadata.title" );
-var theArtistText = new sbIDataRemote( "metadata.artist" );
-var theAlbumText = new sbIDataRemote( "metadata.album" );
-var theStatusText = new sbIDataRemote( "faceplate.status.text" );
-var theStatusStyle = new sbIDataRemote( "faceplate.status.style" );
+var URL = SB_NewDataRemote( "faceplate.play.url", null );
+var thePlaylistIndex = SB_NewDataRemote( "playlist.index", null );
+var seen_playing = SB_NewDataRemote( "faceplate.seenplaying", null );
+var theTitleText = SB_NewDataRemote( "metadata.title", null );
+var theArtistText = SB_NewDataRemote( "metadata.artist", null );
+var theAlbumText = SB_NewDataRemote( "metadata.album", null );
+var theStatusText = SB_NewDataRemote( "faceplate.status.text", null );
+var theStatusStyle = SB_NewDataRemote( "faceplate.status.style", null );
 
 // Help
 function onHelp()
@@ -517,7 +513,7 @@ function onCurrentTrack()
 
   var guid;
   var table;
-  var ref = SBDataGetValue("playing.ref");
+  var ref = SBDataGetStringValue("playing.ref");
   if (ref != "") {
     source_ref = ref;
     var source = new sbIPlaylistsource();
@@ -548,11 +544,11 @@ function onCurrentTrack()
   theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
 }
 
-var FaceplateStateData = new sbIDataRemote( "faceplate.state" );
+var FaceplateStateData = SB_NewDataRemote( "faceplate.state", null );
 
 function onNextService()
 {
-  FaceplateStateData.setValue( ( FaceplateStateData.getIntValue() + 1 ) % 2 ); // can't use boolean, must use integer logic
+  FaceplateStateData.boolValue = !FaceplateStateData.boolValue; 
 }
 
 function onServiceTreeCommand( theEvent )
@@ -848,13 +844,13 @@ function HideServiceEdit()
   }
 }
 
-var theCanGoBackData = new sbIDataRemote("browser.cangoback");
-var theCanGoFwdData = new sbIDataRemote("browser.cangofwd");
-var theCanAddToPlaylistData = new sbIDataRemote( "browser.canplaylist" );
-var theBrowserUrlData = new sbIDataRemote( "browser.url.text" );
-var theBrowserImageData = new sbIDataRemote( "browser.url.image" );
-var theBrowserUriData = new sbIDataRemote( "browser.uri" );
-var theShowWebPlaylistData = new sbIDataRemote( "browser.playlist.show" );
+var theCanGoBackData = SB_NewDataRemote( "browser.cangoback", null );
+var theCanGoFwdData = SB_NewDataRemote( "browser.cangofwd", null );
+var theCanAddToPlaylistData = SB_NewDataRemote( "browser.canplaylist", null );
+var theBrowserUrlData = SB_NewDataRemote( "browser.url.text", null );
+var theBrowserImageData = SB_NewDataRemote( "browser.url.image", null );
+var theBrowserUriData = SB_NewDataRemote( "browser.uri", null );
+var theShowWebPlaylistData = SB_NewDataRemote( "browser.playlist.show", null );
 
 var SBDocStartListener = {
 
@@ -910,23 +906,23 @@ var SBDocStartListener = {
       var theMainPane = document.getElementById( "frame_main_pane" );
       var cur_uri = aLocation.asciiSpec;
       m_CurrentRequestURI = aRequest.name;
-//      if ( SBGetUrlFromService( theBrowserUrlData.getValue() ) != cur_uri )
+//      if ( SBGetUrlFromService( theBrowserUrlData.stringValue ) != cur_uri )
       {
         // Set the box
-        theBrowserUriData.setValue( cur_uri );
-        theBrowserUrlData.setValue( SBGetServiceFromUrl( cur_uri ) );
+        theBrowserUriData.stringValue = cur_uri;
+        theBrowserUrlData.stringValue = SBGetServiceFromUrl( cur_uri ) ;
         var image = SBGetServiceImageFromUrl( cur_uri );
         if ( image.length )
         {
-          theBrowserImageData.setValue( image );
+          theBrowserImageData.stringValue = image;
         }
         
         // Set the buttons based on the session history.
         if ( theMainPane.webNavigation.sessionHistory )
         {
           // Check the buttons
-          theCanGoBackData.setValue( theMainPane.webNavigation.canGoBack );
-          theCanGoFwdData.setValue( theMainPane.webNavigation.canGoForward )
+          theCanGoBackData.boolValue = theMainPane.webNavigation.canGoBack;
+          theCanGoFwdData.boolValue = theMainPane.webNavigation.canGoForward;
         }
         else
         {
@@ -961,8 +957,7 @@ var SBDocStartListener = {
                     50 );
       }
       theServiceTree.urlFromServicePane = false;
-      
-      thePaneLoadingData.setValue( true );
+      thePaneLoadingData.boolValue = true;
       
       // Clear the playlist tree variable so we are not confused.
       thePlaylistTree = null;
@@ -974,7 +969,7 @@ var SBDocStartListener = {
       mainpane_listener_set = false;
       
       // Disable the "add to playlist" button until we see that there is anything to add.
-      theCanAddToPlaylistData.setValue( false );
+      theCanAddToPlaylistData.boolValue = false;
       onBrowserPlaylistHide();
 
       // Clear the playlist tree variable so we are not confused.
@@ -984,7 +979,7 @@ var SBDocStartListener = {
       document.__CURRENTPLAYLIST__ = null;
       
       // Nothing in the status text
-      theStatusText.setValue( "" );
+      theStatusText.stringValue = "";
       
       theServiceTree.current_url = cur_uri;
     }
@@ -999,7 +994,7 @@ var SBDocStartListener = {
 function onBrowserBack()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
-  theCanAddToPlaylistData.setValue( false );
+  theCanAddToPlaylistData.boolValue = false;
   onBrowserPlaylistHide();
   var theMainPane = document.getElementById( "frame_main_pane" );
   mainpane_listener_set = false;
@@ -1010,7 +1005,7 @@ function onBrowserBack()
 function onBrowserFwd()
 {
   // Disable the "add to playlist" button until we see that there is anything to add.
-  theCanAddToPlaylistData.setValue( false );
+  theCanAddToPlaylistData.boolValue = false;
   onBrowserPlaylistHide();
   var theMainPane = document.getElementById( "frame_main_pane" );
   mainpane_listener_set = false;
@@ -1062,7 +1057,7 @@ function onBrowserBookmark()
   {
     alert( "Uh... there's no bookmarks service in XULRunner.  We'll implement this soon." );
 /*  
-    var url = SBDataGetValue( "browser.uri" );
+    var url = SBDataGetStringValue( "browser.uri" );
     alert(url + "\n" + Components.interfaces.nsIBookmarksService);
     var bmarks = Components.classes["@mozilla.org/browser/bookmarks-service;1"].getService();
     bmarks.QueryInterface(Components.interfaces.nsIBookmarksService);
@@ -1341,11 +1336,11 @@ function onBrowserPlaylist()
         theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != WEB_PLAYLIST_TABLE)
     {
       SBWebPlaylistCommands.m_Playlist = theWebPlaylist;
-      theWebPlaylist.bind( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, null, SBWebPlaylistCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
+      theWebPlaylist.bind( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, null, SBWebPlaylistCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
     }
     
     // Show/hide them
-    theShowWebPlaylistData.setValue( true );
+    theShowWebPlaylistData.boolValue = true;
   }
   else
   {
@@ -1356,10 +1351,13 @@ function onBrowserPlaylist()
 
 function onBrowserPlaylistResize()
 {
-  SBDataSetValue( "browser.playlist.height", theWebPlaylist.height );
+  SBDataSetIntValue( "browser.playlist.height", theWebPlaylist.height );
   var collapsed = theWebPlaylist.previousSibling.getAttribute( "state" ) == "collapsed";
-  if (collapsed && SBDataGetIntValue("browser.playlist.collapsed") == 0) metrics_inc("player", "collapse.webplaylist", null);
-  SBDataSetValue( "browser.playlist.collapsed", collapsed );
+  // if collapsed state changed, capture it.
+  if (collapsed != SBDataGetBoolValue("browser.playlist.collapsed")) {
+    metrics_inc("player", "collapse.webplaylist", null);
+  }
+  SBDataSetBoolValue( "browser.playlist.collapsed", collapsed );
 }
 
 function onBrowserDownload()
@@ -1367,8 +1365,8 @@ function onBrowserDownload()
   metrics_inc("player", "downloads", null);
 
   // Work to figure out guid and table
-  var guid = theDownloadContext.getValue();
-  var table = theDownloadTable.getValue();
+  var guid = theDownloadContext.stringValue;
+  var table = theDownloadTable.stringValue;
   var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                   getService(Components.interfaces.sbIDeviceManager);
   if (deviceManager)
@@ -1397,11 +1395,11 @@ function onBrowserDownload()
         theWebPlaylist.source.getRefGUID(theWebPlaylist.ref) != guid ||
         theWebPlaylist.source.getRefTable(theWebPlaylist.ref) != table)
     {
-      theWebPlaylist.bind( guid, table, null, SBDownloadCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
+      theWebPlaylist.bind( guid, table, null, SBDownloadCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
     }
     
     // Show/hide them
-    theShowWebPlaylistData.setValue( true );
+    theShowWebPlaylistData.boolValue = true;
   }
   else
   {
@@ -1413,7 +1411,7 @@ function onBrowserDownload()
 function onBrowserPlaylistHide()
 {
   // Hide the web table if it exists
-  theShowWebPlaylistData.setValue( false );
+  theShowWebPlaylistData.boolValue = false;
  
   // Can't we just use the "theWebPlaylist" global variable? -redfive 
   // And unhook the playlist from the database
@@ -1436,12 +1434,12 @@ function onHTMLUrlChange( evt )
     // Make sure the value is an url
     value = SBGetUrlFromService( value );
     // And then put it back in the box as a service
-    theBrowserUriData.setValue( value );
-    theBrowserUrlData.setValue( SBGetServiceFromUrl( value ) );
+    theBrowserUriData.stringValue = value;
+    theBrowserUrlData.stringValue = SBGetServiceFromUrl( value );
     var image = SBGetServiceImageFromUrl( value );
 //    if ( image.length )
     {
-      theBrowserImageData.setValue( image );
+      theBrowserImageData.stringValue = image;
     }
     // And then go to the url.  Easy, no?
     var theServiceTree = document.getElementById( 'frame_servicetree' );
@@ -1483,9 +1481,9 @@ function onHTMLUrlKeypress( evt )
 }
 
 var mainpane_listener_set = false;
-var thePlaylistRef = new sbIDataRemote( "playlist.ref" );
-var thePaneLoadingData = new sbIDataRemote( "faceplate.loading" );
-thePaneLoadingData.setValue( false );
+var thePlaylistRef = SB_NewDataRemote( "playlist.ref", null );
+var thePaneLoadingData = SB_NewDataRemote( "faceplate.loading", null );
+thePaneLoadingData.boolValue = false;
 var thePlaylistTree;
 
 var theCurrentMainPaneDocument = null;
@@ -1551,7 +1549,7 @@ function onMainPaneLoad()
           // Remember some values
           theLibraryPlaylist = thePlaylistTree;
           thePlaylistTree = thePlaylistTree.tree;
-          thePlaylistRef.setValue( thePlaylistTree.getAttribute( "ref" ) ); // is this set yet?
+          thePlaylistRef.stringValue = thePlaylistTree.getAttribute( "ref" ); // is this set yet?
           
           // Set the current selection
           theLibraryPlaylist.syncPlaylistIndex(false);
@@ -1560,7 +1558,7 @@ function onMainPaneLoad()
           installed_listener = true;
           
           // Hide the progress bar now that we're loaded.
-          thePaneLoadingData.setValue( false );
+          thePaneLoadingData.boolValue = false;
           mainpane_listener_set = true;
         }
       }
@@ -1585,7 +1583,7 @@ function onMainPaneLoad()
         AsyncWebDocument( theMainPane.contentDocument );
         
         // Hide the progress bar now that we're loaded.
-        thePaneLoadingData.setValue( false );
+        thePaneLoadingData.boolValue = false;
         mainpane_listener_set = true;
       }
     }
@@ -1700,21 +1698,21 @@ function GetHrefFromEvent( evt )
 function onLinkOver( evt )
 {
   var the_url = GetHrefFromEvent( evt )
-  theStatusText.setValue( the_url );
+  theStatusText.stringValue = the_url;
   if ( IsMediaUrl( the_url ) )
   {
-    theStatusStyle.setValue( "font-weight: bold;" );
+    theStatusStyle.stringValue = "font-weight: bold;";
   }
   else
   {
-    theStatusStyle.setValue( "font-weight: normal;" );
+    theStatusStyle.stringValue = "font-weight: normal;";
   }
 }
 
 // Catch a contextual on a media url and attempt to play it
 function onLinkOut( evt )
 {
-  theStatusText.setValue( "" );
+  theStatusText.stringValue = "";
 }
 
 // Catch a contextual on a media url and attempt to play it
@@ -2116,7 +2114,7 @@ function onSearchTerm( target, in_term )
   }
 }
 
-var repeat = new sbIDataRemote( "playlist.repeat" ); 
+var repeat = SB_NewDataRemote( "playlist.repeat", null ); 
 
 // Menubar handling
 function onMenu( target )
@@ -2158,11 +2156,11 @@ function onMenu( target )
     case "file.htmlbar":
       if ( SBDataGetIntValue( "option.htmlbar" ) == 0 )
       {
-        SBDataSetValue( "option.htmlbar", 1 );
+        SBDataSetIntValue( "option.htmlbar", 1 );
       }
       else
       {
-        SBDataSetValue( "option.htmlbar", 0 );
+        SBDataSetIntValue( "option.htmlbar", 0 );
       }
     break;
 */    
@@ -2199,13 +2197,13 @@ function onMenu( target )
       onShuffle();
     break;
     case "control.repa":
-      repeat.setValue( 2 );
+      repeat.intValue = 2;
     break;
     case "control.rep1":
-      repeat.setValue( 1 );
+      repeat.intValue = 1;
     break;
     case "control.repx":
-      repeat.setValue( 0 );
+      repeat.intValue = 0;
     break;
     case "menu.extensions":
       SBExtensionsManagerOpen();
@@ -2315,10 +2313,10 @@ function onHTMLContextMenu( target )
 }
 
 
-var theMediaScanIsOpen = new sbIDataRemote( "media_scan.open" );
+var theMediaScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
 function SBScanMedia( )
 {
-  theMediaScanIsOpen.setValue( true );
+  theMediaScanIsOpen.boolValue = true;
   const nsIFilePicker = Components.interfaces.nsIFilePicker;
   const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
   var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
@@ -2339,7 +2337,7 @@ function SBScanMedia( )
     // Open the non-modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
   }
-  theMediaScanIsOpen.setValue( false  );
+  theMediaScanIsOpen.boolValue = false;
 }
 
 function SBMabOpen()
@@ -2567,14 +2565,14 @@ function SBDropped()
   }
   else if ( theDropIsDir )
   {
-    theMediaScanIsOpen.setValue( true );
+    theMediaScanIsOpen.boolValue = true;
     // otherwise, fire off the media scan page.
     var media_scan_data = new Object();
     media_scan_data.URL = theDropPath;
     media_scan_data.retval = "";
     // Open the non-modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
-    theMediaScanIsOpen.setValue( false  );
+    theMediaScanIsOpen.boolValue = false;
   }
 }
 
@@ -2754,9 +2752,9 @@ function SBTabcompleteService( service )
 
 
 // Assume there's just one?
-var theDownloadContext = new sbIDataRemote( "download.context" );
-var theDownloadTable = new sbIDataRemote( "download.table" );
-var theDownloadExists = new sbIDataRemote( "browser.hasdownload" );
+var theDownloadContext = SB_NewDataRemote( "download.context", null );
+var theDownloadTable = SB_NewDataRemote( "download.table", null );
+var theDownloadExists = SB_NewDataRemote( "browser.hasdownload", null );
 
 /*
 var theDownloadListener = 
@@ -2837,7 +2835,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                 // Make a magic data object to get passed to the dialog
                 var download_data = new Object();
                 download_data.retval = "";
-                download_data.value = SBDataGetValue( "download.folder" );
+                download_data.value = SBDataGetStringValue( "download.folder" );
                 
                 if ( ( SBDataGetIntValue( "download.always" ) == 1 ) && ( download_data.value.length > 0 ) )
                 {
@@ -2860,9 +2858,9 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                   downloadDevice.AutoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
                   
                   // Record the current download table
-                  theDownloadContext.setValue( downloadDevice.GetContext('') )
-                  theDownloadTable.setValue( downloadTable.value );
-                  theDownloadExists.setValue( true );
+                  theDownloadContext.stringValue = downloadDevice.GetContext('');
+                  theDownloadTable.stringValue = downloadTable.value;
+                  theDownloadExists.boolValue = true;
                   
                   // Register the guid and table with the playlist source to always show special download commands.
                   SBDownloadCommands.m_Device = downloadDevice;
@@ -3477,7 +3475,7 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
             // Make a magic data object to get passed to the dialog
             var ripping_data = new Object();
             ripping_data.retval = "";
-            ripping_data.value = SBDataGetValue( "ripping.folder" );
+            ripping_data.value = SBDataGetStringValue( "ripping.folder" );
             
             if ( ( SBDataGetIntValue( "ripping.always" ) == 1 ) && ( ripping_data.value.length > 0 ) )
             {
@@ -3846,7 +3844,7 @@ function CheckCDAvailableForBurn()
     {
         return;
     }
-	aCDDevice = aCDDevice.QueryInterface(Components.interfaces.sbICDDevice);
+    aCDDevice = aCDDevice.QueryInterface(Components.interfaces.sbICDDevice);
     if (!aCDDevice)
     {
         return;
@@ -3908,9 +3906,9 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
     if ( theWebPlaylist.ref != ( "NC:" + guid + "_" + table ) )
     {
       if (ripping)
-        theWebPlaylist.bind( guid, table, null, SBCDRippingCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
+        theWebPlaylist.bind( guid, table, null, SBCDRippingCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
       else
-        theWebPlaylist.bind( guid, table, null, SBCDBurningCommands, SBDataGetValue( "browser.playlist.height" ), SBDataGetValue( "browser.playlist.collapsed" ) );
+        theWebPlaylist.bind( guid, table, null, SBCDBurningCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
     }
     
     // Show/hide them

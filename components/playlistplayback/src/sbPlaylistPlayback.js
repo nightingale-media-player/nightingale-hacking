@@ -367,30 +367,32 @@ PlaylistPlayback.prototype = {
     this._statusStyle           = createDataRemote("faceplate.status.style", null );
 
 // Set startup defaults
-    this._metadataPos.setValue( 0 );
-    this._metadataLen.setValue( 0 );
-    this._seenPlaying.setBoolValue(false);
-    this._metadataPosText.setValue( "0:00:00" );
-    this._metadataLenText.setValue( "0:00:00" );
-    this._showRemaining.setBoolValue(false);
-    //this._muteData.setBoolValue( false );
-    this._playlistRef.setValue( "" );
-    this._playlistIndex.setValue( -1 );
-    this._faceplateState.setValue( 0 );
-    this._restartOnPlaybackEnd.setBoolValue( false );
-    this._metadataUrl.setValue( "" );
-    this._metadataTitle.setValue( "" );
-    this._metadataArtist.setValue( "" );
-    this._metadataAlbum.setValue( "" );
-    this._statusText.setValue("");
-    this._statusStyle.setValue("");
-    this._playingRef.setValue( "" );
-    this._playUrl.setValue( "" ); 
-    this._playButton.setValue( 1 ); // Start on.
-    if (this._repeat.getValue() == '') this._repeat.setValue( 0 ); // start with no shuffle
-    if (this._shuffle.getValue() == '') this._shuffle.setBoolValue( false ); // start with no shuffle
-    if (this._volume.getValue() == '') this._volume.setValue(128);
-    this._requestedVolume = this._calculatedVolume = this._volume.getIntValue();
+    this._metadataPos.intValue = 0;
+    this._metadataLen.intValue = 0;
+    this._seenPlaying.boolValue = false;
+    this._metadataPosText.stringValue = "0:00:00";
+    this._metadataLenText.stringValue = "0:00:00";
+    this._showRemaining.boolValue = false;
+    //this._muteData.boolValue = false;
+    this._playlistRef.stringValue = "";
+    this._playlistIndex.intValue = -1;
+    this._faceplateState.boolValue = false;
+    this._restartOnPlaybackEnd.boolValue = false;
+    this._metadataUrl.stringValue = "";
+    this._metadataTitle.stringValue = "";
+    this._metadataArtist.stringValue = "";
+    this._metadataAlbum.stringValue = "";
+    this._statusText.stringValue = "";
+    this._statusStyle.stringValue = "";
+    this._playingRef.stringValue = "";
+    this._playUrl.stringValue = ""; 
+    this._playButton.boolValue = true; // Start on.
+
+    // if they have not been set they will be the empty string.
+    if (this._repeat.stringValue == '') this._repeat.intValue = 0; // start with no shuffle
+    if (this._shuffle.stringValue == '') this._shuffle.boolValue = false; // start with no shuffle
+    if (this._volume.stringValue == '') this._volume.intValue = 128;
+    this._requestedVolume = this._calculatedVolume = this._volume.intValue;
   },
   
   _releaseDataRemotes: function() {
@@ -578,10 +580,8 @@ PlaylistPlayback.prototype = {
         LOG("addCore: selecting new core");
         this._currentCoreIndex = 0;
       }
-      var mute = this._muteData.getBoolValue();
-      var volume = this._volume.getIntValue();
-      core.setMute(mute);
-      core.setVolume(volume);
+      core.setMute(this._muteData.boolValue);
+      core.setVolume(this._volume.intValue);
     }
     else
       throw Components.results.NS_ERROR_INVALID_ARG;
@@ -629,7 +629,7 @@ PlaylistPlayback.prototype = {
       this._playDefault();
     }
     // Hide the intro box and show the normal faceplate box
-    this._faceplateState.setValue( 1 );
+    this._faceplateState.boolValue = true;
     return true;
   },
   
@@ -647,10 +647,10 @@ PlaylistPlayback.prototype = {
     this._updateCurrentInfo(source_ref, index);
 
     // Then play it
-    this.playUrl(this._playUrl.getValue());
+    this.playUrl(this._playUrl.stringValue);
 
     // Hide the intro box and show the normal faceplate box
-    this._faceplateState.setValue( 1 );
+    this._faceplateState.boolValue = true;
   },
 
   /**
@@ -765,8 +765,8 @@ PlaylistPlayback.prototype = {
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
         
-      this._playUrl.setValue(url);
-      this._metadataUrl.setValue(url);
+      this._playUrl.stringValue = url;
+      this._metadataUrl.stringValue = url;
       
       core.stop();
       core.playUrl( url );
@@ -777,7 +777,7 @@ PlaylistPlayback.prototype = {
       this._startPlayerLoop();
       
       // Hide the intro box and show the normal faceplate box
-      this._faceplateState.setValue( 1 );
+      this._faceplateState.boolValue = true;
 
       // metrics
       var s = url.split(".");
@@ -1198,7 +1198,7 @@ PlaylistPlayback.prototype = {
   _startPlayerLoop: function () {
     this._stopPlayerLoop();
     this._started = 1;
-    this._seenPlaying.setBoolValue(false);
+    this._seenPlaying.boolValue = false;
     this._lookForPlayingCount = 0;
     this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
   },
@@ -1224,10 +1224,10 @@ PlaylistPlayback.prototype = {
       }
         
       // When the length changes, always set metadata.
-      if ( this._metadataLen.getValue() != len ) 
+      if ( this._metadataLen.intValue != len ) 
         this._set_metadata = true; 
-      this._metadataLen.setValue( len );
-      this._metadataPos.setValue( pos );
+      this._metadataLen.intValue = len;
+      this._metadataPos.intValue = pos;
       
       // Ignore metadata when paused.
       if ( core.getPlaying() && ! core.getPaused() ) {
@@ -1251,12 +1251,12 @@ PlaylistPlayback.prototype = {
   // Elapsed / Total display
  
   _onPollTimeText: function ( len, pos ) {
-    this._metadataPosText.setValue( EmitSecondsToTimeString( pos / 1000.0 ) + " " );
+    this._metadataPosText.stringValue = EmitSecondsToTimeString( pos / 1000.0 ) + " ";
 
-    if ( len > 0 && this._showRemaining.getBoolValue() )
-      this._metadataLenText.setValue( "-" + EmitSecondsToTimeString( ( len - pos ) / 1000.0 ) );
+    if ( len > 0 && this._showRemaining.boolValue )
+      this._metadataLenText.stringValue = "-" + EmitSecondsToTimeString( ( len - pos ) / 1000.0 );
     else
-      this._metadataLenText.setValue( " " + EmitSecondsToTimeString( len / 1000.0 ) );
+      this._metadataLenText.stringValue = " " + EmitSecondsToTimeString( len / 1000.0 );
   },
 
 
@@ -1264,15 +1264,15 @@ PlaylistPlayback.prototype = {
   
   _onPollVolume: function ( core ) {
       var v = this.getVolume();
-      if ( v != this._volume.getIntValue() ) {
-        this._volume.setValue(v);
+      if ( v != this._volume.intValue ) {
+        this._volume.intValue = v;
     }
   },
 
   _onPollMute: function ( core ) {
       var mute = core.getMute();
-      if ( mute != this._muteData.getBoolValue() ) {
-        this._muteData.setBoolValue(mute);
+      if ( mute != this._muteData.boolValue ) {
+        this._muteData.boolValue = mute;
       }
   },
 
@@ -1280,9 +1280,9 @@ PlaylistPlayback.prototype = {
 
   _onPollButtons: function ( len, core ) {
     if ( core.getPlaying() && ( ! core.getPaused() ) && ( len > 0 ) )
-      this._playButton.setValue( 0 );
+      this._playButton.boolValue = false;
     else
-      this._playButton.setValue( 1 );
+      this._playButton.boolValue = true;
   },
 
   // Routes metadata (and their possible updates) to the metadata ui data remotes
@@ -1311,39 +1311,39 @@ PlaylistPlayback.prototype = {
         return;
       }
       
-      // If the current title is part of the url, it's okay to overwrite the title.
+      // If the current title is part of the url, it is okay to overwrite the title.
       if ( title.length && ( 
-          ( this._metadataTitle.getValue() != title ) &&
-          ( this._playUrl.getValue().indexOf( this._metadataTitle.getValue() ) != -1 )
+          ( this._metadataTitle.stringValue != title ) &&
+          ( this._playUrl.stringValue.indexOf( this._metadataTitle.stringValue ) != -1 )
          ) )
         this._set_metadata = true; 
       else
         title = "";
       // Only if we have no known artist.
-      if ( artist.length && ( this._metadataArtist.getValue() == "" ) )
+      if ( artist.length && ( this._metadataArtist.stringValue == "" ) )
         this._set_metadata = true; 
       else
         artist = "";
       // Only if we have no known album.
-      if ( album.length && ( this._metadataAlbum.getValue() == "" ) )
+      if ( album.length && ( this._metadataAlbum.stringValue == "" ) )
         this._set_metadata = true; 
       else
         album = "";
 
       if ( this._set_metadata ) {
         // Set the metadata into the database table
-        this._setURLMetadata( this._playUrl.getValue(), title, length, album, artist, genre, true );
+        this._setURLMetadata( this._playUrl.stringValue, title, length, album, artist, genre, true );
         // Tell the search popup the metadata has changed
-        this._resetSearchData.setValue( this._resetSearchData.getIntValue() + 1 );
+        this._resetSearchData.intValue++;
         this._set_metadata = false;
       }
 
       if (title != "")
-        this._metadataTitle.setValue( title );
+        this._metadataTitle.stringValue = title;
       if (artist != "")
-        this._metadataArtist.setValue( artist );
+        this._metadataArtist.stringValue = artist;
       if (album != "")
-        this._metadataAlbum.setValue( album );
+        this._metadataAlbum.stringValue = album;
     }
   },
 
@@ -1351,18 +1351,18 @@ PlaylistPlayback.prototype = {
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
     if ( core.getPlaying() && ( len > 0.0 ) ) {
       // First time we see it playing, 
-      if ( ! this._seenPlaying.getBoolValue() ) {
+      if ( ! this._seenPlaying.boolValue ) {
         // Clear the search popup
-        this._resetSearchData.setValue( this._resetSearchData.getIntValue() + 1 );
+        this._resetSearchData.intValue++;
         this._metadataPollCount = 0; // start the count again.
       }
       // Then remember we saw it
-      this._seenPlaying.setBoolValue(true);
+      this._seenPlaying.boolValue = true;
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
-    else if ( this._seenPlaying.getBoolValue() || ( len < 0.0 ) ) {
+    else if ( this._seenPlaying.boolValue || ( len < 0.0 ) ) {
       // Oh, NOW you say we've stopped, eh?
-      this._seenPlaying.setBoolValue(false);
+      this._seenPlaying.boolValue = false;
       this._stopPlayerLoop();
       
       this._playNextPrev(1);
@@ -1376,9 +1376,10 @@ PlaylistPlayback.prototype = {
   
   _playNextPrev: function ( incr ) {
                                                         // GRRRRRR!
-    var cur_index = this._playlistIndex.getIntValue(); // this._findCurrentIndex;
-    var cur_ref = this._playingRef.getValue();
-    this._playlistIndex.setValue( cur_index );
+    var cur_index = this._playlistIndex.intValue; // this._findCurrentIndex;
+    var cur_ref = this._playingRef.stringValue;
+    // XXXredfive - this looks redundant. Do we do this for data remote reasons?
+    this._playlistIndex.intValue = cur_index;
 
     LOG( "current index: " + cur_index );
     
@@ -1390,11 +1391,11 @@ PlaylistPlayback.prototype = {
       // Are we confused?
       if ( cur_index != -1 ) {
         // Are we REPEAT ONE?
-        if ( this._repeat.getIntValue() == 1 ) {
+        if ( this._repeat.intValue == 1 ) {
           next_index = cur_index;
         }
         // Are we SHUFFLE?
-        else if ( this._shuffle.getBoolValue() ) {
+        else if ( this._shuffle.boolValue ) {
           //Does shuffle look like it's supposed to be FUCKING RANDOM. Could we *PLEASE* have a real shuffle. *PLEASE*.
           //Thanks. --aus
           var rand = num_items * Math.random();
@@ -1408,7 +1409,7 @@ PlaylistPlayback.prototype = {
           // Are we at the end?
           if ( next_index >= num_items ) 
             // Are we REPEAT ALL?
-            if ( this._repeat.getIntValue() == 2 )
+            if ( this._repeat.intValue == 2 )
               next_index = 0; // Start over
             else
               next_index = -1; // Give up
@@ -1423,30 +1424,29 @@ PlaylistPlayback.prototype = {
       // "FIXME" -- mig sez: I think the reason it was broke is because you
       // basically made it restart on playLIST end.  And that would get confusing,
       // I assume.
-      if (this._restartOnPlaybackEnd.getBoolValue()) 
+      if (this._restartOnPlaybackEnd.boolValue) 
         restartApp();
     }
   },
   
   _findCurrentIndex: function () {
     var retval = -1;
-    var ref = this._playingRef.getValue();
-    if ( this._playingRef.getValue().length > 0 ) {
-      retval = this._source.getRefRowByColumnValue( ref, "url", this._playUrl.getValue() );
+    var ref = this._playingRef.stringValue;
+    if ( this._playingRef.stringValue.length > 0 ) {
+      retval = this._source.getRefRowByColumnValue( ref, "url", this._playUrl.stringValue );
     }
     return retval;
   },
   
   _playDefault: function () 
   {
-    // No current playlist?! naughty naughty!
-    if ( this._playingRef.getValue().length == 0 )
-    {
-      this.playRef("NC:songbird_library", 0);
+    if ( this._playingRef && this._playingRef.stringValue.length ) {
+      // if there is a song to play, play it
+      this.playRef(this._playingRef.stringValue, 0);
     } 
-    else 
-    {
-      this.playRef(this._playingRef.getValue(), 0);
+    else {
+      // otherwise play the library
+      this.playRef("NC:songbird_library", 0);
     }
   },
   
@@ -1513,8 +1513,8 @@ PlaylistPlayback.prototype = {
   _updateCurrentInfo: function(source_ref, index)
   {
     // These define what is _actually_ playing
-    this._playingRef.setValue( source_ref );
-    this._playlistIndex.setValue( index )
+    this._playingRef.stringValue = source_ref;
+    this._playlistIndex.intValue = index;
     
     // And from those, we ask the Playlistsource to tell us who to play
     var url = this._source.getRefRowCellByColumn( source_ref, index, "url" );
@@ -1523,11 +1523,11 @@ PlaylistPlayback.prototype = {
     var album = this._source.getRefRowCellByColumn( source_ref, index, "album" );
     
     // Set the data remotes to indicate what's about to play
-    this._playUrl.setValue(url);
-    this._metadataUrl.setValue(url);
-    this._metadataTitle.setValue(title);
-    this._metadataArtist.setValue(artist);
-    this._metadataAlbum.setValue(album);
+    this._playUrl.stringValue = url;
+    this._metadataUrl.stringValue = url;
+    this._metadataTitle.stringValue = title;
+    this._metadataArtist.stringValue = artist;
+    this._metadataAlbum.stringValue = album;
     
     return;
   },

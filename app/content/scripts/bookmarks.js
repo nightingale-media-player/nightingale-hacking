@@ -58,7 +58,6 @@ var bmManager = {
 
   init : function() {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-    jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
     this.loadBookmarks();
     this.installProxy();
@@ -102,53 +101,53 @@ var bmManager = {
   saveBookmarks : function() {
     var children = this.bookmark_nodes.children[0].children;
     
-    SBDataSetValue("bookmarks.count", children.length);
+    SBDataSetIntValue("bookmarks.count", children.length);
     for (var i=0;i<children.length;i++) {
       var item = children[i];
       var root = "bookmarks.bookmark"+i;
-      SBDataSetValue(root+".label", item.label);
-      SBDataSetValue(root+".url", item.url);
-      SBDataSetValue(root+".icon", item.icon);
+      SBDataSetStringValue(root+".label", item.label);
+      SBDataSetStringValue(root+".url", item.url);
+      SBDataSetStringValue(root+".icon", item.icon);
     }
   },
   
   loadBookmarks : function() {
     var thechildren = Array();
 
-    var done = SBDataGetIntValue("bookmarks.prepopulate");
+    var done = SBDataGetBoolValue("bookmarks.prepopulate");
     if (!done) {
-      SBDataSetValue("bookmarks.count", 7);
-      SBDataSetValue("bookmarks.bookmark0.label", "Pitchfork");
-      SBDataSetValue("bookmarks.bookmark0.url", "http://www.pitchforkmedia.com/page/downloads/");
-      SBDataSetValue("bookmarks.bookmark0.icon", "http://www.pitchforkmedia.com/favicon.ico");
-      SBDataSetValue("bookmarks.bookmark1.label", "Podbop");
-      SBDataSetValue("bookmarks.bookmark1.url", "http://podbop.org/");
-      SBDataSetValue("bookmarks.bookmark1.icon", "http://podbop.org/favicon.ico");
-      SBDataSetValue("bookmarks.bookmark2.label", "Swedelife");
-      SBDataSetValue("bookmarks.bookmark2.url", "http://www.swedelife.com/");
-      SBDataSetValue("bookmarks.bookmark2.icon", "http://www.swedelife.com/favicon.ico");
-      SBDataSetValue("bookmarks.bookmark3.label", "La Blogotheque");
-      SBDataSetValue("bookmarks.bookmark3.url", "http://www.blogotheque.net/mp3/");
-      SBDataSetValue("bookmarks.bookmark3.icon", "chrome://songbird/skin/serviceicons/default.ico");
-      SBDataSetValue("bookmarks.bookmark4.label", "Medicine");
-      SBDataSetValue("bookmarks.bookmark4.url", "http://takeyourmedicinemp3.blogspot.com/");
-      SBDataSetValue("bookmarks.bookmark4.icon", "chrome://songbird/skin/serviceicons/default.ico");
-      SBDataSetValue("bookmarks.bookmark5.label", "OpenBSD");
-      SBDataSetValue("bookmarks.bookmark5.url", "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/");
-      SBDataSetValue("bookmarks.bookmark5.icon", "chrome://songbird/skin/serviceicons/default.ico");
-      SBDataSetValue("bookmarks.bookmark6.label", "Songbirdnest");
-      SBDataSetValue("bookmarks.bookmark6.url", "http://songbirdnest.com/");
-      SBDataSetValue("bookmarks.bookmark6.icon", "chrome://songbird/skin/default/logo_16.png");
-      SBDataSetValue("bookmarks.prepopulate", 1);
+      SBDataSetIntValue("bookmarks.count", 7);
+      SBDataSetStringValue("bookmarks.bookmark0.label", "Pitchfork");
+      SBDataSetStringValue("bookmarks.bookmark0.url", "http://www.pitchforkmedia.com/page/downloads/");
+      SBDataSetStringValue("bookmarks.bookmark0.icon", "http://www.pitchforkmedia.com/favicon.ico");
+      SBDataSetStringValue("bookmarks.bookmark1.label", "Podbop");
+      SBDataSetStringValue("bookmarks.bookmark1.url", "http://podbop.org/");
+      SBDataSetStringValue("bookmarks.bookmark1.icon", "http://podbop.org/favicon.ico");
+      SBDataSetStringValue("bookmarks.bookmark2.label", "Swedelife");
+      SBDataSetStringValue("bookmarks.bookmark2.url", "http://www.swedelife.com/");
+      SBDataSetStringValue("bookmarks.bookmark2.icon", "http://www.swedelife.com/favicon.ico");
+      SBDataSetStringValue("bookmarks.bookmark3.label", "La Blogotheque");
+      SBDataSetStringValue("bookmarks.bookmark3.url", "http://www.blogotheque.net/mp3/");
+      SBDataSetStringValue("bookmarks.bookmark3.icon", "chrome://songbird/skin/serviceicons/default.ico");
+      SBDataSetStringValue("bookmarks.bookmark4.label", "Medicine");
+      SBDataSetStringValue("bookmarks.bookmark4.url", "http://takeyourmedicinemp3.blogspot.com/");
+      SBDataSetStringValue("bookmarks.bookmark4.icon", "chrome://songbird/skin/serviceicons/default.ico");
+      SBDataSetStringValue("bookmarks.bookmark5.label", "OpenBSD");
+      SBDataSetStringValue("bookmarks.bookmark5.url", "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/");
+      SBDataSetStringValue("bookmarks.bookmark5.icon", "chrome://songbird/skin/serviceicons/default.ico");
+      SBDataSetStringValue("bookmarks.bookmark6.label", "Songbirdnest");
+      SBDataSetStringValue("bookmarks.bookmark6.url", "http://songbirdnest.com/");
+      SBDataSetStringValue("bookmarks.bookmark6.icon", "chrome://songbird/skin/default/logo_16.png");
+      SBDataSetBoolValue("bookmarks.prepopulate", true);
     }
 
     var n = SBDataGetIntValue("bookmarks.count");
     for (var i=0;i<n;i++) {
       var root = "bookmarks.bookmark"+i;
-      var child = { label: SBDataGetValue(root+".label"),
-                    icon: SBDataGetValue(root+".icon"),
-  				          properties: "bookmark",
-						        url: SBDataGetValue(root+".url")
+      var child = { label: SBDataGetStringValue(root+".label"),
+                    icon: SBDataGetStringValue(root+".icon"),
+                    properties: "bookmark",
+                    url: SBDataGetStringValue(root+".url")
 		  };
 		  thechildren.push(child);
     }

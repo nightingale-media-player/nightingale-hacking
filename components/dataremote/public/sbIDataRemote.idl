@@ -24,80 +24,106 @@
 //
  */
 
+/**
+ * \file sbIDataRemote.idl
+ * \brief Definition of the sbIDataRemote Interface
+ * \sa sbDataRemote.js
+ */
+
 #include "nsISupports.idl"
 #include "nsIObserver.idl"
+
+interface nsIDOMElement;
+
 /**
- * The sbIDataRemote Interface
+ * \interface sbIDataRemote
+ * \brief An interface for accessing stored data and linking that data to 
+ *        objects through callbacks, attributes and properties.
+ *
+ * . From javascript you should create one of these
+ *   by the convenience method: SB_NewDataRemote( key, root ) as exposed in the
+ *   file songbird_interfaces.js
+ * \sa DataRemote
  */
-[scriptable, uuid(79eece3f-d661-4f03-83dd-5764a0f77088)]
+[scriptable, uuid(80f8c597-2050-48a0-8efa-c9482547220e)]
 interface sbIDataRemote : nsIObserver
 {
-  /**
-   * Sets internal state, must be called before any other methods
-   */
-  void init(in wstring key, in wstring root);
 
   /**
-   * 
+   * Sets internal state, must be called before any other methods. All other
+   *   calls will throw exceptions if init has not been called.
+   * @param aKey
+   * @param aRoot
+   * @throws NS_ERROR_FAILURE if unable to get the pref branch
+   * @throws NS_ERROR_UNEXPECTED if init has already been called
+   */
+  void init(in AString aKey, in AString aRoot);
+
+  /**
+   * Removes the data remote from being a pref listener.
+   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
   void unbind();
 
   /**
-   * 
+   * When the key associated with the sbDataRemote changes the observer will
+   *   get a callback to observe() with the new value for the data, a handle
+   *   to the sbDataRemote and the key to which the data belongs.
+   * @param aObserver
+   * @param aSuppressFirst
+   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
-  void bindEventFunction(in wstring func);
+  void bindObserver(in nsIObserver aObserver,
+                    in boolean aSuppressFirst);
 
   /**
-   * 
+   * When the key associated with the sbDataRemote changes the property of
+   *   the element will be modified appropriately.
+   * XXXredfive - document the behavior of bool/not/eval and what the property
+   *              will get set to.
+   * @param aElement
+   * @param aProperty
+   * @param aIsBool
+   * @param aIsNot
+   * @param aEvalString
+   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
-  void bindCallbackFunction(in wstring func,
-                            in boolean suppressFirst);
-
-  /**
-   * 
-   */
-  void bindCallbackProperty(in wstring obj, // This needs to be a DOM element.  Can this even work?
-                            in wstring prop,
-                            in boolean is_bool,
-                            in boolean is_not,
-                            in wstring eval);
+  void bindProperty(in nsIDOMElement aElement, 
+                    in AString aProperty,
+                    in boolean aIsBool,
+                    in boolean aIsNot,
+                    in AString aEvalString);
  
   /**
+   * When the key associated with the sbDataRemote changes the attribute of
+   *   the element will be modified appropriately.
+   * XXXredfive - document the behavior of bool/not/eval and what the attribute
+   *              will get set to.
+   * @param aElement
+   * @param aProperty
+   * @param aIsBool
+   * @param aIsNot
+   * @param aEvalString
+   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
    * 
    */
-  void bindCallbackAttribute(in wstring obj, // This needs to be a DOM element.
-                             in wstring prop,
-                             in boolean is_bool,
-                             in boolean is_not,
-                             in wstring eval);
+  void bindAttribute(in nsIDOMElement aElement,
+                     in AString aProperty,
+                     in boolean aIsBool,
+                     in boolean aIsNot,
+                     in AString aEvalString);
 
   /**
-   * 
+   * The 3 ways to get and set the value of the data remote. All three
+   *   represent the same data, just exposed as different types. A sort of
+   *   home brewed simple variant. In javascript you can access these as you 
+   *   would properties of a normal js object ( obj.stringValue = "foo" assigns
+   *   the string foo into the dataremote ). In c++ you need to call getStringValue()
+   *   and so forth.
    */
-  void setValue(in wstring value);
+  attribute AString stringValue;
+  attribute boolean boolValue;
+  attribute long intValue;
 
-  /**
-   * DOH!  int can translate okay, but bool becomes "true"
-   */
-  void setBoolValue(in boolean value);
-
-  /**
-   * 
-   */
-  wstring getValue();
-
-  /**
-   * 
-   */
-  long getIntValue();
-
-  /**
-   * 
-   */
-  boolean getBoolValue();
-
-  /**
-   * 
-   */
-  long makeIntValue(in wstring value);
 };
+

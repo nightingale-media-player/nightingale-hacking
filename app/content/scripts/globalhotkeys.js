@@ -89,15 +89,15 @@ function loadHotkeysFromPrefs() {
   if (!hotkey_service) return;
   beginWatchingHotkeyRemotes();
   setDefaultGlobalHotkeys();
-  var enabled = SBDataGetIntValue("globalhotkeys.enabled");
+  var enabled = SBDataGetBoolValue("globalhotkeys.enabled");
   //log("(re)init - hotkeys are " + (enabled ? "enabled" : "disabled"));
   if (!enabled) return;
   var count = SBDataGetIntValue("globalhotkeys.count");
   for (var i=0;i<count;i++) {
     // Read hotkey binding from user preferences
     var root = "globalhotkey." + i + ".";
-    var keycombo = SBDataGetValue(root + "key");
-    var action = SBDataGetValue(root + "action");
+    var keycombo = SBDataGetStringValue(root + "key");
+    var action = SBDataGetStringValue(root + "action");
     // Split key combination string
     var keys = keycombo.split("-");
     // Parse its components
@@ -121,31 +121,31 @@ function loadHotkeysFromPrefs() {
 
 // Sets the default hotkey settings
 function setDefaultGlobalHotkeys() {
-  if (!SBDataGetIntValue("globalhotkeys.changed")) {
-    SBDataSetValue("globalhotkeys.changed", 1);
-    SBDataSetValue("globalhotkeys.enabled", true);
+  if (!SBDataGetBoolValue("globalhotkeys.changed")) {
+    SBDataSetBoolValue("globalhotkeys.changed", true);
+    SBDataSetBoolValue("globalhotkeys.enabled", true);
 
-    SBDataSetValue("globalhotkeys.count", 5);
+    SBDataSetIntValue("globalhotkeys.count", 5);
     
-    SBDataSetValue("globalhotkey.0.key",             "meta-$38");
-    SBDataSetValue("globalhotkey.0.key.readable",    meta_key_str + "-up");
-    SBDataSetValue("globalhotkey.0.action",          "Playback: Volume up");
+    SBDataSetStringValue("globalhotkey.0.key",             "meta-$38");
+    SBDataSetStringValue("globalhotkey.0.key.readable",    meta_key_str + "-up");
+    SBDataSetStringValue("globalhotkey.0.action",          "Playback: Volume up");
     
-    SBDataSetValue("globalhotkey.1.key",             "meta-$40");
-    SBDataSetValue("globalhotkey.1.key.readable",    meta_key_str + "-down");
-    SBDataSetValue("globalhotkey.1.action",          "Playback: Volume down");
+    SBDataSetStringValue("globalhotkey.1.key",             "meta-$40");
+    SBDataSetStringValue("globalhotkey.1.key.readable",    meta_key_str + "-down");
+    SBDataSetStringValue("globalhotkey.1.action",          "Playback: Volume down");
     
-    SBDataSetValue("globalhotkey.2.key",             "meta-$39");
-    SBDataSetValue("globalhotkey.2.key.readable",    meta_key_str + "-right");
-    SBDataSetValue("globalhotkey.2.action",          "Playback: Next in playlist");
+    SBDataSetStringValue("globalhotkey.2.key",             "meta-$39");
+    SBDataSetStringValue("globalhotkey.2.key.readable",    meta_key_str + "-right");
+    SBDataSetStringValue("globalhotkey.2.action",          "Playback: Next in playlist");
     
-    SBDataSetValue("globalhotkey.3.key",             "meta-$37");
-    SBDataSetValue("globalhotkey.3.key.readable",    meta_key_str + "-left");
-    SBDataSetValue("globalhotkey.3.action",          "Playback: Previous in playlist");
+    SBDataSetStringValue("globalhotkey.3.key",             "meta-$37");
+    SBDataSetStringValue("globalhotkey.3.key.readable",    meta_key_str + "-left");
+    SBDataSetStringValue("globalhotkey.3.action",          "Playback: Previous in playlist");
     
-    SBDataSetValue("globalhotkey.4.key",             "meta-$96");
-    SBDataSetValue("globalhotkey.4.key.readable",    meta_key_str + "-numpad0");
-    SBDataSetValue("globalhotkey.4.action",          "Playback: Play/Pause");
+    SBDataSetStringValue("globalhotkey.4.key",             "meta-$96");
+    SBDataSetStringValue("globalhotkey.4.key.readable",    meta_key_str + "-numpad0");
+    SBDataSetStringValue("globalhotkey.4.action",          "Playback: Play/Pause");
   }
 }
 
@@ -159,15 +159,20 @@ var songbird_hotkeys_event1;
 var songbird_hotkeys_event2;
 
 function beginWatchingHotkeyRemotes() {
-  songbird_hotkeys_event1 = new sbIDataRemote("globalhotkeys.changed");
-  songbird_hotkeys_event1.bindCallbackFunction( globalHotkeysChanged, true )
-  songbird_hotkeys_event2 = new sbIDataRemote("globalhotkeys.enabled");
-  songbird_hotkeys_event2.bindCallbackFunction( globalHotkeysChanged, true )
+  var global_hotkeys_changed = {
+    observer : function ( aSubject, aTopic, aData ) { globalHotkeysChanged(); }
+  }
+  songbird_hotkeys_event1 = SB_NewDataRemote ("globalhotkeys.changed");
+  songbird_hotkeys_event1.bindObserver( global_hotkeys_changed, true )
+  songbird_hotkeys_event2 = SB_NewDataRemote("globalhotkeys.enabled");
+  songbird_hotkeys_event2.bindObserver( global_hotkeys_changed, true )
 }
 
 function stopWatchingHotkeyRemotes() {
-  songbird_hotkeys_event1.unbind();
-  songbird_hotkeys_event2.unbind();
+  if (songbird_hotkeys_event1)
+    songbird_hotkeys_event1.unbind();
+  if (songbird_hotkeys_event2)
+    songbird_hotkeys_event2.unbind();
 }
 
 function globalHotkeysChanged(v) {

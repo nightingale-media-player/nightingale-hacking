@@ -51,8 +51,6 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
         this.dataremote = this.getAttribute("data");
       ]]>
     </constructor>
@@ -64,10 +62,17 @@
         return this.dataremote;
       </getter>
       <setter>
+        // XXXredfive - why do we bind on set property? every time!?!?
+        //     this is crazy, we should be able to do this simpler
+        //     plus I think we can just re-bind to the same DR and not unbind/null
         this.setAttribute("data", val);
         this.dataremote = val;
-        this.bind = null;
-        if (val != "") this.bind = SBDataBindElementProperty ( val, this.label, "value" );
+        if (this.bind) {
+          this.bind.unbind();
+          this.bind = null;
+        }
+        if (val != "") 
+          this.bind = SBDataBindElementProperty ( val, this.label, "value" );
       </setter>
     </property>
         

@@ -64,7 +64,7 @@ function onLoad()
       
       if (aMediaScan && aMediaScanQuery)
       {
-        SBDataSetValue( "media_scan.open", true ); // ?  Don't let this go?
+        SBDataSetBoolValue( "media_scan.open", true ); // ?  Don't let this go?
       
         aMediaScanQuery.SetDirectory(window.arguments[0].URL);
         aMediaScanQuery.SetRecurse(true);
@@ -255,13 +255,13 @@ function onPollQuery()
 
 function doOK()
 {
-  SBDataSetValue( "media_scan.open", false ); // ?  Don't let this go?
+  SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
   document.defaultView.close();
   return true;
 }
 function doCancel()
 {
-  SBDataSetValue( "media_scan.open", false ); // ?  Don't let this go?
+  SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
   document.defaultView.close();
   return true;
 }

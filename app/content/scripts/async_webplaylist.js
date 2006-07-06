@@ -132,9 +132,9 @@ try
       {
         if ( !this.m_Interval ) 
           return;
-        SBDataSetValue( "media_scan.open", false ); // ?  Don't let this go?
-        SBDataSetValue( "webplaylist.total", this.a_array.length );
-        SBDataSetValue( "webplaylist.current", this.a_array.length );
+        SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
+        SBDataSetIntValue( "webplaylist.total", this.a_array.length );
+        SBDataSetIntValue( "webplaylist.current", this.a_array.length );
       },
       20, // 20 steps per interval
       0 // No pause per interval (each UI frame)
@@ -147,7 +147,7 @@ try
     href_loop.a_array = theDocument.getElementsByTagName('A');
     href_loop.embed_array = theDocument.getElementsByTagName('EMBED');
     href_loop.object_array = theDocument.getElementsByTagName('OBJECT');
-    href_loop.uri_now = SBDataGetValue( "browser.uri" );
+    href_loop.uri_now = SBDataGetStringValue( "browser.uri" );
     href_loop.aDBQuery = new sbIDatabaseQuery();
     href_loop.aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);    
     href_loop.aDBQuery.SetAsyncQuery( false );
@@ -164,7 +164,7 @@ try
       var loop_break = false;
       if ( IsMediaUrl( url ) )
       {
-        SBDataSetValue( "webplaylist.current", this.i + 1 );
+        SBDataSetIntValue( "webplaylist.current", this.i + 1 );
         this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
         this.installed_listener = true;
         
@@ -175,7 +175,7 @@ try
                                                 this.aDBQuery );
           //this.aDBQuery.ResetQuery();
           this.aPlaylist = this.aPlaylistManager.CreatePlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
-          this.data.setValue( true );
+          this.data.boolValue = true;
           theWebPlaylistQuery = this.aDBQuery;
           //this.aDBQuery.ResetQuery();
           // Then pretend like we clicked on it.
@@ -213,14 +213,13 @@ try
       else
       {
         // decrement the total to keep the percentage indicator moving
-        var cur_total = SBDataGetValue( "webplaylist.total" );
-        SBDataSetValue( "webplaylist.total", --cur_total );
+        SB_NewDataRemote( "webplaylist.total", null ).intValue--;
       }
     
       return loop_break;
     }
-    SBDataSetValue( "webplaylist.total", href_loop.a_array.length );
-    SBDataSetValue( "media_scan.open", true ); // ?  Don't let this go?
+    SBDataSetIntValue( "webplaylist.total", href_loop.a_array.length );
+    SBDataSetBoolValue( "media_scan.open", true ); // ?  Don't let this go?
   }
 }
 catch ( err )

@@ -39,8 +39,8 @@ try
       if (SBDataGetIntValue("faceplate.volume") == 0 && !PPS.getMute())  // fake mute state ? (volume is 0, faceplate indicates mute but core mute flag is not on)
       {
         // get out of fake mute state
-        SBDataSetValue("faceplate.volume", SBDataGetIntValue("faceplate.volume.last"));
-        SBDataSetValue("faceplate.mute", false);
+        SBDataSetIntValue("faceplate.volume", SBDataGetIntValue("faceplate.volume.last"));
+        SBDataSetBoolValue("faceplate.mute", false);
       } 
       else 
       {
@@ -56,7 +56,7 @@ try
       var v = parseInt(s)+8;
       if (v > 255) v = 255;
       PPS.setVolume(v);
-      SBDataSetValue("faceplate.volume.last", v);
+      SBDataSetIntValue("faceplate.volume.last", v);
     },
 
     OnVolumeDown: function()
@@ -66,7 +66,7 @@ try
       var v = parseInt(s)-8;
       if (v < 0) v = 0;
       PPS.setVolume(0);
-      if (v != 0) SBDataSetValue("faceplate.volume.last", v);
+      if (v != 0) SBDataSetIntValue("faceplate.volume.last", v);
     },
 
     OnNextTrack: function()
@@ -84,7 +84,7 @@ try
     OnStop: function()
     {
       // yeah... no stop state... hmpf
-      if ( SBDataGetIntValue("faceplate.seenplaying") )
+      if ( SBDataGetBoolValue("faceplate.seenplaying") )
       {
         var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
         PPS.pause();

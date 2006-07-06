@@ -40,7 +40,7 @@
   class="sb_faceplate"  
   title="Cheezy Video Window"  
   onload="SBAppInitialize();BSInitialize();"
-  onunload="SBAppDeinitialize();"
+  onunload="SBAppDeinitialize();BSDeInitialize();"
   
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
@@ -111,8 +111,10 @@
           setTimeout( 'window.open( "' + mainwin + '", "mainwin", "chrome,modal=no,toolbar=no" );', 0 ); // (sigh)
         }
       };
-      
-      if (!doFirstRunTest(document, BundleService)) document.__STARTMAINWIN();
+
+      if (!doFirstRunTest(document, BundleService)) {
+        document.__STARTMAINWIN();
+      }
     }
     catch ( err )
     {

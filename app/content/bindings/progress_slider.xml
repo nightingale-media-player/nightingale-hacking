@@ -111,7 +111,7 @@
         var data_str = this.getAttribute('data_tracking');
         if ( data_str.length )
         {
-          return SBDataGetValue( data_str );
+          return SBDataGetBoolValue( data_str );
         }
         return "";
       </getter>
@@ -119,7 +119,7 @@
         var data_str = this.getAttribute('data_tracking');
         if ( data_str.length )
         {
-          return SBDataSetValue( data_str, val );
+          return SBDataSetBoolValue( data_str, val );
         }
         return "";
       </setter>

@@ -38,18 +38,18 @@ function sbRestartBox( title, message )
     restartbox_data.playing = gPPS.getPlaying();
     restartbox_data.ret = 0;
     SBOpenModalDialog( "chrome://songbird/content/xul/restartbox.xul", "restartbox", "chrome,modal=yes, centerscreen", restartbox_data );
-    var restartOnPlaybackEnd = new sbIDataRemote("restart.onplaybackend");
+    var restartOnPlaybackEnd = SB_NewDataRemote( "restart.onplaybackend", null );
     switch (restartbox_data.ret)
     {
       case 0: // restart later
-              restartOnPlaybackEnd.setValue( false );
+              restartOnPlaybackEnd.boolValue = false;
               break;
       case 1: // restart now
-              restartOnPlaybackEnd.setValue( false );
+              restartOnPlaybackEnd.boolValue = false;
               restartApp(); // assumes the current document has this function, bad.
               break;
       case 2: // restart on end of playback
-              restartOnPlaybackEnd.setValue( true );
+              restartOnPlaybackEnd.boolValue = true;
               break;
     }
   }

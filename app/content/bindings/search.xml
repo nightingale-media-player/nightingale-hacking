@@ -109,15 +109,6 @@
     <![CDATA[
     try
     {
-      // Woo, magic includes on instantiation!
-      var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-      
-      jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-      jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
-      jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
-      
-/*      
-*/
       // Set our starting values.                              
       this.theSongbirdSearchSelection = document.getAnonymousElementByAttribute( this, "sid", "search.item.songbird" );
       this.theCurrentSearchSelection = this.theSongbirdSearchSelection;
@@ -234,8 +225,8 @@
           this.metrics_inc("searchwidget", document.__SEARCH_WIDGET__.theCurrentSearchSelection.getAttribute("id"), null);
           
           // Keep last 4 search terms for display in popup
-          var recentSearches = new sbIDataRemote( "searchwidget.recentstrings" ); 
-          searchStrings = recentSearches.getValue().split("\n");
+          var recentSearches = SB_NewDataRemote( "searchwidget.recentstrings", null ); 
+          searchStrings = recentSearches.stringValue.split("\n");
           if (searchStrings.indexOf(search_term) == -1) 
           {
             if (searchStrings.length > 3 || (searchStrings.length == 1 && searchStrings[0] == ""))
@@ -243,7 +234,7 @@
               searchStrings.pop();
             }
             searchStrings.unshift(search_term);
-            recentSearches.setValue(searchStrings.join("\n"));
+            recentSearches.stringValue = searchStrings.join("\n");
             this.onSearchPopup();
           }
         }
@@ -330,8 +321,8 @@
         
   
         // Look for metadata that might be worth searching
-        var thePlaybackURL = new sbIDataRemote( "metadata.url" );      
-        if ( thePlaybackURL.getValue().length )
+        var playbackURL = SBDataGetStringValue( "metadata.url" );
+        if ( playbackURL.length )
         {
 
           this.list.removeAllItems();
@@ -339,7 +330,7 @@
           var aDBQuery = new sbIDatabaseQuery();
           aDBQuery.SetAsyncQuery(false);
           aDBQuery.SetDatabaseGUID("songbird");
-          aDBQuery.AddQuery('select title, artist, album, genre from library where url="' + thePlaybackURL.getValue() + '"' );
+          aDBQuery.AddQuery('select title, artist, album, genre from library where url="' + playbackURL + '"' );
           var ret = aDBQuery.Execute();
           var resultset = aDBQuery.GetResultObject();
           
@@ -371,8 +362,7 @@
         
         
         // Add previous searches
-        var recentSearches = new sbIDataRemote( "searchwidget.recentstrings" ); 
-        recentSearches = recentSearches.getValue();       
+        var recentSearches = SBDataGetStringValue( "searchwidget.recentstrings" ); 
         if (recentSearches.length)
         {
           if (!modified) 
@@ -408,7 +398,7 @@
       }
       catch( err )
       {
-        alert( err )
+        alert( " search.xml:onSearchPopup" + err )
       }
       ]]>
       </body>

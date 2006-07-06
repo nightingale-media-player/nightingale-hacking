@@ -51,12 +51,18 @@
 
      <constructor>
        <![CDATA[
-         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-         jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
-         this.descbinding = this.SBDataBindElementProperty( "faceplate.status.text", this.desc, "value" );
-         this.stylebinding = this.SBDataBindElementAttribute( "faceplate.status.style", this.desc, "style" );
+         // Create and bind data remotes
+         this.descbinding = SBDataBindElementProperty( "faceplate.status.text", this.desc, "value" );
+         this.stylebinding = SBDataBindElementAttribute( "faceplate.status.style", this.desc, "style" );
        ]]>
      </constructor>
+
+     <destructor>
+       <![CDATA[
+         this.descbinding.unbind();
+         this.stylebinding.unbind();
+       ]]>
+     </destructor>
 
      <field name="desc">document.getAnonymousElementByAttribute(this, 'sbid', 'desc');</field>
 

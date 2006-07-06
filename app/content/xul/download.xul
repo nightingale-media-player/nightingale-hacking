@@ -145,9 +145,9 @@
     function doLoad()
     {
       var theTextbox = document.getElementById( "download_folder_path" );
-      theTextbox.value = SBDataGetValue( "download.folder" );
+      theTextbox.value = SBDataGetStringValue( "download.folder" );
       var theCheckbox = document.getElementById( "download_check" );
-      theCheckbox.checked = SBDataGetIntValue( "download.always" ) == 1;
+      theCheckbox.checked = SBDataGetBoolValue( "download.always" );
       var ok = document.getElementById( "button_ok" );
       ok.focus();
     }
@@ -165,9 +165,9 @@
         // Thou shalt not.
         if ( aLocalFile.isDirectory() )
         {
-          SBDataSetValue( "download.folder", theFolder );
+          SBDataSetStringValue( "download.folder", theFolder );
           var theCheckbox = document.getElementById( "download_check" );
-          SBDataSetValue( "download.always", theCheckbox.checked );
+          SBDataSetBoolValue( "download.always", theCheckbox.checked );
           if ( window.arguments && window.arguments[0] )
           {
             window.arguments[0].value = theTextbox.value;

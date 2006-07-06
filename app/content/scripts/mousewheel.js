@@ -70,7 +70,7 @@ try
       if (v < 0) v = 0;
       if (v > 255) v = 255;
       PPS.setVolume(v);
-      if (v != 0) SBDataSetValue("faceplate.volume.last", v);
+      if (v != 0) SBDataSetIntValue("faceplate.volume.last", v);
     }
     catch (err)
     {

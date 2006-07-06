@@ -126,11 +126,9 @@
 
           // Load the javascript we want to use
           var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-          jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
           jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
           jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
           jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
-          jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
           this.tree.builder.addListener( this );
         }
         catch (err) {
@@ -157,7 +155,7 @@
       <body>
       <![CDATA[
         try {
-          var lastSelectedURI = this.SBDataGetValue("servicetree.selected_url");
+          var lastSelectedURI = SBDataGetStringValue("servicetree.selected_url");
           
           this.browser = aBrowserObject;
           this.restoreCollapsedStates();
@@ -201,7 +199,7 @@
               var mainPane = this.browser;
               if (mainPane) {
                 this.current_url = aURL;
-                this.SBDataSetValue( "servicetree.selected_url", aURL );
+                SBDataSetStringValue( "servicetree.selected_url", aURL );
                 try {
                   mainPane.stop();
                   mainPane.loadURI( this.current_url, null, null );
@@ -302,7 +300,7 @@
                   //    bookmarks since they are embargoed metrics)
                   // if user has opted out, this doesn't do anything
                   if (tree_url.slice(0, 9) == "chrome://") 
-                    this.metrics_inc( "servicetree", this.strid, tree_url );
+                    metrics_inc( "servicetree", this.strid, tree_url );
                 }
               }
             }
@@ -337,11 +335,8 @@
             for ( var index = 0; index < rowCount; index++ ) {
               if (tree.view.isContainer(index)) {
                 var item_url = tree.view.getCellText( index, col );
-                var item_remote = new sbIDataRemote("collapsed_" +
-                                                    this.strid + "_" +
-                                                    item_url );
-                // we are collapsed if !open
-                item_remote.setBoolValue(!tree.view.isContainerOpen(index));
+                SBDataSetBoolValue( "collapsed_" + this.strid + "_" + item_url,
+                                    !tree.view.isContainerOpen(index) );
               }
             }
           }
@@ -365,16 +360,12 @@
             for ( index-- ; index >= 0 ; index-- ) {
               if (tree.view.isContainer(index)) {
                 var itemUrl = tree.view.getCellText(index, col);
-                var itemRemote = new sbIDataRemote("collapsed_" +
-                                                   this.strid + "_" +
-                                                   itemUrl );
-                // true if we were collapsed
-                if (itemRemote.getBoolValue()) {
+                if (SBDataGetBoolValue( "collapsed_" + this.strid + "_" + itemUrl )) {
                   if (tree.view.isContainerOpen(index)) {
                     tree.view.toggleOpenState(index);
                   }
                 }
-              } 
+              }
             }
           }
           catch (err) {

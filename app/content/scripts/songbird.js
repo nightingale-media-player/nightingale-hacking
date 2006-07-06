@@ -168,29 +168,38 @@ function onExit()
 function onWindowSaveSize()
 {
   var root = "window." + document.documentElement.id;
-  SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
-  SBDataSetValue( root + ".w", document.documentElement.boxObject.width );
-  SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
+  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
+  SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
+  SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
 }
 
 function onWindowSavePosition()
 {
   var root = "window." + document.documentElement.id;
-  SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
 }
 
 function onWindowLoadSize()
 {
   var root = "window." + document.documentElement.id;
-  if (SBDataGetValue( root + ".x" ) == "" && SBDataGetValue( root + ".w" ) == "") { return; }
+
+  // Test against empty string to see if they have been set before.
+  if ( ( SBDataGetStringValue( root + ".x" ) == "" ) &&
+       ( SBDataGetStringValue( root + ".w" ) == "" ) )
+  {
+    return;
+  }
+
   if ( SBDataGetIntValue( root + ".w" ) && SBDataGetIntValue( root + ".h" ) )
   {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
     // YAY YAY YAY the windowregion hack actualy fixes this :D
     window.resizeTo( SBDataGetIntValue( root + ".w" ), SBDataGetIntValue( root + ".h" ) );
-    // for some reason, the resulting size isn't what we're asking (window currently has a border?) so determine what the difference is and add it to the resize
+    // for some reason, the resulting size isn't what we're asking (window
+    //   currently has a border?) so determine what the difference is and
+    //   add it to the resize
     var diffw = SBDataGetIntValue( root + ".w" ) - document.documentElement.boxObject.width;
     var diffh = SBDataGetIntValue( root + ".h" ) - document.documentElement.boxObject.height;
     window.resizeTo( SBDataGetIntValue( root + ".w" ) + diffw, SBDataGetIntValue( root + ".h" ) + diffh);
@@ -205,7 +214,13 @@ function onWindowLoadSize()
 function onWindowLoadPosition()
 {
   var root = "window." + document.documentElement.id;
-  if (SBDataGetValue( root + ".x" ) == "" && SBDataGetValue( root + ".w" ) == "") { return; }
+
+  if ( ( SBDataGetStringValue( root + ".x" ) == "" ) &&
+       ( SBDataGetStringValue( root + ".y" ) == "" ) )
+  {
+    return;
+  }
+
   window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
   // do the (more or less) same adjustment for x,y as we did for w,h
   var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
@@ -247,7 +262,7 @@ function restartApp()
   if (as)
   {
     // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-    SBDataSetValue("metrics_ignorenextstartup", 1);
+    SBDataSetBoolValue("metrics_ignorenextstartup", true);
     const V_RESTART = 16;
     const V_ATTEMPT = 2;
     as.quit(V_RESTART);
@@ -264,7 +279,7 @@ function quitApp()
   if (as)
   {
     // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-    SBDataSetValue("metrics_ignorenextstartup", 0);
+    SBDataSetBoolValue("metrics_ignorenextstartup", false);
     const V_ATTEMPT = 2;
     as.quit(V_ATTEMPT);
   }
@@ -280,6 +295,9 @@ function SBUrlChanged( value )
     if (windowCloak) {
       var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
       if (service) {
+        // value _should_ be set correctly now.
+        if (value == null)
+          value = SBDataGetStringValue("faceplate.play.url");
         if ( IsVideoUrl( value ) ) {
           service.uncloak( document ); 
         }
@@ -325,14 +343,14 @@ function SBAppDeinitialize()
 function SBMetricsAppStart() 
 {
   // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-  if (SBDataGetIntValue("metrics_ignorenextstartup") == 0)
+  if (!SBDataGetBoolValue("metrics_ignorenextstartup"))
   {
     metrics_inc("player", "appstart", null);
   }
   // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-  SBDataSetValue("metrics_ignorenextstartup", 0);
+  SBDataSetBoolValue("metrics_ignorenextstartup", false);
   var timestamp = new Date();
-  SBDataSetValue("startup_timestamp", timestamp.getTime());
+  SBDataSetIntValue("startup_timestamp", timestamp.getTime());
 }
 
 function SBAppInitialize()
@@ -344,8 +362,15 @@ function SBAppInitialize()
     onWindowLoadSize();
     createLibraryRef();
     initGlobalHotkeys();
-    songbird_playURL = new sbIDataRemote("faceplate.play.url");
-    songbird_playURL.bindCallbackFunction( SBUrlChanged, true )
+
+    // observer for DataRemote
+    var sb_url_changed = {
+      observe: function ( aSubject, aTopic, aData ) { SBUrlChanged(aData); }
+    };
+
+    // Create and bind DataRemote
+    songbird_playURL = SB_NewDataRemote( "faceplate.play.url", null );
+    songbird_playURL.bindObserver( sb_url_changed, true );
 
     /*
     */
@@ -414,7 +439,7 @@ function SBAppInitialize()
     //setTimeout("CoreWMPDocumentInit( 'core_wm' );", 0);
     
     // Reset this on application startup. 
-    SBDataSetValue("backscan.paused", false);
+    SBDataSetIntValue("backscan.paused", 0);
     
     // Go make sure we really have a Songbird database
     SBInitializeNamedDatabase( "songbird" );
@@ -522,7 +547,8 @@ function PushBackscanPause()
 {
   try
   {
-    SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') + 1 );
+    // increment the backscan pause count
+    SB_NewDataRemote( 'backscan.paused', null ).intValue++;
   }
   catch ( err )
   {
@@ -534,9 +560,10 @@ function PopBackscanPause()
 {
   try
   {
-    var pause = SBDataGetIntValue('backscan.paused') - 1;
-    if ( pause < 0 ) pause = 0;
-    SBDataSetValue('backscan.paused', pause );
+    // decrement the backscan pause count to a floor of 0
+    var bsPaused = SB_NewDataRemote('backscan.paused', null);
+    if ( --bsPaused.intValue < 0)
+      bsPaused.intValue = 0;
   }
   catch ( err )
   {

@@ -52,42 +52,46 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
-
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        this.remote_volume = new sbIDataRemote( "faceplate.volume" );
-        this.remote_lastVolume = new sbIDataRemote("faceplate.volume.last");
-        //this.remote_trackerVolume = new sbIDataRemote( "faceplate.volume.tracker" );
-          
-        var onremotevolumechange = { 
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
+ 
+        // observer for DataRemote 
+        var on_remote_volume_change = { 
           _that: null, 
-          handleEvent: function( event ) { this._that.onRemoteVolumeChange(); } 
-        } onremotevolumechange._that = this;
-        this.remote_volume.bindCallbackFunction(onremotevolumechange, true);
+          observe: function( aSubject, aTopic, aData ) { this._that.onRemoteVolumeChange(); } 
+        };
+        on_remote_volume_change._that = this;
+
+        // Create and bind data remotes
+        this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
+        this.remote_lastVolume = SB_NewDataRemote("faceplate.volume.last", null );
+        this.remote_volume.bindObserver(on_remote_volume_change, true);
 
         this.maxpos = 255;
-        this.value = this.remote_volume.getIntValue();
-        this.trackingVolume = 0;
+        this.value = this.remote_volume.intValue;
+        this.trackingVolume = false;
       ]]>
     </constructor>
     <destructor>
+      <![CDATA[
+        if (this.remote_volume)
+          this.remote_volume.unbind();
+      ]]>
     </destructor>
     
     <method name="onTrackVolume">
       <body>
         <![CDATA[
-          //this.remote_trackerVolume.setValue(true); // prevents the core from updating the volume controls while we move them
-          this.trackingVolume = 1; // prevents this volume control from being updated while it is being moved (but other volume controls are updated with our motion)
+          // prevent this volume control from being updated while it is being
+          //   moved (but other volume controls are updated with our motion)
+          this.trackingVolume = true; 
           this.gPPS.setVolume(this.value);
-          this.remote_volume.setValue(this.value);
-          if (this.value == 0) 
-          {
+          this.remote_volume.intValue = this.value;
+          if (this.value == 0) {
             // set mute when we bring the volume to 0
             this.gPPS.setMute(true);
           }
-          else
-          {
+          else {
             // otherwise reset it, and record the last volume
             this.gPPS.setMute(false);
           }
@@ -97,13 +101,13 @@
 
     <method name="onReleaseVolume">
       <body>
-        this.trackingVolume = 0;
-        //this.remote_trackerVolume.setValue(false); 
-        this.gPPS.setVolume(this.value);
-        if (this.value != 0) 
-        {
-          this.remote_lastVolume.setValue(this.value);
-        }
+        <![CDATA[
+          this.trackingVolume = false;
+          this.gPPS.setVolume(this.value);
+          if (this.value != 0) {
+            this.remote_lastVolume.intValue = this.value;
+          }
+        ]]>
       </body>
     </method>
 
@@ -111,10 +115,11 @@
       <body>
         <![CDATA[
           try {
-            if (this.trackingVolume) return; // we are the control changing the volume, ignore this callback
-            this.value = this.remote_volume.getIntValue();
-          } catch (e) {
-            alert("player_controls.xml - onRemoteVolumeChange - " + e);
+            if (this.trackingVolume) // if volume is being actively changed, wait until release
+              return; 
+            this.value = this.remote_volume.intValue;
+          } catch (err) {
+            dump("player_controls.xml - onRemoteVolumeChange - " + err + "\n");
           }
         ]]>
       </body>
@@ -145,19 +150,24 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        this.remote_volume = new sbIDataRemote( "faceplate.volume" );
-        this.remote_lastVolume = new sbIDataRemote( "faceplate.volume.last" );
-        this.remote_mute = new sbIDataRemote( "faceplate.mute" );
-        
+        // Create and bind the data remotes
+        this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
+        this.remote_lastVolume = SB_NewDataRemote( "faceplate.volume.last", null );
+        this.remote_mute = SB_NewDataRemote( "faceplate.mute", null );
         this.bindmuteon = SBDataBindElementAttribute( "faceplate.mute", this.mute_on, "hidden", true, true );
         this.bindmuteoff = SBDataBindElementAttribute( "faceplate.mute", this.mute_off, "hidden", true );
       ]]>
     </constructor>
     <destructor>
+      <![CDATA[
+        if (this.bindmuteon)
+          this.bindmuteon.unbind();
+        if (this.bindmuteoff)
+          this.bindmuteoff.unbind();
+      ]]>
     </destructor>
 
     <field name="mute_on">document.getAnonymousElementByAttribute(this, 'sbid', 'mute_on');</field>
@@ -168,12 +178,11 @@
         <![CDATA[
           var newmute = !this.gPPS.getMute(); 
           this.gPPS.setMute(newmute);
-          if (!newmute) // restore last volume when coming back from mute state
-          {
-            this.gPPS.setVolume(this.remote_lastVolume.getIntValue());
+          if (!newmute) {
+            // restore last volume when coming back from mute state
+            this.gPPS.setVolume(this.remote_lastVolume.intValue);
           } 
-          else
-          {
+          else {
             this.gPPS.setVolume(0);
           }
         ]]>
@@ -384,18 +393,23 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        
-        this.remote_repeat = new sbIDataRemote( "playlist.repeat" ); 
+        // Create and bind data remotes
+        this.remote_repeat = SB_NewDataRemote( "playlist.repeat", null );
         this.repnonebinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_none, "hidden", true, false, "parseInt( value ) != 0" );
         this.rep1binding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_1, "hidden", true, false, "parseInt( value ) != 1" );
         this.repallbinding = SBDataBindElementAttribute( "playlist.repeat", this.repeat_all, "hidden", true, false, "parseInt( value ) != 2" );
       ]]>
     </constructor>
     <destructor>
+      if (this.repnonebinding)
+        this.repnonebinding.unbind();
+      if (this.rep1binding)
+        this.rep1binding.unbind();
+      if (this.repallbinding)
+        this.repallbinding.unbind();
     </destructor>
 
     <field name="repeat_none">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_none');</field>
@@ -407,7 +421,7 @@
         <![CDATA[
           // Rob decided to change the order.  Woo.
           var value = 0;
-          switch ( this.remote_repeat.getIntValue() )
+          switch ( this.remote_repeat.intValue )
           {
             case 0:
               value = 2;
@@ -419,7 +433,7 @@
               value = 1;
               break;
           }
-          this.remote_repeat.setValue( value );
+          this.remote_repeat.intValue = value;
         ]]>
       </body>
     </method>
@@ -449,17 +463,22 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        
-        this.remote_shuffle = new sbIDataRemote( "playlist.shuffle" ); 
+        // Create and bind data remotes
+        this.remote_shuffle = SB_NewDataRemote( "playlist.shuffle", null );
         this.bindshuffleoff = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_off, "hidden", true );
         this.bindshuffleon = SBDataBindElementAttribute( "playlist.shuffle", this.shuffle_on, "hidden", true, true );
       ]]>
     </constructor>
     <destructor>
+      <![CDATA[
+        if (this.bindshuffleoff)
+          this.bindshuffleoff.unbind()
+        if (this.bindshuffleon)
+          this.bindshuffleon.unbind()
+      ]]>
     </destructor>
 
     <field name="shuffle_off">document.getAnonymousElementByAttribute(this, 'sbid', 'shuffle_off');</field>
@@ -468,7 +487,7 @@
     <method name="onShuffle">
       <body>
         <![CDATA[
-          this.remote_shuffle.setValue( ( this.remote_shuffle.getIntValue() + 1 ) % 2 );
+          this.remote_shuffle.boolValue = !this.remote_shuffle.boolValue;
         ]]>
       </body>
     </method>
@@ -496,24 +515,31 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        this.remote_position = new sbIDataRemote( "metadata.position" );
-        
-        var onremotepositionchange = { 
+        // observer for DataRemote 
+        var on_remote_position_change = { 
           _that: null, 
-          handleEvent: function( event ) { this._that.onRemotePositionChange(); } 
-        } onremotepositionchange._that = this;
-        this.remote_position.bindCallbackFunction(onremotepositionchange, true);
+          observe: function( aSubject, aTopic, aData ) { this._that.onRemotePositionChange(); } 
+        };
+        on_remote_position_change._that = this;
 
+        // Create and bind data remotes
+        this.remote_position = SB_NewDataRemote( "metadata.position", null );
+        this.remote_position.bindObserver(on_remote_position_change, true);
         this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
        
         this.trackingPosition = 0;
       ]]>
     </constructor>
     <destructor>
+      <![CDATA[
+        if (this.remote_position)
+          this.remote_position.unbind();
+        if (this.remote_length)
+          this.remote_length.unbind();
+      ]]>
     </destructor>
     
     <method name="onTrackSeekbar">
@@ -566,16 +592,17 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        
-        this.remote_showRemaining = new sbIDataRemote( "faceplate.showremainingtime" ); 
+        // Create and bind data remote
+        this.remote_showRemaining = SB_NewDataRemote( "faceplate.showremainingtime", null );
         this.bindtotaltime = SBDataBindElementAttribute( "metadata.length.str", this.label, "value" );
       ]]>
     </constructor>
     <destructor>
+      if (this.bindtotaltime)
+        this.bindtotaltime.unbind();
     </destructor>
 
     <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'timelabel');</field>
@@ -585,14 +612,10 @@
         <![CDATA[
           var len = gPPS.getLength();
           if ( len > 0 )
-          {
-            this.remote_showRemaining.setValue(!this.remote_showRemaining.getBoolValue());
-          }
+            this.remote_showRemaining.boolValue = !this.remote_showRemaining.boolValue;
           // If you try to toggle it while it is zero, you lose the state.
           else
-          {
-            this.remote_showRemaining.setValue(false);
-          }
+            this.remote_showRemaining.boolValue = false;
         ]]>
       </body>
     </method>
@@ -622,19 +645,23 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
+        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                    .getService(Components.interfaces.sbIPlaylistPlayback);
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        this.remote_seenPlaying = new sbIDataRemote( "faceplate.seenplaying" ); 
-        this.remote_playingRef =  new sbIDataRemote( "playing.ref" ); 
-        this.remote_playlistIndex =  new sbIDataRemote( "playlist.index" ); 
+        // Create and bind data remotes
+        this.remote_seenPlaying = SB_NewDataRemote( "faceplate.seenplaying", null );
+        this.remote_playingRef =  SB_NewDataRemote( "playing.ref", null ); 
+        this.remote_playlistIndex =  SB_NewDataRemote( "playlist.index", null ); 
 
         this.playbinding = SBDataBindElementAttribute( "faceplate.play", this.play, "hidden", true, true );
         this.pausebinding = SBDataBindElementAttribute( "faceplate.play", this.pause, "hidden", true );
       ]]>
     </constructor>
     <destructor>
+      if (this.pausebinding)
+        this.pausebinding.unbind();
+      if (this.playbinding)
+        this.playbinding.unbind();
     </destructor>
 
     <field name="play">document.getAnonymousElementByAttribute(this, 'sbid', 'play');</field>
@@ -650,7 +677,7 @@
             } else {
               // player is buffering, because the play button is visible (not started) yet pause is not set and the player is started
               // start the playlist again at the current spot
-              this.gPPS.playRef(this.remote_playingRef.getValue(), this.remote_playlistIndex.getIntValue());
+              this.gPPS.playRef( this.remote_playingRef.stringValue, this.remote_playlistIndex.intValue );
             }
           } else {
             var ref = "";
@@ -676,8 +703,7 @@
     <method name="onPause">
       <body>
         <![CDATA[
-          if ( this.remote_seenPlaying.getBoolValue() )
-          {
+          if ( this.remote_seenPlaying.boolValue ) {
             this.gPPS.pause();
           }
         ]]>
@@ -746,32 +772,50 @@
   <implementation>
 
     <constructor>
-      this.data  = "metadata.title";
-      this.autotip = this.getAttribute("autotip");
-      if (this.autotip) {
-        var onremoteartistalbumchange = { 
-          _that: null, 
-          handleEvent: function( event ) { this._that.rebuildTip(); } 
-        } onremoteartistalbumchange._that = this;
-        this.remote_artist = new sbIDataRemote( "metadata.artist" );
-        this.remote_artist.bindCallbackFunction(onremoteartistalbumchange, true);
-        this.remote_album = new sbIDataRemote( "metadata.album" );
-        this.remote_album.bindCallbackFunction(onremoteartistalbumchange, true);
-        this.rebuildTip();
+      <![CDATA[
+        this.data  = "metadata.title";
+        this.autotip = this.getAttribute("autotip");
+        if (this.autotip) {
+          // observer for DataRemote 
+          var on_remote_artist_album_change = { 
+            _that: null, 
+            observe: function( aSubject, aTopic, aData ) { this._that.rebuildTip(); } 
+          };
+          on_remote_artist_album_change._that = this;
+
+          // Create and bind data remotes
+          this.remote_artist = SB_NewDataRemote( "metadata.artist", null );
+          this.remote_album = SB_NewDataRemote( "metadata.album", null );
+          this.remote_artist.bindObserver(on_remote_artist_album_change, true);
+          this.remote_album.bindObserver(on_remote_artist_album_change, true);
+
+          this.rebuildTip();
       }
+      ]]>
     </constructor>
+
+    <destructor>
+      <![CDATA[
+        if (this.remote_album)
+          this.remote_album.unbind();
+        if (this.remote_artist)
+          this.remote_artist.unbind();
+      ]]>
+    </destructor>
 
     <method name="rebuildTip">
       <body>
         <![CDATA[
           try {
             var tip = "";
-            if (this.remote_artist.getValue().length > 0) {
-              tip = this.remote_artist.getValue();
+            if ( this.remote_artist.stringValue &&
+                 this.remote_artist.stringValue.length ) {
+              tip = this.remote_artist.stringValue;
             }
-            if (this.remote_album.getValue().length > 0) {
+            if ( this.remote_album.stringValue &&
+                 this.remote_album.stringValue.length ) {
               if (tip.length > 0) tip += " / ";
-              tip += this.remote_album.getValue();
+              tip += this.remote_album.stringValue;
             }
             this.label.setAttribute("tooltiptext", tip);
           } catch (e) {
@@ -879,9 +923,17 @@
 
     <constructor>
       this.data  = "backscan.status";
+
+      // Create and bind data remote
       this.bindvisible = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
-      this.setAttribute("onmousedown", "SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
+
+      // XXXredfive - backscan paused in an int, I think we want to do something different here
+      this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
     </constructor>
+    <destructor>
+      if (this.bindvisible)
+        this.bindvisible.unbind();
+    </destructor>
 
    </implementation>
  

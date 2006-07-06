@@ -47,8 +47,6 @@
 
     <constructor>
       <![CDATA[
-        //var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        //jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
         if (this.checkbox) {
           var oncommand = { 
             _that: null, 
@@ -93,7 +91,13 @@
         <![CDATA[
           if (this.checkbox && !this.isSingleEdition())
           {
-            if (this.checkbox.getAttribute("checked")) this.enableMultiEdition(); else { this.disableMultiEdition(); this.setValueToControl(this.getValueFromDatabase(false)); }
+            if (this.checkbox.getAttribute("checked")) {
+              this.enableMultiEdition();
+            }
+            else {
+             this.disableMultiEdition();
+             this.setValueToControl(this.getValueFromDatabase(false));
+            }
           }
         ]]>
       </body>

@@ -13,12 +13,11 @@ var gHotkeysPane = {
   init: function ()
   {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-    jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
     
     document.defaultView.addEventListener("unload", onHotkeysUnload, true);
     
-    this._binding_enabled = this.SBDataBindElementAttribute("globalhotkeys.enabled", "hotkeys.enabled", "checked", true);
+    this._binding_enabled = SBDataBindElementAttribute("globalhotkeys.enabled", "hotkeys.enabled", "checked", true);
 
     this._list = document.getElementById("hotkey.list");
     this._set = document.getElementById("hotkey.set");
@@ -37,13 +36,13 @@ var gHotkeysPane = {
   
   loadHotkeys: function()
   {
-    var count = this.SBDataGetValue("globalhotkeys.count");
+    var count = SBDataGetIntValue("globalhotkeys.count");
     for (var i=0;i<count;i++) {
       // Read hotkey binding from user preferences
       var root = "globalhotkey." + i + ".";
-      var keycombo = this.SBDataGetValue(root + "key");
-      var keydisplay = this.SBDataGetValue(root + "key.readable");
-      var action = this.SBDataGetValue(root + "action");
+      var keycombo = SBDataGetStringValue(root + "key");
+      var keydisplay = SBDataGetStringValue(root + "key.readable");
+      var action = SBDataGetStringValue(root + "action");
       // make list items accordingly
       this._addItem(keycombo, keydisplay, action, -1);
     }
@@ -78,7 +77,7 @@ var gHotkeysPane = {
   {
     // Save all hotkeys to prefs, extract them from the list itself
     var n = this._list.getRowCount();
-    this.SBDataSetValue("globalhotkeys.count", n);
+    SBDataSetIntValue("globalhotkeys.count", n);
     for (var i=0;i<n;i++)
     {
       var root = "globalhotkey." + i + ".";
@@ -88,11 +87,11 @@ var gHotkeysPane = {
       var keydisplaycell = actioncell.nextSibling;
       var actionstr = actioncell.getAttribute("label");
       var keydisplay = keydisplaycell.getAttribute("label");
-      this.SBDataSetValue(root + "key", keycombo);
-      this.SBDataSetValue(root + "key.readable", keydisplay);
-      this.SBDataSetValue(root + "action", actionstr);
+      SBDataSetStringValue(root + "key", keycombo);
+      SBDataSetStringValue(root + "key.readable", keydisplay);
+      SBDataSetStringValue(root + "action", actionstr);
     }
-    this.SBDataFireEvent("globalhotkeys.changed");
+    SBDataFireEvent("globalhotkeys.changed");
   },
   
   onSelectHotkey: function()
@@ -183,7 +182,7 @@ var gHotkeysPane = {
   
   onEnableDisable: function()
   {
-    this.SBDataSetValue("globalhotkeys.enabled", (this._enabled.getAttribute("checked") == "true"));
+    SBDataSetBoolValue("globalhotkeys.enabled", (this._enabled.getAttribute("checked") == "true"));
   }
   
 };

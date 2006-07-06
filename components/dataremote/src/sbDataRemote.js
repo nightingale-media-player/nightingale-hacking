@@ -31,45 +31,47 @@ const SONGBIRD_DATAREMOTE_IID = Components.interfaces.sbIDataRemote;
 function DataRemote() {
   // Nothing here...
 }
-DataRemote.prototype.constructor = DataRemote;
 
+// Define the prototype block before adding to the prototype object or the
+//   additions will get blown away (at least the setters/getters were).
 DataRemote.prototype = {
-  _prefs: null,
-  _initialized: false,
-  _root: null,
-  _key: null,
-  _callbackFunction: null,
-  _callbackObject: null,
-  _callbackProperty: null,
-  _callbackAttribute: null,
-  _callbackBool: false,
-  _callbackNot: false,
-  _callbackEval: "",
-  _suppressFirst: false,
-  _observing: false,
+  _initialized: false,     // has init been called
+  _observing: false,       // are we hooked up to the pref branch as a listener
+  _prefBranch: null,       // the pref branch associated with the root
+  _root: null,             // the root used to retrieve the pref branch
+  _key: null,              // the section of the branch we care about ("Domain")
+  _boundObserver: null,    // the object observing the change
+  _boundElement: null,     // the element containing the linked prop/attr.
+  _boundProperty: null,    // the property linked to the data (of boundElement)
+  _boundAttribute: null,   // the attribute linked to the data (of boundElement)
+  _isBool: false,          // Is the data a yes/no true/false chunk of data?
+  _isNot: false,           // Is the linked data state opposite of target data?
+  _evalString: "",         // a string of js to evaluate when the data changes
 
-  init: function(key, root) {
+  init: function(aKey, aRoot) {
     // Only allow initialization once per object
     if (this._initialized)
       throw Components.results.NS_ERROR_UNEXPECTED;
       
     // Set the strings
-    if (root == null) {
-    
-      // Use key in root string, makes unique observer lists per key (big but fast?).
-      this._root = "songbird.dataremotes." + key + ".";
-      this._key = key;
+    if (aRoot == null) {
+      // The prefapi hashes fully qualified prefs, so using a simple root does not
+      //   hurt us. Callbacks are in a (BIG) linked-list (ew), which sucks. Having
+      //   a shorter root saves some strncmp() time.
+      this._root = "songbird.";
+      this._key = aKey;
     } else {
-      // If we're specifying a root, just obey what's asked for.
-      this._root = root;
-      this._key = key;
+      // If a root is specified use that.
+      this._root = aRoot;
+      this._key = aKey;
     }
+
+    // get the prefbranch for our root from the pref service
     var prefsService = Components.classes["@mozilla.org/preferences-service;1"]
-                                 .getService(Components.interfaces.nsIPrefService);
-    // Ask for the branch.
-    this._prefs = prefsService.getBranch(this._root)
-                              .QueryInterface(Components.interfaces.nsIPrefBranch2);
-    if (!this._prefs)
+                       .getService(Components.interfaces.nsIPrefService);
+    this._prefBranch = prefsService.getBranch(this._root)
+                  .QueryInterface(Components.interfaces.nsIPrefBranch2);
+    if (!this._prefBranch)
       throw Components.results.NS_ERROR_FAILURE;
       
     this._initialized = true;
@@ -78,223 +80,250 @@ DataRemote.prototype = {
   unbind: function() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    if (this._prefs && this._observing)
-      this._prefs.removeObserver( this._key, this );
+    if (this._prefBranch && this._observing)
+      this._prefBranch.removeObserver( this._key, this );
+
+    // clear the decks
     this._observing = false;
+    this._boundObserver = null;
+    this._boundAttribute = null;
+    this._boundProperty = null;
+    this._boundElement = null;
   },
       
-  bindEventFunction: function(func) {
+  bindObserver: function(aObserver, aSuppressFirst) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    this.bindCallbackFunction(func, true);
-  },
-      
-  bindCallbackFunction: function(func, suppressFirst) {
-    if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    // Don't call the function the first time it is bound
-    this._suppressFirst = suppressFirst;
-  
+
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
-      this._prefs.removeObserver(this._key, this);
-    this._prefs.addObserver(this._key, this, true);
+      this._prefBranch.removeObserver(this._key, this);
+    this._prefBranch.addObserver(this._key, this, true);
     this._observing = true;
 
-    // Now we're observing for a function.        
-    this._callbackFunction = func;
-    this._callbackObject = null;
-    this._callbackProperty = null;
-    this._callbackAttribute = null;
-    this._callbackBool = false;
-    this._callbackNot = false;
-    this._callbackEval = "";
+    // Now we are linked to an nsIObserver object
+    this._boundObserver = aObserver;
+    this._boundElement = null;
+    this._boundProperty = null;
+    this._boundAttribute = null;
+    this._isBool = false;
+    this._isNot = false;
+    this._evalString = "";
     
-    // Set the value once
-    this.observe(null, null, this._key);
+    // If the caller wants to be notified, fire on attachment
+    if (!aSuppressFirst)
+      this.observe(null, null, this._key);
   },
-      
-  bindCallbackProperty: function(obj, prop, bool, not, eval) {
+     
+  bindProperty: function(aElement, aProperty, aIsBool, aIsNot, aEvalString) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    if (!bool)
-      bool = false;
-    if (!not)
-      not = false;
-    if (!eval)
-      eval = "";
+    if (!aIsBool)
+      aIsBool = false;
+    if (!aIsNot)
+      aIsNot = false;
+    if (!aEvalString)
+      aEvalString = "";
 
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
-      this._prefs.removeObserver(this._key, this);
-    this._prefs.addObserver(this._key, this, true);
+      this._prefBranch.removeObserver(this._key, this);
+    this._prefBranch.addObserver(this._key, this, true);
     this._observing = true;
 
-    // Now we're observing for an object's property.        
-    this._callbackFunction = null;
-    this._callbackObject = obj;
-    this._callbackProperty = prop;
-    this._callbackAttribute = null;
-    this._callbackBool = bool;
-    this._callbackNot = not;
-    this._callbackEval = eval;
+    // Now we are linked to property on an element
+    this._boundObserver = null;
+    this._boundElement = aElement;
+    this._boundProperty = aProperty;
+    this._boundAttribute = null;
+    this._isBool = aIsBool;
+    this._isNot = aIsNot;
+    this._evalString = aEvalString;
     
     // Set the value once
     this.observe(null, null, this._key);
   },
         
-  bindCallbackAttribute: function(obj, attr, bool, not, eval) {
+  bindAttribute: function(aElement, aAttribute, aIsBool, aIsNot, aEvalString) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    if (!bool)
-      bool = false;
-    if (!not)
-      not = false;
-    if (!eval)
-      eval = "";
+    if (!aIsBool)
+      aIsBool = false;
+    if (!aIsNot)
+      aIsNot = false;
+    if (!aEvalString)
+      aEvalString = "";
 
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
-      this._prefs.removeObserver(this._key, this);
-    this._prefs.addObserver(this._key, this, true);
+      this._prefBranch.removeObserver(this._key, this);
+    this._prefBranch.addObserver(this._key, this, true);
     this._observing = true;
     
-    // Now we're observing for an object's attribute.        
-    this._callbackFunction = null;
-    this._callbackObject = obj;
-    this._callbackProperty = null;
-    this._callbackAttribute = attr;
-    this._callbackBool = bool;
-    this._callbackNot = not;
-    this._callbackEval = eval;
+    // Now we are linked to an attribute on an element
+    this._boundObserver = null;
+    this._boundElement = aElement;
+    this._boundProperty = null;
+    this._boundAttribute = aAttribute;
+    this._isBool = aIsBool;
+    this._isNot = aIsNot;
+    this._evalString = aEvalString;
     
     // Set the value once
     this.observe(null, null, this._key);
   },
 
-      // SetValue - Put the value into the data store, alert everyone watching this data    
-  setValue: function(value) {
+  get_stringValue : function() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    
-    // Clear the value
-    if (value == null)
-      value = "";
+
+    return this._getValue();
+  },
+
+  set_stringValue : function(aStringValue) {
+    if (!this._initialized)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    // Make sure there is a string object to pass.
+    if (aStringValue == null)
+      aStringValue = "";
+    this._setValue(aStringValue);
+  },
+
+  get_boolValue : function () {
+    if (!this._initialized)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    return (this._makeIntValue(this._getValue()) != 0);
+  },
+
+  set_boolValue : function(aBoolValue) {
+    if (!this._initialized)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    // convert the bool to a numeric string for easy getBoolValue calls.
+    aBoolValue = aBoolValue ? "1" : "0";
+    this._setValue(aBoolValue);
+  },
+
+  get_intValue : function () {
+    if (!this._initialized)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    return this._makeIntValue(this._getValue());
+  },
+
+  set_intValue : function(aIntValue) {
+    if (!this._initialized)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    this._setValue(aIntValue + "");
+  },
+
+  // internal helper function - all setters ultimately call this
+  _setValue: function(aValueStr) {
+    // assume we are being called after the init check in another method.
 
     // Make a unicode string, assign the value, set it into the preferences.
     var sString = Components.classes["@mozilla.org/supports-string;1"]
                             .createInstance(Components.interfaces.nsISupportsString);
-    sString.data = value;
-    this._prefs.setComplexValue(this._key,
+    sString.data = aValueStr;
+    this._prefBranch.setComplexValue(this._key,
                                 Components.interfaces.nsISupportsString,
                                 sString);
   },
 
-      // setBoolValue - Set the value because the js turns true into "true"
-  setBoolValue: function(value) {
-    if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    if (value)
-      value = "1";
-    else
-      value = "0";
-    return this.setValue(value);
-  },    
-  
-      // GetValue - Get the value from the data store
-  getValue: function() {
-    if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-      
+  // internal helper function - all getters ultimately call this
+  _getValue: function() {
+    // assume we are being called after the init check in another method.
+
     var retval = "";
-    if (this._prefs.prefHasUserValue(this._key)) {
-      var prefValue = this._prefs.getComplexValue(this._key, Components.interfaces.nsISupportsString);
-      if (prefValue)
+    if (this._prefBranch.prefHasUserValue(this._key)) {
+      // need complexValue for unicode strings
+      var prefValue = this._prefBranch.getComplexValue(this._key, Components.interfaces.nsISupportsString);
+      if (prefValue != "") {
         retval = prefValue.data;
+      }
     }
     return retval;
   },
       
-      // GetIntValue - Get the value from the data store as an int
-  getIntValue: function() {
-    if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return this.makeIntValue(this.getValue());
-  },
-      
-      // GetBoolValue - Get the value from the data store as an int
-  getBoolValue: function() {
-    if (!this._initialized)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return this.makeIntValue(this.getValue()) != 0;
-  },
-      
-      // MakeIntValue - Get the value from the data store as an int
-  makeIntValue: function(value) {
+  // internal function for converting to an integer.
+  _makeIntValue: function(aValueStr) {
     var retval = 0;
-    if (value && value.length)
-      retval = parseInt(value);
+    if (aValueStr && aValueStr.length)
+      retval = parseInt(aValueStr);
     return retval;
   },
 
   // observe - Called when someone updates the remote data
-  observe: function(subject, topic, data) {
+  // aSubject: The prefbranch object
+  // aTopic:   NS_PREFBRANCH_PREFCHANGE_TOPIC_ID
+  // aData:    the domain (key)
+  observe: function(aSubject, aTopic, aData) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     
     // Early bail conditions
-    if (data != this._key)
+    if (aData != this._key)
       return;
-    if (this._suppressFirst) {
-      this._suppressFirst = false;
-      return;
-    }
     
-    // Get the value (why isn't this a param?)
-    var value = this.getValue();
+    // Get the value as a string - this must be called value to not break
+    //    evalStrings that do an eval of the value.
+    var value = this._getValue();
     
     // Run the optional evaluation
-    if (this._callbackEval.length)
-      value = eval(this._callbackEval);
+    if (this._evalString.length)
+      value = eval(this._evalString);
     
     // Handle boolean and not states
-    if (this.callbackBool) {
-      // If we're not bool before,
-      if(typeof(value) != "boolean") {
+    if (this._isBool) {
+      // If we were not a bool, make us one (_evalString could change value)
+      if (typeof(value) != "boolean") {
         if (value == "true")
           value = true;
         else if (value == "false")
           value = false;
         else
-          value = (this.makeIntValue(value) != 0);
+          value = (this._makeIntValue(value) != 0);
       }
-      // ...we are now!
-      if (this._callbackNot)
+      // reverse ourself if neccessary
+      if (this._isNot)
         value = !value;
     }
-    
+
     // Handle callback states
-    if (this._callbackFunction) {
-      // Call the callback function
-      this._callbackFunction(value);
+    if (this._boundObserver) {
+      try {
+        // pass useful information to the observer.
+        this._boundObserver.observe( this, "", value );
+      }
+      catch (err) {
+        dump("ERROR! Could not call boundObserver.observe().\n" + err + "\n");
+      }
     }
-    else if (this._callbackObject && this._callbackProperty) {
-      // Set the callback object's property
-      this._callbackObject[this._callbackProperty] = value;
+    else if (this._boundElement && this._boundProperty) {
+      // Set the property of the callback object
+      this._boundElement[this._boundProperty] = value;
     }
-    else if (this._callbackObject && this._callbackAttribute) {
+    else if (this._boundElement && this._boundAttribute) {
+      // Set the attribute of the callback object
       var valStr = value;
       // If bool-type, convert to string.
-      if (this._callbackBool) {
+      if (this._isBool) {
         if (value)
           valStr = "true";
         else
           valStr = "false";
       }
-      // Set the callback object's attribute
-      this._callbackObject.setAttribute(this._callbackAttribute, valStr);
+      try {
+        this._boundElement.setAttribute(this._boundAttribute, valStr);
+      }
+      catch (err) {
+        dump("ERROR! Could not setAttribute in sbDataRemote.js\n " + err + "\n");
+      }
     }
   },
 
@@ -310,6 +339,17 @@ DataRemote.prototype = {
     return this;
   }
 }; // DataRemote.prototype
+
+// be specific
+DataRemote.prototype.constructor = DataRemote;
+
+// Um, LAME!!! xpconnect does not automaticaly map js attributes to their getFoo()/setFoo() methods
+DataRemote.prototype.__defineGetter__( "stringValue", DataRemote.prototype.get_stringValue );
+DataRemote.prototype.__defineSetter__( "stringValue", DataRemote.prototype.set_stringValue );
+DataRemote.prototype.__defineGetter__( "boolValue", DataRemote.prototype.get_boolValue );
+DataRemote.prototype.__defineSetter__( "boolValue", DataRemote.prototype.set_boolValue );
+DataRemote.prototype.__defineGetter__( "intValue", DataRemote.prototype.get_intValue );
+DataRemote.prototype.__defineSetter__( "intValue", DataRemote.prototype.set_intValue );
 
 /**
  * ----------------------------------------------------------------------------
@@ -365,3 +405,4 @@ var gModule = {
 function NSGetModule(comMgr, fileSpec) {
   return gModule;
 } // NSGetModule
+

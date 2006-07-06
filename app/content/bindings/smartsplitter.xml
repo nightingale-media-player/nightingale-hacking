@@ -41,9 +41,6 @@
 
     <constructor>
       <![CDATA[
-        var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
-        jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
         var onmouseevent= { 
           _that: null, 
           handleEvent: function( event ) { this._that.onMouseEvent(event); } 
@@ -74,16 +71,20 @@
         <![CDATA[
           var root = "splitter." + this.id + ".";
           var resizebefore = this.getResizeBefore();
-          if (resizebefore) this.SBDataSetValue( root + "before.width", resizebefore.width );
+          if (resizebefore)
+            SBDataSetIntValue( root + "before.width", resizebefore.width );
           this.doAutoShowHide();
           var state = this.getAttribute( "state" );
-          var collapsed = state == "collapsed";
+          var collapsed = (state == "collapsed");
           var metricsid = this.getAttribute("metricsid");
           var metricscategory = this.getAttribute("metricscategory");
-          if (metricsid != "" && metricscategory != "") {
-            if (collapsed && this.SBDataGetIntValue(root + "collapsed") == 0) this.metrics_inc(metricscategory, metricsid, null);
+          if (metricsid && metricscategory ) {
+            // if we changed our collapsed state - record it.
+            if (collapsed != SBDataGetBoolValue(root + "collapsed"))
+              metrics_inc(metricscategory, metricsid, null);
           }
-          this.SBDataSetValue( root + "collapsed", collapsed );
+          // make sure we save the state either way
+          SBDataSetBoolValue( root + "collapsed", collapsed );
           // trigger an event (name of the event is the name of the state) for custom handlers
           var e = document.createEvent("Events");
           e.initEvent(state, false, true);
@@ -97,7 +98,6 @@
       <body>
         <![CDATA[
           var state = this.getAttribute( "state" );
-          var collapsed = state == "collapsed";
           switch (state) {
             case "open":
             case "dragging":
@@ -136,10 +136,10 @@
           var root = "splitter." + this.id + ".";
           var resizebefore = this.getResizeBefore();
           if (resizebefore) {
-            var width = this.SBDataGetValue( root + "before.width" );
+            var width = SBDataGetStringValue( root + "before.width" );
             if ( width != "" ) resizebefore.width = width;
           }
-          this.setAttribute( "state", this.SBDataGetIntValue( root + "collapsed" ) ? "collapsed" : "open" );
+          this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
           this.doAutoShowHide();
         ]]>
       </body>

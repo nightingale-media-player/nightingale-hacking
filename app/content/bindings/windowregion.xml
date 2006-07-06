@@ -64,6 +64,7 @@
         <![CDATA[
         try
         {
+          this.regionList = null;
           var windowResizeHook = Components.classes["@songbirdnest.com/Songbird/WindowResizeHook;1"];
           if ( windowResizeHook ) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);

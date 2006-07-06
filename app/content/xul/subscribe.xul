@@ -161,7 +161,7 @@
       try
       {
         var theTextbox = document.getElementById( "subscribe_folder_path" );
-        theTextbox.value = SBDataGetValue( SUBSCRIBE_FOLDER_KEY );
+        theTextbox.value = SBDataGetStringValue( SUBSCRIBE_FOLDER_KEY );
         var ok = document.getElementById( "button_ok" );
         ok.focus();
         if ( window.arguments && window.arguments[0] )
@@ -200,7 +200,7 @@
           alert( "THROW - Please select a valid destination folder for download." );
           return false;
         }
-        SBDataSetValue( SUBSCRIBE_FOLDER_KEY, theFolder );
+        SBDataSetStringValue( SUBSCRIBE_FOLDER_KEY, theFolder );
       
         var url = document.getElementById( "subscribe_url" ).value;
         var time = parseInt( document.getElementById( "subscribe_interval" ).value );
@@ -292,6 +292,5 @@
     }
   ]]>
   </script>
-  
-  
 </window>
+

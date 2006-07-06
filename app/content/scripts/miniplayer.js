@@ -149,8 +149,8 @@ try
     if ( location.indexOf("?video") == -1 )
     {
       var root = "window." + document.documentElement.id;
-      SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-      SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
+      SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+      SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
     }
   }
 */
@@ -316,16 +316,16 @@ try
   function onWindowSaveSize()
   {
     var root = "window." + document.documentElement.id;
-    SBDataSetValue( root + ".x", document.documentElement.boxObject.screenX );
-    SBDataSetValue( root + ".y", document.documentElement.boxObject.screenY );
-    SBDataSetValue( root + ".w", document.documentElement.boxObject.width );
-    SBDataSetValue( root + ".h", document.documentElement.boxObject.height );
+    SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+    SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
+    SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
+    SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
   }
 
   function onWindowLoadSize()
   {
     var root = "window." + document.documentElement.id;
-    if (SBDataGetValue( root + ".x" ) == "" && SBDataGetValue( root + ".w" ) == "") { return; }
+    if (SBDataGetStringValue( root + ".x" ) == "" && SBDataGetStringValue( root + ".w" ) == "") { return; }
     if ( SBDataGetIntValue( root + ".w" ) && SBDataGetIntValue( root + ".h" ) )
     {
       // https://bugzilla.mozilla.org/show_bug.cgi?id=322788

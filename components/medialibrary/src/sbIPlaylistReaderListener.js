@@ -89,8 +89,8 @@ CPlaylistReaderListener.prototype =
       
       if(success)
       {
-        var dpDownloadContext = new this.sbIDataRemote( "download.context" );
-        var dpDownloadTable = new this.sbIDataRemote( "download.table" );
+        var dpDownloadContext = SB_NewDataRemote( "download.context", null );
+        var dpDownloadTable = SB_NewDataRemote( "download.table", null );
 
         var dbQuery = new this.sbIDatabaseQuery();
         dbQuery.SetDatabaseGUID(this.serviceGuid);
@@ -100,7 +100,7 @@ CPlaylistReaderListener.prototype =
         if(playlist)
         {
           const SUBSCRIBE_FOLDER_KEY = "download.folder";
-          var destFolder = this.SBDataGetValue(SUBSCRIBE_FOLDER_KEY);
+          var destFolder = this.SBDataGetStringValue(SUBSCRIBE_FOLDER_KEY);
  
           deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                       getService(Components.interfaces.sbIDeviceManager);
@@ -120,8 +120,8 @@ CPlaylistReaderListener.prototype =
           var downloadTable = {};
           downloadDevice.AutoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
           
-          dpDownloadContext.setValue( downloadDevice.GetContext('') );
-          dpDownloadTable.setValue( downloadTable.value );
+          dpDownloadContext.stringValue = downloadDevice.GetContext('');
+          dpDownloadTable.stringValue = downloadTable.value;
         }
       }
     }

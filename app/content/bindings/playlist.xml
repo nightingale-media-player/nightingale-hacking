@@ -166,13 +166,10 @@
         // Load the javascript we want to use
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
         jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
-
-        jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", this);
-        jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
-        jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
-        jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/dragAndDrop.js", this );
+        jsLoader.loadSubScript( "chrome://global/content/nsDragAndDrop.js", this );
+        jsLoader.loadSubScript( "chrome://global/content/nsTransferable.js", this );
 
         // Load up the string bundle
         var src = "chrome://songbird/locale/songbird.properties";
@@ -190,22 +187,26 @@
         this._lastviewsummary = "";
         this.lastfiltersstate = "open";
 
-        this.playingRef = new sbIDataRemote( "playing.ref" );
-        this.playlistRef = new sbIDataRemote( "playlist.ref" );
-        this.playUrl = new sbIDataRemote( "faceplate.play.url" );
-
-        var onplayurlchangechange = { 
+        // event handler for the data remote 
+        var on_play_url_change = { 
           _that: null, 
-          handleEvent: function( event ) { this._that.syncPlaylistIndex(false); } 
-        } onplayurlchangechange._that = this;
-        this.playUrl.bindCallbackFunction(onplayurlchangechange, true);
+          // sync the playlist but do not scroll
+          observe: function( aSubject, aTopic, aData ) { this._that.syncPlaylistIndex(false); } 
+        };
+        on_play_url_change._that = this;
+
+        // Create and bind data remotes
+        this.playingRef = SB_NewDataRemote( "playing.ref", null );
+        this.playlistRef = SB_NewDataRemote( "playlist.ref", null );
+        this.playUrl = SB_NewDataRemote( "faceplate.play.url", null );
+        this.playUrl.bindObserver(on_play_url_change, true);
         
         if ( this._constructed ) dump("playlist.xml - constructor - THIS SHOULD NEVER GET CALLED\n"); // ???
         this._constructed = true; // ???
       }
       catch ( err )
       {
-        alert( "playlist.xml - constructor - " + err );
+        dump( "playlist.xml - constructor - " + err );
       }
       ]]>
     </constructor>
@@ -239,7 +240,7 @@
         // detach mouse listeners from drag list 
         this.stopWatchingDragObjects();
 
-        // detach from the sbIDataRemote
+        // detach from the DataRemote
         this.playUrl.unbind();
         this._constructed = false; // ???
       } catch (err) {
@@ -634,6 +635,7 @@
                   }
                   catch( err )
                   {
+                    dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
                   }
                 }
                 toolbarbutton.setAttribute( "label", cmd_text );
@@ -660,6 +662,7 @@
                   }
                   catch( err )
                   {
+                    dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
                   }
                 }
                 /*
@@ -961,7 +964,6 @@
             if ( isVisible == null ) isVisible = "";
             if ( isDefaultVisible == null ) isDefaultVisible = "";
             
-            dump("XXXredfive name:" + name + "\n");
             if ( readableName && readableName[ 0 ] == "&" )
             {
               try
@@ -970,16 +972,18 @@
               }
               catch( err )
               {
+                dump("ERROR playlist.xml:createTemplateAndColumns getting the string from the name: " + err + "\n");
               }
             }
-            
-            var ordinal = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".ordinal" );
+
+            // ordinal is the position of the column
+            var ordinal = SBDataGetIntValue( "playlist." + this.ref + ".column." + name + ".ordinal" );
             if (ordinal == 0) ordinal = 1;
 
             var defaultFlex = result.GetRowCellByColumn(i, "width");
             if (defaultFlex == -1) defaultFlex = 35;
             var isFixed = "false";
-            var size = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".size" );
+            var size = SBDataGetIntValue( "playlist." + this.ref + ".column." + name + ".size" );
 
             this_column_node.setAttribute("id", name);
             this_column_node.setAttribute("label", readableName);
@@ -994,27 +998,29 @@
             {
               this_column_node.setAttribute("type", "progressmeter");
             }
-            
-            var savedHidden = this.SBDataGetValue( "playlist." + this.ref + ".column." + name + ".hidden" );
-            
+           
+            // need to check string, to check for unset state 
+            var savedHidden = SBDataGetStringValue( "playlist." + this.ref + ".column." + name + ".hidden" );
+
             if (savedHidden == "1") 
             {
               this_column_node.setAttribute("hidden", "true");
             }
             else
             {
+              // check default visibility if hidden has not been saved
               if (savedHidden == "" && isDefaultVisible == "0") 
               {
                 this_column_node.setAttribute("hidden", "true");
               } 
             }
 
-            if(isVisible == "0")
+            if(!isVisible)
             {
               this_column_node.setAttribute("ignoreincolumnpicker", "true");
             }
             
-            if (size != '' && size != '0') this_column_node.width = size;
+            if (size > 0) this_column_node.width = size;
             
             this_column_node.setAttribute("fixed", isFixed);
             this_column_node.setAttribute("flex", defaultFlex);
@@ -1120,8 +1126,13 @@
               for (var i=0;i<this.tree.columns.count;i++) {
                 var id = this.tree.columns.getColumnAt(i).id;
                 var width = this.tree.columns.getColumnAt(i).width;
-                if (width == 0) continue; // first rebuild when coming back from a url doesn't have time to show the columns and still has all their widths to 0, don't save that
-                this.SBDataSetValue( "playlist." + this.ref + ".column." + id + ".size", width );
+                if (width == 0) {
+                  // first rebuild when coming back from a url doesn't have time
+                  //   to show the columns and still has all their widths to 0,
+                  //   don't save that
+                  continue; 
+                }
+                SBDataSetIntValue( "playlist." + this.ref + ".column." + id + ".size", width );
               }
             }
           }
@@ -1245,7 +1256,7 @@
               var node = columnsNode.childNodes[i];
               if (node.tagName == "treecol" || node.tagName == "xul:treecol")
               {
-                this.SBDataSetValue( "playlist." + this.ref + ".column." + node.id + ".ordinal", node.ordinal );
+                SBDataSetIntValue( "playlist." + this.ref + ".column." + node.id + ".ordinal", node.ordinal );
               }
             }
           }
@@ -1269,7 +1280,7 @@
               var node = columnsNode.childNodes[i];
               if (node.tagName == "treecol" || node.tagName == "xul:treecol")
               {
-                this.SBDataSetValue( "playlist." + this.ref + ".column." + node.id + ".hidden", node.hidden );
+                SBDataSetBoolValue( "playlist." + this.ref + ".column." + node.id + ".hidden", node.hidden );
               }
             }
           }
@@ -1806,7 +1817,7 @@
                 this.context_term = play_title;
               }
               
-              this.SBDataSetValue( "playlist.context.term", this.context_term );
+              SBDataSetStringValue( "playlist.context.term", this.context_term );
 
               var search_term = document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
               search_term.label = "Search: " + this.context_term;
@@ -1857,8 +1868,8 @@
             {
               if ( ! this.paused_scanning )
               {
-                // Push the pause value
-                SBDataSetValue('backscan.paused', SBDataGetIntValue('backscan.paused') + 1 );
+                // increment the backscan pause value.
+                SB_NewDataRemote( "backscan.paused", null ).intValue++;
                 this.paused_scanning = true;
               }
             }
@@ -1866,10 +1877,10 @@
             {
               if ( this.paused_scanning )
               {
-                // Pop the pause value
-                var pause = SBDataGetIntValue('backscan.paused') - 1;
-                if ( pause < 0 ) pause = 0;
-                SBDataSetValue('backscan.paused', pause );
+                // decrement the backscan.pause value to a floor of 0
+                var bsPaused = SB_NewDataRemote( "backscan.paused", null );
+                if ( --bsPaused.intValue < 0 )
+                  bsPaused.intValue = 0;
                 this.paused_scanning = false;
               }
             }
@@ -1972,7 +1983,7 @@
               return;
             }
             this.context_item = document.getAnonymousElementByAttribute(this, 'id', evt.target.id);
-            this.metrics_inc("playlist.context", this.context_item.getAttribute("id"), null);
+            metrics_inc("playlist.context", this.context_item.getAttribute("id"), null);
             if ( evt.target.getAttribute( "sbtype" ) == "command" )
             {
               if ( this.commands ) // I hope so!
@@ -2219,7 +2230,7 @@
               addedtolibrary = songbirdStrings.GetStringFromName("library.tracksadded");
               alreadyinit = songbirdStrings.GetStringFromName("library.tracksalreadyinit");
               addtolibrary = songbirdStrings.GetStringFromName("library.addtolibrary");
-            } catch (e) {}
+            } catch (err) { /* ignore error, we have default strings */ }
             var msg = "" + this._addedtolibrary_count + " " + addedtolibrary; 
             if (this._existedinlibrary_count > 0) msg += ", " + this._existedinlibrary_count + " " + alreadyinit;
             this.sbMessageBox(addtolibrary, msg, false);
@@ -2695,7 +2706,8 @@
           {
             var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
             var curstate = splitter.getAttribute( "state" );
-            if (this.lastfiltersstate != "collapsed" && curstate == "collapsed") this.metrics_inc("player", "collapse.library", null);
+            if (this.lastfiltersstate != "collapsed" && curstate == "collapsed")
+              metrics_inc("player", "collapse.library", null);
             this.lastfiltersstate = curstate;
           }
           catch (err)
@@ -2713,9 +2725,9 @@
           try
           {
             // if this playlist is the currently playing one, set selection to the playing item
-            if ( this.playlistRef.getValue() == this.playingRef.getValue() )
+            if ( this.playlistRef.stringValue == this.playingRef.stringValue )
             {
-              var url = this.playUrl.getValue();
+              var url = this.playUrl.stringValue;
               var row = this.findUrl(url);
               if (row != -1) 
               {

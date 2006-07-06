@@ -51,10 +51,10 @@ try
     if ( fp_status == nsIFilePicker.returnOK )
     {
       // And if we're good, play it.
-      seen_playing.setValue(false);
-      theTitleText.setValue( fp.file.leafName );
-      theArtistText.setValue( "" );
-      theAlbumText.setValue( "" );
+      seen_playing.boolValue = false;
+      theTitleText.stringValue = fp.file.leafName;
+      theArtistText.stringValue = "";
+      theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportUrl(fp.file.path);
     }
@@ -64,16 +64,16 @@ try
   {
     // Make a magic data object to get passed to the dialog
     var url_open_data = new Object();
-    url_open_data.URL = URL.getValue();
+    url_open_data.URL = URL.stringValue;
     url_open_data.retval = "";
     // Open the modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/open_url.xul", "open_url", "chrome,modal=yes,centerscreen", url_open_data );
     if ( url_open_data.retval == "ok" )
     {
       // And if we're good, play it.
-      theTitleText.setValue( url_open_data.URL );
-      theArtistText.setValue( "" );
-      theAlbumText.setValue( "" );
+      theTitleText.stringValue = url_open_data.URL;
+      theArtistText.stringValue = "";
+      theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportUrl(url_open_data.URL);
     }  

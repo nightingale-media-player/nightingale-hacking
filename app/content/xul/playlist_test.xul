@@ -48,6 +48,8 @@
    src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/metrics.js"/>
 
   <!-- Local hardcoded sample js -->
   <script type="application/x-javascript">
@@ -254,7 +256,7 @@ try
       // Default values, in case we get confused
       var table = "library";
       var guid = "songbird";
-      var data = SBDataGetValue( "browser.uri" );
+      var data = SBDataGetStringValue( "browser.uri" );
 
       // Cook the table from the magic browser uri?
       var qm = data.lastIndexOf( '?' );

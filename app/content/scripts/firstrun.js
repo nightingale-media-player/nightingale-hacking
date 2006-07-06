@@ -202,8 +202,11 @@ function firstRunDialog()
         var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
         if (as)
         {
-          // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-          SBDataSetValue("metrics_ignorenextstartup", 1); // do not count next startup in metrics, since we counted this one, but it was aborted
+          // do NOT replace '_' with '.', or it will be handled as metrics
+          //    data: it would be posted to the metrics aggregator, then reset
+          //    to 0 automatically
+          // do not count next startup in metrics, since we counted this one, but it was aborted
+          SBDataSetBoolValue("metrics_ignorenextstartup", true); 
           const V_ATTEMPT = 2;
           as.quit(V_ATTEMPT);
           return 0;
@@ -341,3 +344,4 @@ function handleOptOut()
     prefs.setCharPref("app.metrics.enabled", metrics_enabled);
   } catch (e) {}; // Stuff likes to throw.
 };
+

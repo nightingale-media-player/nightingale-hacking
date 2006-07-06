@@ -149,13 +149,13 @@ try
   
   var MainwinArtistRemote = null;
   var MainwinAlbumRemote = null;
-  function onSBArtistAlbumChanged( value )
+  function onSBArtistAlbumChanged()
   {
-    // (we get called before they're fully bound)
+    // (we get called before they are fully bound)
     if ( MainwinArtistRemote && MainwinAlbumRemote )
     {
-      var artist = MainwinArtistRemote.getValue();
-      var album = MainwinAlbumRemote.getValue();
+      var artist = MainwinArtistRemote.stringValue;
+      var album = MainwinAlbumRemote.stringValue;
       var theAASlash = document.getElementById( "songbird_text_slash" );
       var theAABox = document.getElementById( "songbird_text_artistalbum" );
       if ( album.length || artist.length )
@@ -184,11 +184,20 @@ try
     try
     {
       // Title/<slash>/Album Box Complex -- two data items for one callback.
-      MainwinArtistRemote = new sbIDataRemote( "metadata.title" ); // changed to title cuz we like to be odd.
-      MainwinArtistRemote.bindCallbackFunction( onSBArtistAlbumChanged );
+
+      // event handler for data remotes
+      var on_artist_album_changed = {
+        observe: function ( aSubject, aTopic, aData ) { onSBArtistAlbumChanged(); }
+      };
+
+      // Create and bind the data remotes
+      MainwinArtistRemote = SB_NewDataRemote( "metadata.title", null ); // changed to title cuz we like to be odd.
+      MainwinAlbumRemote = SB_NewDataRemote( "metadata.album", null );
+      MainwinArtistRemote.bindObserver( on_artist_album_changed, true );
+      MainwinAlbumRemote.bindObserver( on_artist_album_changed, true );
+
+      // add both to the array to be unbound on shutdown
       MainwinAdd( MainwinArtistRemote );
-      MainwinAlbumRemote = new sbIDataRemote( "metadata.album" );
-      MainwinAlbumRemote.bindCallbackFunction( onSBArtistAlbumChanged );
       MainwinAdd( MainwinAlbumRemote );
       
     }
@@ -225,15 +234,15 @@ try
           launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?library" );
         }
         
-        if ( thePlaylistRef.getValue().length > 0 )
+        if ( thePlaylistRef.stringValue.length )
         {
           // Feed the new filter into the list.
           var source = new sbIPlaylistsource();
           // Wait until it is done executing
-          if ( ! source.isQueryExecuting( thePlaylistRef.getValue() ) )
+          if ( ! source.isQueryExecuting( thePlaylistRef.stringValue ) )
           {
             // ...before attempting to override.
-            source.setSearchString( thePlaylistRef.getValue(), widget.list.label );
+            source.setSearchString( thePlaylistRef.stringValue, widget.list.label );
             theLastSearchEventTarget = null;
             return;
           }
