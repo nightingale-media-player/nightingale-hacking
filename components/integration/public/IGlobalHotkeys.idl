@@ -25,17 +25,77 @@
  */
 #include "nsISupports.idl"
 
+/**       
+ * \file IGlobalHotkeys.idl
+ * \brief Global Hotkeys Interface file
+ * This file contains interfaces used to implement global hotkey support. The main interface 
+ * is sbIGlobalHotkeys, which lets you specify a key code and a combination of modifiers,
+ * as well as an id string, and register these with a callback object. When the key is pressed
+ * anywhere in the system (not just when the application is focused), the callback is called
+ * and is given the id string.
+ */
+
+/**
+ * \interface sbIGlobalHotkeyCallback IGlobalHotkeys.h
+ * \brief Global hotkeys callback interface
+ * This interface is used by callback objects to receive a notification when a 
+ * registered hotkey is pressed anywhere in the system (not just when the application
+ * is focused)
+ * \sa sbIGlobalHotkeys
+ */
 [scriptable, uuid(6AFCACC5-9D63-499d-B8D0-B40C66859818)]
 interface sbIGlobalHotkeyCallback : nsISupports
 {
+  /**
+   * \brief Global hotkey callback method
+   * This method is called when a registered global hotkey has been pressed anywhere in the system
+   * (not just when the application is focused)
+   * \param key_id The id for the hotkey, specified when the hotkey was registered
+   * \sa sbIGlobalHotkeys, sbIGlobalHotkeys::AddHotkey()
+   */
   void OnHotkey( in wstring key_id );
 };
 
+/**
+ * \interface sbIGlobalHotkey IGlobalHotkeys.h
+ * \brief Global hotkey registration/unregistration interface
+ * This interface is used to register or unregister hotkey callbacks
+ * \sa sbIGlobalHotkeyCallback
+ */
 [scriptable, uuid(284E14BF-5CE4-4434-A733-4379D27D799E)]
 interface sbIGlobalHotkeys : nsISupports
 {
+  /**
+   * \brief Global hotkey registration method
+   * This method is used to register a hotkey.
+   *
+   *  Hotkeys are specified via key code and modifiers, and an arbitrary id string is given 
+   *  in the callback method.
+   *
+   * \param keyCode The keyboard code for the hotkey
+   * \param altKey The state of the Alt key in combination with the keyboard code
+   * \param ctrlKey The state of the Control key in combination with the keyboard code
+   * \param shiftKey The state of the Shift key in combination with the keyboard code
+   * \param metaKey The state of the Meta key in combination with the keyboard code
+   * \param key_id The arbitrary id associated with this hotkey
+   * \param cb The callback object to call when the hotkey is pressed
+   * \sa RemoveHotkey, sbIGlobalHotkeyCallback, sbIGlobalHotkeyCallback::OnHotkey()
+   */
   void AddHotkey( in PRInt32 keyCode, in PRBool altKey, in PRBool ctrlKey, in PRBool shiftKey, in PRBool metaKey, in wstring key_id, in sbIGlobalHotkeyCallback cb );
+
+  /**
+   * \brief Global hotkey unregistration method
+   * This method is used to unregister a hotkey that has been previously registered with AddHotkey.
+   * \param key_id The id of the key to unregister
+   * \sa AddHotkey, RemoveAllHotkeys
+   */
   void RemoveHotkey( in wstring key_id );
+
+  /**
+   * \brief Global hotkeys unregistration method
+   * This method is used to unregister all hotkeys that have been previously registered with AddHotkey.
+   * \sa AddHotkey, RemoveHotkey
+   */
   void RemoveAllHotkeys();
 };
 

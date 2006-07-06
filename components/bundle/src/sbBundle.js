@@ -50,6 +50,7 @@ Bundle.prototype = {
   _filename: null,
   _needrestart: false,
   _bundleversion: 0,
+  _simulate_lots_of_entries: false,
   
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
@@ -163,31 +164,39 @@ Bundle.prototype = {
   },
   
   getNumExtensions: function() {
-    if (this._status == 1) return this._extlist.length;
+    if (this._status == 1) {
+      if (this._simulate_lots_of_entries) return this._extlist.length * 20;
+      return this._extlist.length;
+    }
     return 0;
   },
   
   getExtensionName: function(idx) {
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
     if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][0];
     return "";
   },
       
   getExtensionDesc: function(idx) {
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
     if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][1];
     return "";
   },
       
   getExtensionURL: function(idx) {
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
     if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][2];
     return "";
   },
       
   getExtensionInstallState: function(idx) {
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
     if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][3];
     return false;
   },
   
   setExtensionInstallState: function(idx, doinstall) {
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
     if (this._status == 1 && idx < this.getNumExtensions()) this._extlist[idx][3] = doinstall;
   },
   

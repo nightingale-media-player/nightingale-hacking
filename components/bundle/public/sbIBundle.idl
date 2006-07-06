@@ -73,15 +73,16 @@ interface sbIBundle : nsISupports
 
   /**
    * \brief Gets the version of the downloaded bundle
-   * This method returns the version extracted from the xml for 
-   * the bundle document
+   * This method returns the version of the downloaded bundle, as extracted from the document's data
    * \return The bundle's version
    */
   wstring getBundleVersion();
   
   /**
    * \brief Gets the installation flag for a bundled extension
-   * This method returns the installation flag associated with a particular bundled extension
+   * This method returns the installation flag associated with a particular bundled extension.
+   * The flag is then used by installSelectedExtensions to determine which, extension should 
+   * be installed.
    * \param idx Index of the extension whose flag you wish to retrieve
    * \return The extension's installation flag (boolean)
    * \sa setExtensionInstallState, installSelectedExtensions
@@ -99,7 +100,7 @@ interface sbIBundle : nsISupports
   /**
    * \brief Install specified bundled extensions
    * This method installs the extensions whose install flags are set to true. A dialog box showing 
-   * the installer's progress will be spawned
+   * the installer's progress will be spawned.
    * \param window The parent for the progress dialog box
    * \sa setExtensionInstallState, getExtensionInstallState
    */
@@ -129,7 +130,7 @@ interface sbIBundle : nsISupports
   /**
    * \brief Install an extension
    * This method installs an XPI extension previously downloaded locally.
-   * \param localFilenale The local filenale for the XPI to install
+   * \param localFilenale The local filename for the XPI to install
    * \return Indicates the installation's success (1) or failure (0, ie: not a valid XPI, could not be installed).
    * \sa downloadFile
    */
@@ -146,8 +147,8 @@ interface sbIBundle : nsISupports
 
   /**
    * \brief Gets the flag indicating that a restart is needed
-   * This method gets the flag indicating wether a restart of the application is 
-   * needed in order for installed extensions to take effect.
+   * This method gets the flag indicating whether a restart of the application is 
+   * needed or not, in order for installed extensions to take effect.
    * \return Value of the flag
    * \sa setNeedRestart
    */
