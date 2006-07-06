@@ -40,11 +40,9 @@ SUBDIRS = dataremote \
           servicesource \
           bundle \
           metrics \
+		  integration \
           $(NULL)
 
-ifeq ($(SB_PLATFORM), win32)
-SUBDIRS += integration
-endif
 
 SUBDIRDEPS  = mediacore : medialibrary
 SUBDIRDEPS2 = playlistreader : medialibrary
