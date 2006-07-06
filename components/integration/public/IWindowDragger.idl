@@ -36,7 +36,7 @@
 /**
  * \interface sbIWindowDragger IWindowDragger.h
  * \brief Window dragging service interface
- * This is an interface to the window dragging service, , used to drag a window without 
+ * This is an interface to the window dragging service, used to drag a window without 
  * losing mousemove messages when the mouse moves outside the rect of the window being 
  * dragged
  */

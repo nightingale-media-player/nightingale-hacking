@@ -205,7 +205,7 @@
               }
             }
             var windowRegion = Components.classes["@songbirdnest.com/Songbird/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
-            windowRegion.SetWindowRegion(document, region);
+            windowRegion.setWindowRegion(document, region);
           }    
           catch ( err )
           {
