@@ -39,8 +39,6 @@
 
 #include "Playlistsource.h"
 
-#include <windows.h>
-
 #define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
   static _Interface * g_Simpleton = NULL;                                       \
   static _Interface * _Interface##SimpletonConstructor( void )                  \
