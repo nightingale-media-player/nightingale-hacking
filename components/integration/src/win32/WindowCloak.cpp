@@ -109,4 +109,4 @@ NS_IMETHODIMP CWindowCloak::Uncloak(nsISupports *window )
   m_items.remove(wce);
   delete wce;
   return NS_OK;
-} // ResetCallback
+} // Uncloak

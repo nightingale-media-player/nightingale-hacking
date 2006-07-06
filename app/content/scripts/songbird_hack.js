@@ -121,7 +121,7 @@ function setMinMaxCallback()
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)
-        service.SetCallback(document, SBWindowMinMaxCB);
+        service.setCallback(document, SBWindowMinMaxCB);
     }
   }
   catch (err) {
@@ -358,7 +358,7 @@ function SBUninitialize()
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)
-        service.ResetCallback(document);
+        service.resetCallback(document);
     }
   }
   catch(err) {

@@ -640,7 +640,7 @@ function setVideoMinMaxCallback()
     if (windowMinMax) {
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       if (service)
-        service.SetCallback(document, SBVideoMinMaxCB);
+        service.setCallback(document, SBVideoMinMaxCB);
     }
   }
   catch (err) {

@@ -25,21 +25,96 @@
  */
 #include "nsISupports.idl"
 
-//{ 0x10eb215d, 0xd70a, 0x4eee, { 0xb5, 0xce, 0x39, 0x99, 0xb, 0x16, 0x70, 0x6c } };
+/**       
+ * \file IWindowMinMax.idl
+ * \brief WindowMinMax service interface file
+ * This file contains the interfaces to the windowminmax service, used to limit the resizing
+ * of a window to specific minimum and maximum dimensions.
+ */
+
+/**
+ * \interface sbIWindowMinMaxCallback IWindowMinMax.h
+ * \brief WindowMinMax callback interface
+ * This interface describes a callback for the WindowMinMax service, used to query the 
+ * application for minimum and maximum dimensions. The callback is also used to trap 
+ * the closing of the window.
+ */
 [scriptable, uuid(10EB215D-D70A-4eee-B5CE-39990B16706C)]
 interface sbIWindowMinMaxCallback : nsISupports
 {
+  /**
+   * \brief Get minimum window width
+   * This method is called by the WindowMinMax hook to query the application for
+   * a minimum window width.
+   * \return The minimum width of the window
+   * \sa getMinHeight, getMaxWidth, getMaxHeight, sbIWindowMinMax
+   */
   PRInt32 GetMinWidth( );
+
+  /**
+   * \brief Get minimum window height
+   * This method is called by the WindowMinMax hook to query the application for
+   * a minimum window height.
+   * \return The minimum height of the window
+   * \sa getMinWidth, getMaxWidth, getMaxHeight, sbIWindowMinMax
+   */
   PRInt32 GetMinHeight( );
+
+  /**
+   * \brief Get maximum window width
+   * This method is called by the WindowMinMax hook to query the application for
+   * a maximum window width.
+   * \return The maximum width of the window
+   * \sa getMinWidth, getMinHeight, getMaxHeight, sbIWindowMinMax
+   */
   PRInt32 GetMaxWidth( );
+
+  /**
+   * \brief Get maximum window height
+   * This method is called by the WindowMinMax hook to query the application for
+   * a maximum window height.
+   * \return The maximum height of the window
+   * \sa getMinWidth, getMinHeight, getMaxWidth, sbIWindowMinMax
+   */
   PRInt32 GetMaxHeight( );
+
+  /**
+   * \brief Window closing callback
+   * This method is called by the WindowMinMax hook to notify the callback object
+   * that the window being monitored is now closing.
+   * \sa sbIWindowMinMax
+   */
   void OnWindowClose( );
 };
 
+/**
+ * \interface sbIWindowMinMax IWindowMinMax.h
+ * \brief WindowMinMax service interface
+ * This is an interface to the WindowMinMax service, used to set and reset callbacks for 
+ * querying the application for minimum and maximum dimensions.
+ * \sa sbIWindowMinMaxCallback
+ */
 [scriptable, uuid(5F4ABE1E-76D2-43b5-8D5E-E6E272A49C50)]
 interface sbIWindowMinMax : nsISupports
 {
-  void SetCallback( in nsISupports window, in sbIWindowMinMaxCallback cb );
-  void ResetCallback( in nsISupports window );
+  /**
+   * \brief Set window minmax callback
+   * This method assigns a WindowMinMaxCallback object to the specified window. When the user
+   * resizes this window, the callback object is queried for minimum and maximum window
+   * dimensions.
+   * \param window The document associated with the window whose dimensions should be limited.
+   * \param cb The callback object used to query for minimum and maximum dimensions
+   * \sa resetCallback, sbIWindowMinMaxCallback
+   */
+  void setCallback( in nsISupports window, in sbIWindowMinMaxCallback cb );
+
+  /**
+   * \brief Remove window minmax callback
+   * This method removes the WindowMinMaxCallback object from the specified window. 
+   * \param window The document associated with the window which had previously been assigned 
+   * a WindowMinMax callback object.
+   * \sa setCallback, sbIWindowMinMaxCallback
+   */
+  void resetCallback( in nsISupports window );
 };
 

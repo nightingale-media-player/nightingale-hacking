@@ -50,7 +50,7 @@
           if (windowResizeHook) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
             if (service)
-              service.SetCallback(document, this);
+              service.setCallback(document, this);
           }
         }    
         catch ( err )
@@ -68,7 +68,7 @@
           if ( windowResizeHook ) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
             if (service) 
-              service.ResetCallback(this);
+              service.resetCallback(this);
           }
         }    
         catch ( err )
