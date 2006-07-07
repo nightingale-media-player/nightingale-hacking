@@ -52,7 +52,7 @@ SUBDIRS = build \
 
 ifdef MAKE_INSTALLER
 SUBDIRS += installer 
-SUBDIRDEPS = installer : components app extensions feathers locales
+SUBDIRDEPS = installer : components app feathers locales
 endif
 
 
