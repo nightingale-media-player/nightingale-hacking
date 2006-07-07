@@ -34,7 +34,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo .dev &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)app\gpl.txt $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\extensions&#x0D;&#x0A;xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo .dev &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)app\gpl.txt $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)build\msvc\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
@@ -57,7 +57,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo .dev &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)app\gpl.txt $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\extensions&#x0D;&#x0A;xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\content&#x0D;&#x0A;echo $(ProjectExt) &gt; _EXCLUDE&#x0D;&#x0A;echo $(IntDir)\ &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo .dev &gt;&gt; _EXCLUDE&#x0D;&#x0A;echo _EXCLUDE &gt;&gt; _EXCLUDE&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDir)dist\chrome\content\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\&#x0D;&#x0A;xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)app\gpl.txt $(SolutionDir)dist&#x0D;&#x0A;copy /y $(SolutionDir)build\msvc\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;$(SolutionDir)tools\win32\unzip\unzip -qq -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\&#x0D;&#x0A;move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
@@ -85,6 +85,10 @@
 				</File>
 				<File
 					RelativePath=".\content\html\eula.html"
+					>
+				</File>
+				<File
+					RelativePath=".\content\html\jar.mn.in"
 					>
 				</File>
 				<File
@@ -286,6 +290,10 @@
 							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\xul\jar.mn.in"
+					>
 				</File>
 				<File
 					RelativePath=".\content\xul\jumptofile.xul"
@@ -842,6 +850,10 @@
 							/>
 						</FileConfiguration>
 					</File>
+					<File
+						RelativePath=".\content\xul\preferences\main_overlay.xul"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -880,7 +892,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -890,7 +902,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -904,7 +916,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -914,7 +926,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\bindings\$(InputFileName)&#x0D;&#x0A;"
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
@@ -1038,6 +1050,10 @@
 							Outputs="$(SolutionDir)dist\chrome\content\bindings\$(InputFileName)"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\bindings\jar.mn.in"
+					>
 				</File>
 				<File
 					RelativePath=".\content\bindings\multistatebutton.xml"
@@ -1590,6 +1606,10 @@
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\jar.mn.in"
+					>
 				</File>
 				<File
 					RelativePath=".\content\scripts\jumptofile.js"
@@ -2170,14 +2190,6 @@
 					</File>
 				</Filter>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="icons"
-			>
-			<File
-				RelativePath=".\icons\songbird.ico"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="preferences"
