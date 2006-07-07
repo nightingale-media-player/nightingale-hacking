@@ -41,6 +41,7 @@
   title="Cheezy Video Window"  
   onload="SBAppInitialize();BSInitialize();"
   onunload="SBAppDeinitialize();BSDeInitialize();"
+  onclose="quitApp();" 
   
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"

@@ -41,6 +41,7 @@
   class="sb_faceplate"
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();"
+  onclose="quitApp();" 
   title="&window.dev.title;"
   onkeypress="onMainwinKeypress( event );"
   
