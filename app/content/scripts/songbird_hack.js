@@ -2114,8 +2114,6 @@ function onSearchTerm( target, in_term )
   }
 }
 
-var repeat = SB_NewDataRemote( "playlist.repeat", null ); 
-
 // Menubar handling
 function onMenu( target )
 {
@@ -2178,32 +2176,25 @@ function onMenu( target )
       quitApp();
     break;
     case "control.play":
-      if ( ! gPPS.getPlaying() )
-      {
-        onPlay();
-      }
-      else
-      {
-        onPause();
-      }
+      gPPS.getPlaying() ? gPPS.getPaused() ? gPPS.play() : gPPS.pause() : gPPS.play();
     break;
     case "control.next":
-      onFwd();
+      gPPS.next();
     break;
     case "control.prev":
-      onBack();
+      gPPS.previous();
     break;
     case "control.shuf":
-      onShuffle();
+      SBDataSetIntValue( "playlist.shuffle", (SBDataGetIntValue( "playlist.shuffle" ) + 1) % 2 );
     break;
     case "control.repa":
-      repeat.intValue = 2;
+      SBDataSetIntValue( "playlist.repeat", 2 );
     break;
     case "control.rep1":
-      repeat.intValue = 1;
+      SBDataSetIntValue( "playlist.repeat", 1 );
     break;
     case "control.repx":
-      repeat.intValue = 0;
+      SBDataSetIntValue( "playlist.repeat", 0 );
     break;
     case "menu.extensions":
       SBExtensionsManagerOpen();
