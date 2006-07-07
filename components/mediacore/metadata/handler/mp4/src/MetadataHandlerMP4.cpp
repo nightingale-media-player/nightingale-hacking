@@ -119,7 +119,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::OnChannelData( nsISupports *channel )
     catch ( const MetadataHandlerMP4Exception err )
     {
       PRBool completed = false;
-      mc->Completed( &completed );
+      mc->GetCompleted( &completed );
       // If it's a tiny file, it's probably a 404 error
       if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
@@ -136,7 +136,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::OnChannelData( nsISupports *channel )
   return NS_OK;
 }
 
-NS_IMETHODIMP sbMetadataHandlerMP4::Completed(PRBool *_retval)
+NS_IMETHODIMP sbMetadataHandlerMP4::GetCompleted(PRBool *_retval)
 {
   *_retval = m_Completed;
 
@@ -230,7 +230,7 @@ void sbMetadataHandlerMP4::callback( const char *atom_path, const char *value_st
 
   if ( key.Length() )
   {
-    m_Values->SetValue( key.get(), value.get(), 0 );
+    m_Values->SetValue( key, value, 0 );
   }
 } 
 //-----------------------------------------------------------------------------
@@ -322,49 +322,3 @@ NS_IMETHODIMP sbMetadataHandlerMP4::SetValuesMap(sbIMetadataValues *values)
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
-
-//-----------------------------------------------------------------------------
-/* PRInt32 GetNumAvailableTags (); */
-NS_IMETHODIMP sbMetadataHandlerMP4::GetNumAvailableTags(PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_OK;
-} //GetNumAvailableTags
-
-//-----------------------------------------------------------------------------
-/* void GetAvailableTags (out PRUint32 tagCount, [array, size_is (tagCount), retval] out wstring tags); */
-NS_IMETHODIMP sbMetadataHandlerMP4::GetAvailableTags(PRUint32 *tagCount, PRUnichar ***tags)
-{
-  return NS_OK;
-} //GetAvailableTags
-
-//-----------------------------------------------------------------------------
-/* wstring GetTag (in wstring tagName); */
-NS_IMETHODIMP sbMetadataHandlerMP4::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
-{
-
-  return NS_OK;
-} //GetTag
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTag (in wstring tagName, in wstring tagValue); */
-NS_IMETHODIMP sbMetadataHandlerMP4::SetTag(const PRUnichar *tagName, const PRUnichar *tagValue, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTag
-
-//-----------------------------------------------------------------------------
-/* void GetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, out PRUint32 valueCount, [array, size_is (valueCount), retval] out wstring values); */
-NS_IMETHODIMP sbMetadataHandlerMP4::GetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 *valueCount, PRUnichar ***values)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //GetTags
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, in PRUint32 valueCount, [array, size_is (valueCount)] in wstring values); */
-NS_IMETHODIMP sbMetadataHandlerMP4::SetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 valueCount, const PRUnichar **values, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTags

@@ -58,59 +58,43 @@ sbMetadataValues::~sbMetadataValues()
 }
 
 /* void setValue (in wstring key, in wstring value, in PRInt32 type); */
-NS_IMETHODIMP sbMetadataValues::SetValue(const PRUnichar *key, const PRUnichar *value, PRInt32 type)
+NS_IMETHODIMP sbMetadataValues::SetValue(const nsAString &key, const nsAString &value, PRInt32 type)
 {
   // Check the inputs
-  if ( ! ( key ) )
-  {
+  if (!key.Length())
     return NS_OK;
-  }
-  if ( ! ( value ) )
-  {
-    value = NS_LITERAL_STRING("").get(); // This should work for our purposes.
-  }
   // Put it into the map
-  m_Map[ nsString( key ) ] = sbMetadataValue( nsString( value ), type );
+  m_Map[ nsPromiseFlatString(key) ] = sbMetadataValue( nsPromiseFlatString(value), type );
   return NS_OK;
 }
 
 /* wstring getValue (in wstring key); */
-NS_IMETHODIMP sbMetadataValues::GetValue(const PRUnichar *key, PRUnichar **_retval)
+NS_IMETHODIMP sbMetadataValues::GetValue(const nsAString &key, nsAString &_retval)
 {
-  // Bad key value is "".
-  nsString retval( NS_LITERAL_STRING("") ); // Formally a blank string.  We'd better get it back in the get.
+  // Bad key value is ""
+  _retval.AssignLiteral("");
   // Check the inputs
-  if ( ! ( key ) || ! ( _retval ) )
-  {
+  if (!key.Length())
     return NS_OK;
-  }
   // Pull it out of the map
   t_map::iterator it = m_Map.find( nsString( key ) );
   if ( it != m_Map.end() )
-  {
-    retval = (*it).second.m_Value;
-  }
-  size_t nLen = retval.Length() + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(retval.get(), nLen * sizeof(PRUnichar));
+    _retval = (*it).second.m_Value;
   return NS_OK;
 }
 
 /* PRInt32 getType (in wstring key); */
-NS_IMETHODIMP sbMetadataValues::GetType(const PRUnichar *key, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataValues::GetType(const nsAString &key, PRInt32 *_retval)
 {
+  // Check the inputs
+  if (!key.Length()||!_retval)
+    return NS_OK;
   // Bad key value
   *_retval = -1; 
-  // Check the inputs
-  if ( ! ( key ) || ! ( _retval ) )
-  {
-    return NS_OK;
-  }
   // Pull it out of the map
   t_map::iterator it = m_Map.find( nsString( key ) );
   if ( it != m_Map.end() )
-  {
     *_retval = (*it).second.m_Type;
-  }
   return NS_OK;
 }
 

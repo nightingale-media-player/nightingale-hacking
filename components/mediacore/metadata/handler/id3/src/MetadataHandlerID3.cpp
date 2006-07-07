@@ -245,7 +245,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
     catch ( const MetadataHandlerID3Exception err )
     {
       PRBool completed = false;
-      mc->Completed( &completed );
+      mc->GetCompleted( &completed );
       // If it's a tiny file, it's probably a 404 error
       if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
@@ -260,7 +260,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
   return NS_OK;
 }
 
-NS_IMETHODIMP sbMetadataHandlerID3::Completed(PRBool *_retval)
+NS_IMETHODIMP sbMetadataHandlerID3::GetCompleted(PRBool *_retval)
 {
   *_retval = m_Completed;
 
@@ -455,52 +455,6 @@ NS_IMETHODIMP sbMetadataHandlerID3::SetValuesMap(sbIMetadataValues *values)
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
-
-//-----------------------------------------------------------------------------
-/* PRInt32 GetNumAvailableTags (); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetNumAvailableTags(PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_OK;
-} //GetNumAvailableTags
-
-//-----------------------------------------------------------------------------
-/* void GetAvailableTags (out PRUint32 tagCount, [array, size_is (tagCount), retval] out wstring tags); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetAvailableTags(PRUint32 *tagCount, PRUnichar ***tags)
-{
-  return NS_OK;
-} //GetAvailableTags
-
-//-----------------------------------------------------------------------------
-/* wstring GetTag (in wstring tagName); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
-{
-
-  return NS_OK;
-} //GetTag
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTag (in wstring tagName, in wstring tagValue); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetTag(const PRUnichar *tagName, const PRUnichar *tagValue, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTag
-
-//-----------------------------------------------------------------------------
-/* void GetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, out PRUint32 valueCount, [array, size_is (valueCount), retval] out wstring values); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 *valueCount, PRUnichar ***values)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //GetTags
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, in PRUint32 valueCount, [array, size_is (valueCount)] in wstring values); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 valueCount, const PRUnichar **values, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTags
 
 //-----------------------------------------------------------------------------
 PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
@@ -811,7 +765,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           }
         }
       }
-      m_Values->SetValue( strKey.get(), strValue.get(), type );
+      m_Values->SetValue( strKey, strValue, type );
     }
   }
 
@@ -826,48 +780,44 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     // Bitrate.
     nsString br;
     br.AppendInt( (PRInt32)headerinfo->bitrate );
-    m_Values->SetValue( NS_LITERAL_STRING("bitrate").get(), br.get(), 0 );
+    m_Values->SetValue( NS_LITERAL_STRING("bitrate"), br, 0 );
 
     // Frequency.
     nsString fr;
     fr.AppendInt( (PRInt32)headerinfo->frequency );
-    m_Values->SetValue( NS_LITERAL_STRING("frequency").get(), fr.get(), 0 );
+    m_Values->SetValue( NS_LITERAL_STRING("frequency"), fr, 0 );
 
     // Length.
-    PRUnichar *value = NULL;
-    m_Values->GetValue(NS_LITERAL_STRING("length").get(), &value);
-    if (*value == 0)
+    nsAutoString value;
+    m_Values->GetValue(NS_LITERAL_STRING("length"), value);
+    if (!value.Length())
     {
       nsString ln;
       ln.AppendInt( (PRInt32)headerinfo->time * 1000 );
-      m_Values->SetValue( NS_LITERAL_STRING("length").get(), ln.get(), 0 );
+      m_Values->SetValue( NS_LITERAL_STRING("length"), ln, 0 );
     }
-    nsMemory::Free( value );
   }
 
   // Fixup the genre info because iTunes is stupid.
-  PRUnichar *genre = NULL;
-  m_Values->GetValue(NS_LITERAL_STRING("genre").get(), &genre);
-  if (*genre != 0)
+  nsAutoString genre;
+  m_Values->GetValue(NS_LITERAL_STRING("genre"), genre);
+  if (genre.Length())
   {
-    nsString gn( genre );
+    nsAutoString gn( genre );
     PRInt32 lparen = gn.Find(NS_LITERAL_CSTRING("("));
     PRInt32 rparen = gn.Find(NS_LITERAL_CSTRING(")"));
     if ( lparen != -1 && rparen != -1 )
     {
-      nsString gen;
+      nsAutoString gen;
       gn.Mid( gen, lparen + 1, rparen - 1 );
       PRInt32 aErrorCode;
       PRInt32 g = gen.ToInteger(&aErrorCode);
       if ( !aErrorCode && g < ID3_NR_OF_V1_GENRES )
       {
-        nsCString u8genre( ID3_v1_genre_description[g] );
-        m_Values->SetValue( NS_LITERAL_STRING("genre").get(), NS_ConvertUTF8toUTF16(u8genre).get(), 0 );
+        m_Values->SetValue( NS_LITERAL_STRING("genre"), NS_ConvertUTF8toUTF16(ID3_v1_genre_description[g]), 0 );
       }
     }
   }
-  nsMemory::Free( genre );
-
 
   m_Completed = true;  // And, we're done.
   return ret;
@@ -1004,23 +954,22 @@ void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length,
   {
     nsAutoString br;
     br.AppendInt(bitrate);
-    m_Values->SetValue(NS_LITERAL_STRING("bitrate").get(), br.get(), 0);
+    m_Values->SetValue(NS_LITERAL_STRING("bitrate"), br, 0);
 
     nsAutoString fr;
     fr.AppendInt(frequency);
-    m_Values->SetValue(NS_LITERAL_STRING("frequency").get(), fr.get(), 0);
+    m_Values->SetValue(NS_LITERAL_STRING("frequency"), fr, 0);
 
-    PRUnichar *value = NULL;
-    m_Values->GetValue(NS_LITERAL_STRING("length").get(), &value);
-    if (*value == 0 && bitrate > 0 && file_size > 0)
+    nsAutoString value;
+    m_Values->GetValue(NS_LITERAL_STRING("length"), value);
+    if (!value.Length() && bitrate > 0 && file_size > 0)
     {
       // Okay, so, the id3 didn't specify length.  Calculate that, too.
       PRUint32 length_in_ms = (PRUint32)( ( ( ( file_size * (PRUint64)8 ) ) / (PRUint64)bitrate ) & 0x00000000FFFFFFFF );
       nsAutoString ln;
       ln.AppendInt(length_in_ms);
-      m_Values->SetValue(NS_LITERAL_STRING("length").get(), ln.get(), 0);
+      m_Values->SetValue(NS_LITERAL_STRING("length"), ln, 0);
     }
-    nsMemory::Free( value );
   }
 } //CalculateBitrate
 

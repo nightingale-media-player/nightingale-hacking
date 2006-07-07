@@ -33,6 +33,7 @@
 [scriptable, uuid(919FF2D3-616D-4035-A52F-08C239F334EE)]
 interface sbIMetadataHandler : nsISupports
 {
+  PRInt32 Vote( in wstring url );
   void SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
   void SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
 
@@ -45,20 +46,7 @@ interface sbIMetadataHandler : nsISupports
   sbIMetadataValues GetValuesMap();
   void SetValuesMap(in sbIMetadataValues values);
 
-  PRInt32 GetNumAvailableTags();
-  void GetAvailableTags(out PRUint32 tagCount, [array, size_is(tagCount), retval] out wstring tags);
-
-  wstring GetTag(in wstring tagName);
-  PRInt32 SetTag(in wstring tagName, in wstring tagValue);
-
-  void GetTags(in PRUint32 tagCount, [array, size_is(tagCount)] in wstring tags, 
-    out PRUint32 valueCount, [array, size_is(valueCount), retval] out wstring values);
-  
-  PRInt32 SetTags(in PRUint32 tagCount, [array, size_is(tagCount)] in wstring tags, 
-    in PRUint32 valueCount, [array, size_is(valueCount)] in wstring values);
-
   void OnChannelData( in nsISupports channel );
-  PRBool Completed();
+  PRBool GetCompleted();
   void Close();
-  PRInt32 Vote( in wstring url );
 };

@@ -135,7 +135,7 @@ try
       if ( bsMDHandler )
       {
         // Ask if it is done.
-        if ( bsMDHandler.Completed() )
+        if ( bsMDHandler.GetCompleted() )
         {
           // Always submit after an http read.  (for now?)
           var channel = bsMDHandler.GetChannel();
@@ -234,7 +234,7 @@ try
         // Phew -- maybe it's okay to read, now?
         var retval = bsMDHandler.Read();
         // If it's immediately done, read the values.
-        if ( bsMDHandler.Completed() )
+        if ( bsMDHandler.GetCompleted() )
           BSReadHandlerValues();
       }
     }

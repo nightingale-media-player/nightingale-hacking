@@ -24,15 +24,50 @@
 //
 */
 
+/**
+* \file sbIMetadataValues.idl
+* \brief A map of value+type pairs, keyed by string.
+*/
 #include "nsISupports.idl"
 
-//{ 0xec39de03, 0x8918, 0x4369, { 0x95, 0x1e, 0xa, 0x4, 0xbd, 0x9c, 0xf6, 0x63 } };
-
+/**
+* \interface sbIMetadataValues sbIMetadataValues.h
+* \brief A map of value+type pairs, keyed by string.
+*
+* This object is passed from and to a sbIMetadataHandler for reading or
+* writing the metadata set of a track.
+*
+* The list of supported metadata keys is:
+*
+* The type enumeration is:
+*
+* \TODO Make a list of keys.  Make a type enumeration.
+* \sa sbIMetadataHandler
+*/
 [scriptable, uuid(EC39DE03-8918-4369-951E-0A04BD9CF663)]
 interface sbIMetadataValues : nsISupports
 {
-  void setValue( in wstring key, in wstring value, in PRInt32 type );
-  wstring getValue( in wstring key );
-  PRInt32 getType( in wstring key );
+  /**
+  * \brief Assign a value to the internal map
+  * \param aKey The key index to receive the incoming value
+  * \param aValue The value to assign
+  * \param aType The type of the value
+  */
+  void setValue( in AString aKey, in AString aValue, in PRInt32 aType );
+  /**
+  * \brief Retrieve a value from the internal map
+  * \param aKey The key index to find the value
+  * \return The value string at that key
+  */
+  AString getValue( in AString aKey );
+  /**
+  * \brief Retrieve a value type from the internal map
+  * \param aKey The key index to find the value type
+  * \return The type enumeration at that key
+  */
+  PRInt32 getType( in AString aKey );
+  /**
+  * \brief Clear the internal map and erase all the values
+  */
   void clear();
 };

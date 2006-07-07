@@ -34,10 +34,12 @@
 // INCLUDES ===================================================================
 #include <nspr.h>
 #include <nscore.h>
-#include "MetadataChannel.h"
 
 #include <string/nsStringAPI.h>
 #include <nsIInputStream.h>
+#include <nsIChannel.h>
+
+#include "MetadataChannel.h"
 
 // DEFINES ====================================================================
 
@@ -221,8 +223,8 @@ NS_IMETHODIMP sbMetadataChannel::ReadInt64(PRInt64 *_retval)
   return NS_OK;
 }
 
-/* PRBool IsSeekable (); */
-NS_IMETHODIMP sbMetadataChannel::IsSeekable(PRBool *_retval)
+/* PRBool GetSeekable (); */
+NS_IMETHODIMP sbMetadataChannel::GetSeekable(PRBool *_retval)
 {
   if ( ! _retval )
     return NS_ERROR_NULL_POINTER;
@@ -232,8 +234,8 @@ NS_IMETHODIMP sbMetadataChannel::IsSeekable(PRBool *_retval)
   return NS_OK;
 }
 
-/* PRBool IsSeekable (); */
-NS_IMETHODIMP sbMetadataChannel::Completed(PRBool *_retval)
+/* PRBool GetSeekable (); */
+NS_IMETHODIMP sbMetadataChannel::GetCompleted(PRBool *_retval)
 {
   if ( ! _retval )
     return NS_ERROR_NULL_POINTER;

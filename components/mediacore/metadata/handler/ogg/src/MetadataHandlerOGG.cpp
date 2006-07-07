@@ -118,7 +118,7 @@ NS_IMETHODIMP sbMetadataHandlerOGG::OnChannelData( nsISupports *channel )
     catch ( const MetadataHandlerOGGException err )
     {
       PRBool completed = false;
-      mc->Completed( &completed );
+      mc->GetCompleted( &completed );
       // If it's a tiny file, it's probably a 404 error
       if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
@@ -131,7 +131,7 @@ NS_IMETHODIMP sbMetadataHandlerOGG::OnChannelData( nsISupports *channel )
   return NS_OK;
 }
 
-NS_IMETHODIMP sbMetadataHandlerOGG::Completed(PRBool *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::GetCompleted(PRBool *_retval)
 {
   *_retval = m_Completed;
 
@@ -223,51 +223,6 @@ NS_IMETHODIMP sbMetadataHandlerOGG::SetValuesMap(sbIMetadataValues *values)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-//-----------------------------------------------------------------------------
-/* PRInt32 GetNumAvailableTags (); */
-NS_IMETHODIMP sbMetadataHandlerOGG::GetNumAvailableTags(PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_OK;
-} //GetNumAvailableTags
-
-//-----------------------------------------------------------------------------
-/* void GetAvailableTags (out PRUint32 tagCount, [array, size_is (tagCount), retval] out wstring tags); */
-NS_IMETHODIMP sbMetadataHandlerOGG::GetAvailableTags(PRUint32 *tagCount, PRUnichar ***tags)
-{
-  return NS_OK;
-} //GetAvailableTags
-
-//-----------------------------------------------------------------------------
-/* wstring GetTag (in wstring tagName); */
-NS_IMETHODIMP sbMetadataHandlerOGG::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
-{
-  return NS_OK;
-} //GetTag
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTag (in wstring tagName, in wstring tagValue); */
-NS_IMETHODIMP sbMetadataHandlerOGG::SetTag(const PRUnichar *tagName, const PRUnichar *tagValue, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTag
-
-//-----------------------------------------------------------------------------
-/* void GetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, out PRUint32 valueCount, [array, size_is (valueCount), retval] out wstring values); */
-NS_IMETHODIMP sbMetadataHandlerOGG::GetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 *valueCount, PRUnichar ***values)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //GetTags
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, in PRUint32 valueCount, [array, size_is (valueCount)] in wstring values); */
-NS_IMETHODIMP sbMetadataHandlerOGG::SetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 valueCount, const PRUnichar **values, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTags
-
 void sbMetadataHandlerOGG::ParseChannel()
 {
   // Lots of data buffers, here
@@ -306,7 +261,7 @@ void sbMetadataHandlerOGG::ParseChannel()
     nsString vendor_string = ReadIntString();
     if ( vendor_string.Length() )
     {
-      m_Values->SetValue( NS_LITERAL_STRING("vendor").get(), vendor_string.get(), 0 );
+      m_Values->SetValue( NS_LITERAL_STRING("vendor"), vendor_string, 0 );
     }
 
     // Comment block.
@@ -325,7 +280,7 @@ void sbMetadataHandlerOGG::ParseChannel()
             nsString key, value;
             comment_string.Left( key, split );
             comment_string.Right( value, comment_string.Length() - split - 1 );
-            m_Values->SetValue( key.get(), value.get(), 0 ); // Lots of bulletproofing before we get here.
+            m_Values->SetValue( key, value, 0 ); // Lots of bulletproofing before we get here.
           }
           else break; // Crap
         }
