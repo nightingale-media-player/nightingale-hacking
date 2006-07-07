@@ -24,10 +24,17 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\
-echo $(ProjectExt) &gt;&gt; _EXCLUDE
+mkdir $(SolutionDir)dist\xulrunner\extensions\rubberducky@songbirdnest.com
+echo $(ProjectExt) &gt; _EXCLUDE
 echo Release\ &gt;&gt; _EXCLUDE
+echo obj\ &gt;&gt; _EXCLUDE
+echo Makefile.in &gt;&gt; _EXCLUDE
+echo jar.mn.in &gt;&gt; _EXCLUDE
+echo install.rdf &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\
+copy /y $(InputDir)install.rdf $(SolutionDir)dist\xulrunner\extensions\rubberducky@songbirdnest.com
+echo. &gt; $(SolutionDir)dist\xulrunner\extensions\rubberducky@songbirdnest.com\chrome.manifest
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "
 				ExcludedFromBuild="FALSE"/>
@@ -48,10 +55,17 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\
-echo $(ProjectExt) &gt;&gt; _EXCLUDE
+mkdir $(SolutionDir)dist\xulrunner\extensions\rubberducky@songbirdnest.com
+echo $(ProjectExt) &gt; _EXCLUDE
 echo Release\ &gt;&gt; _EXCLUDE
+echo obj\ &gt;&gt; _EXCLUDE
+echo Makefile.in &gt;&gt; _EXCLUDE
+echo jar.mn.in &gt;&gt; _EXCLUDE
+echo install.rdf &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\
+copy /y $(InputDir)install.rdf $(SolutionDir)dist\xulrunner\extensions\rubberducky@songbirdnest.com
+echo. &gt; $(SolutionDir)dist\xulrunner\extensions\rubberducky@songbirdnest.com\chrome.manifest
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "
 				ExcludedFromBuild="FALSE"/>
@@ -712,7 +726,10 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			RelativePath=".\bland.css">
 		</File>
 		<File
-			RelativePath=".\jar.mn">
+			RelativePath=".\install.rdf">
+		</File>
+		<File
+			RelativePath=".\jar.mn.in">
 		</File>
 		<File
 			RelativePath=".\songbird.css">

@@ -77,8 +77,8 @@ endif
 ifdef DEBUG
 CONFIGURE_ARGS += --enable-debug
 # debug builds turn off jars by default, unless SB_ENABLE_JARS is set
-ifndef SB_ENABLE_JARS
-CONFIGURE_ARGS += --disable-jars
+ifdef SB_ENABLE_JARS
+CONFIGURE_ARGS += --enable-jars
 endif
 endif  # ifdef DEBUG
 
@@ -89,7 +89,6 @@ ifdef SB_DISABLE_JARS
 CONFIGURE_ARGS += --disable-jars
 endif
 endif #ifndef DEBUG
-
 
 #
 # Set some needed commands

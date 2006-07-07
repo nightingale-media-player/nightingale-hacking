@@ -1,45 +1,51 @@
+#filter substitution
 locales.jar:
-% locale  branding  en-US   jar:locales.jar!/locale/branding/
-% locale  songbird  bg-BG   jar:locales.jar!/locale/bg-BG/songbird/
-% locale  songbird  bs-BA   jar:locales.jar!/locale/bs-BA/songbird/
-% locale  songbird  ca-AD   jar:locales.jar!/locale/ca-AD/songbird/
-% locale  songbird  ca-ES   jar:locales.jar!/locale/ca-ES/songbird/
-% locale  songbird  cs-CZ   jar:locales.jar!/locale/cs-CZ/songbird/
-% locale  songbird  da-DK   jar:locales.jar!/locale/da-DK/songbird/
-% locale  songbird  de-DE   jar:locales.jar!/locale/de-DE/songbird/
-% locale  songbird  el-GR   jar:locales.jar!/locale/el-GR/songbird/
-% locale  songbird  en-AU   jar:locales.jar!/locale/en-AU/songbird/
-% locale  songbird  en-EN   jar:locales.jar!/locale/en-EN/songbird/
-% locale  songbird  en-NZ   jar:locales.jar!/locale/en-NZ/songbird/
-% locale  songbird  en-US   jar:locales.jar!/locale/en-US/songbird/
-% locale  songbird  es-AR   jar:locales.jar!/locale/es-AR/songbird/
-% locale  songbird  es-ES   jar:locales.jar!/locale/es-ES/songbird/
-% locale  songbird  es-MX   jar:locales.jar!/locale/es-MX/songbird/
-% locale  songbird  eu-ES   jar:locales.jar!/locale/eu-ES/songbird/
-% locale  songbird  fi-FI   jar:locales.jar!/locale/fi-FI/songbird/
-% locale  songbird  fr-FR   jar:locales.jar!/locale/fr-FR/songbird/
-% locale  songbird  gl-ES   jar:locales.jar!/locale/gl-ES/songbird/
-% locale  songbird  he-IL   jar:locales.jar!/locale/he-IL/songbird/
-% locale  songbird  hr-HR   jar:locales.jar!/locale/hr-HR/songbird/
-% locale  songbird  hu-HU   jar:locales.jar!/locale/hu-HU/songbird/
-% locale  songbird  it-IT   jar:locales.jar!/locale/it-IT/songbird/
-% locale  songbird  ja-JP   jar:locales.jar!/locale/ja-JP/songbird/
-% locale  songbird  jp-JP   jar:locales.jar!/locale/jp-JP/songbird/
-% locale  songbird  ko-KR   jar:locales.jar!/locale/ko-KR/songbird/
-% locale  songbird  nl-BE   jar:locales.jar!/locale/nl-BE/songbird/
-% locale  songbird  nl-NL   jar:locales.jar!/locale/nl-NL/songbird/
-% locale  songbird  nn-NO   jar:locales.jar!/locale/nn-NO/songbird/
-% locale  songbird  no-NO   jar:locales.jar!/locale/no-NO/songbird/
-% locale  songbird  pl-PL   jar:locales.jar!/locale/pl-PL/songbird/
-% locale  songbird  pt-BR   jar:locales.jar!/locale/pt-BR/songbird/
-% locale  songbird  ru-RU   jar:locales.jar!/locale/ru-RU/songbird/
-% locale  songbird  sk-SK   jar:locales.jar!/locale/sk-SK/songbird/
-% locale  songbird  sv-SE   jar:locales.jar!/locale/sv-SE/songbird/
-% locale  songbird  th-TH   jar:locales.jar!/locale/th-TH/songbird/
-% locale  songbird  tr-TR   jar:locales.jar!/locale/tr-TR/songbird/
-% locale  songbird  uk-UA   jar:locales.jar!/locale/uk-UA/songbird/
-% locale  songbird  zh-CN   jar:locales.jar!/locale/zh-CN/songbird/
-% locale  songbird  zh-TW   jar:locales.jar!/locale/zh-TW/songbird/
+#ifdef USING_FLAT_JARS
+#define LOCALE_LOCATION locales
+#else
+#define LOCALE_LOCATION jar:locales.jar!
+#endif
+% locale  branding  en-US  @LOCALE_LOCATION@/locale/branding/
+% locale  songbird  bg-BG  @LOCALE_LOCATION@/locale/bg-BG/songbird/
+% locale  songbird  bs-BA  @LOCALE_LOCATION@/locale/bs-BA/songbird/
+% locale  songbird  ca-AD  @LOCALE_LOCATION@/locale/ca-AD/songbird/
+% locale  songbird  ca-ES  @LOCALE_LOCATION@/locale/ca-ES/songbird/
+% locale  songbird  cs-CZ  @LOCALE_LOCATION@/locale/cs-CZ/songbird/
+% locale  songbird  da-DK  @LOCALE_LOCATION@/locale/da-DK/songbird/
+% locale  songbird  de-DE  @LOCALE_LOCATION@/locale/de-DE/songbird/
+% locale  songbird  el-GR  @LOCALE_LOCATION@/locale/el-GR/songbird/
+% locale  songbird  en-AU  @LOCALE_LOCATION@/locale/en-AU/songbird/
+% locale  songbird  en-EN  @LOCALE_LOCATION@/locale/en-EN/songbird/
+% locale  songbird  en-NZ  @LOCALE_LOCATION@/locale/en-NZ/songbird/
+% locale  songbird  en-US  @LOCALE_LOCATION@/locale/en-US/songbird/
+% locale  songbird  es-AR  @LOCALE_LOCATION@/locale/es-AR/songbird/
+% locale  songbird  es-ES  @LOCALE_LOCATION@/locale/es-ES/songbird/
+% locale  songbird  es-MX  @LOCALE_LOCATION@/locale/es-MX/songbird/
+% locale  songbird  eu-ES  @LOCALE_LOCATION@/locale/eu-ES/songbird/
+% locale  songbird  fi-FI  @LOCALE_LOCATION@/locale/fi-FI/songbird/
+% locale  songbird  fr-FR  @LOCALE_LOCATION@/locale/fr-FR/songbird/
+% locale  songbird  gl-ES  @LOCALE_LOCATION@/locale/gl-ES/songbird/
+% locale  songbird  he-IL  @LOCALE_LOCATION@/locale/he-IL/songbird/
+% locale  songbird  hr-HR  @LOCALE_LOCATION@/locale/hr-HR/songbird/
+% locale  songbird  hu-HU  @LOCALE_LOCATION@/locale/hu-HU/songbird/
+% locale  songbird  it-IT  @LOCALE_LOCATION@/locale/it-IT/songbird/
+% locale  songbird  ja-JP  @LOCALE_LOCATION@/locale/ja-JP/songbird/
+% locale  songbird  jp-JP  @LOCALE_LOCATION@/locale/jp-JP/songbird/
+% locale  songbird  ko-KR  @LOCALE_LOCATION@/locale/ko-KR/songbird/
+% locale  songbird  nl-BE  @LOCALE_LOCATION@/locale/nl-BE/songbird/
+% locale  songbird  nl-NL  @LOCALE_LOCATION@/locale/nl-NL/songbird/
+% locale  songbird  nn-NO  @LOCALE_LOCATION@/locale/nn-NO/songbird/
+% locale  songbird  no-NO  @LOCALE_LOCATION@/locale/no-NO/songbird/
+% locale  songbird  pl-PL  @LOCALE_LOCATION@/locale/pl-PL/songbird/
+% locale  songbird  pt-BR  @LOCALE_LOCATION@/locale/pt-BR/songbird/
+% locale  songbird  ru-RU  @LOCALE_LOCATION@/locale/ru-RU/songbird/
+% locale  songbird  sk-SK  @LOCALE_LOCATION@/locale/sk-SK/songbird/
+% locale  songbird  sv-SE  @LOCALE_LOCATION@/locale/sv-SE/songbird/
+% locale  songbird  th-TH  @LOCALE_LOCATION@/locale/th-TH/songbird/
+% locale  songbird  tr-TR  @LOCALE_LOCATION@/locale/tr-TR/songbird/
+% locale  songbird  uk-UA  @LOCALE_LOCATION@/locale/uk-UA/songbird/
+% locale  songbird  zh-CN  @LOCALE_LOCATION@/locale/zh-CN/songbird/
+% locale  songbird  zh-TW  @LOCALE_LOCATION@/locale/zh-TW/songbird/
   locale/branding/brand.dtd                     (branding/brand.dtd)
   locale/branding/brand.properties              (branding/brand.properties)
   locale/bg-BG/songbird/songbird.dtd            (bg-BG/songbird.dtd)

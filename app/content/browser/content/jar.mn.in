@@ -1,5 +1,9 @@
 songbird.jar:
-% content   browser             jar:songbird.jar!/content/browser/
+#ifdef USING_FLAT_JARS
+% content  browser   songbird/content/browser/
+#else
+% content  browser   jar:songbird.jar!/content/browser/
+#endif
   content/browser/preferences/advanced-scripts.xul    (preferences/advanced-scripts.xul)
   content/browser/preferences/advanced.js             (preferences/advanced.js)
   content/browser/preferences/advanced.xul            (preferences/advanced.xul)

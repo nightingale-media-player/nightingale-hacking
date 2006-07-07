@@ -1,5 +1,9 @@
-feathers.jar:
-% skin  songbird  dove/0.1          jar:feathers.jar!/feathers/dove/songbird/
+dove.jar:
+#ifdef USING_FLAT_JARS
+% skin  songbird  dove/0.1  dove/feathers/dove/songbird/
+#else
+% skin  songbird  dove/0.1  jar:dove.jar!/feathers/dove/songbird/
+#endif
   feathers/dove/songbird/bindings.xml                                 (bindings.xml)
   feathers/dove/songbird/songbird.css                                 (songbird.css)
   feathers/dove/songbird/default/about.png                            (default/about.png)
@@ -203,16 +207,15 @@ feathers.jar:
   feathers/dove/songbird/serviceicons/amazon.ico                      (serviceicons/amazon.ico)
   feathers/dove/songbird/serviceicons/cdbaby.ico                      (serviceicons/cdbaby.ico)
   feathers/dove/songbird/serviceicons/connect.ico                     (serviceicons/connect.ico)
+  feathers/dove/songbird/serviceicons/default.ico                     (serviceicons/default.ico)
   feathers/dove/songbird/serviceicons/emusic.ico                      (serviceicons/emusic.ico)
   feathers/dove/songbird/serviceicons/google.ico                      (serviceicons/google.ico)
   feathers/dove/songbird/serviceicons/groovesalad.ico                 (serviceicons/groovesalad.ico)
   feathers/dove/songbird/serviceicons/insound.ico                     (serviceicons/insound.ico)
   feathers/dove/songbird/serviceicons/ninjam_gui_win.ico              (serviceicons/ninjam_gui_win.ico)
   feathers/dove/songbird/serviceicons/odeo.ico                        (serviceicons/odeo.ico)
-  feathers/dove/songbird/serviceicons/default.ico                      (serviceicons/default.ico)
   feathers/dove/songbird/serviceicons/radiotime.ico                   (serviceicons/radiotime.ico)
   feathers/dove/songbird/serviceicons/shoutcast.ico                   (serviceicons/shoutcast.ico)
   feathers/dove/songbird/serviceicons/songbird.ico                    (serviceicons/songbird.ico)
   feathers/dove/songbird/serviceicons/u2.ico                          (serviceicons/u2.ico)
   feathers/dove/songbird/serviceicons/yahoo.ico                       (serviceicons/yahoo.ico)
-

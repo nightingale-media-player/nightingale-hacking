@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef USING_JARS
 JAR_MANIFEST = jar.mn
-endif
 
 include $(topsrcdir)/build/rules.mk

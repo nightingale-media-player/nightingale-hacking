@@ -55,10 +55,14 @@ AC_SUBST(SB_CONFIGURATION)
 
 AC_ARG_ENABLE(jars,
               [  --enable-jars           whether or not to create jar files (enabled by default)])
-if test "$enable_jars" != "no"; then
-  USING_JARS=1
+if test "$enable_jars" == "yes"; then
+  FORCE_JARS=1
 fi
-AC_SUBST(USING_JARS)
+if test "$enable_jars" == "no"; then
+  PREVENT_JARS=1
+fi
+AC_SUBST(FORCE_JARS)
+AC_SUBST(PREVENT_JARS)
 
 #
 #  Check for --enable-installer

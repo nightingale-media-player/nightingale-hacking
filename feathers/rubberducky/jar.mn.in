@@ -1,5 +1,9 @@
-feathers.jar:
-% skin  songbird  rubberducky/0.2   jar:feathers.jar!/feathers/rubberducky/songbird/
+rubberducky.jar:
+#ifdef USING_FLAT_JARS
+% skin  songbird  rubberducky/0.2  rubberducky/feathers/rubberducky/songbird/
+#else
+% skin  songbird  rubberducky/0.2  jar:rubberducky.jar!/feathers/rubberducky/songbird/
+#endif
   feathers/rubberducky/songbird/bindings.xml                                (bindings.xml)
   feathers/rubberducky/songbird/bland.css                                   (bland.css)
   feathers/rubberducky/songbird/songbird.css                                (songbird.css)
@@ -212,13 +216,13 @@ feathers.jar:
   feathers/rubberducky/songbird/serviceicons/amazon.ico                     (serviceicons/amazon.ico)
   feathers/rubberducky/songbird/serviceicons/cdbaby.ico                     (serviceicons/cdbaby.ico)
   feathers/rubberducky/songbird/serviceicons/connect.ico                    (serviceicons/connect.ico)
+  feathers/rubberducky/songbird/serviceicons/default.ico                    (serviceicons/default.ico)
   feathers/rubberducky/songbird/serviceicons/emusic.ico                     (serviceicons/emusic.ico)
   feathers/rubberducky/songbird/serviceicons/google.ico                     (serviceicons/google.ico)
   feathers/rubberducky/songbird/serviceicons/groovesalad.ico                (serviceicons/groovesalad.ico)
   feathers/rubberducky/songbird/serviceicons/insound.ico                    (serviceicons/insound.ico)
   feathers/rubberducky/songbird/serviceicons/ninjam_gui_win.ico             (serviceicons/ninjam_gui_win.ico)
   feathers/rubberducky/songbird/serviceicons/odeo.ico                       (serviceicons/odeo.ico)
-  feathers/rubberducky/songbird/serviceicons/default.ico                     (serviceicons/default.ico)
   feathers/rubberducky/songbird/serviceicons/radiotime.ico                  (serviceicons/radiotime.ico)
   feathers/rubberducky/songbird/serviceicons/shoutcast.ico                  (serviceicons/shoutcast.ico)
   feathers/rubberducky/songbird/serviceicons/songbird.ico                   (serviceicons/songbird.ico)

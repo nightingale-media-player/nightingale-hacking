@@ -152,10 +152,7 @@ endif
 
 ifdef JAR_MANIFEST
 targets += make_jar
-endif
-
-ifdef SONGBIRD_CHROME_MANIFEST
-targets += copy_sb_chrome_manifest
+clean_targets += clean_jar_postprocess
 endif
 
 ifdef PREFERENCES
@@ -164,6 +161,7 @@ endif
 
 ifdef APPINI
 targets += appini_preprocess
+clean_targets += clean_appini
 endif
 
 ifdef SHELL_EXECUTE
@@ -209,7 +207,6 @@ ifneq (,$(SUBDIRS))
                 $(MAKE) -C $$d $@; \
 	done
 endif
-
 
 #------------------------------------------------------------------------------
 # Rules for C++ compilation
@@ -488,7 +485,6 @@ endif #SUBDIRS
 
 # SONGBIRD_dir - indicates that the files should be copied into the
 #                   $(SONGBIRD_dir) directory
-# SONGBIRD_CHROME_MANIFEST - a file that will be used as the chrome.manifest
 # CLONEDIR - a directory which will hold all the files from the source dir
 #             with some pattern matching
 # CLONE_FIND_EXP - an expression to pass to 'find' that specifies the type of
@@ -640,17 +636,21 @@ endif #PREFERENCES
 
 ifdef APPINI
 
-ifndef APPINI_STRIP_SUFFIXES
-APPINI_STRIP_SUFFIXES = .in
-endif
+# Preprocesses the $(APPINI) file and turns it into 'application.ini'.
 
-appini_preprocess:
+appini_preprocess: $(SONGBIRD_DISTDIR)/application.ini
+
+$(SONGBIRD_DISTDIR)/application.ini: $(APPINI)
 	@$(MKDIR) -p $(SONGBIRD_DISTDIR)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
     $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(APPINI) > \
-    $(SONGBIRD_DISTDIR)/`basename $(APPINI) $(APPINI_STRIP_SUFFIXES)`; \
+    $(SONGBIRD_DISTDIR)/application.ini; \
+    $(NULL)
 
-.PHONY : appini_preprocess
+clean_appini:
+	$(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DISTDIR)/application.ini
+
+.PHONY : appini_preprocess clean_appini
 
 endif #APPINI
 
@@ -659,33 +659,128 @@ endif #APPINI
 #------------------------------------------------------------------------------
 
 ifdef JAR_MANIFEST
+
+# Extension jars need to go to the extensions subdirectory of the xulrunner
+# folder. Otherwise everything goes into the chrome directory.
+
+ifdef JAR_IS_EXTENSION
+# Hack to make this work with directories with funny characters (e.g. '@')
+TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/.package
+MANIFEST_MOVE_CMD = $(CYGWIN_WRAPPER) $(MV) -f \
+                      $(SONGBIRD_EXTENSIONSDIR)/chrome.manifest \
+                      $(SONGBIRD_EXTENSIONSDIR)/.package/ \
+                      $(NULL)
+EXTENSION_PACKAGING_CMD = $(CYGWIN_WRAPPER) $(RM) -rf \
+                            $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID) && \
+                            $(CYGWIN_WRAPPER) $(MV) -f \
+                            $(SONGBIRD_EXTENSIONSDIR)/.package \
+                            $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID) \
+                            $(NULL)
+else
+TARGET_DIR = $(SONGBIRD_CHROMEDIR)
+endif
+TARGET_DIR := $(strip $(TARGET_DIR))
+
 MAKE_JARS_FLAGS = -s $(srcdir) \
                   -t $(topsrcdir) \
-                  -j $(SONGBIRD_CHROMEDIR) \
-                  -d $(SONGBIRD_CHROMEDIR)/stage \
+                  -j $(TARGET_DIR) \
                   -z $(ZIP) \
                   -p $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
                   -v \
                   $(NULL)
-make_jar:
+
+# We use flat jars (i.e. plain directories) if we have DEBUG defined and
+# FORCE_JARS is _not_defined. Also use flat jars if in a release build and
+# PREVENT_JARS is defined.
+
+ifdef DEBUG
+ifndef FORCE_JARS
+USING_FLAT_JARS=1
+endif
+else # DEBUG
+ifdef PREVENT_JARS
+USING_FLAT_JARS=1
+endif
+endif # DEBUG
+
+ifdef USING_FLAT_JARS
+PPDEFINES += -DUSING_FLAT_JARS=$(USING_FLAT_JARS)
+MAKE_JARS_FLAGS += -f flat -d $(TARGET_DIR)
+else
+MAKE_JARS_FLAGS += -d $(TARGET_DIR)/stage
+endif
+
+ifdef JAR_IS_EXTENSION
+MAKE_JARS_FLAGS += -e
+endif
+
+# Rather than assuming that all jar manifests are named 'jar.mn' we allow the
+# filename to be passed in via the JAR_MANIFEST variable. If no preprocessing
+# is needed then the file is passed to the make_jars.pl perl program. If
+# preprocessing is desired then a file with the '.in' extension should exist in
+# the source directory of the form '$(JAR_MANIFEST).in'.
+
+# Examples:
+#   JAR_MANIFEST = jar.mn
+#
+#   If 'jar.mn' exists in the source directory then no preprocessing will occur
+#     and that file will be passed to make_jars.pl.
+#
+#   If 'jar.mn.in' exists and 'jar.mn' does _not_ exist then the preprocessor
+#     will generate 'jar.mn' in the object directory before passing it to
+#     make_jars.pl.
+#
+#   If both 'jar.mn' _and_ 'jar.mn.in' exist in the source directory then no
+#     preprocessing will occur.
+
+# Check to see if the manifest file exists in the source dir. If not then we're
+# going to assume it needs to be generated through preprocessing. The
+# postprocessed file will be generated in the object directory.
+
+jar_mn_exists := $(shell if test -f $(srcdir)/$(JAR_MANIFEST); then \
+                           echo 1; \
+                         fi;)
+
+ifneq (,$(jar_mn_exists))
+jar_manifest_file = $(srcdir)/$(JAR_MANIFEST)
+else
+jar_manifest_file = ./$(JAR_MANIFEST)
+endif
+
+# Now check to see if a '.in' file exists.
+
+jar_mn_in_exists := $(shell if test -f $(srcdir)/$(JAR_MANIFEST).in; then \
+                              echo 1; \
+                            fi;)
+
+ifneq (,$(jar_mn_in_exists))
+jar_manifest_in = $(JAR_MANIFEST).in
+endif
+
+$(JAR_MANIFEST): $(jar_manifest_in)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+    $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(jar_manifest_in) > \
+    ./$(JAR_MANIFEST) \
+    $(NULL)
+
+make_jar: $(JAR_MANIFEST)
+	@$(CYGWIN_WRAPPER) $(MKDIR) -p $(TARGET_DIR)
 	@$(PERL) -I$(MOZSDK_SCRIPTS_DIR) \
            $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
-           $(MAKE_JARS_FLAGS) \
-           < $(srcdir)/$(JAR_MANIFEST) \
+           $(MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES)\
+           < $(jar_manifest_file) \
            $(NULL)
-	@$(CYGWIN_WRAPPER) $(RM) -rf $(SONGBIRD_CHROMEDIR)/stage
+	@$(CYGWIN_WRAPPER) $(RM) -rf $(TARGET_DIR)/stage
+	@$(MANIFEST_MOVE_CMD)
+	@$(EXTENSION_PACKAGING_CMD)
 
-.PHONY : make_jar
-endif
+clean_jar_postprocess:
+	$(CYGWIN_WRAPPER) $(RM) -f ./$(JAR_MANIFEST)
 
-ifdef SONGBIRD_CHROME_MANIFEST
-ifneq (1,$(words $(SONGBIRD_CHROME_MANIFEST)))
-$(error You can only have one file as your chrome.manifest)
-endif
-chrome_manifest = $(SONGBIRD_CHROMEDIR)/chrome.manifest
-copy_sb_chrome_manifest: $(SONGBIRD_CHROME_MANIFEST)
-	$(CYGWIN_WRAPPER) $(CP) -f $(SONGBIRD_CHROME_MANIFEST) $(SONGBIRD_CHROMEDIR)/chrome.manifest
-#.PHONY : copy_sb_chrome_manifest
+# We want the preprocessor to run every time regrdless of whether or not
+# $(jar_manifest_in) as changed because defines may change as well.
+
+.PHONY : make_jar clean_jar_postprocess $(JAR_MANIFEST)
 endif
 
 #-----------------------

@@ -1,5 +1,9 @@
 songbird.jar:
-% content   songbird            jar:songbird.jar!/content/songbird/
+#ifdef USING_FLAT_JARS
+% content  songbird  songbird/content/songbird/
+#else
+% content  songbird  jar:songbird.jar!/content/songbird/
+#endif
   content/songbird/html/about.html          (about.html)
   content/songbird/html/cannot_load.html    (cannot_load.html)
   content/songbird/html/eula.html           (eula.html)

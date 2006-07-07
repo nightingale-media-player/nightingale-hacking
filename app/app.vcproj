@@ -32,15 +32,12 @@ xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDi
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
 copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
-copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
+copy /y $(SolutionDir)build\msvc\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
-move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
-mkdir $(SolutionDir)dist\xulrunner\extensions
-xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
-"
+move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe"
 				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -67,15 +64,12 @@ xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)\content\*.* $(SolutionDi
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\flash $(SolutionDir)dist\
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(SolutionDir)dependencies\win32\plugins\vlc $(SolutionDir)dist\
 copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
-copy /y $(SolutionDir)app\content\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
+copy /y $(SolutionDir)build\msvc\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
-move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
-mkdir $(SolutionDir)dist\xulrunner\extensions
-xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
-"
+move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe"
 				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -101,7 +95,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					RelativePath=".\content\html\eula.html">
 				</File>
 				<File
-					RelativePath=".\content\html\jar.mn">
+					RelativePath=".\content\html\jar.mn.in">
 				</File>
 				<File
 					RelativePath=".\content\html\not_connected.html">
@@ -279,7 +273,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\jar.mn">
+					RelativePath=".\content\xul\jar.mn.in">
 				</File>
 				<File
 					RelativePath=".\content\xul\jumptofile.xul">
@@ -961,7 +955,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\bindings\jar.mn">
+					RelativePath=".\content\bindings\jar.mn.in">
 				</File>
 				<File
 					RelativePath=".\content\bindings\multistatebutton.xml">
@@ -1448,7 +1442,7 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\scripts\jar.mn">
+					RelativePath=".\content\scripts\jar.mn.in">
 				</File>
 				<File
 					RelativePath=".\content\scripts\jumptofile.js">
@@ -1943,38 +1937,6 @@ xcopy /q /s /y $(SolutionDir)extensions $(SolutionDir)dist\xulrunner\extensions\
 					</File>
 				</Filter>
 			</Filter>
-			<Filter
-				Name="browser"
-				Filter="">
-				<Filter
-					Name="content"
-					Filter="">
-					<File
-						RelativePath=".\content\browser\content\jar.mn">
-					</File>
-				</Filter>
-				<Filter
-					Name="locale"
-					Filter="">
-					<File
-						RelativePath=".\content\browser\locale\jar.mn">
-					</File>
-				</Filter>
-				<Filter
-					Name="skin"
-					Filter="">
-					<File
-						RelativePath=".\content\browser\skin\jar.mn">
-					</File>
-				</Filter>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="icons"
-			Filter="">
-			<File
-				RelativePath=".\icons\songbird.ico">
-			</File>
 		</Filter>
 		<Filter
 			Name="preferences"

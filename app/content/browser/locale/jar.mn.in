@@ -1,5 +1,9 @@
 locales.jar:
-% locale  browser   en-US   jar:locales.jar!/locale/en-US/browser/
+#ifdef USING_FLAT_JARS
+% locale  browser   en-US  locales/locale/en-US/browser/
+#else
+% locale  browser   en-US  jar:locales.jar!/locale/en-US/browser/
+#endif
   locale/en-US/browser/preferences/advanced-scripts.dtd     (browser/preferences/advanced-scripts.dtd)
   locale/en-US/browser/preferences/advanced.dtd             (browser/preferences/advanced.dtd)
   locale/en-US/browser/preferences/changeaction.dtd         (browser/preferences/changeaction.dtd)

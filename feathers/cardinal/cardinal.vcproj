@@ -591,9 +591,6 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			RelativePath=".\bindings.xml">
 		</File>
 		<File
-			RelativePath=".\jar.mn">
-		</File>
-		<File
 			RelativePath=".\songbird.css">
 		</File>
 	</Files>
