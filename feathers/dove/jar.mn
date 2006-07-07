@@ -209,7 +209,7 @@ feathers.jar:
   feathers/dove/songbird/serviceicons/insound.ico                     (serviceicons/insound.ico)
   feathers/dove/songbird/serviceicons/ninjam_gui_win.ico              (serviceicons/ninjam_gui_win.ico)
   feathers/dove/songbird/serviceicons/odeo.ico                        (serviceicons/odeo.ico)
-  feathers/dove/songbird/serviceicons/pogues.ico                      (serviceicons/pogues.ico)
+  feathers/dove/songbird/serviceicons/default.ico                      (serviceicons/default.ico)
   feathers/dove/songbird/serviceicons/radiotime.ico                   (serviceicons/radiotime.ico)
   feathers/dove/songbird/serviceicons/shoutcast.ico                   (serviceicons/shoutcast.ico)
   feathers/dove/songbird/serviceicons/songbird.ico                    (serviceicons/songbird.ico)
