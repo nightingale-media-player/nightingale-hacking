@@ -31,11 +31,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq ($(SB_PLATFORM), "win32")
-	SUBDIRS = win32
-else
-	SUBDIRS = script
-endif
+SUBDIRS = $(SB_PLATFORM)
 
 include $(topsrcdir)/build/rules.mk
 

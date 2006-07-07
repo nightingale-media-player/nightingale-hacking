@@ -168,7 +168,6 @@ components/integration/src/Makefile
 components/integration/src/linux/Makefile
 components/integration/src/macosx/Makefile
 components/integration/src/win32/Makefile
-components/integration/src/script/Makefile
 "
 
 MAKEFILES_mediacore="
