@@ -1869,7 +1869,7 @@
               if ( ! this.paused_scanning )
               {
                 // increment the backscan pause value.
-                SB_NewDataRemote( "backscan.paused", null ).intValue++;
+                SBDataIncrementValue( "backscan.paused" );
                 this.paused_scanning = true;
               }
             }
@@ -1878,9 +1878,7 @@
               if ( this.paused_scanning )
               {
                 // decrement the backscan.pause value to a floor of 0
-                var bsPaused = SB_NewDataRemote( "backscan.paused", null );
-                if ( --bsPaused.intValue < 0 )
-                  bsPaused.intValue = 0;
+                SBDataDecrementValue( "backscan.paused", 0 );
                 this.paused_scanning = false;
               }
             }

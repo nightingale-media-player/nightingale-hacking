@@ -544,11 +544,10 @@ function onCurrentTrack()
   theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
 }
 
-var FaceplateStateData = SB_NewDataRemote( "faceplate.state", null );
-
 function onNextService()
 {
-  FaceplateStateData.boolValue = !FaceplateStateData.boolValue; 
+  // this could, down the road become integer based for >2 services
+  SBDataToggleBoolValue("faceplate.state");
 }
 
 function onServiceTreeCommand( theEvent )

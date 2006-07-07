@@ -39,7 +39,7 @@
 //  The mozilla preferences system is used as the underlying
 //  data storage layer to power this interface.  Because the
 //  preferences are available to all open windows in xulrunner,
-//  these data remotes should will function as globals across 
+//  these data remotes should function as globals across 
 //  the application.  This is both powerful and dangerous, and
 //  while this interface is available to all, everyone should
 //  be very careful to properly namespace their data strings.
@@ -52,12 +52,24 @@
 //   not  - Optionally assign the data as a boolean NOT of the value
 //   eval - Optionally apply an eval string where `value = eval( eval_string );`
 
-//
-// XXXredfive - clean up function names after getting them working.
-//
-
 /**
+ * \brief Create a DataRemote and bind an Element's property to the data.
+ * This method creates a DataRemote associated with the key passed in and
+ *   binds the element's property to the data. Changes to the value of the
+ *   data will automatically be reflected in the value of the property.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aElement - A nsIDOMElement whose property is to be bound, or the
+ *                   name of an element in the current document
+ * \param aProperty - A property of aElement that will be bound.
+ * \param aIsBool - Is the attribute (and therefore the data) a true/false value?
+ * \param aIsNot - Should the attributes value be the opposite of the data.
+ *                 Only used if the aIsBool is true.
+ * \param aEvalString - A string of javascript to be executed to determine the
+ *                      value of the property. It can use the variable "value"
+ *                      in order to take action on the value of the data.
+ * \return The newly created and bound DataRemote.
+ * \sa DatatRemote
  */
 function SBDataBindElementProperty( aKey, aElement, aProperty, aIsBool, aIsNot, aEvalString )
 {
@@ -69,7 +81,7 @@ function SBDataBindElementProperty( aKey, aElement, aProperty, aIsBool, aIsNot, 
       retval.bindProperty( obj, aProperty, aIsBool, aIsNot, aEvalString );
     }
     else {
-      Components.utils.reportError( "Can't find " + aElement );
+      Components.utils.reportError( "SBDataBindElementProperty: Can't find " + aElement );
     }
   }
   catch ( err ) {
@@ -79,7 +91,23 @@ function SBDataBindElementProperty( aKey, aElement, aProperty, aIsBool, aIsNot, 
 }
 
 /**
+ * \brief Create a DataRemote and bind an Element's attribute to the data.
+ * This method creates a DataRemote associated with the key passed in and
+ *   binds the element's attribute to the data. Changes to the value of the
+ *   data will automatically be reflected in the value of the attribute.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aElement - A nsIDOMElement whose attribute is to be bound, or the
+ *                   name of an element in the current document
+ * \param aAttribute - An attribute of aElement that will be bound
+ * \param aIsBool - Is the attribute (and therefore the data) a true/false value
+ * \param aIsNot - Should the attributes value be the opposite of the data.
+ *                 Only used if the aIsBool is true.
+ * \param aEvalString - A string of javascript to be executed to determine the
+ *                      value of the attribute. It can use the variable "value"
+ *                      in order to take action on the value of the data.
+ * \return The newly created and bound DataRemote.
+ * \sa DatatRemote
  */
 function SBDataBindElementAttribute( aKey, aElement, aAttribute, aIsBool, aIsNot, aEvalString )
 {
@@ -91,7 +119,7 @@ function SBDataBindElementAttribute( aKey, aElement, aAttribute, aIsBool, aIsNot
       retval.bindAttribute( obj, aAttribute, aIsBool, aIsNot, aEvalString );
     }
     else {
-      Components.utils.reportError( "Can't find " + aElement );
+      Components.utils.reportError( "SBDataBindElementAttribute: Can't find " + aElement );
     }
   }
   catch ( err ) {
@@ -100,121 +128,177 @@ function SBDataBindElementAttribute( aKey, aElement, aAttribute, aIsBool, aIsNot
   return retval;  
 }
 
-// Note:
-// Some XBL contexts do not create an object properly outside this script.
 /**
- * XXXredfive - remove me
-//function SBDataGetValue( aKey )
-{
-  var data = SB_NewDataRemote( aKey, null );
-  var ret = data.stringValue;
-  data.unbind();
-  return ret;
-}
- */
-
-/**
+ * \brief Get the value of the data in string format.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \return - The string value of the data. If the data has not been set the
+ *           return value will be the empty string ("");
+ * \sa DatatRemote
  */
 function SBDataGetStringValue( aKey )
 {
-  //dump("XXXredfive - SBDataGetStringValue(" + aKey + ")");
- try {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.stringValue;
-  data.unbind();
- } catch (err) {
-   dump("SBDataGetStringValue() ERROR:\n" + err + "\n");
- }
-  //dump( "      stringValue is:" + ret + "\n");
-  return ret;
+  return data.stringValue;
 }
 
 /**
+ * \brief Get the value of the data in integer format
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \return - The integer value of the data. If the data has not been set or
+ *           the data is not convertible to an integer the return value will
+ *           be NaN.
+ * \sa DatatRemote
  */
 function SBDataGetIntValue( aKey )
 {
-  //dump("XXXredfive - SBDataGetIntValue(" + aKey + ")");
- try {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.intValue;
-  data.unbind();
- } catch (err) {
-   dump("SBDataGetIntValue() ERROR:\n" + err + "\n");
- }
-  //dump( ":" + ret + "\n");
-  return ret;
+  return data.intValue;
 }
 
 /**
+ * \brief Get the value of the data in boolean format.
  *
+ * \param aKey - The string identifier for the data to be retrieved.
+ * \return - The boolean value of the data.
+ * \sa DatatRemote
  */
 function SBDataGetBoolValue( aKey )
 {
-  //dump("XXXredfive - SBDataGetBoolValue(" + aKey + ")");
- try {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.boolValue;
-  data.unbind();
- } catch (err) {
-   dump("SBDataGetBoolValue() ERROR:\n" + err + "\n");
- }
-  //dump( ":" + ret + "\n");
-  return ret;
+  return data.boolValue;
 }
 
 /**
- * XXXredfive - remove me
-//function SBDataSetValue( aKey, value )
-{
-  var data = SB_NewDataRemote( aKey, null );
-  var ret = data.stringValue = value;
-  data.unbind();
-  return ret;
-}
- */
-
-/**
+ * \brief Set a string value.
+ * Changes the value of the data remote to the boolean passed in, regardless
+ *   of its value before.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aBoolValue - A boolean value.
+ * \return - The new value of the data.
+ * \sa DatatRemote
  */
 function SBDataSetStringValue( aKey, aStringValue )
 {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.stringValue = aStringValue;
-  data.unbind();
-  return ret;
+  data.stringValue = aStringValue;
+  return aStringValue;
 }
 
 /**
+ * \brief Set a boolean value.
+ * Changes the value of the data remote to the boolean passed in, regardless
+ *   of its value before.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aBoolValue - A boolean value.
+ * \return - The new value of the data.
+ * \sa DatatRemote
  */
 function SBDataSetBoolValue( aKey, aBoolValue )
 {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.boolValue = aBoolValue;
-  data.unbind();
-  return ret;
+  data.boolValue = aBoolValue;
+  return aBoolValue;
 }
 
 /**
+ * \brief Set an integer value.
+ * Changes the value of the data remote to the integer passed in, regardless
+ *   of its value before.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aIntValue - An integer (or string convertable to an integer) value.
+ * \return - The new value of the data.
+ * \sa DatatRemote
  */
 function SBDataSetIntValue( aKey, aIntValue )
 {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.intValue = aIntValue;
-  data.unbind();
-  return ret;
+  data.intValue = aIntValue;
+  return aIntValue;
 }
 
 /**
+ * \brief Increment the integer value.
+ *  Increment the integer value associated with the key passed in. If a ceiling
+ *    value is passed in the new value will be no greater than the ceiling.
  *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aCeiling - Optional, if specified the data will be at most, this value
+ * \return - The new value of the data.
+ * \sa DatatRemote
+ */
+function SBDataIncrementValue( aKey, aCeiling )
+{
+  // if no ceiling is given use the *ceiling*
+  if ( aCeiling == null || isNaN(aCeiling) ) 
+    aCeiling = Number.MAX_VALUE;
+
+  var data = SB_NewDataRemote( aKey, null );
+  var newVal = (data.intValue + 1);  // getter call
+  if ( newVal > aCeiling )
+    newVal = aCeiling;
+  data.intValue = newVal;            // setter call
+  return newVal;
+}
+
+/**
+ * \brief Decrement the integer value.
+ *  Decrement the integer value associated with the key passed in. If a floor
+ *    value is passed in the new value will be no less than the floor.
+ *
+ * \param aKey - The string identifier for the data to be changed.
+ * \param aFloor - Optional, if specified the data will be no less than this value
+ * \return - The new value of the data.
+ * \sa DatatRemote
+ */
+function SBDataDecrementValue( aKey, aFloor )
+{
+  // if no floor is given, use the *floor*
+  if ( aFloor == null || isNaN(aFloor) ) 
+    aFloor = -Number.MAX_VALUE;
+
+  var data = SB_NewDataRemote(aKey, null);
+  var newVal = (data.intValue - 1);  // getter call
+  if ( newVal < aFloor )
+    newVal = aFloor;
+  data.intValue = newVal;            // setter call
+  return newVal;
+}
+
+/**
+ * \brief Change the boolean value.
+ * The true/false value of the data associated with the key will be reversed.
+ *
+ * \param aKey - The string identifier for the data to be changed.
+ * \return - The new value of the data.
+ * \sa DatatRemote
+ */
+function SBDataToggleBoolValue( aKey )
+{
+  var data = SB_NewDataRemote(aKey, null);
+  var newVal = !data.boolValue;
+  data.boolValue = newVal;
+  return newVal;
+}
+
+/**
+ * \brief Cause a notification to be fired.
+ * The data associated with the key will be modified so that observers will
+ *   be called about the change. The actual value of the data should not be
+ *   counted on.
+ *
+ * \param aKey - The data about which the event is being fired
+ * \param aKey - The string identifier for the data about which the event is
+ *               being fired.
+ * \return - The new value of the data.
+ * \sa DatatRemote
  */
 function SBDataFireEvent( aKey )
 {
   var data = SB_NewDataRemote( aKey, null );
-  var ret = data.intValue += 1;
-  data.unbind();
-  return ret;
+  return ++data.intValue;
 }

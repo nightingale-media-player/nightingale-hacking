@@ -146,7 +146,7 @@ try
         return;
       }
 
-      // People can pause us
+      // People can pause us - value can be >1 if multiple things happen that pause us
       if ( ! bsScanningPaused.intValue )
       {
         // So can executing queries, or the media scan.

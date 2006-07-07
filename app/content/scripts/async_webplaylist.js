@@ -212,8 +212,8 @@ try
       }
       else
       {
-        // decrement the total to keep the percentage indicator moving
-        SB_NewDataRemote( "webplaylist.total", null ).intValue--;
+        // decrement the total (floor is 0) to keep the percentage indicator moving
+        SBDataDecrementValue( "webplaylist.total", 0 );
       }
     
       return loop_break;

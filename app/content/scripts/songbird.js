@@ -548,7 +548,7 @@ function PushBackscanPause()
   try
   {
     // increment the backscan pause count
-    SB_NewDataRemote( 'backscan.paused', null ).intValue++;
+    SBDataIncrementValue( "backscan.paused" );
   }
   catch ( err )
   {
@@ -561,9 +561,7 @@ function PopBackscanPause()
   try
   {
     // decrement the backscan pause count to a floor of 0
-    var bsPaused = SB_NewDataRemote('backscan.paused', null);
-    if ( --bsPaused.intValue < 0)
-      bsPaused.intValue = 0;
+    SBDataDecrementValue( "backscan.paused", 0 );
   }
   catch ( err )
   {
