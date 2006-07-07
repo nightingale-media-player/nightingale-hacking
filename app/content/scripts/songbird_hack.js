@@ -2575,7 +2575,7 @@ function SBGetServiceFromUrl( url, nodefault )
   try
   {
     var theServiceTree = document.getElementById( "frame_servicetree" );
-    if ( theServiceTree )
+    if ( theServiceTree && (url.indexOf("chrome://") == 0) ) // Only if it is a chrome url.
     {
       text += "tree\n";
       var theServiceTree_tree = theServiceTree.tree;
