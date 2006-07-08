@@ -30,7 +30,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt $(ProjectDir)$(OutDir)\sbIPlaylistPlayback.xpt&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt&#x0D;&#x0A;"
 				AdditionalDependencies="$(OutDir)\sbIPlaylist.xpt"
 				Outputs="$(OutDir)\sbIMediaLibrary.xpt"
 			/>
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt $(ProjectDir)$(OutDir)\sbIPlaylistPlayback.xpt&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt&#x0D;&#x0A;"
 				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
 				Outputs="$(OutDir)\sbIMediaLibrary.xpt"
 			/>
@@ -301,30 +301,6 @@
 			</File>
 			<File
 				RelativePath=".\public\sbIPlaylist.idl"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\public\sbIPlaylistPlayback.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

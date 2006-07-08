@@ -34,7 +34,6 @@ XPIDL_SRCS = sbIDatabaseEngine.idl \
              sbIDatabaseResult.idl \
              sbIMediaLibrary.idl \
              sbIPlaylist.idl \
-             sbIPlaylistPlayback.idl \
              sbIPlaylistReader.idl \
              sbIPlaylistWriter.idl \
              $(NULL)
