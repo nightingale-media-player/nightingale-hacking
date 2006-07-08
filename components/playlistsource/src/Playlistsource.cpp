@@ -64,7 +64,7 @@
 #include "nsLiteralString.h"
 
 #include "Playlistsource.h"
-#include "IPlaylist.h"
+#include "sbIPlaylist.h"
 
 #define LOOKAHEAD_SIZE 30
 
@@ -155,8 +155,8 @@ MyQueryCallback::~MyQueryCallback()
 
 NS_IMETHODIMP
 MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
-                            const PRUnichar*   dbGUID,
-                            const PRUnichar*   strQuery)
+                            const nsAString&   dbGUID,
+                            const nsAString&   strQuery)
 {
   //
   //
@@ -165,8 +165,6 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   //
   LOG(("MyQueryCallback::OnQueryEnd"));
   NS_ENSURE_ARG_POINTER(dbResultObject);
-  NS_ENSURE_ARG_POINTER(dbGUID);
-  NS_ENSURE_ARG_POINTER(strQuery);
 
 /*
   nsAutoMonitor mon_local(m_pMonitor);
@@ -364,7 +362,7 @@ sbPlaylistsource::FeedPlaylist(const nsAString &aRefName,
   rv = query->SetAsyncQuery(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->SetDatabaseGUID(nsPromiseFlatString(aContextGUID).get());
+  rv = query->SetDatabaseGUID(nsPromiseFlatString(aContextGUID));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // New callback for a new query.
@@ -633,18 +631,16 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
   // Steal the query info used for the ref
   m_SharedQuery->ResetQuery();
 
-  PRUnichar* guidPtr = nsnull;
-  rv = info->m_Query->GetDatabaseGUID(&guidPtr);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsDependentString guid(guidPtr);
-
-  rv = m_SharedQuery->SetDatabaseGUID(guid.get());
+  nsAutoString guid;
+  rv = info->m_Query->GetDatabaseGUID(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUnichar* queryPtr = nsnull;
-  rv = info->m_Query->GetQuery(0, &queryPtr);
+  rv = m_SharedQuery->SetDatabaseGUID(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsDependentString query(queryPtr);
+
+  nsAutoString query;
+  rv = info->m_Query->GetQuery(0, query);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAString::const_iterator start, end;
   query.BeginReading(start);
@@ -661,7 +657,7 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
   query += aw_str + aColumn + eq_str + qu_str + aValue + qu_str;
 
   PRInt32 exeReturn;
-  rv = m_SharedQuery->AddQuery(query.get());
+  rv = m_SharedQuery->AddQuery(query);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mon.Exit();
@@ -857,7 +853,7 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
       rv = filter_info->m_Query->ResetQuery();
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = filter_info->m_Query->AddQuery(sub_query_str.get());
+      rv = filter_info->m_Query->AddQuery(sub_query_str);
       NS_ENSURE_SUCCESS(rv, rv);
 
       PRInt32 ret;
@@ -925,7 +921,7 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
   rv = info->m_Query->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = info->m_Query->AddQuery( main_query_str.get() );
+  rv = info->m_Query->AddQuery( main_query_str );
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = info->m_Query->Execute( &ret );
@@ -1135,7 +1131,7 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   rv = pQuery->SetAsyncQuery(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = pQuery->SetDatabaseGUID(info->m_GUID.get());
+  rv = pQuery->SetDatabaseGUID(info->m_GUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
 
@@ -1259,7 +1255,7 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
     rv = filter_info->m_Query->ResetQuery();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = filter_info->m_Query->AddQuery(sub_query_str.get());
+    rv = filter_info->m_Query->AddQuery(sub_query_str);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRInt32 ret;
@@ -1282,7 +1278,7 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   rv = info->m_Query->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = info->m_Query->AddQuery(main_query_str.get());
+  rv = info->m_Query->AddQuery(main_query_str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = info->m_Query->Execute(_retval);
@@ -1809,20 +1805,18 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
     // XXX These variable names are horrible
 
-    PRUnichar* g;
-    rv = info->m_Query->GetDatabaseGUID(&g);
+    nsAutoString guid;
+    rv = info->m_Query->GetDatabaseGUID(guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsDependentString guid(g);
-    rv = m_SharedQuery->SetDatabaseGUID(guid.get());
+    rv = m_SharedQuery->SetDatabaseGUID(guid);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Set the query string from the info's query string.
-    PRUnichar* oq;
-    rv = info->m_Query->GetQuery(0, &oq);
+    nsAutoString q;
+    rv = info->m_Query->GetQuery(0, q);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsDependentString q(oq);
     nsAutoString tablerow_str = library_str + dot_str + row_str;
     nsAutoString find_str = spc_str + tablerow_str + spc_str;
 
@@ -1837,7 +1831,7 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     }
     q += NS_LITERAL_STRING(" limit 1");
 
-    rv = m_SharedQuery->AddQuery(q.get());
+    rv = m_SharedQuery->AddQuery(q);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Then do it.
@@ -1851,9 +1845,6 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
     rv = m_SharedQuery->GetResultObjectOrphan(getter_AddRefs(colresults));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    PR_Free(g);
-    PR_Free(oq);
   }
   else // info->m_Column.IsEmpty()
     colresults = resultset;
@@ -2322,20 +2313,16 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   rv = m_SharedQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUnichar* g;
-  rv = value.m_Info->m_Query->GetDatabaseGUID(&g);
+  nsAutoString guid;
+  rv = value.m_Info->m_Query->GetDatabaseGUID(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString guid(g);
-
-  rv = m_SharedQuery->SetDatabaseGUID(guid.get());
+  rv = m_SharedQuery->SetDatabaseGUID(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUnichar* oq;
-  rv = value.m_Info->m_Query->GetQuery(0, &oq);
+  nsAutoString q;
+  rv = value.m_Info->m_Query->GetQuery(0, q);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString q(oq);
 
   // If we already have a where, don't add another one
   nsAutoString aw_str;
@@ -2362,7 +2349,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   q += value.m_Id + limit_str;
   q.AppendInt((PRInt32)LOOKAHEAD_SIZE);
 
-  rv = m_SharedQuery->AddQuery(q.get());
+  rv = m_SharedQuery->AddQuery(q);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mon.Exit();
@@ -2395,10 +2382,6 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
     val.m_Resultset = result;
     val.m_ResultsRow = i - value.m_ResMapIndex;
   }
-
-  // Free the strings we got
-  PR_Free(g);
-  PR_Free(oq);
 
   return NS_OK;
 }

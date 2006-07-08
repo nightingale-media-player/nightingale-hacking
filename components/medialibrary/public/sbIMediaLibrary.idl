@@ -1,0 +1,550 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIMediaLibrary.idl
+ * \brief 
+ * 
+ * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbIDatabaseQuery;
+
+/**
+ * \interface sbIMediaLibrary 
+ * \brief
+ *
+ * \sa sbIDatabaseQuery, DatabaseQuery.h, sbIPlaylist, sbIPlaylistManager
+ */
+[scriptable, uuid(ca5c9b2c-e061-4c98-8333-9c839efc0d7f)]
+interface sbIMediaLibrary : nsISupports
+{
+  /**
+   * \brief Set the database query object that the library will use to make 
+   * queries to the database
+   *
+   * \param queryObj Database query object you wish to use with this library.
+   * \sa sbIDatabaseQuery
+   */
+  void setQueryObject(in sbIDatabaseQuery queryObj); /**/
+
+  /**
+   * \brief Get the database query object that is being used by the library to
+   * make database queries.
+   *
+   * \return The database query object that the library uses.
+   * \sa sbIDatabaseQuery
+   */
+  sbIDatabaseQuery getQueryObject(); /**/
+
+  /**
+   * \brief 
+   * \sa sbMediaLibrary.js
+   */
+  void createDefaultLibrary(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param strMediaURL
+   * \param metaColumnCount
+   * \param metaColumnNames
+   * \param metaValueCount
+   * \param metaValues
+   * \param checkForUniqueFilename
+   * \param willRunQueryLater
+   * \return 
+   * \sa removeMediaByURL, removeMediaByGUID, findByGUID, findByURL
+   */
+  AString addMedia(in AString mediaURL, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is (metaColumnCount)] in wstring metaColumnNames, 
+    in PRUint32 metaValueCount, 
+    [array, size_is (metaValueCount)] in wstring metaValues, 
+    in PRBool checkForUniqueFilename, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaURL
+   * \param willRunQueryLater
+   * \return 
+   * \sa removeMediaByGUID, addMedia
+   */
+  PRBool removeMediaByURL(in AString mediaURL, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaGUID
+   * \param willRunQueryLater
+   * \return 
+   * \sa sbIDatabaseQuery
+   */
+  PRBool removeMediaByGUID(in AString mediaGUID, 
+    in PRBool willRunQueryLater); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param willRunQueryLater
+   * \return 
+   * \sa sbIDatabaseQuery
+   */
+  PRBool purgeDefaultLibrary(in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaGUID
+   * \return 
+   * \sa findByURL
+   */
+  AString findByGUID(in AString mediaGUID); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaURL
+   * \return 
+   * \sa findByGUID
+   */
+  AString findByURL(in AString mediaURL); /**/
+
+  /**
+   * \brief 
+   *
+   * \param columnName 
+   * \param columnType 
+   * \sa deleteColumn, getColumnInfo, setColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   */
+  void addColumn(in AString columnName, 
+    in AString columnType); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param columnName
+   * \sa addColumn, getColumnInfo, setColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   */
+  void deleteColumn(in AString columnName); /**/
+
+  /**
+   * \brief 
+   *
+   * \sa addColumn, deleteColumn, setColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   */
+  void getColumnInfo(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param columnName
+   * \param columnReadableName
+   * \param isColumnEverVisible
+   * \param isColumnVisibleByDefault
+   * \param isMetadataColumn
+   * \param columnSortWeight
+   * \param columnDefaultWidth
+   * \param willRunQueryLater
+   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   */
+  void setColumnInfo(in AString columnName, 
+    in AString columnReadableName, 
+    in PRBool isColumnEverVisible, 
+    in PRBool isColumnVisibleByDefault, 
+    in PRBool isMetadataColumn, 
+    in PRInt32 columnSortWeight,
+    in PRInt32 columnDefaultUIWidth, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param metaColumnCount
+   * \param metaColumnNames
+   * \sa addColumn, deleteColumn, getColumnInfo, setColumnInfo, addMetadataColumn, deleteMetadataColumn
+   */
+  /*getMetadataFields*/
+  void getMetadataColumns(out PRUint32 metaColumnCount, 
+    [array, size_is (metaColumnCount), retval] out wstring metaColumnNames); /**/
+
+  /**
+   * \brief 
+   *
+   * \param columnName
+   * \param columnType
+   * \param willRunQueryLater
+   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo, deleteMetadataColumn
+   */
+  /*addMetadataField*/
+  void addMetadataColumn(in AString columnName, 
+    in AString columnType, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param columnName
+   * \param willRunQueryLater
+   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo, addMetadataColumn
+   */
+  /*deleteMetadataField*/
+  PRBool deleteMetadataColumn(in AString columnName, 
+    in PRBool willRunQueryLater); /**/
+
+  /*
+  PRBool AddTagByIndex()
+  PRBool AddTagByGUID();
+
+  PRBool DeleteTag
+  GetUniqueTags();
+  GetUniqueTagsCount();
+  */
+
+  /**
+   * \brief 
+   *
+   * \param columnName
+   * \param columnUniqueValCount
+   * \param columnUniqueValues
+   * \sa setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
+   */
+  /*getUniqueValuesByField*/
+  void getUniqueValuesByColumn(in AString columnName, 
+    out PRUint32 columnUniqueValCount, 
+    [array, size_is (columnUniqueValCount), retval] out wstring columnUniqueValues); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaIndex
+   * \param columnName
+   * \param columnValue
+   * \param willRunQueryLater
+   * \return 
+   * \sa getUniqueValuesByColumn, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
+   */
+  PRBool setValueByIndex(in PRInt32 mediaIndex, 
+    in AString columnName, 
+    in AString columnValue, 
+    in PRBool willRunQueryLater); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param mediaIndex
+   * \param metaColumnCount
+   * \param metaColumnNames
+   * \param metaValueCount
+   * \param metaValues
+   * \param willRunQueryLater 
+   * \return 
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
+   */
+  PRBool setValuesByIndex(in PRInt32 mediaIndex, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is(metaColumnCount)] in wstring metaColumnNames, 
+    in PRUint32 metaValueCount, 
+    [array, size_is(metaValueCount)] in wstring metaValues, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaIndex
+   * \param columnName
+   * \return 
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByGUID, getValuesByIndex, getValuesByGUID
+   */
+  AString getValueByIndex(in PRInt32 mediaIndex, 
+    in AString columnName); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param mediaIndex
+   * \param metaColumnCount
+   * \param metaColumnNames
+   * \param metaValueCount
+   * \param metaValues
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByGUID
+   */
+  void getValuesByIndex(in PRInt32 mediaIndex, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is(metaColumnCount)] in wstring metaColumnNames, 
+    out PRUint32 metaValueCount, 
+    [array, size_is (metaValueCount), retval] out wstring metaValues); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param mediaGUID
+   * \param columName
+   * \param columnValue
+   * \param willRunQueryLater
+   * \return 
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
+   */
+  PRBool setValueByGUID(in AString mediaGUID, 
+    in AString columnName, 
+    in AString columnValue, 
+    in PRBool willRunQueryLater); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param mediaGUID
+   * \param metaColumnCount
+   * \param metaColumnNames
+   * \param metaValueCount
+   * \param metaValues
+   * \param willRunQueryLater
+   * \return
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
+   */
+  PRBool setValuesByGUID(in AString mediaGUID, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is(metaColumnCount)] in wstring metaColumnNames, 
+    in PRUint32 metaValueCount, 
+    [array, size_is(metaValueCount)] in wstring metaValues, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief 
+   *
+   * \param mediaGUID
+   * \param columnName
+   * \return The value of the column, where media library row GUID equals mediaGUID.
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValuesByIndex, getValuesByGUID
+   */
+  AString getValueByGUID(in AString mediaGUID, 
+    in AString columnName); /**/
+  
+  /**
+   * \brief 
+   *
+   * \param mediaGUID
+   * \param metaColumnCount
+   * \param metaColumnNames
+   * \param metaValueCount
+   * \param metaValues
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex
+   */
+  void getValuesByGUID(in AString mediaGUID, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is (metaColumnCount)] in wstring metaColumnNames, 
+    out PRUint32 metaValueCount, 
+    [array, size_is (metaValueCount), retval] out wstring metaValues); /**/
+};
+
+/**
+ * \interface sbIMediaScanCallback 
+ * \brief
+ *
+ * \sa sbIMediaScanQuery, sbIMediaScan, MediaScan.h
+ */
+[scriptable, uuid(0F75EA33-A1FD-4bf6-8D13-DBAC96CAA668)]
+interface sbIMediaScanCallback : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \sa onMediaScanFile, onMediaScanEnd, sbIMediaScanQuery, sbIMediaScan
+   */
+  void onMediaScanStart(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param filePath
+   * \param 
+   * \sa onMediaScanStart, onMediaScanEnd, sbIMediaScanQuery, sbIMediaScan
+   */
+  void onMediaScanFile(in AString filePath, 
+    in PRInt32 fileCount); /**/
+
+  /**
+   * \brief 
+   *
+   * \sa onMediaScanStart, onMediaScanFile, sbIMediaScanQuery, sbIMediaScan
+   */
+  void onMediaScanEnd(); /**/
+};
+
+/**
+ * \interface sbIMediaScanQuery 
+ * \brief
+ *
+ * \sa sbIMediaScanCallback, sbIMediaScan, MediaScan.h
+ */
+[scriptable, uuid(32CD5811-77BF-4800-A4A8-FE764B8DDFD1)]
+interface sbIMediaScanQuery : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa getDirectory, setRecurse, getRecurse
+   */
+  void setDirectory(in AString strDirectory); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  AString getDirectory(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  void setRecurse(in PRBool bRecurse); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  PRBool getRecurse(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  void setCallback(in sbIMediaScanCallback pCallback); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  sbIMediaScanCallback getCallback(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  PRUint32 getFileCount(); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  void addFilePath(in AString strFilePath); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  AString getFilePath(in PRUint32 nIndex); /**/
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  PRBool isScanning();
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  void setIsScanning(in PRBool bIsScanning);
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  AString getLastFileFound();
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  AString getCurrentScanPath();
+
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  void setCurrentScanPath(in AString strScanPath);
+};
+
+/**
+ * \interface sbIMediaScan
+ * \brief
+ *
+ * \sa sbIMediaScanCallback, sbIMediaScanQuery
+ */
+[scriptable, uuid(12BC75D3-8FD4-4b19-8F5B-CEF353E5168D)]
+interface sbIMediaScan : nsISupports
+{ 
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  void submitQuery(in sbIMediaScanQuery pQuery);
+  
+  /**
+   * \brief 
+   *
+   * \param queryObj
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 scanDirectory(in AString strDirectory, 
+    in PRBool bRecurse, 
+    in sbIMediaScanCallback pCallback);
+};

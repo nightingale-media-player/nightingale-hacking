@@ -35,7 +35,6 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsIFile.h>
 #include <xpcom/nsILocalFile.h>
-#include <string/nsString.h>
 #include <string/nsStringAPI.h>
 #include <xpcom/nsISimpleEnumerator.h>
 #include <xpcom/nsDirectoryServiceDefs.h>
@@ -63,15 +62,16 @@
 //#define HARD_SANITY_CHECK             0
 #define QUERY_PROCESSOR_THREAD_COUNT  4
 
-const PRUnichar* ALL_TOKEN = NS_LITERAL_STRING("*").get();
-const PRUnichar* DB_GUID_TOKEN = NS_LITERAL_STRING("%db_guid%").get();
-const PRInt32 DB_GUID_TOKEN_LEN = 9;
+static NS_NAMED_LITERAL_STRING(allToken, "*");
+static NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
+NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
+NS_NAMED_LITERAL_STRING(strEndToken, "\"");
 
 // FUNCTIONS ==================================================================
 int SQLiteCaseInsensitiveCollate(void *pData, int nLenA, const void *pStrA, int nLenB, const void *pStrB)
 {
-  nsString strA( (PRUnichar *)pStrA, nLenA / sizeof(PRUnichar) );
-  nsString strB( (PRUnichar *)pStrB, nLenB / sizeof(PRUnichar) );
+  nsAutoString strA( (PRUnichar *)pStrA, nLenA / sizeof(PRUnichar) );
+  nsAutoString strB( (PRUnichar *)pStrB, nLenB / sizeof(PRUnichar) );
 
   ToLowerCase(strA);
   ToLowerCase(strB);
@@ -146,7 +146,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
 
           {
             nsAutoLock lock(pQuery->m_pModifiedTablesLock);
-            pQuery->m_ModifiedTables.insert( pArgA );
+            pQuery->m_ModifiedTables.insert( nsCAutoString(pArgA) );
           }
         }
       }
@@ -165,7 +165,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
 
           {
             nsAutoLock lock(pQuery->m_pModifiedTablesLock);
-            pQuery->m_ModifiedTables.insert( pArgA );
+            pQuery->m_ModifiedTables.insert( nsCAutoString(pArgA) );
           }
         }
       }
@@ -184,7 +184,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
 
           {
             nsAutoLock lock(pQuery->m_pModifiedTablesLock);
-            pQuery->m_ModifiedTables.insert( pArgA );
+            pQuery->m_ModifiedTables.insert( nsCAutoString(pArgA) );
           }
         }
       }
@@ -218,7 +218,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
 
           {
             nsAutoLock lock(pQuery->m_pModifiedTablesLock);
-            pQuery->m_ModifiedTables.insert( pArgA );
+            pQuery->m_ModifiedTables.insert( nsCAutoString(pArgA) );
           }
         }
       }
@@ -234,9 +234,9 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
         //If there's a table name but no column name, it means we're doing the initial SELECT on the table.
         //This is a good time to check if the query is supposed to be persistent and insert it
         //into the list of persistent queries.
-        if(pQuery->m_PersistentQuery && strnicmp("sqlite_", pArgA, 7))
+        if(pQuery->m_PersistentQuery && strnicmp( "sqlite_", pArgA, 7 ) )
         {
-          pQuery->m_Engine->AddPersistentQuery(pQuery, pArgA);
+          pQuery->m_Engine->AddPersistentQuery( pQuery, nsCAutoString(pArgA) );
         }
       }
       break;
@@ -259,7 +259,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
           
           {
             nsAutoLock lock(pQuery->m_pModifiedTablesLock);
-            pQuery->m_ModifiedTables.insert( pArgA );
+            pQuery->m_ModifiedTables.insert( nsCAutoString(pArgA) );
           }
         }
       }
@@ -366,23 +366,22 @@ CDatabaseEngine::CDatabaseEngine()
 } //dtor
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::OpenDB(PRUnichar *dbGUID)
+PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
 {
   nsAutoLock lock(m_pDatabasesLock);
 
   sqlite3 *pDB = nsnull;
-  std::prustring strDBGUID(dbGUID);
-  std::prustring strFilename(dbGUID);
 
-  strFilename += NS_LITERAL_STRING(".db").get();
+  nsAutoString strFilename(dbGUID);
+  strFilename.AppendLiteral(".db");
 
   // Kick sqlite in the pants
-  PRInt32 ret = sqlite3_open16(strFilename.c_str(), &pDB);
+  PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pDB);
 
   // Remember what we just loaded
   if(ret == SQLITE_OK)
   {
-    m_Databases.insert(std::make_pair(strDBGUID, pDB));
+    m_Databases.insert(std::make_pair(PromiseFlatString(dbGUID), pDB));
 
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
     sqlite3_busy_timeout(pDB, 5000);
@@ -394,24 +393,19 @@ PRInt32 CDatabaseEngine::OpenDB(PRUnichar *dbGUID)
 
     ret = sqlite3_create_collation16(pDB, (char *) NS_LITERAL_STRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
 
-    if(ret != SQLITE_OK)
-    {
-#if defined(XP_WIN)
-      __asm int 3;
-#endif
-    }
+    NS_ASSERTION( ret == SQLITE_OK, "CDatabaseEngine: Couldn't create/open database!");
   }
 
   return ret;
 } //OpenDB
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::CloseDB(PRUnichar *dbGUID)
+PRInt32 CDatabaseEngine::CloseDB(const nsAString &dbGUID)
 {
   PRInt32 ret = 0;
   nsAutoLock lock(m_pDatabasesLock);
 
-  databasemap_t::iterator itDatabases = m_Databases.find(dbGUID);
+  databasemap_t::iterator itDatabases = m_Databases.find(PromiseFlatString(dbGUID));
 
   if(itDatabases != m_Databases.end())
   {
@@ -423,7 +417,7 @@ PRInt32 CDatabaseEngine::CloseDB(PRUnichar *dbGUID)
 } //CloseDB
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::DropDB(PRUnichar *dbGUID)
+PRInt32 CDatabaseEngine::DropDB(const nsAString &dbGUID)
 {
   return 0;
 } //DropDB
@@ -468,33 +462,26 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *dbQuery)
 
 //-----------------------------------------------------------------------------
 /* [noscript] void AddPersistentQuery (in CDatabaseQueryPtr dbQuery, in stlCStringRef strTableName); */
-NS_IMETHODIMP CDatabaseEngine::AddPersistentQuery(CDatabaseQuery * dbQuery, const std::string & strTableName)
+NS_IMETHODIMP CDatabaseEngine::AddPersistentQuery(CDatabaseQuery * dbQuery, const nsACString & strTableName)
 {
   AddPersistentQueryPrivate(dbQuery, strTableName);
   return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
-void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const std::string &strTableName)
+void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName)
 {
   nsAutoLock lock(m_pPersistentQueriesLock);
 
-  nsString strTheDBGUID;
-  PRUnichar *strDBGUID = nsnull;
-  
-  pQuery->GetDatabaseGUID(&strDBGUID);
-  NS_ASSERTION(strDBGUID != nsnull, "No DB GUID present in Query that requested persistent execution!");
+  nsAutoString strTheDBGUID;
+  pQuery->GetDatabaseGUID(strTheDBGUID);
 
-  //Bad :(
-  if(!strDBGUID) return;
+  NS_ASSERTION(strTheDBGUID.IsEmpty() != PR_TRUE, "No DB GUID present in Query that requested persistent execution!");
 
-  strTheDBGUID = strDBGUID;
-  PR_Free(strDBGUID);
-
-  querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(strTheDBGUID.get());
+  querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(strTheDBGUID);
   if(itPersistentQueries != m_PersistentQueries.end())
   {
-    tablepersistmap_t::iterator itTableQuery = itPersistentQueries->second.find(strTableName);
+    tablepersistmap_t::iterator itTableQuery = itPersistentQueries->second.find(PromiseFlatCString(strTableName));
     if(itTableQuery != itPersistentQueries->second.end())
     {
       querylist_t::iterator itQueries = itTableQuery->second.begin();
@@ -514,7 +501,7 @@ void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const st
       querylist_t queryList;
       queryList.push_back(pQuery);
 
-      itPersistentQueries->second.insert(std::make_pair<std::string, querylist_t>(strTableName, queryList));
+      itPersistentQueries->second.insert(std::make_pair<nsCString, querylist_t>(PromiseFlatCString(strTableName), queryList));
     }
   }
   else
@@ -525,9 +512,9 @@ void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const st
     queryList.push_back(pQuery);
 
     tablepersistmap_t tableMap;
-    tableMap.insert(std::make_pair<std::string, querylist_t>(strTableName, queryList));
+    tableMap.insert(std::make_pair<nsCString, querylist_t>(PromiseFlatCString(strTableName), queryList));
 
-    m_PersistentQueries.insert(std::make_pair<std::prustring, tablepersistmap_t>(strTheDBGUID.get(), tableMap));
+    m_PersistentQueries.insert(std::make_pair<nsString, tablepersistmap_t>(strTheDBGUID, tableMap));
   }
 
   {
@@ -554,19 +541,19 @@ void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
 
   nsAutoLock lock(m_pPersistentQueriesLock);
 
-  std::string strTableName("");
-  PRUnichar *strDBGUID = nsnull;
-  pQuery->GetDatabaseGUID(&strDBGUID);
+  nsCAutoString tableName;
+  nsAutoString dbGUID;
+  pQuery->GetDatabaseGUID(dbGUID);
 
   {
     nsAutoLock lock(pQuery->m_pPersistentQueryTableLock);
-    strTableName = pQuery->m_PersistentQueryTable;
+    tableName = pQuery->m_PersistentQueryTable;
   }
 
-  querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(strDBGUID);
+  querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(dbGUID);
   if(itPersistentQueries != m_PersistentQueries.end())
   {
-    tablepersistmap_t::iterator itTableQuery = itPersistentQueries->second.find(strTableName);
+    tablepersistmap_t::iterator itTableQuery = itPersistentQueries->second.find(tableName);
     if(itTableQuery != itPersistentQueries->second.end())
     {
       querylist_t::iterator itQueries = itTableQuery->second.begin();
@@ -582,8 +569,6 @@ void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
       }
     }
   }
-
-  PR_Free(strDBGUID);
 
   return;
 } //RemovePersistentQuery
@@ -665,7 +650,7 @@ nsresult CDatabaseEngine::CloseAllDB()
 } //CloseAllDB
 
 //-----------------------------------------------------------------------------
-sqlite3 *CDatabaseEngine::GetDBByGUID(PRUnichar *dbGUID, PRBool bCreateIfNotOpen /*= PR_FALSE*/)
+sqlite3 *CDatabaseEngine::GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfNotOpen /*= PR_FALSE*/)
 {
   sqlite3 *pRet = nsnull;
 
@@ -684,7 +669,7 @@ sqlite3 *CDatabaseEngine::GetDBByGUID(PRUnichar *dbGUID, PRBool bCreateIfNotOpen
 } //GetDBByGUID
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<std::prustring> &vGUIDList)
+PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
 {
   PRInt32 nRet = 0;
   PRBool bFlag = PR_FALSE;
@@ -739,23 +724,18 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<std::prustring> &vGUIDList)
 
               if(bIsFile)
               {
-                nsString strLeaf;
+                nsAutoString strLeaf;
                 pEntry->GetLeafName(strLeaf);
 
-                nsString::const_iterator itStrStart, itStart, itEnd;
+                nsAutoString::const_iterator itStrStart, itStart, itEnd;
                 strLeaf.BeginReading(itStrStart);
                 strLeaf.BeginReading(itStart);
                 strLeaf.EndReading(itEnd);
 
-                PRBool bFound = FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd);
-                
-                if(bFound)
+                if(FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd))
                 {
-                  PRUint32 nCutPos = (PRUint32)Distance(itStrStart, itStart);
-                  PRUint32 nCutLen = (PRUint32)Distance(itStart, itEnd);
-
-                  strLeaf.Cut(nCutPos, nCutLen);
-                  vGUIDList.push_back(strLeaf.get());
+                  strLeaf.Cut((PRUint32)Distance(itStrStart, itStart), (PRUint32)Distance(itStart, itEnd));
+                  vGUIDList.push_back(strLeaf);
 
                   ++nRet;
                 }
@@ -775,13 +755,13 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<std::prustring> &vGUIDList)
 } //GetDBGUIDList
 
 //-----------------------------------------------------------------------------
-sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
+sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 {
   sqlite3 *pRet = nsnull;
 
   {
     nsAutoLock lock(m_pDatabasesLock);
-    databasemap_t::const_iterator itDatabases = m_Databases.find(dbGUID);
+    databasemap_t::const_iterator itDatabases = m_Databases.find(PromiseFlatString(dbGUID));
     if(itDatabases != m_Databases.end())
     {
       pRet = itDatabases->second;
@@ -826,34 +806,22 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
     PRBool bAllDB = PR_FALSE;
     sqlite3 *pDB = nsnull;
     sqlite3 *pSecondDB = nsnull;
-    PRUnichar *pGUID = nsnull;
-    pQuery->GetDatabaseGUID(&pGUID);
+    nsAutoString dbGUID;
+    pQuery->GetDatabaseGUID(dbGUID);
     
     // create |nsDependentString|s wrapping PRUnichar* buffers so we can
     // do fancy things in a platform independent way.
-    nsString ALL_TOKEN_nsds(ALL_TOKEN);
-    nsString pGUID_nsds(pGUID);
+    nsAutoString lowercaseGUID(dbGUID);
     PRBool bEquals = PR_FALSE;
     {
       // UnicharUtils is not threadsafe, so make sure we don't switch threads here.
       nsAutoLock ccLock(pEngine->m_pCaseConversionLock);
-
-      ToLowerCase(ALL_TOKEN_nsds);
-      ToLowerCase(pGUID_nsds);
-
-      bEquals = ALL_TOKEN_nsds.Equals(pGUID_nsds);
+      ToLowerCase(lowercaseGUID);
+      bAllDB = allToken.Equals(lowercaseGUID);
     }
 
-    if(bEquals)
-    {
-      bAllDB = PR_TRUE;
-    }
-    else
-    {
-      pDB = pEngine->GetDBByGUID(pGUID, PR_TRUE);
-    }
-
-    PR_Free(pGUID);
+    if(!bAllDB)
+      pDB = pEngine->GetDBByGUID(dbGUID, PR_TRUE);
 
     if(!pDB && !bAllDB)
     {
@@ -862,7 +830,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
     }
     else
     {
-      std::vector<std::prustring> vDBList;
+      std::vector<nsString> vDBList;
       PRInt32 nNumDB = 1;
       PRInt32 nQueryCount = 0;
       PRBool bFirstRow = PR_TRUE;
@@ -874,43 +842,37 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
       if(bAllDB)
         nNumDB = pEngine->GetDBGUIDList(vDBList);
 
-      //pQuery->m_QueryResultLock.Lock();
-
       for(PRInt32 i = 0; i < nQueryCount && !pQuery->m_IsAborting; i++)
       {
 
         int retDB = 0;
         sqlite3_stmt *pStmt = nsnull;
 
-        PRUnichar *pzQuery = nsnull;
+        nsAutoString strQuery;
+        nsAutoString::const_iterator start, end, lineStart, lineEnd;
+
         const void *pzTail = nsnull;
-        std::prustring strQuery;
 
-        pQuery->GetQuery(i, &pzQuery);
-
-        strQuery = pzQuery;
-        PR_Free(pzQuery);
+        pQuery->GetQuery(i, strQuery);
+        strQuery.BeginReading(start);
+        strQuery.BeginReading(lineStart);
+        strQuery.EndReading(end);
+        strQuery.EndReading(lineEnd);
         
-        NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
-
-        size_t nPos = strQuery.find(strAttachToken.get());
-        if(nPos != strQuery.npos)
+        if(FindInReadable(strAttachToken, start, end))
         {
-          NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
-          NS_NAMED_LITERAL_STRING(strEndToken, "\"");
-
-          nPos += strAttachToken.Length();
-          nPos = strQuery.find(strStartToken.get(), nPos);
-
-          nPos += strStartToken.Length();
-          size_t nEndPos = strQuery.find(strEndToken.get(), nPos);
-          
-          std::prustring strSecondDBGUID = strQuery.substr(nPos, nEndPos - nPos);
-          pSecondDB = pEngine->GetDBByGUID(const_cast<PRUnichar *>(strSecondDBGUID.c_str()), PR_TRUE);
-
-          if(pSecondDB)
+          start = lineStart = end;
+          strQuery.EndReading(end);
+          if(FindInReadable(strStartToken, start, end))
           {
-            pEngine->LockDatabase(pSecondDB);
+            start = lineStart = end;
+            strQuery.EndReading(end);
+            FindInReadable(strEndToken, start, end);
+            
+            nsDependentString strSecondDBGUID(Substring(lineStart, --start));
+            pSecondDB = pEngine->GetDBByGUID(strSecondDBGUID, PR_TRUE);
+            if(pSecondDB)
+              pEngine->LockDatabase(pSecondDB);
           }
         }
 
@@ -932,7 +894,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
           }
           else
           {
-            pDB = pEngine->GetDBByGUID(const_cast<PRUnichar *>(vDBList[j].c_str()), PR_TRUE);
+            pDB = pEngine->GetDBByGUID(vDBList[j], PR_TRUE);
             
             //Just in case there was some kind of bad error while attempting to get the database or create it.
             if ( !pDB ) 
@@ -951,7 +913,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
 #endif
           }
 
-          retDB = sqlite3_prepare16(pDB, strQuery.c_str(), (int)strQuery.length() * sizeof(PRUnichar), &pStmt, &pzTail);
+          retDB = sqlite3_prepare16(pDB, strQuery.get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
           pQuery->m_CurrentQuery = i;
 
           if(retDB != SQLITE_OK)
@@ -1077,7 +1039,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
 
             if(isPersistent)
             {
-              nsString strTableName(strQuery.c_str());
+              nsAutoString strTableName(strQuery);
               PRBool bFound = PR_FALSE;
               nsString::const_iterator itStrStart, itStart, itEnd;
               {
@@ -1115,8 +1077,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(PRUnichar *dbGUID)
                 }
 
                 nsCString theCTableName;
-                NS_UTF16ToCString(strTableName, NS_CSTRING_ENCODING_ASCII, theCTableName);
-                pEngine->AddPersistentQuery(pQuery, const_cast<char *>(theCTableName.get()));
+                NS_UTF16ToCString(strTableName, NS_CSTRING_ENCODING_UTF8, theCTableName);
+                pEngine->AddPersistentQuery(pQuery, theCTableName);
 
               }
             }
@@ -1177,17 +1139,17 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
   if(pQuery->m_HasChangedDataOfPersistQuery && 
      !pQuery->m_PersistentQuery)
   {
-    PRUnichar *pGUID = nsnull;
-    pQuery->GetDatabaseGUID(&pGUID);
+    nsAutoString dbGUID;
+    pQuery->GetDatabaseGUID(dbGUID);
 
-    if(pGUID)
+    if(!dbGUID.IsEmpty())
     {
       nsAutoLock pqLock(m_pPersistentQueriesLock);
-      querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(pGUID);
+      querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(dbGUID);
 
       if(itPersistentQueries != m_PersistentQueries.end())
       {
-        std::string strTableName;
+        nsCAutoString strTableName;
         
         nsAutoLock lock(pQuery->m_pModifiedTablesLock);
         CDatabaseQuery::modifiedtables_t::iterator i;
@@ -1206,10 +1168,10 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
         }
       }
 
-      itPersistentQueries = m_PersistentQueries.find(ALL_TOKEN);
+      itPersistentQueries = m_PersistentQueries.find(allToken);
       if(itPersistentQueries != m_PersistentQueries.end())
       {
-        std::string strTableName;
+        nsCAutoString strTableName;
 
         nsAutoLock lock(pQuery->m_pModifiedTablesLock);
         CDatabaseQuery::modifiedtables_t::iterator i;
@@ -1222,14 +1184,12 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
             querylist_t::iterator itQueries = itTableQuery->second.begin();
             for(; itQueries != itTableQuery->second.end(); itQueries++)
             {
-              (*itQueries)->SetDatabaseGUID(ALL_TOKEN);
+              (*itQueries)->SetDatabaseGUID(allToken);
               SubmitQueryPrivate((*itQueries));
             }
           }
         }
       }
-
-      PR_Free(pGUID);
     }
   }
 
@@ -1247,11 +1207,11 @@ void CDatabaseEngine::DoPersistentCallback(CDatabaseQuery *pQuery)
   if(pQuery->m_PersistentQuery)
   {
     nsCOMPtr<sbIDatabaseResult> pDBResult;
-    PRUnichar *strGUID = nsnull, *strQuery = nsnull;
+    nsAutoString strGUID, strQuery;
 
     pQuery->GetResultObject(getter_AddRefs(pDBResult));
-    pQuery->GetDatabaseGUID(&strGUID);
-    pQuery->GetQuery(0, &strQuery);
+    pQuery->GetDatabaseGUID(strGUID);
+    pQuery->GetQuery(0, strQuery);
 
     nsAutoLock lock(pQuery->m_pPersistentCallbackListLock);
     CDatabaseQuery::persistentcallbacklist_t::const_iterator itCallback = pQuery->m_PersistentCallbackList.begin();
@@ -1271,8 +1231,5 @@ void CDatabaseEngine::DoPersistentCallback(CDatabaseQuery *pQuery)
         }
       }
     }
-
-    PR_Free(strGUID);
-    PR_Free(strQuery);
   }
 } //DoPersistentCallback

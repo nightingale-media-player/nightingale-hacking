@@ -86,14 +86,14 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery(SIMPLEPLAYLIST_LIST_TABLE_CREATE);
-      queryObj.AddQuery(PLAYLIST_LIST_TABLE_CREATE);
-      queryObj.AddQuery(DYNAMICPLAYLIST_LIST_TABLE_CREATE);
-      queryObj.AddQuery(SMARTPLAYLIST_LIST_TABLE_CREATE);
+      queryObj.resetQuery();
+      queryObj.addQuery(SIMPLEPLAYLIST_LIST_TABLE_CREATE);
+      queryObj.addQuery(PLAYLIST_LIST_TABLE_CREATE);
+      queryObj.addQuery(DYNAMICPLAYLIST_LIST_TABLE_CREATE);
+      queryObj.addQuery(SMARTPLAYLIST_LIST_TABLE_CREATE);
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
     }
     
     return;
@@ -105,10 +105,10 @@ CPlaylistManager.prototype =
 
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
+      queryObj.resetQuery();
 
       var strQuery = "CREATE TABLE \"" + strName + "_desc\"" + PLAYLIST_DESC_TABLE_CREATE;
-      queryObj.AddQuery(strQuery);
+      queryObj.addQuery(strQuery);
       
       var i = 0;
       strQuery = "CREATE TABLE \"" + strName + "\" (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE NOT NULL ";
@@ -117,7 +117,7 @@ CPlaylistManager.prototype =
       {
         strQuery += ", " + aMetaFields[i] + " TEXT ";
           
-        queryObj.AddQuery("INSERT OR REPLACE INTO \"" + strName + "_desc\" (column_name) VALUES (\"" + aMetaFields[i] + "\")");
+        queryObj.addQuery("INSERT OR REPLACE INTO \"" + strName + "_desc\" (column_name) VALUES (\"" + aMetaFields[i] + "\")");
       }
       
       strQuery += ")";
@@ -125,11 +125,11 @@ CPlaylistManager.prototype =
       strReadableName = strReadableName.replace(/"/g, "\"\"");
       strDescription = strDescription.replace(/"/g, "\"\"");
       
-      queryObj.AddQuery(strQuery);
-      queryObj.AddQuery("INSERT INTO " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, description, type) VALUES (\"" + queryObj.GetDatabaseGUID() + "\", \"" + strName + "\", \"" + strReadableName + "\", \""+ strDescription + "\", \"" + strType + "\")");
+      queryObj.addQuery(strQuery);
+      queryObj.addQuery("INSERT INTO " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, description, type) VALUES (\"" + queryObj.getDatabaseGUID() + "\", \"" + strName + "\", \"" + strReadableName + "\", \""+ strDescription + "\", \"" + strType + "\")");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
       var simplePlaylist = (new SimplePlaylist()).QueryInterface(Components.interfaces.sbISimplePlaylist);
       
@@ -148,20 +148,20 @@ CPlaylistManager.prototype =
     
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
+      queryObj.resetQuery();
       
       var strQuery = "CREATE TABLE \"" + strName + "\"" + PLAYLIST_TABLE_CREATE;
       strReadableName = strReadableName.replace(/\"./, "\"\"");
       strDescription = strDescription.replace(/\"./, "\"\"");
 
-      queryObj.AddQuery(strQuery);
-      queryObj.AddQuery("INSERT OR REPLACE INTO " + PLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, description, type) VALUES (\"" + queryObj.GetDatabaseGUID() + "\", \"" + strName + "\", \"" + strReadableName + "\", \"" + strDescription + "\", \"" + strType + "\")");
+      queryObj.addQuery(strQuery);
+      queryObj.addQuery("INSERT OR REPLACE INTO " + PLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, description, type) VALUES (\"" + queryObj.getDatabaseGUID() + "\", \"" + strName + "\", \"" + strReadableName + "\", \"" + strDescription + "\", \"" + strType + "\")");
 
       strQuery = "CREATE TABLE \"" + strName + "_desc\"" + PLAYLIST_DESC_TABLE_CREATE;
-      queryObj.AddQuery(strQuery);
+      queryObj.addQuery(strQuery);
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
       var playlist = (new Playlist()).QueryInterface(Components.interfaces.sbIPlaylist);
       
@@ -180,21 +180,21 @@ CPlaylistManager.prototype =
     
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
+      queryObj.resetQuery();
       
       var strQuery = "CREATE TABLE \"" + strName + "\"" + PLAYLIST_TABLE_CREATE;
 
       strReadableName = strReadableName.replace(/"/g, "\"\"");
       strDescription = strDescription.replace(/"/g, "\"\"");
 
-      queryObj.AddQuery(strQuery);
-      queryObj.AddQuery("INSERT OR REPLACE INTO " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, url, periodicity, description, type) VALUES (\"" + queryObj.GetDatabaseGUID() + "\", \"" + strName + "\", \"" + strReadableName + "\", \"" + strURL + "\", \"" + nPeriodicity + "\", \""+ strDescription + "\", \"" + strType + "\")");
+      queryObj.addQuery(strQuery);
+      queryObj.addQuery("INSERT OR REPLACE INTO " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, url, periodicity, description, type) VALUES (\"" + queryObj.getDatabaseGUID() + "\", \"" + strName + "\", \"" + strReadableName + "\", \"" + strURL + "\", \"" + nPeriodicity + "\", \""+ strDescription + "\", \"" + strType + "\")");
 
       strQuery = "CREATE TABLE \"" + strName + "_desc\"" + PLAYLIST_DESC_TABLE_CREATE;
-      queryObj.AddQuery(strQuery);
+      queryObj.addQuery(strQuery);
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
       var playlist = (new DynamicPlaylist()).QueryInterface(Components.interfaces.sbIDynamicPlaylist);
       
@@ -213,13 +213,13 @@ CPlaylistManager.prototype =
     
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
+      queryObj.resetQuery();
 
       strReadableName = strReadableName.replace(/"/g, "\"\"");
       strDescription = strDescription.replace(/"/g, "\"\"");
       
       strQuery = "INSERT OR REPLACE INTO " + SMARTPLAYLIST_LIST_TABLE_NAME + " (service_uuid, name, readable_name, description, library, limit_value, limit_type, selected_by, match_on, type) VALUES (\"";
-      strQuery += queryObj.GetDatabaseGUID() + "\", \"";
+      strQuery += queryObj.getDatabaseGUID() + "\", \"";
       strQuery += strName + "\", \"";
       strQuery += strReadableName + "\", \"";
       strQuery += strDescription + "\", \"";
@@ -229,13 +229,13 @@ CPlaylistManager.prototype =
       strQuery += strSelectedBy + "\", \"";
       strQuery += strMatchOn + "\", \"";
       strQuery += strType + "\")";
-      queryObj.AddQuery(strQuery);
+      queryObj.addQuery(strQuery);
 
       strQuery = "CREATE TABLE \"" + strName + "_constraints\"" + SMARTPLAYLIST_CONSTRAINT_LIST_TABLE_CREATE;
-      queryObj.AddQuery(strQuery);
+      queryObj.addQuery(strQuery);
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
       var playlist = (new SmartPlaylist()).QueryInterface(Components.interfaces.sbISmartPlaylist);
       
@@ -255,7 +255,7 @@ CPlaylistManager.prototype =
     if(queryObj != null)
     {
       var bSrcIsSimple = true;
-      queryObj.SetDatabaseGUID(strSourceDB);
+      queryObj.setDatabaseGUID(strSourceDB);
       var pSourcePlaylist = this.GetSimplePlaylist(strSourceName, queryObj);
      
       if(pSourcePlaylist == null)
@@ -272,7 +272,7 @@ CPlaylistManager.prototype =
       {
         pSourcePlaylist.GetTableInfo();
         
-        var resObj = queryObj.GetResultObject();
+        var resObj = queryObj.getResultObject();
       
         var i = 0;
         var rowCount = resObj.GetRowCount();
@@ -297,8 +297,8 @@ CPlaylistManager.prototype =
           }
         }
 
-        queryObj.ResetQuery();
-        queryObj.SetDatabaseGUID(strDestDB);
+        queryObj.resetQuery();
+        queryObj.setDatabaseGUID(strDestDB);
         
         this.CreateDefaultPlaylistManager(queryObj);
         
@@ -317,14 +317,14 @@ CPlaylistManager.prototype =
           }
         } 
 
-        queryObj.ResetQuery();
-        queryObj.SetDatabaseGUID(strSourceDB);
+        queryObj.resetQuery();
+        queryObj.setDatabaseGUID(strSourceDB);
         
         // Do not use DB qualifier if using the same database
         var dbQualifier = "";
         if (strSourceDB != strDestDB)
         {
-	        queryObj.AddQuery("ATTACH DATABASE \"" + strDestDB + ".db\" AS \"" + strDestDB + "\"");
+	        queryObj.addQuery("ATTACH DATABASE \"" + strDestDB + ".db\" AS \"" + strDestDB + "\"");
 	        dbQualifier = strDestDB + "\".\"";
 	    }
 
@@ -359,20 +359,20 @@ CPlaylistManager.prototype =
 
         if(bSrcIsSimple)
         {
-          queryObj.AddQuery(strSimpleQuery);
+          queryObj.addQuery(strSimpleQuery);
         }
         else
         {
-          queryObj.AddQuery(strQuery);
+          queryObj.addQuery(strQuery);
         }
 
-        queryObj.AddQuery("DETACH DATABASE \"" + strDestDB + "\"");
+        queryObj.addQuery("DETACH DATABASE \"" + strDestDB + "\"");
           
-        var success = queryObj.Execute();
-        queryObj.WaitForCompletion();
+        var success = queryObj.execute();
+        queryObj.waitForCompletion();
         
-        var error = queryObj.GetLastError();
-        queryObj.SetDatabaseGUID(strDestDB);
+        var error = queryObj.getLastError();
+        queryObj.setDatabaseGUID(strDestDB);
       
         return pDestPlaylist;
       }
@@ -387,15 +387,15 @@ CPlaylistManager.prototype =
 
     if(queryObj != null)
     {
-      queryObj.SetDatabaseGUID(strSourceDB);
+      queryObj.setDatabaseGUID(strSourceDB);
       var pSourcePlaylist = this.GetSimplePlaylist(strSourceName, queryObj);
       
       if(pSourcePlaylist)
       {
         pSourcePlaylist.GetTableInfo();
-        var resObj = queryObj.GetResultObject();
+        var resObj = queryObj.getResultObject();
 
-        queryObj.SetDatabaseGUID(strDestDB);
+        queryObj.setDatabaseGUID(strDestDB);
         var pDestPlaylist = this.CreatePlaylist(strDestName, strReadableName, strDescription, strType, queryObj);
         
         if(pDestPlaylist)
@@ -417,14 +417,14 @@ CPlaylistManager.prototype =
             pDestPlaylist.AddColumn(strColName, strColType);
           }
        
-          queryObj.ResetQuery();
-          queryObj.SetDatabaseGUID(strSourceDB);
+          queryObj.resetQuery();
+          queryObj.setDatabaseGUID(strSourceDB);
           
-          queryObj.AddQuery("INSERT INTO \"db/" + strDestDB + "\".\"" + strDestName + "\" (" + columnList + ") SELECT " + columnList + " FROM \"" + strSourceName + "\"");
-          queryObj.Execute();
-          queryObj.WaitForCompletion();
+          queryObj.addQuery("INSERT INTO \"db/" + strDestDB + "\".\"" + strDestName + "\" (" + columnList + ") SELECT " + columnList + " FROM \"" + strSourceName + "\"");
+          queryObj.execute();
+          queryObj.waitForCompletion();
           
-          queryObj.SetDatabaseGUID(strDestDB);
+          queryObj.setDatabaseGUID(strDestDB);
        
           return pDestPlaylist;
         }
@@ -438,20 +438,20 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       
       if(resObj.GetRowCount() > 0)
       {
-        queryObj.AddQuery("DROP TABLE \"" + strName + "\"");
-        queryObj.AddQuery("DELETE FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
-        queryObj.Execute();
-        queryObj.WaitForCompletion();
+        queryObj.addQuery("DROP TABLE \"" + strName + "\"");
+        queryObj.addQuery("DELETE FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+        queryObj.execute();
+        queryObj.waitForCompletion();
         
         return 1;
       }
@@ -464,20 +464,20 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       
       if(resObj.GetRowCount() > 0)
       {
-        queryObj.AddQuery("DROP TABLE \"" + strName + "\"");
-        queryObj.AddQuery("DELETE FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
-        queryObj.Execute();
-        queryObj.WaitForCompletion();
+        queryObj.addQuery("DROP TABLE \"" + strName + "\"");
+        queryObj.addQuery("DELETE FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+        queryObj.execute();
+        queryObj.waitForCompletion();
         
         return 1;
       }
@@ -490,20 +490,20 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       
       if(resObj.GetRowCount() > 0)
       {
-        queryObj.AddQuery("DROP TABLE \"" + strName + "\"");
-        queryObj.AddQuery("DELETE FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
-        queryObj.Execute();
-        queryObj.WaitForCompletion();
+        queryObj.addQuery("DROP TABLE \"" + strName + "\"");
+        queryObj.addQuery("DELETE FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+        queryObj.execute();
+        queryObj.waitForCompletion();
         
         return 1;
       }
@@ -516,22 +516,22 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + SMARTPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + SMARTPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       
       if(resObj.GetRowCount() > 0)
       {
-        queryObj.AddQuery("DROP TABLE \"" + strName + "\"");
-        queryObj.AddQuery("DROP TABLE \"" + strName + "_constraints\"");
-        queryObj.AddQuery("DELETE FROM " + SMARTPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+        queryObj.addQuery("DROP TABLE \"" + strName + "\"");
+        queryObj.addQuery("DROP TABLE \"" + strName + "_constraints\"");
+        queryObj.addQuery("DELETE FROM " + SMARTPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
         
-        queryObj.Execute();
-        queryObj.WaitForCompletion();
+        queryObj.execute();
+        queryObj.waitForCompletion();
         
         return 1;
       }
@@ -544,18 +544,18 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.SetDatabaseGUID("*");
+      queryObj.resetQuery();
+      queryObj.setDatabaseGUID("*");
       
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME);
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + PLAYLIST_LIST_TABLE_NAME);
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME);
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SMARTPLAYLIST_LIST_TABLE_NAME);
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME);
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + PLAYLIST_LIST_TABLE_NAME);
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME);
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SMARTPLAYLIST_LIST_TABLE_NAME);
       
-      queryObj.Execute();
+      queryObj.execute();
       
-      if(!queryObj.IsAyncQuery());
-        queryObj.WaitForCompletion();
+      if(!queryObj.isAyncQuery());
+        queryObj.waitForCompletion();
     }
   },
  
@@ -563,12 +563,12 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME);
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME);
       
-      queryObj.Execute();
-      if(!queryObj.IsAyncQuery())      
-        queryObj.WaitForCompletion();
+      queryObj.execute();
+      if(!queryObj.isAyncQuery())      
+        queryObj.waitForCompletion();
     }
   },
   
@@ -576,12 +576,12 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + PLAYLIST_LIST_TABLE_NAME);
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + PLAYLIST_LIST_TABLE_NAME);
       
-      queryObj.Execute();
-      if(!queryObj.IsAyncQuery())      
-        queryObj.WaitForCompletion();
+      queryObj.execute();
+      if(!queryObj.isAyncQuery())      
+        queryObj.waitForCompletion();
     }
   },
  
@@ -589,12 +589,12 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME);
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME);
       
-      queryObj.Execute();
-      if(!queryObj.IsAyncQuery())      
-        queryObj.WaitForCompletion();
+      queryObj.execute();
+      if(!queryObj.isAyncQuery())      
+        queryObj.waitForCompletion();
     }
   },
   
@@ -602,12 +602,12 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SMARTPLAYLIST_LIST_TABLE_NAME);
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT service_uuid, name, readable_name, type, base_type, description FROM " + SMARTPLAYLIST_LIST_TABLE_NAME);
       
-      queryObj.Execute();
-      if(!queryObj.IsAyncQuery())
-        queryObj.WaitForCompletion();
+      queryObj.execute();
+      if(!queryObj.isAyncQuery())
+        queryObj.waitForCompletion();
     }
   },
  
@@ -617,13 +617,13 @@ CPlaylistManager.prototype =
 
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
 
-      if(queryObj.GetResultObject().GetRowCount() > 0)
+      if(queryObj.getResultObject().GetRowCount() > 0)
       {
         var simplePlaylist = (new SimplePlaylist()).QueryInterface(Components.interfaces.sbISimplePlaylist);
         
@@ -643,14 +643,14 @@ CPlaylistManager.prototype =
 
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
 
       var playlist = null;
-      if(queryObj.GetResultObject().GetRowCount() > 0)
+      if(queryObj.getResultObject().GetRowCount() > 0)
       {
         playlist = (new Playlist()).QueryInterface(Components.interfaces.sbIPlaylist);
         
@@ -682,13 +682,13 @@ CPlaylistManager.prototype =
 
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
 
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       if(resObj.GetRowCount() > 0)
       {
         var playlist = new DynamicPlaylist();
@@ -712,13 +712,13 @@ CPlaylistManager.prototype =
 
     if(queryObj != null)
     {
-      queryObj.ResetQuery();
-      queryObj.AddQuery("SELECT name FROM " + SMARTPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("SELECT name FROM " + SMARTPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
 
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
 
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       if(resObj.GetRowCount() > 0)
       {
         var playlist = (new SmartPlaylist()).QueryInterface(Components.interfaces.sbISmartPlaylist);
@@ -737,16 +737,16 @@ CPlaylistManager.prototype =
   {
     if(queryObj != null)
     {
-      queryObj.SetDatabaseGUID("*");
+      queryObj.setDatabaseGUID("*");
       
       var strQuery = "SELECT service_uuid, name, periodicity, last_update FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME;
-      queryObj.ResetQuery();
-      queryObj.AddQuery(strQuery);
+      queryObj.resetQuery();
+      queryObj.addQuery(strQuery);
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       
       var dNow = new Date();
       var playlists = new Array();
@@ -775,13 +775,13 @@ CPlaylistManager.prototype =
         
         strQuery += ")";
 
-        queryObj.ResetQuery();
-        queryObj.AddQuery(strQuery);
+        queryObj.resetQuery();
+        queryObj.addQuery(strQuery);
         
-        queryObj.Execute();
-        queryObj.WaitForCompletion();
+        queryObj.execute();
+        queryObj.waitForCompletion();
         
-        resObj = queryObj.GetResultObject();
+        resObj = queryObj.getResultObject();
         return parseInt(resObj.GetRowCount());
       }
     }
@@ -795,13 +795,13 @@ CPlaylistManager.prototype =
     {
       var dNow = new Date();
       
-      queryObj.ResetQuery();
-      queryObj.AddQuery("UPDATE \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" SET last_update = " + dNow.getTime() + " WHERE name = \"" + strName + "\"");
+      queryObj.resetQuery();
+      queryObj.addQuery("UPDATE \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" SET last_update = " + dNow.getTime() + " WHERE name = \"" + strName + "\"");
       
-      queryObj.Execute();
-      queryObj.WaitForCompletion();
+      queryObj.execute();
+      queryObj.waitForCompletion();
       
-      return queryObj.GetLastError() ? false : true;
+      return queryObj.getLastError() ? false : true;
     }
     
     return false;
@@ -812,29 +812,29 @@ CPlaylistManager.prototype =
     var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     if(queryObj)
     {
-      queryObj.SetAsyncQuery(false);
-      queryObj.SetDatabaseGUID(strDBGUID);
+      queryObj.setAsyncQuery(false);
+      queryObj.setDatabaseGUID(strDBGUID);
       
       var strQuery = "SELECT name FROM " + PLAYLIST_LIST_TABLE_NAME + " UNION ";
       strQuery += "SELECT name FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME;
       
-      queryObj.AddQuery(strQuery);
-      queryObj.Execute();
+      queryObj.addQuery(strQuery);
+      queryObj.execute();
       
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       var rowCount = resObj.GetRowCount();
       
       var q = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-      q.SetAsyncQuery(false);
-      q.SetDatabaseGUID(strDBGUID);
+      q.setAsyncQuery(false);
+      q.setDatabaseGUID(strDBGUID);
       
       for(var i = 0; i < rowCount; i++)
       {
         var plName = resObj.GetRowCellByColumn(i, "name");
-        q.AddQuery("DELETE FROM \"" + plName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
+        q.addQuery("DELETE FROM \"" + plName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
       }
       
-      q.Execute();
+      q.execute();
     }
   },
 

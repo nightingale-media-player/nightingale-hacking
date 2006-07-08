@@ -50,7 +50,7 @@ function DPUpdaterInit(interval)
 
     setTimeout( DPUpdaterStart, 30 * 1000 ); // Don't do nothing for 30 seconds
     
-    if(dpUpdaterQuery.IsExecuting())
+    if(dpUpdaterQuery.isExecuting())
       return;
   }
   catch(err)
@@ -75,10 +75,10 @@ function DPUpdaterRun()
     // Sanity check
     if(dpUpdaterInterval == null)
       return;
-    if(dpUpdaterQuery.IsExecuting())
+    if(dpUpdaterQuery.isExecuting())
       return;
     
-    if(dpUpdaterCurrentRow > 0 && dpUpdaterCurrentRow < dpUpdaterQuery.GetResultObject().GetRowCount())
+    if(dpUpdaterCurrentRow > 0 && dpUpdaterCurrentRow < dpUpdaterQuery.getResultObject().GetRowCount())
     {
       //Next Row
       DPUpdaterUpdatePlaylist(dpUpdaterCurrentRow);
@@ -102,7 +102,7 @@ function DPUpdaterUpdatePlaylist(row)
 {
   try
   {
-    var resObj = dpUpdaterQuery.GetResultObject();
+    var resObj = dpUpdaterQuery.getResultObject();
     var rowCount = resObj.GetRowCount();
 
     var strGUID = resObj.GetRowCellByColumn(row, "service_uuid");
@@ -114,8 +114,8 @@ function DPUpdaterUpdatePlaylist(row)
    
     if(success)
     {
-      dpUpdaterPlaylistQuery.ResetQuery();
-      dpUpdaterPlaylistQuery.SetDatabaseGUID(strGUID);
+      dpUpdaterPlaylistQuery.resetQuery();
+      dpUpdaterPlaylistQuery.setDatabaseGUID(strGUID);
       dpPlaylistManager.SetDynamicPlaylistLastUpdate(strName, dpUpdaterPlaylistQuery);
     }
     

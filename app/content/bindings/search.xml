@@ -328,11 +328,11 @@
           this.list.removeAllItems();
           
           var aDBQuery = new sbIDatabaseQuery();
-          aDBQuery.SetAsyncQuery(false);
-          aDBQuery.SetDatabaseGUID("songbird");
-          aDBQuery.AddQuery('select title, artist, album, genre from library where url="' + playbackURL + '"' );
-          var ret = aDBQuery.Execute();
-          var resultset = aDBQuery.GetResultObject();
+          aDBQuery.setAsyncQuery(false);
+          aDBQuery.setDatabaseGUID("songbird");
+          aDBQuery.addQuery('select title, artist, album, genre from library where url="' + playbackURL + '"' );
+          var ret = aDBQuery.execute();
+          var resultset = aDBQuery.getResultObject();
           
           // Go through and see if there is anything upon which to search.
           var ccount = resultset.GetColumnCount();

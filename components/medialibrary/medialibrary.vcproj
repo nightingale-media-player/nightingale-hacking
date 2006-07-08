@@ -36,7 +36,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt $(ProjectDir)$(OutDir)\sbIPlaylistPlayback.xpt
 "
 				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
@@ -101,7 +101,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt $(ProjectDir)$(OutDir)\sbIPlaylistPlayback.xpt
 "
 				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
@@ -154,7 +154,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			Name="public"
 			Filter="">
 			<File
-				RelativePath=".\public\IDatabaseEngine.idl">
+				RelativePath=".\public\sbIDatabaseEngine.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -177,7 +177,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IDatabaseQuery.idl">
+				RelativePath=".\public\sbIDatabaseQuery.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -200,7 +200,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IDatabaseResult.idl">
+				RelativePath=".\public\sbIDatabaseResult.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -223,7 +223,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IMediaLibrary.idl">
+				RelativePath=".\public\sbIMediaLibrary.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -246,7 +246,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylist.idl">
+				RelativePath=".\public\sbIPlaylist.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -269,7 +269,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylistPlayback.idl">
+				RelativePath=".\public\sbIPlaylistPlayback.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -292,7 +292,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylistReader.idl">
+				RelativePath=".\public\sbIPlaylistReader.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -315,7 +315,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylistWriter.idl">
+				RelativePath=".\public\sbIPlaylistWriter.idl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -390,7 +390,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIMediaLibrary.js">
+				RelativePath=".\src\sbMediaLibrary.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

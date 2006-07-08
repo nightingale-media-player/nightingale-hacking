@@ -1,0 +1,283 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbIMediaLibrary.idl
+ * \brief 
+ * 
+ * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
+ */
+#include "nsISupports.idl"
+
+interface sbIDatabaseResult;
+
+/**
+ * \interface sbIDatabaseSimpleQueryCallback 
+ * \brief
+ *
+ * \sa sbIDatabaseQueryCallback, sbIDatabaseQuery, sbIDatabaseResult
+ */
+[scriptable, uuid(918745AE-0F40-4d08-BA4E-27A739459952)]
+interface sbIDatabaseSimpleQueryCallback : nsISupports
+{
+  void onQueryEnd(in sbIDatabaseResult dbResultObject, in AString dbGUID, in AString strQuery);
+};
+
+
+/**
+ * \interface sbIDatabaseQueryCallback 
+ * \brief
+ *
+ * \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQuery
+ */
+[scriptable, uuid(A901158A-3735-44fd-9AD2-1753F1407284)]
+interface sbIDatabaseQueryCallback : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryError(in PRInt32 dbError, in AString dbGUID, in AString strQuery);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryStart(in AString dbGUID, in AString strQuery);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryRow(in sbIDatabaseResult dbResultObject, in PRInt32 dbRowResult, in PRInt32 dbRowTotal);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryEnd(in sbIDatabaseResult dbResultObject, in AString dbGUID, in AString strQuery); 
+};
+
+/**
+* \interface sbIDatabaseQuery
+* \brief
+*
+* \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQueryCallback
+*/
+[scriptable, uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]
+interface sbIDatabaseQuery : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void setAsyncQuery(in PRBool bAsyncQuery);
+
+  /**
+   * \brief 
+   *
+   * \sa sbIDatabaseQuery
+   */
+  PRBool isAyncQuery();
+  
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void setPersistentQuery(in PRBool bPersistentQuery);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRBool isPersistentQuery();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void addSimpleQueryCallback(in sbIDatabaseSimpleQueryCallback dbPersistCB);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void removeSimpleQueryCallback(in sbIDatabaseSimpleQueryCallback dbPersistCB);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void setDatabaseGUID(in AString dbGUID);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  AString getDatabaseGUID();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void addQuery(in AString strQuery);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 getQueryCount();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  AString getQuery(in PRInt32 nIndex);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void resetQuery();
+  
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  sbIDatabaseResult getResultObject();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] sbIDatabaseResult getResultObjectOrphan();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 getLastError();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void setLastError(in PRInt32 dbError);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 execute();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 waitForCompletion();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void addCallback(in sbIDatabaseQueryCallback dbCallback);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void removeCallback(in sbIDatabaseQueryCallback dbCallback);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRBool isExecuting();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 currentQuery();
+
+    /**
+   * \brief 
+   *
+   * \return 
+   * \sa sbIDatabaseQuery
+   */
+  PRBool abort();
+};

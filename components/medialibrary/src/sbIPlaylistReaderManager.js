@@ -118,8 +118,8 @@ CPlaylistReaderManager.prototype =
 
       var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       
-      aDBQuery.SetAsyncQuery(false);
-      aDBQuery.SetDatabaseGUID(strGUID);
+      aDBQuery.setAsyncQuery(false);
+      aDBQuery.setDatabaseGUID(strGUID);
 
       var playlist = aPlaylistManager.GetPlaylist(strName, aDBQuery);
       

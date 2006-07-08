@@ -24,15 +24,47 @@
 //
  */
 
+/**
+ * \file sbIDatabaseEngine.idl
+ * \brief 
+ * 
+ * \sa sbIDatabaseQuery.idl, sbIDatabaseResult.idl
+ */
 #include "nsISupports.idl"
 
 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
 [ref] native stlCStringRef(std::string);
 
+/**
+* \interface sbIDatabaseEngine 
+* \brief
+*
+* \sa sbIDatabaseQuery, sbIDatabaseResult
+*/
 [scriptable, uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
 interface sbIDatabaseEngine : nsISupports
 {
-  [noscript] void AddPersistentQuery(in CDatabaseQueryPtr dbQuery, [const] in stlCStringRef strTableName);
-  [noscript] void RemovePersistentQuery(in CDatabaseQueryPtr dbQuery);
-  [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr dbQuery);
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] void AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] void RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
 };

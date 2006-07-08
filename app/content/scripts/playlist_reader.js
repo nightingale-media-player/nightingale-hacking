@@ -123,8 +123,8 @@ function CPlaylistReader()
         var strDestTable = aUUIDGenerator.generateUUID();
         var aDBQuery = new sbIDatabaseQuery();
         
-        aDBQuery.SetAsyncQuery(false);
-        aDBQuery.SetDatabaseGUID(strGUID);
+        aDBQuery.setAsyncQuery(false);
+        aDBQuery.setDatabaseGUID(strGUID);
 
         aPlaylistManager.CreatePlaylist(strDestTable, strName, strDescription, strType, aDBQuery);
 

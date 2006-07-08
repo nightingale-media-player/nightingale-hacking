@@ -48,8 +48,8 @@ try
   var bsMDHandler = null;
 
   var bsCurQuery = new sbIDatabaseQuery();
-  bsCurQuery.SetAsyncQuery( true );
-  bsCurQuery.SetDatabaseGUID( sbDatabaseGUID );
+  bsCurQuery.setAsyncQuery( true );
+  bsCurQuery.setDatabaseGUID( sbDatabaseGUID );
  
   var bsWaitForExecuting = false;
   
@@ -90,8 +90,8 @@ try
       
         // Go start an async query on the library
         bsDBQuery = new sbIDatabaseQuery();
-        bsDBQuery.SetAsyncQuery( true );
-        bsDBQuery.SetDatabaseGUID( sbDatabaseGUID );
+        bsDBQuery.setAsyncQuery( true );
+        bsDBQuery.setDatabaseGUID( sbDatabaseGUID );
 
         // Fire us off in a little bit
         bsWaitForExecuting = true;
@@ -126,7 +126,7 @@ try
       {
         return;
       }
-      if ( ( bsCurQuery ) && ( bsCurQuery.IsExecuting() ) )
+      if ( ( bsCurQuery ) && ( bsCurQuery.isExecuting() ) )
       {
         return;
       }
@@ -150,7 +150,7 @@ try
       if ( ! bsScanningPaused.intValue )
       {
         // So can executing queries, or the media scan.
-        if ( ! bsDBQuery.IsExecuting() && ( SBDataGetIntValue( "media_scan.open" ) == 0 ) )
+        if ( ! bsDBQuery.isExecuting() && ( SBDataGetIntValue( "media_scan.open" ) == 0 ) )
         {
           if ( bsSubmitQueries )
           {
@@ -159,7 +159,7 @@ try
           }
           
           // If we're at the end of the list,
-          var result = bsDBQuery.GetResultObject();
+          var result = bsDBQuery.getResultObject();
           if ( ( result.GetRowCount() == 0 ) || ( bsLastRow >= result.GetRowCount() ) )
           {
             // ...we need to resubmit the query.
@@ -185,9 +185,9 @@ try
   {
     if ( SBDataGetIntValue( "media_scan.open" ) == 0 )
     {
-      bsDBQuery.ResetQuery();
-      bsDBQuery.AddQuery( bsQueryString );
-      var ret = bsDBQuery.Execute();
+      bsDBQuery.resetQuery();
+      bsDBQuery.addQuery( bsQueryString );
+      var ret = bsDBQuery.execute();
       bsWaitForExecuting = false;
       bsLastRow = 0;
     }
@@ -201,7 +201,7 @@ try
   function BSNextTrack()
   {
     // ...otherwise, try the next one.
-    var result = bsDBQuery.GetResultObject();
+    var result = bsDBQuery.getResultObject();
     var count = 0;
     var quit = false;
    
@@ -276,17 +276,17 @@ try
       bsMetadataArray = workMetadataArray;
     
       // Prepare the query
-      bsCurQuery.ResetQuery();
-      bsCurQuery.SetDatabaseGUID( dbGUID );
-      aMediaLibrary.SetQueryObject(bsCurQuery);
+      bsCurQuery.resetQuery();
+      bsCurQuery.setDatabaseGUID( dbGUID );
+      aMediaLibrary.setQueryObject(bsCurQuery);
       
       // Add the metadata
       for ( var i = 0; i < bsMetadataArray.length; i++ )
       {
         // Go submit the metdadata update, and stash the query so we know when the update is done.
-        aMediaLibrary.SetValuesByGUID( bsGUIDArray[i], keys.length, keys, bsMetadataArray[i].length, bsMetadataArray[i], true );
+        aMediaLibrary.setValuesByGUID( bsGUIDArray[i], keys.length, keys, bsMetadataArray[i].length, bsMetadataArray[i], true );
       }
-      bsCurQuery.Execute();
+      bsCurQuery.execute();
 
       // See who is next.  Maybe nobody.      
       bsGUIDArray = saveGUIDArray;
@@ -311,7 +311,7 @@ try
       bsMDHandler = null;
     }
 
-    var result = bsDBQuery.GetResultObject();
+    var result = bsDBQuery.getResultObject();
     var time = result.GetRowCellByColumn( bsLastRow, "length" );
     var title = result.GetRowCellByColumn( bsLastRow, "title" );
     var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );

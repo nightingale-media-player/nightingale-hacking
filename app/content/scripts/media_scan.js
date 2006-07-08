@@ -66,10 +66,10 @@ function onLoad()
       {
         SBDataSetBoolValue( "media_scan.open", true ); // ?  Don't let this go?
       
-        aMediaScanQuery.SetDirectory(window.arguments[0].URL);
-        aMediaScanQuery.SetRecurse(true);
+        aMediaScanQuery.setDirectory(window.arguments[0].URL);
+        aMediaScanQuery.setRecurse(true);
                 
-        aMediaScan.SubmitQuery(aMediaScanQuery);
+        aMediaScan.submitQuery(aMediaScanQuery);
         
         polling_interval = setInterval( onPollScan, 333 );
         
@@ -93,7 +93,7 @@ function onPollScan()
 {
   try
   {
-    if ( !aMediaScanQuery.IsScanning() )
+    if ( !aMediaScanQuery.isScanning() )
     {
       clearInterval( polling_interval );
 
@@ -109,10 +109,10 @@ function onPollScan()
     }   
     else
     {
-      var len = aMediaScanQuery.GetFileCount();
+      var len = aMediaScanQuery.getFileCount();
       if ( len )
       {
-        var value = aMediaScanQuery.GetLastFileFound();
+        var value = aMediaScanQuery.getLastFileFound();
         theLabel.value = ConvertUrlToFolder(value);
       }
     }
@@ -128,11 +128,10 @@ function onScanComplete( mediaScanQuery )
   mediaScanQuery = aMediaScanQuery;
   theProgress.removeAttribute( "mode" );
 
-  if ( mediaScanQuery.GetFileCount() )
+  if ( mediaScanQuery.getFileCount() )
   {
     try
     {
-      //msDBQuery = new sbIDatabaseQuery();
       aMediaLibrary = new MediaLibrary();
       aMediaLibrary = aMediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
             
@@ -141,21 +140,21 @@ function onScanComplete( mediaScanQuery )
         return -1;
       }
       
-      msDBQuery.ResetQuery();
-      msDBQuery.SetAsyncQuery( true );
-      msDBQuery.SetDatabaseGUID( "songbird" );
+      msDBQuery.resetQuery();
+      msDBQuery.setAsyncQuery( true );
+      msDBQuery.setDatabaseGUID( "songbird" );
       
-      aMediaLibrary.SetQueryObject( msDBQuery );
+      aMediaLibrary.setQueryObject( msDBQuery );
 
       // Take the file array and for everything that seems to be a media url, add it to the database.
       var i = 0, count = 0, total = 0;
-      total = aMediaScanQuery.GetFileCount();
+      total = aMediaScanQuery.getFileCount();
 
       for ( i = 0, count = 0; i < total; i++ )
       {
         var the_url = null;
         var is_url = null;
-        the_url = aMediaScanQuery.GetFilePath( i );
+        the_url = aMediaScanQuery.getFilePath( i );
         is_url = IsMediaUrl( the_url );
 
         if ( is_url )
@@ -163,13 +162,12 @@ function onScanComplete( mediaScanQuery )
           var keys = new Array( "title" );
           var values = new Array();
           values.push( MSConvertUrlToDisplayName( the_url ) );
-          aMediaLibrary.AddMedia( the_url, keys.length, keys, values.length, values, false, true );
+          aMediaLibrary.addMedia( the_url, keys.length, keys, values.length, values, false, true );
           aQueryFileArray.push( values[0] );
         }
       }
       
-      count = msDBQuery.GetQueryCount();
-
+      count = msDBQuery.getQueryCount();
       if ( count )
       {
         var adding = "Adding";
@@ -179,7 +177,7 @@ function onScanComplete( mediaScanQuery )
         } catch(e) {}
         theTitle.value = adding + " (" + count + ")";
         theLabel.value = "";
-        msDBQuery.Execute();
+        msDBQuery.execute();
         polling_interval = setInterval( onPollQuery, 333 );
       }
       else
@@ -215,8 +213,8 @@ function onPollQuery()
   {
     if ( msDBQuery )
     {
-      var len = msDBQuery.GetQueryCount();
-      var pos = msDBQuery.CurrentQuery() + 1;
+      var len = msDBQuery.getQueryCount();
+      var pos = msDBQuery.currentQuery() + 1;
 
       lastpos = pos;
       

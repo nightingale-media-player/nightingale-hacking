@@ -33,7 +33,7 @@
 #define __PLAYLIST_READER_M3U_H__
 
 // INCLUDES ===================================================================
-#include "IPlaylistReader.h"
+#include "sbIPlaylistReader.h"
 
 #include <string/nsString.h>
 #include <xpcom/nsIFile.h>

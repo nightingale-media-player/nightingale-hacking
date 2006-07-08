@@ -40,7 +40,8 @@
 #include <nspr/prmon.h>
 
 #include "sbIPlaylistsource.h"
-#include "IDatabaseQuery.h"
+#include "sbIDatabaseQuery.h"
+#include "sbIDatabaseResult.h"
 
 #include <map>
 #include <set>

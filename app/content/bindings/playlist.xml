@@ -334,33 +334,33 @@
 */
         // Get a query object to handle the database transactions.
         aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-        aDBQuery.SetAsyncQuery(false); // hard and slow.  should only have to happen once.
-        aDBQuery.SetDatabaseGUID(guid);
+        aDBQuery.setAsyncQuery(false); // hard and slow.  should only have to happen once.
+        aDBQuery.setDatabaseGUID(guid);
         
         // Get the library interface, make sure there is a default library (fast if already exists)
         const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
         var aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-        aMediaLibrary.SetQueryObject(aDBQuery);
-        aMediaLibrary.CreateDefaultLibrary();
+        aMediaLibrary.setQueryObject(aDBQuery);
+        aMediaLibrary.createDefaultLibrary();
 
         // Make it all go now, please.
-        aDBQuery.Execute();
-        aDBQuery.ResetQuery();
+        aDBQuery.execute();
+        aDBQuery.resetQuery();
         
         // Get the playlist manager, and create the internal playlisting infrastructure.
         var aPlaylistManager = new sbIPlaylistManager();
         aPlaylistManager.CreateDefaultPlaylistManager(aDBQuery);
 
         // Make it all go now, please.
-        aDBQuery.Execute();
-        aDBQuery.ResetQuery();
+        aDBQuery.execute();
+        aDBQuery.resetQuery();
         
         // Make sure we load into something empty
         aPlaylistManager.DeletePlaylist(table, aDBQuery);
         
         // Make it all go now, please.
-        aDBQuery.Execute();
-        aDBQuery.ResetQuery();
+        aDBQuery.execute();
+        aDBQuery.resetQuery();
 
         // Now it is safe to load up that playlist.    
         const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
@@ -417,12 +417,12 @@
         // Find the table in the playlistlist if possible.
         var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
         queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-        queryObj.SetDatabaseGUID(guid);
+        queryObj.setDatabaseGUID(guid);
         var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var playlistManager = new PlaylistManager();
         playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
         playlistManager.GetAllPlaylistList( queryObj );
-        var resultset = queryObj.GetResultObject();
+        var resultset = queryObj.getResultObject();
         for ( var i = 0; i < resultset.GetRowCount(); i++ )
         {
           if ( table == resultset.GetRowCellByColumn( i, "name" ) )
@@ -906,13 +906,13 @@
           {          
             this.m_queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
             this.m_queryObj = this.m_queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-            this.m_queryObj.SetDatabaseGUID(this.guid);
+            this.m_queryObj.setDatabaseGUID(this.guid);
           }
           
           if(this.m_Library == null)
           {
             this.m_Library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-            this.m_Library.SetQueryObject(this.m_queryObj);
+            this.m_Library.setQueryObject(this.m_queryObj);
           }
           
           if(this.m_PlaylistManager == null)
@@ -922,7 +922,7 @@
           
           if(this.table == "library")
           {
-            this.m_Library.GetColumnInfo();
+            this.m_Library.getColumnInfo();
           }
           else
           {
@@ -943,11 +943,11 @@
             }
             else
             {
-              this.m_Library.GetColumnInfo();
+              this.m_Library.getColumnInfo();
             }
           }
           
-          var result = this.m_queryObj.GetResultObject();
+          var result = this.m_queryObj.getResultObject();
 
           // XXXredfive - Row Count is # of columns (19 currently)
           for (var i = 0; i < result.GetRowCount(); i++)
@@ -2252,9 +2252,9 @@
             
             var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
             queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-            queryObj.SetDatabaseGUID("songbird");
+            queryObj.setDatabaseGUID("songbird");
             
-            mediaLibrary.SetQueryObject(queryObj);
+            mediaLibrary.setQueryObject(queryObj);
             
             var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
             var playlistManager = new PlaylistManager();
@@ -2281,12 +2281,12 @@
               // and destination db, so that the insertion can use it later to insert the proper data in the destination db
               if (this.guid != "songbird")
               {
-                mediaLibrary.GetColumnInfo();
-                var destcols = queryObj.GetResultObject();
+                mediaLibrary.getColumnInfo();
+                var destcols = queryObj.getResultObject();
                 
                 var thisPlaylist = playlistManager.GetPlaylist(this.table, this.m_queryObj);
                 thisPlaylist.GetColumnInfo();
-                var srccols = this.m_queryObj.GetResultObject();
+                var srccols = this.m_queryObj.getResultObject();
                 
                 for (var i=0;i<destcols.GetRowCount();i++)
                 {
@@ -2303,7 +2303,7 @@
                   }
                 }
               }
-              queryObj.ResetQuery();
+              queryObj.resetQuery();
               var params = Array(mediaLibrary, thePlaylist, urlcolumn, uuidcolumn, metadataintersection_ids, metadataintersection_cols);
               this._addedtolibrary_count = 0;
               this._existedinlibrary_count = 0;
@@ -2312,7 +2312,7 @@
               else
                 this.processSelection(this.processSelection_addToPlaylistOrLibrary, params);
                 
-              queryObj.Execute();
+              queryObj.execute();
             }
             else
             {
@@ -2408,7 +2408,7 @@
               if (metadataintersection_cols.length != 0)
               {
                 var values = new Array();
-                if (mediaLibrary.FindByURL(url) != null) 
+                if (mediaLibrary.findByURL(url) != null) 
                 {
                   _this._existedinlibrary_count++;
                 }
@@ -2422,13 +2422,13 @@
                 {
                   values.push(_this.tree.view.getCellText( item, metadataintersection_cols[i] ));
                 }
-                guid = mediaLibrary.AddMedia( url, metadataintersection_ids.length, metadataintersection_ids, values.length, values, false, true );
+                guid = mediaLibrary.addMedia( url, metadataintersection_ids.length, metadataintersection_ids, values.length, values, false, true );
               }
               else
               {
                 // item is already in destination library, but we didnt have a uuid column, 
                 // ask the library for the guid associated with this url
-                guid = mediaLibrary.AddMedia( url, 0, null, 0, null, false, true );
+                guid = mediaLibrary.addMedia( url, 0, null, 0, null, false, true );
               }
             }
             
@@ -2459,11 +2459,11 @@
                 const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
                 var library = new MediaLibrary();    
                 library = library.QueryInterface(Components.interfaces.sbIMediaLibrary);
-                library.SetQueryObject(this.m_queryObj);
+                library.setQueryObject(this.m_queryObj);
 
                 var params = Array(library, column);
                 this.processSelection(this.processSelection_removeTracksFromLibrary, params);
-                this.m_queryObj.Execute();
+                this.m_queryObj.execute();
                 // problem: playlists containing the tracks we just removed now show these items as blank, we could prompt the user to tell him that these tracks
                 //          are in existing playlists and ask for confirmation, then remove the items from the playlists as well, but it might get very slow for 
                 //          lots of selected items/lots of playlists (even just the check may be real slow)
@@ -2488,7 +2488,7 @@
                 {
                   var params = Array(playlist, column);
                   this.processSelection(this.processSelection_removeTracksFromPlaylist, params);
-                  this.m_queryObj.Execute();
+                  this.m_queryObj.execute();
                 }
                 else
                 {
@@ -2516,7 +2516,7 @@
                   {
                     var params = Array(playlist, column);
                     this.processSelection(this.processSelection_removeTracksFromSimplePlaylist, params);
-                    this.m_queryObj.Execute();
+                    this.m_queryObj.execute();
                   }
                   else
                   {
@@ -2556,7 +2556,7 @@
             var mediaLibrary = params[0];
             var column = params[1];
             var guid = _this.tree.view.getCellText( item, column );
-            mediaLibrary.RemoveMediaByGUID(guid, true);
+            mediaLibrary.removeMediaByGUID(guid, true);
           }
           catch( err )
           {
@@ -2818,11 +2818,11 @@
             if ( ! aDBQuery || ! aMediaLibrary)
               return;
             
-            aDBQuery.SetAsyncQuery(true);
-            aDBQuery.SetDatabaseGUID(this.guid);
-            aMediaLibrary.SetQueryObject(aDBQuery);
+            aDBQuery.setAsyncQuery(true);
+            aDBQuery.setDatabaseGUID(this.guid);
+            aMediaLibrary.setQueryObject(aDBQuery);
             
-            aMediaLibrary.SetValueByGUID(filter_value, the_table_column, the_new_value, false);
+            aMediaLibrary.setValueByGUID(filter_value, the_table_column, the_new_value, false);
           }
           catch (err)
           {

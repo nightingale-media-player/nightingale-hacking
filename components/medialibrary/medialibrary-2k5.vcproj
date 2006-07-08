@@ -29,10 +29,10 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt&#x0D;&#x0A;"
-				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
-				Outputs="$(OutDir)\sbMediaLibrary.xpt"
+				Description="XPT Linking: sbIMediaLibrary.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt $(ProjectDir)$(OutDir)\sbIPlaylistPlayback.xpt&#x0D;&#x0A;"
+				AdditionalDependencies="$(OutDir)\sbIPlaylist.xpt"
+				Outputs="$(OutDir)\sbIMediaLibrary.xpt"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -105,7 +105,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbIMediaLibrary.xpt $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -122,10 +122,10 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\IDatabaseEngine.xpt $(ProjectDir)$(OutDir)\IDatabaseQuery.xpt $(ProjectDir)$(OutDir)\IDatabaseResult.xpt $(ProjectDir)$(OutDir)\IMediaLibrary.xpt $(ProjectDir)$(OutDir)\IPlaylist.xpt $(ProjectDir)$(OutDir)\IPlaylistReader.xpt $(ProjectDir)$(OutDir)\IPlaylistWriter.xpt $(ProjectDir)$(OutDir)\IPlaylistPlayback.xpt&#x0D;&#x0A;"
+				Description="XPT Linking: sbIMediaLibrary.xpt"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt $(ProjectDir)$(OutDir)\sbIPlaylistPlayback.xpt&#x0D;&#x0A;"
 				AdditionalDependencies="$(OutDir)\IPlaylist.xpt"
-				Outputs="$(OutDir)\sbMediaLibrary.xpt"
+				Outputs="$(OutDir)\sbIMediaLibrary.xpt"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -193,7 +193,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbIMediaLibrary.xpt $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -204,7 +204,7 @@
 			Name="public"
 			>
 			<File
-				RelativePath=".\public\IDatabaseEngine.idl"
+				RelativePath=".\public\sbIDatabaseEngine.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -228,7 +228,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IDatabaseQuery.idl"
+				RelativePath=".\public\sbIDatabaseQuery.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -252,7 +252,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IDatabaseResult.idl"
+				RelativePath=".\public\sbIDatabaseResult.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -276,7 +276,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IMediaLibrary.idl"
+				RelativePath=".\public\sbIMediaLibrary.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -300,7 +300,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylist.idl"
+				RelativePath=".\public\sbIPlaylist.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -324,7 +324,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylistPlayback.idl"
+				RelativePath=".\public\sbIPlaylistPlayback.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -348,7 +348,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylistReader.idl"
+				RelativePath=".\public\sbIPlaylistReader.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -372,7 +372,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\public\IPlaylistWriter.idl"
+				RelativePath=".\public\sbIPlaylistWriter.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -455,28 +455,6 @@
 						Name="VCCustomBuildTool"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
 						AdditionalDependencies=""
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\src\sbIMediaLibrary.js"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
 					/>
 				</FileConfiguration>
@@ -681,6 +659,28 @@
 			</File>
 			<File
 				RelativePath=".\src\sbISmartPlaylist.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbMediaLibrary.js"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

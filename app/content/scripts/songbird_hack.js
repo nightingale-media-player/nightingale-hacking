@@ -192,12 +192,12 @@ function SBInitialize()
     {
       aDBQuery = aDBQuery.createInstance();
       aDBQuery = aDBQuery.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-      aDBQuery.SetAsyncQuery(false);
-      aDBQuery.SetDatabaseGUID("testdb-0000");
-      aDBQuery.AddQuery("create table test (idx integer primary key autoincrement, url text, name text, tim text, artist text, album text, genre text)");
-      aDBQuery.AddQuery("create index testindex on test(idx, url, name, tim, artist, album, genre)");
+      aDBQuery.setAsyncQuery(false);
+      aDBQuery.setDatabaseGUID("testdb-0000");
+      aDBQuery.addQuery("create table test (idx integer primary key autoincrement, url text, name text, tim text, artist text, album text, genre text)");
+      aDBQuery.addQuery("create index testindex on test(idx, url, name, tim, artist, album, genre)");
       
-      var ret = aDBQuery.Execute();
+      var ret = aDBQuery.execute();
       
       // If it actually worked, that means we created the database
       // ask the user if they would like to fill their empty bucket.
@@ -312,7 +312,7 @@ function SBInitialize()
       
       function PollMetadata( )
       {
-        if ( aMetadataHandler.IsExecuting() )
+        if ( aMetadataHandler.isExecuting() )
         {
           setTimeout( PollMetadata, 500 );
         }
@@ -605,8 +605,8 @@ function onServiceTreeCommand( theEvent )
           aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
           var aDBQuery = new sbIDatabaseQuery();
           
-          aDBQuery.SetAsyncQuery(false);
-          aDBQuery.SetDatabaseGUID(guid);
+          aDBQuery.setAsyncQuery(false);
+          aDBQuery.setDatabaseGUID(guid);
 
           switch ( base_type )
           {
@@ -780,8 +780,8 @@ function onServiceEditChange( evt )
           var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
           var aDBQuery = new sbIDatabaseQuery();
           
-          aDBQuery.SetAsyncQuery(false);
-          aDBQuery.SetDatabaseGUID(guid);
+          aDBQuery.setAsyncQuery(false);
+          aDBQuery.setDatabaseGUID(guid);
           
           var playlist = null;
           
@@ -1961,17 +1961,17 @@ function onPlaylistEditChange( evt )
     if ( ! aDBQuery || ! aMediaLibrary)
       return;
     
-    aDBQuery.SetAsyncQuery(true);
-    aDBQuery.SetDatabaseGUID(theCurrentlyEditingPlaylist.guid);
-    aMediaLibrary.SetQueryObject(aDBQuery);
+    aDBQuery.setAsyncQuery(true);
+    aDBQuery.setDatabaseGUID(theCurrentlyEditingPlaylist.guid);
+    aMediaLibrary.setQueryObject(aDBQuery);
     
-    aMediaLibrary.SetValueByGUID(filter_value, the_table_column, the_new_value, false);
+    aMediaLibrary.setValueByGUID(filter_value, the_table_column, the_new_value, false);
     
     //var table = "library" // hmm... // theCurrentlyEditingPlaylist.table;
     //var q = 'update ' + table + ' set ' + the_table_column + '="' + the_new_value + '" where ' + filter + '="' + filter_value + '"';
-    //aDBQuery.AddQuery( q );
+    //aDBQuery.addQuery( q );
     
-    //var ret = aDBQuery.Execute();
+    //var ret = aDBQuery.execute();
     
     HidePlaylistEdit();
   }
@@ -2345,7 +2345,7 @@ function SBNewPlaylist()
   {
     SBScanServiceTreeNewEntryEditable();
     var query = new sbIDatabaseQuery();
-    query.SetDatabaseGUID( "songbird" );
+    query.setDatabaseGUID( "songbird" );
     var playlistmanager = new sbIPlaylistManager();
     var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
     var playlistguid = aUUIDGenerator.generateUUID();
@@ -2474,8 +2474,8 @@ function SBSubscribe( url, guid, table, readable_name )
       var aPlaylistManager = new PlaylistManager();
       aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
       var aDBQuery = new sbIDatabaseQuery();
-      aDBQuery.SetAsyncQuery(false);
-      aDBQuery.SetDatabaseGUID(guid);
+      aDBQuery.setAsyncQuery(false);
+      aDBQuery.setDatabaseGUID(guid);
       aPlaylistManager.DeletePlaylist( table, aDBQuery );
     }
 
@@ -2755,8 +2755,8 @@ var theDownloadListener =
   CreateQueryObj: function()
   {
     this.m_queryObj = new sbIDatabaseQuery();
-    this.m_queryObj.SetAsyncQuery(true);
-    this.m_queryObj.SetDatabaseGUID("songbird");
+    this.m_queryObj.setAsyncQuery(true);
+    this.m_queryObj.setDatabaseGUID("songbird");
   },
 
   CreateLibraryObj: function()
@@ -2769,7 +2769,7 @@ var theDownloadListener =
       if(this.m_queryObj == null)
           this.CreateQueryObj();
         
-      this.m_libraryObj.SetQueryObject(this.m_queryObj);
+      this.m_libraryObj.setQueryObject(this.m_queryObj);
     }
   },
   
@@ -2800,7 +2800,7 @@ var theDownloadListener =
       aLocalFile.initWithPath(destinationURL);
     
       aValues.push(aLocalFile.leafName);
-      this.m_libraryObj.AddMedia(destinationURL, aKeys.length, aKeys, aValues.length, aValues, false, false);
+      this.m_libraryObj.addMedia(destinationURL, aKeys.length, aKeys, aValues.length, aValues, false, false);
     }
   }
 };
@@ -3510,8 +3510,8 @@ var theCDListener =
   CreateQueryObj: function()
   {
     this.m_queryObj = new sbIDatabaseQuery();
-    this.m_queryObj.SetAsyncQuery(true);
-    this.m_queryObj.SetDatabaseGUID("songbird");
+    this.m_queryObj.setAsyncQuery(true);
+    this.m_queryObj.setDatabaseGUID("songbird");
   },
 
   CreateLibraryObj: function()
@@ -3524,7 +3524,7 @@ var theCDListener =
       if(this.m_queryObj == null)
           this.CreateQueryObj();
         
-      this.m_libraryObj.SetQueryObject(this.m_queryObj);
+      this.m_libraryObj.setQueryObject(this.m_queryObj);
     }
   },
   

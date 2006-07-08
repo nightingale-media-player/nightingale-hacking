@@ -448,13 +448,13 @@
             var mediaLibrary =
                 Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
                 .createInstance( Components.interfaces.sbIMediaLibrary );
-            metadataDBQuery.SetAsyncQuery( false );
-            metadataDBQuery.SetDatabaseGUID( "songbird" );
-            mediaLibrary.SetQueryObject( metadataDBQuery );
-            mediaLibrary.GetColumnInfo();
+            metadataDBQuery.setAsyncQuery( false );
+            metadataDBQuery.setDatabaseGUID( "songbird" );
+            mediaLibrary.setQueryObject( metadataDBQuery );
+            mediaLibrary.getColumnInfo();
 
             // And, here, hopefully we have some column info.
-            var resultset = metadataDBQuery.GetResultObject();
+            var resultset = metadataDBQuery.getResultObject();
             var rowcount = resultset.GetRowCount();
             const kName = "readable_name";
             const kColumn = "column_name";

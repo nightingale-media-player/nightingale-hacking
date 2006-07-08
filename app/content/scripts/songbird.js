@@ -507,13 +507,13 @@ function SBInitializeNamedDatabase( db_name )
   {
     // Make an async database query object for the main songbird database
     var aDBQuery = new sbIDatabaseQuery();
-    aDBQuery.SetAsyncQuery(true);
-    aDBQuery.SetDatabaseGUID(db_name);
+    aDBQuery.setAsyncQuery(true);
+    aDBQuery.setDatabaseGUID(db_name);
     
     // Get the library interface, and create the library through the query
     var aMediaLibrary = new sbIMediaLibrary();    
-    aMediaLibrary.SetQueryObject(aDBQuery);
-    aMediaLibrary.CreateDefaultLibrary();
+    aMediaLibrary.setQueryObject(aDBQuery);
+    aMediaLibrary.createDefaultLibrary();
     
     // Ger the playlist manager, and create the internal playlisting infrastructure.
     var aPlaylistManager = new sbIPlaylistManager();

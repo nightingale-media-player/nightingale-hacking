@@ -93,8 +93,8 @@ CPlaylistReaderListener.prototype =
         var dpDownloadTable = SB_NewDataRemote( "download.table", null );
 
         var dbQuery = new this.sbIDatabaseQuery();
-        dbQuery.SetDatabaseGUID(this.serviceGuid);
-        dbQuery.SetAsyncQuery(false);
+        dbQuery.setDatabaseGUID(this.serviceGuid);
+        dbQuery.setAsyncQuery(false);
         var playlist = aPlaylistManager.GetDynamicPlaylist(this.destinationTable, dbQuery);
         
         if(playlist)

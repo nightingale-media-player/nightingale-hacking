@@ -91,9 +91,9 @@ function WFInit()
   wfMediaScanQuery = new sbIMediaScanQuery();
   wfQuery = new sbIDatabaseQuery();
   
-  wfQuery.SetAsyncQuery(true);
-  wfQuery.SetDatabaseGUID("songbird");
-  wfMediaLibrary.SetQueryObject(wfQuery);
+  wfQuery.setAsyncQuery(true);
+  wfQuery.setDatabaseGUID("songbird");
+  wfMediaLibrary.setQueryObject(wfQuery);
   
   wfManager.CreateWatchFolderManager();
   
@@ -120,10 +120,10 @@ function onWFWakeUpScan()
       wfCurrentFolder = 0;
       wfCurrentFolderList = aFolders;
       
-      wfMediaScanQuery.SetDirectory(aFolders[0]);
-      wfMediaScanQuery.SetRecurse(true);
+      wfMediaScanQuery.setDirectory(aFolders[0]);
+      wfMediaScanQuery.setRecurse(true);
       
-      wfMediaScan.SubmitQuery(wfMediaScanQuery);
+      wfMediaScan.submitQuery(wfMediaScanQuery);
       wfPollScanTimer = setInterval(onWFPollScan, 333);
     }
   }
@@ -131,7 +131,7 @@ function onWFWakeUpScan()
 
 function onWFPollScan()
 {
-  if(!wfMediaScanQuery.IsScanning())
+  if(!wfMediaScanQuery.isScanning())
   {
     clearInterval(wfPollScanTimer);
     onWFScanComplete();
@@ -145,12 +145,12 @@ function onWFScanComplete()
 
 function onWFLibraryAdd()
 {
-  if(wfQuery.IsExecuting())
+  if(wfQuery.isExecuting())
     return;
     
   if(wfIsProcessing)
   {
-    wfQuery.ResetQuery();
+    wfQuery.resetQuery();
     wfIsProcessing = false;
   }
 
@@ -167,11 +167,11 @@ function onWFLibraryAdd()
           
       values.push( ConvertUrlToDisplayName( strURL ) );
       
-      wfMediaLibrary.AddMedia(strURL, keys.length, keys, values.length, values, false, true);
+      wfMediaLibrary.addMedia(strURL, keys.length, keys, values.length, values, false, true);
       
-      if(wfQuery.GetQueryCount() > wfMaxTracksBeforeProcess)
+      if(wfQuery.getQueryCount() > wfMaxTracksBeforeProcess)
       {
-        wfQuery.Execute();
+        wfQuery.execute();
         wfIsProcessing = true;
       }
     }
@@ -180,32 +180,32 @@ function onWFLibraryAdd()
     
     return;
   }
-  else if(wfQuery.GetQueryCount() > 0)
+  else if(wfQuery.getQueryCount() > 0)
   {
-    dump("Dumping left overs. Count: " + wfQuery.GetQueryCount() + "\n");
+    dump("Dumping left overs. Count: " + wfQuery.getQueryCount() + "\n");
     
-    wfQuery.Execute();
+    wfQuery.execute();
     wfIsProcessing = true;
   }
   else if(wfCurrentFolder + 1 < wfCurrentFolderList.length)
   {
     clearInterval(wfMediaLibraryAddTimer);
     
-    wfQuery.ResetQuery();
+    wfQuery.resetQuery();
     wfCurrentFile = 0;
     wfCurrentFolder++;
 
-    wfMediaScanQuery.SetDirectory(wfCurrentFolderList[wfCurrentFolder]);
-    wfMediaScanQuery.SetRecurse(true);
+    wfMediaScanQuery.setDirectory(wfCurrentFolderList[wfCurrentFolder]);
+    wfMediaScanQuery.setRecurse(true);
       
-    wfMediaScan.SubmitQuery(wfMediaScanQuery);
+    wfMediaScan.submitQuery(wfMediaScanQuery);
     wfPollScanTimer = setInterval(onWFPollScan, 333);
   }
   else
   {
     clearInterval(wfMediaLibraryAddTimer);
 
-    wfQuery.ResetQuery();
+    wfQuery.resetQuery();
     wfCurrentFile = 0;
     wfCurrentFolder = 0;
     wfCurrentFolderList = new Array();
@@ -226,14 +226,14 @@ function CWatchFolderManager()
     var watchFolderCreate = "CREATE TABLE " + this.m_watchFolderTable + " (folder TEXT UNIQUE NOT NULL)";
     var watchFolderSettingsCreate = "CREATE TABLE " + this.m_watchFolderSettingsTable + " (name TEXT UNIQUE NOT NULL, value TEXT NOT NULL DEFAULT '')";
     
-    this.m_queryObj.SetAsyncQuery(false);
-    this.m_queryObj.SetDatabaseGUID(this.m_watchDBGUID);
-    this.m_queryObj.ResetQuery();
+    this.m_queryObj.setAsyncQuery(false);
+    this.m_queryObj.setDatabaseGUID(this.m_watchDBGUID);
+    this.m_queryObj.resetQuery();
     
-    this.m_queryObj.AddQuery(watchFolderSettingsCreate);
-    this.m_queryObj.AddQuery(watchFolderCreate);    
+    this.m_queryObj.addQuery(watchFolderSettingsCreate);
+    this.m_queryObj.addQuery(watchFolderCreate);    
     
-    this.m_queryObj.Execute();
+    this.m_queryObj.execute();
   }
   
   this.AddWatchFolder = function AddWatchFolder(strFolder)
@@ -248,13 +248,13 @@ function CWatchFolderManager()
     var folderCount = 0;
     if(aFolders.length)
     {
-      this.m_queryObj.ResetQuery();
+      this.m_queryObj.resetQuery();
       for(var i = 0; i < aFolders.length; i++)
       {
-        this.m_queryObj.AddQuery("INSERT OR REPLACE INTO " + this.m_watchFolderTable + " VALUES (\"" + aFolders[i] + "\")");
+        this.m_queryObj.addQuery("INSERT OR REPLACE INTO " + this.m_watchFolderTable + " VALUES (\"" + aFolders[i] + "\")");
         ++folderCount;
       }
-      this.m_queryObj.Execute();
+      this.m_queryObj.execute();
     }
     
     return folderCount;
@@ -262,16 +262,16 @@ function CWatchFolderManager()
   
   this.SetWatchFolder = function SetWatchFolder(strOldFolder, strNewFolder)
   {
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("UPDATE " + this.m_watchFolderTable + " SET folder = \"" + strNewFolder + "\" WHERE folder = \"" + strOldFolder + "\"");
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("UPDATE " + this.m_watchFolderTable + " SET folder = \"" + strNewFolder + "\" WHERE folder = \"" + strOldFolder + "\"");
+    this.m_queryObj.execute();
   }
   
   this.RemoveWatchFolder = function RemoveWatchFolder(strFolder)
   {
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("DELETE FROM " + this.m_watchFolderTable + " WHERE folder = \"" + strFolder + "\"");
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("DELETE FROM " + this.m_watchFolderTable + " WHERE folder = \"" + strFolder + "\"");
+    this.m_queryObj.execute();
   }
 
   this.RemoveWatchFolders = function RemoveWatchFolders(aFolders)
@@ -280,13 +280,13 @@ function CWatchFolderManager()
     
     if(aFolders.length)
     {
-      this.m_queryObj.ResetQuery();
+      this.m_queryObj.resetQuery();
       for(var i = 0; i < aFolders.length; i++)
       {
-        this.m_queryObj.AddQuery("DELETE FROM " + this.m_watchFolderTable + " WHERE folder = \"" + aFolders[i] + "\"");
+        this.m_queryObj.addQuery("DELETE FROM " + this.m_watchFolderTable + " WHERE folder = \"" + aFolders[i] + "\"");
         folderCount++;
       }
-      this.m_queryObj.Execute();
+      this.m_queryObj.execute();
     }
     
     return folderCount;
@@ -294,19 +294,19 @@ function CWatchFolderManager()
 
   this.RemoveAllWatchFolders = function RemoveAllWatchFolders()
   {
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("DELETE FROM " + this.m_watchFolderTable);
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("DELETE FROM " + this.m_watchFolderTable);
+    this.m_queryObj.execute();
   }
 
   this.GetWatchFolderCount = function GetWatchFolderCount()
   {
     var folderCount = 0;
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("SELECT COUNT(folder) FROM " + this.m_watchFolderTable);
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("SELECT COUNT(folder) FROM " + this.m_watchFolderTable);
+    this.m_queryObj.execute();
     
-    var resObj = this.m_queryObj.GetResultObject();
+    var resObj = this.m_queryObj.eetResultObject();
     if(resObj.GetRowCount())
       folderCount = parseInt(resObj.GetRowCell(0, 0));
       
@@ -317,11 +317,11 @@ function CWatchFolderManager()
   {
     var aFolders = new Array();
     
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("SELECT folder FROM " + this.m_watchFolderTable);
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("SELECT folder FROM " + this.m_watchFolderTable);
+    this.m_queryObj.execute();
     
-    var resObj = this.m_queryObj.GetResultObject();
+    var resObj = this.m_queryObj.getResultObject();
     var rowCount = resObj.GetRowCount();
     if(rowCount)
     {
@@ -339,11 +339,11 @@ function CWatchFolderManager()
   {
     var scanInterval = 0;
     
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("SELECT value FROM " + this.m_watchFolderSettingsTable + " WHERE name = 'scan_interval'");
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("SELECT value FROM " + this.m_watchFolderSettingsTable + " WHERE name = 'scan_interval'");
+    this.m_queryObj.execute();
     
-    var resObj = this.m_queryObj.GetResultObject();
+    var resObj = this.m_queryObj.getResultObject();
     if(resObj.GetRowCount())
       scanInterval = parseInt(resObj.GetRowCell(0, 0));
     
@@ -352,20 +352,20 @@ function CWatchFolderManager()
   
   this.SetFolderScanInterval = function SetFolderScanInterval(scanInterval)
   {
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("INSERT OR REPLACE INTO " + this.m_watchFolderSettingsTable + " VALUES ('scan_interval', '" + scanInterval + "')");
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("INSERT OR REPLACE INTO " + this.m_watchFolderSettingsTable + " VALUES ('scan_interval', '" + scanInterval + "')");
+    this.m_queryObj.execute();
   }
   
   this.GetFolderLastScanTime = function GetFolderLastScanTime()
   {
     var lastScanTime = 0;
     
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("SELECT value FROM " + this.m_watchFolderSettingsTable + " WHERE name = 'last_scan_time'");
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("SELECT value FROM " + this.m_watchFolderSettingsTable + " WHERE name = 'last_scan_time'");
+    this.m_queryObj.execute();
     
-    var resObj = this.m_queryObj.GetResultObject();
+    var resObj = this.m_queryObj.getResultObject();
     if(resObj.GetRowCount())
       lastScanTime = parseInt(resObj.GetRowCell(0, 0));
     
@@ -375,9 +375,9 @@ function CWatchFolderManager()
   this.SetFolderLastScanTime = function SetFolderLastScanTime()
   {
     var dNow = new Date();
-    this.m_queryObj.ResetQuery();
-    this.m_queryObj.AddQuery("INSERT OR REPLACE INTO " + this.m_watchFolderSettingsTable + " VALUES ('last_scan_time', '" + dNow.getTime() + "')");
-    this.m_queryObj.Execute();
+    this.m_queryObj.resetQuery();
+    this.m_queryObj.addQuery("INSERT OR REPLACE INTO " + this.m_watchFolderSettingsTable + " VALUES ('last_scan_time', '" + dNow.getTime() + "')");
+    this.m_queryObj.execute();
   }
 }
 

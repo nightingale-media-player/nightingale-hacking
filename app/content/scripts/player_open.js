@@ -189,12 +189,12 @@ try
           return false;
         }
         
-        aDBQuery.SetAsyncQuery(false);
-        aDBQuery.SetDatabaseGUID("testdb-0000");
-        aDBQuery.AddQuery('select * from test where url="' + the_url + '"' );
-        var ret = aDBQuery.Execute();
+        aDBQuery.setAsyncQuery(false);
+        aDBQuery.setDatabaseGUID("testdb-0000");
+        aDBQuery.addQuery('select * from test where url="' + the_url + '"' );
+        var ret = aDBQuery.execute();
         
-        resultset = aDBQuery.GetResultObject();
+        resultset = aDBQuery.getResultObject();
        
         // we didn't find anything that matches our url
         if ( resultset.GetRowCount() != 0 )

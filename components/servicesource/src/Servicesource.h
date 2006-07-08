@@ -38,7 +38,7 @@
 #include "nsIRDFLiteral.h"
 #include "sbIServicesource.h"
 
-#include "IDatabaseQuery.h"
+#include "sbIDatabaseQuery.h"
 
 #include <map>
 #include <set>

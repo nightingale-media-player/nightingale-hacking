@@ -257,15 +257,15 @@ CPlaylistHTML.prototype =
       if ( links_array.length > 0 )
       {
         var pQuery = new this.sbIDatabaseQuery();
-        pQuery.SetAsyncQuery(true);
-        pQuery.SetDatabaseGUID(strGUID);
+        pQuery.setAsyncQuery(true);
+        pQuery.setDatabaseGUID(strGUID);
 
         const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
         var pLibrary = new MediaLibrary();
         const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var pPlaylistManager = new PlaylistManager();
         
-        pLibrary.SetQueryObject(pQuery);
+        pLibrary.setQueryObject(pQuery);
         pPlaylist = pPlaylistManager.GetPlaylist(strDestTable, pQuery);
         
         dump( "***** strDestTable - " + strDestTable + "    strGUID - " + strGUID + "    pPlaylist - " + pPlaylist + "\n" );
@@ -291,13 +291,13 @@ CPlaylistHTML.prototype =
             var aMetaKeys = new Array("title");
             var aMetaValues = new Array( this.ConvertUrlToDisplayName( url ) );
 
-            var guid = pLibrary.AddMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
+            var guid = pLibrary.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
             pPlaylist.AddByGUID( guid, strGUID, -1, replace, true );
             
             inserted.push( url );
           }
         }
-        pQuery.Execute();
+        pQuery.execute();
         retval = true;
       }
       return retval;

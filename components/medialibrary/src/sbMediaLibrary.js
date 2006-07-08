@@ -63,30 +63,30 @@ CMediaLibrary.prototype =
 {
   m_queryObject: null,
   
-  SetQueryObject: function(queryObj)
+  setQueryObject: function(queryObj)
   {
     this.m_queryObject = queryObj; 
     return;
   },
   
-  GetQueryObject: function()
+  getQueryObject: function()
   {
     return this.m_queryObject;
   },
 
-  CreateDefaultLibrary: function()
+  createDefaultLibrary: function()
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
+      this.m_queryObject.resetQuery();
       
       //Create the Library Description Table.
-      this.m_queryObject.AddQuery(LIBRARY_DESC_TABLE_CREATE);
+      this.m_queryObject.addQuery(LIBRARY_DESC_TABLE_CREATE);
       
       //Create the Library Table.
-      this.m_queryObject.AddQuery(LIBRARY_TABLE_CREATE);
+      this.m_queryObject.addQuery(LIBRARY_TABLE_CREATE);
       //Create the Library Index.
-      this.m_queryObject.AddQuery(LIBRARY_TABLE_CREATE_INDEX);
+      this.m_queryObject.addQuery(LIBRARY_TABLE_CREATE_INDEX);
 
       // Strings beginning with & are translated in the UI.
       var id = ( "&metadata.id" );
@@ -127,40 +127,40 @@ CMediaLibrary.prototype =
       
       */
       
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"id\", \"" + id + "\", 1, 0, 0, 0, -1, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"row_id\", \"" + row_id + "\", 1, 1, 0, -10000, 4, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"uuid\", \"" + uuid + "\", 1, 0, 0, 0, -1, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"service_uuid\", \"" + service_uuid + "\", 1, 0, 0, 0, -1, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"url\", \"" + url + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"content_type\", \"" + content_type + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"length\", \"" + length + "\", 1, 1, 1, -8000, 4, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"artist\", \"" + artist + "\", 1, 1, 1, -7000, 25, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"title\", \"" + title + "\", 1, 1, 1, -9000, 60, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"album\", \"" + album + "\", 1, 1, 1, -6000, 25, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"genre\", \"" + genre + "\", 1, 1, 1, -5000, 10, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"composer\", \"" + composer + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"producer\", \"" + producer + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"rating\", \"" + rating + "\", 1, 1, 1, 1000, 10, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_no\", \"" + track_no + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_total\", \"" + track_total + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_no\", \"" + disc_no + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_total\", \"" + disc_total + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"year\", \"" + year + "\", 1, 0, 1, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"id\", \"" + id + "\", 1, 0, 0, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"row_id\", \"" + row_id + "\", 1, 1, 0, -10000, 4, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"uuid\", \"" + uuid + "\", 1, 0, 0, 0, -1, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"service_uuid\", \"" + service_uuid + "\", 1, 0, 0, 0, -1, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"url\", \"" + url + "\", 1, 0, 1, 0, -1, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"content_type\", \"" + content_type + "\", 1, 0, 1, 0, -1, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"length\", \"" + length + "\", 1, 1, 1, -8000, 4, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"artist\", \"" + artist + "\", 1, 1, 1, -7000, 25, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"title\", \"" + title + "\", 1, 1, 1, -9000, 60, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"album\", \"" + album + "\", 1, 1, 1, -6000, 25, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"genre\", \"" + genre + "\", 1, 1, 1, -5000, 10, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"composer\", \"" + composer + "\", 1, 0, 1, 0, -1, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"producer\", \"" + producer + "\", 1, 0, 1, 0, -1, 'text')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"rating\", \"" + rating + "\", 1, 1, 1, 1000, 10, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_no\", \"" + track_no + "\", 1, 0, 1, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_total\", \"" + track_total + "\", 1, 0, 1, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_no\", \"" + disc_no + "\", 1, 0, 1, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_total\", \"" + disc_total + "\", 1, 0, 1, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"year\", \"" + year + "\", 1, 0, 1, 0, -1, 'numeric')");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
     }
     
     return;
   },
 
-  AddMedia: function(strMediaURL, nMetaKeyCount, aMetaKeys, nMetadataValueCount, aMetadataValues, bCheckForUniqueFileName, bWillRunLater)
+  addMedia: function(strMediaURL, nMetaKeyCount, aMetaKeys, nMetadataValueCount, aMetadataValues, bCheckForUniqueFileName, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
       var guid = aUUIDGenerator.generateUUID();
-      var dbguid = this.m_queryObject.GetDatabaseGUID();
+      var dbguid = this.m_queryObject.getDatabaseGUID();
       var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       var strQuery = "SELECT uuid FROM library WHERE ";
       
@@ -181,16 +181,16 @@ CMediaLibrary.prototype =
         strQuery += "url = \"" + strMediaURL + "\"";
       }
       
-      aDBQuery.SetAsyncQuery(true);
-      aDBQuery.SetDatabaseGUID(dbguid);
+      aDBQuery.setAsyncQuery(true);
+      aDBQuery.setDatabaseGUID(dbguid);
       
-      aDBQuery.ResetQuery();
-      aDBQuery.AddQuery(strQuery);
+      aDBQuery.resetQuery();
+      aDBQuery.addQuery(strQuery);
       
-      aDBQuery.Execute();
-      aDBQuery.WaitForCompletion();
+      aDBQuery.execute();
+      aDBQuery.waitForCompletion();
 
-      var resObj = aDBQuery.GetResultObject();
+      var resObj = aDBQuery.getResultObject();
       if(resObj.GetRowCount() > 0)
       {
         guid = resObj.GetRowCell(0, 0);
@@ -224,14 +224,14 @@ CMediaLibrary.prototype =
       }
         
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
      
       return guid;
@@ -240,19 +240,19 @@ CMediaLibrary.prototype =
     return "";
   },
   
-  RemoveMediaByURL: function(strMediaURL, bWillRunLater)
+  removeMediaByURL: function(strMediaURL, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
     
-      this.m_queryObject.AddQuery("DELETE FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + strMediaURL + "\"");
+      this.m_queryObject.addQuery("DELETE FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + strMediaURL + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -261,23 +261,23 @@ CMediaLibrary.prototype =
     return false;
   },
   
-  RemoveMediaByGUID: function(mediaGUID, bWillRunLater)
+  removeMediaByGUID: function(mediaGUID, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
         
-      this.m_queryObject.AddQuery("DELETE FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
+      this.m_queryObject.addQuery("DELETE FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
       
       const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-      aPlaylistManager.PurgeTrackByGUIDFromPlaylists(mediaGUID, this.m_queryObject.GetDatabaseGUID());
+      aPlaylistManager.PurgeTrackByGUIDFromPlaylists(mediaGUID, this.m_queryObject.getDatabaseGUID());
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -286,19 +286,19 @@ CMediaLibrary.prototype =
     return false;
   },
   
-  PurgeDefaultLibrary : function( bWillRunLater)
+  purgeDefaultLibrary : function( bWillRunLater )
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
         
-      this.m_queryObject.AddQuery("DELETE FROM " + LIBRARY_TABLE_NAME );
+      this.m_queryObject.addQuery("DELETE FROM " + LIBRARY_TABLE_NAME );
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -307,72 +307,72 @@ CMediaLibrary.prototype =
     return false;
   },
   
-  FindByGUID: function(mediaGUID)
+  findByGUID: function(mediaGUID)
   {
     var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-    aDBQuery.SetAsyncQuery(false);
-    aDBQuery.SetDatabaseGUID(this.m_queryObject.GetDatabaseGUID());
+    aDBQuery.setAsyncQuery(false);
+    aDBQuery.setDatabaseGUID(this.m_queryObject.getDatabaseGUID());
 
-    aDBQuery.AddQuery("SELECT url FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
+    aDBQuery.addQuery("SELECT url FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
       
-    aDBQuery.Execute();
+    aDBQuery.execute();
       
-    var resObj = aDBQuery.GetResultObject();
+    var resObj = aDBQuery.getResultObject();
     return resObj.GetRowCell(0, 0);
   },
   
-  FindByURL: function(strURL)
+  findByURL: function(strURL)
   {
     var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-    aDBQuery.SetDatabaseGUID(this.m_queryObject.GetDatabaseGUID());
+    aDBQuery.setDatabaseGUID(this.m_queryObject.getDatabaseGUID());
 
-    aDBQuery.AddQuery("SELECT uuid FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + strURL + "\"");
+    aDBQuery.addQuery("SELECT uuid FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + strURL + "\"");
       
-    aDBQuery.Execute();
-    aDBQuery.WaitForCompletion();
+    aDBQuery.execute();
+    aDBQuery.waitForCompletion();
       
-    var resObj = aDBQuery.GetResultObject();
+    var resObj = aDBQuery.getResultObject();
     return resObj.GetRowCell(0, 0);
   },
 
-  AddColumn: function(strColumn, strDataType)
+  addColumn: function(strColumn, strDataType)
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
     }
 
     return;
   },
   
-  DeleteColumn: function(strColumn)
+  deleteColumn: function(strColumn)
   {
     return;
   },
 
-  GetColumnInfo: function()
+  getColumnInfo: function()
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT * FROM " + LIBRARY_DESC_TABLE_NAME + " ORDER BY sort_weight, column_name ASC");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT * FROM " + LIBRARY_DESC_TABLE_NAME + " ORDER BY sort_weight, column_name ASC");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
     }
   },
   
-  SetColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
+  setColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE " + LIBRARY_DESC_TABLE_NAME + " SET ";
       strQuery += "readable_name = \"" + strReadableName + "\"";
@@ -383,30 +383,30 @@ CMediaLibrary.prototype =
       strQuery += "width = \"" + colWidth + "\"";
       strQuery += " WHERE column_name = \"" + strColumn + "\"";
       
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }    
   },
 
-  GetMetadataFields: function(nMetadataFieldCount)
+  getMetadataFields: function(nMetadataFieldCount)
   {
     var aMetadataFields = new Array();
     nMetadataFieldCount.value = 0;
     
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT column_name FROM " + LIBRARY_DESC_TABLE_NAME + " WHERE is_metadata = 1");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT column_name FROM " + LIBRARY_DESC_TABLE_NAME + " WHERE is_metadata = 1");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
 
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       nMetadataFieldCount.value = resObj.GetRowCount();
       
       for(var i = 0; i < nMetadataFieldCount.value; i++)
@@ -418,27 +418,27 @@ CMediaLibrary.prototype =
     return aMetadataFields;
   },
   
-  AddMetadataField: function(strField, strFieldType, bWillRunLater)
+  addMetadataField: function(strField, strFieldType, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
         
-      this.m_queryObject.AddQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name, is_metadata) VALUES (\"" + strColumn + "\", \"1\")");
+      this.m_queryObject.addQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name, is_metadata) VALUES (\"" + strColumn + "\", \"1\")");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }
     
     return;
   },
   
-  DeleteMetadataField: function(strField, bWillRunLater)
+  deleteMetadataField: function(strField, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -451,20 +451,20 @@ CMediaLibrary.prototype =
     return;
   },
 
-  GetUniqueValuesByField: function(strField, nValueCount)
+  getUniqueValuesByField: function(strField, nValueCount)
   {
     nValueCount.value = 0;
     var aValues = new Array();
     
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT DISTINCT(" + strField + ") FROM " + LIBRARY_TABLE_NAME + " ORDER BY " + strField + " ASC" );
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT DISTINCT(" + strField + ") FROM " + LIBRARY_TABLE_NAME + " ORDER BY " + strField + " ASC" );
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       nValueCount.value = resObj.GetRowCount();
       
       for(var i = 0; i < nValueCount.value; i++)
@@ -476,20 +476,20 @@ CMediaLibrary.prototype =
     return aValues;
   },
   
-  SetValueByIndex: function(mediaIndex, strField, strValue, bWillRunLater)
+  setValueByIndex: function(mediaIndex, strField, strValue, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       strValue = strValue.replace(/"/g, "\"\"");
-      this.m_queryObject.AddQuery("UPDATE " + LIBRARY_TABLE_NAME + " SET " + strField + " = \"" + strValue + "\" WHERE id = \"" + mediaIndex + "\"");
+      this.m_queryObject.addQuery("UPDATE " + LIBRARY_TABLE_NAME + " SET " + strField + " = \"" + strValue + "\" WHERE id = \"" + mediaIndex + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -498,13 +498,13 @@ CMediaLibrary.prototype =
     return false;
   },
   
-  SetValuesByIndex: function(mediaIndex, nMetaKeyCount, aMetaKeys, nMetaValueCount, aMetaValues, bWillRunLater)
+  setValuesByIndex: function(mediaIndex, nMetaKeyCount, aMetaKeys, nMetaValueCount, aMetaValues, bWillRunLater)
   {
     if(this.m_queryObject != null ||
        nMetaKeyCount != nMetaValueCount)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE " + LIBRARY_TABLE_NAME + " SET ";
       var i = 0;
@@ -517,12 +517,12 @@ CMediaLibrary.prototype =
       }
       
       strQuery += " WHERE id = \"" + mediaIndex + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -531,17 +531,17 @@ CMediaLibrary.prototype =
     return false;
   },
   
-  GetValueByIndex: function(mediaIndex, strField)
+  getValueByIndex: function(mediaIndex, strField)
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT " + strField + " FROM " + LIBRARY_TABLE_NAME + " WHERE id = \"" + mediaIndex + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT " + strField + " FROM " + LIBRARY_TABLE_NAME + " WHERE id = \"" + mediaIndex + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       
       if(resObj.GetRowCount())
         return resObj.GetRowCell(0, 0);
@@ -550,7 +550,7 @@ CMediaLibrary.prototype =
     return "";
   },
   
-  GetValuesByIndex: function(mediaIndex, nMetaKeyCount, aMetaKeys, nMetadataValueCount)
+  getValuesByIndex: function(mediaIndex, nMetaKeyCount, aMetaKeys, nMetadataValueCount)
   {
     nMetadataValueCount = 0;
     var aMetadataValues = new Array();
@@ -558,7 +558,7 @@ CMediaLibrary.prototype =
     if(this.m_queryObject != null)
     {
       var strQuery = "SELECT ";
-      this.m_queryObject.ResetQuery();
+      this.m_queryObject.resetQuery();
       
       var i = 0;
       for( ; i < nMetaKeyCount; i++)
@@ -570,12 +570,12 @@ CMediaLibrary.prototype =
       }
       
       strQuery += " FROM " + LIBRARY_TABLE_NAME + " WHERE id = \"" + mediaIndex + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       nMetadataValueCount = resObj.GetColumnCount();
       
       for(var i = 0; i < nMetadataValueCount; i++)
@@ -587,33 +587,33 @@ CMediaLibrary.prototype =
     return aMetadataValues;
   },
   
-  SetValueByGUID: function(mediaGUID, strField, strValue, bWillRunLater)
+  setValueByGUID: function(mediaGUID, strField, strValue, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       strValue = strValue.replace(/"/g, "\"\"");
-      this.m_queryObject.AddQuery("UPDATE " + LIBRARY_TABLE_NAME + " SET " + strField + " = \"" + strValue + "\" WHERE uuid = \"" + mediaGUID + "\"");
+      this.m_queryObject.addQuery("UPDATE " + LIBRARY_TABLE_NAME + " SET " + strField + " = \"" + strValue + "\" WHERE uuid = \"" + mediaGUID + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }
     
     return;
   },
 
-  SetValuesByGUID: function(mediaGUID, nMetaKeyCount, aMetaKeys, nMetaValueCount, aMetaValues, bWillRunLater)
+  setValuesByGUID: function(mediaGUID, nMetaKeyCount, aMetaKeys, nMetaValueCount, aMetaValues, bWillRunLater)
   {
     if(this.m_queryObject != null ||
        nMetaKeyCount != nMetaValueCount)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE " + LIBRARY_TABLE_NAME + " SET ";
       var i = 0;
@@ -626,12 +626,12 @@ CMediaLibrary.prototype =
       }
       
       strQuery += " WHERE uuid = \"" + mediaGUID + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -640,17 +640,17 @@ CMediaLibrary.prototype =
     return false;
   },
   
-  GetValueByGUID: function(mediaGUID, strField)
+  getValueByGUID: function(mediaGUID, strField)
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT " + strField + " FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT " + strField + " FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       
       if(resObj.GetRowCount())
         return resObj.GetRowCell(0, 0);
@@ -659,7 +659,7 @@ CMediaLibrary.prototype =
     return "";
   },
   
-  GetValuesByGUID: function(mediaGUID, nMetaKeyCount, aMetaKeys, nMetadataValueCount)
+  getValuesByGUID: function(mediaGUID, nMetaKeyCount, aMetaKeys, nMetadataValueCount)
   {
     nMetadataValueCount = 0;
     var aMetadataValues = new Array();
@@ -667,7 +667,7 @@ CMediaLibrary.prototype =
     if(this.m_queryObject != null)
     {
       var strQuery = "SELECT ";
-      this.m_queryObject.ResetQuery();
+      this.m_queryObject.resetQuery();
       
       var i = 0;
       for( ; i < nMetaKeyCount; i++)
@@ -679,12 +679,12 @@ CMediaLibrary.prototype =
       }
       
       strQuery += " FROM " + LIBRARY_TABLE_NAME + " WHERE uuid = \"" + mediaGUID + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       nMetadataValueCount = resObj.GetColumnCount();
       
       for(var i = 0; i < nMetadataValueCount; i++)
@@ -773,7 +773,6 @@ var sbMediaLibraryFactory =
  */
 function NSGetModule(comMgr, fileSpec)
 {
-
   return sbMediaLibraryModule;
 } //NSGetModule
 

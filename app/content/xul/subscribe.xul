@@ -219,8 +219,8 @@
         
         var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
         var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-        aDBQuery.SetAsyncQuery( false );
-        aDBQuery.SetDatabaseGUID( "songbird" );
+        aDBQuery.setAsyncQuery( false );
+        aDBQuery.setDatabaseGUID( "songbird" );
         
         var readable_name = getServer( url );
         if ( window.arguments && window.arguments[0] && window.arguments[0].readable_name )

@@ -40,7 +40,7 @@ class CDatabaseQuery;
 #include <vector>
 #include <set>
 
-#include "IDatabaseQuery.h"
+#include "sbIDatabaseQuery.h"
 #include "DatabaseResult.h"
 #include "DatabaseEngine.h"
 
@@ -48,16 +48,7 @@ class CDatabaseQuery;
 #include <prmon.h>
 
 #include <xpcom/nsCOMPtr.h>
-
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-};
-#endif
+#include <string/nsString.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEQUERY_CONTRACTID                 \
@@ -94,7 +85,7 @@ protected:
   PRBool m_HasChangedDataOfPersistQuery;
 
   PRLock* m_pPersistentQueryTableLock;
-  std::string m_PersistentQueryTable;
+  nsCString m_PersistentQueryTable;
 
   PRBool m_IsAborting;
   PRBool m_IsExecuting;
@@ -109,9 +100,9 @@ protected:
   CDatabaseResult* m_QueryResult;
 
   PRLock* m_pDatabaseGUIDLock;
-  std::prustring m_DatabaseGUID;
+  nsString m_DatabaseGUID;
 
-  typedef std::vector<std::prustring> dbquerylist_t;
+  typedef std::vector<nsString> dbquerylist_t;
   PRLock* m_pDatabaseQueryListLock;
   dbquerylist_t m_DatabaseQueryList;
 
@@ -126,7 +117,7 @@ protected:
   PRLock* m_pPersistentCallbackListLock;
   persistentcallbacklist_t m_PersistentCallbackList;
 
-  typedef std::set<std::string> modifiedtables_t;
+  typedef std::set<nsCString> modifiedtables_t;
   PRLock* m_pModifiedTablesLock;
   modifiedtables_t m_ModifiedTables;
 

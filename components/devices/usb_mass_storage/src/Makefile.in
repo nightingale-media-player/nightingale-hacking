@@ -48,6 +48,7 @@ endif
 CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/usb_mass_storage/public \
+               $(DEPTH)/components/devices/usb_mass_storage/src/$(SB_PLATFORM) \
                $(DEPTH)/components/medialibrary/public \
                $(srcdir)/$(SB_PLATFORM)/ \
                $(srcdir) \

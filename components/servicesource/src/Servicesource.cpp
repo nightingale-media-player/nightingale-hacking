@@ -66,8 +66,8 @@
 
 #include "Servicesource.h"
 
-#include "IPlaylist.h"
-
+#include "sbIPlaylist.h"
+#include "sbIDatabaseResult.h"
 
 #define MODULE_SHORTCIRCUIT 0
 
@@ -114,7 +114,7 @@ class MyServicesourceQueryCallback : public sbIDatabaseSimpleQueryCallback
 };
 NS_IMPL_ISUPPORTS1(MyServicesourceQueryCallback, sbIDatabaseSimpleQueryCallback)
 /* void OnQueryEnd (in sbIDatabaseResult dbResultObject, in wstring dbGUID, in wstring strQuery); */
-NS_IMETHODIMP MyServicesourceQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, const PRUnichar *dbGUID, const PRUnichar *strQuery)
+NS_IMETHODIMP MyServicesourceQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResultObject, const nsAString &dbGUID, const nsAString &strQuery)
 {
   if ( m_Timer.get() )
   {
@@ -516,7 +516,7 @@ void CServicesource::Init(void)
     // Setup the list of playlists as a persistent query
     m_PlaylistsQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     m_PlaylistsQuery->SetAsyncQuery( PR_TRUE );
-    m_PlaylistsQuery->SetDatabaseGUID( NS_LITERAL_STRING("songbird").get() );
+    m_PlaylistsQuery->SetDatabaseGUID( NS_LITERAL_STRING("songbird") );
 
     MyServicesourceQueryCallback *callback;
     NS_NEWXPCOM(callback, MyServicesourceQueryCallback);
@@ -527,7 +527,7 @@ void CServicesource::Init(void)
       callback->AddRef();
       m_PlaylistsQuery->AddSimpleQueryCallback( callback );
     }
-    m_PlaylistsQuery->SetPersistentQuery( true );
+    m_PlaylistsQuery->SetPersistentQuery( PR_TRUE );
     
     nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
     if(pPlaylistManager.get())

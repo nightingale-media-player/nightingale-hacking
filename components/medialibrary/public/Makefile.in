@@ -29,17 +29,17 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = IDatabaseEngine.idl \
-             IDatabaseQuery.idl \
-             IDatabaseResult.idl \
-             IMediaLibrary.idl \
-             IPlaylist.idl \
-             IPlaylistPlayback.idl \
-             IPlaylistReader.idl \
-             IPlaylistWriter.idl \
+XPIDL_SRCS = sbIDatabaseEngine.idl \
+             sbIDatabaseQuery.idl \
+             sbIDatabaseResult.idl \
+             sbIMediaLibrary.idl \
+             sbIPlaylist.idl \
+             sbIPlaylistPlayback.idl \
+             sbIPlaylistReader.idl \
+             sbIPlaylistWriter.idl \
              $(NULL)
 
-XPIDL_MODULE = sbMediaLibrary.xpt
+XPIDL_MODULE = sbIMediaLibrary.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)

@@ -103,7 +103,6 @@
       </body>
     </method>
 
-
     <method name="setSingleEdition">
       <body>
         <![CDATA[
@@ -193,7 +192,7 @@
           }
           for (var i=0;i<this.guids.length;i++)
           {
-            var thisval = this.ml.GetValueByGUID(this.guids[i], this.column);
+            var thisval = this.ml.getValueByGUID(this.guids[i], this.column);
             if (i==0) 
             {
               value = thisval;
@@ -224,9 +223,9 @@
           {
             for (var i=0;i<this.guids.length;i++)
             {
-              this.ml.SetValueByGUID(this.guids[i], this.column, value, true);
+              this.ml.setValueByGUID(this.guids[i], this.column, value, true);
             }
-            this.query.Execute();
+            this.query.execute();
           }
         ]]>
       </body>
@@ -255,8 +254,8 @@
         {
           this.ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
           this.query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-          this.query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
-          this.ml.SetQueryObject(this.query);
+          this.query.setDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
+          this.ml.setQueryObject(this.query);
         }
         ]]>
       </body>

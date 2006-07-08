@@ -34,9 +34,9 @@
 #include <algorithm>
 #include <map>
 
-#include "IDatabaseQuery.h"
-#include "IMediaLibrary.h"
-#include "IPlaylist.h"
+#include "sbIDatabaseQuery.h"
+#include "sbIMediaLibrary.h"
+#include "sbIPlaylist.h"
 #include "PlaylistReaderPLS.h"
 
 #include <xpcom/nscore.h>
@@ -355,11 +355,11 @@ PRInt32 CPlaylistReaderPLS::ParsePLSFromBuffer(PRUnichar *pPathToFile, PRUnichar
     nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     if(!pQuery) return NS_ERROR_UNEXPECTED;
     pQuery->SetAsyncQuery(PR_FALSE);
-    pQuery->SetDatabaseGUID(strGUID);
+    pQuery->SetDatabaseGUID(nsAutoString(strGUID));
 
     nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
     if(!pLibrary) return NS_ERROR_UNEXPECTED;
-    pLibrary->SetQueryObject(pQuery.get());
+    pLibrary->SetQueryObject(pQuery);
 
     nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
     if(!pPlaylistManager) return NS_ERROR_UNEXPECTED;
@@ -423,20 +423,18 @@ PRInt32 CPlaylistReaderPLS::ParsePLSFromBuffer(PRUnichar *pPathToFile, PRUnichar
         const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
 
         PRBool bRet = PR_FALSE;
-        PRUnichar *pGUID = nsnull;
-
         if(strTitle.IsEmpty()) strTitle = strURL;
 
         PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
         aMetaValues[0] = ToNewUnicode(strLength);
         aMetaValues[1] = ToNewUnicode(strTitle);
 
-        pLibrary->AddMedia(strURL.get(), nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), m_Replace, PR_FALSE, &pGUID);
+        nsAutoString guid;
+        pLibrary->AddMedia(strURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), m_Replace, PR_FALSE, guid);
 
-        if(pGUID && pPlaylist)
+        if(!guid.IsEmpty() && pPlaylist)
         {
-          pPlaylist->AddByGUID(pGUID, strGUID, -1, m_Replace, PR_FALSE, &bRet);
-          nsMemory::Free(pGUID);
+          pPlaylist->AddByGUID(PromiseFlatString(guid).get(), strGUID, -1, m_Replace, PR_FALSE, &bRet);
         }
 
         nsMemory::Free(aMetaValues[0]);

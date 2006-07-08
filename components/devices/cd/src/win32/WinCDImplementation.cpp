@@ -42,9 +42,9 @@
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsMemory.h>
 
-#include "IDatabaseQuery.h"
-#include "IMediaLibrary.h"
-#include "IPlaylist.h"
+#include "sbIDatabaseQuery.h"
+#include "sbIMediaLibrary.h"
+#include "sbIPlaylist.h"
 
 #define DRIVE_START_LETTER  'A'
 #define DRIVE_END_LETTER    'Z'
@@ -129,7 +129,7 @@ void WinCDObject::ClearCDLibraryData()
 {
   nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   pQuery->SetAsyncQuery(PR_FALSE);
-  pQuery->SetDatabaseGUID(GetDeviceContext().get());
+  pQuery->SetDatabaseGUID(GetDeviceContext());
 
   PRBool retVal;
 
@@ -225,7 +225,7 @@ PRBool WinCDObject::UpdateCDLibraryData()
   {
     nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
     pQuery->SetAsyncQuery(PR_FALSE);
-    pQuery->SetDatabaseGUID(GetDeviceContext().get());
+    pQuery->SetDatabaseGUID(GetDeviceContext());
 
     nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
     pLibrary->SetQueryObject(pQuery.get());
@@ -268,8 +268,6 @@ PRBool WinCDObject::UpdateCDLibraryData()
       const static PRUnichar *aMetaKeys[] = {NS_LITERAL_STRING("length").get(), NS_LITERAL_STRING("title").get()};
       const static PRUint32 nMetaKeyCount = sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
 
-      PRUnichar *pGUID = nsnull;
-
       nsString strTitle(NS_LITERAL_STRING("CD Track "));
       strTitle.AppendInt(trackNum);
 
@@ -281,16 +279,16 @@ PRBool WinCDObject::UpdateCDLibraryData()
       aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strLength.get(), (strLength.Length() + 1) * sizeof(PRUnichar));
       aMetaValues[1] = (PRUnichar *) nsMemory::Clone(strTitle.get(), (strTitle.Length() + 1) * sizeof(PRUnichar));
 
-      pLibrary->AddMedia(url.get(), nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, &pGUID);
-      // Don't know why (thanks to the in-ability to debug javascript) but sometimes "AddMedia" fails the first time and calling it again succeeds,
+      nsAutoString guid;
+      pLibrary->AddMedia(url, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, guid);
+      // Don't know why (thanks to the in-ability to debug javascript) but sometimes "addMedia" fails the first time and calling it again succeeds,
       // needs to be investigated.
-      if (!pGUID)
-        pLibrary->AddMedia(url.get(), nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_FALSE, PR_FALSE, &pGUID);
+      if (!guid.IsEmpty())
+        pLibrary->AddMedia(url, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_FALSE, PR_FALSE, guid);
 
-      if(pGUID && pPlaylist.get())
+      if(!guid.IsEmpty() && pPlaylist.get())
       {
-        pPlaylist->AddByGUID(pGUID, GetDeviceContext().get(), -1, PR_FALSE, PR_FALSE, &bRet);
-        nsMemory::Free(pGUID);
+        pPlaylist->AddByGUID(PromiseFlatString(guid).get(), GetDeviceContext().get(), -1, PR_FALSE, PR_FALSE, &bRet);
       }
 
       nsMemory::Free(aMetaValues[0]);

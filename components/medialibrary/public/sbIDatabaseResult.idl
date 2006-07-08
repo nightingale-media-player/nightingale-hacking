@@ -23,23 +23,92 @@
 // END SONGBIRD GPL
 //
  */
-
+/**
+ * \file sbIDatabaseResult.idl
+ * \brief 
+ * 
+ * \sa sbIDatabaseQuery.idl
+ */
 #include "nsISupports.idl"
 
+/**
+ * \interface sbIDatabaseResult
+ * \brief
+ *
+ * \sa sbIDatabaseQuery
+ */
 [scriptable, uuid(D711447E-B6B0-4e63-A50E-3523794E08DF)]
 interface sbIDatabaseResult : nsISupports
 {
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   PRInt32 GetColumnCount();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   wstring GetColumnName(in PRInt32 dbColumn);
 
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   PRInt32 GetRowCount();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   wstring GetRowCell(in PRInt32 dbRow, in PRInt32 dbCell);
 
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   wstring GetRowCellByColumn(in PRInt32 dbRow, in wstring dbColumn);
 
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   [noscript] wstring GetColumnNamePtr(in PRInt32 dbColumn);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   [noscript] wstring GetRowCellPtr(in PRInt32 dbRow, in PRInt32 dbCell);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   [noscript] wstring GetRowCellByColumnPtr(in PRInt32 dbRow, in wstring dbColumn);
 
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
   [noscript] void ClearResultSet();
 };

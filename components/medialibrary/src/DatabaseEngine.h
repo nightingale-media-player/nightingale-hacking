@@ -41,7 +41,7 @@
 #include <map>
 
 #include "DatabaseQuery.h"
-#include "IDatabaseEngine.h"
+#include "sbIDatabaseEngine.h"
 
 #include <prlock.h>
 #include <prmon.h>
@@ -49,15 +49,7 @@
 #include <nsIThread.h>
 #include <nsIRunnable.h>
 
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-};
-#endif
+#include <string/nsString.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
@@ -89,14 +81,14 @@ public:
   virtual ~CDatabaseEngine();
 
 protected:
-  PRInt32 OpenDB(PRUnichar *dbGUID);
-  PRInt32 CloseDB(PRUnichar *dbGUID);
+  PRInt32 OpenDB(const nsAString &dbGUID);
+  PRInt32 CloseDB(const nsAString &dbGUID);
 
-  PRInt32 DropDB(PRUnichar *dbGUID);
+  PRInt32 DropDB(const nsAString &dbGUID);
 
   PRInt32 SubmitQueryPrivate(CDatabaseQuery *dbQuery);
 
-  void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const std::string &strTableName);
+  void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName);
   void RemovePersistentQueryPrivate(CDatabaseQuery *pQuery);
 
   nsresult LockDatabase(sqlite3 *pDB);
@@ -105,22 +97,22 @@ protected:
   nsresult ClearAllDBLocks();
   nsresult CloseAllDB();
 
-  sqlite3 *GetDBByGUID(PRUnichar *dbGUID, PRBool bCreateIfNotOpen = PR_FALSE);
-  sqlite3 *FindDBByGUID(PRUnichar *dbGUID);
+  sqlite3 *GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfNotOpen = PR_FALSE);
+  sqlite3 *FindDBByGUID(const nsAString &dbGUID);
 
-  PRInt32 GetDBGUIDList(std::vector<std::prustring> &vGUIDList);
+  PRInt32 GetDBGUIDList(std::vector<nsString> &vGUIDList);
 
   static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine);
 
 private:
   //[database guid/name]
-  typedef std::map<std::prustring, sqlite3 *>  databasemap_t;
+  typedef std::map<nsString, sqlite3 *>  databasemap_t;
   typedef std::map<sqlite3 *, PRLock *> databaselockmap_t;
   typedef std::list<CDatabaseQuery *> querylist_t;
   //[table guid/name]
-  typedef std::map<std::string, querylist_t> tablepersistmap_t;
+  typedef std::map<nsCString, querylist_t> tablepersistmap_t;
   //[database guid/name]
-  typedef std::map<std::prustring, tablepersistmap_t > querypersistmap_t;
+  typedef std::map<nsString, tablepersistmap_t > querypersistmap_t;
   typedef std::deque<CDatabaseQuery *> queryqueue_t;
 
   void UpdatePersistentQueries(CDatabaseQuery *pQuery);

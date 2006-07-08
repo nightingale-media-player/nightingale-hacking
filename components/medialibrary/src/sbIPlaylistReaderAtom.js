@@ -92,14 +92,14 @@ CPlaylistAtom.prototype =
               this.m_append = bAppendOrReplace;
               
               this.m_query = new this.sbIDatabaseQuery();
-              this.m_query.SetAsyncQuery(true);
-              this.m_query.SetDatabaseGUID(strGUID);
+              this.m_query.setAsyncQuery(true);
+              this.m_query.setDatabaseGUID(strGUID);
 
               this.m_document = document;
               this.m_library = new MediaLibrary();
               this.m_playlistmgr = new PlaylistManager();
               
-              this.m_library.SetQueryObject(this.m_query);
+              this.m_library.setQueryObject(this.m_query);
               var playlist = this.m_playlistmgr.GetPlaylist(strDestTable, this.m_query);
               
               if(playlist)

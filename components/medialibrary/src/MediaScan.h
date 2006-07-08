@@ -35,16 +35,14 @@
 // INCLUDES ===================================================================
 #include <vector>
 #include <deque>
-#include <string>
 
-#include "IMediaLibrary.h"
+#include "sbIMediaLibrary.h"
 
 #include <xpcom/nscore.h>
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsIFile.h>
 #include <xpcom/nsILocalFile.h>
 #include <string/nsString.h>
-#include <string/nsStringAPI.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsISimpleEnumerator.h>
@@ -53,17 +51,6 @@
 #include <prmon.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
-
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-}
-#endif
-
 
 // DEFINES ====================================================================
 #define SONGBIRD_MEDIASCAN_CONTRACTID                     \

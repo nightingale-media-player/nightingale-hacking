@@ -239,11 +239,11 @@
           // enumerate the list of metadata columns and for each of them, check if it is in the exclusion list
           var ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
           var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-          query.SetDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
-          ml.SetQueryObject(query);
+          query.setDatabaseGUID("songbird"); // todo: make it watch the db as well as the guid !
+          ml.setQueryObject(query);
           
-          ml.GetColumnInfo();
-          var destcols = query.GetResultObject();
+          ml.getColumnInfo();
+          var destcols = query.getResultObject();
           for (var i=0;i<destcols.GetRowCount();i++) {
             // if not, create a control for that column using its data type and readonly status
             var name = destcols.GetRowCellByColumn(i, "column_name");

@@ -25,7 +25,7 @@
  */
 
 #include "nsISupports.idl"
-#include "IPlaylist.idl"
+#include "sbIPlaylist.idl"
 
 [scriptable, uuid(5D32F88B-D83F-42f9-BF6E-D56E833A78BA)]
 interface sbIPlaylistPlayback : nsISupports

@@ -92,14 +92,14 @@ CPlaylistRSS.prototype =
               this.m_append = bAppendOrReplace;
               
               this.m_query = new this.sbIDatabaseQuery();
-              this.m_query.SetAsyncQuery(true);
-              this.m_query.SetDatabaseGUID(strGUID);
+              this.m_query.setAsyncQuery(true);
+              this.m_query.setDatabaseGUID(strGUID);
 
               this.m_document = document;
               this.m_library = new MediaLibrary();
               this.m_playlistmgr = new PlaylistManager();
               
-              this.m_library.SetQueryObject(this.m_query);
+              this.m_library.setQueryObject(this.m_query);
               var playlist = this.m_playlistmgr.GetPlaylist(strDestTable, this.m_query);
               
               if(playlist)
@@ -251,7 +251,7 @@ CPlaylistRSS.prototype =
           }
         }
         
-        var ret = this.m_query.Execute();
+        var ret = this.m_query.execute();
         
         return (ret == 0);
       }
@@ -318,7 +318,7 @@ CPlaylistRSS.prototype =
         var aMetaKeys = new Array("artist", "title", "content_type");
         var aMetaValues = new Array( artist, title, type );
 
-        var guid = this.m_library.AddMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, this.m_append, true );
+        var guid = this.m_library.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, this.m_append, true );
         this.m_playlist.AddByGUID( guid, this.m_guid, -1, this.m_append, true );
         
         return true;

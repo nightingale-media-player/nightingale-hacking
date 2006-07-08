@@ -1016,10 +1016,10 @@ PlaylistPlayback.prototype = {
       // Uhhhhhh..... why are we handling shuffle all funny?  Shuffle isn't per table.
 
 
-    this._db.ResetQuery();
-    this._db.AddQuery(query);
-    this._db.Execute();
-    this._db.WaitForCompletion();
+    this._db.resetQuery();
+    this._db.addQuery(query);
+    this._db.execute();
+    this._db.waitForCompletion();
 */    
     return;
   },
@@ -1456,13 +1456,13 @@ PlaylistPlayback.prototype = {
     var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     queryObj.SetDatabaseGUID("songbird");
-    library.SetQueryObject(queryObj);
+    library.setQueryObject(queryObj);
     var keys = new Array( "title" );
     var values = new Array();
     values.push( ConvertUrlToDisplayName( the_url ) );
-    var guid = library.AddMedia( the_url, keys.length, keys, values.length, values, false, false );
+    var guid = library.addMedia( the_url, keys.length, keys, values.length, values, false, false );
     LOG("add media = " + guid);
-    var row = library.GetValueByGUID(guid, "id");
+    var row = library.getValueByGUID(guid, "id");
     LOG("findbyguid = " + row);
     return row;
   },
@@ -1474,8 +1474,8 @@ PlaylistPlayback.prototype = {
   _setURLMetadata: function( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute ) {
     if ( aDBQuery == null ) {
       aDBQuery = new sbIDatabaseQuery();
-      aDBQuery.SetAsyncQuery(true);
-      aDBQuery.SetDatabaseGUID("songbird");
+      aDBQuery.setAsyncQuery(true);
+      aDBQuery.setDatabaseGUID("songbird");
     }
     if ( execute == null ) {
       execute = true;
@@ -1483,27 +1483,27 @@ PlaylistPlayback.prototype = {
       
     if ( aTitle && aTitle.length ) {
       var q = 'update library set title="'   + aTitle  + '" where url="' + aURL + '"';
-      aDBQuery.AddQuery( q );
+      aDBQuery.addQuery( q );
     }
     if ( aLength && aLength.length ) {
       var q = 'update library set length="'    + aLength + '" where url="' + aURL + '"';
-      aDBQuery.AddQuery( q );
+      aDBQuery.addQuery( q );
     }
     if ( aAlbum && aAlbum.length ) {
       var q = 'update library set album="'  + aAlbum  + '" where url="' + aURL + '"';
-      aDBQuery.AddQuery( q );
+      aDBQuery.addQuery( q );
     }
     if ( aArtist && aArtist.length ) {
       var q = 'update library set artist="' + aArtist + '" where url="' + aURL + '"';
-      aDBQuery.AddQuery( q );
+      aDBQuery.addQuery( q );
     }
     if ( aGenre && aGenre.length ) {
       var q = 'update library set genre="'  + aGenre  + '" where url="' + aURL + '"';
-      aDBQuery.AddQuery( q );
+      aDBQuery.addQuery( q );
     }
     
     if ( execute ) {
-      var ret = aDBQuery.Execute();
+      var ret = aDBQuery.execute();
     }
       
     return aDBQuery; // So whomever calls this can keep track if they want.

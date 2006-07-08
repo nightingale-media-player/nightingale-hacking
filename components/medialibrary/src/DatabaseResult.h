@@ -33,7 +33,7 @@
 #define __DATABASE_RESULT_H__
 
 // INCLUDES ===================================================================
-#include "IDatabaseResult.h"
+#include "sbIDatabaseResult.h"
 
 #include <string>
 #include <vector>

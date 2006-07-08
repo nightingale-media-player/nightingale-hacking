@@ -34,7 +34,7 @@
 
 // INCLUDES ===================================================================
 
-#include "IPlaylistReader.h"
+#include "sbIPlaylistReader.h"
 #include <string/nsString.h>
 #include <xpcom/nsIFile.h>
 #include <nspr/prlock.h>

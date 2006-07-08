@@ -153,13 +153,13 @@
     function getListOfPlaylists() 
     {
       var queryObj = newQuery();
-      queryObj.SetDatabaseGUID(PLAYLIST_DB_GUID);
-      queryObj.SetAsyncQuery(false);
+      queryObj.setDatabaseGUID(PLAYLIST_DB_GUID);
+      queryObj.setAsyncQuery(false);
       
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
       aPlaylistManager.GetPlaylistList(queryObj);
       
-      return queryObj.GetResultObject();
+      return queryObj.getResultObject();
     }
     
     function newQuery()
@@ -254,9 +254,9 @@
       if (mediaLibrary)
       {
         mediaLibrary = mediaLibrary.QueryInterface(Components.interfaces.sbIMediaLibrary);
-        queryObj.SetAsyncQuery( true );
-        queryObj.SetDatabaseGUID( "songbird" );
-        mediaLibrary.SetQueryObject( queryObj );
+        queryObj.setAsyncQuery( true );
+        queryObj.setDatabaseGUID( "songbird" );
+        mediaLibrary.setQueryObject( queryObj );
         var playlistManager = new PlaylistManager();
         if (playlistManager)
         {

@@ -48,7 +48,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CMediaScanQuery, sbIMediaScanQuery)
 
 //-----------------------------------------------------------------------------
 CMediaScanQuery::CMediaScanQuery()
-: m_strDirectory( NS_LITERAL_STRING("").get() )
+: m_strDirectory( EmptyString() )
 , m_bRecurse(PR_FALSE)
 , m_bIsScanning(PR_FALSE)
 , m_pCallback(nsnull)
@@ -103,9 +103,8 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
 
 //--------------------------------------------------------------------- --------
 /* void SetDirectory (in wstring strDirectory); */
-NS_IMETHODIMP CMediaScanQuery::SetDirectory(const PRUnichar *strDirectory)
+NS_IMETHODIMP CMediaScanQuery::SetDirectory(const nsAString &strDirectory)
 {
-  NS_ENSURE_ARG_POINTER(strDirectory);
   nsAutoLock dirLock(m_pDirectoryLock);
   {
     nsAutoLock fileLock(m_pFileStackLock);
@@ -118,13 +117,10 @@ NS_IMETHODIMP CMediaScanQuery::SetDirectory(const PRUnichar *strDirectory)
 
 //-----------------------------------------------------------------------------
 /* wstring GetDirectory (); */
-NS_IMETHODIMP CMediaScanQuery::GetDirectory(PRUnichar **_retval)
+NS_IMETHODIMP CMediaScanQuery::GetDirectory(nsAString &_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pDirectoryLock);
-  size_t nLen = m_strDirectory.Length() + 1;
-  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_strDirectory.get(), nLen * sizeof(PRUnichar)));
-  NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
+  _retval = m_strDirectory;
   return NS_OK;
 } //GetDirectory
 
@@ -174,7 +170,6 @@ NS_IMETHODIMP CMediaScanQuery::GetCallback(sbIMediaScanCallback **_retval)
 NS_IMETHODIMP CMediaScanQuery::GetFileCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  //nsAutoLock lock(m_pFileStackLock);
   size_t nSize = m_FileStack.size();
   *_retval = (PRUint32) nSize;
   return NS_OK;
@@ -182,26 +177,26 @@ NS_IMETHODIMP CMediaScanQuery::GetFileCount(PRUint32 *_retval)
 
 //-----------------------------------------------------------------------------
 /* void AddFilePath (in wstring strFilePath); */
-NS_IMETHODIMP CMediaScanQuery::AddFilePath(const PRUnichar *strFilePath)
+NS_IMETHODIMP CMediaScanQuery::AddFilePath(const nsAString &strFilePath)
 {
-  NS_ENSURE_ARG_POINTER(strFilePath);
   nsAutoLock lock(m_pFileStackLock);
-  m_FileStack.push_back(nsAutoString(strFilePath));
+  m_FileStack.push_back(PromiseFlatString(strFilePath));
   return NS_OK;
 } //AddFilePath
 
 //-----------------------------------------------------------------------------
 /* wstring GetFilePath (in PRInt32 nIndex); */
-NS_IMETHODIMP CMediaScanQuery::GetFilePath(PRUint32 nIndex, PRUnichar **_retval)
+NS_IMETHODIMP CMediaScanQuery::GetFilePath(PRUint32 nIndex, nsAString &_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
+  _retval = EmptyString();
   NS_ENSURE_ARG_MIN(nIndex, 0);
+
   nsAutoLock lock(m_pFileStackLock);
+
   if(nIndex < m_FileStack.size()) {
-    size_t nLen = m_FileStack[nIndex].Length() + 1;
-    *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_FileStack[nIndex].get(), nLen * sizeof(PRUnichar)));
-    NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
+    _retval = m_FileStack[nIndex];
   }
+
   return NS_OK;
 } //GetFilePath
 
@@ -226,34 +221,27 @@ NS_IMETHODIMP CMediaScanQuery::SetIsScanning(PRBool bIsScanning)
 
 //-----------------------------------------------------------------------------
 /* wstring GetLastFileFound (); */
-NS_IMETHODIMP CMediaScanQuery::GetLastFileFound(PRUnichar **_retval)
+NS_IMETHODIMP CMediaScanQuery::GetLastFileFound(nsAString &_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pFileStackLock);
   PRInt32 nIndex = (PRInt32)m_FileStack.size() - 1;
-  size_t nLen = m_FileStack[nIndex].Length() + 1;
-  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_FileStack[nIndex].get(), nLen * sizeof(PRUnichar)));
-  NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
+  _retval = m_FileStack[nIndex];
   return NS_OK;
 } //GetLastFileFound
 
 //-----------------------------------------------------------------------------
 /* wstring GetCurrentScanPath (); */
-NS_IMETHODIMP CMediaScanQuery::GetCurrentScanPath(PRUnichar **_retval)
+NS_IMETHODIMP CMediaScanQuery::GetCurrentScanPath(nsAString &_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pCurrentPathLock);
-  size_t nLen = m_strCurrentPath.Length() + 1;
-  *_retval = NS_REINTERPRET_CAST(PRUnichar*, nsMemory::Clone(m_strCurrentPath.get(), nLen * sizeof(PRUnichar)));
-  NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
+  _retval = m_strCurrentPath;
   return NS_OK;
 } //GetCurrentScanPath
 
 //-----------------------------------------------------------------------------
 /* void SetCurrentScanPath (in wstring strScanPath); */
-NS_IMETHODIMP CMediaScanQuery::SetCurrentScanPath(const PRUnichar *strScanPath)
+NS_IMETHODIMP CMediaScanQuery::SetCurrentScanPath(const nsAString &strScanPath)
 {
-  NS_ENSURE_ARG_POINTER(strScanPath);
   nsAutoLock lock(m_pCurrentPathLock);
   m_strCurrentPath = strScanPath;
   return NS_OK;
@@ -324,10 +312,8 @@ NS_IMETHODIMP CMediaScan::SubmitQuery(sbIMediaScanQuery *pQuery)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
-NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bRecurse, sbIMediaScanCallback *pCallback, PRInt32 *_retval)
+NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bRecurse, sbIMediaScanCallback *pCallback, PRInt32 *_retval)
 {
-  NS_ENSURE_ARG_POINTER(strDirectory);
-
   dirstack_t dirStack;
   fileentrystack_t fileEntryStack;
 
@@ -335,9 +321,10 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
 
   nsresult ret = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
+  nsCOMPtr<nsIIOService> pIOService = do_GetService("@mozilla.org/network/io-service;1");
+  if(!pFile || !pIOService) return ret;
 
   nsString strTheDirectory(strDirectory);
-  nsCString cstrTheDirectory;
 
   ret = pFile->InitWithPath(strTheDirectory);
   if(NS_FAILED(ret)) return ret;
@@ -392,14 +379,20 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
                 if(bIsFile)
                 {
                   nsString strPath;
-                  pEntry->GetPath(strPath);
+
+                  // Get the file:// uri from the file object.
+                  nsCOMPtr<nsIURI> pURI;
+                  pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
+                  nsCString u8spec;
+                  pURI->GetSpec(u8spec);
+                  strPath = NS_ConvertUTF8toUTF16(u8spec);
 
                   *_retval += 1;
 
                   if(pCallback)
                   {
                     PRInt32 nCount = *_retval;
-                    pCallback->OnMediaScanFile(strPath.get(), nCount);
+                    pCallback->OnMediaScanFile(strPath, nCount);
                   }
                 }
                 else if(bIsDirectory && bRecurse)
@@ -441,7 +434,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const PRUnichar *strDirectory, PRBool bR
     {
       *_retval = 1;
       PRInt32 nCount = *_retval;
-      pCallback->OnMediaScanFile(strTheDirectory.get(), nCount);
+      pCallback->OnMediaScanFile(strTheDirectory, nCount);
     }
   }
 
@@ -507,11 +500,8 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   PRBool bRecurse = PR_FALSE;
   pQuery->GetRecurse(&bRecurse);
   
-  PRUnichar *strDirectory = nsnull;
-  pQuery->GetDirectory(&strDirectory);
-
-  nsString strTheDirectory(strDirectory);
-  nsCString cstrTheDirectory;
+  nsString strTheDirectory;
+  pQuery->GetDirectory(strTheDirectory);
 
   ret = pFile->InitWithPath(strTheDirectory);
   if(NS_FAILED(ret)) return ret;
@@ -560,23 +550,19 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
                 if(bIsFile)
                 {
                   nsString strPath;
-#if 0
-                  pEntry->GetPath(strPath);
-#else
                   // Get the file:// uri from the file object.
                   nsCOMPtr<nsIURI> pURI;
                   pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
                   nsCString u8spec;
                   pURI->GetSpec(u8spec);
                   strPath = NS_ConvertUTF8toUTF16(u8spec);
-#endif
 
-                  pQuery->AddFilePath(strPath.get());
+                  pQuery->AddFilePath(strPath);
                   nFoundCount += 1;
 
                   if(pCallback)
                   {
-                    pCallback->OnMediaScanFile(strPath.get(), nFoundCount);
+                    pCallback->OnMediaScanFile(strPath, nFoundCount);
                   }
                 }
                 else if(bIsDirectory && bRecurse)
@@ -614,10 +600,6 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
             }
 
             NS_IF_RELEASE(pCallback);
-
-            if(strDirectory)
-              PR_Free(strDirectory);
-
             NS_IF_RELEASE(pDirEntries);
 
             return NS_OK;
@@ -628,7 +610,7 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
   }
   else
   {
-    pQuery->AddFilePath(strTheDirectory.get());
+    pQuery->AddFilePath(strTheDirectory);
   }
 
   if(pCallback)
@@ -638,8 +620,5 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
 
   NS_IF_RELEASE(pCallback);
   
-  if(strDirectory)
-    PR_Free(strDirectory);
-
   return NS_OK;
 } //ScanDirectory

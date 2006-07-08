@@ -51,11 +51,11 @@
 
 #include "DownloadDevice.h"
 
-#include "IDatabaseResult.h"
-#include "IDatabaseQuery.h"
+#include "sbIDatabaseResult.h"
+#include "sbIDatabaseQuery.h"
 
-#include "IMediaLibrary.h"
-#include "IPlaylist.h"
+#include "sbIMediaLibrary.h"
+#include "sbIPlaylist.h"
 
 /* Implementation file */
 

@@ -58,7 +58,7 @@ CPlaylist.prototype =
   SetQueryObject: function(queryObj)
   {
     this.m_queryObject = queryObj; 
-    this.m_internalQueryObject.SetDatabaseGUID(queryObj.GetDatabaseGUID());
+    this.m_internalQueryObject.setDatabaseGUID(queryObj.getDatabaseGUID());
     
     return;
   },
@@ -73,7 +73,7 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       if(bReplace)
       {
@@ -82,12 +82,12 @@ CPlaylist.prototype =
           return true;
       }
 
-      this.m_queryObject.AddQuery("INSERT INTO \"" + this.m_strName + "\" (playlist_uuid, playlist_service_uuid) VALUES (\"" + mediaGUID + "\", \"" + serviceGUID + "\")");
+      this.m_queryObject.addQuery("INSERT INTO \"" + this.m_strName + "\" (playlist_uuid, playlist_service_uuid) VALUES (\"" + mediaGUID + "\", \"" + serviceGUID + "\")");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -101,14 +101,14 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
 
-      this.m_queryObject.AddQuery("DELETE FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
+      this.m_queryObject.addQuery("DELETE FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -122,14 +122,14 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
 
-      this.m_queryObject.AddQuery("DELETE FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
+      this.m_queryObject.addQuery("DELETE FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
       
       return true;
@@ -164,13 +164,13 @@ CPlaylist.prototype =
   {
     if(this.m_internalQueryObject != null)
     {
-      this.m_internalQueryObject.ResetQuery();
-      this.m_internalQueryObject.AddQuery("SELECT playlist_id FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
+      this.m_internalQueryObject.resetQuery();
+      this.m_internalQueryObject.addQuery("SELECT playlist_id FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
       
-      this.m_internalQueryObject.Execute();
-      this.m_internalQueryObject.WaitForCompletion();
+      this.m_internalQueryObject.execute();
+      this.m_internalQueryObject.waitForCompletion();
       
-      var resObj = this.m_internalQueryObject.GetResultObject();
+      var resObj = this.m_internalQueryObject.getResultObject();
       return resObj.GetRowCell(0, 0);
     }
     
@@ -181,13 +181,13 @@ CPlaylist.prototype =
   {
     if(this.m_internalQueryObject != null)
     {
-      this.m_internalQueryObject.ResetQuery();
-      this.m_internalQueryObject.AddQuery("SELECT playlist_uuid FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + nIndex + "\"");
+      this.m_internalQueryObject.resetQuery();
+      this.m_internalQueryObject.addQuery("SELECT playlist_uuid FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + nIndex + "\"");
       
-      this.m_internalQueryObject.Execute();
-      this.m_internalQueryObject.WaitForCompletion();
+      this.m_internalQueryObject.execute();
+      this.m_internalQueryObject.waitForCompletion();
       
-      var resObj = this.m_internalQueryObject.GetResultObject();
+      var resObj = this.m_internalQueryObject.getResultObject();
       return resObj.GetRowCell(0, 0);
     }
     
@@ -198,11 +198,11 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT * FROM \"" + this.m_strName + "_desc\" UNION SELECT * FROM library_desc ORDER BY sort_weight, column_name ASC");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "_desc\" UNION SELECT * FROM library_desc ORDER BY sort_weight, column_name ASC");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
     }
   },
   
@@ -211,7 +211,7 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE \"" + this.m_strName + "_desc\" SET ";
       strQuery += "readable_name = \"" + strReadableName + "\", ";
@@ -222,12 +222,12 @@ CPlaylist.prototype =
       strQuery += "width = \"" + colWidth + "\" ";
       strQuery += "WHERE = \"" + strColumn + "\"";
       
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }    
   },
@@ -236,11 +236,11 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("PRAGMA table_info(\"" + this.m_strName + "\")");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("PRAGMA table_info(\"" + this.m_strName + "\")");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
     }
   },
   
@@ -248,12 +248,12 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("ALTER TABLE \"" + this.m_strName + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
-      this.m_queryObject.AddQuery("INSERT OR REPLACE INTO \"" + this.m_strName + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("ALTER TABLE \"" + this.m_strName + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + this.m_strName + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
     }
 
     return;
@@ -268,13 +268,13 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT COUNT(playlist_id) FROM \"" + this.m_strName + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT COUNT(playlist_id) FROM \"" + this.m_strName + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       
       return resObj.GetRowCell(0, 0);
     }
@@ -286,11 +286,11 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT * FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + nEntry + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + nEntry + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
 
       return 1;
     }
@@ -302,13 +302,13 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT * FROM \"" + this.m_strName + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       return resObj.GetRowCount();
     }
     
@@ -319,13 +319,13 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT " + strColumn + " FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
 
       if(resObj.GetRowCount())
         return resObj.GetRowCell(0, 0);
@@ -338,13 +338,13 @@ CPlaylist.prototype =
   {
     if(this.m_queryObject != null)
     {
-      this.m_queryObject.ResetQuery();
-      this.m_queryObject.AddQuery("SELECT " + strColumn + " FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
 
       if(resObj.GetRowCount())
         return resObj.GetRowCell(0, 0);    
@@ -361,7 +361,7 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       var strQuery = "SELECT ";
-      this.m_queryObject.ResetQuery();
+      this.m_queryObject.resetQuery();
       
       var i = 0;
       for( ; i < nColumnCount; i++)
@@ -373,12 +373,12 @@ CPlaylist.prototype =
       }
       
       strQuery += " FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + mediaIndex + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       nValueCount = resObj.GetColumnCount();
       
       for(var i = 0; i < nValueCount; i++)
@@ -398,7 +398,7 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       var strQuery = "SELECT ";
-      this.m_queryObject.ResetQuery();
+      this.m_queryObject.resetQuery();
       
       var i = 0;
       for( ; i < nColumnCount; i++)
@@ -410,12 +410,12 @@ CPlaylist.prototype =
       }
       
       strQuery += " FROM \"" + this.m_strName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
-      this.m_queryObject.Execute();
-      this.m_queryObject.WaitForCompletion();
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
       
-      var resObj = this.m_queryObject.GetResultObject();
+      var resObj = this.m_queryObject.getResultObject();
       nValueCount = resObj.GetColumnCount();
       
       for(var i = 0; i < nValueCount; i++)
@@ -432,15 +432,15 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       strValue = strValue.replace(/"/g, "\"\"");
-      this.m_queryObject.AddQuery("UPDATE \"" + this.m_strName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
+      this.m_queryObject.addQuery("UPDATE \"" + this.m_strName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }
     
@@ -452,15 +452,15 @@ CPlaylist.prototype =
     if(this.m_queryObject != null)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       strValue = strValue.replace(/"/g, "\"\"");
-      this.m_queryObject.AddQuery("UPDATE \"" + this.m_strName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
+      this.m_queryObject.addQuery("UPDATE \"" + this.m_strName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }
     
@@ -473,7 +473,7 @@ CPlaylist.prototype =
        nColumnCount != nValueCount)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE \"" + this.m_strName + "\" SET ";
       var i = 0;
@@ -486,12 +486,12 @@ CPlaylist.prototype =
       }
       
       strQuery += " WHERE id = \"" + mediaIndex + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }
 
@@ -504,7 +504,7 @@ CPlaylist.prototype =
        nColumnCount != nValueCount)
     {
       if(!bWillRunLater)
-        this.m_queryObject.ResetQuery();
+        this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE \"" + this.m_strName + "\" SET ";
       var i = 0;
@@ -517,12 +517,12 @@ CPlaylist.prototype =
       }
       
       strQuery += " WHERE playlist_uuid = \"" + mediaGUID + "\"";
-      this.m_queryObject.AddQuery(strQuery);
+      this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.Execute();
-        this.m_queryObject.WaitForCompletion();
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
       }
     }
 
@@ -542,13 +542,13 @@ CPlaylist.prototype =
   
   SetReadableName: function(strReadableName)
   {
-    this.m_queryObject.ResetQuery();
+    this.m_queryObject.resetQuery();
     
     strReadableName = strReadableName.replace(/"/g, "\"\"");
-    this.m_queryObject.AddQuery("UPDATE " + PLAYLIST_LIST_TABLE_NAME + " SET readable_name = \"" + strReadableName + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE " + PLAYLIST_LIST_TABLE_NAME + " SET readable_name = \"" + strReadableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
-    this.m_queryObject.Execute();
-    this.m_queryObject.WaitForCompletion();
+    this.m_queryObject.execute();
+    this.m_queryObject.waitForCompletion();
     
     return;
   },
@@ -557,13 +557,13 @@ CPlaylist.prototype =
   {
     var strReadableName = "";
     
-    this.m_queryObject.ResetQuery();
-    this.m_queryObject.AddQuery("SELECT readable_name FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.resetQuery();
+    this.m_queryObject.addQuery("SELECT readable_name FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + this.m_strName + "\"");
     
-    this.m_queryObject.Execute();
-    this.m_queryObject.WaitForCompletion();
+    this.m_queryObject.execute();
+    this.m_queryObject.waitForCompletion();
     
-    var resObj = this.m_queryObject.GetResultObject();
+    var resObj = this.m_queryObject.getResultObject();
     
     if(resObj.GetRowCount())
       strReadableName = resObj.GetRowCell(0, 0);    

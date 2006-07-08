@@ -25,7 +25,8 @@
  */
 
 #include "nsISupports.idl"
-#include "IDatabaseQuery.idl"
+
+interface sbIDatabaseQuery;
 
 [scriptable, uuid(7B2945F6-6A00-4489-AD2F-95BA25F4D1EA)]
 interface sbISimplePlaylist : nsISupports

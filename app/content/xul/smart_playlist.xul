@@ -227,7 +227,7 @@
 
           var strGUID = window.arguments[0].guid;
           var strTable = window.arguments[0].table;
-          aDBQuery.SetDatabaseGUID(strGUID);
+          aDBQuery.setDatabaseGUID(strGUID);
                   
           var aPlaylist = aPlaylistManager.GetSmartPlaylist(strTable, aDBQuery);
           if(aPlaylist)
@@ -255,7 +255,7 @@
               var conditionsArray = new Array();
               aPlaylist.GetAllConstraints();
               
-              var aResObj = aDBQuery.GetResultObject();
+              var aResObj = aDBQuery.getResultObject();
               var rowCount = aResObj.GetRowCount();
               var node = null, i = 0;
               
@@ -319,11 +319,11 @@
       var conditions = document.getElementById( "smart_conditions" );
       var conditions_array = conditions.getConditions();
 
-      queryObj.SetAsyncQuery(false);
-      queryObj.SetDatabaseGUID(library);      
+      queryObj.setAsyncQuery(false);
+      queryObj.setDatabaseGUID(library);      
       aPlaylistManager.GetSmartPlaylistList(queryObj);
 
-      var resObj = queryObj.GetResultObject();
+      var resObj = queryObj.getResultObject();
       var playlistCount = resObj.GetRowCount() + 1;
 
       var newPlaylist = true;

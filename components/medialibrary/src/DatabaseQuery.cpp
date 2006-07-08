@@ -206,38 +206,28 @@ NS_IMETHODIMP CDatabaseQuery::RemoveSimpleQueryCallback(sbIDatabaseSimpleQueryCa
 
 //-----------------------------------------------------------------------------
 /* void SetDatabaseGUID (in wstring dbGUID); */
-NS_IMETHODIMP CDatabaseQuery::SetDatabaseGUID(const PRUnichar *dbGUID)
+NS_IMETHODIMP CDatabaseQuery::SetDatabaseGUID(const nsAString &dbGUID)
 {
-  NS_ENSURE_ARG_POINTER(dbGUID);
-  
   nsAutoLock lock(m_pDatabaseGUIDLock);
   m_DatabaseGUID = dbGUID;
-
   return NS_OK;
 } //SetDatabaseGUID
 
 //-----------------------------------------------------------------------------
 /* wstring GetDatabaseGUID (); */
-NS_IMETHODIMP CDatabaseQuery::GetDatabaseGUID(PRUnichar **_retval)
+NS_IMETHODIMP CDatabaseQuery::GetDatabaseGUID(nsAString &_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   nsAutoLock lock(m_pDatabaseGUIDLock);
-  size_t nLen = m_DatabaseGUID.length() + 1;
-
-  *_retval = (PRUnichar *)nsMemory::Clone(m_DatabaseGUID.c_str(), nLen * sizeof(PRUnichar));
-  NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
-
+  _retval = m_DatabaseGUID;
   return NS_OK;
 } //GetDatabaseGUID
 
 //-----------------------------------------------------------------------------
 /* void AddQuery (in wstring strQuery); */
-NS_IMETHODIMP CDatabaseQuery::AddQuery(const PRUnichar *strQuery)
+NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
 {
-  NS_ENSURE_ARG_POINTER(strQuery);
   nsAutoLock lock(m_pDatabaseQueryListLock);
-  m_DatabaseQueryList.push_back(strQuery);
-
+  m_DatabaseQueryList.push_back(PromiseFlatString(strQuery));
   return NS_OK;
 } //AddQuery
 
@@ -253,18 +243,13 @@ NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRInt32 *_retval)
 
 //-----------------------------------------------------------------------------
 /* wstring GetQuery (in PRInt32 nIndex); */
-NS_IMETHODIMP CDatabaseQuery::GetQuery(PRInt32 nIndex, PRUnichar **_retval)
+NS_IMETHODIMP CDatabaseQuery::GetQuery(PRInt32 nIndex, nsAString &_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_ARG_MIN(nIndex, 0);
   nsAutoLock lock(m_pDatabaseQueryListLock);
 
   if((PRUint32)nIndex < m_DatabaseQueryList.size())
-  {
-    size_t nLen = m_DatabaseQueryList[nIndex].length() + 1;
-    *_retval = (PRUnichar *)nsMemory::Clone(m_DatabaseQueryList[nIndex].c_str(), nLen * sizeof(PRUnichar));
-    NS_ENSURE_TRUE(*_retval, NS_ERROR_OUT_OF_MEMORY);
-  }
+    _retval = m_DatabaseQueryList[nIndex];
 
   return NS_OK;
 } //GetQuery
@@ -276,6 +261,7 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
   // XXXBen - Seems like we should have one lock that protects both of these.
   //          What happens when one thread resets the query and another tries
   //          to read the query results? Maybe we could just switch the order.
+  // XXXAus - This is ok by design.
   {
     nsAutoLock dbLock(m_pDatabaseQueryListLock);
     m_DatabaseQueryList.clear();

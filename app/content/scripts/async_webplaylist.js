@@ -150,10 +150,10 @@ try
     href_loop.uri_now = SBDataGetStringValue( "browser.uri" );
     href_loop.aDBQuery = new sbIDatabaseQuery();
     href_loop.aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);    
-    href_loop.aDBQuery.SetAsyncQuery( false );
-    href_loop.aDBQuery.SetDatabaseGUID( WEB_PLAYLIST_CONTEXT );
-    href_loop.aMediaLibrary.SetQueryObject( href_loop.aDBQuery );
-    href_loop.aMediaLibrary.CreateDefaultLibrary(); // Does WaitForCompletion();
+    href_loop.aDBQuery.setAsyncQuery( false );
+    href_loop.aDBQuery.setDatabaseGUID( WEB_PLAYLIST_CONTEXT );
+    href_loop.aMediaLibrary.setQueryObject( href_loop.aDBQuery );
+    href_loop.aMediaLibrary.createDefaultLibrary(); // Does waitForCompletion();
     href_loop.aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
     href_loop.aPlaylistManager.CreateDefaultPlaylistManager( href_loop.aDBQuery );
     href_loop.inserted = new Array();
@@ -173,11 +173,11 @@ try
           // When we first find media, flip the webplaylist. 
           this.aPlaylistManager.DeletePlaylist( WEB_PLAYLIST_TABLE, 
                                                 this.aDBQuery );
-          //this.aDBQuery.ResetQuery();
+          //this.aDBQuery.resetQuery();
           this.aPlaylist = this.aPlaylistManager.CreatePlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
           this.data.boolValue = true;
           theWebPlaylistQuery = this.aDBQuery;
-          //this.aDBQuery.ResetQuery();
+          //this.aDBQuery.resetQuery();
           // Then pretend like we clicked on it.
           if ( !thePlaylistTree )
             onBrowserPlaylist();
@@ -198,7 +198,7 @@ try
         {
           var keys = new Array( "title" );
           var values = new Array( ConvertUrlToDisplayName( url ) );
-          var guid = this.aMediaLibrary.AddMedia( url, keys.length, keys, values.length, values, false, false );
+          var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, false, false );
           // XXXredfive
           this.aPlaylist.AddByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
           dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
@@ -206,7 +206,7 @@ try
           
           //A***
           
-          //this.aDBQuery.ResetQuery();
+          //this.aDBQuery.resetQuery();
           loop_break = true; // Only one synchronous database call per ui frame.
         }
       }
@@ -229,17 +229,17 @@ catch ( err )
 
 
 //Removed this block from A***.
-          /*var count = this.aDBQuery.GetQueryCount();
+          /*var count = this.aDBQuery.getQueryCount();
           var text = "\n\n";
           for ( c = 0; c < count; c++ )
           {
-            text += this.aDBQuery.GetQuery( c ) + "\n";
+            text += this.aDBQuery.getQuery( c ) + "\n";
           }*/
           
 //          alert( "pause" );
           
           /*
-          var rv = this.aDBQuery.Execute();
+          var rv = this.aDBQuery.execute();
           
           if ( rv != 0 )
           {
@@ -247,4 +247,4 @@ catch ( err )
           }
           */
           
-          //this.aDBQuery.ResetQuery();
+          //this.aDBQuery.resetQuery();
