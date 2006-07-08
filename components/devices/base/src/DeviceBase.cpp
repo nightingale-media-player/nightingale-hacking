@@ -1019,8 +1019,11 @@ void sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceStr
   else
   {
     nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1");
-    PRInt32 retVal = 0;
-    pPlaylistManager->DeleteSimplePlaylist(transferTable.get(), query.get(), &retVal);
+    if(pPlaylistManager)
+    {
+      PRInt32 retVal = 0;
+      pPlaylistManager->DeleteSimplePlaylist(transferTable.get(), query.get(), &retVal);
+    }
   }
 
 

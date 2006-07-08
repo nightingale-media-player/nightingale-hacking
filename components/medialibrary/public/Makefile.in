@@ -38,7 +38,7 @@ XPIDL_SRCS = sbIDatabaseEngine.idl \
              sbIPlaylistWriter.idl \
              $(NULL)
 
-XPIDL_MODULE = sbIMediaLibrary.xpt
+XPIDL_MODULE = sbMediaLibrary.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
