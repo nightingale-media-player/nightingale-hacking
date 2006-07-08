@@ -73,7 +73,7 @@ sbMetadataManager::~sbMetadataManager()
 
 //-----------------------------------------------------------------------------
 /* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
-NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, sbIMetadataHandler **_retval)
+NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
 {
   *_retval = nsnull;
   nsresult nRet = NS_ERROR_UNEXPECTED;
@@ -94,7 +94,6 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   // Apparently, somewhere in here, it fails for local mp3 files on linux and mac.
   //
 
-
   nsCString cstrScheme;
   nRet = pURI->GetScheme(cstrScheme);
   if(NS_FAILED(nRet)) return nRet;
@@ -107,12 +106,11 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
     nRet = pURI->GetScheme(cstrScheme);
   }
 
-  PRInt32 nHandlerRet = 0;
   nRet = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
   if(NS_FAILED(nRet)) return nRet;
 
   // Local types to ease handling.
-  handlerlist_t handlerlist; // hooray for autosorting
+  handlerlist_t handlerlist; // hooray for autosorting (std::set)
 
   // Find a useful handler for this object.
   nsresult rv;
@@ -144,13 +142,13 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
         if (handler.get())
         {
           PRInt32 vote;
-          handler->Vote( url.get(), &vote );
+          handler->Vote( url, &vote );
           if (vote >= 0) // If everyone returns -1, give up.
           {
             sbMetadataHandlerItem item;
             item.m_Handler = handler;
             item.m_Vote = vote;
-            handlerlist.insert( item ); // Sorted list
+            handlerlist.insert( item ); // Sorted list (std::set)
           }
         }
       }
@@ -173,13 +171,12 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const PRUnichar *strURL, 
   }
 
   // So, if we have anything, set it up and send it back.
-  nRet = pHandler->SetChannel(pChannel, &nHandlerRet);
+  nRet = pHandler->SetChannel(pChannel);
   if(nRet != 0) return nRet;
 
   pHandler->AddRef();
-  pHandler->AddRef();
+  pHandler->AddRef(); // Twice?  Dunno, but my handlers get destroyed, so it's somehow okay.
   *_retval = pHandler;
-  //(*_retval)->AddRef();
 
   nRet = NS_OK;
 

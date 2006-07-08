@@ -57,7 +57,26 @@ sbMetadataValues::~sbMetadataValues()
 {
 }
 
-/* void setValue (in wstring key, in wstring value, in PRInt32 type); */
+/* readonly attribute PRInt32 numValues; */
+NS_IMETHODIMP sbMetadataValues::GetNumValues(PRInt32 *aNumValues)
+{
+  if (aNumValues) *aNumValues = m_Map.size();
+  return NS_OK;
+}
+
+/* AString getKey (in PRInt32 N); */
+NS_IMETHODIMP sbMetadataValues::GetKey(PRInt32 N, nsAString &_retval)
+{
+  _retval.AssignLiteral("");
+  PRInt32 i, end = m_Map.size();
+  t_map::iterator it;
+  for (it = m_Map.begin(), i = 0; i < end; ++i, ++it)
+    if (i == N)
+      _retval = (*it).first;
+  return NS_OK;
+}
+
+/* void setValue (in AString key, in AString value, in PRInt32 type); */
 NS_IMETHODIMP sbMetadataValues::SetValue(const nsAString &key, const nsAString &value, PRInt32 type)
 {
   // Check the inputs
@@ -68,7 +87,7 @@ NS_IMETHODIMP sbMetadataValues::SetValue(const nsAString &key, const nsAString &
   return NS_OK;
 }
 
-/* wstring getValue (in wstring key); */
+/* AString getValue (in AString key); */
 NS_IMETHODIMP sbMetadataValues::GetValue(const nsAString &key, nsAString &_retval)
 {
   // Bad key value is ""
@@ -83,7 +102,7 @@ NS_IMETHODIMP sbMetadataValues::GetValue(const nsAString &key, nsAString &_retva
   return NS_OK;
 }
 
-/* PRInt32 getType (in wstring key); */
+/* PRInt32 getType (in AString key); */
 NS_IMETHODIMP sbMetadataValues::GetType(const nsAString &key, PRInt32 *_retval)
 {
   // Check the inputs

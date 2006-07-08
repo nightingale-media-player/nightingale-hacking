@@ -87,9 +87,8 @@ NS_IMETHODIMP sbMetadataHandlerMP4::GetChannel(nsIChannel **_retval)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetChannel (in nsIChannel urlChannel); */
-NS_IMETHODIMP sbMetadataHandlerMP4::SetChannel(nsIChannel *urlChannel, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerMP4::SetChannel(nsIChannel *urlChannel)
 {
-  *_retval = 0;
   m_Channel = urlChannel;
 
   return NS_OK;
@@ -97,42 +96,9 @@ NS_IMETHODIMP sbMetadataHandlerMP4::SetChannel(nsIChannel *urlChannel, PRInt32 *
 
 NS_IMETHODIMP sbMetadataHandlerMP4::OnChannelData( nsISupports *channel )
 {
-#if 0
-  nsCOMPtr<sbIMetadataChannel> mc( do_QueryInterface(channel) ) ;
-
-  if ( mc.get() )
-  {
-    try
-    {
-      if ( !m_Completed )
-      {
-/*
-        // How do I calculate length without bitrate?
-        PRUnichar *bitrate;
-        m_Values->GetValue( NS_LITERAL_STRING("bitrate").get(), &bitrate );
-        if ( bitrate )
-        {
-        }
-*/
-      }
-    }
-    catch ( const MetadataHandlerMP4Exception err )
-    {
-      PRBool completed = false;
-      mc->GetCompleted( &completed );
-      // If it's a tiny file, it's probably a 404 error
-      if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
-      {
-        // If it's a big file, this means it's an MP4v1 and it needs to seek to the end of the track?  Ooops.
-        m_Completed = true;
-      }
-
-      // Otherwise, take another spin around and try again.
-    }
-  }
-#else
+  // Uhhhhhh..... this is only a synchronous handler.  Just end.  
+  // Someone's probably fucking with you, and you shouldn't put up with it.
   m_Completed = true;
-#endif
   return NS_OK;
 }
 
@@ -155,9 +121,9 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Close()
   return NS_OK;
 } //Close
 
-NS_IMETHODIMP sbMetadataHandlerMP4::Vote(const PRUnichar *url, PRInt32 *_retval )
+NS_IMETHODIMP sbMetadataHandlerMP4::Vote(const nsAString &url, PRInt32 *_retval )
 {
-  nsString strUrl( url );
+  nsPromiseFlatString strUrl( url );
 
   if ( ( strUrl.Find( ".mp4", PR_TRUE ) != -1 ) || ( strUrl.Find( ".m4a", PR_TRUE ) != -1 ) || ( strUrl.Find( ".mov", PR_TRUE ) != -1 ) )
     *_retval = 1;
@@ -239,10 +205,9 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
 {
   nsresult nRet = NS_ERROR_UNEXPECTED;
 
-  *_retval = 0;
+  *_retval = 0; // Zero is failure
   if(!m_Channel)
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
 
@@ -251,7 +216,6 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
   m_Values->Clear();
   if(!m_Values.get())
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
 
@@ -290,10 +254,18 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
     if (file)
       quicktime_dump_info(file, static_callback, this);
     m_Completed = true;
+
+    // This handler is always synchronous
+
+    // Setup retval with the number of values read
+    PRInt32 num_values;
+    m_Values->GetNumValues(&num_values);
+    *_retval = num_values;
   }
   else
   {
-    // ?? Remote file
+    // ?? Remote file.  That would be nice, someday.  
+    // We need better metadata parsing code, however.
   }
 
   return nRet;
@@ -307,8 +279,8 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Write(PRInt32 *_retval)
   return NS_OK;
 } //Write
 
-/* sbIMetadataValues GetValuesMap (); */
-NS_IMETHODIMP sbMetadataHandlerMP4::GetValuesMap(sbIMetadataValues **_retval)
+/* sbIMetadataValues GetValues (); */
+NS_IMETHODIMP sbMetadataHandlerMP4::GetValues(sbIMetadataValues **_retval)
 {
   *_retval = m_Values;
   if ( (*_retval) )
@@ -316,8 +288,8 @@ NS_IMETHODIMP sbMetadataHandlerMP4::GetValuesMap(sbIMetadataValues **_retval)
   return NS_OK;
 }
 
-/* void SetValuesMap (in sbIMetadataValues values); */
-NS_IMETHODIMP sbMetadataHandlerMP4::SetValuesMap(sbIMetadataValues *values)
+/* void SetValues (in sbIMetadataValues values); */
+NS_IMETHODIMP sbMetadataHandlerMP4::SetValues(sbIMetadataValues *values)
 {
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;

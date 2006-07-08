@@ -306,8 +306,8 @@ function SBInitialize()
     {
       const MetadataManager = new Components.Constructor("@songbirdnest.com/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
-      aMetadataHandler = aMetadataManager.GetHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
-      //aMetadataHandler = aMetadataManager.GetHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
+      aMetadataHandler = aMetadataManager.getHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
+      //aMetadataHandler = aMetadataManager.getHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
       var retval = aMetadataHandler.Read();
       
       function PollMetadata( )
@@ -318,13 +318,11 @@ function SBInitialize()
         }
         else
         {
-          var values = aMetadataHandler.getValuesMap();
-          
           var text = "";
           const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer");
           for ( var i in keys )
           {
-            text += keys[ i ] + ": " + values.getValue( keys[ i ] ) + "\n";
+            text += keys[ i ] + ": " + aMetadataHandler.values.getValue( keys[ i ] ) + "\n";
           }
           alert( text );
         }
@@ -1046,7 +1044,7 @@ function onBrowserStop()
 function onBrowserHome()
 {
   var theServiceTree = document.getElementById( 'frame_servicetree' );
-  theServiceTree.launchServiceURL( "http://songbirdnest.com/player/welcome/" );
+  theServiceTree.launchServiceURL( "http://songbirdnest.com/player0.2/welcome/" );
 }
 
 // onBrowserBookmark

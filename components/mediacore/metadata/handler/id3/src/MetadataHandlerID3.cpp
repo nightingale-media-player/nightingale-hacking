@@ -199,9 +199,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::GetChannel(nsIChannel **_retval)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetChannel (in nsIChannel urlChannel); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetChannel(nsIChannel *urlChannel, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerID3::SetChannel(nsIChannel *urlChannel)
 {
-  *_retval = 0;
   m_Channel = urlChannel;
 
   return NS_OK;
@@ -279,9 +278,9 @@ NS_IMETHODIMP sbMetadataHandlerID3::Close()
   return NS_OK;
 } //Close
 
-NS_IMETHODIMP sbMetadataHandlerID3::Vote(const PRUnichar *url, PRInt32 *_retval )
+NS_IMETHODIMP sbMetadataHandlerID3::Vote(const nsAString &url, PRInt32 *_retval )
 {
-  nsString strUrl( url );
+  nsPromiseFlatString strUrl( url );
 
   if ( strUrl.Find( ".mp3", PR_TRUE ) != -1 )
     *_retval = 1; // Yes, we want this.
@@ -306,16 +305,15 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 {
   nsresult nRet = NS_ERROR_UNEXPECTED;
 
+  // Zero is failure.
+  *_retval = 0;
   if ( m_Completed )
   {
-    *_retval = -1;
     return NS_ERROR_UNEXPECTED;
   }
 
-  *_retval = 0;
   if(!m_Channel)
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
 
@@ -323,7 +321,6 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
   if(!m_Values.get())
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
 
@@ -404,11 +401,16 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
         // And finally calculate the bitrate.
         CalculateBitrate(buffer, read, file_size);
         nsMemory::Free(buffer);
+
+        // Setup retval with the number of values read
+        PRInt32 num_values;
+        m_Values->GetNumValues(&num_values);
+        *_retval = num_values;
       }
     }
     else
     {
-      async = true; // Try again, using the nsIChannel
+      async = true; // So, a blocking parse failed.  Try again, using the nsIChannel
     }
     nRet = NS_OK;
   }
@@ -419,12 +421,14 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1");
     if(!m_ChannelHandler.get())
     {
-      *_retval = -1;
       return NS_ERROR_FAILURE;
     }
     m_ChannelHandler->Open( m_Channel, this );
 
     nRet = NS_OK;
+
+    // -1 means we're asynchronous.
+    *_retval = -1;
   }
 
   return nRet;
@@ -438,8 +442,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::Write(PRInt32 *_retval)
   return NS_OK;
 } //Write
 
-/* sbIMetadataValues GetValuesMap (); */
-NS_IMETHODIMP sbMetadataHandlerID3::GetValuesMap(sbIMetadataValues **_retval)
+/* sbIMetadataValues GetValues (); */
+NS_IMETHODIMP sbMetadataHandlerID3::GetValues(sbIMetadataValues **_retval)
 {
   if ( ! m_Completed )
     return NS_ERROR_UNEXPECTED;
@@ -449,8 +453,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::GetValuesMap(sbIMetadataValues **_retval)
   return NS_OK;
 }
 
-/* void SetValuesMap (in sbIMetadataValues values); */
-NS_IMETHODIMP sbMetadataHandlerID3::SetValuesMap(sbIMetadataValues *values)
+/* void SetValues (in sbIMetadataValues values); */
+NS_IMETHODIMP sbMetadataHandlerID3::SetValues(sbIMetadataValues *values)
 {
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -461,8 +465,6 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 {
   PRInt32 ret = 0;
 
-  nsString strKey;
-  nsString strValue;
   PRInt32 type = 0; // Always string, for now.
 
   ID3_Tag::Iterator *itFrame = tag.CreateIterator();
@@ -470,241 +472,243 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 
   while( (pFrame = itFrame->GetNext()) != nsnull)
   {
+    nsAutoString strKey;
+    nsAutoString strValue;
     switch(pFrame->GetID())
     {
       //No known frame.
-      case ID3FID_NOFRAME: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_NOFRAME: strKey.AppendLiteral(""); break;
 
       //Audio encryption.
-      case ID3FID_AUDIOCRYPTO: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_AUDIOCRYPTO: strKey.AppendLiteral(""); break;
 
       //Picture
-      case ID3FID_PICTURE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_PICTURE: strKey.AppendLiteral(""); break;
 
       //Comments.
-      case ID3FID_COMMENT: strKey = NS_LITERAL_STRING("comment"); break;
+      case ID3FID_COMMENT: strKey.AppendLiteral("comment"); break;
 
       //Commercial frame.
-      case ID3FID_COMMERCIAL: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_COMMERCIAL: strKey.AppendLiteral(""); break;
 
       //Encryption method registration.
-      case ID3FID_CRYPTOREG: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_CRYPTOREG: strKey.AppendLiteral(""); break;
 
       //Equalization.
-      case ID3FID_EQUALIZATION: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_EQUALIZATION: strKey.AppendLiteral(""); break;
 
       //Event timing codes.
-      case ID3FID_EVENTTIMING: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_EVENTTIMING: strKey.AppendLiteral(""); break;
       
       //General encapsulated object.
-      case ID3FID_GENERALOBJECT: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_GENERALOBJECT: strKey.AppendLiteral(""); break;
 
       //Group identification registration.
-      case ID3FID_GROUPINGREG: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_GROUPINGREG: strKey.AppendLiteral(""); break;
 
       //Involved people list.
-      case ID3FID_INVOLVEDPEOPLE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_INVOLVEDPEOPLE: strKey.AppendLiteral(""); break;
 
       //Linked information.
-      case ID3FID_LINKEDINFO: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_LINKEDINFO: strKey.AppendLiteral(""); break;
 
       //Music CD identifier.
-      case ID3FID_CDID: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_CDID: strKey.AppendLiteral(""); break;
 
       //MPEG location lookup table.
-      case ID3FID_MPEGLOOKUP: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_MPEGLOOKUP: strKey.AppendLiteral(""); break;
 
       //Ownership frame.
-      case ID3FID_OWNERSHIP: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_OWNERSHIP: strKey.AppendLiteral(""); break;
 
       //Private frame.
-      case ID3FID_PRIVATE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_PRIVATE: strKey.AppendLiteral(""); break;
 
       //Play counter.
-      case ID3FID_PLAYCOUNTER: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_PLAYCOUNTER: strKey.AppendLiteral(""); break;
 
       //Popularimeter.
-      case ID3FID_POPULARIMETER: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_POPULARIMETER: strKey.AppendLiteral(""); break;
 
       //Position synchronisation frame.
-      case ID3FID_POSITIONSYNC: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_POSITIONSYNC: strKey.AppendLiteral(""); break;
 
       //Recommended buffer size.
-      case ID3FID_BUFFERSIZE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_BUFFERSIZE: strKey.AppendLiteral(""); break;
 
       //Relative volume adjustment.
-      case ID3FID_VOLUMEADJ: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_VOLUMEADJ: strKey.AppendLiteral(""); break;
 
       //Reverb.
-      case ID3FID_REVERB: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_REVERB: strKey.AppendLiteral(""); break;
 
       //Synchronized lyric/text.
-      case ID3FID_SYNCEDLYRICS: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_SYNCEDLYRICS: strKey.AppendLiteral(""); break;
 
       //Synchronized tempo codes.
-      case ID3FID_SYNCEDTEMPO: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_SYNCEDTEMPO: strKey.AppendLiteral(""); break;
 
       //Album/Movie/Show title.
-      case ID3FID_ALBUM: strKey = NS_LITERAL_STRING("album"); break;
+      case ID3FID_ALBUM: strKey.AppendLiteral("album"); break;
 
       //BPM (beats per minute).
-      case ID3FID_BPM: strKey = NS_LITERAL_STRING("bpm"); break;
+      case ID3FID_BPM: strKey.AppendLiteral("bpm"); break;
 
       //Composer.
-      case ID3FID_COMPOSER: strKey = NS_LITERAL_STRING("composer"); break;
+      case ID3FID_COMPOSER: strKey.AppendLiteral("composer"); break;
 
       //Content type.
-      case ID3FID_CONTENTTYPE: strKey = NS_LITERAL_STRING("genre"); break;
+      case ID3FID_CONTENTTYPE: strKey.AppendLiteral("genre"); break;
 
       //Copyright message.
-      case ID3FID_COPYRIGHT: strKey = NS_LITERAL_STRING("copyright_message"); break;
+      case ID3FID_COPYRIGHT: strKey.AppendLiteral("copyright_message"); break;
 
       //Date.
-      case ID3FID_DATE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_DATE: strKey.AppendLiteral(""); break;
 
       //Playlist delay.
-      case ID3FID_PLAYLISTDELAY: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_PLAYLISTDELAY: strKey.AppendLiteral(""); break;
 
       //Encoded by.
-      case ID3FID_ENCODEDBY: strKey = NS_LITERAL_STRING("encoded_by"); break;
+      case ID3FID_ENCODEDBY: strKey.AppendLiteral("vendor"); break;
 
       //Lyricist/Text writer.
-      case ID3FID_LYRICIST: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_LYRICIST: strKey.AppendLiteral(""); break;
 
       //File type.
-      case ID3FID_FILETYPE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_FILETYPE: strKey.AppendLiteral(""); break;
 
       //Time.
-      case ID3FID_TIME: strKey = NS_LITERAL_STRING("length"); break;
+      case ID3FID_TIME: strKey.AppendLiteral("length"); break;
 
       //Content group description.
-      case ID3FID_CONTENTGROUP: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_CONTENTGROUP: strKey.AppendLiteral(""); break;
 
       //Title/songname/content description.
-      case ID3FID_TITLE: strKey = NS_LITERAL_STRING("title"); break;
+      case ID3FID_TITLE: strKey.AppendLiteral("title"); break;
 
       //Subtitle/Description refinement.
-      case ID3FID_SUBTITLE: strKey = NS_LITERAL_STRING("subtitle"); break;
+      case ID3FID_SUBTITLE: strKey.AppendLiteral("subtitle"); break;
 
       //Initial key.
-      case ID3FID_INITIALKEY: strKey = NS_LITERAL_STRING("key"); break;
+      case ID3FID_INITIALKEY: strKey.AppendLiteral("key"); break;
 
       //Language(s).
-      case ID3FID_LANGUAGE: strKey = NS_LITERAL_STRING("language"); break;
+      case ID3FID_LANGUAGE: strKey.AppendLiteral("language"); break;
 
       //Length.
-      case ID3FID_SONGLEN: strKey = NS_LITERAL_STRING("length"); break;
+      case ID3FID_SONGLEN: strKey.AppendLiteral("length"); break;
 
       //Media type.
-      case ID3FID_MEDIATYPE: strKey = NS_LITERAL_STRING("mediatype"); break;
+      case ID3FID_MEDIATYPE: strKey.AppendLiteral("mediatype"); break;
 
       //Original album/movie/show title.
-      case ID3FID_ORIGALBUM: strKey = NS_LITERAL_STRING("original_album"); break;
+      case ID3FID_ORIGALBUM: strKey.AppendLiteral("original_album"); break;
 
       //Original filename.
-      case ID3FID_ORIGFILENAME: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_ORIGFILENAME: strKey.AppendLiteral(""); break;
 
       //Original lyricist(s)/text writer(s).
-      case ID3FID_ORIGLYRICIST: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_ORIGLYRICIST: strKey.AppendLiteral(""); break;
 
       //Original artist(s)/performer(s).
-      case ID3FID_ORIGARTIST: strKey = NS_LITERAL_STRING("original_artist"); break;
+      case ID3FID_ORIGARTIST: strKey.AppendLiteral("original_artist"); break;
 
       //Original release year.
-      case ID3FID_ORIGYEAR: strKey = NS_LITERAL_STRING("original_year"); break;
+      case ID3FID_ORIGYEAR: strKey.AppendLiteral("original_year"); break;
 
       //File owner/licensee.
-      case ID3FID_FILEOWNER: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_FILEOWNER: strKey.AppendLiteral(""); break;
 
       //Lead performer(s)/Soloist(s).
-      case ID3FID_LEADARTIST: strKey = NS_LITERAL_STRING("artist"); break;
+      case ID3FID_LEADARTIST: strKey.AppendLiteral("artist"); break;
 
       //Band/orchestra/accompaniment.
-      case ID3FID_BAND: strKey = NS_LITERAL_STRING("accompaniment"); break;
+      case ID3FID_BAND: strKey.AppendLiteral("accompaniment"); break;
 
       //Conductor/performer refinement.
-      case ID3FID_CONDUCTOR: strKey = NS_LITERAL_STRING("conductor"); break;
+      case ID3FID_CONDUCTOR: strKey.AppendLiteral("conductor"); break;
 
       //Interpreted, remixed, or otherwise modified by.
-      case ID3FID_MIXARTIST: strKey = NS_LITERAL_STRING("interpreter_remixer"); break;
+      case ID3FID_MIXARTIST: strKey.AppendLiteral("interpreter_remixer"); break;
 
       //Part of a set.
-      case ID3FID_PARTINSET: strKey = NS_LITERAL_STRING("set_collection"); break;
+      case ID3FID_PARTINSET: strKey.AppendLiteral("set_collection"); break;
 
       //Publisher.
-      case ID3FID_PUBLISHER: strKey = NS_LITERAL_STRING("publisher"); break;
+      case ID3FID_PUBLISHER: strKey.AppendLiteral("publisher"); break;
 
       //Track number/Position in set.
-      case ID3FID_TRACKNUM: strKey = NS_LITERAL_STRING("track_no"); break;
+      case ID3FID_TRACKNUM: strKey.AppendLiteral("track_no"); break;
 
       //Recording dates.
-      case ID3FID_RECORDINGDATES: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_RECORDINGDATES: strKey.AppendLiteral(""); break;
 
       //Internet radio station name.
-      case ID3FID_NETRADIOSTATION: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_NETRADIOSTATION: strKey.AppendLiteral(""); break;
 
       //Internet radio station owner.
-      case ID3FID_NETRADIOOWNER: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_NETRADIOOWNER: strKey.AppendLiteral(""); break;
 
       //Size.
-      case ID3FID_SIZE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_SIZE: strKey.AppendLiteral(""); break;
 
       //ISRC (international standard recording code).
-      case ID3FID_ISRC: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_ISRC: strKey.AppendLiteral(""); break;
 
       //Software/Hardware and settings used for encoding.
-      case ID3FID_ENCODERSETTINGS: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_ENCODERSETTINGS: strKey.AppendLiteral(""); break;
 
       //User defined text information.
-      case ID3FID_USERTEXT: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_USERTEXT: strKey.AppendLiteral(""); break;
 
       //Year.
-      case ID3FID_YEAR: strKey = NS_LITERAL_STRING("year"); break;
+      case ID3FID_YEAR: strKey.AppendLiteral("year"); break;
 
       //Unique file identifier.
-      case ID3FID_UNIQUEFILEID: strKey = NS_LITERAL_STRING("metadata_uuid"); break;
+      case ID3FID_UNIQUEFILEID: strKey.AppendLiteral("metadata_uuid"); break;
 
       //Terms of use.
-      case ID3FID_TERMSOFUSE: strKey = NS_LITERAL_STRING("terms_of_use"); break;
+      case ID3FID_TERMSOFUSE: strKey.AppendLiteral("terms_of_use"); break;
 
       //Unsynchronized lyric/text transcription.
-      case ID3FID_UNSYNCEDLYRICS: strKey = NS_LITERAL_STRING("lyrics"); break;
+      case ID3FID_UNSYNCEDLYRICS: strKey.AppendLiteral("lyrics"); break;
 
       //Commercial information.
-      case ID3FID_WWWCOMMERCIALINFO: strKey = NS_LITERAL_STRING("commercialinfo_url"); break;
+      case ID3FID_WWWCOMMERCIALINFO: strKey.AppendLiteral("commercialinfo_url"); break;
 
       //Copyright/Legal infromation.
-      case ID3FID_WWWCOPYRIGHT: strKey = NS_LITERAL_STRING("copyright_url"); break;
+      case ID3FID_WWWCOPYRIGHT: strKey.AppendLiteral("copyright_url"); break;
 
       //Official audio file webpage.
-      case ID3FID_WWWAUDIOFILE: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_WWWAUDIOFILE: strKey.AppendLiteral(""); break;
 
       //Official artist/performer webpage.
-      case ID3FID_WWWARTIST: strKey = NS_LITERAL_STRING("artist_url"); break;
+      case ID3FID_WWWARTIST: strKey.AppendLiteral("artist_url"); break;
 
       //Official audio source webpage.
-      case ID3FID_WWWAUDIOSOURCE: strKey = NS_LITERAL_STRING("source_url"); break;
+      case ID3FID_WWWAUDIOSOURCE: strKey.AppendLiteral("source_url"); break;
 
       //Official internet radio station homepage.
-      case ID3FID_WWWRADIOPAGE: strKey = NS_LITERAL_STRING("netradio_url"); break;
+      case ID3FID_WWWRADIOPAGE: strKey.AppendLiteral("netradio_url"); break;
 
       //Payment.
-      case ID3FID_WWWPAYMENT: strKey = NS_LITERAL_STRING("payment_url"); break;
+      case ID3FID_WWWPAYMENT: strKey.AppendLiteral("payment_url"); break;
 
       //Official publisher webpage.
-      case ID3FID_WWWPUBLISHER: strKey = NS_LITERAL_STRING("publisher_url"); break;
+      case ID3FID_WWWPUBLISHER: strKey.AppendLiteral("publisher_url"); break;
 
       //User defined URL link.
-      case ID3FID_WWWUSER: strKey = NS_LITERAL_STRING("user_url"); break;
+      case ID3FID_WWWUSER: strKey.AppendLiteral("user_url"); break;
 
       //Encrypted meta frame (id3v2.2.x).
-      case ID3FID_METACRYPTO: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_METACRYPTO: strKey.AppendLiteral(""); break;
 
       //Compressed meta frame (id3v2.2.1).
-      case ID3FID_METACOMPRESSION: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_METACOMPRESSION: strKey.AppendLiteral(""); break;
 
       //Last field placeholder.
-      case ID3FID_LASTFRAMEID: strKey = NS_LITERAL_STRING(""); break;
+      case ID3FID_LASTFRAMEID: strKey.AppendLiteral(""); break;
     }
 
     // If we care,
@@ -742,11 +746,12 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           case ID3TE_UTF16:
           {
             size_t size = pField->Size();
-            unicode_t *buffer = (unicode_t *)nsMemory::Alloc( ( size + 1) * sizeof(unicode_t) );
+            unicode_t *buffer = (unicode_t *)nsMemory::Alloc( (size + 1) * sizeof(unicode_t) );
             size_t read = pField->Get( buffer, size );
             buffer[read] = 0;
             if (swap)
-              for (size_t i = 0; i < read; i++)  // Am I sure this is the rules for when I'm supposed to swap?
+              // Am I sure this is the rules? I'm always supposed to swap?
+              for (size_t i = 0; i < read; i++)  
               {
                 char *p = (char *)(buffer+i);
                 char temp = p[0];
@@ -759,8 +764,8 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           }
           case ID3TE_UTF8:
           {
-            nsCString u8_string( pField->GetRawText() );
-            strValue = NS_ConvertUTF8toUTF16(u8_string);
+            // Relatively easy.
+            strValue = NS_ConvertUTF8toUTF16( pField->GetRawText() );
             break;
           }
         }
@@ -771,6 +776,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 
   // For now, leak this?
   // We crash when we delete it?
+
 //  delete itFrame;
 
   // Parse up the happy header info.
@@ -803,13 +809,12 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
   m_Values->GetValue(NS_LITERAL_STRING("genre"), genre);
   if (genre.Length())
   {
-    nsAutoString gn( genre );
-    PRInt32 lparen = gn.Find(NS_LITERAL_CSTRING("("));
-    PRInt32 rparen = gn.Find(NS_LITERAL_CSTRING(")"));
+    PRInt32 lparen = genre.Find("(");
+    PRInt32 rparen = genre.Find(")");
     if ( lparen != -1 && rparen != -1 )
     {
       nsAutoString gen;
-      gn.Mid( gen, lparen + 1, rparen - 1 );
+      genre.Mid( gen, lparen + 1, rparen - 1 );
       PRInt32 aErrorCode;
       PRInt32 g = gen.ToInteger(&aErrorCode);
       if ( !aErrorCode && g < ID3_NR_OF_V1_GENRES )

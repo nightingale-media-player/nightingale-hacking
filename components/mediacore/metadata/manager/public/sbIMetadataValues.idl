@@ -48,24 +48,37 @@
 interface sbIMetadataValues : nsISupports
 {
   /**
+  * \brief The number of values stored internally
+  */
+  readonly attribute PRInt32 numValues;
+
+  /**
+  * \brief The N'th key in the internal map
+  */
+  AString getKey( in PRInt32 N );
+
+  /**
   * \brief Assign a value to the internal map
   * \param aKey The key index to receive the incoming value
   * \param aValue The value to assign
   * \param aType The type of the value
   */
   void setValue( in AString aKey, in AString aValue, in PRInt32 aType );
+
   /**
   * \brief Retrieve a value from the internal map
   * \param aKey The key index to find the value
   * \return The value string at that key
   */
   AString getValue( in AString aKey );
+
   /**
   * \brief Retrieve a value type from the internal map
   * \param aKey The key index to find the value type
   * \return The type enumeration at that key
   */
   PRInt32 getType( in AString aKey );
+
   /**
   * \brief Clear the internal map and erase all the values
   */

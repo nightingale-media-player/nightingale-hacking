@@ -31,9 +31,6 @@
 
 #pragma once
 
-#ifdef XP_WIN
-#include <windows.h>
-#endif
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "MetadataHandlerOGG.h"
@@ -93,9 +90,8 @@ NS_IMETHODIMP sbMetadataHandlerOGG::GetChannel(nsIChannel **_retval)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetChannel (in nsIChannel urlChannel); */
-NS_IMETHODIMP sbMetadataHandlerOGG::SetChannel(nsIChannel *urlChannel, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerOGG::SetChannel(nsIChannel *urlChannel)
 {
-  *_retval = 0;
   m_Channel = urlChannel;
 
   return NS_OK;
@@ -150,9 +146,9 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Close()
   return NS_OK;
 } //Close
 
-NS_IMETHODIMP sbMetadataHandlerOGG::Vote( const PRUnichar *url, PRInt32 *_retval )
+NS_IMETHODIMP sbMetadataHandlerOGG::Vote( const nsAString &url, PRInt32 *_retval )
 {
-  nsString strUrl( url );
+  nsPromiseFlatString strUrl( url );
 
   if ( strUrl.Find( ".ogg", PR_TRUE ) != -1 )
     *_retval = 1;
@@ -168,10 +164,9 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
 {
   nsresult nRet = NS_ERROR_UNEXPECTED;
 
-  *_retval = 0;
+  *_retval = 0;  // Zero is failure
   if(!m_Channel)
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
 
@@ -180,7 +175,6 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
   m_Values->Clear();
   if(!m_Values.get())
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
 
@@ -188,11 +182,14 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
   m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1");
   if(!m_ChannelHandler.get())
   {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
   }
+
   // Start reading the data.
   m_ChannelHandler->Open( m_Channel, this );
+
+  // This read is always asynchronous
+  *_retval = -1;
 
   nRet = NS_OK;
 
@@ -207,8 +204,8 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Write(PRInt32 *_retval)
   return NS_OK;
 } //Write
 
-/* sbIMetadataValues GetValuesMap (); */
-NS_IMETHODIMP sbMetadataHandlerOGG::GetValuesMap(sbIMetadataValues **_retval)
+/* sbIMetadataValues GetValues (); */
+NS_IMETHODIMP sbMetadataHandlerOGG::GetValues(sbIMetadataValues **_retval)
 {
   *_retval = m_Values;
   if ( (*_retval) )
@@ -216,8 +213,8 @@ NS_IMETHODIMP sbMetadataHandlerOGG::GetValuesMap(sbIMetadataValues **_retval)
   return NS_OK;
 }
 
-/* void SetValuesMap (in sbIMetadataValues values); */
-NS_IMETHODIMP sbMetadataHandlerOGG::SetValuesMap(sbIMetadataValues *values)
+/* void SetValues (in sbIMetadataValues values); */
+NS_IMETHODIMP sbMetadataHandlerOGG::SetValues(sbIMetadataValues *values)
 {
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -225,10 +222,6 @@ NS_IMETHODIMP sbMetadataHandlerOGG::SetValuesMap(sbIMetadataValues *values)
 
 void sbMetadataHandlerOGG::ParseChannel()
 {
-  // Lots of data buffers, here
-  PRUint32 count;
-  void *buf;
-
   // We don't care about the first header?
   sbOGGHeader first_header = ParseHeader();
   if ( first_header.m_Size && first_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
@@ -254,8 +247,7 @@ void sbMetadataHandlerOGG::ParseChannel()
   if ( comment_header.m_Size && comment_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
   {
     // Head block.
-    char head[7];
-    m_ChannelHandler->Read( (char *)head, 7, &count ); // junq
+    m_ChannelHandler->Skip( 7 ); // junq
 
     // Vendor block.
     nsString vendor_string = ReadIntString();
@@ -274,7 +266,7 @@ void sbMetadataHandlerOGG::ParseChannel()
         nsString comment_string = ReadIntString();
         if ( comment_string.Length() )
         {
-          PRInt32 split = comment_string.Find( "=", FALSE );
+          PRInt32 split = comment_string.Find( "=", false );
           if ( split != -1 )
           {
             nsString key, value;
@@ -284,7 +276,7 @@ void sbMetadataHandlerOGG::ParseChannel()
           }
           else break; // Crap
         }
-        else break; // Crap
+        else break; // Double-Crap
       }
     }
   }

@@ -43,7 +43,7 @@ interface nsIChannel;
 *
 * This class provides buffered read methods for the handler to retrieve data.
 *
-* /sa sbIMetadataHandler
+* \sa sbIMetadataHandler
 */
 [uuid(6CB7F8A0-29ED-424b-AEF6-B491A8784AF4)]
 interface sbIMetadataChannel : nsIStreamListener

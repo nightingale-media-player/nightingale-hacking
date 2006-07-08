@@ -24,13 +24,40 @@
 //
 */
 
+/**
+* \file sbIMetadataManager.idl
+* \brief The manager from which to request a metadata handler
+* \sa sbIMetadataHandler.idl
+*/
 #include "nsISupports.idl"
 #include "sbIMetadataHandler.idl"
 
-//{ 0x3ebc067f, 0xe52d, 0x4041, { 0xa5, 0xe4, 0x5c, 0x21, 0x7d, 0x4a, 0x5f, 0xbe } }
-
+/**
+* \interface sbIMetadataManager sbIMetadataManager.h
+* \brief The manager from which to request a metadata handler
+*
+* User code gives the manager an url to a piece of media.
+*
+* Manager returns a proper handler, or NULL if it can't find one.
+*
+* User code uses that sbIMetadataHandler to read/write metadata.
+*
+* \sa sbIMetadataHandler
+*/
 [scriptable, uuid(3EBC067F-E52D-4041-A5E4-5C217D4A5FBE)]
 interface sbIMetadataManager : nsISupports
 {
-  sbIMetadataHandler GetHandlerForMediaURL(in wstring strURL);
+  /**
+  * \brief Request a metadata handler
+  *
+  * User code provides an url to a piece of media.
+  *
+  * This method returns a proper handler, or NULL if it can't find one.
+  *
+  * User code uses that sbIMetadataHandler to read/write metadata.
+  *
+  * \param aUrl The url from which to read/write metadata
+  * \return The handler to use, or NULL.
+  */
+  sbIMetadataHandler getHandlerForMediaURL(in AString aUrl);
 };

@@ -135,11 +135,10 @@ try
       if ( bsMDHandler )
       {
         // Ask if it is done.
-        if ( bsMDHandler.GetCompleted() )
+        if ( bsMDHandler.completed )
         {
           // Always submit after an http read.  (for now?)
-          var channel = bsMDHandler.GetChannel();
-          if ( channel && channel.URI.scheme.indexOf( "http" ) != -1 )
+          if ( bsMDHandler.channel && bsMDHandler.channel.URI.scheme.indexOf( "http" ) != -1 )
             bsSubmitQueries = true;
           BSReadHandlerValues();
         }
@@ -218,7 +217,7 @@ try
       var url = result.GetRowCellByColumn( bsLastRow, "url" );
       try
       {
-        bsMDHandler = aMetadataManager.GetHandlerForMediaURL(url);
+        bsMDHandler = aMetadataManager.getHandlerForMediaURL(url);
       } 
       catch(e)
       {
@@ -232,9 +231,9 @@ try
       else
       {
         // Phew -- maybe it's okay to read, now?
-        var retval = bsMDHandler.Read();
+        var retval = bsMDHandler.read();
         // If it's immediately done, read the values.
-        if ( bsMDHandler.GetCompleted() )
+        if ( bsMDHandler.completed )
           BSReadHandlerValues();
       }
     }
@@ -305,9 +304,10 @@ try
     var values = null;
     if ( ! blank && bsMDHandler )
     {
-      values = bsMDHandler.GetValuesMap();
-      // clear the bsMDHandler variable so we don't track it.
-      bsMDHandler.Close();
+      // Get the values out of it before we close and destroy it.
+      values = bsMDHandler.values;
+      // Clear the bsMDHandler variable so we don't track it.
+      bsMDHandler.close();
       bsMDHandler = null;
     }
 
@@ -317,16 +317,18 @@ try
     var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
     var url = result.GetRowCellByColumn( bsLastRow, "url" );
     var service_uuid = result.GetRowCellByColumn( bsLastRow, "service_uuid" );
-//    BSCalcMaxArray( result.GetRowCount() ); // leave it at 20.
     
     var metadata = new Array();
-    if ( ! blank )
+    if ( ! blank && values != null )
     {
-      values.setValue( "service_uuid", service_uuid, 0 ); // Pretend like it came from the file.
+      // This is the database that owns this.  Make sure it's set.
+      values.setValue( "service_uuid", service_uuid, 0 ); 
       var text = "";
       for ( var i in keys )
       {
-        metadata[ i ] = values.getValue( keys[ i ] );
+        // Pull the individual values into an array we can 
+        // send to the database later.
+        metadata[ i ] = values.getValue( keys[ i ] ); 
         text += keys[ i ] + ": " + metadata[ i ] + "\n";
       }
       //alert(text);

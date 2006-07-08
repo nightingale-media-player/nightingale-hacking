@@ -24,29 +24,143 @@
 //
 */
 
+/**
+* \file sbIMetadataHandler.idl
+* \brief A wrapper for an nsIChannel that buffers the incoming data
+*/
 #include "nsISupports.idl"
 #include "nsIChannel.idl"
 #include "sbIMetadataValues.idl"
 
-//{ 0x919ff2d3, 0x616d, 0x4035, { 0xa5, 0x2f, 0x8, 0xc2, 0x39, 0xf3, 0x34, 0xee } }
-
+/**
+* \interface sbIMetadataHandler sbIMetadataHandler.h
+* \brief An object capable of returning the metadata from the url to a file
+*
+* User code requests a handler by calling 
+* sbIMetadataManager::getHandlerForMediaURL that then returns one of these.
+*
+* \sa sbIMetadataManager
+*/
 [scriptable, uuid(919FF2D3-616D-4035-A52F-08C239F334EE)]
 interface sbIMetadataHandler : nsISupports
 {
-  PRInt32 Vote( in wstring url );
-  void SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
-  void SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
+  /**
+  * \brief The values object containing the metadata information
+  *
+  * When the handler has successfully completed its read() operation, the
+  * values attribute will be filled with the metadata from the url.
+  */
+  attribute sbIMetadataValues values;
 
-  nsIChannel GetChannel();
-  PRInt32 SetChannel(in nsIChannel urlChannel);
+  /**
+  * \brief Whether or not the object has completed its read() operation
+  *
+  * This value is false until the handler completes its read() operation.
+  *
+  * It is up to the implementor to determine if a read() call should operate
+  * asynchronously or by blocking.  The user of the handler should not attempt
+  * to get the sbIMetadataValues object before the read() is completed.
+  */
+  readonly attribute PRBool completed;
 
-  PRInt32 Read();
-  PRInt32 Write();
+  /**
+  * \brief The object's nsIChannel
+  *
+  * The object is assigned an nsIChannel from the sbIMetadataManager after it
+  * has successfully voted for an url.  In the Read call, the implementor may
+  * choose to pull the url from the channel and use that directly, or open the
+  * channel (either itself or using an sbIMetadataChannel as a helper) and
+  * stream the data to be parsed.
+  *
+  * In general, for local files, it is faster to pull the url and handle the
+  * metadata read immediately rather than open the channel.  For remote files,
+  * it's far easier to just use the channel infrastructure already setup.
+  */
+  attribute nsIChannel channel;
 
-  sbIMetadataValues GetValuesMap();
-  void SetValuesMap(in sbIMetadataValues values);
+  /**
+  * \brief Vote to be the handler returned for the given url
+  *
+  * The sbIMetadataManager will instantiate one of every sbIMetadataHandler
+  * subclass and ask it to vote on the given url.  Whichever handler returns
+  * the highest vote will be used as the handler for the url.
+  *
+  * Values less than zero cause that handler to be ignored.
+  *
+  * At the moment, our handlers return -1, 0, or 1 (for "no," "maybe," and
+  * "yes").
+  *
+  * \param aUrl The url upon which one should vote
+  * \return The vote
+  * \sa sbIMetadataManager
+  */
+  PRInt32 vote( in AString aUrl );
 
-  void OnChannelData( in nsISupports channel );
-  PRBool GetCompleted();
-  void Close();
+  /**
+  * \brief Get the mimetypes supported by this handler (probably DEPRECATED)
+  * \TODO Make sure it's safe to deprecate these.  Only the cores should need to return mimetype/extension info, I think.
+  * \param nMIMECount The number of mimetypes returned in the array
+  * \param aMIMETypes The array of mimetypes supported by this handler
+  */
+  void supportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+  * \brief Get the extensions supported by this handler (probably DEPRECATED)
+  * \TODO Make sure it's safe to deprecate these.  Only the cores should need to return mimetype/extension info, I think.
+  * \param nExtCount The number of extensions returned in the array
+  * \param aExts The array of extensions supported by this handler
+  */
+  void supportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
+
+  /**
+  * \brief Start the read operation
+  *
+  * After getting a handler from the sbIMetadataManager, the user code usually
+  * calls read upon it, immediately.  The implementor may choose to handle the
+  * request immediately or asynchronously.
+  *
+  * \return -1 if operating asynchronously, otherwise the number of metadata values read (0 on failure)
+  */
+  PRInt32 read();
+
+  /**
+  * \brief Start the write operation
+  *
+  * After getting a handler from the sbIMetadataManager, the user code may set
+  * an sbIMetadataValues object into the handler and then call write to write
+  * the abstract metadata map into the specific metadata requirements of the
+  * file format supported by the handler.
+  *
+  * Note that the number of items written may not always equal the number of
+  * items in the sbIMetadataValues object if the underlying file format does
+  * not support the given keys.
+  *
+  * \TODO Make anything actually work with a write operation
+  * \return -1 if operating asynchronously, otherwise the number of metadata values written (0 on failure)
+  */
+  PRInt32 write();
+
+  /**
+  * \brief Be thou informst that one's sbIMetadataChannel has just received data
+  *
+  * Every time the underlying nsIChannel dumps data on the sbIMetadataChannel,
+  * plus once more for when the nsIChannel reports a stop condition.
+  *
+  * This is a chance for the handler code to attempt to parse the datastream.
+  *
+  * \param aChannel The sbIMetadataChannel delivering data.  You'll have to QI for it.
+  */
+  void onChannelData( in nsISupports aChannel );
+
+  /**
+  * \brief Be thou informst that one's sbIMetadataChannel has just received data
+  *
+  * Every time the underlying nsIChannel dumps data on the sbIMetadataChannel,
+  * plus once more for when the nsIChannel reports a stop condition.
+  *
+  * This is a chance for the handler code to attempt to parse the datastream.
+  *
+  * \param aChannel The sbIMetadataChannel delivering data.  You'll have to QI for it.
+  */
+  void close();
 };
