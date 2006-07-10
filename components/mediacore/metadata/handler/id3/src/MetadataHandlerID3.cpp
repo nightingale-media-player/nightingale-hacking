@@ -229,24 +229,25 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
           PRUint64 buf = 0;
           mc->GetBuf(&buf);
           PRUint32 read = 0, size = PR_MIN( 8096, (PRUint32)buf );
-          char *buffer = (char *)nsMemory::Alloc(size);
-          if (buffer)
+          if ( size )
           {
-            mc->Read(buffer, size, &read);
-            PRUint64 file_size = 0;
-            mc->GetSize(&file_size);
-            CalculateBitrate(buffer, read, file_size);
-            nsMemory::Free(buffer);
+            char *buffer = (char *)nsMemory::Alloc(size);
+            if (buffer)
+            {
+              mc->Read(buffer, size, &read);
+              PRUint64 file_size = 0;
+              mc->GetSize(&file_size);
+              CalculateBitrate(buffer, read, file_size);
+              nsMemory::Free(buffer);
+            }
           }
         }
       }
     }
     catch ( const MetadataHandlerID3Exception err )
     {
-      PRBool completed = false;
-      mc->GetCompleted( &completed );
       // If it's a tiny file, it's probably a 404 error
-      if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
+      if ( err.m_Seek > ( err.m_Size - 1024 ) )
       {
         // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
         m_Completed = true;
@@ -255,6 +256,12 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
       // Otherwise, take another spin around and try again.
     }
   }
+
+  // If the channel thinks it's done, then the handler must be done, too.
+  PRBool completed = false;
+  mc->GetCompleted( &completed );
+  if ( completed )
+    m_Completed = true;
 
   return NS_OK;
 }
