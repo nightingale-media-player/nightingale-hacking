@@ -65,13 +65,16 @@ public:
   PRInt32 ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable);
 
 protected:
-  PRLock* m_pNameLock;
-  nsString m_Name;
+  PRLock*   m_pNameLock;
+  nsString  m_Name;
 
-  PRLock* m_pDescriptionLock;
-  nsString m_Description;
+  PRLock*   m_pOriginalURLLock;
+  nsString  m_OriginalURL;
 
-  PRBool m_Replace;
+  PRLock*   m_pDescriptionLock;
+  nsString  m_Description;
+
+  PRBool    m_Replace;
 };
 
 #endif // __PLAYLIST_READER_M3U_H__

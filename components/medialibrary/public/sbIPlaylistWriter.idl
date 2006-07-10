@@ -29,11 +29,11 @@
 [scriptable, uuid(27B68B9B-E471-4367-B159-63B65C581847)]
 interface sbIPlaylistWriter : nsISupports
 {
-  PRBool Write(in wstring strPlaylist, in wstring strOutURL, in PRBool bReplace, out PRInt32 errorCode);
-  PRInt32 Vote(in wstring strURL);
+  PRBool Write(in AString strPlaylist, in AString strOutURL, in PRBool bReplace, out PRInt32 errorCode);
+  PRInt32 Vote(in AString strURL);
 
-  wstring Name();
-  wstring Description();
+  AString Name();
+  AString Description();
   
   void SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
   void SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);

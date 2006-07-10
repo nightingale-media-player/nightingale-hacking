@@ -83,7 +83,7 @@ CPlaylistReaderListener.prototype =
         dump("CPlaylistReaderListener::onStateChange - Playlist Content Type: " + strContentType + "\n");
       }
       aPlaylistReader.originalURL = this.originalURL;
-      var success = aPlaylistReader.LoadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
+      var success = aPlaylistReader.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
                                                  this.readableName, this.playlistType, this.description, 
                                                  strContentType, this.appendOrReplace, null);
       

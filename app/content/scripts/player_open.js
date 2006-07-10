@@ -97,7 +97,7 @@ try
       // Tell it what filters to be using
       var filterlist = "";
       var extensionCount = new Object;
-      var extensions = thePlaylistReader.SupportedFileExtensions(extensionCount);
+      var extensions = thePlaylistReader.supportedFileExtensions(extensionCount);
       
       var first = true;
       for(var i = 0; i < extensions.length; i++)
@@ -126,7 +126,7 @@ try
         // And if we're good, play it.
         var plsFile = "file:///" + fp.file.path;
         var readableName = fp.file.leafName;
-        var success = thePlaylistReader.AutoLoad(plsFile, "songbird", readableName, "user", plsFile, "", null);
+        var success = thePlaylistReader.autoLoad(plsFile, "songbird", readableName, "user", plsFile, "", null);
         
         if ( ( success == true ) || ( success == 1 ) )
         {

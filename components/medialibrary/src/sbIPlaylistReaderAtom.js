@@ -57,7 +57,7 @@ CPlaylistAtom.prototype =
   m_table: "",
   m_append: false,
   
-  Read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
+  read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
   {
     try
     {
@@ -105,7 +105,7 @@ CPlaylistAtom.prototype =
               if(playlist)
               {
                 this.m_playlist = playlist;
-                return this.ProcessXMLDocument(this.m_document);
+                return this.processXMLDocument(this.m_document);
               }
             }
           }
@@ -114,13 +114,13 @@ CPlaylistAtom.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistAtom::Read - " + err;
+      throw "CPlaylistAtom::read - " + err;
     }
     
     return false;
   },
   
-  Vote: function( strURL )
+  vote: function( strURL )
   {
     try
     {
@@ -128,11 +128,11 @@ CPlaylistAtom.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistAtom::Vote - " + err;
+      throw "CPlaylistAtom::vote - " + err;
     }
   },
   
-  Name: function()
+  name: function()
   {
     try
     {
@@ -140,11 +140,11 @@ CPlaylistAtom.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistAtom::Name - " + err;
+      throw "CPlaylistAtom::name - " + err;
     }
   },
   
-  Description: function()
+  description: function()
   {
     try
     {
@@ -152,11 +152,11 @@ CPlaylistAtom.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistAtom::Description - " + err;
+      throw "CPlaylistAtom::description - " + err;
     }
   },
   
-  SupportedMIMETypes: function( /* out */ nMIMECount )
+  supportedMIMETypes: function( /* out */ nMIMECount )
   {
     var retval = new Array;
     nMIMECount.value = 0;
@@ -171,12 +171,12 @@ CPlaylistAtom.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistAtom::SupportedMIMETypes - " + err;
+      throw "CPlaylistAtom::supportedMIMETypes - " + err;
     }
     return retval;
   },
   
-  SupportedFileExtensions: function( /* out */ nExtCount )
+  supportedFileExtensions: function( /* out */ nExtCount )
   {
     var retval = new Array;
     nExtCount.value = 0;
@@ -190,13 +190,13 @@ CPlaylistAtom.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistAtom::SupportedFileExtensions - " + err;
+      throw "CPlaylistAtom::supportedFileExtensions - " + err;
     }
     
     return retval;
   },
   
-  ProcessXMLDocument: function( xmlDocument )
+  processXMLDocument: function( xmlDocument )
   {
     var ret = false;
     try
@@ -224,7 +224,7 @@ CPlaylistAtom.prototype =
     return ret;
   },
   
-  ProcessAtomFeed: function( xmlDocument )
+  processAtomFeed: function( xmlDocument )
   {
     try
     {

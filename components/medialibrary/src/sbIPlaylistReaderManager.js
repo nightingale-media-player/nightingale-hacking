@@ -50,7 +50,7 @@ CPlaylistReaderManager.prototype =
   m_Browser: null,
   m_Listener: null,
 
-  GetTempFilename: function()
+  getTempFilename: function()
   {
     var strTempFile = "";
     
@@ -69,7 +69,7 @@ CPlaylistReaderManager.prototype =
     return aTempFolder.path;
   },
   
-  GetFileExtension: function(strURL)
+  getFileExtension: function(strURL)
   {
     if(!strURL) return "";
     
@@ -90,13 +90,13 @@ CPlaylistReaderManager.prototype =
   },
 
   //sbIPlaylistReaderManager
-  LoadPlaylist: function(strURL, strGUID, strName, strReadableName, strPlaylistType, strDescription, strContentType, bAppendOrReplace, playlistReaderListener)
+  loadPlaylist: function(strURL, strGUID, strName, strReadableName, strPlaylistType, strDescription, strContentType, bAppendOrReplace, playlistReaderListener)
   {
     const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
     const PlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
     
     var err = new Object();
-    var theExtension = this.GetFileExtension(strURL);
+    var theExtension = this.getFileExtension(strURL);
     var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
     var aLocalURI = Components.classes["@mozilla.org/network/simple-uri;1"].createInstance(Components.interfaces.nsIURI);
 
@@ -107,7 +107,7 @@ CPlaylistReaderManager.prototype =
     catch ( err )
     {
       // WHOA!
-//      throw( "\r\nsbIPlaylistReaderManager::LoadPlaylist Error loading url '" + strURL + "'\r\n" + err + "\r\n" );
+      //throw( "\r\nsbIPlaylistReaderManager::loadPlaylist Error loading url '" + strURL + "'\r\n" + err + "\r\n" );
       return false;
     }
     
@@ -131,14 +131,14 @@ CPlaylistReaderManager.prototype =
       var aURL = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURL);
       aURL.spec = strURL;
 
-      return this.Read(strURL, strGUID, strName, strContentType, bAppendOrReplace, err);
+      return this.read(strURL, strGUID, strName, strContentType, bAppendOrReplace, err);
     }
     else 
     {
       // Remember the original url.
       this.originalURL = strURL;
       
-      var destFile = this.GetTempFilename() + "." + theExtension;
+      var destFile = this.getTempFilename() + "." + theExtension;
       var aBrowser = (Components.classes["@mozilla.org/embedding/browser/nsWebBrowser;1"]).createInstance(Components.interfaces.nsIWebBrowserPersist);
 
       if(!aBrowser) return false;
@@ -182,19 +182,19 @@ CPlaylistReaderManager.prototype =
     return true;
   },
 
-  AutoLoad: function(strURL, strGUID, strName, strType, strDesc, strContentType, playlistReaderListener)
+  autoLoad: function(strURL, strGUID, strName, strType, strDesc, strContentType, playlistReaderListener)
   {
     var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
     aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
 
     var strDestTable = aUUIDGenerator.generateUUID();
     
-    return this.LoadPlaylist(strURL, strGUID, strDestTable, strName, strType, strDesc, strContentType, false, playlistReaderListener);
+    return this.loadPlaylist(strURL, strGUID, strDestTable, strName, strType, strDesc, strContentType, false, playlistReaderListener);
   },
   
-  Read: function(strURL, strGUID, strDestTable, strContentType, bAppendOrReplace)
+  read: function(strURL, strGUID, strDestTable, strContentType, bAppendOrReplace)
   {
-    var theExtension = this.GetFileExtension(strURL);
+    var theExtension = this.getFileExtension(strURL);
   
     for(var contractID in Components.classes)
     {
@@ -210,7 +210,7 @@ CPlaylistReaderManager.prototype =
           if(strContentType == "")
           {
             var nExtensionsCount = new Object;
-            var theExtensions = aReader.SupportedFileExtensions(nExtensionsCount);
+            var theExtensions = aReader.supportedFileExtensions(nExtensionsCount);
             
             for(var i = 0; i < theExtensions.length; i++)
             {
@@ -223,9 +223,9 @@ CPlaylistReaderManager.prototype =
                 aReader.originalURL = this.originalURL;
                 this.originalURL = "";
                 
-                bRet = aReader.Read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+                bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
                 
-                dump("CPlaylistReaderManager::Read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
+                dump("CPlaylistReaderManager::read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
                 
                 if(bRet)
                   return bRet;
@@ -235,7 +235,7 @@ CPlaylistReaderManager.prototype =
           else
           {
             var nMIMTypeCount = new Object;
-            var theMIMETypes = aReader.SupportedMIMETypes(nMIMTypeCount);
+            var theMIMETypes = aReader.supportedMIMETypes(nMIMTypeCount);
             
             for(var i = 0; i < theMIMETypes.length; i++)
             {
@@ -248,9 +248,9 @@ CPlaylistReaderManager.prototype =
                 aReader.originalURL = this.originalURL;
                 this.originalURL = "";
                 
-                bRet = aReader.Read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+                bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
                 
-                dump("CPlaylistReaderManager::Read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
+                dump("CPlaylistReaderManager::read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
                 
                 if(bRet)     
                   return bRet;
@@ -264,7 +264,7 @@ CPlaylistReaderManager.prototype =
     return false;
   },
   
-  SupportedFileExtensions: function(nExtCount)
+  supportedFileExtensions: function(nExtCount)
   {
     var theExtensions = new Array;
     nExtCount.value = 0;
@@ -281,7 +281,7 @@ CPlaylistReaderManager.prototype =
         if(aReader)
         {
           var nExtensionsCount = new Object;
-          var aExts = aReader.SupportedFileExtensions(nExtensionsCount);
+          var aExts = aReader.supportedFileExtensions(nExtensionsCount);
           theExtensions.push(aExts);
         }
       }
@@ -291,7 +291,7 @@ CPlaylistReaderManager.prototype =
     return theExtensions;
   },
   
-  SupportedMIMETypes: function(nMIMECount)
+  supportedMIMETypes: function(nMIMECount)
   {
     var theMIMETypes = new Array;
     nMIMECount.value = 0;
@@ -308,7 +308,7 @@ CPlaylistReaderManager.prototype =
         if(aReader)
         {
           var nMIMETypesCount = new Object;
-          var aMIMETypes = aReader.SupportedMIMETypes(nMIMETypesCount);
+          var aMIMETypes = aReader.supportedMIMETypes(nMIMETypesCount);
           theMIMETypes.push(aMIMETypes);
         }
       }

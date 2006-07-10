@@ -57,7 +57,7 @@ CPlaylistRDF.prototype =
   m_table: "",
   m_append: false,
   
-  Read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
+  read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
   {
     try
     {
@@ -105,7 +105,7 @@ CPlaylistRDF.prototype =
               if(playlist)
               {
                 this.m_playlist = playlist;
-                return this.ProcessXMLDocument(this.m_document);
+                return this.processXMLDocument(this.m_document);
               }
             }
           }
@@ -114,13 +114,13 @@ CPlaylistRDF.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRDF::Read - " + err;
+      throw "CPlaylistRDF::read - " + err;
     }
     
     return false;
   },
   
-  Vote: function( strURL )
+  vote: function( strURL )
   {
     try
     {
@@ -128,11 +128,11 @@ CPlaylistRDF.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRDF::Vote - " + err;
+      throw "CPlaylistRDF::vote - " + err;
     }
   },
   
-  Name: function()
+  name: function()
   {
     try
     {
@@ -140,11 +140,11 @@ CPlaylistRDF.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRDF::Name - " + err;
+      throw "CPlaylistRDF::name - " + err;
     }
   },
   
-  Description: function()
+  description: function()
   {
     try
     {
@@ -152,11 +152,11 @@ CPlaylistRDF.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRDF::Description - " + err;
+      throw "CPlaylistRDF::description - " + err;
     }
   },
   
-  SupportedMIMETypes: function( /* out */ nMIMECount )
+  supportedMIMETypes: function( /* out */ nMIMECount )
   {
     var retval = new Array;
     nMIMECount.value = 0;
@@ -170,12 +170,12 @@ CPlaylistRDF.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRDF::SupportedMIMETypes - " + err;
+      throw "CPlaylistRDF::supportedMIMETypes - " + err;
     }
     return retval;
   },
   
-  SupportedFileExtensions: function( /* out */ nExtCount )
+  supportedFileExtensions: function( /* out */ nExtCount )
   {
     var retval = new Array;
     nExtCount.value = 0;
@@ -189,24 +189,24 @@ CPlaylistRDF.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRDF::SupportedFileExtensions - " + err;
+      throw "CPlaylistRDF::supportedFileExtensions - " + err;
     }
     
     return retval;
   },
   
-  ProcessXMLDocument: function( xmlDocument )
+  processXMLDocument: function( xmlDocument )
   {
     var ret = false;
     try
     {
       var document = xmlDocument.documentElement;
-      dump("CPlaylistRDF::ProcessXMLDocument - Tag Name: " + document.tagName + "\n");
+      dump("CPlaylistRDF::processXMLDocument - Tag Name: " + document.tagName + "\n");
       
       if(document.tagName == "rdf:RDF")
       {
-        dump("CPlaylistRDF::ProcessXMLDocument - RSS/RDF Version: 1.0\n");
-        ret = this.ProcessRDFFeed(document);
+        dump("CPlaylistRDF::processXMLDocument - RSS/RDF Version: 1.0\n");
+        ret = this.processRDFFeed(document);
       }
     }      
     catch(err)
@@ -217,7 +217,7 @@ CPlaylistRDF.prototype =
     return ret;
   },
   
-  ProcessRDFFeed: function( xmlDocument )
+  processRDFFeed: function( xmlDocument )
   {
     try
     {

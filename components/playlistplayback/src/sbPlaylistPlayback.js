@@ -1147,7 +1147,7 @@ PlaylistPlayback.prototype = {
         // Tell it what filters to be using
         var filterlist = "";
         var extensionCount = new Object;
-        var extensions = aPlaylistReaderManager.SupportedFileExtensions(extensionCount);
+        var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
 
         for(var i = 0; i < extensions.length; i++)
         {

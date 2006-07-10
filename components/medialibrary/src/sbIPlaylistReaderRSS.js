@@ -57,7 +57,7 @@ CPlaylistRSS.prototype =
   m_table: "",
   m_append: false,
     
-  Read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
+  read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
   {
     try
     {
@@ -105,7 +105,7 @@ CPlaylistRSS.prototype =
               if(playlist)
               {
                 this.m_playlist = playlist;
-                return this.ProcessXMLDocument(this.m_document);
+                return this.processXMLDocument(this.m_document);
               }
             }
           }
@@ -114,13 +114,13 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::Read - " + err;
+      throw "CPlaylistRSS::read - " + err;
     }
     
     return false;
   },
   
-  Vote: function( strURL )
+  vote: function( strURL )
   {
     try
     {
@@ -128,11 +128,11 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::Vote - " + err;
+      throw "CPlaylistRSS::vote - " + err;
     }
   },
   
-  Name: function()
+  name: function()
   {
     try
     {
@@ -140,11 +140,11 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::Name - " + err;
+      throw "CPlaylistRSS::name - " + err;
     }
   },
   
-  Description: function()
+  description: function()
   {
     try
     {
@@ -152,11 +152,11 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::Description - " + err;
+      throw "CPlaylistRSS::description - " + err;
     }
   },
   
-  SupportedMIMETypes: function( /* out */ nMIMECount )
+  supportedMIMETypes: function( /* out */ nMIMECount )
   {
     var retval = new Array;
     nMIMECount.value = 0;
@@ -172,12 +172,12 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::SupportedMIMETypes - " + err;
+      throw "CPlaylistRSS::supportedMIMETypes - " + err;
     }
     return retval;
   },
   
-  SupportedFileExtensions: function( /* out */ nExtCount )
+  supportedFileExtensions: function( /* out */ nExtCount )
   {
     var retval = new Array;
     nExtCount.value = 0;
@@ -191,13 +191,13 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::SupportedFileExtensions - " + err;
+      throw "CPlaylistRSS::supportedFileExtensions - " + err;
     }
     
     return retval;
   },
   
-  ProcessXMLDocument: function( xmlDocument )
+  processXMLDocument: function( xmlDocument )
   {
     var ret = false;
     try
@@ -207,23 +207,23 @@ CPlaylistRSS.prototype =
       if(document.tagName == "rss")
       {
         var rssVersion = document.getAttribute("version");
-        dump("CPlaylistRSS::ProcessXMLDocument - RSS Version: " + rssVersion + "\n");
+        dump("CPlaylistRSS::processXMLDocument - RSS Version: " + rssVersion + "\n");
         
         if(rssVersion[0] == "2")
         {
-          ret = this.ProcessRSSFeed(document);
+          ret = this.processRSSFeed(document);
         }
       }
     }
     catch(err)
     {
-      throw "CPlaylistRSS::ProcessXMLDocument - " + err;
+      throw "CPlaylistRSS::processXMLDocument - " + err;
     }
     
     return ret;
   },
   
-  ProcessRSSFeed: function( xmlDocument )
+  processRSSFeed: function( xmlDocument )
   {
     try
     {
@@ -247,7 +247,7 @@ CPlaylistRSS.prototype =
           {
             case "title": this.m_playlist.SetReadableName(child.firstChild.data); break;
             case "description": playlistDescription = ""; break;
-            case "item": this.ProcessRSSItem(child); break;
+            case "item": this.processRSSItem(child); break;
           }
         }
         
@@ -258,13 +258,13 @@ CPlaylistRSS.prototype =
     }
     catch(err)
     {
-      throw "CPlaylistRSS::ProcessXMLDocument - " + err;
+      throw "CPlaylistRSS::processRSSDocument - " + err;
     }
     
     return false;
   },
   
-  ProcessRSSItem: function(xmlElement)
+  processRSSItem: function(xmlElement)
   {
     try
     {

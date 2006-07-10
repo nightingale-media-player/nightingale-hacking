@@ -70,6 +70,9 @@ protected:
   PRLock*   m_pDescriptionLock;
   nsString  m_Description;
 
+  PRLock*   m_pOriginalURLLock;
+  nsString  m_OriginalURL;
+
   PRBool m_Replace;
 };
 

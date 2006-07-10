@@ -68,9 +68,11 @@ CPlaylistReaderPLS::CPlaylistReaderPLS()
 : m_Replace(PR_FALSE)
 , m_pDescriptionLock(PR_NewLock())
 , m_pNameLock(PR_NewLock())
+, m_pOriginalURLLock(PR_NewLock())
 {
   NS_ASSERTION(m_pDescriptionLock, "PlaylistReaderPLS.m_pDescriptionLock failed");
   NS_ASSERTION(m_pNameLock, "PlaylistReaderPLS.m_pNameLock failed");
+  NS_ASSERTION(m_pOriginalURLLock, "PlaylistReaderPLS.m_pOriginalURLLock failed");
 
   m_Name.AssignLiteral("Songbird PLS Reader");
   m_Description.AssignLiteral("Loads PLS playlist files from remote and local locations.");
@@ -87,27 +89,29 @@ CPlaylistReaderPLS::~CPlaylistReaderPLS()
 
 //-----------------------------------------------------------------------------
 /* attribute wstring originalURL; */
-NS_IMETHODIMP CPlaylistReaderPLS::SetOriginalURL(const PRUnichar *strURL)
+NS_IMETHODIMP CPlaylistReaderPLS::SetOriginalURL(const nsAString &strURL)
 {
+  nsAutoLock lock(m_pOriginalURLLock);
+  m_OriginalURL = strURL;
   return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP CPlaylistReaderPLS::GetOriginalURL(PRUnichar **strURL)
+NS_IMETHODIMP CPlaylistReaderPLS::GetOriginalURL(nsAString &strURL)
 {
-  *strURL = nsnull;
+  nsAutoLock lock(m_pOriginalURLLock);
+  strURL = m_OriginalURL;
   return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
 /* PRBool Read (in wstring strURL, in wstring strGUID, in wstring strDestTable, out PRInt32 errorCode); */
-NS_IMETHODIMP CPlaylistReaderPLS::Read(const PRUnichar *strURL, const PRUnichar *strGUID, const PRUnichar *strDestTable, PRBool bReplace, PRInt32 *errorCode, PRBool *_retval)
+NS_IMETHODIMP CPlaylistReaderPLS::Read(const nsAString &strURL, const nsAString &strGUID, const nsAString &strDestTable, PRBool bReplace, PRInt32 *errorCode, PRBool *_retval)
 {
   *_retval = PR_FALSE;
   *errorCode = 0;
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsDependentString strTheURL(strURL);
   nsCAutoString  cstrURL;
 
   nsCOMPtr<nsIFileInputStream> pFileReader = do_GetService("@mozilla.org/network/file-input-stream;1");
@@ -116,7 +120,7 @@ NS_IMETHODIMP CPlaylistReaderPLS::Read(const PRUnichar *strURL, const PRUnichar 
 
   if(!pFile || !pURI || !pFileReader) return rv;
 
-  rv = pURI->SetSpec(NS_ConvertUTF16toUTF8(strTheURL));
+  rv = pURI->SetSpec(NS_ConvertUTF16toUTF8(strURL));
   if(NS_FAILED(rv)) return rv;
 
   nsCAutoString  cstrScheme;
@@ -172,11 +176,11 @@ NS_IMETHODIMP CPlaylistReaderPLS::Read(const PRUnichar *strURL, const PRUnichar 
     }
 
     m_Replace = bReplace;
-    *errorCode = ParsePLSFromBuffer(NS_CONST_CAST(PRUnichar *, strPathToPLS.get()), 
-                                    NS_CONST_CAST(PRUnichar *, strBuffer.get()), 
+    *errorCode = ParsePLSFromBuffer(NS_CONST_CAST(PRUnichar *, PromiseFlatString(strPathToPLS).get()), 
+                                    NS_CONST_CAST(PRUnichar *, PromiseFlatString(strBuffer).get()), 
                                     strBuffer.Length(), 
-                                    NS_CONST_CAST(PRUnichar *, strGUID), 
-                                    NS_CONST_CAST(PRUnichar *, strDestTable));
+                                    NS_CONST_CAST(PRUnichar *, PromiseFlatString(strGUID).get()), 
+                                    NS_CONST_CAST(PRUnichar *, PromiseFlatString(strDestTable).get()));
 
     if(!*errorCode)
     {
@@ -190,7 +194,7 @@ NS_IMETHODIMP CPlaylistReaderPLS::Read(const PRUnichar *strURL, const PRUnichar 
 
 //-----------------------------------------------------------------------------
 /* PRInt32 Vote (); */
-NS_IMETHODIMP CPlaylistReaderPLS::Vote(const PRUnichar *strUrl, PRInt32 *_retval)
+NS_IMETHODIMP CPlaylistReaderPLS::Vote(const nsAString &strUrl, PRInt32 *_retval)
 {
   *_retval = 10000;
   return NS_OK;
@@ -198,27 +202,19 @@ NS_IMETHODIMP CPlaylistReaderPLS::Vote(const PRUnichar *strUrl, PRInt32 *_retval
 
 //-----------------------------------------------------------------------------
 /* wstring Name (); */
-NS_IMETHODIMP CPlaylistReaderPLS::Name(PRUnichar **_retval)
+NS_IMETHODIMP CPlaylistReaderPLS::Name(nsAString &_retval)
 {
   nsAutoLock lock(m_pNameLock);
-  *_retval = ToNewUnicode(m_Name);
-
-  if(*_retval)
-    return NS_ERROR_OUT_OF_MEMORY;
-
+  _retval = m_Name;
   return NS_OK;
 } //Name
 
 //-----------------------------------------------------------------------------
 /* wstring Description (); */
-NS_IMETHODIMP CPlaylistReaderPLS::Description(PRUnichar **_retval)
+NS_IMETHODIMP CPlaylistReaderPLS::Description(nsAString &_retval)
 {
   nsAutoLock lock(m_pDescriptionLock);
-  *_retval = ToNewUnicode(m_Description);
-
-  if(*_retval)
-    return NS_ERROR_OUT_OF_MEMORY;
-
+  _retval = m_Description;
   return NS_OK;
 } //Description
 

@@ -110,7 +110,7 @@ function DPUpdaterUpdatePlaylist(row)
     var strName = resObj.GetRowCellByColumn(row, "name");
     var strReadableName = resObj.GetRowCellByColumn(row, "readable_name");
 
-    var success = dpPlaylistReaderManager.LoadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", true, null);
+    var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", true, null);
    
     if(success)
     {

@@ -49,7 +49,7 @@ CPlaylistHTML.prototype =
 
   m_HREFArray: new Array(),
 
-  Read: function( strURL, strGUID, strDestTable, replace, /* out */ errorCode )
+  read: function( strURL, strGUID, strDestTable, replace, /* out */ errorCode )
   {
     try
     {
@@ -87,11 +87,11 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::Read - " + err;
+      throw "CPlaylistHTML::read - " + err;
     }
   },
   
-  Vote: function( strURL )
+  vote: function( strURL )
   {
     try
     {
@@ -99,11 +99,11 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::Vote - " + err;
+      throw "CPlaylistHTML::vote - " + err;
     }
   },
   
-  Name: function()
+  name: function()
   {
     try
     {
@@ -111,11 +111,11 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::Name - " + err;
+      throw "CPlaylistHTML::name - " + err;
     }
   },
   
-  Description: function()
+  description: function()
   {
     try
     {
@@ -123,11 +123,11 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::Description - " + err;
+      throw "CPlaylistHTML::description - " + err;
     }
   },
   
-  SupportedMIMETypes: function( /* out */ nMIMECount )
+  supportedMIMETypes: function( /* out */ nMIMECount )
   {
     var retval = new Array;
     nMIMECount.value = 0;
@@ -139,12 +139,12 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::SupportedMIMETypes - " + err;
+      throw "CPlaylistHTML::supportedMIMETypes - " + err;
     }
     return retval;
   },
   
-  SupportedFileExtensions: function( /* out */ nExtCount )
+  supportedFileExtensions: function( /* out */ nExtCount )
   {
     var retval = new Array;
     nExtCount.value = 0;
@@ -161,7 +161,7 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistHTML::SupportedFileExtensions - " + err;
+      throw "CPlaylistHTML::supportedFileExtensions - " + err;
     }
     
     return retval;
@@ -240,7 +240,7 @@ CPlaylistHTML.prototype =
         }
       }
       // I'm tired of this function.  Let's have a different one.
-      retval = this.CreatePlaylist( strGUID, strDestTable, links, replace );
+      retval = this.createPlaylist( strGUID, strDestTable, links, replace );
     }
     catch ( err )
     {
@@ -249,7 +249,7 @@ CPlaylistHTML.prototype =
     return retval;
   },
   
-  CreatePlaylist: function( strGUID, strDestTable, links_array, replace )
+  createPlaylist: function( strGUID, strDestTable, links_array, replace )
   {
     try
     {

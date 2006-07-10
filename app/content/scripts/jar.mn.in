@@ -24,7 +24,6 @@ songbird.jar:
   content/songbird/scripts/miniplayer.js                (miniplayer.js)
   content/songbird/scripts/mousewheel.js                (mousewheel.js)
   content/songbird/scripts/player_open.js               (player_open.js)
-  content/songbird/scripts/playlist_reader.js           (playlist_reader.js)
   content/songbird/scripts/restartbox.js                (restartbox.js)
   content/songbird/scripts/sbIAsyncForLoop.js           (sbIAsyncForLoop.js)
   content/songbird/scripts/sbIDOMEval.js                (sbIDOMEval.js)

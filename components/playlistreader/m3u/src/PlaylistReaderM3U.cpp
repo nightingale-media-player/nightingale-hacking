@@ -67,9 +67,11 @@ CPlaylistReaderM3U::CPlaylistReaderM3U()
 : m_Replace(PR_FALSE)
 , m_pDescriptionLock(PR_NewLock())
 , m_pNameLock(PR_NewLock())
+, m_pOriginalURLLock(PR_NewLock())
 {
-  NS_ASSERTION(m_pDescriptionLock, "PlaylistReaderPLS.m_pDescriptionLock failed");
-  NS_ASSERTION(m_pNameLock, "PlaylistReaderPLS.m_pNameLock failed");
+  NS_ASSERTION(m_pDescriptionLock, "PlaylistReaderM3U.m_pDescriptionLock failed");
+  NS_ASSERTION(m_pNameLock, "PlaylistReaderM3U.m_pNameLock failed");
+  NS_ASSERTION(m_pOriginalURLLock, "PlaylistReaderM3U.m_pOriginalURLLock failed");
 
   m_Name.AssignLiteral("Songbird M3U Reader");
   m_Description.AssignLiteral("Loads M3U playlists from remote and local locations.");
@@ -85,26 +87,29 @@ CPlaylistReaderM3U::~CPlaylistReaderM3U()
 } //dtor
 
 //-----------------------------------------------------------------------------
-/* attribute wstring originalURL; */
-NS_IMETHODIMP CPlaylistReaderM3U::SetOriginalURL(const PRUnichar *strURL)
+/* attribute AString originalURL; */
+NS_IMETHODIMP CPlaylistReaderM3U::SetOriginalURL(const nsAString &strURL)
 {
+  nsAutoLock lock(m_pOriginalURLLock);
+  m_OriginalURL = strURL;
   return NS_OK;
 }
-NS_IMETHODIMP CPlaylistReaderM3U::GetOriginalURL(PRUnichar **strURL)
+
+NS_IMETHODIMP CPlaylistReaderM3U::GetOriginalURL(nsAString &strURL)
 {
-  *strURL = nsnull;
+  nsAutoLock lock(m_pOriginalURLLock);
+  strURL = m_OriginalURL;
   return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
 /* PRBool Read (in wstring strURL, in wstring strGUID, in wstring strDestTable, out PRInt32 errorCode); */
-NS_IMETHODIMP CPlaylistReaderM3U::Read(const PRUnichar *strURL, const PRUnichar *strGUID, const PRUnichar *strDestTable, PRBool bReplace, PRInt32 *errorCode, PRBool *_retval)
+NS_IMETHODIMP CPlaylistReaderM3U::Read(const nsAString &strURL, const nsAString &strGUID, const nsAString &strDestTable, PRBool bReplace, PRInt32 *errorCode, PRBool *_retval)
 {
   *_retval = PR_FALSE;
   *errorCode = 0;
   nsresult rv = NS_ERROR_UNEXPECTED;
   
-  nsAutoString strTheURL(strURL);
   nsCAutoString cstrURL;
   
   nsCOMPtr<nsIFileInputStream> pFileReader = do_GetService("@mozilla.org/network/file-input-stream;1");
@@ -168,11 +173,11 @@ NS_IMETHODIMP CPlaylistReaderM3U::Read(const PRUnichar *strURL, const PRUnichar 
     }
 
     m_Replace = bReplace;
-    *errorCode = ParseM3UFromBuffer(NS_CONST_CAST(PRUnichar *, strPathToPLS.get()), 
-                                    NS_CONST_CAST(PRUnichar *, strBuffer.get()), 
+    *errorCode = ParseM3UFromBuffer(NS_CONST_CAST(PRUnichar *, PromiseFlatString(strPathToPLS).get()), 
+                                    NS_CONST_CAST(PRUnichar *, PromiseFlatString(strBuffer).get()), 
                                     strBuffer.Length(), 
-                                    NS_CONST_CAST(PRUnichar *, strGUID), 
-                                    NS_CONST_CAST(PRUnichar *, strDestTable));
+                                    NS_CONST_CAST(PRUnichar *, PromiseFlatString(strGUID).get()), 
+                                    NS_CONST_CAST(PRUnichar *, PromiseFlatString(strDestTable).get()));
 
     if(!*errorCode)
     {
@@ -186,7 +191,7 @@ NS_IMETHODIMP CPlaylistReaderM3U::Read(const PRUnichar *strURL, const PRUnichar 
 
 //-----------------------------------------------------------------------------
 /* PRInt32 Vote (); */
-NS_IMETHODIMP CPlaylistReaderM3U::Vote(const PRUnichar *strUrl, PRInt32 *_retval)
+NS_IMETHODIMP CPlaylistReaderM3U::Vote(const nsAString &strUrl, PRInt32 *_retval)
 {
   *_retval = 10000;
   return NS_OK;
@@ -194,27 +199,19 @@ NS_IMETHODIMP CPlaylistReaderM3U::Vote(const PRUnichar *strUrl, PRInt32 *_retval
 
 //-----------------------------------------------------------------------------
 /* wstring Name (); */
-NS_IMETHODIMP CPlaylistReaderM3U::Name(PRUnichar **_retval)
+NS_IMETHODIMP CPlaylistReaderM3U::Name(nsAString &_retval)
 {
   nsAutoLock lock(m_pNameLock);
-  *_retval = ToNewUnicode(m_Name);
-  
-  if(*_retval == nsnull)
-    return NS_ERROR_OUT_OF_MEMORY;
-
+  _retval = m_Name;
   return NS_OK;
 } //Name
 
 //-----------------------------------------------------------------------------
 /* wstring Description (); */
-NS_IMETHODIMP CPlaylistReaderM3U::Description(PRUnichar **_retval)
+NS_IMETHODIMP CPlaylistReaderM3U::Description(nsAString &_retval)
 {
   nsAutoLock lock(m_pDescriptionLock);
-  *_retval = ToNewUnicode(m_Description);
-
-  if(*_retval == nsnull)
-    return NS_ERROR_OUT_OF_MEMORY;
-
+  _retval = m_Description;
   return NS_OK;
 } //Description
 

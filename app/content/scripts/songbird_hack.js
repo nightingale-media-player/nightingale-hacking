@@ -299,7 +299,7 @@ function SBInitialize()
 //    var the_url = "file:///c:\\vice.html";
 //    var the_url = "http://odeo.com/channel/38104/rss";
 //    var the_url = "http://takeyourmedicinemp3.blogspot.com/atom.xml";
-//    var success = thePlaylistReader.AutoLoad(the_url, "songbird", ConvertUrlToDisplayName( the_url ), "http", the_url, "", null);
+//    var success = thePlaylistReader.autoLoad(the_url, "songbird", ConvertUrlToDisplayName( the_url ), "http", the_url, "", null);
 
 /*
     try
@@ -1650,7 +1650,7 @@ function IsPlaylistUrl( the_url )
       // Tell it what filters to be using
       var filterlist = "";
       var extensionCount = new Object;
-      var extensions = aPlaylistReaderManager.SupportedFileExtensions(extensionCount);
+      var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
 
       for(var i = 0; i < extensions.length; i++)
       {
@@ -2292,7 +2292,7 @@ function onHTMLContextMenu( target )
       break;
       case "html.context.playlist":
         SBScanServiceTreeNewEntryEditable();
-        var success = thePlaylistReader.AutoLoad(theHTMLContextURL, "songbird", ConvertUrlToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
+        var success = thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", ConvertUrlToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
         SBScanServiceTreeNewEntryStart();
       break;
     }
