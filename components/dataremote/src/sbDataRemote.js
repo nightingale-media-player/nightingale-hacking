@@ -23,6 +23,15 @@
 // END SONGBIRD GPL
 //
  */
+
+/**
+ * \file sbDataRemote.js
+ * \brief Implementation of the interface sbIDataRemote
+ * This implementation of sbIDataRemote uses the mozilla pref system as a
+ *   backend for storing key-value pairs.
+ * \sa sbIDataRemote.idl  sbIDataRemote.js
+ */
+
 const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
 const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Service Interface";
 const SONGBIRD_DATAREMOTE_CID = Components.ID("{9e6c2f00-b727-443f-88a6-1f4e2beb65cd}");
@@ -76,7 +85,8 @@ DataRemote.prototype = {
       
     this._initialized = true;
   },
-        
+
+  // only needs to be called if we have bound an attribute, property or observer
   unbind: function() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;

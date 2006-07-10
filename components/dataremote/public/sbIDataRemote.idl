@@ -27,7 +27,7 @@
 /**
  * \file sbIDataRemote.idl
  * \brief Definition of the sbIDataRemote Interface
- * \sa sbDataRemote.js
+ * \sa sbDataRemote.js sbIDataRemote.js
  */
 
 #include "nsISupports.idl"
@@ -37,12 +37,21 @@ interface nsIDOMElement;
 
 /**
  * \interface sbIDataRemote
- * \brief An interface for accessing stored data and linking that data to 
- *        objects through callbacks, attributes and properties.
+ * \brief An interface for accessing, and binding to, stored data.
  *
- * . From javascript you should create one of these
- *   by the convenience method: SB_NewDataRemote( key, root ) as exposed in the
- *   file songbird_interfaces.js
+ * This interface defines the ability to set key-value pairs into a global
+ *   data-store, and to observe changes in the value of the data. The observer
+ *   can be bound to the data in one of three different ways. A callback object
+ *   can be bound as an nsIObserver, or a DOM element can bind the value of an
+ *   attribute or a property to the value of the data.
+ *
+ * The attribute and property bindings can be done as string, integer or
+ *   boolean, and in the case of boolean binding the value can be the inverse
+ *   of the data value. In addition the actual value for the attribute or
+ *   property can be defined by additional script executed in the notification 
+ *   step.
+ *
+ *
  * \sa DataRemote
  */
 [scriptable, uuid(80f8c597-2050-48a0-8efa-c9482547220e)]
@@ -50,43 +59,49 @@ interface sbIDataRemote : nsIObserver
 {
 
   /**
-   * Sets internal state, must be called before any other methods. All other
+   * \brief Initialize the DataRemote
+   * Sets internal state, MUST be called before any other methods. All other
    *   calls will throw exceptions if init has not been called.
-   * @param aKey
-   * @param aRoot
-   * @throws NS_ERROR_FAILURE if unable to get the pref branch
-   * @throws NS_ERROR_UNEXPECTED if init has already been called
+   *
+   * \param aKey - The string identifier for the data to watch
+   * \param aRoot - OPTIONAL - If present this defines a prefix to the key
+   * \throws NS_ERROR_FAILURE if unable to initialize properly
+   * \throws NS_ERROR_UNEXPECTED if init has already been called
    */
   void init(in AString aKey, in AString aRoot);
 
   /**
-   * Removes the data remote from being a pref listener.
-   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
+   * \brief Disconnect the DataRemote
+   * If this DataRemote has been bound via a call to bindObserver(),
+   *   bindAttribute() or bindProperty() it must be disconnected to prevent
+   *   calls back to objects that may no longer be around. 
+   * \throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
   void unbind();
 
   /**
+   * \brief
    * When the key associated with the sbDataRemote changes the observer will
    *   get a callback to observe() with the new value for the data, a handle
    *   to the sbDataRemote and the key to which the data belongs.
-   * @param aObserver
-   * @param aSuppressFirst
-   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
+   * \param aObserver
+   * \param aSuppressFirst
+   * \throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
   void bindObserver(in nsIObserver aObserver,
                     in boolean aSuppressFirst);
 
   /**
+   * \brief
    * When the key associated with the sbDataRemote changes the property of
    *   the element will be modified appropriately.
-   * XXXredfive - document the behavior of bool/not/eval and what the property
-   *              will get set to.
-   * @param aElement
-   * @param aProperty
-   * @param aIsBool
-   * @param aIsNot
-   * @param aEvalString
-   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
+   *
+   * \param aElement
+   * \param aProperty
+   * \param aIsBool
+   * \param aIsNot
+   * \param aEvalString
+   * \ throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
   void bindProperty(in nsIDOMElement aElement, 
                     in AString aProperty,
@@ -95,17 +110,16 @@ interface sbIDataRemote : nsIObserver
                     in AString aEvalString);
  
   /**
+   * \brief
    * When the key associated with the sbDataRemote changes the attribute of
    *   the element will be modified appropriately.
-   * XXXredfive - document the behavior of bool/not/eval and what the attribute
-   *              will get set to.
-   * @param aElement
-   * @param aProperty
-   * @param aIsBool
-   * @param aIsNot
-   * @param aEvalString
-   * @ throws NS_ERROR_NOT_INITIALIZED if init has not been called
-   * 
+   *
+   * \param aElement
+   * \param aProperty
+   * \param aIsBool
+   * \param aIsNot
+   * \param aEvalString
+   * \throws NS_ERROR_NOT_INITIALIZED if init has not been called
    */
   void bindAttribute(in nsIDOMElement aElement,
                      in AString aProperty,
@@ -114,15 +128,42 @@ interface sbIDataRemote : nsIObserver
                      in AString aEvalString);
 
   /**
-   * The 3 ways to get and set the value of the data remote. All three
-   *   represent the same data, just exposed as different types. A sort of
-   *   home brewed simple variant. In javascript you can access these as you 
-   *   would properties of a normal js object ( obj.stringValue = "foo" assigns
-   *   the string foo into the dataremote ). In c++ you need to call getStringValue()
-   *   and so forth.
+   * \brief Access to the data in string format
+   * In javascript you can access the data as you would properties of a normal
+   *   js object ( obj.stringValue = "foo" assigns the string foo into the
+   *   DataRemote ). In c++ you need to call setStringValue("foo") and likewise
+   *   for the getter.
+   *
+   * \param aStringValue - The string to set as the data
+   * \return A string containing the value of the data, or the empty string if
+   *         no data has been set yet.
    */
   attribute AString stringValue;
+
+  /**
+   * \brief Access to the data in boolean format
+   * In javascript you can access the data as you would properties of a normal
+   *   js object ( obj.boolValue = true assigns the boolean true into the
+   *   DataRemote ). In c++ you need to call setStringValue(true) and likewise
+   *   for the getter.
+   *
+   * \param aBoolValue - The boolean to set as the data
+   * \return TRUE if the data converts to true
+   * \return FALSE if the data converts to false or there is no data set yet.
+   */
   attribute boolean boolValue;
+
+  /**
+   * \brief Access to the data in integer format
+   * In javascript you can access the data as you would properties of a normal
+   *   js object ( obj.intValue = 10 assigns the integer 10 into the
+   *   DataRemote ). In c++ you need to call setStringValue(10) and likewise
+   *   for the getter.
+   *
+   * \param aIntValue - The integer to set as the data
+   * \return The integer stored if it actually is an interger
+   * \return NaN if the the data stored is not a number.
+   */
   attribute long intValue;
 
 };
