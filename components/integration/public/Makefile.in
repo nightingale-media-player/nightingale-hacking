@@ -34,7 +34,6 @@ XPIDL_SRCS = IWindowCloak.idl \
              IWindowMinMax.idl \
              IWindowRegion.idl \
              IWindowResizeHook.idl \
-             IMediaKeyboard.idl \
              IGlobalHotkeys.idl \
              $(NULL)
              
