@@ -913,7 +913,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 #endif
           }
 
-          retDB = sqlite3_prepare16(pDB, strQuery.get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
+          retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
           pQuery->m_CurrentQuery = i;
 
           if(retDB != SQLITE_OK)
