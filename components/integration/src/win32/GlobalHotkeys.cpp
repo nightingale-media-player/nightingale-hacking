@@ -85,9 +85,8 @@ CGlobalHotkeys::~CGlobalHotkeys()
 } // dtor
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP CGlobalHotkeys::AddHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey, const PRUnichar *keyid, sbIGlobalHotkeyCallback *callback)
+NS_IMETHODIMP CGlobalHotkeys::AddHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey, const nsAString &keyid, sbIGlobalHotkeyCallback *callback)
 {
-  NS_ENSURE_ARG_POINTER(keyid);
   HOTKEY_HANDLE handle = registerHotkey(keyCode, altKey, ctrlKey, shiftKey, metaKey);
   if (handle == NULL) return NS_ERROR_FAILURE;
   NS_ADDREF(callback);
@@ -102,9 +101,8 @@ NS_IMETHODIMP CGlobalHotkeys::AddHotkey(PRInt32 keyCode, PRBool altKey, PRBool c
 std::list<GlobalHotkeyEntry *> CGlobalHotkeys::m_hotkeys;
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP CGlobalHotkeys::RemoveHotkey(const PRUnichar *keyid)
+NS_IMETHODIMP CGlobalHotkeys::RemoveHotkey(const nsAString &keyid)
 {
-  NS_ENSURE_ARG_POINTER(keyid);
   GlobalHotkeyEntry *entry = findHotkeyById(keyid);
   if (!entry) return NS_ERROR_FAILURE;
   removeEntry(entry);
@@ -142,7 +140,7 @@ LRESULT CGlobalHotkeys::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     int idHotKey = (int) wParam; 
     GlobalHotkeyEntry *entry = findHotkeyByHandle(idHotKey);
     if (entry) {
-      entry->m_callback->OnHotkey(entry->m_keyid.get());
+      entry->m_callback->OnHotkey(entry->m_keyid);
     }
   }
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -170,7 +168,7 @@ void CGlobalHotkeys::unregisterHotkey(HOTKEY_HANDLE handle)
 }
 
 //-----------------------------------------------------------------------------
-GlobalHotkeyEntry *CGlobalHotkeys::findHotkeyById(const PRUnichar *keyid)
+GlobalHotkeyEntry *CGlobalHotkeys::findHotkeyById(const nsAString &keyid)
 {
   std::list<GlobalHotkeyEntry*>::iterator iter;
   for (iter = m_hotkeys.begin(); iter != m_hotkeys.end(); iter++)

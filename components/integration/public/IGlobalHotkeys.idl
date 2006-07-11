@@ -53,7 +53,7 @@ interface sbIGlobalHotkeyCallback : nsISupports
    * \param key_id The id for the hotkey, specified when the hotkey was registered
    * \sa sbIGlobalHotkeys, sbIGlobalHotkeys::addHotkey()
    */
-  void onHotkey( in wstring key_id );
+  void onHotkey( in AString key_id );
 };
 
 /**
@@ -81,7 +81,7 @@ interface sbIGlobalHotkeys : nsISupports
    * \param cb The callback object to call when the hotkey is pressed
    * \sa removeHotkey, sbIGlobalHotkeyCallback, sbIGlobalHotkeyCallback::onHotkey()
    */
-  void addHotkey( in PRInt32 keyCode, in PRBool altKey, in PRBool ctrlKey, in PRBool shiftKey, in PRBool metaKey, in wstring key_id, in sbIGlobalHotkeyCallback cb );
+  void addHotkey( in PRInt32 keyCode, in PRBool altKey, in PRBool ctrlKey, in PRBool shiftKey, in PRBool metaKey, in AString key_id, in sbIGlobalHotkeyCallback cb );
 
   /**
    * \brief Global hotkey unregistration method
@@ -89,7 +89,7 @@ interface sbIGlobalHotkeys : nsISupports
    * \param key_id The id of the key to unregister
    * \sa addHotkey, removeAllHotkeys
    */
-  void removeHotkey( in wstring key_id );
+  void removeHotkey( in AString key_id );
 
   /**
    * \brief Global hotkeys unregistration method

@@ -89,7 +89,7 @@ protected:
 
   HOTKEY_HANDLE registerHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey);
   void unregisterHotkey(HOTKEY_HANDLE handle);
-  GlobalHotkeyEntry *findHotkeyById(const PRUnichar *keyid);
+  GlobalHotkeyEntry *findHotkeyById(const nsAString &keyid);
   GlobalHotkeyEntry *findHotkeyByHandle(HOTKEY_HANDLE handle);
   void removeEntry(GlobalHotkeyEntry *entry);
   
