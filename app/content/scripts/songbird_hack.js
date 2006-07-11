@@ -180,7 +180,6 @@ function SBInitialize()
     onWindowLoadSize();
     setMinMaxCallback();
     SBInitMouseWheel();
-    setMediaKeyboardCallback();
     initJumpToFileHotkey();
 
     if (window.addEventListener)
@@ -348,7 +347,6 @@ function SBUninitialize()
 {
   resetJumpToFileHotkey();
   closeJumpTo();
-  resetMediaKeyboardCallback();
   try {
     var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
     if (windowMinMax) {

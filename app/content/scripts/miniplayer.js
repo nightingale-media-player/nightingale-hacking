@@ -60,7 +60,6 @@ try
     var location = "" + window.location; // Grrr.  Dumb objects.
     if ( location.indexOf("?video") == -1 ) {
       initJumpToFileHotkey();
-      setMediaKeyboardCallback();
     } else {
       document.getElementById("mini_close").hidden = true;
       document.getElementById("mini_btn_max").setAttribute("oncommand", "SBFullscreen();");
@@ -75,7 +74,6 @@ try
   {
     var location = "" + window.location; // Grrr.  Dumb objects.
     if ( location.indexOf("?video") == -1 ) {
-      resetMediaKeyboardCallback();
       resetJumpToFileHotkey();
       closeJumpTo();
     }
