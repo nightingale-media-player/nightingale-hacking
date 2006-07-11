@@ -109,8 +109,6 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/mousewheel.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/mediakeyboard.js"/>
-  <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
 
   <!-- Load the demo-specific scripts -->

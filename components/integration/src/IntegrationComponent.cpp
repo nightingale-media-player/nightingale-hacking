@@ -36,7 +36,6 @@
 #include "WindowMinMax.h"
 #include "WindowResizeHook.h"
 #include "WindowRegion.h"
-#include "MediaKeyboard.h"
 #include "GlobalHotkeys.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
@@ -44,7 +43,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowCloak)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
-NS_GENERIC_FACTORY_CONSTRUCTOR(CMediaKeyboard)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
 
 static nsModuleComponentInfo sbIntegration[] =
@@ -82,13 +80,6 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_WINDOWREGION_CID,
     SONGBIRD_WINDOWREGION_CONTRACTID,
     CWindowRegionConstructor
-  },
-
-  {
-    SONGBIRD_MEDIAKEYBOARD_CLASSNAME,
-    SONGBIRD_MEDIAKEYBOARD_CID,
-    SONGBIRD_MEDIAKEYBOARD_CONTRACTID,
-    CMediaKeyboardConstructor
   },
 
   {
