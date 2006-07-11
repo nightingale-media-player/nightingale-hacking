@@ -1,20 +1,55 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+* \file sbIThreadsafeCaseConversion.idl
+* \brief Unicode case conversion routines that are threadsafe
+*/
 #include "nsISupports.idl"
 
+/**
+* \interface sbIThreadsafeCaseConversion sbIThreadsafeCaseConversion.h
+* \brief Unicode case conversion routines that are threadsafe
+*
+* Because guess-who's aren't?
+*
+* \TODO Is this still going to get implemented?
+*/
 [scriptable, uuid(66b4148a-7f06-4c4a-9ede-5c526db8c03c)]
 interface sbIThreadsafeCaseConversion : nsISupports
 {
   /**
-   * Performs an in-place conversion of the string to lowercase
-   *
-   * @param aString - The string to convert
-   */
-  void ToLowerCase(inout AString aString);
+  * \brief Performs an in-place conversion of the string to lowercase
+  * \param aString - The string to convert
+  */
+  void toLowerCase(inout AString aString);
 
   /**
-   * Performs an in-place conversion of the string to uppercase
-   *
-   * @param aString - The string to convert
-   */
-  void ToUpperCase(inout AString aString);
-
+  * \brief Performs an in-place conversion of the string to uppercase
+  * \param aString - The string to convert
+  */
+  void toUpperCase(inout AString aString);
 };
