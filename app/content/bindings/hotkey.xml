@@ -159,6 +159,14 @@
 
           const DOM_VK_META           = 0xE0;
 
+          const DOM_VK_MEDIA_MUTE       = 0xAD;
+          const DOM_VK_VOLUME_DOWN      = 0xAE;
+          const DOM_VK_VOLUME_UP        = 0xAF;
+          const DOM_VK_MEDIA_NEXT_TRACK = 0xB0;
+          const DOM_VK_MEDIA_PREV_TRACK = 0xB1;
+          const DOM_VK_MEDIA_STOP       = 0xB2;
+          const DOM_VK_MEDIA_PLAY_PAUSE = 0xB3;
+
           // this.log(code);
           switch (code) {
             // NO DASH ALLOWED !
@@ -235,6 +243,13 @@
             case DOM_VK_META: return this.meta_key_str;
             case DOM_VK_META1: return this.meta_key_str;
             case DOM_VK_META2: return this.meta_key_str;
+            case DOM_VK_MEDIA_MUTE: return "mute";
+            case DOM_VK_VOLUME_DOWN: return "volumedown";
+            case DOM_VK_VOLUME_UP: return "volumeup";
+            case DOM_VK_MEDIA_NEXT_TRACK: return "nexttrack";
+            case DOM_VK_MEDIA_PREV_TRACK: return "prevtrack";
+            case DOM_VK_MEDIA_STOP: return "stop";
+            case DOM_VK_MEDIA_PLAY_PAUSE: return "playpause";
           }
           if (this.hotkeyChar && this.hotkeyChar != 0) return String.fromCharCode(this.hotkeyChar);
           // because for some reason, some keys may not be recognized, print them as literal keycodes 
