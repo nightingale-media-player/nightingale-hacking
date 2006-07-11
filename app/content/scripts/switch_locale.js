@@ -105,7 +105,7 @@ function fillLocaleList(menu) {
       }
 
       var item = document.createElement("menuitem");
-      className = menu.parentNode.getAttribute("class");
+      var className = menu.parentNode.getAttribute("class");
 
       item.setAttribute("label", displayName);
       item.setAttribute("name", "locale.switch");
