@@ -120,8 +120,8 @@ CSmartPlaylist.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
     }
     
     return -1;
@@ -138,8 +138,8 @@ CSmartPlaylist.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
     }
     
     return "";
@@ -228,7 +228,7 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
       
-      return resObj.GetRowCell(0, 0);
+      return resObj.getRowCell(0, 0);
     }
     
     return 0;
@@ -261,7 +261,7 @@ CSmartPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      return resObj.GetRowCount();
+      return resObj.getRowCount();
     }
     
     return 0;
@@ -279,8 +279,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
     }
         
     return "";
@@ -298,8 +298,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -331,11 +331,11 @@ CSmartPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nValueCount = resObj.GetColumnCount();
+      nValueCount = resObj.getColumnCount();
       
       for(var i = 0; i < nValueCount; i++)
       {
-        aValues.push(resObj.GetRowCell(0, i));
+        aValues.push(resObj.getRowCell(0, i));
       }    
     }
     
@@ -368,11 +368,11 @@ CSmartPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nValueCount = resObj.GetColumnCount();
+      nValueCount = resObj.getColumnCount();
       
       for(var i = 0; i < nValueCount; i++)
       {
-        aValues.push(resObj.GetRowCell(0, i));
+        aValues.push(resObj.getRowCell(0, i));
       }    
     }
     
@@ -516,8 +516,8 @@ CSmartPlaylist.prototype =
     
     var resObj = this.m_queryObject.getResultObject();
     
-    if(resObj.GetRowCount())
-      strReadableName = resObj.GetRowCell(0, 0);    
+    if(resObj.getRowCount())
+      strReadableName = resObj.getRowCell(0, 0);    
     
     return strReadableName;
   },
@@ -558,8 +558,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -603,8 +603,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -624,8 +624,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -649,10 +649,10 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
+      if(resObj.getRowCount())
       {
-        nLimit.value = resObj.GetRowCell(0, 0);
-        strLimitType.value = resObj.GetRowCell(0, 1);
+        nLimit.value = resObj.getRowCell(0, 0);
+        strLimitType.value = resObj.getRowCell(0, 1);
       }
     }
   },
@@ -693,8 +693,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -736,8 +736,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -777,8 +777,8 @@ CSmartPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return 0;
@@ -795,7 +795,7 @@ CSmartPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      return resObj.GetRowCount();
+      return resObj.getRowCount();
     }
     
     return 0;
@@ -812,7 +812,7 @@ CSmartPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      if(resObj.GetRowCount())
+      if(resObj.getRowCount())
         return true;
     }
     
@@ -940,7 +940,7 @@ CSmartPlaylist.prototype =
       
       resObj = this.m_queryObject.getResultObject();
      
-      var rowCount = resObj.GetRowCount();
+      var rowCount = resObj.getRowCount();
       
       if(rowCount)
         strTheSmartQuery += " WHERE ";
@@ -948,9 +948,9 @@ CSmartPlaylist.prototype =
       var constraint = "", constraintValue = "", i = 0;
       for(; i < rowCount; ++i)
       {
-        strTheSmartQuery += resObj.GetRowCellByColumn(i, "column_name") + " ";
-        constraint = resObj.GetRowCellByColumn(i, "constraint_name");
-        constraintValue = resObj.GetRowCellByColumn(i, "constraint_value");
+        strTheSmartQuery += resObj.getRowCellByColumn(i, "column_name") + " ";
+        constraint = resObj.getRowCellByColumn(i, "constraint_name");
+        constraintValue = resObj.getRowCellByColumn(i, "constraint_value");
         
         switch(constraint)
         {

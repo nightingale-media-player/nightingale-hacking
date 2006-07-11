@@ -275,15 +275,15 @@ CPlaylistManager.prototype =
         var resObj = queryObj.getResultObject();
       
         var i = 0;
-        var rowCount = resObj.GetRowCount();
+        var rowCount = resObj.getRowCount();
         var strColName = "", strColType = "", columnList = "";
         var aCols = new Array;
         var aColType = new Array;
         
         for(i = 0; i < rowCount; i++)
         {
-          strColName = resObj.GetRowCell(i, 1);
-          strColType = resObj.GetRowCell(i, 2);
+          strColName = resObj.getRowCell(i, 1);
+          strColType = resObj.getRowCell(i, 2);
          
           if(strColName != "playlist_id") 
           {
@@ -402,13 +402,13 @@ CPlaylistManager.prototype =
         {
         
           var i = 0;
-          var rowCount = resObj.GetRowCount();
+          var rowCount = resObj.getRowCount();
           var columnList = "";
           
           for(i = 0; i < rowCount; i++)
           {
-            var strColName = resObj.GetRowCellByColumn(i, "name");
-            var strColType = resObj.GetRowCellByColumn(i, "type");
+            var strColName = resObj.getRowCellByColumn(i, "name");
+            var strColType = resObj.getRowCellByColumn(i, "type");
             
             columnList +=  strColName;
             if(i != rowCount - 1)
@@ -446,7 +446,7 @@ CPlaylistManager.prototype =
       
       var resObj = queryObj.getResultObject();
       
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
         queryObj.addQuery("DROP TABLE \"" + strName + "\"");
         queryObj.addQuery("DELETE FROM " + SIMPLEPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
@@ -472,7 +472,7 @@ CPlaylistManager.prototype =
       
       var resObj = queryObj.getResultObject();
       
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
         queryObj.addQuery("DROP TABLE \"" + strName + "\"");
         queryObj.addQuery("DELETE FROM " + PLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
@@ -498,7 +498,7 @@ CPlaylistManager.prototype =
       
       var resObj = queryObj.getResultObject();
       
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
         queryObj.addQuery("DROP TABLE \"" + strName + "\"");
         queryObj.addQuery("DELETE FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + strName + "\"");
@@ -524,7 +524,7 @@ CPlaylistManager.prototype =
       
       var resObj = queryObj.getResultObject();
       
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
         queryObj.addQuery("DROP TABLE \"" + strName + "\"");
         queryObj.addQuery("DROP TABLE \"" + strName + "_constraints\"");
@@ -623,7 +623,7 @@ CPlaylistManager.prototype =
       queryObj.execute();
       queryObj.waitForCompletion();
 
-      if(queryObj.getResultObject().GetRowCount() > 0)
+      if(queryObj.getResultObject().getRowCount() > 0)
       {
         var simplePlaylist = (new SimplePlaylist()).QueryInterface(Components.interfaces.sbISimplePlaylist);
         
@@ -650,7 +650,7 @@ CPlaylistManager.prototype =
       queryObj.waitForCompletion();
 
       var playlist = null;
-      if(queryObj.getResultObject().GetRowCount() > 0)
+      if(queryObj.getResultObject().getRowCount() > 0)
       {
         playlist = (new Playlist()).QueryInterface(Components.interfaces.sbIPlaylist);
         
@@ -689,7 +689,7 @@ CPlaylistManager.prototype =
       queryObj.waitForCompletion();
 
       var resObj = queryObj.getResultObject();
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
         var playlist = new DynamicPlaylist();
         if(playlist)
@@ -719,7 +719,7 @@ CPlaylistManager.prototype =
       queryObj.waitForCompletion();
 
       var resObj = queryObj.getResultObject();
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
         var playlist = (new SmartPlaylist()).QueryInterface(Components.interfaces.sbISmartPlaylist);
         
@@ -751,14 +751,14 @@ CPlaylistManager.prototype =
       var dNow = new Date();
       var playlists = new Array();
       
-      for(var i = 0; i < resObj.GetRowCount(); ++i)
+      for(var i = 0; i < resObj.getRowCount(); ++i)
       {
-        var lastUpdate = parseInt(resObj.GetRowCellByColumn(i, "last_update"));
-        var periodicity = parseInt(resObj.GetRowCellByColumn(i, "periodicity"));
+        var lastUpdate = parseInt(resObj.getRowCellByColumn(i, "last_update"));
+        var periodicity = parseInt(resObj.getRowCellByColumn(i, "periodicity"));
         
         if(dNow.getTime() - lastUpdate >= (periodicity * 1000 * 60))
         {
-          var name = resObj.GetRowCellByColumn(i, "name");
+          var name = resObj.getRowCellByColumn(i, "name");
           playlists.push(name);
         }
       }      
@@ -782,7 +782,7 @@ CPlaylistManager.prototype =
         queryObj.waitForCompletion();
         
         resObj = queryObj.getResultObject();
-        return parseInt(resObj.GetRowCount());
+        return parseInt(resObj.getRowCount());
       }
     }
     
@@ -822,7 +822,7 @@ CPlaylistManager.prototype =
       queryObj.execute();
       
       var resObj = queryObj.getResultObject();
-      var rowCount = resObj.GetRowCount();
+      var rowCount = resObj.getRowCount();
       
       var q = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       q.setAsyncQuery(false);
@@ -830,7 +830,7 @@ CPlaylistManager.prototype =
       
       for(var i = 0; i < rowCount; i++)
       {
-        var plName = resObj.GetRowCellByColumn(i, "name");
+        var plName = resObj.getRowCellByColumn(i, "name");
         q.addQuery("DELETE FROM \"" + plName + "\" WHERE playlist_uuid = \"" + mediaGUID + "\"");
       }
       

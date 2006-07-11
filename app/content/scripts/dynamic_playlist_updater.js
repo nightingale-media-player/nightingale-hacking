@@ -78,7 +78,7 @@ function DPUpdaterRun()
     if(dpUpdaterQuery.isExecuting())
       return;
     
-    if(dpUpdaterCurrentRow > 0 && dpUpdaterCurrentRow < dpUpdaterQuery.getResultObject().GetRowCount())
+    if(dpUpdaterCurrentRow > 0 && dpUpdaterCurrentRow < dpUpdaterQuery.getResultObject().getRowCount())
     {
       //Next Row
       DPUpdaterUpdatePlaylist(dpUpdaterCurrentRow);
@@ -103,12 +103,12 @@ function DPUpdaterUpdatePlaylist(row)
   try
   {
     var resObj = dpUpdaterQuery.getResultObject();
-    var rowCount = resObj.GetRowCount();
+    var rowCount = resObj.getRowCount();
 
-    var strGUID = resObj.GetRowCellByColumn(row, "service_uuid");
-    var strURL = resObj.GetRowCellByColumn(row, "url");
-    var strName = resObj.GetRowCellByColumn(row, "name");
-    var strReadableName = resObj.GetRowCellByColumn(row, "readable_name");
+    var strGUID = resObj.getRowCellByColumn(row, "service_uuid");
+    var strURL = resObj.getRowCellByColumn(row, "url");
+    var strName = resObj.getRowCellByColumn(row, "name");
+    var strReadableName = resObj.getRowCellByColumn(row, "readable_name");
 
     var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", true, null);
    

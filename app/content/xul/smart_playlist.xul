@@ -256,16 +256,16 @@
               aPlaylist.GetAllConstraints();
               
               var aResObj = aDBQuery.getResultObject();
-              var rowCount = aResObj.GetRowCount();
+              var rowCount = aResObj.getRowCount();
               var node = null, i = 0;
               
               for(; i < rowCount; ++i)
               {
                 node = new Object;
                 
-                node.metadata = aResObj.GetRowCellByColumn(i, "column_name");
+                node.metadata = aResObj.getRowCellByColumn(i, "column_name");
                 
-                var conditionName = aResObj.GetRowCellByColumn(i, "constraint_name");
+                var conditionName = aResObj.getRowCellByColumn(i, "constraint_name");
                 switch(conditionName)
                 {
                   case "contains": conditionName = 0; break;
@@ -277,7 +277,7 @@
                 }
                 
                 node.condition = conditionName;
-                node.value = aResObj.GetRowCellByColumn(i, "constraint_value");
+                node.value = aResObj.getRowCellByColumn(i, "constraint_value");
                 
                 conditionsArray.push(node);
               }
@@ -324,7 +324,7 @@
       aPlaylistManager.GetSmartPlaylistList(queryObj);
 
       var resObj = queryObj.getResultObject();
-      var playlistCount = resObj.GetRowCount() + 1;
+      var playlistCount = resObj.getRowCount() + 1;
 
       var newPlaylist = true;
       var name = "";

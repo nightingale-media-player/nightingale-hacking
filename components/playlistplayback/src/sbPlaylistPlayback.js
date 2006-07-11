@@ -1455,7 +1455,7 @@ PlaylistPlayback.prototype = {
     const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
     var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-    queryObj.SetDatabaseGUID("songbird");
+    queryObj.setDatabaseGUID("songbird");
     library.setQueryObject(queryObj);
     var keys = new Array( "title" );
     var values = new Array();

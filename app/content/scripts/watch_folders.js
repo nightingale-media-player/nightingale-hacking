@@ -307,8 +307,8 @@ function CWatchFolderManager()
     this.m_queryObj.execute();
     
     var resObj = this.m_queryObj.eetResultObject();
-    if(resObj.GetRowCount())
-      folderCount = parseInt(resObj.GetRowCell(0, 0));
+    if(resObj.getRowCount())
+      folderCount = parseInt(resObj.getRowCell(0, 0));
       
     return folderCount;
   }
@@ -322,12 +322,12 @@ function CWatchFolderManager()
     this.m_queryObj.execute();
     
     var resObj = this.m_queryObj.getResultObject();
-    var rowCount = resObj.GetRowCount();
+    var rowCount = resObj.getRowCount();
     if(rowCount)
     {
       for(var i = 0; i < rowCount; i++)
       {
-        var strFolder = resObj.GetRowCellByColumn(i, "folder");
+        var strFolder = resObj.getRowCellByColumn(i, "folder");
         aFolders.push(strFolder);
       }
     }
@@ -344,8 +344,8 @@ function CWatchFolderManager()
     this.m_queryObj.execute();
     
     var resObj = this.m_queryObj.getResultObject();
-    if(resObj.GetRowCount())
-      scanInterval = parseInt(resObj.GetRowCell(0, 0));
+    if(resObj.getRowCount())
+      scanInterval = parseInt(resObj.getRowCell(0, 0));
     
     return scanInterval;
   }
@@ -366,8 +366,8 @@ function CWatchFolderManager()
     this.m_queryObj.execute();
     
     var resObj = this.m_queryObj.getResultObject();
-    if(resObj.GetRowCount())
-      lastScanTime = parseInt(resObj.GetRowCell(0, 0));
+    if(resObj.getRowCount())
+      lastScanTime = parseInt(resObj.getRowCell(0, 0));
     
     return lastScanTime;
   }

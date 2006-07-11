@@ -244,13 +244,13 @@
           
           ml.getColumnInfo();
           var destcols = query.getResultObject();
-          for (var i=0;i<destcols.GetRowCount();i++) {
+          for (var i=0;i<destcols.getRowCount();i++) {
             // if not, create a control for that column using its data type and readonly status
-            var name = destcols.GetRowCellByColumn(i, "column_name");
+            var name = destcols.getRowCellByColumn(i, "column_name");
             if (this.isExcluded(name)) continue;
-            var readablename = destcols.GetRowCellByColumn(i, "readable_name");
-            var type = destcols.GetRowCellByColumn(i, "type");
-            //var ro = destcols.GetRowCellByColumn(i, "readonly");
+            var readablename = destcols.getRowCellByColumn(i, "readable_name");
+            var type = destcols.getRowCellByColumn(i, "type");
+            //var ro = destcols.getRowCellByColumn(i, "readonly");
             var elem = document.createElement("dbedit_textbox");
             if (type == 'numeric') elem.setAttribute("numeric", true);
             //if (ro) elem.setAttribute("readonly", "true");

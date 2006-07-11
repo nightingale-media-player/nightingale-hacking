@@ -159,7 +159,7 @@ try
           
           // If we're at the end of the list,
           var result = bsDBQuery.getResultObject();
-          if ( ( result.GetRowCount() == 0 ) || ( bsLastRow >= result.GetRowCount() ) )
+          if ( ( result.getRowCount() == 0 ) || ( bsLastRow >= result.getRowCount() ) )
           {
             // ...we need to resubmit the query.
             bsWaitForExecuting = true;
@@ -204,7 +204,7 @@ try
     var count = 0;
     var quit = false;
    
-    if ( ! bsSubmitQueries && ( bsLastRow < result.GetRowCount() ) ) 
+    if ( ! bsSubmitQueries && ( bsLastRow < result.getRowCount() ) ) 
     {
       var scanning = "Scanning";
       try
@@ -214,7 +214,7 @@ try
       bsScanningText.stringValue = scanning + "...";
       
       var bad_url = false;
-      var url = result.GetRowCellByColumn( bsLastRow, "url" );
+      var url = result.getRowCellByColumn( bsLastRow, "url" );
       try
       {
         bsMDHandler = aMetadataManager.getHandlerForMediaURL(url);
@@ -312,11 +312,11 @@ try
     }
 
     var result = bsDBQuery.getResultObject();
-    var time = result.GetRowCellByColumn( bsLastRow, "length" );
-    var title = result.GetRowCellByColumn( bsLastRow, "title" );
-    var uuid = result.GetRowCellByColumn( bsLastRow, "uuid" );
-    var url = result.GetRowCellByColumn( bsLastRow, "url" );
-    var service_uuid = result.GetRowCellByColumn( bsLastRow, "service_uuid" );
+    var time = result.getRowCellByColumn( bsLastRow, "length" );
+    var title = result.getRowCellByColumn( bsLastRow, "title" );
+    var uuid = result.getRowCellByColumn( bsLastRow, "uuid" );
+    var url = result.getRowCellByColumn( bsLastRow, "url" );
+    var service_uuid = result.getRowCellByColumn( bsLastRow, "service_uuid" );
     
     var metadata = new Array();
     if ( ! blank && values != null )
@@ -386,7 +386,7 @@ try
     bsLastRow++;
     
     // If we get to the end of the list and we have things to submit, submit them!
-    if ( ( bsLastRow == result.GetRowCount() ) && ( bsGUIDArray.length > 0 ) )
+    if ( ( bsLastRow == result.getRowCount() ) && ( bsGUIDArray.length > 0 ) )
     {
       bsSubmitQueries = true;
     }

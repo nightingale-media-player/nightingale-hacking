@@ -440,22 +440,14 @@ PRBool sbDeviceBase::GetNextTransferFileEntry(PRInt32 prevIndex, const PRUnichar
   {
     // We only want the first record
     PRUint32 rowNumber = 0;
-    PRUnichar *id = NULL;
-    resultset->GetRowCellByColumn(rowNumber, INDEX_COLUMN_NAME.get(), &id);
-    PRInt32 conversionError = 0;
-    curIndex = nsString(id).ToInteger(&conversionError);
+    nsAutoString id;
+    resultset->GetRowCellByColumn(rowNumber, INDEX_COLUMN_NAME, id);
     
-    PRUnichar *source = NULL;
-    resultset->GetRowCellByColumn(rowNumber, SOURCE_COLUMN_NAME.get(), &source);
-    recvSource = source;
-
-    PRUnichar *destination = NULL;
-    resultset->GetRowCellByColumn(rowNumber, DESTINATION_COLUMN_NAME.get(), &destination);
-    recvDestination = destination;
-
-    PR_Free(id);
-    PR_Free(source);
-    PR_Free(destination);
+    PRInt32 conversionError = 0;
+    curIndex = id.ToInteger(&conversionError);
+    
+    resultset->GetRowCellByColumn(rowNumber, SOURCE_COLUMN_NAME, recvSource);
+    resultset->GetRowCellByColumn(rowNumber, DESTINATION_COLUMN_NAME, recvDestination);
 
     return PR_TRUE;
   }
@@ -497,10 +489,6 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
   const nsString destinationPathColumnName = DESTINATION_COLUMN_NAME;
   const nsString indexColumnName = INDEX_COLUMN_NAME;
 
-  PRUnichar *sourcePath;
-  PRUnichar *destinationPath;
-  PRUnichar *index;
-
   PRInt32 sourcePathColumnIndex = -1;
   PRInt32 destinationPathColumnIndex = -1;
   PRUint32 indexColumnIndex = -1;
@@ -511,19 +499,19 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
   resultset->GetColumnCount(&colCount);
   for (PRInt32 colNumber = 0; colNumber < colCount; colNumber ++)
   {
-    PRUnichar *columnName;
-    resultset->GetColumnName(colNumber, &columnName);
-    if (sourcePathColumnName == nsString(columnName))
+    nsAutoString columnName;
+    resultset->GetColumnName(colNumber, columnName);
+    if (sourcePathColumnName == columnName)
     {
       sourcePathColumnIndex = colNumber;
     }
     else
-      if (destinationPathColumnName == nsString(columnName))
+      if (destinationPathColumnName == columnName)
       {
         destinationPathColumnIndex = colNumber;
       }
       else
-        if (indexColumnName == nsString(columnName))
+        if (indexColumnName == columnName)
         {
           indexColumnIndex = colNumber;
         }
@@ -552,30 +540,34 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
     for ( ; rowNumber < rowcount; rowNumber++ )
     {
       // Get progress value
-      PRUnichar *progressString = NULL;
-      resultset->GetRowCellByColumn(rowNumber, NS_LITERAL_STRING("progress").get(), &progressString);
+      nsAutoString progressString;
+      resultset->GetRowCellByColumn(rowNumber, NS_LITERAL_STRING("progress"), progressString);
       PRInt32 errorCode;
-      PRInt32 progress = nsString(progressString).ToInteger(&errorCode);
-      PR_Free(progressString);
+      PRInt32 progress = progressString.ToInteger(&errorCode);
+
       if (progress == 100)
       {
         continue; // This track has already completed downloading
       }
 
       // Transfer this file
-      resultset->GetRowCell(rowNumber, sourcePathColumnIndex, &sourcePath);
-      resultset->GetRowCell(rowNumber, destinationPathColumnIndex, &destinationPath);
-      resultset->GetRowCell(rowNumber, indexColumnIndex, &index);
+      nsAutoString sourcePath, destinationPath, index;
+      resultset->GetRowCell(rowNumber, sourcePathColumnIndex, sourcePath);
+      resultset->GetRowCell(rowNumber, destinationPathColumnIndex, destinationPath);
+      resultset->GetRowCell(rowNumber, indexColumnIndex, index);
 
-      PRBool bRet = TransferFile(deviceString, sourcePath, destinationPath, (PRUnichar *) dbContext.get(), (PRUnichar *) tableName.get(), index, rowNumber);
+      PRBool bRet = TransferFile(deviceString, 
+        NS_CONST_CAST(PRUnichar *, PromiseFlatString(sourcePath).get()),
+        NS_CONST_CAST(PRUnichar *, PromiseFlatString(destinationPath).get()), 
+        NS_CONST_CAST(PRUnichar *, PromiseFlatString(dbContext).get()), 
+        NS_CONST_CAST(PRUnichar *, PromiseFlatString(tableName).get()), 
+        NS_CONST_CAST(PRUnichar *, PromiseFlatString(index).get()), 
+        rowNumber);
+
       if(bRet)
       {
-        DoTransferStartCallback(sourcePath, destinationPath);
+        DoTransferStartCallback(PromiseFlatString(sourcePath).get(), PromiseFlatString(destinationPath).get());
       }
-
-      PR_Free(index);
-      PR_Free(sourcePath);
-      PR_Free(destinationPath);
 
       break;
 
@@ -888,15 +880,8 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     updateDataQuery = NS_LITERAL_STRING("UPDATE \"") + destTable + NS_LITERAL_STRING("\"");
     updateDataQuery += NS_LITERAL_STRING(" SET source = ");
 
-    PRUnichar *strCurSource = nsnull;
-    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("source").get(), &strCurSource);
-
-    PRUnichar *strCurDest = nsnull;
-    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("destination").get(), &strCurDest);
-
-    // Default to what's already there
-    if(nsString(strCurSource).Length()) sourcePathFile = strCurSource;
-    if(nsString(strCurDest).Length()) destinationPathFile = strCurDest;
+    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("source"), sourcePathFile);
+    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("destination"), destinationPathFile);
 
     if (isSourceGiven) 
     {
@@ -918,17 +903,15 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
 #endif
     }
 
-    PRUnichar* data;
-    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("url").get(), &data);
-
     nsString fileName;
-    nsString dataString(data);
-    GetFileNameFromURL(NS_CONST_CAST(PRUnichar*, DeviceString),
+    nsAutoString dataString;
+    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("url"), dataString);
+    GetFileNameFromURL(NS_CONST_CAST(PRUnichar *, DeviceString),
                        dataString,
                        fileName);
 
     if (!isDestinationGiven)
-      destinationPathFile = data;
+      destinationPathFile = dataString;
     else 
     {
       fileName.ReplaceChar(FILE_ILLEGAL_CHARACTERS, '_');
@@ -936,7 +919,7 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     }
 
     if (!isSourceGiven)
-      sourcePathFile = data;
+      sourcePathFile = dataString;
     else
       sourcePathFile += fileName;
 
@@ -945,13 +928,9 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
     updateDataQuery += NS_LITERAL_STRING(" destination = ");
     AddQuotedString(updateDataQuery, destinationPathFile.get(), PR_FALSE);
     updateDataQuery += NS_LITERAL_STRING(" WHERE url = ");
-    AddQuotedString(updateDataQuery, data, PR_FALSE);
+    AddQuotedString(updateDataQuery, dataString.get(), PR_FALSE);
 
     query->AddQuery(updateDataQuery);
-
-    PR_Free(data);
-    PR_Free(strCurSource);
-    PR_Free(strCurDest);
   }
 
   PRInt32 queryError = 0;
@@ -1144,11 +1123,8 @@ PRBool sbDeviceBase::GetSourceAndDestinationURL(const PRUnichar* dbContext, cons
   if(result) {
     PRUnichar *strSourceURL = nsnull, *strDestURL = nsnull;
 
-    result->GetRowCellByColumn(0, NS_LITERAL_STRING("source").get(), &strSourceURL);
-    result->GetRowCellByColumn(0, NS_LITERAL_STRING("destination").get(), &strDestURL);
-
-    sourceURL = strSourceURL;
-    destURL = strDestURL;
+    result->GetRowCellByColumn(0, NS_LITERAL_STRING("source"), sourceURL);
+    result->GetRowCellByColumn(0, NS_LITERAL_STRING("destination"), destURL);
 
     bRet = PR_TRUE;
   }
@@ -1320,11 +1296,10 @@ void sbDeviceBase::ResumeAbortedDownload(const PRUnichar* deviceString)
   resultset->GetRowCount( &rowcount );
 
   for ( PRInt32 row = 0; row < rowcount; row++ ) {
-    PRUnichar *progressString = nsnull;
-    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress").get(), &progressString);
+    nsAutoString progressString;
+    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress"), progressString);
     PRInt32 errorCode;
-    PRInt32 progress = nsString(progressString).ToInteger(&errorCode);
-    PR_Free(progressString);
+    PRInt32 progress = progressString.ToInteger(&errorCode);
     if (progress < 100) {
       // Unfinished transfer,
       // re-initiate it.
@@ -1366,11 +1341,10 @@ void sbDeviceBase::ResumeAbortedUpload(const PRUnichar* deviceString)
 
   for ( PRInt32 row = 0; row < rowcount; row++ )
   {
-    PRUnichar *progressString = nsnull;
-    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress").get(), &progressString);
+    nsAutoString progressString;
+    resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress"), progressString);
     PRInt32 errorCode;
-    PRInt32 progress = nsString(progressString).ToInteger(&errorCode);
-    PR_Free(progressString);
+    PRInt32 progress = progressString.ToInteger(&errorCode);
     if (progress < 100)
     {
       // Unfinished transfer,

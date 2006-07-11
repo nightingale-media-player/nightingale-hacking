@@ -40,18 +40,8 @@
 
 #include <prlock.h>
 
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-}
-
-#endif
-
+#include <nscore.h>
+#include <string/nsString.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASERESULT_CONTRACTID                \
@@ -76,20 +66,20 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDATABASERESULT
 
-  nsresult AddRow(const std::vector<std::prustring> &vCellValues);
+  nsresult AddRow(const std::vector<nsString> &vCellValues);
   nsresult DeleteRow(PRInt32 dbRow);
 
-  nsresult SetColumnNames(const std::vector<std::prustring> &vColumnNames);
-  nsresult SetColumnName(PRInt32 dbColumn, const std::prustring &strColumnName);
+  nsresult SetColumnNames(const std::vector<nsString> &vColumnNames);
+  nsresult SetColumnName(PRInt32 dbColumn, const nsString &strColumnName);
 
-  nsresult SetRowCell(PRInt32 dbRow, PRInt32 dbCell, const std::prustring &strCellValue);
-  nsresult SetRowCells(PRInt32 dbRow, const std::vector<std::prustring> &vCellValues);
+  nsresult SetRowCell(PRInt32 dbRow, PRInt32 dbCell, const nsString &strCellValue);
+  nsresult SetRowCells(PRInt32 dbRow, const std::vector<nsString> &vCellValues);
 
-  PRInt32 GetColumnIndexFromName(const std::prustring &strColumnName);
+  PRInt32 GetColumnIndexFromName(const nsAString &strColumnName);
 
 protected:
-  typedef std::vector<std::prustring> dbcolumnnames_t;
-  typedef std::vector<std::vector<std::prustring> > dbrowcells_t;
+  typedef std::vector<nsString> dbcolumnnames_t;
+  typedef std::vector< std::vector<nsString> > dbrowcells_t;
   
   dbcolumnnames_t m_ColumnNames;
   PRLock* m_pColumnNamesLock;

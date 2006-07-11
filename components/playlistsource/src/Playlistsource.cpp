@@ -595,12 +595,9 @@ sbPlaylistsource::GetRefRowCellByColumn(const nsAString &aRefName,
     }
     // The LoadRowResults above will fail silently if the table has been deleted and the UI is still asking for values.
     if (valueInfo.m_Resultset) {
-      PRUnichar *val = nsnull;
       rv = valueInfo.m_Resultset->GetRowCellByColumn(valueInfo.m_ResultsRow,
-                                                    nsPromiseFlatString(aColumn).get(),
-                                                    &val);
-      _retval = val;
-      nsMemory::Free(val);
+                                                    nsPromiseFlatString(aColumn),
+                                                    _retval);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -670,11 +667,9 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
   rv = m_SharedQuery->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, NS_ERROR_NULL_POINTER);
 
-  PRUnichar* val;
-  rv = result->GetRowCell(0, 0, &val);
-  if ( !val ) return NS_OK; // Whoa.
+  nsAutoString v;
+  rv = result->GetRowCell(0, 0, v);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsDependentString v(val);
 
   // (sigh) Now linear search the info results object for the matching id value
   // to get the result index
@@ -683,23 +678,16 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool found = PR_FALSE;
-  PRUnichar *newval;
+  nsAutoString newval;
   for (i = 0 ; i < rowcount; i++ ) {
-    rv = info->m_Resultset->GetRowCell(i, 0, &newval);
+    rv = info->m_Resultset->GetRowCell(i, 0, newval);
     NS_ENSURE_SUCCESS(rv, rv);
-    nsDependentString test(newval);
-
-    if (v == test)
+    if (v == newval)
+    {
       found = PR_TRUE;
-
-    PR_Free(newval);
-    newval = nsnull;
-
-    if (found)
       break;
+    }
   }
-
-  PR_Free(val);
 
   if (found)
     *_retval = i;
@@ -1855,11 +1843,10 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (j = 0; j < colcount; j++) {
-    PRUnichar* col_name;
-    rv = colresults->GetColumnName(j, &col_name);
+    nsAutoString col_str;
+    rv = colresults->GetColumnName(j, col_str);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsDependentString col_str(col_name);
     nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI) +
                                        NS_ConvertUTF16toUTF8(col_str);
 
@@ -1870,7 +1857,6 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
 
     info->m_ColumnMap[col_resource] = j;
-    PR_Free(col_name);
   }
 
   if ((colcount == 0) && (!info->m_Column.IsEmpty())) {

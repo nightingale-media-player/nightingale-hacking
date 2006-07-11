@@ -335,15 +335,15 @@
           var resultset = aDBQuery.getResultObject();
           
           // Go through and see if there is anything upon which to search.
-          var ccount = resultset.GetColumnCount();
-          var rowcount = resultset.GetRowCount();
+          var ccount = resultset.getColumnCount();
+          var rowcount = resultset.getRowCount();
           
           for(var i = 0; i < rowcount; i++)
           {
             for(var j = 0; j < ccount; j++)
             {
               // LAME.  If I append a totally blank item it is autoselected.
-              var value = "" + resultset.GetRowCell(i, j);
+              var value = "" + resultset.getRowCell(i, j);
               if ( ! value.length )
               {
                 value = " ";

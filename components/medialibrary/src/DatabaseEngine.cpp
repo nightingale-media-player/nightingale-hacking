@@ -957,37 +957,33 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                     pRes->ClearResultSet();
                     PR_Lock(pQuery->m_pQueryResultLock);
 
-                    std::vector<std::prustring> vColumnNames;
+                    std::vector<nsString> vColumnNames;
                     vColumnNames.reserve(nCount);
 
                     for(int i = 0; i < nCount; i++)
                     {
                       PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, i);
-                      std::prustring strColumnName;
-
+                      nsString strColumnName;
+                      
                       if(p)
-                      {
                         strColumnName = p;
-                      }
-
+                      
                       vColumnNames.push_back(strColumnName);
                     }
 
                     pRes->SetColumnNames(vColumnNames);
                   }
 
-                  std::vector<std::prustring> vCellValues;
+                  std::vector<nsString> vCellValues;
                   vCellValues.reserve(nCount);
 
                   for(int i = 0; i < nCount; i++)
                   {
                     PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
-                    std::prustring strCellValue;
+                    nsString strCellValue;
 
                     if(p)
-                    {
                       strCellValue = p;
-                    }
 
                     vCellValues.push_back(strCellValue);
                   }

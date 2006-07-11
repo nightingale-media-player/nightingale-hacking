@@ -46,7 +46,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  PRInt32 GetColumnCount();
+  PRInt32 getColumnCount();
 
   /**
    * \brief 
@@ -54,7 +54,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  wstring GetColumnName(in PRInt32 dbColumn);
+  AString getColumnName(in PRInt32 dbColumn);
 
   /**
    * \brief 
@@ -62,7 +62,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  PRInt32 GetRowCount();
+  PRInt32 getRowCount();
 
   /**
    * \brief 
@@ -70,7 +70,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  wstring GetRowCell(in PRInt32 dbRow, in PRInt32 dbCell);
+  AString getRowCell(in PRInt32 dbRow, in PRInt32 dbCell);
 
   /**
    * \brief 
@@ -78,7 +78,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  wstring GetRowCellByColumn(in PRInt32 dbRow, in wstring dbColumn);
+  AString getRowCellByColumn(in PRInt32 dbRow, in AString dbColumn);
 
   /**
    * \brief 
@@ -86,7 +86,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring GetColumnNamePtr(in PRInt32 dbColumn);
+  [noscript] wstring getColumnNamePtr(in PRInt32 dbColumn);
 
   /**
    * \brief 
@@ -94,7 +94,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring GetRowCellPtr(in PRInt32 dbRow, in PRInt32 dbCell);
+  [noscript] wstring getRowCellPtr(in PRInt32 dbRow, in PRInt32 dbCell);
 
   /**
    * \brief 
@@ -102,7 +102,7 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring GetRowCellByColumnPtr(in PRInt32 dbRow, in wstring dbColumn);
+  [noscript] wstring getRowCellByColumnPtr(in PRInt32 dbRow, in AString dbColumn);
 
   /**
    * \brief 
@@ -110,5 +110,5 @@ interface sbIDatabaseResult : nsISupports
    * \param 
    * \sa sbIDatabaseQuery
    */
-  [noscript] void ClearResultSet();
+  [noscript] void clearResultSet();
 };

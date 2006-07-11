@@ -171,7 +171,7 @@ CPlaylist.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      return resObj.GetRowCell(0, 0);
+      return resObj.getRowCell(0, 0);
     }
     
     return -1;
@@ -188,7 +188,7 @@ CPlaylist.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      return resObj.GetRowCell(0, 0);
+      return resObj.getRowCell(0, 0);
     }
     
     return "";
@@ -276,7 +276,7 @@ CPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
       
-      return resObj.GetRowCell(0, 0);
+      return resObj.getRowCell(0, 0);
     }
     
     return 0;
@@ -309,7 +309,7 @@ CPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      return resObj.GetRowCount();
+      return resObj.getRowCount();
     }
     
     return 0;
@@ -327,8 +327,8 @@ CPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
     }
         
     return "";
@@ -346,8 +346,8 @@ CPlaylist.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
 
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);    
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);    
     }
       
     return "";
@@ -379,11 +379,11 @@ CPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nValueCount = resObj.GetColumnCount();
+      nValueCount = resObj.getColumnCount();
       
       for(var i = 0; i < nValueCount; i++)
       {
-        aValues.push(resObj.GetRowCell(0, i));
+        aValues.push(resObj.getRowCell(0, i));
       }    
     }
     
@@ -416,11 +416,11 @@ CPlaylist.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nValueCount = resObj.GetColumnCount();
+      nValueCount = resObj.getColumnCount();
       
       for(var i = 0; i < nValueCount; i++)
       {
-        aValues.push(resObj.GetRowCell(0, i));
+        aValues.push(resObj.getRowCell(0, i));
       }    
     }
     
@@ -565,8 +565,8 @@ CPlaylist.prototype =
     
     var resObj = this.m_queryObject.getResultObject();
     
-    if(resObj.GetRowCount())
-      strReadableName = resObj.GetRowCell(0, 0);    
+    if(resObj.getRowCount())
+      strReadableName = resObj.getRowCell(0, 0);    
     
     return strReadableName;
   },

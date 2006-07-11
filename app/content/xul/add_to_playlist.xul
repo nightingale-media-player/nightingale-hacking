@@ -126,11 +126,11 @@
       {
         var result = getListOfPlaylists();
 
-        //alert("Found " + result.GetRowCount() + " playlists.");
+        //alert("Found " + result.getRowCount() + " playlists.");
         
-        for (var i = 0; i < result.GetRowCount(); i++)
+        for (var i = 0; i < result.getRowCount(); i++)
         {
-          if (result.GetRowCellByColumn(i, "base_type") != "playlist") continue;
+          if (result.getRowCellByColumn(i, "base_type") != "playlist") continue;
           var listitem = document.createElement("listitem");
           listitem.setAttribute("label", result.GetRowCellByColumn(i, "readable_name"));
           listitem.setAttribute("playlist_name", result.GetRowCellByColumn(i, "name"));
@@ -230,9 +230,9 @@
       // if there exists a playlist with that name, tell the user, and abort creation
       var exists = false;
       var result = getListOfPlaylists();
-      for (var i=0;i<result.GetRowCount();i++)
+      for (var i=0;i<result.getRowCount();i++)
       {
-        if (result.GetRowCellByColumn(i, "readable_name") == name)
+        if (result.getRowCellByColumn(i, "readable_name") == name)
         {
           exists = true;
           break;

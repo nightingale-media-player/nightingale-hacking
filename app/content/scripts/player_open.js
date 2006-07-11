@@ -197,7 +197,7 @@ try
         resultset = aDBQuery.getResultObject();
        
         // we didn't find anything that matches our url
-        if ( resultset.GetRowCount() != 0 )
+        if ( resultset.getRowCount() != 0 )
         {
           retval = true;
         }

@@ -191,9 +191,9 @@ CMediaLibrary.prototype =
       aDBQuery.waitForCompletion();
 
       var resObj = aDBQuery.getResultObject();
-      if(resObj.GetRowCount() > 0)
+      if(resObj.getRowCount() > 0)
       {
-        guid = resObj.GetRowCell(0, 0);
+        guid = resObj.getRowCell(0, 0);
         if(guid)
         {
           //strQuery = "UPDATE " + LIBRARY_TABLE_NAME + " SET url = \"" + strMediaURL + "\" WHERE uuid = \"" + guid + "\"";
@@ -318,7 +318,7 @@ CMediaLibrary.prototype =
     aDBQuery.execute();
       
     var resObj = aDBQuery.getResultObject();
-    return resObj.GetRowCell(0, 0);
+    return resObj.getRowCell(0, 0);
   },
   
   findByURL: function(strURL)
@@ -332,7 +332,7 @@ CMediaLibrary.prototype =
     aDBQuery.waitForCompletion();
       
     var resObj = aDBQuery.getResultObject();
-    return resObj.GetRowCell(0, 0);
+    return resObj.getRowCell(0, 0);
   },
 
   addColumn: function(strColumn, strDataType)
@@ -407,11 +407,11 @@ CMediaLibrary.prototype =
       this.m_queryObject.waitForCompletion();
 
       var resObj = this.m_queryObject.getResultObject();
-      nMetadataFieldCount.value = resObj.GetRowCount();
+      nMetadataFieldCount.value = resObj.getRowCount();
       
       for(var i = 0; i < nMetadataFieldCount.value; i++)
       {
-        aMetadataFields.push(resObj.GetRowCell(i, 0));
+        aMetadataFields.push(resObj.getRowCell(i, 0));
       }
     }
     
@@ -465,11 +465,11 @@ CMediaLibrary.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nValueCount.value = resObj.GetRowCount();
+      nValueCount.value = resObj.getRowCount();
       
       for(var i = 0; i < nValueCount.value; i++)
       {
-        aValues.push(resObj.GetRowCell(i, 0));
+        aValues.push(resObj.getRowCell(i, 0));
       }
     }
     
@@ -543,8 +543,8 @@ CMediaLibrary.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
       
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
     }
     
     return "";
@@ -576,11 +576,11 @@ CMediaLibrary.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nMetadataValueCount = resObj.GetColumnCount();
+      nMetadataValueCount = resObj.getColumnCount();
       
       for(var i = 0; i < nMetadataValueCount; i++)
       {
-        aMetadataValues.push(resObj.GetRowCell(0, i));
+        aMetadataValues.push(resObj.getRowCell(0, i));
       }
     }
     
@@ -652,8 +652,8 @@ CMediaLibrary.prototype =
       
       var resObj = this.m_queryObject.getResultObject();
       
-      if(resObj.GetRowCount())
-        return resObj.GetRowCell(0, 0);
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
     }
     
     return "";
@@ -685,11 +685,11 @@ CMediaLibrary.prototype =
       this.m_queryObject.waitForCompletion();
       
       var resObj = this.m_queryObject.getResultObject();
-      nMetadataValueCount = resObj.GetColumnCount();
+      nMetadataValueCount = resObj.getColumnCount();
       
       for(var i = 0; i < nMetadataValueCount; i++)
       {
-        aMetadataValues.push(resObj.GetRowCell(0, i));
+        aMetadataValues.push(resObj.getRowCell(0, i));
       }
     }
     

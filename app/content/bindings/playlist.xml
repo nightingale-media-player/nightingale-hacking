@@ -423,14 +423,14 @@
         playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
         playlistManager.GetAllPlaylistList( queryObj );
         var resultset = queryObj.getResultObject();
-        for ( var i = 0; i < resultset.GetRowCount(); i++ )
+        for ( var i = 0; i < resultset.getRowCount(); i++ )
         {
-          if ( table == resultset.GetRowCellByColumn( i, "name" ) )
+          if ( table == resultset.getRowCellByColumn( i, "name" ) )
           {
-            this.type = resultset.GetRowCellByColumn( i, "type" );
-            this.base_type = resultset.GetRowCellByColumn( i, "base_type" );
-            this.description = resultset.GetRowCellByColumn( i, "description" );
-            this.readable_name = resultset.GetRowCellByColumn( i, "readable_name" );
+            this.type = resultset.getRowCellByColumn( i, "type" );
+            this.base_type = resultset.getRowCellByColumn( i, "base_type" );
+            this.description = resultset.getRowCellByColumn( i, "description" );
+            this.readable_name = resultset.getRowCellByColumn( i, "readable_name" );
             break;
           }
         }        
@@ -950,14 +950,14 @@
           var result = this.m_queryObj.getResultObject();
 
           // XXXredfive - Row Count is # of columns (19 currently)
-          for (var i = 0; i < result.GetRowCount(); i++)
+          for (var i = 0; i < result.getRowCount(); i++)
           {
             var this_column_node = document.createElement("treecol");
 
-            var name = result.GetRowCellByColumn(i, "column_name");
-            var readableName = result.GetRowCellByColumn(i, "readable_name");
-            var isVisible = result.GetRowCellByColumn(i, "is_visible");
-            var isDefaultVisible = result.GetRowCellByColumn(i, "default_visibility");
+            var name = result.getRowCellByColumn(i, "column_name");
+            var readableName = result.getRowCellByColumn(i, "readable_name");
+            var isVisible = result.getRowCellByColumn(i, "is_visible");
+            var isDefaultVisible = result.getRowCellByColumn(i, "default_visibility");
             
             if ( name == null ) name = "";
             if ( readableName == null ) readableName = "";
@@ -980,7 +980,7 @@
             var ordinal = SBDataGetIntValue( "playlist." + this.ref + ".column." + name + ".ordinal" );
             if (ordinal == 0) ordinal = 1;
 
-            var defaultFlex = result.GetRowCellByColumn(i, "width");
+            var defaultFlex = result.getRowCellByColumn(i, "width");
             if (defaultFlex == -1) defaultFlex = 35;
             var isFixed = "false";
             var size = SBDataGetIntValue( "playlist." + this.ref + ".column." + name + ".size" );
@@ -2288,13 +2288,13 @@
                 thisPlaylist.GetColumnInfo();
                 var srccols = this.m_queryObj.getResultObject();
                 
-                for (var i=0;i<destcols.GetRowCount();i++)
+                for (var i=0;i<destcols.getRowCount();i++)
                 {
-                  var columnid = destcols.GetRowCell(i, 0);
+                  var columnid = destcols.getRowCell(i, 0);
                   if (columnid == "uuid" || columnid == "url" || columnid == "service_uuid" || columnid == "id" || columnid == "row_id") continue;
-                  for (var j=0;j<srccols.GetRowCount();j++)
+                  for (var j=0;j<srccols.getRowCount();j++)
                   {
-                    if (columnid == srccols.GetRowCell(j, 0))
+                    if (columnid == srccols.getRowCell(j, 0))
                     {
                       metadataintersection_ids.push(columnid);
                       metadataintersection_cols.push(this.tree.columns.getNamedColumn(columnid));

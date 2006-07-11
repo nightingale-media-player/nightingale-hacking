@@ -725,10 +725,7 @@ CServicesource::GetTarget(nsIRDFResource *source,
 
       if (property == kNC_Label)
       {
-        PRUnichar* data;
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("readable_name").get(), &data);
-        outstring = data;
-        PR_Free( data );
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("readable_name"), outstring);
       }
       else if (property == kNC_Icon)
       {
@@ -737,31 +734,26 @@ CServicesource::GetTarget(nsIRDFResource *source,
       }
       else if (property == kNC_URL)
       {
-        PRUnichar* data;
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name").get(), &data);
-        outstring = gPlaylistUrl + nsDependentString( data );
-        PR_Free( data );
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid").get(), &data);
-        outstring += NS_LITERAL_STRING(",") + nsDependentString( data );
-        PR_Free( data );
+        nsAutoString data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
+        outstring = gPlaylistUrl + data;
+
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
+        outstring += NS_LITERAL_STRING(",") + data;
       }
       else if (property == kNC_Properties)
       {
         // Javascript code is assuming this ordering!
         outstring = NS_LITERAL_STRING( "playlist" );
-        PRUnichar* data;
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
-        PR_Free( data );
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
-        PR_Free( data );
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("type").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
-        PR_Free( data );
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("base_type").get(), &data);
-        outstring += NS_LITERAL_STRING(" ") + nsDependentString( data );
-        PR_Free( data );
+        nsAutoString data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
+        outstring += NS_LITERAL_STRING(" ") + data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
+        outstring += NS_LITERAL_STRING(" ") + data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("type"), data);
+        outstring += NS_LITERAL_STRING(" ") + data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("base_type"), data);
+        outstring += NS_LITERAL_STRING(" ") + data;
       }
       else if (property == kNC_Open)
       {

@@ -455,16 +455,16 @@
 
             // And, here, hopefully we have some column info.
             var resultset = metadataDBQuery.getResultObject();
-            var rowcount = resultset.GetRowCount();
+            var rowcount = resultset.getRowCount();
             const kName = "readable_name";
             const kColumn = "column_name";
             const kVisible = "is_visible";
             for ( var index = 0; index < rowcount; index++ ) {
-              var visible = resultset.GetRowCellByColumn( index, kVisible );
+              var visible = resultset.getRowCellByColumn( index, kVisible );
               if ( visible == "1" ) {
                 var obj = {};
-                obj.name = resultset.GetRowCellByColumn( index, kName );
-                obj.column = resultset.GetRowCellByColumn( index, kColumn );
+                obj.name = resultset.GgtRowCellByColumn( index, kName );
+                obj.column = resultset.getRowCellByColumn( index, kColumn );
                 
                 if ( obj.name && obj.name[ 0 ] == "&" ) {
                   try {
