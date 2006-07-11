@@ -42,7 +42,6 @@ CPP_SRCS = MultiMonitor.cpp \
            WindowMinMaxSubclass.cpp \
            WindowRegion.cpp \
            WindowResizeHook.cpp \
-           MediaKeyboard.cpp \
            GlobalHotkeys.cpp \
            ../IntegrationComponent.cpp \
            $(NULL)
