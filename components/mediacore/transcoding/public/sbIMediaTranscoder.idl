@@ -24,53 +24,271 @@
 //
  */
 
+/**
+* \file sbIMediaTranscoder.idl
+* \brief Interfaces for implementing and using media transcoders
+* \TODO Stub module.  Currently unimplemented.
+*/
 #include "nsISupports.idl"
 
-[scriptable, uuid()]
+/**
+* \interface sbIMediaType sbIMediaTranscoder.h
+* \brief An object to represent a requested or supported set of mimetypes
+* \TODO Stub interface.  Currently unimplemented.
+* \sa sbIMediaTranscoderManager, sbIMediaTranscoder, sbIMediaTranscoderCallback
+*/
+[scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
 interface sbIMediaType : nsISupports
 {
-  attribute wstring name;
-  attribute wstring description;
+  /**
+  * \brief The name of the media type set
+  */
+  attribute AString name;
 
-  attribute wstring majorType;
-  attribute wstring contentType;
+  /**
+  * \brief The long description of the media type set
+  */
+  attribute AString description;
 
-  void MIMETypes(out PRUint32 nMIMECount, [array, size_is(nMIMECount), retval] out wstring aMIMETypes);
-  void Extensions(out PRUint32 nExtCount, [array, size_is(nExtCount), retval] out wstring aExts);
-}
+  /**
+  * \brief The primary major type string
+  */
+  attribute AString majorType;
 
-[scriptable, uuid()]
-interface sbIMediaTranscoderCallback : nsISupports
-{
-  void onTranscodeBegin(in wstring strInputURL, in wstring strOutputURL, in sbIMediaType outputType);
-  void onTranscodeProgress(in wstring strInputURL, in wstring strOutputURL, in PRInt32 progressPercent);
-  void onTranscodeMessage(in wstring strMessage);
-  void onTranscodeError(in wstring strInputURL, in wstring strOutputURL, in PRInt32 errorNum, in wstring strError);
-  void onTranscodeComplete(in wstring strInputURL, in wstring strOutputURL);
+  /**
+  * \brief The primary content type string
+  */
+  attribute AString contentType;
+
+  /**
+  * \brief Get the entire list of supported mimetypes
+  *
+  * Return all the different mimetypes supported as part of this sbIMediaType.
+  *
+  * \param nMIMECount The number of items in the array
+  * \param aMIMETypes The array of mimetype strings
+  */
+  void getMIMETypes(out PRUint32 nMIMECount, [array, size_is(nMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+  * \brief Get the entire list of supported extensions
+  *
+  * Return all the different extensions supported as part of this sbIMediaType.
+  *
+  * \param nExtCount The number of items in the array
+  * \param aExts The array of extension strings
+  */
+  void getExtensions(out PRUint32 nExtCount, [array, size_is(nExtCount), retval] out wstring aExts);
 };
 
+/**
+* \interface sbIMediaTranscoderCallback sbIMediaTranscoder.h
+* \brief A callback to inform upon the status of a transcode operation
+*
+* User code may implement a local instance of this interface and pass it into
+* the sbIMediaTranscoderManager::transcode() method to be informed about the
+* status and progress of the transcode operation.
+*
+* \TODO Stub interface.  Currently unimplemented.
+* \sa sbIMediaTranscoderManager, sbIMediaTranscoder, sbIMediaType
+*/
+[scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
+interface sbIMediaTranscoderCallback : nsISupports
+{
+  /**
+  * \brief The transcode operation has begun
+  * \param aInputURL The url to the input file
+  * \param aOutputURL The url to the output file
+  * \param aOutputType The type for the output file
+  */
+  void onTranscodeBegin(in AString aInputURL, in AString aOutputURL, in sbIMediaType aOutputType);
+
+  /**
+  * \brief The transcode is in progress
+  * \param aInputURL The url to the input file
+  * \param aOutputURL The url to the output file
+  * \param aPercent A value between 0 and 100, indicating the progress of the transcode operation
+  */
+  void onTranscodeProgress(in AString aInputURL, in AString aOutputURL, in PRInt32 aPercent);
+
+  /**
+  * \brief The transcode has sent a message (?!)
+  * \param aMessage The message to be sent
+  */
+  void onTranscodeMessage(in AString aMessage);
+
+  /**
+  * \brief The transcode has failed
+  * \param aInputURL The url to the input file
+  * \param aOutputURL The url to the output file
+  * \param aErrorVal The numeric value for the error
+  * \param aErrorStr The error string
+  */
+  void onTranscodeError(in AString aInputURL, in AString aOutputURL, in PRInt32 aErrorVal, in AString aErrorStr);
+
+  /**
+  * \brief The transcode has successfully completed
+  * \param aInputURL The url to the input file
+  * \param aOutputURL The url to the output file
+  */
+  void onTranscodeComplete(in AString aInputURL, in AString aOutputURL);
+};
+
+/**
+* \interface sbIMediaTranscoder sbIMediaTranscoder.h
+* \brief An object that performs a transcode operation
+*
+* This object is supposed to be a high-level wrapper for a full featured
+* transcoder underneath the covers that does complex transcoding already.
+*
+* It handles chaining the decode of the input type to the encode of the
+* output type, internally.
+*
+* \TODO Stub interface.  Currently unimplemented.  Lots of work.
+* \sa sbIMediaTranscoderManager, sbIMediaTranscoderCallback, sbIMediaType
+*/
 [scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
 interface sbIMediaTranscoder : nsISupports
 {
-  attribute wstring name;
-  attribute wstring description;
 
-  PRInt32 Transcode(in wstring strInputURL, in wstring strOutputURL, in sbIMediaType strOutputMIMEType);
-  
-  void SupportedMajorInputTypes(out PRUint32 nMajorCount, 
+  /**
+  * \brief The name of the transcoder
+  */
+  attribute AString name;
+
+  /**
+  * \brief The long description of the transcoder
+  */
+  attribute AString description;
+
+  /**
+  * \brief TRUE, if the transcode has completed
+  */
+  attribute PRBool completed;
+
+  /**
+  * \brief Start a transcode operation
+  *
+  * This method is called by the sbIMediaTranscoderManager after the proper
+  * sbIMediaTranscoder instance is found to handle the desired input and
+  * output files.
+  *
+  * \param aInputURL The url to the input file
+  * \param aInputType The type of the input file
+  * \param aOutputURL The url to the output file
+  * \param aOutputType The type for the output file
+  * \param aCallback The optional callback object to observe the transcoding
+  * \return Error conditions of some form or another
+  */
+  PRInt32 transcode(in AString aInputURL, 
+                    in sbIMediaType aInputMIMEType, 
+                    in AString aOutputURL, 
+                    in sbIMediaType aOutputMIMEType, 
+                    in sbIMediaTranscoderCallback aCallback);
+
+  /**
+  * \brief Get the list of input major types
+  *
+  * This method returns an array of all the major mimetype strings that it
+  * supports (the string to the left of the "/" in the mimetype string).
+  *
+  * \param nMajorCount The number of items in the array
+  * \param aMajorInputs The array of major type strings
+  */
+  void getSupportedMajorInputTypes(out PRUint32 nMajorCount, 
                                 [array, size_is(nMajorCount), retval] out wstring aMajorInputs);
-  void SupportedInputMediaTypes(out PRUint32 nInputCount, 
+
+  /**
+  * \brief Get the list of input types
+  *
+  * This method returns an array of sbIMediaType objects that it supports.
+  *
+  * \param nInputCount The number of items in the array
+  * \param aInputTypes The array of types
+  */
+  void getSupportedInputMediaTypes(out PRUint32 nInputCount, 
                                 [array, size_is(nInputCount), retval] out sbIMediaType aInputTypes);
   
-  void SupportedMajorOutputTypes(out PRUint32 nMajorCount, 
+  /**
+  * \brief Get the list of output major types
+  *
+  * This method returns an array of all the major mimetype strings that it
+  * supports (the string to the left of the "/" in the mimetype string).
+  *
+  * \param nMajorCount The number of items in the array
+  * \param aMajorOutputs The array of major type strings
+  */
+  void getSupportedMajorOutputTypes(out PRUint32 nMajorCount, 
                                  [array, size_is(nMajorCount), retval] out wstring aMajorOutputs);
-  void SupportedOutputMediaTypes(out PRUint32 nOutputCount, 
+
+  /**
+  * \brief Get the list of output types
+  *
+  * This method returns an array of sbIMediaType objects that it supports.
+  *
+  * \param nOutputCount The number of items in the array
+  * \param aOutputTypes The array of types
+  */
+  void getSupportedOutputMediaTypes(out PRUint32 nOutputCount, 
                                  [array, size_is(nOutputCount), retval] out sbIMediaType aOutputTypes);
 };
 
+/**
+* \interface sbIMediaTranscoderManager sbIMediaTranscoder.h
+* \brief An object that receives all requests for transcode operations
+*
+* This service is retrieved by user code that calls its transcode() method.
+*
+* This code is responsible for iterating through all available 
+* sbIMediaTranscoder instances, finding one that supports the requested
+* transcode operation, and calling its sbIMediaTranscoder::transcode() method.
+*
+* \TODO Stub interface.  Currently unimplemented.
+* \sa sbIMediaTranscoder, sbIMediaTranscoderCallback, sbIMediaType
+*/
 [scriptable, uuid()]
 interface sbIMediaTranscoderManager : nsISupports
 {
-  PRInt32 Transcode(in wstring strInputURL, in wstring strOutputURL, in sbIMediaTranscoderCallback cb);
-  void SupportedMediaTypes(out PRUint32 nTypeCount, [array, size_is(nTypeCount), retval] out sbIMediaType aTypes);
+  /**
+  * \brief Start a transcode operation
+  *
+  * This code is responsible for iterating through all available 
+  * sbIMediaTranscoder instances, finding one that supports the requested
+  * transcode operation, and calling its sbIMediaTranscoder::transcode() 
+  * method.
+  *
+  * \param aInputURL The url to the input file
+  * \param aInputType The type of the input file
+  * \param aOutputURL The url to the output file
+  * \param aOutputType The type for the output file
+  * \param aCallback The optional callback object to observe the transcoding
+  * \return Error conditions of some form or another
+  */
+  PRInt32 transcode(in AString aInputURL, 
+                    in sbIMediaType aInputMIMEType, 
+                    in AString aOutputURL, 
+                    in sbIMediaType aOutputMIMEType, 
+                    in sbIMediaTranscoderCallback aCallback);
+
+  /**
+  * \brief Get the list of all supported input types
+  *
+  * This method returns a concatenation of all the types it supports
+  *
+  * \param nInputCount The number of items in the array
+  * \param aInputTypes The array of types
+  */
+  void getSupportedInputMediaTypes(out PRUint32 nInputCount, 
+                                [array, size_is(nInputCount), retval] out sbIMediaType aInputTypes);
+  
+  /**
+  * \brief Get the list of all supported output types
+  *
+  * This method returns a concatenation of all the types it supports.
+  *
+  * \param nOutputCount The number of items in the array
+  * \param aOutputTypes The array of types
+  */
+  void getSupportedOutputMediaTypes(out PRUint32 nOutputCount, 
+                                 [array, size_is(nOutputCount), retval] out sbIMediaType aOutputTypes);
 };
