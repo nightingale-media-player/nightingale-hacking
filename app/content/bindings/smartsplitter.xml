@@ -69,26 +69,38 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
+          var state = this.getAttribute( "state" );
+
           var root = "splitter." + this.id + ".";
           var resizebefore = this.getResizeBefore();
           if (resizebefore)
             SBDataSetIntValue( root + "before.width", resizebefore.width );
           this.doAutoShowHide();
-          var state = this.getAttribute( "state" );
-          var collapsed = (state == "collapsed");
-          var metricsid = this.getAttribute("metricsid");
-          var metricscategory = this.getAttribute("metricscategory");
-          if (metricsid && metricscategory ) {
-            // if we changed our collapsed state - record it.
-            if (collapsed != SBDataGetBoolValue(root + "collapsed"))
-              metrics_inc(metricscategory, metricsid, null);
+
+          // Only record state change on mouse up, rather than
+          // on every mousemove
+          if (event.type == "mouseup")
+          {
+            dump("running.. " + state + "\n" );
+            var collapsed = (state == "collapsed");
+            
+            var metricsid = this.getAttribute("metricsid");
+            var metricscategory = this.getAttribute("metricscategory");
+            if (metricsid && metricscategory ) {
+              // if we changed our collapsed state - record it.
+              if (collapsed != SBDataGetBoolValue(root + "collapsed"))
+                metrics_inc(metricscategory, metricsid, null);
+            }
+            
+            // make sure we save the state either way
+            SBDataSetBoolValue( root + "collapsed", collapsed );
+            
+            // trigger an event (name of the event is the name of the state) for custom handlers
+            var e = document.createEvent("Events");
+            e.initEvent(state, false, true);
+            this.dispatchEvent(e);
           }
-          // make sure we save the state either way
-          SBDataSetBoolValue( root + "collapsed", collapsed );
-          // trigger an event (name of the event is the name of the state) for custom handlers
-          var e = document.createEvent("Events");
-          e.initEvent(state, false, true);
-          this.dispatchEvent(e);
+          
         ]]>
       </body>
     </method>
