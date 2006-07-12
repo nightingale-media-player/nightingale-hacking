@@ -38,7 +38,7 @@
 <window
   id="frame_outer"
   hidechrome="true"
-  class="sb_faceplate"
+  class="sb_faceplate, window"
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();"
   onclose="quitApp();" 
@@ -438,7 +438,7 @@
                 <hbox class="sb_faceplate" flex="1">
 
                   <!-- SERVICE PANE -->
-                  <vbox class="sb_faceplate" id="frame_service_box">
+                  <vbox class="sb_faceplate, service-pane">
                     <hbox class="sb_faceplate" flex="1">
                       <servicetree id="frame_servicetree" flex="1"/>                  
                     </hbox>

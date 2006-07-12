@@ -38,7 +38,7 @@
   onunload="onDeinit();"
 >
 
-  <hbox class="chrome_iframe_bkgd" flex="1">
+  <hbox class="iframe_bkgd" flex="1">
     <spacer width="3"/> 
     <vbox flex="1">
       <hbox align="center">
