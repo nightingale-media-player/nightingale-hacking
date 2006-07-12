@@ -434,7 +434,7 @@
               </smartsplitter>
 
               <vbox class="sb_faceplate" id="frame_middle_pane" flex="1">
-                <hbox class="sb_faceplate" flex="1">
+                <hbox class="sb_faceplate" id="frame_middle_pane_hbox" flex="1">
 
                   <!-- SERVICE PANE -->
                   <vbox class="sb_faceplate, service-pane">
@@ -504,6 +504,10 @@
                     </playlist>
 
                   </vbox>
+                  
+                  
+                  
+                  
                 </hbox>
               </vbox>
               <!-- frame_middle_pane -->
