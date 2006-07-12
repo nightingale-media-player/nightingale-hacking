@@ -38,25 +38,21 @@ try
   var PLATFORM_MACOSX = user_agent.indexOf("Mac OS X") != -1;
   var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
 
-  // If we are running under windows, there's a bug with background-color: transparent;
-  if (PLATFORM_WIN32)
-  {
-/*  
-    // During script initialization, set the background color to black.
-    // Otherwise, all iframes are blank.  Dumb bug.
-    var win = document.getElementById("frame_outer");
-    if (win)
-      win.setAttribute("style","background-color: #000 !important;");
-    // At least this fixes it.
-*/    
-  }
-
-  // If we are running under mac, hide the topbar.
+  //
+  //
+  //  Make platform specific hacks to mainwin.xul here
+  //
+  //
   if (PLATFORM_MACOSX)
   {
+    // If we are running under mac, hide the topbar.
     var top = document.getElementById("songbird_top");
     if (top)
       top.setAttribute("hidden","true");
+    // And the top resizers
+    var resizers = document.getElementById("frame_top_resizers")'
+    if (resizers)
+      resizers.setAttribute("hidden","true");
   }
 
   function onSBMainwinDataLoad()
