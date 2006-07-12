@@ -68,6 +68,168 @@ Grey material for the Service Pane.
 
 /** 
 ************************************************************************************************************************************************
+THE LAYOUT for the Main Application Window
+Love your boxes.
+************************************************************************************************************************************************
+*/ 
+
+#frame_service_tree
+{
+  -moz-border-top-colors: transparent !important;
+  -moz-border-left-colors: transparent !important;
+  -moz-border-bottom-colors: transparent !important;
+  -moz-border-right-colors: transparent !important;  
+  background-color: #686A6A !important;
+  color: #CDD4C4 !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row
+{
+  -moz-border-top-colors: #686A6A !important;
+  -moz-border-left-colors: #686A6A !important;
+  -moz-border-bottom-colors: #686A6A !important;
+  -moz-border-right-colors: #686A6A !important;
+  background-color: #686A6A !important;
+}
+
+#frame_service_buttonbar button
+{
+  border: 1px solid !important;
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  background-color: #686A6A !important;
+  color: #99A195 !important; 
+}
+#frame_service_buttonbar button:hover
+{
+  color: #FFF !important;
+}
+
+/** Bind images to the popup and button */
+/** NOTE: IDs containing periods are bad.. */
+#frame_service_buttonbar clickholdbutton[id="file.new"]
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+#frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.smart"] {
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.remote"]{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row( selected )
+{
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #eee !important;
+  -moz-border-left-colors: #eee !important;
+  -moz-border-bottom-colors: #eee !important;
+  -moz-border-right-colors: #eee !important; 
+  border: 1px solid #eee !important;
+  background-color: #FFF !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell
+{
+  border: none !important;
+  background-color: #686A6A !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell( selected )
+{
+  border: none !important;
+  background-color: #FFF !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #333 !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty
+{
+  list-style-image: url(default/twisty_closed.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty( open )
+{
+  list-style-image: url(default/twisty_open.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist )
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist smart )
+{
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
+{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist download )
+{
+  list-style-image: url(default/icon_downloads_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
+{
+  list-style-image: url(default/icon_webplaylist_16x16.png) !important;
+}
+
+#frame_service_tree_label
+{
+  border: none !important;
+  background-color: transparent !important; 
+}
+
+tree .treecol-image
+{
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  background-image: url(default/treecol.png) !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+tree .tree-columnpicker-icon
+{
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  border: none !important;
+  list-style-image: url(default/column_picker.png) !important;
+  background-color: transparent !important;
+}
+
+tree treecol
+{
+  background-image: url(default/treecol.png) !important;
+  color: #99A194 !important;  
+  -moz-border-right-colors: none !important;
+  -moz-border-bottom-colors: none !important;
+  -moz-border-top-colors: none !important;
+  -moz-border-left-colors: none !important;
+  border: 1px solid #666 !important;
+  border-bottom: none !important;
+  background-color: transparent !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
 SCROLLBARS
 ************************************************************************************************************************************************
 */ 
@@ -75,19 +237,33 @@ SCROLLBARS
 scrollbar
 {   
   background-color: #000 !important;
+  background-image: none !important; 
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 {   
-  background-color: transparent !important; 
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #333 #000 !important;
+  -moz-border-bottom-colors: #333 #000 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  border: 2px solid !important; 
+  background-color: #343d42 !important;  
+  background-image: url(default/chrome_scroll_up.png) !important;
+  background-position: center center !important; 
 } 
  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #333 #000 !important;
+  -moz-border-bottom-colors: #333 #000 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  border: 2px solid !important; 
+  background-color: #343d42 !important;
   background-image: url(default/chrome_scroll_down.png) !important;
-  background-color: transparent !important; 
+  background-position: center center !important;
 } 
  
 scrollbar > slider > thumb > gripper
@@ -97,88 +273,63 @@ scrollbar > slider > thumb > gripper
 
 scrollbar > slider > thumb
 {   
-  -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 2px !important;  
   -moz-border-top-colors: #666 #333 !important;
   -moz-border-right-colors: #333 #000 !important;
   -moz-border-bottom-colors: #333 #000 !important;
   -moz-border-left-colors: #666 #333 !important;
   border: 2px solid !important; 
-  background-color: #343d42 !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  width: 16px !important;
-  background-image: none !important;
-  list-style-image: none !important;
+  background-color: #343d42 !important;
 } 
 
 scrollbar > slider
 {   
-  -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #000 !important; 
-  background-image: none !important; 
-  list-style-image: none !important; 
-  padding: 0 0 0 0 !important; 
-  border: none !important; 
+  background-color: #000 !important;
 } 
 
 /* service pane scrollbar*/
 #frame_service_tree scrollbar
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
+{    
   background-color: #686A6A !important;
   background-image: none !important; 
-  background-image: none !important; 
-  padding: 0 0 0 0 !important;
 } 
 
 #frame_service_tree scrollbar > slider > thumb
 {   
-  -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 3px !important;  
+  -moz-border-top-colors: #999 #666 !important;
+  -moz-border-right-colors: #666 #333 !important;
+  -moz-border-bottom-colors: #666 #333 !important;
+  -moz-border-left-colors: #999 #666 !important;
+  border: 2px solid !important; 
+  background-color: transparent !important;
+} 
+
+#frame_service_tree scrollbar > slider
+{    
+  background-color: #686A6A !important; 
+} 
+
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{    
+  -moz-border-top-colors: #999 #666 !important;
+  -moz-border-right-colors: #666 #333 !important;
+  -moz-border-bottom-colors: #666 #333 !important;
+  -moz-border-left-colors: #999 #666 !important;
+  border: 2px solid !important; 
+  background-color: transparent !important;
+} 
+ 
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
   -moz-border-top-colors: #999 #666 !important;
   -moz-border-right-colors: #666 #333 !important;
   -moz-border-bottom-colors: #666 #333 !important;
   -moz-border-left-colors: #999 #666 !important;
   border: 2px solid !important; 
   background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  height: 16px !important;
-  width: 16px !important;
 } 
 
-#frame_service_tree scrollbar > slider
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #686A6A !important; 
-} 
-
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_up_svcpane.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_down_svcpane.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
-} 
 /*
 Body
 bright-highlight    #7a7c7c 

@@ -30,6 +30,7 @@
 @import url(mainwin_colors.css); /* css for the main application window colors **/
 @import url(dialog.css); /* css for the dialog windows **/
 @import url(dialog_colors.css); /* css for the dialog window colors **/
+@import url(songbird.css); /* make this file win! **/
  
 
  /** 
@@ -140,131 +141,61 @@ SCROLLBARS
 scrollbar
 {   
   -moz-appearance: none !important;
-  background-color: #000 !important; 
-  background-image: none !important; 
-  background-image: none !important; 
-  padding: 0 0 0 0 !important;  
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 {   
   -moz-appearance: none !important; 
-  background-image: url(default/chrome_scroll_up.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
 } 
  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
   -moz-appearance: none !important;
-  background-image: url(default/chrome_scroll_down.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
 } 
  
 scrollbar > slider > thumb > gripper
 {   
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  width: 16px !important;
 } 
 
 scrollbar > slider > thumb
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 2px !important;  
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  width: 16px !important;
-  background-image: none !important;
-  list-style-image: none !important;
 } 
 
 scrollbar > slider
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #000 !important; 
-  background-image: none !important; 
-  list-style-image: none !important; 
-  padding: 0 0 0 0 !important; 
-  border: none !important; 
 } 
 
 /* service pane scrollbar*/
 #frame_service_tree scrollbar
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #686A6A !important;
-  background-image: none !important; 
-  background-image: none !important; 
-  padding: 0 0 0 0 !important;
 } 
 
 #frame_service_tree scrollbar > slider > thumb
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 3px !important;  
-  -moz-border-top-colors: #999 #666 !important;
-  -moz-border-right-colors: #666 #333 !important;
-  -moz-border-bottom-colors: #666 #333 !important;
-  -moz-border-left-colors: #999 #666 !important;
-  border: 2px solid !important; 
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  height: 16px !important;
-  width: 16px !important;
 } 
 
 #frame_service_tree scrollbar > slider
 {   
   -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #686A6A !important; 
 } 
 
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_up_svcpane.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
 } 
  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
   -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_down_svcpane.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
 } 
 
 /** 
