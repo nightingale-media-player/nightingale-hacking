@@ -41,12 +41,14 @@ try
   // If we are running under windows, there's a bug with background-color: transparent;
   if (PLATFORM_WIN32)
   {
+/*  
     // During script initialization, set the background color to black.
     // Otherwise, all iframes are blank.  Dumb bug.
     var win = document.getElementById("frame_outer");
     if (win)
       win.setAttribute("style","background-color: #000 !important;");
     // At least this fixes it.
+*/    
   }
 
   // If we are running under mac, hide the topbar.
