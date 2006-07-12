@@ -125,7 +125,7 @@
 			Name="src"
 			>
 			<File
-				RelativePath=".\src\baseCore.js"
+				RelativePath=".\src\coreBase.js"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
