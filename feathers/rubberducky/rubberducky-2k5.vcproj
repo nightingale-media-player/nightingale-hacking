@@ -942,10 +942,30 @@
 		<File
 			RelativePath=".\mainwin.css"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\mainwin_colors.css"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\mainwin_images.css"
