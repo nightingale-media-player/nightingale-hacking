@@ -30,7 +30,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt&#x0D;&#x0A;"
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"
 			/>
@@ -122,7 +122,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt&#x0D;&#x0A;"
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"
 			/>
@@ -368,6 +368,10 @@
 				</File>
 				<File
 					RelativePath=".\src\win32\MediaKeyboard.h"
+					>
+				</File>
+				<File
+					RelativePath=".\src\win32\MultiMonitor.cpp"
 					>
 				</File>
 				<File
