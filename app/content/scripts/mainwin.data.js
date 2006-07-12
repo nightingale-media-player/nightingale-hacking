@@ -50,7 +50,7 @@ try
     if (top)
       top.setAttribute("hidden","true");
     // And the top resizers
-    var resizers = document.getElementById("frame_top_resizers")'
+    var resizers = document.getElementById("frame_top_resizers");
     if (resizers)
       resizers.setAttribute("hidden","true");
   }

@@ -109,8 +109,8 @@
             for (var i=0;i<this.childNodes.length;i++)
             {
               var node = this.childNodes[i];
-              if (node.tagName == "windowregionrect" ||
-                  node.tagName == "xul:windowregionrect")
+              if ( node.tagName && (node.tagName == "windowregionrect" ||
+                  node.tagName == "xul:windowregionrect") )
               {
                 this.addRegionNode(node);
               }

@@ -430,17 +430,12 @@ function SBAppInitialize()
     var theFLInstance = document.getElementById( "core_flash_frame" );
     var theFLBox = document.getElementById( "box_flash" );
 
-    // Bind the core instances to the core objects (I really should make these use createElementNS, if we can get it to work)      
-    //theWMPCore.bindInstance( theWMPInstance );
-    //theQTCore.bindInstance( theQTInstance );
-    //theVLCCore.bindInstance( theVLCInstance );
 
-    // Tell the repeater we will be playing only one specific type of media
-    //thePlayerRepeater.setPlaybackCore( theWMPCore );
-    //thePlayerRepeater.setPlaybackCore( theQTCore );
-    //thePlayerRepeater.setPlaybackCore( theVLCCore );
+    //
+    // Depending upon the platform, initialize one core
+    // and hide all of the rest of them.
+    //
 
-    // Let the sbIPlaylistPlayback interface play in the game, too, maaaan.
     //Windows, prefer VLC.
     if ( PLATFORM_WIN32 ) {
       // Initialize with VLC
@@ -472,9 +467,6 @@ function SBAppInitialize()
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
     }
-    
-    //CoreWMPDocumentInit( "core_wm" );
-    //setTimeout("CoreWMPDocumentInit( 'core_wm' );", 0);
     
     // Reset this on application startup. 
     SBDataSetIntValue("backscan.paused", 0);
