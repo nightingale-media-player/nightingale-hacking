@@ -165,6 +165,44 @@ function onExit()
   document.defaultView.close();
 }
 
+function onMinimumWindowSize()
+{
+/*
+  //
+  // SOMEDAY, we might be able to figure out how to properly constrain our
+  // windows back to the proper min-width / min-height values for the document
+  //
+
+
+  // Yah, okay, this function only works if there's one top level object with an id of "window_parent" (sigh)
+  var parent = document.getElementById('window_parent');
+  if (!parent) parent = document.getElementById('frame_mini'); // grr, bad hardcoding!
+  if ( parent ) {
+    var w_width = window.innerWidth;
+    var w_height = window.innerHeight;
+    var p_width = parent.boxObject.width + 4; // borders?!  ugh.
+    var p_height = parent.boxObject.height + 4;
+    var size = false;
+    // However, if in resizing the window size is different from the document's box object
+    if (w_width != p_width) {
+      // That means we found the document's min width.  Because you can't query it directly.
+      w_width = p_width;
+      size = true;
+    }
+    // However, if in resizing the window size is different from the document's box object
+    if (w_height != p_height) {
+      // That means we found the document's min height.  Because you can't query it directly.
+      w_height = p_height;
+      size = true;
+    }
+    if (size)
+    {
+      window.resizeTo(w_width, w_height);
+    }
+  }
+*/  
+}
+
 function onWindowSaveSize()
 {
   var root = "window." + document.documentElement.id;

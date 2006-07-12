@@ -65,8 +65,9 @@ var SBWindowMinMaxCB =
     // What we'd like it to be
     var retval = 750;
     // However, if in resizing the window size is different from the document's box object
-    if (window.innerWidth != document.getElementById('window_parent').boxObject.width)
+    if (window.innerWidth != document.getElementById('window_parent').boxObject.width + 4)
     { 
+      dump("eeek!\n");
       // That means we found the document's min width.  Because you can't query it directly.
       retval = document.getElementById('window_parent').boxObject.width - 1;
     }
@@ -78,7 +79,7 @@ var SBWindowMinMaxCB =
     // What we'd like it to be
     var retval = 400;
     // However, if in resizing the window size is different from the document's box object
-    if (window.innerHeight != document.getElementById('window_parent').boxObject.height)
+    if (window.innerHeight != document.getElementById('window_parent').boxObject.height + 4)
     { 
       // That means we found the document's min width.  Because you can't query it directly.
       retval = document.getElementById('window_parent').boxObject.height - 1;

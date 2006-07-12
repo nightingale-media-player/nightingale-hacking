@@ -78,9 +78,9 @@
 
     <vbox class="sb_faceplate" flex="1">
       <hbox class="sb_faceplate" id="frame_top_resizers">
-        <resizer id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
-        <resizer id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
-        <resizer id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
+        <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
+        <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
+        <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
       </hbox>
 
       <vbox class="sb_faceplate" id="frame_outer_pane" flex="1">
@@ -88,9 +88,9 @@
         <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
 
           <vbox class="sb_faceplate">
-            <resizer id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
-            <resizer id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
-            <resizer id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
+            <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
+            <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
+            <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
           </vbox>
 
           <vbox id="chrome_bkgd" class="sb_faceplate" flex="1">
@@ -216,7 +216,7 @@
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
             <hbox id="frame_mini" hidden="true">
-              <resizer id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
+              <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
               <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
               <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
               <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
@@ -257,7 +257,7 @@
                 <button id="mini_btn_max"     class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" hidden="true" />
                 <button id="mini_btn_exit"    class="sb_faceplate miniplayer" oncommand="quitApp( );" hidden="true" />
               </hbox>
-              <resizer id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
+              <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
             </hbox>
 
             <!-- PUT THE POPUPSET INSIDE SOMETHING THAT CAN NEVER BE DISPLAYED -->
@@ -533,9 +533,9 @@
           </vbox>
 
           <vbox class="sb_faceplate">
-            <resizer id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
-            <resizer id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
-            <resizer id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
+            <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
+            <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
+            <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
           </vbox>
 
         </hbox>
@@ -545,9 +545,9 @@
       <!-- frame_outer_pane -->
 
       <hbox class="sb_faceplate" id="frame_bottom_resizers">
-        <resizer id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
-        <resizer id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
-        <resizer id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
+        <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
+        <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
+        <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
       </hbox>
     </vbox>
 
