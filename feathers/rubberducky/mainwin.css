@@ -31,16 +31,264 @@ First-Run dialog, and the Smart Playlist dialog.
 ************************************************************************************************************************************************
 */ 
 
-.sb_faceplate_dialog
+
+/** 
+************************************************************************************************************************************************
+THE LAYOUT for the Main Application Window
+Love the box.
+************************************************************************************************************************************************
+*/ 
+
+.window
+{
+  width:  924px !important;
+  height: 668px !important;
+}
+
+#frame_top_pane
+{
+  top: 0px !important;
+  left: 0px !important;
+  height: 40px !important;
+}
+
+#frame_control_pane
+{
+  max-height: 45px !important;
+}
+
+#frame_middle_pane
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-background-clip: padding !important;
   border: none !important;
+}
+
+#frame_service_tree
+{
+  -moz-appearance: none !important;
+  -moz-border-top-colors: transparent !important;
+  -moz-border-left-colors: transparent !important;
+  -moz-border-bottom-colors: transparent !important;
+  -moz-border-right-colors: transparent !important;  
+  margin: 0px 0px 0px 0px !important;
+  padding: 6px 0px 0px 0px !important;
+  background-color: #686A6A !important;
+  /*background-image: url(default/bkgd_clouds.png) !important;*/
+  color: #CDD4C4 !important;
+}
+
+.service-pane /* aka The Service Pane, The Left Pane **/
+{
+  -moz-appearance: none !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  border: 1px solid #666 !important;
   margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 135px !important;
+  /*background-image: url(default/bkgd_clouds.png) !important;*/
+}
+
+#frame_service_tree > treechildren::-moz-tree-row
+{
+  margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
-  min-width: 0px !important;
-  min-height: 0px !important;
-  border-width: 0px !important;
-  font-family: tahoma, arial !important; /*arial is the fallback font*/
-  font-size: 11px !important;
+  -moz-appearance: none !important;  
+  -moz-border-top-colors: #686A6A !important;
+  -moz-border-left-colors: #686A6A !important;
+  -moz-border-bottom-colors: #686A6A !important;
+  -moz-border-right-colors: #686A6A !important;
+  background-color: #686A6A !important;
+}
+
+
+
+#frame_service_buttonbar button
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  background-color: #686A6A !important;
+  height: 25px !important;  
+  color: #99A195 !important; 
+}
+#frame_service_buttonbar button:hover
+{
+  color: #FFF !important;
+}
+
+
+/** Offset menu a to account for rounded button **/
+#frame_service_buttonbar clickholdbutton menupopup
+{
+ margin-left: 8px;
+}
+
+/** Bind images to the popup and button */
+/** NOTE: IDs containing periods are bad.. */
+#frame_service_buttonbar clickholdbutton[id="file.new"]
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+#frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.smart"] {
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.remote"]{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
+
+#frame_service_tree > treechildren::-moz-tree-row( selected )
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #eee !important;
+  -moz-border-left-colors: #eee !important;
+  -moz-border-bottom-colors: #eee !important;
+  -moz-border-right-colors: #eee !important; 
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: 1px solid #eee !important;
+  background-color: #FFF !important;
+  font-size: larger;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell
+{
+  -moz-appearance: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  background-color: #686A6A !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell( selected )
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 5px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  background-color: #FFF !important;
+  font-size: larger;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #333 !important;
+  font-weight: bold;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text
+{
+  margin: 0px 0px 0px 3px !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty
+{
+  -moz-appearance: none !important;
+  margin: 0px 3px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  list-style-image: url(default/twisty_closed.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty( open )
+{
+  -moz-appearance: none !important;
+  margin: 0px 3px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  list-style-image: url(default/twisty_open.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist )
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist smart )
+{
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
+{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist download )
+{
+  list-style-image: url(default/icon_downloads_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
+{
+  list-style-image: url(default/icon_webplaylist_16x16.png) !important;
+}
+
+#frame_service_tree_label
+{
+  -moz-appearance: none !important; /* grrrr! */
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  height: 0px !important;
+  background-color: transparent !important; 
+}
+
+tree .treecol-image
+{
+  -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-image: url(default/treecol.png) !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+tree .tree-columnpicker-icon
+{
+  -moz-appearance: none !important; /* grrrr! */
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  margin: 0px 2px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+  list-style-image: url(default/column_picker.png) !important;
+  background-color: transparent !important;
+}
+
+tree treecol
+{
+  -moz-appearance: none !important; /* grrrr! */
+  margin: 0px !important;
+  padding: 0px 0px 0px 5px !important;
+  background-image: url(default/treecol.png) !important;
+  color: #99A194 !important;  
+  -moz-border-right-colors: none !important;
+  -moz-border-bottom-colors: none !important;
+  -moz-border-top-colors: none !important;
+  -moz-border-left-colors: none !important;
+  height: 20px !important;  
+  -moz-border-radius-topright: 5px !important;
+  -moz-border-radius-topleft: 5px !important;
+  border: 1px solid #666 !important;
+  border-bottom: none !important;
+  background-color: transparent !important;
 }
