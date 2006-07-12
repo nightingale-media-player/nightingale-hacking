@@ -34,10 +34,10 @@ function CoreFlash()
   this._paused  = false;
 }
 
-// inherit the prototype from BaseCore
-CoreFlash.prototype = new BaseCore();
+// inherit the prototype from CoreBase
+CoreFlash.prototype = new CoreBase();
 
-// set the constructor so we use ours and not the one for BaseCore
+// set the constructor so we use ours and not the one for CoreBase
 CoreFlash.prototype.constructor = CoreFlash;
 
 CoreFlash.prototype.playUrl = function ( aURL )

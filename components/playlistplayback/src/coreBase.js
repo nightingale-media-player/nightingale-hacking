@@ -1,9 +1,9 @@
 
-function BaseCore()
+function CoreBase()
 {
 };
 
-BaseCore.prototype = 
+CoreBase.prototype = 
 {
   _object  : null,
   _url     : "",
