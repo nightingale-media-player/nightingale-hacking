@@ -463,7 +463,7 @@
               var visible = resultset.getRowCellByColumn( index, kVisible );
               if ( visible == "1" ) {
                 var obj = {};
-                obj.name = resultset.GgtRowCellByColumn( index, kName );
+                obj.name = resultset.getRowCellByColumn( index, kName );
                 obj.column = resultset.getRowCellByColumn( index, kColumn );
                 
                 if ( obj.name && obj.name[ 0 ] == "&" ) {
