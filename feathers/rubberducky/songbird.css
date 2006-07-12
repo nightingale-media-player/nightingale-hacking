@@ -25,7 +25,10 @@
  */
 
 /* You can only use the @ at the top of the file. **/
-@import url("chrome://global/skin/xulscrollbars.css"); 
+@import url("chrome://global/skin/xulscrollbars.css");
+@import url(mainwin_colors.css);
+@import url(dialog.css);
+@import url(dialog_colors.css);
  
 /** 
 ************************************************************************************************************************************************
@@ -33,18 +36,7 @@ COLOR SCHEME: BLACK
 ************************************************************************************************************************************************
 */ 
 
-/** 
-************************************************************************************************************************************************
-Playback Cores are brokered via the browser for now.
-************************************************************************************************************************************************
-*/ 
 
-#core_wmp,
-#core_qt,
-#core_vlc
-{
-}
- 
  /** 
 ************************************************************************************************************************************************
 THE WINDOW
@@ -66,8 +58,7 @@ tree
   list-style-image: none !important;
 }
 
-.sb_faceplate,
-.sb_faceplate_dialog
+.sb_faceplate
 {
   -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding !important;
@@ -155,89 +146,7 @@ tree
   border-width: 0px !important;
 }  
 
-/** 
-************************************************************************************************************************************************
-THE WINDOW CHROME
-These pieces paint the resizeable window for Songbird.
-************************************************************************************************************************************************
-*/
-.chrome_iframe_bkgd
-{
-  background: #000 !important;
-}
 
-.chrome_bkgd,
-#chrome_bkgd
-{
-  background-image: url(default/chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
-  background-color: transparent !important;
-}
-
-
-#chrome_nw
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_nw_25x25.png) !important; /** <img src="defaultchrm_nw_25x25.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_n
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_n.png) !important; /** <img src="defaultchrm_n.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_ne
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_ne_25x25.png) !important; /** <img src="defaultchrm_ne_25x25.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_w
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_w.png) !important; /** <img src="defaultchrm_w.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_e
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_e.png) !important; /** <img src="defaultchrm_e.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_sw
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_sw_25x25.png) !important; /** <img src="defaultchrm_sw_25x25.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_s
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_s.png) !important; /** <img src="defaultchrm_s.png"> */
-  background-color: transparent !important;
-}
-
-#chrome_se
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_se_25x25.png) !important; /** <img src="defaultchrm_se_25x25.png"> */
-  background-color: transparent !important;
-}
 
 /** 
 ************************************************************************************************************************************************
@@ -246,13 +155,11 @@ Love the box.
 ************************************************************************************************************************************************
 */ 
 
-#frame_outer
+.window
 {
   width:  924px !important;
   height: 668px !important;
-  /* background-color: transparent !important;  mig found a magic trick to allow this to be transparent on mac and linux */
 }
-
 
 #frame_top_pane
 {
@@ -278,33 +185,26 @@ Love the box.
   -moz-border-top-colors: transparent !important;
   -moz-border-left-colors: transparent !important;
   -moz-border-bottom-colors: transparent !important;
-  -moz-border-right-colors: transparent !important;
-  border: 1px solid #333 !important;
-  margin: 0px !important;
+  -moz-border-right-colors: transparent !important;  
+  margin: 0px 0px 0px 0px !important;
   padding: 6px 0px 0px 0px !important;
   background-color: #686A6A !important;
   /*background-image: url(default/bkgd_clouds.png) !important;*/
   color: #CDD4C4 !important;
 }
 
-#frame_service_box /* aka The Service Pane, The Left Pane **/
+.service-pane /* aka The Service Pane, The Left Pane **/
 {
   -moz-appearance: none !important;
   -moz-border-radius-topleft: 3px !important;
   -moz-border-radius-bottomleft: 3px !important;
   -moz-border-radius-topright: 3px !important;
   -moz-border-radius-bottomright: 3px !important;
-  -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #474848 !important;
-  -moz-border-bottom-colors: #474848 !important;
-  -moz-border-right-colors: #474848 !important;
   border: 1px solid #666 !important;
   margin: 0px !important;
   padding: 0px 0px 0px 0px !important;
   width: 135px !important;
-  background-color: #686A6A !important;
   /*background-image: url(default/bkgd_clouds.png) !important;*/
-  color: #CDD4C4 !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-row
@@ -508,6 +408,140 @@ tree treecol
   border-bottom: none !important;
   background-color: transparent !important;
 }
+
+/* Scroll Bars */
+
+scrollbar
+{   
+  -moz-appearance: none !important; /* grrrr! */ 
+  background-color: #000 !important; 
+  background-image: none !important; 
+  background-image: none !important; 
+  padding: 0 0 0 0 !important;  
+} 
+
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+  background-image: url(default/chrome_scroll_up.png) !important;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+  background-image: url(default/chrome_scroll_down.png) !important;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+scrollbar > slider > thumb > gripper
+{   
+  -moz-appearance: none !important; /* grrrr! */
+  background-color: transparent !important; 
+  background-image: none !important;
+  list-style-image: none !important;
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  width: 16px !important;
+} 
+
+scrollbar > slider > thumb
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+  -moz-border-radius: 2px !important;  
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #333 #000 !important;
+  -moz-border-bottom-colors: #333 #000 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  border: 2px solid !important; 
+  background-color: #343d42 !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  width: 16px !important;
+  background-image: none !important;
+  list-style-image: none !important;
+} 
+
+scrollbar > slider
+{   
+  -moz-appearance: none !important; /* grrrr! */ 
+  background-color: #000 !important; 
+  background-image: none !important; 
+  list-style-image: none !important; 
+  padding: 0 0 0 0 !important; 
+  border: none !important; 
+} 
+
+/* service pane scrollbar*/
+#frame_service_tree scrollbar
+{   
+  -moz-appearance: none !important; /* grrrr! */ 
+  background-color: #686A6A !important;
+  background-image: none !important; 
+  background-image: none !important; 
+  padding: 0 0 0 0 !important;
+} 
+
+#frame_service_tree scrollbar > slider > thumb
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+  -moz-border-radius: 3px !important;  
+  -moz-border-top-colors: #999 #666 !important;
+  -moz-border-right-colors: #666 #333 !important;
+  -moz-border-bottom-colors: #666 #333 !important;
+  -moz-border-left-colors: #999 #666 !important;
+  border: 2px solid !important; 
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  height: 16px !important;
+  width: 16px !important;
+} 
+
+#frame_service_tree scrollbar > slider
+{   
+  -moz-appearance: none !important; /* grrrr! */ 
+  background-color: #686A6A !important; 
+} 
+
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+  background-image: url(default/chrome_scroll_up_svcpane.png) !important;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+  background-image: url(default/chrome_scroll_down_svcpane.png) !important;
+  background-color: transparent !important; 
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  border: none !important; 
+  height: 16px !important;
+  width: 16px !important;
+} 
 
 /** 
 ************************************************************************************************************************************************
@@ -1327,9 +1361,9 @@ THE MAIN PANE
   -moz-border-radius-topright: 3px !important;
   -moz-border-radius-topleft: 3px !important;
   -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #474848 !important;
-  -moz-border-bottom-colors: #474848 !important;
-  -moz-border-right-colors: #474848 !important;
+  -moz-border-left-colors: #444 !important;
+  -moz-border-bottom-colors: #444 !important;
+  -moz-border-right-colors: #444 !important;
   border: 1px solid #000 !important;
 }
 
@@ -1515,139 +1549,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-color: transparent !important;
 }
 
-/* Scroll Bars */
 
-scrollbar
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #000 !important; 
-  background-image: none !important; 
-  background-image: none !important; 
-  padding: 0 0 0 0 !important;  
-} 
-
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_up.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_down.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-scrollbar > slider > thumb > gripper
-{   
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent !important; 
-  background-image: none !important;
-  list-style-image: none !important;
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  width: 16px !important;
-} 
-
-scrollbar > slider > thumb
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 2px !important;  
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  width: 16px !important;
-  background-image: none !important;
-  list-style-image: none !important;
-} 
-
-scrollbar > slider
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #000 !important; 
-  background-image: none !important; 
-  list-style-image: none !important; 
-  padding: 0 0 0 0 !important; 
-  border: none !important; 
-} 
-
-/* service pane scrollbar*/
-#frame_service_tree scrollbar
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #686A6A !important;
-  background-image: none !important; 
-  background-image: none !important; 
-  padding: 0 0 0 0 !important;
-} 
-
-#frame_service_tree scrollbar > slider > thumb
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  -moz-border-radius: 3px !important;  
-  -moz-border-top-colors: #999 #666 !important;
-  -moz-border-right-colors: #666 #333 !important;
-  -moz-border-bottom-colors: #666 #333 !important;
-  -moz-border-left-colors: #999 #666 !important;
-  border: 2px solid !important; 
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  height: 16px !important;
-  width: 16px !important;
-} 
-
-#frame_service_tree scrollbar > slider
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-  background-color: #686A6A !important; 
-} 
-
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_up_svcpane.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-  background-image: url(default/chrome_scroll_down_svcpane.png) !important;
-  background-color: transparent !important; 
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  border: none !important; 
-  height: 16px !important;
-  width: 16px !important;
-} 
 
 /** 
 ************************************************************************************************************************************************
@@ -2971,7 +2873,7 @@ TEXTBOXES for dialogs and forms.
 .sbextensions_box
 {
   -moz-appearance: none !important;
-  background: #000 !important;
+  background-color: #000 !important;
   color: #CCC !important;
 }
 
@@ -3061,7 +2963,7 @@ CHECKBOXES, boxes, labels, images, states.
 
 checkbox {
   -moz-box-align: center;
-  background: #000 !important;
+  background-color: #000 !important;
   -moz-box-align: center;   
   opacity: 0.7 !important; /* When it's not focused, dim it slightly. */
 }

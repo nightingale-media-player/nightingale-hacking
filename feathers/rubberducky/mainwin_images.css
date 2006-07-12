@@ -1,0 +1,83 @@
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/
+.chrome_iframe_bkgd
+{
+  background: #F00 !important;
+}
+
+.chrome_bkgd,
+#chrome_bkgd
+{
+  background-image: url(default/chrome_bkgd.png) !important;  
+  background-color: transparent !important;
+}
+
+
+#chrome_nw
+{
+  -moz-appearance: none !important; 
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_nw_25x25.png) !important;  
+  background-color: transparent !important;
+}
+
+#chrome_n
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_n.png) !important; 
+  background-color: transparent !important;
+}
+
+#chrome_ne
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_ne_25x25.png) !important; 
+  background-color: transparent !important;
+}
+
+#chrome_w
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_w.png) !important; /** <img src="defaultchrm_w.png"> */
+  background-color: transparent !important;
+}
+
+#chrome_e
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_e.png) !important; /** <img src="defaultchrm_e.png"> */
+  background-color: transparent !important;
+}
+
+#chrome_sw
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_sw_25x25.png) !important; /** <img src="defaultchrm_sw_25x25.png"> */
+  background-color: transparent !important;
+}
+
+#chrome_s
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_s.png) !important; /** <img src="defaultchrm_s.png"> */
+  background-color: transparent !important;
+}
+
+#chrome_se
+{
+  height: 25px !important;
+  width: 25px !important;
+  background-image: url(default/chrm_se_25x25.png) !important; /** <img src="defaultchrm_se_25x25.png"> */
+  background-color: transparent !important;
+}

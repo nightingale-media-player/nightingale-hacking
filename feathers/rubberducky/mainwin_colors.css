@@ -1,0 +1,95 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+This css files specifies the color styles for everything in the main application window.  
+There are three schemes that control the colors in Songbird, the Main Window and its buttons, the Service Pane, and the Filterlists.
+To achieve a three-dimensional effect, it's important to remember that a user understands their desktop to be lit from the
+upper left corner or directly from above.  Consequently, use the light colors on the top and left borders and dark colors on the 
+right and bottom borders to achieve a dimensional appearance.
+************************************************************************************************************************************************
+*/ 
+
+.service-pane
+{
+  background-color: #686a6a !important;
+  -moz-border-top-colors: #7a7c7c !important;
+  -moz-border-left-colors: #474848 !important;
+  -moz-border-bottom-colors: #474848 !important;
+  -moz-border-right-colors: #474848 !important;
+  border: 1px solid !important;
+  color: #cdd4c4 !important;
+}
+
+.window
+{
+  background-color: #000 !important;
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  border: 2px solid !important;
+  color: #ccc !important;
+}
+
+
+/*
+Body
+bright-highlight    #7a7c7c 
+highlight           #99a195
+hover               #fff
+foreground          #ccc
+body                #333
+shadow              #505154
+darkshadow          #333
+background          #000
+
+Service Pane
+bright-highlight    #7a7c7c
+highlight           #999
+foreground          #cdd4c4
+body                #686a6a
+shadow              #444
+darkshadow          #333
+background          #000
+
+Filterlists
+filterlist-light    #343d42
+filterlist-dark     #1d272d
+selected            #4a4e48
+selected-highlight  #99a195
+
+Disabled
+bright-highlight    #444
+highlight           #444
+foreground          #505154
+body                #333
+shadow              #505154
+darkshadow          #333
+background          #000
+**/
+

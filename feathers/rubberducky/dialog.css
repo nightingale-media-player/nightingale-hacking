@@ -1,0 +1,46 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+This css files specifies the base styles for everything not in the main application window.  This includes all dialog boxes like the 
+First-Run dialog, and the Smart Playlist dialog.
+************************************************************************************************************************************************
+*/ 
+
+.sb_faceplate_dialog
+{
+  -moz-appearance: none !important; /* grrrr! */
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  border-width: 0px !important;
+  font-family: tahoma, arial !important; /*arial is the fallback font*/
+  font-size: 11px !important;
+}
