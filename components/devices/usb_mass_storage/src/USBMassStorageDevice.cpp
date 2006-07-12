@@ -101,8 +101,8 @@ sbUSBMassStorageDevice::~sbUSBMassStorageDevice()
 //-----------------------------------------------------------------------------
 // sbIUSBMassStorageDevice
 //-----------------------------------------------------------------------------
-/* PRBool OnUSBDeviceEvent (in PRBool deviceAdded, in wstring deviceIdentifier); */
-NS_IMETHODIMP sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded, const PRUnichar *deviceName, const PRUnichar *deviceIdentifier, PRBool *_retval)
+/* PRBool OnUSBDeviceEvent (in PRBool deviceAdded, in AString deviceIdentifier); */
+NS_IMETHODIMP sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded, const nsAString &deviceName, const nsAString &deviceIdentifier, PRBool *_retval)
 {
   PRBool bInit = PR_FALSE;
   
@@ -157,14 +157,14 @@ NS_IMETHODIMP sbUSBMassStorageDevice::RemoveCallback(sbIDeviceBaseCallback *pCal
 // sbIDeviceBase implementation 
 // Just forwarding calls to mBaseDevice
 //-----------------------------------------------------------------------------
-/* attribute wstring name; */
+/* attribute AString name; */
 NS_IMETHODIMP sbUSBMassStorageDevice::SetName(const PRUnichar * aName)
 {
   return sbDeviceBase::SetName(aName);
 }
 
 //-----------------------------------------------------------------------------
-/* wstring EnumDeviceString (in PRUint32 index); */
+/* AString EnumDeviceString (in PRUint32 index); */
 NS_IMETHODIMP sbUSBMassStorageDevice::EnumDeviceString(PRUint32 index, PRUnichar **_retval)
 {
   // There is only one download device, so index is ignored
@@ -174,7 +174,7 @@ NS_IMETHODIMP sbUSBMassStorageDevice::EnumDeviceString(PRUint32 index, PRUnichar
 }
 
 //-----------------------------------------------------------------------------
-/* wstring GetContext (in wstring deviceString); */
+/* AString GetContext (in AString deviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetContext(const PRUnichar *deviceString, PRUnichar **_retval)
 {
   size_t nLen = CONTEXT_USBMASSSTORAGE_DEVICE_LEN + 1;
@@ -233,7 +233,7 @@ NS_IMETHODIMP sbUSBMassStorageDevice::GetAvailableSpace(const PRUnichar *deviceS
 }
 
 //-----------------------------------------------------------------------------
-/* PRBool GetTrackTable (out wstring dbContext, out wstring tableName); */
+/* PRBool GetTrackTable (out AString dbContext, out AString tableName); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetTrackTable(const PRUnichar *deviceString, PRUnichar **dbContext, PRUnichar **tableName, PRBool *_retval)
 {
   return sbDeviceBase::GetTrackTable(deviceString, dbContext, tableName, _retval);
@@ -247,14 +247,14 @@ NS_IMETHODIMP sbUSBMassStorageDevice::AbortTransfer(const PRUnichar *deviceStrin
 }
 
 //-----------------------------------------------------------------------------
-/* PRBool DeleteTable (in wstring dbContext, in wstring tableName); */
+/* PRBool DeleteTable (in AString dbContext, in AString tableName); */
 NS_IMETHODIMP sbUSBMassStorageDevice::DeleteTable(const PRUnichar *deviceString, const PRUnichar *dbContext, const PRUnichar *tableName, PRBool *_retval)
 {
   return sbDeviceBase::DeleteTable(deviceString, dbContext, tableName, _retval);
 }
 
 //-----------------------------------------------------------------------------
-/* PRBool UpdateTable (in wstring dbContext, in wstring tableName); */
+/* PRBool UpdateTable (in AString dbContext, in AString tableName); */
 NS_IMETHODIMP sbUSBMassStorageDevice::UpdateTable(const PRUnichar *deviceString, const PRUnichar *tableName, PRBool *_retval)
 {
   return sbDeviceBase::UpdateTable(deviceString, tableName, _retval);
@@ -269,7 +269,7 @@ NS_IMETHODIMP sbUSBMassStorageDevice::EjectDevice(const PRUnichar *deviceString,
 /* End DeviceBase */
 
 //-----------------------------------------------------------------------------
-/* wstring GetDeviceCategory (); */
+/* AString GetDeviceCategory (); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetDeviceCategory(PRUnichar **_retval)
 {
   size_t nLen = NAME_USBMASSSTORAGE_DEVICE_LEN + 1;
@@ -323,14 +323,14 @@ NS_IMETHODIMP sbUSBMassStorageDevice::GetNumDevices(PRUint32 *_retval)
 }
 
 //-----------------------------------------------------------------------------
-/* wstring GetNumDestinations (in wstring DeviceString); */
+/* AString GetNumDestinations (in AString DeviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetNumDestinations(const PRUnichar *DeviceString, PRUnichar **_retval)
 {
   return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
 }
 
 //-----------------------------------------------------------------------------
-/* PRBool MakeTransferTable (in wstring DeviceString, in wstring ContextInput, in wstring TableName, out wstring TransferTable); */
+/* PRBool MakeTransferTable (in AString DeviceString, in AString ContextInput, in AString TableName, out AString TransferTable); */
 NS_IMETHODIMP sbUSBMassStorageDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval)
 {
   return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, bDownloading, TransferTableName, _retval);
@@ -412,14 +412,14 @@ PRBool sbUSBMassStorageDevice::StopCurrentTransfer(const PRUnichar* deviceString
 }
 
 //-----------------------------------------------------------------------------
-/* wstring GetDownloadTable (in wstring deviceString); */
+/* AString GetDownloadTable (in AString deviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetDownloadTable(const PRUnichar *deviceString, PRUnichar **_retval)
 {
   return sbDeviceBase::GetDownloadTable(deviceString, _retval);
 }
 
 //-----------------------------------------------------------------------------
-/* wstring GetUploadTable (in wstring deviceString); */
+/* AString GetUploadTable (in AString deviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetUploadTable(const PRUnichar *deviceString, PRUnichar **_retval)
 {
   return sbDeviceBase::GetUploadTable(deviceString, _retval);
@@ -475,14 +475,14 @@ nsString sbUSBMassStorageDevice::GetDeviceUploadTable(const PRUnichar* deviceStr
 }
 
 //-----------------------------------------------------------------------------
-/* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
+/* PRBool DownloadTable (in AString DeviceCategory, in AString DeviceString, in AString TableName); */
 NS_IMETHODIMP sbUSBMassStorageDevice::UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
 {
   return sbDeviceBase::UploadTable(DeviceString, TableName, _retval);
 }
 
 //-----------------------------------------------------------------------------
-/* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
+/* PRBool DownloadTable (in AString DeviceCategory, in AString DeviceString, in AString TableName); */
 NS_IMETHODIMP sbUSBMassStorageDevice::DownloadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
 {
   return sbDeviceBase::DownloadTable(DeviceString, TableName, _retval);
@@ -503,14 +503,14 @@ NS_IMETHODIMP sbUSBMassStorageDevice::SetUploadFileType(const PRUnichar *deviceS
 }
 
 //-----------------------------------------------------------------------------
-/* PRUint32 GetDownloadFileType (in wstring deviceString); */
+/* PRUint32 GetDownloadFileType (in AString deviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetDownloadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
 {
   return sbDeviceBase::GetDownloadFileType(deviceString, _retval);
 }
 
 //-----------------------------------------------------------------------------
-/* PRUint32 GetUploadFileType (in wstring deviceString); */
+/* PRUint32 GetUploadFileType (in AString deviceString); */
 NS_IMETHODIMP sbUSBMassStorageDevice::GetUploadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
 {
   return sbDeviceBase::GetUploadFileType(deviceString, _retval);

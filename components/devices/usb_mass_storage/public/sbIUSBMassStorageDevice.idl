@@ -30,7 +30,7 @@
 [scriptable, uuid(A20BF454-673B-4308-8898-93F2B001D4E9)]
 interface sbIUSBMassStorageDevice : sbIDeviceBase
 {
-  PRBool OnUSBDeviceEvent(in PRBool deviceAdded, in wstring deviceName, in wstring deviceIdentifier);
+  PRBool OnUSBDeviceEvent(in PRBool deviceAdded, in AString deviceName, in AString deviceIdentifier);
 };
 
 
@@ -40,14 +40,14 @@ interface sbIUSBMassStorageDevice : sbIDeviceBase
 [scriptable, uuid(4C4E501E-D117-41a6-99A0-59E8AFEFB61D)]
 interface sbIUSBMassStorageDeviceHandler : nsISupports
 {
-  PRInt32 OnDeviceConnect(in wstring deviceIdentifier, in wstring devicePath);
-  PRInt32 OnDeviceDisconnect(in wstring deviceIdentifier, in wstring devicePath);
+  PRInt32 OnDeviceConnect(in AString deviceIdentifier, in AString devicePath);
+  PRInt32 OnDeviceDisconnect(in AString deviceIdentifier, in AString devicePath);
 
-  PRInt32 OnPrepareUpload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, out AString strDefaultDestURL);
-  PRInt32 OnCompleteUpload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, in wstring strDestURL);
+  PRInt32 OnPrepareUpload(in AString deviceIdentifier, in AString devicePath, in AString strSourceURL, out AString strDefaultDestURL);
+  PRInt32 OnCompleteUpload(in AString deviceIdentifier, in AString devicePath, in AString strSourceURL, in AString strDestURL);
 
-  PRInt32 OnPrepareDownload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, out AString strDefaultDestURL);
-  PRInt32 OnCompleteDownload(in wstring deviceIdentifier, in wstring devicePath, in wstring strSourceURL, out AString strDefaultDestURL);
+  PRInt32 OnPrepareDownload(in AString deviceIdentifier, in AString devicePath, in AString strSourceURL, out AString strDefaultDestURL);
+  PRInt32 OnCompleteDownload(in AString deviceIdentifier, in AString devicePath, in AString strSourceURL, out AString strDefaultDestURL);
 
-  PRBool CanHandleDevice(in wstring deviceIdentifier, in wstring devicePath);
+  PRBool CanHandleDevice(in AString deviceIdentifier, in AString devicePath);
 };

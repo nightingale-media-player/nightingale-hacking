@@ -38,11 +38,11 @@ public:
   IUSBMassStorageDeviceHelper() {};
   ~IUSBMassStorageDeviceHelper() {};
 
-  virtual PRBool Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier) = 0;
+  virtual PRBool Initialize(const nsAString &deviceName, const nsAString &deviceIdentifier) = 0;
 
-  virtual const PRUnichar * GetDeviceVendor() = 0;
-  virtual const PRUnichar * GetDeviceModel() = 0;
-  virtual const PRUnichar * GetDeviceSerialNumber() = 0;
+  virtual const nsAString & GetDeviceVendor() = 0;
+  virtual const nsAString & GetDeviceModel() = 0;
+  virtual const nsAString & GetDeviceSerialNumber() = 0;
 
   virtual PRInt64 GetDeviceCapacity() = 0;
 };
@@ -53,11 +53,11 @@ public:
   CUSBMassStorageDeviceHelperStub() {};
   ~CUSBMassStorageDeviceHelperStub() {};
 
-  virtual PRBool Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier){ return PR_FALSE; };
+  virtual PRBool Initialize(const nsAString &deviceName, const nsAString &deviceIdentifier){ return PR_FALSE; };
 
-  virtual const PRUnichar * GetDeviceVendor() { return NS_LITERAL_STRING("__STUB__").get(); };
-  virtual const PRUnichar * GetDeviceModel() { return NS_LITERAL_STRING("__STUB__").get(); };
-  virtual const PRUnichar * GetDeviceSerialNumber() { return NS_LITERAL_STRING("__STUB__").get(); };
+  virtual const nsAString & GetDeviceVendor() { return NS_LITERAL_STRING("__STUB__"); };
+  virtual const nsAString & GetDeviceModel() { return NS_LITERAL_STRING("__STUB__"); };
+  virtual const nsAString & GetDeviceSerialNumber() { return NS_LITERAL_STRING("__STUB__"); };
 
   virtual PRInt64 GetDeviceCapacity() { return -1; };
 };

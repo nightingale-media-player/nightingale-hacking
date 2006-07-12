@@ -33,12 +33,7 @@
  */
 
 #include "nspr.h"
-
-#include <string/nsStringAPI.h>
 #include "nsString.h"
-
-//#define WINVER        0x501
-//#define _WIN32_WINNT  0x501
 
 #include <windows.h>
 #include <stdio.h>
@@ -54,11 +49,11 @@ public:
   CUSBMassStorageDeviceHelperWin32();
   ~CUSBMassStorageDeviceHelperWin32();
   
-  virtual PRBool Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier);
+  virtual PRBool Initialize(const nsAString &deviceName, const nsAString &deviceIdentifier);
 
-  virtual const PRUnichar * GetDeviceVendor();
-  virtual const PRUnichar * GetDeviceModel();
-  virtual const PRUnichar * GetDeviceSerialNumber();
+  virtual const nsAString & GetDeviceVendor();
+  virtual const nsAString & GetDeviceModel();
+  virtual const nsAString & GetDeviceSerialNumber();
 
   virtual PRInt64 GetDeviceCapacity();
 

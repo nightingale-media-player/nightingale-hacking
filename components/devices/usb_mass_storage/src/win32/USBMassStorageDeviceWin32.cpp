@@ -44,14 +44,11 @@ CUSBMassStorageDeviceHelperWin32::~CUSBMassStorageDeviceHelperWin32()
 } //dtor
 
 //-----------------------------------------------------------------------------
-PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const PRUnichar *deviceName, const PRUnichar *deviceIdentifier)
+PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const nsAString &deviceName, const nsAString &deviceIdentifier)
 {
   PRBool bCanHandleDevice = PR_FALSE;
 
-  nsString strDeviceName(deviceName);
-  nsString strDeviceIdentifier(deviceIdentifier);
-
-  if(FindInReadable(NS_LITERAL_STRING("USBSTOR"), strDeviceName) == PR_TRUE)
+  if(FindInReadable(NS_LITERAL_STRING("USBSTOR"), deviceName) == PR_TRUE)
   {
     bCanHandleDevice = PR_TRUE;
     m_DeviceName = deviceName;
@@ -62,21 +59,21 @@ PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const PRUnichar *deviceName,
 } //Initialize
 
 //-----------------------------------------------------------------------------
-const PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceVendor()
+const nsAString & CUSBMassStorageDeviceHelperWin32::GetDeviceVendor()
 {
-  return NS_L("");
+  return EmptyString();
 } //GetDeviceVendor
 
 //-----------------------------------------------------------------------------
-const PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceModel()
+const nsAString & CUSBMassStorageDeviceHelperWin32::GetDeviceModel()
 {
-  return NS_L("");
+  return EmptyString();
 } //GetDeviceModel
 
 //-----------------------------------------------------------------------------
-const PRUnichar * CUSBMassStorageDeviceHelperWin32::GetDeviceSerialNumber()
+const nsAString & CUSBMassStorageDeviceHelperWin32::GetDeviceSerialNumber()
 {
-  return NS_L("");
+  return EmptyString();
 } //GetDeviceSerialNumber
 
 //-----------------------------------------------------------------------------
