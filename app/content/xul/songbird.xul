@@ -238,7 +238,7 @@
    
   <!-- Load the core wrappers (GREET THE NEW BOSS) -->
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/baseCore.js"/>
+   src="chrome://songbird/content/scripts/coreBase.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreVLC.js"/>
 <!--
