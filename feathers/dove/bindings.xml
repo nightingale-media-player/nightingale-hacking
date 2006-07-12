@@ -28,6 +28,10 @@
       <xul:windowregionset>
 
         <xul:windowregionrect type="add" size="window"/>
+<!--        
+
+No more rounded corners....
+
 
         <xul:windowregionrect type="sub" size="6,1" anchor="topleft" offsetx="0" offsety="0"/>
         <xul:windowregionrect type="sub" size="4,1" anchor="topleft" offsetx="0" offsety="1"/>
@@ -52,7 +56,7 @@
         <xul:windowregionrect type="sub" size="3,1" anchor="bottomright" offsetx="0" offsety="2"/>
         <xul:windowregionrect type="sub" size="2,1" anchor="bottomright" offsetx="0" offsety="3"/>
         <xul:windowregionrect type="sub" size="1,2" anchor="bottomright" offsetx="0" offsety="4"/>
-
+-->
       </xul:windowregionset>
     </content>
 

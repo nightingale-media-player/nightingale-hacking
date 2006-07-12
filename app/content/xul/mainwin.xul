@@ -51,13 +51,12 @@
 >
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
-  <!-- <windowregion/> -->
+  <windowregion/> <!-- No matter what mig says, don't take this out!! -->
 
   <stack flex="1" id="window_parent"
     ondragover="nsDragAndDrop.dragOver( event, SBDropObserver )"
     ondragdrop="nsDragAndDrop.drop( event, SBDropObserver )"
->
-
+  >
     <vbox class="sb_faceplate" flex="1">
       <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
