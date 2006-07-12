@@ -1786,7 +1786,8 @@
               this.hidePlaylistEdit();
 
               // Find the url column. 
-              var title_column = this.tree.columns ? this.tree.columns["title"] : "title";
+              var title_column = this.tree.columns.getNamedColumn("title");
+              if (!title_column) return;
               // Get the text of the hidden tree cell, this contains the url.
               var play_title = this.tree.view.getCellText( this.tree.currentIndex, title_column );
               
