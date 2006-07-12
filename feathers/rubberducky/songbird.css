@@ -40,7 +40,8 @@ COLOR SCHEME: BLACK
  /** 
 ************************************************************************************************************************************************
 THE WINDOW
-Love the window.
+These base styles are basically here to tell other -moz styles from spoiling our lovely UI. 
+!important is necessary to make sure these styles override any OS-specific styles as well.
 ************************************************************************************************************************************************
 */ 
 page
