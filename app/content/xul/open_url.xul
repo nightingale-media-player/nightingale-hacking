@@ -30,7 +30,7 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<dialog 
+<window 
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="open_url"
@@ -77,7 +77,7 @@
           <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
-         <label id="songbird_open_url_label" value="&textbox.songbird_open_url;"/>
+         <label class="dialog_label" value="&textbox.songbird_open_url;"/>
         
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
         <hbox>          
@@ -131,4 +131,4 @@
   ]]>
   </script>
   
-</dialog>
+</window>
