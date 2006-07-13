@@ -132,8 +132,8 @@
         {
           if (result.getRowCellByColumn(i, "base_type") != "playlist") continue;
           var listitem = document.createElement("listitem");
-          listitem.setAttribute("label", result.GetRowCellByColumn(i, "readable_name"));
-          listitem.setAttribute("playlist_name", result.GetRowCellByColumn(i, "name"));
+          listitem.setAttribute("label", result.getRowCellByColumn(i, "readable_name"));
+          listitem.setAttribute("playlist_name", result.getRowCellByColumn(i, "name"));
           list.appendChild(listitem);
         }
         
