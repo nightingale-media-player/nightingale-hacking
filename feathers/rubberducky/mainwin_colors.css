@@ -40,7 +40,8 @@ MAIN WINDOW
 Black material for the window.
 ************************************************************************************************************************************************
 */ 
-.window
+.window,
+.dialog
 {
   background-color: #000 !important; /* color of the Main Window **/
   -moz-border-top-colors: #7a7c7c #333 !important;

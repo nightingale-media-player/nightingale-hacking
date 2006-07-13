@@ -452,53 +452,24 @@ DIALOG BOXES and their buttons
   background-color: Transparent !important;
 }
 
-#new_playlist label,
-#playlist_exists label,
-#open_url label,
-#download label,
-#smart_playlist label,
-#subscribe,
-#track_editor label,
-#watchfolder
+.dialog_label
 {
   color: #fff !important;
 }
 
-.dialog-label
-{
-  color: #fff !important;
-}
-
-#track_editor
-{
-  -moz-appearance: none !important; /* grrrr! */
-  width: 600px !important;
-  /*background-color: transparent !important; BUGGY*/
-}
-
-#smart_playlist
-{
-  width:  600px !important;
-  /*background-color: transparent !important; this breaks the red flash in the Inspector*/
-}
-
-#open_url
-{
-  width:  460px !important;
-  background-color: transparent !important; /*this breaks the red flash in the Inspector*/
-}
-
+#track_editor,
+#smart_playlist,
+#open_url,
 #watchfolder,
 #new_playlist,
 #playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
 {
-  background-color: transparent !important;
+  width:  550px !important; /* makes all the dialog boxes the same size **/
 }
 
 /* Dialog Form Elements */
 
 /* dialog buttons */
-
 .dialog_button 
 {
   -moz-appearance: none !important;
@@ -513,7 +484,7 @@ DIALOG BOXES and their buttons
   color: #99A195 !important;
 }
 
-.backless_button 
+.backless_button /* Used in Watch Folders **/
 {
   -moz-appearance: none !important;
   -moz-border-radius: 0px !important;
