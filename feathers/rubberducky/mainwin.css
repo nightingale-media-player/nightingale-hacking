@@ -721,6 +721,21 @@ THE STATUS PANE
   height: 10px !important;
 }
 
+#status_progress_box
+{
+  -moz-appearance:none !important;
+  height: 5px !important;
+  width: 100px !important;
+  overflow: hidden !important;
+}
+
+#status_progress { 
+   margin: 2px 0px 0px 0px !important;
+   border: none !important;
+   min-width: 100px !important; 
+} 
+
+
 /** 
 ************************************************************************************************************************************************
 RESIZERS
@@ -749,3 +764,529 @@ RESIZERS
   height: 9px !important;
   width: 9px !important;
 }
+
+/** 
+************************************************************************************************************************************************
+SEARCH WIDGET
+************************************************************************************************************************************************
+*/
+
+#search_temp
+{
+  width: 143px !important;
+  height: 21px !important;
+}
+
+
+.button-icon
+{
+  margin: 0px 0px 0px 5px !important; 
+}
+
+#search_service_list
+{
+  width: 120px !important;
+  margin: 3px 0px 3px 0px !important; 
+}
+
+
+#search_widget
+{ 
+  border: 1px solid !important; 
+  -moz-border-radius: 5px !important;
+  margin: 2px 2px 2px 2px !important; 
+} 
+
+#search_widget input
+{
+  padding-top: 2px !important;
+}
+
+#search_widget input:focus
+{
+  padding-top: 2px !important;
+}
+
+.button-menu-dropmarker
+{
+  background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
+}
+/* END SEARCH WIDGET **/
+
+
+/** 
+************************************************************************************************************************************************
+CONTROL BOX
+Contains the Main Playback Controls and the Dashboard.
+************************************************************************************************************************************************
+*/
+
+
+#control_left_box
+{
+  width: 138px !important;
+}
+
+#control_right_box
+{
+ width: 500px !important;
+}
+
+#face_left_box
+{
+  width: 35px !important;
+}
+
+#face_middle_box
+{
+
+  height: 45px !important;
+}
+
+#face_right_box
+{
+  width: 35px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+DASHBOARD
+************************************************************************************************************************************************
+*/
+
+#dashboard_box
+{
+  height: 45px !important;
+}
+
+#dashboard_bkgd
+{
+  height: 45px !important;
+}
+
+#dashboard_w
+{
+  width: 25px !important;
+  height: 45px !important;
+  background-repeat: no-repeat !important;
+}
+#dashboard_e
+{
+  width: 25px !important;
+  height: 45px !important;
+  background-repeat: no-repeat !important;
+}
+
+#intro_box
+{
+  height: 45px !important;
+}
+
+#intro_box_bkgd
+{
+  height: 45px !important;
+}
+
+#intro_box_image
+{
+  width: 45px !important;
+  height: 45px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* the texties */
+#songbird_text_title
+{ 
+  width: auto !important; /* was: max-width: auto !important; */
+  color: #1F292B !important;
+  overflow: hidden !important;
+}
+#songbird_text_artist
+{
+  color: #1F292B !important;
+  overflow: hidden !important;
+}
+#songbird_text_album
+{
+  color: #1F292B !important;
+  overflow: hidden !important;
+}
+#songbird_text_slash
+{
+  color: #1F292B !important;
+}
+#songbird_text_time
+{
+  color: #1F292B !important; 
+}
+
+#songbird_text_time_total
+{
+  color: #1F292B !important;
+}
+
+#songbird_text_time_elapsed
+{
+  color: #1F292B !important;
+}
+
+/* the seekbar slider */
+#songbird_seekbar_slider
+{
+  height: 10px !important;
+}
+#songbird_seekbar_thumb
+{
+  width: 21px !important;
+  height: 10px !important;
+  border: 1px solid !important;
+}
+#songbird_seekbar_thumb > gripper
+{
+  height: 10px !important;
+}
+#songbird_seekbar_progress
+{
+  height: 10px !important;
+}
+#songbird_seekbar_progress > .progress-bar
+{
+  height: 10px !important;
+}
+#songbird_seekbar_progress > .progress-remainder
+{
+  height: 10px !important;
+}
+#songbird_seekbar
+{
+  border: 1px solid !important;
+  height: 10px !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+Main Playback Controls
+Play/Pause, Previous (back), Next (forward)
+************************************************************************************************************************************************
+*/
+
+/* the play button */
+#playbutton_box
+{
+  width: 130px !important;
+  height: 36px !important;
+  padding-left: 7px !important;
+}
+#songbird_btn_play
+{  
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+}
+
+/* the pause button */
+#songbird_btn_pause
+{
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+}
+
+/* the back button */
+
+#songbird_btn_back
+{
+  margin: 2px 0px 0px 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* the fwd button */
+#songbird_btn_fwd
+{
+  margin: 2px 13px 0px 0px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* the curr button */
+#songbird_btn_curr
+{
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the next button */
+#songbird_btn_next
+{
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the rep1 button */
+#songbird_btn_rep
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the rep1_on button */
+#songbird_btn_rep1
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the repall button */
+#songbird_btn_repall
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the shuf button */
+#songbird_btn_shuf
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the shuf_on button */
+#songbird_btn_shuf_on
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+/* END CONTROL BOX **/
+
+/** 
+************************************************************************************************************************************************
+WEB BAR
+Browser Toolbar, Address Box, and Url-Slurper Button
+************************************************************************************************************************************************
+*/
+
+/* the box with the url image and the url textbox */
+#browser_url_box
+{
+  margin: 2px 0px 2px 3px !important;
+  padding: 5px 3px 3px 3px !important;
+  -moz-border-radius: 5px !important;
+}
+
+#browser_url_image
+{
+  -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  margin: 1px 0px 3px 5px !important;
+}
+
+#browser_url
+{
+  margin-left: 3px !important;
+  margin: 0px 0px 0px 5px !important;
+  font-size: larger !important;
+}
+
+#browser_url input:focus
+{
+  font-weight: bolder !important;
+}
+
+#browser_url input[selected="true"]
+{
+  font-weight: bolder !important;
+}
+
+
+
+#browser_toolbar
+{
+  border-bottom: 1px solid !important; 
+  height: 35px !important;
+  padding-left: 2px !important;
+}
+
+#browser_toolbar button 
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px 3px 0px 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+ }
+ 
+#browser_toolbar button[disabled="true"],
+#browser_toolbar button[disabled="true"]:hover
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+
+#browser_back[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+
+#browser_refresh[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_stop[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_fwd[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_home[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_bookmark[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+#browser_playlist[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_download[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+/* END WEB BAR */
+
+/** 
+************************************************************************************************************************************************
+VOLUME
+Mute and Slider
+************************************************************************************************************************************************
+*/
+#mute_off
+{
+  width: 12px !important;
+  height: 12px !important;
+  background-repeat: no-repeat !important;
+}
+
+#mute_on
+{
+  width: 12px !important;
+  height: 12px !important;
+  background-repeat: no-repeat !important;
+}
+
+#volume_box
+{
+  height: 16px !important;    
+  padding-top: 0px !important;
+  margin-top: 5px !important;
+}
+
+#songbird_volume
+{
+  top: 5px !important;
+  left: 5px !important;
+  width: 104px !important;
+  height: 14px !important;
+}
+
+/*
+*/
+#songbird_volume > progress_slider,
+#songbird_volume gripper
+{  
+  padding: 0px 0px 0px 0px !important;
+  border: none !important;
+}
+
+
+
+#songbird_volume_thumb
+{
+  width: 36px !important;
+  height: 14px !important;
+}
+
+#songbird_volume_progress
+{
+  top: 0px !important;
+  left: 0px !important; /* previously 20px, 1 thumb-width in */
+  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  height: 14px !important;
+}
+
+#songbird_volume_e
+{
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+}
+#songbird_volume_w
+{
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+}
+

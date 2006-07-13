@@ -87,20 +87,11 @@ THE WINDOW CHROME
 ************************************************************************************************************************************************
 */
 
-.window
-{
-  -moz-appearance:none !important;
-}
-
+.window,
 .chrome_bkgd,
 #chrome_bkgd,
 #chrome_e,
-#chrome_w
-{
-  -moz-appearance:none !important;
-}
-
-/** chrm_n.png is offset by 9 pixels to make up for the 9px height of the top frame */
+#chrome_w,
 #chrome_nw,
 #chrome_n,
 #chrome_ne
@@ -169,18 +160,10 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 
 
 #sysbtn_maximize hbox,
-#sysbtn_maximize
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
+#sysbtn_maximize,
 #sysbtn_maximize > hbox > image,
 #sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
+#sysbtn_maximize > hbox,
 #sysbtn_maximize > image
 {
   -moz-appearance:none !important;
@@ -194,60 +177,19 @@ SCROLLBARS
 ************************************************************************************************************************************************
 */ 
 
-scrollbar
-{   
-  -moz-appearance: none !important;
-} 
-
+scrollbar,
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-appearance: none !important; 
-} 
- 
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-appearance: none !important;
-} 
- 
-scrollbar > slider > thumb > gripper
-{   
-  -moz-appearance: none !important; /* grrrr! */
-} 
-
-scrollbar > slider > thumb
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-} 
-
-scrollbar > slider
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-} 
-
-/* service pane scrollbar*/
-#frame_service_tree scrollbar
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-} 
-
-#frame_service_tree scrollbar > slider > thumb
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-} 
-
-#frame_service_tree scrollbar > slider
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-} 
-
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"],
+scrollbar > slider > thumb > gripper,
+scrollbar > slider > thumb,
+scrollbar > slider,
+#frame_service_tree scrollbar,
+#frame_service_tree scrollbar > slider > thumb,
+#frame_service_tree scrollbar > slider,
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-appearance: none !important; /* grrrr! */  
-} 
- 
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 #frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
@@ -262,22 +204,9 @@ Organize your collection with genre/artist/album filterlists.
 ************************************************************************************************************************************************
 */ 
 
-filterlist
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-filterlist > tree
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-/* striping for genre filter */
-filterlist > tree > treechildren::-moz-tree-row
-{
-  -moz-appearance: none !important;
-}
-
+filterlist,
+filterlist > tree,
+filterlist > tree > treechildren::-moz-tree-row,
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
@@ -289,49 +218,15 @@ THE PLAYLIST
 ************************************************************************************************************************************************
 */ 
 
-playlist
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-playlist > stack > vbox
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-
-#playlist_tree
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-#playlist_toolbar
-{
-  -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-}
-
+playlist,
+playlist > stack > vbox,
+#playlist_tree,
+#playlist_toolbar,
 #playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg
-{
-  -moz-appearance: none !important;
-}
-
-playlist > stack > vbox > hbox
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-#playlist_tree > treechildren::-moz-tree-row( selected, focus )
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-#playlist_tree > treechildren::-moz-tree-progressmeter
-{
- -moz-appearance: none !important; /* grrrr! */
-}
-
+playlist > stack > vbox > hbox#playlist_toolbar_bkg,
+playlist > stack > vbox > hbox,
+#playlist_tree > treechildren::-moz-tree-row( selected, focus ),
+#playlist_tree > treechildren::-moz-tree-progressmeter,
 #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
  -moz-appearance: none !important; /* grrrr! */
@@ -360,11 +255,7 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-#playlist_toolbar > button[disabled="true"]
-{
-  -moz-appearance: none !important;
-}
-
+#playlist_toolbar > button[disabled="true"],
 #playlist_toolbar > button[disabled="false"]
 {
   -moz-appearance: none !important;
@@ -382,24 +273,12 @@ These let the user resize the frames in your box model.
 
 .vert_splitter,
 #vert_splitter,
-#filter_splitter
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-#vert_splitter[state="collapsed"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
+#filter_splitter,
+#vert_splitter[state="collapsed"],
 .horz_splitter,
 #horz_splitter,
-#playlist_web_split > grippy
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-#control_pane_splitter
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
+#playlist_web_split > grippy,
+#control_pane_splitter,
 #control_pane_splitter[state="collapsed"]
 {
   -moz-appearance: none !important; /* grrrr! */
@@ -418,40 +297,33 @@ THE MAIN PANE
   -moz-appearance: none !important;
 }
 
+/** 
+************************************************************************************************************************************************
+THE STATUS PANE
+************************************************************************************************************************************************
+*/ 
+
+#status_progress_box,
+#status_progress,
+.progress-bar 
+{ 
+   -moz-appearance: none !important; /* grrrr! */ 
+}
+
 
 /** 
 ************************************************************************************************************************************************
 RESIZERS
 ************************************************************************************************************************************************
 */ 
-#frame_resize_t
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-#frame_resize_to
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-#frame_resize_m
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
-#frame_resize_mo
-{
-  -moz-appearance: none !important; /* grrrr! */
-}
-
+#frame_resize_t,
+#frame_resize_to,
+#frame_resize_m,
+#frame_resize_mo,
 #resize
 {
   -moz-appearance: none !important; /* grrrr! */
 }
-
-
-
-
 
 /** 
 ************************************************************************************************************************************************
@@ -459,537 +331,37 @@ SEARCH WIDGET
 ************************************************************************************************************************************************
 */
 
-#search_temp
-{
-  width: 143px !important;
-  height: 21px !important;
-  background-image: url(default/search_temp.png) !important;
-  background-color: transparent !important;
-}
-
-#search_service_button
-{
-  background-color: transparent !important;
-}
-
-.button-icon
-{
-  margin: 0px 0px 0px 5px !important; 
-}
-
-#search_service_list
-{
-  width: 120px !important;
-  margin: 3px 0px 3px 0px !important; 
-  background-color: transparent !important;
-}
-
-
-#search_widget
-{ 
-  background-color: #000 !important;
-  border: 1px solid #4A4E48 !important; 
-  -moz-border-radius: 5px !important;
-  margin: 2px 2px 2px 2px !important; 
-} 
-
-#search_widget input
-{
-  color: #CCC !important;
-  padding-top: 2px !important;
-}
-
-#search_widget input:focus
-{
-  background-color: #99A195 !important;
-  color: #FFF !important;
-  padding-top: 2px !important;
-}
-
 .button-menu-dropmarker
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent !important;
-  background-image: url(default/dropmarker.png) !important;
-  background-repeat: no-repeat !important;
-  height: 9px !important;
-  width: 9px !important;
-}
-
-/* Status Pane */
-
-#status_progress_box
-{
-  -moz-appearance:none !important;
-  height: 5px !important;
-  width: 100px !important;
-  overflow: hidden !important;
-}
-
-#status_progress { 
-   -moz-appearance: none !important; /* grrrr! */ 
-   margin: 2px 0px 0px 0px !important;
-   background-color: #333 !important; 
-   border: none !important;
-   min-width: 100px !important; 
-} 
-
-#status_progress .progress-bar { 
-   -moz-appearance: none !important; /* grrrr! */ 
-   background-color: #666 !important;
-} 
-  
-#status_progress[mode="undetermined"] { 
-  background-color: #333 !important;
-} 
-  
-#status_text, #library_text, #scanning_text
-{
-  color: #999 !important;
-}
-
-/* tooltips */
-tooltip
-{
-  -moz-appearance: none !important; /* grrrr! */  
-  background-color: #EEE !important;
-  color: #333 !important;   
-}
-
-
-/* the menus */
-#songbird_menu
-{
-  -moz-appearance: none !important;
-  height: 10px !important;
-  padding: 0px !important;
-  margin: 0px !important;
-}
-
-#songbird_menu > menu > label
-{
-  -moz-appearance: none !important;
-  background-color: transparent !important;
-  color: #999 !important;
-  height: 10px !important;
-  
-  padding-left: 2px !important;
-  padding-right: 6px !important;
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
-  margin-left: 0px !important;
-  margin-top: 0px !important;
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
-}
-
-#songbird_menu > menu:hover,
-#songbird_menu > menu:hover > label,
-#songbird_menu > menu[open],
-#songbird_menu > menu[open] > label,
-#songbird_menu > menu[_moz-menuactive="true"],
-#songbird_menu > menu[_moz-menuactive="true"] > label
-{
-  -moz-appearance: none !important;
-  background-color: #666 !important; /* I feel SUPER important! */
-  height: 10px !important;
-  color: #EEE !important;
-
-  padding-left: 2px !important;
-  padding-right: 3px !important;
-  padding-top: 1px !important;
-  padding-bottom: 0px !important;
-  margin-left: -1px !important;
-  margin-top: -1px !important;
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
-}
-
-#songbird_menu > menu#songbird_menu_spacer
-{
- -moz-appearance: none !important; /* grrrr! */
-  width: 14px !important;
-}
-
-
-#control_left_box
-{
-  width: 138px !important;
-}
-
-#control_right_box
-{
- width: 500px !important;
-}
-
-#face_left_box
-{
-  width: 35px !important;
-}
-
-#face_middle_box
-{
-
-  height: 45px !important;
-}
-
-#face_right_box
-{
-  width: 35px !important;
-}
-
-#dashboard_box
-{
-  background-color: transparent !important;
-  height: 45px !important;
-}
-
-#dashboard_bkgd
-{
-  height: 45px !important;
-  background-image: url(default/dashboard_bkgd.png) !important;
-}
-
-#dashboard_w
-{
-  width: 25px !important;
-  height: 45px !important;
-  background-image: url(default/dashboard_w.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-#dashboard_e
-{
-  width: 25px !important;
-  height: 45px !important;
-  background-image: url(default/dashboard_e.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-#intro_box
-{
-  height: 45px !important;
-}
-
-#intro_box_bkgd
-{
-  height: 45px !important;
-  background-image: url(default/dashboard_bkgd.png) !important;
-}
-
-#intro_box_image
-{
-  width: 45px !important;
-  height: 45px !important;
-  background-image: url(default/default_bkgd_logo.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-#dashboard_line_h
-{
-  height: 1px !important;
-  background-color: #CCCCCC !important;
-}
-
-#dashboard_line_v
-{
-  width: 1px !important;
-  background-color: #CCCCCC !important;
 }
 
 /** 
 ************************************************************************************************************************************************
-CHROME - The Main Controls
-Play/Pause, Previous (back), Next (forward)
+TOOLTIPS
 ************************************************************************************************************************************************
 */
 
-/* the play button */
-#playbutton_box
+tooltip
 {
-  background-color: transparent !important;
-  width: 130px !important;
-  height: 36px !important;
-  padding-left: 7px !important;
-}
-#songbird_btn_play
-{  
-  background-image: url(default/play_normal.png) !important; /** <img src="defaultplay_normal.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  background-position: center center !important;
+  -moz-appearance: none !important; /* grrrr! */  
 }
 
-#songbird_btn_play[disabled="true"]
+/** 
+************************************************************************************************************************************************
+DASHBOARD
+************************************************************************************************************************************************
+*/
+/* the seekbar slider */
+#songbird_seekbar_slider,
+#songbird_seekbar_thumb,
+#songbird_seekbar_thumb > gripper,
+#songbird_seekbar_progress,
+#songbird_seekbar_progress > .progress-bar,
+#songbird_seekbar_progress > .progress-remainder,
+#songbird_seekbar
 {
-  background-image: url(default/play_active.png) !important; /** <img src="defaultplay_active.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_play:hover
-{
-  background-image: url(default/play_normal.png) !important; /** <img src="defaultplay_normal.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_play:active
-{
-  background-image: url(default/play_active.png) !important; /** <img src="defaultplay_active.png"> */
-  background-color: transparent !important;
-}
-
-/* the pause button */
-#songbird_btn_pause
-{
-  background-image: url(default/pause_normal.png) !important; /** <img src="defaultpause_normal.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  background-position: center center !important;
-}
-#songbird_btn_pause[disabled="true"]
-{
-  background-image: url(default/pause_normal.png) !important; /** <img src="defaultpause_normal.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_pause:hover
-{
-  background-image: url(default/pause_normal.png) !important; /** <img src="defaultpause_normal.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_pause:active
-{
-  background-image: url(default/pause_active.png) !important; /** <img src="defaultpause_active.png"> */
-  background-color: transparent !important;
-}
-
-/* the back button */
-
-#songbird_btn_back
-{
-  margin: 2px 0px 0px 4px !important;
-  width: 32px !important;
-  height: 32px !important;
-  background-image: url(default/back_normal.png) !important; /** <img src="defaultback_normal.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-#songbird_btn_back[disabled="true"]
-{
-  background-image: url(default/back_disabled.png) !important; /** <img src="defaultback_disabled.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_back:hover
-{
-  background-image: url(default/back_normal.png) !important; /** <img src="defaultback_normal.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_back:active
-{
-  background-image: url(default/back_active.png) !important; /** <img src="defaultback_active.png"> */
-  background-color: transparent !important;
-}
-
-/* the fwd button */
-#songbird_btn_fwd
-{
-  margin: 2px 13px 0px 0px !important;
-  width: 32px !important;
-  height: 32px !important;
-  background-image: url(default/forward_normal.png) !important; /** <img src="defaultforward_normal.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-#songbird_btn_fwd[disabled="true"]
-{
-  background-image: url(default/forward_disabled.png) !important; /** <img src="defaultforward_disabled.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_fwd:hover
-{
-  background-image: url(default/forward_normal.png) !important; /** <img src="defaultforward_normal.png"> */
-  background-color: transparent !important;
-}
-#songbird_btn_fwd:active
-{
-  background-image: url(default/forward_active.png) !important; /** <img src="defaultforward_active.png"> */
-  background-color: transparent !important;
-}
-
-/* the curr button */
-#songbird_btn_curr
-{
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/currenttrack_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_curr[disabled="true"]
-{
-  background-image: url(default/currenttrack_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_curr:hover
-{
-  background-image: url(default/currenttrack_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_curr:active
-{
-  background-image: url(default/currenttrack_active.png) !important;
-  background-color: transparent !important;
-}
-
-/* the next button */
-#songbird_btn_next
-{
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/nextsvc_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_next[disabled="true"]
-{
-  background-image: url(default/nextsvc_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_next:hover
-{
-  background-image: url(default/nextsvc_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_next:active
-{
-  background-image: url(default/nextsvc_active.png) !important;
-  background-color: transparent !important;
-}
-
-/* the rep1 button */
-#songbird_btn_rep
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/rep1_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_rep[disabled="true"]
-{
-  background-image: url(default/rep1_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_rep:hover[disabled="true"]
-{
-  background-image: url(default/rep1_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_rep:active
-{
-  background-image: url(default/rep1_active.png) !important;
-  background-color: transparent !important;
-}
-
-/* the rep1_on button */
-#songbird_btn_rep1
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/rep1_on_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_rep1[disabled="true"]
-{
-  background-image: url(default/rep1_on_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_rep1:hover[disabled="true"]
-{
-  background-image: url(default/rep1_on_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_rep1:active
-{
-  background-image: url(default/rep1_on_active.png) !important;
-  background-color: transparent !important;
-}
-
-/* the repall button */
-#songbird_btn_repall
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/repall_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_repall[disabled="true"]
-{
-  background-image: url(default/repall_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_repall:hover[disabled="true"]
-{
-  background-image: url(default/repall_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_repall:active
-{
-  background-image: url(default/repall_active.png) !important;
-  background-color: transparent !important;
-}
-
-/* the shuf button */
-#songbird_btn_shuf
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/shuf_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_shuf[disabled="true"]
-{
-  background-image: url(default/shuf_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_shuf:hover[disabled="true"]
-{
-  background-image: url(default/shuf_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_shuf:active
-{
-  background-image: url(default/shuf_active.png) !important;
-  background-color: transparent !important;
-}
-
-/* the shuf_on button */
-#songbird_btn_shuf_on
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-  background-image: url(default/shuf_on_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_shuf_on[disabled="true"]
-{
-  background-image: url(default/shuf_disabled.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_shuf_on:hover[disabled="true"]
-{
-  background-image: url(default/shuf_normal.png) !important;
-  background-color: transparent !important;
-}
-#songbird_btn_shuf_on:active
-{
-  background-image: url(default/shuf_on_active.png) !important;
-  background-color: transparent !important;
+  -moz-appearance: none !important;
 }
 
 /** 
@@ -1000,357 +372,49 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 */
 
 /* the box with the url image and the url textbox */
-#browser_url_box
-{
-  margin: 2px 0px 2px 3px !important;
-  padding: 5px 3px 3px 3px !important;
-  -moz-border-radius: 5px !important;
-  border: 1px solid #4A4E48 !important;
-  background-color: transparent !important;
-  color: #CCC !important;
-}
-
-#browser_url_image
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent !important;
-  height: 16px !important;
-  width: 16px !important;
-  margin: 1px 0px 3px 5px !important;
-}
-
-#browser_url
-{
-  background-color: transparent !important;
-  color: #CCC !important;  
-  margin-left: 3px !important;
-  margin: 0px 0px 0px 5px !important;
-  font-size: larger !important;
-}
-
-#browser_url input:focus
-{
-  background-color: #99A195 !important;
-  color: #FFF !important;
-  font-weight: bolder !important;
-}
-
-#browser_url input[selected="true"]
-{
-  background-color: #F00 !important;
-  color: #FFF !important;
-  font-weight: bolder !important;
-}
-
-
-
-#browser_toolbar
-{
-  -moz-appearance: none !important;
-  border-bottom: 1px solid #808583 !important; 
-  background-color: transparent !important;
-  height: 35px !important;
-  padding-left: 2px !important;
-}
-
-#browser_toolbar button 
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  padding: 0px 3px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: #333 !important;   
- }
- 
+#browser_url_box,
+#browser_url_image,
+#browser_url,
+#browser_url input:focus,
+#browser_url input[selected="true"],
+#browser_toolbar,
+#browser_toolbar button ,
 #browser_toolbar button[disabled="true"],
-#browser_toolbar button[disabled="true"]:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: transparent !important;
-  -moz-border-left-colors: transparent !important;
-  -moz-border-bottom-colors: transparent !important;
-  -moz-border-right-colors: transparent !important;
-  background-color: transparent !important; 
-}
-
-
-
-
-#browser_back
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_back_normal.png) !important;
-}
-#browser_back:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_back_hover.png) !important;
-}
-#browser_back[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_back_disabled.png) !important;
-}
-#browser_back[active="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_back_active.png) !important;
-}
-#browser_refresh
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_refresh_normal.png) !important;
-}
-#browser_refresh:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_refresh_hover.png) !important;
-}
-#browser_refresh[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_refresh_disabled.png) !important;
-}
-#browser_refresh[active="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_refresh_active.png) !important;
-}
-#browser_stop
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_stop_normal.png) !important;
-}
-#browser_stop:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_stop_hover.png) !important;
-}
-#browser_stop[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_stop_disabled.png) !important;
-}
-#browser_stop[active="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_stop_active.png) !important;
-}
-#browser_fwd
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_forward_normal.png) !important;
-}
-#browser_fwd:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_forward_hover.png) !important;
-}
-#browser_fwd[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_forward_disabled.png) !important;
-}
-#browser_fwd[active="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_forward_active.png) !important;
-}
-#browser_home
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_home_normal.png) !important;
-}
-#browser_home:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_home_hover.png) !important;
-}
-#browser_home[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_home_disabled.png) !important;
-}
-#browser_home[active="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_home_active.png) !important;
-}
-#browser_bookmark
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_bookmark_normal.png) !important;
-}
-#browser_bookmark:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_bookmark_hover.png) !important;
-}
-#browser_bookmark[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_bookmark_disabled.png) !important;
-}
-#browser_bookmark[active="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_bookmark_active.png) !important;
-}
-#browser_playlist
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_addtoplaylist_normal.png) !important;
-}
-#browser_playlist:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_addtoplaylist_hover.png) !important;
-}
-#browser_playlist[disabled="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_addtoplaylist_disabled.png) !important;
-}
-#browser_download
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/webbar_dlplaylist_normal.png) !important;
-}
-#browser_download:hover
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  list-style-image: url(default/webbar_dlplaylist_hover.png) !important;
-}
+#browser_toolbar button[disabled="true"]:hover,
+#browser_back,
+#browser_back:hover,
+#browser_back[disabled="true"],
+#browser_back[active="true"],
+#browser_refresh,
+#browser_refresh:hover,
+#browser_refresh[disabled="true"],
+#browser_refresh[active="true"],
+#browser_stop,
+#browser_stop:hover,
+#browser_stop[disabled="true"],
+#browser_stop[active="true"],
+#browser_fwd,
+#browser_fwd:hover,
+#browser_fwd[disabled="true"],
+#browser_fwd[active="true"],
+#browser_home,
+#browser_home:hover,
+#browser_home[disabled="true"],
+#browser_home[active="true"],
+#browser_bookmark,
+#browser_bookmark:hover,
+#browser_bookmark[disabled="true"],
+#browser_bookmark[active="true"],
+#browser_playlist,
+#browser_playlist:hover,
+#browser_playlist[disabled="true"],
+#browser_download,
+#browser_download:hover,
 #browser_download[disabled="true"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 30px !important;
-  width: 30px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-  list-style-image: url(default/webbar_dlplaylist_disabled.png) !important;
 }
-
+/* END WEB BAR */
 
 /** 
 ************************************************************************************************************************************************
@@ -1358,219 +422,22 @@ VOLUME
 Mute and Slider
 ************************************************************************************************************************************************
 */
-#mute_off
-{
-  width: 12px !important;
-  height: 12px !important;
-  background-image: url(default/mute_off.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
+#mute_off,
+#mute_on,
 
-#mute_on
-{
-  width: 12px !important;
-  height: 12px !important;
-  background-image: url(default/mute_on.png) !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-#volume_box
-{
-  height: 16px !important;    
-  padding-top: 0px !important;
-  margin-top: 5px !important;
-  background-color: transparent !important;
-}
-
-#songbird_volume
-{
-  top: 5px !important;
-  left: 5px !important;
-  width: 104px !important;
-  height: 14px !important;
-}
-
-/*
-*/
+#volume_box,
+#songbird_volume,
 #songbird_volume > progress_slider,
-#songbird_volume gripper
-{  
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: none !important;
-  list-style-image: none !important;
-  padding: 0 0 0 0 !important;
-  border: none !important;
-  background-color: transparent !important;
-}
-
-
-
-#songbird_volume_thumb
-{
-  width: 36px !important;
-  height: 14px !important;
-  background-image: url(default/volume_thumb.png) !important;
-  background-color: transparent !important;
-}
-
-#songbird_volume_progress
-{
-  top: 0px !important;
-  left: 0px !important; /* previously 20px, 1 thumb-width in */
-  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
-  height: 14px !important;
-  background-color: transparent !important;
-}
-#songbird_volume_progress > .progress-bar
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/volume_progress_bar.png) !important;
-  background-color: transparent !important;
-}
-#songbird_volume_progress > .progress-remainder
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/volume_progress_remainder.png) !important;
-  background-color: transparent !important;
-}
-
-#songbird_volume_e
-{
-  background-image: url(default/volume_e.png) !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 5px !important;
-  width: 3px !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
+#songbird_volume gripper,
+#songbird_volume_thumb,
+#songbird_volume_progress,
+#songbird_volume_progress > .progress-bar,
+#songbird_volume_progress > .progress-remainder,
+#songbird_volume_e,
 #songbird_volume_w
 {
-  background-image: url(default/volume_w.png) !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 5px !important;
-  width: 3px !important;
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-/* the seekbar slider */
-#songbird_seekbar_slider
-{
   -moz-appearance: none !important; /* grrrr! */
-  height: 10px !important;
 }
-#songbird_seekbar_thumb
-{
-  -moz-appearance: none !important; /* grrrr! */
-  width: 21px !important;
-  height: 10px !important;
-  background-color: #1F292B !important;
-  background-image: url(default/seekbar_progress.png) !important;
-  border: 1px solid #a7afa2 !important;
-}
-#songbird_seekbar_thumb > gripper
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 10px !important;
-}
-#songbird_seekbar_progress
-{
-  height: 10px !important;
-}
-#songbird_seekbar_progress > .progress-bar
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/seekbar_progress.png) !important;
-  height: 10px !important;
-}
-#songbird_seekbar_progress > .progress-remainder
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(default/seekbar_remainder.png) !important;
-  height: 10px !important;
-}
-#songbird_seekbar
-{
-  -moz-appearance: none !important;
-  border: 1px solid #1F292B !important;
-  height: 10px !important;
-}
-
-/** 
-************************************************************************************************************************************************
-DASHBOARD
-************************************************************************************************************************************************
-*/
-
-/* the texties */
-#songbird_text_title
-{ 
-  width: auto !important; /* was: max-width: auto !important; */
-  color: #1F292B !important;
-  overflow: hidden !important;
-}
-#songbird_text_artist
-{
-  color: #1F292B !important;
-  overflow: hidden !important;
-}
-#songbird_text_album
-{
-  color: #1F292B !important;
-  overflow: hidden !important;
-}
-#songbird_text_slash
-{
-  color: #1F292B !important;
-}
-#songbird_text_time
-{
-  color: #1F292B !important; 
-}
-
-#songbird_text_time_total
-{
-  color: #1F292B !important;
-}
-
-#songbird_text_time_elapsed
-{
-  color: #1F292B !important;
-}
-
-#songbird_text_rep1
-{
-  top: 51px !important;
-  left: 294px !important;
-  width: 100px !important;
-  height: 15px !important;
-  color: #1F292B !important;
- 
-  text-align: right !important;
-}
-#songbird_text_rep
-{
-  top: 51px !important;
-  left: 294px !important;
-  width: 100px !important;
-  height: 15px !important;
-  color: #1F292B !important;
- 
-  text-align: right !important;
-}
-#songbird_text_shuf
-{
-  top: 66px !important;
-  left: 294px !important;
-  width: 100px !important;
-  height: 15px !important;
-  color: #1F292B !important;
- 
-  text-align: right !important;
-}
-
 /** 
 ************************************************************************************************************************************************
 DIALOG BOXES and their buttons
@@ -1775,7 +642,7 @@ TEXTBOXES for dialogs and forms.
 .sbextensions_box
 {
   -moz-appearance: none !important;
-  background-color: #000 !important;
+  background-color: transparent !important;
   color: #CCC !important;
 }
 
@@ -1865,7 +732,7 @@ CHECKBOXES, boxes, labels, images, states.
 
 checkbox {
   -moz-box-align: center;
-  background-color: #000 !important;
+  background-color: transparent !important;
   -moz-box-align: center;   
   opacity: 0.7 !important; /* When it's not focused, dim it slightly. */
 }
@@ -1882,6 +749,8 @@ checkbox {
 
 .checkbox-label {
   margin: 0 !important;
+  color: #FFF !important;
+  background-color: Transparent !important;
 }
 
 /* ..... focused state ..... */
@@ -2087,6 +956,69 @@ checkbox
 MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 ************************************************************************************************************************************************
 */
+/** 
+************************************************************************************************************************************************
+THE MENUS
+Poppin' Fresh.
+************************************************************************************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) Styles **/
+
+#songbird_menu
+{
+  -moz-appearance: none !important;
+  height: 10px !important;
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+#songbird_menu > menu > label
+{
+  -moz-appearance: none !important;
+  background-color: transparent !important;
+  color: #999 !important;
+  height: 10px !important;
+  
+  padding-left: 2px !important;
+  padding-right: 6px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin-left: 0px !important;
+  margin-top: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label
+{
+  -moz-appearance: none !important;
+  background-color: #666 !important; /* I feel SUPER important! */
+  height: 10px !important;
+  color: #EEE !important;
+
+  padding-left: 2px !important;
+  padding-right: 3px !important;
+  padding-top: 1px !important;
+  padding-bottom: 0px !important;
+  margin-left: -1px !important;
+  margin-top: -1px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu#songbird_menu_spacer
+{
+ -moz-appearance: none !important; /* grrrr! */
+  width: 14px !important;
+}
+
+/* The Basic Menu Styles **/
 
 menupopup, 
 popup

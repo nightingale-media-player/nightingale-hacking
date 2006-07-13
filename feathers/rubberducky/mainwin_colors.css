@@ -42,7 +42,7 @@ Black material for the window.
 */ 
 .window
 {
-  background-color: #f00 !important; /* color of the Main Window **/
+  background-color: #000 !important; /* color of the Main Window **/
   -moz-border-top-colors: #7a7c7c #333 !important;
   -moz-border-left-colors: #686a6a #333  !important;
   -moz-border-bottom-colors: #333 #333 !important;
@@ -991,7 +991,545 @@ THE MAIN PANE
   -moz-border-right-colors: #444 !important;
 }
 
+/** 
+************************************************************************************************************************************************
+THE STATUS PANE
+************************************************************************************************************************************************
+*/ 
 
+#status_progress { 
+   background-color: #333 !important; 
+} 
+
+#status_progress .progress-bar { 
+   background-color: #666 !important;
+} 
+  
+#status_progress[mode="undetermined"] { 
+  background-color: #333 !important;
+} 
+  
+#status_text, #library_text, #scanning_text
+{
+  color: #999 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+SEARCH WIDGET
+************************************************************************************************************************************************
+*/
+
+#search_temp
+{
+  background-color: transparent !important;
+}
+
+#search_service_button
+{
+  background-color: transparent !important;
+}
+
+
+#search_service_list
+{
+  background-color: transparent !important;
+}
+
+
+#search_widget
+{ 
+  background-color: #000 !important;
+} 
+
+#search_widget input
+{
+  color: #CCC !important;
+}
+
+#search_widget input:focus
+{
+  background-color: #99A195 !important;
+  color: #FFF !important;
+}
+
+.button-menu-dropmarker
+{
+  background-color: transparent !important;
+}
+
+/** 
+************************************************************************************************************************************************
+TOOLTIPS
+************************************************************************************************************************************************
+*/
+
+tooltip
+{  
+  background-color: #EEE !important;
+  color: #333 !important;   
+}
+
+/** 
+************************************************************************************************************************************************
+CONTROL BOX
+Contains the Main Playback Controls and the Dashboard.
+************************************************************************************************************************************************
+*/
+
+/* DASHBOARD **/
+
+#dashboard_box
+{
+  background-color: transparent !important;
+}
+
+#dashboard_w
+{
+  background-color: transparent !important;
+}
+#dashboard_e
+{
+  background-color: transparent !important;
+}
+
+/* the seekbar slider */
+#songbird_seekbar_thumb
+{
+  background-color: #1F292B !important;
+  border: 1px solid #a7afa2 !important;
+}
+
+#songbird_seekbar
+{
+  border: 1px solid #1F292B !important;
+}
+
+/** 
+************************************************************************************************************************************************
+Main Playback Controls
+Play/Pause, Previous (back), Next (forward)
+************************************************************************************************************************************************
+*/
+
+/* the play button */
+#playbutton_box
+{
+  background-color: transparent !important;
+}
+#songbird_btn_play
+{  
+  background-color: transparent !important;
+}
+
+#songbird_btn_play[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_play:hover
+{
+  background-color: transparent !important;
+}
+#songbird_btn_play:active
+{
+  background-color: transparent !important;
+}
+
+/* the pause button */
+#songbird_btn_pause
+{
+  background-color: transparent !important;
+}
+#songbird_btn_pause[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_pause:hover
+{
+  background-color: transparent !important;
+}
+#songbird_btn_pause:active
+{
+  background-color: transparent !important;
+}
+
+/* the back button */
+
+#songbird_btn_back
+{
+  background-color: transparent !important;
+}
+#songbird_btn_back[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_back:hover
+{
+  background-color: transparent !important;
+}
+#songbird_btn_back:active
+{
+  background-color: transparent !important;
+}
+
+/* the fwd button */
+#songbird_btn_fwd
+{
+  background-color: transparent !important;
+}
+#songbird_btn_fwd[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_fwd:hover
+{
+  background-color: transparent !important;
+}
+#songbird_btn_fwd:active
+{
+  background-color: transparent !important;
+}
+
+/* the curr button */
+#songbird_btn_curr
+{
+  background-color: transparent !important;
+}
+#songbird_btn_curr[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_curr:hover
+{
+  background-color: transparent !important;
+}
+#songbird_btn_curr:active
+{
+  background-color: transparent !important;
+}
+
+/* the next button */
+#songbird_btn_next
+{
+  background-color: transparent !important;
+}
+#songbird_btn_next[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_next:hover
+{
+  background-color: transparent !important;
+}
+#songbird_btn_next:active
+{
+  background-color: transparent !important;
+}
+
+/* the rep1 button */
+#songbird_btn_rep
+{
+  background-color: transparent !important;
+}
+#songbird_btn_rep[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_rep:hover[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_rep:active
+{
+  background-color: transparent !important;
+}
+
+/* the rep1_on button */
+#songbird_btn_rep1
+{
+  background-color: transparent !important;
+}
+#songbird_btn_rep1[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_rep1:hover[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_rep1:active
+{
+  background-color: transparent !important;
+}
+
+/* the repall button */
+#songbird_btn_repall
+{
+  background-color: transparent !important;
+}
+#songbird_btn_repall[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_repall:hover[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_repall:active
+{
+  background-color: transparent !important;
+}
+
+/* the shuf button */
+#songbird_btn_shuf
+{
+  background-color: transparent !important;
+}
+#songbird_btn_shuf[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_shuf:hover[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_shuf:active
+{
+  background-color: transparent !important;
+}
+
+/* the shuf_on button */
+#songbird_btn_shuf_on
+{
+  background-color: transparent !important;
+}
+#songbird_btn_shuf_on[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_shuf_on:hover[disabled="true"]
+{
+  background-color: transparent !important;
+}
+#songbird_btn_shuf_on:active
+{
+  background-color: transparent !important;
+}
+/* END CONTROL BOX **/
+
+/** 
+************************************************************************************************************************************************
+WEB BAR
+Browser Toolbar, Address Box, and Url-Slurper Button
+************************************************************************************************************************************************
+*/
+
+/* the box with the url image and the url textbox */
+#browser_url_box
+{
+  border: 1px solid #4A4E48 !important;
+  background-color: transparent !important;
+  color: #CCC !important;
+}
+
+#browser_url_image
+{
+  background-color: transparent !important;
+}
+
+#browser_url
+{
+  background-color: transparent !important;
+  color: #CCC !important;  
+}
+
+#browser_url input:focus
+{
+  background-color: #99A195 !important;
+  color: #FFF !important;
+}
+
+#browser_url input[selected="true"]
+{
+  background-color: #F00 !important;
+  color: #FFF !important;
+}
+
+
+
+#browser_toolbar
+{
+  border-bottom: 1px solid #808583 !important; 
+  background-color: transparent !important;
+}
+
+#browser_toolbar button 
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: #333 !important;   
+ }
+ 
+#browser_toolbar button[disabled="true"],
+#browser_toolbar button[disabled="true"]:hover
+{
+  -moz-border-top-colors: transparent !important;
+  -moz-border-left-colors: transparent !important;
+  -moz-border-bottom-colors: transparent !important;
+  -moz-border-right-colors: transparent !important;
+  background-color: transparent !important; 
+}
+
+#browser_back:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_back[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+
+#browser_refresh:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_refresh[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+
+#browser_stop:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_stop[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+
+#browser_fwd:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_fwd[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+#browser_home:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_home[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+
+#browser_bookmark:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_bookmark[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+
+#browser_playlist:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_playlist[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+
+#browser_download:hover
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+}
+#browser_download[disabled="true"]
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  background-color: transparent !important; 
+}
+/* END WEB BAR */
+
+/** 
+************************************************************************************************************************************************
+VOLUME
+Mute and Slider
+************************************************************************************************************************************************
+*/
+#mute_off,
+#mute_on,
+#volume_box,
+#songbird_volume > progress_slider,
+#songbird_volume gripper,
+#songbird_volume_thumb,
+#songbird_volume_progress,
+#songbird_volume_progress > .progress-bar,
+#songbird_volume_progress > .progress-remainder,
+#songbird_volume_e,
+#songbird_volume_w
+{
+  background-color: transparent !important;
+}
 /*
 Body
 bright-highlight    #7a7c7c 
