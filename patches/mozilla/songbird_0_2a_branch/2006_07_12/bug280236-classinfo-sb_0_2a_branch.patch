@@ -1,13 +1,25 @@
-? bug280236-classinfov1.1.patch
+? .mozconfig.mk
+? a.out
+? bug280236-classinfo-sb_0_2a_branch.patch
+? compiled
+? confdefs.h
+? config.cache
+? config.log
 ? sanity.diff
+? sanity13.diff
 Index: js/src/xpconnect/src/xpccomponents.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpccomponents.cpp,v
 retrieving revision 1.75.2.12
-diff -u -r1.75.2.12 xpccomponents.cpp
+diff -U8 -p -r1.75.2.12 xpccomponents.cpp
 --- js/src/xpconnect/src/xpccomponents.cpp	7 Jul 2006 02:12:02 -0000	1.75.2.12
-+++ js/src/xpconnect/src/xpccomponents.cpp	12 Jul 2006 20:47:42 -0000
-@@ -47,6 +47,8 @@
++++ js/src/xpconnect/src/xpccomponents.cpp	13 Jul 2006 18:37:07 -0000
+@@ -42,16 +42,18 @@
+ 
+ /* The "Components" xpcom objects for JavaScript. */
+ 
+ #include "xpcprivate.h"
+ #include "nsReadableUtils.h"
  #include "nsIScriptObjectPrincipal.h"
  #include "nsIDOMWindow.h"
  
@@ -16,7 +28,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  /***************************************************************************/
  // stuff used by all
  
-@@ -96,6 +98,106 @@
+ static nsresult ThrowAndFail(uintN errNum, JSContext* cx, JSBool* retval)
+ {
+     XPCThrower::Throw(errNum, cx);
+     *retval = JS_FALSE;
+     return NS_OK;
+@@ -91,16 +93,116 @@ char * xpc_CheckAccessList(const PRUnich
+     for(const char** p = list; *p; p++)
+         if(!strcmp(*p, asciiName.get()))
+             return xpc_CloneAllAccess();
+ 
+     return nsnull;
  }
  #endif
  
@@ -123,7 +145,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  /***************************************************************************/
  
  nsXPCComponents_Interfaces::nsXPCComponents_Interfaces()
-@@ -125,6 +227,7 @@
+ {
+     mManager = dont_AddRef(XPTI_GetInterfaceInfoManager());
+ }
+ 
+ nsXPCComponents_Interfaces::~nsXPCComponents_Interfaces()
+@@ -120,16 +222,17 @@ NS_IMETHODIMP nsXPCComponents_Interfaces
+ {
+     mManager = aManager;
+     return NS_OK;
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_Interfaces)
    NS_INTERFACE_MAP_ENTRY(nsIScriptableInterfaces)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -131,7 +163,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
    NS_INTERFACE_MAP_ENTRY(nsISecurityCheckedComponent)
  #endif
-@@ -319,7 +422,8 @@
+   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIScriptableInterfaces)
+ NS_INTERFACE_MAP_END_THREADSAFE
+ 
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_Interfaces)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_Interfaces)
+@@ -314,52 +417,154 @@ nsXPCComponents_Interfaces::CanSetProper
+ #endif
+ 
+ /***************************************************************************/
+ /***************************************************************************/
+ /***************************************************************************/
  
  class nsXPCComponents_InterfacesByID :
              public nsIScriptableInterfacesByID,
@@ -141,7 +183,9 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
            , public nsISecurityCheckedComponent
  #endif
-@@ -329,6 +433,7 @@
+ {
+ public:
+     // all the interface method declarations...
      NS_DECL_ISUPPORTS
      NS_DECL_NSISCRIPTABLEINTERFACESBYID
      NS_DECL_NSIXPCSCRIPTABLE
@@ -149,7 +193,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
      NS_DECL_NSISECURITYCHECKEDCOMPONENT
  #endif
-@@ -341,6 +446,105 @@
+ 
+ public:
+     nsXPCComponents_InterfacesByID();
+     virtual ~nsXPCComponents_InterfacesByID();
+ 
+ private:
      nsCOMPtr<nsIInterfaceInfoManager> mManager;
  };
  
@@ -255,7 +304,14 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  
  nsXPCComponents_InterfacesByID::nsXPCComponents_InterfacesByID()
  {
-@@ -355,6 +559,7 @@
+     mManager = dont_AddRef(XPTI_GetInterfaceInfoManager());
+ }
+ 
+ nsXPCComponents_InterfacesByID::~nsXPCComponents_InterfacesByID()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_InterfacesByID)
    NS_INTERFACE_MAP_ENTRY(nsIScriptableInterfacesByID)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -263,7 +319,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
    NS_INTERFACE_MAP_ENTRY(nsISecurityCheckedComponent)
  #endif
-@@ -559,19 +764,117 @@
+   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIScriptableInterfacesByID)
+ NS_INTERFACE_MAP_END_THREADSAFE
+ 
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_InterfacesByID)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_InterfacesByID)
+@@ -554,41 +759,140 @@ nsXPCComponents_InterfacesByID::CanSetPr
+ #endif
+ 
+ /***************************************************************************/
+ /***************************************************************************/
+ /***************************************************************************/
  
  
  
@@ -382,7 +448,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents_Classes::nsXPCComponents_Classes()
  {
  }
-@@ -584,6 +887,7 @@
+ 
+ nsXPCComponents_Classes::~nsXPCComponents_Classes()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_Classes)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents_Classes)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -390,7 +461,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents_Classes)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -716,19 +1020,117 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_Classes)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_Classes)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCComponents_Classes
+@@ -711,41 +1015,140 @@ nsXPCComponents_Classes::NewResolve(nsIX
+     }
+     return NS_OK;
+ }
+ 
+ /***************************************************************************/
  /***************************************************************************/
  /***************************************************************************/
  
@@ -509,7 +590,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents_ClassesByID::nsXPCComponents_ClassesByID()
  {
  }
-@@ -741,6 +1143,7 @@
+ 
+ nsXPCComponents_ClassesByID::~nsXPCComponents_ClassesByID()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_ClassesByID)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents_ClassesByID)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -517,7 +603,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents_ClassesByID)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -892,19 +1295,117 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_ClassesByID)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_ClassesByID)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCComponents_ClassesByID
+@@ -887,41 +1290,140 @@ nsXPCComponents_ClassesByID::NewResolve(
+ }
+ 
+ 
+ /***************************************************************************/
+ 
  // Currently the possible results do not change at runtime, so they are only
  // cached once (unlike ContractIDs, CLSIDs, and IIDs)
  
@@ -636,7 +732,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents_Results::nsXPCComponents_Results()
  {
  }
-@@ -917,6 +1418,7 @@
+ 
+ nsXPCComponents_Results::~nsXPCComponents_Results()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_Results)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents_Results)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -644,7 +745,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents_Results)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -1019,13 +1521,17 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_Results)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_Results)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCComponents_Results
+@@ -1014,48 +1516,147 @@ nsXPCComponents_Results::NewResolve(nsIX
+         }
+     }
+     return NS_OK;
+ }
+ 
  /***************************************************************************/
  // JavaScript Constructor for nsIJSID objects (Components.ID)
  
@@ -663,7 +774,13 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  
  
  public:
-@@ -1039,6 +1545,100 @@
+     nsXPCComponents_ID();
+     virtual ~nsXPCComponents_ID();
+ 
+ private:
+     NS_METHOD CallOrConstruct(nsIXPConnectWrappedNative *wrapper,
+                               JSContext * cx, JSObject * obj,
+                               PRUint32 argc, jsval * argv,
                                jsval * vp, PRBool *_retval);
  };
  
@@ -764,7 +881,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents_ID::nsXPCComponents_ID()
  {
  }
-@@ -1051,6 +1651,7 @@
+ 
+ nsXPCComponents_ID::~nsXPCComponents_ID()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_ID)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents_ID)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -772,7 +894,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents_ID)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -1148,13 +1749,17 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_ID)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_ID)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCComponents_ID
+@@ -1143,48 +1744,147 @@ nsXPCComponents_ID::HasInstance(nsIXPCon
+     if(bp)
+         *bp = JSValIsInterfaceOfType(cx, val, NS_GET_IID(nsIJSID));
+     return NS_OK;
+ }
+ 
  /***************************************************************************/
  // JavaScript Constructor for nsIXPCException objects (Components.Exception)
  
@@ -791,7 +923,13 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  
  
  public:
-@@ -1168,6 +1773,100 @@
+     nsXPCComponents_Exception();
+     virtual ~nsXPCComponents_Exception();
+ 
+ private:
+     NS_METHOD CallOrConstruct(nsIXPConnectWrappedNative *wrapper,
+                               JSContext * cx, JSObject * obj,
+                               PRUint32 argc, jsval * argv,
                                jsval * vp, PRBool *_retval);
  };
  
@@ -892,7 +1030,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents_Exception::nsXPCComponents_Exception()
  {
  }
-@@ -1180,6 +1879,7 @@
+ 
+ nsXPCComponents_Exception::~nsXPCComponents_Exception()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_Exception)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents_Exception)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -900,7 +1043,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents_Exception)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -1335,7 +2035,10 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_Exception)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_Exception)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCComponents_Exception
+@@ -1330,25 +2030,29 @@ nsXPCComponents_Exception::HasInstance(n
+ // it since it has no registed factory. Security really kicks in when we try
+ // to build a wrapper around an instance.
+ 
+ // {B4A95150-E25A-11d3-8F61-0010A4E73D9A}
+ #define NS_XPCCONSTRUCTOR_CID  \
  { 0xb4a95150, 0xe25a, 0x11d3, \
      { 0x8f, 0x61, 0x0, 0x10, 0xa4, 0xe7, 0x3d, 0x9a } }
  
@@ -912,7 +1065,8 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  {
  public:
      NS_DEFINE_STATIC_CID_ACCESSOR(NS_XPCCONSTRUCTOR_CID)
-@@ -1344,6 +2047,7 @@
+ public:
+     // all the interface method declarations...
      NS_DECL_ISUPPORTS
      NS_DECL_NSIXPCCONSTRUCTOR
      NS_DECL_NSIXPCSCRIPTABLE
@@ -920,7 +1074,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  
  public:
      nsXPCConstructor(); // not implemented
-@@ -1363,6 +2067,100 @@
+     nsXPCConstructor(nsIJSCID* aClassID,
+                      nsIJSIID* aInterfaceID,
+                      const char* aInitializer);
+     virtual ~nsXPCConstructor();
+ 
+@@ -1358,16 +2062,110 @@ private:
+                               PRUint32 argc, jsval * argv,
+                               jsval * vp, PRBool *_retval);
+ private:
+     nsIJSCID* mClassID;
+     nsIJSIID* mInterfaceID;
      char*     mInitializer;
  };
  
@@ -1021,7 +1185,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCConstructor::nsXPCConstructor(nsIJSCID* aClassID,
                                     nsIJSIID* aInterfaceID,
                                     const char* aInitializer)
-@@ -1408,6 +2206,7 @@
+ {
+     NS_IF_ADDREF(mClassID = aClassID);
+     NS_IF_ADDREF(mInterfaceID = aInterfaceID);
+     mInitializer = aInitializer ?
+         (char*) nsMemory::Clone(aInitializer, strlen(aInitializer)+1) :
+@@ -1403,16 +2201,17 @@ NS_IMETHODIMP
+ nsXPCConstructor::GetInitializer(char * *aInitializer)
+ {
+     XPC_STRING_GETTER_BODY(aInitializer, mInitializer);
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCConstructor)
    NS_INTERFACE_MAP_ENTRY(nsIXPCConstructor)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -1029,7 +1203,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCConstructor)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -1511,13 +2310,17 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCConstructor)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCConstructor)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCConstructor
+@@ -1506,47 +2305,146 @@ nsXPCConstructor::CallOrConstruct(nsIXPC
+     }
+ 
+     return NS_OK;
+ }
+ 
  /*******************************************************/
  // JavaScript Constructor for nsIXPCConstructor objects (Components.Constructor)
  
@@ -1048,7 +1232,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  
  public:
      nsXPCComponents_Constructor();
-@@ -1530,6 +2333,100 @@
+     virtual ~nsXPCComponents_Constructor();
+ 
+ private:
+     NS_METHOD CallOrConstruct(nsIXPConnectWrappedNative *wrapper,
+                               JSContext * cx, JSObject * obj,
+                               PRUint32 argc, jsval * argv,
                                jsval * vp, PRBool *_retval);
  };
  
@@ -1149,7 +1338,12 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents_Constructor::nsXPCComponents_Constructor()
  {
  }
-@@ -1542,6 +2439,7 @@
+ 
+ nsXPCComponents_Constructor::~nsXPCComponents_Constructor()
+ {
+     // empty
+ }
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents_Constructor)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents_Constructor)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -1157,7 +1351,17 @@ diff -u -r1.75.2.12 xpccomponents.cpp
    NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents_Constructor)
  NS_INTERFACE_MAP_END_THREADSAFE
  
-@@ -2658,6 +3556,7 @@
+ NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents_Constructor)
+ NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents_Constructor)
+ 
+ // The nsIXPCScriptable map declaration that will generate stubs for us...
+ #define XPC_MAP_CLASSNAME           nsXPCComponents_Constructor
+@@ -2653,25 +3551,125 @@ nsXPCComponents_Utils::CanSetProperty(co
+ /***************************************************************************/
+ 
+ // XXXjband We ought to cache the wrapper in the object's slots rather than
+ // re-wrapping on demand
+ 
  NS_INTERFACE_MAP_BEGIN(nsXPCComponents)
    NS_INTERFACE_MAP_ENTRY(nsIXPCComponents)
    NS_INTERFACE_MAP_ENTRY(nsIXPCScriptable)
@@ -1165,7 +1369,9 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
    NS_INTERFACE_MAP_ENTRY(nsISecurityCheckedComponent)
  #endif
-@@ -2667,6 +3566,105 @@
+   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIXPCComponents)
+ NS_INTERFACE_MAP_END_THREADSAFE
+ 
  NS_IMPL_THREADSAFE_ADDREF(nsXPCComponents)
  NS_IMPL_THREADSAFE_RELEASE(nsXPCComponents)
  
@@ -1271,14 +1477,24 @@ diff -u -r1.75.2.12 xpccomponents.cpp
  nsXPCComponents::nsXPCComponents()
      :   mInterfaces(nsnull),
          mInterfacesByID(nsnull),
+         mClasses(nsnull),
+         mClassesByID(nsnull),
+         mResults(nsnull),
+         mID(nsnull),
+         mException(nsnull),
 Index: js/src/xpconnect/src/xpcconvert.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcconvert.cpp,v
 retrieving revision 1.96.4.4
-diff -u -r1.96.4.4 xpcconvert.cpp
+diff -U8 -p -r1.96.4.4 xpcconvert.cpp
 --- js/src/xpconnect/src/xpcconvert.cpp	7 Jul 2006 02:12:02 -0000	1.96.4.4
-+++ js/src/xpconnect/src/xpcconvert.cpp	12 Jul 2006 20:47:43 -0000
-@@ -1273,19 +1273,25 @@
++++ js/src/xpconnect/src/xpcconvert.cpp	13 Jul 2006 18:37:08 -0000
+@@ -1268,29 +1268,35 @@ nsresult
+ XPCConvert::ConstructException(nsresult rv, const char* message,
+                                const char* ifaceName, const char* methodName,
+                                nsISupports* data,
+                                nsIException** exceptn)
+ {
      static const char format[] = "\'%s\' when calling method: [%s::%s]";
      const char * msg = message;
      char* sz = nsnull;
@@ -1310,14 +1526,24 @@ diff -u -r1.96.4.4 xpcconvert.cpp
          JS_smprintf_free(sz);
      return res;
  }
+ 
+ /********************************/
+ 
+ // static
+ nsresult
 Index: js/src/xpconnect/src/xpcjsid.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcjsid.cpp,v
 retrieving revision 1.66
-diff -u -r1.66 xpcjsid.cpp
+diff -U8 -p -r1.66 xpcjsid.cpp
 --- js/src/xpconnect/src/xpcjsid.cpp	7 Nov 2004 23:59:26 -0000	1.66
-+++ js/src/xpconnect/src/xpcjsid.cpp	12 Jul 2006 20:47:43 -0000
-@@ -297,23 +297,25 @@
++++ js/src/xpconnect/src/xpcjsid.cpp	13 Jul 2006 18:37:08 -0000
+@@ -292,33 +292,35 @@ NS_METHOD GetSharedScriptableHelperForJS
+ 
+ /******************************************************/
+ 
+ static JSBool gClassObjectsWereInited = JS_FALSE;
+ 
  NS_DECL_CI_INTERFACE_GETTER(nsJSIID)
  // Can't make this static. http://bugzilla.mozilla.org/show_bug.cgi?id=81436
  nsIClassInfo* NS_CLASSINFO_NAME(nsJSIID);
@@ -1345,14 +1571,24 @@ diff -u -r1.66 xpcjsid.cpp
  
  JSBool xpc_InitJSxIDClassObjects()
  {
+     if(gClassObjectsWereInited)
+         return JS_TRUE;
+ 
+     nsresult rv = NS_OK;
+ 
 Index: js/src/xpconnect/src/xpcmodule.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcmodule.cpp,v
 retrieving revision 1.40.28.2
-diff -u -r1.40.28.2 xpcmodule.cpp
+diff -U8 -p -r1.40.28.2 xpcmodule.cpp
 --- js/src/xpconnect/src/xpcmodule.cpp	16 May 2006 18:29:35 -0000	1.40.28.2
-+++ js/src/xpconnect/src/xpcmodule.cpp	12 Jul 2006 20:47:44 -0000
-@@ -88,7 +88,7 @@
++++ js/src/xpconnect/src/xpcmodule.cpp	13 Jul 2006 18:37:09 -0000
+@@ -83,17 +83,17 @@ NS_DECL_CLASSINFO(nsXPCException)
+ 
+ static const nsModuleComponentInfo components[] = {
+   {nsnull, NS_JS_ID_CID,                         XPC_ID_CONTRACTID,            nsJSIDConstructor             },
+   {nsnull, NS_XPCONNECT_CID,                     XPC_XPCONNECT_CONTRACTID,     nsIXPConnectConstructor       },
+   {nsnull, NS_XPC_THREAD_JSCONTEXT_STACK_CID,    XPC_CONTEXT_STACK_CONTRACTID, nsIJSContextStackConstructor  },
    {nsnull, NS_XPCEXCEPTION_CID,                  XPC_EXCEPTION_CONTRACTID,     nsXPCExceptionConstructor, nsnull, nsnull, nsnull, NS_CI_INTERFACE_GETTER_NAME(nsXPCException), nsnull, &NS_CLASSINFO_NAME(nsXPCException)},
    {nsnull, NS_JS_RUNTIME_SERVICE_CID,            XPC_RUNTIME_CONTRACTID,       nsIJSRuntimeServiceConstructor},
    {NS_SCRIPTERROR_CLASSNAME, NS_SCRIPTERROR_CID, NS_SCRIPTERROR_CONTRACTID,    nsScriptErrorConstructor      },
@@ -1361,14 +1597,24 @@ diff -u -r1.40.28.2 xpcmodule.cpp
    {nsnull, XPCVARIANT_CID,                       XPCVARIANT_CONTRACTID,        nsnull, nsnull, nsnull, nsnull, NS_CI_INTERFACE_GETTER_NAME(XPCVariant), nsnull, &NS_CLASSINFO_NAME(XPCVariant)},
    {nsnull, NS_XPC_JSCONTEXT_STACK_ITERATOR_CID,  XPC_JSCONTEXT_STACK_ITERATOR_CONTRACTID, nsXPCJSContextStackIteratorConstructor }
  
+ #ifdef MOZ_JSLOADER
+   // jsloader stuff
+  ,{ "JS component loader", MOZJSCOMPONENTLOADER_CID,
+     MOZJSCOMPONENTLOADER_CONTRACTID, mozJSComponentLoaderConstructor,
+     RegisterJSLoader, UnregisterJSLoader }
 Index: js/src/xpconnect/src/xpcprivate.h
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
 retrieving revision 1.162.2.10
-diff -u -r1.162.2.10 xpcprivate.h
+diff -U8 -p -r1.162.2.10 xpcprivate.h
 --- js/src/xpconnect/src/xpcprivate.h	7 Jul 2006 02:12:02 -0000	1.162.2.10
-+++ js/src/xpconnect/src/xpcprivate.h	12 Jul 2006 20:47:45 -0000
-@@ -137,6 +137,8 @@
++++ js/src/xpconnect/src/xpcprivate.h	13 Jul 2006 18:37:10 -0000
+@@ -132,16 +132,18 @@
+ #undef GetMessage
+ #endif
+ 
+ /***************************************************************************/
+ // Compile time switches for instrumentation and stuff....
  
  // Note that one would not normally turn *any* of these on in a non-DEBUG build.
  
@@ -1377,7 +1623,17 @@ diff -u -r1.162.2.10 xpcprivate.h
  #if defined(DEBUG_jband) || defined(DEBUG_jst) || defined(DEBUG_dbradley) || defined(DEBUG_shaver_no) || defined(DEBUG_timeless)
  #define DEBUG_xpc_hacker
  #endif
-@@ -290,7 +292,7 @@
+ 
+ #if defined(DEBUG_brendan) || defined(DEBUG_bzbarsky)
+ #define DEBUG_XPCNativeWrapper 1
+ #endif
+ 
+@@ -285,17 +287,17 @@ class XPCAutoLock : public nsAutoLockBas
+ public:
+ 
+     static XPCLock* NewLock(const char* name)
+                         {return nsAutoMonitor::NewMonitor(name);}
+     static void     DestroyLock(XPCLock* lock)
                          {nsAutoMonitor::DestroyMonitor(lock);}
  
      XPCAutoLock(XPCLock* lock)
@@ -1386,7 +1642,17 @@ diff -u -r1.162.2.10 xpcprivate.h
          : nsAutoLockBase(lock ? (void*) lock : (void*) this, eAutoMonitor),
  #else
          : nsAutoLockBase(lock, eAutoMonitor),
-@@ -2084,11 +2086,9 @@
+ #endif
+           mLock(lock)
+     {
+         if(mLock)
+             PR_EnterMonitor(mLock);
+@@ -2079,21 +2081,19 @@ private:
+         XPCWrappedNativeProto*   mMaybeProto;
+     };
+     XPCNativeSet*                mSet;
+     JSObject*                    mFlatJSObject;
+     XPCNativeScriptableInfo*     mScriptableInfo;
      XPCWrappedNativeTearOffChunk mFirstChunk;
      JSObject*                    mNativeWrapper;
  
@@ -1395,12 +1661,22 @@ diff -u -r1.162.2.10 xpcprivate.h
 -    PRThread*          mThread; // Don't want to overload _mOwningThread
 -    static PRThread*   gMainThread;
 -#endif
-+    nsCOMPtr<nsIThread>          mThread; // Don't want to overload _mOwningThread
++    PRThread*                    mThread; // Don't want to overload _mOwningThread
 +    static PRThread*             gMainThread;
  };
  
  /***************************************************************************
-@@ -2848,8 +2848,9 @@
+ ****************************************************************************
+ *
+ * Core classes for wrapped JSObject for use from native code...
+ *
+ ****************************************************************************
+@@ -2843,18 +2843,19 @@ public:
+         {jsval old = mResolveName; mResolveName = name; return old;}
+ 
+     XPCWrappedNative* GetResolvingWrapper() const {return mResolvingWrapper;}
+     XPCWrappedNative* SetResolvingWrapper(XPCWrappedNative* w)
+         {XPCWrappedNative* old = mResolvingWrapper;
           mResolvingWrapper = w; return old;}
  
      void Cleanup();
@@ -1411,7 +1687,17 @@ diff -u -r1.162.2.10 xpcprivate.h
  
      static PRLock* GetLock() {return gLock;}
      // Must be called with the threads locked.
-@@ -2900,6 +2901,9 @@
+     static XPCPerThreadData* IterateThreads(XPCPerThreadData** iteratorp);
+ 
+     XPCContext* GetRecentXPCContext(JSContext* cx) const
+         {return cx == mMostRecentJSContext ? mMostRecentXPCContext : nsnull;}
+ 
+@@ -2895,16 +2896,19 @@ private:
+     nsIExceptionManager* mExceptionManager;
+     nsIException*        mException;
+     JSBool               mExceptionManagerNotAvailable;
+     AutoMarkingPtr*      mAutoRoots;
+ 
  #ifdef XPC_CHECK_WRAPPER_THREADSAFETY
      JSUint32             mWrappedNativeThreadsafetyReportDepth;
  #endif
@@ -1421,7 +1707,17 @@ diff -u -r1.162.2.10 xpcprivate.h
  
      static PRLock*           gLock;
      static XPCPerThreadData* gThreads;
-@@ -2950,11 +2954,14 @@
+     static PRUintn           gTLSIndex;
+ };
+ 
+ /**************************************************************/
+ 
+@@ -2945,21 +2949,24 @@ private:
+ {0xb5e65b52, 0x1dd1, 0x11b2, \
+     { 0xae, 0x8f, 0xf0, 0x92, 0x8e, 0xd8, 0x84, 0x82 }}
+ 
+ #ifndef XPCONNECT_STANDALONE
+ #include "nsIScriptSecurityManager.h"
  #include "nsIPrincipal.h"
  #include "nsIScriptObjectPrincipal.h"
  
@@ -1437,7 +1733,17 @@ diff -u -r1.162.2.10 xpcprivate.h
    
    virtual nsIPrincipal* GetPrincipal() {
      return mPrincipal;
-@@ -2973,11 +2980,12 @@
+   }
+ 
+   BackstagePass(nsIPrincipal *prin) :
+     mPrincipal(prin)
+   {
+@@ -2968,21 +2975,22 @@ public:
+   virtual ~BackstagePass() { }
+ 
+ private:
+   nsCOMPtr<nsIPrincipal> mPrincipal;
+ };
  
  #else
  
@@ -1451,7 +1757,17 @@ diff -u -r1.162.2.10 xpcprivate.h
  
    BackstagePass()
    {
-@@ -3016,7 +3024,8 @@
+   }
+ 
+   virtual ~BackstagePass() { }
+ };
+ 
+@@ -3011,25 +3019,27 @@ class nsJSRuntimeServiceImpl : public ns
+     static nsJSRuntimeServiceImpl* gJSRuntimeService;
+     nsCOMPtr<nsIXPCScriptable> mBackstagePass;
+ };
+ 
+ /***************************************************************************/
  // 'Components' object
  
  class nsXPCComponents : public nsIXPCComponents,
@@ -1461,7 +1777,8 @@ diff -u -r1.162.2.10 xpcprivate.h
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
                        , public nsISecurityCheckedComponent
  #endif
-@@ -3025,6 +3034,7 @@
+ {
+ public:
      NS_DECL_ISUPPORTS
      NS_DECL_NSIXPCCOMPONENTS
      NS_DECL_NSIXPCSCRIPTABLE
@@ -1469,7 +1786,17 @@ diff -u -r1.162.2.10 xpcprivate.h
  
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
      NS_DECL_NSISECURITYCHECKEDCOMPONENT
-@@ -3060,7 +3070,8 @@
+ #endif
+ 
+ public:
+     static JSBool
+     AttachNewComponentsObject(XPCCallContext& ccx,
+@@ -3055,26 +3065,28 @@ private:
+     nsXPCComponents_Constructor*    mConstructor;
+     nsXPCComponents_Utils*          mUtils;
+ };
+ 
+ /***************************************************************************/
  
  class nsXPCComponents_Interfaces :
              public nsIScriptableInterfaces,
@@ -1479,7 +1806,9 @@ diff -u -r1.162.2.10 xpcprivate.h
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
            , public nsISecurityCheckedComponent
  #endif
-@@ -3070,6 +3081,7 @@
+ {
+ public:
+     // all the interface method declarations...
      NS_DECL_ISUPPORTS
      NS_DECL_NSISCRIPTABLEINTERFACES
      NS_DECL_NSIXPCSCRIPTABLE
@@ -1487,14 +1816,24 @@ diff -u -r1.162.2.10 xpcprivate.h
  #ifdef XPC_USE_SECURITY_CHECKED_COMPONENT
      NS_DECL_NSISECURITYCHECKEDCOMPONENT
  #endif
+ 
+ public:
+     nsXPCComponents_Interfaces();
+     virtual ~nsXPCComponents_Interfaces();
+ 
 Index: js/src/xpconnect/src/xpcruntimesvc.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcruntimesvc.cpp,v
 retrieving revision 1.18.6.1
-diff -u -r1.18.6.1 xpcruntimesvc.cpp
+diff -U8 -p -r1.18.6.1 xpcruntimesvc.cpp
 --- js/src/xpconnect/src/xpcruntimesvc.cpp	23 Feb 2006 21:41:10 -0000	1.18.6.1
-+++ js/src/xpconnect/src/xpcruntimesvc.cpp	12 Jul 2006 20:47:45 -0000
-@@ -41,11 +41,17 @@
++++ js/src/xpconnect/src/xpcruntimesvc.cpp	13 Jul 2006 18:37:10 -0000
+@@ -36,21 +36,27 @@
+  * and other provisions required by the GPL or the LGPL. If you do not delete
+  * the provisions above, a recipient may use your version of this file under
+  * the terms of any one of the MPL, the GPL or the LGPL.
+  *
+  * ***** END LICENSE BLOCK ***** */
  
  #include "xpcprivate.h"
  
@@ -1515,7 +1854,17 @@ diff -u -r1.18.6.1 xpcruntimesvc.cpp
  
  // The nsIXPCScriptable map declaration that will generate stubs for us...
  #define XPC_MAP_CLASSNAME           BackstagePass
-@@ -74,6 +80,105 @@
+ #define XPC_MAP_QUOTED_CLASSNAME   "BackstagePass"
+ #define                             XPC_MAP_WANT_NEWRESOLVE
+ #define XPC_MAP_FLAGS       nsIXPCScriptable::USE_JSSTUB_FOR_ADDPROPERTY   | \
+                             nsIXPCScriptable::USE_JSSTUB_FOR_DELPROPERTY   | \
+                             nsIXPCScriptable::USE_JSSTUB_FOR_SETPROPERTY   | \
+@@ -69,16 +75,115 @@ BackstagePass::NewResolve(nsIXPConnectWr
+     JSBool resolved;
+ 
+     *_retval = JS_ResolveStandardClass(cx, obj, id, &resolved);
+     if(*_retval && resolved)
+         *objp = obj;
      return NS_OK;
  }
  
@@ -1621,7 +1970,17 @@ diff -u -r1.18.6.1 xpcruntimesvc.cpp
  /*
   * This object holds state that we don't want to lose!
   *
-@@ -137,7 +242,14 @@
+  * The plan is that once created this object never goes away. We do an
+  * intentional extra addref at construction to keep it around even if no one
+  * is using it.
+  */
+ 
+@@ -132,17 +237,24 @@ const uint32 gGCSize = 4L * 1024L * 1024
+ NS_IMETHODIMP
+ nsJSRuntimeServiceImpl::GetRuntime(JSRuntime **runtime)
+ {
+     if(!runtime)
+         return NS_ERROR_NULL_POINTER;
  
      if(!mRuntime)
      {
@@ -1637,3 +1996,8 @@ diff -u -r1.18.6.1 xpcruntimesvc.cpp
          if(!mRuntime)
              return NS_ERROR_OUT_OF_MEMORY;
  
+         // Unconstrain the runtime's threshold on nominal heap size, to avoid
+         // triggering GC too often if operating continuously near an arbitrary
+         // finite threshold (0xffffffff is infinity for uint32 parameters).
+         // This leaves the maximum-JS_malloc-bytes threshold still in effect
+         // to cause period, and we hope hygienic, last-ditch GCs from within
