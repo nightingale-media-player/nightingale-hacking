@@ -38,13 +38,87 @@ First-Run dialog, and the Smart Playlist dialog.
   -moz-border-left-colors: #686a6a #333  !important;
   -moz-border-bottom-colors: #333 #333 !important;
   -moz-border-right-colors: #505154 #333 !important;
-  border: 2px solid !important;
   color: #ccc !important;
 }
 
 .iframe_bkgd
 {
   background: #000 !important;
+}
+
+#window_top   /* Title box */
+{
+  border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
+  background-color: Transparent !important;
+}
+
+.dialog_label
+{
+  color: #fff !important;
+}
+
+
+
+/* Dialog Form Elements */
+
+/* dialog buttons */
+.dialog_button 
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #99A195 !important;
+}
+
+.backless_button /* Used in Watch Folders **/
+{
+  background-color: transparent !important;
+  color: #99A195 !important;
+}
+
+#button_ok[disabled="true"],
+#button_ok:hover[disabled="true"],
+#button_browse[disabled="true"],
+#button_browse:hover[disabled="true"],
+#button_cancel[disabled="true"],
+#button_cancel:hover[disabled="true"],
+#songbird_makenewplaylist[disabled="true"],
+#songbird_makenewplaylist:hover[disabled="true"]
+{
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #535751 !important;
+}
+
+#button_ok,
+#button_browse,
+#button_cancel,
+#songbird_makenewplaylist
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #99A195 !important;
+}
+
+#button_ok:hover,
+#button_cancel:hover,
+#songbird_makenewplaylist:hover,
+#button_browse:hover,
+#button_ok:focus,
+#button_cancel:focus,
+#songbird_makenewplaylist:focus,
+#button_browse:focus
+{
+  color: #FFF !important;
+  background-color: #333 !important;
 }
 
 /*

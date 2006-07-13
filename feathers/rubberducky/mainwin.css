@@ -38,6 +38,12 @@ These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
 
+.window,
+.dialog
+{
+  border: 2px solid !important;
+}
+
 
 .chrome_bkgd,
 #chrome_bkgd
@@ -203,7 +209,6 @@ Love the box.
 {
   width:  924px !important;
   height: 668px !important;
-  border: 2px solid !important;
 }
 
 .service-pane /* aka The Service Pane, The Left Pane **/

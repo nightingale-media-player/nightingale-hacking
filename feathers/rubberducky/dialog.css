@@ -33,7 +33,6 @@ First-Run dialog, and the Smart Playlist dialog.
 
 .sb_faceplate_dialog
 {
-  -moz-appearance: none !important; /* grrrr! */
   -moz-background-clip: padding !important;
   border: none !important;
   margin: 0px !important;
@@ -43,4 +42,62 @@ First-Run dialog, and the Smart Playlist dialog.
   border-width: 0px !important;
   font-family: tahoma, arial !important; /*arial is the fallback font*/
   font-size: 11px !important;
+}
+
+#window_top   /* Title  */
+{
+  border-bottom: 1px solid !important; /* this draws the line under the title bar */
+  padding-bottom: 6px !important;
+  margin-bottom: 4px !important;
+}
+
+#track_editor,
+#smart_playlist,
+#open_url,
+#watchfolder,
+#new_playlist,
+#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+{
+  width:  550px !important; /* makes all the dialog boxes the same size **/
+}
+
+/* Dialog Form Elements */
+
+/* dialog buttons */
+.dialog_button 
+{
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
+  border: 1px solid !important;
+}
+
+.backless_button /* Used in Watch Folders **/
+{
+  -moz-border-radius: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  border: 0px solid !important;
+}
+
+#button_ok[disabled="true"],
+#button_ok:hover[disabled="true"],
+#button_browse[disabled="true"],
+#button_browse:hover[disabled="true"],
+#button_cancel[disabled="true"],
+#button_cancel:hover[disabled="true"],
+#songbird_makenewplaylist[disabled="true"],
+#songbird_makenewplaylist:hover[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
+  border: 1px solid !important;
+}
+
+#button_ok,
+#button_browse,
+#button_cancel,
+#songbird_makenewplaylist
+{
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
+  border: 1px solid !important;
 }

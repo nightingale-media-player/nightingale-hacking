@@ -443,20 +443,6 @@ Mute and Slider
 DIALOG BOXES and their buttons
 ************************************************************************************************************************************************
 */
-
-#window_top  
-{
-  border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
-  padding-bottom: 6px !important;
-  margin-bottom: 4px !important;
-  background-color: Transparent !important;
-}
-
-.dialog_label
-{
-  color: #fff !important;
-}
-
 #track_editor,
 #smart_playlist,
 #open_url,
@@ -467,33 +453,10 @@ DIALOG BOXES and their buttons
   width:  550px !important; /* makes all the dialog boxes the same size **/
 }
 
-/* Dialog Form Elements */
-
-/* dialog buttons */
-.dialog_button 
-{
-  -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  padding: 3px 20px 3px 20px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
-  color: #99A195 !important;
-}
-
-.backless_button /* Used in Watch Folders **/
-{
-  -moz-appearance: none !important;
-  -moz-border-radius: 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  border: 0px solid !important;
-  background-color: transparent !important;
-  color: #99A195 !important;
-}
-
+#window_top, 
+.dialog_label,
+.dialog_button, /* dialog buttons */
+.backless_button, /* Used in Watch Folders **/
 #button_ok[disabled="true"],
 #button_ok:hover[disabled="true"],
 #button_browse[disabled="true"],
@@ -501,37 +464,11 @@ DIALOG BOXES and their buttons
 #button_cancel[disabled="true"],
 #button_cancel:hover[disabled="true"],
 #songbird_makenewplaylist[disabled="true"],
-#songbird_makenewplaylist:hover[disabled="true"]
-{
-  -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  padding: 3px 20px 3px 20px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #535751 !important;
-  -moz-border-left-colors: #535751 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
-  color: #535751 !important;
-}
-
+#songbird_makenewplaylist:hover[disabled="true"],
 #button_ok,
 #button_browse,
 #button_cancel,
-#songbird_makenewplaylist
-{
-  -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  padding: 3px 20px 3px 20px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
-  color: #99A195 !important;
-}
-
+#songbird_makenewplaylist,
 #button_ok:hover,
 #button_cancel:hover,
 #songbird_makenewplaylist:hover,
@@ -541,8 +478,7 @@ DIALOG BOXES and their buttons
 #songbird_makenewplaylist:focus,
 #button_browse:focus
 {
-  color: #FFF !important;
-  background-color: #333 !important;
+  -moz-appearance: none !important;
 }
 
 /** 
