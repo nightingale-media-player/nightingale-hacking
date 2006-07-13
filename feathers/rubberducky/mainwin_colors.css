@@ -68,6 +68,64 @@ Grey material for the Service Pane.
 
 /** 
 ************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/
+.chrome_iframe_bkgd
+{
+  background: #f00 !important;
+}
+
+.chrome_bkgd,
+#chrome_bkgd
+{
+  background-color: transparent !important;
+}
+
+
+#chrome_nw
+{  
+  background-color: transparent !important;
+}
+
+#chrome_n
+{
+  background-color: transparent !important;
+}
+
+#chrome_ne
+{
+  background-color: transparent !important;
+}
+
+#chrome_w
+{
+  background-color: transparent !important;
+}
+
+#chrome_e
+{
+  background-color: transparent !important;
+}
+
+#chrome_sw
+{
+  background-color: transparent !important;
+}
+
+#chrome_s
+{
+  background-color: transparent !important;
+}
+
+#chrome_se
+{
+  background-color: transparent !important;
+}
+
+/** 
+************************************************************************************************************************************************
 THE LAYOUT for the Main Application Window
 Love your boxes.
 ************************************************************************************************************************************************

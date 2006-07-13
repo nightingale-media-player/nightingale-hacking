@@ -33,6 +33,77 @@ First-Run dialog, and the Smart Playlist dialog.
 
 /** 
 ************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/
+
+
+.chrome_bkgd,
+#chrome_bkgd
+{
+  -moz-appearance: none !important; 
+}
+
+
+#chrome_nw
+{
+  -moz-appearance: none !important;
+  height: 9px !important;   
+  width: 9px !important;   
+}
+
+#chrome_n
+{
+  -moz-appearance: none !important;
+  height: 9px !important;   
+  width: 9px !important; 
+}
+
+#chrome_ne
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_w
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_e
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_sw
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_s
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_se
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+/** 
+************************************************************************************************************************************************
 THE LAYOUT for the Main Application Window
 Love the box.
 ************************************************************************************************************************************************

@@ -28,10 +28,9 @@
 @import url("chrome://global/skin/xulscrollbars.css");
 @import url(mainwin.css); /* css for the main application window **/
 @import url(mainwin_colors.css); /* css for the main application window colors **/
+@import url(mainwin_images.css); /* css for the main application window colors **/
 @import url(dialog.css); /* css for the dialog windows **/
 @import url(dialog_colors.css); /* css for the dialog window colors **/
-@import url(songbird.css); /* make this file win! **/
- 
 
  /** 
 ************************************************************************************************************************************************

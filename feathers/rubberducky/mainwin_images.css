@@ -1,83 +1,67 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+This css files specifies the images for everything in the main application window.  
+For colors, see mainwin_colors.css.  For size and positioning, see mainwin.css.
+All other styles affecting the elements below are found in songbird.css.
+************************************************************************************************************************************************
+*/
+
 /** 
 ************************************************************************************************************************************************
 THE WINDOW CHROME
 These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
-.chrome_iframe_bkgd
-{
-  background: #F00 !important;
-}
 
 .chrome_bkgd,
-#chrome_bkgd
-{
-  background-image: url(default/chrome_bkgd.png) !important;  
-  background-color: transparent !important;
-}
-
-
-#chrome_nw
-{
-  -moz-appearance: none !important; 
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_nw_25x25.png) !important;  
-  background-color: transparent !important;
-}
-
-#chrome_n
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_n.png) !important; 
-  background-color: transparent !important;
-}
-
-#chrome_ne
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_ne_25x25.png) !important; 
-  background-color: transparent !important;
-}
-
+#chrome_bkgd,
+#chrome_e,
 #chrome_w
 {
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_w.png) !important; /** <img src="defaultchrm_w.png"> */
-  background-color: transparent !important;
+  background-image: url(default/chrm_bkgd.png) !important; /** <img src="chrm_bkgd.png"> */
+  background-repeat: repeat-x !important;  
 }
 
-#chrome_e
+/** chrm_n.png is offset by 9 pixels to make up for the 9px height of the top frame */
+#chrome_nw,
+#chrome_n,
+#chrome_ne
 {
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_e.png) !important; /** <img src="defaultchrm_e.png"> */
-  background-color: transparent !important;
+  background-image: url(default/chrm_n.png) !important; /** <img src="chrm_n.png"> */
+  background-repeat: repeat-x !important;   
 }
 
-#chrome_sw
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_sw_25x25.png) !important; /** <img src="defaultchrm_sw_25x25.png"> */
-  background-color: transparent !important;
-}
 
-#chrome_s
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_s.png) !important; /** <img src="defaultchrm_s.png"> */
-  background-color: transparent !important;
-}
+/*
+#chrome_se, #chrome_s, #chrome_sw are not in use
+**/
 
-#chrome_se
-{
-  height: 25px !important;
-  width: 25px !important;
-  background-image: url(default/chrm_se_25x25.png) !important; /** <img src="defaultchrm_se_25x25.png"> */
-  background-color: transparent !important;
-}
+
+
+
