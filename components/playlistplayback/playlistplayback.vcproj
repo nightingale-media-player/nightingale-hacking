@@ -121,7 +121,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Name="src"
 			Filter="">
 			<File
-				RelativePath=".\src\baseCore.js">
+				RelativePath=".\src\coreBase.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -145,6 +145,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -153,6 +154,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -164,6 +166,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build StepPerforming Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -172,6 +175,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build StepPerforming Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -183,6 +187,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -191,6 +196,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -202,6 +208,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom BuilPerforming Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -210,6 +217,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom BuilPerforming Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
@@ -224,6 +232,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
@@ -232,6 +241,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
 						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>

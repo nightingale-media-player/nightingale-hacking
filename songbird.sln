@@ -115,6 +115,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "integration", "components\i
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usb_mass_storage", "components\devices\usb_mass_storage\usb_mass_storage.vcproj", "{E61D8808-C882-479C-B447-DD957B60E62C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{581FC30D-8DE2-4824-8039-B9CA1BDCB179} = {581FC30D-8DE2-4824-8039-B9CA1BDCB179}
+		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -219,6 +225,10 @@ Global
 		{5DF6F1EA-D56E-4459-BE1B-6DAA2197B911}.Debug.Build.0 = Debug|Win32
 		{5DF6F1EA-D56E-4459-BE1B-6DAA2197B911}.Release.ActiveCfg = Release|Win32
 		{5DF6F1EA-D56E-4459-BE1B-6DAA2197B911}.Release.Build.0 = Release|Win32
+		{E61D8808-C882-479C-B447-DD957B60E62C}.Debug.ActiveCfg = Debug|Win32
+		{E61D8808-C882-479C-B447-DD957B60E62C}.Debug.Build.0 = Debug|Win32
+		{E61D8808-C882-479C-B447-DD957B60E62C}.Release.ActiveCfg = Release|Win32
+		{E61D8808-C882-479C-B447-DD957B60E62C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -22,6 +22,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Performing Final Custom Build Step"
 				CommandLine="mkdir $(SolutionDir)dist\chrome\content
 mkdir $(SolutionDir)dist\defaults\preferences
 echo $(ProjectExt) &gt; _EXCLUDE
@@ -37,7 +38,8 @@ copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(So
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
-move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe"
+move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
+"
 				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -54,6 +56,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Performing Final Custom Build Step"
 				CommandLine="mkdir $(SolutionDir)dist\chrome\content
 mkdir $(SolutionDir)dist\defaults\preferences
 echo $(ProjectExt) &gt; _EXCLUDE
@@ -69,7 +72,8 @@ copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(So
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
-move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe"
+move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
+"
 				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -1514,25 +1518,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\scripts\mediakeyboard.js">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
 							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
