@@ -923,11 +923,11 @@ CSmartPlaylist.prototype =
 
       resObj = this.m_queryObject.getResultObject();
       
-      var library = resObj.GetRowCellByColumn(0, "library");
-      var limitValue = resObj.GetRowCellByColumn(0, "limit_value");
-      var limitType = resObj.GetRowCellByColumn(0, "limit_type");
-      var selectedBy = resObj.GetRowCellByColumn(0, "selected_by");
-      var match = resObj.GetRowCellByColumn(0, "match_on");
+      var library = resObj.getRowCellByColumn(0, "library");
+      var limitValue = resObj.getRowCellByColumn(0, "limit_value");
+      var limitType = resObj.getRowCellByColumn(0, "limit_type");
+      var selectedBy = resObj.getRowCellByColumn(0, "selected_by");
+      var match = resObj.getRowCellByColumn(0, "match_on");
       
       if(match == "any") match = "OR";
       else if(match == "all") match = "AND";

@@ -154,11 +154,11 @@ function onWFLibraryAdd()
     wfIsProcessing = false;
   }
 
-  var fileCount = wfMediaScanQuery.GetFileCount();
+  var fileCount = wfMediaScanQuery.getFileCount();
   
   if(wfCurrentFile < fileCount)
   {
-    var strURL = wfMediaScanQuery.GetFilePath(wfCurrentFile);
+    var strURL = wfMediaScanQuery.getFilePath(wfCurrentFile);
     
     if(IsMediaUrl(strURL))
     {
