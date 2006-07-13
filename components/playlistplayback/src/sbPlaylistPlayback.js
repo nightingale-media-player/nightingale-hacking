@@ -1375,9 +1375,45 @@ PlaylistPlayback.prototype = {
   },
   
   _playNextPrev: function ( incr ) {
+    // "FIXME" -- mig sez: I think the reason it was broke is because you
+    // basically made it restart on playLIST end.  And that would get confusing,
+    // I assume.
+    if (this._restartOnPlaybackEnd.boolValue)
+    { 
+      restartApp();
+      return;
+    }
                                                         // GRRRRRR!
     var cur_index = this._playlistIndex.intValue; // this._findCurrentIndex;
     var cur_ref = this._playingRef.stringValue;
+    var cur_url = this._playUrl.stringValue;
+  
+    // Doublecheck that filters match what they were when we last played something.  
+    var panic = false;
+    var num_filters = this._source.getNumFilters( cur_ref );
+    if (num_filters > 0)
+    {
+      var i;
+      for (i = 0; i < num_filters; i++)
+      {
+        // If they're not the same, just return from this.  No more play for you!
+        var filter = this._source.getFilter( cur_ref, i );
+        if (this.filters[i] != filter)
+          panic = true; // WHOA, now what?  Try to use the current url!
+      };
+    };
+    
+    if (panic)
+    {
+      // So, we're in panic mode.  The filters have changed.
+      var index = this._source.getRefRowByColumnValue(cur_ref, "url", cur_url);
+      // If we can find the current url in the current list, use that as the index
+      if (index != -1)
+        cur_index = index;
+      else
+        return; // Otherwise, stop playback.
+    };
+    
     // XXXredfive - this looks redundant. Do we do this for data remote reasons?
     this._playlistIndex.intValue = cur_index;
 
@@ -1421,11 +1457,6 @@ PlaylistPlayback.prototype = {
       if ( next_index != -1 ) 
         this.playRef( cur_ref, next_index );
         
-      // "FIXME" -- mig sez: I think the reason it was broke is because you
-      // basically made it restart on playLIST end.  And that would get confusing,
-      // I assume.
-      if (this._restartOnPlaybackEnd.boolValue) 
-        restartApp();
     }
   },
   
@@ -1529,7 +1560,15 @@ PlaylistPlayback.prototype = {
     this._metadataArtist.stringValue = artist;
     this._metadataAlbum.stringValue = album;
     
-    return;
+    // Record, internally, what the filters on the ref are.
+    // If the filters are different when we are asked to play next/prev, fail.
+    this.num_filters = this._source.getNumFilters( source_ref );
+    this.filters = new Array();
+    var i;
+    for (i = 0; i < this.num_filters; i++)
+    {
+      this.filters.push( this._source.getFilter( source_ref, i ) );
+    };
   },
   
   /**
