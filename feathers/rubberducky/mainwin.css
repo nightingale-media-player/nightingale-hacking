@@ -113,6 +113,20 @@ Love the box.
 {
   width:  924px !important;
   height: 668px !important;
+  border: 2px solid !important;
+}
+
+.service-pane /* aka The Service Pane, The Left Pane **/
+{
+  -moz-appearance: none !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  border: 1px solid !important;
+  margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 135px !important;
 }
 
 #frame_top_pane
@@ -138,18 +152,6 @@ Love the box.
   -moz-appearance: none !important;
   margin: 0px 0px 0px 0px !important;
   padding: 6px 0px 0px 0px !important;
-}
-
-.service-pane /* aka The Service Pane, The Left Pane **/
-{
-  -moz-appearance: none !important;
-  -moz-border-radius-topleft: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;
-  -moz-border-radius-topright: 3px !important;
-  -moz-border-radius-bottomright: 3px !important;
-  margin: 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  width: 135px !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-row
@@ -182,6 +184,7 @@ Love the box.
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
+  border: 1px solid !important;
   margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
   font-size: larger;
@@ -242,6 +245,7 @@ tree .treecol-image
   -moz-appearance: none !important; /* grrrr! */
   margin: 0px 0px 0px 0px !important;
   padding: 0px !important;
+  border: none !important;
 }
 
 tree .tree-columnpicker-icon
@@ -249,6 +253,7 @@ tree .tree-columnpicker-icon
   -moz-appearance: none !important; /* grrrr! */
   margin: 0px 2px 0px 0px !important;
   padding: 0px !important;
+  border: none !important;
 }
 
 tree treecol
@@ -256,9 +261,8 @@ tree treecol
   -moz-appearance: none !important; /* grrrr! */
   margin: 0px !important;
   padding: 0px 0px 0px 5px !important;
-  height: 20px !important;  
-  -moz-border-radius-topright: 5px !important;
-  -moz-border-radius-topleft: 5px !important;
+  height: 20px !important;
+  border-width: 0px 1px 0px 0px !important;
 }
 
 /** 
@@ -346,3 +350,148 @@ scrollbar > slider
   height: 16px !important;
   width: 16px !important;
 } 
+
+/** 
+************************************************************************************************************************************************
+THE LISTS, aka. the List Tree.
+A List Tree is a sortable column list with striping rows.
+************************************************************************************************************************************************
+*/ 
+tree treecol
+{
+  -moz-border-right-colors: #333 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE FILTERLISTS
+Organize your collection with genre/artist/album filterlists.  
+************************************************************************************************************************************************
+*/ 
+
+filterlist
+{
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+filterlist > tree
+{
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  /* opacity: 0.8; slow on the mac :( **/
+}
+
+/* striping for genre filter */
+filterlist > tree > treechildren::-moz-tree-row
+{
+  border: none !important;
+}
+
+filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+{
+  border: none !important;
+}
+
+filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: bold !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist
+{
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+playlist > stack > vbox
+{
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+
+#playlist_tree
+{
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+#playlist_toolbar
+{
+  border: none !important;
+}
+
+#playlist_toolbar_bkg,
+playlist > stack > vbox > hbox#playlist_toolbar_bkg
+{
+  -moz-border-radius-bottomright: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;  
+  border-top: 1px solid;
+}
+
+playlist > stack > vbox > hbox
+{
+  height: 27px !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row
+{
+  margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  border: 0px solid !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-cell
+{
+  margin: 0px !important;
+  padding: 0px 0px 0px 5px !important;
+  border-right: 1px solid !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row( selected, focus )
+{
+  border: none !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: bold !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter
+{
+ border: none !important;
+ margin-top: 6px !important;
+ margin-bottom: 6px !important;
+ height: 10px !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+  border: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE WEB PLAYLIST aka THE URL SLURPER
+Style this to match your webpage!
+************************************************************************************************************************************************
+#playlist_web
+{
+ 
+} 
+*/

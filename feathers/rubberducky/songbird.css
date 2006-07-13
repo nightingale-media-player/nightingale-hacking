@@ -196,7 +196,17 @@ scrollbar > slider
 {   
   -moz-appearance: none !important; /* grrrr! */  
 } 
+/* END SCROLLBARS */
 
+
+
+
+/** 
+************************************************************************************************************************************************
+THE LISTS, aka. the List Tree.
+A List Tree is a sortable column list with striping rows.
+************************************************************************************************************************************************
+*/ 
 /** 
 ************************************************************************************************************************************************
 THE FILTERLISTS
@@ -207,67 +217,22 @@ Organize your collection with genre/artist/album filterlists.
 filterlist
 {
   -moz-appearance: none !important; /* grrrr! */
-  margin: 0px !important;
-  padding: 0px !important;
-  background-image: url(default/bkgd_clouds.png) !important;
 }
 
 filterlist > tree
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-right-colors: none !important;
-  -moz-border-bottom-colors: none !important;
-  -moz-border-top-colors: none !important;
-  -moz-border-left-colors: none !important;
-  border-top: none !important;
-  border-right: none !important;
-  border-bottom: none !important;
-  border-left: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  background-color: transparent !important;
-  /* opacity: 0.8; slow on the mac :( **/
 }
 
 /* striping for genre filter */
 filterlist > tree > treechildren::-moz-tree-row
 {
   -moz-appearance: none !important;
-  background-color: #1d272d !important;
-  border: none !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-row( odd )
-{
-  background-color: #1d272d !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-row( even )
-{
-  background-color: #343d42 !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-row( selected )
-{
-  background-color: #4A4E48 !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  background-color: #99A195 !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-cell-text
-{
-  color: #EEE !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-cell-text( selected )
-{
-  color: #FFF !important;
-  font-weight: bold !important;
 }
 
 /** 
@@ -279,32 +244,17 @@ THE PLAYLIST
 playlist
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  background-color: #000 !important;
-  background-image: url(default/bkgd_flowers.png) !important;
 }
 
 playlist > stack > vbox
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  background-color: transparent !important;
 }
 
 
-playlist > stack > vbox > tree
+#playlist_tree
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  background-color: transparent !important;
-  /* opacity: .8 !important; slow on the mac :( **/
-  
 }
 
 #playlist_toolbar
@@ -317,112 +267,40 @@ playlist > stack > vbox > tree
 playlist > stack > vbox > hbox#playlist_toolbar_bkg
 {
   -moz-appearance: none !important;
-  -moz-border-radius-bottomright: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;  
-  border-top: 1px solid #686a6a;
 }
 
 playlist > stack > vbox > hbox
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: #000 !important;
-  height: 27px !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-row
-{
-  margin: 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  border: 0px solid #000 !important;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-row( odd )
-{
-  background-color: #1d272d !important;
-}
-
-playlist > stack > vbox > tree >  treechildren::-moz-tree-row( even )
-{
-  background-color: #343d42 !important;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-cell
-{
-  margin: 0px !important;
-  padding: 0px 0px 0px 5px !important;
-  border-right: 1px solid #505154 !important;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected )
-{
-  background-color: #4A4E48 !important;
-}
-playlist > stack > vbox > tree > treechildren::-moz-tree-row( selected, focus )
+#playlist_tree > treechildren::-moz-tree-row( selected, focus )
 {
   -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  background-color: #99A195 !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text
-{
-  color: #CCC !important;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-cell-text( selected )
-{
-  color: #FFF !important;
-  font-weight: bold !important;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter
+#playlist_tree > treechildren::-moz-tree-progressmeter
 {
  -moz-appearance: none !important; /* grrrr! */
- border: none !important;
- background-color: #333 !important;
- color: #eee !important;
- margin-top: 6px !important;
- margin-bottom: 6px !important;
- height: 10px !important;
 }
 
-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( odd )
-{
- background-color: #000 !important;
- color: #eee !important;
-}
-
-playlist > stack > vbox > tree > treechildren::-moz-tree-progressmeter( selected, focus )
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
  -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  background-color: #676D65 !important;
-}
-
-/*  This is the box shown while a playlist is loading */
-#loading_box
-{
-  /*background-image: url(default/spinner.gif) !important;
-  background-repeat: no-repeat !important;
-  border: 0px solid #F00 !important;
-  width: 54px !important;
-  height: 54px !important;
-  margin: 0px 20px 45px 0px !important;
-  background-position: right bottom !important;*/
-  width: 2000px !important;
-  height: 2000px !important;
 }
 
 /** 
 ************************************************************************************************************************************************
 THE WEB PLAYLIST aka THE URL SLURPER
+Style this to match your webpage!
 ************************************************************************************************************************************************
 */
-
 #playlist_web
 {
- 
+ -moz-appearance: none !important; /* grrrr! */
 } 
+/* END LIST TREES **/
+
 
 /** 
 ************************************************************************************************************************************************
