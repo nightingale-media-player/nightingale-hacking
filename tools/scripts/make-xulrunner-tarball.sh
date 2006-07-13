@@ -5,7 +5,7 @@ notice() {
 }
 
 if [ $# != 3 ]; then
-  notice "usage: make-xulrunner-tarball.sh mozilla-build-dist-bin-dir songbird-tarball-dest-dir target-tarball-name"
+  notice "usage: make-xulrunner-tarball.sh [mozilla-bin-dir] [songbird-tarball-dest-dir] [target-tarball-name]"
   exit 1
 fi
 
