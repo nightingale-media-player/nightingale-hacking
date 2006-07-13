@@ -2370,7 +2370,7 @@ function SBMiniplayerOpen()
   } catch (err) {}
 
   // Open the window
-  window.open( miniwin, "", "chrome,modal=no,popup=yes" );
+  window.open( miniwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
   onExit();
 }
 

@@ -110,7 +110,7 @@
             mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
           } catch (err) {}
 
-          setTimeout( 'window.open( "' + mainwin + '", "mainwin", "chrome,modal=no,toolbar=no" );', 0 ); // (sigh)
+          setTimeout( 'window.open( "' + mainwin + '", "mainwin", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );', 0 ); // (sigh)
         }
       };
 

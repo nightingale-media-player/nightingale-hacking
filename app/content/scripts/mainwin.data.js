@@ -43,17 +43,7 @@ try
   //  Make platform specific hacks to mainwin.xul here
   //
   //
-  if (PLATFORM_MACOSX)
-  {
-    // If we are running under mac, hide the topbar.
-    var top = document.getElementById("songbird_top");
-    if (top)
-      top.setAttribute("hidden","true");
-    // And the top resizers
-    var resizers = document.getElementById("frame_top_resizers");
-    if (resizers)
-      resizers.setAttribute("hidden","true");
-  }
+
 
   function onSBMainwinDataLoad()
   {
