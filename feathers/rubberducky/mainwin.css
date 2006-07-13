@@ -101,6 +101,96 @@ These pieces paint the resizeable window for Songbird.
   height: 9px !important;   
   width: 9px !important;
 }
+/** 
+************************************************************************************************************************************************
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+#app_icon
+{
+  background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
+  margin: 1px 5px 0px 2px !important;
+}
+
+#app_title,
+#video_window_title
+{
+  margin: 0px 0px 0px 0px !important;
+  font-family: tahoma, arial !important;
+  font-weight: bold !important;
+  font-size: 11px !important;
+}
+
+#sysbtn_close
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{
+  width: 9px !important;
+  height: 9px !important;
+  max-width: 9px !important;
+  max-height: 9px !important;
+  border: none !important;
+  margin: -2px 0px 0px 0px !important;
+  padding: 0px !important;
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  width: 0px !important;
+  height: 0px !important;
+  max-width: 0px !important;
+  max-height: 0px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+#sysbtn_maximize > image
+{
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_minimize
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_minimode
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+/* END CHROME **/
 
 /** 
 ************************************************************************************************************************************************
@@ -499,3 +589,163 @@ Style this to match your webpage!
  
 } 
 */
+
+/** 
+************************************************************************************************************************************************
+THE TOOLBAR
+The Toolbar is a way for a user to discover pertinent contextual menu 
+features without having to know how to right-click.  You'll see styles
+for both the toolbar buttons and the corresponding entries in the 
+contextual menu.
+************************************************************************************************************************************************
+*/ 
+
+/* the generic style for all playlist toolbarbuttons */
+#playlist_toolbar > button[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+  border: 1px solid !important;
+  padding: 0px 5px 0px 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  height: 25px !important;  
+}
+
+#playlist_toolbar > button[disabled="false"]
+{
+  -moz-border-radius: 3px !important;
+  padding: 0px 5px 0px 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  height: 25px !important;  
+}
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Spliters to resize the panes */
+
+.vert_splitter,
+#vert_splitter,
+#filter_splitter
+{
+  width: 7px !important;
+  height: 50px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  cursor: w-resize;
+}
+
+#vert_splitter[state="collapsed"]
+{
+  width: 10px !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  border: 1px solid !important;
+  margin-right: 7px !important;
+}
+
+.horz_splitter,
+#horz_splitter,
+#playlist_web_split > grippy
+{
+  width: 50px !important;
+  height: 7px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  cursor: n-resize;
+}
+
+#control_pane_splitter
+{
+  width: 50px !important;
+  height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important; /* Mac doesn't want to respect my height value without this? */
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 0px 3px 0px;
+  cursor: n-resize;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  width: 50px !important;
+  height: 7px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 3px 3px 3px;
+  cursor: n-resize;
+}
+
+#horz_splitter[state="collapsed"]
+{
+  height: 7px !important;
+}
+
+#playlist_web_split[state="collapsed"]
+{
+  height: 7px !important;
+}
+/* END SPLITTERS **/
+
+/** 
+************************************************************************************************************************************************
+THE MAIN PANE
+************************************************************************************************************************************************
+*/ 
+
+#main_pane_border
+{
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-topleft: 3px !important;
+  border: 1px solid !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE STATUS PANE
+************************************************************************************************************************************************
+*/ 
+#frame_status_pane
+{
+  height: 10px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+#frame_resize_t
+{
+  width: 9px !important;
+  height: 9px !important;
+}
+
+#frame_resize_to
+{
+  width: 9px !important;
+  height: 9px !important;
+}
+
+#frame_resize_m
+{
+  width: 9px !important;
+  height: 9px !important;  
+}
+
+#frame_resize_mo
+{
+  height: 9px !important;
+  width: 9px !important;
+}

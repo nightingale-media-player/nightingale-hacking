@@ -81,6 +81,33 @@ tree
   -moz-appearance:none !important;
 }
 
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+************************************************************************************************************************************************
+*/
+
+.window
+{
+  -moz-appearance:none !important;
+}
+
+.chrome_bkgd,
+#chrome_bkgd,
+#chrome_e,
+#chrome_w
+{
+  -moz-appearance:none !important;
+}
+
+/** chrm_n.png is offset by 9 pixels to make up for the 9px height of the top frame */
+#chrome_nw,
+#chrome_n,
+#chrome_ne
+{
+  -moz-appearance:none !important;
+}
+
 /* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
 #service_edit_popup autorepeatbutton,
 #service_edit_popup arrowscrollbox,
@@ -131,6 +158,35 @@ tree
   width:  400px;
   background-color: transparent !important; /*this breaks the red flash in the Inspector*/
 }
+
+
+/** 
+************************************************************************************************************************************************
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+#sysbtn_maximize > image
+{
+  -moz-appearance:none !important;
+}
+/* END CHROME **/
+
 
 /** 
 ************************************************************************************************************************************************
@@ -199,15 +255,6 @@ scrollbar > slider
 } 
 /* END SCROLLBARS */
 
-
-
-
-/** 
-************************************************************************************************************************************************
-THE LISTS, aka. the List Tree.
-A List Tree is a sortable column list with striping rows.
-************************************************************************************************************************************************
-*/ 
 /** 
 ************************************************************************************************************************************************
 THE FILTERLISTS
@@ -293,7 +340,6 @@ playlist > stack > vbox > hbox
 /** 
 ************************************************************************************************************************************************
 THE WEB PLAYLIST aka THE URL SLURPER
-Style this to match your webpage!
 ************************************************************************************************************************************************
 */
 #playlist_web
@@ -314,465 +360,16 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-playlist > stack > vbox > hbox > hbox > button[disabled="true"]
+#playlist_toolbar > button[disabled="true"]
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  border: 1px solid !important;
-  padding: 0px 5px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  -moz-border-top-colors: #444 !important;
-  -moz-border-left-colors: #444 !important;
-  -moz-border-bottom-colors: #444 !important;
-  -moz-border-right-colors: #444 !important;
-  background-color: #333 !important;
-  color: #99A195 !important;
-  height: 25px !important;  
 }
 
-playlist > stack > vbox > hbox > hbox > button[disabled="false"]
+#playlist_toolbar > button[disabled="false"]
 {
   -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  padding: 0px 5px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #333 !important;
-  height: 25px !important;  
-  color: #99A195 !important;  
 }
-
-/* 
-  These are the actual command elements created,
-  a toolbarbutton and a menuitem for each command id.
-
-  You should attach each command's icon, here.
-*/
-
-/* Toolbar: Play Button */
-button#library_cmd_play
-{
-  -moz-appearance: none !important;
-  list-style-image: url(default/toolbar_play_normal.png) !important;  
-  color: #99A195 !important;
-}
-button#library_cmd_play:hover
-{
-  -moz-appearance: none !important;
-  list-style-image: url(default/toolbar_play_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_play[disabled="true"]
-{
-  -moz-appearance: none !important;
-  list-style-image: url(default/toolbar_play_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_play
-{
-  list-style-image: url(default/toolbar_play_hover.png) !important;
-  color: #FFF !important;  
-}
-menuitem#library_cmd_play[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_play_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_play[disabled="true"]
-{
-  list-style-image: url(default/toolbar_play_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: remove Button */
-button#library_cmd_remove
-{
-  list-style-image: url(default/toolbar_remove_normal.png) !important;
-  color: #99A195 !important;  
-}
-button#library_cmd_remove:hover
-{
-  list-style-image: url(default/toolbar_remove_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_remove[disabled="true"]
-{
-  list-style-image: url(default/toolbar_remove_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_remove
-{
-  list-style-image: url(default/toolbar_remove_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_remove[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_remove_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_remove[disabled="true"]
-{
-  list-style-image: url(default/toolbar_remove_normal.png) !important;
-  padding-left: 9px !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: edit Button */
-button#library_cmd_edit
-{
-  list-style-image: url(default/toolbar_info_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_edit:hover
-{
-  list-style-image: url(default/toolbar_info_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_edit[disabled="true"]
-{
-  list-style-image: url(default/toolbar_info_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_edit
-{
-  list-style-image: url(default/toolbar_info_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_edit[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_info_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_edit[disabled="true"]
-{
-  list-style-image: url(default/toolbar_info_normal.png) !important;
-  color: #99A195 !important;
-}
-
-
-/* Toolbar: addtoplaylist Button */
-button#library_cmd_addtoplaylist
-{
-  list-style-image: url(default/toolbar_addtoplaylist_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_addtoplaylist:hover
-{
-  list-style-image: url(default/toolbar_addtoplaylist_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_addtoplaylist[disabled="true"]
-{
-  list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtoplaylist
-{
-  list-style-image: url(default/toolbar_addtoplaylist_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_addtoplaylist[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtoplaylist[disabled="true"]
-{
-  list-style-image: url(default/toolbar_addtoplaylist_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: burntocd Button */
-button#library_cmd_burntocd
-{
-  list-style-image: url(default/toolbar_burntocd_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_burntocd:hover
-{
-  list-style-image: url(default/toolbar_burntocd_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_burntocd[disabled="true"]
-{
-  list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_burntocd
-{
-  list-style-image: url(default/toolbar_burntocd_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_burntocd[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_burntocd[disabled="true"]
-{
-  list-style-image: url(default/toolbar_burntocd_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: device Button */
-button#library_cmd_device
-{
-  list-style-image: url(default/toolbar_device_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_device:hover
-{
-  list-style-image: url(default/toolbar_device_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_device[disabled="true"]
-{
-  list-style-image: url(default/toolbar_device_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_device
-{
-  list-style-image: url(default/toolbar_device_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_device[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_device_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_device[disabled="true"]
-{
-  list-style-image: url(default/toolbar_device_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: addtolibrary Button */
-button#library_cmd_addtolibrary
-{
-  list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_addtolibrary[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_addtolibrary[disabled="true"]
-{
-  list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtolibrary
-{
-  list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_addtolibrary[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtolibrary[disabled="true"]
-{
-  list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: download Button */
-button#library_cmd_download
-{
-  list-style-image: url(default/toolbar_download_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_download:hover
-{
-  list-style-image: url(default/toolbar_download_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_download[disabled="true"]
-{
-  list-style-image: url(default/toolbar_download_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_download
-{
-  list-style-image: url(default/toolbar_download_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_download[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_download_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_download[disabled="true"]
-{
-  list-style-image: url(default/toolbar_download_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: subscribe Button */
-button#library_cmd_subscribe
-{
-  list-style-image: url(default/toolbar_subscribe_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_subscribe:hover
-{
-  list-style-image: url(default/toolbar_subscribe_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_subscribe[disabled="true"]
-{
-  list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_subscribe
-{
-  list-style-image: url(default/toolbar_subscribe_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_subscribe[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_subscribe[disabled="true"]
-{
-  list-style-image: url(default/toolbar_subscribe_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: pause Button */
-button#library_cmd_pause
-{
-  list-style-image: url(default/toolbar_pause_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_pause:hover
-{
-  list-style-image: url(default/toolbar_pause_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_pause[disabled="true"]
-{
-  list-style-image: url(default/toolbar_pause_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_pause
-{
-  list-style-image: url(default/toolbar_pause_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_pause[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_pause_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_pause[disabled="true"]
-{
-  list-style-image: url(default/toolbar_pause_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: resume Button */
-button#library_cmd_resume
-{
-  list-style-image: url(default/toolbar_resume_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_resume:hover
-{
-  list-style-image: url(default/toolbar_resume_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_resume[disabled="true"]
-{
-  list-style-image: url(default/toolbar_resume_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_resume
-{
-  list-style-image: url(default/toolbar_resume_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_resume[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_resume_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_resume[disabled="true"]
-{
-  list-style-image: url(default/toolbar_resume_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: switch to downloads Button */
-button#library_cmd_showdlplaylist
-{
-  list-style-image: url(default/toolbar_downloads_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_showdlplaylist:hover
-{
-  list-style-image: url(default/toolbar_downloads_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_showdlplaylist[disabled="true"]
-{
-  list-style-image: url(default/toolbar_downloads_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_showdlplaylist
-{
-  list-style-image: url(default/toolbar_downloads_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_showdlplaylist[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_downloads_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_showdlplaylist[disabled="true"]
-{
-  list-style-image: url(default/toolbar_downloads_normal.png) !important;
-  color: #99A195 !important;
-}
-
-/* Toolbar: switch to webplaylist Button */
-button#library_cmd_showwebplaylist
-{
-  list-style-image: url(default/toolbar_webplaylist_normal.png) !important;
-  color: #99A195 !important;
-}
-button#library_cmd_showwebplaylist:hover
-{
-  list-style-image: url(default/toolbar_webplaylist_hover.png) !important;
-  color: #FFF !important;
-}
-button#library_cmd_showwebplaylist[disabled="true"]
-{
-  list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_showwebplaylist
-{
-  list-style-image: url(default/toolbar_webplaylist_hover.png) !important;
-  color: #FFF !important;
-}
-menuitem#library_cmd_showwebplaylist[active="true"]:hover
-{
-  list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
-  color: #505154 !important;
-}
-menuitem#library_cmd_showwebplaylist[disabled="true"]
-{
-  list-style-image: url(default/toolbar_webplaylist_normal.png) !important;
-  color: #99A195 !important;
-}
+/* END TOOLBAR **/
 
 /** 
 ************************************************************************************************************************************************
@@ -788,98 +385,26 @@ These let the user resize the frames in your box model.
 #filter_splitter
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 7px !important;
-  height: 50px !important;
-  background-color: #333 !important;
-  background-image: url(default/grippy.png) !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  cursor: w-resize;
 }
-
-#vert_splitter
-{
-  background-color: #000 !important;
-}
-
 #vert_splitter[state="collapsed"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 10px !important;
-  background-color: #686A6A !important;
-  background-image: url(default/grippy_svcpane.png) !important;
-  -moz-border-radius-topleft: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;
-  -moz-border-radius-topright: 3px !important;
-  -moz-border-radius-bottomright: 3px !important;
-  -moz-border-top-colors: #666 !important;
-  -moz-border-left-colors: #666 !important;
-  -moz-border-bottom-colors: #666 !important;
-  -moz-border-right-colors: #666 !important;
-  border: 1px solid #686A6A !important;
-  margin-right: 7px !important;
 }
-
 .horz_splitter,
 #horz_splitter,
 #playlist_web_split > grippy
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 50px !important;
-  height: 7px !important;
-  background-color: #333 !important;
-  background-image: url(default/grippy.png) !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  cursor: n-resize;
 }
-
 #control_pane_splitter
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 50px !important;
-  height: 7px !important;
-  min-height: 7px !important;
-  max-height: 7px !important; /* Mac doesn't want to respect my height value without this? */
-  background-color: transparent !important;
-  background-image: url(default/grippy.png) !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  margin: 3px 0px 3px 0px;
-  cursor: n-resize;
 }
-
 #control_pane_splitter[state="collapsed"]
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 50px !important;
-  height: 7px !important;
-  background-color: transparent !important;
-  background-image: url(default/grippy_filterlist.png) !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  margin: 3px 3px 3px 3px;
-  cursor: n-resize;
 }
-
-#horz_splitter[state="collapsed"]
-{
-  height: 7px !important;
-  background-color: #333 !important;
-  background-image: url(default/grippy_filterlist.png) !important;
-}
-
-#playlist_web_split[state="collapsed"]
-{
-  height: 7px !important;
-  background-color: #333 !important;
-  background-image: url(default/grippy_webplaylist.png) !important;
-}
-
+/* END SPLITTERS **/
 
 
 /** 
@@ -891,196 +416,40 @@ THE MAIN PANE
 #main_pane_border
 {
   -moz-appearance: none !important;
-  -moz-border-radius-topright: 3px !important;
-  -moz-border-radius-topleft: 3px !important;
-  -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #444 !important;
-  -moz-border-bottom-colors: #444 !important;
-  -moz-border-right-colors: #444 !important;
-  border: 1px solid #000 !important;
 }
 
-#frame_main_pane
-{
-  
-}
 
-#frame_main_pane_html
-{
- 
-}
-
-#frame_main_pane_over
-{  
-}
-
-#frame_status_pane
-{
-  height: 10px !important;
-}
-
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
 #frame_resize_t
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 9px !important;
-  
-  background-image: none !important;
-  list-style-image: none !important;
 }
 
 #frame_resize_to
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 16px !important;
-  height: 9px !important;
-  
-  background-image: none !important;
-  list-style-image: none !important;
 }
 
 #frame_resize_m
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 9px !important;  
-  background-image: none !important;
-  list-style-image: none !important;
 }
 
 #frame_resize_mo
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 9px !important;
-  
-  background-image: none !important;
-  list-style-image: none !important;
 }
 
 #resize
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-image: url(mini/mini.progbkgdfill.png) !important;
-  list-style-image: none !important;
 }
 
-/** 
-************************************************************************************************************************************************
-CHROME - Top Bar
-Minimize, Maximize, Restore, and Switch to Mini-Mode
-************************************************************************************************************************************************
-*/
 
-#songbird_top  /* unused, marks the hbox that contains the top bar */
-{
-}
-
-#app_icon
-{
-  background-image: url(default/app_close.png) !important;
-  background-repeat: no-repeat !important;
-  position: relative !important;
-  height: 9px !important;
-  width: 9px !important;
-  margin: 1px 5px 0px 2px !important;
-}
-
-#app_title,
-#video_window_title
-{
-  margin: 0px 0px 0px 0px !important;
-  font-family: tahoma, arial !important;
-  font-weight: bold !important;
-  font-size: 11px !important;
-  color: #FFF !important;
-}
-
-#sysbtn_close
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-image: url(default/sysbtn_close_9x9.png) !important; /** <img src="defaultsysbtn_close_9x9.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize hbox,
-#sysbtn_maximize
-{
-  -moz-appearance: none !important; /* grrrr! */
-  width: 9px !important;
-  height: 9px !important;
-  max-width: 9px !important;
-  max-height: 9px !important;
-  border: none !important;
-  margin: -2px 0px 0px 0px !important;
-  padding: 0px !important;
-  background-color: transparent !important;  
-  background-image: none !important;
-  list-style-image: none !important;
-}
-
-#sysbtn_maximize > hbox > image,
-#sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox
-{
-  width: 0px !important;
-  height: 0px !important;
-  max-width: 0px !important;
-  max-height: 0px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: transparent !important;
-  background-image: none !important;
-  list-style-image: none !important;
-}
-
-#sysbtn_maximize > image
-{
-  -moz-appearance:none !important;
-  width: 9px !important;
-  height: 9px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  list-style-image: none !important;
-  background-image: url(default/sysbtn_maximize_9x9.png) !important; /** <img src="defaultsysbtn_maximize_9x9.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize[checked="true"] > image /* Restore */
-{
-  width: 9px !important;
-  height: 9px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  list-style-image: none !important;
-  background-image: url(default/sysbtn_restore_9x9.png) !important; /** <img src="defaultsysbtn_restore_9x9.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-#sysbtn_minimize
-{
-  width: 9px !important;
-  height: 9px !important;
-  list-style-image: none !important;
-  background-image: url(default/sysbtn_minimize_9x9.png) !important; /** <img src="defaultsysbtn_minimize_9x9.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
-
-#sysbtn_minimode
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-image: url(default/sysbtn_minimode_9x9.png) !important; /** <img src="defaultsysbtn_minimode_9x9.png"> */
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-}
 
 
 
@@ -2228,7 +1597,7 @@ DIALOG BOXES and their buttons
   color: #fff !important;
 }
 
-.dialog_label
+.dialog-label
 {
   color: #fff !important;
 }
@@ -2242,8 +1611,8 @@ DIALOG BOXES and their buttons
 
 #smart_playlist
 {
-  width:  550px !important;
-  background-color: transparent !important; /*this breaks the red flash in the Inspector*/
+  width:  600px !important;
+  /*background-color: transparent !important; this breaks the red flash in the Inspector*/
 }
 
 #open_url
@@ -2908,10 +2277,6 @@ The ABOUT BOX
   border: 0px solid #F00 !important;
   
 }
-
-
-
-
 
 
 /** 

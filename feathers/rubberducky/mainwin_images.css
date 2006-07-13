@@ -31,6 +31,10 @@ For colors, see mainwin_colors.css.  For size and positioning, see mainwin.css.
 All other styles affecting the elements below are found in songbird.css.
 ************************************************************************************************************************************************
 */
+
+
+
+
 /** 
 ************************************************************************************************************************************************
 SCROLLBARS
@@ -40,12 +44,21 @@ scrollbar
 {   
   background-image: none !important;
 }
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  background-image: url(default/chrome_scroll_up.png) !important;
+} 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  background-image: url(default/chrome_scroll_down.png) !important;
+} 
 
 
 /** 
 ************************************************************************************************************************************************
 THE WINDOW CHROME
-These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
 
@@ -72,6 +85,605 @@ These pieces paint the resizeable window for Songbird.
 #chrome_se, #chrome_s, #chrome_sw are not in use
 **/
 
+/** 
+************************************************************************************************************************************************
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+#app_icon
+{
+  background-image: url(default/app_close.png) !important;
+}
+
+#sysbtn_close
+{
+  background-image: url(default/sysbtn_close_9x9.png) !important; /** <img src="defaultsysbtn_close_9x9.png"> */
+}
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{ 
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#sysbtn_maximize > image
+{
+  list-style-image: none !important;
+  background-image: url(default/sysbtn_maximize_9x9.png) !important; /** <img src="sysbtn_maximize_9x9.png"> */
+}
+
+#sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  list-style-image: none !important;
+  background-image: url(default/sysbtn_restore_9x9.png) !important; /** <img src="sysbtn_restore_9x9.png"> */
+}
+
+#sysbtn_minimize
+{
+  background-image: url(default/sysbtn_minimize_9x9.png) !important; /** <img src="sysbtn_minimize_9x9.png"> */
+}
+
+#sysbtn_minimode
+{
+  background-image: url(default/sysbtn_minimode_9x9.png) !important; /** <img src="sysbtn_minimode_9x9.png"> */
+}
+/* END CHROME **/
+
+/** 
+************************************************************************************************************************************************
+SERVICE PANE
+************************************************************************************************************************************************
+*/ 
+
+/* Twisty and Shouty **/
+#frame_service_tree > treechildren::-moz-tree-twisty( open )
+{
+  list-style-image: url(default/twisty_open.png) !important;
+}
+
+/* Service Pane Icons **/
+#frame_service_tree > treechildren::-moz-tree-image( playlist )
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist smart )
+{
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
+{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist download )
+{
+  list-style-image: url(default/icon_downloads_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
+{
+  list-style-image: url(default/icon_webplaylist_16x16.png) !important;
+}
+
+/** Bind images to the button and button-popup on the Service Pane */
+/** NOTE: IDs containing periods are bad.. */
+#frame_service_buttonbar clickholdbutton[id="file.new"]
+{
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+
+#frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
+  list-style-image: url(default/icon_playlist_16x16.png) !important;
+}
+
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.smart"] {
+  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
+}
+
+#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.remote"]{
+  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty
+{
+  list-style-image: url(default/twisty_closed.png) !important;
+}
+/* END SERVICE PANE **/
+
+/** 
+************************************************************************************************************************************************
+THE LISTS, aka. the List Tree.
+A List Tree is a sortable column list with striping rows.
+************************************************************************************************************************************************
+*/ 
+tree treecol
+{
+  background-image: url(default/treecol.png) !important;
+}
+
+/* column picker **/
+tree .tree-columnpicker-icon
+{
+  list-style-image: url(default/column_picker.png) !important;
+}
+tree .treecol-image /* puts a little piece to fill in next to the column picker **/
+{
+  background-image: url(default/treecol.png) !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE FILTERLISTS
+Organize your collection with genre/artist/album filterlists.  
+************************************************************************************************************************************************
+*/ 
+
+filterlist
+{
+  background-image: url(default/bkgd_clouds.png) !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist
+{
+  background-image: url(default/bkgd_flowers.png) !important;
+}
+/* END THE LISTS **/
+
+/** 
+************************************************************************************************************************************************
+THE TOOLBAR
+The Toolbar is a way for a user to discover pertinent contextual menu 
+features without having to know how to right-click.  You'll see styles
+for both the toolbar buttons and the corresponding entries in the 
+contextual menu.
+************************************************************************************************************************************************
+*/ 
+
+/* 
+  These are the actual command elements created,
+  a toolbarbutton and a menuitem for each command id.
+
+  You should attach each command's icon, here.
+*/
+
+/* Toolbar: Play Button */
+button#library_cmd_play
+{
+  list-style-image: url(default/toolbar_play_normal.png) !important; 
+}
+button#library_cmd_play:hover
+{
+  list-style-image: url(default/toolbar_play_hover.png) !important;
+}
+button#library_cmd_play[disabled="true"]
+{
+  list-style-image: url(default/toolbar_play_disabled.png) !important;
+}
+menuitem#library_cmd_play
+{
+  list-style-image: url(default/toolbar_play_hover.png) !important;
+}
+menuitem#library_cmd_play[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_play_disabled.png) !important;
+}
+menuitem#library_cmd_play[disabled="true"]
+{
+  list-style-image: url(default/toolbar_play_normal.png) !important;
+}
+
+/* Toolbar: remove Button */
+button#library_cmd_remove
+{
+  list-style-image: url(default/toolbar_remove_normal.png) !important;
+}
+button#library_cmd_remove:hover
+{
+  list-style-image: url(default/toolbar_remove_hover.png) !important;
+}
+button#library_cmd_remove[disabled="true"]
+{
+  list-style-image: url(default/toolbar_remove_disabled.png) !important;
+}
+menuitem#library_cmd_remove
+{
+  list-style-image: url(default/toolbar_remove_hover.png) !important;
+}
+menuitem#library_cmd_remove[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_remove_disabled.png) !important;
+}
+menuitem#library_cmd_remove[disabled="true"]
+{
+  list-style-image: url(default/toolbar_remove_normal.png) !important;
+}
+
+/* Toolbar: edit Button */
+button#library_cmd_edit
+{
+  list-style-image: url(default/toolbar_info_normal.png) !important;
+}
+button#library_cmd_edit:hover
+{
+  list-style-image: url(default/toolbar_info_hover.png) !important;
+}
+button#library_cmd_edit[disabled="true"]
+{
+  list-style-image: url(default/toolbar_info_disabled.png) !important;
+}
+menuitem#library_cmd_edit
+{
+  list-style-image: url(default/toolbar_info_hover.png) !important;
+}
+menuitem#library_cmd_edit[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_info_disabled.png) !important;
+}
+menuitem#library_cmd_edit[disabled="true"]
+{
+  list-style-image: url(default/toolbar_info_normal.png) !important;
+}
 
 
+/* Toolbar: addtoplaylist Button */
+button#library_cmd_addtoplaylist
+{
+  list-style-image: url(default/toolbar_addtoplaylist_normal.png) !important;
+}
+button#library_cmd_addtoplaylist:hover
+{
+  list-style-image: url(default/toolbar_addtoplaylist_hover.png) !important;
+}
+button#library_cmd_addtoplaylist[disabled="true"]
+{
+  list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
+}
+menuitem#library_cmd_addtoplaylist
+{
+  list-style-image: url(default/toolbar_addtoplaylist_hover.png) !important;
+}
+menuitem#library_cmd_addtoplaylist[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_addtoplaylist_disabled.png) !important;
+}
+menuitem#library_cmd_addtoplaylist[disabled="true"]
+{
+  list-style-image: url(default/toolbar_addtoplaylist_normal.png) !important;
+}
 
+/* Toolbar: burntocd Button */
+button#library_cmd_burntocd
+{
+  list-style-image: url(default/toolbar_burntocd_normal.png) !important;
+}
+button#library_cmd_burntocd:hover
+{
+  list-style-image: url(default/toolbar_burntocd_hover.png) !important;
+}
+button#library_cmd_burntocd[disabled="true"]
+{
+  list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
+}
+menuitem#library_cmd_burntocd
+{
+  list-style-image: url(default/toolbar_burntocd_hover.png) !important;
+}
+menuitem#library_cmd_burntocd[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_burntocd_disabled.png) !important;
+}
+menuitem#library_cmd_burntocd[disabled="true"]
+{
+  list-style-image: url(default/toolbar_burntocd_normal.png) !important;
+}
+
+/* Toolbar: device Button */
+button#library_cmd_device
+{
+  list-style-image: url(default/toolbar_device_normal.png) !important;
+}
+button#library_cmd_device:hover
+{
+  list-style-image: url(default/toolbar_device_hover.png) !important;
+}
+button#library_cmd_device[disabled="true"]
+{
+  list-style-image: url(default/toolbar_device_disabled.png) !important;
+}
+menuitem#library_cmd_device
+{
+  list-style-image: url(default/toolbar_device_hover.png) !important;
+}
+menuitem#library_cmd_device[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_device_disabled.png) !important;
+}
+menuitem#library_cmd_device[disabled="true"]
+{
+  list-style-image: url(default/toolbar_device_normal.png) !important;
+}
+
+/* Toolbar: addtolibrary Button */
+button#library_cmd_addtolibrary
+{
+  list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
+}
+button#library_cmd_addtolibrary[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
+}
+button#library_cmd_addtolibrary[disabled="true"]
+{
+  list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
+}
+menuitem#library_cmd_addtolibrary
+{
+  list-style-image: url(default/toolbar_addtolibrary_hover.png) !important;
+}
+menuitem#library_cmd_addtolibrary[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_addtolibrary_disabled.png) !important;
+}
+menuitem#library_cmd_addtolibrary[disabled="true"]
+{
+  list-style-image: url(default/toolbar_addtolibrary_normal.png) !important;
+}
+
+/* Toolbar: download Button */
+button#library_cmd_download
+{
+  list-style-image: url(default/toolbar_download_normal.png) !important;
+}
+button#library_cmd_download:hover
+{
+  list-style-image: url(default/toolbar_download_hover.png) !important;
+}
+button#library_cmd_download[disabled="true"]
+{
+  list-style-image: url(default/toolbar_download_disabled.png) !important;
+}
+menuitem#library_cmd_download
+{
+  list-style-image: url(default/toolbar_download_hover.png) !important;
+}
+menuitem#library_cmd_download[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_download_disabled.png) !important;
+}
+menuitem#library_cmd_download[disabled="true"]
+{
+  list-style-image: url(default/toolbar_download_normal.png) !important;
+}
+
+/* Toolbar: subscribe Button */
+button#library_cmd_subscribe
+{
+  list-style-image: url(default/toolbar_subscribe_normal.png) !important;
+}
+button#library_cmd_subscribe:hover
+{
+  list-style-image: url(default/toolbar_subscribe_hover.png) !important;
+}
+button#library_cmd_subscribe[disabled="true"]
+{
+  list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
+}
+menuitem#library_cmd_subscribe
+{
+  list-style-image: url(default/toolbar_subscribe_hover.png) !important;
+}
+menuitem#library_cmd_subscribe[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_subscribe_disabled.png) !important;
+}
+menuitem#library_cmd_subscribe[disabled="true"]
+{
+  list-style-image: url(default/toolbar_subscribe_normal.png) !important;
+}
+
+/* Toolbar: pause Button */
+button#library_cmd_pause
+{
+  list-style-image: url(default/toolbar_pause_normal.png) !important;
+}
+button#library_cmd_pause:hover
+{
+  list-style-image: url(default/toolbar_pause_hover.png) !important;
+}
+button#library_cmd_pause[disabled="true"]
+{
+  list-style-image: url(default/toolbar_pause_disabled.png) !important;
+}
+menuitem#library_cmd_pause
+{
+  list-style-image: url(default/toolbar_pause_hover.png) !important;
+}
+menuitem#library_cmd_pause[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_pause_disabled.png) !important;
+}
+menuitem#library_cmd_pause[disabled="true"]
+{
+  list-style-image: url(default/toolbar_pause_normal.png) !important;
+}
+
+/* Toolbar: resume Button */
+button#library_cmd_resume
+{
+  list-style-image: url(default/toolbar_resume_normal.png) !important;
+}
+button#library_cmd_resume:hover
+{
+  list-style-image: url(default/toolbar_resume_hover.png) !important;
+}
+button#library_cmd_resume[disabled="true"]
+{
+  list-style-image: url(default/toolbar_resume_disabled.png) !important;
+}
+menuitem#library_cmd_resume
+{
+  list-style-image: url(default/toolbar_resume_hover.png) !important;
+}
+menuitem#library_cmd_resume[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_resume_disabled.png) !important;
+}
+menuitem#library_cmd_resume[disabled="true"]
+{
+  list-style-image: url(default/toolbar_resume_normal.png) !important;
+}
+
+/* Toolbar: switch to downloads Button */
+button#library_cmd_showdlplaylist
+{
+  list-style-image: url(default/toolbar_downloads_normal.png) !important;
+}
+button#library_cmd_showdlplaylist:hover
+{
+  list-style-image: url(default/toolbar_downloads_hover.png) !important;
+}
+button#library_cmd_showdlplaylist[disabled="true"]
+{
+  list-style-image: url(default/toolbar_downloads_disabled.png) !important;
+}
+menuitem#library_cmd_showdlplaylist
+{
+  list-style-image: url(default/toolbar_downloads_hover.png) !important;
+}
+menuitem#library_cmd_showdlplaylist[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_downloads_disabled.png) !important;
+}
+menuitem#library_cmd_showdlplaylist[disabled="true"]
+{
+  list-style-image: url(default/toolbar_downloads_normal.png) !important;
+}
+
+/* Toolbar: switch to webplaylist Button */
+button#library_cmd_showwebplaylist
+{
+  list-style-image: url(default/toolbar_webplaylist_normal.png) !important;
+}
+button#library_cmd_showwebplaylist:hover
+{
+  list-style-image: url(default/toolbar_webplaylist_hover.png) !important;
+}
+button#library_cmd_showwebplaylist[disabled="true"]
+{
+  list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
+}
+menuitem#library_cmd_showwebplaylist
+{
+  list-style-image: url(default/toolbar_webplaylist_hover.png) !important;
+}
+menuitem#library_cmd_showwebplaylist[active="true"]:hover
+{
+  list-style-image: url(default/toolbar_webplaylist_disabled.png) !important;
+}
+menuitem#library_cmd_showwebplaylist[disabled="true"]
+{
+  list-style-image: url(default/toolbar_webplaylist_normal.png) !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Spliters to resize the panes */
+
+.vert_splitter,
+#vert_splitter,
+#filter_splitter
+{
+  background-image: url(default/grippy.png) !important;
+}
+
+#vert_splitter[state="collapsed"]
+{
+  background-image: url(default/grippy_svcpane.png) !important;
+}
+
+.horz_splitter,
+#horz_splitter,
+#playlist_web_split > grippy
+{
+  background-image: url(default/grippy.png) !important;
+}
+
+#control_pane_splitter
+{
+  background-image: url(default/grippy.png) !important;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  background-image: url(default/grippy_filterlist.png) !important;
+}
+
+#horz_splitter[state="collapsed"]
+{
+  background-image: url(default/grippy_filterlist.png) !important;
+}
+
+#playlist_web_split[state="collapsed"]
+{
+  background-image: url(default/grippy_webplaylist.png) !important;
+}
+/* END SPLITTERS **/
+
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+#frame_resize_t
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_to
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_m
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_mo
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#resize
+{
+  background-image: url(mini/mini.progbkgdfill.png) !important;
+  list-style-image: none !important;
+}

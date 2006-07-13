@@ -36,12 +36,13 @@ right and bottom borders to achieve a dimensional appearance.
 
 /** 
 ************************************************************************************************************************************************
+MAIN WINDOW
 Black material for the window.
 ************************************************************************************************************************************************
 */ 
 .window
 {
-  background-color: #000 !important; /* color of the Main Window **/
+  background-color: #f00 !important; /* color of the Main Window **/
   -moz-border-top-colors: #7a7c7c #333 !important;
   -moz-border-left-colors: #686a6a #333  !important;
   -moz-border-bottom-colors: #333 #333 !important;
@@ -51,6 +52,7 @@ Black material for the window.
 
 /** 
 ************************************************************************************************************************************************
+SERVICE PANE
 Grey material for the Service Pane.
 ************************************************************************************************************************************************
 */ 
@@ -78,7 +80,7 @@ These pieces paint the resizeable window for Songbird.
 .chrome_bkgd,
 #chrome_bkgd
 {
-  background-color: transparent !important;
+  background-color: #000 !important;
 }
 
 
@@ -124,7 +126,59 @@ These pieces paint the resizeable window for Songbird.
 
 /** 
 ************************************************************************************************************************************************
-THE LAYOUT for the Main Application Window
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+#app_title,
+#video_window_title
+{
+  color: #FFF !important;
+}
+
+#sysbtn_close
+{
+  background-color: transparent !important;
+}
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{
+  background-color: transparent !important;  
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  background-color: transparent !important;
+}
+
+#sysbtn_maximize > image
+{
+  background-color: transparent !important;
+}
+
+#sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  background-color: transparent !important;
+}
+
+#sysbtn_minimize
+{
+  background-color: transparent !important;
+}
+
+#sysbtn_minimode
+{
+  background-color: transparent !important;
+}
+/* END CHROME **/
+
+/** 
+************************************************************************************************************************************************
+MAIN WINDOW
 Love your boxes.
 ************************************************************************************************************************************************
 */ 
@@ -163,22 +217,6 @@ Love your boxes.
   color: #FFF !important;
 }
 
-/** Bind images to the popup and button */
-/** NOTE: IDs containing periods are bad.. */
-#frame_service_buttonbar clickholdbutton[id="file.new"]
-{
-  list-style-image: url(default/icon_playlist_16x16.png) !important;
-}
-#frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
-  list-style-image: url(default/icon_playlist_16x16.png) !important;
-}
-#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.smart"] {
-  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
-}
-#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.remote"]{
-  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
-}
-
 #frame_service_tree > treechildren::-moz-tree-row( selected )
 {
   -moz-border-radius: 3px !important;
@@ -206,49 +244,11 @@ Love your boxes.
   color: #333 !important;
 }
 
-#frame_service_tree > treechildren::-moz-tree-twisty
-{
-  list-style-image: url(default/twisty_closed.png) !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-twisty( open )
-{
-  list-style-image: url(default/twisty_open.png) !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-image( playlist )
-{
-  list-style-image: url(default/icon_playlist_16x16.png) !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-image( playlist smart )
-{
-  list-style-image: url(default/icon_smplaylist_16x16.png) !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-image( playlist dynamic )
-{
-  list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-image( playlist download )
-{
-  list-style-image: url(default/icon_downloads_16x16.png) !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-image( playlist webplaylist )
-{
-  list-style-image: url(default/icon_webplaylist_16x16.png) !important;
-}
-
 #frame_service_tree_label
 {
   border: none !important;
   background-color: transparent !important; 
 }
-
-
-
 
 /** 
 ************************************************************************************************************************************************
@@ -271,7 +271,6 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
   -moz-border-left-colors: #666 #333 !important;
   border: 2px solid !important; 
   background-color: #343d42 !important;  
-  background-image: url(default/chrome_scroll_up.png) !important;
   background-position: center center !important; 
 } 
  
@@ -284,7 +283,6 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
   -moz-border-left-colors: #666 #333 !important;
   border: 2px solid !important; 
   background-color: #343d42 !important;
-  background-image: url(default/chrome_scroll_down.png) !important;
   background-position: center center !important;
 } 
  
@@ -542,6 +540,456 @@ Style this guy to match your webpage!
  
 } 
 */
+
+/** 
+************************************************************************************************************************************************
+THE TOOLBAR
+The Toolbar is a way for a user to discover pertinent contextual menu 
+features without having to know how to right-click.  You'll see styles
+for both the toolbar buttons and the corresponding entries in the 
+contextual menu.
+************************************************************************************************************************************************
+*/ 
+
+/* the generic style for all playlist toolbarbuttons */
+#playlist_toolbar > button[disabled="true"]
+{
+  -moz-border-top-colors: #444 !important;
+  -moz-border-left-colors: #444 !important;
+  -moz-border-bottom-colors: #444 !important;
+  -moz-border-right-colors: #444 !important;
+  background-color: #333 !important;
+  color: #99A195 !important;
+}
+
+#playlist_toolbar > button[disabled="false"]
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #333 !important;
+  color: #99A195 !important;  
+}
+
+/* 
+  These are the actual command elements created,
+  a toolbarbutton and a menuitem for each command id.
+
+  You should attach each command's icon, here.
+*/
+
+/* Toolbar: Play Button */
+button#library_cmd_play
+{  
+  color: #99A195 !important;
+}
+button#library_cmd_play:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_play[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_play
+{
+  color: #FFF !important;  
+}
+menuitem#library_cmd_play[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_play[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: remove Button */
+button#library_cmd_remove
+{
+  color: #99A195 !important;  
+}
+button#library_cmd_remove:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_remove[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_remove
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_remove[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_remove[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: edit Button */
+button#library_cmd_edit
+{
+  color: #99A195 !important;
+}
+button#library_cmd_edit:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_edit[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_edit
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_edit[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_edit[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+
+/* Toolbar: addtoplaylist Button */
+button#library_cmd_addtoplaylist
+{
+  color: #99A195 !important;
+}
+button#library_cmd_addtoplaylist:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_addtoplaylist[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_addtoplaylist
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_addtoplaylist[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_addtoplaylist[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: burntocd Button */
+button#library_cmd_burntocd
+{
+  color: #99A195 !important;
+}
+button#library_cmd_burntocd:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_burntocd[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_burntocd
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_burntocd[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_burntocd[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: device Button */
+button#library_cmd_device
+{
+  color: #99A195 !important;
+}
+button#library_cmd_device:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_device[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_device
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_device[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_device[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: addtolibrary Button */
+button#library_cmd_addtolibrary
+{
+  color: #99A195 !important;
+}
+button#library_cmd_addtolibrary[active="true"]:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_addtolibrary[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_addtolibrary
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_addtolibrary[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_addtolibrary[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: download Button */
+button#library_cmd_download
+{
+  color: #99A195 !important;
+}
+button#library_cmd_download:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_download[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_download
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_download[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_download[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: subscribe Button */
+button#library_cmd_subscribe
+{
+  color: #99A195 !important;
+}
+button#library_cmd_subscribe:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_subscribe[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_subscribe
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_subscribe[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_subscribe[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: pause Button */
+button#library_cmd_pause
+{
+  color: #99A195 !important;
+}
+button#library_cmd_pause:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_pause[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_pause
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_pause[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_pause[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: resume Button */
+button#library_cmd_resume
+{
+  color: #99A195 !important;
+}
+button#library_cmd_resume:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_resume[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_resume
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_resume[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_resume[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: switch to downloads Button */
+button#library_cmd_showdlplaylist
+{
+  color: #99A195 !important;
+}
+button#library_cmd_showdlplaylist:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_showdlplaylist[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_showdlplaylist
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_showdlplaylist[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_showdlplaylist[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/* Toolbar: switch to webplaylist Button */
+button#library_cmd_showwebplaylist
+{
+  color: #99A195 !important;
+}
+button#library_cmd_showwebplaylist:hover
+{
+  color: #FFF !important;
+}
+button#library_cmd_showwebplaylist[disabled="true"]
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_showwebplaylist
+{
+  color: #FFF !important;
+}
+menuitem#library_cmd_showwebplaylist[active="true"]:hover
+{
+  color: #505154 !important;
+}
+menuitem#library_cmd_showwebplaylist[disabled="true"]
+{
+  color: #99A195 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Spliters to resize the panes */
+
+.vert_splitter,
+#vert_splitter,
+#filter_splitter
+{
+  background-color: #333 !important;
+}
+
+#vert_splitter
+{
+  background-color: #000 !important;
+}
+
+#vert_splitter[state="collapsed"]
+{
+  background-color: #686A6A !important;
+  -moz-border-top-colors: #666 !important;
+  -moz-border-left-colors: #666 !important;
+  -moz-border-bottom-colors: #666 !important;
+  -moz-border-right-colors: #666 !important;
+  border: 1px solid #686A6A !important;
+}
+
+.horz_splitter,
+#horz_splitter,
+#playlist_web_split > grippy
+{
+  background-color: #333 !important;
+}
+
+#control_pane_splitter
+{
+  background-color: transparent !important;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  background-color: transparent !important;
+}
+
+#horz_splitter[state="collapsed"]
+{
+  background-color: #333 !important;
+}
+
+#playlist_web_split[state="collapsed"]
+{
+  background-color: #333 !important;
+}
+/* END SPLITTERS **/
+
+/** 
+************************************************************************************************************************************************
+THE MAIN PANE
+************************************************************************************************************************************************
+*/ 
+
+#main_pane_border
+{
+  -moz-border-top-colors: #7a7c7c !important;
+  -moz-border-left-colors: #444 !important;
+  -moz-border-bottom-colors: #444 !important;
+  -moz-border-right-colors: #444 !important;
+}
 
 
 /*
