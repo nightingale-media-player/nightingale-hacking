@@ -10,7 +10,6 @@
 
   <prefpane id="paneHotkeys" onpaneload="gHotkeysPane.init();">
 
-    <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
     <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/hotkeys.js"/>
 
     <groupbox flex="1"> 
