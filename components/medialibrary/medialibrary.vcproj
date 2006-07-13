@@ -61,7 +61,6 @@ copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\
-copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
@@ -126,7 +125,6 @@ copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbMediaLibrary.xpt $(SolutionDir)dist\components
 mkdir $(SolutionDir)dist\xulrunner\
 copy /y $(SolutionDir)dependencies\win32\sqlite\release\bin\sqlite.dll $(SolutionDir)dist\xulrunner\
-copy /y $(InputDir)src\*.js $(SolutionDir)dist\components\
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
@@ -346,24 +344,26 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				RelativePath=".\src\MediaScan.h">
 			</File>
 			<File
-				RelativePath=".\src\sbIDynamicPlaylist.js">
+				RelativePath=".\src\sbDynamicPlaylist.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 "
 						AdditionalDependencies=""
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 "
 						AdditionalDependencies=""
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -386,7 +386,28 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylist.js">
+				RelativePath=".\src\sbPlaylist.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbPlaylistManager.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -405,7 +426,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistManager.js">
+				RelativePath=".\src\sbPlaylistReaderAtom.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -424,7 +445,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistReaderAtom.js">
+				RelativePath=".\src\sbPlaylistReaderHTML.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -443,7 +464,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistReaderHTML.js">
+				RelativePath=".\src\sbPlaylistReaderListener.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -462,7 +483,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistReaderListener.js">
+				RelativePath=".\src\sbPlaylistReaderManager.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -481,7 +502,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistReaderManager.js">
+				RelativePath=".\src\sbPlaylistReaderRDF.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -500,7 +521,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistReaderRDF.js">
+				RelativePath=".\src\sbPlaylistReaderRSS.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -519,7 +540,7 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbIPlaylistReaderRSS.js">
+				RelativePath=".\src\sbSimplePlaylist.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -538,26 +559,49 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbISimplePlaylist.js">
+				RelativePath=".\src\sbSmartPlaylist.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 "
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 "
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbISmartPlaylist.js">
+				RelativePath=".\src\sbPlaylistBase.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbPlaylistModule.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

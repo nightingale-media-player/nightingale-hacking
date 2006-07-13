@@ -88,7 +88,17 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(COMPONENTS_DIR)/medialibrary/src/*.js \
+                      $(COMPONENTS_DIR)/medialibrary/src/sbMediaLibrary.js \
+                      $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistModule.js \
+                      $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistManager.js \
+                      $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistReader*.js \
+                      $(COMPONENTS_DIR)/medialibrary/src/sbSimplePlaylist.js \
                       $(NULL)
+                      
+SONGBIRD_SCRIPTS = $(COMPONENTS_DIR)/medialibrary/src/sbDynamicPlaylist.js \
+                   $(COMPONENTS_DIR)/medialibrary/src/sbPlaylist.js \
+                   $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistBase.js \
+                   $(COMPONENTS_DIR)/medialibrary/src/sbSmartPlaylist.js \
+                   $(NULL)
 
 include $(topsrcdir)/build/rules.mk

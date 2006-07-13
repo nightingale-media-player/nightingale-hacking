@@ -840,21 +840,21 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
 
   sbISimplePlaylist* t;
   query->SetDatabaseGUID(nsAutoString(ContextInput));
-  pPlaylistManager->GetSimplePlaylist(TableName, query.get(), &t);
-  pPlaylistManager->CopySimplePlaylist(ContextInput, TableName, FilterColumn, FilterCount, filterValues, deviceContext, destTable.get(), transferTableDescription.get(), transferTableReadable.get(), transferTableType.get(), query.get(), getter_AddRefs(pPlaylistDest));
+  pPlaylistManager->GetSimplePlaylist(nsAutoString(TableName), query, &t);
+  pPlaylistManager->CopySimplePlaylist(nsAutoString(ContextInput), nsAutoString(TableName), nsAutoString(FilterColumn), FilterCount, filterValues, nsAutoString(deviceContext), destTable, transferTableDescription, transferTableReadable, transferTableType, query, getter_AddRefs(pPlaylistDest));
 
   if(!pPlaylistDest.get())
     return PR_FALSE;
 
-  pPlaylistDest->AddColumn(NS_LITERAL_STRING("source").get(), NS_LITERAL_STRING("text").get());
-  pPlaylistDest->AddColumn(NS_LITERAL_STRING("destination").get(), NS_LITERAL_STRING("text").get());
-  pPlaylistDest->AddColumn(NS_LITERAL_STRING("progress").get(), NS_LITERAL_STRING("integer(0, 100)").get());
-  pPlaylistDest->AddColumn(NS_LITERAL_STRING("status").get(), NS_LITERAL_STRING("text").get());
+  pPlaylistDest->AddColumn(NS_LITERAL_STRING("source"), NS_LITERAL_STRING("text"));
+  pPlaylistDest->AddColumn(NS_LITERAL_STRING("destination"), NS_LITERAL_STRING("text"));
+  pPlaylistDest->AddColumn(NS_LITERAL_STRING("progress"), NS_LITERAL_STRING("integer(0, 100)"));
+  pPlaylistDest->AddColumn(NS_LITERAL_STRING("status"), NS_LITERAL_STRING("text"));
 
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source").get(), NS_LITERAL_STRING("Source URL").get(), PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70, PR_FALSE);
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination").get(), NS_LITERAL_STRING("Destination URL").get(), PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70, PR_FALSE);
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress").get(), NS_LITERAL_STRING("Download Progress").get(), PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20, PR_FALSE);
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status").get(), NS_LITERAL_STRING("Status").get(), PR_TRUE, PR_TRUE, PR_FALSE, -7000, 20, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"), NS_LITERAL_STRING("Source URL"), PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"), NS_LITERAL_STRING("Destination URL"), PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"), NS_LITERAL_STRING("Download Progress"), PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"), NS_LITERAL_STRING("Status"), PR_TRUE, PR_TRUE, PR_FALSE, -7000, 20, PR_FALSE);
 
   PRInt32 nEntryCount = 0;
   pPlaylistDest->GetAllEntries(&nEntryCount);
@@ -1001,7 +1001,7 @@ void sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceStr
     if(pPlaylistManager)
     {
       PRInt32 retVal = 0;
-      pPlaylistManager->DeleteSimplePlaylist(transferTable.get(), query.get(), &retVal);
+      pPlaylistManager->DeleteSimplePlaylist(transferTable, query, &retVal);
     }
   }
 

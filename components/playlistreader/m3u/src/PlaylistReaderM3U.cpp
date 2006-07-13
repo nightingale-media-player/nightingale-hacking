@@ -299,7 +299,7 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
   nsCOMPtr<sbIPlaylist> pPlaylist;
   if(!pPlaylistManager) return NS_ERROR_UNEXPECTED;
 
-  pPlaylistManager->GetPlaylist(strDestTable, pQuery.get(), getter_AddRefs(pPlaylist));
+  pPlaylistManager->GetPlaylist(nsAutoString(strDestTable), pQuery.get(), getter_AddRefs(pPlaylist));
   if(!pPlaylist) return NS_ERROR_UNEXPECTED;
 
   nsDependentString playlistBuffer(pBuffer);
@@ -411,7 +411,7 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
 
             if(!guid.IsEmpty() && pPlaylist)
             {
-              pPlaylist->AddByGUID(PromiseFlatString(guid).get(), strGUID, -1, m_Replace, PR_TRUE, &bRet);
+              pPlaylist->AddByGUID(guid, nsAutoString(strGUID), -1, m_Replace, PR_TRUE, &bRet);
             }
 
             nsMemory::Free(aMetaValues[0]);

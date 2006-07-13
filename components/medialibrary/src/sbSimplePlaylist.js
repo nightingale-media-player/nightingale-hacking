@@ -46,18 +46,18 @@ CSimplePlaylist.prototype =
   m_strReadableName: "",
   m_queryObject: null,
   
-  SetQueryObject: function(queryObj)
+  setQueryObject: function(queryObj)
   {
     this.m_queryObject = queryObj; 
     return;
   },
   
-  GetQueryObject: function()
+  getQueryObject: function()
   {
     return this.m_queryObject;
   },
   
-  AddByURL: function(strURL, nColumnCount, aColumns, nValueCount, aValues, bWillRunLater)
+  addByURL: function(strURL, nColumnCount, aColumns, nValueCount, aValues, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -100,7 +100,7 @@ CSimplePlaylist.prototype =
     return;
   },
  
-  RemoveByURL: function(strURL, bWillRunLater)
+  removeByURL: function(strURL, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -121,7 +121,7 @@ CSimplePlaylist.prototype =
     return false;
   },
   
-  RemoveByIndex: function(nIndex, bWillRunLater)
+  removeByIndex: function(nIndex, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -142,7 +142,7 @@ CSimplePlaylist.prototype =
     return false;  
   },
 
-  RemoveByGUID: function(mediaGUID, bWillRunLater)
+  removeByGUID: function(mediaGUID, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -163,7 +163,7 @@ CSimplePlaylist.prototype =
     return false;
   },
   
-  FindByURL: function(strURL)
+  findByURL: function(strURL)
   {
     if(this.m_queryObject != null)
     {
@@ -180,7 +180,7 @@ CSimplePlaylist.prototype =
     return -1;
   },
   
-  FindByIndex: function(nIndex)
+  findByIndex: function(nIndex)
   {
     if(this.m_queryObject != null)
     {
@@ -197,7 +197,7 @@ CSimplePlaylist.prototype =
     return "";
   },
 
-  GetColumnInfo: function()
+  getColumnInfo: function()
   {
     if(this.m_queryObject != null)
     {
@@ -209,7 +209,7 @@ CSimplePlaylist.prototype =
     }
   },
   
-  SetColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
+  setColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -235,7 +235,7 @@ CSimplePlaylist.prototype =
     }    
   },
   
-  GetTableInfo: function()
+  getTableInfo: function()
   {
     if(this.m_queryObject != null)
     {
@@ -249,7 +249,7 @@ CSimplePlaylist.prototype =
     return;
   },
   
-  AddColumn: function(strColumn, strType)
+  addColumn: function(strColumn, strType)
   {
     if(this.m_queryObject != null)
     {
@@ -265,7 +265,7 @@ CSimplePlaylist.prototype =
     return;
   },
   
-  DeleteColumn: function(strColumn)
+  deleteColumn: function(strColumn)
   {
     if(this.m_queryObject != null)
     {
@@ -274,7 +274,7 @@ CSimplePlaylist.prototype =
     return;
   },
 
-  GetNumEntries: function()
+  getNumEntries: function()
   {
     if(this.m_queryObject != null)
     {
@@ -292,7 +292,7 @@ CSimplePlaylist.prototype =
     return 0;
   },  
   
-  GetEntry: function(nEntry)
+  getEntry: function(nEntry)
   {
     if(this.m_queryObject != null)
     {
@@ -308,7 +308,7 @@ CSimplePlaylist.prototype =
     return 0;
   },
 
-  GetAllEntries: function()
+  getAllEntries: function()
   {
     if(this.m_queryObject != null)
     {
@@ -325,7 +325,7 @@ CSimplePlaylist.prototype =
     return 0;
   },
 
-  GetColumnValueByIndex: function(mediaIndex, strColumn)
+  getColumnValueByIndex: function(mediaIndex, strColumn)
   {
     if(this.m_queryObject != null)
     {
@@ -344,7 +344,7 @@ CSimplePlaylist.prototype =
     return "";
   },
   
-  GetColumnValueByURL: function(mediaURL, strColumn)
+  getColumnValueByURL: function(mediaURL, strColumn)
   {
     if(this.m_queryObject != null)
     {
@@ -363,7 +363,7 @@ CSimplePlaylist.prototype =
     return "";
   },
 
-  GetColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount)
+  getColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount)
   {
     nValueCount = 0;
     var aValues = new Array();
@@ -400,7 +400,7 @@ CSimplePlaylist.prototype =
     return aValues;
   },
   
-  GetColumnValuesByURL: function(mediaURL, nColumnCount, aColumns, nValueCount)
+  getColumnValuesByURL: function(mediaURL, nColumnCount, aColumns, nValueCount)
   {
     nValueCount = 0;
     var aValues = new Array();
@@ -437,7 +437,7 @@ CSimplePlaylist.prototype =
     return aValues;
   },
   
-  SetColumnValueByIndex: function(mediaIndex, strColumn, strValue, bWillRunLater)
+  setColumnValueByIndex: function(mediaIndex, strColumn, strValue, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -457,7 +457,7 @@ CSimplePlaylist.prototype =
     return;
   },
   
-  SetColumnValueByURL: function(mediaURL, strColumn, strValue, bWillRunLater)
+  setColumnValueByURL: function(mediaURL, strColumn, strValue, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -477,7 +477,7 @@ CSimplePlaylist.prototype =
     return;
   },
 
-  SetColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount, aValues, bWillRunLater)
+  setColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount, aValues, bWillRunLater)
   {
     if(this.m_queryObject != null ||
        nColumnCount != nValueCount)
@@ -508,7 +508,7 @@ CSimplePlaylist.prototype =
     return;
   },
   
-  SetColumnValuesByURL: function(mediaURL, nColumnCount, aColumns, nValueCount, aValues, bWillRunLater)
+  setColumnValuesByURL: function(mediaURL, nColumnCount, aColumns, nValueCount, aValues, bWillRunLater)
   {
     if(this.m_queryObject != null ||
        nColumnCount != nValueCount)
@@ -539,7 +539,7 @@ CSimplePlaylist.prototype =
     return;
   },
 
-  SetName: function(strName)
+  setName: function(strName)
   {
     if(strName != "")
       this.m_strName = strName;
@@ -547,12 +547,12 @@ CSimplePlaylist.prototype =
     return;
   },
   
-  GetName: function()
+  getName: function()
   {
     return this.m_strName;
   },
   
-  SetReadableName: function(strReadableName)
+  setReadableName: function(strReadableName)
   {
     if(this.m_queryObject != null)
     {
@@ -568,7 +568,7 @@ CSimplePlaylist.prototype =
     return;
   },
   
-  GetReadableName: function()
+  getReadableName: function()
   {
     var strReadableName = "";
     this.m_queryObject.resetQuery();

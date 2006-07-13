@@ -31,199 +31,377 @@ interface sbIDatabaseQuery;
 [scriptable, uuid(7B2945F6-6A00-4489-AD2F-95BA25F4D1EA)]
 interface sbISimplePlaylist : nsISupports
 {
-  void SetQueryObject(in sbIDatabaseQuery queryObj);
-  sbIDatabaseQuery GetQueryObject();
+  void setQueryObject(in sbIDatabaseQuery queryObj);
 
-  void AddByURL(in wstring strURL, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    in PRUint32 nValueCount, [array, size_is(nValueCount)] in wstring aValues, in PRBool bWillRunLater);
+  sbIDatabaseQuery getQueryObject();
 
-  PRBool RemoveByURL(in wstring strURL, in PRBool bWillRunLater);
-  PRBool RemoveByIndex(in PRInt32 nIndex, in PRBool bWillRunLater);
-  PRBool RemoveByGUID(in wstring mediaGUID, in PRBool bWillRunLater);
+  void addByURL(in AString strURL, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    in PRUint32 nValueCount, 
+    [array, size_is(nValueCount)] in wstring aValues, 
+    in PRBool bWillRunLater);
 
-  PRInt32 FindByURL(in wstring strURL);
-  wstring FindByIndex(in PRInt32 nIndex);
+  PRBool removeByURL(in AString strURL, 
+    in PRBool bWillRunLater);
 
-  void GetColumnInfo();
-  void SetColumnInfo(in wstring strColumn, in wstring strReadableName, in PRBool isVisible, 
-    in PRBool defaultVisibility, in PRBool isMetadata, in PRInt32 sortWeight,
-    in PRInt32 colWidth, in PRBool bWillRunLater);
+  PRBool removeByIndex(in PRInt32 nIndex, 
+    in PRBool bWillRunLater);
 
-  void GetTableInfo();
+  PRBool removeByGUID(in AString mediaGUID, 
+    in PRBool bWillRunLater);
+
+  PRInt32 findByURL(in AString strURL);
+
+  AString findByIndex(in PRInt32 nIndex);
+
+  void getColumnInfo();
+
+  void setColumnInfo(in AString strColumn, 
+    in AString strReadableName, 
+    in PRBool isVisible, 
+    in PRBool defaultVisibility, 
+    in PRBool isMetadata, 
+    in PRInt32 sortWeight,
+    in PRInt32 colWidth, 
+    in PRBool bWillRunLater);
+
+  void getTableInfo();
   
-  void AddColumn(in wstring strColumn, in wstring strDataType);
-  void DeleteColumn(in wstring strColumn);
+  void addColumn(in AString strColumn, 
+    in AString strDataType);
 
-  PRInt32 GetNumEntries();
-  PRInt32 GetEntry(in PRInt32 nEntry);
+  void deleteColumn(in AString strColumn);
 
-  PRInt32 GetAllEntries();
+  PRInt32 getNumEntries();
 
-  wstring GetColumnValueByIndex(in PRInt32 mediaIndex, in wstring strColumn);
-  wstring GetColumnValueByURL(in wstring mediaURL, in wstring strColumn);
+  PRInt32 getEntry(in PRInt32 nEntry);
 
-  void GetColumnValuesByIndex(in PRInt32 mediaIndex, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    out PRUint32 nValueCount, [array, size_is(nValueCount), retval] out wstring aValues);
-  void GetColumnValuesByURL(in wstring mediaURL, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    out PRUint32 nValueCount, [array, size_is(nValueCount), retval] out wstring aValues);
+  PRInt32 getAllEntries();
+
+  AString getColumnValueByIndex(in PRInt32 mediaIndex, 
+    in AString strColumn);
+
+  AString getColumnValueByURL(in AString mediaURL, 
+    in AString strColumn);
+
+  void getColumnValuesByIndex(in PRInt32 mediaIndex, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    out PRUint32 nValueCount, 
+    [array, size_is(nValueCount), retval] out wstring aValues);
+
+  void getColumnValuesByURL(in AString mediaURL, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    out PRUint32 nValueCount, 
+    [array, size_is(nValueCount), retval] out wstring aValues);
   
-  void SetColumnValueByIndex(in PRInt32 mediaIndex, in wstring strColumn, in wstring strValue, in PRBool bWillRunLater);
-  void SetColumnValueByURL(in wstring mediaURL, in wstring strColumn, in wstring strValue, in PRBool bWillRunLater);
+  void setColumnValueByIndex(in PRInt32 mediaIndex, 
+    in AString strColumn, 
+    in AString strValue, 
+    in PRBool bWillRunLater);
 
-  void SetColumnValuesByIndex(in PRInt32 mediaIndex, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    in PRUint32 nValueCount, [array, size_is(nValueCount)] in wstring aValues, in PRBool bWillRunLater);
-  void SetColumnValuesByURL(in wstring mediaURL, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    in PRUint32 nValueCount, [array, size_is(nValueCount)] in wstring aValues, in PRBool bWillRunLater);
+  void setColumnValueByURL(in AString mediaURL, 
+    in AString strColumn, 
+    in AString strValue, 
+    in PRBool bWillRunLater);
 
-  void SetName(in wstring strName);
-  wstring GetName();
+  void setColumnValuesByIndex(in PRInt32 mediaIndex, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    in PRUint32 nValueCount, 
+    [array, size_is(nValueCount)] in wstring aValues, 
+    in PRBool bWillRunLater);
 
-  void SetReadableName(in wstring strReadableName);
-  wstring GetReadableName();
+  void setColumnValuesByURL(in AString mediaURL, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    in PRUint32 nValueCount, 
+    [array, size_is(nValueCount)] in wstring aValues, 
+    in PRBool bWillRunLater);
+
+  void setName(in AString strName);
+
+  AString getName();
+
+  void setReadableName(in AString strReadableName);
+
+  AString getReadableName();
 };
 
 [scriptable, uuid(C2B560D7-A145-4dd3-9040-F1682F17BCA6)]
 interface sbIPlaylist : nsISupports
 {
-  void SetQueryObject(in sbIDatabaseQuery queryObj);
-  sbIDatabaseQuery GetQueryObject();
+  void setQueryObject(in sbIDatabaseQuery queryObj);
 
-  PRBool AddByGUID(in wstring mediaGUID, in wstring serviceGUID, in PRInt32 nPosition, in PRBool bReplace, in PRBool bWillRunLater);
-  PRBool RemoveByGUID(in wstring mediaGUID);
-  PRBool RemoveByIndex(in PRInt32 mediaIndex);
-  PRBool MoveByGUID(in wstring mediaGUID, in PRInt32 nPosition);
-  PRBool MoveByIndex(in PRInt32 mediaIndex, in PRInt32 nPosition);
+  sbIDatabaseQuery getQueryObject();
+
+  PRBool addByGUID(in AString mediaGUID, 
+    in AString serviceGUID, 
+    in PRInt32 nPosition, 
+    in PRBool bReplace, 
+    in PRBool bWillRunLater);
+
+  PRBool removeByGUID(in AString mediaGUID);
+
+  PRBool removeByIndex(in PRInt32 mediaIndex);
+
+  PRBool moveByGUID(in AString mediaGUID, 
+    in PRInt32 nPosition);
+
+  PRBool moveByIndex(in PRInt32 mediaIndex, 
+    in PRInt32 nPosition);
   
-  PRInt32 FindByGUID(in wstring mediaGUID);
-  wstring FindByIndex(in PRInt32 mediaIndex);
+  PRInt32 findByGUID(in AString mediaGUID);
 
-  void GetColumnInfo();
-  void SetColumnInfo(in wstring strColumn, in wstring strReadableName, in PRBool isVisible, 
-    in PRBool defaultVisibility, in PRBool isMetadata, in PRInt32 sortWeight,
-    in PRInt32 colWidth, in PRBool bWillRunLater);
+  AString findByIndex(in PRInt32 mediaIndex);
 
-  void GetTableInfo();
+  void getColumnInfo();
+
+  void setColumnInfo(in AString strColumn, 
+    in AString strReadableName, 
+    in PRBool isVisible, 
+    in PRBool defaultVisibility, 
+    in PRBool isMetadata, 
+    in PRInt32 sortWeight,
+    in PRInt32 colWidth, 
+    in PRBool bWillRunLater);
+
+  void getTableInfo();
   
-  void AddColumn(in wstring strColumn);
-  void DeleteColumn(in wstring strColumn);
+  void addColumn(in AString strColumn);
 
-  PRInt32 GetNumEntries();
-  PRInt32 GetEntry(in PRInt32 nEntry);
+  void deleteColumn(in AString strColumn);
 
-  PRInt32 GetAllEntries();
+  PRInt32 getNumEntries();
 
-  wstring GetColumnValueByIndex(in PRInt32 mediaIndex, in wstring strColumn);
-  wstring GetColumnValueByGUID(in wstring mediaGUID, in wstring strColumn);
+  PRInt32 getEntry(in PRInt32 nEntry);
 
-  void GetColumnValuesByIndex(in PRInt32 mediaIndex, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    out PRUint32 nValueCount, [array, size_is(nValueCount), retval] out wstring aValues);
-  void GetColumnValuesByGUID(in wstring mediaGUID, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    out PRUint32 nValueCount, [array, size_is(nValueCount), retval] out wstring aValues);
+  PRInt32 getAllEntries();
+
+  AString getColumnValueByIndex(in PRInt32 mediaIndex, 
+    in AString strColumn);
+
+  AString getColumnValueByGUID(in AString mediaGUID, 
+    in AString strColumn);
+
+  void getColumnValuesByIndex(in PRInt32 mediaIndex, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    out PRUint32 nValueCount, 
+    [array, size_is(nValueCount), retval] out wstring aValues);
+
+  void getColumnValuesByGUID(in AString mediaGUID, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    out PRUint32 nValueCount, 
+    [array, size_is(nValueCount), retval] out wstring aValues);
   
-  void SetColumnValueByIndex(in PRInt32 mediaIndex, in wstring strColumn, in wstring strValue);
-  void SetColumnValueByGUID(in wstring mediaGUID, in wstring strColumn, in wstring strValue);
+  void setColumnValueByIndex(in PRInt32 mediaIndex, 
+    in AString strColumn, 
+    in AString strValue);
 
-  void SetColumnValuesByIndex(in PRInt32 mediaIndex, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    in PRUint32 nValueCount, [array, size_is(nValueCount)] in wstring aValues);
-  void SetColumnValuesByGUID(in wstring mediaGUID, in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns,
-    in PRUint32 nValueCount, [array, size_is(nValueCount)] in wstring aValues);
+  void setColumnValueByGUID(in AString mediaGUID, 
+    in AString strColumn, 
+    in AString strValue);
 
-  void SetName(in wstring strName);
-  wstring GetName();
+  void setColumnValuesByIndex(in PRInt32 mediaIndex, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    in PRUint32 nValueCount, 
+    [array, size_is(nValueCount)] in wstring aValues);
 
-  void SetReadableName(in wstring strReadableName);
-  wstring GetReadableName();
+  void setColumnValuesByGUID(in AString mediaGUID, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns,
+    in PRUint32 nValueCount, 
+    [array, size_is(nValueCount)] in wstring aValues);
+
+  void setName(in AString strName);
+
+  AString getName();
+
+  void setReadableName(in AString strReadableName);
+
+  AString getReadableName();
 };
 
 [scriptable, uuid(8A1A3D68-E3A4-484b-B9A5-4088ADEDA5B3)]
 interface sbIDynamicPlaylist : sbIPlaylist
 {
-  void SetPeriodicity(in PRUint32 nPeriodicity, in PRBool bWillRunLater);
-  PRUint32 GetPeriodicity();
-  
-  void SetURL(in wstring strURL, in PRBool bWillRunLater);
-  wstring GetURL();
+  void setPeriodicity(in PRUint32 nPeriodicity, 
+    in PRBool bWillRunLater);
 
-  void SetLastUpdateTime();
-  PRInt64 GetLastUpdateTime();
+  PRUint32 getPeriodicity();
+  
+  void setURL(in AString strURL, 
+    in PRBool bWillRunLater);
+  AString getURL();
+
+  void setLastUpdateTime();
+
+  PRInt64 getLastUpdateTime();
 };
 
 [scriptable, uuid(07BC8B9F-FB08-4fd6-92A4-9D5CDFE2D823)]
 interface sbISmartPlaylist : sbIPlaylist
 {
-  void SetLibrary(in wstring strLibrary, in PRBool bWillRunLater);
-  wstring GetLibrary();
+  void setLibrary(in AString strLibrary, 
+    in PRBool bWillRunLater);
 
-  void SetLimitAndType(in PRUint32 nLimit, in wstring strLimitType, in PRBool bWillRunLater);
-  PRUint32 GetLimit();
-  wstring GetLimitType();
-  void GetLimitAndType(out PRUint32 nLimit, out wstring strLimitType);
+  AString getLibrary();
 
-  void SetSelectedBy(in wstring strSelectedBy);
-  wstring GetSelectedBy();
+  void setLimitAndType(in PRUint32 nLimit, 
+    in AString strLimitType, 
+    in PRBool bWillRunLater);
 
-  void SetMatch(in wstring strMatchOn);
-  wstring GetMatch();
+  PRUint32 getLimit();
 
-  void AddConstraint(in wstring strMetadata, in wstring strConstraint, in wstring strConstraintValue, in PRBool bWillRunLater);
-  PRUint32 GetConstraintCount();
-  PRUint32 GetAllConstraints();
-  PRBool GetConstraint(in PRUint32 nIndex);
-  void ReplaceConstraint(in PRUint32 nIndex, in wstring strMetadata, in wstring strConstraint, in wstring strConstraintValue, in PRBool bWillRunLater);
-  void RemoveConstraint(in PRUint32 nIndex, in PRBool bWillRunLater);
-  void RemoveAllConstraints(in PRBool bWillRunLater);
+  AString getLimitType();
+
+  void getLimitAndType(out PRUint32 nLimit, 
+    out AString strLimitType);
+
+  void setSelectedBy(in AString strSelectedBy);
+  
+  AString getSelectedBy();
+
+  void setMatch(in AString strMatchOn);
+
+  AString getMatch();
+
+  void addConstraint(in AString strMetadata, 
+    in AString strConstraint, 
+    in AString strConstraintValue, 
+    in PRBool bWillRunLater);
+
+  PRUint32 getConstraintCount();
+
+  PRUint32 getAllConstraints();
+
+  PRBool getConstraint(in PRUint32 nIndex);
+
+  void replaceConstraint(in PRUint32 nIndex, 
+    in AString strMetadata, 
+    in AString strConstraint, 
+    in AString strConstraintValue, 
+    in PRBool bWillRunLater);
+
+  void removeConstraint(in PRUint32 nIndex, 
+    in PRBool bWillRunLater);
+
+  void removeAllConstraints(in PRBool bWillRunLater);
 
   //Don't use SetQuery unless you want to build a custom query that's not doable from the
   //SmartPlaylist query builder!
-  void SetQuery(in wstring strQuery, in PRBool bWillRunLater);
+  void setQuery(in AString strQuery, 
+    in PRBool bWillRunLater);
 
   //Get the SQL Query representation of the SmartPlaylist.
-  wstring GetQuery();
+  AString getQuery();
 
-  PRBool RebuildPlaylist();
+  PRBool rebuildPlaylist();
 };
 
 [scriptable, uuid(0BE3A41A-6673-494a-A53E-9740A98ACFF7)]
 interface sbIPlaylistManager : nsISupports
 {
-  void CreateDefaultPlaylistManager(in sbIDatabaseQuery queryObj);
+  void createDefaultPlaylistManager(in sbIDatabaseQuery queryObj);
 
-  sbISimplePlaylist CreateSimplePlaylist(in wstring strName, in wstring strReadableName, in wstring strDescription, in wstring strType, 
-    in PRUint32 nColumnCount, [array, size_is(nColumnCount)] in wstring aColumns, in sbIDatabaseQuery queryObj);
+  sbISimplePlaylist createSimplePlaylist(in AString strName, 
+    in AString strReadableName, 
+    in AString strDescription, 
+    in AString strType, 
+    in PRUint32 nColumnCount, 
+    [array, size_is(nColumnCount)] in wstring aColumns, 
+    in sbIDatabaseQuery queryObj);
 
-  sbIPlaylist CreatePlaylist(in wstring strName, in wstring strReadableName, in wstring strDescription, in wstring strType, in sbIDatabaseQuery queryObj);
+  sbIPlaylist createPlaylist(in AString strName, 
+    in AString strReadableName, 
+    in AString strDescription, 
+    in AString strType, 
+    in sbIDatabaseQuery queryObj);
 
-  sbIDynamicPlaylist CreateDynamicPlaylist(in wstring strName, in wstring strReadableName, in wstring strDescription, in wstring strType, in wstring strURL, in PRUint32 nPeriodicity, in sbIDatabaseQuery queryObj);
-  sbISmartPlaylist CreateSmartPlaylist(in wstring strName, in wstring strReadableName, in wstring strDescription, 
-                                       in wstring strType, in wstring strLibrary, in PRUint32 nLimit, in wstring strLimitType, 
-                                       in wstring strSelectedBy, in wstring strMatchOn, in sbIDatabaseQuery queryObj);
+  sbIDynamicPlaylist createDynamicPlaylist(in AString strName, 
+    in AString strReadableName, 
+    in AString strDescription, 
+    in AString strType, 
+    in AString strURL, 
+    in PRUint32 nPeriodicity, 
+    in sbIDatabaseQuery queryObj);
 
-  sbIPlaylist CopyPlaylist(in wstring strSourceDB, in wstring strSourceName, in wstring strDestDB, in wstring strDestName, 
-    in wstring strReadableName, in wstring strDescription, in wstring strType, in sbIDatabaseQuery queryObj);
+  sbISmartPlaylist createSmartPlaylist(in AString strName, 
+    in AString strReadableName, 
+    in AString strDescription, 
+    in AString strType, 
+    in AString strLibrary, 
+    in PRUint32 nLimit, 
+    in AString strLimitType, 
+    in AString strSelectedBy, 
+    in AString strMatchOn, 
+    in sbIDatabaseQuery queryObj);
 
-  sbISimplePlaylist CopySimplePlaylist(in wstring strSourceDB, in wstring strSourceName, in wstring strSourceFilterColumn, 
-    in PRUint32 nSourceFilterValueCount, [array, size_is(nSourceFilterValueCount)] in wstring aSourceFilterValues, in wstring strDestDB, in wstring strDestName, 
-    in wstring strReadableName, in wstring strDescription, in wstring strType, in sbIDatabaseQuery queryObj);
+  sbIPlaylist copyPlaylist(in AString strSourceDB, 
+    in AString strSourceName, 
+    in AString strDestDB, 
+    in AString strDestName, 
+    in AString strReadableName, 
+    in AString strDescription, 
+    in AString strType, 
+    in sbIDatabaseQuery queryObj);
 
-  PRInt32 DeleteSimplePlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
-  PRInt32 DeletePlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
-  PRInt32 DeleteDynamicPlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
-  PRInt32 DeleteSmartPlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
+  sbISimplePlaylist copySimplePlaylist(in AString strSourceDB, 
+    in AString strSourceName, 
+    in AString strSourceFilterColumn, 
+    in PRUint32 nSourceFilterValueCount, 
+    [array, size_is(nSourceFilterValueCount)] in wstring aSourceFilterValues, 
+    in AString strDestDB, 
+    in AString strDestName, 
+    in AString strReadableName, 
+    in AString strDescription, 
+    in AString strType, 
+    in sbIDatabaseQuery queryObj);
+
+  PRInt32 deleteSimplePlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
+
+  PRInt32 deletePlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
+
+  PRInt32 deleteDynamicPlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
+
+  PRInt32 deleteSmartPlaylist(in AString strName,
+    in sbIDatabaseQuery queryObj);
   
-  void GetAllPlaylistList(in sbIDatabaseQuery queryObj);
+  void getAllPlaylistList(in sbIDatabaseQuery queryObj);
   
-  void GetSimplePlaylistList(in sbIDatabaseQuery queryObj);
-  void GetPlaylistList(in sbIDatabaseQuery queryObj);
-  void GetDynamicPlaylistList(in sbIDatabaseQuery queryObj);
-  void GetSmartPlaylistList(in sbIDatabaseQuery queryObj);
+  void getSimplePlaylistList(in sbIDatabaseQuery queryObj);
+
+  void getPlaylistList(in sbIDatabaseQuery queryObj);
+
+  void getDynamicPlaylistList(in sbIDatabaseQuery queryObj);
+
+  void getSmartPlaylistList(in sbIDatabaseQuery queryObj);
   
-  sbISimplePlaylist GetSimplePlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
-  sbIPlaylist GetPlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
-  sbIDynamicPlaylist GetDynamicPlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
-  sbISmartPlaylist GetSmartPlaylist(in wstring strName, in sbIDatabaseQuery queryObj);
+  sbISimplePlaylist getSimplePlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
 
-  PRUint32 GetDynamicPlaylistsForUpdate(in sbIDatabaseQuery queryObj);
-  PRBool SetDynamicPlaylistLastUpdate(in wstring strName, in sbIDatabaseQuery queryObj);
+  sbIPlaylist getPlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
 
-  void PurgeTrackByGUIDFromPlaylists(in wstring mediaGUID, in wstring strDBGUID);
+  sbIDynamicPlaylist getDynamicPlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
+
+  sbISmartPlaylist getSmartPlaylist(in AString strName, 
+    in sbIDatabaseQuery queryObj);
+
+  PRUint32 getDynamicPlaylistsForUpdate(in sbIDatabaseQuery queryObj);
+  
+  PRBool setDynamicPlaylistLastUpdate(in AString strName, 
+    in sbIDatabaseQuery queryObj);
+
+  void purgeTrackByGUIDFromPlaylists(in AString mediaGUID, 
+    in AString strDBGUID);
 };

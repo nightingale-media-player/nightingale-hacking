@@ -82,7 +82,7 @@ CPlaylistManager.prototype =
     Components.interfaces.nsIProgrammingLanguage.JAVASCRIPT,
   flags: Components.interfaces.nsIClassInfo.THREADSAFE,
 
-  CreateDefaultPlaylistManager: function(queryObj)
+  createDefaultPlaylistManager: function(queryObj)
   {
     if(queryObj != null)
     {
@@ -99,7 +99,7 @@ CPlaylistManager.prototype =
     return;
   },
   
-  CreateSimplePlaylist: function(strName, strReadableName, strDescription, strType, nMetaFieldCount, aMetaFields, queryObj)
+  createSimplePlaylist: function(strName, strReadableName, strDescription, strType, nMetaFieldCount, aMetaFields, queryObj)
   {
     const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
 
@@ -133,8 +133,8 @@ CPlaylistManager.prototype =
       
       var simplePlaylist = (new SimplePlaylist()).QueryInterface(Components.interfaces.sbISimplePlaylist);
       
-      simplePlaylist.SetName(strName);
-      simplePlaylist.SetQueryObject(queryObj);
+      simplePlaylist.setName(strName);
+      simplePlaylist.setQueryObject(queryObj);
       
       return simplePlaylist;      
     }
@@ -142,7 +142,7 @@ CPlaylistManager.prototype =
     return null;
   },
   
-  CreatePlaylist: function(strName, strReadableName, strDescription, strType, queryObj)
+  createPlaylist: function(strName, strReadableName, strDescription, strType, queryObj)
   {
     const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
     
@@ -165,8 +165,8 @@ CPlaylistManager.prototype =
       
       var playlist = (new Playlist()).QueryInterface(Components.interfaces.sbIPlaylist);
       
-      playlist.SetName(strName);
-      playlist.SetQueryObject(queryObj);
+      playlist.setName(strName);
+      playlist.setQueryObject(queryObj);
       
       return playlist;
     }
@@ -174,7 +174,7 @@ CPlaylistManager.prototype =
     return null;
   },
 
-  CreateDynamicPlaylist: function(strName, strReadableName, strDescription, strType, strURL, nPeriodicity, queryObj)
+  createDynamicPlaylist: function(strName, strReadableName, strDescription, strType, strURL, nPeriodicity, queryObj)
   {
     const DynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
     
@@ -198,8 +198,8 @@ CPlaylistManager.prototype =
       
       var playlist = (new DynamicPlaylist()).QueryInterface(Components.interfaces.sbIDynamicPlaylist);
       
-      playlist.SetName(strName);
-      playlist.SetQueryObject(queryObj);
+      playlist.setName(strName);
+      playlist.setQueryObject(queryObj);
       
       return playlist;
     }
@@ -207,7 +207,7 @@ CPlaylistManager.prototype =
     return null;
   },
   
-  CreateSmartPlaylist: function(strName, strReadableName, strDescription, strType, strLibrary, nLimit, strLimitType, strSelectedBy, strMatchOn, queryObj)
+  createSmartPlaylist: function(strName, strReadableName, strDescription, strType, strLibrary, nLimit, strLimitType, strSelectedBy, strMatchOn, queryObj)
   {
     const SmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
     
@@ -239,8 +239,8 @@ CPlaylistManager.prototype =
       
       var playlist = (new SmartPlaylist()).QueryInterface(Components.interfaces.sbISmartPlaylist);
       
-      playlist.SetName(strName);
-      playlist.SetQueryObject(queryObj);
+      playlist.setName(strName);
+      playlist.setQueryObject(queryObj);
       
       return playlist;
     }
@@ -248,7 +248,7 @@ CPlaylistManager.prototype =
     return null;
   },
   
-  CopySimplePlaylist: function(strSourceDB, strSourceName, strSourceFilterColumn, nSourceFilterValueCount, aSourceFilterValues, strDestDB, strDestName, strReadableName, strDescription, strType, queryObj)
+  copySimplePlaylist: function(strSourceDB, strSourceName, strSourceFilterColumn, nSourceFilterValueCount, aSourceFilterValues, strDestDB, strDestName, strReadableName, strDescription, strType, queryObj)
   {
     const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
     
@@ -256,11 +256,11 @@ CPlaylistManager.prototype =
     {
       var bSrcIsSimple = true;
       queryObj.setDatabaseGUID(strSourceDB);
-      var pSourcePlaylist = this.GetSimplePlaylist(strSourceName, queryObj);
+      var pSourcePlaylist = this.getSimplePlaylist(strSourceName, queryObj);
      
       if(pSourcePlaylist == null)
       {
-        pSourcePlaylist = this.GetPlaylist(strSourceName, queryObj);
+        pSourcePlaylist = this.getPlaylist(strSourceName, queryObj);
         
         if(pSourcePlaylist)
         {
@@ -270,7 +270,7 @@ CPlaylistManager.prototype =
       
       if(pSourcePlaylist)
       {
-        pSourcePlaylist.GetTableInfo();
+        pSourcePlaylist.getTableInfo();
         
         var resObj = queryObj.getResultObject();
       
@@ -300,19 +300,19 @@ CPlaylistManager.prototype =
         queryObj.resetQuery();
         queryObj.setDatabaseGUID(strDestDB);
         
-        this.CreateDefaultPlaylistManager(queryObj);
+        this.createDefaultPlaylistManager(queryObj);
         
-        var pDestPlaylist = this.GetSimplePlaylist(strDestName, queryObj);
+        var pDestPlaylist = this.getSimplePlaylist(strDestName, queryObj);
         
         if(!pDestPlaylist)
         {
-          pDestPlaylist = this.CreateSimplePlaylist(strDestName, strReadableName, strDescription, strType, 0, null, queryObj);
+          pDestPlaylist = this.createSimplePlaylist(strDestName, strReadableName, strDescription, strType, 0, null, queryObj);
 
           if(pDestPlaylist)
           {
             for(i = 0; i < rowCount; i++)
             {
-              pDestPlaylist.AddColumn(aCols[i], aColType[i]);
+              pDestPlaylist.addColumn(aCols[i], aColType[i]);
             }
           }
         } 
@@ -381,22 +381,22 @@ CPlaylistManager.prototype =
     return null;
   },
 
-  CopyPlaylist: function(strSourceDB, strSourceName, strDestDB, strDestName, strReadableName, strDescription, strType, queryObj)
+  copyPlaylist: function(strSourceDB, strSourceName, strDestDB, strDestName, strReadableName, strDescription, strType, queryObj)
   {
     const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
 
     if(queryObj != null)
     {
       queryObj.setDatabaseGUID(strSourceDB);
-      var pSourcePlaylist = this.GetSimplePlaylist(strSourceName, queryObj);
+      var pSourcePlaylist = this.getSimplePlaylist(strSourceName, queryObj);
       
       if(pSourcePlaylist)
       {
-        pSourcePlaylist.GetTableInfo();
+        pSourcePlaylist.getTableInfo();
         var resObj = queryObj.getResultObject();
 
         queryObj.setDatabaseGUID(strDestDB);
-        var pDestPlaylist = this.CreatePlaylist(strDestName, strReadableName, strDescription, strType, queryObj);
+        var pDestPlaylist = this.createPlaylist(strDestName, strReadableName, strDescription, strType, queryObj);
         
         if(pDestPlaylist)
         {
@@ -414,7 +414,7 @@ CPlaylistManager.prototype =
             if(i != rowCount - 1)
               columnList += ", ";
               
-            pDestPlaylist.AddColumn(strColName, strColType);
+            pDestPlaylist.addColumn(strColName, strColType);
           }
        
           queryObj.resetQuery();
@@ -434,7 +434,7 @@ CPlaylistManager.prototype =
     return null;
   },
 
-  DeleteSimplePlaylist: function(strName, queryObj)
+  deleteSimplePlaylist: function(strName, queryObj)
   {
     if(queryObj != null)
     {
@@ -460,7 +460,7 @@ CPlaylistManager.prototype =
     return 0;
   },
   
-  DeletePlaylist: function(strName, queryObj)
+  deletePlaylist: function(strName, queryObj)
   {
     if(queryObj != null)
     {
@@ -486,7 +486,7 @@ CPlaylistManager.prototype =
     return 0;
   },
  
-  DeleteDynamicPlaylist: function(strName, queryObj)
+  deleteDynamicPlaylist: function(strName, queryObj)
   {
     if(queryObj != null)
     {
@@ -512,7 +512,7 @@ CPlaylistManager.prototype =
     return 0;
   },
   
-  DeleteSmartPlaylist: function(strName, queryObj)
+  deleteSmartPlaylist: function(strName, queryObj)
   {
     if(queryObj != null)
     {
@@ -540,7 +540,7 @@ CPlaylistManager.prototype =
     return 0;
   },
   
-  GetAllPlaylistList: function(queryObj)
+  getAllPlaylistList: function(queryObj)
   {
     if(queryObj != null)
     {
@@ -559,7 +559,7 @@ CPlaylistManager.prototype =
     }
   },
  
-  GetSimplePlaylistList: function(queryobj)
+  getSimplePlaylistList: function(queryobj)
   {
     if(queryObj != null)
     {
@@ -572,7 +572,7 @@ CPlaylistManager.prototype =
     }
   },
   
-  GetPlaylistList: function(queryObj)
+  getPlaylistList: function(queryObj)
   {
     if(queryObj != null)
     {
@@ -585,7 +585,7 @@ CPlaylistManager.prototype =
     }
   },
  
-  GetDynamicPlaylistList: function(queryObj)
+  getDynamicPlaylistList: function(queryObj)
   {
     if(queryObj != null)
     {
@@ -598,7 +598,7 @@ CPlaylistManager.prototype =
     }
   },
   
-  GetSmartPlaylistList: function(queryObj)
+  getSmartPlaylistList: function(queryObj)
   {
     if(queryObj != null)
     {
@@ -611,7 +611,7 @@ CPlaylistManager.prototype =
     }
   },
  
-  GetSimplePlaylist: function(strName, queryObj)
+  getSimplePlaylist: function(strName, queryObj)
   {
     const SimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
 
@@ -627,8 +627,8 @@ CPlaylistManager.prototype =
       {
         var simplePlaylist = (new SimplePlaylist()).QueryInterface(Components.interfaces.sbISimplePlaylist);
         
-        simplePlaylist.SetName(strName);
-        simplePlaylist.SetQueryObject(queryObj);
+        simplePlaylist.setName(strName);
+        simplePlaylist.setQueryObject(queryObj);
         
         return simplePlaylist;
       }
@@ -637,7 +637,7 @@ CPlaylistManager.prototype =
     return null;
   },
   
-  GetPlaylist: function(strName, queryObj)
+  getPlaylist: function(strName, queryObj)
   {
     const Playlist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
 
@@ -654,20 +654,20 @@ CPlaylistManager.prototype =
       {
         playlist = (new Playlist()).QueryInterface(Components.interfaces.sbIPlaylist);
         
-        playlist.SetName(strName);
-        playlist.SetQueryObject(queryObj);
+        playlist.setName(strName);
+        playlist.setQueryObject(queryObj);
       
         return playlist;
       }
       else
       {
-        playlist = this.GetDynamicPlaylist(strName, queryObj);
+        playlist = this.getDynamicPlaylist(strName, queryObj);
         if(playlist)
         {
           return playlist.QueryInterface(Components.interfaces.sbIPlaylist);
         }
         
-        playlist = this.GetSmartPlaylist(strName, queryObj);
+        playlist = this.getSmartPlaylist(strName, queryObj);
         if(playlist)
           return playlist.QueryInterface(Components.interfaces.sbIPlaylist);
       }
@@ -676,7 +676,7 @@ CPlaylistManager.prototype =
     return null;
   },
 
-  GetDynamicPlaylist: function(strName, queryObj)
+  getDynamicPlaylist: function(strName, queryObj)
   {
     const DynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
 
@@ -695,8 +695,8 @@ CPlaylistManager.prototype =
         if(playlist)
         {
           playlist = playlist.QueryInterface(Components.interfaces.sbIDynamicPlaylist);
-          playlist.SetName(strName);
-          playlist.SetQueryObject(queryObj);
+          playlist.setName(strName);
+          playlist.setQueryObject(queryObj);
         
           return playlist;
         }
@@ -706,7 +706,7 @@ CPlaylistManager.prototype =
     return null;
   },
   
-  GetSmartPlaylist: function(strName, queryObj)
+  getSmartPlaylist: function(strName, queryObj)
   {
     const SmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
 
@@ -723,8 +723,8 @@ CPlaylistManager.prototype =
       {
         var playlist = (new SmartPlaylist()).QueryInterface(Components.interfaces.sbISmartPlaylist);
         
-        playlist.SetName(strName);
-        playlist.SetQueryObject(queryObj);
+        playlist.setName(strName);
+        playlist.setQueryObject(queryObj);
       
         return playlist;
       }
@@ -733,7 +733,7 @@ CPlaylistManager.prototype =
     return null;
   },
 
-  GetDynamicPlaylistsForUpdate: function(queryObj)
+  getDynamicPlaylistsForUpdate: function(queryObj)
   {
     if(queryObj != null)
     {
@@ -789,7 +789,7 @@ CPlaylistManager.prototype =
     return 0;
   },
 
-  SetDynamicPlaylistLastUpdate: function(strName, queryObj)
+  setDynamicPlaylistLastUpdate: function(strName, queryObj)
   {
     if(queryObj != null)
     {
@@ -807,7 +807,7 @@ CPlaylistManager.prototype =
     return false;
   },
 
-  PurgeTrackByGUIDFromPlaylists: function(mediaGUID, strDBGUID)
+  purgeTrackByGUIDFromPlaylists: function(mediaGUID, strDBGUID)
   {
     var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
     if(queryObj)

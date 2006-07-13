@@ -231,7 +231,7 @@
         var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
         var guid = aUUIDGenerator.generateUUID();
         
-        aPlaylistManager.CreateDynamicPlaylist(guid, readable_name, url, url, url, time, aDBQuery);
+        aPlaylistManager.createDynamicPlaylist(guid, readable_name, url, url, url, time, aDBQuery);
 
         //Run the dynamic playlist updater to download the new playlist.
         SBDataFireEvent( "dynamic.playlist.update" );

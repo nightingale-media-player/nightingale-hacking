@@ -44,15 +44,6 @@ const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uu
 
 function CMediaLibrary()
 {
-  try
-  {
-    jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-    jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-  }
-  catch ( err )
-  {
-    throw "\n\n CMediaLibrary Constructor \r\n" + err;
-  }
 }
 
 /* I actually need a constructor in this case. */
@@ -272,7 +263,7 @@ CMediaLibrary.prototype =
       
       const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-      aPlaylistManager.PurgeTrackByGUIDFromPlaylists(mediaGUID, this.m_queryObject.getDatabaseGUID());
+      aPlaylistManager.purgeTrackByGUIDFromPlaylists(mediaGUID, this.m_queryObject.getDatabaseGUID());
       
       if(!bWillRunLater)
       {

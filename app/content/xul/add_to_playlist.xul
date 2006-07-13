@@ -157,7 +157,7 @@
       queryObj.setAsyncQuery(false);
       
       var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-      aPlaylistManager.GetPlaylistList(queryObj);
+      aPlaylistManager.getPlaylistList(queryObj);
       
       return queryObj.getResultObject();
     }
@@ -261,16 +261,16 @@
         if (playlistManager)
         {
           playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-          playlistManager.CreateDefaultPlaylistManager( queryObj );      
+          playlistManager.createDefaultPlaylistManager( queryObj );      
           var playlistguid = newGuid();
-          var playlist = playlistManager.CreatePlaylist( playlistguid, name, "Playlist", "user", queryObj );
+          var playlist = playlistManager.createPlaylist( playlistguid, name, "Playlist", "user", queryObj );
 
           var list = document.getElementById("songbird_playlistlist");
           if (list != null)
           {
             var listitem = document.createElement("listitem");
             listitem.setAttribute("label", name);
-            listitem.setAttribute("playlist_name", playlist.GetName());
+            listitem.setAttribute("playlist_name", playlist.getName());
             list.appendChild(listitem);
             list.ensureElementIsVisible(listitem);
             list.selectItem(listitem);

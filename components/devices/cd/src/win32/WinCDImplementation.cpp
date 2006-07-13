@@ -138,11 +138,11 @@ void WinCDObject::ClearCDLibraryData()
 
   if(pPlaylistManager.get())
   {
-    pPlaylistManager->DeletePlaylist(GetCDTracksTable().get(), pQuery, &retVal);
+    pPlaylistManager->DeletePlaylist(GetCDTracksTable(), pQuery, &retVal);
 
     if(pLibrary.get())
     {
-      pLibrary->SetQueryObject(pQuery.get());
+      pLibrary->SetQueryObject(pQuery);
       pLibrary->PurgeDefaultLibrary(PR_FALSE, &retVal);
     }
   }
@@ -235,7 +235,7 @@ PRBool WinCDObject::UpdateCDLibraryData()
     pPlaylistManager->CreateDefaultPlaylistManager(pQuery);
 
     nsCOMPtr<sbIPlaylist> pPlaylist;
-    pPlaylistManager->CreatePlaylist(GetCDTracksTable().get(), GetDeviceString().get(), GetDeviceString().get(), nsString(NS_LITERAL_STRING("cd")).get(), pQuery, getter_AddRefs(pPlaylist));
+    pPlaylistManager->CreatePlaylist(GetCDTracksTable(), GetDeviceString(), GetDeviceString(), NS_LITERAL_STRING("cd"), pQuery, getter_AddRefs(pPlaylist));
 
     pQuery->Execute(&bRet);
     pQuery->ResetQuery();
@@ -288,7 +288,7 @@ PRBool WinCDObject::UpdateCDLibraryData()
 
       if(!guid.IsEmpty() && pPlaylist.get())
       {
-        pPlaylist->AddByGUID(PromiseFlatString(guid).get(), GetDeviceContext().get(), -1, PR_FALSE, PR_FALSE, &bRet);
+        pPlaylist->AddByGUID(guid, GetDeviceContext(), -1, PR_FALSE, PR_FALSE, &bRet);
       }
 
       nsMemory::Free(aMetaValues[0]);

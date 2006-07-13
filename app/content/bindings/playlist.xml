@@ -349,14 +349,14 @@
         
         // Get the playlist manager, and create the internal playlisting infrastructure.
         var aPlaylistManager = new sbIPlaylistManager();
-        aPlaylistManager.CreateDefaultPlaylistManager(aDBQuery);
+        aPlaylistManager.createDefaultPlaylistManager(aDBQuery);
 
         // Make it all go now, please.
         aDBQuery.execute();
         aDBQuery.resetQuery();
         
         // Make sure we load into something empty
-        aPlaylistManager.DeletePlaylist(table, aDBQuery);
+        aPlaylistManager.deletePlaylist(table, aDBQuery);
         
         // Make it all go now, please.
         aDBQuery.execute();
@@ -421,7 +421,7 @@
         var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
         var playlistManager = new PlaylistManager();
         playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-        playlistManager.GetAllPlaylistList( queryObj );
+        playlistManager.getAllPlaylistList( queryObj );
         var resultset = queryObj.getResultObject();
         for ( var i = 0; i < resultset.getRowCount(); i++ )
         {
@@ -926,20 +926,20 @@
           }
           else
           {
-            var playlist = this.m_PlaylistManager.GetPlaylist(this.table, this.m_queryObj);
+            var playlist = this.m_PlaylistManager.getPlaylist(this.table, this.m_queryObj);
             
             if(!playlist)
-              playlist = this.m_PlaylistManager.GetSimplePlaylist(this.table, this.m_queryObj);
+              playlist = this.m_PlaylistManager.getSimplePlaylist(this.table, this.m_queryObj);
 
             if(!playlist)
-              playlist = this.m_PlaylistManager.GetDynamicPlaylist(this.table, this.m_queryObj);
+              playlist = this.m_PlaylistManager.getDynamicPlaylist(this.table, this.m_queryObj);
 
             if(!playlist)
-              playlist = this.m_PlaylistManager.GetSmartPlaylist(this.table, this.m_queryObj);
+              playlist = this.m_PlaylistManager.getSmartPlaylist(this.table, this.m_queryObj);
            
             if(playlist)
             {
-              playlist.GetColumnInfo();
+              playlist.getColumnInfo();
             }
             else
             {
@@ -2262,7 +2262,7 @@
             playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
             
             var thePlaylist;
-            if (playlist != null) thePlaylist = playlistManager.GetPlaylist(playlist, queryObj);
+            if (playlist != null) thePlaylist = playlistManager.getPlaylist(playlist, queryObj);
             
             if (playlist != null && thePlaylist == null)
             {
@@ -2285,8 +2285,8 @@
                 mediaLibrary.getColumnInfo();
                 var destcols = queryObj.getResultObject();
                 
-                var thisPlaylist = playlistManager.GetPlaylist(this.table, this.m_queryObj);
-                thisPlaylist.GetColumnInfo();
+                var thisPlaylist = playlistManager.getPlaylist(this.table, this.m_queryObj);
+                thisPlaylist.getColumnInfo();
                 var srccols = this.m_queryObj.getResultObject();
                 
                 for (var i=0;i<destcols.getRowCount();i++)
@@ -2435,7 +2435,7 @@
             
             if (thePlaylist) 
             {
-              thePlaylist.AddByGUID( guid, "songbird", -1, false, true );
+              thePlaylist.addByGUID( guid, "songbird", -1, false, true );
             }
           }
           catch( err )
@@ -2480,7 +2480,7 @@
               var playlistmgr = new PlaylistManager();
               playlistmgr = playlistmgr.QueryInterface(Components.interfaces.sbIPlaylistManager);
               
-              var playlist = playlistmgr.GetPlaylist(this.table, this.m_queryObj);
+              var playlist = playlistmgr.getPlaylist(this.table, this.m_queryObj);
               
               if (playlist)
               {
@@ -2512,7 +2512,7 @@
                 }
                 if (column)
                 {
-                  playlist = playlistmgr.GetSimplePlaylist(this.table, this.m_queryObj);
+                  playlist = playlistmgr.getSimplePlaylist(this.table, this.m_queryObj);
                   if (playlist)
                   {
                     var params = Array(playlist, column);
@@ -2578,7 +2578,7 @@
             var playlist = params[0];
             var column = params[1];
             var index = _this.tree.view.getCellText( item, column );
-            playlist.RemoveByIndex(index, true);
+            playlist.removeByIndex(index, true);
           }
           catch( err )
           {
@@ -2602,13 +2602,13 @@
             switch ( column.id )
             {
               case "id":
-                playlist.RemoveByIndex( value, true );
+                playlist.removeByIndex( value, true );
                 break;
               case "playlist_uuid":
-                playlist.RemoveByGUID( value, true );
+                playlist.removeByGUID( value, true );
                 break;
               case "url":
-                playlist.RemoveByURL( value, true );
+                playlist.removeByURL( value, true );
                 break;
             }
           }

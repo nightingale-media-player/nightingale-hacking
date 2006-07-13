@@ -86,7 +86,7 @@ function DPUpdaterRun()
     else
     {
       //Check to see if any dynamic playlists need to be updated.
-      var nCount = dpPlaylistManager.GetDynamicPlaylistsForUpdate(dpUpdaterQuery);
+      var nCount = dpPlaylistManager.getDynamicPlaylistsForUpdate(dpUpdaterQuery);
       
       if(nCount)
         DPUpdaterUpdatePlaylist(0);
@@ -116,7 +116,7 @@ function DPUpdaterUpdatePlaylist(row)
     {
       dpUpdaterPlaylistQuery.resetQuery();
       dpUpdaterPlaylistQuery.setDatabaseGUID(strGUID);
-      dpPlaylistManager.SetDynamicPlaylistLastUpdate(strName, dpUpdaterPlaylistQuery);
+      dpPlaylistManager.setDynamicPlaylistLastUpdate(strName, dpUpdaterPlaylistQuery);
     }
     
     dpUpdaterCurrentRow++;
@@ -132,7 +132,7 @@ function DPUpdaterUpdatePlaylist(row)
 
 function DPUpdaterManualRun()
 {
-  var nCount = dpPlaylistManager.GetDynamicPlaylistsForUpdate(dpUpdaterQuery);
+  var nCount = dpPlaylistManager.getDynamicPlaylistsForUpdate(dpUpdaterQuery);
   
   if(nCount)
     DPUpdaterUpdatePlaylist(0);

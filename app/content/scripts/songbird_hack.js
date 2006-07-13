@@ -608,16 +608,16 @@ function onServiceTreeCommand( theEvent )
           switch ( base_type )
           {
             case "simple":
-              aPlaylistManager.DeleteSimplePlaylist(table, aDBQuery);
+              aPlaylistManager.deleteSimplePlaylist(table, aDBQuery);
               break;
             case "dynamic":
-              aPlaylistManager.DeleteDynamicPlaylist(table, aDBQuery);
+              aPlaylistManager.deleteDynamicPlaylist(table, aDBQuery);
               break;
             case "smart":
-              aPlaylistManager.DeleteSmartPlaylist(table, aDBQuery);
+              aPlaylistManager.deleteSmartPlaylist(table, aDBQuery);
               break;
             default:
-              aPlaylistManager.DeletePlaylist(table, aDBQuery);
+              aPlaylistManager.deletePlaylist(table, aDBQuery);
               break;
           }
         }
@@ -785,16 +785,16 @@ function onServiceEditChange( evt )
           // How do I edit a table's readable name?  I have to know what type it is?  Ugh.
           switch ( base_type )
           {
-            case "simple":  playlist = aPlaylistManager.GetSimplePlaylist(table, aDBQuery);  break;
-            case "dynamic": playlist = aPlaylistManager.GetDynamicPlaylist(table, aDBQuery); break;
-            case "smart":   playlist = aPlaylistManager.GetSmartPlaylist(table, aDBQuery);   break;
-            default:        playlist = aPlaylistManager.GetPlaylist(table, aDBQuery);        break;
+            case "simple":  playlist = aPlaylistManager.getSimplePlaylist(table, aDBQuery);  break;
+            case "dynamic": playlist = aPlaylistManager.getDynamicPlaylist(table, aDBQuery); break;
+            case "smart":   playlist = aPlaylistManager.getSmartPlaylist(table, aDBQuery);   break;
+            default:        playlist = aPlaylistManager.getPlaylist(table, aDBQuery);        break;
           }
           
           if(playlist)
           {
             var strReadableName = evt.target.value;
-            playlist.SetReadableName(strReadableName);
+            playlist.setReadableName(strReadableName);
           }
         }      
         HideServiceEdit();
@@ -2351,7 +2351,7 @@ function SBNewPlaylist()
     {
       name = theSongbirdStrings.getString("playlist");
     } catch(e) {}
-    var playlist = playlistmanager.CreatePlaylist( playlistguid, name, "Playlist", "user", query );
+    var playlist = playlistmanager.createPlaylist( playlistguid, name, "Playlist", "user", query );
     SBScanServiceTreeNewEntryStart();
   }
   catch ( err )
@@ -2473,7 +2473,7 @@ function SBSubscribe( url, guid, table, readable_name )
       var aDBQuery = new sbIDatabaseQuery();
       aDBQuery.setAsyncQuery(false);
       aDBQuery.setDatabaseGUID(guid);
-      aPlaylistManager.DeletePlaylist( table, aDBQuery );
+      aPlaylistManager.deletePlaylist( table, aDBQuery );
     }
 
     SBScanServiceTreeNewEntryStart();

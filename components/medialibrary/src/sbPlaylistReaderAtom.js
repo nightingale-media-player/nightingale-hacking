@@ -100,7 +100,7 @@ CPlaylistAtom.prototype =
               this.m_playlistmgr = new PlaylistManager();
               
               this.m_library.setQueryObject(this.m_query);
-              var playlist = this.m_playlistmgr.GetPlaylist(strDestTable, this.m_query);
+              var playlist = this.m_playlistmgr.getPlaylist(strDestTable, this.m_query);
               
               if(playlist)
               {

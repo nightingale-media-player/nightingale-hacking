@@ -229,17 +229,17 @@
           var strTable = window.arguments[0].table;
           aDBQuery.setDatabaseGUID(strGUID);
                   
-          var aPlaylist = aPlaylistManager.GetSmartPlaylist(strTable, aDBQuery);
+          var aPlaylist = aPlaylistManager.getSmartPlaylist(strTable, aDBQuery);
           if(aPlaylist)
           {
             document.playlist = aPlaylist;
             document.queryObj = aDBQuery;
             
-            var strLibrary = aPlaylist.GetLibrary();
-            var strLimit = aPlaylist.GetLimit();
-            var strLimitType = aPlaylist.GetLimitType();
-            var strSelectedBy = aPlaylist.GetSelectedBy();
-            var strMatch = aPlaylist.GetMatch();
+            var strLibrary = aPlaylist.getLibrary();
+            var strLimit = aPlaylist.getLimit();
+            var strLimitType = aPlaylist.getLimitType();
+            var strSelectedBy = aPlaylist.getSelectedBy();
+            var strMatch = aPlaylist.getMatch();
             
             if(strLimit != "0")
               document.getElementById( "smart_songs_check" ).checked = true;
@@ -253,7 +253,7 @@
             if(smartConditions)
             {
               var conditionsArray = new Array();
-              aPlaylist.GetAllConstraints();
+              aPlaylist.getAllConstraints();
               
               var aResObj = aDBQuery.getResultObject();
               var rowCount = aResObj.getRowCount();
@@ -321,7 +321,7 @@
 
       queryObj.setAsyncQuery(false);
       queryObj.setDatabaseGUID(library);      
-      aPlaylistManager.GetSmartPlaylistList(queryObj);
+      aPlaylistManager.getSmartPlaylistList(queryObj);
 
       var resObj = queryObj.getResultObject();
       var playlistCount = resObj.getRowCount() + 1;
@@ -338,13 +338,13 @@
       else
       {
         newPlaylist = false;
-        name = document.playlist.GetName();
-        readable_name = document.playlist.GetReadableName();
-        document.playlist.RemoveAllConstraints(false);
+        name = document.playlist.getName();
+        readable_name = document.playlist.getReadableName();
+        document.playlist.removeAllConstraints(false);
       }
 
       var description = "Smart Playlist";
-      var aSmartPlaylist = aPlaylistManager.CreateSmartPlaylist(name, readable_name, description, "User", library, limit, limit_type, selected_by, match, queryObj);
+      var aSmartPlaylist = aPlaylistManager.createSmartPlaylist(name, readable_name, description, "User", library, limit, limit_type, selected_by, match, queryObj);
       
       // For now, just display a debug box
       /*
@@ -372,11 +372,11 @@
           case 5: conditionName = "ends with"; break;
         }
         
-        aSmartPlaylist.AddConstraint(node.metadata, conditionName, node.value, false);
+        aSmartPlaylist.addConstraint(node.metadata, conditionName, node.value, false);
       }
       //alert( text );
       
-      aSmartPlaylist.RebuildPlaylist();
+      aSmartPlaylist.rebuildPlaylist();
       
       if ( window.arguments && window.arguments[0] )
       {

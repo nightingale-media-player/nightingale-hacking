@@ -28,25 +28,25 @@
 // sbIPlaylistReader Object (RSS)
 //
 
-const SONGBIRD_PLAYLISTRSS_CONTRACTID = "@songbirdnest.com/Songbird/Playlist/Reader/RSS;1";
-const SONGBIRD_PLAYLISTRSS_CLASSNAME = "Songbird RSS Playlist Interface";
-const SONGBIRD_PLAYLISTRSS_CID = Components.ID("{4c55f911-0174-4a73-8a41-949459585aec}");
-const SONGBIRD_PLAYLISTRSS_IID = Components.interfaces.sbIPlaylistReader;
+const SONGBIRD_PLAYLISTRDF_CONTRACTID = "@songbirdnest.com/Songbird/Playlist/Reader/RDF;1";
+const SONGBIRD_PLAYLISTRDF_CLASSNAME = "Songbird RDF Playlist Interface";
+const SONGBIRD_PLAYLISTRDF_CID = Components.ID("{68008842-0c55-4c53-8e9f-5eb00e31adf6}");
+const SONGBIRD_PLAYLISTRDF_IID = Components.interfaces.sbIPlaylistReader;
 
-function CPlaylistRSS()
+function CPlaylistRDF()
 {
   jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
 }
 
 /* I actually need a constructor in this case. */
-CPlaylistRSS.prototype.constructor = CPlaylistRSS;
+CPlaylistRDF.prototype.constructor = CPlaylistRDF;
 
-/* the CPlaylistRSS class def */
-CPlaylistRSS.prototype = 
+/* the CPlaylistRDF class def */
+CPlaylistRDF.prototype = 
 {
   originalURL: "",
-
+  
   m_document: null,
   m_playlistmgr: null,
   m_playlist: null,
@@ -56,7 +56,7 @@ CPlaylistRSS.prototype =
   m_guid: "",
   m_table: "",
   m_append: false,
-    
+  
   read: function( strURL, strGUID, strDestTable, bAppendOrReplace, /* out */ errorCode )
   {
     try
@@ -100,7 +100,7 @@ CPlaylistRSS.prototype =
               this.m_playlistmgr = new PlaylistManager();
               
               this.m_library.setQueryObject(this.m_query);
-              var playlist = this.m_playlistmgr.GetPlaylist(strDestTable, this.m_query);
+              var playlist = this.m_playlistmgr.getPlaylist(strDestTable, this.m_query);
               
               if(playlist)
               {
@@ -114,7 +114,7 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::read - " + err;
+      throw "CPlaylistRDF::read - " + err;
     }
     
     return false;
@@ -128,7 +128,7 @@ CPlaylistRSS.prototype =
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::vote - " + err;
+      throw "CPlaylistRDF::vote - " + err;
     }
   },
   
@@ -136,11 +136,11 @@ CPlaylistRSS.prototype =
   {
     try
     {
-      return "RSS Playlist"; // ????
+      return "RDF Playlist"; // ????
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::name - " + err;
+      throw "CPlaylistRDF::name - " + err;
     }
   },
   
@@ -148,11 +148,11 @@ CPlaylistRSS.prototype =
   {
     try
     {
-      return "RSS Playlist"; // ????
+      return "RDF Playlist"; // ????
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::description - " + err;
+      throw "CPlaylistRDF::description - " + err;
     }
   },
   
@@ -164,15 +164,13 @@ CPlaylistRSS.prototype =
     try
     {
       retval.push( "text/xml" );
-      retval.push( "text/html" );
-      retval.push( "text/rss+xml" );
+      retval.push( "text/rdf+xml" );
       retval.push( "application/xml" );
-      
       nMIMECount.value = retval.length;
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::supportedMIMETypes - " + err;
+      throw "CPlaylistRDF::supportedMIMETypes - " + err;
     }
     return retval;
   },
@@ -184,14 +182,14 @@ CPlaylistRSS.prototype =
     
     try
     {
-      retval.push( "rss" );
+      retval.push( "rdf" );
       retval.push( "xml" );
       
       nExtCount.value = retval.length;
     }
     catch ( err )
     {
-      throw "CPlaylistRSS::supportedFileExtensions - " + err;
+      throw "CPlaylistRDF::supportedFileExtensions - " + err;
     }
     
     return retval;
@@ -203,131 +201,34 @@ CPlaylistRSS.prototype =
     try
     {
       var document = xmlDocument.documentElement;
+      dump("CPlaylistRDF::processXMLDocument - Tag Name: " + document.tagName + "\n");
       
-      if(document.tagName == "rss")
+      if(document.tagName == "rdf:RDF")
       {
-        var rssVersion = document.getAttribute("version");
-        dump("CPlaylistRSS::processXMLDocument - RSS Version: " + rssVersion + "\n");
-        
-        if(rssVersion[0] == "2")
-        {
-          ret = this.processRSSFeed(document);
-        }
+        dump("CPlaylistRDF::processXMLDocument - RSS/RDF Version: 1.0\n");
+        ret = this.processRDFFeed(document);
       }
-    }
+    }      
     catch(err)
     {
-      throw "CPlaylistRSS::processXMLDocument - " + err;
+      throw "CPlaylistRDF::ProcessXMLDocument - " + err;
     }
     
     return ret;
   },
   
-  processRSSFeed: function( xmlDocument )
+  processRDFFeed: function( xmlDocument )
   {
     try
     {
-      var channels = xmlDocument.getElementsByTagName("channel");
-      var i = 0;
       
-      for(; i < channels.length; i++)
-      {
-        var playlistTitle = "";
-        var playlistDescription = "";
-        
-        var channel = channels.item(i);
-        
-        var children = channel.childNodes;
-        var j = 0;
-        for(; j < children.length; j++)
-        {
-          var child = children.item(j);
-          
-          switch(child.nodeName)
-          {
-            case "title": this.m_playlist.SetReadableName(child.firstChild.data); break;
-            case "description": playlistDescription = ""; break;
-            case "item": this.processRSSItem(child); break;
-          }
-        }
-        
-        var ret = this.m_query.execute();
-        
-        return (ret == 0);
-      }
     }
     catch(err)
     {
-      throw "CPlaylistRSS::processRSSDocument - " + err;
+      throw "CPlaylistRDF::ProcessXMLDocument - " + err;
     }
     
     return false;
-  },
-  
-  processRSSItem: function(xmlElement)
-  {
-    try
-    {
-      var url = "";
-      var artist = "";
-      var title = "";
-      var type = "";
-      var size = "";
-
-      var i = 0;
-      var children = xmlElement.childNodes;
-      for(; i < children.length; i++)
-      {
-        var child = children.item(i);
-        
-        switch(child.nodeName)
-        {
-          case "title":
-          {
-            if(child.hasChildNodes() && child.firstChild.nodeType == 3)
-            {
-              title = child.firstChild.data;
-            }
-          }
-          break;
-
-          case "itunes:author":
-          {
-            if(child.hasChildNodes() && child.firstChild.nodeType == 3)
-            {
-              artist = child.firstChild.data;
-            }
-          }
-          break;
-          
-          case "enclosure":
-          {
-            if(child.hasAttributes() && child.nodeType == 1)
-            {
-              url = child.getAttribute("url");
-              type = child.getAttribute("type");
-              size = child.getAttribute("length");
-            }
-          }
-          break;
-        }
-      }
-      
-      if(url != "" && this.IsMediaUrl(url))
-      {
-        var aMetaKeys = new Array("artist", "title", "content_type");
-        var aMetaValues = new Array( artist, title, type );
-
-        var guid = this.m_library.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, this.m_append, true );
-        this.m_playlist.AddByGUID( guid, this.m_guid, -1, this.m_append, true );
-        
-        return true;
-      }
-    }
-    catch(err)
-    {
-      throw "CPlaylistRSS::ProcessRSSItem - " + err;
-    }
   },
   
   IsMediaUrl: function( the_url )
@@ -392,24 +293,24 @@ CPlaylistRSS.prototype =
   QueryInterface: function(iid)
   {
       if (!iid.equals(Components.interfaces.nsISupports) &&
-          !iid.equals(SONGBIRD_PLAYLISTRSS_IID))
+          !iid.equals(SONGBIRD_PLAYLISTRDF_IID))
           throw Components.results.NS_ERROR_NO_INTERFACE;
       return this;
   }
-}; //CPlaylistRSS
+}; //CPlaylistRDF
 
 /**
- * \class sbPlaylistRSSModule
+ * \class sbPlaylistRDFModule
  * \brief 
  */
-var sbPlaylistRSSModule = 
+var sbPlaylistRDFModule = 
 {
   registerSelf: function(compMgr, fileSpec, location, type)
   {
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTRSS_CID, 
-                                    SONGBIRD_PLAYLISTRSS_CLASSNAME, 
-                                    SONGBIRD_PLAYLISTRSS_CONTRACTID, 
+    compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTRDF_CID, 
+                                    SONGBIRD_PLAYLISTRDF_CLASSNAME, 
+                                    SONGBIRD_PLAYLISTRDF_CONTRACTID, 
                                     fileSpec, 
                                     location,
                                     type);
@@ -417,39 +318,39 @@ var sbPlaylistRSSModule =
 
   getClassObject: function(compMgr, cid, iid) 
   {
-    if(!cid.equals(SONGBIRD_PLAYLISTRSS_CID))
+    if(!cid.equals(SONGBIRD_PLAYLISTRDF_CID))
         throw Components.results.NS_ERROR_NO_INTERFACE;
 
     if(!iid.equals(Components.interfaces.nsIFactory))
         throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 
-    return sbPlaylistRSSFactory;
+    return sbPlaylistRDFFactory;
   },
 
   canUnload: function(compMgr)
   { 
     return true; 
   }
-}; //sbPlaylistRSSModule
+}; //sbPlaylistRDFModule
 
 /**
- * \class sbPlaylistHTMLFactory
+ * \class sbPlaylistRDFFactory
  * \brief 
  */
-var sbPlaylistRSSFactory =
+var sbPlaylistRDFFactory =
 {
   createInstance: function(outer, iid)
   {
     if (outer != null)
         throw Components.results.NS_ERROR_NO_AGGREGATION;
 
-    if (!iid.equals(SONGBIRD_PLAYLISTRSS_IID) &&
+    if (!iid.equals(SONGBIRD_PLAYLISTRDF_IID) &&
         !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_INVALID_ARG;
 
-    return (new CPlaylistRSS()).QueryInterface(iid);
+    return (new CPlaylistRDF()).QueryInterface(iid);
   }
-}; //sbPlaylistRSSFactory
+}; //sbPlaylistRDFFactory
 
 /**
  * \function NSGetModule
@@ -457,5 +358,5 @@ var sbPlaylistRSSFactory =
  */
 function NSGetModule(comMgr, fileSpec)
 { 
-  return sbPlaylistRSSModule;
+  return sbPlaylistRDFModule;
 } //NSGetModule

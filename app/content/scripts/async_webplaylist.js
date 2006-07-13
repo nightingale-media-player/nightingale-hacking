@@ -155,7 +155,7 @@ try
     href_loop.aMediaLibrary.setQueryObject( href_loop.aDBQuery );
     href_loop.aMediaLibrary.createDefaultLibrary(); // Does waitForCompletion();
     href_loop.aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-    href_loop.aPlaylistManager.CreateDefaultPlaylistManager( href_loop.aDBQuery );
+    href_loop.aPlaylistManager.createDefaultPlaylistManager( href_loop.aDBQuery );
     href_loop.inserted = new Array();
     href_loop.aPlaylist = null;
     href_loop.HandleUrl = // Useful function to be called by the internal code
@@ -171,10 +171,10 @@ try
         if ( this.aPlaylist == null )
         {
           // When we first find media, flip the webplaylist. 
-          this.aPlaylistManager.DeletePlaylist( WEB_PLAYLIST_TABLE, 
+          this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, 
                                                 this.aDBQuery );
           //this.aDBQuery.resetQuery();
-          this.aPlaylist = this.aPlaylistManager.CreatePlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
+          this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
           this.data.boolValue = true;
           theWebPlaylistQuery = this.aDBQuery;
           //this.aDBQuery.resetQuery();
@@ -200,7 +200,7 @@ try
           var values = new Array( ConvertUrlToDisplayName( url ) );
           var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, false, false );
           // XXXredfive
-          this.aPlaylist.AddByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
+          this.aPlaylist.addByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
           dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
           this.inserted.push( url );
           

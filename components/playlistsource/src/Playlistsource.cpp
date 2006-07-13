@@ -1125,13 +1125,13 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
 
   mon.Exit();
 
-  rv = pPlaylistManager->GetSimplePlaylist(table_name.get(),
-                                           pQuery.get(),
+  rv = pPlaylistManager->GetSimplePlaylist(table_name,
+                                           pQuery,
                                            getter_AddRefs(pSimplePlaylist));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = pPlaylistManager->GetSmartPlaylist(table_name.get(),
-                                          pQuery.get(),
+  rv = pPlaylistManager->GetSmartPlaylist(table_name,
+                                          pQuery,
                                           getter_AddRefs(pSmartPlaylist));
   NS_ENSURE_SUCCESS(rv, rv);
 

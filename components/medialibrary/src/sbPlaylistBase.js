@@ -25,49 +25,37 @@
  */
 
 //
-// sbIDynamicPlaylist Object
+// CPlaylistBase Object
 //
 
-const SONGBIRD_PLAYLIST_IID = Components.interfaces.sbIPlaylist;
-
-const SONGBIRD_DYNAMICPLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/DynamicPlaylist;1";
-const SONGBIRD_DYNAMICPLAYLIST_CLASSNAME = "Songbird Dynamic Playlist Interface"
-const SONGBIRD_DYNAMICPLAYLIST_CID = Components.ID("{6322a435-1e78-4825-91c8-520e829c23b8}");
-const SONGBIRD_DYNAMICPLAYLIST_IID = Components.interfaces.sbIDynamicPlaylist;
-
-const DYNAMICPLAYLIST_LIST_TABLE_NAME = "dynamicplaylist_list";
-
-function CDynamicPlaylist()
+function CPlaylistBase()
 {
-  var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-  query = query.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-
-  this.m_internalQueryObject = query;
 }
 
-CDynamicPlaylist.prototype.constructor = CDynamicPlaylist;
-
-/* the CPlaylist class def */
-CDynamicPlaylist.prototype = 
+/* the CPlaylistBase class def */
+CPlaylistBase.prototype = 
 {
+  m_strPlaylistTableName: "",
   m_strName: "",
   m_strReadableName: "",
+  
   m_queryObject: null,
   m_internalQueryObject: null,
   
-  SetQueryObject: function(queryObj)
+  setQueryObject: function(queryObj)
   {
     this.m_queryObject = queryObj; 
     this.m_internalQueryObject.setDatabaseGUID(queryObj.getDatabaseGUID());
+    
     return;
   },
   
-  GetQueryObject: function()
+  getQueryObject: function()
   {
     return this.m_queryObject;
   },
   
-  AddByGUID: function(mediaGUID, serviceGUID, nPosition, bReplace, bWillRunLater)
+  addByGUID: function(mediaGUID, serviceGUID, nPosition, bReplace, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -76,7 +64,7 @@ CDynamicPlaylist.prototype =
       
       if(bReplace)
       {
-        var index = this.FindByGUID(mediaGUID);
+        var index = this.findByGUID(mediaGUID);
         if(index != -1)
           return true;
       }
@@ -95,7 +83,7 @@ CDynamicPlaylist.prototype =
     return false;
   },
   
-  RemoveByGUID: function(mediaGUID, bWillRunLater)
+  removeByGUID: function(mediaGUID, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -116,7 +104,7 @@ CDynamicPlaylist.prototype =
     return false;
   },
   
-  RemoveByIndex: function(mediaIndex, bWillRunLater)
+  removeByIndex: function(mediaIndex, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -137,7 +125,7 @@ CDynamicPlaylist.prototype =
     return false;
   },
   
-  MoveByGUID: function(mediaGUID, nPosition)
+  moveByGUID: function(mediaGUID, nPosition)
   {
     if(m_queryObject != null)
     {
@@ -148,7 +136,7 @@ CDynamicPlaylist.prototype =
     return false;
   },
   
-  MoveByIndex: function(mediaIndex, nPosition)
+  moveByIndex: function(mediaIndex, nPosition)
   {
     if(m_queryObject != null)
     {
@@ -159,7 +147,7 @@ CDynamicPlaylist.prototype =
     return false;
   },
 
-  FindByGUID: function(mediaGUID)
+  findByGUID: function(mediaGUID)
   {
     if(this.m_internalQueryObject != null)
     {
@@ -170,15 +158,13 @@ CDynamicPlaylist.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      
-      if(resObj.getRowCount())
-        return resObj.getRowCell(0, 0);
+      return resObj.getRowCell(0, 0);
     }
     
     return -1;
   },
   
-  FindByIndex: function(mediaIndex)
+  findByIndex: function(mediaIndex)
   {
     if(this.m_internalQueryObject != null)
     {
@@ -189,14 +175,13 @@ CDynamicPlaylist.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      if(resObj.getRowCount())
-        return resObj.getRowCell(0, 0);
+      return resObj.getRowCell(0, 0);
     }
     
     return "";
   },
 
-  GetColumnInfo: function()
+  getColumnInfo: function()
   {
     if(this.m_queryObject != null)
     {
@@ -208,7 +193,7 @@ CDynamicPlaylist.prototype =
     }
   },
   
-  SetColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
+  setColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -222,18 +207,7 @@ CDynamicPlaylist.prototype =
       strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\", ";
       strQuery += "sort_weight = \"" + sortWeight + "\", ";
       strQuery += "width = \"" + colWidth + "\" ";
-      strQuery += "WHERE column_name = \"" + strColumn + "\"";
-      
-      this.m_queryObject.addQuery(strQuery);
-      
-      strQuery = "UPDATE \"library_desc\" SET ";
-      strQuery += "readable_name = \"" + strReadableName + "\", ";
-      strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\", ";
-      strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\", ";
-      strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\", ";
-      strQuery += "sort_weight = \"" + sortWeight + "\", ";
-      strQuery += "width = \"" + colWidth + "\" ";
-      strQuery += "WHERE column_name = \"" + strColumn + "\"";
+      strQuery += "WHERE = \"" + strColumn + "\"";
       
       this.m_queryObject.addQuery(strQuery);
       
@@ -245,7 +219,7 @@ CDynamicPlaylist.prototype =
     }    
   },
 
-  GetTableInfo: function()
+  getTableInfo: function()
   {
     if(this.m_queryObject != null)
     {
@@ -257,7 +231,7 @@ CDynamicPlaylist.prototype =
     }
   },
   
-  AddColumn: function(strColumn, strDataType)
+  addColumn: function(strColumn, strDataType)
   {
     if(this.m_queryObject != null)
     {
@@ -272,12 +246,12 @@ CDynamicPlaylist.prototype =
     return;
   },
   
-  DeleteColumn: function(strColumn)
+  deleteColumn: function(strColumn)
   {
     return;
   },
 
-  GetNumEntries: function()
+  getNumEntries: function()
   {
     if(this.m_queryObject != null)
     {
@@ -295,7 +269,7 @@ CDynamicPlaylist.prototype =
     return 0;
   },  
   
-  GetEntry: function(nEntry)
+  getEntry: function(nEntry)
   {
     if(this.m_queryObject != null)
     {
@@ -311,7 +285,7 @@ CDynamicPlaylist.prototype =
     return 0;
   },
 
-  GetAllEntries: function()
+  getAllEntries: function()
   {
     if(this.m_queryObject != null)
     {
@@ -328,7 +302,7 @@ CDynamicPlaylist.prototype =
     return 0;
   },
 
-  GetColumnValueByIndex: function(mediaIndex, strColumn)
+  getColumnValueByIndex: function(mediaIndex, strColumn)
   {
     if(this.m_queryObject != null)
     {
@@ -347,7 +321,7 @@ CDynamicPlaylist.prototype =
     return "";
   },
   
-  GetColumnValueByGUID: function(mediaGUID, strColumn)
+  getColumnValueByGUID: function(mediaGUID, strColumn)
   {
     if(this.m_queryObject != null)
     {
@@ -366,7 +340,7 @@ CDynamicPlaylist.prototype =
     return "";
   },
 
-  GetColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount)
+  getColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount)
   {
     nValueCount = 0;
     var aValues = new Array();
@@ -403,7 +377,7 @@ CDynamicPlaylist.prototype =
     return aValues;
   },
   
-  GetColumnValuesByGUID: function(mediaGUID, nColumnCount, aColumns, nValueCount)
+  getColumnValuesByGUID: function(mediaGUID, nColumnCount, aColumns, nValueCount)
   {
     nValueCount = 0;
     var aValues = new Array();
@@ -440,7 +414,7 @@ CDynamicPlaylist.prototype =
     return aValues;
   },
   
-  SetColumnValueByIndex: function(mediaIndex, strColumn, strValue)
+  setColumnValueByIndex: function(mediaIndex, strColumn, strValue)
   {
     if(this.m_queryObject != null)
     {
@@ -460,7 +434,7 @@ CDynamicPlaylist.prototype =
     return;
   },
   
-  SetColumnValueByGUID: function(mediaGUID, strColumn, strValue)
+  setColumnValueByGUID: function(mediaGUID, strColumn, strValue)
   {
     if(this.m_queryObject != null)
     {
@@ -480,7 +454,7 @@ CDynamicPlaylist.prototype =
     return;
   },
 
-  SetColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount, aValues)
+  setColumnValuesByIndex: function(mediaIndex, nColumnCount, aColumns, nValueCount, aValues)
   {
     if(this.m_queryObject != null ||
        nColumnCount != nValueCount)
@@ -511,7 +485,7 @@ CDynamicPlaylist.prototype =
     return;
   },
   
-  SetColumnValuesByGUID: function(mediaGUID, nColumnCount, aColumns, nValueCount, aValues)
+  setColumnValuesByGUID: function(mediaGUID, nColumnCount, aColumns, nValueCount, aValues)
   {
     if(this.m_queryObject != null ||
        nColumnCount != nValueCount)
@@ -542,23 +516,23 @@ CDynamicPlaylist.prototype =
     return;
   },
   
-  SetName: function(strName)
+  setName: function(strName)
   {
     this.m_strName = strName;
     return;
   },
   
-  GetName: function()
+  getName: function()
   {
     return this.m_strName;
   },
   
-  SetReadableName: function(strReadableName)
+  setReadableName: function(strReadableName)
   {
     this.m_queryObject.resetQuery();
     
     strReadableName = strReadableName.replace(/"/g, "\"\"");
-    this.m_queryObject.addQuery("UPDATE " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " SET readable_name = \"" + strReadableName + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE " + this.m_strPlaylistTableName + " SET readable_name = \"" + strReadableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -566,11 +540,12 @@ CDynamicPlaylist.prototype =
     return;
   },
   
-  GetReadableName: function()
+  getReadableName: function()
   {
     var strReadableName = "";
+    
     this.m_queryObject.resetQuery();
-    this.m_queryObject.addQuery("SELECT readable_name FROM " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT readable_name FROM " + this.m_strPlaylistTableName + " WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -582,185 +557,4 @@ CDynamicPlaylist.prototype =
     
     return strReadableName;
   },
-
-  SetPeriodicity: function(nPeriodicity, bWillRunLater)
-  {
-    if(this.m_queryObject != null)
-    {
-      if(!bWillRunLater)
-        this.m_queryObject.resetQuery();
-      
-      this.m_queryObject.addQuery("UPDATE \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" SET periodicity  = \"" + nPeriodicity + "\" WHERE name = \"" + this.m_strName + "\"");
-      
-      if(!bWillRunLater)
-      {
-        this.m_queryObject.execute();
-        this.m_queryObject.waitForCompletion();
-      }
-    }
-    
-    return;
-  },
-  
-  GetPeriodicity: function()
-  {
-    if(this.m_queryObject != null)
-    {
-      this.m_queryObject.resetQuery();
-      this.m_queryObject.addQuery("SELECT periodicity FROM \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
-      
-      this.m_queryObject.execute();
-      this.m_queryObject.waitForCompletion();
-      
-      var resObj = this.m_queryObject.getResultObject();
-      if(resObj.getRowCount > 0)
-      {
-        return resObj.getRowCell(0, 0);
-      }
-    }
-    
-    return 0;
-  },
-  
-  SetURL: function(strURL, bWillRunLater)
-  {
-  if(this.m_queryObject != null)
-    {
-      if(!bWillRunLater)
-        this.m_queryObject.resetQuery();
-      
-      this.m_queryObject.addQuery("UPDATE " + DYNAMICPLAYLIST_LIST_TABLE_NAME + " SET url = \"" + strURL + "\" WHERE name = \"" + this.m_strName + "\"");
-      
-      if(!bWillRunLater)
-      {
-        this.m_queryObject.execute();
-        this.m_queryObject.waitForCompletion();
-      }
-    }
-    
-    return;
-  },
-  
-  GetURL: function()
-  {
-    if(this.m_queryObject != null)
-    {
-      this.m_queryObject.resetQuery();
-      this.m_queryObject.addQuery("SELECT url FROM \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
-      
-      this.m_queryObject.execute();
-      this.m_queryObject.waitForCompletion();
-      
-      var resObj = this.m_queryObject.getResultObject();
-      if(resObj.getRowCount > 0)
-      {
-        return resObj.getRowCell(0, 0);
-      }
-    }
-
-    return "";
-  },
-
-  SetLastUpdateTime: function()
-  {
-    if(this.m_queryObject != null)
-    {
-      var dNow = new Date();
-      
-      this.m_queryObject.resetQuery();
-      this.m_queryObject.addQuery("UPDATE \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" SET last_update = " + dNow.getTime() + " WHERE name = \"" + this.m_strName + "\"");
-      
-      this.m_queryObject.execute();
-      this.m_queryObject.waitForCompletion();
-    }    
-  },
-  
-  GetLastUpdateTime: function()
-  {
-    if(this.m_queryObject != null)
-    {
-      this.m_queryObject.resetQuery();
-      this.m_queryObject.addQuery("SELECT last_update FROM \"" + DYNAMICPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
-      
-      this.m_queryObject.execute();
-      this.m_queryObject.waitForCompletion();
-      
-      var resObj = this.m_queryObject.getResultObject();
-      if(resObj.getRowCount > 0)
-        return resObj.getRowCell(0, 0);
-    }
-
-    return 0;
-  },
-
-  QueryInterface: function(iid)
-  {
-      if (!iid.equals(Components.interfaces.nsISupports) &&
-          !iid.equals(SONGBIRD_DYNAMICPLAYLIST_IID) && 
-          !iid.equals(SONGBIRD_PLAYLIST_IID))
-          throw Components.results.NS_ERROR_NO_INTERFACE;
-      return this;
-  }
 };
-
-/**
- * \class sbDynamicPlaylistModule
- * \brief 
- */
-var sbDynamicPlaylistModule = 
-{
-  registerSelf: function(compMgr, fileSpec, location, type)
-  {
-      compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-      compMgr.registerFactoryLocation(SONGBIRD_DYNAMICPLAYLIST_CID, 
-                                      SONGBIRD_DYNAMICPLAYLIST_CLASSNAME, 
-                                      SONGBIRD_DYNAMICPLAYLIST_CONTRACTID, 
-                                      fileSpec, 
-                                      location,
-                                      type);
-  },
-
-  getClassObject: function(compMgr, cid, iid) 
-  {
-      if (!cid.equals(SONGBIRD_DYNAMICPLAYLIST_CID))
-          throw Components.results.NS_ERROR_NO_INTERFACE;
-
-      if (!iid.equals(Components.interfaces.nsIFactory))
-          throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-      return sbDynamicPlaylistFactory;
-  },
-
-  canUnload: function(compMgr)
-  { 
-    return true; 
-  }
-};
-
-/**
- * \class sbDynamicPlaylistFactory
- * \brief 
- */
-var sbDynamicPlaylistFactory =
-{
-    createInstance: function(outer, iid)
-    {
-        if (outer != null)
-            throw Components.results.NS_ERROR_NO_AGGREGATION;
-    
-        if (!iid.equals(SONGBIRD_DYNAMICPLAYLIST_IID) &&
-            !iid.equals(Components.interfaces.nsISupports))
-            throw Components.results.NS_ERROR_INVALID_ARG;
-
-        return (new CDynamicPlaylist()).QueryInterface(iid);
-    }
-}; //sbDynamicPlaylistFactory
-
-/**
- * \function NSGetModule
- * \brief 
- */
-function NSGetModule(comMgr, fileSpec)
-{ 
-  return sbDynamicPlaylistModule;
-} //NSGetModule

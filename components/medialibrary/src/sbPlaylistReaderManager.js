@@ -121,10 +121,10 @@ CPlaylistReaderManager.prototype =
       aDBQuery.setAsyncQuery(false);
       aDBQuery.setDatabaseGUID(strGUID);
 
-      var playlist = aPlaylistManager.GetPlaylist(strName, aDBQuery);
+      var playlist = aPlaylistManager.getPlaylist(strName, aDBQuery);
       
       if(!playlist)
-        aPlaylistManager.CreatePlaylist(strName, strReadableName, strDescription, strPlaylistType, aDBQuery);
+        aPlaylistManager.createPlaylist(strName, strReadableName, strDescription, strPlaylistType, aDBQuery);
         
       err.value = 0;
       

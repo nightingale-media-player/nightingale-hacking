@@ -547,7 +547,7 @@ function SBInitializeNamedDatabase( db_name )
     
     // Ger the playlist manager, and create the internal playlisting infrastructure.
     var aPlaylistManager = new sbIPlaylistManager();
-    aPlaylistManager.CreateDefaultPlaylistManager(aDBQuery);
+    aPlaylistManager.createDefaultPlaylistManager(aDBQuery);
   }
   catch(err)
   {

@@ -95,7 +95,7 @@ CPlaylistReaderListener.prototype =
         var dbQuery = new this.sbIDatabaseQuery();
         dbQuery.setDatabaseGUID(this.serviceGuid);
         dbQuery.setAsyncQuery(false);
-        var playlist = aPlaylistManager.GetDynamicPlaylist(this.destinationTable, dbQuery);
+        var playlist = aPlaylistManager.getDynamicPlaylist(this.destinationTable, dbQuery);
         
         if(playlist)
         {

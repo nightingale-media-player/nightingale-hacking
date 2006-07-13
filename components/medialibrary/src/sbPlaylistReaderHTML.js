@@ -266,7 +266,7 @@ CPlaylistHTML.prototype =
         var pPlaylistManager = new PlaylistManager();
         
         pLibrary.setQueryObject(pQuery);
-        pPlaylist = pPlaylistManager.GetPlaylist(strDestTable, pQuery);
+        pPlaylist = pPlaylistManager.getPlaylist(strDestTable, pQuery);
         
         dump( "***** strDestTable - " + strDestTable + "    strGUID - " + strGUID + "    pPlaylist - " + pPlaylist + "\n" );
 
@@ -292,7 +292,7 @@ CPlaylistHTML.prototype =
             var aMetaValues = new Array( this.ConvertUrlToDisplayName( url ) );
 
             var guid = pLibrary.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
-            pPlaylist.AddByGUID( guid, strGUID, -1, replace, true );
+            pPlaylist.addByGUID( guid, strGUID, -1, replace, true );
             
             inserted.push( url );
           }
@@ -304,7 +304,7 @@ CPlaylistHTML.prototype =
     }
     catch ( err )
     {
-      throw "\nCPlaylistHTML::CreatePlaylist\n" + strGUID + "\n" + strDestTable + "\n" + links_array + "\n" + replace + "\n" + err;
+      throw "\nCPlaylistHTML::createPlaylist\n" + strGUID + "\n" + strDestTable + "\n" + links_array + "\n" + replace + "\n" + err;
     }
   },
 
