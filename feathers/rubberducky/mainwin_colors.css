@@ -401,6 +401,12 @@ filterlist
   background-image: url(default/bkgd_clouds.png) !important;
 }
 
+filterlist > tree
+{
+  background-color: transparent !important;
+  /* opacity: 0.8; slow on the mac :( **/
+}
+
 /* striping for genre filter */
 filterlist > tree > treechildren::-moz-tree-row
 {
@@ -462,13 +468,18 @@ playlist > stack > vbox
 
 #playlist_toolbar_bkg,
 playlist > stack > vbox > hbox#playlist_toolbar_bkg
-{
+{ 
   border-top: 1px solid #686a6a;
 }
 
 playlist > stack > vbox > hbox
 {
   background-color: #000 !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row
+{
+  border: 0px solid #000 !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row( odd )
@@ -513,7 +524,6 @@ playlist > stack > vbox > hbox
 
 #playlist_tree > treechildren::-moz-tree-progressmeter( odd )
 {
- background-color: #000 !important;
  color: #eee !important;
 }
 
