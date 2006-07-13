@@ -63,7 +63,7 @@
       <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
       <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
       <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
-      <field name="size">29</field>
+      <field name="size">30</field> <!-- This is approximate.  The skin will determine its actual value and we have to recalculate it. -->
       <field name="distance">0</field>
       <field name="current">0</field>
       <field name="anim_start">0</field>
@@ -334,11 +334,27 @@
             hbox.appendChild( plus );
             this.parent.insertBefore( hbox, before );
             
-            // See if we're overshooting and fix it.
+            // See if we've miscalculated and fix it.
             var box_size = hbox.boxObject.height;
-            var miscalculation = box_size - this.size;
-            window.resizeBy( 0, miscalculation );
-            this.size = box_size;
+            if ( box_size != this.size ) // Ooops!
+            {
+              // Get the growbox
+              var grow_nodes = this.parent.getElementsByAttribute( 'sbtype', 'growbox' );
+              if ( grow_nodes.length != 1 ) {
+                // ??? really bad?
+              }
+              var growbox = grow_nodes.item( 0 );
+              // If the growbox has a height here, we miscalculated the animation
+              var miscalculation = - growbox.boxObject.height;
+              // So correct it
+              window.resizeBy( 0, miscalculation );
+              // Then update our "current" and "distance" calculations to
+              // reflect the size correction (for multiple insertions).
+              this.current += miscalculation;
+              this.distance = this.distance * box_size / this.size;
+              // Remember the correct box size from here out
+              this.size = box_size;
+            }
             
             // Set the value based on the incoming data
             if ( value )
@@ -606,7 +622,6 @@
           ]]>
         </body>
       </method>
-
 
     </implementation>
  
