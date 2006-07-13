@@ -313,7 +313,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
               if (usbDevice)
               {
                 
-                usbDevice->OnUSBDeviceEvent(DBT_DEVICEARRIVAL == wParam, strDeviceName.get(), strDeviceGUID.get(), &retVal);
+                usbDevice->OnUSBDeviceEvent(DBT_DEVICEARRIVAL == wParam, strDeviceName, strDeviceGUID, &retVal);
               }
             }
           }
