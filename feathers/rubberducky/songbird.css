@@ -24,7 +24,35 @@
 //
  */
 
-/* You can only use the @ at the top of the file. **/
+/** 
+************************************************************************************************************************************************
+=SONGBIRD CSS=
+Welcome to Songbird's CSS.  If you're here trying to make Songbird better you should know how our CSS
+is structured.  We think of Songbird as having 3 layers of CSS: Size & Position, Color and Images.
+
+==Size & Position==
+This includes margins, padding, -moz-styles, size, alignment, etc.  If it's not a color or an image or 
+-moz-appearance: none, it belongs in the base style sheet.  For the Main Window, this is mainwin.css,
+for the mini this is mini.css, and for everything else, dialog.css.
+
+==Color==
+Everything that can be colored in Songbird can be colored in one stylesheet.  For the Main window, this is 
+mainwin_colors.css, for the mini this is mini_colors.css, and for everything else, dialog_colors.css.
+
+==Images==
+All images used in rendering Songbird can be found on this stylesheet.  For the Main window, 
+this is mainwin_images.css.  Dialogs have only 2 images for check boxes so we've left those in and
+saved another file for the dialogs.  If you'd like to make one, be sure to add it to this stylesheet
+in the Cascade section.
+************************************************************************************************************************************************
+*/ 
+
+ /** 
+************************************************************************************************************************************************
+CASCADE!
+You can only use the @ at the top of the file.
+************************************************************************************************************************************************
+*/ 
 @import url("chrome://global/skin/xulscrollbars.css");
 @import url(mainwin.css); /* css for the main application window **/
 @import url(mainwin_colors.css); /* css for the main application window colors **/
@@ -482,641 +510,176 @@ DIALOG BOXES and their buttons
 }
 
 /** 
-************************************************************************************************************************************************
+****************************************************************************
 TEXTBOXES for dialogs and forms.
-************************************************************************************************************************************************
+****************************************************************************
 */
-.textbox-input-box
-{
-  -moz-appearance: none !important;
-  background-color: #000 !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;  
-}
-
+.textbox-input-box,
 .drawer_box textbox,
 .dialog_textbox,
-.smart_condition_box textbox
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
-  color: #FFF !important;
-  height: 30px !important;
-  padding-top: 2px !important;
-  padding-left: 3px !important;
-}
-
+.smart_condition_box textbox,
 .drawer_box input:focus,
 .dialog_textbox input:focus,
-.smart_condition_box input:focus
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #4A4E48 !important; 
-  color: #FFF !important;
-  height: 30px !important;
-  padding-top: 0px !important;
-  padding-left: 0px !important;
-}
-
+.smart_condition_box input:focus,
 .drawer_box[disabled="true"],
 .dialog_textbox[disabled="true"],
 .smart_condition_box[disabled="true"]
 {
-  border: 1px solid !important;
-  -moz-border-top-colors: #333 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  -moz-border-bottom-colors: #333 !important;
-  color: #666 !important;
+  -moz-appearance: none !important;
 }
 
 /** 
-*FIRST RUN dialog, aka, the Bundle Picker.
-************************************************************************************************************************************************
+**************************************************************************
+LISTBOXES for dialogs and forms.
+****************************************************************************
 */
-.sbextensions_box
-{
-  -moz-appearance: none !important;
-  background-color: transparent !important;
-  color: #CCC !important;
-}
-
-richlistbox
-{
-  -moz-appearance: none !important;
-  background: transparent !important;
-  padding: 10px 10px 10px 10px !important;
-  
-}
-
-richlistitem[selected="true"]
-{
-  -moz-appearance: none !important;
-  background: transparent !important;
-  color: #fff !important;
-}
-
-richlistitem > checkbox,
-richlistitem > checkbox[selected="false"]
-{
-  -moz-appearance: none !important;
-  background: transparent !important;
-  opacity: .6 !important;
-}
-richlistitem:focus > checkbox,
-richlistitem:focus > checkbox[selected="true"]
-{
-  -moz-appearance: none !important;
-  background: transparent !important;  
-  opacity: 1 !important;  
-}
-
-richlistitem > label
-{
-  -moz-appearance: none !important;
-  background: transparent !important;
-  color: #ccc !important;
-  margin: 2px 0px 0px -3px !important;
-}
-richlistitem[selected="true"] > label
-{
-  -moz-appearance: none !important;
-  background: transparent !important;  
-  color: #ccc !important;
-}
-  
-
-/* Listboxes for dialogs */
-
 .dialog_listbox
 {
   -moz-appearance: none !important; /* grrrr! */
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #333 !important; 
 }
 
-.dialog_listbox > listitem
-{
-  background-color: #333 !important; /* doesn't seem to inherit the #333 from .dialog_listbox */
-  color: #FFF !important;
-}
-
-.dialog_listbox > listitem[selected=true]
-{
-  background-color: #4A4E48 !important;
-}
-
-.formgrouping
-{
-  padding: 5px !important; 
-  -moz-border-radius: 5px !important; 
-  border: 1px solid #3B3C3F !important;
-}
 
 /** 
-************************************************************************************************************************************************
+***********************************************************************
 CHECKBOXES, boxes, labels, images, states.
-************************************************************************************************************************************************
+**********************************************************************
 */
-
-/* ::::: checkbox ::::: */
-
-checkbox {
-  -moz-box-align: center;
-  background-color: transparent !important;
-  -moz-box-align: center;   
-  opacity: 0.7 !important; /* When it's not focused, dim it slightly. */
-}
-
-.checkbox-label-box {
-  -moz-margin-start: 2px;
-  border: 1px solid transparent;
-  padding: 0px 1px;
-}
-
-.checkbox-icon {
-  -moz-margin-end: 2px;
-}
-
-.checkbox-label {
-  margin: 0 !important;
-  color: #FFF !important;
-  background-color: Transparent !important;
-}
-
-/* ..... focused state ..... */
-
-checkbox:focus{
-  opacity: 1 !important;
-}
-
-checkbox:focus > .checkbox-label-box {
-  -moz-appearance: none !important;
-}
-
-/* ..... disabled state ..... */
-
-checkbox[disabled="true"] > .checkbox-check {
-  -moz-appearance: none !important;
-  background-color: #333 !important;
-}
-
-checkbox[disabled="true"] {
-  color: #666 !important;
-}
-
-/* ::::: checkmark image ::::: */
-
-.checkbox-check {
-  -moz-box-align: center;
-  border: 2px solid;
-  -moz-appearance: none !important; 
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
-  min-width: 13px;
-  min-height: 13px;
-  background: -moz-Field no-repeat 50% 50%;
-}
-  
-checkbox:hover:active > .checkbox-check {
-  -moz-appearance: none !important;
-  background-color: #000 !important;
-}
-
-/* ..... checked state ..... */
-
+.checkbox-check,
+checkbox:focus > .checkbox-label-box,
+checkbox[disabled="true"] > .checkbox-check,
+checkbox:hover:active > .checkbox-check,
 checkbox[checked="true"] > .checkbox-check 
 {
   -moz-appearance: none !important;
-  background-color: #000 !important;
-  background-image: url("default/check_fff.png") !important;
 }
 
-checkbox[checked="true"][disabled="true"] > .checkbox-check {
-  background-color: #000 !important;
+/** 
+****************************************************************************************************************
+The following styles are for the specific dialog boxes themselves.
+*/
+/** 
+************************************************************************
+*FIRST RUN dialog, aka, the Bundle Picker.
+*************************************************************************
+*/
+.sbextensions_box,
+richlistbox,
+richlistitem[selected="true"],
+richlistitem > checkbox,
+richlistitem > checkbox[selected="false"],
+richlistitem:focus > checkbox,
+richlistitem:focus > checkbox[selected="true"],
+richlistitem > label,
+richlistitem[selected="true"] > label
+{
+  -moz-appearance: none !important;
 }
 
-/* Smart Playlist Builder */
+/** 
+********************************************************************
+SMART PLAYLIST BUILDER
+*******************************************************************
+*/
 #smartpl_select_library
 {
   -moz-appearance: none !important; /* grrrr! */
-  margin: 10px 0px 0px 0px !important;
 }
 
-.drawer_box,
-.smart_condition_box
-{
-  -moz-border-radius: 5px !important; 
-  border: 1px solid #3B3C3F !important;
-  padding-right: 5px !important;
-}
+/** 
+*******************************************************************
+MEDIA SCAN
+*********************************************************************
+*/
 
-#smart_playlist_name_label
-{
-  margin-top: 7px !important; /* lines this label with it's textbox counterpart in the smart playlist builder */
-}
-
-#smart_songs_check,
-#smart_match_check
-{
-  margin-top: 0px !important; /* the align="center" of the parent needs this to have no top margin. */
-}
-
-#smart_songs_count
-{
-  width: 40px !important;
-}
-
-.drawer_box,
-.smart_condition_box
-{
-  border: 1px solid #99A195 !important;
-  -moz-border-radius: 5px !important; 
-}
-
-.smart_condition_plus
-{
-  /* if you want an icon */
-}
-
-.smart_condition_minus
-{
-  /* if you want an icon */
-}
-
-/* Media Scan Progress Dialog */
-
-#media_scan
-{
-  background-color: transparent !important;
-  width: 500px !important;
-  color: #FFF !important;
-}
-
-#songbird_media_scan 
+#songbird_media_scan,
+#songbird_media_scan .progress-bar 
 { 
    -moz-appearance: none !important; /* grrrr! */ 
-   margin: 2px 0px 0px 0px !important;
-   background-color: #000 !important; 
-   border: none !important;
-   color: #FFF !important;
-} 
-
-#songbird_media_scan .progress-bar { 
-   -moz-appearance: none !important; /* grrrr! */ 
-   background-color: #666 !important;
 } 
   
-#songbird_media_scan[mode="undetermined"] { 
-  background-color: #333 !important;
-} 
-
-#songbird_media_scan_title,
-#songbird_media_scan_label
-{color: #FFF !important;}
-
-/* Add to Playlist */
-#add_to_playlist
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 200px !important;
-  /*background-color: transparent !important; BUGGY*/
-}
-
+/** 
+*******************************************************************
+ADD TO PLAYLIST
+********************************************************************
+*/
+#add_to_playlist,
 #jump_to_file
 {
   -moz-appearance: none !important; /* grrrr! */
-  width: 420px !important;
-  height: 500px !important;
-  color: #FFF !important;
-  /*background-color: transparent !important; BUGGY*/
 }
 
-#songbird_playlistlist > listitem
-{
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  background-color: #FFF !important;
-  color: #333 !important;
-}
-
-#songbird_playlistlist > listitem[selected=true]
-{
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  background-color: #4A4E48 !important;
-  color: #FFF !important;
-}
-
-/* Download Dialog */
-#subscribe_folder_path,
-#download_folder_path
-{
-  width: 365px !important;
-}
-
-#subscribe_url,
-#songbird_open_url
-{
-  width: 420px !important;
-}
-
-#subscribe_interval
-{
-  width: 40px !important;
-}
-
-#watchfolder
-{
-  width: 400px !important;
-}
+/** 
+***************************************************************
+DOWNLOAD DIALOG
+******************************************************************
+*/
 
 input,
 checkbox
 {
   -moz-appearance: none !important;
-  -moz-user-focus: normal !important;
 }
-
 
 /** 
 ************************************************************************************************************************************************
-MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS. Poppin' Fresh.
 ************************************************************************************************************************************************
 */
 /** 
-************************************************************************************************************************************************
-THE MENUS
-Poppin' Fresh.
-************************************************************************************************************************************************
+*******************************************************************
+THE TOP MENU (File, Edit, Etc...)
+******************************************************************
 */
-
-/* The Top Menu (File, Edit, Etc...) Styles **/
-
-#songbird_menu
-{
-  -moz-appearance: none !important;
-  height: 10px !important;
-  padding: 0px !important;
-  margin: 0px !important;
-}
-
-#songbird_menu > menu > label
-{
-  -moz-appearance: none !important;
-  background-color: transparent !important;
-  color: #999 !important;
-  height: 10px !important;
-  
-  padding-left: 2px !important;
-  padding-right: 6px !important;
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
-  margin-left: 0px !important;
-  margin-top: 0px !important;
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
-}
-
+#songbird_menu,
+#songbird_menu > menu > label,
 #songbird_menu > menu:hover,
 #songbird_menu > menu:hover > label,
 #songbird_menu > menu[open],
 #songbird_menu > menu[open] > label,
 #songbird_menu > menu[_moz-menuactive="true"],
-#songbird_menu > menu[_moz-menuactive="true"] > label
-{
-  -moz-appearance: none !important;
-  background-color: #666 !important; /* I feel SUPER important! */
-  height: 10px !important;
-  color: #EEE !important;
-
-  padding-left: 2px !important;
-  padding-right: 3px !important;
-  padding-top: 1px !important;
-  padding-bottom: 0px !important;
-  margin-left: -1px !important;
-  margin-top: -1px !important;
-  margin-right: 0px !important;
-  margin-bottom: 0px !important;
-}
-
+#songbird_menu > menu[_moz-menuactive="true"] > label,
 #songbird_menu > menu#songbird_menu_spacer
 {
  -moz-appearance: none !important; /* grrrr! */
-  width: 14px !important;
 }
 
-/* The Basic Menu Styles **/
+/** 
+******************************************************************************************
+BASE MENUS
+************************************************************************************* ****
+*/
 
 menupopup, 
-popup
-{
-  -moz-appearance: none !important; /* grrrr! */
-  -moz-border-top-colors: #333 #333 !important;
-  -moz-border-right-colors: #333 #333 !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-left-colors: #333 #333 !important;
-  background-color: #333 !important;
-  color: #FFF !important;
-}
-
-menuseparator
-{
-  -moz-appearance: none !important; /* grrrr! */
-  border-top: 1px solid #999 !important;
-  border-bottom: 1px solid #333 !important;
-}
-
+popup,
+menuseparator,
 menupopup > menu,
-popup > menu
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #333 !important;
-  color: #FFF !important;
-}
-
-popup, menuitem, popup > menuitem
-{
-  -moz-appearance: none !important; /* grrrr! */
-  color: #FFF !important;
-}
-
+popup > menu,
+popup, menuitem, popup > menuitem,
 menuitem[_moz-menuactive="true"],  
 popup > menuitem[_moz-menuactive="true"],
 popup > menu[_moz-menuactive="true"],
-menupopup > menu[_moz-menuactive="true"]
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #4A4E48 !important;
-  color: #FFF !important;
-}
-
-.menu-right[_moz-menuactive="true"] 
-{
-  -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 0px !important;
-  height: 9px !important;
-  width: 7px !important;
-  list-style-image: url(default/menu-arrow-hover.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-.menu-right
-{   
-  -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 0px !important;
-  height: 9px !important;
-  width: 7px !important;
-  list-style-image: url(default/menu-arrow.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-menuitem[selected="true"]
-{
-  background-color: #4A4E48 !important;
-  color: #FFF !important;
-}
-
-menuitem[checked="true"] > hbox[checked="true"] 
-{ 
-  -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 2px !important;
-  height: 7px !important;
-  width: 7px !important;
-  list-style-image: url(default/check_fff.png) !important;
-  background-repeat: no-repeat !important;
-}
-
+menupopup > menu[_moz-menuactive="true"],
+.menu-right[_moz-menuactive="true"],
+.menu-right,
+menuitem[checked="true"] > hbox[checked="true"],
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
-  -moz-appearance: none !important; /* grrrr! */ 
-  margin: 0px 0px 0px 2px !important;
-  height: 7px !important;
-  width: 7px !important;
-  list-style-image: url(default/check_fff.png) !important;
-  background-repeat: no-repeat !important;
-}
-
-/* Menulist */
-
-
-menulist
-{ 
   -moz-appearance: none !important; /* grrrr! */
-  height: 24px !important; 
-  background-color: #242527 !important;
-  border: 1px solid #4F5052 !important; 
-  color: #FFF !important;
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important; 
-} 
-
-.menulist-label
-{
-  color: #fff !important;
 }
 
-.menulist-dropmarker
-{
-  -moz-appearance: none !important; /* grrrr! */
-  list-style-image: url(default/chrome_scroll_down.png) !important; 
-  background-repeat: no-repeat !important;
-  background-color: transparent !important;
-  border: none !important;
-  margin: 2px 4px 2px 0px !important;
-}
+/** 
+**************************************************************************************************
+MENULIST
+*************************************************************************************************
+*/
 
-menulist:focus
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-color: #4A4E48 !important;
-  color: #fff !important;
-}
-
+menulist,
+.menulist-dropmarker,
+menulist:focus,
 menulist:focus > hbox
 {
   -moz-appearance: none !important; /* grrrr! */
-  background-color: #4A4E48 !important;
 }
-
-menulist[disabled="true"]
-{
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #333 #333 !important;
-  -moz-border-left-colors: #333 #333 !important;
-  -moz-border-right-colors: #333 #333 !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  color: #666 !important;
-}
-
-menulist[disabled="true"] > dropmarker
-{
-  opacity: 0.5 !important;
-}
-
-
-.menulist-editable-input,
-.menulist-editable-box
-{
-  color: #fff !important;
-  background-color: transparent !important;
-}
-
-.menulist-editable-box
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  background-color: #000 !important;
-}
-
-.menulist-editable-input[disabled="true"]
-{
-  color: #666 !important;
-}
-
-
-
-/** 
-************************************************************************************************************************************************
-The ABOUT BOX
-************************************************************************************************************************************************
-*/  
-#about
-{
-  background-color: #FFF !important;
-}
-#about_browser
-{
-  height: 180px !important;
-  width: 390px !important;
-  border: 0px solid #F00 !important;
-  
-}
-
 
 /** 
 ************************************************************************************************************************************************
@@ -1124,25 +687,10 @@ VIDEO WINDOW
 ************************************************************************************************************************************************
 */
 
-#video_window
-{
-  -moz-appearance:none !important;
-  background-color: #000 !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
- /* background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
-}
-
-#video_chrome_bkgd
-{
-  background-image: url(default//chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
-  background-position: 0px -15px !important;
-}
-
+#video_window,
 iframe#video_controls
 {
   -moz-appearance: none !important;
-  background-color: #000 !important;
-  height: 24px !important;
-  width: 700px !important;
 }
 
 /** 
@@ -1156,5 +704,4 @@ MISCELLANEOUS
 windowregion {
   -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion") !important;
 }
-
 

@@ -934,10 +934,30 @@
 		<File
 			RelativePath=".\dialog.css"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\dialog_colors.css"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\mainwin.css"
@@ -948,7 +968,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
-					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
 				/>
 			</FileConfiguration>
@@ -962,7 +982,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
-					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
 				/>
 			</FileConfiguration>
@@ -970,6 +990,30 @@
 		<File
 			RelativePath=".\mainwin_images.css"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\mini.css"
+			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\songbird.css"

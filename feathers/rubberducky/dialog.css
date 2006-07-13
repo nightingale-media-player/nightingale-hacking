@@ -26,8 +26,8 @@
 
 /** 
 ************************************************************************************************************************************************
-This css files specifies the base styles for everything not in the main application window.  This includes all dialog boxes like the 
-First-Run dialog, and the Smart Playlist dialog.
+DIALOG SIZE & POSITION
+This CSS files specifies the size and position of dialog UI.
 ************************************************************************************************************************************************
 */ 
 
@@ -101,3 +101,406 @@ First-Run dialog, and the Smart Playlist dialog.
   padding: 3px 20px 3px 20px !important;
   border: 1px solid !important;
 }
+
+/** 
+************************************************************************************************************************************************
+TEXTBOXES for dialogs and forms.
+************************************************************************************************************************************************
+*/
+
+.drawer_box textbox,
+.dialog_textbox,
+.smart_condition_box textbox
+{
+  -moz-border-radius: 3px !important;
+  height: 30px !important;
+  padding-top: 2px !important;
+  padding-left: 3px !important;
+}
+
+.drawer_box input:focus,
+.dialog_textbox input:focus,
+.smart_condition_box input:focus
+{
+  -moz-border-radius: 3px !important;
+  height: 30px !important;
+  padding-top: 0px !important;
+  padding-left: 0px !important;
+}
+
+.drawer_box[disabled="true"],
+.dialog_textbox[disabled="true"],
+.smart_condition_box[disabled="true"]
+{
+  border: 1px solid !important;
+}
+
+/** 
+*************************************************************************************************
+LISTBOXES for dialogs and forms.
+****************************************************************************
+*/
+.dialog_listbox
+{
+  -moz-border-radius: 3px !important;
+}
+
+.formgrouping
+{
+  padding: 5px !important; 
+  -moz-border-radius: 5px !important; 
+  border: 1px solid !important;
+}
+
+/** 
+********************************************************************************************
+CHECKBOXES, boxes, labels, images, states.
+**********************************************************************
+*/
+
+/* ::::: checkbox ::::: */
+
+checkbox {
+  -moz-box-align: center;
+  -moz-box-align: center;   
+  opacity: 0.7 !important; /* When it's not focused, dim it slightly. */
+}
+
+.checkbox-label-box {
+  -moz-margin-start: 2px;
+  border: 1px solid transparent;
+  padding: 0px 1px;
+}
+
+.checkbox-icon {
+  -moz-margin-end: 2px;
+}
+
+.checkbox-label {
+  margin: 0 !important;
+}
+
+/* ..... focused state ..... */
+
+checkbox:focus{
+  opacity: 1 !important;
+}
+
+
+/* ::::: checkmark image ::::: */
+
+.checkbox-check {
+  -moz-box-align: center;
+  border: 2px solid;
+  min-width: 13px;
+  min-height: 13px;
+  background: -moz-Field no-repeat 50% 50%;
+}
+/** 
+**********************************************************************************
+The following styles are for the specific dialog boxes themselves.
+*/
+/** 
+**************************************************************************************************************
+*FIRST RUN dialog, aka, the Bundle Picker.
+**********************************************************************************
+*/
+
+richlistbox
+{
+  padding: 10px 10px 10px 10px !important;
+  
+}
+
+richlistitem > checkbox,
+richlistitem > checkbox[selected="false"]
+{
+  opacity: .6 !important;
+}
+richlistitem:focus > checkbox,
+richlistitem:focus > checkbox[selected="true"]
+{ 
+  opacity: 1 !important;  
+}
+
+richlistitem > label
+{
+  margin: 2px 0px 0px -3px !important;
+}
+
+
+/** 
+*****************************************************************************************************
+SMART PLAYLIST BUILDER
+*******************************************************************
+*/
+#smartpl_select_library
+{
+  margin: 10px 0px 0px 0px !important;
+}
+
+.drawer_box,
+.smart_condition_box
+{
+  -moz-border-radius: 5px !important; 
+  border: 1px solid !important;
+  padding-right: 5px !important;
+}
+
+#smart_playlist_name_label
+{
+  margin-top: 7px !important; /* lines this label with it's textbox counterpart in the smart playlist builder */
+}
+
+#smart_songs_check,
+#smart_match_check
+{
+  margin-top: 0px !important; /* the align="center" of the parent needs this to have no top margin. */
+}
+
+#smart_songs_count
+{
+  width: 40px !important;
+}
+
+.drawer_box,
+.smart_condition_box
+{
+  border: 1px solid !important;
+  -moz-border-radius: 5px !important; 
+}
+
+/** 
+**************************************************************************************************************
+MEDIA SCAN
+***********************************************************************************
+*/
+
+
+#songbird_media_scan 
+{ 
+   margin: 2px 0px 0px 0px !important;
+   border: none !important;
+} 
+
+/** 
+***********************************************************************************************
+ADD TO PLAYLIST
+**********************************************************************************
+*/
+#add_to_playlist
+{
+  height: 200px !important;
+}
+
+#jump_to_file
+{
+  width: 420px !important;
+  height: 500px !important;
+}
+
+#songbird_playlistlist > listitem
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+#songbird_playlistlist > listitem[selected=true]
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+/** 
+*************************************************************************************************************
+DOWNLOAD DIALOG
+******************************************************************
+*/
+#subscribe_folder_path,
+#download_folder_path
+{
+  width: 365px !important;
+}
+
+#subscribe_url,
+#songbird_open_url
+{
+  width: 420px !important;
+}
+
+#subscribe_interval
+{
+  width: 40px !important;
+}
+
+#watchfolder
+{
+  width: 400px !important;
+}
+
+input,
+checkbox
+{
+  -moz-user-focus: normal !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+************************************************************************************************************************************************
+*/
+/** 
+*****************************************************************************************
+THE MENUS
+Poppin' Fresh.
+*****************************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) Styles **/
+
+#songbird_menu
+{
+  height: 10px !important;
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+#songbird_menu > menu > label
+{
+  height: 10px !important;  
+  padding-left: 2px !important;
+  padding-right: 6px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin-left: 0px !important;
+  margin-top: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label
+{
+  height: 10px !important;
+  padding-left: 2px !important;
+  padding-right: 3px !important;
+  padding-top: 1px !important;
+  padding-bottom: 0px !important;
+  margin-left: -1px !important;
+  margin-top: -1px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu#songbird_menu_spacer
+{
+  width: 14px !important;
+}
+
+/* The Basic Menu Styles **/
+
+.menu-right[_moz-menuactive="true"] 
+{
+  margin: 0px 0px 0px 0px !important;
+  height: 9px !important;
+  width: 7px !important;
+  list-style-image: url(default/menu-arrow-hover.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+.menu-right
+{    
+  margin: 0px 0px 0px 0px !important;
+  height: 9px !important;
+  width: 7px !important;
+  list-style-image: url(default/menu-arrow.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+menuitem[checked="true"] > hbox[checked="true"] 
+{  
+  margin: 0px 0px 0px 2px !important;
+  height: 7px !important;
+  width: 7px !important;
+  list-style-image: url(default/check_fff.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{  
+  margin: 0px 0px 0px 2px !important;
+  height: 7px !important;
+  width: 7px !important;
+  list-style-image: url(default/check_fff.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MENULIST
+************************************************************************************************************************************************
+*/
+
+menulist
+{ 
+  height: 24px !important; 
+  border: 1px solid !important;
+  -moz-border-radius: 3px !important;
+} 
+
+.menulist-dropmarker
+{
+  list-style-image: url(default/chrome_scroll_down.png) !important; 
+  background-repeat: no-repeat !important;
+  border: none !important;
+  margin: 2px 4px 2px 0px !important;
+}
+
+menulist[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+}
+
+menulist[disabled="true"] > dropmarker
+{
+  opacity: 0.5 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+The ABOUT BOX
+************************************************************************************************************************************************
+*/  
+
+#about_browser
+{
+  height: 180px !important;
+  width: 390px !important;
+  border: 0px solid #F00 !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+VIDEO WINDOW
+************************************************************************************************************************************************
+*/
+
+
+#video_chrome_bkgd
+{
+  background-image: url(default//chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
+  background-position: 0px -15px !important;
+}
+
+iframe#video_controls
+{
+  height: 24px !important;
+  width: 700px !important;
+}
+
+
