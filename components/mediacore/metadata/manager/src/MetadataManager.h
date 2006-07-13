@@ -37,8 +37,10 @@
 #include "sbIMetadataManager.h"
 #include "sbIMetadataHandler.h"
 #include <nsCOMPtr.h>
+#include <string/nsString.h>
 
 #include <set>
+#include <list>
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAMANAGER_CONTRACTID               \
@@ -77,7 +79,8 @@ class sbMetadataManager : public sbIMetadataManager
     }
   };
   class handlerlist_t : public std::set< sbMetadataHandlerItem > {};
-
+  class contractlist_t : public std::list< nsCString > {};
+  contractlist_t m_ContractList;
 };
 
 #endif // __METADATA_MANAGER_H__

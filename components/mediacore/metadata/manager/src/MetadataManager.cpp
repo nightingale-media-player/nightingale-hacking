@@ -64,6 +64,32 @@ NS_IMPL_ISUPPORTS1(sbMetadataManager, sbIMetadataManager)
 //-----------------------------------------------------------------------------
 sbMetadataManager::sbMetadataManager()
 {
+  // Find the list of handlers for this object.
+  nsresult rv;
+  nsCOMPtr<nsIComponentRegistrar> registrar;
+  rv = NS_GetComponentRegistrar(getter_AddRefs(registrar));
+  if (rv != NS_OK)
+    return;
+
+  nsCOMPtr<nsISimpleEnumerator> simpleEnumerator;
+  rv = registrar->EnumerateContractIDs(getter_AddRefs(simpleEnumerator));
+  if (rv != NS_OK)
+    return;
+
+  PRBool moreAvailable = PR_FALSE;
+  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK && moreAvailable)
+  {
+    nsCOMPtr<nsISupportsCString> contractString;
+    if (simpleEnumerator->GetNext(getter_AddRefs(contractString)) == NS_OK)
+    {
+      nsCString contractID;
+      contractString->GetData(contractID);
+      if (contractID.Find("@songbirdnest.com/Songbird/MetadataHandler/") != -1)
+      {
+        m_ContractList.push_back(contractID);
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -112,49 +138,33 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   // Local types to ease handling.
   handlerlist_t handlerlist; // hooray for autosorting (std::set)
 
-  // Find a useful handler for this object.
-  nsresult rv;
-  nsCOMPtr<nsIComponentRegistrar> registrar;
-  rv = NS_GetComponentRegistrar(getter_AddRefs(registrar));
-  if (rv != NS_OK)
-    return rv;
-
-  nsCOMPtr<nsISimpleEnumerator> simpleEnumerator;
-  rv = registrar->EnumerateContractIDs(getter_AddRefs(simpleEnumerator));
-  if (rv != NS_OK)
-    return rv;
-
   nsCString u8Url;
   pURI->GetSpec( u8Url );
   nsString url = NS_ConvertUTF8toUTF16(u8Url);
-  PRBool moreAvailable = PR_FALSE;
 
-  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK && moreAvailable)
+  if (!m_ContractList.size())
+    throw;
+
+
+  // Go through the list of contract ids, and make them vote on the url
+  for (contractlist_t::iterator i = m_ContractList.begin(); i != m_ContractList.end(); i++ )
   {
-    nsCOMPtr<nsISupportsCString> contractString;
-    if (simpleEnumerator->GetNext(getter_AddRefs(contractString)) == NS_OK)
+    nsCOMPtr<sbIMetadataHandler> handler(do_CreateInstance((*i).get()));
+    if (handler.get())
     {
-      char* contractID = NULL;
-      contractString->ToString(&contractID);
-      if (strstr(contractID, "@songbirdnest.com/Songbird/MetadataHandler/"))
+      PRInt32 vote;
+      handler->Vote( url, &vote );
+      if (vote >= 0) // If everyone returns -1, give up.
       {
-        nsCOMPtr<sbIMetadataHandler> handler(do_CreateInstance(contractID));
-        if (handler.get())
-        {
-          PRInt32 vote;
-          handler->Vote( url, &vote );
-          if (vote >= 0) // If everyone returns -1, give up.
-          {
-            sbMetadataHandlerItem item;
-            item.m_Handler = handler;
-            item.m_Vote = vote;
-            handlerlist.insert( item ); // Sorted list (std::set)
-          }
-        }
+        sbMetadataHandlerItem item;
+        item.m_Handler = handler;
+        item.m_Vote = vote;
+        handlerlist.insert( item ); // Sorted list (std::set)
       }
-      PR_Free(contractID);
     }
   }
+
+
 
   // If there's anything in the list
   if ( handlerlist.rbegin() != handlerlist.rend() )
