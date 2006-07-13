@@ -11,6 +11,7 @@ rubberducky.jar:
   feathers/rubberducky/songbird/mainwin.css                                 (mainwin.css)
   feathers/rubberducky/songbird/mainwin_colors.css                          (mainwin_colors.css)
   feathers/rubberducky/songbird/mainwin_images.css                          (mainwin_images.css)
+  feathers/rubberducky/songbird/mini.css                                    (mini.css)
   feathers/rubberducky/songbird/songbird.css                                (songbird.css)
   feathers/rubberducky/songbird/default/about.png                           (default/about.png)
   feathers/rubberducky/songbird/default/app_close.png                       (default/app_close.png)
