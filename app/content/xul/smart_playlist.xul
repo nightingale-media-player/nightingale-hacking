@@ -112,7 +112,7 @@
                   <menuitem id="smart_any_list_all" label="&smart.all;" value="all" />
                 </menupopup>
               </menulist>       
-              <label value="&smart.following;"/>
+              <label class="dialog_label" value="&smart.following;"/>
               <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
             </hbox>
             <spacer height="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
