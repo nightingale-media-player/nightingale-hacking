@@ -419,7 +419,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionPath)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
+						CommandLine="mkdir $(SolutionDir)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
 						AdditionalDependencies=""
 						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"
 					/>
@@ -429,7 +429,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionPath)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
+						CommandLine="mkdir $(SolutionDir)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
 						AdditionalDependencies=""
 						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"
 					/>
@@ -487,7 +487,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionPath)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
+						CommandLine="mkdir $(SolutionDir)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
 						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"
 					/>
 				</FileConfiguration>
@@ -496,7 +496,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionPath)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
+						CommandLine="mkdir $(SolutionDir)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
 						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"
 					/>
 				</FileConfiguration>
@@ -707,7 +707,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionPath)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
+						CommandLine="mkdir $(SolutionDir)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
 						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"
 					/>
 				</FileConfiguration>
@@ -716,8 +716,8 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;"
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
+						CommandLine="mkdir $(SolutionDir)dist\scripts&#x0D;&#x0A;copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)&#x0D;&#x0A;"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"
 					/>
 				</FileConfiguration>
 			</File>
