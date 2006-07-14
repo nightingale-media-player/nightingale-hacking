@@ -36,7 +36,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt
 "
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"/>
@@ -97,7 +97,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbIntegration.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IMediaKeyboard.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbIntegration.xpt $(ProjectDir)$(OutDir)\IWindowDragger.xpt $(ProjectDir)$(OutDir)\IWindowCloak.xpt $(ProjectDir)$(OutDir)\IWindowMinMax.xpt $(ProjectDir)$(OutDir)\IWindowResizeHook.xpt $(ProjectDir)$(OutDir)\IWindowRegion.xpt $(ProjectDir)$(OutDir)\IGlobalHotkeys.xpt
 "
 				AdditionalDependencies="$(OutDir)\IWindowRegion.xpt"
 				Outputs="$(OutDir)\sbIntegration.xpt"/>
