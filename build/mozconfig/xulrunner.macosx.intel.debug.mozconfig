@@ -1,0 +1,12 @@
+mk_add_options MOZ_CO_PROJECT=xulrunner
+mk_add_options MOZ_CO_TAG=SONGBIRD_0_2A_20060712_BRANCH
+mk_add_options MOZ_CO_MODULE=mozilla/other-licenses/bsdiff,mozilla/tools/update-packaging
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/compiled/xulrunner-debug
+ac_add_options --enable-application=xulrunner
+ac_add_options --enable-debug --disable-optimize
+ac_add_options --disable-tests
+ac_add_options --disable-javaxpcom
+ac_add_options --enable-svg --enable-canvas
+ac_add_options --enable-update-packaging
+ac_add_options --enable-extensions=default,inspector,venkman
+ac_add_options --with-macos-sdk=/Developer/SDKs/MacOSX10.4u.sdk
