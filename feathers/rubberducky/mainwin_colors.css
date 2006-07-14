@@ -968,7 +968,7 @@ These let the user resize the frames in your box model.
 ************************************************************************************************************************************************
 */ 
 
-/* Spliters to resize the panes */
+/* Splitters to resize the panes */
 
 .vert_splitter,
 #vert_splitter,
@@ -982,6 +982,7 @@ These let the user resize the frames in your box model.
   background-color: #000 !important;
 }
 
+.vert_splitter[state="collapsed"],
 #vert_splitter[state="collapsed"]
 {
   background-color: #686A6A !important;

@@ -645,6 +645,7 @@ These let the user resize the frames in your box model.
   cursor: w-resize;
 }
 
+.vert_splitter[state="collapsed"],
 #vert_splitter[state="collapsed"]
 {
   width: 10px !important;
@@ -653,6 +654,10 @@ These let the user resize the frames in your box model.
   -moz-border-radius-topright: 3px !important;
   -moz-border-radius-bottomright: 3px !important;
   border: 1px solid !important;
+}
+
+#vert_splitter[state="collapsed"]
+{
   margin-right: 7px !important;
 }
 
