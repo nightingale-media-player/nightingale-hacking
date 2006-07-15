@@ -146,7 +146,7 @@
               </menupopup>
             </menulist>
             <spacer width="8"/>
-            <label value="Selected by" control="smart_selected_list" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label class="dialog_label"  value="Selected by" control="smart_selected_list" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <menulist id="smart_selected_list" value="&smart.random;">
               <menupopup id="smart_selected_list_popup" >
                 <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />
