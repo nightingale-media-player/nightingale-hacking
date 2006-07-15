@@ -920,6 +920,20 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\base_styles.css"
+			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
 			RelativePath=".\bindings.xml"
 			>
 		</File>
@@ -940,7 +954,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
-					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
 				/>
 			</FileConfiguration>
@@ -954,7 +968,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
-					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
 				/>
 			</FileConfiguration>

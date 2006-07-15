@@ -6,6 +6,7 @@ rubberducky.jar:
 #endif
   feathers/rubberducky/songbird/bindings.xml                                (bindings.xml)
   feathers/rubberducky/songbird/bland.css                                   (bland.css)
+  feathers/rubberducky/songbird/base_styles.css                             (base_styles.css)
   feathers/rubberducky/songbird/dialog.css                                  (dialog.css)
   feathers/rubberducky/songbird/dialog_colors.css                           (dialog_colors.css)
   feathers/rubberducky/songbird/mainwin.css                                 (mainwin.css)

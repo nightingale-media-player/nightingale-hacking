@@ -1,0 +1,710 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+=SONGBIRD CSS=
+Welcome to Songbird's CSS.  If you're here trying to make Songbird better you should know how our CSS
+is structured.  We think of Songbird as having 3 layers of CSS: Size & Position, Color and Images.
+
+==Size & Position==
+This includes margins, padding, -moz-styles, size, alignment, etc.  If it's not a color or an image or 
+-moz-appearance: none, it belongs in the base style sheet.  For the Main Window, this is mainwin.css,
+for the mini this is mini.css, and for everything else, dialog.css.
+
+==Color==
+Everything that can be colored in Songbird can be colored in one stylesheet.  For the Main window, this is 
+mainwin_colors.css, for the mini this is mini_colors.css, and for everything else, dialog_colors.css.
+
+==Images==
+All images used in rendering Songbird can be found on this stylesheet.  For the Main window, 
+this is mainwin_images.css.  Dialogs have only 2 images for check boxes so we've left those in and
+saved another file for the dialogs.  If you'd like to make one, be sure to add it to this stylesheet
+in the Cascade section.
+************************************************************************************************************************************************
+*/ 
+
+
+
+ /** 
+************************************************************************************************************************************************
+THE WINDOW
+These base styles are basically here to tell other -moz styles from spoiling our lovely UI. 
+!important is necessary to make sure these styles override any OS-specific styles as well.
+************************************************************************************************************************************************
+*/ 
+page
+{
+  -moz-user-focus: ignore !important;
+  -moz-appearance: none !important; /* grrrr! */
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+tree
+{ 
+  -moz-appearance: none !important; /* grrrr! */
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+.sb_faceplate
+{
+  -moz-appearance: none !important; /* grrrr! */
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  border-width: 0px !important;
+  font-family: tahoma, arial !important; /*arial is the fallback font*/
+  font-size: 11px !important;
+}
+
+.sb_faceplate
+{
+  -moz-user-focus: ignore !important;
+}  
+
+/* Edit-in-place popups overlapping the entries in the service pane tree */
+
+.sb_faceplate_edit
+{
+  -moz-appearance:none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+************************************************************************************************************************************************
+*/
+
+.window,
+.chrome_bkgd,
+#chrome_bkgd,
+#chrome_e,
+#chrome_w,
+#chrome_nw,
+#chrome_n,
+#chrome_ne
+{
+  -moz-appearance:none !important;
+}
+
+/* UTTERLY OBLITERATE the stuff trying to put scrollbars up over my edit boxes. */
+#service_edit_popup autorepeatbutton,
+#service_edit_popup arrowscrollbox,
+#playlist_edit_popup autorepeatbutton,
+#playlist_edit_popup arrowscrollbox
+{
+  -moz-appearance: none !important;
+  -moz-binding: none !important; /* like, yea, take out the binding and everything */
+  border: none !important;
+  height: 0px !important;
+  max-height: 0px !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
+#service_edit,
+#service_edit *,
+#service_edit_popup
+{
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
+  background-color: #FFF !important;
+  color: #333 !important;
+  font-weight: bold;
+  border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
+#playlist_edit,
+#playlist_edit *,
+#playlist_edit_popup
+{
+  -moz-appearance: none !important;
+  -moz-box-pack: center !important;
+  background-color: #4A4E48 !important;
+  color: #FFF !important;
+  font-weight: bold;
+  border: none !important;
+  height: 100% !important;
+  margin: 0px 0px 0px 0px !important; 
+  padding: 0px 0px 0px 0px !important; 
+}
+
+#edit_bookmark
+{
+  width:  400px;
+  background-color: transparent !important; /*this breaks the red flash in the Inspector*/
+}
+
+
+/** 
+************************************************************************************************************************************************
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize,
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox,
+#sysbtn_maximize > image
+{
+  -moz-appearance:none !important;
+}
+/* END CHROME **/
+
+
+/** 
+************************************************************************************************************************************************
+SCROLLBARS
+************************************************************************************************************************************************
+*/ 
+
+scrollbar,
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"],
+scrollbar > slider > thumb > gripper,
+scrollbar > slider > thumb,
+scrollbar > slider,
+#frame_service_tree scrollbar,
+#frame_service_tree scrollbar > slider > thumb,
+#frame_service_tree scrollbar > slider,
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-appearance: none !important; /* grrrr! */  
+} 
+/* END SCROLLBARS */
+
+/** 
+************************************************************************************************************************************************
+THE FILTERLISTS
+Organize your collection with genre/artist/album filterlists.  
+************************************************************************************************************************************************
+*/ 
+
+filterlist,
+filterlist > tree,
+filterlist > tree > treechildren::-moz-tree-row,
+filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist,
+playlist > stack > vbox,
+#playlist_tree,
+#playlist_toolbar,
+#playlist_toolbar_bkg,
+playlist > stack > vbox > hbox#playlist_toolbar_bkg,
+playlist > stack > vbox > hbox,
+#playlist_tree > treechildren::-moz-tree-row( selected, focus ),
+#playlist_tree > treechildren::-moz-tree-progressmeter,
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+ -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+************************************************************************************************************************************************
+THE WEB PLAYLIST aka THE URL SLURPER
+************************************************************************************************************************************************
+*/
+#playlist_web
+{
+ -moz-appearance: none !important; /* grrrr! */
+} 
+/* END LIST TREES **/
+
+
+/** 
+************************************************************************************************************************************************
+THE TOOLBAR
+The Toolbar is a way for a user to discover pertinent contextual menu 
+features without having to know how to right-click.  You'll see styles
+for both the toolbar buttons and the corresponding entries in the 
+contextual menu.
+************************************************************************************************************************************************
+*/ 
+
+/* the generic style for all playlist toolbarbuttons */
+#playlist_toolbar > button[disabled="true"],
+#playlist_toolbar > button[disabled="false"]
+{
+  -moz-appearance: none !important;
+}
+/* END TOOLBAR **/
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Spliters to resize the panes */
+
+.vert_splitter,
+#vert_splitter,
+#filter_splitter,
+#vert_splitter[state="collapsed"],
+.horz_splitter,
+#horz_splitter,
+#playlist_web_split > grippy,
+#control_pane_splitter,
+#control_pane_splitter[state="collapsed"]
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+/* END SPLITTERS **/
+
+
+/** 
+************************************************************************************************************************************************
+THE MAIN PANE
+************************************************************************************************************************************************
+*/ 
+
+#main_pane_border
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE STATUS PANE
+************************************************************************************************************************************************
+*/ 
+
+#status_progress_box,
+#status_progress,
+.progress-bar 
+{ 
+   -moz-appearance: none !important; /* grrrr! */ 
+}
+
+
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+#frame_resize_t,
+#frame_resize_to,
+#frame_resize_m,
+#frame_resize_mo,
+#resize
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+************************************************************************************************************************************************
+SEARCH WIDGET
+************************************************************************************************************************************************
+*/
+
+.button-menu-dropmarker
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+************************************************************************************************************************************************
+TOOLTIPS
+************************************************************************************************************************************************
+*/
+
+tooltip
+{
+  -moz-appearance: none !important; /* grrrr! */  
+}
+
+/** 
+************************************************************************************************************************************************
+DASHBOARD
+************************************************************************************************************************************************
+*/
+/* the seekbar slider */
+#songbird_seekbar_slider,
+#songbird_seekbar_thumb,
+#songbird_seekbar_thumb > gripper,
+#songbird_seekbar_progress,
+#songbird_seekbar_progress > .progress-bar,
+#songbird_seekbar_progress > .progress-remainder,
+#songbird_seekbar
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+WEB BAR
+Browser Toolbar, Address Box, and Url-Slurper Button
+************************************************************************************************************************************************
+*/
+
+/* the box with the url image and the url textbox */
+#browser_url_box,
+#browser_url_image,
+#browser_url,
+#browser_url input:focus,
+#browser_url input[selected="true"],
+#browser_toolbar,
+#browser_toolbar button ,
+#browser_toolbar button[disabled="true"],
+#browser_toolbar button[disabled="true"]:hover,
+#browser_back,
+#browser_back:hover,
+#browser_back[disabled="true"],
+#browser_back[active="true"],
+#browser_refresh,
+#browser_refresh:hover,
+#browser_refresh[disabled="true"],
+#browser_refresh[active="true"],
+#browser_stop,
+#browser_stop:hover,
+#browser_stop[disabled="true"],
+#browser_stop[active="true"],
+#browser_fwd,
+#browser_fwd:hover,
+#browser_fwd[disabled="true"],
+#browser_fwd[active="true"],
+#browser_home,
+#browser_home:hover,
+#browser_home[disabled="true"],
+#browser_home[active="true"],
+#browser_bookmark,
+#browser_bookmark:hover,
+#browser_bookmark[disabled="true"],
+#browser_bookmark[active="true"],
+#browser_playlist,
+#browser_playlist:hover,
+#browser_playlist[disabled="true"],
+#browser_download,
+#browser_download:hover,
+#browser_download[disabled="true"]
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+/* END WEB BAR */
+
+/** 
+************************************************************************************************************************************************
+VOLUME
+Mute and Slider
+************************************************************************************************************************************************
+*/
+#mute_off,
+#mute_on,
+
+#volume_box,
+#songbird_volume,
+#songbird_volume > progress_slider,
+#songbird_volume gripper,
+#songbird_volume_thumb,
+#songbird_volume_progress,
+#songbird_volume_progress > .progress-bar,
+#songbird_volume_progress > .progress-remainder,
+#songbird_volume_e,
+#songbird_volume_w
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+/** 
+************************************************************************************************************************************************
+DIALOG BOXES and their buttons
+************************************************************************************************************************************************
+*/
+#track_editor,
+#smart_playlist,
+#open_url,
+#watchfolder,
+#new_playlist,
+#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+{
+  width:  550px !important; /* makes all the dialog boxes the same size **/
+}
+
+#window_top, 
+.dialog_label,
+.dialog_button, /* dialog buttons */
+.backless_button, /* Used in Watch Folders **/
+#button_ok[disabled="true"],
+#button_ok:hover[disabled="true"],
+#button_browse[disabled="true"],
+#button_browse:hover[disabled="true"],
+#button_cancel[disabled="true"],
+#button_cancel:hover[disabled="true"],
+#songbird_makenewplaylist[disabled="true"],
+#songbird_makenewplaylist:hover[disabled="true"],
+#button_ok,
+#button_browse,
+#button_cancel,
+#songbird_makenewplaylist,
+#button_ok:hover,
+#button_cancel:hover,
+#songbird_makenewplaylist:hover,
+#button_browse:hover,
+#button_ok:focus,
+#button_cancel:focus,
+#songbird_makenewplaylist:focus,
+#button_browse:focus
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+****************************************************************************
+TEXTBOXES for dialogs and forms.
+****************************************************************************
+*/
+.textbox-input-box,
+.drawer_box textbox,
+.dialog_textbox,
+.smart_condition_box textbox,
+.drawer_box input:focus,
+.dialog_textbox input:focus,
+.smart_condition_box input:focus,
+.drawer_box[disabled="true"],
+.dialog_textbox[disabled="true"],
+.smart_condition_box[disabled="true"]
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+**************************************************************************
+LISTBOXES for dialogs and forms.
+****************************************************************************
+*/
+.dialog_listbox
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+
+/** 
+***********************************************************************
+CHECKBOXES, boxes, labels, images, states.
+**********************************************************************
+*/
+.checkbox-check,
+checkbox:focus > .checkbox-label-box,
+checkbox[disabled="true"] > .checkbox-check,
+checkbox:hover:active > .checkbox-check,
+checkbox[checked="true"] > .checkbox-check 
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+****************************************************************************************************************
+The following styles are for the specific dialog boxes themselves.
+*/
+/** 
+************************************************************************
+*FIRST RUN dialog, aka, the Bundle Picker.
+*************************************************************************
+*/
+.sbextensions_box,
+richlistbox,
+richlistitem[selected="true"],
+richlistitem > checkbox,
+richlistitem > checkbox[selected="false"],
+richlistitem:focus > checkbox,
+richlistitem:focus > checkbox[selected="true"],
+richlistitem > label,
+richlistitem[selected="true"] > label
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+********************************************************************
+SMART PLAYLIST BUILDER
+*******************************************************************
+*/
+#smartpl_select_library
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+*******************************************************************
+MEDIA SCAN
+*********************************************************************
+*/
+
+#songbird_media_scan,
+#songbird_media_scan .progress-bar 
+{ 
+   -moz-appearance: none !important; /* grrrr! */ 
+} 
+  
+/** 
+*******************************************************************
+ADD TO PLAYLIST
+********************************************************************
+*/
+#add_to_playlist,
+#jump_to_file
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+***************************************************************
+DOWNLOAD DIALOG
+******************************************************************
+*/
+
+input,
+checkbox
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS. Poppin' Fresh.
+************************************************************************************************************************************************
+*/
+/** 
+*******************************************************************
+THE TOP MENU (File, Edit, Etc...)
+******************************************************************
+*/
+#songbird_menu,
+#songbird_menu > menu > label,
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label,
+#songbird_menu > menu#songbird_menu_spacer
+{
+ -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+******************************************************************************************
+BASE MENUS
+************************************************************************************* ****
+*/
+
+menupopup, 
+popup,
+menuseparator,
+menupopup > menu,
+popup > menu,
+popup, menuitem, popup > menuitem,
+menuitem[_moz-menuactive="true"],  
+popup > menuitem[_moz-menuactive="true"],
+popup > menu[_moz-menuactive="true"],
+menupopup > menu[_moz-menuactive="true"],
+.menu-right[_moz-menuactive="true"],
+.menu-right,
+menuitem[checked="true"] > hbox[checked="true"],
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{ 
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+**************************************************************************************************
+MENULIST
+*************************************************************************************************
+*/
+
+menulist,
+.menulist-dropmarker,
+menulist:focus,
+menulist:focus > hbox
+{
+  -moz-appearance: none !important; /* grrrr! */
+}
+
+/** 
+************************************************************************************************************************************************
+VIDEO WINDOW
+************************************************************************************************************************************************
+*/
+
+#video_window,
+iframe#video_controls
+{
+  -moz-appearance: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MISCELLANEOUS
+************************************************************************************************************************************************
+*/  
+
+/* window region */
+
+windowregion {
+  -moz-binding: url("chrome://songbird/skin/bindings.xml#windowregion") !important;
+}
+
+
+
+ /** 
+************************************************************************************************************************************************
+CASCADE!
+You can only use the @ at the top of the file.
+************************************************************************************************************************************************
+*/ 
+@import url("chrome://global/skin/xulscrollbars.css");
+@import url(mainwin.css); /* css for the main application window **/
+@import url(mainwin_colors.css); /* css for the main application window colors **/
+@import url(mainwin_images.css); /* css for the main application window colors **/
+@import url(dialog.css); /* css for the dialog windows **/
+@import url(dialog_colors.css); /* css for the dialog window colors **/
+@import url(mini.css); /* css for the mini player **/
