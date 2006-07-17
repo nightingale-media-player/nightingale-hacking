@@ -125,27 +125,52 @@ function setDefaultGlobalHotkeys() {
     SBDataSetBoolValue("globalhotkeys.changed", true);
     SBDataSetBoolValue("globalhotkeys.enabled", true);
 
-    SBDataSetIntValue("globalhotkeys.count", 5);
-    
-    SBDataSetStringValue("globalhotkey.0.key",             "meta-$38");
-    SBDataSetStringValue("globalhotkey.0.key.readable",    meta_key_str + "-up");
+    SBDataSetIntValue("globalhotkeys.count", 10);
+
+    // media keyboard keys :
+
+    SBDataSetStringValue("globalhotkey.0.key",             "$175");
+    SBDataSetStringValue("globalhotkey.0.key.readable",    "volumeup");
     SBDataSetStringValue("globalhotkey.0.action",          "Playback: Volume up");
     
-    SBDataSetStringValue("globalhotkey.1.key",             "meta-$40");
-    SBDataSetStringValue("globalhotkey.1.key.readable",    meta_key_str + "-down");
+    SBDataSetStringValue("globalhotkey.1.key",             "$174");
+    SBDataSetStringValue("globalhotkey.1.key.readable",    "volumedown");
     SBDataSetStringValue("globalhotkey.1.action",          "Playback: Volume down");
     
-    SBDataSetStringValue("globalhotkey.2.key",             "meta-$39");
-    SBDataSetStringValue("globalhotkey.2.key.readable",    meta_key_str + "-right");
+    SBDataSetStringValue("globalhotkey.2.key",             "$176");
+    SBDataSetStringValue("globalhotkey.2.key.readable",    "nexttrack");
     SBDataSetStringValue("globalhotkey.2.action",          "Playback: Next in playlist");
     
-    SBDataSetStringValue("globalhotkey.3.key",             "meta-$37");
-    SBDataSetStringValue("globalhotkey.3.key.readable",    meta_key_str + "-left");
+    SBDataSetStringValue("globalhotkey.3.key",             "$177");
+    SBDataSetStringValue("globalhotkey.3.key.readable",    "prevtrack");
     SBDataSetStringValue("globalhotkey.3.action",          "Playback: Previous in playlist");
     
-    SBDataSetStringValue("globalhotkey.4.key",             "meta-$96");
-    SBDataSetStringValue("globalhotkey.4.key.readable",    meta_key_str + "-numpad0");
+    SBDataSetStringValue("globalhotkey.4.key",             "$179");
+    SBDataSetStringValue("globalhotkey.4.key.readable",    "playpause");
     SBDataSetStringValue("globalhotkey.4.action",          "Playback: Play/Pause");
+    
+    // non media keyboard keys :
+    
+    SBDataSetStringValue("globalhotkey.5.key",             "meta-$38");
+    SBDataSetStringValue("globalhotkey.5.key.readable",    meta_key_str + "-up");
+    SBDataSetStringValue("globalhotkey.5.action",          "Playback: Volume up");
+    
+    SBDataSetStringValue("globalhotkey.6.key",             "meta-$40");
+    SBDataSetStringValue("globalhotkey.6.key.readable",    meta_key_str + "-down");
+    SBDataSetStringValue("globalhotkey.6.action",          "Playback: Volume down");
+    
+    SBDataSetStringValue("globalhotkey.7.key",             "meta-$39");
+    SBDataSetStringValue("globalhotkey.7.key.readable",    meta_key_str + "-right");
+    SBDataSetStringValue("globalhotkey.7.action",          "Playback: Next in playlist");
+    
+    SBDataSetStringValue("globalhotkey.8.key",             "meta-$37");
+    SBDataSetStringValue("globalhotkey.8.key.readable",    meta_key_str + "-left");
+    SBDataSetStringValue("globalhotkey.8.action",          "Playback: Previous in playlist");
+    
+    SBDataSetStringValue("globalhotkey.9.key",             "meta-$96");
+    SBDataSetStringValue("globalhotkey.9.key.readable",    meta_key_str + "-numpad0");
+    SBDataSetStringValue("globalhotkey.9.action",          "Playback: Play/Pause");
+
   }
 }
 
