@@ -60,23 +60,26 @@ endif
 
 ifeq (linux,$(SB_PLATFORM))
 FLASH_PLUGIN = libflashplayer
-VLC_PLUGIN = libvlcplugin
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/vlc/components/vlcintf.xpt \
-                      $(PLUGINS_DIR)/flash/components/flashplayer.xpt \
+SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/flash/components/flashplayer.xpt \
                       $(NULL)
 
 SONGBIRD_PLUGINS = $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX) \
-                   $(PLUGINS_DIR)/vlc/plugins/$(VLC_PLUGIN)$(DLL_SUFFIX) \
                    $(NULL)
 
-SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX) \
-                      $(NULL)
+# non-existent variable, VLC no-worky on linux yet...
+ifdef (SB_LINUX_VLC)
+VLC_PLUGIN = libvlcplugin
+
+SONGBIRD_PLUGINS += $(PLUGINS_DIR)/vlc/plugins/$(VLC_PLUGIN)$(DLL_SUFFIX)
+SONGBIRD_COMPONENTS += $(PLUGINS_DIR)/vlc/components/vlcintf.xpt
+SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX)
+endif
 
 SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.0.0 \
                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3 \
