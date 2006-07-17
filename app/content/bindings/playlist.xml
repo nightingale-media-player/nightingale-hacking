@@ -1836,7 +1836,7 @@
               
               this.context_x = evt.clientX;
               this.context_y = evt.clientY;
-              this.context_popup.showPopup( this.tree, evt.screenX, evt.screenY, "context", null, null, null );
+              this.context_popup.showPopup( this.tree, evt.screenX + 5, evt.screenY, "context", null, null, null );
             }
           }
           catch( err )

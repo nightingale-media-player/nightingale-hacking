@@ -1729,7 +1729,7 @@ function onLinkContext( evt )
     }
     theAddItem.setAttribute( "disabled", disabled );
     
-    theHTMLPopup.showPopup( theMainPane, theMainPane.boxObject.screenX + evt.clientX, theMainPane.boxObject.screenY + evt.clientY, "context", null, null );
+    theHTMLPopup.showPopup( theMainPane, theMainPane.boxObject.screenX + evt.clientX + 5, theMainPane.boxObject.screenY + evt.clientY, "context", null, null );
   }
   catch ( err )
   {

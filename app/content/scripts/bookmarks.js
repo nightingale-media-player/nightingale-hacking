@@ -274,7 +274,7 @@ var bmManager = {
             this.popup.appendChild(removeitem);
             this.popup.appendChild(edititem);
             service.appendChild(this.popup);
-            this.popup.showPopup( service.tree, theEvent.screenX, theEvent.screenY, "context", null, null, null );
+            this.popup.showPopup( service.tree, theEvent.screenX + 5, theEvent.screenY, "context", null, null, null );
             theEvent.preventBubble();
             theEvent.preventDefault();
             return;

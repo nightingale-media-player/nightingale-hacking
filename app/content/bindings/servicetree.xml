@@ -536,7 +536,7 @@
               theServiceTreePlaylistPopup.setAttribute( "sb_type", type );
               theServiceTreePlaylistPopup.setAttribute( "sb_base_type", base_type );
               if ( theServiceTreePlaylistPopup ) {
-                theServiceTreePlaylistPopup.showPopup( document.documentElement, theEvent.screenX, theEvent.screenY, "context", null, null, null );
+                theServiceTreePlaylistPopup.showPopup( document.documentElement, theEvent.screenX + 5, theEvent.screenY, "context", null, null, null );
               }
             }
           }
@@ -570,7 +570,7 @@
           try {
             var theServiceTreePlaylistPopup = this.popup_none;
             if (theServiceTreePlaylistPopup) {
-              theServiceTreePlaylistPopup.showPopup( document.documentElement, theEvent.screenX, theEvent.screenY, "context", null, null, null );
+              theServiceTreePlaylistPopup.showPopup( document.documentElement, theEvent.screenX + 5, theEvent.screenY, "context", null, null, null );
             }
           }
           catch (err) {
