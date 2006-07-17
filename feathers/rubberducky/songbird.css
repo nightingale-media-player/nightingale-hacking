@@ -26,20 +26,20 @@
 
 /** 
 ************************************************************************************************************************************************
-=SONGBIRD CSS=
+= SONGBIRD CSS =
 Welcome to Songbird's CSS.  If you're here trying to make Songbird better you should know how our CSS
 is structured.  We think of Songbird as having 3 layers of CSS: Size & Position, Color and Images.
 
-==Size & Position==
+== Size & Position ==
 This includes margins, padding, -moz-styles, size, alignment, etc.  If it's not a color or an image or 
 -moz-appearance: none, it belongs in the base style sheet.  For the Main Window, this is mainwin.css,
 for the mini this is mini.css, and for everything else, dialog.css.
 
-==Color==
+== Color ==
 Everything that can be colored in Songbird can be colored in one stylesheet.  For the Main window, this is 
 mainwin_colors.css, for the mini this is mini_colors.css, and for everything else, dialog_colors.css.
 
-==Images==
+== Images ==
 All images used in rendering Songbird can be found on this stylesheet.  For the Main window, 
 this is mainwin_images.css.  Dialogs have only 2 images for check boxes so we've left those in and
 saved another file for the dialogs.  If you'd like to make one, be sure to add it to this stylesheet
