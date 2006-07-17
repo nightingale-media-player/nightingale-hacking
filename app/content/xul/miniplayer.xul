@@ -40,8 +40,8 @@
  id="mini"
  title="&window.dev.title;"
  hidechrome="true"
- onload="{centerWindowOnScreen();SBInitialize();}"
- onunload="SBUninitialize();"
+ onload="{centerWindowOnScreen();SBInitialize();SBInterfaceInitialize();}"
+ onunload="SBUninitialize();SBInterfaceDeinitialize();"
  class="sb_faceplate miniplayer"
  onkeypress="onMiniplayerKeypress( event );"
 >

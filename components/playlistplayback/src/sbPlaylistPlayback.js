@@ -297,6 +297,7 @@ PlaylistPlayback.prototype = {
     
   _faceplateState:       null,
   _restartOnPlaybackEnd: null,
+  _restartAppNow:        null,
   _resetSearchData:      null,
   
   _requestedVolume:      -1,
@@ -362,6 +363,7 @@ PlaylistPlayback.prototype = {
     this._metadataLenText       = createDataRemote("metadata.length.str", null);
     this._faceplateState        = createDataRemote("faceplate.state", null);
     this._restartOnPlaybackEnd  = createDataRemote("restart.onplaybackend", null);
+    this._restartAppNow         = createDataRemote("restart.restartnow", null);
 
     this._statusText            = createDataRemote("faceplate.status.text", null );
     this._statusStyle           = createDataRemote("faceplate.status.style", null );
@@ -378,6 +380,7 @@ PlaylistPlayback.prototype = {
     this._playlistIndex.intValue = -1;
     this._faceplateState.boolValue = false;
     this._restartOnPlaybackEnd.boolValue = false;
+    this._restartAppNow.boolValue = false;
     this._metadataUrl.stringValue = "";
     this._metadataTitle.stringValue = "";
     this._metadataArtist.stringValue = "";
@@ -1380,7 +1383,7 @@ PlaylistPlayback.prototype = {
     // I assume.
     if (this._restartOnPlaybackEnd.boolValue)
     { 
-      restartApp();
+      this._restartApp();
       return;
     }
                                                         // GRRRRRR!
@@ -1569,6 +1572,11 @@ PlaylistPlayback.prototype = {
     {
       this.filters.push( this._source.getFilter( source_ref, i ) );
     };
+  },
+  
+  _restartApp: function() {
+    // this is being watched by the main document in order to implement it
+    this._restartAppNow.boolValue = true;
   },
   
   /**

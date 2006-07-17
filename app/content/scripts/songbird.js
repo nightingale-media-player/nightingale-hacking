@@ -290,12 +290,10 @@ function ConvertUrlToDisplayName( url )
   return the_value;
 }
 
-document.restartOnPlaybackEnd = false;
+var songbird_restartNow;
+
 function restartApp()
 {
-  //thePlayerRepeater.doStop();
-  onExit();
-
   var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
   if (as)
   {
@@ -306,6 +304,7 @@ function restartApp()
     as.quit(V_RESTART);
     as.quit(V_ATTEMPT);
   }
+  onExit();
 }
 
 function quitApp()
@@ -359,6 +358,12 @@ function SBMetricsAppShutdown()
   metrics_add("player", "timerun", null, diff);
 }
 
+function SBInterfaceDeinitialize() 
+{
+  // Unbind restartapp remote
+  songbird_restartNow.unbind();
+}
+
 function SBAppDeinitialize()
 {
   // Make sure we stop before shutdown or our timer kills us.
@@ -389,6 +394,15 @@ function SBMetricsAppStart()
   SBDataSetBoolValue("metrics_ignorenextstartup", false);
   var timestamp = new Date();
   SBDataSetIntValue("startup_timestamp", timestamp.getTime());
+}
+
+function SBInterfaceInitialize() 
+{
+  var sb_restart_app = {
+    observe: function ( aSubject, aTopic, aData ) { restartApp(); }
+  };
+  songbird_restartNow = SB_NewDataRemote( "restart.restartnow", null );
+  songbird_restartNow.bindObserver( sb_restart_app, true );
 }
 
 function SBAppInitialize()
@@ -429,7 +443,6 @@ function SBAppInitialize()
     */
     var theFLInstance = document.getElementById( "core_flash_frame" );
     var theFLBox = document.getElementById( "box_flash" );
-
 
     //
     // Depending upon the platform, initialize one core
