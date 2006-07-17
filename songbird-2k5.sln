@@ -99,11 +99,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "servicesource", "components
 		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cardinal", "feathers\cardinal\cardinal-2k5.vcproj", "{540ABD21-599E-4576-ADE1-233DE0467AEB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{00A5E4C1-0FFC-4932-8E50-763DF2E57054} = {00A5E4C1-0FFC-4932-8E50-763DF2E57054}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rubberducky", "feathers\rubberducky\rubberducky-2k5.vcproj", "{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{00A5E4C1-0FFC-4932-8E50-763DF2E57054} = {00A5E4C1-0FFC-4932-8E50-763DF2E57054}
@@ -210,10 +205,6 @@ Global
 		{E9C17F59-5D09-496B-A524-170FA0908892}.Debug|Win32.Build.0 = Debug|Win32
 		{E9C17F59-5D09-496B-A524-170FA0908892}.Release|Win32.ActiveCfg = Release|Win32
 		{E9C17F59-5D09-496B-A524-170FA0908892}.Release|Win32.Build.0 = Release|Win32
-		{540ABD21-599E-4576-ADE1-233DE0467AEB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{540ABD21-599E-4576-ADE1-233DE0467AEB}.Debug|Win32.Build.0 = Debug|Win32
-		{540ABD21-599E-4576-ADE1-233DE0467AEB}.Release|Win32.ActiveCfg = Release|Win32
-		{540ABD21-599E-4576-ADE1-233DE0467AEB}.Release|Win32.Build.0 = Release|Win32
 		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Debug|Win32.Build.0 = Debug|Win32
 		{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}.Release|Win32.ActiveCfg = Release|Win32
