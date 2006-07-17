@@ -295,7 +295,15 @@
             // Make the labels
             var label = document.createElement( "label" );
             var spacer = document.createElement( "spacer" );
-            label.setAttribute( "value", "To fully experience the Media Web your Songbird may need a few extensions." );
+            
+            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+            var extensionslabel = "To fully experience the Media Web your Songbird may need a few extensions.";
+            try {
+              extensionslabel = songbirdStrings.GetStringFromName("extensions.label");
+            } catch (err) { /* ignore error, we have default strings */ }
+            
+            label.setAttribute( "value", extensionslabel );
             spacer.setAttribute( "height", "5" );
             
             // Make the extension droplist

@@ -35,7 +35,6 @@
 
 -->
 
-
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
@@ -89,7 +88,6 @@
           xxx_onchange="onSearchChange();"
           xxx_oncommand="onSearchChange();"
           onkeypress="onSearchKeypress( event );"
-          label="Search"
         >
           <xul:menupopup 
             sbid="search.list.popup"
@@ -122,7 +120,7 @@
       // Stuff us into the document context so we can find us from an interval callback
       document.__SEARCH_WIDGET__ = this;
       
-      this.list.label = "Search";
+      this.list.label = this.getDefaultSearchString();
     }
     catch ( err )
     {
@@ -167,6 +165,20 @@
         this.onSearchPopup();
       </setter>
     </property>
+
+    <method name="getDefaultSearchString">
+      <body>
+        <![CDATA[
+          var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+          var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+          var defaultsearchstring = "Search";
+          try {
+            defaultsearchstring = songbirdStrings.GetStringFromName("search.label");
+          } catch (err) { /* ignore error, we have default strings */ }
+          return defaultsearchstring;
+        ]]>
+      </body>
+    </method>
 
     <!-- INTERNAL EVENT HANDLERS -->
     <method name="onFirstMousedown">

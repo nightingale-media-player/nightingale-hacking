@@ -1820,10 +1820,19 @@
               
               SBDataSetStringValue( "playlist.context.term", this.context_term );
 
+              var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+              var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+              var searchheader = "Search";
+              var lyricsheader = "Lyrics";
+              try {
+                searchheader = songbirdStrings.GetStringFromName("playlist.context.searchheader");
+                lyricsheader = songbirdStrings.GetStringFromName("playlist.context.lyricsheader");
+              } catch (err) { /* ignore error, we have default strings */ }
+              
               var search_term = document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
-              search_term.label = "Search: " + this.context_term;
+              search_term.label = searchheader + ": " + this.context_term;
               var lyrics_term = document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
-              lyrics_term.label = "Lyrics: " + this.context_term;
+              lyrics_term.label = lyricsheader + ": " + this.context_term;
               
               this.context_x = evt.clientX;
               this.context_y = evt.clientY;

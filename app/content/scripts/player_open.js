@@ -45,7 +45,12 @@ try
     } catch(e) {}
     fp.init(window, sel, nsIFilePicker.modeOpen);
     // Tell it what filters to be using
-    fp.appendFilter("Media Files","*.wav; *.ogg; *.flac; *.m4a; *.mp3; *.mp4; *.wma; *.wmv; *.avi; *.asf; *.asx; *.mov;");
+    var mediafiles = "Madia Files";
+    try
+    {
+      mediafiles = theSongbirdStrings.getString("open.mediafiles");
+    } catch(e) {}
+    fp.appendFilter(mediafiles,"*.wav; *.ogg; *.flac; *.m4a; *.mp3; *.mp4; *.wma; *.wmv; *.avi; *.asf; *.asx; *.mov;");
     // Show it
     var fp_status = fp.show();
     if ( fp_status == nsIFilePicker.returnOK )
@@ -115,7 +120,12 @@ try
         }
       }
       
-      fp.appendFilter("Playlist Files", filterlist);
+      var playlistfiles = "Playlist Files";
+      try
+      {
+        playlistfiles = theSongbirdStrings.getString("open.playlistfiles");
+      } catch(e) {}
+      fp.appendFilter(playlistfiles, filterlist);
       
       // Show it
       var fp_status = fp.show();

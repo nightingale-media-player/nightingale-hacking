@@ -277,3 +277,11 @@
 <!ENTITY metadata.length "Length" >
 
 
+
+
+<!ENTITY restartbox.restartnow "Restart Now" >
+<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
+<!ENTITY restartbox.restartlater "Restart Later" >
+<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+
+

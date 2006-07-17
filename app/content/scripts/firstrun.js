@@ -44,15 +44,7 @@ function bundleDataReady(bundle) {
   if (bundle.getNumExtensions() > 0) {
     enableCustomInstall(); 
   } else {
-    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var errortitle = "Network Error"; 
-    var errormsg = "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!";
-    try  { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
-      errortitle = songbirdStrings.GetStringFromName("setup.networkerrortitle");
-      errormsg = songbirdStrings.GetStringFromName("setup.networkerrormsg");
-    }catch(e){}
-    sbMessageBox(errortitle, errormsg, false);
+    sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false);
   }
   enableGoAhead();
   hidePleaseWait();
@@ -257,15 +249,7 @@ function doOK()
     noext = (count == 0);
   }
   if (noext) {
-    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var noxpititle = "No extension"; 
-    var noxpimsg = "Press Ok to keep a minimal installation, or Cancel to go back.";
-    try { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
-      noxpititle = songbirdStrings.GetStringFromName("setup.noxpititle");
-      noxpimsg = songbirdStrings.GetStringFromName("setup.noxpimsg");
-    }catch(e){}
-    var r = sbMessageBox(noxpititle, noxpimsg, true);
+    var r = sbMessageBox_strings("setup.noxpititle", "setup.noxpimsg", "No extension", "Press Ok to keep a minimal installation, or Cancel to go back.", true);
     if (r == "accept") { 
       prefs.setCharPref("firstruncheck", "1");  
       return true; 
@@ -294,16 +278,7 @@ function doOK()
 
 function doCancel()
 {
-  var bundle = window.arguments[0].bundle;
-  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var bypasstitle = "Proceed ?"; 
-  var bypassmsg = "Are you sure you want to bypass the final setup? (you will be offered another opportunity to revisit this screen the next time you run Songbird).";
-  try  { // GetStringFromName likes to throw.  Mozilla is _nasty_ about localization.
-    bypasstitle = songbirdStrings.GetStringFromName("setup.bypasstitle");
-    bypassmsg = songbirdStrings.GetStringFromName("setup.bypassmsg");
-  }catch(e){}
-  var r = sbMessageBox(bypasstitle, bypassmsg, true); 
+  var r = sbMessageBox_strings("setup.bypasstitle", "setup.bypassmsg", "Proceed ?", "Are you sure you want to bypass the final setup? (you will be offered another opportunity to revisit this screen the next time you run Songbird).", true); 
   if (r == "accept") { 
     window.arguments[0].cancelled = true; 
     return true; 

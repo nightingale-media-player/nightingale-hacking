@@ -152,7 +152,8 @@
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbIDataRemote.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/dynamic_playlist_updater.js" />
-  
+<script type="application/x-javascript" src="chrome://songbird/content/scripts/messagebox.js" />
+
   <script>
   <![CDATA[
     function doLoad()
@@ -191,13 +192,13 @@
           // Thou shalt not.
           if ( ! aLocalFile.isDirectory() )
           {
-            alert( "Please select a valid destination folder for download." );
+            sbMessageBox_strings("subscribe.selectvalidfolder.title", "subscribe.selectvalidfolder.msg", "Invalid folder", "Please select a valid destination folder for download.");
             return false;
           }
         }
         catch ( err )
         {
-          alert( "THROW - Please select a valid destination folder for download." );
+          sbMessageBox_strings("subscribe.selectvalidfolder.title", "subscribe.selectvalidfolder.msg", "Invalid folder", "Please select a valid destination folder for download.");
           return false;
         }
         SBDataSetStringValue( SUBSCRIBE_FOLDER_KEY, theFolder );
