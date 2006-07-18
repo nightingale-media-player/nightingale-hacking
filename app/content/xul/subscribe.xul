@@ -249,7 +249,7 @@
       }
       return true;
     }
-    function doCancel()
+    function doCancel() 
     {
       if ( window.arguments && window.arguments[0] )
       {
@@ -261,7 +261,7 @@
     }
     function getServer( url )
     {
-      retval = "";
+      var retval = "";
       try
       {
         var aURL = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURL);
