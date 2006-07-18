@@ -68,8 +68,9 @@ CPlaylistBase.prototype =
         if(index != -1)
           return true;
       }
-
-      this.m_queryObject.addQuery("INSERT INTO \"" + this.m_strName + "\" (playlist_uuid, playlist_service_uuid) VALUES (\"" + mediaGUID + "\", \"" + serviceGUID + "\")");
+      
+      var query_str = "INSERT INTO \"" + this.m_strName + "\" (playlist_uuid, playlist_service_uuid) VALUES (\"" + mediaGUID + "\", \"" + serviceGUID + "\")"
+      this.m_queryObject.addQuery(query_str);
       
       if(!bWillRunLater)
       {
@@ -158,7 +159,8 @@ CPlaylistBase.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      return resObj.getRowCell(0, 0);
+      if (resObj.getRowCount() > 0)
+        return resObj.getRowCell(0, 0);
     }
     
     return -1;
@@ -175,7 +177,8 @@ CPlaylistBase.prototype =
       this.m_internalQueryObject.waitForCompletion();
       
       var resObj = this.m_internalQueryObject.getResultObject();
-      return resObj.getRowCell(0, 0);
+      if (resObj.getRowCount() > 0)
+        return resObj.getRowCell(0, 0);
     }
     
     return "";

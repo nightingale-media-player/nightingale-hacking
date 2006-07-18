@@ -268,7 +268,7 @@ CPlaylistHTML.prototype =
         pLibrary.setQueryObject(pQuery);
         pPlaylist = pPlaylistManager.getPlaylist(strDestTable, pQuery);
         
-        dump( "***** strDestTable - " + strDestTable + "    strGUID - " + strGUID + "    pPlaylist - " + pPlaylist + "\n" );
+        dump( "**********\nstrDestTable - " + strDestTable + "\nstrGUID - " + strGUID + "\npPlaylist - " + pPlaylist + "\n" );
 
         var inserted = new Array();        
         for ( var i in links_array )
@@ -297,14 +297,16 @@ CPlaylistHTML.prototype =
             inserted.push( url );
           }
         }
-        pQuery.execute();
+        var ex = pQuery.execute();
         retval = true;
       }
       return retval;
     }
     catch ( err )
     {
-      throw "\nCPlaylistHTML::createPlaylist\n" + strGUID + "\n" + strDestTable + "\n" + links_array + "\n" + replace + "\n" + err;
+      var error = "\nCPlaylistHTML::createPlaylist\n" + strGUID + "\n" + strDestTable + "\n" + links_array + "\n" + replace + "\n" + err;
+      dump( error );
+      throw error;
     }
   },
 

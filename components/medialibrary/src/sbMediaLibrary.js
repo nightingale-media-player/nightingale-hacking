@@ -193,7 +193,6 @@ CMediaLibrary.prototype =
       }
       else
       {
-  
         var i = 0;
         strQuery = "INSERT OR REPLACE INTO " + LIBRARY_TABLE_NAME + " (uuid, service_uuid, url";
         for(; i < nMetaKeyCount; i++)
