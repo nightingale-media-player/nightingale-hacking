@@ -60,6 +60,7 @@ try
     var location = "" + window.location; // Grrr.  Dumb objects.
     if ( location.indexOf("?video") == -1 ) {
       initJumpToFileHotkey();
+      setMinMaxCallback();
     } else {
       document.getElementById("mini_close").hidden = true;
       document.getElementById("mini_btn_max").setAttribute("oncommand", "SBFullscreen();");
@@ -76,6 +77,17 @@ try
     if ( location.indexOf("?video") == -1 ) {
       resetJumpToFileHotkey();
       closeJumpTo();
+      try {
+        var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+        if (windowMinMax) {
+          var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+          if (service)
+            service.resetCallback(document);
+        }
+      }
+      catch(err) {
+        dump("Error. miniplayer.js: SBUnitialize() \n" + err + "\n");
+      }
     }
   }
    
@@ -346,6 +358,71 @@ try
     var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
     window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
   }
+
+  var SBWindowMinMaxCB = 
+  {
+    // Shrink until the box doesn't match the window, then stop.
+    _minwidth: -1,
+    GetMinWidth: function()
+    {
+      // If min size is not yet known and if the window size is different from the document's box object, 
+      if (this._minwidth == -1 && window.innerWidth != document.getElementById('frame_mini').boxObject.width)
+      { 
+        // Then we know we've hit the minimum width, record it. Because you can't query it directly.
+        this._minwidth = document.getElementById('frame_mini').boxObject.width + 1;
+      }
+      return this._minwidth;
+    },
+
+    GetMinHeight: function()
+    {
+      return -1;
+    },
+
+    GetMaxWidth: function()
+    {
+      return -1;
+    },
+
+    GetMaxHeight: function()
+    {
+      return -1;
+    },
+
+    OnWindowClose: function()
+    {
+      setTimeout(quitApp, 0);
+    },
+
+    QueryInterface : function(aIID)
+    {
+      if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
+          !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+          !aIID.equals(Components.interfaces.nsISupports)) 
+      {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+      
+      return this;
+    }
+  }
+
+  function setMinMaxCallback()
+  {
+    try {
+      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      if (windowMinMax) {
+        var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+        if (service)
+          service.setCallback(document, SBWindowMinMaxCB);
+      }
+    }
+    catch (err) {
+      // No component
+      dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
+    }
+  }
+
 }
 catch ( err )
 {
