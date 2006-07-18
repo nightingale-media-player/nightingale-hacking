@@ -28,8 +28,6 @@
 // sbISmartPlaylist Object
 //
 
-const SMARTPLAYLIST_LIST_TABLE_NAME = "smartplaylist_list";
-
 const SONGBIRD_SMARTPLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/SmartPlaylist;1";
 const SONGBIRD_SMARTPLAYLIST_CLASSNAME = "Songbird Smart Playlist Interface"
 const SONGBIRD_SMARTPLAYLIST_CID = Components.ID("{a81b9c4d-e578-4737-840f-43d404c98423}");
@@ -37,9 +35,6 @@ const SONGBIRD_SMARTPLAYLIST_IID = Components.interfaces.sbISmartPlaylist;
 
 function CSmartPlaylist()
 {
-//  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-//  jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbPlaylistBase.js", this );
-
   var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
   query = query.QueryInterface(Components.interfaces.sbIDatabaseQuery);
 
@@ -253,7 +248,7 @@ CSmartPlaylist.prototype.setLibrary = function(strLibrary, bWillRunLater) {
     var strColumn = "library";
     var strValue = strLibrary;
     
-    this.m_queryObject.addQuery("UPDATE \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE \"" + this.m_strPlaylistTableName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
     
     if(!bWillRunLater)
     {
@@ -271,7 +266,7 @@ CSmartPlaylist.prototype.getLibrary = function() {
     this.m_queryObject.resetQuery();
     
     var strColumn = "library";
-    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -296,7 +291,7 @@ CSmartPlaylist.prototype.setLimitAndType = function(nLimit, strLimitType, bWillR
     var strValueA = nLimit;
     var strValueB = strLimitType;
     
-    this.m_queryObject.addQuery("UPDATE \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" SET " + strColumnA + " = \"" + strValueA + "\", " + strColumnB + " = \"" + strValueB + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE \"" + this.m_strPlaylistTableName+ "\" SET " + strColumnA + " = \"" + strValueA + "\", " + strColumnB + " = \"" + strValueB + "\" WHERE name = \"" + this.m_strName + "\"");
     
     if(!bWillRunLater)
     {
@@ -315,7 +310,7 @@ CSmartPlaylist.prototype.getLimit = function()
     this.m_queryObject.resetQuery();
     
     var strColumn = "limit_value";
-    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -335,7 +330,7 @@ CSmartPlaylist.prototype.getLimitType = function() {
     this.m_queryObject.resetQuery();
     
     var strColumn = "limit_type";
-    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -359,7 +354,7 @@ CSmartPlaylist.prototype.getLimitAndType = function(nLimit, strLimitType) {
     
     var strColumnA = "limit_value";
     var strColumnB = "limit_type";
-    this.m_queryObject.addQuery("SELECT " + strColumn + ", " + strColumnB + " FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT " + strColumn + ", " + strColumnB + " FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -383,7 +378,7 @@ CSmartPlaylist.prototype.setSelectedBy = function(strSelectedBy, bWillRunLater) 
     var strColumn = "selected_by";
     var strValue = strSelectedBy;
     
-    this.m_queryObject.addQuery("UPDATE \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE \"" + this.m_strPlaylistTableName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
     
     if(!bWillRunLater)
     {
@@ -401,7 +396,7 @@ CSmartPlaylist.prototype.getSelectedBy = function() {
     this.m_queryObject.resetQuery();
     
     var strColumn = "selected_by";
-    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -424,7 +419,7 @@ CSmartPlaylist.prototype.setMatch = function(strMatchOn, bWillRunLater) {
     var strColumn = "match_on";
     var strValue = strMatchOn;
     
-    this.m_queryObject.addQuery("UPDATE \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE \"" + this.m_strPlaylistTableName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
     
     if(!bWillRunLater)
     {
@@ -442,7 +437,7 @@ CSmartPlaylist.prototype.getMatch = function() {
     this.m_queryObject.resetQuery();
     
     var strColumn = "match_on";
-    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("SELECT " + strColumn + " FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
     
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
@@ -596,7 +591,7 @@ CSmartPlaylist.prototype.setQuery = function(strQuery, bWillRunLater) {
     var strColumn = "query";
     var strValue = strQuery;
     
-    this.m_queryObject.addQuery("UPDATE \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
+    this.m_queryObject.addQuery("UPDATE \"" + this.m_strPlaylistTableName + "\" SET " + strColumn + " = \"" + strValue + "\" WHERE name = \"" + this.m_strName + "\"");
     
     if(!bWillRunLater)
     {
@@ -619,7 +614,7 @@ CSmartPlaylist.prototype.rebuildPlaylist = function() {
     var strQuery = "";
     var strTheSmartQuery = "SELECT * FROM library";
 
-    strQuery = "SELECT * FROM \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" WHERE name = \"" + this.m_strName + "\"";
+    strQuery = "SELECT * FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"";
     this.m_queryObject.resetQuery();
     this.m_queryObject.addQuery(strQuery);
     this.m_queryObject.execute();
@@ -678,7 +673,7 @@ CSmartPlaylist.prototype.rebuildPlaylist = function() {
     
     this.m_queryObject.resetQuery();
     
-    strQuery = "UPDATE OR IGNORE \"" + SMARTPLAYLIST_LIST_TABLE_NAME + "\" SET query = x\"" + strTheSmartQuery + "\" WHERE name = \"" + this.m_strName + "\"";
+    strQuery = "UPDATE OR IGNORE \"" + this.m_strPlaylistTableName+ "\" SET query = x\"" + strTheSmartQuery + "\" WHERE name = \"" + this.m_strName + "\"";
     
     this.m_queryObject.addQuery(strQuery);
     

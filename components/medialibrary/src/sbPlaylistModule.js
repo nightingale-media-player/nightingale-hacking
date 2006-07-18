@@ -77,9 +77,7 @@ var sbPlaylistModule =
         
       var f = componentsDir.clone();
       f = f.QueryInterface(Components.interfaces.nsILocalFile);
-      dump("sbPlaylistModule.js: " + f.path + "\n");
       
-      //f.appendRelativePath("..");
       f.appendRelativePath("scripts");
       f.append(scriptName);
       
