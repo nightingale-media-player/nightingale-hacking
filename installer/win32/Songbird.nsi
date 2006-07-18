@@ -87,6 +87,7 @@ NoUninstall:
   File /r components
   File /r defaults
   File /r plugins
+  File /r scripts
   File /r vlcplugins
   File /r xulrunner
   
