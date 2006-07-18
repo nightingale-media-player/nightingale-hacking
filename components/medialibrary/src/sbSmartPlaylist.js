@@ -28,6 +28,8 @@
 // sbISmartPlaylist Object
 //
 
+const SMARTPLAYLIST_LIST_TABLE_NAME = "smartplaylist_list";
+
 const SONGBIRD_SMARTPLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/SmartPlaylist;1";
 const SONGBIRD_SMARTPLAYLIST_CLASSNAME = "Songbird Smart Playlist Interface"
 const SONGBIRD_SMARTPLAYLIST_CID = Components.ID("{a81b9c4d-e578-4737-840f-43d404c98423}");
