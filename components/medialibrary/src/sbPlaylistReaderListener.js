@@ -79,8 +79,12 @@ CPlaylistReaderListener.prototype =
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
       if(aChannel)
       {
-        strContentType = aChannel.contentType;
-        dump("CPlaylistReaderListener::onStateChange - Playlist Content Type: " + strContentType + "\n");
+        try {
+          strContentType = aChannel.contentType;
+          dump("CPlaylistReaderListener::onStateChange - Playlist Content Type: " + strContentType + "\n");
+        } catch (err) {
+          dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE\n");
+        } // Grrrr.
       }
       aPlaylistReader.originalURL = this.originalURL;
       var success = aPlaylistReader.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
@@ -89,8 +93,8 @@ CPlaylistReaderListener.prototype =
       
       if(success)
       {
-        var dpDownloadContext = SB_NewDataRemote( "download.context", null );
-        var dpDownloadTable = SB_NewDataRemote( "download.table", null );
+        var dpDownloadContext = this.SB_NewDataRemote( "download.context", null );
+        var dpDownloadTable = this.SB_NewDataRemote( "download.table", null );
 
         var dbQuery = new this.sbIDatabaseQuery();
         dbQuery.setDatabaseGUID(this.serviceGuid);
