@@ -559,5 +559,5 @@ CPlaylistBase.prototype =
       strReadableName = resObj.getRowCell(0, 0);    
     
     return strReadableName;
-  },
+  }
 };
