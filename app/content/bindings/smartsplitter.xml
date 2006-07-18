@@ -73,8 +73,9 @@
 
           var root = "splitter." + this.id + ".";
           var resizebefore = this.getResizeBefore();
-          if (resizebefore)
-            SBDataSetIntValue( root + "before.width", resizebefore.width );
+          if (resizebefore) {
+            if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+          }
           this.doAutoShowHide();
 
           // Only record state change on mouse up, rather than
