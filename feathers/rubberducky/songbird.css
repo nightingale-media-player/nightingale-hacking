@@ -43,7 +43,8 @@ mainwin_colors.css, for the mini this is mini_colors.css, and for everything els
 All images used in rendering Songbird can be found on this stylesheet.  For the Main window, 
 this is mainwin_images.css.  Dialogs have only 2 images for check boxes so we've left those in and
 saved another file for the dialogs.  If you'd like to make one, be sure to add it to this stylesheet
-in the Cascade section.
+in the Cascade section and add it to the appropriate jar file.  In this case, it's jar.mn.in found in
+the same folder as this style sheet.
 ************************************************************************************************************************************************
 */ 
 

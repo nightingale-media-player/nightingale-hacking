@@ -138,6 +138,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 {
   background-image: url(default/sysbtn_minimode_9x9.png) !important; /** <img src="sysbtn_minimode_9x9.png"> */
 }
+
 /* END CHROME **/
 
 /** 
@@ -180,22 +181,24 @@ SERVICE PANE
 
 /** Bind images to the button and button-popup on the Service Pane */
 /** NOTE: IDs containing periods are bad.. */
-#frame_service_buttonbar clickholdbutton[id="file.new"]
+clickholdbutton[id="file.new"]
 {
   list-style-image: url(default/icon_playlist_16x16.png) !important;
 }
 
-#frame_service_buttonbar clickholdbutton[id="file.new"] .menuitem-iconic[id="file.new"]  {
+.menuitem-iconic[id="file.new"]  {
   list-style-image: url(default/icon_playlist_16x16.png) !important;
 }
 
-#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.smart"] {
+.menuitem-iconic[id="file.smart"] {
   list-style-image: url(default/icon_smplaylist_16x16.png) !important;
 }
 
-#frame_service_buttonbar  clickholdbutton[id="file.new"] .menuitem-iconic[id="file.remote"]{
+.menuitem-iconic[id="file.remote"]{
   list-style-image: url(default/icon_dynplaylist_16x16.png) !important;
 }
+
+
 
 #frame_service_tree > treechildren::-moz-tree-twisty
 {
