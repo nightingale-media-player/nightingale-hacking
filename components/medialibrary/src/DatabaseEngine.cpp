@@ -38,6 +38,8 @@
 #include <string/nsStringAPI.h>
 #include <xpcom/nsISimpleEnumerator.h>
 #include <xpcom/nsDirectoryServiceDefs.h>
+#include <xpcom/nsAppDirectoryServiceDefs.h>
+#include <xpcom/nsDirectoryServiceUtils.h>
 #include <unicharutil/nsUnicharUtils.h>
 
 #include <nsAutoLock.h>
@@ -372,10 +374,21 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
 
   sqlite3 *pDB = nsnull;
 
-  //nsCOMPtr<nsIFile> f;
-  //nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(f));
+  nsCOMPtr<nsIFile> f;
+  nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(f));
+  if(NS_FAILED(rv)) return 1;
+  nsAutoString strFilename;
+  f->Append(NS_LITERAL_STRING("db"));
+
+  PRBool dirExists = PR_FALSE; 
+  f->Exists(&dirExists);
   
-  nsAutoString strFilename(dbGUID);
+  if(!dirExists) 
+    f->Create(nsIFile::DIRECTORY_TYPE, 0660);
+  
+  f->Append(dbGUID);
+  f->GetPath(strFilename);
+  
   strFilename.AppendLiteral(".db");
 
   // Kick sqlite in the pants
@@ -681,17 +694,11 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
   nsCOMPtr<nsIServiceManager> svcMgr;
   rv = NS_GetServiceManager(getter_AddRefs(svcMgr));
 
-  nsCOMPtr<nsIProperties> directory;
-  rv = svcMgr->GetServiceByContractID("@mozilla.org/file/directory_service;1", 
-    NS_GET_IID(nsIProperties), 
-    getter_AddRefs(directory));
-
-  // Get it once so we can restore it
-  nsCOMPtr<nsILocalFile> pDBDirectory = do_GetService("@mozilla.org/file/local;1");
-  rv = directory->Get(NS_OS_CURRENT_WORKING_DIR, NS_GET_IID(nsIFile), getter_AddRefs(pDBDirectory));
-
+  nsCOMPtr<nsIFile> pDBDirectory;
+  rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(pDBDirectory));  
   if(NS_FAILED(rv)) return 0;
 
+  pDBDirectory->Append(NS_LITERAL_STRING("db"));
   rv = pDBDirectory->IsDirectory(&bFlag);
 
   if(bFlag)
