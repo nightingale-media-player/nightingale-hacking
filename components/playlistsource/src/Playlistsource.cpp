@@ -166,16 +166,6 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   LOG(("MyQueryCallback::OnQueryEnd"));
   NS_ENSURE_ARG_POINTER(dbResultObject);
 
-/*
-  nsAutoMonitor mon_local(m_pMonitor);
-
-  m_Results.push_back( nsCOMPtr< sbIDatabaseResult >( dbResultObject ) );
-
-  PRInt32 rowcount;
-  dbResultObject->GetRowCount( &rowcount );
-  printf( "- MyQueryCallback(0x%08X) -- %d rows\n", dbResultObject, rowcount );
-*/
-
   NS_ENSURE_TRUE(gPlaylistPlaylistsource, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_Timer, NS_ERROR_OUT_OF_MEMORY);
 
@@ -187,6 +177,7 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
     // XXX This is NOT a safe or reliable way to post events to another thread
     m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
                                   0, nsITimer::TYPE_ONE_SHOT);
+    // MIG: So, then, what is?
   }
 
   return NS_OK;
@@ -267,19 +258,11 @@ MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
     // Push the old resultset onto the garbage stack.
     gPlaylistPlaylistsource->g_ResultGarbage.push_back(result);
 
-#if 0
-    if ( ! m_Results.empty() )
-    {
-      m_Info->m_Resultset = *( m_Results.rbegin() );
-      m_Results.clear();
-    }
-#else
     // Orphan the result for the query.
     nsCOMPtr<sbIDatabaseResult> res;
     nsresult rv = m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(res));
     if ( NS_SUCCEEDED( rv ) )
       m_Info->m_Resultset = res;
-#endif
   }
   // Decrement and update if needbe.
   gPlaylistPlaylistsource->g_ActiveQueryCount -= count;
