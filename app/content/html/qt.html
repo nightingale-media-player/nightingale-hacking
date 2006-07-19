@@ -52,6 +52,27 @@ function initPlayer()
   }
 }
 
+function cleanupOnError()
+{
+  try {
+    //Setting the URL to blank doesn't work.
+    //Stopping doesn't help either :(
+    //theQTCore.SetURL("");
+    //stopPlayer();
+  
+    //Probably an error :(
+    isBuffering = false;
+    isPlaying = false;
+    isPaused = false;
+    clearInterval(waitForPlayInterval);
+    waitForPlayInterval = 0;
+    waitRetryCount = 0;
+  } catch(e) {
+    dump(e);
+  }
+}
+
+var waitRetryCount = 0;
 function waitForPlayer()
 {
   initPlayer();
@@ -61,9 +82,14 @@ function waitForPlayer()
   switch(playerStatus)
   {
     case "Waiting":
+      waitRetryCount++;
+      if(waitRetryCount > 200) {
+        cleanupOnError();
+      }
     break;
     
     case "Loading":
+    dump("QTCore: Loading\n");
     break;
     
     case "Playable":
@@ -77,19 +103,18 @@ function waitForPlayer()
     default:
       if(playerStatus == null || playerStatus.indexOf("Error") != -1)
       {
-        //Probably an error :(
-        isBuffering = false;
-        isPlaying = false;
-        isPaused = false;
-        clearInterval(waitForPlayInterval);
-        waitForPlayInterval = 0;
+        cleanupOnError();
       }
   }
 }
 
 function playURL(url)
-{
+{  
   initPlayer();
+
+  if(isBuffering) {
+    cleanupOnError();
+  }
 
   isBuffering = true;  
   theQTCore.SetURL(url);
@@ -166,20 +191,28 @@ function getPlayerLength()
   //we fake a 1ms length when buffering.
 
   if(isBuffering) return 1;
+ 
+  var timeScale = theQTCore.GetTimeScale();
+  var duration = theQTCore.GetDuration();
   
-  return theQTCore.GetDuration();
+  return (duration / timeScale * 1000);
 }
 
 function getPlayerPosition()
 {
   initPlayer();
-  return theQTCore.GetTime();
+  var currentPos = theQTCore.GetTime();
+  var timeScale = theQTCore.GetTimeScale();
+  
+  return (currentPos / timeScale * 1000);
 }
 
 function seekPlayer(pos)
 {
   initPlayer();
-  theQTCore.SetTime(pos);
+  var timeScale = theQTCore.GetTimeScale();
+  
+  theQTCore.SetTime( pos / 1000 * timeScale );
 }
 </script>
 <embed id="core_qt" height="100%" width="100%" scale="aspect" bgcolor="#000000" name="core_qt" EnableJavaScript="true" AllowEmbedTagOverrides="true" SaveEmbedTags="true" autoplay="false" controller="false" target="myself" type="application/x-rtsp">
