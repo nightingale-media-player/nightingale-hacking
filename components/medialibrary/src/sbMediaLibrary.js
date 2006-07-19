@@ -441,7 +441,7 @@ CMediaLibrary.prototype =
     return;
   },
 
-  getUniqueValuesByField: function(strField, nValueCount)
+  getUniqueValuesByColumn: function(strField, nValueCount)
   {
     nValueCount.value = 0;
     var aValues = new Array();
