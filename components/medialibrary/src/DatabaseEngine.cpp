@@ -682,13 +682,14 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
   rv = NS_GetServiceManager(getter_AddRefs(svcMgr));
 
   nsCOMPtr<nsIProperties> directory;
-  rv = svcMgr->GetServiceByContractID("@mozilla.org/file/directory_service;1",
-    NS_GET_IID(nsIProperties),
+  rv = svcMgr->GetServiceByContractID("@mozilla.org/file/directory_service;1", 
+    NS_GET_IID(nsIProperties), 
     getter_AddRefs(directory));
 
-  //nsCOMPtr<nsIFile> f;
-  //nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(f));
-  
+  // Get it once so we can restore it
+  nsCOMPtr<nsILocalFile> pDBDirectory = do_GetService("@mozilla.org/file/local;1");
+  rv = directory->Get(NS_OS_CURRENT_WORKING_DIR, NS_GET_IID(nsIFile), getter_AddRefs(pDBDirectory));
+
   if(NS_FAILED(rv)) return 0;
 
   rv = pDBDirectory->IsDirectory(&bFlag);
