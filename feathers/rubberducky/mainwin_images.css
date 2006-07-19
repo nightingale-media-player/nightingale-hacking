@@ -117,13 +117,13 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   list-style-image: none !important;
 }
 
-#sysbtn_maximize > image
+#sysbtn_maximize .checkbox-check
 {
   list-style-image: none !important;
   background-image: url(default/sysbtn_maximize_9x9.png) !important; /** <img src="sysbtn_maximize_9x9.png"> */
 }
 
-#sysbtn_maximize[checked="true"] > image /* Restore */
+#sysbtn_maximize[checked="true"] .checkbox-check /* Restore */
 {
   list-style-image: none !important;
   background-image: url(default/sysbtn_restore_9x9.png) !important; /** <img src="sysbtn_restore_9x9.png"> */
