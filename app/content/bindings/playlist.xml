@@ -1892,9 +1892,11 @@
                 this.paused_scanning = false;
               }
             }
-            var e = document.createEvent("Events");
-            e.initEvent("playlist-selchange", false, true);
-            this.dispatchEvent(e);
+            if (!this.restoring_selection) {
+              var e = document.createEvent("Events");
+              e.initEvent("playlist-selchange", false, true);
+              this.dispatchEvent(e);
+            }
           }
           catch( err )
           {

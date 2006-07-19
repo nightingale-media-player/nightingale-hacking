@@ -41,6 +41,8 @@
  onload="onLoadTrackEditor();"
  onunload="onUnloadTrackEditor();"
  windowtype="track_editor"
+ onfocus="onFocus()"
+ onblur="onBlur()"
 >
   
 <windowregion/>
@@ -102,10 +104,11 @@
              exclude="uuid;url;title;artist;album;genre;length"/>
           </hbox>
           
+<!--
           <hbox id="tageditor.hflex">
             <tageditor id="trackeditor.tageditor" hflex="tageditor.hflex" title="&trackeditor.tags;" flex="1" />
           </hbox>
-          
+-->          
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <hbox>
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
@@ -152,14 +155,46 @@
   
   var playlist = null;
   
+  var dirty = {
+    value: false,
+    setDirty: function(val) {
+      this.value = val;
+      enableUndo();
+    },
+    isDirty: function() {
+      return this.value;
+    }
+  };
+  
+  var focus = {
+    value: false,
+    setIsFocused : function(val) {
+      this.value = val;
+    },
+    isFocused: function() {
+      return this.value;
+    }
+  };
+  
   function onLoadTrackEditor() {
     SBDataIncrementValue( "backscan.paused" );
 
     var doc = window.arguments[0];
-    document.getElementById("trackeditor.trackeditor").setBaseDocument(doc);
-    document.getElementById("trackeditor.exttrackeditor").setBaseDocument(doc);
-    document.getElementById("trackeditor.tageditor").setBaseDocument(doc);
-
+    var _trackeditor = document.getElementById("trackeditor.trackeditor");
+    _trackeditor.setBaseDocument(doc);
+    _trackeditor.setDirtyObject(dirty);
+    _trackeditor.setMainFocusObject(focus);
+    var _exttrackeditor = document.getElementById("trackeditor.exttrackeditor");
+    _exttrackeditor.setBaseDocument(doc);
+    _exttrackeditor.setDirtyObject(dirty);
+    _exttrackeditor.setMainFocusObject(focus);
+    //var _tageditor = document.getElementById("trackeditor.tageditor");
+    //_tageditor.setBaseDocument(doc);
+    //_tageditor.setDirtyObject(dirty);
+    //_tageditor.setMainFocusObject(focus);
+    
+    disableUndo();
+    
     playlist = doc.__CURRENTPLAYLIST__;
     if (playlist)
     {
@@ -186,17 +221,27 @@
     onWindowSavePosition();
   }
   
+  function enableUndo() {
+    document.getElementById("button_undo").setAttribute("disabled", "false");
+  }
+  
+  function disableUndo() {
+    document.getElementById("button_undo").setAttribute("disabled", "true");
+  }
+  
   function doOK() {
     document.getElementById("trackeditor.trackeditor").apply();
     document.getElementById("trackeditor.exttrackeditor").apply();
-    document.getElementById("trackeditor.tageditor").apply();
+    //document.getElementById("trackeditor.tageditor").apply();
     return true;
   }
 
   function doUndo() {
     document.getElementById("trackeditor.trackeditor").undo();
     document.getElementById("trackeditor.exttrackeditor").undo();
-    document.getElementById("trackeditor.tageditor").undo();
+    //document.getElementById("trackeditor.tageditor").undo();
+    dirty.setDirty(false);
+    disableUndo();
   }
   
   function doCancel() {
@@ -214,6 +259,14 @@
         document.getElementById("button_ok").doCommand();
         break;
     }
+  }
+  
+  function onFocus() {
+    focus.setIsFocused(true);
+  }
+
+  function onBlur() {
+    focus.setIsFocused(false);
   }
   
   ]]>

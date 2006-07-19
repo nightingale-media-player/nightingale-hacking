@@ -64,6 +64,8 @@
     <field name="guids">null</field>
     <field name="ismultiedit">false</field>
     <field name="multieditdisabled">false</field>
+    <field name="dirtyobject">null</field>
+    <field name="originalvalue">""</field>
 
     <property name="readonly">
       <getter>
@@ -93,10 +95,11 @@
           {
             if (this.checkbox.getAttribute("checked")) {
               this.enableMultiEdition();
-            }
-            else {
+            } else {
              this.disableMultiEdition();
-             this.setValueToControl(this.getValueFromDatabase(false));
+             var value = this.getValueFromDatabase(false);
+             this.originalvalue = value;
+             this.setValueToControl(value);
             }
           }
         ]]>
@@ -243,7 +246,9 @@
     
     <method name="undo">
       <body>
-        this.setValueToControl(this.getValueFromDatabase(true));
+        var value = this.getValueFromDatabase(true);
+        this.originalvalue = value;
+        this.setValueToControl(value);
       </body>
     </method>
 
@@ -259,9 +264,27 @@
         }
         ]]>
       </body>
-    </method>    
-   
-   </implementation>
+    </method>
+    
+    <method name="setDirty">
+      <body>
+        <![CDATA[
+          if (this.dirtyobject) this.dirtyobject.setDirty(true);
+        ]]>
+      </body>
+    </method>
+
+    <method name="checkForChange">
+      <body>
+        <![CDATA[
+         var value = this.getValueFromControl();
+         if (value != this.originalvalue) this.setDirty();
+        ]]>
+      </body>
+    </method>
+
+
+  </implementation>
  
   </binding>
 
@@ -348,10 +371,17 @@
       </body>
     </method>
     
-    
-    
    </implementation>
- 
+
+    <handlers>
+      <handler event="keypress">
+        <![CDATA[
+          var controller = this;
+          var callback = function() { controller.checkForChange(); };
+          setTimeout(callback, 0); 
+        ]]>
+      </handler>
+    </handlers>
   </binding>
 
 
@@ -423,7 +453,7 @@
           if (this.populateuniques) {
             this.editcontrol.removeAllItems();
             var nout = {};
-            var array = this.ml.GetUniqueValuesByField(this.column, nout);
+            var array = this.ml.getUniqueValuesByColumn(this.column, nout);
             for (var i=0;i<array.length;i++) {
               if (array[i] != "")
                 this.editcontrol.appendItem(array[i], null, null);
@@ -434,7 +464,24 @@
     </method>
     
    </implementation>
- 
+
+    <handlers>
+      <handler event="keypress">
+        <![CDATA[
+          var controller = this;
+          var callback = function() { controller.checkForChange(); };
+          setTimeout(callback, 0); 
+        ]]>
+      </handler>
+      <handler event="popuphidden">
+        <![CDATA[
+          var controller = this;
+          var callback = function() { controller.checkForChange(); };
+          setTimeout(callback, 0); 
+        ]]>
+      </handler>
+    </handlers>
+
   </binding>
 
 </bindings>

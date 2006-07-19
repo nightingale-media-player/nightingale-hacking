@@ -91,6 +91,8 @@
   var controls = Array();
   var basedoc = null;
   var guids = Array();
+  var dirtyobject = null;
+  var focusobject = null;
 
   function apply() 
   {
@@ -104,15 +106,18 @@
       controls[i].undo();
   }
   
-  function setBaseDocument(doc) {
+  function setObjects(doc, dirty, focus) {
     basedoc = doc;
+    dirtyobject = dirty;
+    focusobject = focus;
+    setControlsDirtyObject();
     watchPlaylist();
     loadSelection();
   }
 
   document.__APPLY_FUNCTION__ = apply;
   document.__UNDO_FUNCTION__ = undo;
-  document.__SETBASEDOC_FUNCTION__ = setBaseDocument;
+  document.__SETOBJECTS_FUNCTION__ = setObjects;
   
   function onInit()
   {
@@ -125,7 +130,11 @@
       alert( err );
     }
   } 
- 
+  
+  function setControlsDirtyObject() {
+    for (var i=0;i<controls.length;i++) controls[i].dirtyobject = dirtyobject;
+  }
+
   function loadControls() {
     controls.push(document.getElementById("trackeditor.guid"));
     controls.push(document.getElementById("trackeditor.url"));
@@ -163,12 +172,14 @@
   
   function onPlaylistSelectionChanged()
   {
+    if (dirtyobject && dirtyobject.isDirty()) return; // ignore new selection if anything has been edited
+    if (focusobject && focusobject.isFocused()) return; // ignore new selection if the window is focused (the selection can't possibly have been made by the user!)
     loadSelection();
   }
   
   function loadSelection()
   {
-    guids = Array();
+    var _guids = Array();
     var playlist = basedoc.__CURRENTPLAYLIST__;
     if (playlist && playlist.tree.columns) 
     {
@@ -176,6 +187,7 @@
       if (guid_column && playlist.tree.view && playlist.tree.view.selection)
       {
         var rangeCount = playlist.tree.view.selection.getRangeCount();
+        if (rangeCount == 0) return; // abort !
         for (var i=0; i < rangeCount; i++) 
         {
           var start = {};
@@ -185,11 +197,12 @@
           {
             // Get the text of the hidden tree cell, this contains the uuid.
             var guid = playlist.tree.view.getCellText( j, guid_column );
-            guids.push(guid);
+            _guids.push(guid);
           }
         }
       }
     }
+    guids = _guids;
     onTrackChange();
   }
   
