@@ -102,20 +102,20 @@
               <menubar id="songbird_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)">
                 <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
                   <menupopup id="file-popup">
-                    <menuitem id="file.new" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-                    <menuitem id="file.smart" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
-                    <menuitem id="file.remote" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
-                    <menuitem id="file.file" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
-                    <menuitem id="file.url" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
-                    <menuitem id="file.playlist" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
+                    <menuitem id="file.new" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+                    <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+                    <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+                    <menuitem id="file.file" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
+                    <menuitem id="file.url" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
+                    <menuitem id="file.playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="file.scan" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
-                    <menuitem id="file.dlfolder" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
-                    <menuitem id="file.watch" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
+                    <menuitem id="file.scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
+                    <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
+                    <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
                     <menuseparator/>
                     <!--menuitem id="file.htmlbar" type="checkbox" label="&menu.file.htmlbar;"/-->
-                    <menuitem id="file.skin" type="checkbox" label="&menu.file.skin;"/>
-                    <menuitem id="file.window" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
+                    <menuitem id="file.skin" class="menuitem-iconic" type="checkbox" label="&menu.file.skin;"/>
+                    <menuitem id="file.window" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
                     <menuseparator/>
                     <menu id="songbird_menu_locale" label="&locale.language;" class="sb_faceplate" accesskey="&locale.language.accesskey;">
                       <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
