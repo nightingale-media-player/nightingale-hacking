@@ -384,7 +384,7 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
   f->Exists(&dirExists);
   
   if(!dirExists) 
-    f->Create(nsIFile::DIRECTORY_TYPE, 0660);
+    f->Create(nsIFile::DIRECTORY_TYPE, 0700);
   
   f->Append(dbGUID);
   f->GetPath(strFilename);
