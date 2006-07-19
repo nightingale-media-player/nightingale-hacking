@@ -1085,16 +1085,17 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 nsCString theCTableName;
                 NS_UTF16ToCString(strTableName, NS_CSTRING_ENCODING_UTF8, theCTableName);
                 pEngine->AddPersistentQuery(pQuery, theCTableName);
-
               }
             }
+            CDatabaseResult *pRes = pQuery->GetResultObject();
+            pRes->ClearResultSet();
           }
 
           //Always release the statement.
           retDB = sqlite3_finalize(pStmt);
           pEngine->UnlockDatabase(pDB);
 
-#if defined(HARD_SANITY_CHECK)
+#if defined(HARD_SANI8TY_CHECK)
           if(retDB != SQLITE_OK)
           {
             PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
