@@ -237,7 +237,6 @@ interface sbIMediaLibrary : nsISupports
    * \param columnUniqueValues
    * \sa setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
-  /*getUniqueValuesByField*/
   void getUniqueValuesByColumn(in AString columnName, 
     out PRUint32 columnUniqueValCount, 
     [array, size_is (columnUniqueValCount), retval] out wstring columnUniqueValues); /**/

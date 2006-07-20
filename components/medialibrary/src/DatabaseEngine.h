@@ -117,8 +117,11 @@ private:
 
   void UpdatePersistentQueries(CDatabaseQuery *pQuery);
   void DoPersistentCallback(CDatabaseQuery *pQuery);
+  nsresult GetDBStorePath(const nsAString &dbGUID, nsAString &strPath);
 
 private:
+  PRLock * m_pDBStorePathLock;
+  nsString m_DBStorePath;
 
   databasemap_t m_Databases;
   PRLock* m_pDatabasesLock;

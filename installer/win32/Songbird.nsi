@@ -36,12 +36,9 @@ OutFile "Songbird_${BUILD_ID}.exe"
 InstallDir "$PROGRAMFILES\Songbird\"
 ;InstallDirRegKey HKLM SOFTWARE\Songbird "Install_Dir"
 
-;LicenseData LICENSE.txt
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; License / EULA is displayed on first run.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Page license
 
 Page components
 Page directory
@@ -174,6 +171,7 @@ Section "Uninstall"
   RMDir /r $INSTDIR\components
   RMDir /r $INSTDIR\defaults
   RMDir /r $INSTDIR\plugins
+  RMDir /r $INSTDIR\scripts
   RMDir /r $INSTDIR\vlcplugins
   RMDir /r $INSTDIR\xulrunner
 

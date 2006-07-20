@@ -100,7 +100,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -184,7 +184,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

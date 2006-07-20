@@ -69,27 +69,6 @@ static NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
 NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
 NS_NAMED_LITERAL_STRING(strEndToken, "\"");
 
-// FUNCTIONS ==================================================================
-int SQLiteCaseInsensitiveCollate(void *pData, int nLenA, const void *pStrA, int nLenB, const void *pStrB)
-{
-  nsAutoString strA( (PRUnichar *)pStrA, nLenA / sizeof(PRUnichar) );
-  nsAutoString strB( (PRUnichar *)pStrB, nLenB / sizeof(PRUnichar) );
-
-  ToLowerCase(strA);
-  ToLowerCase(strB);
-
-  if(strA.Equals(strB))
-    return 0;
-
-  if(strA < strB)
-    return -1;
-  
-  if(strA > strB)
-    return 1;
-
-  return -1;
-} //SQLiteCaseInsensitiveCollate
-
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger)
 {
   int ret = SQLITE_OK;
@@ -298,12 +277,14 @@ CDatabaseEngine::CDatabaseEngine()
   m_pQueryProcessorMonitor  = nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor");
   m_pPersistentQueriesLock = PR_NewLock();
   m_pCaseConversionLock = PR_NewLock();
+  m_pDBStorePathLock = PR_NewLock();
 
   NS_ASSERTION(m_pDatabasesLock, "CDatabaseEngine.mpDatabaseLock failed");
   NS_ASSERTION(m_pDatabaseLocksLock, "CDatabaseEngine.m_pDatabasesLocksLock failed");
   NS_ASSERTION(m_pQueryProcessorMonitor, "CDatabaseEngine.m_pQueryProcessorMonitor failed");
   NS_ASSERTION(m_pPersistentQueriesLock, "CDatabaseEngine.m_pPersistentQueriesLock failed");
   NS_ASSERTION(m_pCaseConversionLock, "CDatabaseEngine.m_pCaseConversionLock failed");
+  NS_ASSERTION(m_pDBStorePathLock, "CDatabaseEngine.m_pDBStorePathLock failed");
 
 #ifdef DEBUG_locks
   nsCAutoString log;
@@ -365,6 +346,8 @@ CDatabaseEngine::CDatabaseEngine()
     PR_DestroyLock(m_pPersistentQueriesLock);
   if (m_pCaseConversionLock)
     PR_DestroyLock(m_pCaseConversionLock);
+  if (m_pDBStorePathLock)
+    PR_DestroyLock(m_pDBStorePathLock);
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -374,23 +357,9 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
 
   sqlite3 *pDB = nsnull;
 
-  nsCOMPtr<nsIFile> f;
-  nsresult rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(f));
-  if(NS_FAILED(rv)) return 1;
   nsAutoString strFilename;
-  f->Append(NS_LITERAL_STRING("db"));
-
-  PRBool dirExists = PR_FALSE; 
-  f->Exists(&dirExists);
+  GetDBStorePath(dbGUID, strFilename);
   
-  if(!dirExists) 
-    f->Create(nsIFile::DIRECTORY_TYPE, 0700);
-  
-  f->Append(dbGUID);
-  f->GetPath(strFilename);
-  
-  strFilename.AppendLiteral(".db");
-
   // Kick sqlite in the pants
   PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pDB);
 
@@ -406,8 +375,6 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
     sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
     if(strErr) sqlite3_free(strErr);
 #endif
-
-    ret = sqlite3_create_collation16(pDB, (char *) NS_LITERAL_STRING("songbird_ci").get(), SQLITE_UTF16, nsnull, SQLiteCaseInsensitiveCollate);
 
     NS_ASSERTION( ret == SQLITE_OK, "CDatabaseEngine: Couldn't create/open database!");
   }
@@ -879,10 +846,26 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
             strQuery.EndReading(end);
             FindInReadable(strEndToken, start, end);
             
-            nsDependentString strSecondDBGUID(Substring(lineStart, --start));
+            nsAutoString strSecondDBGUID(Substring(lineStart, start));
             pSecondDB = pEngine->GetDBByGUID(strSecondDBGUID, PR_TRUE);
             if(pSecondDB)
+            {
+              nsAutoString::const_iterator stringStart, guidStart, guidEnd;
+              nsAutoString strDBPath(strSecondDBGUID);
+              strDBPath.AppendLiteral(".db");
+              
+              strQuery.BeginReading(stringStart);
+              strQuery.BeginReading(guidStart);
+              strQuery.EndReading(guidEnd);
+
+              if(FindInReadable(strDBPath, guidStart, guidEnd))
+              {
+                pEngine->GetDBStorePath(strSecondDBGUID, strDBPath);
+                strQuery.Replace(Distance(stringStart, guidStart), Distance(guidStart, guidEnd), strDBPath);
+              }
+
               pEngine->LockDatabase(pSecondDB);
+            }
           }
         }
 
@@ -1095,7 +1078,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           retDB = sqlite3_finalize(pStmt);
           pEngine->UnlockDatabase(pDB);
 
-#if defined(HARD_SANI8TY_CHECK)
+#if defined(HARD_SANITY_CHECK)
           if(retDB != SQLITE_OK)
           {
             PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
@@ -1107,8 +1090,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
         }
       }
-
-      //pQuery->m_QueryResultLock.Unlock();
     }
 
     if(pSecondDB != nsnull)
@@ -1131,10 +1112,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
     //Check if this query is a persistent query so we can now fire off the callback.
     pEngine->DoPersistentCallback(pQuery);
-
-    //Close up the db.
-    //pEngine->CloseDB(pGUID);
-    //PR_Free(pGUID);
 
     NS_IF_RELEASE(pQuery);
   } // while
@@ -1240,3 +1217,57 @@ void CDatabaseEngine::DoPersistentCallback(CDatabaseQuery *pQuery)
     }
   }
 } //DoPersistentCallback
+
+//-----------------------------------------------------------------------------
+nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, nsAString &strPath)
+{
+  nsresult rv = NS_ERROR_FAILURE;
+  nsAutoLock lock(m_pDBStorePathLock);
+
+  if(m_DBStorePath.IsEmpty())
+  {
+    nsCOMPtr<nsIFile> f;
+
+    rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(f));
+    if(NS_FAILED(rv)) return rv;
+
+    rv = f->Append(NS_LITERAL_STRING("db"));
+    if(NS_FAILED(rv)) return rv;
+
+    PRBool dirExists = PR_FALSE; 
+    rv = f->Exists(&dirExists);
+    if(NS_FAILED(rv)) return rv;
+
+    if(!dirExists) 
+    {
+      rv = f->Create(nsIFile::DIRECTORY_TYPE, 0700);
+      if(NS_FAILED(rv)) return rv;
+    }
+
+    nsAutoString strDBFile(dbGUID);
+    strDBFile.AppendLiteral(".db");
+
+    rv = f->GetPath(m_DBStorePath);
+    if(NS_FAILED(rv)) return rv;
+    rv = f->Append(strDBFile);
+    if(NS_FAILED(rv)) return rv;
+    rv = f->GetPath(strPath);
+    if(NS_FAILED(rv)) return rv;
+  }
+  else
+  {
+    nsCOMPtr<nsILocalFile> f;
+
+    rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(f));
+    if(NS_FAILED(rv)) return rv;
+
+    nsAutoString strDBFile(dbGUID);
+    strDBFile.AppendLiteral(".db");
+    rv = f->Append(strDBFile);
+    if(NS_FAILED(rv)) return rv;
+    rv = f->GetPath(strPath);
+    if(NS_FAILED(rv)) return rv;
+  }
+
+  return NS_OK;
+} //GetDBStorePath
