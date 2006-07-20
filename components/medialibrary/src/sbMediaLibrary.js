@@ -37,7 +37,7 @@ const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
 const LIBRARY_TABLE_NAME = "library";
 const LIBRARY_DESC_TABLE_NAME = "library_desc";
 
-const LIBRARY_DESC_TABLE_CREATE = "CREATE TABLE library_desc (column_name TEXT UNIQUE, readable_name TEXT, is_visible INTEGER(0, 1) DEFAULT 0, default_visibility INTEGER(0, 1) DEFAULT 0, is_metadata INTEGER(0, 1) DEFAULT 0, sort_weight INTEGER DEFAULT 0, width INTEGER DEFAULT -1, type TEXT DEFAULT 'text')";
+const LIBRARY_DESC_TABLE_CREATE = "CREATE TABLE library_desc (column_name TEXT UNIQUE, readable_name TEXT, is_visible INTEGER(0, 1) DEFAULT 0, default_visibility INTEGER(0, 1) DEFAULT 0, is_metadata INTEGER(0, 1) DEFAULT 0, sort_weight INTEGER DEFAULT 0, width INTEGER DEFAULT -1, type TEXT DEFAULT 'text', readonly INTEGER(0,1) DEFAULT 0)";
 const LIBRARY_TABLE_CREATE = "CREATE TABLE library (id INTEGER PRIMARY KEY, uuid BLOB UNIQUE NOT NULL, service_uuid BLOB NOT NULL, url TEXT UNIQUE DEFAULT '', content_type TEXT DEFAULT '', length TEXT DEFAULT '0', artist TEXT DEFAULT '', title TEXT DEFAULT '', album TEXT DEFAULT '', genre TEXT DEFAULT '', composer TEXT DEFAULT '', producer TEXT DEFAULT '', rating INTEGER DEFAULT 0, track_no INTEGER DEFAULT 0, track_total INTEGER DEFAULT 0, disc_no INTEGER DEFAULT 0, disc_total INTEGER DEFAULT 0, year INTEGER DEFAULT 0)";
 const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uuid, url, content_type, length, artist, album, genre)";
 
@@ -116,28 +116,29 @@ CMediaLibrary.prototype =
       6. default column width, in pixels, signed integer value.
       7. preferred data type of column (this *doesn't* mean the column *HAS* to have the sqlite type that matches the field type you want)
       Some example data types: text, numeric, decimal, boolean.
-      
+      8. is column read only to the user?
+
       */
       
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"id\", \"" + id + "\", 1, 0, 0, 0, -1, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"row_id\", \"" + row_id + "\", 1, 1, 0, -10000, 4, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"uuid\", \"" + uuid + "\", 1, 0, 0, 0, -1, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"service_uuid\", \"" + service_uuid + "\", 1, 0, 0, 0, -1, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"url\", \"" + url + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"content_type\", \"" + content_type + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"length\", \"" + length + "\", 1, 1, 1, -8000, 4, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"artist\", \"" + artist + "\", 1, 1, 1, -7000, 25, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"title\", \"" + title + "\", 1, 1, 1, -9000, 60, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"album\", \"" + album + "\", 1, 1, 1, -6000, 25, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"genre\", \"" + genre + "\", 1, 1, 1, -5000, 10, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"composer\", \"" + composer + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"producer\", \"" + producer + "\", 1, 0, 1, 0, -1, 'text')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"rating\", \"" + rating + "\", 1, 1, 1, 1000, 10, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_no\", \"" + track_no + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_total\", \"" + track_total + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_no\", \"" + disc_no + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_total\", \"" + disc_total + "\", 1, 0, 1, 0, -1, 'numeric')");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"year\", \"" + year + "\", 1, 0, 1, 0, -1, 'numeric')");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"id\", \"" + id + "\", 1, 0, 0, 0, -1, 'numeric', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"row_id\", \"" + row_id + "\", 1, 1, 0, -10000, 4, 'numeric', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"uuid\", \"" + uuid + "\", 1, 0, 0, 0, -1, 'text', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"service_uuid\", \"" + service_uuid + "\", 1, 0, 0, 0, -1, 'text', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"url\", \"" + url + "\", 1, 0, 1, 0, -1, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"content_type\", \"" + content_type + "\", 1, 0, 1, 0, -1, 'text', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"length\", \"" + length + "\", 1, 1, 1, -8000, 4, 'numeric', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"artist\", \"" + artist + "\", 1, 1, 1, -7000, 25, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"title\", \"" + title + "\", 1, 1, 1, -9000, 60, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"album\", \"" + album + "\", 1, 1, 1, -6000, 25, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"genre\", \"" + genre + "\", 1, 1, 1, -5000, 10, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"composer\", \"" + composer + "\", 1, 0, 1, 0, -1, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"producer\", \"" + producer + "\", 1, 0, 1, 0, -1, 'text', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"rating\", \"" + rating + "\", 1, 1, 1, 1000, 10, 'numeric', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_no\", \"" + track_no + "\", 1, 0, 1, 0, -1, 'numeric', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"track_total\", \"" + track_total + "\", 1, 0, 1, 0, -1, 'numeric', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_no\", \"" + disc_no + "\", 1, 0, 1, 0, -1, 'numeric', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"disc_total\", \"" + disc_total + "\", 1, 0, 1, 0, -1, 'numeric', 0)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"year\", \"" + year + "\", 1, 0, 1, 0, -1, 'numeric', 0)");
       
       this.m_queryObject.execute();
       this.m_queryObject.waitForCompletion();
@@ -359,7 +360,16 @@ CMediaLibrary.prototype =
     }
   },
   
-  setColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
+  setColumnInfo: function(strColumn, 
+    strReadableName, 
+    isVisible, 
+    defaultVisibility, 
+    isMetadata, 
+    sortWeight, 
+    colWidth,
+    dataType,
+    readOnly,
+    bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -373,6 +383,8 @@ CMediaLibrary.prototype =
       strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
       strQuery += "sort_weight = \"" + sortWeight + "\"";
       strQuery += "width = \"" + colWidth + "\"";
+      strQuery += "type = \"" + dataType + "\"";
+      strQuery += "readonly = \"" + readOnly + "\"";
       strQuery += " WHERE column_name = \"" + strColumn + "\"";
       
       this.m_queryObject.addQuery(strQuery);

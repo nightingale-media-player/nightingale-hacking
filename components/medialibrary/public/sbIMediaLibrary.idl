@@ -173,6 +173,8 @@ interface sbIMediaLibrary : nsISupports
    * \param isMetadataColumn
    * \param columnSortWeight
    * \param columnDefaultWidth
+   * \param columnDataType
+   * \param isColumnReadOnly
    * \param willRunQueryLater
    * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
    */
@@ -182,7 +184,9 @@ interface sbIMediaLibrary : nsISupports
     in PRBool isColumnVisibleByDefault, 
     in PRBool isMetadataColumn, 
     in PRInt32 columnSortWeight,
-    in PRInt32 columnDefaultUIWidth, 
+    in PRInt32 columnDefaultUIWidth,
+    in AString columnDataType,
+    in PRBool isColumnReadOnly,
     in PRBool willRunQueryLater); /**/
 
   /**
