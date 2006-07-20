@@ -1352,7 +1352,7 @@ PlaylistPlayback.prototype = {
 
   _onPollCompleted: function ( len, pos, core ) {
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
-    if ( core.getPlaying() && ( len > 0.0 ) ) {
+    if ( core.getPlaying() && ( len > 0.0 || pos > 0.0 ) ) {
       // First time we see it playing, 
       if ( ! this._seenPlaying.boolValue ) {
         // Clear the search popup
