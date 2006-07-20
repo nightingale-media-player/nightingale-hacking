@@ -41,7 +41,6 @@ const LIBRARY_DESC_TABLE_CREATE = "CREATE TABLE library_desc (column_name TEXT U
 const LIBRARY_TABLE_CREATE = "CREATE TABLE library (id INTEGER PRIMARY KEY, uuid BLOB UNIQUE NOT NULL, service_uuid BLOB NOT NULL, url TEXT UNIQUE DEFAULT '', content_type TEXT DEFAULT '', length TEXT DEFAULT '0', artist TEXT DEFAULT '', title TEXT DEFAULT '', album TEXT DEFAULT '', genre TEXT DEFAULT '', composer TEXT DEFAULT '', producer TEXT DEFAULT '', rating INTEGER DEFAULT 0, track_no INTEGER DEFAULT 0, track_total INTEGER DEFAULT 0, disc_no INTEGER DEFAULT 0, disc_total INTEGER DEFAULT 0, year INTEGER DEFAULT 0)";
 const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uuid, url, content_type, length, artist, album, genre)";
 
-
 function CMediaLibrary()
 {
 }
@@ -53,7 +52,9 @@ CMediaLibrary.prototype.constructor = CMediaLibrary;
 CMediaLibrary.prototype = 
 {
   m_queryObject: null,
-  
+
+  m_UUIDGenerator: null,
+
   setQueryObject: function(queryObj)
   {
     this.m_queryObject = queryObj; 
@@ -149,8 +150,9 @@ CMediaLibrary.prototype =
   {
     if(this.m_queryObject != null)
     {
-      var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
-      var guid = aUUIDGenerator.generateUUID();
+      if (!this.m_UUIDGenerator)
+        this.m_UUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
+      var guid = this.m_UUIDGenerator.generateUUID();
       var dbguid = this.m_queryObject.getDatabaseGUID();
       var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       var strQuery = "SELECT uuid FROM library WHERE ";
