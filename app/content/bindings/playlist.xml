@@ -1549,8 +1549,19 @@
       </body>
     </method>
 
-    <!-- nsIXULTreeBuilderObserver implementation -->
+    <!-- nsIXULTreeBuilderObserver implementation
+      canDrop()
+      onDrop()
+      onToggleOpenState()
+      onCycleHeader()
+      onCycleCell()
+      onSelectionChanged()
+      onPerformAction()
+      onPerformActionOnRow()
+      onPerformActionOnCell()
+    -->
 
+    <!-- nsITreeView implementation -->
     <method name="isEditable">
       <parameter name="row"/>
       <parameter name="col"/>
