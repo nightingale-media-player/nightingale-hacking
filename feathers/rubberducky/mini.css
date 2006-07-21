@@ -336,13 +336,13 @@ window#mini
 #mini_text_title
 {
   min-width: 100px !important;
-  height: 15px !important;
+  height: 13px !important;
   color: #E4EADF !important;
   overflow: hidden;
 }
 #mini_text_time
 {
   width: auto !important;
-  height: 15px !important;
+  height: 13px !important;
   color: #E4EADF !important;
 }
