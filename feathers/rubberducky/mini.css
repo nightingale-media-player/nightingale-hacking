@@ -335,6 +335,7 @@ window#mini
 /* the texties */
 #mini_text_title
 {
+  font-family: Tahoma, Sans-Serif !important;
   min-width: 100px !important;
   height: 13px !important;
   color: #E4EADF !important;
@@ -342,6 +343,7 @@ window#mini
 }
 #mini_text_time
 {
+  font-family: Tahoma, Sans-Serif !important;
   width: auto !important;
   height: 13px !important;
   color: #E4EADF !important;
