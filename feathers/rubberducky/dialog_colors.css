@@ -105,11 +105,17 @@ selected-highlight  #99a195
   color: #fff !important;
 }
 
+/** 
+************************************************************************************************************************************************
+FORM ELEMENTS
+************************************************************************************************************************************************
+*/
 
-
-/* Dialog Form Elements */
-
-/* dialog buttons */
+/** 
+**************************************************************************************
+BUTTONS for dialogs and forms.
+**************************************************************************************
+*/
 .dialog_button 
 {
   -moz-border-top-colors: #99A195 !important;
@@ -120,20 +126,8 @@ selected-highlight  #99a195
   color: #99A195 !important;
 }
 
-.backless_button /* Used in Watch Folders **/
-{
-  background-color: transparent !important;
-  color: #99A195 !important;
-}
-
-#button_ok[disabled="true"],
-#button_ok:hover[disabled="true"],
-#button_browse[disabled="true"],
-#button_browse:hover[disabled="true"],
-#button_cancel[disabled="true"],
-#button_cancel:hover[disabled="true"],
-#songbird_makenewplaylist[disabled="true"],
-#songbird_makenewplaylist:hover[disabled="true"]
+.dialog_button[disabled="true"],
+.dialog_button:hover[disabled="true"]
 {
   -moz-border-top-colors: #535751 !important;
   -moz-border-left-colors: #535751 !important;
@@ -143,36 +137,22 @@ selected-highlight  #99a195
   color: #535751 !important;
 }
 
-#button_ok,
-#button_browse,
-#button_cancel,
-#songbird_makenewplaylist
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
-  color: #99A195 !important;
-}
-
-#button_ok:hover,
-#button_cancel:hover,
-#songbird_makenewplaylist:hover,
-#button_browse:hover,
-#button_ok:focus,
-#button_cancel:focus,
-#songbird_makenewplaylist:focus,
-#button_browse:focus
+.dialog_button:hover
 {
   color: #FFF !important;
   background-color: #333 !important;
 }
 
+.backless_button /* Used in Watch Folders **/
+{
+  background-color: transparent !important;
+  color: #99A195 !important;
+}
+
 /** 
-************************************************************************************************************************************************
+*************************************************************************
 TEXTBOXES for dialogs and forms.
-************************************************************************************************************************************************
+***************************************************************************
 */
 .textbox-input-box
 {
@@ -219,7 +199,7 @@ TEXTBOXES for dialogs and forms.
 }
 
 /** 
-*************************************************************************************************
+*******************************************************************************
 LISTBOXES for dialogs and forms.
 ****************************************************************************
 */
@@ -249,7 +229,7 @@ LISTBOXES for dialogs and forms.
 }
 
 /** 
-********************************************************************************************
+***********************************************************************
 CHECKBOXES, boxes, labels, images, states.
 **********************************************************************
 */
