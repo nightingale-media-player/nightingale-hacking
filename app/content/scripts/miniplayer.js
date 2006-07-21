@@ -68,7 +68,7 @@ try
     }
     window.addEventListener( "keydown", checkAltF4, true );
     
-    onWindowLoadSize();
+    onWindowLoadSizeAndPosition();
   }
   
   function SBUninitialize()
@@ -186,7 +186,7 @@ try
       var location = "" + window.location; // Grrr.  Dumb objects.
       if ( location.indexOf("?video") == -1 )
       {
-        onWindowSaveSize();
+        onWindowSaveSizeAndPosition();
       }
     }
     catch ( err )
@@ -306,6 +306,7 @@ try
         break;
       case 40: // Arrow Down
       case 13: // Return
+        //if ( gPPS.playing )
         if ( gPPS.getPlaying() )
           onPause( );
         else
@@ -321,6 +322,7 @@ try
         }
         break;
       case 32: // Space
+        //if ( gPPS.playing )
         if ( gPPS.getPlaying() )
           onPause( );
         else
@@ -329,7 +331,7 @@ try
     }
   }
 
-  function onWindowSaveSize()
+  function onWindowSaveSizeAndPosition()
   {
     var root = "window." + document.documentElement.id;
     SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
@@ -338,7 +340,7 @@ try
     SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
   }
 
-  function onWindowLoadSize()
+  function onWindowLoadSizeAndPosition()
   {
     var root = "window." + document.documentElement.id;
     if (SBDataGetStringValue( root + ".x" ) == "" && SBDataGetStringValue( root + ".w" ) == "") { return; }

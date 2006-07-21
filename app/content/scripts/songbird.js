@@ -156,7 +156,7 @@ function onExit()
 {
   try
   {
-    onWindowSaveSize();
+    onWindowSaveSizeAndPosition();
   }
   catch ( err )
   {
@@ -203,29 +203,50 @@ function onMinimumWindowSize()
 */  
 }
 
-function onWindowSaveSize()
+// No forseen need to save _just_ size without position
+function onWindowSaveSizeAndPosition()
 {
   var root = "window." + document.documentElement.id;
-  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
+
+  dump("******** onWindowSaveSizeAndPosition: root:" + root +
+                                  " root.w:" + SBDataGetIntValue(root+'.w') + 
+                                  " root.h:" + SBDataGetIntValue(root+'.h') + 
+                                  "\n");
+
   SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
   SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
+
+  onWindowSavePosition();
 }
 
 function onWindowSavePosition()
 {
   var root = "window." + document.documentElement.id;
+
+  dump("******** onWindowLoadSize: root:" + root +
+                                  " root.w:" + SBDataGetIntValue(root+'.x') + 
+                                  " root.h:" + SBDataGetIntValue(root+'.y') + 
+                                  "\n");
+
   SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
   SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
 }
 
+// No forseen need to load _just_ size without position
 function onWindowLoadSize()
 {
   var root = "window." + document.documentElement.id;
 
-  // Test against empty string to see if they have been set before.
-  if ( ( SBDataGetStringValue( root + ".x" ) == "" ) &&
-       ( SBDataGetStringValue( root + ".w" ) == "" ) )
+  dump("******** onWindowLoadSize: root:" + root +
+                                  " root.w:" + SBDataGetIntValue(root+'.w') + 
+                                  " root.h:" + SBDataGetIntValue(root+'.h') + 
+                                  " box.w:" + document.documentElement.boxObject.width +
+                                  " box.h:" + document.documentElement.boxObject.height +
+                                  "\n");
+
+  // If they have not been set they will be NaN
+  if ( isNaN( SBDataGetIntValue( root + ".h" ) ) || 
+       isNaN( SBDataGetIntValue( root + ".w" ) ))
   {
     return;
   }
@@ -242,19 +263,23 @@ function onWindowLoadSize()
     var diffh = SBDataGetIntValue( root + ".h" ) - document.documentElement.boxObject.height;
     window.resizeTo( SBDataGetIntValue( root + ".w" ) + diffw, SBDataGetIntValue( root + ".h" ) + diffh);
   }
-  window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
-  // do the (more or less) same adjustment for x,y as we did for w,h
-  var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
-  var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
-  window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
+  onWindowLoadPosition();
 }
 
 function onWindowLoadPosition()
 {
   var root = "window." + document.documentElement.id;
 
-  if ( ( SBDataGetStringValue( root + ".x" ) == "" ) &&
-       ( SBDataGetStringValue( root + ".y" ) == "" ) )
+  dump("******** onWindowLoadPosition: root:" + root +
+                                  " root.x:" + SBDataGetIntValue(root+'.x') +
+                                  " root.y:" + SBDataGetIntValue(root+'.y') +
+                                  " box.x:" + document.documentElement.boxObject.screenX +
+                                  " box.y:" + document.documentElement.boxObject.screenY +
+                                  "\n");
+
+  // If they have not been set they will be NaN
+  if ( isNaN( SBDataGetIntValue( root + ".x" ) ) || 
+       isNaN( SBDataGetIntValue( root + ".y" ) ))
   {
     return;
   }
@@ -263,7 +288,10 @@ function onWindowLoadPosition()
   // do the (more or less) same adjustment for x,y as we did for w,h
   var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
   var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
-  window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
+
+  // This fix not needed for Linux - might need to add a MacOSX check.
+  if (!PLATFORM_LINUX)
+    window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
 }
 
 function ConvertUrlToDisplayName( url )
@@ -379,7 +407,7 @@ function SBAppDeinitialize()
   songbird_playURL.unbind();
   // Remember where the video window is.
   resetGlobalHotkeys();
-  onWindowSaveSize();
+  onWindowSaveSizeAndPosition();
   SBMetricsAppShutdown();
 }
 
