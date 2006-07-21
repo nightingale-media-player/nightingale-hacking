@@ -2265,7 +2265,8 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
     q += aw_str + tablerow_str + spc_str + ge_str + spc_str;
   }
 
-  q += value.m_Id + limit_str;
+  q += value.m_Id;
+  q += order_str + NS_LITERAL_STRING(" id ") + limit_str ;
   q.AppendInt((PRInt32)LOOKAHEAD_SIZE);
 
   rv = m_SharedQuery->AddQuery(q);
@@ -2298,8 +2299,16 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
 
   for (PRInt32 i = value.m_ResMapIndex; i < end; i++) {
     sbValueInfo& val = g_ValueMap[value.m_Info->m_ResList[i]];
-    val.m_Resultset = result;
-    val.m_ResultsRow = i - value.m_ResMapIndex;
+    // Go through the results and check to see who goes with what.  Don't assume i matches j.
+    for (PRInt32 j = 0; j < rows; j++) {
+      nsAutoString id;
+      result->GetRowCellByColumn( j, NS_LITERAL_STRING("id"), id );
+      // Make sure this is a valid assignment!
+      if ( val.m_Id == id ) {
+        val.m_Resultset = result;
+        val.m_ResultsRow = j;
+      }
+    }
   }
 
   return NS_OK;
