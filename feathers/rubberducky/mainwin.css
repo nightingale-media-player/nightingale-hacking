@@ -906,22 +906,33 @@ DASHBOARD
   background-repeat: no-repeat !important;
 }
 
+#songbird_text_artistalbum,
+#songbird_box_title
+{
+  height: 14px !important;
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+}
+
 /* the texties */
 #songbird_text_title
 { 
   width: auto !important; /* was: max-width: auto !important; */
   color: #1F292B !important;
   overflow: hidden !important;
+  font-family: Tahoma !important;
 }
 #songbird_text_artist
 {
   color: #1F292B !important;
   overflow: hidden !important;
+  font-family: Tahoma !important;
 }
 #songbird_text_album
 {
   color: #1F292B !important;
   overflow: hidden !important;
+  font-family: Tahoma !important;
 }
 #songbird_text_slash
 {
