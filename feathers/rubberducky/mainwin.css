@@ -956,34 +956,34 @@ DASHBOARD
 /* the seekbar slider */
 #songbird_seekbar_slider
 {
-  height: 10px !important;
+  height: 8px !important;
 }
 #songbird_seekbar_thumb
 {
   width: 21px !important;
-  height: 10px !important;
+  height: 8px !important;
   border: 1px solid !important;
 }
 #songbird_seekbar_thumb > gripper
 {
-  height: 10px !important;
+  height: 8px !important;
 }
 #songbird_seekbar_progress
 {
-  height: 10px !important;
+  height: 8px !important;
 }
 #songbird_seekbar_progress > .progress-bar
 {
-  height: 10px !important;
+  height: 8px !important;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
-  height: 10px !important;
+  height: 8px !important;
 }
 #songbird_seekbar
 {
   border: 1px solid !important;
-  height: 10px !important;
+  height: 8px !important;
 }
 
 
