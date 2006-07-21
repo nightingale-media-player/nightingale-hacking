@@ -66,6 +66,11 @@ try
       document.getElementById("mini_btn_max").setAttribute("oncommand", "SBFullscreen();");
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     }
+    
+    if ( PLATFORM_MACOSX ) {
+      document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
+    }
+    
     window.addEventListener( "keydown", checkAltF4, true );
     
     onWindowLoadSizeAndPosition();
