@@ -2219,7 +2219,13 @@ function onMenu( target )
 
 function SBOpenPreferences(paneID)
 {
-  var features = "chrome,titlebar,toolbar,centerscreen,modal";
+  // On all systems except Windows pref changes should be instant.
+  //
+  // In mozilla this is the browser.prefereces.instantApply pref,
+  // and is set at compile time.
+  var instantApply = navigator.userAgent.indexOf("Windows") == -1;
+	
+  var features = "chrome,titlebar,toolbar,centerscreen" + (instantApply ? ",dialog=no" : ",modal");
 
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
   var win = wm.getMostRecentWindow("Browser:Preferences");
