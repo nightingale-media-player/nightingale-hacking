@@ -380,9 +380,13 @@ PlaylistPlayback.prototype = {
 
     // if they have not been set they will be the empty string.
     if ( this._shuffle.stringValue == "") this._shuffle.boolValue = false; // start with no shuffle
-    if ( isNaN(this._repeat.intValue) ) this._repeat.intValue = REPEAT_MODE_OFF; // start with no repeat
-    if ( isNaN(this._volume.intValue) ) this._volume.intValue = 128;
+    if ( this._repeat.stringValue == "" ) this._repeat.intValue = REPEAT_MODE_OFF; // start with no repeat
+    dump("XXXredfive *********************** volume:" + this._volume.intValue + "\n");
+    dump("XXXredfive *********************** volume:" + this._volume.stringValue + "\n");
+    if ( this._volume.stringValue == "" ) this._volume.intValue = 128;
     this._requestedVolume = this._calculatedVolume = this._volume.intValue;
+    dump("XXXredfive *********************** volume:" + this._volume.intValue + "\n");
+    dump("XXXredfive *********************** volume:" + this._volume.stringValue + "\n");
   },
   
   _releaseDataRemotes: function() {

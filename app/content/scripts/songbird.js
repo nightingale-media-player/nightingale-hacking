@@ -244,9 +244,9 @@ function onWindowLoadSize()
                                   " box.h:" + document.documentElement.boxObject.height +
                                   "\n");
 
-  // If they have not been set they will be NaN
-  if ( isNaN( SBDataGetIntValue( root + ".h" ) ) || 
-       isNaN( SBDataGetIntValue( root + ".w" ) ))
+  // If they have not been set they will be ""
+  if ( SBDataGetStringValue( root + ".h" ) == ""  || 
+       SBDataGetStringValue( root + ".w" ) == "" )
   {
     return;
   }
@@ -277,9 +277,9 @@ function onWindowLoadPosition()
                                   " box.y:" + document.documentElement.boxObject.screenY +
                                   "\n");
 
-  // If they have not been set they will be NaN
-  if ( isNaN( SBDataGetIntValue( root + ".x" ) ) || 
-       isNaN( SBDataGetIntValue( root + ".y" ) ))
+  // If they have not been set they will be ""
+  if ( SBDataGetStringValue( root + ".x" ) == "" || 
+       SBDataGetStringValue( root + ".y" ) == "" )
   {
     return;
   }
