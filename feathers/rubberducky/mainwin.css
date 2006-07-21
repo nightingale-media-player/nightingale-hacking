@@ -920,43 +920,47 @@ DASHBOARD
   width: auto !important; /* was: max-width: auto !important; */
   color: #1F292B !important;
   overflow: hidden !important;
-  font-family: Tahoma !important;
+  font-family: Tahoma, Bitstream Vera Sans !important;
 }
 #songbird_text_artist
 {
   color: #1F292B !important;
   overflow: hidden !important;
-  font-family: Tahoma !important;
+  font-family: Tahoma, Bitstream Vera Sans !important;
 }
 #songbird_text_album
 {
   color: #1F292B !important;
   overflow: hidden !important;
-  font-family: Tahoma !important;
+  font-family: Tahoma, Bitstream Vera Sans !important;
 }
 #songbird_text_slash
 {
+  font-family: Tahoma, Bitstream Vera Sans !important;
   color: #1F292B !important;
 }
 #songbird_text_time
 {
+  font-family: Tahoma, Bitstream Vera Sans !important;
   color: #1F292B !important; 
 }
 
 #songbird_text_time_total
 {
+  font-family: Tahoma, Bitstream Vera Sans !important;
   color: #1F292B !important;
 }
 
 #songbird_text_time_elapsed
 {
+  font-family: Tahoma, Bitstream Vera Sans !important;
   color: #1F292B !important;
 }
 
 /* the seekbar slider */
 #songbird_seekbar_slider
 {
-  height: 8px !important;
+  height: 10px !important;
 }
 #songbird_seekbar_thumb
 {
@@ -970,20 +974,20 @@ DASHBOARD
 }
 #songbird_seekbar_progress
 {
-  height: 8px !important;
+  height: 10px !important;
 }
 #songbird_seekbar_progress > .progress-bar
 {
-  height: 8px !important;
+  height: 10px !important;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
-  height: 8px !important;
+  height: 10px !important;
 }
 #songbird_seekbar
 {
   border: 1px solid !important;
-  height: 8px !important;
+  height: 10px !important;
 }
 
 
