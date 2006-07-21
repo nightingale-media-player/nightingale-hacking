@@ -759,7 +759,7 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
   aSearchString.EndReading(end);
 
   // check to see if the new query is more restrictive
-  PRBool subquery = FindInReadable(info->m_Override, start, end);
+  PRBool subquery = FindInReadable(info->m_SearchString, start, end);
 
   if ( col_count == 0 && subquery ) {
     // we have no results and the filter string is at least as
@@ -769,136 +769,10 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
     return NS_OK;
   }
 
-  info->m_Override = aSearchString;
-
-  if (aSearchString.IsEmpty()) {
-    // Revert to the normal override.
-    mon.Exit();
-    return ExecuteFeed(aRefName, nsnull);
-  }
-
-  // Crack the incoming list of filter strings (space delimited)
-  nsStringArray filter_values;
-  rv = ParseStringIntoArray(nsPromiseFlatString(aSearchString), &filter_values, NS_L(' '));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsDependentString table_name(info->m_Table);
-
-  // The beginning of the main query string before we dump on it.
-  nsAutoString main_query_str = info->m_SimpleQueryStr + where_str;
-
-  PRInt32 filter_count = (PRInt32)info->m_Filters.size();
-  PRBool any_column = PR_FALSE;
-
-  // Compose an override query from the filter string and the columns in the
-  // current results
-  if (filter_count) {
-    // We're going to submit n+1 queries;
-    g_ActiveQueryCount += filter_count + 1;
-
-    filtermap_t::iterator f = info->m_Filters.begin();
-    for (; f != info->m_Filters.end(); f++) {
-      // Compose an override string for the filter query.
-      // select unique ( artist ) from "library" where (
-      nsAutoString sub_query_str = unique_str + op_str + (*f).second.m_Column +
-                                   cp_str + from_str + qu_str + table_name +
-                                   qu_str + where_str + op_str;
-      PRBool any_value = PR_FALSE;
-      PRInt32 count = filter_values.Count();
-      for (PRInt32 index = 0; index < count; index++) {
-        if (any_value)
-          sub_query_str += and_str;
-        any_value = PR_TRUE;
-        // ( artist like "%cc%" )
-        sub_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
-                         pct_str + *filter_values[index] + pct_str + qu_str +
-                         cp_str;
-      }
-      // ) order by artist
-      sub_query_str += cp_str + order_str + (*f).second.m_Column;
-
-      sbFeedInfo* filter_info = GetFeedInfo((*f).second.m_Ref);
-      NS_ENSURE_TRUE(filter_info, NS_ERROR_NULL_POINTER);
-
-      filter_info->m_Override = aSearchString;
-      rv = filter_info->m_Query->ResetQuery();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = filter_info->m_Query->AddQuery(sub_query_str);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRInt32 ret;
-      rv = filter_info->m_Query->Execute(&ret);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
- 
-    PRBool any_value = PR_FALSE;
-    PRInt32 count = filter_values.Count();
-    for (PRInt32 index = 0; index < count; index++) {
-      if (any_value)
-        main_query_str += and_str;
-      any_value = PR_TRUE;
-      any_column = PR_FALSE;
-      main_query_str += op_str;
-
-      for (f = info->m_Filters.begin(); f != info->m_Filters.end(); f++) {
-        // Add to the main query override string
-        if (any_column)
-          main_query_str += or_str;
-        any_column = PR_TRUE;
-        // ( artist like "%cc%" )
-        main_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
-                          pct_str + *filter_values[index] + pct_str + qu_str +
-                          cp_str;
-      }
-
-      // or ( title like "%cc%" ) )
-      main_query_str += or_str + op_str + NS_LITERAL_STRING("title") +
-                        like_str + qu_str + pct_str + *filter_values[index] +
-                        pct_str + qu_str + cp_str + cp_str;
-    }
-  } // filter_count
-  else { 
-    // do it from the actual columns if there's no filters.
-    PRBool any_value = PR_FALSE;
-    PRInt32 count = filter_values.Count();
-    for (PRInt32 index = 0; index < count; index++) {
-      if (any_value)
-        main_query_str += and_str;
-      else
-        main_query_str += op_str;
-      any_value = PR_TRUE;
-      any_column = PR_FALSE;
-      // ( title like "%cc%" or genre like "%cc%" or artist like "%cc%"
-      //     or album like "%cc%" )
-      main_query_str += op_str + NS_LITERAL_STRING("title") + like_str +
-                        qu_str + pct_str + *filter_values[index] + pct_str +
-                        qu_str + or_str + NS_LITERAL_STRING("genre") +
-                        like_str + qu_str + pct_str + *filter_values[index] +
-                        pct_str + qu_str + or_str +
-                        NS_LITERAL_STRING("artist") + like_str + qu_str +
-                        pct_str + *filter_values[index] + pct_str + qu_str +
-                        or_str + NS_LITERAL_STRING("album") + like_str +
-                        qu_str + pct_str + *filter_values[index] + pct_str +
-                        qu_str + cp_str;
-    }
-    if (any_value)
-      main_query_str += cp_str;
-  }
+  info->m_SearchString = aSearchString;
 
   mon.Exit();
-
-  PRInt32 ret;
-  rv = info->m_Query->ResetQuery();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = info->m_Query->AddQuery( main_query_str );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = info->m_Query->Execute( &ret );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return ExecuteFeed(aRefName, nsnull);
 }
 
 NS_IMETHODIMP
@@ -914,7 +788,7 @@ sbPlaylistsource::GetSearchString(const nsAString &aRefName,
   sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  _retval = info->m_Override;
+  _retval = info->m_SearchString;
 
   return NS_OK;
 }
@@ -1018,7 +892,7 @@ sbPlaylistsource::GetFilter(const nsAString &aRefName,
   nsAutoMonitor mon(g_pMonitor);
 
   sbFeedInfo* info = GetFeedInfo(aRefName);
-  if (info && info->m_Override.IsEmpty()) {
+  if (info) {
     // Find the specific filter
     filtermap_t::iterator f = info->m_Filters.find(aIndex);
     if (f != info->m_Filters.end()) {
@@ -1084,7 +958,6 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   sbFeedInfo* info = GetFeedInfo(aRefName);
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
-  info->m_Override.Assign(NS_LITERAL_STRING(""));
   nsAutoString table_name(info->m_Table);
 
   nsCOMPtr<sbISimplePlaylist> pSimplePlaylist;
@@ -1148,11 +1021,80 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
 
   info->m_SimpleQueryStr = simple_query_str;
 
+  PRInt32 filter_count = (PRInt32)info->m_Filters.size();
+
+  // Crack the incoming list of filters from the search string (space delimited)
+  nsStringArray search_values;
+  rv = ParseStringIntoArray(info->m_SearchString, &search_values, NS_L(' '));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool any_column = PR_FALSE;
+
+  nsAutoString search_query_str;
+  PRInt32 search_count = search_values.Count();
+
+  // Build the search query string
+  if (filter_count) {
+    PRBool any_value = PR_FALSE;
+
+    filtermap_t::iterator f = info->m_Filters.begin();
+
+    for (PRInt32 index = 0; index < search_count; index++) {
+      if (any_value)
+        search_query_str += and_str;
+      any_value = PR_TRUE;
+      any_column = PR_FALSE;
+      search_query_str += op_str;
+
+      for (f = info->m_Filters.begin(); f != info->m_Filters.end(); f++) {
+        // Add to the search query string
+        if (any_column)
+          search_query_str += or_str;
+        any_column = PR_TRUE;
+        // ( artist like "%cc%" )
+        search_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
+          pct_str + *search_values[index] + pct_str + qu_str +
+          cp_str;
+      }
+
+      // or ( title like "%cc%" ) )
+      search_query_str += or_str + op_str + NS_LITERAL_STRING("title") +
+        like_str + qu_str + pct_str + *search_values[index] +
+        pct_str + qu_str + cp_str + cp_str;
+    }
+  } else {
+    // no filterlist, do it from a fixed set of columns.
+    PRBool any_value = PR_FALSE;
+    PRInt32 count = search_values.Count();
+    for (PRInt32 index = 0; index < count; index++) {
+      if (any_value)
+        search_query_str += and_str;
+      else
+        search_query_str += op_str;
+      any_value = PR_TRUE;
+      any_column = PR_FALSE;
+      // ( title like "%cc%" or genre like "%cc%" or artist like "%cc%"
+      //     or album like "%cc%" )
+      search_query_str += op_str + NS_LITERAL_STRING("title") + like_str +
+        qu_str + pct_str + *search_values[index] + pct_str +
+        qu_str + or_str + NS_LITERAL_STRING("genre") +
+        like_str + qu_str + pct_str + *search_values[index] +
+        pct_str + qu_str + or_str +
+        NS_LITERAL_STRING("artist") + like_str + qu_str +
+        pct_str + *search_values[index] + pct_str + qu_str +
+        or_str + NS_LITERAL_STRING("album") + like_str +
+        qu_str + pct_str + *search_values[index] + pct_str +
+        qu_str + cp_str;
+    }
+    if (any_value)
+      search_query_str += cp_str;
+  }
+
   // The filters for the filters.
   nsAutoString sub_filter_str;
 
   // We're going to submit n+1 queries;
-  g_ActiveQueryCount += (PRInt32)info->m_Filters.size() + 1;
+  g_ActiveQueryCount += filter_count + 1;
 
   PRBool anything = PR_FALSE;
   filtermap_t::iterator filterIter = info->m_Filters.begin();
@@ -1185,8 +1127,12 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
     nsAutoString sub_query_str = unique_str + op_str + (*filterIter).second.m_Column +
                                  cp_str + from_str + qu_str + table_name +
                                  qu_str;
+    // if anything is selected in the filter, use that
     if (anything)
       sub_query_str += where_str + sub_filter_str;
+    else if (search_count) // otherwise, use the search if it exists. if it doesn't then select all (no "where ...")
+      sub_query_str += where_str + search_query_str;
+      
     sub_query_str += order_str + (*filterIter).second.m_Column;
 
     // Append this filter's constraints to the next sub query
@@ -1208,7 +1154,7 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
 
     // Remember the column
     filter_info->m_Column = (*filterIter).second.m_Column;
-    filter_info->m_Override.Assign(NS_LITERAL_STRING(""));
+    filter_info->m_SearchString.Assign(NS_LITERAL_STRING(""));
 
     // Execute the new query for the feed
     PRBool isExecuting;
@@ -1238,10 +1184,14 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
       anything = PR_TRUE;
   } // for
 
-  // Only alter the main playlist query if we have current filters.
-  if (!anything)
+  // Only alter the main playlist query if we have current filterlist filters, otherwise select everything
+  if (!anything) {
     main_query_str = simple_query_str;
-
+    // but if there is a search in progress, restrict to its filters
+    if (search_count)
+      main_query_str += where_str + search_query_str;
+  }
+  
   // Remove the previous results
   info->m_Resultset = nsnull;
 

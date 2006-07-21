@@ -162,7 +162,7 @@ public:
     PRInt32                       m_RefCount;
     PRBool                        m_ForceGetTargets;
     nsString                      m_Ref;
-    nsString                      m_Override;
+    nsString                      m_SearchString;
     nsString                      m_Table;
     nsString                      m_GUID;
     nsString                      m_Column;
