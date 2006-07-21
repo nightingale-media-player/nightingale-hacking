@@ -341,10 +341,17 @@ window#mini
   color: #E4EADF !important;
   overflow: hidden;
 }
-#mini_text_time
+#mini_text_time,
+#mini_text_artist,
+#mini_text_album,
+#mini_text_time_total,
+#mini_text_time_elapsed,
+#mini_text_time_t_txt
 {
   font-family: Tahoma, Sans-Serif !important;
   width: auto !important;
   height: 13px !important;
   color: #E4EADF !important;
+  overflow: hidden;
 }
+
