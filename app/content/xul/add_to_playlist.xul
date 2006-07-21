@@ -81,7 +81,7 @@
         <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
         <listbox class="dialog_listbox" id="songbird_playlistlist" onselect="enableOK();" />
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-        <button id="songbird_makenewplaylist" label="&addtoplaylist.create;" oncommand="doCreateNew();"/>
+        <button id="songbird_makenewplaylist" class="dialog_button sb_faceplate" label="&addtoplaylist.create;" oncommand="doCreateNew();"/>
         <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
         <hbox>
           <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
