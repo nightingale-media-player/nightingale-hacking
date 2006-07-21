@@ -245,23 +245,28 @@ function onWindowLoadSize()
                                   "\n");
 
   // If they have not been set they will be ""
-  if ( SBDataGetStringValue( root + ".h" ) == ""  || 
-       SBDataGetStringValue( root + ".w" ) == "" )
+  if ( SBDataGetStringValue( root + ".w" ) == "" ||
+       SBDataGetStringValue( root + ".h" ) == "" )
   {
     return;
   }
 
-  if ( SBDataGetIntValue( root + ".w" ) && SBDataGetIntValue( root + ".h" ) )
+  // get the data once.
+  var rootW = SBDataGetIntValue( root + ".w" );
+  var rootH = SBDataGetIntValue( root + ".h" );
+
+  if ( rootW && rootH )
   {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
     // YAY YAY YAY the windowregion hack actualy fixes this :D
-    window.resizeTo( SBDataGetIntValue( root + ".w" ), SBDataGetIntValue( root + ".h" ) );
+    window.resizeTo( rootW, rootH );
+
     // for some reason, the resulting size isn't what we're asking (window
     //   currently has a border?) so determine what the difference is and
     //   add it to the resize
-    var diffw = SBDataGetIntValue( root + ".w" ) - document.documentElement.boxObject.width;
-    var diffh = SBDataGetIntValue( root + ".h" ) - document.documentElement.boxObject.height;
-    window.resizeTo( SBDataGetIntValue( root + ".w" ) + diffw, SBDataGetIntValue( root + ".h" ) + diffh);
+    var diffW = rootW - document.documentElement.boxObject.width;
+    var diffH = rootH - document.documentElement.boxObject.height;
+    window.resizeTo( rootW + diffW, rootH + diffH);
   }
   onWindowLoadPosition();
 }
@@ -284,14 +289,18 @@ function onWindowLoadPosition()
     return;
   }
 
-  window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
+  // get the data once.
+  var rootX = SBDataGetIntValue( root + ".x" );
+  var rootY = SBDataGetIntValue( root + ".y" );
+
+  window.moveTo( rootX, rootY );
   // do the (more or less) same adjustment for x,y as we did for w,h
-  var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
-  var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
+  var diffX = rootX - document.documentElement.boxObject.screenX;
+  var diffY = rootY - document.documentElement.boxObject.screenY;
 
   // This fix not needed for Linux - might need to add a MacOSX check.
   if (!PLATFORM_LINUX)
-    window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
+    window.moveTo( rootX - diffX, rootY - diffY );
 }
 
 function ConvertUrlToDisplayName( url )
