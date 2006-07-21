@@ -224,15 +224,15 @@ var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
 
 function hotkey_volumeUp() {
-  var volume = gPPS.getVolume() + 8;
+  var volume = gPPS.volume + 8;
   if (volume > 255) volume = 255;
-  gPPS.setVolume(volume);
+  gPPS.volume = volume;
 }
 
 function hotkey_volumeDown() {
-  var volume = gPPS.getVolume() - 8;
+  var volume = gPPS.volume - 8;
   if (volume < 0) volume = 0;
-  gPPS.setVolume(volume);
+  gPPS.volume = volume;
 }
 
 function hotkey_nextTrack() {

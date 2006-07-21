@@ -116,14 +116,14 @@ interface sbICoreWrapper : nsISupports
    * \brief Generic id string
    * \return String identifier
    */
-  wstring getId();
+  AString getId();
 
   /**
    *
    * \brief Set the string identifier
    * \param aId - the string identifier
    */
-  void setId(in wstring aId);
+  void setId(in AString aId);
 
   /**
    * \brief Retrieve the HTML element that implements playback functionality
@@ -156,7 +156,7 @@ interface sbICoreWrapper : nsISupports
    * \throws NS_ERROR_INVALID_ARG If the URL passed in is null/undefined.
    * \throws NS_ERROR_NOT_INITIALIZED If no object has been set.
    */
-  boolean playUrl(in wstring aURL);
+  boolean playUrl(in AString aURL);
 
   /**
    * \brief Resume paused playback.  Multiple calls do nothing.
@@ -182,7 +182,7 @@ interface sbICoreWrapper : nsISupports
    * \return The value of the metadata, the empty string if it is not set or
    *         doesn't exist.
    */
-  wstring getMetadata(in wstring aKey);
+  AString getMetadata(in AString aKey);
 
   /**
    * \brief Called when the core is swapping.

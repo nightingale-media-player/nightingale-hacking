@@ -24,7 +24,18 @@
 //
  */
 
+/**
+ * \file coreFlash.js
+ * \brief The CoreWrapper implementation for the Flash Plugin
+ * \sa sbICoreWrapper.idl coreBase.js
+ */
 // The Flash Plugin Wrapper
+
+/**
+ * \class CoreFlash
+ * \brief The CoreWrapper for the Flash Plugin
+ * \sa CoreBase
+ */
 function CoreFlash()
 {
   this._object = null;

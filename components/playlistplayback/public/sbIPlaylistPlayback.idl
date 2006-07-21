@@ -24,311 +24,87 @@
 //
  */
 
+/**
+ * \file sbIPlaylistPlayback.js
+ * \brief Contains the interface definition for sbIPlaylistPlayback
+ * \sa sbICoreWrapper.idl sbPlaylistPlayback.js
+ */
+
 #include "nsISupports.idl"
 #include "nsIObserver.idl"
-#include "sbIPlaylist.idl"
-#include "sbICoreWrapper.idl"
+
+interface sbIPlaylist;
+interface sbICoreWrapper;
 
 /**
+ * \interface sbIPlaylistPlayback
+ * \brief
+ * \sa sbICoreWrapper sbIPlaylist
  * An interface that describes the PlaylistPlayback Service
  */
 [scriptable, uuid(190b1e87-8769-43b4-a362-4065eb6730e5)]
 interface sbIPlaylistPlayback : nsIObserver
 {
-  const unsigned short REPEAT_MODE_OFF = 1;
+  const unsigned short REPEAT_MODE_OFF = 0;
+  const unsigned short REPEAT_MODE_ONE = 1;
   const unsigned short REPEAT_MODE_ALL = 2;
-  const unsigned short REPEAT_MODE_ONE = 3;
 
-  /**
-   * 
-   */
+  // Attributes reflecting state of the playback core:
   attribute sbICoreWrapper core;
-
-  /**
-   * 
-   */
   attribute unsigned short volume;
-
-  /**
-   * 
-   */
   attribute boolean mute;
-
-  /**
-   * 
-   */
-  readonly attribute long long length;
-
-  /**
-   * 
-   */
   attribute long long position;
+  readonly attribute long long length;
+  readonly attribute boolean paused;
+  readonly attribute boolean playing;
+  readonly attribute boolean started;
 
-  /**
-   * 
-   */
+  // Attributes reflecting Songbird playback state:
   attribute unsigned short repeat;
-
-  /**
-   * 
-   */
   attribute boolean shuffle;
+  readonly attribute unsigned long itemCount;
+  readonly attribute AString currentGUID;
+  readonly attribute AString currentURL;
 
-  /**
-   * 
-   */
-  attribute unsigned long currentIndex;
-
-  /**
-   * 
-   */
-  attribute unsigned long itemCount;
-
-  /**
-   *
-   */
-  readonly attribute wstring currentGUID;
-
-  /**
-   *
-   */
-  readonly attribute wstring currentURL;
-
-  /**
-   *
-   */
-  void addCore(in sbICoreWrapper core,
-               in boolean select);
-
-  /**
-   *
-   */
+  // Methods for Mutli-core manipulation
+  void addCore(in sbICoreWrapper core, in boolean select);
   void removeCore(in sbICoreWrapper core);
-
-  /**
-   *
-   */
   void selectCore(in sbICoreWrapper core);
 
-   /**
-   * To resume playback or just play a default value if not currently playing back.
-   */
+  // "Standard" player controls
   boolean play();
-
- /**
-   * Use the string as a playlistsource ref
-   */
-  boolean playRef(in wstring source_ref,
-                  in unsigned long index);
-
- /**
-  *
-  */
-  boolean playRefByID(in wstring source_ref,
-                      in unsigned long row_id);
-
-  /**
-   *
-   */
-  boolean playRefByUUID(in wstring source_ref,
-                        in wstring media_uuid);
-  
-  /**
-   *
-   */
-  boolean playRefByURL(in wstring source_ref,
-                       in wstring url);
-
- /**
-   * Create a new playlistsource ref
-   */
-  boolean playTable(in wstring dbGUID,
-                    in wstring table,
-                    in unsigned long index);
-
-  boolean playTableByURL(in wstring dbGUID,
-                    in wstring table,
-                    in wstring url);
-
-  boolean playTableByID(in wstring dbGUID,
-                    in wstring table,
-                    in unsigned long row_id);
-
-  boolean playTableByUUID(in wstring dbGUID,
-                    in wstring table,
-                    in wstring uuid);
-  /**
-   *
-   */
-  boolean playObject(in sbIPlaylist playlist,
-                     in unsigned long index);
-
-  /**
-   * This method just clears the internal playlist and plays a single file
-   */
-  boolean playUrl(in wstring url);
-
-  /**
-   * This method imports the url in the library (if needed) and plays the ml from that point on
-   */
-  boolean playAndImportUrl(in wstring url);
-
-  /**
-   * This method imports the url in the library (if needed) but does not play it (returns item's row in table)
-   */
-  long importUrl(in wstring url);
-
-  /**
-   *
-   */
   boolean pause();
-
-  /**
-   *
-   */
   boolean stop();
-
-  /**
-   * calculate based upon shuffle and repeat values
-   */
   unsigned long next();
-
-  /**
-   * calculate based upon shuffle and repeat values
-   */
   unsigned long previous();
-
-  /**
-   * 
-   */
   unsigned long current();
-
-
-/*
-
-It's totally fine to implement the following as attributes if you prefer,  
-so long as we carry over the same functionality.
-
-The mute/volume/length/position api here should just call to the current wrapper.
-
-*/
-
-  /**
-   * 
-   */
-  boolean getPaused();
-
-  /**
-   *
-   */
-  boolean getPlaying();
-
-  /**
-   *
-   */
-  boolean getStarted();
-
-  /**
-   *
-   */
-  unsigned short getVolume();
-
-  /**
-   *
-   */
-  boolean setVolume(in unsigned short volume);
-
-  /**
-   *
-   */
-  boolean getMute();
-
-  /**
-   *
-   */
-  void setMute(in boolean mute);
-
-  /**
-   *
-   */
-  unsigned long long getLength();
-
-  /**
-   *
-   */
-  unsigned long long getPosition();
-
-  /**
-   *
-   */
-  boolean setPosition(in unsigned long long position);
-
-  /**
-   *
-   */
   void goFullscreen();
 
-  /**
-   *
-   */
-  void setRepeat(in unsigned short repeatMode);
+  // Various ways of passing in content to play
+  boolean playRef(in AString source_ref, in unsigned long index);
+  boolean playRefByID(in AString source_ref, in unsigned long row_id);
+  boolean playRefByUUID(in AString source_ref, in AString media_uuid);
+  boolean playRefByURL(in AString source_ref, in AString url);
+  boolean playTable(in AString dbGUID, in AString table, in unsigned long index);
+  boolean playTableByURL(in AString dbGUID, in AString table, in AString url);
+  boolean playTableByID(in AString dbGUID, in AString table, in unsigned long row_id);
+  boolean playTableByUUID(in AString dbGUID, in AString table, in AString uuid);
+  boolean playObject(in sbIPlaylist playlist, in unsigned long index);
+  boolean playUrl(in AString url);
+  boolean playAndImportUrl(in AString url);
+  long importUrl(in AString url);
 
-  /**
-   *
-   */
-  unsigned short getRepeat();
 
-  /**
-   *
-   */
-  void setShuffle(in boolean shuffle);
+  // Metadata methods
+  void getMetadataFields(out unsigned long fieldCount, [array, size_is(fieldCount), retval] out wstring metaFields);
+  AString getCurrentValue(in AString field);
+  void setCurrentValue(in AString field, in AString value);
+  void getCurrentValues(in unsigned long fieldCount, [array, size_is(fieldCount)] in wstring metaFields,
+                        out unsigned long valueCount, [array, size_is(valueCount), retval] out wstring metaValues);
+  void setCurrentValues(in unsigned long fieldCount, [array, size_is(fieldCount)] in wstring metaFields, 
+                        in unsigned long valueCount, [array, size_is(valueCount)] in wstring metaValues);
 
-  /**
-   *
-   */
-  boolean getShuffle();
-
-  /**
-   *
-   */
-  void getMetadataFields(out unsigned long fieldCount,
-                         [array, size_is(fieldCount), retval] out wstring metaFields);
-
-  /**
-   *
-   */
-  wstring getCurrentValue(in wstring field);
-
-   /**
-   *
-   */
-  void setCurrentValue(in wstring field,
-                       in wstring value);
-
-  /**
-   *
-   */
-  void getCurrentValues(in unsigned long fieldCount,
-                        [array, size_is(fieldCount)] in wstring metaFields,
-                        out unsigned long valueCount,
-                        [array, size_is(valueCount), retval] out wstring metaValues);
-
-  /**
-   *
-   */
-  void setCurrentValues(in unsigned long fieldCount,
-                        [array, size_is(fieldCount)] in wstring metaFields,
-                        in unsigned long valueCount,
-                        [array, size_is(valueCount)] in wstring metaValues);
-
-  /**
-   *  Returns true if the url can be played as media
-   */
-  boolean isMediaUrl(in wstring url);
-
-  /**
-   *  Returns true if the url can be opened as playlist
-   */
-  boolean isPlaylistUrl(in wstring url);
-
+  // URL checking
+  boolean isMediaUrl(in AString url);
+  boolean isPlaylistUrl(in AString url);
 };

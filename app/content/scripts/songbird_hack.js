@@ -1241,11 +1241,12 @@ var SBWebPlaylistCommands =
             
             onBrowserTransfer( this.m_Playlist.guid, this.m_Playlist.table, filterCol, filterVals.length, filterVals );
             // And show the download table in the chrome playlist.
+            //dump("XXXredfive ######### library_cmd_download\n");
             onBrowserDownload();
           }
           catch( err )          
           {
-            alert( err );
+            alert( "SBWebPlaylistCommands Error:" + err );
           }
         }
         break;
@@ -1278,6 +1279,7 @@ var SBWebPlaylistCommands =
         break;
         case "library_cmd_showdlplaylist":
         {
+          //dump("XXXredfive ######### library_cmd_showdlplaylist\n");
           onBrowserDownload();
         }
         break;
@@ -1313,7 +1315,7 @@ var SBWebPlaylistCommands =
     
     return this;
   }
-}
+} // SBWebPlaylistCommands declaration
 
 // Register the web playlist commands at startup
 if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
@@ -2172,7 +2174,7 @@ function onMenu( target )
       quitApp();
     break;
     case "control.play":
-      gPPS.getPlaying() ? gPPS.getPaused() ? gPPS.play() : gPPS.pause() : gPPS.play();
+      gPPS.playing ? ( gPPS.paused ? gPPS.play() : gPPS.pause() ) : gPPS.play();
     break;
     case "control.next":
       gPPS.next();

@@ -85,15 +85,15 @@
           // prevent this volume control from being updated while it is being
           //   moved (but other volume controls are updated with our motion)
           this.trackingVolume = true; 
-          this.gPPS.setVolume(this.value);
+          this.gPPS.volume = this.value;
           this.remote_volume.intValue = this.value;
           if (this.value == 0) {
             // set mute when we bring the volume to 0
-            this.gPPS.setMute(true);
+            this.gPPS.mute = true;
           }
           else {
             // otherwise reset it, and record the last volume
-            this.gPPS.setMute(false);
+            this.gPPS.mute = false;
           }
         ]]>
       </body>
@@ -103,7 +103,7 @@
       <body>
         <![CDATA[
           this.trackingVolume = false;
-          this.gPPS.setVolume(this.value);
+          this.gPPS.volume = this.value;
           if (this.value != 0) {
             this.remote_lastVolume.intValue = this.value;
           }
@@ -176,14 +176,14 @@
     <method name="onMute">
       <body>
         <![CDATA[
-          var newmute = !this.gPPS.getMute(); 
-          this.gPPS.setMute(newmute);
+          var newmute = !this.gPPS.mute; 
+          this.gPPS.mute = newmute;
           if (!newmute) {
             // restore last volume when coming back from mute state
-            this.gPPS.setVolume(this.remote_lastVolume.intValue);
+            this.gPPS.volume = this.remote_lastVolume.intValue;
           } 
           else {
-            this.gPPS.setVolume(0);
+            this.gPPS.volume = 0;
           }
         ]]>
       </body>
@@ -227,7 +227,7 @@
       <body>
         <![CDATA[
           this.seen_skip = false;
-          if ( this.gPPS.getPlaying() )
+          if ( this.gPPS.playing )
           {
             this.skip = true;
             if ( ! this.skip_interval )
@@ -267,7 +267,7 @@
           if ( _this.skip )
           {
             _this.seen_skip = true;
-            _this.gPPS.setPosition( _this.gPPS.getPosition() + 15000 );
+            _this.gPPS.position = _this.gPPS.position + 15000;
           }
           else
           {
@@ -316,7 +316,7 @@
       <body>
         <![CDATA[
           this.seen_skip = false;
-          if ( this.gPPS.getPlaying() )
+          if ( this.gPPS.playing )
           {
             this.skip = true;
             if ( ! this.skip_interval )
@@ -356,7 +356,7 @@
           if ( _this.skip )
           {
             _this.seen_skip = true;
-            _this.gPPS.setPosition( _this.gPPS.getPosition() - 15000 );
+            _this.gPPS.position = _this.gPPS.position - 15000;
           }
           else
           {
@@ -552,7 +552,7 @@
 
     <method name="onReleaseSeekbar">
       <body>
-        this.gPPS.setPosition(this.value);
+        this.gPPS.position = this.value;
         this.trackingPosition = 0;
       </body>
     </method>
@@ -562,7 +562,7 @@
         <![CDATA[
           try {
             if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
-            this.value = gPPS.getPosition();
+            this.value = gPPS.position;
           } catch (e) {
             alert("player_controls.xml - onRemotePositionChange - " + e);
           }
@@ -610,7 +610,7 @@
     <method name="onTotalDown">
       <body>
         <![CDATA[
-          var len = gPPS.getLength();
+          var len = gPPS.length;
           if ( len > 0 )
             this.remote_showRemaining.boolValue = !this.remote_showRemaining.boolValue;
           // If you try to toggle it while it is zero, you lose the state.
@@ -671,8 +671,8 @@
       <body>
         <![CDATA[
           var ref = "";
-          if (this.gPPS.getStarted()) {
-            if (this.gPPS.getPaused()) {
+          if (this.gPPS.started) {
+            if (this.gPPS.paused) {
               gPPS.play();
             } else {
               // player is buffering, because the play button is visible (not started) yet pause is not set and the player is started

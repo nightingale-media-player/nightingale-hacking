@@ -49,35 +49,20 @@ const SONGBIRD_DATABASEQUERY_IID = Components.interfaces.sbIDatabaseQuery;
 const SONGBIRD_MEDIALIBRARY_CONTRACTID = "@songbirdnest.com/Songbird/MediaLibrary;1";
 const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
 
+const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderManager;1";
+const SONGBIRD_PLAYLISTREADERMANAGER_IID = Components.interfaces.sbIPlaylistReaderManager;
+
 // String Bundles
-const URI_SONGBIRD_PROPERTIES    = "chrome://songbird/locale/songbird.properties";
+const URI_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
 
 // Database GUIDs
 const DB_TEST_GUID = "testdb-0000";
 
-// Other XPCOM Stuff
-const sbIDatabaseQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
-/*
-const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
-const sbIMediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-const sbIPlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-const sbIPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/Playlist;1", "sbIPlaylist");
-const sbISimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
-const sbIDynamicPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/DynamicPlaylist;1", "sbIDynamicPlaylist");
-const sbISmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
-const sbIPlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-const sbIPlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
-const sbIMediaScan = new Components.Constructor("@songbirdnest.com/Songbird/MediaScan;1", "sbIMediaScan");
-const sbIMediaScanQuery = new Components.Constructor("@songbirdnest.com/Songbird/MediaScanQuery;1", "sbIMediaScanQuery");
-*/
-
-// Regular const's
-const PLAYBUTTON_STATE_PLAY  = 0;
-const PLAYBUTTON_STATE_PAUSE = 1;
-
-const REPEAT_MODE_OFF = 1;
+// Regular consts
+// These MUST match those in the idl.
+const REPEAT_MODE_OFF = 0;
+const REPEAT_MODE_ONE = 1;
 const REPEAT_MODE_ALL = 2;
-const REPEAT_MODE_ONE = 3;
 
 /**
  * ----------------------------------------------------------------------------
@@ -105,6 +90,9 @@ function LOG(string) {
       gConsole.logStringMessage(string);
 } // LOG
 
+/**
+ *
+ */
 function ConvertUrlToDisplayName(url)
 {
   url = decodeURI( url );
@@ -193,6 +181,7 @@ function listProperties(obj, objName) {
  * All service initialization is handled in _init() after prefs are available.
  */
 function PlaylistPlayback() {  
+  LOG("XXXredfive - PlaylistPlayback");
   gConsole = Components.classes["@mozilla.org/consoleservice;1"]
                        .getService(Components.interfaces.nsIConsoleService);
   gOS      = Components.classes["@mozilla.org/observer-service;1"]
@@ -206,10 +195,13 @@ function PlaylistPlayback() {
   }
 
   // Playlistsource provides the interface for requesting playlist info.  
-  this._source = Components.classes[ "@mozilla.org/rdf/datasource;1?name=playlist" ].getService( Components.interfaces.sbIPlaylistsource );
-  this._timer = Components.classes[ "@mozilla.org/timer;1" ].createInstance( Components.interfaces.nsITimer );
+  this._source = Components.classes[ "@mozilla.org/rdf/datasource;1?name=playlist" ]
+                 .getService( Components.interfaces.sbIPlaylistsource );
+  this._timer = Components.classes[ "@mozilla.org/timer;1" ]
+                .createInstance( Components.interfaces.nsITimer );
 
-  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                 .getService(Components.interfaces.mozIJSSubScriptLoader);
   jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
 
 } // PlaylistPlayback
@@ -243,11 +235,6 @@ PlaylistPlayback.prototype = {
   /**
    *
    */
-  _repeatMode: REPEAT_MODE_OFF,
-
-  /**
-   *
-   */
   _shuffle: false,
 
   /**
@@ -276,7 +263,6 @@ PlaylistPlayback.prototype = {
   _playButton:         null,
   _playUrl:            null,
   _seenPlaying:        null,
-  _started:            0,
   _lastVolume:         null,
   _volume:             null,
   _muteData:           null,
@@ -303,6 +289,7 @@ PlaylistPlayback.prototype = {
   _requestedVolume:      -1,
   _calculatedVolume:     -1,
 
+  _started:           false,
   _set_metadata:      false,
   
   /**
@@ -316,11 +303,10 @@ PlaylistPlayback.prototype = {
    */
   _init: function() {
     try {
-      LOG("Songbird PlaylistPlayback Service loaded successfully");
-      
       // Attach all the sbDataRemote objects (via XPCOM!)
       LOG("Attaching DataRemote objects");
       this._attachDataRemotes();
+      LOG("Songbird PlaylistPlayback Service loaded successfully");
     } catch( err ) {
       LOG( "!!! ERROR: sbPlaylistPlayback _init\n\n" + err + "\n" );
     }
@@ -328,6 +314,7 @@ PlaylistPlayback.prototype = {
   
   _deinit: function() {
     this._releaseDataRemotes();
+    LOG("XXXredfive - Songbird PlaylistPlayback Service unloaded successfully");
   },
 
   _attachDataRemotes: function() {
@@ -368,7 +355,7 @@ PlaylistPlayback.prototype = {
     this._statusText            = createDataRemote("faceplate.status.text", null );
     this._statusStyle           = createDataRemote("faceplate.status.style", null );
 
-// Set startup defaults
+    // Set startup defaults
     this._metadataPos.intValue = 0;
     this._metadataLen.intValue = 0;
     this._seenPlaying.boolValue = false;
@@ -392,9 +379,9 @@ PlaylistPlayback.prototype = {
     this._playButton.boolValue = true; // Start on.
 
     // if they have not been set they will be the empty string.
-    if (this._repeat.stringValue == '') this._repeat.intValue = 0; // start with no shuffle
-    if (this._shuffle.stringValue == '') this._shuffle.boolValue = false; // start with no shuffle
-    if (this._volume.stringValue == '') this._volume.intValue = 128;
+    if ( this._shuffle.stringValue == "") this._shuffle.boolValue = false; // start with no shuffle
+    if ( isNaN(this._repeat.intValue) ) this._repeat.intValue = REPEAT_MODE_OFF; // start with no repeat
+    if ( isNaN(this._volume.intValue) ) this._volume.intValue = 128;
     this._requestedVolume = this._calculatedVolume = this._volume.intValue;
   },
   
@@ -470,91 +457,123 @@ PlaylistPlayback.prototype = {
    * See sbIPlaylistPlayback.idl
    */
   get volume() {
-    return this.getVolume();
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    var retval = core.getVolume();
+    // hand back the requestedVolume if we have not changed to work around
+    //   rounding vagaries from the core implementation - the core may
+    //   internally track volume on a different scale.
+    if ( retval == this._calculatedVolume ) {
+      retval = this._requestedVolume;
+    }
+    return retval;
   },
+
   set volume(val) {
-    this.setVolume(val);
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    // after setting the value in the core, ask for the the value and store
+    //   it so we can verify in the getter. Some cores may use a different
+    //   scale for volume and we do not want rounding to change the volume.
+    core.setVolume(val);
+    this._requestedVolume = val;
+    this._calculatedVolume = core.getVolume();
+    this._onPollVolume();
+    return false;
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get mute() {
-    return this.getMute();
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    return core.getMute();
   },
+
   set mute(val) {
-    this.setMute(val);
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    core.setMute(val);
+    // some cores set their volume to 0 on setMute(true), but do not restore
+    // the volume when mute is turned off, this fixes the problem
+    if (val == false) {
+      core.setVolume(this._calculatedVolume);
+    }
+    // if the core is not playing, the loop is not running, but we still want
+    //     the new mute state (and possibly volume) to be routed to all the
+    //     UI controls
+    this._onPollMute(core);
+    return true;
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get length() {
-    return this.getLength();
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    return core.getLength();
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get position() {
-    return this.getPosition();
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    return core.getPosition();
   },
+
   set position(val) {
-    this.setPosition(val);
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    core.setPosition(val);
+    return true;
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get repeat() {
-    return this.getRepeat();
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    return this._repeat;
   },
+
   set repeat(val) {
-    this.setRepeat(val);
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    this._repeat = val;
+    return;
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get shuffle() {
-    return this.getShuffle();
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    return this._shuffle;
   },
+
   set shuffle(val) {
-    this.setShuffle(val);
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    this._shuffle = val;      
+    return;
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  get currentIndex() {
-    return 0;
-  },
-  set currentIndex(val) {
-    
-  },
-  
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get itemCount() {
-    return 0;
-  },
-  set itemCount(val) {
-    
+    return this._source.getRefRowCount( this._playlistRef.stringValue );
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get currentGUID() {
-    return "";
+    return this._source.getRefRowCellByColumn( this._playlistRef.stringValue, 
+                                               this._playlistIndex.intValue,
+                                               "id");
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get currentURL() {
-    return "";
+    return this._playUrl;
   },
   
   /**
@@ -699,6 +718,8 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     this.playUrl(url);
+
+    // update the current info in 250ms
     setTimeout('var index = this._source.getRefRowByColumnValue(' + source_ref + ', "url",' + url + '); this._updateCurrentInfo(' + source_ref + ', index )', 250);
    
     return;
@@ -774,7 +795,10 @@ PlaylistPlayback.prototype = {
       core.stop();
       core.playUrl( url );
       
-      LOG( "Playing '" + core.getId() + "'(" + this.getLength() + "/" + this.getPosition() + ") - playing: " + this.getPlaying() + " paused: " + this.getPaused() );
+      LOG( "Playing '" + core.getId() + "'(" + this.length + "/" +
+           this.position + ") - playing: " + this.playing +
+           " paused: " + this.paused
+         );
       
       // Start the polling loop to feed the metadata dataremotes.
       this._startPlayerLoop();
@@ -863,13 +887,13 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return 0;
+    return this._playlistIndex;
   },
 
   /**
    * See sbIPlaylistPlayback.idl
    */
-  getPaused: function() {
+  get paused() {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -879,7 +903,7 @@ PlaylistPlayback.prototype = {
   /**
    * See sbIPlaylistPlayback.idl
    */
-  getPlaying: function() {
+  get playing() {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -889,154 +913,10 @@ PlaylistPlayback.prototype = {
   /**
    * See sbIPlaylistPlayback.idl
    */
-  getStarted: function() {
+  get started() {
     return this._started;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  getVolume: function() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    var retval = core.getVolume();
-    if ( retval == this._calculatedVolume ) {
-      retval = this._requestedVolume;
-    }
-//    dump( "GetVolume -- req: " + this._requestedVolume + " calc: " + this._calculatedVolume + " retval: " + retval + "\n" );
-    return retval;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  setVolume: function(volume) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    core.setVolume(volume);
-    this._requestedVolume = volume;
-    this._calculatedVolume = core.getVolume();
-//    dump( "SetVolume -- req: " + this._requestedVolume + " calc: " + this._calculatedVolume + "\n" );
-    this._onPollVolume();
-    return false;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  getMute: function() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return core.getMute();
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  setMute: function(mute) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    core.setMute(mute);
-    // some cores set their volume to 0 on setMute(true), but do not restore
-    // the volume when mute is turned off, this fixes the problem
-    if (mute == false) {
-      core.setVolume(this._calculatedVolume);
-    }
-    this._onPollMute(core); // if the core is not playing, the loop is not running, but we still want the new mute state (and possibly volume) to be routed to all the UI controls
-    return true;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  getLength: function() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return core.getLength();
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  getPosition: function() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return core.getPosition();
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  setPosition: function(position) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    core.setPosition(position);
-    return true;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  setRepeat: function(repeatMode) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  getRepeat: function() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return REPEAT_MODE_OFF;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  setShuffle: function(shuffle) {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-      
-    var shuffleVal = shuffle ? 1 : 0;
-
-
-    // XXX what is this.m_strName?
-    var query = ""; //"UPDATE " + this._table + ' SET shuffle = "' + shuffleVal + '" WHERE name = "' + /*this.m_strName +*/ '"');
-/*    
-
-      // Uhhhhhh..... why are we handling shuffle all funny?  Shuffle isn't per table.
-
-
-    this._db.resetQuery();
-    this._db.addQuery(query);
-    this._db.execute();
-    this._db.waitForCompletion();
-*/    
-    return;
-  },
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
-  getShuffle: function() {
-    var core = this.core;
-    if (!core)
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    return false;
-  },
-  
   /**
    * See sbIPlaylistPlayback.idl
    */
@@ -1144,14 +1024,18 @@ PlaylistPlayback.prototype = {
       if ( the_url.indexOf )
       {
         // Make the playlist reader manager.
-        const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-        var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+        // XXXredfive - cleanup
+        //const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+        //var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+        var playlistReaderManager = Components.classes[SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID]
+                                    .createInstance(SONGBIRD_PLAYLISTREADERMANAGER_IID);
         
         // Tell it what filters to be using
         var filterlist = "";
         var extensionCount = new Object;
         var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
 
+        // cycle over the list of supported extensions looking for a match in the url
         for(var i = 0; i < extensions.length; i++)
         {
           if ( the_url.indexOf( "." + extensions[i] ) != -1 )
@@ -1200,7 +1084,7 @@ PlaylistPlayback.prototype = {
   
   _startPlayerLoop: function () {
     this._stopPlayerLoop();
-    this._started = 1;
+    this._started = true;
     this._seenPlaying.boolValue = false;
     this._lookForPlayingCount = 0;
     this._timer.initWithCallback( this, 250, 1 ) // TYPE_REPEATING_SLACK
@@ -1208,7 +1092,7 @@ PlaylistPlayback.prototype = {
   
   _stopPlayerLoop: function () {
     this._timer.cancel();
-    this._started = 0;
+    this._started = false;
   },
   
   // Poll function
@@ -1218,11 +1102,11 @@ PlaylistPlayback.prototype = {
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-      var len = this.getLength();
-      var pos = this.getPosition();
+      var len = this.length;
+      var pos = this.position;
       
       if ( !this._once ) {
-        LOG( "_onPlayerLoop '" + core.getId() + "'(" + this.getLength() + "/" + this.getPosition() + ") - playing: " + this.getPlaying() + " paused: " + this.getPaused() );
+        LOG( "_onPlayerLoop '" + core.getId() + "'(" + this.length + "/" + this.position + ") - playing: " + this.playing + " paused: " + this.paused );
         this._once = true;
       }
         
@@ -1264,14 +1148,15 @@ PlaylistPlayback.prototype = {
 
 
   // Routes volume changes from the core to the volume ui data remote 
-  
   _onPollVolume: function ( core ) {
-      var v = this.getVolume();
+      // do not ask the core directly for volume. special processing required!
+      var v = this.volume;
       if ( v != this._volume.intValue ) {
         this._volume.intValue = v;
     }
   },
 
+  // Routes mute changes to the mute data remote
   _onPollMute: function ( core ) {
       var mute = core.getMute();
       if ( mute != this._muteData.boolValue ) {
@@ -1280,7 +1165,6 @@ PlaylistPlayback.prototype = {
   },
 
   // Routes core playback status changes to the play/pause button ui data remote
-
   _onPollButtons: function ( len, core ) {
     if ( core.getPlaying() && ( ! core.getPaused() ) && ( len > 0 ) )
       this._playButton.boolValue = false;
@@ -1364,7 +1248,7 @@ PlaylistPlayback.prototype = {
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
     else if ( this._seenPlaying.boolValue || ( len < 0.0 ) ) {
-      // Oh, NOW you say we've stopped, eh?
+      // Oh, NOW you say we stopped, eh?
       this._seenPlaying.boolValue = false;
       this._stopPlayerLoop();
       
@@ -1399,7 +1283,7 @@ PlaylistPlayback.prototype = {
       var i;
       for (i = 0; i < num_filters; i++)
       {
-        // If they're not the same, just return from this.  No more play for you!
+        // If they are not the same, just return from this.  No more play for you!
         var filter = this._source.getFilter( cur_ref, i );
         if (this.filters[i] != filter)
           panic = true; // WHOA, now what?  Try to use the current url!
@@ -1408,7 +1292,7 @@ PlaylistPlayback.prototype = {
     
     if (panic)
     {
-      // So, we're in panic mode.  The filters have changed.
+      // So, we are in panic mode.  The filters have changed.
       var index = this._source.getRefRowByColumnValue(cur_ref, "url", cur_url);
       // If we can find the current url in the current list, use that as the index
       if (index != -1)
@@ -1417,7 +1301,6 @@ PlaylistPlayback.prototype = {
         return; // Otherwise, stop playback.
     };
     
-    // XXXredfive - this looks redundant. Do we do this for data remote reasons?
     this._playlistIndex.intValue = cur_index;
 
     LOG( "current index: " + cur_index );
@@ -1430,12 +1313,12 @@ PlaylistPlayback.prototype = {
       // Are we confused?
       if ( cur_index != -1 ) {
         // Are we REPEAT ONE?
-        if ( this._repeat.intValue == 1 ) {
+        if ( this._repeat.intValue == REPEAT_MODE_ONE ) {
           next_index = cur_index;
         }
         // Are we SHUFFLE?
         else if ( this._shuffle.boolValue ) {
-          //Does shuffle look like it's supposed to be FUCKING RANDOM. Could we *PLEASE* have a real shuffle. *PLEASE*.
+          //Does shuffle look like it is supposed to be FUCKING RANDOM. Could we *PLEASE* have a real shuffle. *PLEASE*.
           //Thanks. --aus
           var rand = num_items * Math.random();
           next_index = Math.floor( rand );
@@ -1448,7 +1331,7 @@ PlaylistPlayback.prototype = {
           // Are we at the end?
           if ( next_index >= num_items ) 
             // Are we REPEAT ALL?
-            if ( this._repeat.intValue == 2 )
+            if ( this._repeat.intValue == REPEAT_MODE_ALL )
               next_index = 0; // Start over
             else
               next_index = -1; // Give up
@@ -1486,28 +1369,36 @@ PlaylistPlayback.prototype = {
   
   _importUrlInLibrary: function( the_url )
   {
-    const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-    var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
-    var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+    // XXXredfive - cleanup
+    //const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+    //var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+    var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
+
+    // set up the database query object
+    var queryObj = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(SONGBIRD_DATABASEQUERY_IID);
     queryObj.setDatabaseGUID("songbird");
     library.setQueryObject(queryObj);
+
+    // prepare the data for addMedia call
     var keys = new Array( "title" );
     var values = new Array();
     values.push( ConvertUrlToDisplayName( the_url ) );
+
+    // add the url to the library
     var guid = library.addMedia( the_url, keys.length, keys, values.length, values, false, false );
     LOG("add media = " + guid);
+
+    // return the index of the row in the library.
     var row = library.getValueByGUID(guid, "id");
     LOG("findbyguid = " + row);
     return row;
   },
   
-/*  
-*/
   // Updates the database with metadata changes
-
   _setURLMetadata: function( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute ) {
     if ( aDBQuery == null ) {
-      aDBQuery = new sbIDatabaseQuery();
+      //aDBQuery = new sbIDatabaseQuery();
+      aDBQuery = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(SONGBIRD_DATABASEQUERY_IID);
       aDBQuery.setAsyncQuery(true);
       aDBQuery.setDatabaseGUID("songbird");
     }
@@ -1516,15 +1407,15 @@ PlaylistPlayback.prototype = {
     }
       
     if ( aTitle && aTitle.length ) {
-      var q = 'update library set title="'   + aTitle  + '" where url="' + aURL + '"';
+      var q = 'update library set title="' + aTitle + '" where url="' + aURL + '"';
       aDBQuery.addQuery( q );
     }
     if ( aLength && aLength.length ) {
-      var q = 'update library set length="'    + aLength + '" where url="' + aURL + '"';
+      var q = 'update library set length="' + aLength + '" where url="' + aURL + '"';
       aDBQuery.addQuery( q );
     }
     if ( aAlbum && aAlbum.length ) {
-      var q = 'update library set album="'  + aAlbum  + '" where url="' + aURL + '"';
+      var q = 'update library set album="' + aAlbum + '" where url="' + aURL + '"';
       aDBQuery.addQuery( q );
     }
     if ( aArtist && aArtist.length ) {
@@ -1532,7 +1423,7 @@ PlaylistPlayback.prototype = {
       aDBQuery.addQuery( q );
     }
     if ( aGenre && aGenre.length ) {
-      var q = 'update library set genre="'  + aGenre  + '" where url="' + aURL + '"';
+      var q = 'update library set genre="' + aGenre + '" where url="' + aURL + '"';
       aDBQuery.addQuery( q );
     }
     

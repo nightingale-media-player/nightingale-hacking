@@ -34,10 +34,10 @@ function CoreMPlayer()
   this._paused  = false;
 };
 
-// inherit the prototype from BaseCore
-CoreMPlayer.prototype = new BaseCore();
+// inherit the prototype from CoreBase
+CoreMPlayer.prototype = new CoreBase();
 
-// set the constructor so we use ours and not the one for BaseCore
+// set the constructor so we use ours and not the one for CoreBase
 CoreMPlayer.prototype.constructor = CoreMPlayer;
 
 

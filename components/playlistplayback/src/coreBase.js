@@ -1,8 +1,45 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the <93>GPL<94>).
+//
+// Software distributed under the License is distributed
+// on an <93>AS IS<94> basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
 
+/**
+ * \file coreBase.js
+ * \brief Base class for the sbICoreWrapper implementations
+ * \sa sbICoreWrapper.idl coreFlash.js coreWMP.js coreQT.js coreVLC.js
+ */
+
+/**
+ * \class CoreBase
+ * \brief Base class for sbICoreWrapper implementations
+ * \sa CoreFlash CoreWMP CoreQT CoreVLC
+ */
 function CoreBase()
 {
 };
 
+// Define the class-level data and methods
 CoreBase.prototype = 
 {
   _object  : null,
@@ -12,7 +49,7 @@ CoreBase.prototype =
   _paused  : false,
 
   _verifyObject: function () {
-    if ((this._object == undefined) || (!this._object)) {
+    if ( this._object == null ) {
       LOG("VERIFY OBJECT FAILED. OBJECT DOES NOT EXIST");
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     }
@@ -38,15 +75,11 @@ CoreBase.prototype =
       //if (this._object)
       //  this.swapCore();
       //
-      this.LOG("XXXredfive setting _object\n");
       this._object = aObject;
     }
   },
 
-  /**
-   * When a swap happens, stop ourself
-   */
-  onSwappedOut: function () {
+  onSwapCore: function() {
     this._verifyObject();
     try {
       this._object.Stop();
@@ -55,9 +88,13 @@ CoreBase.prototype =
     }
   },
 
-  /** 
-   * prepends file:// to urls if they have a :// in them
-   * replaces \\ with /
+  /**
+   * \brief Clean up an url.
+   * prepends file:// to urls if they do not have '(letters)://'
+   * replaces '\\' with '/'
+   *
+   * \param aURL
+   *        An url to sanitize
    */
   sanitizeURL: function (aURL) {
     if (!aURL)
@@ -73,11 +110,11 @@ CoreBase.prototype =
     return aURL;
   },
 
-  /**
+  /** 
    * Converts seconds to a time string
-   * @param   seconds
+   * \param   aSeconds
    *          The number of seconds to convert
-   * @return  A string containing the converted time (HH:MM:SS)
+   * \return  A string containing the converted time (HH:MM:SS)
    */
   emitSecondsToTimeString: function (aSeconds) {
     if ( aSeconds < 0 )
@@ -107,17 +144,26 @@ CoreBase.prototype =
   // Debugging helper functions
 
   /**
-   * Helper function to provide output.
+   * \brief Helper function to provide output.
+   *
+   * \param aString
+   *        A string to output to the command line.
+   * \param aImplName
+   *        The name of the derived class calling the method
    */
-  LOG: function (aImplName, aString) {
-    dump("***" + aImplName + "*** " + aString + "\n");
+  LOG: function ( aString, aImplName ) {
+    if (!aImplName)
+      aImplName = "CoreBase";
+    dump("***" + aImplName + " *** " + aString + "\n");
   },
 
   /**
+   * \brief Dump an object to the console.
    * Dumps an object's properties to the console
-   * @param   obj
+   *
+   * \param   aObj
    *          The object to dump
-   * @param   objName
+   * \param   aObjName
    *          A string containing the name of obj
    */
   listProperties: function (aObj, aObjName) {

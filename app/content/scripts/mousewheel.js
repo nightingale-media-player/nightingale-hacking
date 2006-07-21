@@ -65,11 +65,11 @@ try
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
       // walked up to the window
-      var s = PPS.getVolume();
+      var s = PPS.volume;
       var v = parseInt(s)+((event.detail > 0) ? -8 : 8);
       if (v < 0) v = 0;
       if (v > 255) v = 255;
-      PPS.setVolume(v);
+      PPS.volume = v;
       if (v != 0) SBDataSetIntValue("faceplate.volume.last", v);
     }
     catch (err)

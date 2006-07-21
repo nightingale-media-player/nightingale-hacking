@@ -306,8 +306,7 @@ try
         break;
       case 40: // Arrow Down
       case 13: // Return
-        //if ( gPPS.playing )
-        if ( gPPS.getPlaying() )
+        if ( gPPS.playing )
           onPause( );
         else
           onPlay( );
@@ -322,8 +321,7 @@ try
         }
         break;
       case 32: // Space
-        //if ( gPPS.playing )
-        if ( gPPS.getPlaying() )
+        if ( gPPS.playing )
           onPause( );
         else
           onPlay( );

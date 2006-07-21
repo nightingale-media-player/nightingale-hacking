@@ -296,7 +296,7 @@ function CoreVLC() {
   }
   
   /**
-   *
+   * inherit from coreBase
    */
   this.onSwapCore = function() {
     this.stop();
