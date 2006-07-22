@@ -882,22 +882,6 @@
         
           this.stopWatchingDragObjects();
         
-          // Columns nodes parent
-          var columns_node = document.createElement("treecols");
-
-          // Template nodes parents
-          var template_node = document.createElement("template");
-
-          var rule_node = document.createElement("rule");
-
-          var treechildren_node = document.createElement("treechildren");
-          treechildren_node.setAttribute("flex", "1");
-
-          var treeitem_node = document.createElement("treeitem");
-          treeitem_node.setAttribute("uri", "rdf:*");
-
-          var treerow_node = document.createElement("treerow");
-
           // Go through all the columns on the table and create nodes accordingly
           if(this.guid == 'undefined' || this.table == 'undefined' || this.guid == "" || this.table == "")
             return;
@@ -948,12 +932,28 @@
           }
           
           var result = this.m_queryObj.getResultObject();
+          
+          if ( result.getRowCount() == 0 ) return; // Don't create nodes if there's no columns.
+
+          // Columns nodes parent
+          var columns_node = document.createElement("treecols");
+
+          // Template nodes parents
+          var template_node = document.createElement("template");
+
+          var rule_node = document.createElement("rule");
+
+          var treechildren_node = document.createElement("treechildren");
+          treechildren_node.setAttribute("flex", "1");
+
+          var treeitem_node = document.createElement("treeitem");
+          treeitem_node.setAttribute("uri", "rdf:*");
+
+          var treerow_node = document.createElement("treerow");
 
           // XXXredfive - Row Count is # of columns (19 currently)
           for (var i = 0; i < result.getRowCount(); i++)
           {
-            var this_column_node = document.createElement("treecol");
-
             var name = result.getRowCellByColumn(i, "column_name");
             var readableName = result.getRowCellByColumn(i, "readable_name");
             var isVisible = result.getRowCellByColumn(i, "is_visible");
@@ -964,6 +964,10 @@
             if ( isVisible == null ) isVisible = "";
             if ( isDefaultVisible == null ) isDefaultVisible = "";
             
+            if ( name == "" ) continue;
+            
+            var this_column_node = document.createElement("treecol");
+
             if ( readableName && readableName[ 0 ] == "&" )
             {
               try

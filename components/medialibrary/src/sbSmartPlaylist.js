@@ -114,28 +114,28 @@ CSmartPlaylist.prototype.setColumnInfo = function(strColumn,
       this.m_queryObject.resetQuery();
     
     var strQuery = "UPDATE \"" + this.m_strName + "_desc\" SET ";
-    strQuery += "readable_name = \"" + strReadableName + "\"";
-    strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\"";
-    strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\"";
-    strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
-    strQuery += "sort_weight = \"" + sortWeight + "\"";
-    strQuery += "width = \"" + colWidth + "\"";
-    strQuery += "type = \"" + dataType + "\"";
-    strQuery += "readonly = \"" + readOnly + "\"";
-    strQuery += " WHERE column_name = \"" + strColumn + "\"";
+      strQuery += "readable_name = \"" + strReadableName + "\", ";
+      strQuery += "is_visible = \"" + (isVisible ? 1: 0) + "\", ";
+      strQuery += "default_visibility = \"" + (defaultVisibility ? 1 : 0) + "\", ";
+      strQuery += "is_metadata = \"" + (isMetadata ? 1 : 0) + "\", ";
+      strQuery += "sort_weight = \"" + sortWeight + "\", ";
+      strQuery += "width = \"" + colWidth + "\", ";
+      strQuery += "type = \"" + dataType + "\", ";
+      strQuery += "readonly = \"" + (readOnly ? 1 : 0) + "\" ";
+      strQuery += " WHERE column_name = \"" + strColumn + "\" ";
     
     this.m_queryObject.addQuery(strQuery);
     
     strQuery = "UPDATE \"library_desc\" SET ";
-    strQuery += "readable_name = \"" + strReadableName + "\"";
-    strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\"";
-    strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\"";
-    strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
-    strQuery += "sort_weight = \"" + sortWeight + "\"";
-    strQuery += "width = \"" + colWidth + "\"";
-    strQuery += "type = \"" + dataType + "\"";
-    strQuery += "readonly = \"" + readOnly + "\"";
-    strQuery += " WHERE column_name = \"" + strColumn + "\"";
+      strQuery += "readable_name = \"" + strReadableName + "\", ";
+      strQuery += "is_visible = \"" + (isVisible ? 1: 0) + "\", ";
+      strQuery += "default_visibility = \"" + (defaultVisibility ? 1 : 0) + "\", ";
+      strQuery += "is_metadata = \"" + (isMetadata ? 1 : 0) + "\", ";
+      strQuery += "sort_weight = \"" + sortWeight + "\", ";
+      strQuery += "width = \"" + colWidth + "\", ";
+      strQuery += "type = \"" + dataType + "\", ";
+      strQuery += "readonly = \"" + (readOnly ? 1 : 0) + "\" ";
+      strQuery += " WHERE column_name = \"" + strColumn + "\" ";
     
     this.m_queryObject.addQuery(strQuery);
     

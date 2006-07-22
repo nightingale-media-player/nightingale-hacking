@@ -204,8 +204,20 @@ CSimplePlaylist.prototype =
       this.m_queryObject.resetQuery();
       this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "_desc\"");
       
-      this.m_queryObject.execute();
+      var exec = this.m_queryObject.execute();
       this.m_queryObject.waitForCompletion();
+      
+      var results = this.m_queryObject.getResultObject();
+      var i, j, text = "";
+      for (i = 0; i < results.getRowCount(); i++ )
+      {
+        for (j = 0; j < results.getColumnCount(); j++ )
+        {
+          text += results.getColumnName( j ) + ": " + results.getRowCell(i, j) + " - ";
+        }
+        text += "\n";
+      }
+      dump(text+"\n");
     }
   },
   
@@ -226,21 +238,22 @@ CSimplePlaylist.prototype =
         this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE \"" + this.m_strName + "_desc\" SET ";
-      strQuery += "readable_name = \"" + strReadableName + "\"";
-      strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\"";
-      strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\"";
-      strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
-      strQuery += "sort_weight = \"" + sortWeight + "\"";
-      strQuery += "width = \"" + colWidth + "\"";
-      strQuery += "type = \"" + dataType + "\"";
-      strQuery += "readonly = \"" + readOnly + "\"";
-      strQuery += " WHERE column_name = \"" + strColumn + "\"";
+      strQuery += "readable_name = \"" + strReadableName + "\", ";
+      strQuery += "is_visible = \"" + (isVisible ? 1: 0) + "\", ";
+      strQuery += "default_visibility = \"" + (defaultVisibility ? 1 : 0) + "\", ";
+      strQuery += "is_metadata = \"" + (isMetadata ? 1 : 0) + "\", ";
+      strQuery += "sort_weight = \"" + sortWeight + "\", ";
+      strQuery += "width = \"" + colWidth + "\", ";
+      strQuery += "type = \"" + dataType + "\", ";
+      strQuery += "readonly = \"" + (readOnly ? 1 : 0) + "\" ";
+      strQuery += " WHERE column_name = \"" + strColumn + "\" ";
       
       this.m_queryObject.addQuery(strQuery);
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.execute();
+        var exec = this.m_queryObject.execute();
+        dump( "setColumnInfo exec: " + exec + "\n" + strQuery + "\n\n" );
         this.m_queryObject.waitForCompletion();
       }
     }    
@@ -269,7 +282,8 @@ CSimplePlaylist.prototype =
       this.m_queryObject.addQuery("ALTER TABLE \"" + this.m_strName + "\" ADD COLUMN \"" + strColumn + "\" " + strType);
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + this.m_strName + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
       
-      this.m_queryObject.execute();
+      var exec = this.m_queryObject.execute();
+      dump( "addColumn exec: " + exec + "\n" + this.m_queryObject.getQuery(0) + "\n" + this.m_queryObject.getQuery(1) + "\n\n" );
       this.m_queryObject.waitForCompletion();
     }
 
