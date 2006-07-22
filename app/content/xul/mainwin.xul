@@ -235,26 +235,26 @@
               <hbox flex="1">
                 <spacer width="4" height="18" id="mini_dash_w"/>
                 <vbox id="mini_dash" flex="1">
-                  <hbox id="mini_text_time" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
-                    <player_artist id="mini_text_artist" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
+                  <hbox id="mini_text_time" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1" >
+                    <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right"/>
                     <spacer width="20" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                    <player_title id="mini_text_title" class="sb_faceplate miniplayer" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right" flex="1"/>
-                    <label id="mini_text_time_e_txt"   class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                    <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                    <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate miniplayer" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-                    <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate miniplayer" />
+                    <player_title id="mini_text_title" class="sb_faceplate" autotip="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" crop="right" flex="1"/>
+                    <label id="mini_text_time_e_txt"   class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                    <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                    <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                    <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" />
                   </hbox>
-                  <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+                  <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
                 </vbox>
                 <spacer width="4" height="18" id="mini_dash_e"/>
               </hbox>
               <hbox hidden="true">
-                <player_repeat class="sb_faceplate miniplayer" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
+                <player_repeat class="sb_faceplate" repid="mini_btn_rep1" rep1id="mini_btn_repa" repallid="mini_btn_rep" hidden="true"/>
                 <player_shuffle class="sb_faceplate" shuffleonid="mini_btn_shuf_on" shuffleoffid="mini_btn_shuf" hidden="true"/>
-                <button id="mini_btn_help"    class="sb_faceplate miniplayer" oncommand="onHelp( );" hidden="true" />
-                <button id="mini_btn_min"     class="sb_faceplate miniplayer" oncommand="onMinimize( );" hidden="true" />
-                <button id="mini_btn_max"     class="sb_faceplate miniplayer" oncommand="SBMainWindowOpen( );" hidden="true" />
-                <button id="mini_btn_exit"    class="sb_faceplate miniplayer" oncommand="quitApp( );" hidden="true" />
+                <button id="mini_btn_help"    class="sb_faceplate" oncommand="onHelp( );" hidden="true" />
+                <button id="mini_btn_min"     class="sb_faceplate" oncommand="onMinimize( );" hidden="true" />
+                <button id="mini_btn_max"     class="sb_faceplate" oncommand="SBMainWindowOpen( );" hidden="true" />
+                <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
               </hbox>
               <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
             </hbox>
@@ -372,7 +372,7 @@
                           </hbox>
                           <!-- SONG ALBUM DISPLAY -->
                           <hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
-                            <player_title align="center" id="songbird_text_title" value="Welcome to Songbird" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+                            <player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             <label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                             <player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
                           </hbox>
