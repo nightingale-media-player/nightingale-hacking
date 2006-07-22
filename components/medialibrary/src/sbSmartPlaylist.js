@@ -97,31 +97,45 @@ CSmartPlaylist.prototype.getColumnInfo = function()
   }
 };
   
-CSmartPlaylist.prototype.setColumnInfo = function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater) {
+CSmartPlaylist.prototype.setColumnInfo = function(strColumn, 
+  strReadableName, 
+  isVisible, 
+  defaultVisibility, 
+  isMetadata, 
+  sortWeight, 
+  colWidth,
+  dataType,
+  readOnly,
+  bWillRunLater)
+{
   if(this.m_queryObject != null)
   {
     if(!bWillRunLater)
       this.m_queryObject.resetQuery();
     
     var strQuery = "UPDATE \"" + this.m_strName + "_desc\" SET ";
-    strQuery += "readable_name = \"" + strReadableName + "\", ";
-    strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\", ";
-    strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\", ";
-    strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\", ";
-    strQuery += "sort_weight = \"" + sortWeight + "\", ";
-    strQuery += "width = \"" + colWidth + "\" ";
-    strQuery += "WHERE column_name = \"" + strColumn + "\"";
+    strQuery += "readable_name = \"" + strReadableName + "\"";
+    strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\"";
+    strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\"";
+    strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
+    strQuery += "sort_weight = \"" + sortWeight + "\"";
+    strQuery += "width = \"" + colWidth + "\"";
+    strQuery += "type = \"" + dataType + "\"";
+    strQuery += "readonly = \"" + readOnly + "\"";
+    strQuery += " WHERE column_name = \"" + strColumn + "\"";
     
     this.m_queryObject.addQuery(strQuery);
     
     strQuery = "UPDATE \"library_desc\" SET ";
-    strQuery += "readable_name = \"" + strReadableName + "\", ";
-    strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\", ";
-    strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\", ";
-    strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\", ";
-    strQuery += "sort_weight = \"" + sortWeight + "\", ";
-    strQuery += "width = \"" + colWidth + "\" ";
-    strQuery += "WHERE column_name = \"" + strColumn + "\"";
+    strQuery += "readable_name = \"" + strReadableName + "\"";
+    strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\"";
+    strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\"";
+    strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
+    strQuery += "sort_weight = \"" + sortWeight + "\"";
+    strQuery += "width = \"" + colWidth + "\"";
+    strQuery += "type = \"" + dataType + "\"";
+    strQuery += "readonly = \"" + readOnly + "\"";
+    strQuery += " WHERE column_name = \"" + strColumn + "\"";
     
     this.m_queryObject.addQuery(strQuery);
     
@@ -131,7 +145,8 @@ CSmartPlaylist.prototype.setColumnInfo = function(strColumn, strReadableName, is
       this.m_queryObject.waitForCompletion();
     }
   }    
-};
+},
+
 
 CSmartPlaylist.prototype.addColumn = function(strColumn, strDataType) {
   return;

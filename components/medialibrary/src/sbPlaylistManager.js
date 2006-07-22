@@ -40,7 +40,7 @@ const PLAYLIST_LIST_TABLE_NAME = "playlist_list";
 const DYNAMICPLAYLIST_LIST_TABLE_NAME = "dynamicplaylist_list";
 const SMARTPLAYLIST_LIST_TABLE_NAME = "smartplaylist_list";
 
-const PLAYLIST_DESC_TABLE_CREATE = " (column_name TEXT UNIQUE NOT NULL, readable_name TEXT, is_visible INTEGER(0, 1) DEFAULT 0, default_visibility INTEGER(0, 1) DEFAULT 0, is_metadata INTEGER(0, 1) DEFAULT 0, sort_weight INTEGER DEFAULT 0, width INTEGER DEFAULT 0, type TEXT DEFAULT 'text')";
+const PLAYLIST_DESC_TABLE_CREATE = " (column_name TEXT UNIQUE NOT NULL, readable_name TEXT, is_visible INTEGER(0, 1) DEFAULT 0, default_visibility INTEGER(0, 1) DEFAULT 0, is_metadata INTEGER(0, 1) DEFAULT 0, sort_weight INTEGER DEFAULT 0, width INTEGER DEFAULT -1, type TEXT DEFAULT 'text', readonly INTEGER(0,1) DEFAULT 0)";
 const PLAYLIST_TABLE_CREATE = " (playlist_id INTEGER PRIMARY KEY, playlist_uuid BLOB, playlist_service_uuid BLOB, playlist_order INTEGER DEFAULT -1, playlist_has_been_processed INTEGER(0,1) DEFAULT 0)";
 
 const SIMPLEPLAYLIST_LIST_TABLE_CREATE = "CREATE TABLE simpleplaylist_list (service_uuid BLOB NOT NULL, name TEXT UNIQUE NOT NULL, readable_name TEXT NOT NULL, description TEXT DEFAULT '', type TEXT DEFAULT '', base_type TEXT DEFAULT 'simple')";

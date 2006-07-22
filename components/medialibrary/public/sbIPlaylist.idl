@@ -57,14 +57,16 @@ interface sbISimplePlaylist : nsISupports
 
   void getColumnInfo();
 
-  void setColumnInfo(in AString strColumn, 
-    in AString strReadableName, 
-    in PRBool isVisible, 
-    in PRBool defaultVisibility, 
-    in PRBool isMetadata, 
-    in PRInt32 sortWeight,
-    in PRInt32 colWidth, 
-    in PRBool bWillRunLater);
+  void setColumnInfo(in AString columnName, 
+    in AString columnReadableName, 
+    in PRBool isColumnEverVisible, 
+    in PRBool isColumnVisibleByDefault, 
+    in PRBool isMetadataColumn, 
+    in PRInt32 columnSortWeight,
+    in PRInt32 columnDefaultUIWidth,
+    in AString columnDataType,
+    in PRBool isColumnReadOnly,
+    in PRBool willRunQueryLater);
 
   void getTableInfo();
   
@@ -159,14 +161,16 @@ interface sbIPlaylist : nsISupports
 
   void getColumnInfo();
 
-  void setColumnInfo(in AString strColumn, 
-    in AString strReadableName, 
-    in PRBool isVisible, 
-    in PRBool defaultVisibility, 
-    in PRBool isMetadata, 
-    in PRInt32 sortWeight,
-    in PRInt32 colWidth, 
-    in PRBool bWillRunLater);
+  void setColumnInfo(in AString columnName, 
+    in AString columnReadableName, 
+    in PRBool isColumnEverVisible, 
+    in PRBool isColumnVisibleByDefault, 
+    in PRBool isMetadataColumn, 
+    in PRInt32 columnSortWeight,
+    in PRInt32 columnDefaultUIWidth,
+    in AString columnDataType,
+    in PRBool isColumnReadOnly,
+    in PRBool willRunQueryLater);
 
   void getTableInfo();
   

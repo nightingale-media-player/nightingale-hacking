@@ -37,6 +37,7 @@ const SONGBIRD_MEDIALIBRARY_IID = Components.interfaces.sbIMediaLibrary;
 const LIBRARY_TABLE_NAME = "library";
 const LIBRARY_DESC_TABLE_NAME = "library_desc";
 
+// If you change LIBRARY_DESC, remember to change PLAYLIST_DESC!!!!
 const LIBRARY_DESC_TABLE_CREATE = "CREATE TABLE library_desc (column_name TEXT UNIQUE, readable_name TEXT, is_visible INTEGER(0, 1) DEFAULT 0, default_visibility INTEGER(0, 1) DEFAULT 0, is_metadata INTEGER(0, 1) DEFAULT 0, sort_weight INTEGER DEFAULT 0, width INTEGER DEFAULT -1, type TEXT DEFAULT 'text', readonly INTEGER(0,1) DEFAULT 0)";
 const LIBRARY_TABLE_CREATE = "CREATE TABLE library (id INTEGER PRIMARY KEY, uuid BLOB UNIQUE NOT NULL, service_uuid BLOB NOT NULL, url TEXT UNIQUE DEFAULT '', content_type TEXT DEFAULT '', length TEXT DEFAULT '0', artist TEXT DEFAULT '', title TEXT DEFAULT '', album TEXT DEFAULT '', genre TEXT DEFAULT '', composer TEXT DEFAULT '', producer TEXT DEFAULT '', rating INTEGER DEFAULT 0, track_no INTEGER DEFAULT 0, track_total INTEGER DEFAULT 0, disc_no INTEGER DEFAULT 0, disc_total INTEGER DEFAULT 0, year INTEGER DEFAULT 0)";
 const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uuid, url, content_type, length, artist, album, genre)";

@@ -209,7 +209,16 @@ CSimplePlaylist.prototype =
     }
   },
   
-  setColumnInfo: function(strColumn, strReadableName, isVisible, defaultVisibility, isMetadata, sortWeight, colWidth, bWillRunLater)
+  setColumnInfo: function(strColumn, 
+    strReadableName, 
+    isVisible, 
+    defaultVisibility, 
+    isMetadata, 
+    sortWeight, 
+    colWidth,
+    dataType,
+    readOnly,
+    bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -217,13 +226,15 @@ CSimplePlaylist.prototype =
         this.m_queryObject.resetQuery();
       
       var strQuery = "UPDATE \"" + this.m_strName + "_desc\" SET ";
-      strQuery += "readable_name = \"" + strReadableName + "\", ";
-      strQuery += "is_visible = \"" + (isVisible == true ? "1" : "0") + "\", ";
-      strQuery += "default_visibility = \"" + (defaultVisibility == true ? "1" : "0") + "\", ";
-      strQuery += "is_metadata = \"" + (isMetadata == true ? "1" : "0") + "\", ";
-      strQuery += "sort_weight = \"" + sortWeight + "\", ";
-      strQuery += "width = \"" + colWidth + "\" ";
-      strQuery += "WHERE column_name = \"" + strColumn + "\"";
+      strQuery += "readable_name = \"" + strReadableName + "\"";
+      strQuery += "is_visible = \"" + isVisible ? 1: 0 + "\"";
+      strQuery += "default_visibility = \"" + defaultVisibility ? 1 : 0 + "\"";
+      strQuery += "is_metadata = \"" + isMetadata ? 1 : 0 + "\"";
+      strQuery += "sort_weight = \"" + sortWeight + "\"";
+      strQuery += "width = \"" + colWidth + "\"";
+      strQuery += "type = \"" + dataType + "\"";
+      strQuery += "readonly = \"" + readOnly + "\"";
+      strQuery += " WHERE column_name = \"" + strColumn + "\"";
       
       this.m_queryObject.addQuery(strQuery);
       

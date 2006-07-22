@@ -851,10 +851,10 @@ PRBool sbDeviceBase::CreateTransferTable(const PRUnichar *DeviceString, const PR
   pPlaylistDest->AddColumn(NS_LITERAL_STRING("progress"), NS_LITERAL_STRING("integer(0, 100)"));
   pPlaylistDest->AddColumn(NS_LITERAL_STRING("status"), NS_LITERAL_STRING("text"));
 
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"), NS_LITERAL_STRING("Source URL"), PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70, PR_FALSE);
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"), NS_LITERAL_STRING("Destination URL"), PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70, PR_FALSE);
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"), NS_LITERAL_STRING("Download Progress"), PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20, PR_FALSE);
-  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"), NS_LITERAL_STRING("Status"), PR_TRUE, PR_TRUE, PR_FALSE, -7000, 20, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"), NS_LITERAL_STRING("Source URL"), PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70, NS_LITERAL_STRING("text"), PR_TRUE, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"), NS_LITERAL_STRING("Destination URL"), PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70, NS_LITERAL_STRING("text"), PR_TRUE, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"), NS_LITERAL_STRING("Download Progress"), PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20, NS_LITERAL_STRING("progress"), PR_TRUE, PR_FALSE);
+  pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"), NS_LITERAL_STRING("Status"), PR_TRUE, PR_TRUE, PR_FALSE, -7000, 20, NS_LITERAL_STRING("text"), PR_TRUE, PR_FALSE);
 
   PRInt32 nEntryCount = 0;
   pPlaylistDest->GetAllEntries(&nEntryCount);
