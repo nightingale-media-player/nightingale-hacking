@@ -26,11 +26,10 @@ if "%2"=="package" goto package
 @rd /s /q %DEPTH%\_built_installer
 
 @copy /y Songbird.nsi %DEPTH%\dist\
-@copy /y %ICON_FILE% %DEPTH%\dist\
 
 @mkdir %DEPTH%\dist\chrome\icons\default
-@copy  %DEPTH%\app\branding\songbird.ico %DEPTH%\dist\chrome\icons\default\frame_outer.ico
-@copy  %DEPTH%\app\branding\songbird.ico %DEPTH%\dist\songbird.ico
+@copy /y %DEPTH%\app\branding\songbird.ico %DEPTH%\dist\chrome\icons\default\frame_outer.ico
+@copy /y %DEPTH%\app\branding\songbird*.ico %DEPTH%\dist\
 
 @copy /y LICENSE.txt %DEPTH%\dist\
 @copy /y GPL.txt %DEPTH%\dist\

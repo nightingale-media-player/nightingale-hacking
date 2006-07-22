@@ -8,6 +8,7 @@
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
+
 Name "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
 Caption "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
 
@@ -52,6 +53,50 @@ ShowUninstDetails show
 
 Function .onInstSuccess
   WriteINIStr $APPDATA\Songbird_vlc\vlcrc main plugin-path $INSTDIR\vlcplugins
+FunctionEnd
+
+var LinkIconFile
+var Result
+var MajorVersion
+var MinorVersion
+var BuildNumber
+var PlatformID
+var CSDVersion 
+Function .onInit
+  ; Figure out if we should give the old or the new icon in our links
+  ; XP or 2k3 use new icon, everyone else uses the old.
+  
+  ; Test for XP
+  Version::IsWindowsXP
+  Pop $Result
+  StrCmp $Result "1" UseNewIcon
+  
+  ; Test for 2k3
+  Version::IsWindows2003
+  Pop $Result
+  StrCmp $Result "1" UseNewIcon
+  
+  ; Test for Vista (?)
+  Version::GetWindowsVersion
+  ; get function result
+  Pop $MajorVersion
+  Pop $MinorVersion
+  Pop $BuildNumber
+  Pop $PlatformID
+  Pop $CSDVersion  
+  StrCmp $MajorVersion "6" UseNewIcon
+
+  UseOldIcon:
+    ; Fallthrough to use the old 32x32x8 icon
+    Strcpy $LinkIconFile 'songbird32x32x8.ico'
+    Goto Done
+    
+  UseNewIcon:
+    ; Use the new 128x128x32 icon
+    Strcpy $LinkIconFile 'songbird.ico'
+    Goto Done
+    
+  Done:
 FunctionEnd
 
 Section "Songbird Base (Required)"
@@ -110,7 +155,7 @@ NoRequireMSVCP71:
   WriteRegStr HKLM SOFTWARE\Songbird "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "DisplayName" "Songbird 0.1 (Win32)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "DisplayName" "$NAME"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "UninstallString" '"$INSTDIR\songbird-uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "NoRepair" 1
@@ -120,16 +165,16 @@ SectionEnd
 
 Section "Start Menu Entries"
   CreateDirectory "$SMPROGRAMS\Songbird"
-  CreateShortCut "$SMPROGRAMS\Songbird\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\songbird.ico" 0
-  CreateShortCut "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk" "$INSTDIR\songbird-uninstall.exe" "" "$INSTDIR\songbird-uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\Songbird\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\$LinkIconFile" 0
+  CreateShortCut "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk" "$INSTDIR\songbird-uninstall.exe" "" "$INSTDIR\$LinkIconFile" 0
 SectionEnd
 
 Section "Desktop Icon"
-  CreateShortCut "$DESKTOP\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\Songbird.ico" 0
+  CreateShortCut "$DESKTOP\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\$LinkIconFile" 0
 SectionEnd
 
 Section "QuickLaunch Icon"
-  CreateShortCut "$QUICKLAUNCH\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\Songbird.ico" 0
+  CreateShortCut "$QUICKLAUNCH\Songbird.lnk" "$INSTDIR\songbird.exe" "" "$INSTDIR\$LinkIconFile" 0
 SectionEnd
 
 Section "Uninstall"
@@ -179,3 +224,4 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
 SectionEnd
+
