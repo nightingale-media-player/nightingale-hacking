@@ -2,7 +2,7 @@
 <!ENTITY window.main.title  "Songbird User Preview" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
 <!ENTITY window.ok          "確定" >
 <!ENTITY window.cancel      "取消" >
 <!ENTITY window.browse      "瀏覽..." >

@@ -1,7 +1,7 @@
 ﻿<!ENTITY window.main.title  "Songbird Pré-version Utilisateur" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
 <!ENTITY window.ok          "Accepter" >
 <!ENTITY window.cancel      "Annuler" >
 <!ENTITY window.browse      "Parcourir..." >
