@@ -59,18 +59,23 @@ SONGBIRD_DIST = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-FLASH_PLUGIN = libflashplayer
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/flash/components/flashplayer.xpt \
-                      $(NULL)
+SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/components/libtotem_mozilla.xpt
+SONGBIRD_PLUGINS    = $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/plugins/libtotem_mozilla$(DLL_SUFFIX)
+SONGBIRD_DIST      += $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/bin/totem-mozilla-viewer
 
-SONGBIRD_PLUGINS = $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX) \
-                   $(NULL)
+ifneq ("-x86_64","$(SB_ARCH)")
+
+FLASH_PLUGIN = libflashplayer
+SONGBIRD_COMPONENTS += $(PLUGINS_DIR)/flash/components/flashplayer.xpt
+SONGBIRD_PLUGINS    += $(PLUGINS_DIR)/flash/plugins/$(FLASH_PLUGIN)$(DLL_SUFFIX)
+
+endif
 
 # non-existent variable, VLC no-worky on linux yet...
 ifdef (SB_LINUX_VLC)
