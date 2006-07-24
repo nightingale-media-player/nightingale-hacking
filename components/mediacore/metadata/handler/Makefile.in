@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = id3 \
+          ogg \
           $(NONE)
 
 include $(topsrcdir)/build/rules.mk
