@@ -217,7 +217,7 @@ void PR_CALLBACK sbDeviceBase::DeviceProcess(sbDeviceBase* pDevice)
 
     switch(pDeviceMessage->message) {
       case MSG_DEVICE_TRANSFER:
-        pDevice->TransferNextFile((PRInt32) pDeviceMessage->data1, (TransferData *) pDeviceMessage->data2);
+        pDevice->TransferNextFile(NS_PTR_TO_INT32(pDeviceMessage->data1), (TransferData *) pDeviceMessage->data2);
         break;
       case MSG_DEVICE_INITIALIZE:
         pDevice->InitializeSync();
@@ -226,7 +226,7 @@ void PR_CALLBACK sbDeviceBase::DeviceProcess(sbDeviceBase* pDevice)
         pDevice->FinalizeSync();
         break;
       case MSG_DEVICE_EVENT:
-        pDevice->DeviceEventSync((PRBool) pDeviceMessage->data2);
+        pDevice->DeviceEventSync(NS_PTR_TO_INT32(pDeviceMessage->data2));
         break;
       default:
         NS_NOTREACHED("Bad DeviceMessage");
