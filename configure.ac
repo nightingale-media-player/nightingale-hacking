@@ -106,6 +106,7 @@ AC_CANONICAL_SYSTEM
 case "$target" in
   *-cygwin*|*-mingw*|*-msvc*|*-mks*)
     SB_PLATFORM="win32"
+    SB_ARCH=""
     # Add the Cygwin wrapper if necessary
     case "$target" in
       *-mingw*)
@@ -123,12 +124,23 @@ case "$target" in
   ;;
   *darwin*)
     SB_PLATFORM="macosx"
+    SB_ARCH=""
   ;;
   *linux*)
     SB_PLATFORM="linux"
+    case "$target_cpu" in
+      x86_64)
+        SB_ARCH="-x86_64"
+      ;;
+      *)
+        # SK: Maybe make this i386?
+        SB_ARCH=""
+      ;;
+    esac
   ;;
 esac
 AC_SUBST(SB_PLATFORM)
+AC_SUBST(SB_ARCH)
 AC_SUBST(CYGWIN_WRAPPER)
 AC_SUBST(CYGDRIVE_MOUNT)
 
@@ -565,7 +577,7 @@ AC_SUBST(BUILD_ID_FILENAME)
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $srcdir/dependencies/$SB_PLATFORM/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
+echo $MAKEFILES | ${PERL} $srcdir/dependencies/$SB_PLATFORM$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 

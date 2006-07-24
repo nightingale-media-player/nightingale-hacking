@@ -3,14 +3,14 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright© 2006 POTI, Inc.
+# Copyrightï¿½ 2006 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the “GPL”).
+# GNU General Public License Version 2 (the ï¿½GPLï¿½).
 # 
 # Software distributed under the License is distributed 
-# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an ï¿½AS ISï¿½ basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -36,6 +36,7 @@ AUTODEFS_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
 SB_PLATFORM      = @SB_PLATFORM@
+SB_ARCH          = @SB_ARCH@
 SB_CONFIGURATION = @SB_CONFIGURATION@
 
 ACDEFINES = @DEFS@
@@ -74,21 +75,21 @@ CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
 
 APP_DIR	           = @top_srcdir@/app
 BUILD_DIR          = @top_srcdir@/build
-DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@
-XULRUNNER_DIR      = @top_srcdir@/dependencies/@SB_PLATFORM@/xulrunner/@SB_CONFIGURATION@
+DEPS_DIR           = @top_srcdir@/dependencies/@SB_PLATFORM@@SB_ARCH@
+XULRUNNER_DIR      = @top_srcdir@/dependencies/@SB_PLATFORM@@SB_ARCH@/xulrunner/@SB_CONFIGURATION@
 COMPONENTS_DIR     = @top_srcdir@/components
-ID3LIB_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/id3lib/@SB_CONFIGURATION@
-SQLITE_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/sqlite/@SB_CONFIGURATION@
+ID3LIB_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@@SB_ARCH@/id3lib/@SB_CONFIGURATION@
+SQLITE_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@@SB_ARCH@/sqlite/@SB_CONFIGURATION@
 SCRIPTS_DIR        = @top_srcdir@/tools/scripts
 
-MOZSDK_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@/mozilla/@SB_CONFIGURATION@
+MOZSDK_DIR         = @top_srcdir@/dependencies/@SB_PLATFORM@@SB_ARCH@/mozilla/@SB_CONFIGURATION@
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
 MOZSDK_LIB_DIR     = $(MOZSDK_DIR)/lib
 MOZSDK_BIN_DIR     = $(MOZSDK_DIR)/bin
 MOZSDK_IDL_DIR     = $(MOZSDK_DIR)/idl
 MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
 
-PLUGINS_DIR        = @top_srcdir@/dependencies/@SB_PLATFORM@/plugins
+PLUGINS_DIR        = @top_srcdir@/dependencies/@SB_PLATFORM@@SB_ARCH@/plugins
 
 OBJDIRNAME         = @OBJDIRNAME@
 DISTDIRNAME        = @DISTDIRNAME@
