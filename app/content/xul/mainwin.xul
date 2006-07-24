@@ -124,7 +124,7 @@
                       <menupopup id="feathers.popup" onpopupshowing="fillFeathersList(this);" />
                     </menu>
                     <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="sb_faceplate"/> -->
-                    <!-- <menuitem id="menu.dominspector" label="DOM Inspector" class="sb_faceplate"/> -->
+                    <menuitem id="menu.dominspector" label="DOM Inspector" class="sb_faceplate"/>
                     <menuitem id="menu.preferences" label="&menu.preferences;" class="sb_faceplate" accesskey="&menu.preferences.accesskey;"/>
                     <menuitem id="menu.extensions" label="&menu.extensions;" class="sb_faceplate" accesskey="&menu.extensions.accesskey;"/>
                     <menuseparator/>
