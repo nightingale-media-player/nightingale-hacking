@@ -1,0 +1,1317 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+MAINWIN SIZE & POSITION
+This CSS files specifies the size and position of the Main Window UI.
+************************************************************************************************************************************************
+*/ 
+
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/
+
+.window,
+.dialog
+{
+  border: 2px solid !important;
+}
+
+
+.chrome_bkgd,
+#chrome_bkgd
+{
+  -moz-appearance: none !important; 
+}
+
+
+#chrome_nw
+{
+  -moz-appearance: none !important;
+  height: 9px !important;   
+  width: 9px !important;   
+}
+
+#chrome_n
+{
+  -moz-appearance: none !important;
+  height: 9px !important;   
+  width: 9px !important; 
+}
+
+#chrome_ne
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_w
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_e
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_sw
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_s
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_se
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+/** 
+************************************************************************************************************************************************
+CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+#app_icon
+{
+  background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
+  margin: 1px 5px 0px 2px !important;
+}
+
+#app_title,
+#video_window_title
+{
+  margin: 0px 0px 0px 0px !important;
+  font-family: tahoma, arial !important;
+  font-weight: bold !important;
+  font-size: 11px !important;
+}
+
+#sysbtn_close
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{
+  width: 9px !important;
+  height: 9px !important;
+  max-width: 9px !important;
+  max-height: 9px !important;
+  border: none !important;
+  margin: -2px 0px 0px 0px !important;
+  padding: 0px !important;
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  width: 0px !important;
+  height: 0px !important;
+  max-width: 0px !important;
+  max-height: 0px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+#sysbtn_maximize > image
+{
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_minimize
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_minimode
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+/* END CHROME **/
+
+/** 
+************************************************************************************************************************************************
+THE LAYOUT for the Main Application Window
+Love the box.
+************************************************************************************************************************************************
+*/ 
+
+#frame_outer
+{
+  width:  924px !important;
+  height: 668px !important;
+}
+
+.service-pane /* aka The Service Pane, The Left Pane **/
+{
+  -moz-appearance: none !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  border: 1px solid !important;
+  margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  width: 135px !important;
+}
+
+#frame_top_pane
+{
+  top: 0px !important;
+  left: 0px !important;
+  height: 40px !important;
+}
+
+#frame_control_pane
+{
+  max-height: 45px !important;
+}
+
+#frame_middle_pane
+{
+  -moz-appearance: none !important; /* grrrr! */
+  border: none !important;
+}
+
+#frame_service_tree
+{
+  -moz-appearance: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 6px 0px 0px 0px !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row
+{
+  -moz-appearance: none !important;  
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+}
+
+
+
+#frame_service_buttonbar button
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  height: 25px !important;  
+  color: #99A195 !important; 
+}
+
+/** Offset menu a to account for rounded button **/
+#frame_service_buttonbar clickholdbutton menupopup
+{
+ margin-left: 8px;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row( selected )
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 3px !important;
+  border: 1px solid !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  font-size: larger;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell
+{
+  -moz-appearance: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell( selected )
+{
+  -moz-appearance: none !important;
+  -moz-border-radius: 5px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  font-size: larger;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: bold;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text
+{
+  margin: 0px 0px 0px 3px !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty
+{
+  -moz-appearance: none !important;
+  margin: 0px 3px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+#frame_service_tree > treechildren::-moz-tree-twisty( open )
+{
+  -moz-appearance: none !important;
+  margin: 0px 3px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+#frame_service_tree_label
+{
+  -moz-appearance: none !important; /* grrrr! */
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  height: 0px !important; 
+}
+
+tree .treecol-image
+{
+  -moz-appearance: none !important; /* grrrr! */
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+}
+
+tree .tree-columnpicker-icon
+{
+  -moz-appearance: none !important; /* grrrr! */
+  margin: 0px 2px 0px 0px !important;
+  padding: 0px !important;
+  border: none !important;
+}
+
+tree treecol
+{
+  -moz-appearance: none !important; /* grrrr! */
+  margin: 0px !important;
+  padding: 0px 0px 0px 5px !important;
+  height: 20px !important;
+  border-width: 0px 1px 0px 0px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+SCROLLBARS
+************************************************************************************************************************************************
+*/ 
+
+scrollbar
+{   
+  padding: 0 0 0 0 !important;  
+} 
+
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-border-radius: 2px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-border-radius: 2px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+scrollbar > slider > thumb > gripper
+{   
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  width: 16px !important;
+} 
+
+scrollbar > slider > thumb
+{    
+  -moz-border-radius: 2px !important;   
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  width: 16px !important;
+} 
+
+scrollbar > slider
+{   
+  padding: 0 0 0 0 !important; 
+} 
+
+/* service pane scrollbar*/
+#frame_service_tree scrollbar
+{   
+  padding: 0 0 0 0 !important;
+} 
+
+#frame_service_tree scrollbar > slider > thumb
+{     
+  -moz-border-radius: 3px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  height: 16px !important;
+  width: 16px !important;
+} 
+
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-border-radius: 3px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-border-radius: 3px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+
+/** 
+************************************************************************************************************************************************
+THE LISTS, aka. the List Tree.
+A List Tree is a sortable column list with striping rows.
+************************************************************************************************************************************************
+*/ 
+tree treecol
+{
+  -moz-border-right-colors: #333 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE FILTERLISTS
+Organize your collection with genre/artist/album filterlists.  
+************************************************************************************************************************************************
+*/ 
+
+filterlist
+{
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+filterlist > tree
+{
+  -moz-border-right-colors: none !important;
+  -moz-border-bottom-colors: none !important;
+  -moz-border-top-colors: none !important;
+  -moz-border-left-colors: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  /* opacity: 0.8; slow on the mac :( **/
+}
+
+/* striping for genre filter */
+filterlist > tree > treechildren::-moz-tree-row
+{
+  border: none !important;
+}
+
+filterlist > tree > treechildren::-moz-tree-row( selected, focus )
+{
+  border: none !important;
+}
+
+filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: bold !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist
+{
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+playlist > stack > vbox
+{
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+
+#playlist_tree
+{
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+#playlist_toolbar
+{
+  border: none !important;
+}
+
+#playlist_toolbar_bkg,
+playlist > stack > vbox > hbox#playlist_toolbar_bkg
+{
+  -moz-border-radius-bottomright: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;  
+  border-top: 1px solid;
+}
+
+playlist > stack > vbox > hbox
+{
+  height: 27px !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row
+{
+  margin: 0px !important;
+  padding: 0px 0px 0px 0px !important;
+  border: 0px solid !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-cell
+{
+  margin: 0px !important;
+  padding: 0px 0px 0px 5px !important;
+  border-right: 1px solid !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-row( selected, focus )
+{
+  border: none !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: bold !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter
+{
+ border: none !important;
+ margin-top: 6px !important;
+ margin-bottom: 6px !important;
+ height: 10px !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+  border: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE WEB PLAYLIST aka THE URL SLURPER
+Style this to match your webpage!
+************************************************************************************************************************************************
+#playlist_web
+{
+ 
+} 
+*/
+
+/** 
+************************************************************************************************************************************************
+THE TOOLBAR
+The Toolbar is a way for a user to discover pertinent contextual menu 
+features without having to know how to right-click.  You'll see styles
+for both the toolbar buttons and the corresponding entries in the 
+contextual menu.
+************************************************************************************************************************************************
+*/ 
+
+/* the generic style for all playlist toolbarbuttons */
+#playlist_toolbar > button[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+  border: 1px solid !important;
+  padding: 0px 5px 0px 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  height: 25px !important;  
+}
+
+#playlist_toolbar > button[disabled="false"]
+{
+  -moz-border-radius: 3px !important;
+  padding: 0px 5px 0px 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+  height: 25px !important;  
+}
+
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Spliters to resize the panes */
+
+.vert_splitter,
+#vert_splitter,
+#filter_splitter
+{
+  width: 7px !important;
+  height: 50px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  cursor: w-resize;
+}
+
+.vert_splitter[state="collapsed"],
+#vert_splitter[state="collapsed"]
+{
+  width: 10px !important;
+  -moz-border-radius-topleft: 3px !important;
+  -moz-border-radius-bottomleft: 3px !important;
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-bottomright: 3px !important;
+  border: 1px solid !important;
+}
+
+#vert_splitter[state="collapsed"]
+{
+  margin-right: 7px !important;
+}
+
+.horz_splitter,
+#horz_splitter,
+#playlist_web_split > grippy
+{
+  width: 50px !important;
+  height: 7px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  cursor: n-resize;
+}
+
+#control_pane_splitter
+{
+  width: 50px !important;
+  height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important; /* Mac doesn't want to respect my height value without this? */
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 0px 3px 0px;
+  cursor: n-resize;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  width: 50px !important;
+  height: 7px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 3px 3px 3px;
+  cursor: n-resize;
+}
+
+#horz_splitter[state="collapsed"]
+{
+  height: 7px !important;
+}
+
+#playlist_web_split[state="collapsed"]
+{
+  height: 7px !important;
+}
+/* END SPLITTERS **/
+
+/** 
+************************************************************************************************************************************************
+THE MAIN PANE
+************************************************************************************************************************************************
+*/ 
+
+#main_pane_border
+{
+  -moz-border-radius-topright: 3px !important;
+  -moz-border-radius-topleft: 3px !important;
+  border: 1px solid !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE STATUS PANE
+************************************************************************************************************************************************
+*/ 
+#frame_status_pane
+{
+  height: 10px !important;
+}
+
+#status_progress_box
+{
+  -moz-appearance:none !important;
+  height: 5px !important;
+  width: 100px !important;
+  overflow: hidden !important;
+}
+
+#status_progress { 
+   margin: 2px 0px 0px 0px !important;
+   border: none !important;
+   min-width: 100px !important; 
+} 
+
+
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+#frame_resize_t
+{
+  width: 9px !important;
+  height: 9px !important;
+}
+
+#frame_resize_to
+{
+  width: 9px !important;
+  height: 9px !important;
+}
+
+#frame_resize_m
+{
+  width: 9px !important;
+  height: 9px !important;  
+}
+
+#frame_resize_mo
+{
+  height: 9px !important;
+  width: 9px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+SEARCH WIDGET
+************************************************************************************************************************************************
+*/
+
+#search_temp
+{
+  width: 143px !important;
+  height: 21px !important;
+}
+
+
+.button-icon
+{
+  margin: 0px 0px 0px 5px !important; 
+}
+
+#search_service_list
+{
+  width: 120px !important;
+  margin: 3px 0px 3px 0px !important; 
+}
+
+
+#search_widget
+{ 
+  border: 1px solid !important; 
+  -moz-border-radius: 5px !important;
+  margin: 2px 2px 2px 2px !important; 
+} 
+
+#search_widget input
+{
+  padding-top: 2px !important;
+}
+
+#search_widget input:focus
+{
+  padding-top: 2px !important;
+}
+
+.button-menu-dropmarker
+{
+  background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
+}
+/* END SEARCH WIDGET **/
+
+
+/** 
+************************************************************************************************************************************************
+CONTROL BOX
+Contains the Main Playback Controls and the Dashboard.
+************************************************************************************************************************************************
+*/
+
+
+#control_left_box
+{
+  width: 138px !important;
+}
+
+#control_right_box
+{
+ width: 500px !important;
+}
+
+#face_left_box
+{
+  width: 35px !important;
+}
+
+#face_middle_box
+{
+
+  height: 45px !important;
+}
+
+#face_right_box
+{
+  width: 35px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+DASHBOARD
+************************************************************************************************************************************************
+*/
+
+#dashboard_box
+{
+  height: 45px !important;
+}
+
+#dashboard_bkgd
+{
+  height: 45px !important;
+}
+
+#dashboard_w
+{
+  width: 25px !important;
+  height: 45px !important;
+  background-repeat: no-repeat !important;
+}
+#dashboard_e
+{
+  width: 25px !important;
+  height: 45px !important;
+  background-repeat: no-repeat !important;
+}
+
+#intro_box
+{
+  height: 45px !important;
+}
+
+#intro_box_bkgd
+{
+  height: 45px !important;
+}
+
+#intro_box_image
+{
+  width: 45px !important;
+  height: 45px !important;
+  background-repeat: no-repeat !important;
+}
+
+#songbird_text_artistalbum,
+#songbird_box_title
+{
+  height: 14px !important;
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+}
+
+/* the texties */
+#songbird_text_title
+{ 
+  width: auto !important; /* was: max-width: auto !important; */
+  color: #1F292B !important;
+  overflow: hidden !important;
+  font-family: Tahoma, Sans-Serif !important;
+}
+#songbird_text_artist
+{
+  color: #1F292B !important;
+  overflow: hidden !important;
+  font-family: Tahoma, Sans-Serif !important;
+}
+#songbird_text_album
+{
+  color: #1F292B !important;
+  overflow: hidden !important;
+  font-family: Tahoma, Sans-Serif !important;
+}
+#songbird_text_slash
+{
+  font-family: Tahoma, Sans-Serif !important;
+  color: #1F292B !important;
+}
+#songbird_text_time
+{
+  font-family: Tahoma, Sans-Serif !important;
+  color: #1F292B !important; 
+}
+
+#songbird_text_time_total
+{
+  font-family: Tahoma, Sans-Serif !important;
+  color: #1F292B !important;
+}
+
+#songbird_text_time_elapsed
+{
+  font-family: Tahoma, Sans-Serif !important;
+  color: #1F292B !important;
+}
+
+/* the seekbar slider */
+#songbird_seekbar_slider
+{
+  height: 10px !important;
+}
+#songbird_seekbar_thumb
+{
+  width: 21px !important;
+  height: 8px !important;
+  border: 1px solid !important;
+}
+#songbird_seekbar_thumb > gripper
+{
+  height: 8px !important;
+}
+#songbird_seekbar_progress
+{
+  height: 10px !important;
+}
+#songbird_seekbar_progress > .progress-bar
+{
+  height: 10px !important;
+}
+#songbird_seekbar_progress > .progress-remainder
+{
+  height: 10px !important;
+}
+#songbird_seekbar
+{
+  border: 1px solid !important;
+  height: 10px !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+Main Playback Controls
+Play/Pause, Previous (back), Next (forward)
+************************************************************************************************************************************************
+*/
+
+/* the play button */
+#playbutton_box
+{
+  width: 130px !important;
+  height: 36px !important;
+  padding-left: 7px !important;
+}
+#songbird_btn_play
+{  
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+}
+
+/* the pause button */
+#songbird_btn_pause
+{
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+}
+
+/* the back button */
+
+#songbird_btn_back
+{
+  margin: 2px 0px 0px 4px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* the fwd button */
+#songbird_btn_fwd
+{
+  margin: 2px 13px 0px 0px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* the curr button */
+#songbird_btn_curr
+{
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the next button */
+#songbird_btn_next
+{
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the rep1 button */
+#songbird_btn_rep
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the rep1_on button */
+#songbird_btn_rep1
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the repall button */
+#songbird_btn_repall
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the shuf button */
+#songbird_btn_shuf
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+/* the shuf_on button */
+#songbird_btn_shuf_on
+{
+  top: 0px !important;
+  left: 0px !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+/* END CONTROL BOX **/
+
+/** 
+************************************************************************************************************************************************
+WEB BAR
+Browser Toolbar, Address Box, and Url-Slurper Button
+************************************************************************************************************************************************
+*/
+
+/* the box with the url image and the url textbox */
+#browser_url_box
+{
+  margin: 2px 0px 2px 3px !important;
+  padding: 5px 3px 3px 3px !important;
+  -moz-border-radius: 5px !important;
+}
+
+#browser_url_image
+{
+  -moz-appearance: none !important; /* grrrr! */
+  height: 16px !important;
+  width: 16px !important;
+  margin: 1px 0px 3px 5px !important;
+}
+
+#browser_url
+{
+  margin-left: 3px !important;
+  margin: 0px 0px 0px 5px !important;
+  font-size: larger !important;
+}
+
+#browser_url input:focus
+{
+  font-weight: bolder !important;
+}
+
+#browser_url input[selected="true"]
+{
+  font-weight: bolder !important;
+}
+
+
+
+#browser_toolbar
+{
+  border-bottom: 1px solid !important; 
+  height: 35px !important;
+  padding-left: 2px !important;
+}
+
+#browser_toolbar button 
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  padding: 0px 3px 0px 0px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+ }
+ 
+#browser_toolbar button[disabled="true"],
+#browser_toolbar button[disabled="true"]:hover
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+
+#browser_back[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+
+#browser_refresh[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_stop[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_fwd[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_home[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_bookmark[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+#browser_playlist[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+
+#browser_download[disabled="true"]
+{
+  height: 30px !important;
+  width: 30px !important;
+  -moz-border-radius: 3px !important;
+  margin: 2px 0px 2px 2px !important;
+  border: 1px solid !important;
+}
+/* END WEB BAR */
+
+/** 
+************************************************************************************************************************************************
+VOLUME
+Mute and Slider
+************************************************************************************************************************************************
+*/
+#mute_off
+{
+  width: 12px !important;
+  height: 12px !important;
+  background-repeat: no-repeat !important;
+}
+
+#mute_on
+{
+  width: 12px !important;
+  height: 12px !important;
+  background-repeat: no-repeat !important;
+}
+
+#volume_box
+{
+  height: 16px !important;    
+  padding-top: 0px !important;
+  margin-top: 5px !important;
+}
+
+#songbird_volume
+{
+  top: 5px !important;
+  left: 5px !important;
+  width: 104px !important;
+  height: 14px !important;
+}
+
+/*
+*/
+#songbird_volume > progress_slider,
+#songbird_volume gripper
+{  
+  padding: 0px 0px 0px 0px !important;
+  border: none !important;
+}
+
+
+
+#songbird_volume_thumb
+{
+  width: 36px !important;
+  height: 14px !important;
+}
+
+#songbird_volume_progress
+{
+  top: 0px !important;
+  left: 0px !important; /* previously 20px, 1 thumb-width in */
+  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
+  height: 14px !important;
+}
+
+#songbird_volume_e
+{
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+}
+#songbird_volume_w
+{
+  margin: 0px 0px 0px 0px !important;
+  height: 5px !important;
+  width: 3px !important;
+  background-repeat: no-repeat !important;
+}
+
