@@ -177,6 +177,9 @@ components/mediacore/metadata/handler/Makefile
 components/mediacore/metadata/handler/id3/Makefile
 components/mediacore/metadata/handler/id3/public/Makefile
 components/mediacore/metadata/handler/id3/src/Makefile
+components/mediacore/metadata/handler/ogg/Makefile
+components/mediacore/metadata/handler/ogg/public/Makefile
+components/mediacore/metadata/handler/ogg/src/Makefile
 components/mediacore/metadata/manager/Makefile
 components/mediacore/metadata/manager/public/Makefile
 components/mediacore/metadata/manager/src/Makefile
