@@ -114,8 +114,8 @@ NoUninstall:
   ;; Force creation of new profile / cache for Songbird
   ;; for nightly / developer builds.
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  RMDir /r "$APPDATA\Pioneers of the Inevitable\Songbird"
-  RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\Songbird"
+  RMDir /r "$APPDATA\Pioneers of the Inevitable\"
+  RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\"
   
   File *.ini
   File *.exe
