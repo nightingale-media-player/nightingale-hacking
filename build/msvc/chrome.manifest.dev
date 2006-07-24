@@ -1,6 +1,7 @@
 content songbird                    content/
 locale  branding  en-US             locales/branding/
-skin    songbird  rubberducky/0.2   feathers/rubberducky/
+skin    songbird  rubberducky/0.2   feathers/rubberducky/skin/
+content rubberducky                 feathers/rubberducky/content/
 skin    songbird  dove/0.1          feathers/dove/
 
 locale	songbird	zh-TW	        locales/zh-TW/

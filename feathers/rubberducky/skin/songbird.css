@@ -77,14 +77,14 @@ CASCADE!
 You can only use the @ at the top of the file.
 ************************************************************************************************************************************************
 */ 
-@import url("chrome://global/skin/xulscrollbars.css");
-@import url(base_styles.css); /* base styles for the main application window **/
-@import url(mainwin.css); /* size and positioning for the main application window **/
-@import url(mainwin_colors.css); /* colors for the main application window colors **/
-@import url(mainwin_images.css); /* images for the main application window colors **/
-@import url(dialog.css); /* size and positioning for the dialog windows **/
-@import url(dialog_colors.css); /* colors for the dialog window colors **/
-@import url(mini.css); /* css for the mini player **/
+@import url(chrome://rubberducky/content/css/base_styles.css); /* base styles for the main application window **/
+@import url(chrome://rubberducky/content/css/mainwin.css); /* size and positioning for the main application window **/
+@import url(chrome://rubberducky/content/css/mainwin_images.css); /* images for the main application window colors **/
+@import url(chrome://rubberducky/content/css/dialog.css); /* size and positioning for the dialog windows **/
+@import url(chrome://rubberducky/content/css/mini.css); /* css for the mini player **/
 
+
+@import url(mainwin_colors.css); /* colors for the main application window colors **/
+@import url(dialog_colors.css); /* colors for the dialog window colors **/
  
 
