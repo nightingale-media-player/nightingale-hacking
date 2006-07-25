@@ -76,8 +76,10 @@
           if (resizebefore) {
             if (this.isVertical()) {
               if (resizebefore.height != "") SBDataSetIntValue( root + "before.height", resizebefore.height );
+              //dump("saving " + resizebefore.height+ "\r\n");
             } else {
               if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+              //dump("saving " + resizebefore.width + "\r\n");
             }
           }
           this.doAutoShowHide();
@@ -155,10 +157,13 @@
             if (this.isVertical()) {
               var height = SBDataGetStringValue( root + "before.height" );
               if ( height != "" ) resizebefore.height = height;
+              //dump("loading " + height+ "\r\n");
             } else {
               var width = SBDataGetStringValue( root + "before.width" );
               if ( width != "" ) resizebefore.width = width;
+              //dump("loading " + width+ "\r\n");
             }
+            resizebefore.setAttribute("flex", "0");
           }
           if (!sizeonly) {
             this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
