@@ -350,7 +350,6 @@ interface sbIPlaylistsource : nsIRDFDataSource
   *
   * Pass a blank string to clear this value.
   *
-  * \TODO This currently overrides the filters.  Make it work along with them.
   * \param aRefName The unique identifier for the datasource 
   * \param aSearchString The string defining the search
   */
@@ -363,6 +362,27 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * \return The search string
   */
   AString getSearchString( in AString aRefName );
+
+  /**
+  * \brief Set the sort order on a datasource
+  *
+  * The sort order should be the name of an existing column.
+  * The results will be sorted using that column data
+  *
+  * Pass a blank string to reset to a default order.
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aSearchString The column name on which to perform sorting
+  */
+  void setOrder( in AString aRefName, in AString aColumnName );
+
+  /**
+  * \brief Get the sort order from a datasource
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The column on which sorting is being performed
+  */
+  AString getOrder( in AString aRefName );
 
   /**
   * \brief Get the database guid string on a datasource

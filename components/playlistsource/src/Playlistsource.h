@@ -167,6 +167,7 @@ public:
     nsString                      m_GUID;
     nsString                      m_Column;
     nsString                      m_SimpleQueryStr;
+    nsString                      m_SortOrder;
     nsCOMPtr<nsIRDFResource>      m_RootResource;
     nsCOMPtr<nsISimpleEnumerator> m_RootTargets;
     nsCOMPtr<nsIRDFResource>      m_RowIdResource;

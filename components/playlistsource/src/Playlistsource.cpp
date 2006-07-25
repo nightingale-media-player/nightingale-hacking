@@ -795,6 +795,43 @@ sbPlaylistsource::GetSearchString(const nsAString &aRefName,
 }
 
 NS_IMETHODIMP
+sbPlaylistsource::SetOrder(const nsAString &aRefName,
+                           const nsAString &aColumnName)
+{
+  LOG(("sbPlaylistsource::SetOrder"));
+
+  METHOD_SHORTCIRCUIT;
+
+  nsAutoMonitor mon(g_pMonitor);
+
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  info->m_SortOrder = aColumnName;
+
+  mon.Exit();
+  return ExecuteFeed(aRefName, nsnull);
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::GetOrder(const nsAString &aRefName,
+                                 nsAString       &_retval)
+{
+  LOG(("sbPlaylistsource::GetSearchString"));
+  METHOD_SHORTCIRCUIT;
+
+  // LOCK IT.
+  nsAutoMonitor mon(g_pMonitor);
+
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  _retval = info->m_SortOrder;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlaylistsource::SetFilter(const nsAString &aRefName,
                             PRInt32          aIndex,
                             const nsAString &aFilterString,
@@ -1192,7 +1229,11 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
     if (search_count)
       main_query_str += where_str + search_query_str;
   }
-  
+
+  if (!info->m_SortOrder.IsEmpty()) {
+    main_query_str += order_str + info->m_SortOrder; 
+  }
+
   // Remove the previous results
   info->m_Resultset = nsnull;
 
