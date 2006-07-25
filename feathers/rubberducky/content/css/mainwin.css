@@ -396,6 +396,8 @@ scrollbar > slider > thumb > gripper
   padding: 0px 0px 0px 0px !important;
   margin: 0px 0px 0px 0px !important;
   width: 16px !important;
+  background-image: none !important;
+  list-style-image: none !important;
 } 
 
 scrollbar > slider > thumb
@@ -404,11 +406,15 @@ scrollbar > slider > thumb
   padding: 0px 0px 0px 0px !important;
   margin: 0px 0px 0px 0px !important;  
   width: 16px !important;
+  background-image: none !important;
+  list-style-image: none !important;
 } 
 
 scrollbar > slider
 {   
   padding: 0 0 0 0 !important; 
+  background-image: none !important;
+  list-style-image: none !important;
 } 
 
 /* service pane scrollbar*/
@@ -819,6 +825,7 @@ SEARCH WIDGET
 
 .button-menu-dropmarker
 {
+  background-color: transparent !important;
   background-repeat: no-repeat !important;
   height: 9px !important;
   width: 9px !important;

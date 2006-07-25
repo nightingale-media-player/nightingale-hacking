@@ -539,7 +539,7 @@ menulist
 
 .menulist-dropmarker
 {
-  list-style-image: url(default/chrome_scroll_down.png) !important; 
+  list-style-image: url(default/chrome_scroll_down.png) !important;
   background-color: transparent !important;
 }
 

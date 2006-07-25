@@ -438,11 +438,13 @@ menulist
 
 .menulist-dropmarker
 {
-  list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important; 
+  -moz-appearance: none !important;
   background-repeat: no-repeat !important;
+  background-color: transparent !important;
   border: none !important;
   margin: 2px 4px 2px 0px !important;
 }
+
 
 menulist[disabled="true"]
 {
