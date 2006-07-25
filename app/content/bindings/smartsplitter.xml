@@ -74,7 +74,11 @@
           var root = "splitter." + this.id + ".";
           var resizebefore = this.getResizeBefore();
           if (resizebefore) {
-            if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+            if (this.isVertical()) {
+              if (resizebefore.height != "") SBDataSetIntValue( root + "before.height", resizebefore.height );
+            } else {
+              if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+            }
           }
           this.doAutoShowHide();
 
@@ -82,7 +86,6 @@
           // on every mousemove
           if (event.type == "mouseup")
           {
-            dump("running.. " + state + "\n" );
             var collapsed = (state == "collapsed");
             
             var metricsid = this.getAttribute("metricsid");
@@ -143,17 +146,34 @@
     </method>
 
     <method name="restoreLastState">
-      <parameter name=""/>
+      <parameter name="sizeonly"/>
       <body>
         <![CDATA[
           var root = "splitter." + this.id + ".";
           var resizebefore = this.getResizeBefore();
           if (resizebefore) {
-            var width = SBDataGetStringValue( root + "before.width" );
-            if ( width != "" ) resizebefore.width = width;
+            if (this.isVertical()) {
+              var height = SBDataGetStringValue( root + "before.height" );
+              if ( height != "" ) resizebefore.height = height;
+            } else {
+              var width = SBDataGetStringValue( root + "before.width" );
+              if ( width != "" ) resizebefore.width = width;
+            }
           }
-          this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
-          this.doAutoShowHide();
+          if (!sizeonly) {
+            this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
+            this.doAutoShowHide();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="isVertical">
+      <body>
+        <![CDATA[
+          var or = this.getAttribute("orientation");
+          if (or == "vert" || or == "vertical") return true;
+          return false;
         ]]>
       </body>
     </method>
