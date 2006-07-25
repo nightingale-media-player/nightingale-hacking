@@ -63,7 +63,6 @@
 				ExcludedFromBuild="false"
 			/>
 		</Configuration>
-
 	</Configurations>
 	<References>
 	</References>
@@ -71,6 +70,18 @@
 		<Filter
 			Name="skin"
 			>
+			<File
+				RelativePath=".\skin\dialog_colors.css"
+				>
+			</File>
+			<File
+				RelativePath=".\skin\mainwin_colors.css"
+				>
+			</File>
+			<File
+				RelativePath=".\skin\songbird.css"
+				>
+			</File>
 			<Filter
 				Name="default"
 				>
@@ -923,20 +934,6 @@
 					>
 				</File>
 			</Filter>
-
-			<File
-				RelativePath=".\skin\dialog_colors.css"
-				>
-			</File>
-			<File
-				RelativePath=".\skin\mainwin_colors.css"
-				>
-			</File>
-
-			<File
-				RelativePath=".\skin\songbird.css"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="content"
@@ -948,17 +945,32 @@
 					RelativePath=".\content\bindings\bindings.xml"
 					>
 				</File>
-			</Filter>	
+			</Filter>
 			<Filter
 				Name="xul"
 				>
-				
+				<File
+					RelativePath=".\content\xul\mainwin.xul"
+					>
+				</File>
+				<File
+					RelativePath=".\content\xul\miniplayer.xul"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="css"
 				>
 				<File
+					RelativePath=".\content\css\base_styles.css"
+					>
+				</File>
+				<File
 					RelativePath=".\content\css\dialog.css"
+					>
+				</File>
+				<File
+					RelativePath=".\content\css\mainwin.css"
 					>
 				</File>
 				<File
@@ -966,19 +978,9 @@
 					>
 				</File>
 				<File
-					RelativePath=".\content\css\base_styles.css"
-					>
-				</File>	
-				<File
-					RelativePath=".\content\css\mainwin.css"
-					>
-
-				</File>
-				<File
 					RelativePath=".\content\css\mini.css"
 					>
 				</File>
-
 			</Filter>
 		</Filter>
 		<File

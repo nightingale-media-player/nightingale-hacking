@@ -9,6 +9,12 @@ pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul"); 
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
 
+
+// Interim "bones" implementation
+pref("general.bones.selectedMainWinURL", "chrome://rubberducky/content/xul/mainwin.xul");
+pref("general.bones.selectedMiniPlayerURL", "chrome://rubberducky/content/xul/miniplayer.xul");
+
+
 #includesubst songbird-update-prefs.js.in
 
 #ifdef DEBUG
