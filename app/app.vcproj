@@ -36,7 +36,6 @@ copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
 copy /y $(SolutionDir)build\msvc\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
-copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
 move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
 "
@@ -70,7 +69,6 @@ copy /y $(SolutionDir)build\msvc\application.ini $(SolutionDir)dist
 copy /y $(SolutionDir)build\msvc\chrome.manifest.dev $(SolutionDir)dist\chrome\chrome.manifest
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\
 copy /y $(SolutionDir)dependencies\win32\runtime\$(ConfigurationName)\*.dll $(SolutionDir)dist\xulrunner\
-copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 $(SolutionDir)tools\win32\unzip\unzip -qq -u -o $(SolutionDir)dependencies\win32\xulrunner\$(ConfigurationName)\xulrunner.zip -d $(SolutionDir)dist\
 move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird.exe
 "
@@ -363,27 +361,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\xul\mainwin.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\xul\media_scan.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -406,27 +383,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 				</File>
 				<File
 					RelativePath=".\content\xul\messagebox.xul">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\xul\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\xul\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\content\xul\miniplayer.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
