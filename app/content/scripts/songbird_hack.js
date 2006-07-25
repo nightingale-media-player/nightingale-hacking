@@ -369,7 +369,7 @@ function SBMainWindowReopen()
 {
   // Get mainwin URL
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var mainwin = "chrome://songbird/content/xul/mainwin.xul";
+  var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
   try {
     mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
   } catch (err) {}
@@ -2372,7 +2372,7 @@ function SBMiniplayerOpen()
 {
   // Get miniplayer URL
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var miniwin = "chrome://songbird/content/xul/miniplayer.xul";
+  var miniwin = "chrome://rubberducky/content/xul/miniplayer.xul";
   try {
     miniwin = prefs.getCharPref("general.bones.selectedMiniPlayerURL", miniwin);  
   } catch (err) {}

@@ -105,7 +105,7 @@
           }
           // Get mainwin URL
           var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-          var mainwin = "chrome://songbird/content/xul/mainwin.xul";
+          var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
           try {
             mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
           } catch (err) {}
