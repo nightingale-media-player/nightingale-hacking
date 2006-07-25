@@ -375,7 +375,7 @@ function SBMainWindowReopen()
   } catch (err) {}
 
   // Open the window
-  window.open( mainwin, "", "chrome,modal=no" );
+  window.open( mainwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
   setTimeout( "onExit();", 1000 );
 }
 
