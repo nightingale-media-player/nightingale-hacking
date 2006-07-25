@@ -37,10 +37,68 @@ endif
 
 CPP_SRCS = MetadataHandlerMP4.cpp \
            MetadataHandlerMP4Component.cpp \
+           atom.c \
+           ctab.c \
+           ctts.c \
+           dimm.c \
+           dinf.c \
+           dmax.c \
+           dmed.c \
+           dref.c \
+           drep.c \
+           edts.c \
+           elst.c \
+           esds.c \
+           gmhd.c \
+           gmin.c \
+           hdlr.c \
+           hinf.c \
+           hint.c \
+           hinthnti.c \
+           hintudta.c \
+           hmhd.c \
+           hnti.c \
+           iods.c \
+           matrix.c \
+           maxr.c \
+           mdat.c \
+           mdhd.c \
+           mdia.c \
+           meta.c \
+           minf.c \
+           moov.c \
+           mvhd.c \
+           nump.c \
+           payt.c \
+           pmax.c \
+           quicktime.c \
+           rtp.c \
+           rtphint.c \
+           sdp.c \
+           smhd.c \
+           stbl.c \
+           stco.c \
+           stsc.c \
+           stsd.c \
+           stsdtable.c \
+           stss.c \
+           stsz.c \
+           stts.c \
+           tkhd.c \
+           tmax.c \
+           tmin.c \
+           tpyl.c \
+           trak.c \
+           tref.c \
+           trpy.c \
+           udta.c \
+           util.c \
+           vmhd.c \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
-               $(ID3LIB_DIR)/include \
+               $(DEPTH)/dependencies/vendor/mp4 /
+               $(DEPTH)/dependencies/vendor/mp4/include /
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -50,7 +108,7 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) $(CPP_SRCS:.c=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plc4 \

@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib libmp4_st60.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerMP4_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\mp4\$(ConfigurationName)&quot;"
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib libmp4_st60.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerMP4.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\mp4\$(ConfigurationName)&quot;"
@@ -211,6 +211,238 @@
 			</File>
 			<File
 				RelativePath=".\src\MetadataHandlerMP4Component.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="mp4"
+			>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\atom.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\ctab.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\ctts.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\dimm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\dinf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\dmax.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\dmed.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\dref.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\drep.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\edts.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\elst.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\esds.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\gmhd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\gmin.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hdlr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hinf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hinthnti.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hintudta.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hmhd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\hnti.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\iods.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\matrix.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\maxr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\mdat.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\mdhd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\mdia.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\meta.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\minf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\moov.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\mvhd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\nump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\payt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\pmax.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\quicktime.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\rtp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\rtphint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\sdp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\smhd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stbl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stco.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stsc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stsd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stsdtable.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stss.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stsz.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\stts.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\tkhd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\tmax.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\tmin.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\tpyl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\trak.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\tref.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\trpy.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\udta.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\util.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\dependencies\vendor\mp4\vmhd.c"
 				>
 			</File>
 		</Filter>
