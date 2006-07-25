@@ -107,6 +107,7 @@ NS_NAMED_LITERAL_STRING(collate_binary_str, " collate binary ");
 NS_NAMED_LITERAL_STRING(on_str, " on ");
 NS_NAMED_LITERAL_STRING(using_str, " using");
 NS_NAMED_LITERAL_STRING(limit_str, " limit ");
+NS_NAMED_LITERAL_STRING(offset_str, " offset ");
 NS_NAMED_LITERAL_STRING(op_str, "(");
 NS_NAMED_LITERAL_STRING(cp_str, ")");
 NS_NAMED_LITERAL_STRING(eq_str, "=");
@@ -2243,31 +2244,23 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   rv = value.m_Info->m_Query->GetQuery(0, q);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If we already have a where, don't add another one
-  nsAutoString aw_str;
-  if (q.Find(NS_LITERAL_STRING("where"), PR_TRUE) == -1)
-    aw_str = NS_LITERAL_STRING(" where ");
-  else
-    aw_str = NS_LITERAL_STRING(" and ");
-
+  // Hack the given query string to get all the metadata
   nsAutoString tablerow_str = library_str + dot_str + row_str;
   nsAutoString find_str = spc_str + tablerow_str + spc_str;
-
-  if (q.Find(find_str) == -1 )
-  {
+  if (q.Find(find_str) == -1 ) {
     q.ReplaceSubstring(NS_LITERAL_STRING(" id "),
                        NS_LITERAL_STRING(" *,id "));
-    q += aw_str + NS_LITERAL_STRING("id >= ");
   } else {
     nsAutoString replace = spc_str + NS_LITERAL_STRING("*,") + tablerow_str +
                            spc_str;
     q.ReplaceSubstring(find_str, replace);
-    q += aw_str + tablerow_str + spc_str + ge_str + spc_str;
   }
 
-  q += value.m_Id;
-  q += order_str + NS_LITERAL_STRING(" id ") + limit_str ;
+  // And read from the current row
+  q += limit_str ;
   q.AppendInt((PRInt32)LOOKAHEAD_SIZE);
+  q += offset_str ;
+  q.AppendInt((PRInt32)value.m_Row);
 
   rv = m_SharedQuery->AddQuery(q);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2299,16 +2292,14 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
 
   for (PRInt32 i = value.m_ResMapIndex; i < end; i++) {
     sbValueInfo& val = g_ValueMap[value.m_Info->m_ResList[i]];
-    // Go through the results and check to see who goes with what.  Don't assume i matches j.
-    for (PRInt32 j = 0; j < rows; j++) {
-      nsAutoString id;
-      result->GetRowCellByColumn( j, NS_LITERAL_STRING("id"), id );
-      // Make sure this is a valid assignment!
-      if ( val.m_Id == id ) {
-        val.m_Resultset = result;
-        val.m_ResultsRow = j;
-      }
-    }
+    nsAutoString id;
+    result->GetRowCellByColumn( i, NS_LITERAL_STRING("id"), id );
+    // Make sure this is a valid assignment!
+    if ( val.m_Id == id ) {
+      val.m_Resultset = result;
+      val.m_ResultsRow = i;
+    } else
+      printf( "PlaylistPlayback cache miss? Row %d\n", val.m_Row ); // Hmmm.  Less than optimal.
   }
 
   return NS_OK;
