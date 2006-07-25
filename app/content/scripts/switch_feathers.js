@@ -100,6 +100,30 @@ function fillFeathersList(menu) {
 
       menu.appendChild(item);
     }
+
+
+    // HACK: Had to remove "internalName" from rubberducky as it 
+    // prevented packacking of the bones.  
+    // For now, just hardcoding support for rubberducky
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    var curfeathers = "rubberducky";
+    try {
+      curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
+    } catch (err) {}
+    var item = document.createElement("menuitem");
+    className = menu.parentNode.getAttribute("class");
+    item.setAttribute("label", "Rubberducky");
+    item.setAttribute("featherid", "rubberducky/0.2");
+    item.setAttribute("name", "feathers.switch");
+    item.setAttribute("type", "radio");
+    item.setAttribute("class", className);
+    if (curfeathers == "rubberducky/0.2") {
+      item.setAttribute("checked", "true");
+    }
+    item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
+    menu.appendChild(item);
+    
+    
   }
   catch ( err )
   {
