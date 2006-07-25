@@ -401,13 +401,53 @@ copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 					<Tool
 						Name="VCCustomBuildTool"
 						CommandLine="mkdir $(SolutionDir)dist\scripts\
-copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbPlaylistBase.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="mkdir $(SolutionDir)dist\scripts\
+copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbPlaylistManager.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\sbPlaylistManager.js">
+				RelativePath=".\src\sbPlaylistModule.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -577,46 +617,6 @@ copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 "
 						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\src\sbPlaylistBase.js">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionDir)dist\scripts\
-copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
-"
-						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="mkdir $(SolutionDir)dist\scripts\
-copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
-"
-						Outputs="$(SolutionDir)dist\scripts\$(InputFileName)"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\src\sbPlaylistModule.js">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
-"
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
-"
-						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
