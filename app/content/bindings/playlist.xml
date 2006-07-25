@@ -47,18 +47,20 @@
           <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
           </xul:hbox>
 
-          <xul:splitter
+          <xul:smartsplitter
             id="horz_splitter"
             sbid="filter_splitter"
+            orientation="vertical" 
             state="open"
             collapse="before"
             resizebefore="closest"
             resizeafter="closest"
             hidden="true"
-            onmouseup="onFiltersResize();"
+            metricscategory="player" 
+            metricsid="collapse.library" 
         >
             <xul:grippy/>
-          </xul:splitter>
+          </xul:smartsplitter>
 
           <!-- Playlist Tree -->
           <xul:tree 
@@ -756,8 +758,8 @@
       try
       {
         // These should be shown
-        var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
-        splitter.hidden = false;
+        var thesplitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
+        thesplitter.hidden = false;
         var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_parent');
         parent.hidden = false;
         
@@ -818,6 +820,7 @@
         }
         
         this.filters.push( filterlist );
+        thesplitter.restoreLastState(true);
       }
       catch( err )
       {
@@ -2759,25 +2762,6 @@
             alert( "playlist.xml - getViewSummary - " + err );
           }
           return ret;
-        ]]>
-      </body>
-    </method>
-    
-    <method name="onFiltersResize">
-      <body>
-        <![CDATA[
-          try
-          {
-            var splitter = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_splitter');
-            var curstate = splitter.getAttribute( "state" );
-            if (this.lastfiltersstate != "collapsed" && curstate == "collapsed")
-              metrics_inc("player", "collapse.library", null);
-            this.lastfiltersstate = curstate;
-          }
-          catch (err)
-          {
-            alert( "playlist.xml - onFiltersResize - " + err );
-          }
         ]]>
       </body>
     </method>
