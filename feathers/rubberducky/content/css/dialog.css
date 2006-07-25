@@ -442,7 +442,10 @@ menulist
   background-repeat: no-repeat !important;
   background-color: transparent !important;
   border: none !important;
+  width:16px !important;
+  height:16px !important;
   margin: 2px 4px 2px 0px !important;
+  background-position: center center !important;
 }
 
 
