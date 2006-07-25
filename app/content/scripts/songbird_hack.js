@@ -1301,6 +1301,9 @@ var SBWebPlaylistCommands =
   
   setPlaylist: function( playlist )
   {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
     this.m_Playlist = playlist;
   },
   
@@ -3079,6 +3082,9 @@ var SBDownloadCommands =
   
   setPlaylist: function( playlist )
   {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
     this.m_Playlist = playlist;
   },
   
@@ -3299,6 +3305,9 @@ var SBCDCommands =
   
   setPlaylist: function( playlist )
   {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
     this.m_Playlist = playlist;
   },
   
@@ -3441,6 +3450,9 @@ var SBRippingCommands =
   
   setPlaylist: function( playlist )
   {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
     this.m_Playlist = playlist;
   },
   
@@ -3751,6 +3763,9 @@ var SBCDBurningCommands =
   
   setPlaylist: function( playlist )
   {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
     this.m_Playlist = playlist;
   },
   

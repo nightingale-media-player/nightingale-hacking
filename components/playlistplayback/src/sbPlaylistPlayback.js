@@ -1023,35 +1023,28 @@ PlaylistPlayback.prototype = {
   },
 
   isPlaylistUrl: function(the_url) {
-    try
+    if ( the_url.indexOf )
     {
-      if ( the_url.indexOf )
-      {
-        // Make the playlist reader manager.
-        // XXXredfive - cleanup
-        //const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-        //var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
-        var playlistReaderManager = Components.classes[SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID]
-                                    .createInstance(SONGBIRD_PLAYLISTREADERMANAGER_IID);
-        
-        // Tell it what filters to be using
-        var filterlist = "";
-        var extensionCount = new Object;
-        var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
+      // Make the playlist reader manager.
+      // XXXredfive - cleanup
+      //const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
+      //var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+      var aPlaylistReaderManager = Components.classes[SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID]
+                                  .createInstance(SONGBIRD_PLAYLISTREADERMANAGER_IID);
+      
+      // Tell it what filters to be using
+      var filterlist = "";
+      var extensionCount = new Object;
+      var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
 
-        // cycle over the list of supported extensions looking for a match in the url
-        for(var i = 0; i < extensions.length; i++)
-        {
-          if ( the_url.indexOf( "." + extensions[i] ) != -1 )
-          {      
-            return true;
-          }
+      // cycle over the list of supported extensions looking for a match in the url
+      for(var i = 0; i < extensions.length; i++)
+      {
+        if ( the_url.indexOf( "." + extensions[i] ) != -1 )
+        {      
+          return true;
         }
       }
-    }
-    catch ( err )
-    {
-      alert( "IsPlaylistUrl - " + err );
     }
     return false;
   },
