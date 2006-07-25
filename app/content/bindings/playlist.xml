@@ -35,132 +35,132 @@
 
   <binding id="playlist">
     <content>
-    <xul:stack flex="1">
-      <xul:vbox sbid="loading_box" pack="end" align="right" flex="1" class="sb_faceplate">
-        <xul:vbox id="loading_box" class="sb_faceplate" flex="1">
-          <xul:label id="loading_text" flex="1" value=""/>
+      <xul:stack flex="1">
+        <xul:vbox sbid="loading_box" pack="end" align="right" flex="1" class="sb_faceplate">
+          <xul:vbox id="loading_box" class="sb_faceplate" flex="1">
+            <xul:label id="loading_text" flex="1" value=""/>
+          </xul:vbox>
         </xul:vbox>
-      </xul:vbox>
-      <xul:vbox flex="1" class="sb_faceplate" style="margin: 0px;padding: 0px;">
-        <!-- Playlist Filters
-        -->        
-        <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
-        </xul:hbox>
-        
-        <xul:splitter
-          id="horz_splitter"
-          sbid="filter_splitter"
-          state="open"
-          collapse="before"
-          resizebefore="closest"
-          resizeafter="closest"
-          hidden="true"
-          onmouseup="onFiltersResize();"
-        >
-          <xul:grippy/>
-        </xul:splitter>
-      
-        <!-- Playlist Tree -->        
-        <xul:tree 
-          xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker" 
-          id="playlist_tree" 
-          sbid="playlist_tree" 
-          ref="" 
-          datasources="" 
-          flags="dont-build-content"
-          flex="3" 
-          onmouseup="saveColumnsProperties();"
-          ondblclick="onPlaylistDblClick( event );"
-          onkeypress="onPlaylistKeypress( event );"
-          oncontextmenu="onPlaylistContextClick( event );"
-          onselect="onPlaylistSelectClick( event );"
-          onclick="onPlaylistClick( event );"
-          onscroll="onPlaylistScroll( event );"
-          ondraggesture="onDrag(event);"
-        >
-        </xul:tree>
-        
-        <!-- Playlist Toolbar
+        <xul:vbox flex="1" class="sb_faceplate" style="margin: 0px;padding: 0px;">
+          <!-- Playlist Filters
         -->
-        <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
-          <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
+          <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
           </xul:hbox>
-        </xul:hbox>
-        
-        <!-- Popupset
+
+          <xul:splitter
+            id="horz_splitter"
+            sbid="filter_splitter"
+            state="open"
+            collapse="before"
+            resizebefore="closest"
+            resizeafter="closest"
+            hidden="true"
+            onmouseup="onFiltersResize();"
+        >
+            <xul:grippy/>
+          </xul:splitter>
+
+          <!-- Playlist Tree -->
+          <xul:tree 
+            xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker" 
+            id="playlist_tree" 
+            sbid="playlist_tree" 
+            ref="" 
+            datasources="" 
+            flags="dont-build-content"
+            flex="3" 
+            onmouseup="saveColumnsProperties();"
+            ondblclick="onPlaylistDblClick( event );"
+            onkeypress="onPlaylistKeypress( event );"
+            oncontextmenu="onPlaylistContextClick( event );"
+            onselect="onPlaylistSelectClick( event );"
+            onclick="onPlaylistClick( event );"
+            onscroll="onPlaylistScroll( event );"
+            ondraggesture="onDrag(event);"
+        >
+          </xul:tree>
+
+          <!-- Playlist Toolbar
         -->
-        <xul:popupset>
-          <!-- Context Popup 
+          <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
+            <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
+            </xul:hbox>
+          </xul:hbox>
+
+          <!-- Popupset
+        -->
+          <xul:popupset>
+            <!-- Context Popup 
           -->
-          <xul:popup 
-            id="playlist_context_popup" 
-            sbid="playlist_context_popup" 
-            onpopupshown="onPopupShown( event );"
-            onpopuphidden="onPopupHidden( event );"
-            oncommand="onPlaylistContextMenu( event );"
+            <xul:popup 
+              id="playlist_context_popup" 
+              sbid="playlist_context_popup" 
+              onpopupshown="onPopupShown( event );"
+              onpopuphidden="onPopupHidden( event );"
+              oncommand="onPlaylistContextMenu( event );"
           >
-            <xul:menuseparator sbid="playlist_context_before"/>
-            <xul:menu id="playlist.context.search" label="&playlist.context.search;">
-              <xul:menupopup id="playlist.popup.search">
-                <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
-                <xul:menuseparator/>
-                <xul:menuitem id="search.popup.google" 
-                  label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
+              <xul:menuseparator sbid="playlist_context_before"/>
+              <xul:menu id="playlist.context.search" label="&playlist.context.search;">
+                <xul:menupopup id="playlist.popup.search">
+                  <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
+                  <xul:menuseparator/>
+                  <xul:menuitem id="search.popup.google" 
+                    label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
                 />
-                <xul:menuitem id="search.popup.wiki" 
-                  label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
+                  <xul:menuitem id="search.popup.wiki" 
+                    label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
                 />
-                <xul:menuitem id="search.popup.yahoo" 
-                  label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
+                  <xul:menuitem id="search.popup.yahoo" 
+                    label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
                 />
-                <xul:menuitem id="search.popup.emusic" 
-                  label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
+                  <xul:menuitem id="search.popup.emusic" 
+                    label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
                 />
-                <xul:menuitem id="search.popup.insound" 
-                  label="Insound" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/insound.ico"
+                  <xul:menuitem id="search.popup.insound" 
+                    label="Insound" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/insound.ico"
                 />
-                <xul:menuitem id="playlist.popup.odeo" 
-                  label="Odeo" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/odeo.ico"
+                  <xul:menuitem id="playlist.popup.odeo" 
+                    label="Odeo" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/odeo.ico"
                 />
-                <xul:menuitem id="search.popup.shoutcast" 
-                  label="Shoutcast" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/shoutcast.ico"
+                  <xul:menuitem id="search.popup.shoutcast" 
+                    label="Shoutcast" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/shoutcast.ico"
                 />
-                <xul:menuitem id="search.popup.radiotime" 
-                  label="Radiotime" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/radiotime.ico"
+                  <xul:menuitem id="search.popup.radiotime" 
+                    label="Radiotime" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/radiotime.ico"
                 />
-              </xul:menupopup>
-            </xul:menu>
-            <xul:menu id="playlist.context.lyrics" label="&playlist.context.lyrics;">
-              <xul:menupopup id="playlist.popup.lyrics">
-                <xul:menuitem id="lyrics_popup_term" sbid="lyrics_popup_term" label="" disabled="true"/>
-                <xul:menuseparator/>
-                <xul:menuitem id="lyrics.popup.google" 
-                  label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
+                </xul:menupopup>
+              </xul:menu>
+              <xul:menu id="playlist.context.lyrics" label="&playlist.context.lyrics;">
+                <xul:menupopup id="playlist.popup.lyrics">
+                  <xul:menuitem id="lyrics_popup_term" sbid="lyrics_popup_term" label="" disabled="true"/>
+                  <xul:menuseparator/>
+                  <xul:menuitem id="lyrics.popup.google" 
+                    label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
                 />
-              </xul:menupopup>
-            </xul:menu>
-            <children/>
-          </xul:popup>
-          <!-- Edit Popup (doesn't work)
+                </xul:menupopup>
+              </xul:menu>
+              <children/>
+            </xul:popup>
+            <!-- Edit Popup (doesn't work)
           -->
-          <xul:popup id="playlist_edit_popup" sbid="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
-            <xul:textbox id="playlist_edit_box"
-                         sbid="playlist_edit_box"
-                         class="sb_faceplate"
-                         onblur="hidePlaylistEdit();"
-                         onchange="onPlaylistEditChange();"
-                         onkeypress="onPlaylistEditKeypress( event );"
-                         flex="1"/>
-          </xul:popup>
-        </xul:popupset>
-      </xul:vbox>
-    </xul:stack>
+            <xul:popup id="playlist_edit_popup" sbid="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
+              <xul:textbox id="playlist_edit_box"
+                           sbid="playlist_edit_box"
+                           class="sb_faceplate"
+                           onblur="hidePlaylistEdit();"
+                           onchange="onPlaylistEditChange();"
+                           onkeypress="onPlaylistEditKeypress( event );"
+                           flex="1"/>
+            </xul:popup>
+          </xul:popupset>
+        </xul:vbox>
+      </xul:stack>
     </content>
 
-  <implementation type="application/x-javascript" implements="nsIXULBuilderListener,nsIXULTreeBuilderObserver" name="songbird_playlist">
+    <implementation type="application/x-javascript" implements="nsIXULBuilderListener,nsIXULTreeBuilderObserver" name="songbird_playlist">
 
-    <constructor>
-      <![CDATA[
+      <constructor>
+        <![CDATA[
       try
       {
         // Load the javascript we want to use
@@ -209,10 +209,10 @@
         dump( "playlist.xml - constructor - " + err );
       }
       ]]>
-    </constructor>
+      </constructor>
 
-    <destructor>
-      <![CDATA[
+      <destructor>
+        <![CDATA[
       try {
         if ( ! this._constructed )
         {
@@ -247,79 +247,79 @@
         dump("playlist.xml - destructor: " + err + "\n");
       }
       ]]>
-    </destructor>
+      </destructor>
 
-    <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_tree');</field>
-    <field name="context_popup">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');</field>
-    <field name="loading_box">document.getAnonymousElementByAttribute(this, 'sbid', 'loading_box');</field>
-    <field name="context_x">-1</field>
-    <field name="context_y">-1</field>
-    <field name="context_term">""</field>
-    <field name="context_item"></field>
-    <field name="popup_showing">false</field>
-    <field name="guid">""</field>
-    <field name="table">""</field>
-    <field name="type">""</field>
-    <field name="base_type">""</field>
-    <field name="description">""</field>
-    <field name="readable_name">""</field>
-    <field name="filters">new Array();</field>
-    <field name="commands"></field>
-    <field name="toolbarbuttons">new Array();</field>
-    <field name="menuitems">new Array();</field>
-    <field name="stringbundle">null</field>
-    <field name="m_Library">null</field>
-    <field name="m_PlaylistManager">null</field>
-    <field name="edit_popup">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_edit_popup');</field>
-    <field name="edit_box">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_edit_box');</field>
-    <field name="source">null</field>
-    <field name="builder">this.tree.builder</field>
-    <field name="view">this.tree.view</field>
-    <field name="_saved_selection">null</field>
-    <field name="_saved_nitems">null</field>
-    <field name="_dragobjects">null</field>
-    <field name="_selection_key">""</field>
-    <field name="_selection_key_array">""</field>
-    <field name="treecols">null</field>
-    <field name="restoring_selection">false</field>
-    <field name="_addedtolibrary_count">0</field>
-    <field name="_existedinlibrary_count">0</field>
-    <field name="m_dndSourceTracker">null</field>
-    <field name="lastClickIndex">0</field>
-    <field name="lastClickTimestamp">0</field>
-    <field name="paused_scanning">false</field>
- 
-    <property name="ref">
-      <getter>
-        return this.tree.getAttribute("ref");
-      </getter>
-      <setter>
-        return this.tree.setAttribute("ref", val);
-      </setter>
-    </property>
+      <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_tree');</field>
+      <field name="context_popup">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_context_popup');</field>
+      <field name="loading_box">document.getAnonymousElementByAttribute(this, 'sbid', 'loading_box');</field>
+      <field name="context_x">-1</field>
+      <field name="context_y">-1</field>
+      <field name="context_term">""</field>
+      <field name="context_item"></field>
+      <field name="popup_showing">false</field>
+      <field name="guid">""</field>
+      <field name="table">""</field>
+      <field name="type">""</field>
+      <field name="base_type">""</field>
+      <field name="description">""</field>
+      <field name="readable_name">""</field>
+      <field name="filters">new Array();</field>
+      <field name="commands"></field>
+      <field name="toolbarbuttons">new Array();</field>
+      <field name="menuitems">new Array();</field>
+      <field name="stringbundle">null</field>
+      <field name="m_Library">null</field>
+      <field name="m_PlaylistManager">null</field>
+      <field name="edit_popup">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_edit_popup');</field>
+      <field name="edit_box">document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_edit_box');</field>
+      <field name="source">null</field>
+      <field name="builder">this.tree.builder</field>
+      <field name="view">this.tree.view</field>
+      <field name="_saved_selection">null</field>
+      <field name="_saved_nitems">null</field>
+      <field name="_dragobjects">null</field>
+      <field name="_selection_key">""</field>
+      <field name="_selection_key_array">""</field>
+      <field name="treecols">null</field>
+      <field name="restoring_selection">false</field>
+      <field name="_addedtolibrary_count">0</field>
+      <field name="_existedinlibrary_count">0</field>
+      <field name="m_dndSourceTracker">null</field>
+      <field name="lastClickIndex">0</field>
+      <field name="lastClickTimestamp">0</field>
+      <field name="paused_scanning">false</field>
 
-    <property name="datasources">
-      <getter>
-        return this.tree.getAttribute("datasources");
-      </getter>
-      <setter>
-        return this.tree.setAttribute("datasources", val);
-      </setter>
-    </property>
-    
-    <!-- Initialization and Control -->
-    
-    <method name="load">
-      <parameter name="url"/>
-      <parameter name="guid"/>
-      <parameter name="table"/>
-      <parameter name="name"/>
-      <parameter name="type"/>
-      <parameter name="description"/>
-      <parameter name="content_type"/>
-      <parameter name="commands"/>
-      <body>
-      <![CDATA[
+      <property name="ref">
+        <getter>
+          return this.tree.getAttribute("ref");
+        </getter>
+        <setter>
+          return this.tree.setAttribute("ref", val);
+        </setter>
+      </property>
+
+      <property name="datasources">
+        <getter>
+          return this.tree.getAttribute("datasources");
+        </getter>
+        <setter>
+          return this.tree.setAttribute("datasources", val);
+        </setter>
+      </property>
+
+      <!-- Initialization and Control -->
+
+      <method name="load">
+        <parameter name="url"/>
+        <parameter name="guid"/>
+        <parameter name="table"/>
+        <parameter name="name"/>
+        <parameter name="type"/>
+        <parameter name="description"/>
+        <parameter name="content_type"/>
+        <parameter name="commands"/>
+        <body>
+          <![CDATA[
       try
       {
 /*      
@@ -377,19 +377,19 @@
         alert( "playlist.xml - load - " + err );
       }
       ]]>
-      </body>
-    </method>
-    
-    <method name="bind">
-      <parameter name="guid"/>
-      <parameter name="table"/>
-      <parameter name="filters"/>
-      <parameter name="commands"/>
-      <parameter name="resize"/>
-      <parameter name="collapse"/>
-      <parameter name="refsuffix"/>
-      <body>
-      <![CDATA[
+        </body>
+      </method>
+
+      <method name="bind">
+        <parameter name="guid"/>
+        <parameter name="table"/>
+        <parameter name="filters"/>
+        <parameter name="commands"/>
+        <parameter name="resize"/>
+        <parameter name="collapse"/>
+        <parameter name="refsuffix"/>
+        <body>
+          <![CDATA[
        //dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
       try
       {
@@ -554,13 +554,13 @@
         alert( "playlist.xml - bind - " + err );
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="refreshCommands">
-      <parameter name="stateonly"/>
-      <body>
-      <![CDATA[
+      <method name="refreshCommands">
+        <parameter name="stateonly"/>
+        <body>
+          <![CDATA[
       try
       {
         if (!stateonly) stateonly = false;
@@ -711,12 +711,12 @@
         alert( "playlist.xml - refreshCommands - " + err );
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="removeCommands">
-      <body>
-        <![CDATA[
+      <method name="removeCommands">
+        <body>
+          <![CDATA[
         try
         {
           // Delete the toolbar commands
@@ -745,14 +745,14 @@
           alert( "playlist.xml - removeElementsByAttribute - " + err );
         }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="addFilter">
-      <parameter name="meta_column"/>
-      <parameter name="feed"/>
-      <body>
-      <![CDATA[
+      <method name="addFilter">
+        <parameter name="meta_column"/>
+        <parameter name="feed"/>
+        <body>
+          <![CDATA[
       try
       {
         // These should be shown
@@ -824,14 +824,14 @@
         alert( "playlist.xml - addFilter - " + err );
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <!-- Dynamic Columns/Template -->
+      <!-- Dynamic Columns/Template -->
 
-    <method name="loadColumns">
-      <body>
-      <![CDATA[
+      <method name="loadColumns">
+        <body>
+          <![CDATA[
       try
       {
         if (this.source == null)
@@ -856,14 +856,14 @@
         alert( "playlist.xml - loadColumns - " + err );
       }
       ]]>
-      </body>
-    </method>
-    
-    <method name="createTemplateAndColumns">
-      <parameter name="source"/>
-      <parameter name="ref"/>
-      <body>
-        <![CDATA[
+        </body>
+      </method>
+
+      <method name="createTemplateAndColumns">
+        <parameter name="source"/>
+        <parameter name="ref"/>
+        <body>
+          <![CDATA[
         try
         {
           // See if we need to hide the loading box.
@@ -1076,28 +1076,28 @@
           alert( "playlist.xml - createTemplateAndColumns - " + err );
         }
         ]]>
-      </body>
-    </method> 
+        </body>
+      </method>
 
-    <!-- Tree Manipulation Functions -->
+      <!-- Tree Manipulation Functions -->
 
-    <method name="removeColumns">
-      <body>
+      <method name="removeColumns">
+        <body>
           this.removeChildByName("treecols");
           //this.treecols = null;
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="removeTemplate">
-      <body>
+      <method name="removeTemplate">
+        <body>
           this.removeChildByName("template");
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="removeChildByName">
-      <parameter name="childname"/>
-      <body>
-        <![CDATA[
+      <method name="removeChildByName">
+        <parameter name="childname"/>
+        <body>
+          <![CDATA[
           for (var i=0; i<this.tree.childNodes.length; i++) {
             var node = this.tree.childNodes.item(i);
             if (node.tagName == childname || node.tagName == "xul:"+childname) {
@@ -1106,24 +1106,24 @@
             }
           }
         ]]>
-      </body>
-    </method>
-    
-    <!-- Save columns UI properties -->
+        </body>
+      </method>
 
-    <method name="saveColumnsProperties">
-      <body>
-        this.saveColumnsWidth(); 
-        this.saveColumnsOrdinal();
-        this.saveColumnsVisibility();
-      </body>
-    </method>
-    
-    <!-- Save columns width in data remotes -->
+      <!-- Save columns UI properties -->
 
-    <method name="saveColumnsWidth">
-      <body>
-        <![CDATA[
+      <method name="saveColumnsProperties">
+        <body>
+          this.saveColumnsWidth();
+          this.saveColumnsOrdinal();
+          this.saveColumnsVisibility();
+        </body>
+      </method>
+
+      <!-- Save columns width in data remotes -->
+
+      <method name="saveColumnsWidth">
+        <body>
+          <![CDATA[
           try
           {
             if (this.tree.columns && this.tree.columns.count && this.tree.columns.count > 0) {
@@ -1144,15 +1144,15 @@
           {
             alert( "playlist.xml - saveColumnsWidth - " + err );
           }
-        ]]> 
-      </body>
-    </method>
+        ]]>
+        </body>
+      </method>
 
-    <method name="findObject">
-      <parameter name="parent"/>
-      <parameter name="object"/>
-      <body>
-        <![CDATA[
+      <method name="findObject">
+        <parameter name="parent"/>
+        <parameter name="object"/>
+        <body>
+          <![CDATA[
           var ret = null;
           try
           {
@@ -1174,14 +1174,14 @@
           }
           return ret;
         ]]>
-      </body>
-    </method>
-    
-    <method name="findAnonymousObject">
-      <parameter name="parent"/>
-      <parameter name="object"/>
-      <body>
-        <![CDATA[
+        </body>
+      </method>
+
+      <method name="findAnonymousObject">
+        <parameter name="parent"/>
+        <parameter name="object"/>
+        <body>
+          <![CDATA[
           var ret = null;
           try
           {
@@ -1208,12 +1208,12 @@
           }
           return ret;
         ]]>
-      </body>
-    </method>
-    
-    <method name="isColumnPickerOpen">
-      <body>
-        <![CDATA[
+        </body>
+      </method>
+
+      <method name="isColumnPickerOpen">
+        <body>
+          <![CDATA[
           var ret = false;
           try
           {
@@ -1235,22 +1235,22 @@
             alert( "playlist.xml - isColumnPickerOpen - " + err );
           }
           return ret;
-        ]]> 
-      </body>
-    </method>
-    
+        ]]>
+        </body>
+      </method>
 
-    <!-- Save columns ordinal in data remotes -->
 
-    <method name="findColumns">
-      <body>
-        return this.findObject(this.tree, "treecols");
-      </body>
-    </method>
-    
-    <method name="saveColumnsOrdinal">
-      <body>
-        <![CDATA[
+      <!-- Save columns ordinal in data remotes -->
+
+      <method name="findColumns">
+        <body>
+          return this.findObject(this.tree, "treecols");
+        </body>
+      </method>
+
+      <method name="saveColumnsOrdinal">
+        <body>
+          <![CDATA[
           try
           {
             var columnsNode = this.findColumns();
@@ -1269,12 +1269,12 @@
             alert( "playlist.xml - saveColumnsOrdinal - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="saveColumnsVisibility">
-      <body>
-        <![CDATA[
+      <method name="saveColumnsVisibility">
+        <body>
+          <![CDATA[
           try
           {
             var columnsNode = this.findColumns();
@@ -1293,14 +1293,14 @@
             alert( "playlist.xml - saveColumnsVisibility - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <!-- Selection save/restore - HACK -->
-    
-    <method name="saveSelection">
-      <body>
-        <![CDATA[
+      <!-- Selection save/restore - HACK -->
+
+      <method name="saveSelection">
+        <body>
+          <![CDATA[
           try
           {
             if (this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
@@ -1349,13 +1349,13 @@
           {
             alert( "playlist.xml - saveSelection" + err );
           }
-        ]]> 
-      </body>
-    </method>
-    
-    <method name="restoreSelection">
-      <body>
-        <![CDATA[
+        ]]>
+        </body>
+      </method>
+
+      <method name="restoreSelection">
+        <body>
+          <![CDATA[
           try
           {
             this.restoring_selection = true;
@@ -1388,15 +1388,15 @@
           {
             alert( "playlist.xml - restoreSelection - " + err );
           }
-        ]]> 
-      </body>
-    </method>
-  
-    <method name="findCell">
-      <parameter name="column"/>
-      <parameter name="value"/>
-      <body>
-        <![CDATA[
+        ]]>
+        </body>
+      </method>
+
+      <method name="findCell">
+        <parameter name="column"/>
+        <parameter name="value"/>
+        <body>
+          <![CDATA[
           try
           {
             // Instead of a linear search, try a shortcut.
@@ -1417,15 +1417,15 @@
           }
           return -1;
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <!-- Drag Objects watcher -->
-    
-    <method name="registerDragObject">
-      <parameter name="obj"/>
-      <body>
-        <![CDATA[
+      <!-- Drag Objects watcher -->
+
+      <method name="registerDragObject">
+        <parameter name="obj"/>
+        <body>
+          <![CDATA[
           try
           {
             if (this._dragobjects == null) this._dragobjects = Array();
@@ -1436,12 +1436,12 @@
             alert( "playlist.xml - registerDragObject - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="startWatchingDragObjects">
-      <body>
-        <![CDATA[
+      <method name="startWatchingDragObjects">
+        <body>
+          <![CDATA[
           try {
             var dragObjects = this._dragobjects;
             if (dragObjects) {
@@ -1459,12 +1459,12 @@
             alert("playlist.xml - startWatchingDragObjects - " + err);
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="stopWatchingDragObjects">
-      <body>
-        <![CDATA[
+      <method name="stopWatchingDragObjects">
+        <body>
+          <![CDATA[
           try
           {
             if (this._dragobjects != null)
@@ -1482,24 +1482,24 @@
             alert( "playlist.xml - stopWatchingDragObjects - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="dragObjectMouseUp">
-      <body>
-        document.__PlaylistXBL_DragObjectDown__ = null;
-      </body>
-    </method>
+      <method name="dragObjectMouseUp">
+        <body>
+          document.__PlaylistXBL_DragObjectDown__ = null;
+        </body>
+      </method>
 
-    <method name="dragObjectMouseDown">
-      <body>
-        document.__PlaylistXBL_DragObjectDown__ = this;
-      </body>
-    </method>
-    
-    <method name="isAnyDragObjectDown">
-      <body>
-        <![CDATA[
+      <method name="dragObjectMouseDown">
+        <body>
+          document.__PlaylistXBL_DragObjectDown__ = this;
+        </body>
+      </method>
+
+      <method name="isAnyDragObjectDown">
+        <body>
+          <![CDATA[
           var ret = 0;
           try
           {
@@ -1521,43 +1521,59 @@
           }
           return ret;
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <!-- nsIXULBuilderListener implementation -->
+      <!-- nsIXULBuilderListener implementation -->
 
-    <method name="willRebuild">
-      <parameter name="builder"/>
-      <body>
-        this.saveSelection();
-        this.saveColumnsProperties();
-        // XXXredfive - may want to check if columns have changed
-        //this.loadColumns(); 
-      </body>
-    </method>
+      <method name="willRebuild">
+        <parameter name="builder"/>
+        <body>
+          this.saveSelection();
+          this.saveColumnsProperties();
+          // XXXredfive - may want to check if columns have changed
+          //this.loadColumns();
+        </body>
+      </method>
 
-    <method name="didRebuild">
-      <parameter name="builder"/>
-      <body>
-        var viewsummary = this.getViewSummary();
-        if (this._lastviewsummary == viewsummary) 
-        {
+      <method name="didRebuild">
+        <parameter name="builder"/>
+        <body>
+          var viewsummary = this.getViewSummary();
+          if (this._lastviewsummary == viewsummary)
+          {
           this.restoreSelection();
           this.refreshCommands(true);
-        }
-        else
-        {
+          }
+          else
+          {
           this.refreshCommands(false);
-        }
-        this._lastviewsummary = viewsummary;
-      </body>
-    </method>
+          }
+          this._lastviewsummary = viewsummary;
+        </body>
+      </method>
 
-    <!-- nsIXULTreeBuilderObserver implementation
+      <method name="onCycleHeader">
+        <parameter name="id"/>
+        <parameter name="elem"/>
+        <body>
+          <![CDATA[
+            if (this.sortorder == id) {
+              if (this.sortdirection == "asc") this.sortdirection = "desc";
+              else this.sortdirection = "asc";
+            } else {
+              this.sortorder = id;
+              this.sortdirection = "asc";
+            }
+            if (this.source) this.source.setOrder(this.ref, id + " " + this.sortdirection);
+          ]]>
+        </body>
+      </method>
+
+      <!-- nsIXULTreeBuilderObserver implementation
       canDrop()
       onDrop()
       onToggleOpenState()
-      onCycleHeader()
       onCycleCell()
       onSelectionChanged()
       onPerformAction()
@@ -1565,12 +1581,12 @@
       onPerformActionOnCell()
     -->
 
-    <!-- nsITreeView implementation -->
-    <method name="isEditable">
-      <parameter name="row"/>
-      <parameter name="col"/>
-      <body>
-      <![CDATA[
+      <!-- nsITreeView implementation -->
+      <method name="isEditable">
+        <parameter name="row"/>
+        <parameter name="col"/>
+        <body>
+          <![CDATA[
       try
       {
         alert( "isEditable( " + row + ", " + col + " )" );
@@ -1581,14 +1597,14 @@
       }
       return true;
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <!-- Event yellers -->
-    
-    <method name="sendPlayEvent">
-      <body>
-      <![CDATA[
+      <!-- Event yellers -->
+
+      <method name="sendPlayEvent">
+        <body>
+          <![CDATA[
       try
       {
         var e = document.createEvent("Events");
@@ -1600,12 +1616,12 @@
         alert( "playlist.xml - sendPlayEvent - " + err )
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="sendEscEvent">
-      <body>
-      <![CDATA[
+      <method name="sendEscEvent">
+        <body>
+          <![CDATA[
       try
       {
         var e = document.createEvent("Events");
@@ -1617,12 +1633,12 @@
         alert( "playlist.xml - sendEscEvent - " + err )
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="sendEditEvent">
-      <body>
-        <![CDATA[
+      <method name="sendEditEvent">
+        <body>
+          <![CDATA[
       try
       {
         var e = document.createEvent("Events");
@@ -1634,12 +1650,12 @@
         alert( "playlist.xml - sendEditEvent - " + err )
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="sendEditorEvent">
-      <body>
-        <![CDATA[
+      <method name="sendEditorEvent">
+        <body>
+          <![CDATA[
       try
       {
         var e = document.createEvent("Events");
@@ -1648,15 +1664,15 @@
       }
       catch( err )
       {
-        alert( "playlist.xml - sendEditEvent - " + err )
+        alert( "playlist.xml - sendEditorEvent - " + err )
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="sendBurnToCDEvent">
-      <body>
-      <![CDATA[
+      <method name="sendBurnToCDEvent">
+        <body>
+          <![CDATA[
       try
       {
         var e = document.createEvent("Events");
@@ -1665,18 +1681,18 @@
       }
       catch( err )
       {
-        alert( "playlist.xml - sendEditEvent - " + err )
+        alert( "playlist.xml - sendBurnToCDEvent - " + err )
       }
       ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <!-- Tree event listeners -->
-    
-    <method name="onToolbarCommand">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
+      <!-- Tree event listeners -->
+
+      <method name="onToolbarCommand">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
           try
           {
             if ( this.commands )
@@ -1689,13 +1705,13 @@
             alert( "playlist.xml - onToolbarCommand - " + err );
           }
         ]]>
-      </body>
-    </method>
-    
-    <method name="onPlaylistDblClick">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
+        </body>
+      </method>
+
+      <method name="onPlaylistDblClick">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
           try
           {
             var obj = {}, row = {}, col = {}; 
@@ -1714,13 +1730,13 @@
             alert( "playlist.xml - onPlaylistDblClick - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="onFilterDblClick">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
+      <method name="onFilterDblClick">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
           try
           {
 
@@ -1747,13 +1763,13 @@
             alert( "playlist.xml - onFilterDblClick - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="onPlaylistKeypress">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
+      <method name="onPlaylistKeypress">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
           try
           {
             //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
@@ -1787,13 +1803,13 @@
             alert( "playlist.xml - onPlaylistKeypress - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="onPlaylistContextClick">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
+      <method name="onPlaylistContextClick">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
           try
           {
             if ( this.tree.currentIndex > -1 )
@@ -1859,13 +1875,13 @@
             alert( "playlist.xml - onPlaylistContextClick - " + err );
           }
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    <method name="onPlaylistSelectClick">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
+      <method name="onPlaylistSelectClick">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
           try
           {
             this.hidePlaylistEdit();
@@ -1918,6 +1934,25 @@
             alert( "playlist.xml - onPlaylistSelectClick - " + err );
           }
         ]]>
+        </body>
+      </method>
+
+    <method name="isReadOnlyColumn">
+      <parameter name="col"/>
+      <body>
+        <![CDATA[
+          var ml = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+          var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+          query.setDatabaseGUID(this.guid)
+          ml.setQueryObject(query);
+          ml.getColumnInfo();
+          var destcols = query.getResultObject();
+          for (var i=0;i<destcols.getRowCount();i++) {
+            var colname = destcols.getRowCellByColumn(i, "column_name");
+            if (colname == col) return (destcols.getRowCellByColumn(i, "readonly") != 0);
+          }
+          return true;
+        ]]>
       </body>
     </method>
 
@@ -1943,27 +1978,31 @@
               // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
               if ( obj.value )
               {
-                // Remember the row and column
-                this.edit_row = row.value;
-                this.edit_col = col.value;
-                if (this.edit_col.id == "rating") 
+                if (!this.isReadOnlyColumn( col.value.id ))
                 {
-                  var width = this.edit_col.element.boxObject.width;
-                  var dist = evt.screenX - this.edit_col.element.boxObject.screenX;
-                  // 4 pixels offsets
-                  width -= 8;
-                  dist -= 4;
-                  var ret = Math.round(dist / width * 100);
-                  if (ret < 0) ret = 0; if (ret > 100) ret = 100;
-                  this.setCellRating(this.edit_row, this.edit_col, ret);
-                } 
-                else 
-                {
-                  var delay = evt.timeStamp - this.lastClickTimestamp;
-                  if ( delay > 1000 && delay < 2000 )
+                  // Remember the row and column
+                  this.edit_row = row.value;
+                  this.edit_col = col.value;
+                  if (this.edit_col.id == "rating") 
                   {
-                    // Send the event and see if anyone is there to catch it?
-                    this.sendEditEvent();
+                    var width = this.edit_col.element.boxObject.width;
+                    var dist = evt.screenX - this.edit_col.element.boxObject.screenX;
+                    // 4 pixels offsets
+                    width -= 8;
+                    dist -= 4;
+                    var ret = Math.round(dist / width * 100);
+                    if (ret < 0) ret = 0; if (ret > 100) ret = 100;
+                    this.setCellRating(this.edit_row, this.edit_col, ret);
+                  } 
+                  else 
+                  {
+                    // todo: check readonly bit first !
+                    var delay = evt.timeStamp - this.lastClickTimestamp;
+                    if ( delay > 1000 && delay < 2000 )
+                    {
+                      // Send the event and see if anyone is there to catch it?
+                      this.sendEditEvent();
+                    }
                   }
                 }
               }

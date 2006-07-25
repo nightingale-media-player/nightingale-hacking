@@ -264,12 +264,15 @@
             if (this.isExcluded(name)) continue;
             var readablename = destcols.getRowCellByColumn(i, "readable_name");
             var type = destcols.getRowCellByColumn(i, "type");
-            //var ro = destcols.getRowCellByColumn(i, "readonly");
-            var elem = document.createElement("dbedit_textbox");
+            var ro = destcols.getRowCellByColumn(i, "readonly");
+            var elem;
+            if (ro != 0) elem = document.createElement("dbedit_label");
+            else elem = document.createElement("dbedit_textbox");
             if (type == 'numeric') elem.setAttribute("numeric", true);
-            //if (ro) elem.setAttribute("readonly", "true");
+            if (ro != 0) elem.setAttribute("readonly", "true");
             elem.setAttribute("column", name);
-            elem.setAttribute("class", "dialog_textbox");
+            if (ro != 0) elem.setAttribute("class", "dialog_textbox");
+            else elem.setAttribute("class", "dialog_label");
             elem.setAttribute("flex", "1");
             // create a container for the element, add a descriptive label and a spacer to it
             var hbox = document.createElement("hbox");
