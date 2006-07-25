@@ -2293,11 +2293,11 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   for (PRInt32 i = value.m_ResMapIndex; i < end; i++) {
     sbValueInfo& val = g_ValueMap[value.m_Info->m_ResList[i]];
     nsAutoString id;
-    result->GetRowCellByColumn( i, NS_LITERAL_STRING("id"), id );
+    result->GetRowCellByColumn( i - value.m_ResMapIndex, NS_LITERAL_STRING("id"), id );
     // Make sure this is a valid assignment!
     if ( val.m_Id == id ) {
       val.m_Resultset = result;
-      val.m_ResultsRow = i;
+      val.m_ResultsRow = i - value.m_ResMapIndex;
     } else
       printf( "PlaylistPlayback cache miss? Row %d\n", val.m_Row ); // Hmmm.  Less than optimal.
   }
