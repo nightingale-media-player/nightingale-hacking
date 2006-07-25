@@ -1,18 +1,17 @@
 rubberducky.jar:
 #ifdef USING_FLAT_JARS
 % skin  songbird  rubberducky/0.2  rubberducky/feathers/rubberducky/songbird/skin/
-% content rubberducky   rubberducky/feathers/rubberducky/songbird/content/
+% content  rubberducky  rubberducky/feathers/rubberducky/songbird/content/
 #else
 % skin  songbird  rubberducky/0.2  jar:rubberducky.jar!/feathers/rubberducky/songbird/skin/
-% content rubberducky   jar:rubberducky.jar!/feathers/rubberducky/songbird/content/
+% content  rubberducky   jar:rubberducky.jar!/feathers/rubberducky/songbird/content/
 #endif
   feathers/rubberducky/songbird/content/bindings/bindings.xml                    (content/bindings/bindings.xml)
   feathers/rubberducky/songbird/content/css/mainwin_images.css                   (content/css/mainwin_images.css)
   feathers/rubberducky/songbird/content/css/base_styles.css                      (content/css/base_styles.css)  
   feathers/rubberducky/songbird/content/css/mini.css                             (content/css/mini.css)  
   feathers/rubberducky/songbird/content/css/dialog.css                           (content/css/dialog.css)    
-  feathers/rubberducky/songbird/content/css/mainwin.css                          (content/css/mainwin.css)      
-
+  feathers/rubberducky/songbird/content/css/mainwin.css                          (content/css/mainwin.css)
   feathers/rubberducky/songbird/skin/dialog_colors.css                           (skin/dialog_colors.css)
   feathers/rubberducky/songbird/skin/mainwin_colors.css                          (skin/mainwin_colors.css)
   feathers/rubberducky/songbird/skin/songbird.css                                (skin/songbird.css)

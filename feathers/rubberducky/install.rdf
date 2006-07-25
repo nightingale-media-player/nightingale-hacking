@@ -26,7 +26,12 @@
     <!-- Front End Integration Hooks (used by Theme Manager)-->
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <em:internalName>rubberducky/0.2</em:internalName>
+    <!-- CURSES!  internalName sets "skin-only mode" for the extension, 
+         and prevents declaration of content or overlays.
+         Therefore turning it off for now so that we can put the 
+         default bones in with rubberducky.
+         <em:internalName>rubberducky/0.2</em:internalName> 
+    -->
   </Description>      
 
 </RDF>
