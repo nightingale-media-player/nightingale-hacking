@@ -53,6 +53,8 @@
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components
+mkdir $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool
@@ -110,6 +112,8 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				CommandLine="mkdir $(SolutionDir)dist\components
 copy /y $(TargetPath) $(SolutionDir)dist\components
 copy /y $(TargetDir)sbICDDevice.xpt $(SolutionDir)dist\components
+mkdir $(SolutionDir)dist\xulrunner\
+copy /y $(SolutionDir)dependencies\win32\sonic\release\*.dll $(SolutionDir)dist\xulrunner\
 echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 "/>
 			<Tool

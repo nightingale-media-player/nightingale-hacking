@@ -8,9 +8,9 @@
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
-
-Name "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
-Caption "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
+!define RELEASE_NAME "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
+Name "${RELEASE_NAME}"
+Caption "${RELEASE_NAME}"
 
 ComponentText "You may customize the Songbird installation below. Click next when you're ready to continue the installation process." \
 "" \
@@ -155,7 +155,7 @@ NoRequireMSVCP71:
   WriteRegStr HKLM SOFTWARE\Songbird "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "DisplayName" "$NAME"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "DisplayName" "${RELEASE_NAME}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "UninstallString" '"$INSTDIR\songbird-uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird" "NoRepair" 1

@@ -28,8 +28,6 @@
 // sbIDynamicPlaylist Object
 //
 
-//const SONGBIRD_PLAYLIST_IID = Components.interfaces.sbIPlaylist;
-
 const SONGBIRD_DYNAMICPLAYLIST_CONTRACTID = "@songbirdnest.com/Songbird/DynamicPlaylist;1";
 const SONGBIRD_DYNAMICPLAYLIST_CLASSNAME = "Songbird Dynamic Playlist Interface"
 const SONGBIRD_DYNAMICPLAYLIST_CID = Components.ID("{6322a435-1e78-4825-91c8-520e829c23b8}");
@@ -37,10 +35,6 @@ const SONGBIRD_DYNAMICPLAYLIST_IID = Components.interfaces.sbIDynamicPlaylist;
 
 function CDynamicPlaylist()
 {
-/*
-  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbPlaylistBase.js", this );
-*/
   var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
   query = query.QueryInterface(Components.interfaces.sbIDatabaseQuery);
 
