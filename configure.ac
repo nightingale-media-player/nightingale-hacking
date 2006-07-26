@@ -145,6 +145,18 @@ AC_SUBST(CYGWIN_WRAPPER)
 AC_SUBST(CYGDRIVE_MOUNT)
 
 #
+# Check for an alternate dependencies location
+#
+
+AC_ARG_WITH(dependencies-dir,
+            [  --with-dependencies-dir=DIR          the location of the dependencies directory],
+            SB_DEPENDENCIES_DIR=$withval)
+if test -z "$SB_DEPENDENCIES_DIR"; then
+  SB_DEPENDENCIES_DIR=$srcdir/dependencies/$SB_PLATFORM$SB_ARCH
+fi
+AC_SUBST(SB_DEPENDENCIES_DIR)
+
+#
 # Checks for programs.
 #
 
