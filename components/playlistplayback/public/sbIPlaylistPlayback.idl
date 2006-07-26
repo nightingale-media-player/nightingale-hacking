@@ -105,6 +105,6 @@ interface sbIPlaylistPlayback : nsIObserver
                         in unsigned long valueCount, [array, size_is(valueCount)] in wstring metaValues);
 
   // URL checking
-  boolean isMediaUrl(in AString url, in boolean test_playlist);
+  boolean isMediaUrl(in AString url);
   boolean isPlaylistUrl(in AString url);
 };
