@@ -37,6 +37,34 @@ function CPlaylistReaderManager()
 {
   jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
   jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
+  
+  // Cache the valid components
+  for(var contractID in Components.classes)
+  {
+    if(contractID.indexOf(this.m_rootContractID) != -1)
+    {
+      var aReader = Components.classes[contractID];
+      
+      aReader = aReader.createInstance();
+      aReader = aReader.QueryInterface(this.m_interfaceID);
+      
+      if(aReader)
+      {
+        this.m_Readers.push(aReader);
+      }  
+    }
+  }
+  
+  // Cache the supported strings
+  for(var i in this.m_Readers)
+  {
+    var nExtensionsCount = new Object;
+    var aExts = this.m_Readers[i].supportedFileExtensions(nExtensionsCount);
+    this.m_Extensions.push(aExts);
+    var nMIMETypesCount = new Object;
+    var aMIMETypes = this.m_Readers[i].supportedMIMETypes(nMIMETypesCount);
+    this.m_MIMETypes.push(aMIMETypes);
+  }
 }
 
 CPlaylistReaderManager.prototype.constructor = CPlaylistReaderManager;
@@ -49,6 +77,9 @@ CPlaylistReaderManager.prototype =
   m_interfaceID: Components.interfaces.sbIPlaylistReader,
   m_Browser: null,
   m_Listener: null,
+  m_Readers: new Array(),
+  m_Extensions: new Array(),
+  m_MIMETypes: new Array(),
 
   getTempFilename: function()
   {
@@ -196,66 +227,55 @@ CPlaylistReaderManager.prototype =
   {
     var theExtension = this.getFileExtension(strURL);
   
-    for(var contractID in Components.classes)
+    for(var aReader in this.m_Readers)
     {
-      if(contractID.indexOf(this.m_rootContractID) != -1)
+      if(strContentType == "")
       {
-        var aReader = Components.classes[contractID];
+        var nExtensionsCount = new Object;
+        var theExtensions = aReader.supportedFileExtensions(nExtensionsCount);
         
-        aReader = aReader.createInstance();
-        aReader = aReader.QueryInterface(this.m_interfaceID);
-        
-        if(aReader)
+        for(var i = 0; i < theExtensions.length; i++)
         {
-          if(strContentType == "")
+          if(theExtensions[i] == theExtension)
           {
-            var nExtensionsCount = new Object;
-            var theExtensions = aReader.supportedFileExtensions(nExtensionsCount);
+            var errorCode = new Object;
+            var bRet = false;
             
-            for(var i = 0; i < theExtensions.length; i++)
-            {
-              if(theExtensions[i] == theExtension)
-              {
-                var errorCode = new Object;
-                var bRet = false;
-                
-                // Handoff the original url
-                aReader.originalURL = this.originalURL;
-                this.originalURL = "";
-                
-                bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
-                
-                dump("CPlaylistReaderManager::read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
-                
-                if(bRet)
-                  return bRet;
-              }
-            }
+            // Handoff the original url
+            aReader.originalURL = this.originalURL;
+            this.originalURL = "";
+            
+            bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+            
+            dump("CPlaylistReaderManager::read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
+            
+            if(bRet)
+              return bRet;
           }
-          else
+        }
+      }
+      else
+      {
+        var nMIMTypeCount = new Object;
+        var theMIMETypes = aReader.supportedMIMETypes(nMIMTypeCount);
+        
+        for(var i = 0; i < theMIMETypes.length; i++)
+        {
+          if(theMIMETypes[i] == strContentType)
           {
-            var nMIMTypeCount = new Object;
-            var theMIMETypes = aReader.supportedMIMETypes(nMIMTypeCount);
+            var errorCode = new Object;
+            var bRet = false;
             
-            for(var i = 0; i < theMIMETypes.length; i++)
-            {
-              if(theMIMETypes[i] == strContentType)
-              {
-                var errorCode = new Object;
-                var bRet = false;
-                
-                // Handoff the original url
-                aReader.originalURL = this.originalURL;
-                this.originalURL = "";
-                
-                bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
-                
-                dump("CPlaylistReaderManager::read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
-                
-                if(bRet)     
-                  return bRet;
-              }
-            }
+            // Handoff the original url
+            aReader.originalURL = this.originalURL;
+            this.originalURL = "";
+            
+            bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+            
+            dump("CPlaylistReaderManager::read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
+            
+            if(bRet)     
+              return bRet;
           }
         }
       }
@@ -266,56 +286,14 @@ CPlaylistReaderManager.prototype =
   
   supportedFileExtensions: function(nExtCount)
   {
-    var theExtensions = new Array;
-    nExtCount.value = 0;
-    
-    for(var contractID in Components.classes)
-    {
-      if(contractID.indexOf(this.m_rootContractID) != -1)
-      {
-        var aReader = Components.classes[contractID];
-     
-        aReader = aReader.createInstance();
-        aReader = aReader.QueryInterface(this.m_interfaceID);
-        
-        if(aReader)
-        {
-          var nExtensionsCount = new Object;
-          var aExts = aReader.supportedFileExtensions(nExtensionsCount);
-          theExtensions.push(aExts);
-        }
-      }
-    }
-
-    nExtCount.value = theExtensions.length;    
-    return theExtensions;
+    nExtCount.value = this.m_Extensions.length;    
+    return this.m_Extensions;
   },
   
   supportedMIMETypes: function(nMIMECount)
   {
-    var theMIMETypes = new Array;
-    nMIMECount.value = 0;
-    
-    for(var contractID in Components.classes)
-    {
-      if(contractID.indexOf(this.m_rootContractID) != -1)
-      {
-        var aReader = Components.classes[contractID];
-     
-        aReader = aReader.createInstance();
-        aReader = aReader.QueryInterface(this.m_interfaceID);
-        
-        if(aReader)
-        {
-          var nMIMETypesCount = new Object;
-          var aMIMETypes = aReader.supportedMIMETypes(nMIMETypesCount);
-          theMIMETypes.push(aMIMETypes);
-        }
-      }
-    }
-
-    nMIMECount.value = theMIMETypes.length;    
-    return theMIMETypes;   
+    nMIMECount.value = this.m_MIMETypes.length;    
+    return this.m_MIMETypes;   
   },
   
   QueryInterface: function(aIID) {

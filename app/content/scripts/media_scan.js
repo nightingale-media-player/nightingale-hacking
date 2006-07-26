@@ -25,6 +25,7 @@
  */
 
 const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
 
@@ -155,7 +156,7 @@ function onScanComplete( mediaScanQuery )
         var the_url = null;
         var is_url = null;
         the_url = aMediaScanQuery.getFilePath( i );
-        is_url = IsMediaUrl( the_url );
+        is_url = gPPS.isMediaUrl( the_url );
 
         if ( is_url )
         {
@@ -306,39 +307,4 @@ function ConvertUrlToFolder( url )
     the_value = url;
   }
   return the_value;
-}
-
-function IsMediaUrl( the_url )
-{
-  if ( ( the_url.indexOf ) && 
-        (
-          // Protocols at the beginning
-          ( the_url.indexOf( "mms:" ) == 0 ) || 
-          ( the_url.indexOf( "rtsp:" ) == 0 ) || 
-          // File extensions at the end
-          ( the_url.indexOf( ".pls" ) != -1 ) || 
-          ( the_url.indexOf( "rss" ) != -1 ) || 
-          ( the_url.indexOf( ".m3u" ) == ( the_url.length - 4 ) ) || 
-//          ( the_url.indexOf( ".rm" ) == ( the_url.length - 3 ) ) || 
-//          ( the_url.indexOf( ".ram" ) == ( the_url.length - 4 ) ) || 
-//          ( the_url.indexOf( ".smil" ) == ( the_url.length - 5 ) ) || 
-          ( the_url.indexOf( ".mp3" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".ogg" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".flac" ) == ( the_url.length - 5 ) ) ||
-          ( the_url.indexOf( ".wav" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".m4a" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".wma" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
-        )
-      )
-  {
-    return true;
-  }
-  return false;
 }

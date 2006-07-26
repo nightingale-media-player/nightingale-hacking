@@ -203,6 +203,7 @@ function PlaylistPlayback() {
   var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                  .getService(Components.interfaces.mozIJSSubScriptLoader);
   jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
+  
 
 } // PlaylistPlayback
 PlaylistPlayback.prototype.constructor = PlaylistPlayback;
@@ -291,6 +292,9 @@ PlaylistPlayback.prototype = {
 
   _started:           false,
   _set_metadata:      false,
+  
+  _playlistReaderManager: null,
+
   
   /**
    * ---------------------------------------------
@@ -987,35 +991,32 @@ PlaylistPlayback.prototype = {
   },
 
   isMediaUrl: function(the_url) {
-    if ( ( the_url.indexOf ) && 
-          (
-            // Known playlist type?
-            ( this.isPlaylistUrl( the_url ) ) ||
-            // Protocols at the beginning
-            ( the_url.indexOf( "mms:" ) == 0 ) || 
-            ( the_url.indexOf( "rtsp:" ) == 0 ) || 
-            // File extensions at the end
-            ( the_url.indexOf( ".pls" ) != -1 ) || 
-            ( the_url.indexOf( "rss" ) != -1 ) || 
-            ( the_url.indexOf( ".m3u" ) == ( the_url.length - 4 ) ) || 
-  //          ( the_url.indexOf( ".rm" ) == ( the_url.length - 3 ) ) || 
-  //          ( the_url.indexOf( ".ram" ) == ( the_url.length - 4 ) ) || 
-  //          ( the_url.indexOf( ".smil" ) == ( the_url.length - 5 ) ) || 
-            ( the_url.indexOf( ".mp3" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".ogg" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".flac" ) == ( the_url.length - 5 ) ) ||
-            ( the_url.indexOf( ".wav" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".m4a" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".wma" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
-          )
+// NO    if (this.isPlaylistUrl(the_url)) return true;
+    if( ( the_url.indexOf ) && 
+        (
+          // Protocols at the beginning
+          ( the_url.indexOf( "mms:" ) == 0 ) || 
+          ( the_url.indexOf( "rtsp:" ) == 0 ) || 
+          // For now, still hardcode the playlist types.
+          ( the_url.indexOf( ".pls" ) != -1 ) || 
+          ( the_url.indexOf( "rss" ) != -1 ) || 
+          ( the_url.indexOf( ".m3u" ) != -1 ) || 
+          // File extensions at the end
+          ( the_url.indexOf( ".mp3" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".ogg" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".flac" ) == ( the_url.length - 5 ) ) ||
+          ( the_url.indexOf( ".wav" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".m4a" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".wma" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
+          ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
         )
+      )
     {
       return true;
     }
@@ -1025,24 +1026,27 @@ PlaylistPlayback.prototype = {
   isPlaylistUrl: function(the_url) {
     if ( the_url.indexOf )
     {
-      // Make the playlist reader manager.
-      // XXXredfive - cleanup
-      //const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-      //var aPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
-      var aPlaylistReaderManager = Components.classes[SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID]
-                                  .createInstance(SONGBIRD_PLAYLISTREADERMANAGER_IID);
-      
+      // Cache our manager, but not at construction!
+      if ( this._playlistReaderManager == null )
+        this._playlistReaderManager = Components.classes[SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID]
+                                      .createInstance(SONGBIRD_PLAYLISTREADERMANAGER_IID);
+    
       // Tell it what filters to be using
       var filterlist = "";
       var extensionCount = new Object;
-      var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
+      var extensions = this._playlistReaderManager.supportedFileExtensions(extensionCount);
 
-      // cycle over the list of supported extensions looking for a match in the url
+      // Cycle over the list of supported extensions looking for a match in the url
       for(var i = 0; i < extensions.length; i++)
       {
-        if ( the_url.indexOf( "." + extensions[i] ) != -1 )
-        {      
-          return true;
+        var ext_list = extensions[i].split(",");
+        for(var j = 0; j < ext_list.length; j++)
+        {
+          var ext = ext_list[j];
+          if ( the_url.indexOf( "." + ext ) != -1 )
+          {      
+            return true;
+          }
         }
       }
     }
@@ -1507,6 +1511,7 @@ PlaylistPlayback.prototype = {
  * Adapted from nsUpdateService.js
  */
 var gModule = {
+
   registerSelf: function(componentManager, fileSpec, location, type) {
     componentManager = componentManager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
     for (var key in this._objects) {

@@ -162,7 +162,7 @@ try
     function( url )     
     {
       var loop_break = false;
-      if ( IsMediaUrl( url ) )
+      if ( gPPS.isMediaUrl( url ) )
       {
         SBDataSetIntValue( "webplaylist.current", this.i + 1 );
         this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
