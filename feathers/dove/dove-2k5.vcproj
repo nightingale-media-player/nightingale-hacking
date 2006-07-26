@@ -928,6 +928,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\dialog_colors.css"
+			>
+		</File>
+		<File
+			RelativePath=".\mainwin_colors.css"
+			>
+		</File>
+		<File
 			RelativePath=".\songbird.css"
 			>
 			<FileConfiguration
@@ -936,7 +944,7 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
-					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
 				/>
 			</FileConfiguration>
@@ -946,10 +954,14 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="SKIN: Copying $(ProjectName) - $(InputFileName)"
-					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
+					CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)&#x0D;&#x0A;"
 					Outputs="$(SolutionDir)dist\chrome\feathers\$(ProjectName)\$(InputFileName)"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\songbird_old.css"
+			>
 		</File>
 	</Files>
 	<Globals>

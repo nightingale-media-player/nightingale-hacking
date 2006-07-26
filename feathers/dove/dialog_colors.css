@@ -1,0 +1,626 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+DIALOG COLORS
+
+This css files specifies the color styles for everything not in the main application window.  This includes all dialog boxes like the 
+First-Run dialog, and the Smart Playlist dialog.  Rubberducky is Songbird's black skin.  
+
+There are three schemes that control the colors in Songbird, the Main Window and its buttons, the Service Pane, and the Filterlists.
+To achieve a three-dimensional effect, it's important to remember that a user understands their desktop to be lit from the
+upper left corner or directly from above.  Consequently, use the light colors on the top and left borders and dark colors on the 
+right and bottom borders to achieve a dimensional appearance.
+
+The following ARE NOT CLASS NAMES.
+
+Body Material - Rubberducky
+-------------------------------
+bright-highlight    #7a7c7c - upperleft borders
+highlight           #686a6a - upperleft borders
+hover               #fff    - text
+foreground          #ccc    - text
+button              #333    - skin
+shadow              #505154 - lowerright borders
+darkshadow          #333    - lowerright borders
+background          #000    - skin
+
+Disabled - Rubberducky
+-------------------------------
+bright-highlight    #444
+highlight           #444
+foreground          #505154
+button              #333
+shadow              #505154
+darkshadow          #333
+background          #000
+
+Service Pane - Rubberducky
+-------------------------------
+bright-highlight    #7a7c7c
+highlight           #999
+foreground          #cdd4c4
+button              #686a6a
+shadow              #444
+darkshadow          #333
+background          #000
+
+Filterlists - Rubberducky
+-------------------------------
+filterlist-light    #343d42
+filterlist-dark     #1d272d
+selected            #4a4e48
+selected-highlight  #99a195
+
+************************************************************************************************************************************************
+*/ 
+
+.dialog
+{
+  background-color: #000 !important;
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  color: #ccc !important;
+}
+
+.iframe_bkgd
+{
+  background: #000 !important;
+}
+
+#window_top   /* Title box */
+{
+  border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
+  background-color: Transparent !important;
+}
+
+.dialog_label
+{
+  color: #fff !important;
+}
+
+/** 
+************************************************************************************************************************************************
+FORM ELEMENTS
+************************************************************************************************************************************************
+*/
+
+/** 
+**************************************************************************************
+BUTTONS for dialogs and forms.
+**************************************************************************************
+*/
+.dialog_button 
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #99A195 !important;
+}
+
+.dialog_button[disabled="true"],
+.dialog_button:hover[disabled="true"]
+{
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #535751 !important;
+}
+
+.dialog_button:hover
+{
+  color: #FFF !important;
+  background-color: #333 !important;
+}
+
+.backless_button /* Used in Watch Folders **/
+{
+  background-color: transparent !important;
+  color: #99A195 !important;
+}
+
+/** 
+*************************************************************************
+TEXTBOXES for dialogs and forms.
+***************************************************************************
+*/
+.textbox-input-box
+{
+  background-color: #000 !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;  
+}
+
+.drawer_box textbox,
+.dialog_textbox,
+.smart_condition_box textbox
+{
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #000 !important; 
+  color: #FFF !important;
+}
+
+.drawer_box input:focus,
+.dialog_textbox input:focus,
+.smart_condition_box input:focus
+{
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #4A4E48 !important; 
+  color: #FFF !important;
+}
+
+.drawer_box[disabled="true"],
+.dialog_textbox[disabled="true"],
+.smart_condition_box[disabled="true"]
+{
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
+  -moz-border-bottom-colors: #333 !important;
+  color: #666 !important;
+}
+
+/** 
+*******************************************************************************
+LISTBOXES for dialogs and forms.
+****************************************************************************
+*/
+.dialog_listbox
+{
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #333 !important; 
+}
+
+.dialog_listbox > listitem
+{
+  background-color: #333 !important; /* doesn't seem to inherit the #333 from .dialog_listbox */
+  color: #FFF !important;
+}
+
+.dialog_listbox > listitem[selected=true]
+{
+  background-color: #4A4E48 !important;
+}
+
+.formgrouping
+{
+  border: 1px solid #3B3C3F !important;
+}
+
+/** 
+***********************************************************************
+CHECKBOXES, boxes, labels, images, states.
+**********************************************************************
+*/
+
+/* ::::: checkbox ::::: */
+
+checkbox {
+  background-color: transparent !important;
+}
+
+.checkbox-label-box {
+  border: 1px solid transparent;
+}
+
+
+.checkbox-label {
+  color: #FFF !important;
+  background-color: Transparent !important;
+}
+
+/* ..... disabled state ..... */
+
+checkbox[disabled="true"] > .checkbox-check {
+  background-color: #333 !important;
+}
+
+checkbox[disabled="true"] {
+  color: #666 !important;
+}
+
+/* ::::: checkmark image ::::: */
+
+.checkbox-check {
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #000 !important; 
+}
+  
+checkbox:hover:active > .checkbox-check {
+  background-color: #000 !important;
+}
+
+/* ..... checked state ..... */
+
+checkbox[checked="true"] > .checkbox-check 
+{
+  -moz-appearance: none !important;
+  background-color: #000 !important;
+  background-image: url("default/check_fff.png") !important;
+}
+
+checkbox[checked="true"][disabled="true"] > .checkbox-check {
+  background-color: #000 !important;
+}
+/* END CHECKBOXES **/
+/** 
+**********************************************************************************
+The following styles are for the specific dialog boxes themselves.
+*/
+/** 
+**************************************************************************************************************
+*FIRST RUN dialog, aka, the Bundle Picker.
+**********************************************************************************
+*/
+.sbextensions_box
+{
+  background-color: transparent !important;
+  color: #CCC !important;
+}
+
+richlistbox
+{
+  background: transparent !important;
+  
+}
+
+richlistitem[selected="true"]
+{
+  background: transparent !important;
+  color: #fff !important;
+}
+
+richlistitem > checkbox,
+richlistitem > checkbox[selected="false"]
+{
+  background: transparent !important;
+}
+richlistitem:focus > checkbox,
+richlistitem:focus > checkbox[selected="true"]
+{
+  background: transparent !important;  
+}
+
+richlistitem > label
+{
+  background: transparent !important;
+  color: #ccc !important;
+}
+richlistitem[selected="true"] > label
+{
+  background: transparent !important;  
+  color: #ccc !important;
+}
+
+/** 
+*****************************************************************************************************
+SMART PLAYLIST BUILDER
+*******************************************************************
+*/
+
+.drawer_box,
+.smart_condition_box
+{
+  border: 1px solid #3B3C3F !important;
+}
+
+.drawer_box,
+.smart_condition_box
+{
+  border: 1px solid #99A195 !important;
+}
+
+.smart_condition_plus
+{
+  /* if you want an icon */
+}
+
+.smart_condition_minus
+{
+  /* if you want an icon */
+}
+
+/** 
+**************************************************************************************************************
+MEDIA SCAN
+***********************************************************************************
+*/
+
+#media_scan
+{
+  background-color: transparent !important;
+  color: #FFF !important;
+}
+
+#songbird_media_scan 
+{ 
+   background-color: #000 !important; 
+   color: #FFF !important;
+} 
+
+#songbird_media_scan .progress-bar { 
+   background-color: #666 !important;
+} 
+  
+#songbird_media_scan[mode="undetermined"] { 
+  background-color: #333 !important;
+} 
+
+#songbird_media_scan_title,
+#songbird_media_scan_label
+{color: #FFF !important;}
+
+/** 
+***********************************************************************************************
+ADD TO PLAYLIST
+**********************************************************************************
+*/
+
+
+#jump_to_file
+{
+  color: #FFF !important;
+}
+
+#songbird_playlistlist > listitem
+{
+  background-color: #FFF !important;
+  color: #333 !important;
+}
+
+#songbird_playlistlist > listitem[selected=true]
+{
+  background-color: #4A4E48 !important;
+  color: #FFF !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+************************************************************************************************************************************************
+*/
+/** 
+*****************************************************************************************
+THE MENUS
+Poppin' Fresh.
+*****************************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) Styles **/
+
+#songbird_menu > menu > label
+{
+  background-color: transparent !important;
+  color: #999 !important;
+}
+
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label
+{
+  background-color: #666 !important; /* I feel SUPER important! */
+  color: #EEE !important;
+}
+
+/* The Basic Menu Styles **/
+
+menupopup, 
+popup
+{
+  -moz-border-top-colors: #333 #333 !important;
+  -moz-border-right-colors: #333 #333 !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  -moz-border-left-colors: #333 #333 !important;
+  background-color: #333 !important;
+  color: #FFF !important;
+}
+
+menuseparator
+{
+  border-top: 1px solid #999 !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+menupopup > menu,
+popup > menu
+{
+  background-color: #333 !important;
+  color: #FFF !important;
+}
+
+popup, menuitem, popup > menuitem
+{
+  color: #FFF !important;
+}
+
+menuitem[_moz-menuactive="true"],  
+popup > menuitem[_moz-menuactive="true"],
+popup > menu[_moz-menuactive="true"],
+menupopup > menu[_moz-menuactive="true"]
+{
+  background-color: #4A4E48 !important;
+  color: #FFF !important;
+}
+
+.menu-right[_moz-menuactive="true"] 
+{
+  list-style-image: url(default/menu-arrow-hover.png) !important;
+}
+
+.menu-right
+{   
+  list-style-image: url(default/menu-arrow.png) !important;
+}
+
+menuitem[selected="true"]
+{
+  background-color: #4A4E48 !important;
+  color: #FFF !important;
+}
+
+menuitem[checked="true"] > hbox[checked="true"] 
+{ 
+  list-style-image: url(default/check_fff.png) !important;
+}
+
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{ 
+  list-style-image: url(default/check_fff.png) !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MENULIST
+************************************************************************************************************************************************
+*/
+
+menulist
+{ 
+  background-color: #242527 !important;
+  border: 1px solid #4F5052 !important; 
+  color: #FFF !important;
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important; 
+} 
+
+.menulist-label
+{
+  color: #fff !important;
+}
+
+.menulist-dropmarker
+{
+  list-style-image: none !important;
+  background-image: url(default/chrome_scroll_down.png) !important;
+  background-color: transparent !important;
+}
+
+menulist:focus
+{
+  background-color: #4A4E48 !important;
+  color: #fff !important;
+}
+
+menulist:focus > hbox
+{
+  background-color: #4A4E48 !important;
+}
+
+menulist[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+  -moz-border-top-colors: #333 #333 !important;
+  -moz-border-left-colors: #333 #333 !important;
+  -moz-border-right-colors: #333 #333 !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  color: #666 !important;
+}
+
+.menulist-editable-input,
+.menulist-editable-box
+{
+  color: #fff !important;
+  background-color: transparent !important;
+}
+
+.menulist-editable-box
+{
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  background-color: #000 !important;
+}
+
+.menulist-editable-input[disabled="true"]
+{
+  color: #666 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+The ABOUT BOX
+************************************************************************************************************************************************
+*/  
+#about
+{
+  background-color: #FFF !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+VIDEO WINDOW
+************************************************************************************************************************************************
+*/
+
+#video_window
+{
+  background-color: #000 !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+ /* background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+}
+
+#video_chrome_bkgd
+{
+  background-image: url(default//chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
+}
+
+iframe#video_controls
+{
+  background-color: #000 !important;
+}
+
+
+
+
+
+
