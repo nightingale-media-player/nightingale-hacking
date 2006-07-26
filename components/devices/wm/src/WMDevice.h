@@ -38,9 +38,6 @@
 #include "sbIWMDevice.h"
 #include "DeviceBase.h"
 
-#ifndef NS_DECL_ISUPPORTS
-#error
-#endif
 // DEFINES ====================================================================
 #define SONGBIRD_WMDevice_CONTRACTID                      \
   "@songbirdnest.com/Songbird/Device/WMDevice;1"
@@ -56,11 +53,11 @@
 
 // CLASSES ====================================================================
 
-class sbDownloadListener;
-
-class sbWMDevice :  public sbIWMDevice, public sbDeviceBase
+class sbWMDevice : public sbIWMDevice,
+                   public sbDeviceBase
 {
 public:
+
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICEBASE
   NS_DECL_SBIWMDEVICE
@@ -68,16 +65,16 @@ public:
   sbWMDevice();
 
 private:
+
+  friend class sbDownloadListener;
+
+  ~sbWMDevice();
+
   virtual void OnThreadBegin();
   virtual void OnThreadEnd();
 
-  virtual bool IsEjectSupported();
-
-  friend class sbDownloadListener;
-private:
-  ~sbWMDevice();
-
+  virtual PRBool IsEjectSupported();
+  virtual PRBool SuspendCurrentTransfer(const nsAString& aDeviceString);
 };
 
 #endif // __WM_DEVICE_H__
-

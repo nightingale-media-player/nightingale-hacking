@@ -59,15 +59,12 @@
   {0x82, 0xfd, 0x60, 0x9f, 0xf5, 0xf7, 0x85, 0x8}         \
 }
 
-namespace 
+struct TransferData
 {
-  typedef struct
-  {
-    nsString            deviceString;
-    nsString            dbContext;
-    nsString            dbTable;
-  } TransferData;
-}
+  nsString  deviceString;
+  nsString  dbContext;
+  nsString  dbTable;
+};
 
 // CLASSES ====================================================================
 
@@ -78,112 +75,258 @@ class sbDeviceBase
 public:
   NS_DECL_SBIDEVICEBASE
 
-    sbDeviceBase(PRBool usingThread = PR_TRUE);
+  sbDeviceBase(PRBool usingThread = PR_TRUE);
   virtual ~sbDeviceBase();
 
-  PRBool  CreateTrackTable(nsString& deviceString, nsString& tableName);
-  PRBool  AddTrack(nsString& deviceString, nsString& tableName, nsString& url, nsString& name, nsString& tim, nsString& artist, nsString& album, nsString& genre, PRUint32 length);
-  void    DownloadDone(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index);
+  PRBool CreateTrackTable(nsString& deviceString,
+                          nsString& tableName);
 
-  void DoDeviceConnectCallback(const PRUnichar* deviceString);
-  void DoDeviceDisconnectCallback(const PRUnichar* deviceString);
-  void DoTransferStartCallback(const PRUnichar* sourceURL, const PRUnichar* destinationURL);
-  void DoTransferCompleteCallback(const PRUnichar* sourceURL, const PRUnichar* destinationURL, PRInt32 nStatus);
+  PRBool AddTrack(nsString& deviceString,
+                  nsString& tableName,
+                  nsString& url,
+                  nsString& name,
+                  nsString& tim,
+                  nsString& artist,
+                  nsString& album,
+                  nsString& genre,
+                  PRUint32 length);
 
-  virtual PRBool IsDeviceIdle(const PRUnichar* deviceString) { return PR_FALSE; }
-  virtual PRBool IsDownloadInProgress(const PRUnichar* deviceString) { return PR_FALSE;}
-  virtual PRBool IsUploadInProgress(const PRUnichar* deviceString) { return PR_FALSE; }
-  virtual PRBool IsTransferInProgress(const PRUnichar* deviceString) { return PR_FALSE;}
-  virtual PRBool IsDownloadPaused(const PRUnichar* deviceString) { return PR_FALSE; }
-  virtual PRBool IsUploadPaused(const PRUnichar* deviceString) { return PR_FALSE;}
-  virtual PRBool IsTransferPaused(const PRUnichar* deviceString) { return PR_FALSE; }
+  void DownloadDone(PRUnichar* deviceString,
+                    PRUnichar* table,
+                    PRUnichar* index);
 
-  PRBool  UpdateIOProgress(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index, PRUint32 percentComplete);
-  PRBool  UpdateIOStatus(PRUnichar* deviceString, PRUnichar* table, PRUnichar* index, const PRUnichar* status);
-  PRBool  TransferNextFile(PRInt32 prevDownloadRowNumber, void *data);
-  void    RemoveExistingTransferTableEntries(const PRUnichar* DeviceString, PRBool downloadTable, PRBool dropTable = false);
-  PRBool  GetFileExtension(PRUint32 fileFormat, nsString& fileExtension);
+  void DoDeviceConnectCallback(const nsAString& aDeviceString);
+
+  void DoDeviceDisconnectCallback(const nsAString& aDeviceString);
+
+  void DoTransferStartCallback(const nsAString& aSourceURL,
+                               const nsAString& aDestinationURL);
+
+  void DoTransferCompleteCallback(const nsAString& aSourceURL,
+                                  const nsAString& aDestinationURL,
+                                  PRInt32 aStatus);
+
+  virtual PRBool IsDeviceIdle(const PRUnichar* deviceString) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool IsDownloadInProgress(const PRUnichar* deviceString) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool IsUploadInProgress(const PRUnichar* deviceString) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool IsTransferInProgress(const nsAString& aDeviceString) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool IsDownloadPaused(const PRUnichar* deviceString) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool IsUploadPaused(const PRUnichar* deviceString) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool IsTransferPaused(const PRUnichar* deviceString) {
+    return PR_FALSE;
+  }
+
+  PRBool UpdateIOProgress(PRUnichar* deviceString,
+                          PRUnichar* table,
+                          PRUnichar* index,
+                          PRUint32 percentComplete);
+
+  PRBool UpdateIOStatus(PRUnichar* deviceString,
+                        PRUnichar* table,
+                        PRUnichar* index,
+                        const PRUnichar* status);
+
+  PRBool TransferNextFile(PRInt32 prevDownloadRowNumber,
+                          void *data);
+
+  void RemoveExistingTransferTableEntries(const PRUnichar* DeviceString,
+                                          PRBool downloadTable,
+                                          PRBool dropTable = PR_FALSE);
+
+  PRBool GetFileExtension(PRUint32 fileFormat,
+                          nsString& fileExtension);
   
-  PRBool  GetNextTransferFileEntry(PRInt32 prevIndex, const PRUnichar *deviceString, PRBool bDownloading, PRInt32& curIndex, nsString& source, nsString& destination);
+  PRBool GetNextTransferFileEntry(PRInt32 prevIndex,
+                                  const PRUnichar *deviceString,
+                                  PRBool bDownloading,
+                                  PRInt32& curIndex,
+                                  nsString& source,
+                                  nsString& destination);
 
 protected:
 
   // Should be overridden in the derived class
-  virtual void OnThreadBegin(){}
-  virtual void OnThreadEnd(){}
+  virtual void OnThreadBegin() {}
+  virtual void OnThreadEnd() {}
 
-  virtual PRBool TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber){ return false;}
-  virtual PRBool StopCurrentTransfer(const PRUnichar* deviceString);
-  virtual PRBool SuspendCurrentTransfer(const PRUnichar* deviceString);
-  virtual PRBool ResumeTransfer(const PRUnichar* deviceString);
+  virtual PRBool TransferFile(PRUnichar* deviceString,
+                              PRUnichar* source,
+                              PRUnichar* destination,
+                              PRUnichar* dbContext,
+                              PRUnichar* table,
+                              PRUnichar* index,
+                              PRInt32 curDownloadRowNumber) {
+    return PR_FALSE;
+  }
+
+  virtual PRBool StopCurrentTransfer(const nsAString& aDeviceString);
+
+  virtual PRBool SuspendCurrentTransfer(const nsAString& aDeviceString);
+
+  virtual PRBool ResumeTransfer(const nsAString& aDeviceString);
 
   virtual PRBool InitializeAsync();
+
   virtual PRBool FinalizeAsync();
+
   virtual PRBool DeviceEventAsync(PRBool mediaInserted);
 
   virtual PRBool InitializeSync();
+
   virtual PRBool FinalizeSync();
+
   virtual PRBool DeviceEventSync(PRBool mediaInserted);
 
   PRBool SubmitMessage(PRUint32 message, void* data1, void* data2);
 
-  typedef struct
+  struct ThreadMessage
   {
     PRUint32 message;
-    void*    data1;
-    void*    data2;
-  } ThreadMessage;
+    void* data1;
+    void* data2;
+  };
 
-  PRBool    CreateTransferTable(const PRUnichar *DeviceString, const PRUnichar* ContextInput, const PRUnichar* TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **filterValues, const PRUnichar* sourcePath, const PRUnichar* destPath, PRBool isDownloading, PRUnichar **TransferTableName);
-  void      AddQuotedString(nsString &destinationString, const PRUnichar* sourceString, PRBool suffixWithComma = PR_TRUE);
-  PRBool    GetFileNameFromURL(const PRUnichar *DeviceString, nsString& url, nsString& fileName);
-  nsString  GetTransferTable(const PRUnichar* deviceString, PRBool getDownloadTable);
-  PRBool    StartTransfer(const PRUnichar *deviceString, const PRUnichar *tableName);
+  PRBool CreateTransferTable(const nsAString& aDeviceString,
+                             const nsAString& aContextInput,
+                             const nsAString& aTableName,
+                             const nsAString& aFilterColumn,
+                             PRUint32 aFilterCount,
+                             const PRUnichar** aFilterValues,
+                             const nsAString& aSourcePath,
+                             const nsAString& aDestPath,
+                             PRBool aDownloading,
+                             nsAString& aTransferTable);
 
-  PRBool GetSourceAndDestinationURL(const PRUnichar* dbContext, const PRUnichar* table, const PRUnichar* index, nsString& sourceURL, nsString& destURL);
+
+  void AddQuotedString(nsString &destinationString,
+                       const PRUnichar* sourceString,
+                       PRBool suffixWithComma = PR_TRUE);
+
+  PRBool GetFileNameFromURL(const PRUnichar *DeviceString,
+                            nsString& url,
+                            nsString& fileName);
+
+  void GetTransferTable(const nsAString& aDeviceString,
+                        PRBool aGetDownloadTable,
+                        nsAString& _retval);
+
+  PRBool StartTransfer(const PRUnichar *deviceString,
+                       const PRUnichar *tableName);
+
+  PRBool GetSourceAndDestinationURL(const PRUnichar* dbContext,
+                                    const PRUnichar* table,
+                                    const PRUnichar* index,
+                                    nsString& sourceURL,
+                                    nsString& destURL);
 
   // Device state
-  virtual void DeviceIdle(const PRUnichar* deviceString){}
+  virtual void DeviceIdle(const PRUnichar* deviceString) {}
+
   virtual void DeviceDownloading(const PRUnichar* deviceString) {}
+
   virtual void DeviceUploading(const PRUnichar* deviceString) {}
+
   virtual void DeviceDownloadPaused(const PRUnichar* deviceString) {}
+
   virtual void DeviceUploadPaused(const PRUnichar* deviceString) {}
+
   virtual void DeviceDeleting(const PRUnichar* deviceString) {}
+
   virtual void DeviceBusy(const PRUnichar* deviceString) {}
 
   void ResumeAbortedTransfer(const PRUnichar* deviceString);
+
   void ResumeAbortedDownload(const PRUnichar* deviceString);
+
   void ResumeAbortedUpload(const PRUnichar* deviceString);
 
   // Transfer related
-  virtual nsString GetDeviceDownloadTable(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceUploadTable(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceDownloadTableDescription(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceUploadTableDescription(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceDownloadTableType(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceUploadTableType(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceDownloadReadable(const PRUnichar* deviceString){ return nsString(); }
-  virtual nsString GetDeviceUploadTableReadable(const PRUnichar* deviceString){ return nsString(); }
+  virtual void GetDeviceDownloadTable(const nsAString& aDeviceString,
+                                      nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceUploadTable(const nsAString& aDeviceString,
+                                    nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceDownloadTableDescription(const nsAString& aDeviceString,
+                                                 nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceUploadTableDescription(const nsAString& aDeviceString,
+                                               nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceDownloadTableType(const nsAString& aDeviceString,
+                                          nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceUploadTableType(const nsAString& aDeviceString,
+                                        nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceDownloadReadable(const nsAString& aDeviceString,
+                                         nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
+
+  virtual void GetDeviceUploadTableReadable(const nsAString& aDeviceString,
+                                            nsAString& _retval) {
+    _retval.Assign(EmptyString());
+  }
 
   // Should be overridden in the derived class to return the row number for currently transferring track
-  virtual PRUint32  GetCurrentTransferRowNumber(const PRUnichar* deviceString) { return 0;  }
+  virtual PRUint32 GetCurrentTransferRowNumber(const PRUnichar* deviceString) {
+    return 0;
+  }
 
   virtual PRBool GetUploadFileFormat(PRUint32& fileFormat);
+
   virtual PRBool GetDownloadFileFormat(PRUint32& fileFormat);
-  virtual void   TransferComplete();
+
+  virtual void TransferComplete();
 
   static void PR_CALLBACK DeviceProcess(sbDeviceBase* pData);
 
 private:
-  std::deque<ThreadMessage *> mDeviceMessageQueue;
+
+  std::deque<ThreadMessage*> mDeviceMessageQueue;
+
   PRBool mUsingThread;
 
   PRLock* mpCallbackListLock;
   std::vector<sbIDeviceBaseCallback *> mCallbackList;
 
   PRMonitor* mpDeviceThreadMonitor;
+
   nsCOMPtr<nsIThread> mpDeviceThread;
+
   PRBool mDeviceThreadShouldShutdown;
+
   PRBool mDeviceQueueHasItem;
 };
 
@@ -192,13 +335,11 @@ class sbDeviceThread : public nsIRunnable
 public:
   NS_DECL_ISUPPORTS
 
-    sbDeviceThread(sbDeviceBase* pDevice) : mpDevice(pDevice)
-  {
+  sbDeviceThread(sbDeviceBase* pDevice) : mpDevice(pDevice) {
     NS_ASSERTION(mpDevice, "Initializing without a sbDeviceBase");
   }
 
-  NS_IMETHOD Run()
-  {
+  NS_IMETHOD Run() {
     if (!mpDevice)
       return NS_ERROR_NULL_POINTER;
     sbDeviceBase::DeviceProcess(mpDevice);

@@ -1378,7 +1378,7 @@ function onBrowserDownload()
       var downloadDevice =
         deviceManager.getDeviceByCategory(downloadCategory);
       SBDownloadCommands.m_Device = downloadDevice;
-      guid = downloadDevice.GetContext('');
+      guid = downloadDevice.getContext('');
       table = "download";
     }
   }
@@ -1804,7 +1804,7 @@ try
       listProperties( downloadDevice, "downloadDevice" );
       alert( Components.interfaces.sbIDownloadDevice );
           downloadDevice.name;
-          downloadDevice.IsDownloadSupported();
+          downloadDevice.isDownloadSupported();
           t = downloadDevice.DownloadTrackTable('testdb-0000','download');
     }
   }
@@ -2785,19 +2785,19 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                   var downloadTable = {};
                   // Passing empty string for device name as download device has just one device
                   // Prepare table for download & get the name for newly prepared download table
-                  //downloadDevice.AddCallback(theDownloadListener);
+                  //downloadDevice.addCallback(theDownloadListener);
                   
-                  downloadDevice.AutoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
+                  downloadDevice.autoDownloadTable('', guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', download_data.value, downloadTable);
                   
                   // Record the current download table
-                  theDownloadContext.stringValue = downloadDevice.GetContext('');
+                  theDownloadContext.stringValue = downloadDevice.getContext('');
                   theDownloadTable.stringValue = downloadTable.value;
                   theDownloadExists.boolValue = true;
                   
                   // Register the guid and table with the playlist source to always show special download commands.
                   SBDownloadCommands.m_Device = downloadDevice;
                   var source = new sbIPlaylistsource();
-                  source.registerPlaylistCommands( downloadDevice.GetContext(''), downloadTable.value, "download", SBDownloadCommands );
+                  source.registerPlaylistCommands( downloadDevice.getContext(''), downloadTable.value, "download", SBDownloadCommands );
                 }
             }
         }
@@ -2870,7 +2870,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+        if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
           this.m_Ids[ index ] = "library_cmd_resume";
         }
@@ -2893,7 +2893,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+        if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
           this.m_Names[ index ] = "&command.resume";
         }
@@ -2922,7 +2922,7 @@ var SBDownloadCommands =
     {
       if ( this.m_Device )
       {
-        if ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+        if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
           this.m_Tooltips[ index ] = "&command.tooltip.resume";
         }
@@ -2947,7 +2947,7 @@ var SBDownloadCommands =
       switch( index )
       {
         case 2:
-          retval = ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOADING ) || ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+          retval = ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOADING ) || ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         break;
         default:
           retval = true;
@@ -2981,13 +2981,13 @@ var SBDownloadCommands =
         break;
         case "library_cmd_pause":
         case "library_cmd_resume":
-          if ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOADING )
+          if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOADING )
           {
-            this.m_Device.SuspendTransfer('');
+            this.m_Device.suspendTransfer('');
           }
-          else if ( this.m_Device.GetDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
+          else if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
           {
-            this.m_Device.ResumeTransfer('');
+            this.m_Device.resumeTransfer('');
           }
           // Since we changed state, update the command buttons.
           this.m_Playlist.refreshCommands();
@@ -3049,7 +3049,7 @@ if (deviceManager)
     var downloadDevice =
       deviceManager.getDeviceByCategory(downloadCategory);
     SBDownloadCommands.m_Device = downloadDevice;
-    var guid = downloadDevice.GetContext('');
+    var guid = downloadDevice.getContext('');
     var table = "download"; // downloadDevice.GetTransferTableName('');
     var source = new sbIPlaylistsource();
     try
@@ -3434,9 +3434,9 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
                 var rippingTable = {};
                 // Passing empty string for device name as download device has just one device
                 // Prepare table for download & get the name for newly prepared download table
-                //downloadDevice.AddCallback(theDownloadListener);
+                //downloadDevice.addCallback(theDownloadListener);
                 
-                aCDDevice.AutoDownloadTable(deviceName, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', ripping_data.value, rippingTable);
+                aCDDevice.autoDownloadTable(deviceName, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', ripping_data.value, rippingTable);
                 
                 // Register the guid and table with the playlist source to always show special download commands.
                 SBRippingCommands.m_Device = aCDDevice;
@@ -3520,7 +3520,7 @@ function OnCDInsert(deviceName)
       SBCDCommands.m_Device = aCDDevice;
       var cdTable = {};
       var cdContext = {};
-      aCDDevice.GetTrackTable(SBCDCommands.m_DeviceName, cdContext, cdTable);
+      aCDDevice.getTrackTable(SBCDCommands.m_DeviceName, cdContext, cdTable);
       cdContext = cdContext.value;
       cdTable = cdTable.value;
       SBCDCommands.m_Context = cdContext;
@@ -3551,16 +3551,16 @@ if (deviceManager)
         var aCDDevice = deviceManager.getDeviceByCategory(CDCategory);
         try
         {
-            aCDDevice.AddCallback(theCDListener);
-            if (aCDDevice.GetNumDevices() > 0)
+            aCDDevice.addCallback(theCDListener);
+            if (aCDDevice.deviceCount > 0)
             {
 			  // Currently handling just the first device
-			  OnCDInsert(aCDDevice.EnumDeviceString(0));
+			  OnCDInsert(aCDDevice.getDeviceStringByIndex(0));
             }
         }
         catch ( err )
         {
-            alert( "aCDDevice.AddCallback(theCDListener);\r\n" + err );
+            alert( "aCDDevice.addCallback(theCDListener);\r\n" + err );
         }
     }
 }
@@ -3726,7 +3726,7 @@ function onStartCDBurn(cdDevice, deviceName, table)
       CheckCDAvailableForBurn();
       if (cdAvailableForWrite)
       {
-        cdDevice.UploadTable(deviceName, table);
+        cdDevice.uploadTable(deviceName, table);
       }
     }
   }
@@ -3753,14 +3753,14 @@ function onAddToCDBurn(guid, table, strFilterColumn, nFilterValueCount, aFilterV
         var burnTable = {};
         
         // CD burning will be a two step process, user has to click the 'burn' button to initiate a CD burn
-        aCDDevice.MakeTransferTable(writableCDDeviceString, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', '', false, burnTable);
+        aCDDevice.makeTransferTable(writableCDDeviceString, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, '', '', false, burnTable);
         
         // Register the guid and table with the playlist source to always show special burn commands.
         SBCDBurningCommands.m_Device = aCDDevice;
         SBCDBurningCommands.m_DeviceName = writableCDDeviceString;
         SBCDBurningCommands.m_TableName = burnTable.value;
         var source = new sbIPlaylistsource();
-        source.registerPlaylistCommands( aCDDevice.GetContext(writableCDDeviceString), burnTable.value, burnTable.value, SBCDBurningCommands );
+        source.registerPlaylistCommands( aCDDevice.getContext(writableCDDeviceString), burnTable.value, burnTable.value, SBCDBurningCommands );
 
         // And show the download table in the chrome playlist.
         //onBrowserCDTransfer(aCDDevice, writableCDDeviceString, 0 /*Burning*/);
@@ -3795,18 +3795,18 @@ function CheckCDAvailableForBurn()
     }
 
     var temp = {};
-    if (!aCDDevice.GetWritableCDDrive(temp))
+    if (!aCDDevice.getWritableCDDrive(temp))
     {
         return;
     }
     writableCDDeviceString = temp.value;
     
-    if (!aCDDevice.IsUploadSupported(writableCDDeviceString))
+    if (!aCDDevice.isUploadSupported(writableCDDeviceString))
     {
         return;
     }
 
-    if (aCDDevice.GetAvailableSpace(writableCDDeviceString) == 0)
+    if (aCDDevice.getAvailableSpace(writableCDDeviceString) == 0)
     {
         return;
     }
@@ -3819,7 +3819,7 @@ function onStopCDBurn(deviceName, aCDDevice)
 {
   if (aCDDevice)
   {
-    aCDDevice.AbortTransfer(deviceName);
+    aCDDevice.abortTransfer(deviceName);
   }
 }
 
@@ -3831,12 +3831,12 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
 	metrics_inc("player", "cd burning", null);
     
   // Work to figure out guid and table
-  var guid = cdDevice.GetContext(deviceString);
+  var guid = cdDevice.getContext(deviceString);
   var table;
   if (ripping)
-    table = cdDevice.GetDownloadTable(deviceString);
+    table = cdDevice.getDownloadTable(deviceString);
   else
-    table = cdDevice.GetUploadTable(deviceString);
+    table = cdDevice.getUploadTable(deviceString);
 
   // Actual functionality
   if ( ! thePlaylistTree )

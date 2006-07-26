@@ -279,11 +279,8 @@ sbDeviceManager::GetCategoryByIndex(PRUint32 aIndex,
   nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(aIndex);
   NS_ENSURE_TRUE(device, NS_ERROR_NULL_POINTER);
 
-  PRUnichar* stringBuffer;
-  nsresult rv = device->GetDeviceCategory(&stringBuffer);
+  nsresult rv = device->GetDeviceCategory(_retval);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  _retval.Assign(stringBuffer);
 
   return NS_OK;
 }
@@ -369,14 +366,12 @@ sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
       continue;
     }
 
-    PRUnichar* categoryBuffer;
-    nsresult rv = device->GetDeviceCategory(&categoryBuffer);
+    nsAutoString category;
+    nsresult rv = device->GetDeviceCategory(category);
     if (NS_FAILED(rv)) {
       NS_WARNING("GetDeviceCategory Failed");
       continue;
     }
-
-    nsDependentString category(categoryBuffer);
 
     if (category.Equals(aCategory)) {
       mLastRequestedCategory = category;

@@ -24,11 +24,25 @@
 //
  */
 
+/**
+ * \file sbIDownloadDevice.idl
+ *
+ * \brief The IDL for sbIDownloadDevice.
+ */
+
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
-[scriptable, uuid(5918440D-AF8B-40e9-80C4-F1132BD893A9)]
+/**
+ * \interface sbIDownloadDevice
+ *
+ * \brief Songbird DownloadDevice Interface.
+ * 
+ * <TODO:Detail>.
+ *
+ * \sa sbIDeviceBase.idl
+ */
+[scriptable, uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
 interface sbIDownloadDevice : sbIDeviceBase
 {
 };
-

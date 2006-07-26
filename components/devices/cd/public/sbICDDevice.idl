@@ -41,12 +41,11 @@
  *
  * \sa sbIDeviceBase.idl
  */
-[scriptable, uuid(6d5f2046-7e6b-4005-b9af-00135eecd2c5)]
+[scriptable, uuid(35da06df-eb59-4590-be5a-0329abc40965)]
 interface sbICDDevice : sbIDeviceBase
 {
   /**
    * \brief Finds the first CD device capable of writing.
-   *
    *
    * <TODO: Detail>
    *

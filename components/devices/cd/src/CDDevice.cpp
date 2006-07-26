@@ -63,11 +63,10 @@
 
 NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
 
-sbCDDevice::sbCDDevice()
-: sbDeviceBase(PR_TRUE)
+sbCDDevice::sbCDDevice() :
+  sbDeviceBase(PR_TRUE),
+  mCDManagerObject(nsnull)
 {
-  mCDManagerObject = new WinCDDeviceManager(this);
-
   // Get the string bundle for our strings
   if (!m_StringBundle) {
     nsresult rv;
@@ -94,8 +93,11 @@ sbCDDevice::~sbCDDevice()
 NS_IMETHODIMP
 sbCDDevice::Initialize(PRBool* _retval)
 {
+  mCDManagerObject = new WinCDDeviceManager();
+  NS_ENSURE_TRUE(mCDManagerObject, NS_ERROR_OUT_OF_MEMORY);
+
   // Post a message to handle this event asynchronously
-  mCDManagerObject->Initialize();
+  mCDManagerObject->Initialize((void*)this);
   return NS_OK;
 }
 
@@ -108,44 +110,44 @@ sbCDDevice::Finalize(PRBool* _retval)
 }
 
 NS_IMETHODIMP
-sbCDDevice::AddCallback(sbIDeviceBaseCallback *pCallback,
+sbCDDevice::AddCallback(sbIDeviceBaseCallback* aCallback,
                         PRBool* _retval)
 {
-  return sbDeviceBase::AddCallback(pCallback, _retval);
+  return sbDeviceBase::AddCallback(aCallback, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::RemoveCallback(sbIDeviceBaseCallback *pCallback,
+sbCDDevice::RemoveCallback(sbIDeviceBaseCallback* aCallback,
                            PRBool* _retval)
 {
-  return sbDeviceBase::RemoveCallback(pCallback, _retval);
+  return sbDeviceBase::RemoveCallback(aCallback, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::EnumDeviceString(PRUint32 aIndex,
-                             PRUnichar** _retval)
+sbCDDevice::GetDeviceStringByIndex(PRUint32 aIndex,
+                                   nsAString& _retval)
 {
-  *_retval = mCDManagerObject->EnumDeviceString(aIndex);
+  mCDManagerObject->GetDeviceStringByIndex(aIndex, _retval);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbCDDevice::SetName(const PRUnichar* aName)
+sbCDDevice::SetName(const nsAString& aName)
 {
   return sbDeviceBase::SetName(aName);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetContext(const PRUnichar* aDeviceString,
-                       PRUnichar** _retval)
+sbCDDevice::GetContext(const nsAString& aDeviceString,
+                       nsAString& _retval)
 {
-  *_retval = mCDManagerObject->GetContext(aDeviceString);
+  mCDManagerObject->GetContext(aDeviceString, _retval);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbCDDevice::IsDownloadSupported(const PRUnichar* aDeviceString,
+sbCDDevice::IsDownloadSupported(const nsAString& aDeviceString,
                                 PRBool* _retval)
 {
   *_retval = PR_TRUE;
@@ -153,14 +155,14 @@ sbCDDevice::IsDownloadSupported(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetSupportedFormats(const PRUnichar* aDeviceString,
+sbCDDevice::GetSupportedFormats(const nsAString& aDeviceString,
                                 PRUint32* _retval)
 {
   return sbDeviceBase::GetSupportedFormats(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::IsUploadSupported(const PRUnichar* aDeviceString,
+sbCDDevice::IsUploadSupported(const nsAString& aDeviceString,
                               PRBool* _retval)
 {
   *_retval = mCDManagerObject->IsUploadSupported(aDeviceString);
@@ -168,28 +170,28 @@ sbCDDevice::IsUploadSupported(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::IsTransfering(const PRUnichar* aDeviceString,
+sbCDDevice::IsTransfering(const nsAString& aDeviceString,
                           PRBool* _retval)
 {
   return sbDeviceBase::IsTransfering(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::IsDeleteSupported(const PRUnichar* aDeviceString,
+sbCDDevice::IsDeleteSupported(const nsAString& aDeviceString,
                               PRBool* _retval)
 {
   return sbDeviceBase::IsDeleteSupported(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetUsedSpace(const PRUnichar* aDeviceString,
+sbCDDevice::GetUsedSpace(const nsAString& aDeviceString,
                          PRUint32* _retval)
 {
   return sbDeviceBase::GetUsedSpace(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetAvailableSpace(const PRUnichar* aDeviceString,
+sbCDDevice::GetAvailableSpace(const nsAString& aDeviceString,
                               PRUint32* _retval)
 {
   *_retval = mCDManagerObject->GetAvailableSpace(aDeviceString);
@@ -197,9 +199,9 @@ sbCDDevice::GetAvailableSpace(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetTrackTable(const PRUnichar* aDeviceString,
-                          PRUnichar** aDBContext,
-                          PRUnichar** aTableName,
+sbCDDevice::GetTrackTable(const nsAString& aDeviceString,
+                          nsAString& aDBContext,
+                          nsAString& aTableName,
                           PRBool* _retval)
 {
   *_retval = mCDManagerObject->GetTrackTable(aDeviceString, aDBContext,
@@ -208,16 +210,16 @@ sbCDDevice::GetTrackTable(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::AbortTransfer(const PRUnichar* aDeviceString,
+sbCDDevice::AbortTransfer(const nsAString& aDeviceString,
                           PRBool* _retval)
 {
   return sbDeviceBase::AbortTransfer(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::DeleteTable(const PRUnichar* aDeviceString,
-                        const PRUnichar* aDBContext,
-                        const PRUnichar* aTableName,
+sbCDDevice::DeleteTable(const nsAString& aDeviceString,
+                        const nsAString& aDBContext,
+                        const nsAString& aTableName,
                         PRBool* _retval)
 {
   return sbDeviceBase::DeleteTable(aDeviceString, aDBContext, aTableName,
@@ -225,31 +227,31 @@ sbCDDevice::DeleteTable(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::UpdateTable(const PRUnichar* aDeviceString,
-                        const PRUnichar* aTableName,
+sbCDDevice::UpdateTable(const nsAString& aDeviceString,
+                        const nsAString& aTableName,
                         PRBool* _retval)
 {
   return sbDeviceBase::UpdateTable(aDeviceString, aTableName, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::EjectDevice(const PRUnichar* aDeviceString,
+sbCDDevice::EjectDevice(const nsAString& aDeviceString,
                         PRBool* _retval)
 {
   return sbDeviceBase::EjectDevice(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetDeviceCategory(PRUnichar** _retval)
+sbCDDevice::GetDeviceCategory(nsAString& aDeviceCategory)
 {
-  *_retval = ToNewUnicode(NS_LITERAL_STRING(NAME_CDDEVICE));
+  aDeviceCategory.AssignLiteral(NAME_CDDEVICE);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetName(PRUnichar** aName)
+sbCDDevice::GetName(nsAString& aName)
 {
-  *aName = ToNewUnicode(NS_LITERAL_STRING(NAME_CDDEVICE));
+  aName.AssignLiteral(NAME_CDDEVICE);
   return NS_OK;
 }
 
@@ -274,54 +276,55 @@ sbCDDevice::OnThreadEnd()
 }
 
 NS_IMETHODIMP
-sbCDDevice::IsUpdateSupported(const PRUnichar* aDeviceString,
+sbCDDevice::IsUpdateSupported(const nsAString& aDeviceString,
                               PRBool* _retval)
 {
   return sbDeviceBase::IsUpdateSupported(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::IsEjectSupported(const PRUnichar* aDeviceString,
+sbCDDevice::IsEjectSupported(const nsAString& aDeviceString,
                              PRBool* _retval)
 {
   return sbDeviceBase::IsEjectSupported(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetNumDevices(PRUint32* _retval)
+sbCDDevice::GetDeviceCount(PRUint32* aDeviceCount)
 {
-  return sbDeviceBase::GetNumDevices(_retval);
+  return sbDeviceBase::GetDeviceCount(aDeviceCount);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetNumDestinations(const PRUnichar* aDeviceString,
-                               PRUnichar** _retval)
+sbCDDevice::GetDestinationCount(const nsAString& aDeviceString,
+                                PRUint32* _retval)
 {
-  return sbDeviceBase::GetNumDestinations(aDeviceString, _retval);
+  return sbDeviceBase::GetDestinationCount(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::MakeTransferTable(const PRUnichar* aDeviceString,
-                              const PRUnichar* aContextInput,
-                              const PRUnichar* aTableName,
-                              const PRUnichar* aFilterColumn,
+sbCDDevice::MakeTransferTable(const nsAString& aDeviceString,
+                              const nsAString& aContextInput,
+                              const nsAString& aTableName,
+                              const nsAString& aFilterColumn,
                               PRUint32 aFilterCount,
                               const PRUnichar** aFilterValues,
-                              const PRUnichar* aSourcePath,
-                              const PRUnichar* aDestPath,
+                              const nsAString& aSourcePath,
+                              const nsAString& aDestPath,
                               PRBool aDownloading,
-                              PRUnichar** aTransferTableName,
+                              nsAString& aTransferTable,
                               PRBool* _retval)
 {
-  return sbDeviceBase::MakeTransferTable(aDeviceString, aContextInput, aTableName,
-                                         aFilterColumn, aFilterCount,
-                                         aFilterValues, aSourcePath, aDestPath,
-                                         aDownloading, aTransferTableName,
+  return sbDeviceBase::MakeTransferTable(aDeviceString, aContextInput,
+                                         aTableName, aFilterColumn,
+                                         aFilterCount, aFilterValues,
+                                         aSourcePath, aDestPath,
+                                         aDownloading, aTransferTable,
                                          _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::SuspendTransfer(const PRUnichar* aDeviceString,
+sbCDDevice::SuspendTransfer(const nsAString& aDeviceString,
                             PRBool* _retval)
 {
   *_retval = PR_FALSE;
@@ -329,7 +332,7 @@ sbCDDevice::SuspendTransfer(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::ResumeTransfer(const PRUnichar* aDeviceString,
+sbCDDevice::ResumeTransfer(const nsAString& aDeviceString,
                            PRBool* _retval)
 {
   *_retval = PR_FALSE;
@@ -337,14 +340,14 @@ sbCDDevice::ResumeTransfer(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetDeviceState(const PRUnichar* aDeviceString,
+sbCDDevice::GetDeviceState(const nsAString& aDeviceString,
                            PRUint32* _retval)
 {
   return sbDeviceBase::GetDeviceState(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::RemoveTranferTracks(const PRUnichar* aDeviceString,
+sbCDDevice::RemoveTranferTracks(const nsAString& aDeviceString,
                                 PRUint32 aIndex,
                                 PRBool* _retval)
 {
@@ -352,35 +355,38 @@ sbCDDevice::RemoveTranferTracks(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetDownloadTable(const PRUnichar* aDeviceString,
-                             PRUnichar** _retval)
+sbCDDevice::GetDownloadTable(const nsAString& aDeviceString,
+                             nsAString& _retval)
 {
   return sbDeviceBase::GetDownloadTable(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetUploadTable(const PRUnichar* aDeviceString,
-                           PRUnichar** _retval)
+sbCDDevice::GetUploadTable(const nsAString& aDeviceString,
+                           nsAString& _retval)
 {
   return sbDeviceBase::GetUploadTable(aDeviceString, _retval);
 }
 
 NS_IMETHODIMP
-sbCDDevice::AutoDownloadTable(const PRUnichar* aDeviceString,
-                              const PRUnichar* aContextInput,
-                              const PRUnichar* aTableName,
-                              const PRUnichar* aFilterColumn,
+sbCDDevice::AutoDownloadTable(const nsAString& aDeviceString,
+                              const nsAString& aContextInput,
+                              const nsAString& aTableName,
+                              const nsAString& aFilterColumn,
                               PRUint32 aFilterCount,
                               const PRUnichar** aFilterValues,
-                              const PRUnichar* aSourcePath,
-                              const PRUnichar* aDestPath,
-                              PRUnichar** aTransferTable,
+                              const nsAString& aSourcePath,
+                              const nsAString& aDestPath,
+                              nsAString& aTransferTable,
                               PRBool* _retval)
 {
-  if (!IsDownloadInProgress(aDeviceString))
+  // XXXben Remove me
+  nsAutoString str(aDeviceString);
+
+  if (!IsDownloadInProgress(str.get()))
   {
     // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(aDeviceString, PR_TRUE);
+    RemoveExistingTransferTableEntries(str.get(), PR_TRUE);
   }
 
   return sbDeviceBase::AutoDownloadTable(aDeviceString, aContextInput, aTableName,
@@ -390,20 +396,23 @@ sbCDDevice::AutoDownloadTable(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::AutoUploadTable(const PRUnichar* aDeviceString,
-                            const PRUnichar* aContextInput,
-                            const PRUnichar* aTableName,
-                            const PRUnichar* aFilterColumn,
+sbCDDevice::AutoUploadTable(const nsAString& aDeviceString,
+                            const nsAString& aContextInput,
+                            const nsAString& aTableName,
+                            const nsAString& aFilterColumn,
                             PRUint32 aFilterCount,
                             const PRUnichar** aFilterValues,
-                            const PRUnichar* aSourcePath,
-                            const PRUnichar* aDestPath,
-                            PRUnichar** aTransferTable,
+                            const nsAString& aSourcePath,
+                            const nsAString& aDestPath,
+                            nsAString& aTransferTable,
                             PRBool* _retval)
 {
-  if (IsDeviceIdle(aDeviceString))
+  // XXXben Remove me
+  nsAutoString strDevice(aDeviceString);
+
+  if (IsDeviceIdle(strDevice.get()))
   {
-    RemoveExistingTransferTableEntries(aDeviceString, PR_FALSE);
+    RemoveExistingTransferTableEntries(strDevice.get(), PR_FALSE);
     sbDeviceBase::AutoUploadTable(aDeviceString, aContextInput, aTableName,
                                   aFilterColumn, aFilterCount, aFilterValues,
                                   aSourcePath, aDestPath, aTransferTable,
@@ -414,8 +423,8 @@ sbCDDevice::AutoUploadTable(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::UploadTable(const PRUnichar* aDeviceString,
-                        const PRUnichar* aTableName,
+sbCDDevice::UploadTable(const nsAString& aDeviceString,
+                        const nsAString& aTableName,
                         PRBool* _retval)
 {
   *_retval = mCDManagerObject->UploadTable(aDeviceString, aTableName);
@@ -423,8 +432,8 @@ sbCDDevice::UploadTable(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::DownloadTable(const PRUnichar* aDeviceString,
-                          const PRUnichar* aTableName,
+sbCDDevice::DownloadTable(const nsAString& aDeviceString,
+                          const nsAString& aTableName,
                           PRBool* _retval)
 {
   return sbDeviceBase::DownloadTable(aDeviceString, aTableName, _retval);
@@ -442,7 +451,7 @@ sbCDDevice::OnCDDriveEvent(PRBool aMediaInserted,
 PRBool
 sbCDDevice::InitializeSync()
 {
-  mCDManagerObject->Initialize();
+  mCDManagerObject->Initialize((void*)this);
   return PR_TRUE;
 }
 
@@ -459,98 +468,90 @@ sbCDDevice::DeviceEventSync(PRBool aMediaInserted)
   return mCDManagerObject->OnCDDriveEvent(aMediaInserted);
 }
 
-nsString sbCDDevice::GetDeviceDownloadTableDescription(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceDownloadTableDescription(const nsAString& aDeviceString,
+                                              nsAString& _retval)
 { 
-  nsString displayString;
-  PRUnichar* value = nsnull;
+  nsXPIDLString string;
 
   NS_NAMED_LITERAL_STRING(bundleString, CDDEVICE_RIP_TABLE_READABLE);
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
-  displayString = value;
-  PR_Free(value);
-
-  return displayString;
+  m_StringBundle->GetStringFromName(bundleString.get(),
+                                    getter_Copies(string));
+  _retval.Assign(string);
 }
 
-nsString sbCDDevice::GetDeviceUploadTableDescription(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceUploadTableDescription(const nsAString& aDeviceString,
+                                            nsAString& _retval)
 { 
-  nsString displayString;
-  PRUnichar* value = nsnull;
+  nsXPIDLString string;
 
   NS_NAMED_LITERAL_STRING(bundleString, CDDEVICE_BURN_TABLE_READABLE);
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
-  displayString = value;
-  PR_Free(value);
-
-  return displayString;
+  m_StringBundle->GetStringFromName(bundleString.get(),
+                                    getter_Copies(string));
+  _retval.Assign(string);
 }
 
-nsString sbCDDevice::GetDeviceDownloadTableType(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceDownloadTableType(const nsAString& aDeviceString,
+                                       nsAString& _retval)
 { 
-  nsString displayString;
-  PRUnichar* value = nsnull;
+  nsXPIDLString string;
 
   NS_NAMED_LITERAL_STRING(bundleString, CDDEVICE_RIP_TABLE_READABLE);
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
-  displayString = value;
-  PR_Free(value);
-
-  return displayString;
+  m_StringBundle->GetStringFromName(bundleString.get(),
+                                    getter_Copies(string));
+  _retval.Assign(string);
 }
 
-nsString sbCDDevice::GetDeviceUploadTableType(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceUploadTableType(const nsAString& aDeviceString,
+                                     nsAString& _retval)
 { 
-  nsString displayString;
-  PRUnichar* value = nsnull;
+  nsXPIDLString string;
 
   NS_NAMED_LITERAL_STRING(bundleString, CDDEVICE_RIP_TABLE_READABLE);
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
-  displayString = value;
-  PR_Free(value);
-
-  return displayString;
+  m_StringBundle->GetStringFromName(bundleString.get(),
+                                    getter_Copies(string));
+  _retval.Assign(string);
 }
 
-nsString sbCDDevice::GetDeviceDownloadReadable(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceDownloadReadable(const nsAString& aDeviceString,
+                                      nsAString& _retval)
 { 
-  nsString displayString;
-  PRUnichar* value = nsnull;
+  nsXPIDLString string;
 
   NS_NAMED_LITERAL_STRING(bundleString, CDDEVICE_RIP_TABLE_READABLE);
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
-  displayString = value;
-  PR_Free(value);
-
-  return displayString;
+  m_StringBundle->GetStringFromName(bundleString.get(),
+                                    getter_Copies(string));
+  _retval.Assign(string);
 }
 
-nsString sbCDDevice::GetDeviceUploadTableReadable(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceUploadTableReadable(const nsAString& aDeviceString,
+                                         nsAString& _retval)
 { 
-  nsString displayString;
-  PRUnichar* value = nsnull;
+  nsXPIDLString string;
 
   NS_NAMED_LITERAL_STRING(bundleString, CDDEVICE_BURN_TABLE_READABLE);
-  m_StringBundle->GetStringFromName(bundleString.get(), &value);
-
-  displayString = value;
-  PR_Free(value);
-
-  return displayString;
+  m_StringBundle->GetStringFromName(bundleString.get(),
+                                    getter_Copies(string));
+  _retval.Assign(string);
 }
 
-nsString sbCDDevice::GetDeviceDownloadTable(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceDownloadTable(const nsAString& aDeviceString,
+                                   nsAString& _retval)
 { 
-  return nsString(NS_LITERAL_STRING(CDDEVICE_RIP_TABLE));
+  _retval.AssignLiteral(CDDEVICE_RIP_TABLE);
 }
 
-nsString sbCDDevice::GetDeviceUploadTable(const PRUnichar* aDeviceString)
+void
+sbCDDevice::GetDeviceUploadTable(const nsAString& aDeviceString,
+                                 nsAString& _retval)
 { 
-  return nsString(NS_LITERAL_STRING(CDDEVICE_BURN_TABLE)); 
+  _retval.AssignLiteral(CDDEVICE_BURN_TABLE); 
 }
 
 // XXXben Why isn't this aDeviceString const like the rest?
@@ -569,25 +570,25 @@ sbCDDevice::TransferFile(PRUnichar* aDeviceString,
 }
 
 PRBool
-sbCDDevice::StopCurrentTransfer(const PRUnichar* aDeviceString)
+sbCDDevice::StopCurrentTransfer(const nsAString& aDeviceString)
 {
   return mCDManagerObject->StopCurrentTransfer(aDeviceString);
 }
 
 PRBool
-sbCDDevice::SuspendCurrentTransfer(const PRUnichar* aDeviceString)
+sbCDDevice::SuspendCurrentTransfer(const nsAString& aDeviceString)
 {
   return PR_FALSE;
 }
 
 PRBool
-sbCDDevice::ResumeTransfer(const PRUnichar* aDeviceString)
+sbCDDevice::ResumeTransfer(const nsAString& aDeviceString)
 {
   return PR_FALSE;
 }
 
 NS_IMETHODIMP
-sbCDDevice::SetDownloadFileType(const PRUnichar* aDeviceString,
+sbCDDevice::SetDownloadFileType(const nsAString& aDeviceString,
                                 PRUint32 aFileType,
                                 PRBool* _retval)
 {
@@ -596,7 +597,7 @@ sbCDDevice::SetDownloadFileType(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::SetUploadFileType(const PRUnichar* aDeviceString,
+sbCDDevice::SetUploadFileType(const nsAString& aDeviceString,
                               PRUint32 aFileType,
                               PRBool* _retval)
 {
@@ -604,7 +605,7 @@ sbCDDevice::SetUploadFileType(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetDownloadFileType(const PRUnichar* aDeviceString,
+sbCDDevice::GetDownloadFileType(const nsAString& aDeviceString,
                                 PRUint32* _retval)
 {
   *_retval = mCDManagerObject->GetCDRipFormat(aDeviceString);
@@ -612,7 +613,7 @@ sbCDDevice::GetDownloadFileType(const PRUnichar* aDeviceString,
 }
 
 NS_IMETHODIMP
-sbCDDevice::GetUploadFileType(const PRUnichar* aDeviceString,
+sbCDDevice::GetUploadFileType(const nsAString& aDeviceString,
                               PRUint32* _retval)
 {
   return sbDeviceBase::GetUploadFileType(aDeviceString, _retval);

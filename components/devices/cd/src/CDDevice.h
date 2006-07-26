@@ -66,14 +66,28 @@ public:
   sbCDDevice();
 
   // Transfer related
-  virtual nsString GetDeviceDownloadTable(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceUploadTable(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceDownloadTableDescription(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceUploadTableDescription(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceDownloadTableType(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceUploadTableType(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceDownloadReadable(const PRUnichar* aDeviceString);
-  virtual nsString GetDeviceUploadTableReadable(const PRUnichar* aDeviceString);
+  virtual void GetDeviceDownloadTable(const nsAString& aDeviceString,
+                                      nsAString& _retval);
+
+  virtual void GetDeviceUploadTable(const nsAString& aDeviceString,
+                                    nsAString& _retval);
+
+  virtual void GetDeviceDownloadTableDescription(const nsAString& aDeviceString,
+                                                 nsAString& _retval);
+
+  virtual void GetDeviceUploadTableDescription(const nsAString& aDeviceString,
+                                               nsAString& _retval);
+
+  virtual void GetDeviceDownloadTableType(const nsAString& aDeviceString,
+                                          nsAString& _retval);
+
+  virtual void GetDeviceUploadTableType(const nsAString& aDeviceString,
+                                        nsAString& _retval);
+  virtual void GetDeviceDownloadReadable(const nsAString& aDeviceString,
+                                         nsAString& _retval);
+
+  virtual void GetDeviceUploadTableReadable(const nsAString& aDeviceString,
+                                            nsAString& _retval);
 
   virtual PRBool TransferFile(PRUnichar* aDeviceString,
                               PRUnichar* aSource,
@@ -84,9 +98,13 @@ public:
                               PRInt32 aCurDownloadRowNumber);
 
   virtual void TransferComplete(const PRUnichar* aDeviceString);
-  virtual PRBool StopCurrentTransfer(const PRUnichar* aDeviceString);
-  virtual PRBool SuspendCurrentTransfer(const PRUnichar* aDeviceString);
-  virtual PRBool ResumeTransfer(const PRUnichar* aDeviceString);
+
+  virtual PRBool StopCurrentTransfer(const nsAString& aDeviceString);
+
+  virtual PRBool SuspendCurrentTransfer(const nsAString& aDeviceString);
+
+  virtual PRBool ResumeTransfer(const nsAString& aDeviceString);
+
   virtual PRUint32 GetCurrentTransferRowNumber(const PRUnichar* aDeviceString);
 
   virtual PRBool IsDeviceIdle(const PRUnichar* aDeviceString) {
@@ -101,9 +119,11 @@ public:
     return mCDManagerObject->IsUploadInProgress(aDeviceString);
   }
 
-  virtual PRBool IsTransferInProgress(const PRUnichar* aDeviceString) {
-    return (mCDManagerObject->IsDownloadInProgress(aDeviceString) ||
-            mCDManagerObject->IsUploadInProgress(aDeviceString));
+  virtual PRBool IsTransferInProgress(const nsAString& aDeviceString) {
+    // XXXben Remove me
+    nsAutoString str(aDeviceString);
+    return (mCDManagerObject->IsDownloadInProgress(str.get()) ||
+            mCDManagerObject->IsUploadInProgress(str.get()));
   }
 
   virtual PRBool IsDownloadPaused(const PRUnichar* aDeviceString) {

@@ -24,11 +24,25 @@
 //
  */
 
+/**
+ * \file sbIWMDevice.idl
+ *
+ * \brief The IDL for sbIWMDevice.
+ */
+
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
-[scriptable, uuid(58061A82-8AE7-4d6b-95E4-50C2A31DEF97)]
+/**
+ * \interface sbIWMDevice
+ *
+ * \brief Songbird WMDevice Interface.
+ *
+ * <TODO: Detail>.
+ *
+ * \sa sbIDeviceBase.idl
+ */
+[scriptable, uuid(58061a82-8ae7-4d6b-95e4-50c2a31def97)]
 interface sbIWMDevice : sbIDeviceBase
 {
 };
-

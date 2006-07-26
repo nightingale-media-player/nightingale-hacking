@@ -34,7 +34,6 @@
 #include "objbase.h"
 #endif
 
-#include <time.h>
 
 #include <xpcom/nscore.h>
 #include <xpcom/nsXPCOM.h>
@@ -46,8 +45,6 @@
 #include <xpcom/nsServiceManagerUtils.h>
 #include <string/nsStringAPI.h>
 #include "nsString.h"
-#include "nsIWebProgressListener.h"
-#include "nsNetUtil.h"
 
 #include "DownloadDevice.h"
 
@@ -70,66 +67,13 @@
 #define DOWNLOAD_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
 #define DOWNLOAD_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
 
-class sbDownloadListener : public nsIWebProgressListener
-{
-public:
-  sbDownloadListener(sbDownloadDevice *downlodingDeviceObject, PRUnichar* deviceString, PRUnichar* table, PRUnichar* index): 
-      mDownlodingDeviceObject(downlodingDeviceObject),
-        mDeviceString(deviceString), 
-        mTable(table),
-        mIndex(index),
-        mShutDown(PR_FALSE),
-        mPrevProgVal(0),
-        mSuspend(PR_FALSE),
-        mSavedRequestObject(nsnull)
-      {
-        mLastDownloadUpdate = time(nsnull);
-      }
-
-      ~sbDownloadListener()
-      {
-      }
-
-      void ShutDown()
-      {
-        mShutDown = PR_TRUE;
-      }
-
-      void Suspend()
-      {
-        mSuspend = PR_TRUE;
-      }
-
-      PRBool Resume()
-      {
-        if (mSuspend && mSavedRequestObject)
-        {
-          mSuspend = PR_FALSE;
-          mSavedRequestObject->Resume();
-
-          return PR_TRUE;
-        }
-        return PR_FALSE;
-      }
-
-      NS_DECL_ISUPPORTS
-        NS_DECL_NSIWEBPROGRESSLISTENER
-
-private:
-  sbDownloadDevice* mDownlodingDeviceObject;
-  nsString mDeviceString; 
-  nsString mTable;
-  nsString mIndex;
-  PRBool mShutDown;
-  PRBool mSuspend;
-  PRUint32 mPrevProgVal;
-  nsIRequest* mSavedRequestObject;
-  time_t mLastDownloadUpdate;
-};
-
 NS_IMPL_ISUPPORTS1(sbDownloadListener, nsIWebProgressListener)
 
-NS_IMETHODIMP sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, PRUint32 aStateFlags, nsresult aStatus)
+NS_IMETHODIMP
+sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
+                                  nsIRequest *aRequest,
+                                  PRUint32 aStateFlags,
+                                  nsresult aStatus)
 {
   if (mShutDown)
   {
@@ -158,7 +102,13 @@ NS_IMETHODIMP sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress, ns
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDownloadListener::OnProgressChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, PRInt32 aCurSelfProgress, PRInt32 aMaxSelfProgress, PRInt32 aCurTotalProgress, PRInt32 aMaxTotalProgress)
+NS_IMETHODIMP
+sbDownloadListener::OnProgressChange(nsIWebProgress *aWebProgress,
+                                     nsIRequest *aRequest,
+                                     PRInt32 aCurSelfProgress,
+                                     PRInt32 aMaxSelfProgress,
+                                     PRInt32 aCurTotalProgress,
+                                     PRInt32 aMaxTotalProgress)
 {
   if (mShutDown)
   {
@@ -185,7 +135,10 @@ NS_IMETHODIMP sbDownloadListener::OnProgressChange(nsIWebProgress *aWebProgress,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDownloadListener::OnLocationChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, nsIURI *aLocation)
+NS_IMETHODIMP
+sbDownloadListener::OnLocationChange(nsIWebProgress *aWebProgress,
+                                     nsIRequest *aRequest,
+                                     nsIURI *aLocation)
 {
   if (mShutDown)
   {
@@ -196,7 +149,11 @@ NS_IMETHODIMP sbDownloadListener::OnLocationChange(nsIWebProgress *aWebProgress,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDownloadListener::OnStatusChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, nsresult aStatus, const PRUnichar *aMessage)
+NS_IMETHODIMP
+sbDownloadListener::OnStatusChange(nsIWebProgress *aWebProgress,
+                                   nsIRequest *aRequest,
+                                   nsresult aStatus,
+                                   const PRUnichar *aMessage)
 {
   if (mShutDown)
   {
@@ -208,7 +165,10 @@ NS_IMETHODIMP sbDownloadListener::OnStatusChange(nsIWebProgress *aWebProgress, n
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDownloadListener::OnSecurityChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, PRUint32 aState)
+NS_IMETHODIMP
+sbDownloadListener::OnSecurityChange(nsIWebProgress *aWebProgress,
+                                     nsIRequest *aRequest,
+                                     PRUint32 aState)
 {
   if (mShutDown)
   {
@@ -224,12 +184,11 @@ NS_IMETHODIMP sbDownloadListener::OnSecurityChange(nsIWebProgress *aWebProgress,
 NS_IMPL_ISUPPORTS2(sbDownloadDevice, sbIDeviceBase, sbIDownloadDevice)
 
 //-----------------------------------------------------------------------------
-sbDownloadDevice::sbDownloadDevice():
-sbDeviceBase(PR_FALSE),
-mListener(nsnull),
-mDeviceState(kSB_DEVICE_STATE_IDLE)
+sbDownloadDevice::sbDownloadDevice() :
+  sbDeviceBase(PR_FALSE),
+  mListener(nsnull),
+  mDeviceState(kSB_DEVICE_STATE_IDLE)
 {
-  PRBool retVal = PR_FALSE;
   SetCurrentTransferRowNumber(-1);
 } //ctor
 
@@ -240,8 +199,8 @@ sbDownloadDevice::~sbDownloadDevice()
   Finalize(&retVal);
 } //dtor
 
-/* PRBool Initialize (); */
-NS_IMETHODIMP sbDownloadDevice::Initialize(PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::Initialize(PRBool *_retval)
 {
   // Resume transfer if any pending
   sbDeviceBase::ResumeAbortedTransfer(NULL);
@@ -249,36 +208,40 @@ NS_IMETHODIMP sbDownloadDevice::Initialize(PRBool *_retval)
   return NS_OK;
 }
 
-/* PRBool Finalize (); */
-NS_IMETHODIMP sbDownloadDevice::Finalize(PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::Finalize(PRBool *_retval)
 {
-  StopCurrentTransfer(NULL);
+  StopCurrentTransfer(EmptyString());
   return NS_OK;
 }
 
-/* PRBool AddCallback (in sbIDeviceBaseCallback pCallback); */
-NS_IMETHODIMP sbDownloadDevice::AddCallback(sbIDeviceBaseCallback *pCallback, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::AddCallback(sbIDeviceBaseCallback* aCallback,
+                              PRBool* _retval)
 {
-  return sbDeviceBase::AddCallback(pCallback, _retval);
+  return sbDeviceBase::AddCallback(aCallback, _retval);
 }
 
-/* PRBool RemoveCallback (in sbIDeviceBaseCallback pCallback); */
-NS_IMETHODIMP sbDownloadDevice::RemoveCallback(sbIDeviceBaseCallback *pCallback, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::RemoveCallback(sbIDeviceBaseCallback* aCallback,
+                                 PRBool* _retval)
 {
-  return sbDeviceBase::RemoveCallback(pCallback, _retval);
+  return sbDeviceBase::RemoveCallback(aCallback, _retval);
 }
 
 // ***************************
 // sbIDeviceBase implementation 
 // Just forwarding calls to mBaseDevice
-/* attribute wstring name; */
-NS_IMETHODIMP sbDownloadDevice::SetName(const PRUnichar * aName)
+
+NS_IMETHODIMP
+sbDownloadDevice::SetName(const nsAString& aName)
 {
   return sbDeviceBase::SetName(aName);
 }
 
-/* wstring EnumDeviceString (in PRUint32 index); */
-NS_IMETHODIMP sbDownloadDevice::EnumDeviceString(PRUint32 index, PRUnichar **_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDeviceStringByIndex(PRUint32 aIndex,
+                                         nsAString& _retval)
 {
   // There is only one download device, so index is ignored
   GetDeviceCategory(_retval);
@@ -286,105 +249,130 @@ NS_IMETHODIMP sbDownloadDevice::EnumDeviceString(PRUint32 index, PRUnichar **_re
   return NS_OK;
 }
 
-/* wstring GetContext (in wstring deviceString); */
-NS_IMETHODIMP sbDownloadDevice::GetContext(const PRUnichar *deviceString, PRUnichar **_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetContext(const nsAString& aDeviceString,
+                             nsAString& _retval)
 {
-  size_t nLen = CONTEXT_DOWNLOAD_DEVICE_LEN + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(CONTEXT_DOWNLOAD_DEVICE, nLen * sizeof(PRUnichar));
+  _retval.Assign(CONTEXT_DOWNLOAD_DEVICE);
   return NS_OK;
 }
 
-/* PRBool IsDownloadSupported (); */
-NS_IMETHODIMP sbDownloadDevice::IsDownloadSupported(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::IsDownloadSupported(const nsAString& aDeviceString,
+                                      PRBool *_retval)
 {
   *_retval = PR_TRUE;
   return NS_OK;
 }
 
-/* PRUint32 GetSupportedFormats (); */
-NS_IMETHODIMP sbDownloadDevice::GetSupportedFormats(const PRUnichar *deviceString, PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetSupportedFormats(const nsAString& aDeviceString,
+                                      PRUint32 *_retval)
 {
-  return sbDeviceBase::GetSupportedFormats(deviceString, _retval);
+  return sbDeviceBase::GetSupportedFormats(aDeviceString, _retval);
 }
 
-/* PRBool IsUploadSupported (); */
-NS_IMETHODIMP sbDownloadDevice::IsUploadSupported(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::IsUploadSupported(const nsAString& aDeviceString,
+                                    PRBool *_retval)
 {
-  return sbDeviceBase::IsUploadSupported(deviceString, _retval);
+  return sbDeviceBase::IsUploadSupported(aDeviceString, _retval);
 }
 
-/* PRBool IsTransfering (); */
-NS_IMETHODIMP sbDownloadDevice::IsTransfering(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::IsTransfering(const nsAString& aDeviceString,
+                                PRBool *_retval)
 {
-  return sbDeviceBase::IsTransfering(deviceString, _retval);
+  return sbDeviceBase::IsTransfering(aDeviceString, _retval);
 }
 
-/* PRBool IsDeleteSupported (); */
-NS_IMETHODIMP sbDownloadDevice::IsDeleteSupported(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::IsDeleteSupported(const nsAString& aDeviceString,
+                                    PRBool *_retval)
 {
-  return sbDeviceBase::IsDeleteSupported(deviceString, _retval);
+  return sbDeviceBase::IsDeleteSupported(aDeviceString, _retval);
 }
 
-/* PRUint32 GetUsedSpace (); */
-NS_IMETHODIMP sbDownloadDevice::GetUsedSpace(const PRUnichar *deviceString, PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetUsedSpace(const nsAString& aDeviceString,
+                               PRUint32* _retval)
 {
-  return sbDeviceBase::GetUsedSpace(deviceString, _retval);
+  return sbDeviceBase::GetUsedSpace(aDeviceString, _retval);
 }
 
-/* PRUint32 GetAvailableSpace (); */
-NS_IMETHODIMP sbDownloadDevice::GetAvailableSpace(const PRUnichar *deviceString, PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetAvailableSpace(const nsAString& aDeviceString,
+                                    PRUint32 *_retval)
 {
-  return sbDeviceBase::GetAvailableSpace(deviceString, _retval);
+  return sbDeviceBase::GetAvailableSpace(aDeviceString, _retval);
 }
 
-/* PRBool GetTrackTable (out wstring dbContext, out wstring tableName); */
-NS_IMETHODIMP sbDownloadDevice::GetTrackTable(const PRUnichar *deviceString, PRUnichar **dbContext, PRUnichar **tableName, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetTrackTable(const nsAString& aDeviceString,
+                                nsAString& aDBContext,
+                                nsAString& aTableName,
+                                PRBool *_retval)
 {
-  return sbDeviceBase::GetTrackTable(deviceString, dbContext, tableName, _retval);
+  return sbDeviceBase::GetTrackTable(aDeviceString, aDBContext, aTableName,
+                                     _retval);
 }
 
-/* PRBool AbortTransfer (); */
-NS_IMETHODIMP sbDownloadDevice::AbortTransfer(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::AbortTransfer(const nsAString& aDeviceString,
+                                PRBool *_retval)
 {
-  return sbDeviceBase::AbortTransfer(deviceString, _retval);
+  return sbDeviceBase::AbortTransfer(aDeviceString, _retval);
 }
 
-/* PRBool DeleteTable (in wstring dbContext, in wstring tableName); */
-NS_IMETHODIMP sbDownloadDevice::DeleteTable(const PRUnichar *deviceString, const PRUnichar *dbContext, const PRUnichar *tableName, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::DeleteTable(const nsAString& aDeviceString,
+                              const nsAString& aDBContext,
+                              const nsAString& aTableName,
+                              PRBool* _retval)
 {
-  return sbDeviceBase::DeleteTable(deviceString, dbContext, tableName, _retval);
+  return sbDeviceBase::DeleteTable(aDeviceString, aDBContext, aTableName,
+                                   _retval);
 }
 
-/* PRBool UpdateTable (in wstring dbContext, in wstring tableName); */
-NS_IMETHODIMP sbDownloadDevice::UpdateTable(const PRUnichar *deviceString, const PRUnichar *tableName, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::UpdateTable(const nsAString& aDeviceString,
+                              const nsAString& aTableName,
+                              PRBool *_retval)
 {
-  return sbDeviceBase::UpdateTable(deviceString, tableName, _retval);
+  return sbDeviceBase::UpdateTable(aDeviceString, aTableName, _retval);
 }
 
-/* PRBool EjectDevice (); */
-NS_IMETHODIMP sbDownloadDevice::EjectDevice(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::EjectDevice(const nsAString& aDeviceString,
+                              PRBool *_retval)
 {
-  return sbDeviceBase::EjectDevice(deviceString, _retval);
+  return sbDeviceBase::EjectDevice(aDeviceString, _retval);
 }
 
 /* End DeviceBase */
 
-/* wstring GetDeviceCategory (); */
-NS_IMETHODIMP sbDownloadDevice::GetDeviceCategory(PRUnichar **_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDeviceCategory(nsAString& aDeviceCategory)
 {
-  size_t nLen = NAME_DOWNLOAD_DEVICE_LEN + 1;
-  *_retval = (PRUnichar *) nsMemory::Clone(NAME_DOWNLOAD_DEVICE, nLen * sizeof(PRUnichar));
+  aDeviceCategory.Assign(NAME_DOWNLOAD_DEVICE);
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDownloadDevice::GetName(PRUnichar **aName)
+NS_IMETHODIMP
+sbDownloadDevice::GetName(nsAString& aName)
 {
-  size_t nLen = NAME_DOWNLOAD_DEVICE_LEN + 1;
-  *aName = (PRUnichar *) nsMemory::Clone(NAME_DOWNLOAD_DEVICE, nLen * sizeof(PRUnichar));
+  aName.Assign(NAME_DOWNLOAD_DEVICE);
   return NS_OK;
 }
 
-PRBool sbDownloadDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber)
+PRBool
+sbDownloadDevice::TransferFile(PRUnichar* deviceString,
+                               PRUnichar* source,
+                               PRUnichar* destination,
+                               PRUnichar* dbContext,
+                               PRUnichar* table,
+                               PRUnichar* index,
+                               PRInt32 curDownloadRowNumber)
 {
   nsCOMPtr<nsIURI> pSourceURI(do_CreateInstance("@mozilla.org/network/simple-uri;1"));
 
@@ -406,7 +394,7 @@ PRBool sbDownloadDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source
     PRInt32 ec = 0;
     PRInt32 mediaId = nsString(index).ToInteger(&ec);
 
-    RemoveTranferTracks(NS_LITERAL_STRING("").get(), mediaId, &bRet);
+    RemoveTranferTracks(EmptyString(), mediaId, &bRet);
 
     TransferData* data = new TransferData;
     data->dbContext = dbContext;
@@ -442,79 +430,135 @@ PRBool sbDownloadDevice::TransferFile(PRUnichar* deviceString, PRUnichar* source
   return PR_TRUE;
 }
 
-void sbDownloadDevice::OnThreadBegin()
+void
+sbDownloadDevice::OnThreadBegin()
 {
 }
 
-void sbDownloadDevice::OnThreadEnd()
+void
+sbDownloadDevice::OnThreadEnd()
 {
 }
 
-/* PRBool IsUpdateSupported (); */
-NS_IMETHODIMP sbDownloadDevice::IsUpdateSupported(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::IsUpdateSupported(const nsAString& aDeviceString,
+                                    PRBool *_retval)
 {
-  return sbDeviceBase::IsUpdateSupported(deviceString, _retval);
+  return sbDeviceBase::IsUpdateSupported(aDeviceString, _retval);
 }
 
-/* PRBool IsEjectSupported (); */
-NS_IMETHODIMP sbDownloadDevice::IsEjectSupported(const PRUnichar *deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::IsEjectSupported(const nsAString& aDeviceString,
+                                   PRBool *_retval)
 {
-  return sbDeviceBase::IsEjectSupported(deviceString, _retval);
+  return sbDeviceBase::IsEjectSupported(aDeviceString, _retval);
 }
 
-/* PRUint32 GetNumDevices (); */
-NS_IMETHODIMP sbDownloadDevice::GetNumDevices(PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDeviceCount(PRUint32* aDeviceCount)
 {
-  return sbDeviceBase::GetNumDevices(_retval);
+  return sbDeviceBase::GetDeviceCount(aDeviceCount);
 }
 
-/* wstring GetNumDestinations (in wstring DeviceString); */
-NS_IMETHODIMP sbDownloadDevice::GetNumDestinations(const PRUnichar *DeviceString, PRUnichar **_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDestinationCount(const nsAString& aDeviceString,
+                                      PRUint32* _retval)
 {
-  return sbDeviceBase::GetNumDestinations(DeviceString, _retval);
+  return sbDeviceBase::GetDestinationCount(aDeviceString, _retval);
 }
 
-/* PRBool MakeTransferTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval); */
-NS_IMETHODIMP sbDownloadDevice::MakeTransferTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRBool bDownloading, PRUnichar **TransferTableName, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::MakeTransferTable(const nsAString& aDeviceString,
+                                    const nsAString& aContextInput,
+                                    const nsAString& aTableName,
+                                    const nsAString& aFilterColumn,
+                                    PRUint32 aFilterCount,
+                                    const PRUnichar** aFilterValues,
+                                    const nsAString& aSourcePath,
+                                    const nsAString& aDestPath,
+                                    PRBool aDownloading,
+                                    nsAString& aTransferTable,
+                                    PRBool* _retval)
 {
-  return sbDeviceBase::MakeTransferTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, bDownloading, TransferTableName, _retval);
+  return sbDeviceBase::MakeTransferTable(aDeviceString, aContextInput,
+                                         aTableName, aFilterColumn,
+                                         aFilterCount, aFilterValues,
+                                         aSourcePath, aDestPath,
+                                         aDownloading, aTransferTable,
+                                         _retval);
 }
  
-/* PRBool AutoDownloadTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval); */
-NS_IMETHODIMP sbDownloadDevice::AutoDownloadTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::AutoDownloadTable(const nsAString& aDeviceString,
+                                    const nsAString& aContextInput,
+                                    const nsAString& aTableName,
+                                    const nsAString& aFilterColumn,
+                                    PRUint32 aFilterCount,
+                                    const PRUnichar** aFilterValues,
+                                    const nsAString& aSourcePath,
+                                    const nsAString& aDestPath,
+                                    nsAString& aTransferTable,
+                                    PRBool* _retval)
 {
-  if (!IsDownloadInProgress(DeviceString))
+  // XXXben Remove me
+  nsAutoString str(aDeviceString);
+
+  if (!IsDownloadInProgress(str.get()))
   {
     // Get rid of previous download entries
     RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
   }
 
-  return sbDeviceBase::AutoDownloadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTable, _retval);
+  return sbDeviceBase::AutoDownloadTable(aDeviceString, aContextInput,
+                                         aTableName, aFilterColumn,
+                                         aFilterCount, aFilterValues,
+                                         aSourcePath, aDestPath,
+                                         aTransferTable, _retval);
 }
 
-/* PRBool AutoUploadTable (const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval); */
-NS_IMETHODIMP sbDownloadDevice::AutoUploadTable(const PRUnichar *DeviceString, const PRUnichar *ContextInput, const PRUnichar *TableName, const PRUnichar *FilterColumn, PRUint32 FilterCount, const PRUnichar **FilterValues, const PRUnichar *sourcePath, const PRUnichar *destPath, PRUnichar **TransferTable, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::AutoUploadTable(const nsAString& aDeviceString,
+                                  const nsAString& aContextInput,
+                                  const nsAString& aTableName,
+                                  const nsAString& aFilterColumn,
+                                  PRUint32 aFilterCount,
+                                  const PRUnichar** aFilterValues,
+                                  const nsAString& aSourcePath,
+                                  const nsAString& aDestPath,
+                                  nsAString& aTransferTable,
+                                  PRBool* _retval)
 {
-  if (!IsUploadInProgress(DeviceString))
+  // XXXben Remove me
+  nsAutoString strDevice(aDeviceString);
+
+  if (!IsUploadInProgress(strDevice.get()))
   {
     // Get rid of previous download entries
     RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
   }
 
-  return sbDeviceBase::AutoUploadTable(DeviceString, ContextInput, TableName, FilterColumn, FilterCount, FilterValues, sourcePath, destPath, TransferTable, _retval);
+  return sbDeviceBase::AutoUploadTable(aDeviceString, aContextInput,
+                                       aTableName, aFilterColumn,
+                                       aFilterCount, aFilterValues,
+                                       aSourcePath, aDestPath,
+                                       aTransferTable, _retval);
 }
 
-/* PRBool SuspendTransfer (); */
-NS_IMETHODIMP sbDownloadDevice::SuspendTransfer(const PRUnichar* deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::SuspendTransfer(const nsAString& aDeviceString,
+                                  PRBool *_retval)
 {
-  sbDeviceBase::SuspendTransfer(deviceString, _retval);
+  sbDeviceBase::SuspendTransfer(aDeviceString, _retval);
 
   return NS_OK;
 }
 
-PRBool sbDownloadDevice::SuspendCurrentTransfer(const PRUnichar* deviceString)
+PRBool
+sbDownloadDevice::SuspendCurrentTransfer(const nsAString& aDeviceString)
 {
-  if (IsTransferInProgress(deviceString))
+  // XXXben Remove me
+
+  if (IsTransferInProgress(aDeviceString))
   {
     // Suspend transfer
     if (mListener)
@@ -527,15 +571,17 @@ PRBool sbDownloadDevice::SuspendCurrentTransfer(const PRUnichar* deviceString)
   return PR_FALSE;
 }
 
-/* PRBool ResumeTransfer (); */
-NS_IMETHODIMP sbDownloadDevice::ResumeTransfer(const PRUnichar* deviceString, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::ResumeTransfer(const nsAString& aDeviceString,
+                                 PRBool *_retval)
 {
-  sbDeviceBase::ResumeTransfer(deviceString, _retval);
+  sbDeviceBase::ResumeTransfer(aDeviceString, _retval);
 
   return NS_OK;
 }
 
-PRBool sbDownloadDevice::ResumeTransfer(const PRUnichar* deviceString)
+PRBool
+sbDownloadDevice::ResumeTransfer(const nsAString& aDeviceString)
 {
   // Resume transfer
   if (mListener && mListener->Resume())
@@ -547,7 +593,8 @@ PRBool sbDownloadDevice::ResumeTransfer(const PRUnichar* deviceString)
 }
 
 
-inline void sbDownloadDevice::ReleaseListener()
+inline void
+sbDownloadDevice::ReleaseListener()
 {
   if (mListener)
   {
@@ -556,120 +603,149 @@ inline void sbDownloadDevice::ReleaseListener()
   }
 }
 
-/* PRUint32 GetDeviceState (); */
-NS_IMETHODIMP sbDownloadDevice::GetDeviceState(const PRUnichar *deviceString, PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDeviceState(const nsAString& aDeviceString,
+                                 PRUint32 *_retval)
 {
   *_retval = mDeviceState;
   return NS_OK;
 }
 
-/* PRBool RemoveTranferTracks (in PRUint32 index); */
-NS_IMETHODIMP sbDownloadDevice::RemoveTranferTracks(const PRUnichar *deviceString, PRUint32 index, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::RemoveTranferTracks(const nsAString& aDeviceString,
+                                      PRUint32 aIndex,
+                                      PRBool *_retval)
 {
-  return sbDeviceBase::RemoveTranferTracks(deviceString, index, _retval);
+  return sbDeviceBase::RemoveTranferTracks(aDeviceString, aIndex, _retval);
 }
 
-PRBool sbDownloadDevice::StopCurrentTransfer(const PRUnichar* deviceString)
+PRBool
+sbDownloadDevice::StopCurrentTransfer(const nsAString& aDeviceString)
 {
-  if (IsTransferInProgress(deviceString))
-  {
-    if (mListener)
-    {
+  if (IsTransferInProgress(aDeviceString)) {
+    if (mListener) {
       mListener->ShutDown();
       return PR_TRUE;
     }
   }
-
   return PR_FALSE;
 }
 
-/* wstring GetDownloadTable (in wstring deviceString); */
-NS_IMETHODIMP sbDownloadDevice::GetDownloadTable(const PRUnichar *deviceString, PRUnichar **_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDownloadTable(const nsAString& aDeviceString,
+                                   nsAString& _retval)
 {
-  return sbDeviceBase::GetDownloadTable(deviceString, _retval);
+  return sbDeviceBase::GetDownloadTable(aDeviceString, _retval);
 }
 
-/* wstring GetUploadTable (in wstring deviceString); */
-NS_IMETHODIMP sbDownloadDevice::GetUploadTable(const PRUnichar *deviceString, PRUnichar **_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetUploadTable(const nsAString& aDeviceString,
+                                 nsAString& _retval)
 {
-  return sbDeviceBase::GetUploadTable(deviceString, _retval);
+  return sbDeviceBase::GetUploadTable(aDeviceString, _retval);
 }
 
 // Transfer related
-nsString sbDownloadDevice::GetDeviceDownloadTableDescription(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceDownloadTableDescription(const nsAString& aDeviceString,
+                                                    nsAString& _retval)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_DESCRIPTION); 
+  _retval.Assign(DOWNLOAD_DEVICE_TABLE_DESCRIPTION); 
 }
 
-nsString sbDownloadDevice::GetDeviceUploadTableDescription(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceUploadTableDescription(const nsAString& aDeviceString,
+                                                  nsAString& _retval)
 { 
-  return nsString(); 
+  _retval.Assign(EmptyString()); 
 }
 
-nsString sbDownloadDevice::GetDeviceDownloadTableType(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceDownloadTableType(const nsAString& aDeviceString,
+                                             nsAString& _retval)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_TYPE); 
+  _retval.Assign(DOWNLOAD_DEVICE_TABLE_TYPE); 
 }
 
-nsString sbDownloadDevice::GetDeviceUploadTableType(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceUploadTableType(const nsAString& aDeviceString,
+                                           nsAString& _retval)
 { 
-  return nsString(); 
+  _retval.Assign(EmptyString()); 
 }
 
-nsString sbDownloadDevice::GetDeviceDownloadReadable(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceDownloadReadable(const nsAString& aDeviceString,
+                                            nsAString& _retval)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_READABLE); 
+  _retval.Assign(DOWNLOAD_DEVICE_TABLE_READABLE); 
 }
 
-nsString sbDownloadDevice::GetDeviceUploadTableReadable(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceUploadTableReadable(const nsAString& aDeviceString,
+                                               nsAString& _retval)
 { 
-  return nsString(); 
+  _retval.Assign(EmptyString()); 
 }
 
-nsString sbDownloadDevice::GetDeviceDownloadTable(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceDownloadTable(const nsAString& aDeviceString,
+                                         nsAString& _retval)
 { 
-  return nsString(DOWNLOAD_DEVICE_TABLE_NAME); 
+  _retval.Assign(DOWNLOAD_DEVICE_TABLE_NAME); 
 }
 
-nsString sbDownloadDevice::GetDeviceUploadTable(const PRUnichar* deviceString)
+void
+sbDownloadDevice::GetDeviceUploadTable(const nsAString& aDeviceString,
+                                       nsAString& _retval)
 { 
-  return nsString(); 
+  _retval.Assign(EmptyString()); 
 }
 
-/* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
-NS_IMETHODIMP sbDownloadDevice::UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::UploadTable(const nsAString& aDeviceString,
+                              const nsAString& aTableName,
+                              PRBool *_retval)
 {
-  return sbDeviceBase::UploadTable(DeviceString, TableName, _retval);
+  return sbDeviceBase::UploadTable(aDeviceString, aTableName, _retval);
 }
 
-/* PRBool DownloadTable (in wstring DeviceCategory, in wstring DeviceString, in wstring TableName); */
-NS_IMETHODIMP sbDownloadDevice::DownloadTable(const PRUnichar *DeviceString, const PRUnichar *TableName, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::DownloadTable(const nsAString& aDeviceString,
+                                const nsAString& aTableName,
+                                PRBool *_retval)
 {
-  return sbDeviceBase::DownloadTable(DeviceString, TableName, _retval);
+  return sbDeviceBase::DownloadTable(aDeviceString, aTableName, _retval);
 }
 
-/* PRBool SetDownloadFileType (in PRUint32 fileType); */
-NS_IMETHODIMP sbDownloadDevice::SetDownloadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::SetDownloadFileType(const nsAString& aDeviceString,
+                                      PRUint32 aFileType,
+                                      PRBool *_retval)
 {
-  return sbDeviceBase::SetDownloadFileType(deviceString, fileType, _retval);
+  return sbDeviceBase::SetDownloadFileType(aDeviceString, aFileType, _retval);
 }
 
-/* PRBool SetUploadFileType (in PRUint32 fileType); */
-NS_IMETHODIMP sbDownloadDevice::SetUploadFileType(const PRUnichar *deviceString, PRUint32 fileType, PRBool *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::SetUploadFileType(const nsAString& aDeviceString,
+                                    PRUint32 aFileType,
+                                    PRBool *_retval)
 {
-  return sbDeviceBase::SetUploadFileType(deviceString, fileType, _retval);
+  return sbDeviceBase::SetUploadFileType(aDeviceString, aFileType, _retval);
 }
 
-/* PRUint32 GetDownloadFileType (in wstring deviceString); */
-NS_IMETHODIMP sbDownloadDevice::GetDownloadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetDownloadFileType(const nsAString& aDeviceString,
+                                      PRUint32 *_retval)
 {
-  return sbDeviceBase::GetDownloadFileType(deviceString, _retval);
+  return sbDeviceBase::GetDownloadFileType(aDeviceString, _retval);
 }
 
-/* PRUint32 GetUploadFileType (in wstring deviceString); */
-NS_IMETHODIMP sbDownloadDevice::GetUploadFileType(const PRUnichar *deviceString, PRUint32 *_retval)
+NS_IMETHODIMP
+sbDownloadDevice::GetUploadFileType(const nsAString& aDeviceString,
+                                    PRUint32 *_retval)
 {
-  return sbDeviceBase::GetUploadFileType(deviceString, _retval);
+  return sbDeviceBase::GetUploadFileType(aDeviceString, _retval);
 }
 
 /* End of implementation class template. */

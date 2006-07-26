@@ -122,9 +122,9 @@ CPlaylistReaderListener.prototype =
             return false;
 
           var downloadTable = {};
-          downloadDevice.AutoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
+          downloadDevice.autoDownloadTable('', this.serviceGuid, this.destinationTable, '', 0, null, '', destFolder, downloadTable);
           
-          dpDownloadContext.stringValue = downloadDevice.GetContext('');
+          dpDownloadContext.stringValue = downloadDevice.getContext('');
           dpDownloadTable.stringValue = downloadTable.value;
         }
       }

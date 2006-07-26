@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 #include "sbIDeviceBase.idl"
 
-[scriptable, uuid(A20BF454-673B-4308-8898-93F2B001D4E9)]
+[scriptable, uuid(a20bf454-673b-4308-8898-93f2b001d4e9)]
 interface sbIUSBMassStorageDevice : sbIDeviceBase
 {
   PRBool OnUSBDeviceEvent(in PRBool deviceAdded, in AString deviceName, in AString deviceIdentifier);

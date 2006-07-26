@@ -30,48 +30,97 @@
 class sbCDDeviceManager
 {
 public:
-  virtual PRUnichar*  GetContext(const PRUnichar* deviceString) = 0;
-  virtual PRUnichar*  EnumDeviceString(PRUint32 index) = 0;
-  virtual PRBool      IsDownloadSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32    GetSupportedFormats(const PRUnichar*  deviceString) = 0;
-  virtual PRBool      IsUploadSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRBool      IsTransfering(const PRUnichar*  deviceString) = 0;
-  virtual PRBool      IsDeleteSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32    GetUsedSpace(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32    GetAvailableSpace(const PRUnichar*  deviceString) = 0;
-  virtual PRBool      GetTrackTable(const PRUnichar*  deviceString, PRUnichar** dbContext, PRUnichar** tableName) = 0;
-  virtual PRBool      EjectDevice(const PRUnichar*  deviceString) = 0; 
-  virtual PRBool      IsUpdateSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRBool      IsEjectSupported(const PRUnichar*  deviceString) = 0;
-  virtual PRUint32    GetNumDevices() = 0;
-  virtual PRUint32    GetDeviceState(const PRUnichar*  deviceString) = 0;
-  virtual PRUnichar*  GetNumDestinations (const PRUnichar*  DeviceString) = 0;
-  virtual PRBool      StopCurrentTransfer(const PRUnichar*  DeviceString) = 0;
-  virtual PRBool      SuspendTransfer(const PRUnichar*  DeviceString) = 0;
-  virtual PRBool      ResumeTransfer(const PRUnichar*  DeviceString) = 0;
-  virtual PRBool      OnCDDriveEvent(PRBool mediaInserted) = 0;
-  virtual PRBool      SetCDRipFormat(const PRUnichar*  DeviceString, PRUint32 format) = 0;
-  virtual PRUint32    GetCDRipFormat(const PRUnichar*  DeviceString) = 0;
-  virtual PRUint32    GetCurrentTransferRowNumber(const PRUnichar* deviceString) = 0;
-  virtual PRBool      SetGapBurnedTrack(const PRUnichar* deviceString, PRUint32 numSeconds) = 0;
-  virtual PRBool      GetWritableCDDrive(nsAString& aDeviceString) = 0;
-  virtual PRBool      UploadTable(const PRUnichar *DeviceString, const PRUnichar *TableName) = 0;
 
-  virtual void        SetTransferState(const PRUnichar* deviceString, PRInt32 newState) = 0;
-  virtual bool        TransferFile(const PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber) = 0;
+  virtual void GetContext(const nsAString& aDeviceString,
+                          nsAString& _retval) = 0;
 
-  virtual PRBool      IsDeviceIdle(const PRUnichar* deviceString) = 0;
-  virtual PRBool      IsDownloadInProgress(const PRUnichar* deviceString) = 0;
-  virtual PRBool      IsUploadInProgress(const PRUnichar* deviceString) = 0;
-  virtual PRBool      IsTransferInProgress(const PRUnichar* deviceString) = 0;
-  virtual PRBool      IsDownloadPaused(const PRUnichar* deviceString) = 0;
-  virtual PRBool      IsUploadPaused(const PRUnichar* deviceString) = 0;
-  virtual PRBool      IsTransferPaused(const PRUnichar* deviceString) = 0;
-  virtual void        TransferComplete(const PRUnichar* deviceString) = 0;
+  virtual void GetDeviceStringByIndex(PRUint32 aIndex,
+                                      nsAString& _retval) = 0;
 
-  virtual ~sbCDDeviceManager(){}
+  virtual PRBool IsDownloadSupported(const nsAString& aDeviceString) = 0;
 
-  virtual void Initialize() = 0;
+  virtual PRUint32 GetSupportedFormats(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool IsUploadSupported(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool IsTransfering(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool IsDeleteSupported(const nsAString& aDeviceString) = 0;
+
+  virtual PRUint32 GetUsedSpace(const nsAString& aDeviceString) = 0;
+
+  virtual PRUint32 GetAvailableSpace(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool GetTrackTable(const nsAString& aDeviceString,
+                               nsAString& aDBContext,
+                               nsAString& aTableName) = 0;
+
+  virtual PRBool EjectDevice(const nsAString&  aDeviceString) = 0;
+
+  virtual PRBool IsUpdateSupported(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool IsEjectSupported(const nsAString&  aDeviceString) = 0;
+
+  virtual PRUint32 GetDeviceCount() = 0;
+
+  virtual PRUint32 GetDeviceState(const nsAString& aDeviceString) = 0;
+
+  virtual PRUint32 GetDestinationCount(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool StopCurrentTransfer(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool SuspendTransfer(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool ResumeTransfer(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool OnCDDriveEvent(PRBool mediaInserted) = 0;
+
+  virtual PRBool SetCDRipFormat(const nsAString& aDeviceString,
+                                PRUint32 aFormat) = 0;
+
+  virtual PRUint32 GetCDRipFormat(const nsAString& aDeviceString) = 0;
+
+  virtual PRUint32 GetCurrentTransferRowNumber(const PRUnichar* deviceString) = 0;
+
+  virtual PRBool SetGapBurnedTrack(const PRUnichar* deviceString,
+                                   PRUint32 numSeconds) = 0;
+
+  virtual PRBool GetWritableCDDrive(nsAString& aDeviceString) = 0;
+
+  virtual PRBool UploadTable(const nsAString& aDeviceString,
+                             const nsAString& aTableName) = 0;
+
+  virtual void SetTransferState(const PRUnichar* deviceString,
+                                PRInt32 newState) = 0;
+
+  virtual PRBool TransferFile(const PRUnichar* deviceString,
+                              PRUnichar* source,
+                              PRUnichar* destination,
+                              PRUnichar* dbContext,
+                              PRUnichar* table,
+                              PRUnichar* index,
+                              PRInt32 curDownloadRowNumber) = 0;
+
+  virtual PRBool IsDeviceIdle(const PRUnichar* deviceString) = 0;
+
+  virtual PRBool IsDownloadInProgress(const PRUnichar* deviceString) = 0;
+
+  virtual PRBool IsUploadInProgress(const PRUnichar* deviceString) = 0;
+
+  virtual PRBool IsTransferInProgress(const nsAString& aDeviceString) = 0;
+
+  virtual PRBool IsDownloadPaused(const PRUnichar* deviceString) = 0;
+
+  virtual PRBool IsUploadPaused(const PRUnichar* deviceString) = 0;
+
+  virtual PRBool IsTransferPaused(const PRUnichar* deviceString) = 0;
+
+  virtual void  TransferComplete(const PRUnichar* deviceString) = 0;
+
+  virtual ~sbCDDeviceManager() {}
+
+  virtual void Initialize(void* parent) = 0;
+
   virtual void Finalize() = 0;
 };
 

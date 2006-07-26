@@ -58,7 +58,8 @@
 
 // Since download device has only one instance, the "Device String" notion does not
 // apply to this device and hence ignored in all the functions.
-class sbUSBMassStorageDevice :  public sbIUSBMassStorageDevice, public sbDeviceBase
+class sbUSBMassStorageDevice : public sbIUSBMassStorageDevice,
+                               public sbDeviceBase
 {
 public:
   NS_DECL_ISUPPORTS
@@ -70,54 +71,129 @@ public:
 
 private:
 
-  PRBool IsDeviceIdle(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_IDLE; }
-  PRBool IsDownloadInProgress(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_DOWNLOADING; }
-  PRBool IsUploadInProgress(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_UPLOADING; }
-  PRBool IsTransferInProgress(const PRUnichar* deviceString) { return (IsDownloadInProgress(deviceString) || IsUploadInProgress(deviceString)); }
-  PRBool IsDownloadPaused(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_DOWNLOAD_PAUSED; }
-  PRBool IsUploadPaused(const PRUnichar* deviceString) { return mDeviceState == kSB_DEVICE_STATE_UPLOAD_PAUSED; }
-  PRBool IsTransferPaused(const PRUnichar* deviceString) { return (IsDownloadPaused(deviceString) || IsUploadPaused(deviceString)); }
+  PRBool IsDeviceIdle(const PRUnichar* deviceString) {
+    return mDeviceState == kSB_DEVICE_STATE_IDLE;
+  }
+
+  PRBool IsDownloadInProgress(const PRUnichar* deviceString) {
+    return mDeviceState == kSB_DEVICE_STATE_DOWNLOADING;
+  }
+
+  PRBool IsUploadInProgress(const PRUnichar* deviceString) {
+    return mDeviceState == kSB_DEVICE_STATE_UPLOADING;
+  }
+  
+  PRBool IsTransferInProgress(const nsAString& aDeviceString) {
+    // XXXben Remove me
+    nsAutoString str(aDeviceString);
+    return (IsDownloadInProgress(str.get()) ||
+            IsUploadInProgress(str.get()));
+  }
+
+  PRBool IsDownloadPaused(const PRUnichar* deviceString) {
+    return mDeviceState == kSB_DEVICE_STATE_DOWNLOAD_PAUSED;
+  }
+
+  PRBool IsUploadPaused(const PRUnichar* deviceString) {
+    return mDeviceState == kSB_DEVICE_STATE_UPLOAD_PAUSED;
+  }
+
+  PRBool IsTransferPaused(const PRUnichar* deviceString) {
+    return (IsDownloadPaused(deviceString) || IsUploadPaused(deviceString));
+  }
 
   virtual void OnThreadBegin();
+
   virtual void OnThreadEnd();
 
-  virtual PRBool TransferFile(PRUnichar* deviceString, PRUnichar* source, PRUnichar* destination, PRUnichar* dbContext, PRUnichar* table, PRUnichar* index, PRInt32 curDownloadRowNumber);
+  virtual PRBool TransferFile(PRUnichar* deviceString,
+                              PRUnichar* source,
+                              PRUnichar* destination,
+                              PRUnichar* dbContext,
+                              PRUnichar* table,
+                              PRUnichar* index,
+                              PRInt32 curDownloadRowNumber);
 
-  virtual PRBool StopCurrentTransfer(const PRUnichar* deviceString);
-  virtual PRBool SuspendCurrentTransfer(const PRUnichar* deviceString);
-  virtual PRBool ResumeTransfer(const PRUnichar* deviceString);
+  virtual PRBool StopCurrentTransfer(const nsAString& aDeviceString);
+
+  virtual PRBool SuspendCurrentTransfer(const nsAString& aDeviceString);
+
+  virtual PRBool ResumeTransfer(const nsAString& aDeviceString);
 
   // Transfer related
-  virtual nsString GetDeviceDownloadTable(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTable(const PRUnichar* deviceString);
-  virtual nsString GetDeviceDownloadTableDescription(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTableDescription(const PRUnichar* deviceString);
-  virtual nsString GetDeviceDownloadTableType(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTableType(const PRUnichar* deviceString);
-  virtual nsString GetDeviceDownloadReadable(const PRUnichar* deviceString);
-  virtual nsString GetDeviceUploadTableReadable(const PRUnichar* deviceString);
-  virtual PRUint32  GetCurrentTransferRowNumber(const PRUnichar* deviceString) { return mCurrentTransferRowNumber;  }
-  void SetCurrentTransferRowNumber(PRUint32 rowNumber) { mCurrentTransferRowNumber = rowNumber; }
+  virtual void GetDeviceDownloadTable(const nsAString& aDeviceString,
+                                      nsAString& _retval);
 
-  virtual void DeviceIdle(const PRUnichar* deviceString){mDeviceState = kSB_DEVICE_STATE_IDLE; }
-  virtual void DeviceDownloading(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_DOWNLOADING;}
-  virtual void DeviceUploading(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_UPLOADING;}
-  virtual void DeviceDownloadPaused(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_DOWNLOAD_PAUSED;}
-  virtual void DeviceUploadPaused(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_UPLOAD_PAUSED;}
-  virtual void DeviceDeleting(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_DELETING;}
-  virtual void DeviceBusy(const PRUnichar* deviceString) {mDeviceState = kSB_DEVICE_STATE_BUSY;}
+  virtual void GetDeviceUploadTable(const nsAString& aDeviceString,
+                                    nsAString& _retval);
+
+  virtual void GetDeviceDownloadTableDescription(const nsAString& aDeviceString,
+                                                 nsAString& _retval);
+
+  virtual void GetDeviceUploadTableDescription(const nsAString& aDeviceString,
+                                               nsAString& _retval);
+
+  virtual void GetDeviceDownloadTableType(const nsAString& aDeviceString,
+                                          nsAString& _retval);
+
+  virtual void GetDeviceUploadTableType(const nsAString& aDeviceString,
+                                        nsAString& _retval);
+
+  virtual void GetDeviceDownloadReadable(const nsAString& aDeviceString,
+                                         nsAString& _retval);
+
+  virtual void GetDeviceUploadTableReadable(const nsAString& aDeviceString,
+                                            nsAString& _retval);
+
+  virtual PRUint32 GetCurrentTransferRowNumber(const PRUnichar* deviceString) {
+    return mCurrentTransferRowNumber; 
+  }
+
+  void SetCurrentTransferRowNumber(PRUint32 rowNumber) {
+    mCurrentTransferRowNumber = rowNumber;
+  }
+
+  virtual void DeviceIdle(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_IDLE;
+  }
+
+  virtual void DeviceDownloading(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_DOWNLOADING;
+  }
+
+  virtual void DeviceUploading(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_UPLOADING;
+  }
+
+  virtual void DeviceDownloadPaused(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_DOWNLOAD_PAUSED;
+  }
+
+  virtual void DeviceUploadPaused(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_UPLOAD_PAUSED;
+  }
+
+  virtual void DeviceDeleting(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_DELETING;
+  }
+
+  virtual void DeviceBusy(const PRUnichar* deviceString) {
+    mDeviceState = kSB_DEVICE_STATE_BUSY;
+  }
 
 private:
+
   typedef std::map<nsString, nsString> devicemap_t;
 
   PRUint32 mDeviceState;
+
   PRInt32 mCurrentTransferRowNumber;
 
   IUSBMassStorageDeviceHelper * m_pHelperImpl;
   
   PRLock *mConnectedDevicesLock;
+
   devicemap_t mConnectedDevices;
 };
 
 #endif // __USB_MASS_STORAGE_DEVICE_H__
-
