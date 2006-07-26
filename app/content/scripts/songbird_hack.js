@@ -299,7 +299,7 @@ function SBInitialize()
 //    var the_url = "file:///c:\\vice.html";
 //    var the_url = "http://odeo.com/channel/38104/rss";
 //    var the_url = "http://takeyourmedicinemp3.blogspot.com/atom.xml";
-//    var success = thePlaylistReader.autoLoad(the_url, "songbird", ConvertUrlToDisplayName( the_url ), "http", the_url, "", null);
+//    var success = thePlaylistReader.autoLoad(the_url, "songbird", gPPS.convertUrlToDisplayName( the_url ), "http", the_url, "", null);
 
 /*
     try
@@ -2236,7 +2236,7 @@ function onHTMLContextMenu( target )
       break;
       case "html.context.playlist":
         SBScanServiceTreeNewEntryEditable();
-        var success = thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", ConvertUrlToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
+        var success = thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", gPPS.convertUrlToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
         SBScanServiceTreeNewEntryStart();
       break;
     }

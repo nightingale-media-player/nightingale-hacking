@@ -91,65 +91,6 @@ function LOG(string) {
 } // LOG
 
 /**
- *
- */
-function ConvertUrlToDisplayName(url)
-{
-  url = decodeURI( url );
-  
-  var ret = "";
-  
-  if (url.lastIndexOf('/') != -1)
-    ret = url.substring(url.lastIndexOf('/') + 1, url.length);
-  else if (url.lastIndexOf('\\') != -1)
-    ret = url.substring(url.lastIndexOf('\\') + 1, url.length);
-  else
-    ret = url;
-    
-  var percent = ret.indexOf('%');
-  if (percent != -1) {
-    var remainder = ret;
-    ret = "";
-    while (percent != -1) {
-      ret += remainder.substring(0, percent);
-      remainder = remainder.substring(percent + 3, url.length);
-      percent = remainder.indexOf('%');
-      ret += " ";
-      if (percent == -1)
-        ret += remainder;
-    }
-  }
-  if (ret.length == 0)
-    ret = url;
-
-  return ret;
-}
-
-// Just a useful function to parse down some seconds.
-function EmitSecondsToTimeString( seconds )
-{
-  if ( seconds < 0 )
-    return "00:00";
-  seconds = parseFloat( seconds );
-  var minutes = parseInt( seconds / 60 );
-  seconds = parseInt( seconds ) % 60;
-  var hours = parseInt( minutes / 60 );
-  if ( hours > 50 ) // lame
-    return "Error";
-  minutes = parseInt( minutes ) % 60;
-  var text = ""
-  if ( hours > 0 )
-    text += hours + ":";
-  if ( minutes < 10 )
-    text += "0";
-  text += minutes + ":";
-  if ( seconds < 10 )
-    text += "0";
-  text += seconds;
-  return text;
-}
-
-/**
  * Dumps an object's properties to the console
  * @param   obj
  *          The object to dump
@@ -1023,6 +964,29 @@ PlaylistPlayback.prototype = {
     return false;
   },
 
+  isVideoUrl: function ( the_url )
+  {
+    if ( ( the_url.indexOf ) && 
+          (
+            ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
+            
+            // A better solution is needed, as asx files are not always video..
+            // The following hack brought to you by Nivi:
+            ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) && the_url.indexOf( "allmusic.com" ) == -1 ) ||
+            
+            ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
+            ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
+          )
+        )
+    {
+      return true;
+    }
+    return false;
+  },
+
   isPlaylistUrl: function(the_url) {
     if ( the_url.indexOf )
     {
@@ -1052,7 +1016,86 @@ PlaylistPlayback.prototype = {
     }
     return false;
   },
+  
+  stripHoursFromTimeString: function ( str )
+  {
+    if ( str == null )
+      str = "";
+    var retval = str;
+    if ( ( str.length == 7 ) && ( str[ 0 ] == "0" ) && ( str[ 1 ] == ":" ) )
+    {
+      retval = str.substring( 2, str.length );
+    }
+    return retval;
+  },
 
+  emitSecondsToTimeString: function ( seconds )
+  {
+    if ( seconds < 0 )
+      return "00:00";
+    seconds = parseFloat( seconds );
+    var minutes = parseInt( seconds / 60 );
+    seconds = parseInt( seconds ) % 60;
+    var hours = parseInt( minutes / 60 );
+    if ( hours > 50 ) // lame
+      return "Error";
+    minutes = parseInt( minutes ) % 60;
+    var text = ""
+    if ( hours > 0 )
+      text += hours + ":";
+    if ( minutes < 10 )
+      text += "0";
+    text += minutes + ":";
+    if ( seconds < 10 )
+      text += "0";
+    text += seconds;
+    return text;
+  },
+  
+  convertUrlToDisplayName: function( url )
+  {
+    url = decodeURI( url );
+    // Set the title display  
+    var the_value = "";
+    if ( url.lastIndexOf('/') != -1 )
+    {
+      the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
+    }
+    else if ( url.lastIndexOf('\\') != -1 )
+    {
+      the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
+    }
+    else
+    {
+      the_value = url;
+    }
+    if ( ! the_value.length )
+    {
+      the_value = url;
+    }
+    return the_value;
+  },
+
+  convertUrlToFolder: function( url )
+  {
+    // Set the title display  
+    url = decodeURI( url );
+    var the_value = "";
+    if ( url.lastIndexOf('/') != -1 )
+    {
+      the_value = url.substring( 0, url.lastIndexOf('/') );
+    }
+    else if ( url.lastIndexOf('\\') != -1 )
+    {
+      the_value = url.substring( 0, url.lastIndexOf('\\') );
+    }
+    else
+    {
+      the_value = url;
+    }
+    return the_value;
+  },
+  
   /**
    * Handle Observer Service notifications
    */
@@ -1139,12 +1182,12 @@ PlaylistPlayback.prototype = {
   // Elapsed / Total display
  
   _onPollTimeText: function ( len, pos ) {
-    this._metadataPosText.stringValue = EmitSecondsToTimeString( pos / 1000.0 ) + " ";
+    this._metadataPosText.stringValue = this.emitSecondsToTimeString( pos / 1000.0 ) + " ";
 
     if ( len > 0 && this._showRemaining.boolValue )
-      this._metadataLenText.stringValue = "-" + EmitSecondsToTimeString( ( len - pos ) / 1000.0 );
+      this._metadataLenText.stringValue = "-" + this.emitSecondsToTimeString( ( len - pos ) / 1000.0 );
     else
-      this._metadataLenText.stringValue = " " + EmitSecondsToTimeString( len / 1000.0 );
+      this._metadataLenText.stringValue = " " + this.emitSecondsToTimeString( len / 1000.0 );
   },
 
 
@@ -1187,7 +1230,7 @@ PlaylistPlayback.prototype = {
       var genre = "" + core.getMetadata("genre");
       var length = "";
       if ( len_ms >= 0 )
-        length = EmitSecondsToTimeString( len_ms / 1000.0 );
+        length = this.emitSecondsToTimeString( len_ms / 1000.0 );
 
       // Glaaaaaaah!        
       if ( title == "null" ) title = "";
@@ -1383,7 +1426,7 @@ PlaylistPlayback.prototype = {
     // prepare the data for addMedia call
     var keys = new Array( "title" );
     var values = new Array();
-    values.push( ConvertUrlToDisplayName( the_url ) );
+    values.push( gPPS.convertUrlToDisplayName( the_url ) );
 
     // add the url to the library
     var guid = library.addMedia( the_url, keys.length, keys, values.length, values, false, false );

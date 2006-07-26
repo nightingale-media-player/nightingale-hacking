@@ -303,30 +303,6 @@ function onWindowLoadPosition()
     window.moveTo( rootX - diffX, rootY - diffY );
 }
 
-function ConvertUrlToDisplayName( url )
-{
-  url = decodeURI( url );
-  // Set the title display  
-  var the_value = "";
-  if ( url.lastIndexOf('/') != -1 )
-  {
-    the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
-  }
-  else if ( url.lastIndexOf('\\') != -1 )
-  {
-    the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
-  }
-  else
-  {
-    the_value = url;
-  }
-  if ( ! the_value.length )
-  {
-    the_value = url;
-  }
-  return the_value;
-}
-
 var songbird_restartNow;
 
 function restartApp()
@@ -372,7 +348,7 @@ function SBUrlChanged( value )
         // value _should_ be set correctly now.
         if (value == null)
           value = SBDataGetStringValue("faceplate.play.url");
-        if ( IsVideoUrl( value ) ) {
+        if ( gPPS.isVideoUrl( value ) ) {
           service.uncloak( document ); 
         }
         else {
@@ -655,30 +631,6 @@ function SBOpenModalDialog( url, param1, param2, param3 )
   var retval = window.openDialog( url, param1, param2, param3 );
   PopBackscanPause();
   return retval;
-}
-
-function IsVideoUrl( the_url )
-{
-
-  if ( ( the_url.indexOf ) && 
-        (
-          ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
-          
-          // A better solution is needed, as asx files are not always video..
-          // The following hack brought to you by Nivi:
-          ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) && the_url.indexOf( "allmusic.com" ) == -1 ) ||
-          
-          ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
-        )
-      )
-  {
-    return true;
-  }
-  return false;
 }
 
 var SBVideoMinMaxCB = 

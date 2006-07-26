@@ -114,7 +114,7 @@ function onPollScan()
       if ( len )
       {
         var value = aMediaScanQuery.getLastFileFound();
-        theLabel.value = ConvertUrlToFolder(value);
+        theLabel.value = gPPS.convertUrlToFolder(value);
       }
     }
   }
@@ -162,7 +162,7 @@ function onScanComplete( mediaScanQuery )
         {
           var keys = new Array( "title" );
           var values = new Array();
-          values.push( MSConvertUrlToDisplayName( the_url ) );
+          values.push( gPPS.convertUrlToDisplayName( the_url ) );
           aMediaLibrary.addMedia( the_url, keys.length, keys, values.length, values, false, true );
           aQueryFileArray.push( values[0] );
         }
@@ -265,46 +265,3 @@ function doCancel()
   return true;
 }
 
-function MSConvertUrlToDisplayName( the_url )
-{
-  var url = decodeURI( the_url );
-  // Set the title display  
-  var the_value = "";
-  if ( url.lastIndexOf('/') != -1 )
-  {
-    the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
-  }
-  else if ( url.lastIndexOf('\\') != -1 )
-  {
-    the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
-  }
-  else
-  {
-    the_value = url;
-  }
-  if ( ! the_value.length )
-  {
-    the_value = url;
-  }
-  return the_value;
-}
-
-function ConvertUrlToFolder( url )
-{
-  // Set the title display  
-  url = decodeURI( url );
-  var the_value = "";
-  if ( url.lastIndexOf('/') != -1 )
-  {
-    the_value = url.substring( 0, url.lastIndexOf('/') );
-  }
-  else if ( url.lastIndexOf('\\') != -1 )
-  {
-    the_value = url.substring( 0, url.lastIndexOf('\\') );
-  }
-  else
-  {
-    the_value = url;
-  }
-  return the_value;
-}

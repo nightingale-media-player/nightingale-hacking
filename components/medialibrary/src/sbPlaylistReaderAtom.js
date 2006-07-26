@@ -239,30 +239,6 @@ CPlaylistAtom.prototype =
     return false;
   },
   
-  ConvertUrlToDisplayName: function( url )
-  {
-    url = decodeURI( url );
-    // Set the title display  
-    var the_value = "";
-    if ( url.lastIndexOf('/') != -1 )
-    {
-      the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
-    }
-    else if ( url.lastIndexOf('\\') != -1 )
-    {
-      the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
-    }
-    else
-    {
-      the_value = url;
-    }
-    if ( the_value.length == 0 )
-    {
-      the_value = url;
-    }
-    return the_value;
-  },
-
   QueryInterface: function(iid)
   {
       if (!iid.equals(Components.interfaces.nsISupports) &&

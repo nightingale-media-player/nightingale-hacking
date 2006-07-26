@@ -197,7 +197,7 @@ try
         if ( ! skip )
         {
           var keys = new Array( "title" );
-          var values = new Array( ConvertUrlToDisplayName( url ) );
+          var values = new Array( gPPS.convertUrlToDisplayName( url ) );
           var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, false, false );
           // XXXredfive
           this.aPlaylist.addByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
@@ -243,7 +243,7 @@ catch ( err )
           
           if ( rv != 0 )
           {
-            alert( "FAILED: " + ConvertUrlToDisplayName( url ) + "  ----  Result value: " + rv + text );
+            alert( "FAILED: " + gPPS.convertUrlToDisplayName( url ) + "  ----  Result value: " + rv + text );
           }
           */
           

@@ -152,30 +152,6 @@ try
     }
   }
 
-  function ConvertUrlToDisplayName( url )
-  {
-    // Set the title display  
-    url = decodeURI( url );
-    var the_value = "";
-    if ( url.lastIndexOf('/') != -1 )
-    {
-      the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
-    }
-    else if ( url.lastIndexOf('\\') != -1 )
-    {
-      the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
-    }
-    else
-    {
-      the_value = url;
-    }
-    if ( ! the_value.length )
-    {
-      the_value = url;
-    }
-    return the_value;
-  }
-
   function log(str)
   {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']

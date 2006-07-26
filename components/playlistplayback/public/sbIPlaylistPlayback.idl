@@ -106,5 +106,13 @@ interface sbIPlaylistPlayback : nsIObserver
 
   // URL checking
   boolean isMediaUrl(in AString url);
+  boolean isVideoUrl(in AString url);
   boolean isPlaylistUrl(in AString url);
+
+  // String twiddling
+  AString stripHoursFromTimeString(in AString str);
+  AString emitSecondsToTimeString(in AString seconds);
+  AString convertUrlToDisplayName(in AString url);
+  AString convertUrlToFolder(in AString url);
+
 };

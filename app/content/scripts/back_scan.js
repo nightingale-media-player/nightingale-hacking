@@ -30,6 +30,7 @@ try
   
 //  const sbDatabaseGUID = "songbird";
   const sbDatabaseGUID = "*";
+  var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 
   const MetadataManager = new Components.Constructor("@songbirdnest.com/Songbird/MetadataManager;1", "sbIMetadataManager");
   var aMetadataManager = new MetadataManager();
@@ -368,7 +369,7 @@ try
     }
     else
     {
-      metadata[1] = BSEmitSecondsToTimeString( metadata[1] / 1000 );
+      metadata[1] = gPPS.emitSecondsToTimeString( metadata[1] / 1000 );
     }
     if ( metadata[1] == "0" )
     {
@@ -414,41 +415,6 @@ try
     }
   }
 
-  function BSStripHoursFromTimeString( str )
-  {
-    if ( str == null )
-      str = "";
-    var retval = str;
-    if ( ( str.length == 7 ) && ( str[ 0 ] == "0" ) && ( str[ 1 ] == ":" ) )
-    {
-      retval = str.substring( 2, str.length );
-    }
-    return retval;
-  }
-
-  // Just a useful function to parse down some seconds.
-  function BSEmitSecondsToTimeString( seconds )
-  {
-    if ( seconds < 0 )
-      return "00:00";
-    seconds = parseFloat( seconds );
-    var minutes = parseInt( seconds / 60 );
-    seconds = parseInt( seconds ) % 60;
-    var hours = parseInt( minutes / 60 );
-    if ( hours > 50 ) // lame
-      return "Error";
-    minutes = parseInt( minutes ) % 60;
-    var text = ""
-    if ( hours > 0 )
-      text += hours + ":";
-    if ( minutes < 10 )
-      text += "0";
-    text += minutes + ":";
-    if ( seconds < 10 )
-      text += "0";
-    text += seconds;
-    return text;
-  }
 }
 catch ( err )
 {

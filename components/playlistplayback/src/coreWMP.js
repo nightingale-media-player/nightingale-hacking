@@ -64,41 +64,6 @@ function listProperties(obj, objName) {
 }
 
 /**
- * Converts seconds to a time string
- * @param   seconds
- *          The number of seconds to convert
- * @return  A string containing the converted time
- */  
-function EmitSecondsToTimeString( seconds )
-{
-  if ( seconds < 0 )
-    return "00:00";
-  seconds = parseFloat( seconds );
-  var minutes = parseInt( seconds / 60 );
-  seconds = parseInt( seconds ) % 60;
-  var hours = parseInt( minutes / 60 );
-  if ( hours > 50 ) // lame
-    return "Error";
-  minutes = parseInt( minutes ) % 60;
-  var text = ""
-  if ( hours > 0 )
-  {
-    text += hours + ":";
-  }
-  if ( minutes < 10 )
-  {
-    text += "0";
-  }
-  text += minutes + ":";
-  if ( seconds < 10 )
-  {
-    text += "0";
-  }
-  text += seconds;
-  return text;
-}
-
-/**
  * ----------------------------------------------------------------------------
  * Core Implementation
  * ----------------------------------------------------------------------------
@@ -307,7 +272,9 @@ function CoreWMP() {
       break;
       
       case "length":
-        retval += EmitSecondsToTimeString( this._object.getItemInfo( "Duration" ) );
+        var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                             .getService(Components.interfaces.sbIPlaylistPlayback);
+        retval += gPPS.emitSecondsToTimeString( this._object.getItemInfo( "Duration" ) );
       break;
       
       case "title":

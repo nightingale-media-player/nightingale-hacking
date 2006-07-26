@@ -131,7 +131,7 @@ function onWFLibraryAdd()
       var keys = new Array( "title" );
       var values = new Array();
           
-      values.push( ConvertUrlToDisplayName( strURL ) );
+      values.push( gPPS.convertUrlToDisplayName( strURL ) );
       
       wfMediaLibrary.addMedia(strURL, keys.length, keys, values.length, values, false, true);
       

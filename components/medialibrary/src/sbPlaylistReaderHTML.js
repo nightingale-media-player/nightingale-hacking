@@ -290,7 +290,7 @@ CPlaylistHTML.prototype =
           if ( !skip )
           {
             var aMetaKeys = new Array("title");
-            var aMetaValues = new Array( this.ConvertUrlToDisplayName( url ) );
+            var aMetaValues = new Array( this.gPPS.convertUrlToDisplayName( url ) );
 
             var guid = pLibrary.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
             pPlaylist.addByGUID( guid, strGUID, -1, replace, true );
@@ -309,30 +309,6 @@ CPlaylistHTML.prototype =
       dump( error );
       throw error;
     }
-  },
-
-  ConvertUrlToDisplayName: function( url )
-  {
-    url = decodeURI( url );
-    // Set the title display  
-    var the_value = "";
-    if ( url.lastIndexOf('/') != -1 )
-    {
-      the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
-    }
-    else if ( url.lastIndexOf('\\') != -1 )
-    {
-      the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
-    }
-    else
-    {
-      the_value = url;
-    }
-    if ( the_value.length == 0 )
-    {
-      the_value = url;
-    }
-    return the_value;
   },
 
   QueryInterface: function(iid)

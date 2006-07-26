@@ -110,37 +110,6 @@ CoreBase.prototype =
     return aURL;
   },
 
-  /** 
-   * Converts seconds to a time string
-   * \param   aSeconds
-   *          The number of seconds to convert
-   * \return  A string containing the converted time (HH:MM:SS)
-   */
-  emitSecondsToTimeString: function (aSeconds) {
-    if ( aSeconds < 0 )
-      return "00:00";
-    aSeconds = parseFloat( aSeconds );
-    var minutes = parseInt( aSeconds / 60 );
-    aSeconds = parseInt( aSeconds ) % 60;
-    var hours = parseInt( minutes / 60 );
-    if ( hours > 50 ) // lame
-      return "Error";
-    minutes = parseInt( minutes ) % 60;
-    var text = ""
-    if ( hours > 0 ) {
-      text += hours + ":";
-    }
-    if ( minutes < 10 ) {
-      text += "0";
-    }
-    text += minutes + ":";
-    if ( aSeconds < 10 ) {
-      text += "0";
-    }
-    text += aSeconds;
-    return text;
-  },
-
   // Debugging helper functions
 
   /**
