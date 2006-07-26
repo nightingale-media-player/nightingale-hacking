@@ -90,7 +90,7 @@ private:
   nsIRDFResource       *kNC_Open; // THIS DOESN'T WORK, STOP IMPLEMENTING IT.
 
   // Cheezy hardcoded hierarchy
-#define NUM_PARENTS 9
+#define NUM_PARENTS 2
 #define MAX_CHILDREN 20
   nsIRDFResource       *kNC_Parent[ NUM_PARENTS ];
   nsIRDFResource       *kNC_Child[ NUM_PARENTS ][ MAX_CHILDREN ];

@@ -98,71 +98,25 @@ var bmManager = {
 		}
   },
   
-  saveBookmarks : function() {
-    var children = this.bookmark_nodes.children[0].children;
-    
-    SBDataSetIntValue("bookmarks.count", children.length);
-    for (var i=0;i<children.length;i++) {
-      var item = children[i];
-      var root = "bookmarks.bookmark"+i;
-      SBDataSetStringValue(root+".label", item.label);
-      SBDataSetStringValue(root+".url", item.url);
-      SBDataSetStringValue(root+".icon", item.icon);
-    }
+  saveBookmarks : function() {    
+    SBDataSetStringValue("bookmarks.serializedTree", this.bookmark_nodes.toJSONString());
   },
   
   loadBookmarks : function() {
     var thechildren = Array();
 
-    var done = SBDataGetBoolValue("bookmarks.prepopulate");
+    var done = SBDataGetBoolValue("bookmarks.prepopulated");
     if (!done) {
-      SBDataSetIntValue("bookmarks.count", 7);
-      SBDataSetStringValue("bookmarks.bookmark0.label", "Pitchfork");
-      SBDataSetStringValue("bookmarks.bookmark0.url", "http://www.pitchforkmedia.com/page/downloads/");
-      SBDataSetStringValue("bookmarks.bookmark0.icon", "http://www.pitchforkmedia.com/favicon.ico");
-      SBDataSetStringValue("bookmarks.bookmark1.label", "Podbop");
-      SBDataSetStringValue("bookmarks.bookmark1.url", "http://podbop.org/");
-      SBDataSetStringValue("bookmarks.bookmark1.icon", "http://podbop.org/favicon.ico");
-      SBDataSetStringValue("bookmarks.bookmark2.label", "Swedelife");
-      SBDataSetStringValue("bookmarks.bookmark2.url", "http://www.swedelife.com/");
-      SBDataSetStringValue("bookmarks.bookmark2.icon", "http://www.swedelife.com/favicon.ico");
-      SBDataSetStringValue("bookmarks.bookmark3.label", "La Blogotheque");
-      SBDataSetStringValue("bookmarks.bookmark3.url", "http://www.blogotheque.net/mp3/");
-      SBDataSetStringValue("bookmarks.bookmark3.icon", "chrome://songbird/skin/serviceicons/default.ico");
-      SBDataSetStringValue("bookmarks.bookmark4.label", "Medicine");
-      SBDataSetStringValue("bookmarks.bookmark4.url", "http://takeyourmedicinemp3.blogspot.com/");
-      SBDataSetStringValue("bookmarks.bookmark4.icon", "chrome://songbird/skin/serviceicons/default.ico");
-      SBDataSetStringValue("bookmarks.bookmark5.label", "OpenBSD");
-      SBDataSetStringValue("bookmarks.bookmark5.url", "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/");
-      SBDataSetStringValue("bookmarks.bookmark5.icon", "chrome://songbird/skin/serviceicons/default.ico");
-      SBDataSetStringValue("bookmarks.bookmark6.label", "Songbirdnest");
-      SBDataSetStringValue("bookmarks.bookmark6.url", "http://songbirdnest.com/");
-      SBDataSetStringValue("bookmarks.bookmark6.icon", "chrome://songbird/skin/default/logo_16.png");
-      SBDataSetBoolValue("bookmarks.prepopulate", true);
+      this.bookmark_nodes = this._getDefaultNodes();	
+      this.saveBookmarks();
+      SBDataSetBoolValue("bookmarks.prepopulated", true);
+    } 
+    else
+    {
+      var serializedTree = SBDataGetStringValue("bookmarks.serializedTree");
+      this.bookmark_nodes = serializedTree.parseJSON();
     }
 
-    var n = SBDataGetIntValue("bookmarks.count");
-    for (var i=0;i<n;i++) {
-      var root = "bookmarks.bookmark"+i;
-      var child = { label: SBDataGetStringValue(root+".label"),
-                    icon: SBDataGetStringValue(root+".icon"),
-                    properties: "bookmark",
-                    url: SBDataGetStringValue(root+".url")
-		  };
-		  thechildren.push(child);
-    }
-
-    this.bookmark_nodes = {
-		  children: [
-			  { 
-				  label: "Bookmarks",
-				  icon: "chrome://songbird/skin/default/icon_folder.png",
-				  url: "",
-				  children: null
-		    }
-		  ]
-		};
-		this.bookmark_nodes.children[0].children = thechildren;
 	  return this.bookmark_nodes;
   },
   
@@ -175,12 +129,13 @@ var bmManager = {
     return -1;
   },
   
+  
   getString : function(strid, defstr) {
     var sb = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-    var bmStrings = sb.createBundle("chrome://songbird/locales/songbird.properties");
+    var bmStrings = sb.createBundle("chrome://songbird/locale/songbird.properties");
     try {
       defstr = bmStrings.GetStringFromName(strid);
-    } catch (e) {}
+    } catch (e) {dump(e);}
     return defstr;
   },
   
@@ -256,29 +211,26 @@ var bmManager = {
         if ( properties[ 0 ] == "bookmark" ) {
           var children = this.bookmark_nodes.children[0].children;
           var element = service.tree.contentView.getItemAtIndex( row );
-          var url = element.getAttribute( "url" );
-          var n = this.findBookmark(url);
-          if (n >= 0) {
-            if (this.popup) { service.removeChild(this.popup); this.popup = null; }
-            this.popup = document.createElement("popup");
-            this.popup.setAttribute("id", "bookmark_menu");
-            this.popup.setAttribute("oncommand", "onBookmarkCommand(event.target);");
-            var edititem = document.createElement("menuitem");
-            edititem.setAttribute("id", "bookmark.edit");
-            edititem.setAttribute("label", this.getString("bookmarks.menu.edit", "Edit"));
-            edititem.setAttribute("url", children[n].url);
-            var removeitem = document.createElement("menuitem");
-            removeitem.setAttribute("id", "bookmark.remove");
-            removeitem.setAttribute("label", this.getString("bookmarks.menu.remove", "Remove"));
-            removeitem.setAttribute("url", children[n].url);
-            this.popup.appendChild(removeitem);
-            this.popup.appendChild(edititem);
-            service.appendChild(this.popup);
-            this.popup.showPopup( service.tree, theEvent.screenX + 5, theEvent.screenY, "context", null, null, null );
-            theEvent.preventBubble();
-            theEvent.preventDefault();
-            return;
-          }
+
+          if (this.popup) { service.removeChild(this.popup); this.popup = null; }
+          this.popup = document.createElement("popup");
+          this.popup.setAttribute("id", "bookmark_menu");
+          this.popup.setAttribute("oncommand", "onBookmarkCommand(event.target);");
+          var edititem = document.createElement("menuitem");
+          edititem.setAttribute("id", "bookmark.edit");
+          edititem.setAttribute("label", this.getString("bookmarks.menu.edit", "Edit"));
+          edititem.setAttribute("rdfid", element.getAttribute( "id" ));
+          var removeitem = document.createElement("menuitem");
+          removeitem.setAttribute("id", "bookmark.remove");
+          removeitem.setAttribute("label", this.getString("bookmarks.menu.remove", "Remove"));
+          removeitem.setAttribute("rdfid", element.getAttribute( "id" ));
+          this.popup.appendChild(removeitem);
+          this.popup.appendChild(edititem);
+          service.appendChild(this.popup);
+          this.popup.showPopup( service.tree, theEvent.screenX + 5, theEvent.screenY, "context", null, null, null );
+          theEvent.preventBubble();
+          theEvent.preventDefault();
+          return;
         }
       }
     }
@@ -288,22 +240,22 @@ var bmManager = {
   },
   
   onEditCommand : function (target) {
-    var url = target.getAttribute("url");
-    var n = this.findBookmark(url);
-    if (n >= 0) {
-      var children = this.bookmark_nodes.children[0].children;
+    var id = target.getAttribute("rdfid");
+    var node = this.serviceSourceProxy.getNodeByResourceId(id);
+    
+    if (node != null) {
       var data = {};
-      data.in_url = children[n].url;
-      data.in_label = children[n].label;
-      data.in_icon= children[n].icon;
+      data.in_url = node.url;
+      data.in_label = node.label;
+      data.in_icon= node.icon;
       SBOpenModalDialog( "chrome://songbird/content/xul/editbookmark.xul", "edit_bookmark", "chrome,modal=yes, centerscreen", data );
       if (data.result) {
         var newurl = data.out_url;
         var newicon = data.out_icon;
         var newlabel = data.out_label;
-        children[n].url = newurl;
-        children[n].label = newlabel;
-        children[n].icon = newicon;
+        node.url = newurl;
+        node.label = newlabel;
+        node.icon = newicon;
         this.saveBookmarks();
         this.rebuildBookmarks();
       } 
@@ -311,14 +263,380 @@ var bmManager = {
   },
   
   onRemoveCommand : function (target) {
-    var url = target.getAttribute("url");
-    var n = this.findBookmark(url);
-    if (n >= 0) {
-      var children = this.bookmark_nodes.children[0].children;
-      children.splice(n, 1);
-      this.saveBookmarks();
-      this.rebuildBookmarks();
-    }    
+    var id = target.getAttribute("rdfid");
+    var node = this.serviceSourceProxy.getNodeByResourceId(id);
+    //dump("\n\nid is: " + id + " resource is " + node + "\n\n");    
+    
+    // Find index of item in node tree.
+    // This could be better.. but it works.
+    var i = 0;
+    var j = -1;
+    var found = false;
+    for (i = 0; i < this.bookmark_nodes.children.length; i++) {
+      if (this.bookmark_nodes.children[i] == node) {
+        j = -1;
+        found = true;
+        break;
+      }
+      for (j = 0; j < this.bookmark_nodes.children[i].children.length; j++) {
+        if (this.bookmark_nodes.children[i].children[j] == node) {
+          found = true;
+          break;
+        }
+      }
+      if (found) break;
+    }
+
+    
+    if (!found) {
+      dump("!!! Bookmarks onRemoveCommand failed to find " + id + "\n");
+      return;
+    }
+
+    dump("\nbookmarks.js: onRemoveCommand found item at " + i + ", " + j + "\n");
+
+    // Remove the node..
+    if (i > 0 && j == -1) {
+      var children = this.bookmark_nodes.children;
+      children.splice(i, 1);
+    } else if (i >= 0 && j != -1) {
+      var children = this.bookmark_nodes.children[i].children;
+      children.splice(j, 1);
+    }
+        
+    this.saveBookmarks();
+    this.rebuildBookmarks();
+  },
+  
+  _getDefaultNodes : function() {
+
+    var nodes = {
+		  children: [
+			  { /////// BOOKMARKS
+				  label: this.getString("servicesource.bookmarks", ""),
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  url: "",
+				  children: [
+			      { 
+				      label: "Pitchfork",
+				      icon: "http://www.pitchforkmedia.com/favicon.ico",
+				      url: "http://www.pitchforkmedia.com/page/downloads/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Podbop",
+				      icon: "http://podbop.org/favicon.ico",
+				      url: "http://podbop.org/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Swedelife",
+				      icon: "http://www.swedelife.com/favicon.ico",
+				      url: "http://www.swedelife.com/",
+				      properties: "bookmark",
+				      children: []
+		        },			        				  
+			      { 
+				      label: "La Blogothèque",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://www.blogotheque.net/mp3/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Medicine",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://takeyourmedicinemp3.blogspot.com/",
+				      properties: "bookmark",
+				      children: []
+		        },			        				  
+			      { 
+				      label: "OpenBSD",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Songbirdnest",
+				      icon: "chrome://songbird/skin/default/logo_16.png",
+				      url: "http://songbirdnest.com/",
+				      properties: "bookmark",
+				      children: []
+		        },			        
+			      { 
+				      label: "Autodownload",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "chrome://songbird/content/xul/remote_download.xul",
+				      properties: "bookmark",
+				      children: []
+		        }
+				  ]
+		    },
+			  { /////// SEARCHES
+				  label: this.getString("servicesource.searches", ""),
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  url: "",
+				  properties: "bookmark",
+				  children: [
+			      { 
+				      label: "Google",
+				      icon: "chrome://songbird/skin/serviceicons/google.ico",
+				      url: "http://www.google.com/musicsearch?q=",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Yahoo!",
+				      icon: "chrome://songbird/skin/serviceicons/yahoo.ico",
+				      properties: "bookmark",
+				      url: "http://audio.search.yahoo.com/",
+				      children: []
+		        },	
+			      { 
+				      label: "Creative Commons",
+				      icon: "http://creativecommons.org/favicon.ico",
+				      url: "http://search.creativecommons.org/",
+				      properties: "bookmark",
+				      children: []
+		        }		  
+				  ]
+		    },	    
+			  { /////// MUSIC STORES
+				  label: this.getString("servicesource.music_stores", ""),
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  properties: "bookmark",
+				  url: "",
+				  children: [
+			      { 
+				      label: "Connect",
+				      icon: "chrome://songbird/skin/serviceicons/connect.ico",
+				      url: "http://musicstore.connect.com/promos/dc/take_tour.html",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Amazon",
+				      icon: "chrome://songbird/skin/serviceicons/amazon.ico",
+				      url: "http://www.faser.net/mab/chrome/content/mab.xul",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Audible",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://audible.com/",
+				      properties: "bookmark",
+				      children: []
+		        },			        			      
+			      { 
+				      label: "Beatport",
+				      icon: "https://www.beatport.com/favicon.ico",
+				      url: "http://beatport.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "MP3Tunes",
+				      icon: "http://www.mp3tunes.com/favicon.ico",
+				      url: "http://www.mp3tunes.com/store.php",
+				      properties: "bookmark",
+				      children: []
+		        },
+			      { 
+				      label: "eMusic",
+				      icon: "chrome://songbird/skin/serviceicons/emusic.ico",
+				      url: "http://emusic.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "CD Baby",
+				      icon: "chrome://songbird/skin/serviceicons/cdbaby.ico",
+				      url: "http://cdbaby.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Selectric Records",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://www.selectricrecords.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Arts and Crafts Records",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://www.galleryac.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Calabash Music",
+				      icon: "http://calabashmusic.com/favicon.ico",
+				      url: "http://calabashmusic.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Project Opus",
+				      icon: "http://projectopus.com/favicon.ico",
+				      url: "http://projectopus.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Birdman Records",
+				      icon: "http://www.birdmanrecords.com/favicon.ico",
+				      url: "http://www.birdmanrecords.com/",
+				      properties: "bookmark",
+				      children: []
+		        }			        		        		        		        		        		        		                		        
+				  ]
+		    },			    
+			  { /////// PODCASTS
+				  label: this.getString("servicesource.podcasts", ""),
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  url: "",
+				  properties: "bookmark",
+				  children: [
+			      { 
+				      label: "Odeo Featured",
+				      icon: "chrome://songbird/skin/serviceicons/odeo.ico",
+				      url: "http://odeo.com/listen/featured/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Podemus",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://podemus.fr/",
+				      properties: "bookmark",
+				      children: []
+		        }		  
+				  ]
+		    },	
+			  { /////// RADIO
+				  label: this.getString("servicesource.radio", ""),
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  url: "",
+				  properties: "bookmark",
+				  children: [
+			      { 
+				      label: "SHOUTcast",
+				      icon: "chrome://songbird/skin/serviceicons/shoutcast.ico",
+				      url: "http://www.shoutcast.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Radiotime",
+				      icon: "chrome://songbird/skin/serviceicons/radiotime.ico",
+				      url: "http://radiotime.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "MVY Radio",
+				      icon: "http://www.mvyradio.com/favicon.ico",
+				      url: "http://www.mvyradio.com/",
+				      properties: "bookmark",
+				      children: []
+		        }	  
+				  ]
+		    },	
+			  { /////// NETWORK SERVICES
+				  label: "Network Services",
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  url: "",
+				  properties: "bookmark",
+				  children: [
+			      { 
+				      label: "Ninjam",
+				      icon: "chrome://songbird/skin/serviceicons/ninjam_gui_win.ico",
+				      url: "http://ninjam.com/samples.php",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "last.fm",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://last.fm/group/Songbird",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "AllMusic",
+				      icon: "http://www.allmusic.com/favicon.ico",
+				      url: "http://www.allmusic.com/",
+				      properties: "bookmark",
+				      children: []
+		        },			        			      
+			      { 
+				      label: "MP3Tunes Locker",
+				      icon: "http://mp3tunes.com/favicon.ico",
+				      url: "http://www.mp3tunes.com/locker/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Streampad",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://www.streampad.com/",
+				      properties: "bookmark",
+				      children: []
+		        },
+			      { 
+				      label: "Tables Turned",
+				      icon: "http://tablesturned.com/favicon.ico",
+				      url: "http://tablesturned.com/",
+				      properties: "bookmark",
+				      children: []
+		        },
+			      { 
+				      label: "Music Strands",
+				      icon: "http://musicstrands.com/favicon.ico",
+				      url: "http://musicstrands.com/",
+				      properties: "bookmark",
+				      children: []
+		        },
+			      { 
+				      label: "Jamendo",
+				      icon: "http://jamendo.com/favicon.ico",
+				      url: "http://jamendo.com/",
+				      properties: "bookmark",
+				      children: []
+		        }			        				        		        	  
+				  ]
+		    },			    		    
+			  { /////// NETWORK DEVICES
+				  label: "Network Devices",
+				  icon: "chrome://songbird/skin/default/icon_folder.png",
+				  url: "",
+				  properties: "bookmark",
+				  children: [
+			      { 
+				      label: "SlimDevices",
+				      icon: "http://slimdevices.com/favicon.ico",
+				      url: "http://www.slimdevices.com/",
+				      properties: "bookmark",
+				      children: []
+		        },	
+			      { 
+				      label: "Sonos",
+				      icon: "http://www.sonos.com/favicon.ico",
+				      url: "http://www.sonos.com/",
+				      properties: "bookmark",
+				      children: []
+		        }		  
+				  ]
+		    }	    
+		    
+		  ]
+		};  
+		return nodes;
   }
 };
 

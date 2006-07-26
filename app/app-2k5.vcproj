@@ -1564,6 +1564,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\content\scripts\json.js"
+					>
+				</File>
+				<File
 					RelativePath=".\content\scripts\jumptofile.js"
 					>
 					<FileConfiguration

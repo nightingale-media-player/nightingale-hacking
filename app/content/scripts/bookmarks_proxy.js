@@ -1,8 +1,30 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
 /**
- * File:		ServicesourceProxy.js 
- * Created:		May 2006
- * Author:		Matt Crocker
- *
  * Purpose:
  *		Wraps Servicesource nsIRDFDataSource to provide filtering and inclusion of
  *		additional nodes.
@@ -118,6 +140,9 @@ ServicesourceProxy.prototype = {
 		this.filtering = enabled;
 	},
 	
+	getNodeByResourceId: function (id) {
+	  return this.rdfLookup[id];
+	},
 
 	/* nsIRDFDataSource */
 	URI: "rdf:bookmarks-servicesource-proxy",
@@ -171,8 +196,9 @@ ServicesourceProxy.prototype = {
 			{
 				var originalEnumerator = this.mInner.GetTargets(subj, pred, tv);
 				
-				// Replace bookmarks submenu
-				var items = this._replaceBookmarks(originalEnumerator);
+				// Add additional nodes
+				var items = this._filterNodes(originalEnumerator);
+			  items = items.concat(this.nodes.rdfResources);
 			
 				// Wrap the items in an nsISimpleEnumerator
 				var enumerator = new ArrayEnumerator(items);
@@ -320,7 +346,7 @@ ServicesourceProxy.prototype = {
 	 */ 
 	_createRDFResources: function() {
 		this.nodes.rdfResources = [];
-		for (var i in this.nodes.children) 
+		for (var i = 0; i < this.nodes.children.length; i++) 
 		{
 			this.nodes.rdfResources[i] = RDF.GetAnonymousResource();
 			this.rdfLookup[ this.nodes.rdfResources[i].Value ] = this.nodes.children[i] 
@@ -328,7 +354,7 @@ ServicesourceProxy.prototype = {
 			if (this.nodes.children[i].children.length > 0) 
 			{
 				this.nodes.children[i].rdfResources = [];
-				for (var j in this.nodes.children[i].children) 
+				for (var j = 0; j < this.nodes.children[i].children.length; j++) 
 				{
 					this.nodes.children[i].rdfResources[j] = RDF.GetAnonymousResource();
 					this.rdfLookup[ this.nodes.children[i].rdfResources[j].Value ] = this.nodes.children[i].children[j];
@@ -339,13 +365,15 @@ ServicesourceProxy.prototype = {
 	
 	
 	
+
+	
 	/**
 	 * Given an nsISimpleEnumerator of nsIRDFResources, creates an array of all items
 	 * that should remain on the sidebar
 	 */
-	_replaceBookmarks: function(enumerator) {
+	_filterNodes: function(enumerator) {
 		var selectedItems = [];
-		
+			
 		// Walk all items and make a list of the ones that we want
 		while (enumerator.hasMoreElements()) {
 			var item = enumerator.getNext();
@@ -353,15 +381,24 @@ ServicesourceProxy.prototype = {
 			// Perform lookup to see what this item is..
 			item = item.QueryInterface(Components.interfaces.nsIRDFResource);
 			
-			var label = this.mInner.GetTarget(item, NC_LABEL, true).QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
-			if (label != "Bookmarks") {
-			  selectedItems.push(item);
+			
+			var icon = this.mInner.GetTarget(item, NC_ICON, true);
+
+			// If it has an icon, we may not want to keep it
+			if (icon != null && this.filtering) {
+				icon = icon.QueryInterface(Components.interfaces.nsIRDFLiteral).Value;
+				
+				// If icon is a folder, then we don't want to display it
+				if (icon != "chrome://songbird/skin/default/icon_folder.png") {
+					selectedItems.push(item);
+				} 
+			// No icon.. probably a playlist
 			} else {
-        selectedItems = selectedItems.concat(this.nodes.rdfResources); 
+				selectedItems.push(item);
 			}
 		}
 		
 		return selectedItems;
-	}
+	}	
 
 };
