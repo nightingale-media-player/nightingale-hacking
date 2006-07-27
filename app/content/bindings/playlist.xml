@@ -2784,7 +2784,7 @@
           try
           {
             // if this playlist is the currently playing one, set selection to the playing item
-            if ( this.playlistRef.stringValue == this.playingRef.stringValue )
+            if ( this.playlistRef && this.playlistRef.stringValue == this.playingRef.stringValue )
             {
               var url = this.playUrl.stringValue;
               var row = this.findUrl(url);
