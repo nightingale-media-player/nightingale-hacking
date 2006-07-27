@@ -38,7 +38,7 @@
 <window
   id="frame_outer"
   hidechrome="true"
-  class="sb_faceplate, window"
+  class="sb_faceplate, mainwin"
   onload="SBInitialize();onSBMainwinDataLoad();SBInterfaceInitialize();"
   onunload="SBUninitialize();onSBMainwinDataUnload();SBInterfaceDeinitialize();"
   onclose="quitApp();" 
@@ -59,19 +59,19 @@
   >
     <vbox class="sb_faceplate" flex="1">
       <hbox class="sb_faceplate">
-        <image id="chrome_nw" class="sb_faceplate"/>
-        <image id="chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="chrome_ne" class="sb_faceplate"/>
+        <image id="mainwin_chrome_nw" class="sb_faceplate"/>
+        <image id="mainwin_chrome_n" class="sb_faceplate" flex="1"/>
+        <image id="mainwin_chrome_ne" class="sb_faceplate"/>
       </hbox>
       <hbox class="sb_faceplate" flex="1">
-        <image id="chrome_w" class="sb_faceplate"/>
+        <image id="mainwin_chrome_w" class="sb_faceplate"/>
         <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
-        <image id="chrome_e" class="sb_faceplate"/>
+        <image id="mainwin_chrome_e" class="sb_faceplate"/>
       </hbox>
       <hbox class="sb_faceplate">
-        <image id="chrome_sw" class="sb_faceplate"/>
-        <image id="chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="chrome_se" class="sb_faceplate"/>
+        <image id="mainwin_chrome_sw" class="sb_faceplate"/>
+        <image id="mainwin_chrome_s" class="sb_faceplate" flex="1"/>
+        <image id="mainwin_chrome_se" class="sb_faceplate"/>
       </hbox>
     </vbox>
 
