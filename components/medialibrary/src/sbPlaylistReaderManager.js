@@ -43,15 +43,9 @@ function CPlaylistReaderManager()
   {
     if(contractID.indexOf(this.m_rootContractID) != -1)
     {
-      var aReader = Components.classes[contractID];
-      
-      aReader = aReader.createInstance();
-      aReader = aReader.QueryInterface(this.m_interfaceID);
-      
+      var aReader = Components.classes[contractID].createInstance(this.m_interfaceID);
       if(aReader)
-      {
         this.m_Readers.push(aReader);
-      }  
     }
   }
   
@@ -227,8 +221,9 @@ CPlaylistReaderManager.prototype =
   {
     var theExtension = this.getFileExtension(strURL);
   
-    for(var aReader in this.m_Readers)
+    for(var r in this.m_Readers)
     {
+      var aReader = this.m_Readers[r];
       if(strContentType == "")
       {
         var nExtensionsCount = new Object;
