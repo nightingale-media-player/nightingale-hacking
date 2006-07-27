@@ -169,11 +169,6 @@
           </hbox>
           </vbox><!-- end of grouping -->
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-          <!--hbox>
-            <label id="smart_playlist_name_label" value="Name your playlist smarty:"/>
-            <textbox class="dialog_textbox" id="smart_playlist_name" flex="1"/>
-          </hbox> 
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/-->
           <hbox>
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
             <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
