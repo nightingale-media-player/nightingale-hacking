@@ -67,18 +67,18 @@
   </vbox>
 
   <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
-    <hbox class="sb_faceplate">
-      <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
-    </hbox>
+    
     <hbox class="sb_faceplate" flex="1">
-    <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
-      <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
+      <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">
+        <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>      
         <hbox id="window_top" class="sb_faceplate" >
+          <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <label id="app_title" value="&media_scan.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
           <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
           <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
+          <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
         </hbox>
         <spacer flex="1"/>
         <hbox style="overflow: hidden;"> 
@@ -111,10 +111,6 @@
         </hbox>
         <spacer flex="1"/> 
       </vbox>
-    <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-    </hbox>
-    <hbox class="sb_faceplate">
-      <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
     </hbox>
   </vbox>
 </stack>  

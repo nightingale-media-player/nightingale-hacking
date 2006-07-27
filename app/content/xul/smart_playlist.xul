@@ -43,7 +43,8 @@
 >
 
 
-<!--windowregion/-->
+<windowregion/>
+
 <stack flex="1">
 
   <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
