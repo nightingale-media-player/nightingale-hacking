@@ -240,6 +240,12 @@ Love the box.
   border: none !important;
 }
 
+#frame_main_pane
+{
+  -moz-appearance: none !important; /* grrrr! */
+  border: none !important;
+}
+
 #frame_service_tree
 {
   -moz-appearance: none !important;
