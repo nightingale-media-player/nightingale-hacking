@@ -79,8 +79,17 @@ radio[pane=paneTabs]:hover, radio[pane=paneTabs][selected="true"] {
 radio[pane=paneAdvanced] {
 	-moz-image-region: rect(0px, 160px, 32px, 128px)
 }
+
 radio[pane=paneAdvanced]:hover, radio[pane=paneAdvanced][selected="true"] {
 	-moz-image-region: rect(32px, 160px, 64px, 128px)
+}
+
+radio[pane=paneHotkeys]{
+	-moz-image-region: rect(0px, 224px, 32px, 192px)
+}
+
+radio[pane=paneHotkeys]:hover, radio[pane=paneHotkeys][selected="true"] {
+	-moz-image-region: rect(32px, 224px, 64px, 192px)
 }
 
 /* General Pane */
