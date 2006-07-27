@@ -62,19 +62,18 @@ THE WINDOW CHROME
 ************************************************************************************************************************************************
 */
 
-.chrome_bkgd,
-#chrome_bkgd,
-#chrome_e,
-#chrome_w
+#mainwin_chrome_bkgd,
+#mainwin_chrome_e,
+#mainwin_chrome_w
 {
   background-image: url(chrome://songbird/skin/default/chrm_bkgd.png) !important; /** <img src="chrm_bkgd.png"> */
   background-repeat: repeat-x !important;  
 }
 
 /** chrm_n.png is offset by 9 pixels to make up for the 9px height of the top frame */
-#chrome_nw,
-#chrome_n,
-#chrome_ne
+#mainwin_chrome_nw,
+#mainwin_chrome_n,
+#mainwin_chrome_ne
 {
   background-image: url(chrome://songbird/skin/default/chrm_n.png) !important; /** <img src="chrm_n.png"> */
   background-repeat: repeat-x !important;   

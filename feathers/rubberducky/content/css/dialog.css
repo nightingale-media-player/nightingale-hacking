@@ -44,6 +44,110 @@ This CSS files specifies the size and position of dialog UI.
   font-size: 11px !important;
 }
 
+/** 
+******************************************************************************************
+THE DIALOG CHROME
+These pieces paint the resizeable window for dialogs.
+*******************************************************************************************
+*/
+
+window
+{
+  border: 2px solid !important;
+}
+
+
+#chrome_bkgd
+{
+  -moz-appearance: none !important; 
+}
+
+
+#chrome_nw
+{
+  -moz-appearance: none !important;
+  height: 9px !important;   
+  width: 9px !important;   
+}
+
+#chrome_n
+{
+  -moz-appearance: none !important;
+  height: 9px !important;   
+  width: 9px !important; 
+}
+
+#chrome_ne
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_w
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_e
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_sw
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_s
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_se
+{
+  -moz-appearance: none !important; 
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+/** 
+**************************************
+THE DIALOG CHROME IMAGES
+**************************************
+*/
+
+#chrome_bkgd,
+#chrome_e,
+#chrome_w
+{
+  background-image: url(chrome://songbird/skin/default/chrm_bkgd.png) !important; /** <img src="chrm_bkgd.png"> */
+  background-repeat: repeat-x !important;  
+}
+
+/** chrm_n.png creates an offset by 9 pixels to make up for the 9px height of the top frame */
+#chrome_nw,
+#chrome_n,
+#chrome_ne
+{
+  background-image: url(chrome://songbird/skin/default/chrm_n.png) !important; /** <img src="chrm_n.png"> */
+  background-repeat: repeat-x !important;   
+}
+
+/** 
+************************************************************************************************************************************************
+TOP BAR
+************************************************************************************************************************************************
+*/
+
 #window_top   /* Title  */
 {
   border-bottom: 1px solid !important; /* this draws the line under the title bar */
@@ -62,6 +166,11 @@ This CSS files specifies the size and position of dialog UI.
 }
 
 /* Dialog Form Elements */
+
+progressmeter
+{
+	border: none !important;
+}
 
 /* dialog buttons */
 .dialog_button 
@@ -261,10 +370,9 @@ MEDIA SCAN
 */
 
 
-#songbird_media_scan 
+#media_scan 
 { 
-   margin: 2px 0px 0px 0px !important;
-   border: none !important;
+   margin: 0px 0px 0px 0px !important;
 } 
 
 /** 

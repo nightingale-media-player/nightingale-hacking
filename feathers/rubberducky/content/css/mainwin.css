@@ -38,70 +38,68 @@ These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
 
-.window,
-.dialog
+window
 {
   border: 2px solid !important;
 }
 
 
-.chrome_bkgd,
-#chrome_bkgd
+#mainwin_chrome_bkgd
 {
   -moz-appearance: none !important; 
 }
 
 
-#chrome_nw
+#mainwin_chrome_nw
 {
   -moz-appearance: none !important;
   height: 9px !important;   
   width: 9px !important;   
 }
 
-#chrome_n
+#mainwin_chrome_n
 {
   -moz-appearance: none !important;
   height: 9px !important;   
   width: 9px !important; 
 }
 
-#chrome_ne
+#mainwin_chrome_ne
 {
   -moz-appearance: none !important; 
   height: 9px !important;   
   width: 9px !important;
 }
 
-#chrome_w
+#mainwin_chrome_w
 {
   -moz-appearance: none !important; 
   height: 9px !important;   
   width: 9px !important;
 }
 
-#chrome_e
+#mainwin_chrome_e
 {
   -moz-appearance: none !important; 
   height: 9px !important;   
   width: 9px !important;
 }
 
-#chrome_sw
+#mainwin_chrome_sw
 {
   -moz-appearance: none !important; 
   height: 9px !important;   
   width: 9px !important;
 }
 
-#chrome_s
+#mainwin_chrome_s
 {
   -moz-appearance: none !important; 
   height: 9px !important;   
   width: 9px !important;
 }
 
-#chrome_se
+#mainwin_chrome_se
 {
   -moz-appearance: none !important; 
   height: 9px !important;   
@@ -109,7 +107,7 @@ These pieces paint the resizeable window for Songbird.
 }
 /** 
 ************************************************************************************************************************************************
-CHROME - Top Bar
+TOP BAR
 Minimize, Maximize, Restore, and Switch to Mini-Mode
 ************************************************************************************************************************************************
 */
