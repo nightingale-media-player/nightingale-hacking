@@ -34,10 +34,10 @@ To achieve a three-dimensional effect, it's important to remember that a user un
 upper left corner or directly from above.  Consequently, use the light colors on the top and left borders and dark colors on the 
 right and bottom borders to achieve a dimensional appearance.
 
-Rubberducky is Songbird's black skin.  
+Dove is Songbird's white skin.  
 The following ARE NOT CLASS NAMES.
 
-Body Material - Rubberducky
+Body Material - Dove
 -------------------------------
 bright-highlight    #7a7c7c - upperleft borders
 highlight           #686a6a - upperleft borders
@@ -56,7 +56,7 @@ shadow              #505154
 darkshadow          #333
 background          #000
 
-Service Pane - Rubberducky
+Service Pane - Dove
 -------------------------------
 bright-highlight    #7a7c7c
 highlight           #999
@@ -66,7 +66,7 @@ shadow              #444
 darkshadow          #333
 background          #000
 
-Filterlists - Rubberducky
+Filterlists - Dove
 -------------------------------
 filterlist-light    #343d42
 filterlist-dark     #1d272d
@@ -78,91 +78,68 @@ selected-highlight  #99a195
 
 /** 
 ************************************************************************************************************************************************
-MAIN WINDOW
-Black material for the window.
-************************************************************************************************************************************************
-*/ 
-.window,
-.dialog
-{
-  background-color: #efefef !important; /* color of the Main Window **/
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-left-colors: #686a6a #333  !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  color: #ccc !important;
-}
-
-/** 
-************************************************************************************************************************************************
-SERVICE PANE
-Grey material for the Service Pane.
-************************************************************************************************************************************************
-*/ 
-.service-pane
-{
-  background-color: #686a6a !important;
-  -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #474848 !important;
-  -moz-border-bottom-colors: #474848 !important;
-  -moz-border-right-colors: #474848 !important;
-  color: #cdd4c4 !important;
-}
-
-/** 
-************************************************************************************************************************************************
 THE WINDOW CHROME
 These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
-.chrome_iframe_bkgd
+
+.mainwin
 {
-  background: #f00 !important;
+  background-color: #FFF !important; /* color of the Main Window **/
+  -moz-border-top-colors: #eee #ececec !important;
+  -moz-border-left-colors: #eee #ececec  !important;
+  -moz-border-bottom-colors: #ccc #eee !important;
+  -moz-border-right-colors: #ccc #eee !important;
+  color: #666 !important;
 }
 
-.chrome_bkgd,
-#chrome_bkgd
+#mainwin_chrome_bkgd
 {
-  background-color: #000 !important;
+  background-color: #FFF !important; /* match to the Main Window **/
+}
+
+.chrome_iframe_bkgd /* match to the Main Window **/
+{
+  background: #FFF !important;
 }
 
 
-#chrome_nw
+#mainwin_chrome_nw
 {  
   background-color: transparent !important;
 }
 
-#chrome_n
+#mainwin_chrome_n
 {
   background-color: transparent !important;
 }
 
-#chrome_ne
+#mainwin_chrome_ne
 {
   background-color: transparent !important;
 }
 
-#chrome_w
+#mainwin_chrome_w
 {
   background-color: transparent !important;
 }
 
-#chrome_e
+#mainwin_chrome_e
 {
   background-color: transparent !important;
 }
 
-#chrome_sw
+#mainwin_chrome_sw
 {
   background-color: transparent !important;
 }
 
-#chrome_s
+#mainwin_chrome_s
 {
   background-color: transparent !important;
 }
 
-#chrome_se
+#mainwin_chrome_se
 {
   background-color: transparent !important;
 }
@@ -174,10 +151,10 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 ************************************************************************************************************************************************
 */
 
-#app_title,
+#mainwin_app_title,
 #video_window_title
 {
-  color: #FFF !important;
+  color: #666 !important;
 }
 
 #sysbtn_close
@@ -217,14 +194,22 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 {
   background-color: transparent !important;
 }
-/* END CHROME **/
 
 /** 
 ************************************************************************************************************************************************
-MAIN WINDOW
-Love your boxes.
+SERVICE PANE
+Grey material for the Service Pane.
 ************************************************************************************************************************************************
 */ 
+.service-pane
+{
+  background-color: #686a6a !important;
+  -moz-border-top-colors: #7a7c7c !important;
+  -moz-border-left-colors: #474848 !important;
+  -moz-border-bottom-colors: #474848 !important;
+  -moz-border-right-colors: #474848 !important;
+  color: #cdd4c4 !important;
+}
 
 #frame_service_tree
 {
@@ -301,32 +286,24 @@ SCROLLBARS
 
 scrollbar
 {   
-  background-color: #000 !important;
+  background-color: #FFF !important;
   background-image: none !important; 
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important;  
-  background-position: center center !important; 
-} 
- 
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"],
+scrollbar > slider > thumb
 {   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
   border: 2px solid !important; 
-  background-color: #343d42 !important;
-  background-position: center center !important;
+  background-position: center center !important;  
+  background-color: #FFF !important; 
+  -moz-border-top-colors: #eee #ececec !important;
+  -moz-border-left-colors: #eee #ececec  !important;
+  -moz-border-bottom-colors: #ccc #eee !important;
+  -moz-border-right-colors: #ccc #eee !important;
+  color: #666 !important; 
 } 
  
 scrollbar > slider > thumb > gripper
@@ -334,22 +311,12 @@ scrollbar > slider > thumb > gripper
   background-color: transparent !important; 
 } 
 
-scrollbar > slider > thumb
-{   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important;
-} 
-
 scrollbar > slider
 {   
-  background-color: #000 !important;
+  background-color: #FFF !important;
 } 
 
-/* service pane scrollbar*/
+/* service pane scrollbars*/
 #frame_service_tree scrollbar
 {    
   background-color: #686A6A !important;
@@ -974,15 +941,15 @@ These let the user resize the frames in your box model.
 #vert_splitter,
 #filter_splitter
 {
-  background-color: #333 !important;
+  background-color: #ececec !important;
 }
 
 #vert_splitter
 {
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 
-.vert_splitter[state="collapsed"],
+.vert_splitter[state="collapsed"], /* Service Pane Collapses into this splitter bar **/
 #vert_splitter[state="collapsed"]
 {
   background-color: #686A6A !important;
@@ -997,7 +964,7 @@ These let the user resize the frames in your box model.
 #horz_splitter,
 #playlist_web_split > grippy
 {
-  background-color: #333 !important;
+  background-color: #ececec !important;
 }
 
 #control_pane_splitter
@@ -1012,12 +979,12 @@ These let the user resize the frames in your box model.
 
 #horz_splitter[state="collapsed"]
 {
-  background-color: #333 !important;
+  background-color: #ececec !important;
 }
 
 #playlist_web_split[state="collapsed"]
 {
-  background-color: #333 !important;
+  background-color: #ececec !important;
 }
 /* END SPLITTERS **/
 
@@ -1029,10 +996,10 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #444 !important;
-  -moz-border-bottom-colors: #444 !important;
-  -moz-border-right-colors: #444 !important;
+  -moz-border-top-colors: #ccc !important;
+  -moz-border-left-colors: #ccc !important;
+  -moz-border-bottom-colors: #ccc !important;
+  -moz-border-right-colors: #ccc !important;
 }
 
 /** 
@@ -1371,7 +1338,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 /* the box with the url image and the url textbox */
 #browser_url_box
 {
-  border: 1px solid #4A4E48 !important;
+  border: 1px solid #666 !important;
   background-color: transparent !important;
   color: #CCC !important;
 }
@@ -1393,27 +1360,19 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   color: #FFF !important;
 }
 
-#browser_url input[selected="true"]
-{
-  background-color: #F00 !important;
-  color: #FFF !important;
-}
-
-
-
 #browser_toolbar
 {
-  border-bottom: 1px solid #808583 !important; 
+  border-bottom: 1px solid #ccc !important; 
   background-color: transparent !important;
 }
 
 #browser_toolbar button 
 {
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: #333 !important;   
+  -moz-border-top-colors: #ececec !important;
+  -moz-border-left-colors: #ececec !important;
+  -moz-border-bottom-colors: #ccc !important;
+  -moz-border-right-colors: #ccc !important;
+  background-color: #fff !important;   
  }
  
 #browser_toolbar button[disabled="true"],
@@ -1426,132 +1385,37 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   background-color: transparent !important; 
 }
 
-#browser_back:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_back[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_refresh:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_refresh[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_stop:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_stop[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_fwd:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_fwd[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-#browser_home:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_home[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_bookmark:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_bookmark[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_playlist:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_playlist[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
+#browser_back:hover,
+#browser_refresh:hover,
+#browser_stop:hover,
+#browser_fwd:hover,
+#browser_home:hover,
+#browser_bookmark:hover,
+#browser_playlist:hover,
 #browser_download:hover
 {
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
+  -moz-border-top-colors: #ececec !important;
+  -moz-border-left-colors: #ececec !important;
+  -moz-border-bottom-colors: #ccc !important;
+  -moz-border-right-colors: #ccc !important;
+  background-color: #eee !important;   
 }
+#browser_back[disabled="true"],
+#browser_refresh[disabled="true"],
+#browser_stop[disabled="true"],
+#browser_fwd[disabled="true"],
+#browser_home[disabled="true"],
+#browser_bookmark[disabled="true"],
+#browser_playlist[disabled="true"],
 #browser_download[disabled="true"]
 {
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
+  -moz-border-top-colors: #eee !important;
+  -moz-border-left-colors: #eee !important;
+  -moz-border-bottom-colors: #eee !important;
+  -moz-border-right-colors: #eee !important;
   background-color: transparent !important; 
 }
+
 /* END WEB BAR */
 
 /** 

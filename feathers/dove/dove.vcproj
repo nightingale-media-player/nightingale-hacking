@@ -35,7 +35,8 @@ echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\
 copy /y $(InputDir)install.rdf $(SolutionDir)dist\xulrunner\extensions\dove@songbirdnest.com
 echo. &gt; $(SolutionDir)dist\xulrunner\extensions\dove@songbirdnest.com\chrome.manifest
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
+"
 				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -65,7 +66,8 @@ echo _EXCLUDE &gt;&gt; _EXCLUDE
 xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\
 copy /y $(InputDir)install.rdf $(SolutionDir)dist\xulrunner\extensions\dove@songbirdnest.com
 echo. &gt; $(SolutionDir)dist\xulrunner\extensions\dove@songbirdnest.com\chrome.manifest
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
+"
 				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -721,10 +723,16 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
 			RelativePath=".\bindings.xml">
 		</File>
 		<File
+			RelativePath=".\dialog_colors.css">
+		</File>
+		<File
 			RelativePath=".\install.rdf">
 		</File>
 		<File
 			RelativePath=".\jar.mn.in">
+		</File>
+		<File
+			RelativePath=".\mainwin_colors.css">
 		</File>
 		<File
 			RelativePath=".\songbird.css">

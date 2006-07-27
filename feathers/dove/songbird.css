@@ -77,19 +77,14 @@ CASCADE!
 You can only use the @ at the top of the file.
 ************************************************************************************************************************************************
 */ 
-/** First pull all the base definitions from rubberducky **/
+@import url(chrome://rubberducky/content/css/base_styles.css); /* base styles for the main application window **/
+@import url(chrome://rubberducky/content/css/mainwin.css); /* size and positioning for the main application window **/
+@import url(chrome://rubberducky/content/css/mainwin_images.css); /* images for the main application window colors **/
+@import url(chrome://rubberducky/content/css/dialog.css); /* size and positioning for the dialog windows **/
+@import url(chrome://rubberducky/content/css/mini.css); /* css for the mini player **/
 
-/**@import url(chrome://rubberducky/content/css/base_styles.css); /* base styles for the main application window **/
-/**@import url(chrome://rubberducky/content/css/mainwin.css); /* size and positioning for the main application window **/
-/**@import url(chrome://rubberducky/content/css/mainwin_images.css); /* images for the main application window colors **/
-/**@import url(chrome://rubberducky/content/css/dialog.css); /* size and positioning for the dialog windows **/
-/**@import url(chrome://rubberducky/content/css/mini.css); /* css for the mini player **/
 
-/** Then make the dove specific modifications **/
-/**@import url(mainwin_colors.css); /* colors for the main application window colors **/
-/**@import url(dialog_colors.css); /* colors for the dialog window colors **/
+@import url(mainwin_colors.css); /* colors for the main application window colors **/
+@import url(dialog_colors.css); /* colors for the dialog window colors **/
  
 
-/** For now the checked in version will use only the original dove css.
-    As soon as conversion is complete this line can be removed. **/
-@import url(songbird_old.css); 

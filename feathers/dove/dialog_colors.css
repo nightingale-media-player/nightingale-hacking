@@ -79,15 +79,75 @@ selected-highlight  #99a195
 ************************************************************************************************************************************************
 */ 
 
-.dialog
+
+/** 
+******************************************************************************************
+THE DIALOG CHROME
+These pieces paint the resizeable window for dialogs.
+*******************************************************************************************
+*/
+
+window
 {
-  background-color: #000 !important;
+  background-color: #000 !important; /* color of the Main Window **/
   -moz-border-top-colors: #7a7c7c #333 !important;
   -moz-border-left-colors: #686a6a #333  !important;
   -moz-border-bottom-colors: #333 #333 !important;
   -moz-border-right-colors: #505154 #333 !important;
   color: #ccc !important;
 }
+
+.chrome_iframe_bkgd
+{
+  background: #f00 !important;
+}
+
+#chrome_bkgd
+{
+  background-color: #000 !important; /* color of the Main Window **/
+}
+
+
+#chrome_nw
+{  
+  background-color: transparent !important;
+}
+
+#chrome_n
+{
+  background-color: transparent !important;
+}
+
+#chrome_ne
+{
+  background-color: transparent !important;
+}
+
+#chrome_w
+{
+  background-color: transparent !important;
+}
+
+#chrome_e
+{
+  background-color: transparent !important;
+}
+
+#chrome_sw
+{
+  background-color: transparent !important;
+}
+
+#chrome_s
+{
+  background-color: transparent !important;
+}
+
+#chrome_se
+{
+  background-color: transparent !important;
+}
+
 
 .iframe_bkgd
 {
@@ -100,10 +160,16 @@ selected-highlight  #99a195
   background-color: Transparent !important;
 }
 
+#app_title
+{
+  color: #eee !important;
+}
+
 .dialog_label
 {
   color: #fff !important;
 }
+
 
 /** 
 ************************************************************************************************************************************************
@@ -372,7 +438,7 @@ MEDIA SCAN
 
 #media_scan
 {
-  background-color: transparent !important;
+  background-color: #000 !important;
   color: #FFF !important;
 }
 
