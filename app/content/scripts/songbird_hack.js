@@ -901,9 +901,9 @@ var SBDocStartListener = {
       var theServiceTree = document.getElementById( "frame_servicetree" );
       var theMainPane = document.getElementById( "frame_main_pane" );
       var cur_uri = aLocation.asciiSpec;
-      m_CurrentRequestURI = aRequest.name;
-//      if ( SBGetUrlFromService( theBrowserUrlData.stringValue ) != cur_uri )
+      if ( aRequest && aRequest.name )    
       {
+        m_CurrentRequestURI = aRequest.name;
         // Set the box
         theBrowserUriData.stringValue = cur_uri;
         theBrowserUrlData.stringValue = SBGetServiceFromUrl( cur_uri ) ;
