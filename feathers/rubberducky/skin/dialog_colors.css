@@ -79,7 +79,7 @@ selected-highlight  #99a195
 ************************************************************************************************************************************************
 */ 
 
-.dialog
+window
 {
   background-color: #000 !important;
   -moz-border-top-colors: #7a7c7c #333 !important;
@@ -88,6 +88,66 @@ selected-highlight  #99a195
   -moz-border-right-colors: #505154 #333 !important;
   color: #ccc !important;
 }
+
+/** 
+******************************************************************************************
+THE DIALOG CHROME
+These pieces paint the resizeable window for dialogs.
+*******************************************************************************************
+*/
+
+.chrome_iframe_bkgd
+{
+  background: #f00 !important;
+}
+
+.chrome_bkgd,
+#chrome_bkgd
+{
+  background-color: #000 !important;
+}
+
+
+#chrome_nw
+{  
+  background-color: transparent !important;
+}
+
+#chrome_n
+{
+  background-color: transparent !important;
+}
+
+#chrome_ne
+{
+  background-color: transparent !important;
+}
+
+#chrome_w
+{
+  background-color: transparent !important;
+}
+
+#chrome_e
+{
+  background-color: transparent !important;
+}
+
+#chrome_sw
+{
+  background-color: transparent !important;
+}
+
+#chrome_s
+{
+  background-color: transparent !important;
+}
+
+#chrome_se
+{
+  background-color: transparent !important;
+}
+
 
 .iframe_bkgd
 {
@@ -372,7 +432,7 @@ MEDIA SCAN
 
 #media_scan
 {
-  background-color: transparent !important;
+  background-color: #000 !important;
   color: #FFF !important;
 }
 

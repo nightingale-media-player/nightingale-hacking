@@ -82,8 +82,7 @@ MAIN WINDOW
 Black material for the window.
 ************************************************************************************************************************************************
 */ 
-.window,
-.dialog
+.mainwin
 {
   background-color: #000 !important; /* color of the Main Window **/
   -moz-border-top-colors: #7a7c7c #333 !important;
@@ -117,52 +116,51 @@ These pieces paint the resizeable window for Songbird.
 */
 .chrome_iframe_bkgd
 {
-  background: #f00 !important;
+  background: #000 !important;
 }
 
-.chrome_bkgd,
-#chrome_bkgd
+#mainwin_chrome_bkgd
 {
   background-color: #000 !important;
 }
 
 
-#chrome_nw
+#mainwin_chrome_nw
 {  
   background-color: transparent !important;
 }
 
-#chrome_n
+#mainwin_chrome_n
 {
   background-color: transparent !important;
 }
 
-#chrome_ne
+#mainwin_chrome_ne
 {
   background-color: transparent !important;
 }
 
-#chrome_w
+#mainwin_chrome_w
 {
   background-color: transparent !important;
 }
 
-#chrome_e
+#mainwin_chrome_e
 {
   background-color: transparent !important;
 }
 
-#chrome_sw
+#mainwin_chrome_sw
 {
   background-color: transparent !important;
 }
 
-#chrome_s
+#mainwin_chrome_s
 {
   background-color: transparent !important;
 }
 
-#chrome_se
+#mainwin_chrome_se
 {
   background-color: transparent !important;
 }
