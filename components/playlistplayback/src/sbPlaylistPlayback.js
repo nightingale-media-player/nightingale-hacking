@@ -1169,7 +1169,7 @@ PlaylistPlayback.prototype = {
       this._onPollVolume( core );
       this._onPollMute( core );
       this._onPollTimeText( len, pos );
-      this._onPollButtons( len, core );
+      this._onPollButtons( len, pos, core );
       this._onPollCompleted( len, pos, core );
     }       
     catch ( err )  
@@ -1209,8 +1209,8 @@ PlaylistPlayback.prototype = {
   },
 
   // Routes core playback status changes to the play/pause button ui data remote
-  _onPollButtons: function ( len, core ) {
-    if ( core.getPlaying() && ( ! core.getPaused() ) && ( len > 0 ) )
+  _onPollButtons: function ( len, pos, core ) {
+    if ( core.getPlaying() && ( ! core.getPaused() ) && ( len > 0 || pos > 0 ) )
       this._playButton.boolValue = false;
     else
       this._playButton.boolValue = true;
