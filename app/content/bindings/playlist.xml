@@ -2430,6 +2430,7 @@
                 func(this, c, params);
               }
             }
+            this.tree.view.selection.clearSelection();
           }
           catch( err )
           {
