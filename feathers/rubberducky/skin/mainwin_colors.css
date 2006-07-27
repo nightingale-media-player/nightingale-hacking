@@ -85,11 +85,6 @@ Black material for the window.
 .mainwin
 {
   background-color: #000 !important; /* color of the Main Window **/
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-left-colors: #686a6a #333  !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  color: #ccc !important;
 }
 
 /** 
@@ -114,54 +109,38 @@ THE WINDOW CHROME
 These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
-.chrome_iframe_bkgd
-{
-  background: #000 !important;
-}
 
+.chrome_iframe_bkgd,
 #mainwin_chrome_bkgd
 {
-  background-color: #000 !important;
-}
-
-
-#mainwin_chrome_nw
-{  
   background-color: transparent !important;
 }
 
-#mainwin_chrome_n
-{
-  background-color: transparent !important;
-}
-
+#mainwin_chrome_nw,
+#mainwin_chrome_n,
 #mainwin_chrome_ne
 {
+  -moz-border-top-colors: #7a7c7c #333 !important;
   background-color: transparent !important;
 }
 
-#mainwin_chrome_w
+#mainwin_chrome_e,
+#mainwin_chrome_se
 {
+  -moz-border-right-colors: #505154 #333 !important;
   background-color: transparent !important;
 }
 
-#mainwin_chrome_e
-{
-  background-color: transparent !important;
-}
-
+#mainwin_chrome_w,
 #mainwin_chrome_sw
 {
+  -moz-border-left-colors: #686a6a #333  !important;
   background-color: transparent !important;
 }
 
 #mainwin_chrome_s
 {
-  background-color: transparent !important;
-}
-
-#mainwin_chrome_se
-{
+  -moz-border-bottom-colors: #333 #333 !important;
   background-color: transparent !important;
 }
 
@@ -178,39 +157,15 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   color: #FFF !important;
 }
 
-#sysbtn_close
-{
-  background-color: transparent !important;
-}
-
+#sysbtn_close,
 #sysbtn_maximize hbox,
-#sysbtn_maximize
-{
-  background-color: transparent !important;  
-}
-
+#sysbtn_maximize,
 #sysbtn_maximize > hbox > image,
 #sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize > image
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_maximize[checked="true"] > image /* Restore */
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_minimize
-{
-  background-color: transparent !important;
-}
-
+#sysbtn_maximize > hbox,
+#sysbtn_maximize > image,
+#sysbtn_maximize[checked="true"] > image, /* Restore */
+#sysbtn_minimize,
 #sysbtn_minimode
 {
   background-color: transparent !important;
