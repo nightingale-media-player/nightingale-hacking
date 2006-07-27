@@ -76,15 +76,119 @@ selected-highlight  #99a195
 ************************************************************************************************************************************************
 */ 
 
+
 /** 
 ************************************************************************************************************************************************
-MAIN WINDOW
-Black material for the window.
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */ 
 .mainwin
 {
   background-color: #000 !important; /* color of the Main Window **/
+}
+
+.chrome_iframe_bkgd,
+#mainwin_chrome_bkgd
+{
+  background-color: #000 !important; /* color of the Main Window **/
+}
+
+<<<<<<< .mine
+#mainwin_chrome_nw
+{
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  background-color: #000 !important;
+}
+=======
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/
+>>>>>>> .r1569
+<<<<<<< .mine
+#mainwin_chrome_n
+=======
+
+.chrome_iframe_bkgd,
+#mainwin_chrome_bkgd
+>>>>>>> .r1569
+{
+<<<<<<< .mine
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  background-color: #000 !important;
+}
+#mainwin_chrome_ne
+{
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  background-color: #000 !important;
+=======
+  background-color: transparent !important;
+>>>>>>> .r1569
+}
+<<<<<<< .mine
+#mainwin_chrome_e
+{
+  -moz-border-right-colors: #505154 #333 !important;
+  background-color: #000 !important;
+}
+#mainwin_chrome_se
+=======
+
+#mainwin_chrome_nw,
+#mainwin_chrome_n,
+#mainwin_chrome_ne
+>>>>>>> .r1569
+{
+<<<<<<< .mine
+  -moz-border-bottom-colors: #333 #333 !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  background-color: #000 !important;
+=======
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  background-color: transparent !important;
+>>>>>>> .r1569
+}
+
+<<<<<<< .mine
+#mainwin_chrome_s
+=======
+#mainwin_chrome_e,
+#mainwin_chrome_se
+>>>>>>> .r1569
+{
+<<<<<<< .mine
+  -moz-border-bottom-colors: #333 #333 !important;
+  background-color: #000 !important;
+=======
+  -moz-border-right-colors: #505154 #333 !important;
+  background-color: transparent !important;
+>>>>>>> .r1569
+}
+<<<<<<< .mine
+#mainwin_chrome_w
+{
+  -moz-border-left-colors: #686a6a #333  !important;
+  background-color: #000 !important;
+}
+=======
+
+#mainwin_chrome_w,
+>>>>>>> .r1569
+#mainwin_chrome_sw
+{
+<<<<<<< .mine
+  -moz-border-bottom-colors: #333 #333 !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  background-color: #000 !important;
+=======
+  -moz-border-left-colors: #686a6a #333  !important;
+  background-color: transparent !important;
+>>>>>>> .r1569
 }
 
 /** 
@@ -95,55 +199,23 @@ Grey material for the Service Pane.
 */ 
 .service-pane
 {
+<<<<<<< .mine
   background-color: #686a6a !important;
   -moz-border-top-colors: #7a7c7c !important;
   -moz-border-left-colors: #474848 !important;
   -moz-border-bottom-colors: #474848 !important;
   -moz-border-right-colors: #474848 !important;
   color: #cdd4c4 !important;
-}
-
-/** 
-************************************************************************************************************************************************
-THE WINDOW CHROME
-These pieces paint the resizeable window for Songbird.
-************************************************************************************************************************************************
-*/
-
-.chrome_iframe_bkgd,
-#mainwin_chrome_bkgd
-{
-  background-color: transparent !important;
-}
-
-#mainwin_chrome_nw,
-#mainwin_chrome_n,
-#mainwin_chrome_ne
-{
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  background-color: transparent !important;
-}
-
-#mainwin_chrome_e,
-#mainwin_chrome_se
-{
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: transparent !important;
-}
-
-#mainwin_chrome_w,
-#mainwin_chrome_sw
-{
-  -moz-border-left-colors: #686a6a #333  !important;
-  background-color: transparent !important;
-}
-
-#mainwin_chrome_s
-{
+=======
   -moz-border-bottom-colors: #333 #333 !important;
   background-color: transparent !important;
+>>>>>>> .r1569
 }
 
+<<<<<<< .mine
+
+=======
+>>>>>>> .r1569
 /** 
 ************************************************************************************************************************************************
 CHROME - Top Bar
@@ -151,7 +223,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 ************************************************************************************************************************************************
 */
 
-#app_title,
+#mainwin_app_title,
 #video_window_title
 {
   color: #FFF !important;

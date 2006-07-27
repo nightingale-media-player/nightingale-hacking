@@ -79,15 +79,6 @@ selected-highlight  #99a195
 ************************************************************************************************************************************************
 */ 
 
-window
-{
-  background-color: #000 !important;
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-left-colors: #686a6a #333  !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  color: #ccc !important;
-}
 
 /** 
 ******************************************************************************************
@@ -95,59 +86,74 @@ THE DIALOG CHROME
 These pieces paint the resizeable window for dialogs.
 *******************************************************************************************
 */
-
-.chrome_iframe_bkgd
+window
 {
-  background: #f00 !important;
+  background-color: #000 !important; /* color of the Main Window **/
 }
 
-.chrome_bkgd,
+.chrome_iframe_bkgd,
 #chrome_bkgd
 {
-  background-color: #000 !important;
+  background-color: #000 !important; /* color of the Main Window **/
 }
-
 
 #chrome_nw
-{  
-  background-color: transparent !important;
+{
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  border-top: 2px solid !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  border-left: 2px solid !important;
+  background-color: #000 !important;
 }
-
 #chrome_n
 {
-  background-color: transparent !important;
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  border-top: 2px solid !important;
+  background-color: #000 !important;
 }
-
 #chrome_ne
 {
-  background-color: transparent !important;
+  -moz-border-top-colors: #7a7c7c #333 !important;
+  border-top: 2px solid !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  border-right: 2px solid !important;
+  background-color: #000 !important;
 }
-
-#chrome_w
-{
-  background-color: transparent !important;
-}
-
 #chrome_e
 {
-  background-color: transparent !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  border-right: 2px solid !important;
+  background-color: #000 !important;
 }
-
-#chrome_sw
+#chrome_se
 {
-  background-color: transparent !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  border-bottom: 2px solid !important;
+  -moz-border-right-colors: #505154 #333 !important;
+  border-right: 2px solid !important;
+  background-color: #000 !important;
 }
 
 #chrome_s
 {
-  background-color: transparent !important;
+  -moz-border-bottom-colors: #333 #333 !important;
+  border-bottom: 2px solid !important;
+  background-color: #000 !important;
 }
-
-#chrome_se
+#chrome_w
 {
-  background-color: transparent !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  border-left: 2px solid !important;
+  background-color: #000 !important;
 }
-
+#chrome_sw
+{
+  -moz-border-bottom-colors: #333 #333 !important;
+  border-bottom: 2px solid !important;
+  -moz-border-left-colors: #686a6a #333  !important;
+  border-left: 2px solid !important;
+  background-color: #000 !important;
+}
 
 .iframe_bkgd
 {
@@ -158,6 +164,11 @@ These pieces paint the resizeable window for dialogs.
 {
   border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
   background-color: Transparent !important;
+}
+
+#app_title
+{
+  color: #fff !important;
 }
 
 .dialog_label
