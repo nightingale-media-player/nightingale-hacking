@@ -38,12 +38,6 @@ These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
 
-window
-{
-  border: 2px solid !important;
-}
-
-
 #mainwin_chrome_bkgd
 {
   -moz-appearance: none !important; 
@@ -53,6 +47,8 @@ window
 #mainwin_chrome_nw
 {
   -moz-appearance: none !important;
+  border-top: 2px solid !important;
+  border-left: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;   
 }
@@ -60,6 +56,7 @@ window
 #mainwin_chrome_n
 {
   -moz-appearance: none !important;
+  border-top: 2px solid !important;
   height: 9px !important;   
   width: 9px !important; 
 }
@@ -67,6 +64,8 @@ window
 #mainwin_chrome_ne
 {
   -moz-appearance: none !important; 
+  border-top: 2px solid !important;
+  border-right: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;
 }
@@ -74,6 +73,7 @@ window
 #mainwin_chrome_w
 {
   -moz-appearance: none !important; 
+  border-left: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;
 }
@@ -81,6 +81,7 @@ window
 #mainwin_chrome_e
 {
   -moz-appearance: none !important; 
+  border-right: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;
 }
@@ -88,6 +89,8 @@ window
 #mainwin_chrome_sw
 {
   -moz-appearance: none !important; 
+  border-bottom: 2px solid !important;
+  border-left: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;
 }
@@ -95,6 +98,7 @@ window
 #mainwin_chrome_s
 {
   -moz-appearance: none !important; 
+  border-bottom: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;
 }
@@ -102,6 +106,8 @@ window
 #mainwin_chrome_se
 {
   -moz-appearance: none !important; 
+  border-bottom: 2px solid !important;
+  border-right: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;
 }
@@ -120,7 +126,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   margin: 1px 5px 0px 2px !important;
 }
 
-#app_title,
+#mainwin_app_title,
 #video_window_title
 {
   margin: 0px 0px 0px 0px !important;

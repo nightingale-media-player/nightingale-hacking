@@ -51,12 +51,6 @@ These pieces paint the resizeable window for dialogs.
 *******************************************************************************************
 */
 
-window
-{
-  border: 2px solid !important;
-}
-
-
 #chrome_bkgd
 {
   -moz-appearance: none !important; 
@@ -153,6 +147,14 @@ TOP BAR
   border-bottom: 1px solid !important; /* this draws the line under the title bar */
   padding-bottom: 6px !important;
   margin-bottom: 4px !important;
+}
+
+#app_title
+{
+  margin: 0px 0px 0px 0px !important;
+  font-family: tahoma, arial !important;
+  font-weight: bold !important;
+  font-size: 11px !important;
 }
 
 #track_editor,
