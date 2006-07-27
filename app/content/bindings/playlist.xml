@@ -392,7 +392,7 @@
         <parameter name="refsuffix"/>
         <body>
           <![CDATA[
-       //dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
+           // dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
       try
       {
         // Perhaps we need to reload our columns
@@ -565,8 +565,10 @@
           <![CDATA[
       try
       {
-        if (!stateonly) stateonly = false;
-        if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0) stateonly = false;
+        if (!stateonly)
+          stateonly = false;
+        if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0) 
+          stateonly = false;
         
         // Get the parents
         var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
@@ -577,13 +579,17 @@
         // If we have a popup, skip it
         if ( this.popup_shown )
         {
+          // make a note that we need to refresh when the popup goes away
+          this._needRefresh = true;
           return;
         }
+        this._needRefresh = false;
         
-        if (!stateonly) toolbar.hidden = true;
-
-        // Remove old elements
-        if (!stateonly) this.removeCommands();
+        if (!stateonly) {
+          toolbar.hidden = true;
+          // Remove old elements
+          this.removeCommands();
+        }
         
         if ( this.commands )
         {
@@ -704,7 +710,7 @@
 
           if ( this.toolbarbuttons.length != this.commands.getNumCommands() )
           {
-            dump( "ERROR: TOOLBARBUTTONS OUT OF SYNCH!" );
+            dump( "ERROR: TOOLBARBUTTONS OUT OF SYNCH!\n" );
           }
         }
       }
@@ -1545,12 +1551,12 @@
           var viewsummary = this.getViewSummary();
           if (this._lastviewsummary == viewsummary)
           {
-          this.restoreSelection();
-          this.refreshCommands(true);
+            this.restoreSelection();
+            this.refreshCommands(true);
           }
           else
           {
-          this.refreshCommands(false);
+            this.refreshCommands(false);
           }
           this._lastviewsummary = viewsummary;
         </body>
@@ -2147,6 +2153,11 @@
           try
           {
             this.popup_shown = false;
+
+            // Force a refresh of the commands due to bug315 - toolbarbuttons out of sync
+            if (this._needRefresh)
+              this.refreshCommands(false);
+            
           }
           catch( err )
           {
