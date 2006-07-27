@@ -1426,7 +1426,7 @@ PlaylistPlayback.prototype = {
     // prepare the data for addMedia call
     var keys = new Array( "title" );
     var values = new Array();
-    values.push( gPPS.convertUrlToDisplayName( the_url ) );
+    values.push( this.convertUrlToDisplayName( the_url ) );
 
     // add the url to the library
     var guid = library.addMedia( the_url, keys.length, keys, values.length, values, false, false );

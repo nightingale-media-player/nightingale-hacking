@@ -45,7 +45,7 @@ try
     } catch(e) {}
     fp.init(window, sel, nsIFilePicker.modeOpen);
     // Tell it what filters to be using
-    var mediafiles = "Madia Files";
+    var mediafiles = "Media Files";
     try
     {
       mediafiles = theSongbirdStrings.getString("open.mediafiles");
