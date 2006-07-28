@@ -932,6 +932,9 @@ PlaylistPlayback.prototype = {
   },
 
   isMediaUrl: function(the_url) {
+    // Case insensitive.
+    if (the_url && the_url.tolower) the_url.tolower(); else return false;
+    
 // NO    if (this.isPlaylistUrl(the_url)) return true;
     if( ( the_url.indexOf ) && 
         (
@@ -966,6 +969,7 @@ PlaylistPlayback.prototype = {
 
   isVideoUrl: function ( the_url )
   {
+    if (the_url && the_url.tolower) the_url.tolower(); else return false;
     if ( ( the_url.indexOf ) && 
           (
             ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
