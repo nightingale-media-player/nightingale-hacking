@@ -376,6 +376,11 @@ tree treecol
   background-color: transparent !important;
 }
 
+#playlist_tree treecol:hover
+{
+  background-color: #333 !important;
+}
+
 /* column picker **/
 tree .tree-columnpicker-icon
 {
