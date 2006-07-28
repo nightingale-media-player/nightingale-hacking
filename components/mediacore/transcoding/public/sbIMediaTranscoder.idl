@@ -27,14 +27,14 @@
 /**
 * \file sbIMediaTranscoder.idl
 * \brief Interfaces for implementing and using media transcoders
-* \TODO Stub module.  Currently unimplemented.
+* \todo Stub module.  Currently unimplemented.
 */
 #include "nsISupports.idl"
 
 /**
 * \interface sbIMediaType sbIMediaTranscoder.h
 * \brief An object to represent a requested or supported set of mimetypes
-* \TODO Stub interface.  Currently unimplemented.
+* \todo Stub interface.  Currently unimplemented.
 * \sa sbIMediaTranscoderManager, sbIMediaTranscoder, sbIMediaTranscoderCallback
 */
 [scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
@@ -89,7 +89,7 @@ interface sbIMediaType : nsISupports
 * the sbIMediaTranscoderManager::transcode() method to be informed about the
 * status and progress of the transcode operation.
 *
-* \TODO Stub interface.  Currently unimplemented.
+* \todo Stub interface.  Currently unimplemented.
 * \sa sbIMediaTranscoderManager, sbIMediaTranscoder, sbIMediaType
 */
 [scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
@@ -144,7 +144,7 @@ interface sbIMediaTranscoderCallback : nsISupports
 * It handles chaining the decode of the input type to the encode of the
 * output type, internally.
 *
-* \TODO Stub interface.  Currently unimplemented.  Lots of work.
+* \todo Stub interface.  Currently unimplemented.  Lots of work.
 * \sa sbIMediaTranscoderManager, sbIMediaTranscoderCallback, sbIMediaType
 */
 [scriptable, uuid(497EADC6-CE0E-4e40-91A5-EE6D11B2A4DA)]
@@ -243,7 +243,7 @@ interface sbIMediaTranscoder : nsISupports
 * sbIMediaTranscoder instances, finding one that supports the requested
 * transcode operation, and calling its sbIMediaTranscoder::transcode() method.
 *
-* \TODO Stub interface.  Currently unimplemented.
+* \todo Stub interface.  Currently unimplemented.
 * \sa sbIMediaTranscoder, sbIMediaTranscoderCallback, sbIMediaType
 */
 [scriptable, uuid()]

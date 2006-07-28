@@ -98,7 +98,7 @@ interface sbIMetadataHandler : nsISupports
 
   /**
   * \brief Get the mimetypes supported by this handler (probably DEPRECATED)
-  * \TODO Make sure it's safe to deprecate these.  Only the cores should need to return mimetype/extension info, I think.
+  * \todo Make sure it's safe to deprecate these.  Only the cores should need to return mimetype/extension info, I think.
   * \param nMIMECount The number of mimetypes returned in the array
   * \param aMIMETypes The array of mimetypes supported by this handler
   */
@@ -106,7 +106,7 @@ interface sbIMetadataHandler : nsISupports
 
   /**
   * \brief Get the extensions supported by this handler (probably DEPRECATED)
-  * \TODO Make sure it's safe to deprecate these.  Only the cores should need to return mimetype/extension info, I think.
+  * \todo Make sure it's safe to deprecate these.  Only the cores should need to return mimetype/extension info, I think.
   * \param nExtCount The number of extensions returned in the array
   * \param aExts The array of extensions supported by this handler
   */
@@ -135,7 +135,7 @@ interface sbIMetadataHandler : nsISupports
   * items in the sbIMetadataValues object if the underlying file format does
   * not support the given keys.
   *
-  * \TODO Make anything actually work with a write operation
+  * \todo Make anything actually work with a write operation
   * \return -1 if operating asynchronously, otherwise the number of metadata values written (0 on failure)
   */
   PRInt32 write();

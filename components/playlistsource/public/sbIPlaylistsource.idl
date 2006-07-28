@@ -139,7 +139,7 @@ interface sbIPlaylistCommands : nsISupports
   * string will be used as an index into the current localization's properties
   * file.
   *
-  * \TODO The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip.
+  * \todo The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip.
   * \param index The index of the element for which the data is being requested
   * \return The string for the tooltip
   */
@@ -455,7 +455,7 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * data in RDF format, and properly constructs the internal structures
   * necessary to properly query this interface for its information.
   *
-  * \TODO I'm pretty sure this is broken right now
+  * \todo I'm pretty sure this is broken right now
   * \param aRefName The unique identifier for the datasource 
   */
   void forceGetTargets( in AString aRefName );
@@ -487,7 +487,7 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * Commands can be registered for an entire database (by setting ContextGUID
   * and leaving TableName null), or for any "type" characteristic.
   *
-  * \TODO Currently, new registrations overwrite previous registrations.  BAD.  Make them save and return an array.  Please don't overwrite our standard commands.
+  * \todo Currently, new registrations overwrite previous registrations.  BAD.  Make them save and return an array.  Please don't overwrite our standard commands.
   * \param aContextGUID The guid string for the database to register against
   * \param aTableName The name of the table to register against
   * \param aPlaylistType The arbitrary type string to register against
@@ -506,7 +506,7 @@ interface sbIPlaylistsource : nsIRDFDataSource
   *
   * This method is only called by the playlist UI object, in playlist.xml
   *
-  * \TODO Currently, new registrations overwrite previous registrations.  BAD.  Make them save and return an array.  Please don't overwrite our standard commands.
+  * \todo Currently, new registrations overwrite previous registrations.  BAD.  Make them save and return an array.  Please don't overwrite our standard commands.
   * \param aContextGUID The guid string for the playlist
   * \param aTableName The name of the playlist
   * \param aPlaylistType The type of the playlist

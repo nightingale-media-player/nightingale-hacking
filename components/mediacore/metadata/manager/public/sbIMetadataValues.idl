@@ -41,7 +41,7 @@
 *
 * The type enumeration is:
 *
-* \TODO Make a list of keys.  Make a type enumeration.
+* \todo Make a list of keys.  Make a type enumeration.
 * \sa sbIMetadataHandler
 */
 [scriptable, uuid(EC39DE03-8918-4369-951E-0A04BD9CF663)]

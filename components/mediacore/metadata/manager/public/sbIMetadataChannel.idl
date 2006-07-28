@@ -50,7 +50,7 @@ interface sbIMetadataChannel : nsIStreamListener
 {
   /**
   * \brief The current read position (for the read methods)
-  * \TODO Make "SetPos()" work past the end of the buffer.  Right now, nothing is seekable.
+  * \todo Make "SetPos()" work past the end of the buffer.  Right now, nothing is seekable.
   */
   attribute PRUInt64 pos;
   /**
@@ -63,7 +63,7 @@ interface sbIMetadataChannel : nsIStreamListener
   readonly attribute PRUInt64 size;
   /**
   * \brief If the datastream is seekable
-  * \TODO Make "GetSeekable()" work.  Right now, nothing is seekable.
+  * \todo Make "GetSeekable()" work.  Right now, nothing is seekable.
   */
   readonly attribute PRBool seekable;
   /**
