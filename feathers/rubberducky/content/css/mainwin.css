@@ -1136,11 +1136,11 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   margin: 1px 0px 3px 5px !important;
 }
 
-#browser_url
+#browser_url,
+.mainwin_location
 {
-  margin-left: 3px !important;
   margin: 0px 0px 0px 5px !important;
-  font-size: larger !important;
+  border: none !important;
 }
 
 #browser_url input:focus

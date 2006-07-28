@@ -391,6 +391,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url_box,
 #browser_url_image,
 #browser_url,
+.mainwin_location,
 #browser_url input:focus,
 #browser_url input[selected="true"],
 #browser_toolbar,
