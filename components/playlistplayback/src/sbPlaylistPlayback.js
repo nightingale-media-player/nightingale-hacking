@@ -259,7 +259,7 @@ PlaylistPlayback.prototype = {
   
   _deinit: function() {
     this._releaseDataRemotes();
-    LOG("XXXredfive - Songbird PlaylistPlayback Service unloaded successfully");
+    LOG("Songbird PlaylistPlayback Service unloaded successfully");
   },
 
   _attachDataRemotes: function() {
@@ -324,14 +324,13 @@ PlaylistPlayback.prototype = {
     this._playButton.boolValue = true; // Start on.
 
     // if they have not been set they will be the empty string.
-    if ( this._shuffle.stringValue == "") this._shuffle.boolValue = false; // start with no shuffle
-    if ( this._repeat.stringValue == "" ) this._repeat.intValue = REPEAT_MODE_OFF; // start with no repeat
-    dump("XXXredfive *********************** volume:" + this._volume.intValue + "\n");
-    dump("XXXredfive *********************** volume:" + this._volume.stringValue + "\n");
-    if ( this._volume.stringValue == "" ) this._volume.intValue = 128;
+    if ( this._shuffle.stringValue == "")
+      this._shuffle.boolValue = false; // start with no shuffle
+    if ( this._repeat.stringValue == "" )
+      this._repeat.intValue = REPEAT_MODE_OFF; // start with no repeat
+    if ( this._volume.stringValue == "" )
+      this._volume.intValue = 128;
     this._requestedVolume = this._calculatedVolume = this._volume.intValue;
-    dump("XXXredfive *********************** volume:" + this._volume.intValue + "\n");
-    dump("XXXredfive *********************** volume:" + this._volume.stringValue + "\n");
   },
   
   _releaseDataRemotes: function() {
@@ -373,38 +372,27 @@ PlaylistPlayback.prototype = {
       this._currentCoreIndex = -1;
   },
 
-  /**
-   * ---------------------------------------------
-   * Public get/set Property Accessors
-   * ---------------------------------------------
-   */
 
-  /**
-   * Access to the currently selected core object
-   */
+  // --------------------------------------------------------------------------
+  //  Public attribute (property) getters and setters
+  // --------------------------------------------------------------------------
+
   get core() {
-//    LOG("get core: _cores.length = " + this._cores.length);
-//    LOG("get core: _currentCoreIndex = " + this._currentCoreIndex);
-    
     if ((this._cores.length > 0) &&
         (this._currentCoreIndex > -1) &&
         (this._currentCoreIndex <= this._cores.length - 1)) {
-//      LOG("get core: returning, core.getId = " + this._cores[this._currentCoreIndex].getId());
       return this._cores[this._currentCoreIndex];
     }
     else {
-//      LOG("get core: returning null");
       return null;
     }
   },
+
   set core(val) {
     LOG("set core: core.getId = " + val.id);
     this.selectCore(val);
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get volume() {
     var core = this.core;
     if (!core)
@@ -525,15 +513,11 @@ PlaylistPlayback.prototype = {
     return this._playUrl;
   },
   
-  /**
-   * ---------------------------------------------
-   * Public Methods
-   * ---------------------------------------------
-   */
+  // ---------------------------------------------
+  //  Public Methods
+  // ---------------------------------------------
 
-  /**
-   * Add a core to the array. Optionally select it.
-   */
+  // Add a core to the array. Optionally select it.
   addCore: function(core, select) {
     LOG("addCore: core.id = " + core.getId());
     for (var i = 0; i < this._cores.length; i++) {
@@ -556,11 +540,8 @@ PlaylistPlayback.prototype = {
     }
     else
       throw Components.results.NS_ERROR_INVALID_ARG;
- },
+  },
   
-  /**
-   *
-   */
   removeCore: function(core) {
     LOG("removeCore with core.getId = " + core.getId());
     for (var i = 0; i < this._cores.length; i++) {
@@ -583,30 +564,19 @@ PlaylistPlayback.prototype = {
     this.addCore(core, true);
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   play: function() {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    if (this._started)
-    { 
-      if (core.getPaused() == false) core.pause();
-      else core.play();
-    }
-    else
-    {
-      this._playDefault();
-    }
+
+    // kick off playback
+    this._playDefault();
+
     // Hide the intro box and show the normal faceplate box
     this._faceplateState.boolValue = true;
     return true;
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playRef: function(source_ref, index) {
     LOG("source = " + source_ref + " index = " + index);
     if (!source_ref || (index == null) || (index < 0))
@@ -624,9 +594,6 @@ PlaylistPlayback.prototype = {
     this._faceplateState.boolValue = true;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playRefByID: function(source_ref, row_id) {
     LOG("source = " + source_ref + " row_id = " + row_id);
     if (!source_ref || (row_id == null) || (row_id < 0))
@@ -640,9 +607,6 @@ PlaylistPlayback.prototype = {
     return this.playRef(source_ref, index);
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playRefByUUID: function(source_ref, media_uuid) {
     LOG("source = " + source_ref + " media_uuid = " + media_uuid);
     if (!source_ref || (media_uuid == ""))
@@ -655,9 +619,6 @@ PlaylistPlayback.prototype = {
     return this.playRef(source_ref, index);
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playRefByURL: function(source_ref, url) {
     LOG("source = " + source_ref + " url = " + url);
     if (!source_ref || (url == null) || (url == ""))
@@ -674,9 +635,6 @@ PlaylistPlayback.prototype = {
     return;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playTable: function(dbGUID, table, index) {
     LOG("playTable - db: " + dbGUID + "\ntable: " + table + "\nindex: " + index);
     
@@ -713,9 +671,6 @@ PlaylistPlayback.prototype = {
     this.playTable(dbGUID, table, index);
   },
   
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playObject: function(playlist, index) {
     if (!playlist || !index)
       throw Components.results.NS_ERROR_INVALID_ARG;
@@ -729,9 +684,6 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_INVALID_ARG;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   playUrl: function(url) {
     try  {
       var core = this.core;
@@ -770,10 +722,10 @@ PlaylistPlayback.prototype = {
     return true;
   },
   
-  playAndImportUrl: function(url) {
+  playAndImportUrl: function(aURL) {
     try  {
-      var row = this._importUrlInLibrary(url);
-      this.playRefByURL("NC:songbird_library", url);
+      var row = this._importUrlInLibrary(aURL);
+      this.playRefByURL("NC:songbird_library", aURL);
     } catch( err ) {
       LOG( "playAndImportUrl:\n" + err );
       return false;
@@ -781,13 +733,10 @@ PlaylistPlayback.prototype = {
     return true;
   },
   
-  importUrl: function(url) {
-    return this._importUrlInLibrary(url);
+  importUrl: function(aURL) {
+    return this._importUrlInLibrary(aURL);
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   pause: function() {
     var core = this.core;
     if (!core)
@@ -796,42 +745,31 @@ PlaylistPlayback.prototype = {
     return true;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   stop: function() {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     core.stop();
     this._stopPlayerLoop(); // oh VERY important!
+    return true;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   next: function() {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     this._playNextPrev(1);
-    return 0;
+    return this._playlistIndex;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   previous: function() {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     this._playNextPrev(-1);
-    return 0;
+    return this._playlistIndex;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   current: function() {
     var core = this.core;
     if (!core)
@@ -839,9 +777,6 @@ PlaylistPlayback.prototype = {
     return this._playlistIndex;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get paused() {
     var core = this.core;
     if (!core)
@@ -849,9 +784,6 @@ PlaylistPlayback.prototype = {
     return core.getPaused();
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get playing() {
     var core = this.core;
     if (!core)
@@ -859,16 +791,10 @@ PlaylistPlayback.prototype = {
     return core.getPlaying();
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   get started() {
     return this._started;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   goFullscreen: function() {
     var core = this.core;
     if (!core)
@@ -876,10 +802,6 @@ PlaylistPlayback.prototype = {
     core.goFullscreen();
   },
   
-
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   getMetadataFields: function(/*out*/ fieldCount, /*out*/ metaFields) {
     var core = this.core;
     if (!core)
@@ -889,9 +811,6 @@ PlaylistPlayback.prototype = {
     return;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   getCurrentValue: function(field) {
     var core = this.core;
     if (!core)
@@ -899,9 +818,6 @@ PlaylistPlayback.prototype = {
     return "";
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   setCurrentValue: function(field, value) {
     var core = this.core;
     if (!core)
@@ -909,9 +825,6 @@ PlaylistPlayback.prototype = {
     return;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   getCurrentValues: function(fieldCount, metaFields, /*out*/ valueCount, /*out*/ metaValues) {
     var core = this.core;
     if (!core)
@@ -921,9 +834,6 @@ PlaylistPlayback.prototype = {
     return;
   },
 
-  /**
-   * See sbIPlaylistPlayback.idl
-   */
   setCurrentValues: function(fieldCount, metaFields, valueCount, metaValues) {
     var core = this.core;
     if (!core)
@@ -1099,10 +1009,8 @@ PlaylistPlayback.prototype = {
     }
     return the_value;
   },
-  
-  /**
-   * Handle Observer Service notifications
-   */
+ 
+  // watch for XRE startup and shutdown messages 
   observe: function(subject, topic, data) {
     switch (topic) {
     case "profile-after-change":
@@ -1122,9 +1030,9 @@ PlaylistPlayback.prototype = {
     }
   },
   
-//
-// Below here are local items used internally to do player loop handling.
-//
+  // --------------------------------------------------------------------------
+  // Below here are local items used internally to do player loop handling.
+  // --------------------------------------------------------------------------
 
   notify: function( timer ) { // nsITimerCallback
     this._onPlayerLoop();
@@ -1154,7 +1062,10 @@ PlaylistPlayback.prototype = {
       var pos = this.position;
       
       if ( !this._once ) {
-        LOG( "_onPlayerLoop '" + core.getId() + "'(" + this.length + "/" + this.position + ") - playing: " + this.playing + " paused: " + this.paused );
+        LOG( "_onPlayerLoop '" + core.getId() +
+             "'(" + this.length + "/" + this.position +
+             ") - playing: " + this.playing +
+             " paused: " + this.paused );
         this._once = true;
       }
         

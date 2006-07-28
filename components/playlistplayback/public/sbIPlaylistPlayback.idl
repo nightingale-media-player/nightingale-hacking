@@ -45,57 +45,325 @@ interface sbICoreWrapper;
 [scriptable, uuid(190b1e87-8769-43b4-a362-4065eb6730e5)]
 interface sbIPlaylistPlayback : nsIObserver
 {
+  // --------------------------------------------------------------------------
+  // Constants for repeat state - this must match the implementation's
+  // --------------------------------------------------------------------------
+
+  /** \brief No repeat.
+   */
   const unsigned short REPEAT_MODE_OFF = 0;
+
+  /** \brief Repeate the current track (again and again and... ).
+   */
   const unsigned short REPEAT_MODE_ONE = 1;
+
+  /** \brief Play throught all tracks and then do it again.
+   */
   const unsigned short REPEAT_MODE_ALL = 2;
 
-  // Attributes reflecting state of the playback core:
-  attribute sbICoreWrapper core;
-  attribute unsigned short volume;
-  attribute boolean mute;
-  attribute long long position;
-  readonly attribute long long length;
-  readonly attribute boolean paused;
-  readonly attribute boolean playing;
-  readonly attribute boolean started;
 
+  // --------------------------------------------------------------------------
+  // Attributes reflecting state of the playback core:
+  // --------------------------------------------------------------------------
+
+  /**
+   * \brief The current core responsible for playback.
+   * This object is the wrapper around the actual playback engine. All calls to
+   *   the playback engine go through this wrapper. This may be only one of
+   *   several available playback cores, but it is the current core controlling
+   *   playback.
+   */
+  attribute sbICoreWrapper core;
+
+  /**
+   * \brief The volume.
+   * The volume as reported by the core, or set upon the core.
+   */
+  attribute unsigned short volume;
+
+  /**
+   * \brief The mute state.
+   * The mute state as reported by the core, or set upon the core.
+   */
+  attribute boolean mute;
+
+  /**
+   * \brief The position within the current track.
+   * The number of milliseconds from the start of the current track as reported
+   *   by or set upon the core.
+   */
+  attribute long long position;
+
+  /**
+   * /brief The length of the current track.
+   * Reported by the core.
+   */
+  readonly attribute long long length;
+
+  /**
+   * /brief The pause state of the core.
+   * If paused, playback will continue from the current position.
+   */
+  readonly attribute boolean paused;
+
+  /**
+   * \brief The playing state of the core.
+   * Seperate from pause state. I
+   */
+  readonly attribute boolean playing;
+
+
+  // --------------------------------------------------------------------------
   // Attributes reflecting Songbird playback state:
+  // --------------------------------------------------------------------------
+
+  /**
+   * \brief Repeat state.
+   * This has 3 possible states the are reflected in the constants
+   * \sa  REPEAT_MODE_NONE
+   * \sa  REPEAT_MODE_ALL
+   * \sa  REPEAT_MODE_ONE
+   */
   attribute unsigned short repeat;
+
+  /**
+   *\brief Shuffle state.
+   */
   attribute boolean shuffle;
+
+  /**
+   * \brief Number of items in the current playlist.
+   * As reported by the playlistsource.
+   */
   readonly attribute unsigned long itemCount;
+
+  /**
+   * \brief The GUID for the current track in the playback core.
+   */
   readonly attribute AString currentGUID;
+
+  /**
+   * \brief The URL for the current track in the playback core.
+   */
   readonly attribute AString currentURL;
 
-  // Methods for Mutli-core manipulation
-  void addCore(in sbICoreWrapper core, in boolean select);
-  void removeCore(in sbICoreWrapper core);
-  void selectCore(in sbICoreWrapper core);
+  /**
+   * \brief Has playback started.
+   * This is mainly used internally. This does not check the state of the player.
+   *
+   * \TODO Does this really need to be exposed through an interface?
+   */
+  readonly attribute boolean started;
 
+
+  // --------------------------------------------------------------------------
+  // Methods for Mutli-core manipulation
+  // --------------------------------------------------------------------------
+
+  /**
+   * \brief Add a playback core.
+   * Add a playback core to the collection of cores available for media
+   *   playback. If the core already exists it doesn't get added again but
+   *   will be selected if aSelect is true.
+   *
+   * \param aCore - The Core wrapper that interfaces with the core implementation
+   * \param aSelect - A boolean to indicate if the core should be selected as
+   *            the current playback core.
+   * \return void
+   */
+  void addCore(in sbICoreWrapper aCore, in boolean aSelect);
+
+  /**
+   * \brief Take a core out of the collection of available playback cores.
+   * 
+   * \param aCore - the core to remove
+   * \return void
+   */
+  void removeCore(in sbICoreWrapper aCore);
+
+  /**
+   * \brief Select the core passed in as the current core.
+   * If the core passed in doesn't already exist in the collection it gets
+   *   added first. Then it is selected as the current playback core.
+   * 
+   * \param aCore - the core to add.
+   * \return void
+   */
+  void selectCore(in sbICoreWrapper aCore);
+
+
+  // --------------------------------------------------------------------------
   // "Standard" player controls
+  // --------------------------------------------------------------------------
+
+  /**
+   * \brief Begin playback.
+   * If previously paused playback will start at the same position. If stopped
+   *   playback will begin at the beginning of the track. Paused playback will
+   *   start from the same point.
+   *
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return true
+   */
   boolean play();
+
+  /**
+   * \brief Halt playback
+   * This maintains the position in the track and halts the playback.
+   *
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return true
+   */
   boolean pause();
+
+  /**
+   * \brief Halt playback
+   * Stops the playback of the current track. Restarting the playback after
+   *  this call casuses it to start from the beginning of the track.
+   * 
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return true
+   */
   boolean stop();
+
+  /**
+   * \brief Advance playback to the next track
+   *
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return the index of the currently playing track
+   */
   unsigned long next();
+
+  /**
+   * \brief Set playback to the track before the current one in play order
+   *
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return the index of the currently playing track
+   */
   unsigned long previous();
+
+  /**
+   * \brief Get the index of the current track.
+   *
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return the index of the currently playing track
+   */
   unsigned long current();
+
+  /**
+   * \brief Make the playback take the full screen.
+   * This only makes sense for video playback.
+   *
+   * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
+   * \return true
+   */
   void goFullscreen();
 
+
+  // --------------------------------------------------------------------------
   // Various ways of passing in content to play
+  // --------------------------------------------------------------------------
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playRef(in AString source_ref, in unsigned long index);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playRefByID(in AString source_ref, in unsigned long row_id);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playRefByUUID(in AString source_ref, in AString media_uuid);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playRefByURL(in AString source_ref, in AString url);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playTable(in AString dbGUID, in AString table, in unsigned long index);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playTableByURL(in AString dbGUID, in AString table, in AString url);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playTableByID(in AString dbGUID, in AString table, in unsigned long row_id);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playTableByUUID(in AString dbGUID, in AString table, in AString uuid);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playObject(in sbIPlaylist playlist, in unsigned long index);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playUrl(in AString url);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   boolean playAndImportUrl(in AString url);
+
+  /**
+   * \brief
+   *
+   * \throw
+   * \return
+   */
   long importUrl(in AString url);
 
 
+  // --------------------------------------------------------------------------
   // Metadata methods
+  // --------------------------------------------------------------------------
   void getMetadataFields(out unsigned long fieldCount, [array, size_is(fieldCount), retval] out wstring metaFields);
   AString getCurrentValue(in AString field);
   void setCurrentValue(in AString field, in AString value);
@@ -104,15 +372,20 @@ interface sbIPlaylistPlayback : nsIObserver
   void setCurrentValues(in unsigned long fieldCount, [array, size_is(fieldCount)] in wstring metaFields, 
                         in unsigned long valueCount, [array, size_is(valueCount)] in wstring metaValues);
 
+  // --------------------------------------------------------------------------
   // URL checking
+  // --------------------------------------------------------------------------
   boolean isMediaUrl(in AString url);
   boolean isVideoUrl(in AString url);
   boolean isPlaylistUrl(in AString url);
 
+  // --------------------------------------------------------------------------
   // String twiddling
+  // --------------------------------------------------------------------------
   AString stripHoursFromTimeString(in AString str);
   AString emitSecondsToTimeString(in AString seconds);
   AString convertUrlToDisplayName(in AString url);
   AString convertUrlToFolder(in AString url);
 
 };
+
