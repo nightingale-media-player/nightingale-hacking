@@ -232,6 +232,8 @@ function SBInitialize()
     // hack, to let play buttons find the visible playlist if needed
     document.__CURRENTWEBPLAYLIST__ = theWebPlaylist;
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
+    theWebPlaylist.addEventListener( "playlist-noplaylist", function () { document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/main_pane.xul?library' ); }, true );
+    
 // no!    theWebPlaylist.addEventListener( "playlist-edit", onPlaylistEdit, true );
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
     theWebPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
@@ -1543,6 +1545,7 @@ function onMainPaneLoad()
           thePlaylistTree.addEventListener( "playlist-editor", onPlaylistEditor, true );
           thePlaylistTree.addEventListener( "playlist-play", onPlaylistPlay, true );
           thePlaylistTree.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
+          thePlaylistTree.addEventListener( "playlist-noplaylist", function () { document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/main_pane.xul?library' ); }, true );
           thePlaylistTree.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
             
           // Remember some values
@@ -3859,7 +3862,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.LaunchURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
+    theServiceTree.launchURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
   }
 
 }// END

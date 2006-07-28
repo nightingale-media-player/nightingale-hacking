@@ -477,6 +477,19 @@
         this.addedObserver = false;
         
         this._lastviewsummary = "";
+        // If the source says we have filters, use them.
+        if ( filters == null )
+        {
+          var num = this.source.getNumFilters( ref );
+          if ( num > 0 )
+          {
+            filters = new Array();
+            for ( var i = 0; i < num; i++ )
+            {
+              filters.push( this.source.getFilter( ref, i ) );
+            }
+          }
+        }
         if ( filters && filters.length )
         {
           for ( var i = 0; i < filters.length; ++i )
@@ -1548,6 +1561,9 @@
       <method name="didRebuild">
         <parameter name="builder"/>
         <body>
+          // Check to make sure this playlist still exists!
+          if (!this.ensurePlaylistExists()) return;
+          
           var viewsummary = this.getViewSummary();
           if (this._lastviewsummary == viewsummary)
           {
@@ -2894,8 +2910,45 @@
         ]]>
       </body>
     </method>
-    
-   </implementation> 
+
+
+    <method name="ensurePlaylistExists">
+      <body>
+        <![CDATA[
+        var found = true;
+        if (this.table.length > 0 && this.guid.length > 0) {
+          found = false;
+          var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
+          queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+          queryObj.setDatabaseGUID(this.guid);
+          var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          var playlistManager = new PlaylistManager();
+          playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+          playlistManager.getAllPlaylistList( queryObj );
+          var resultset = queryObj.getResultObject();
+          if (this.table == "library")
+            found = true;
+          else
+            for ( var i = 0; i < resultset.getRowCount(); i++ ) {
+              if ( this.table == resultset.getRowCellByColumn( i, "name" ) ) {
+                found = true;
+                break;
+              }
+            }
+          
+          if ( !found )
+          {
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-noplaylist", false, true);
+            this.dispatchEvent(e);
+          }
+        }          
+        return found;
+        ]]>
+        </body>
+      </method>
+
+</implementation> 
  
   </binding>
 
