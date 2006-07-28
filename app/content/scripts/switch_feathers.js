@@ -75,6 +75,8 @@ function fillFeathersList(menu) {
 
     var internalName = "";
     var item = null;
+    var className = "";
+    
     // HACK: Had to remove "internalName" from rubberducky as it 
     // prevented packacking of the bones.  
     // For now, just hardcoding support for rubberducky
@@ -91,10 +93,10 @@ function fillFeathersList(menu) {
     }
     item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
     menu.appendChild(item);
+
+/*
+// Okay, don't do dove afterall.
     
-    // HACK: Had to remove "internalName" from rubberducky as it 
-    // prevented packacking of the bones.  
-    // For now, just hardcoding support for rubberducky
     internalName = "dove/0.1";
     item = document.createElement("menuitem");
     className = menu.parentNode.getAttribute("class");
@@ -108,10 +110,10 @@ function fillFeathersList(menu) {
     }
     item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
     menu.appendChild(item);
-    
-    
+*/    
+
+    //    
     // After we hack in "rubberducky" and "dove" we scan to see if there's any other skins available.
-    
     
     /* access the list of skins from the extensions manager and read extra data using the corresponding rdf datasource */
     var extmgr = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
