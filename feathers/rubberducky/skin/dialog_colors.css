@@ -88,6 +88,7 @@ These pieces paint the resizeable window for dialogs.
 */
 window
 {
+  -moz-appearance: none !important; 
   background-color: #000 !important; /* color of the Main Window **/
 }
 
@@ -100,58 +101,46 @@ window
 #chrome_nw
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
-  border-top: 2px solid !important;
-  -moz-border-left-colors: #686a6a #333  !important;
-  border-left: 2px solid !important;
+  -moz-border-left-colors: #686a6a #333 !important;
   background-color: #000 !important;
 }
 #chrome_n
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
-  border-top: 2px solid !important;
   background-color: #000 !important;
 }
 #chrome_ne
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
-  border-top: 2px solid !important;
   -moz-border-right-colors: #505154 #333 !important;
-  border-right: 2px solid !important;
   background-color: #000 !important;
 }
 #chrome_e
 {
   -moz-border-right-colors: #505154 #333 !important;
-  border-right: 2px solid !important;
   background-color: #000 !important;
 }
 #chrome_se
 {
   -moz-border-bottom-colors: #333 #333 !important;
-  border-bottom: 2px solid !important;
   -moz-border-right-colors: #505154 #333 !important;
-  border-right: 2px solid !important;
   background-color: #000 !important;
 }
 
 #chrome_s
 {
   -moz-border-bottom-colors: #333 #333 !important;
-  border-bottom: 2px solid !important;
   background-color: #000 !important;
 }
 #chrome_w
 {
-  -moz-border-left-colors: #686a6a #333  !important;
-  border-left: 2px solid !important;
+  -moz-border-left-colors: #686a6a #333 !important;
   background-color: #000 !important;
 }
 #chrome_sw
 {
   -moz-border-bottom-colors: #333 #333 !important;
-  border-bottom: 2px solid !important;
-  -moz-border-left-colors: #686a6a #333  !important;
-  border-left: 2px solid !important;
+  -moz-border-left-colors: #686a6a #333 !important;
   background-color: #000 !important;
 }
 
