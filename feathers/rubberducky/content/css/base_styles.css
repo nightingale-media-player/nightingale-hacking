@@ -690,7 +690,7 @@ MISCELLANEOUS
 /* window region */
 
 windowregion {
-  -moz-binding: url("chrome://rubberducky/bones/content/bindings/bindings.xml#windowregion") !important;
+  -moz-binding: url("chrome://rubberducky/content/bindings/bindings.xml#windowregion") !important;
 }
 
 
