@@ -165,6 +165,186 @@ window
   color: #fff !important;
 }
 
+
+/** 
+************************************************************************************************************************************************
+SCROLLBARS
+************************************************************************************************************************************************
+*/ 
+
+playlist.dialog_playlist scrollbar
+{   
+  background-color: #000 !important;
+  background-image: none !important; 
+} 
+
+playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #333 #000 !important;
+  -moz-border-bottom-colors: #333 #000 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  border: 2px solid !important; 
+  background-color: #343d42 !important;  
+  background-position: center center !important; 
+} 
+ 
+playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #333 #000 !important;
+  -moz-border-bottom-colors: #333 #000 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  border: 2px solid !important; 
+  background-color: #343d42 !important;
+  background-position: center center !important;
+} 
+ 
+playlist.dialog_playlist scrollbar > slider > thumb > gripper
+{   
+  background-color: transparent !important; 
+} 
+
+playlist.dialog_playlist scrollbar > slider > thumb
+{   
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #333 #000 !important;
+  -moz-border-bottom-colors: #333 #000 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  border: 2px solid !important; 
+  background-color: #343d42 !important;
+} 
+
+playlist.dialog_playlist scrollbar > slider
+{   
+  background-color: #000 !important;
+} 
+
+/** 
+************************************************************************************************************************************************
+THE LISTS, aka. the List Tree.
+A List Tree is a sortable column list with striping rows.
+************************************************************************************************************************************************
+*/ 
+playlist.dialog_playlist tree treecol
+{
+  background-image: url(default/treecol.png) !important;
+  color: #99A194 !important;  
+  -moz-border-right-colors: #333 !important;
+  background-color: #000 !important;
+}
+
+/* column picker **/
+playlist.dialog_playlist tree .tree-columnpicker-icon
+{
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  list-style-image: url(default/column_picker.png) !important;
+  background-color: #000 !important;
+}
+playlist.dialog_playlist tree .treecol-image /* puts a little piece to fill in next to the column picker **/
+{
+  -moz-border-top-colors: #000 #000 !important;
+  -moz-border-right-colors: #000 #000 !important;
+  -moz-border-bottom-colors: #000 #000 !important;
+  -moz-border-left-colors: #000 #000 !important;
+  background-image: url(default/treecol.png) !important;
+  background-color: #000 !important;
+}
+
+/** 
+************************************************************************************************************************************************
+THE PLAYLIST
+************************************************************************************************************************************************
+*/ 
+
+playlist.dialog_playlist
+{
+  background-color: #000 !important;
+  background-image: url(default/bkgd_flowers.png) !important;
+}
+
+playlist.dialog_playlist > stack > vbox
+{
+  background-color: transparent !important;
+}
+
+
+.dialog_playlist #playlist_tree
+{
+  background-color: transparent !important;  
+}
+
+.dialog_playlist #playlist_toolbar_bkg,
+playlist.dialog_playlist > stack > vbox > hbox#playlist_toolbar_bkg
+{ 
+  border-top: 1px solid #686a6a;
+}
+
+playlist.dialog_playlist > stack > vbox > hbox.dialog_playlist
+{
+  background-color: #000 !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-row
+{
+  border: 0px solid #000 !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-row( odd )
+{
+  background-color: #1d272d !important;
+}
+
+.dialog_playlist #playlist_tree >  treechildren::-moz-tree-row( even )
+{
+  background-color: #343d42 !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell
+{
+  border-right: 1px solid #505154 !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-row( selected )
+{
+  background-color: #4A4E48 !important;
+}
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-row( selected, focus )
+{
+  background-color: #99A195 !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text
+{
+  color: #CCC !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #FFF !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter
+{
+ background-color: #333 !important;
+ color: #eee !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter( odd )
+{
+ color: #eee !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+  background-color: #676D65 !important;
+}
+
 /** 
 ************************************************************************************************************************************************
 FORM ELEMENTS

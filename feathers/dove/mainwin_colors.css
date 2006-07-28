@@ -386,8 +386,16 @@ tree treecol
 {
   background-image: url(default/treecol.png) !important;
   color: #99A194 !important;  
-  -moz-border-right-colors: #333 !important;
+  -moz-border-right-colors: #ccc !important;
   background-color: transparent !important;
+}
+
+tree treecol:hover
+{
+  background-image: url(default/treecol.png) !important;
+  color: #666 !important;  
+  -moz-border-right-colors: #ccc !important;
+  background-color: #ccc !important;
 }
 
 /* column picker **/
@@ -424,42 +432,46 @@ filterlist
 
 filterlist > tree
 {
-  background-color: transparent !important;
+  background-color: #FFF !important;
   /* opacity: 0.8; slow on the mac :( **/
 }
 
 /* striping for genre filter */
 filterlist > tree > treechildren::-moz-tree-row
 {
-  background-color: #1d272d !important;
+  background-color: #ececec !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d !important;
+  background-color: #fff !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42 !important;
+  background-color: #ececec !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48 !important;
+  background-color: #bdc1c1 !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #99A195 !important;
+  background-color: #686a6a !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text
 {
-  color: #EEE !important;
+  color: #666 !important;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #666 !important;
+}
+filterlist > tree > treechildren::-moz-tree-cell-text( selected, focus )
 {
   color: #FFF !important;
 }
@@ -487,70 +499,71 @@ playlist > stack > vbox
   background-color: transparent !important;  
 }
 
-#playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg
-{ 
-  border-top: 1px solid #686a6a;
-}
-
 playlist > stack > vbox > hbox
 {
-  background-color: #000 !important;
+  background-color: #fff !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row
 {
-  border: 0px solid #000 !important;
+  border: 0px solid #ececec !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d !important;
+  background-color: #fff !important;
 }
 
 #playlist_tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42 !important;
+  background-color: #ececec !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-cell
 {
-  border-right: 1px solid #505154 !important;
+  border-right: 1px solid #eee !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48 !important;
+  background-color: #bdc1c1 !important;
 }
 #playlist_tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #99A195 !important;
+  background-color: #686a6a !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text
 {
-  color: #CCC !important;
+  color: #666 !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #666 !important;
+}
+
+#playlist_tree > treechildren::-moz-tree-cell-text( selected,focus )
 {
   color: #FFF !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter
 {
- background-color: #333 !important;
- color: #eee !important;
+ background-color: #ccc !important;
+ color: #999 !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter( odd )
 {
- color: #eee !important;
+ background-color: #ececec !important;
+ color: #999 !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
-  background-color: #676D65 !important;
+ background-color: #ececec !important;
+ color: #999 !important;
 }
 
 /** 
@@ -574,25 +587,47 @@ contextual menu.
 ************************************************************************************************************************************************
 */ 
 
+
+#playlist_toolbar_bkg,
+playlist > stack > vbox > hbox#playlist_toolbar_bkg
+{ 
+  border-top: 1px solid #eee;
+}
+
 /* the generic style for all playlist toolbarbuttons */
+#playlist_toolbar > button
+{
+  color: #99A195 !important;
+}
+
 #playlist_toolbar > button[disabled="true"]
 {
-  -moz-border-top-colors: #444 !important;
-  -moz-border-left-colors: #444 !important;
-  -moz-border-bottom-colors: #444 !important;
-  -moz-border-right-colors: #444 !important;
-  background-color: #333 !important;
-  color: #99A195 !important;
+  -moz-border-top-colors: #eee !important;
+  -moz-border-left-colors: #eee !important;
+  -moz-border-bottom-colors: #eee !important;
+  -moz-border-right-colors: #eee !important;
+  background-color: #fff !important;
+  color: #eee !important;
+}
+
+#playlist_toolbar > button:hover[disabled="true"]
+{
+  color: #eee !important;
 }
 
 #playlist_toolbar > button[disabled="false"]
 {
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #333 !important;
+  -moz-border-top-colors: #ccc !important;
+  -moz-border-left-colors: #ccc !important;
+  -moz-border-bottom-colors: #999 !important;
+  -moz-border-right-colors: #999 !important;
+  background-color: #fff !important;
   color: #99A195 !important;  
+}
+
+#playlist_toolbar > button:hover
+{
+  color: #666 !important;  
 }
 
 /* 
@@ -602,19 +637,7 @@ contextual menu.
   You should attach each command's icon, here.
 */
 
-/* Toolbar: Play Button */
-button#library_cmd_play
-{  
-  color: #99A195 !important;
-}
-button#library_cmd_play:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_play[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: Play*/
 menuitem#library_cmd_play
 {
   color: #FFF !important;  
@@ -628,19 +651,7 @@ menuitem#library_cmd_play[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: remove Button */
-button#library_cmd_remove
-{
-  color: #99A195 !important;  
-}
-button#library_cmd_remove:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_remove[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: remove Button */
 menuitem#library_cmd_remove
 {
   color: #FFF !important;
@@ -654,19 +665,7 @@ menuitem#library_cmd_remove[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: edit Button */
-button#library_cmd_edit
-{
-  color: #99A195 !important;
-}
-button#library_cmd_edit:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_edit[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: edit Button */
 menuitem#library_cmd_edit
 {
   color: #FFF !important;
@@ -681,19 +680,7 @@ menuitem#library_cmd_edit[disabled="true"]
 }
 
 
-/* Toolbar: addtoplaylist Button */
-button#library_cmd_addtoplaylist
-{
-  color: #99A195 !important;
-}
-button#library_cmd_addtoplaylist:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_addtoplaylist[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: addtoplaylist Button */
 menuitem#library_cmd_addtoplaylist
 {
   color: #FFF !important;
@@ -707,19 +694,7 @@ menuitem#library_cmd_addtoplaylist[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: burntocd Button */
-button#library_cmd_burntocd
-{
-  color: #99A195 !important;
-}
-button#library_cmd_burntocd:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_burntocd[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: burntocd Button */
 menuitem#library_cmd_burntocd
 {
   color: #FFF !important;
@@ -733,19 +708,7 @@ menuitem#library_cmd_burntocd[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: device Button */
-button#library_cmd_device
-{
-  color: #99A195 !important;
-}
-button#library_cmd_device:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_device[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: device Button */
 menuitem#library_cmd_device
 {
   color: #FFF !important;
@@ -759,19 +722,7 @@ menuitem#library_cmd_device[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: addtolibrary Button */
-button#library_cmd_addtolibrary
-{
-  color: #99A195 !important;
-}
-button#library_cmd_addtolibrary[active="true"]:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_addtolibrary[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: addtolibrary Button */
 menuitem#library_cmd_addtolibrary
 {
   color: #FFF !important;
@@ -785,19 +736,7 @@ menuitem#library_cmd_addtolibrary[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: download Button */
-button#library_cmd_download
-{
-  color: #99A195 !important;
-}
-button#library_cmd_download:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_download[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: download Button */
 menuitem#library_cmd_download
 {
   color: #FFF !important;
@@ -811,19 +750,7 @@ menuitem#library_cmd_download[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: subscribe Button */
-button#library_cmd_subscribe
-{
-  color: #99A195 !important;
-}
-button#library_cmd_subscribe:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_subscribe[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: subscribe Button */
 menuitem#library_cmd_subscribe
 {
   color: #FFF !important;
@@ -837,19 +764,7 @@ menuitem#library_cmd_subscribe[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: pause Button */
-button#library_cmd_pause
-{
-  color: #99A195 !important;
-}
-button#library_cmd_pause:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_pause[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: pause Button */
 menuitem#library_cmd_pause
 {
   color: #FFF !important;
@@ -863,19 +778,7 @@ menuitem#library_cmd_pause[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: resume Button */
-button#library_cmd_resume
-{
-  color: #99A195 !important;
-}
-button#library_cmd_resume:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_resume[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: resume Button */
 menuitem#library_cmd_resume
 {
   color: #FFF !important;
@@ -889,19 +792,7 @@ menuitem#library_cmd_resume[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: switch to downloads Button */
-button#library_cmd_showdlplaylist
-{
-  color: #99A195 !important;
-}
-button#library_cmd_showdlplaylist:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_showdlplaylist[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: switch to downloads Button */
 menuitem#library_cmd_showdlplaylist
 {
   color: #FFF !important;
@@ -915,19 +806,7 @@ menuitem#library_cmd_showdlplaylist[disabled="true"]
   color: #99A195 !important;
 }
 
-/* Toolbar: switch to webplaylist Button */
-button#library_cmd_showwebplaylist
-{
-  color: #99A195 !important;
-}
-button#library_cmd_showwebplaylist:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_showwebplaylist[disabled="true"]
-{
-  color: #505154 !important;
-}
+/* Menuitem: switch to webplaylist Button */
 menuitem#library_cmd_showwebplaylist
 {
   color: #FFF !important;
@@ -954,7 +833,7 @@ These let the user resize the frames in your box model.
 #vert_splitter,
 #filter_splitter
 {
-  background-color: #ececec !important;
+  background-color: #ccc !important;
 }
 
 #vert_splitter
@@ -977,7 +856,7 @@ These let the user resize the frames in your box model.
 #horz_splitter,
 #playlist_web_split > grippy
 {
-  background-color: #ececec !important;
+  background-color: #ccc !important;
 }
 
 #control_pane_splitter
@@ -1063,17 +942,23 @@ SEARCH WIDGET
 
 #search_widget
 { 
-  background-color: #000 !important;
+  background-color: #FFF !important;
 } 
 
 #search_widget input
 {
-  color: #CCC !important;
+  background-color: #FFF !important;
+  color: #666 !important;
+}
+
+#search_widget .menulist-editable-box
+{
+	background-color: #FFF !important;
 }
 
 #search_widget input:focus
 {
-  background-color: #99A195 !important;
+  background-color: #EEE !important;
   color: #FFF !important;
 }
 
@@ -1351,7 +1236,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 /* the box with the url image and the url textbox */
 #browser_url_box
 {
-  border: 1px solid #666 !important;
+  border: 1px solid #CCC !important;
   background-color: transparent !important;
   color: #CCC !important;
 }
@@ -1364,13 +1249,19 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url
 {
   background-color: transparent !important;
-  color: #CCC !important;  
+  color: #333 !important;  
 }
 
 #browser_url input:focus
 {
-  background-color: #99A195 !important;
-  color: #FFF !important;
+  background-color: #EEE !important;
+  color: #333 !important;
+}
+
+.mainwin_location input
+{
+  background-color: #FFF !important;
+  color: #333 !important;   
 }
 
 #browser_toolbar

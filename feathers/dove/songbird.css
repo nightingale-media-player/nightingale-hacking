@@ -85,6 +85,8 @@ You can only use the @ at the top of the file.
 
 
 @import url(mainwin_colors.css); /* colors for the main application window colors **/
+@import url(mainwin_images.css); /* images for the main application window **/
 @import url(dialog_colors.css); /* colors for the dialog window colors **/
+@import url(mini.css); /* colors for the mini **/
  
 

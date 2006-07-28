@@ -735,6 +735,12 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			RelativePath=".\mainwin_colors.css">
 		</File>
 		<File
+			RelativePath=".\mainwin_images.css">
+		</File>
+		<File
+			RelativePath=".\mini.css">
+		</File>
+		<File
 			RelativePath=".\songbird.css">
 		</File>
 	</Files>
