@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright� 2006 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the �GPL�).
-// 
-// Software distributed under the License is distributed 
-// on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -34,10 +34,10 @@ try
  */
 
 /**
- * Logs a string to the error console. 
+ * Logs a string to the error console.
  * @param   string
  *          The string to write to the error console..
- */  
+ */
 function LOG(string) {
   dump("***CoreTotem*** " + string + "\n");
 } // LOG
@@ -48,7 +48,7 @@ function LOG(string) {
  *          The object to dump
  * @param   objName
  *          A string containing the name of obj
- */  
+ */
 function listProperties(obj, objName) {
   var columns = 1;
   var count = 0;
@@ -68,7 +68,7 @@ function listProperties(obj, objName) {
  * @param   seconds
  *          The number of seconds to convert
  * @return  A string containing the converted time
- */  
+ */
 function EmitSecondsToTimeString( seconds )
 {
   if ( seconds < 0 )
@@ -104,8 +104,9 @@ function CoreTotem()
   this._object = null;
   this._url = "";
   this._id = "";
-  this._playing = false;
   this._paused  = false;
+  this._oldVolume = 0;
+  this._muted = false;
 
   /**
    *
@@ -116,8 +117,8 @@ function CoreTotem()
       LOG("VERIFY OBJECT FAILED.  OBJECT DOES NOT HAVE PROPER Totem API.")
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     }
-  }  
-  
+  }
+
   // When another core wrapper takes over, stop.
   this.onSwappedOut = function onSwappedOut()
   {
@@ -130,8 +131,8 @@ function CoreTotem()
     {
       LOG(e);
     }
-  } 
-  
+  }
+
   // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
   this.playUrl = function ( url )
   {
@@ -143,21 +144,23 @@ function CoreTotem()
     this._url = url;
 
     this._paused = false;
-    this._playing = true;
 
     if( url.search(/[A-Za-z].*\:\/\//g) < 0 )
     {
       url = "file://" + url;
     }
-    
+
     if( url.search(/\\/g))
     {
       url.replace(/\\/, '/');
     }
 
     try {
-        this._object.OpenUrl( url );
-        this._object.Play();
+      if(this._object.IsPlaying) {
+        this._object.Close();
+      }
+      this._object.OpenUrl( url );
+      this._object.Play();
     }
     catch(e) {
         LOG(e);
@@ -169,24 +172,23 @@ function CoreTotem()
   this.play      = function ()
   {
     this._verifyObject();
-  	
+
     this._paused = false;
-    this._playing = true;
-  
+
     try {
       this._object.Play();
     } catch(e) {
       LOG(e);
     }
-    
+
     return true;
   }
-  
+
   this.pause     = function ()
   {
     if( this._paused )
       return this._paused;
-  
+
     this._verifyObject();
 
     try {
@@ -196,117 +198,117 @@ function CoreTotem()
     }
 
     this._paused = true;
-    
+
     return this._paused;
   }
-  
+
   this.stop = function ()
   {
     this._verifyObject();
-    
-    if( !this._playing )
+
+    if( !this._object.IsPlaying )
       return true;
-      
-    this._paused = false;
-    this._playing = false;
 
     try {
       this._object.Rewind();
+      this._object.Close();
+      this._paused = false;
     } catch(e) {
       LOG(e);
     }
 
     return true;
   }
-  
+
   this.getPlaying   = function ()
   {
     this._verifyObject();
-    
+
     // XXX: Why do we do this?
     if( this.getLength() == this.getPosition() )
     {
       this.stop();
     }
-    
+
     return this._object.IsPlaying;
   }
-  
+
   this.getPaused    = function ()
   {
     this._verifyObject();
     return this._paused;
   }
-  
+
   this.getLength = function ()
   {
     this._verifyObject();
     var playLength = 0;
-    
+
     try {
       playLength = this._object.StreamLength;
     } catch(e) {
       LOG(e);
     }
-    
+
     return playLength;
   }
-  
+
   this.getPosition = function ()
   {
     this._verifyObject();
     var curPos = 0;
-    
+
     try {
       curPos = this._object.CurrentTime;
     } catch(e) {
       LOG(e);
     }
-    
+
     return curPos;
   }
-  
+
   this.setPosition = function ( pos )
   {
     this._verifyObject();
-    
+
     try {
       this._object.SeekTime( pos );
     } catch(e) {
       LOG(e);
     }
   }
-  
+
   this.getVolume   = function ()
   {
     this._verifyObject();
-    var curVol = this._object.Volume;
-    
-    return curVol;
+    return Math.round(this._object.Volume / 100 * 255);
   }
-  
-  this.setVolume   = function ( vol )
-  {
-    // TODO: convert volume
-    this._verifyObject();
-    this._object.Volume = vol;
 
-    LOG(this.getVolume());
+  this.setVolume   = function ( volume )
+  {
+    this._verifyObject();
+    if ((volume < 0) || (volume > 255))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    this._object.Volume = Math.round(volume / 255 * 100); 
   }
-  
+
   this.getMute     = function ()
   {
     this._verifyObject();
-    var isMuted = this._object.isMuted;
-    
-    return isMuted;
+    return this._muted;
   }
-  
+
   this.setMute     = function ( mute )
   {
-    // XXX: Need to impl this myself
     this._verifyObject();
-    this._object.mutePlayer( mute );
+    if(mute) {
+      this._oldVolume = this.getVolume();
+      this._muted = true;
+    }
+    else {
+      this.setVolume(this._oldVolume);
+      this._muted = false;
+    }
   }
 
   this.getMetadata = function ( key )
@@ -320,26 +322,26 @@ function CoreTotem()
     this._verifyObject();
     // Can totem do this?
   }
-  
+
   /**
    *
    */
   this.getId = function() {
     return this._id;
   }
- 
+
   this.setId = function(id) {
     if (this._id != id)
       this._id = id;
   }
- 
+
   /**
    *
    */
   this.getObject = function() {
     return this._object;
   }
-  
+
   this.setObject = function(object) {
    if (this._object != object) {
       if (this._object)
@@ -347,7 +349,7 @@ function CoreTotem()
       this._object = object;
     }
   }
-  
+
   /**
    * See nsISupports.idl
    */
@@ -387,8 +389,8 @@ function CoreTotemDocumentInit( id )
   {
     LOG( "\n!!! coreTotem failed to bind properly\n" + err );
   }
-} 
- 
+}
+
 }
 catch ( err )
 {

@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 POTI, Inc.
+// Copyrightï¿½ 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the ï¿½GPLï¿½).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an ï¿½AS ISï¿½ basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -457,6 +457,11 @@ function SBAppInitialize()
     var theFLInstance = document.getElementById( "core_flash_frame" );
     var theFLBox = document.getElementById( "box_flash" );
 
+    /*
+    */
+    var theTotemInstance = document.getElementById( "core_totem_frame" );
+    var theTotemBox = document.getElementById( "box_totem" );
+
     //
     // Depending upon the platform, initialize one core
     // and hide all of the rest of them.
@@ -471,6 +476,8 @@ function SBAppInitialize()
       if (theQTBox) theQTBox.hidden = true;
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
+      // Hide Totem
+      if (theTotemBox) theTotemBox.hidden = true;
     }
 
     //MacOSX, prefer QT.
@@ -481,17 +488,22 @@ function SBAppInitialize()
       if (theVLCBox) theVLCBox.hidden = true;
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
+      // Hide Totem
+      if (theTotemBox) theTotemBox.hidden = true;
     }
     
-    //Linux, prefer...?
+    //Linux, prefer totem-gstreamer
     if( PLATFORM_LINUX ) {
       //CoreVLCDocumentInit( "core_vlc_document" );
       //InitPlaybackCoreMPlayer( "core_mp_frame" );
-      InitPlaybackCoreFlash( "core_flash_frame" );
+      //InitPlaybackCoreFlash( "core_flash_frame" );
+      CoreTotemDocumentInit( "core_totem_frame" );
       // Hide VLC
       if (theVLCBox) theVLCBox.hidden = true;
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
+      // Hide Flash
+      if (theFLBox) theFLBox.hidden = true;
     }
     
     // Reset this on application startup. 
