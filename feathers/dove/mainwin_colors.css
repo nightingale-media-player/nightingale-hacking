@@ -83,65 +83,78 @@ These pieces paint the resizeable window for Songbird.
 ************************************************************************************************************************************************
 */
 
+/** 
+************************************************************************************************************************************************
+THE WINDOW CHROME
+These pieces paint the resizeable window for Songbird.
+************************************************************************************************************************************************
+*/ 
 .mainwin
 {
   background-color: #FFF !important; /* color of the Main Window **/
-  -moz-border-top-colors: #eee #ececec !important;
-  -moz-border-left-colors: #eee #ececec  !important;
-  -moz-border-bottom-colors: #ccc #eee !important;
-  -moz-border-right-colors: #ccc #eee !important;
-  color: #666 !important;
 }
 
+.chrome_iframe_bkgd,
 #mainwin_chrome_bkgd
 {
-  background-color: #FFF !important; /* match to the Main Window **/
+  background-color: #FFF !important; /* color of the Main Window **/
 }
-
-.chrome_iframe_bkgd /* match to the Main Window **/
-{
-  background: #FFF !important;
-}
-
 
 #mainwin_chrome_nw
-{  
-  background-color: transparent !important;
+{
+  -moz-border-top-colors: #eee #ececec !important;
+  border-top: 2px solid !important;
+  -moz-border-left-colors: #eee #ececec  !important;
+  border-left: 2px solid !important;
+  background-color: #FFF !important;  
 }
-
 #mainwin_chrome_n
 {
-  background-color: transparent !important;
+  -moz-border-top-colors: #eee #ececec !important;
+  border-top: 2px solid !important;
+  background-color: #FFF !important;  
 }
-
 #mainwin_chrome_ne
 {
-  background-color: transparent !important;
+  -moz-border-top-colors: #eee #ececec !important;
+  border-top: 2px solid !important;
+  -moz-border-right-colors: #ccc #eee !important;
+  border-right: 2px solid !important;
+  background-color: #FFF !important;  
 }
-
-#mainwin_chrome_w
-{
-  background-color: transparent !important;
-}
-
 #mainwin_chrome_e
 {
-  background-color: transparent !important;
+  -moz-border-right-colors: #ccc #eee !important;
+  border-right: 2px solid !important;
+  background-color: #FFF !important;
 }
-
-#mainwin_chrome_sw
-{
-  background-color: transparent !important;
-}
-
-#mainwin_chrome_s
-{
-  background-color: transparent !important;
-}
-
 #mainwin_chrome_se
 {
-  background-color: transparent !important;
+  -moz-border-right-colors: #ccc #eee !important;
+  border-right: 2px solid !important;
+  -moz-border-bottom-colors: #ccc #eee !important;
+  border-bottom: 2px solid !important;
+  background-color: #FFF !important;
+}
+#mainwin_chrome_s
+{
+  -moz-border-bottom-colors: #ccc #eee !important;
+  border-bottom: 2px solid !important;
+  background-color: #FFF !important;
+}
+#mainwin_chrome_w
+{
+  -moz-border-left-colors: #eee #ececec  !important;
+  border-left: 2px solid !important;
+  background-color: #FFF !important;
+}
+#mainwin_chrome_sw
+{
+  -moz-border-left-colors: #eee #ececec  !important;
+  border-left: 2px solid !important;
+  -moz-border-bottom-colors: #ccc #eee !important;
+  border-bottom: 2px solid !important;
+  background-color: #FFF !important;
 }
 
 /** 
