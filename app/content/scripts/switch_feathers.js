@@ -66,6 +66,53 @@ function fillFeathersList(menu) {
       menu.removeChild(children[i - 1]);
     }
 
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    var curfeathers = "rubberducky";
+    try {
+      curfeathers = prefs.getCharPref("general.skins.selectedSkin");  
+    } catch (err) {}
+
+
+    var internalName = "";
+    var item = null;
+    // HACK: Had to remove "internalName" from rubberducky as it 
+    // prevented packacking of the bones.  
+    // For now, just hardcoding support for rubberducky
+    internalName = "rubberducky/0.2";
+    item = document.createElement("menuitem");
+    className = menu.parentNode.getAttribute("class");
+    item.setAttribute("label", "Rubberducky");
+    item.setAttribute("featherid", internalName);
+    item.setAttribute("name", "feathers.switch");
+    item.setAttribute("type", "radio");
+    item.setAttribute("class", className);
+    if (curfeathers == internalName) {
+      item.setAttribute("checked", "true");
+    }
+    item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
+    menu.appendChild(item);
+    
+    // HACK: Had to remove "internalName" from rubberducky as it 
+    // prevented packacking of the bones.  
+    // For now, just hardcoding support for rubberducky
+    internalName = "dove/0.1";
+    item = document.createElement("menuitem");
+    className = menu.parentNode.getAttribute("class");
+    item.setAttribute("label", "Dove");
+    item.setAttribute("featherid", internalName);
+    item.setAttribute("name", "feathers.switch");
+    item.setAttribute("type", "radio");
+    item.setAttribute("class", className);
+    if (curfeathers == internalName) {
+      item.setAttribute("checked", "true");
+    }
+    item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
+    menu.appendChild(item);
+    
+    
+    // After we hack in "rubberducky" and "dove" we scan to see if there's any other skins available.
+    
+    
     /* access the list of skins from the extensions manager and read extra data using the corresponding rdf datasource */
     var extmgr = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
     var RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService(Components.interfaces.nsIRDFService);
@@ -79,50 +126,25 @@ function fillFeathersList(menu) {
       if (internalName == undefined) internalName = intData(target);
       if (internalName == undefined) internalName = "";
       var feathers = items[i].name;
+      
+      if (internalName.length > 0 && feathers.length > 0)
+      {
+        var item = document.createElement("menuitem");
+        className = menu.parentNode.getAttribute("class");
 
-      var item = document.createElement("menuitem");
-      className = menu.parentNode.getAttribute("class");
+        item.setAttribute("label", feathers);
+        item.setAttribute("featherid", internalName);
+        item.setAttribute("name", "feathers.switch");
+        item.setAttribute("type", "radio");
+        item.setAttribute("class", className);
+        if (curfeathers == internalName) {
+          item.setAttribute("checked", "true");
+        }
+        item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
 
-      item.setAttribute("label", feathers);
-      item.setAttribute("featherid", internalName);
-      item.setAttribute("name", "feathers.switch");
-      item.setAttribute("type", "radio");
-      item.setAttribute("class", className);
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-      var curfeathers = "rubberducky";
-      try {
-        curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
-      } catch (err) {}
-      if (curfeathers == internalName) {
-        item.setAttribute("checked", "true");
+        menu.appendChild(item);
       }
-      item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
-
-      menu.appendChild(item);
     }
-
-
-    // HACK: Had to remove "internalName" from rubberducky as it 
-    // prevented packacking of the bones.  
-    // For now, just hardcoding support for rubberducky
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    var curfeathers = "rubberducky";
-    try {
-      curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
-    } catch (err) {}
-    var item = document.createElement("menuitem");
-    className = menu.parentNode.getAttribute("class");
-    item.setAttribute("label", "Rubberducky");
-    item.setAttribute("featherid", "rubberducky/0.2");
-    item.setAttribute("name", "feathers.switch");
-    item.setAttribute("type", "radio");
-    item.setAttribute("class", className);
-    if (curfeathers == "rubberducky/0.2") {
-      item.setAttribute("checked", "true");
-    }
-    item.setAttribute("oncommand", "switchFeathers(\"" + internalName + "\")");
-    menu.appendChild(item);
-    
     
   }
   catch ( err )
