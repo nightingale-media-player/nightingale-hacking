@@ -1,0 +1,226 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=iso-8859-1" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Language" content="en" />
+    <link rel="stylesheet" href="doxygen.css">
+    <title>TreeView</title>
+    <script type="text/javascript">
+    <!-- // Hide script from old browsers
+    
+    function toggleFolder(id, imageNode) 
+    {
+      var folder = document.getElementById(id);
+      var l = imageNode.src.length;
+      if (imageNode.src.substring(l-20,l)=="ftv2folderclosed.png" || 
+          imageNode.src.substring(l-18,l)=="ftv2folderopen.png")
+      {
+        imageNode = imageNode.previousSibling;
+        l = imageNode.src.length;
+      }
+      if (folder == null) 
+      {
+      } 
+      else if (folder.style.display == "block") 
+      {
+        if (imageNode != null) 
+        {
+          imageNode.nextSibling.src = "ftv2folderclosed.png";
+          if (imageNode.src.substring(l-13,l) == "ftv2mnode.png")
+          {
+            imageNode.src = "ftv2pnode.png";
+          }
+          else if (imageNode.src.substring(l-17,l) == "ftv2mlastnode.png")
+          {
+            imageNode.src = "ftv2plastnode.png";
+          }
+        }
+        folder.style.display = "none";
+      } 
+      else 
+      {
+        if (imageNode != null) 
+        {
+          imageNode.nextSibling.src = "ftv2folderopen.png";
+          if (imageNode.src.substring(l-13,l) == "ftv2pnode.png")
+          {
+            imageNode.src = "ftv2mnode.png";
+          }
+          else if (imageNode.src.substring(l-17,l) == "ftv2plastnode.png")
+          {
+            imageNode.src = "ftv2mlastnode.png";
+          }
+        }
+        folder.style.display = "block";
+      }
+    }
+
+    // End script hiding -->        
+    </script>
+  </head>
+
+  <body class="ftvtree">
+    <div class="directory">
+      <h3>Songbird</h3>
+      <div style="display: block;">
+        <p><img src="ftv2pnode.png" alt="o" width=16 height=22 onclick="toggleFolder('folder1', this)"/><img src="ftv2folderclosed.png" alt="+" width=24 height=22 onclick="toggleFolder('folder1', this)"/><a class="el" href="annotated.html" target="basefrm">Class List</a></p>
+        <div id="folder1">
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_bundle.html" target="basefrm">sbIBundle</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_bundle_observer.html" target="basefrm">sbIBundleObserver</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_c_d_device.html" target="basefrm">sbICDDevice</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_core_wrapper.html" target="basefrm">sbICoreWrapper</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_engine.html" target="basefrm">sbIDatabaseEngine</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_query.html" target="basefrm">sbIDatabaseQuery</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_query_callback.html" target="basefrm">sbIDatabaseQueryCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_result.html" target="basefrm">sbIDatabaseResult</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_simple_query_callback.html" target="basefrm">sbIDatabaseSimpleQueryCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_data_remote.html" target="basefrm">sbIDataRemote</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_device_base_callback.html" target="basefrm">sbIDeviceBaseCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_device_manager.html" target="basefrm">sbIDeviceManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_download_device.html" target="basefrm">sbIDownloadDevice</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_download_observer.html" target="basefrm">sbIDownloadObserver</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_dynamic_playlist.html" target="basefrm">sbIDynamicPlaylist</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_global_hotkey.html" target="basefrm">sbIGlobalHotkey</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_global_hotkey_callback.html" target="basefrm">sbIGlobalHotkeyCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_global_hotkeys.html" target="basefrm">sbIGlobalHotkeys</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_library.html" target="basefrm">sbIMediaLibrary</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_scan.html" target="basefrm">sbIMediaScan</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_scan_callback.html" target="basefrm">sbIMediaScanCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_scan_query.html" target="basefrm">sbIMediaScanQuery</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_transcoder.html" target="basefrm">sbIMediaTranscoder</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_transcoder_callback.html" target="basefrm">sbIMediaTranscoderCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_transcoder_manager.html" target="basefrm">sbIMediaTranscoderManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_type.html" target="basefrm">sbIMediaType</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_channel.html" target="basefrm">sbIMetadataChannel</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_handler.html" target="basefrm">sbIMetadataHandler</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_manager.html" target="basefrm">sbIMetadataManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_values.html" target="basefrm">sbIMetadataValues</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metrics.html" target="basefrm">sbIMetrics</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist.html" target="basefrm">sbIPlaylist</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_commands.html" target="basefrm">sbIPlaylistCommands</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_manager.html" target="basefrm">sbIPlaylistManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_playback.html" target="basefrm">sbIPlaylistPlayback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_reader.html" target="basefrm">sbIPlaylistReader</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_reader_listener.html" target="basefrm">sbIPlaylistReaderListener</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_reader_manager.html" target="basefrm">sbIPlaylistReaderManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlistsource.html" target="basefrm">sbIPlaylistsource</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_writer.html" target="basefrm">sbIPlaylistWriter</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_servicesource.html" target="basefrm">sbIServicesource</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_simple_playlist.html" target="basefrm">sbISimplePlaylist</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_smart_playlist.html" target="basefrm">sbISmartPlaylist</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_threadsafe_case_conversion.html" target="basefrm">sbIThreadsafeCaseConversion</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_u_s_b_mass_storage_device.html" target="basefrm">sbIUSBMassStorageDevice</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_u_s_b_mass_storage_device_handler.html" target="basefrm">sbIUSBMassStorageDeviceHandler</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_cloak.html" target="basefrm">sbIWindowCloak</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_dragger.html" target="basefrm">sbIWindowDragger</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_min_max.html" target="basefrm">sbIWindowMinMax</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_min_max_callback.html" target="basefrm">sbIWindowMinMaxCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_region.html" target="basefrm">sbIWindowRegion</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_resize_hook.html" target="basefrm">sbIWindowResizeHook</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_resize_hook_callback.html" target="basefrm">sbIWindowResizeHookCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2lastnode.png" alt="\" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_w_m_device.html" target="basefrm">sbIWMDevice</a></p>
+        </div>
+        <p><img src="ftv2pnode.png" alt="o" width=16 height=22 onclick="toggleFolder('folder2', this)"/><img src="ftv2folderclosed.png" alt="+" width=24 height=22 onclick="toggleFolder('folder2', this)"/><a class="el" href="hierarchy.html" target="basefrm">Class Hierarchy</a></p>
+        <div id="folder2">
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_bundle.html" target="basefrm">sbIBundle</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_bundle_observer.html" target="basefrm">sbIBundleObserver</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_c_d_device.html" target="basefrm">sbICDDevice</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_core_wrapper.html" target="basefrm">sbICoreWrapper</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_engine.html" target="basefrm">sbIDatabaseEngine</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_query.html" target="basefrm">sbIDatabaseQuery</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_query_callback.html" target="basefrm">sbIDatabaseQueryCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_result.html" target="basefrm">sbIDatabaseResult</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_database_simple_query_callback.html" target="basefrm">sbIDatabaseSimpleQueryCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_data_remote.html" target="basefrm">sbIDataRemote</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_device_base_callback.html" target="basefrm">sbIDeviceBaseCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_device_manager.html" target="basefrm">sbIDeviceManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_download_device.html" target="basefrm">sbIDownloadDevice</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_download_observer.html" target="basefrm">sbIDownloadObserver</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_global_hotkey.html" target="basefrm">sbIGlobalHotkey</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_global_hotkey_callback.html" target="basefrm">sbIGlobalHotkeyCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_global_hotkeys.html" target="basefrm">sbIGlobalHotkeys</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_library.html" target="basefrm">sbIMediaLibrary</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_scan.html" target="basefrm">sbIMediaScan</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_scan_callback.html" target="basefrm">sbIMediaScanCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_scan_query.html" target="basefrm">sbIMediaScanQuery</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_transcoder.html" target="basefrm">sbIMediaTranscoder</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_transcoder_callback.html" target="basefrm">sbIMediaTranscoderCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_transcoder_manager.html" target="basefrm">sbIMediaTranscoderManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_media_type.html" target="basefrm">sbIMediaType</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_channel.html" target="basefrm">sbIMetadataChannel</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_handler.html" target="basefrm">sbIMetadataHandler</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_manager.html" target="basefrm">sbIMetadataManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metadata_values.html" target="basefrm">sbIMetadataValues</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_metrics.html" target="basefrm">sbIMetrics</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2pnode.png" alt="o" width=16 height=22 onclick="toggleFolder('folder3', this)"/><img src="ftv2folderclosed.png" alt="+" width=24 height=22 onclick="toggleFolder('folder3', this)"/><a class="el" href="interfacesb_i_playlist.html" target="basefrm">sbIPlaylist</a></p>
+          <div id="folder3">
+            <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_dynamic_playlist.html" target="basefrm">sbIDynamicPlaylist</a></p>
+            <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2lastnode.png" alt="\" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_smart_playlist.html" target="basefrm">sbISmartPlaylist</a></p>
+          </div>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_commands.html" target="basefrm">sbIPlaylistCommands</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_manager.html" target="basefrm">sbIPlaylistManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_playback.html" target="basefrm">sbIPlaylistPlayback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_reader.html" target="basefrm">sbIPlaylistReader</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_reader_listener.html" target="basefrm">sbIPlaylistReaderListener</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_reader_manager.html" target="basefrm">sbIPlaylistReaderManager</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlistsource.html" target="basefrm">sbIPlaylistsource</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_playlist_writer.html" target="basefrm">sbIPlaylistWriter</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_servicesource.html" target="basefrm">sbIServicesource</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_simple_playlist.html" target="basefrm">sbISimplePlaylist</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_threadsafe_case_conversion.html" target="basefrm">sbIThreadsafeCaseConversion</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_u_s_b_mass_storage_device.html" target="basefrm">sbIUSBMassStorageDevice</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_u_s_b_mass_storage_device_handler.html" target="basefrm">sbIUSBMassStorageDeviceHandler</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_cloak.html" target="basefrm">sbIWindowCloak</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_dragger.html" target="basefrm">sbIWindowDragger</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_min_max.html" target="basefrm">sbIWindowMinMax</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_min_max_callback.html" target="basefrm">sbIWindowMinMaxCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_region.html" target="basefrm">sbIWindowRegion</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_resize_hook.html" target="basefrm">sbIWindowResizeHook</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_window_resize_hook_callback.html" target="basefrm">sbIWindowResizeHookCallback</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2lastnode.png" alt="\" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="interfacesb_i_w_m_device.html" target="basefrm">sbIWMDevice</a></p>
+        </div>
+        <p><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="functions.html" target="basefrm">Class Members</a></p>
+        <p><img src="ftv2pnode.png" alt="o" width=16 height=22 onclick="toggleFolder('folder4', this)"/><img src="ftv2folderclosed.png" alt="+" width=24 height=22 onclick="toggleFolder('folder4', this)"/><a class="el" href="files.html" target="basefrm">File List</a></p>
+        <div id="folder4">
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_bundle_8idl.html" target="basefrm">C:/projects/songbird/components/bundle/public/sbIBundle.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_data_remote_8idl.html" target="basefrm">C:/projects/songbird/components/dataremote/public/sbIDataRemote.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_device_base_8idl.html" target="basefrm">C:/projects/songbird/components/devices/base/public/sbIDeviceBase.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_c_d_device_8idl.html" target="basefrm">C:/projects/songbird/components/devices/cd/public/sbICDDevice.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_download_device_8idl.html" target="basefrm">C:/projects/songbird/components/devices/download/public/sbIDownloadDevice.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl</b></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/devices/usb_mass_storage/public/sbIUSBMassStorageDevice.idl</b></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_w_m_device_8idl.html" target="basefrm">C:/projects/songbird/components/devices/wm/public/sbIWMDevice.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="_i_global_hotkeys_8idl.html" target="basefrm">C:/projects/songbird/components/integration/public/IGlobalHotkeys.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="_i_window_cloak_8idl.html" target="basefrm">C:/projects/songbird/components/integration/public/IWindowCloak.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="_i_window_dragger_8idl.html" target="basefrm">C:/projects/songbird/components/integration/public/IWindowDragger.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="_i_window_min_max_8idl.html" target="basefrm">C:/projects/songbird/components/integration/public/IWindowMinMax.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="_i_window_region_8idl.html" target="basefrm">C:/projects/songbird/components/integration/public/IWindowRegion.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="_i_window_resize_hook_8idl.html" target="basefrm">C:/projects/songbird/components/integration/public/IWindowResizeHook.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_metadata_channel_8idl.html" target="basefrm">C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_metadata_handler_8idl.html" target="basefrm">C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_metadata_manager_8idl.html" target="basefrm">C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataManager.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_metadata_values_8idl.html" target="basefrm">C:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataValues.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_media_transcoder_8idl.html" target="basefrm">C:/projects/songbird/components/mediacore/transcoding/public/sbIMediaTranscoder.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_database_engine_8idl.html" target="basefrm">C:/projects/songbird/components/medialibrary/public/sbIDatabaseEngine.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl</b></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_database_result_8idl.html" target="basefrm">C:/projects/songbird/components/medialibrary/public/sbIDatabaseResult.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_media_library_8idl.html" target="basefrm">C:/projects/songbird/components/medialibrary/public/sbIMediaLibrary.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl</b></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_playlist_reader_8idl.html" target="basefrm">C:/projects/songbird/components/medialibrary/public/sbIPlaylistReader.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/medialibrary/public/sbIPlaylistWriter.idl</b></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_threadsafe_case_conversion_8idl.html" target="basefrm">C:/projects/songbird/components/medialibrary/public/sbIThreadsafeCaseConversion.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_metrics_8idl.html" target="basefrm">C:/projects/songbird/components/metrics/public/sbIMetrics.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_core_wrapper_8idl.html" target="basefrm">C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl</b></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="sb_i_playlistsource_8idl.html" target="basefrm">C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl</a></p>
+          <p><img src="ftv2vertline.png" alt="|" width=16 height=22 /><img src="ftv2lastnode.png" alt="\" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><b>C:/projects/songbird/components/servicesource/public/sbIServicesource.idl</b></p>
+        </div>
+        <p><img src="ftv2node.png" alt="o" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="globals.html" target="basefrm">File Members</a></p>
+        <p><img src="ftv2plastnode.png" alt="\" width=16 height=22 onclick="toggleFolder('folder5', this)"/><img src="ftv2folderclosed.png" alt="+" width=24 height=22 onclick="toggleFolder('folder5', this)"/><a class="el" href="pages.html" target="basefrm">Related Pages</a></p>
+        <div id="folder5">
+          <p><img src="ftv2blank.png" alt="&nbsp;" width=16 height=22 /><img src="ftv2lastnode.png" alt="\" width=16 height=22 /><img src="ftv2doc.png" alt="*" width=24 height=22 /><a class="el" href="todo.html" target="basefrm">Todo List</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
