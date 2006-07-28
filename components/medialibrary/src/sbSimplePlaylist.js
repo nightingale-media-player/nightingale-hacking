@@ -206,18 +206,6 @@ CSimplePlaylist.prototype =
       
       var exec = this.m_queryObject.execute();
       this.m_queryObject.waitForCompletion();
-      
-      var results = this.m_queryObject.getResultObject();
-      var i, j, text = "";
-      for (i = 0; i < results.getRowCount(); i++ )
-      {
-        for (j = 0; j < results.getColumnCount(); j++ )
-        {
-          text += results.getColumnName( j ) + ": " + results.getRowCell(i, j) + " - ";
-        }
-        text += "\n";
-      }
-      dump(text+"\n");
     }
   },
   
@@ -253,7 +241,6 @@ CSimplePlaylist.prototype =
       if(!bWillRunLater)
       {
         var exec = this.m_queryObject.execute();
-        dump( "setColumnInfo exec: " + exec + "\n" + strQuery + "\n\n" );
         this.m_queryObject.waitForCompletion();
       }
     }    
@@ -283,7 +270,6 @@ CSimplePlaylist.prototype =
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + this.m_strName + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
       
       var exec = this.m_queryObject.execute();
-      dump( "addColumn exec: " + exec + "\n" + this.m_queryObject.getQuery(0) + "\n" + this.m_queryObject.getQuery(1) + "\n\n" );
       this.m_queryObject.waitForCompletion();
     }
 
