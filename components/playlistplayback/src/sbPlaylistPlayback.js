@@ -122,7 +122,6 @@ function listProperties(obj, objName) {
  * All service initialization is handled in _init() after prefs are available.
  */
 function PlaylistPlayback() {  
-  LOG("XXXredfive - PlaylistPlayback");
   gConsole = Components.classes["@mozilla.org/consoleservice;1"]
                        .getService(Components.interfaces.nsIConsoleService);
   gOS      = Components.classes["@mozilla.org/observer-service;1"]
@@ -249,7 +248,6 @@ PlaylistPlayback.prototype = {
   _init: function() {
     try {
       // Attach all the sbDataRemote objects (via XPCOM!)
-      LOG("Attaching DataRemote objects");
       this._attachDataRemotes();
       LOG("Songbird PlaylistPlayback Service loaded successfully");
     } catch( err ) {
@@ -263,6 +261,7 @@ PlaylistPlayback.prototype = {
   },
 
   _attachDataRemotes: function() {
+    LOG("Attaching DataRemote objects");
     // This will create the component and call init with the args
     var createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, SONGBIRD_DATAREMOTE_IID, "init");
 
@@ -334,7 +333,7 @@ PlaylistPlayback.prototype = {
   },
   
   _releaseDataRemotes: function() {
-    // And we have to let them go when we're done else all hell breaks loose.
+    // And we have to let them go when we are done else all hell breaks loose.
     this._playButton.unbind();
     this._playUrl.unbind();
     this._seenPlaying.unbind();
@@ -556,9 +555,6 @@ PlaylistPlayback.prototype = {
     }
   },
 
-  /**
-   *
-   */
   selectCore: function(core) {
     LOG("selectCore with core.getId = " + core.getId());
     this.addCore(core, true);
@@ -569,8 +565,15 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    // kick off playback
-    this._playDefault();
+    if (this._started) {
+      if (core.getPaused())
+        core.play()
+      // is there an else case here?
+    }
+    else {
+      // play the current track, or the libary from position 0
+      this._playDefault();
+    }
 
     // Hide the intro box and show the normal faceplate box
     this._faceplateState.boolValue = true;
@@ -630,7 +633,10 @@ PlaylistPlayback.prototype = {
     this.playUrl(url);
 
     // update the current info in 250ms
-    setTimeout('var index = this._source.getRefRowByColumnValue(' + source_ref + ', "url",' + url + '); this._updateCurrentInfo(' + source_ref + ', index )', 250);
+    setTimeout('var index = this._source.getRefRowByColumnValue(' +
+               source_ref + ', "url",' + url + '); this._updateCurrentInfo(' +
+               source_ref + ', index )', 250
+              );
    
     return;
   },
@@ -689,15 +695,15 @@ PlaylistPlayback.prototype = {
       var core = this.core;
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
-        
+
       this._playUrl.stringValue = url;
       this._metadataUrl.stringValue = url;
-      
+
       core.stop();
       core.playUrl( url );
-      
-      LOG( "Playing '" + core.getId() + "'(" + this.length + "/" +
-           this.position + ") - playing: " + this.playing +
+
+      LOG( "Playing '" + core.getId() + "'(" + this.position + "/" +
+           this.length + ") - playing: " + this.playing +
            " paused: " + this.paused
          );
       
@@ -1063,9 +1069,10 @@ PlaylistPlayback.prototype = {
       
       if ( !this._once ) {
         LOG( "_onPlayerLoop '" + core.getId() +
-             "'(" + this.length + "/" + this.position +
+             "'(" + this.position + "/" + this.length +
              ") - playing: " + this.playing +
-             " paused: " + this.paused );
+             " paused: " + this.paused +
+             " ref: " + this._playingRef + "\n" );
         this._once = true;
       }
         
@@ -1328,9 +1335,6 @@ PlaylistPlayback.prototype = {
   
   _importUrlInLibrary: function( the_url )
   {
-    // XXXredfive - cleanup
-    //const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-    //var library = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
     var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
 
     // set up the database query object
