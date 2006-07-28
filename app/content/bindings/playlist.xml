@@ -1588,7 +1588,7 @@
               else this.sortdirection = "asc";
             } else {
               this.sortorder = id;
-              this.sortdirection = "asc";
+              this.sortdirection = (id == "rating") ? "desc" : "asc";
             }
             if (this.source) this.source.setOrder(this.ref, id + " " + this.sortdirection);
           ]]>
