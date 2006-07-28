@@ -43,6 +43,13 @@ These pieces paint the resizeable window for Songbird.
   -moz-appearance: none !important; 
 }
 
+#mainwin_chrome_n
+{
+  -moz-appearance: none !important;
+  border-top: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important; 
+}
 
 #mainwin_chrome_nw
 {
@@ -51,14 +58,6 @@ These pieces paint the resizeable window for Songbird.
   border-left: 2px solid !important;
   height: 9px !important;   
   width: 9px !important;   
-}
-
-#mainwin_chrome_n
-{
-  -moz-appearance: none !important;
-  border-top: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important; 
 }
 
 #mainwin_chrome_ne
