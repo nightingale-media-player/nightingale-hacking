@@ -96,7 +96,7 @@
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
 
           <hbox flex="1">
-            <playlist id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
+            <playlist class="dialog_playlist" id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
           </hbox>
 
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 

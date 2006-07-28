@@ -101,7 +101,7 @@
           <checkbox class="dialog_checkbox dialog_label" id="watch_check" label="&media_scan.watch;" />
           <spacer flex="1"/>
         </hbox>
-        <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+         
         <hbox>
           <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
           <button id="button_ok" label="&window.ok;" disabled="true" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
@@ -111,6 +111,7 @@
         </hbox>
         <spacer flex="1"/> 
       </vbox>
+      <spacer height="9" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
       </vbox>
       <spacer width="9" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
     </hbox>
