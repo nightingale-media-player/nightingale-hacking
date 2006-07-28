@@ -684,7 +684,7 @@ These let the user resize the frames in your box model.
   height: 7px !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
-  border: none !important;
+  border: 0px solid transparent !important;
   cursor: n-resize;
 }
 
