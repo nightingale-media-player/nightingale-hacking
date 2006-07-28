@@ -901,20 +901,20 @@ THE STATUS PANE
 */ 
 
 #status_progress { 
-   background-color: #333 !important; 
+   background-color: #ececec !important; 
 } 
 
 #status_progress .progress-bar { 
-   background-color: #666 !important;
+   background-color: #ccc !important;
 } 
   
 #status_progress[mode="undetermined"] { 
-  background-color: #333 !important;
+  background-color: #999 !important;
 } 
   
 #status_text, #library_text, #scanning_text
 {
-  color: #999 !important;
+  color: #666 !important;
 }
 
 /** 
@@ -943,6 +943,7 @@ SEARCH WIDGET
 #search_widget
 { 
   background-color: #FFF !important;
+  border: 1px solid #CCC !important;
 } 
 
 #search_widget input
@@ -959,7 +960,7 @@ SEARCH WIDGET
 #search_widget input:focus
 {
   background-color: #EEE !important;
-  color: #FFF !important;
+  color: #333 !important;
 }
 
 .button-menu-dropmarker
