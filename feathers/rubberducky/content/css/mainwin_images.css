@@ -246,7 +246,7 @@ THE PLAYLIST
 
 playlist
 {
-  background-image: url(chrome://songbird/skin/default/bkgd_flowers.png) !important;
+  /*background-image: url(chrome://songbird/skin/default/bkgd_flowers.png) !important;**/
 }
 /* END THE LISTS **/
 
