@@ -218,7 +218,7 @@ TEXTBOXES for dialogs and forms.
 
 .drawer_box textbox,
 .dialog_textbox,
-.smart_condition_value textbox,
+.smart_condition_value textbox
 {
   -moz-border-radius: 3px !important;
   height: 22px !important;
