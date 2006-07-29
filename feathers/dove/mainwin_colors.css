@@ -390,11 +390,8 @@ tree treecol
   background-color: transparent !important;
 }
 
-tree treecol:hover
+#playlist_tree treecol:hover
 {
-  background-image: url(default/treecol.png) !important;
-  color: #666 !important;  
-  -moz-border-right-colors: #ccc !important;
   background-color: #ccc !important;
 }
 
