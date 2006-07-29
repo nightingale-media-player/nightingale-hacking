@@ -493,7 +493,7 @@ checkbox {
 
 /* ..... disabled state ..... */
 
-checkbox[disabled="true"] > .checkbox-check {
+checkbox[disabled="true"] .checkbox-check {
   background-color: #333 !important;
 }
 
@@ -511,20 +511,20 @@ checkbox[disabled="true"] {
   background-color: #000 !important; 
 }
   
-checkbox:hover:active > .checkbox-check {
+checkbox:hover:active .checkbox-check {
   background-color: #000 !important;
 }
 
 /* ..... checked state ..... */
 
-checkbox[checked="true"] > .checkbox-check 
+checkbox[checked="true"] .checkbox-check 
 {
   -moz-appearance: none !important;
   background-color: #000 !important;
   background-image: url("default/check_fff.png") !important;
 }
 
-checkbox[checked="true"][disabled="true"] > .checkbox-check {
+checkbox[checked="true"][disabled="true"] .checkbox-check {
   background-color: #000 !important;
 }
 /* END CHECKBOXES **/

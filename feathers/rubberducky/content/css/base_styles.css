@@ -535,9 +535,9 @@ CHECKBOXES, boxes, labels, images, states.
 */
 .checkbox-check,
 checkbox:focus > .checkbox-label-box,
-checkbox[disabled="true"] > .checkbox-check,
-checkbox:hover:active > .checkbox-check,
-checkbox[checked="true"] > .checkbox-check 
+checkbox[disabled="true"] .checkbox-check,
+checkbox:hover:active .checkbox-check,
+checkbox[checked="true"] .checkbox-check 
 {
   -moz-appearance: none !important;
 }
