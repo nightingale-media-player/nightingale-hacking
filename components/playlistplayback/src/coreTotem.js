@@ -230,7 +230,7 @@ function CoreTotem()
       this.stop();
     }
 
-    return this._object.IsPlaying;
+    return this._object.IsPlaying || this._paused;
   }
 
   this.getPaused    = function ()
