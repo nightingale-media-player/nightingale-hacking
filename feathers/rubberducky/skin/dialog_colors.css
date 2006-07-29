@@ -98,6 +98,11 @@ window
   background-color: #000 !important; /* color of the Main Window **/
 }
 
+.chrome_iframe_bkgd
+{
+  background-color: transparent !important; 
+}
+
 #chrome_nw
 {
   -moz-border-top-colors: #7a7c7c #333 !important;
@@ -146,7 +151,7 @@ window
 
 .iframe_bkgd
 {
-  background: #000 !important;
+  background: transparent !important;
 }
 
 #window_top   /* Title box */
@@ -155,7 +160,8 @@ window
   background-color: Transparent !important;
 }
 
-#app_title
+#app_title,
+label.dialog_box
 {
   color: #fff !important;
 }
