@@ -534,7 +534,8 @@ CHECKBOXES, boxes, labels, images, states.
 **********************************************************************
 */
 .checkbox-check,
-checkbox:focus > .checkbox-label-box,
+.checkbox-spacer-box,
+checkbox:focus .checkbox-label-box,
 checkbox[disabled="true"] .checkbox-check,
 checkbox:hover:active .checkbox-check,
 checkbox[checked="true"] .checkbox-check 
