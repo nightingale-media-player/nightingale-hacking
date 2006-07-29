@@ -513,6 +513,7 @@ checkbox {
 
 checkbox[disabled="true"] > .checkbox-check {
   background-color: #333 !important;
+  background-image: none !important;
 }
 
 checkbox[disabled="true"] {
@@ -527,10 +528,12 @@ checkbox[disabled="true"] {
   -moz-border-right-colors: #99A195 #333 !important;
   -moz-border-bottom-colors: #99A195 #333 !important;
   background-color: #000 !important; 
+  background-image: none !important;
 }
   
 checkbox:hover:active > .checkbox-check {
   background-color: #000 !important;
+  background-image: none !important;
 }
 
 /* ..... checked state ..... */
@@ -544,6 +547,7 @@ checkbox[checked="true"] > .checkbox-check
 
 checkbox[checked="true"][disabled="true"] > .checkbox-check {
   background-color: #000 !important;
+  background-image: url("default/check_fff.png") !important;
 }
 /* END CHECKBOXES **/
 /** 
