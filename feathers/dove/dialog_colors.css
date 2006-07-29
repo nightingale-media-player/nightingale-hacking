@@ -155,7 +155,8 @@ window
   background-color: Transparent !important;
 }
 
-#app_title
+#app_title,
+label.dialog_box
 {
   color: #fff !important;
 }
