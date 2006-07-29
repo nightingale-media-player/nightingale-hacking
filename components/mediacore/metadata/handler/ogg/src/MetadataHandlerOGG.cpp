@@ -34,6 +34,7 @@
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include "MetadataHandlerOGG.h"
+#include <unicharutil/nsUnicharUtils.h>
 
 // DEFINES ====================================================================
 
@@ -272,6 +273,7 @@ void sbMetadataHandlerOGG::ParseChannel()
             nsString key, value;
             comment_string.Left( key, split );
             comment_string.Right( value, comment_string.Length() - split - 1 );
+            ToLowerCase( key );
             m_Values->SetValue( key, value, 0 ); // Lots of bulletproofing before we get here.
           }
           else break; // Crap

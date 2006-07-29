@@ -42,6 +42,7 @@
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsEscape.h>
 #include <string/nsReadableUtils.h>
+#include <string/nsString.h>
 
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"
