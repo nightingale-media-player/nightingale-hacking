@@ -223,13 +223,6 @@ function CoreTotem()
   this.getPlaying   = function ()
   {
     this._verifyObject();
-
-    // XXX: Why do we do this?
-    if( this.getLength() == this.getPosition() )
-    {
-      this.stop();
-    }
-
     return this._object.IsPlaying || this._paused;
   }
 
