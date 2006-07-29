@@ -802,6 +802,10 @@ SEARCH WIDGET
   height: 21px !important;
 }
 
+#search_widget .menulist-editable-box
+{
+  border: none !important;
+}
 
 .button-icon
 {
