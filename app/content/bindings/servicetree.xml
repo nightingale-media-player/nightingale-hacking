@@ -206,7 +206,8 @@
                   rv = 1;
                 }
                 catch (err) {
-                  alert( "servicetree.xml - launchURL - internal " + err );
+                  if ( aURL != "chrome://songbird/content/html/cannot_load.html" )
+                    this.launchURL( "chrome://songbird/content/html/cannot_load.html" );
                 }
               }
             }
