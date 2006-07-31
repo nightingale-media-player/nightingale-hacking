@@ -215,46 +215,17 @@ progressmeter
 TEXTBOXES for dialogs and forms.
 ************************************************************************************************************************************************
 */
-
-.drawer_box textbox,
-.dialog_textbox,
-.smart_condition_value textbox
+.dialog_textbox
 {
   -moz-border-radius: 3px !important;
   height: 22px !important;
   padding: 0px 0px 0px 0px !important;
 }
 
-.smart_condition_box textbox
+.dialog_textbox input
 {
-  -moz-border-radius: 3px !important;
   height: 22px !important;
   padding: 0px 0px 0px 0px !important;
-}
-
-.drawer_box input:focus,
-.dialog_textbox input:focus,
-.smart_condition_box input:focus
-{
-  -moz-border-radius: 3px !important;
-  height: auto !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-.drawer_box input,
-.dialog_textbox input,
-.smart_condition_box input
-{
-  -moz-border-radius: 3px !important;
-  height: auto !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-.drawer_box[disabled="true"],
-.dialog_textbox[disabled="true"],
-.smart_condition_box[disabled="true"]
-{
-  border: 1px solid !important;
 }
 
 /** 

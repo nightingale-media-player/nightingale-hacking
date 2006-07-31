@@ -299,7 +299,7 @@
   <binding id="label" extends="chrome://songbird/content/bindings/db_controls.xml#base">
 
   <content>
-    <xul:label flex="1" sid="dbedit.label" xbl:inherits="class=class" />
+    <xul:label flex="1" sid="dbedit.label" class="dialog_label" />
   </content>
 
   <implementation>
@@ -344,7 +344,7 @@
   <content>
     <xul:checkbox sid="dbedit.checkbox" hidden="true"/>
     <xul:spacer sid="dbedit.spacer" width="2" hidden="true"/>
-    <xul:textbox flex="1" sid="dbedit.textbox" xbl:inherits="class=class" />
+    <xul:textbox flex="1" sid="dbedit.textbox" class="dialog_textbox" />
   </content>
 
   <implementation>
@@ -400,8 +400,9 @@
     <xul:menulist 
       sid="dbedit.list"
       flex="1"
-      xbl:inherits="editable=editable,class=class,id=listid"
-       onpopupshowing="onPopup();"
+      xbl:inherits="editable=editable,id=listid"
+      class="dialog_textbox"
+      onpopupshowing="onPopup();"
     >
       <children/>
     </xul:menulist>

@@ -395,19 +395,9 @@ BUTTONS for dialogs and forms.
 TEXTBOXES for dialogs and forms.
 ***************************************************************************
 */
-.textbox-input-box
+.dialog_textbox
 {
-  background-color: #000 !important;
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;  
-}
-
-.drawer_box textbox,
-.dialog_textbox,
-.smart_condition_box textbox
-{
+  border: 2px solid !important;
   -moz-border-top-colors: #535751 #333 !important;
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
@@ -416,26 +406,28 @@ TEXTBOXES for dialogs and forms.
   color: #FFF !important;
 }
 
-.drawer_box input:focus,
-.dialog_textbox input:focus,
-.smart_condition_box input:focus
+.dialog_textbox input
 {
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #4A4E48 !important; 
+  border-top: 2px solid #000 !important;
+  border-left: 2px solid #000 !important;
+  background-color: #000 !important; 
   color: #FFF !important;
 }
 
-.drawer_box[disabled="true"],
-.dialog_textbox[disabled="true"],
-.smart_condition_box[disabled="true"]
+.dialog_textbox input:focus
 {
-  -moz-border-top-colors: #333 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  -moz-border-bottom-colors: #333 !important;
+  border-top: 2px solid #4A4E48 !important;
+  border-left: 2px solid #4A4E48 !important;
+  background-color: #4A4E48 !important; 
+}
+
+.dialog_textbox[disabled="true"]
+{
+  border: 2px solid !important;
+  -moz-border-top-colors: #333 #222 !important;
+  -moz-border-left-colors: #333 #222 !important;
+  -moz-border-right-colors: #333 #222 !important;
+  -moz-border-bottom-colors: #333 #222 !important;
   color: #666 !important;
 }
 

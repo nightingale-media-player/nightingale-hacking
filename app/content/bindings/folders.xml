@@ -301,7 +301,7 @@
             // Make the text box
             var textbox = document.createElement( "textbox" );
             textbox.setAttribute( "sbtype", "value" );
-            textbox.setAttribute( "class", "smart_condition_value" );
+            textbox.setAttribute( "class", "smart_condition_value dialog_textbox" );
             textbox.setAttribute( "flex", "1" );
             
             // Make the browse button

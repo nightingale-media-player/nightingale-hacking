@@ -44,38 +44,38 @@
       <hbox align="center">
         <label id="trackeditor.label.guid" class="dialog_label" value="&metadata.uuid;" width="96"/>
         <spacer width="5"/>
-        <dbedit_label id="trackeditor.guid" column="uuid" class="dialog_label" />
+        <dbedit_label id="trackeditor.guid" column="uuid"/>
       </hbox>
       <spacer height="3"/>
       <hbox align="center">
         <label id="trackeditor.label.url" class="dialog_label" value="&metadata.url;" width="96"/>
         <spacer width="5"/> 
-        <dbedit_textbox id="trackeditor.url" column="url" class="dialog_textbox" flex="1"/>
+        <dbedit_textbox id="trackeditor.url" column="url" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.title" class="dialog_label" value="&metadata.title;" width="96"/>
         <spacer width="5"/>
-        <dbedit_textbox id="trackeditor.title" column="title" class="dialog_textbox" flex="1"/>
+        <dbedit_textbox id="trackeditor.title" column="title" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.artist" class="dialog_label" value="&metadata.artist;" width="96"/>
         <spacer width="5"/> 
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" class="dialog_textbox" flex="1" />
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.artist" column="artist" flex="1" />
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.album" class="dialog_label" value="&metadata.album;" width="96"/>
         <spacer width="5"/>
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" class="dialog_textbox" flex="1"/>
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.album" column="album" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.genre" class="dialog_label" value="&metadata.genre;" width="96"/>
         <spacer width="5"/> 
-        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" class="dialog_textbox" flex="1"/>
+        <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.length" class="dialog_label" value="&metadata.length;" width="96"/>
         <spacer width="5"/> 
-        <dbedit_textbox id="trackeditor.length" readonly="1" column="length" class="dialog_textbox" flex="1"/>
+        <dbedit_textbox id="trackeditor.length" readonly="1" column="length" flex="1"/>
       </hbox>
     </vbox>
     <spacer width="3"/> 
