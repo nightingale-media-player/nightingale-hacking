@@ -801,7 +801,6 @@ menulist[disabled="true"]
 .menulist-editable-input,
 .menulist-editable-box
 {
-  border: none !important;
   color: #fff !important;
   background-color: transparent !important;
 }
