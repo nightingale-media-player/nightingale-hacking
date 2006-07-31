@@ -919,6 +919,11 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
                                   PRBool aDownloading,
                                   nsAString& aTransferTable)
 {
+  // XXXben Remove me
+  nsAutoString strDevice(aDeviceString), deviceContext;
+
+  GetContext(strDevice, deviceContext);
+
   // Obtain the schema for the passed table
   // for creating a similar table in device's database context.
   nsresult rv;
@@ -926,13 +931,31 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
     do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
 
   rv = query->SetAsyncQuery(PR_FALSE); 
-  rv = query->SetDatabaseGUID(aContextInput);
 
   nsCOMPtr<sbIPlaylistManager> pPlaylistManager =
     do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1", &rv);
 
   nsAutoString destTable;
   GetTransferTable(aDeviceString, aDownloading, destTable);
+
+  PRInt32 queryError = 0;
+
+  // If the transfer table exists then get the number of
+  // rows in the existing table.
+  PRInt32 numExistingRows = 0;
+  nsAutoString selectQueryTransferTable;
+  selectQueryTransferTable.AssignLiteral("select * from ");
+  selectQueryTransferTable += destTable;
+  query->AddQuery(selectQueryTransferTable);
+  query->SetDatabaseGUID(deviceContext);
+  query->Execute(&queryError);
+  if (!queryError)
+  {
+    nsCOMPtr<sbIDatabaseResult> resultsetSelectTransferTable;
+    rv = query->GetResultObjectOrphan(getter_AddRefs(resultsetSelectTransferTable));
+    resultsetSelectTransferTable->GetRowCount(&numExistingRows);
+  }
+  query->ResetQuery(); // Make it re-usable
 
 #if 0
   nsAutoString text(aFilterColumn);
@@ -966,10 +989,6 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
   sbISimplePlaylist* dummyPlaylist;
   pPlaylistManager->GetSimplePlaylist(aTableName, query, &dummyPlaylist);
 
-  // XXXben Remove me
-  nsAutoString strDevice(aDeviceString), deviceContext;
-
-  GetContext(strDevice, deviceContext);
 
   nsCOMPtr<sbISimplePlaylist> pPlaylistDest;
   rv = pPlaylistManager->CopySimplePlaylist(aContextInput, aTableName,
@@ -983,35 +1002,42 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
 
   NS_ENSURE_TRUE(pPlaylistDest, PR_FALSE);
 
-  rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("source"),
-                                NS_LITERAL_STRING("text"));
-  rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("destination"),
-                                NS_LITERAL_STRING("text"));
-  rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("progress"),
-                                NS_LITERAL_STRING("integer(0, 100)"));
-  rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("status"),
-                                NS_LITERAL_STRING("text"));
+  // We need to add the extra columns and set the info for those columns only
+  // if they do not currently exist in the transfer table. Since a greater than zero 
+  // numExistingRows indicates that we have already done this, we might as well not 
+  // do this when numExistingRows is greater than zero. 
+  if (numExistingRows == 0)
+  {
+    rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("source"),
+                                  NS_LITERAL_STRING("text"));
+    rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("destination"),
+                                  NS_LITERAL_STRING("text"));
+    rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("progress"),
+                                  NS_LITERAL_STRING("integer(0, 100)"));
+    rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("status"),
+                                  NS_LITERAL_STRING("text"));
 
-  rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"),
-                                    NS_LITERAL_STRING("Source URL"),
-                                    PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70,
-                                    NS_LITERAL_STRING("text"), PR_TRUE,
-                                    PR_FALSE);
-  rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"),
-                                    NS_LITERAL_STRING("Destination URL"),
-                                    PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70,
-                                    NS_LITERAL_STRING("text"), PR_TRUE,
-                                    PR_FALSE);
-  rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"),
-                                    NS_LITERAL_STRING("Download Progress"),
-                                    PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20,
-                                    NS_LITERAL_STRING("progress"), PR_TRUE,
-                                    PR_FALSE);
-  rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"),
-                                    NS_LITERAL_STRING("Status"), PR_TRUE,
-                                    PR_TRUE, PR_FALSE, -7000, 20,
-                                    NS_LITERAL_STRING("text"), PR_TRUE,
-                                    PR_FALSE);
+    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"),
+                                      NS_LITERAL_STRING("Source URL"),
+                                      PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70,
+                                      NS_LITERAL_STRING("text"), PR_TRUE,
+                                      PR_FALSE);
+    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"),
+                                      NS_LITERAL_STRING("Destination URL"),
+                                      PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70,
+                                      NS_LITERAL_STRING("text"), PR_TRUE,
+                                      PR_FALSE);
+    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"),
+                                      NS_LITERAL_STRING("Download Progress"),
+                                      PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20,
+                                      NS_LITERAL_STRING("progress"), PR_TRUE,
+                                      PR_FALSE);
+    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"),
+                                      NS_LITERAL_STRING("Status"), PR_TRUE,
+                                      PR_TRUE, PR_FALSE, -7000, 20,
+                                      NS_LITERAL_STRING("text"), PR_TRUE,
+                                      PR_FALSE);
+  }
 
   PRInt32 dummy;
   rv = pPlaylistDest->GetAllEntries(&dummy);
@@ -1029,7 +1055,12 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
   // Clean it up since we'll reuse it.
   rv = query->ResetQuery();
 
-  for (PRInt32 row = 0; row < rowcount; row++) {
+  // Set the destination and source info by correctly forming a 
+  // fully qualified path for source and destination, but
+  // do not set the source/destination for those existing
+  // rows in the transfer table (bug 568). So starting 
+  // with row = numExistingRows. 
+  for (PRInt32 row = numExistingRows; row < rowcount; row++) {
     nsAutoString updateDataQuery, destinationPathFile, sourcePathFile;
 
     updateDataQuery.AssignLiteral("UPDATE \"");
@@ -1089,7 +1120,6 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
     rv = query->AddQuery(updateDataQuery);
   }
 
-  PRInt32 queryError = 0;
   rv = query->Execute(&queryError);
 
   if (queryError) {
