@@ -107,6 +107,7 @@ function onPollScan()
       onScanComplete( aMediaScanQuery );
       document.getElementById("button_ok").removeAttribute( "disabled" );
       document.getElementById("button_ok").focus();
+      document.getElementById("button_cancel").setAttribute( "disabled", "true" );
     }   
     else
     {
