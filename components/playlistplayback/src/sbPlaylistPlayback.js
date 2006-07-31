@@ -584,15 +584,16 @@ PlaylistPlayback.prototype = {
     return true;
   },
   
-  playRef: function(source_ref, index) {
-    LOG("source = " + source_ref + " index = " + index);
-    if (!source_ref || (index == null) || (index < 0))
+  playRef: function(aSourceRef, aIndex) {
+    LOG("playRef: source = " + aSourceRef + " index = " + aIndex);
+    if (!aSourceRef || (aIndex == null) || (aIndex < 0))
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    this._updateCurrentInfo(source_ref, index);
+    // pull metadata and filters from aSourceRef
+    this._updateCurrentInfo(aSourceRef, aIndex);
 
     // Then play it
     this.playUrl(this._playUrl.stringValue);
@@ -601,112 +602,121 @@ PlaylistPlayback.prototype = {
     this._faceplateState.boolValue = true;
   },
 
-  playRefByID: function(source_ref, row_id) {
-    LOG("source = " + source_ref + " row_id = " + row_id);
-    if (!source_ref || (row_id == null) || (row_id < 0))
+  playRefByID: function(aSourceRef, aRowID) {
+    LOG("playRefByID: source = " + aSourceRef + " rowID = " + aRowID);
+    if (!aSourceRef || (aRowID == null) || (aRowID < 0))
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-  
-    var index = this._source.getRefRowByColumnValue(source_ref, "id", row_id);
-    
-    return this.playRef(source_ref, index);
+ 
+    // Get the index for the row 
+    var index = this._source.getRefRowByColumnValue(aSourceRef, "id", aRowID);
+
+    // Then play it.
+    return this.playRef(aSourceRef, index);
   },
 
-  playRefByUUID: function(source_ref, media_uuid) {
-    LOG("source = " + source_ref + " media_uuid = " + media_uuid);
-    if (!source_ref || (media_uuid == ""))
+  playRefByUUID: function(aSourceRef, aMediaUUID) {
+    LOG("playRefByUUID source = " + aSourceRef + " media_uuid = " + aMediaUUID);
+    if (!aSourceRef || (aMediaUUID == ""))
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    var index = this._source.getRefRowByColumnValue(source_ref, "uuid", media_uuid);
-    return this.playRef(source_ref, index);
+    // Get the index for the row.
+    var index = this._source.getRefRowByColumnValue(aSourceRef, "uuid", aMediaUUID);
+
+    // Then play it.
+    return this.playRef(aSourceRef, index);
   },
-  
-  playRefByURL: function(source_ref, url) {
-    LOG("source = " + source_ref + " url = " + url);
-    if (!source_ref || (url == null) || (url == ""))
+
+  playRefByURL: function(aSourceRef, aURL) {
+    LOG("playRefByURL source = " + aSourceRef + " url = " + aURL);
+    if (!aSourceRef || aURL == "")
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    this.playUrl(url);
+    // Start the playback
+    this.playUrl(aURL);
 
+    // XXXredfive - Needed? playRef() above does this before calling playUrl()
     // update the current info in 250ms
     setTimeout('var index = this._source.getRefRowByColumnValue(' +
-               source_ref + ', "url",' + url + '); this._updateCurrentInfo(' +
-               source_ref + ', index )', 250
+               aSourceRef + ', "url",' + aURL + '); this._updateCurrentInfo(' +
+               aSourceRef + ', index )', 250
               );
    
     return;
   },
 
-  playTable: function(dbGUID, table, index) {
-    LOG("playTable - db: " + dbGUID + "\ntable: " + table + "\nindex: " + index);
+  playTable: function(aDatabaseGUID, aTable, aIndex) {
+    LOG("playTable - db: " + aDatabaseGUID + "\ntable: " + aTable + "\nindex: " + aIndex);
     
-    if ( !dbGUID || !table || (index == null) )
+    if ( !aDatabaseGUID || !aTable || (aIndex == null) )
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     // Create a ref different from what playlist.xml uses as a ref.
-    var theRef = "sbPlaylistPlayback.js_" + dbGUID + "_" + table;
+    var ppRef = "sbPlaylistPlayback.js_" + aDatabaseGUID + "_" + aTable;
     
     // Tell playlistsource to set up that ref to the requested playlist
-    this._source.feedPlaylist( theRef, dbGUID, table );
-    this._source.executeFeed( theRef );
+    this._source.feedPlaylist( ppRef, aDatabaseGUID, aTable );
+    this._source.executeFeed( ppRef );
     
     // Synchronous call!  Woo hoo!
-    while( this._source.isQueryExecuting( theRef ) );
+    while( this._source.isQueryExecuting( ppRef ) );
 
     // After the call is done, force GetTargets
-    this._source.forceGetTargets( theRef );
+    this._source.forceGetTargets( ppRef );
     
     // And then use the source to play that ref.
-    return this.playRef( theRef, index );
+    return this.playRef( ppRef, aIndex );
   },
 
-  playTableByUrl: function(dbGUID, table, url) {
-    var index = this._source.getRefRowByColumnValue(source_ref, "url", url);
-    this.playTable(dbGUID, table, index);
+  // XXXredfive - borked
+  playTableByUrl: function(aDatabaseGUID, aTable, aURL) {
+    var index = this._source.getRefRowByColumnValue(aSourceRef, "url", aURL);
+    this.playTable(aDatabaseGUID, aTable, index);
   },
   
-  playTableByID: function(dbGUID, table, row_id) {
-    var index = this._source.getRefRowByColumnValue(source_ref, "id", row_id);
-    this.playTable(dbGUID, table, index);
+  // XXXredfive - borked
+  playTableByID: function(aDatabaseGUID, aTable, aRowID) {
+    var index = this._source.getRefRowByColumnValue(aSourceRef, "id", aRowID);
+    this.playTable(aDatabaseGUID, aTable, index);
   },
   
-  playObject: function(playlist, index) {
-    if (!playlist || !index)
+  playObject: function(playlist, aIndex) {
+    if (!playlist || !aIndex)
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
       
     if ( playlist.ref )
-      return this.playRef(playlist.ref, index);
+      return this.playRef(playlist.ref, aIndex);
     else
       throw Components.results.NS_ERROR_INVALID_ARG;
   },
 
-  playUrl: function(url) {
+  playUrl: function(aURL) {
     try  {
       var core = this.core;
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-      this._playUrl.stringValue = url;
-      this._metadataUrl.stringValue = url;
+      this._playUrl.stringValue = aURL;
+      this._metadataUrl.stringValue = aURL;
 
       core.stop();
-      core.playUrl( url );
+      core.playUrl( aURL );
 
-      LOG( "Playing '" + core.getId() + "'(" + this.position + "/" +
+      LOG( "playUrl() '" + core.getId() + "'(" + this.position + "/" +
            this.length + ") - playing: " + this.playing +
            " paused: " + this.paused
          );
@@ -718,7 +728,7 @@ PlaylistPlayback.prototype = {
       this._faceplateState.boolValue = true;
 
       // metrics
-      var s = url.split(".");
+      var s = aURL.split(".");
       if (s.length > 1)
       {
         var ext = s[s.length-1];
@@ -851,34 +861,34 @@ PlaylistPlayback.prototype = {
     return;
   },
 
-  isMediaUrl: function(the_url) {
+  isMediaUrl: function(aURL) {
     // Case insensitive.
-    the_url.toLowerCase();
+    aURL.toLowerCase();
     
-// NO    if (this.isPlaylistUrl(the_url)) return true;
-    if( ( the_url.indexOf ) && 
+// NO    if (this.isPlaylistUrl(aURL)) return true;
+    if( ( aURL.indexOf ) && 
         (
           // Protocols at the beginning
-          ( the_url.indexOf( "mms:" ) == 0 ) || 
-          ( the_url.indexOf( "rtsp:" ) == 0 ) || 
+          ( aURL.indexOf( "mms:" ) == 0 ) || 
+          ( aURL.indexOf( "rtsp:" ) == 0 ) || 
           // For now, still hardcode the playlist types.
-          ( the_url.indexOf( ".pls" ) != -1 ) || 
-          ( the_url.indexOf( "rss" ) != -1 ) || 
-          ( the_url.indexOf( ".m3u" ) != -1 ) || 
+          ( aURL.indexOf( ".pls" ) != -1 ) || 
+          ( aURL.indexOf( "rss" ) != -1 ) || 
+          ( aURL.indexOf( ".m3u" ) != -1 ) || 
           // File extensions at the end
-          ( the_url.indexOf( ".mp3" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".ogg" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".flac" ) == ( the_url.length - 5 ) ) ||
-          ( the_url.indexOf( ".wav" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".m4a" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".wma" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
-          ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
+          ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".ogg" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".flac" ) == ( aURL.length - 5 ) ) ||
+          ( aURL.indexOf( ".wav" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".wma" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".wmv" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".asx" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".asf" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
         )
       )
     {
@@ -887,22 +897,22 @@ PlaylistPlayback.prototype = {
     return false;
   },
 
-  isVideoUrl: function ( the_url )
+  isVideoUrl: function ( aURL )
   {
-    the_url.toLowerCase();
-    if ( ( the_url.indexOf ) && 
+    aURL.toLowerCase();
+    if ( ( aURL.indexOf ) && 
           (
-            ( the_url.indexOf( ".wmv" ) == ( the_url.length - 4 ) ) ||
+            ( aURL.indexOf( ".wmv" ) == ( aURL.length - 4 ) ) ||
             
             // A better solution is needed, as asx files are not always video..
             // The following hack brought to you by Nivi:
-            ( the_url.indexOf( ".asx" ) == ( the_url.length - 4 ) && the_url.indexOf( "allmusic.com" ) == -1 ) ||
+            ( aURL.indexOf( ".asx" ) == ( aURL.length - 4 ) && aURL.indexOf( "allmusic.com" ) == -1 ) ||
             
-            ( the_url.indexOf( ".asf" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".avi" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".mov" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".mpg" ) == ( the_url.length - 4 ) ) ||
-            ( the_url.indexOf( ".mp4" ) == ( the_url.length - 4 ) )
+            ( aURL.indexOf( ".asf" ) == ( aURL.length - 4 ) ) ||
+            ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
+            ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
+            ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+            ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
           )
         )
     {
@@ -911,8 +921,8 @@ PlaylistPlayback.prototype = {
     return false;
   },
 
-  isPlaylistUrl: function(the_url) {
-    if ( the_url.indexOf )
+  isPlaylistUrl: function(aURL) {
+    if ( aURL.indexOf )
     {
       // Cache our manager, but not at construction!
       if ( this._playlistReaderManager == null )
@@ -931,7 +941,7 @@ PlaylistPlayback.prototype = {
         for(var j = 0; j < ext_list.length; j++)
         {
           var ext = ext_list[j];
-          if ( the_url.indexOf( "." + ext ) != -1 )
+          if ( aURL.indexOf( "." + ext ) != -1 )
           {      
             return true;
           }
@@ -976,48 +986,48 @@ PlaylistPlayback.prototype = {
     return text;
   },
   
-  convertUrlToDisplayName: function( url )
+  convertUrlToDisplayName: function( aURL )
   {
-    url = decodeURI( url );
+    aURL = decodeURI( aURL );
     // Set the title display  
-    var the_value = "";
-    if ( url.lastIndexOf('/') != -1 )
+    var urlDisplay = "";
+    if ( aURL.lastIndexOf('/') != -1 )
     {
-      the_value = url.substring( url.lastIndexOf('/') + 1, url.length );
+      urlDisplay = aURL.substring( aURL.lastIndexOf('/') + 1, aURL.length );
     }
-    else if ( url.lastIndexOf('\\') != -1 )
+    else if ( aURL.lastIndexOf('\\') != -1 )
     {
-      the_value = url.substring( url.lastIndexOf('\\') + 1, url.length );
+      urlDisplay = aURL.substring( aURL.lastIndexOf('\\') + 1, aURL.length );
     }
     else
     {
-      the_value = url;
+      urlDisplay = aURL;
     }
-    if ( ! the_value.length )
+    if ( ! urlDisplay.length )
     {
-      the_value = url;
+      urlDisplay = aURL;
     }
-    return the_value;
+    return urlDisplay;
   },
 
-  convertUrlToFolder: function( url )
+  convertUrlToFolder: function( aURL )
   {
     // Set the title display  
-    url = decodeURI( url );
-    var the_value = "";
-    if ( url.lastIndexOf('/') != -1 )
+    aURL = decodeURI( aURL );
+    var urlDisplay = "";
+    if ( aURL.lastIndexOf('/') != -1 )
     {
-      the_value = url.substring( 0, url.lastIndexOf('/') );
+      urlDisplay = aURL.substring( 0, aURL.lastIndexOf('/') );
     }
-    else if ( url.lastIndexOf('\\') != -1 )
+    else if ( aURL.lastIndexOf('\\') != -1 )
     {
-      the_value = url.substring( 0, url.lastIndexOf('\\') );
+      urlDisplay = aURL.substring( 0, aURL.lastIndexOf('\\') );
     }
     else
     {
-      the_value = url;
+      urlDisplay = aURL;
     }
-    return the_value;
+    return urlDisplay;
   },
  
   // watch for XRE startup and shutdown messages 
@@ -1345,7 +1355,7 @@ PlaylistPlayback.prototype = {
     }
   },
   
-  _importUrlInLibrary: function( the_url )
+  _importUrlInLibrary: function( aURL )
   {
     var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
 
@@ -1357,10 +1367,10 @@ PlaylistPlayback.prototype = {
     // prepare the data for addMedia call
     var keys = new Array( "title" );
     var values = new Array();
-    values.push( this.convertUrlToDisplayName( the_url ) );
+    values.push( this.convertUrlToDisplayName( aURL ) );
 
     // add the url to the library
-    var guid = library.addMedia( the_url, keys.length, keys, values.length, values, false, false );
+    var guid = library.addMedia( aURL, keys.length, keys, values.length, values, false, false );
     LOG("add media = " + guid);
 
     // return the index of the row in the library.
@@ -1410,20 +1420,20 @@ PlaylistPlayback.prototype = {
   },
   
   
-  _updateCurrentInfo: function(source_ref, index)
+  _updateCurrentInfo: function(aSourceRef, aIndex)
   {
     // These define what is _actually_ playing
-    this._playingRef.stringValue = source_ref;
-    this._playlistIndex.intValue = index;
+    this._playingRef.stringValue = aSourceRef;
+    this._playlistIndex.intValue = aIndex;
     
     // And from those, we ask the Playlistsource to tell us who to play
-    var url = this._source.getRefRowCellByColumn( source_ref, index, "url" );
-    var title = this._source.getRefRowCellByColumn( source_ref, index, "title" );
-    var artist = this._source.getRefRowCellByColumn( source_ref, index, "artist" );
-    var album = this._source.getRefRowCellByColumn( source_ref, index, "album" );
-    var genre = this._source.getRefRowCellByColumn( source_ref, index, "genre" );
+    var url = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "url" );
+    var title = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "title" );
+    var artist = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "artist" );
+    var album = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "album" );
+    var genre = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "genre" );
     
-    // Set the data remotes to indicate what's about to play
+    // Set the data remotes to indicate what is about to play
     this._playUrl.stringValue = url;
     this._metadataUrl.stringValue = url;
     this._metadataTitle.stringValue = title;
@@ -1431,14 +1441,11 @@ PlaylistPlayback.prototype = {
     this._metadataAlbum.stringValue = album;
     this._metadataGenre.stringValue = genre;
     
-    // Record, internally, what the filters on the ref are.
-    // If the filters are different when we are asked to play next/prev, fail.
-    this.num_filters = this._source.getNumFilters( source_ref );
+    // Record what the filters on the ref are for a check in _playNextPrev()
+    this.num_filters = this._source.getNumFilters( aSourceRef );
     this.filters = new Array();
-    var i;
-    for (i = 0; i < this.num_filters; i++)
-    {
-      this.filters.push( this._source.getFilter( source_ref, i ) );
+    for ( var i = 0; i < this.num_filters; i++) {
+      this.filters.push( this._source.getFilter( aSourceRef, i ) );
     };
   },
   

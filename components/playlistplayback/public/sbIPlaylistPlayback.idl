@@ -265,100 +265,139 @@ interface sbIPlaylistPlayback : nsIObserver
   // --------------------------------------------------------------------------
 
   /**
-   * \brief
+   * \brief Play a particular track from a source.
    *
-   * \throw
+   * \param aSourceRef - A valid table reference in the library
+   * \param aIndex - The index for the row corresponding to the track to play.
+   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aIndex is null or if aIndex
+   *        is negative.
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playRef(in AString source_ref, in unsigned long index);
+  boolean playRef(in AString aSourceRef, in unsigned long aIndex);
+
+  /**
+   * \brief Play a particular track from a source.
+   *
+   * \param aSourceRef - A valid table reference in the libary
+   * \param aRowID - The ID for the row corresponding to the track to play.
+   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aRowID is null or if aRowID
+   *        is negative.
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
+   * \return
+   */
+  boolean playRefByID(in AString aSourceRef, in unsigned long aRowID);
+
+  /**
+   * \brief Play a particular track from a source.
+   *
+   * \param aSourceRef
+   * \param aMediaUUID
+   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aMediaUUDI is null
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
+   * \return
+   */
+  boolean playRefByUUID(in AString aSourceRef, in AString aMediaUUID);
+
+  /**
+   * \brief Play a particular track from a source.
+   *
+   * \param aSourceRef
+   * \param aURL
+   * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
+   * \return
+   */
+  boolean playRefByURL(in AString aSourceRef, in AString aURL);
 
   /**
    * \brief
    *
+   * \param aDatabaseGUID
+   * \param aTable
+   * \param aIndex
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playRefByID(in AString source_ref, in unsigned long row_id);
+  boolean playTable(in AString aDatabaseGUID, in AString aTable, in unsigned long aIndex);
 
   /**
    * \brief
    *
+   * \param aDatabaseGUID
+   * \param aTable
+   * \param aURL
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playRefByUUID(in AString source_ref, in AString media_uuid);
+  boolean playTableByURL(in AString aDatabaseGUID, in AString aTable, in AString aURL);
 
   /**
    * \brief
    *
+   * \param aDatabaseGUID
+   * \param aTable
+   * \param aRowID
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playRefByURL(in AString source_ref, in AString url);
+  boolean playTableByID(in AString aDatabaseGUID, in AString aTable, in unsigned long aRowID);
 
   /**
    * \brief
    *
+   * \param aDatabaseGUID
+   * \param aTable
+   * \param aUUID
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playTable(in AString dbGUID, in AString table, in unsigned long index);
+  boolean playTableByUUID(in AString aDatabaseGUID, in AString aTable, in AString aUUID);
 
   /**
    * \brief
    *
+   * \param aPlaylist
+   * \param aIndex
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playTableByURL(in AString dbGUID, in AString table, in AString url);
+  boolean playObject(in sbIPlaylist aPlaylist, in unsigned long aIndex);
 
   /**
    * \brief
    *
+   * \param aURL
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playTableByID(in AString dbGUID, in AString table, in unsigned long row_id);
+  boolean playUrl(in AString aURL);
 
   /**
    * \brief
    *
+   * \param aURL
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playTableByUUID(in AString dbGUID, in AString table, in AString uuid);
+  boolean playAndImportUrl(in AString aURL);
 
   /**
    * \brief
    *
+   * \param aURL
    * \throw
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playObject(in sbIPlaylist playlist, in unsigned long index);
-
-  /**
-   * \brief
-   *
-   * \throw
-   * \return
-   */
-  boolean playUrl(in AString url);
-
-  /**
-   * \brief
-   *
-   * \throw
-   * \return
-   */
-  boolean playAndImportUrl(in AString url);
-
-  /**
-   * \brief
-   *
-   * \throw
-   * \return
-   */
-  long importUrl(in AString url);
+  long importUrl(in AString aURL);
 
 
   // --------------------------------------------------------------------------
