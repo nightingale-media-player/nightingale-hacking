@@ -653,6 +653,8 @@ These let the user resize the frames in your box model.
 #filter_splitter
 {
   width: 7px !important;
+  min-width: 7px !important;
+  max-width: 7px !important;
   height: 50px !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
@@ -682,6 +684,8 @@ These let the user resize the frames in your box model.
 {
   width: 50px !important;
   height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   border: 0px solid transparent !important;
@@ -715,11 +719,15 @@ These let the user resize the frames in your box model.
 #horz_splitter[state="collapsed"]
 {
   height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important;
 }
 
 #playlist_web_split[state="collapsed"]
 {
   height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important;
 }
 /* END SPLITTERS **/
 
