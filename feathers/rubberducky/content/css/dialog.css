@@ -224,7 +224,7 @@ TEXTBOXES for dialogs and forms.
 
 .dialog_textbox input
 {
-  height: 18px !important;
+  height: 22px !important;
   padding: 0px 0px 0px 0px !important;
 }
 
@@ -557,7 +557,6 @@ menulist
   background-position: center center !important;
 }
 
-
 menulist[disabled="true"]
 {
   -moz-border-radius: 3px !important;
@@ -566,6 +565,14 @@ menulist[disabled="true"]
 menulist[disabled="true"] > dropmarker
 {
   opacity: 0.5 !important;
+}
+
+.menulist-editable-input,
+.menulist-editable-box
+{
+  border: none !important;
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
 }
 
 /** 
