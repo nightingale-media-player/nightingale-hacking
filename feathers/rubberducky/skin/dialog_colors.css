@@ -413,16 +413,16 @@ TEXTBOXES for dialogs and forms.
 
 .dialog_textbox input
 {
-  border-top: 2px solid #000 !important;
-  border-left: 2px solid #000 !important;
+/*  border-top: 2px solid #000 !important;
+  border-left: 2px solid #000 !important; */
   background-color: #000 !important; 
   color: #FFF !important;
 }
 
 .dialog_textbox input:focus
 {
-  border-top: 2px solid #4A4E48 !important;
-  border-left: 2px solid #4A4E48 !important;
+/*  border-top: 2px solid #4A4E48 !important;
+  border-left: 2px solid #4A4E48 !important; */
   background-color: #4A4E48 !important; 
 }
 
