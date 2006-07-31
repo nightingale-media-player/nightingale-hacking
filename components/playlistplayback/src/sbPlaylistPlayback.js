@@ -214,6 +214,7 @@ PlaylistPlayback.prototype = {
   _metadataTitle:      null,
   _metadataArtist:     null,
   _metadataAlbum:      null,
+  _metadataGenre:      null,
   _metadataUrl:        null,
   _metadataPos:        null,
   _metadataLen:        null,
@@ -286,6 +287,7 @@ PlaylistPlayback.prototype = {
     this._metadataTitle         = createDataRemote("metadata.title", null);
     this._metadataArtist        = createDataRemote("metadata.artist", null);
     this._metadataAlbum         = createDataRemote("metadata.album", null);
+    this._metadataGenre         = createDataRemote("metadata.genre", null);
     this._metadataUrl           = createDataRemote("metadata.url", null);
     this._metadataPos           = createDataRemote("metadata.position", null);
     this._metadataLen           = createDataRemote("metadata.length", null);
@@ -316,6 +318,7 @@ PlaylistPlayback.prototype = {
     this._metadataTitle.stringValue = "";
     this._metadataArtist.stringValue = "";
     this._metadataAlbum.stringValue = "";
+    this._metadataGenre.stringValue = "";
     this._statusText.stringValue = "";
     this._statusStyle.stringValue = "";
     this._playingRef.stringValue = "";
@@ -348,6 +351,7 @@ PlaylistPlayback.prototype = {
     this._metadataTitle.unbind();
     this._metadataArtist.unbind();
     this._metadataAlbum.unbind();
+    this._metadataGenre.unbind();
     this._metadataUrl.unbind();
     this._metadataPos.unbind();
     this._metadataLen.unbind();
@@ -1182,6 +1186,11 @@ PlaylistPlayback.prototype = {
         this._set_metadata = true; 
       else
         album = "";
+      // Only if we have no known genre.
+      if ( genre.length && ( this._metadataGenre.stringValue == "" ) )
+        this._set_metadata = true; 
+      else
+        genre = "";
 
       if ( this._set_metadata ) {
         // Set the metadata into the database table
@@ -1191,12 +1200,15 @@ PlaylistPlayback.prototype = {
         this._set_metadata = false;
       }
 
+      // Send it out to the dataremotes
       if (title != "")
         this._metadataTitle.stringValue = title;
       if (artist != "")
         this._metadataArtist.stringValue = artist;
       if (album != "")
         this._metadataAlbum.stringValue = album;
+      if (genre != "")
+        this._metadataGenre.stringValue = genre;
     }
   },
 
@@ -1409,6 +1421,7 @@ PlaylistPlayback.prototype = {
     var title = this._source.getRefRowCellByColumn( source_ref, index, "title" );
     var artist = this._source.getRefRowCellByColumn( source_ref, index, "artist" );
     var album = this._source.getRefRowCellByColumn( source_ref, index, "album" );
+    var genre = this._source.getRefRowCellByColumn( source_ref, index, "genre" );
     
     // Set the data remotes to indicate what's about to play
     this._playUrl.stringValue = url;
@@ -1416,6 +1429,7 @@ PlaylistPlayback.prototype = {
     this._metadataTitle.stringValue = title;
     this._metadataArtist.stringValue = artist;
     this._metadataAlbum.stringValue = album;
+    this._metadataGenre.stringValue = genre;
     
     // Record, internally, what the filters on the ref are.
     // If the filters are different when we are asked to play next/prev, fail.
