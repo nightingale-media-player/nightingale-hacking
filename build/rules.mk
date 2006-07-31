@@ -94,6 +94,11 @@ targets += lib_link
 clean_targets += lib_clean
 endif
 
+ifdef C_SRCS
+targets += c_compile
+clean_targets += c_clean
+endif
+
 ifdef UNZIP_SRC
 targets += unzip_file
 endif
@@ -376,6 +381,56 @@ lib_clean:
 .PHONY : lib_clean
 
 endif #STATIC_LIB
+
+#------------------------------------------------------------------------------
+# Rules for C compilation
+#------------------------------------------------------------------------------
+
+# C_SRCS - a list of .cpp files to be compiled
+# C_INCLUDES - a list of include dirs
+# C_FLAGS - an override of the default flags to pass to the compiler
+# C_EXTRA_FLAGS - a list of additional flags to pass to the compiler
+# C_DEFS - a override of the default defines to pass to the compiler with -D added
+# C_EXTRA_DEFS - a list of additional defines with -D to pass to the compiler
+
+ifdef C_SRCS
+
+ifdef C_FLAGS
+compile_flags = $(C_FLAGS)
+else
+compile_flags = $(CFLAGS)
+ifdef C_EXTRA_FLAGS
+compile_flags += $(C_EXTRA_FLAGS)
+endif
+endif
+
+ifdef C_DEFS
+compile_defs = $(C_DEFS)
+else
+compile_defs = $(ACDEFINES)
+ifdef C_EXTRA_DEFS
+compile_defs += $(C_EXTRA_DEFS)
+endif
+endif
+
+ifdef C_INCLUDES
+compile_includes_temp = $(addprefix $(CFLAGS_INCLUDE_PREFIX), $(C_INCLUDES))
+compile_includes = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX), $(compile_includes_temp))
+endif
+
+compiler_objects = $(C_SRCS:.c=$(OBJ_SUFFIX))
+
+$(compiler_objects) :%$(OBJ_SUFFIX): %.c
+	$(CYGWIN_WRAPPER) $(CC) $(compile_flags) $(compile_defs) $(compile_includes) $<
+
+c_compile: $(compiler_objects)
+
+c_clean:
+	$(CYGWIN_WRAPPER) $(RM) -f $(compiler_objects) vc70.pdb vc71.pdb
+
+.PHONY : c_compile c_clean
+
+endif #C_SRCS
 
 #------------------------------------------------------------------------------
 # Rules for XPIDL compilation
