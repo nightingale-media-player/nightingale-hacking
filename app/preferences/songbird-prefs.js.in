@@ -14,12 +14,8 @@ pref("general.skins.selectedSkin", "rubberducky/0.2");
 pref("general.bones.selectedMainWinURL", "chrome://rubberducky/content/xul/mainwin.xul");
 pref("general.bones.selectedMiniPlayerURL", "chrome://rubberducky/content/xul/miniplayer.xul");
 
-
-#includesubst songbird-update-prefs.js.in
-
-#ifdef DEBUG
-#includesubst songbird-debug-prefs.js.in
-#endif
+// HAH.  Okay, so, our skinswitching trick doesn't work unless we shut down their happycache.
+pref("nglayout.debug.disable_xul_cache", true);
 
 pref("config.trim_on_minimize", true); // Dump the current ram footprint when minimized.
 
@@ -51,4 +47,13 @@ pref("capability.policy.default.ClassID.CID22D6F312-B0F6-11D0-94AB-0080C74C7E95"
 pref("signon.rememberSignons", true);
 pref("signon.expireMasterPassword", false);
 pref("signon.SignonFileName", "signons.txt");
+
+//
+// Do the include stuff at the end.
+//
+#includesubst songbird-update-prefs.js.in
+
+#ifdef DEBUG
+#includesubst songbird-debug-prefs.js.in
+#endif
 
