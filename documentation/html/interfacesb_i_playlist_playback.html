@@ -22,56 +22,121 @@
 <p>
 <a href="interfacesb_i_playlist_playback-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#57b2697c1029d00279d841c57fa6dd77">addCore</a> (in <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a> aCore, in boolean aSelect)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a playback core. Add a playback core to the collection of cores available for media playback. If the core already exists it doesn't get added again but will be selected if aSelect is true.  <a href="#57b2697c1029d00279d841c57fa6dd77"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#8ba11f526ece608120fcf29b94ba326c">removeCore</a> (in <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a> aCore)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Take a core out of the collection of available playback cores.  <a href="#8ba11f526ece608120fcf29b94ba326c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#ee7408cd7d2d62d2a146d83abe5acd6f">selectCore</a> (in <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a> aCore)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Select the core passed in as the current core. If the core passed in doesn't already exist in the collection it gets added first. Then it is selected as the current playback core.  <a href="#ee7408cd7d2d62d2a146d83abe5acd6f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#1f753836239c83c49b88ac2d640baaa2">play</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin playback. If previously paused playback will start at the same position. If stopped playback will begin at the beginning of the track. Paused playback will start from the same point.  <a href="#1f753836239c83c49b88ac2d640baaa2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#06c688bf56cd5354d78b55edac6ab65a">pause</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Halt playback This maintains the position in the track and halts the playback.  <a href="#06c688bf56cd5354d78b55edac6ab65a"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#73cfaeb60327ced50c221a51da6a49e4">stop</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Halt playback Stops the playback of the current track. Restarting the playback after this call casuses it to start from the beginning of the track.  <a href="#73cfaeb60327ced50c221a51da6a49e4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#d85eb4d3e41869a6a0883614505165fc">next</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Advance playback to the next track.  <a href="#d85eb4d3e41869a6a0883614505165fc"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#449a55e261414fa45742138091597186">previous</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set playback to the track before the current one in play order.  <a href="#449a55e261414fa45742138091597186"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#4e84c439ba33757a27b71c885fba6d59">current</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the index of the current track.  <a href="#4e84c439ba33757a27b71c885fba6d59"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#42d8906fd9160e75cb35df21462d6408">goFullscreen</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Make the playback take the full screen. This only makes sense for video playback.  <a href="#42d8906fd9160e75cb35df21462d6408"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#33257b276cccf8839a5a390be723fe78">playRef</a> (in AString source_ref, in unsigned long index)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#6af114ec42574ce605ba58a8e8f22e84">playRefByID</a> (in AString source_ref, in unsigned long row_id)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#cefd8c74bee4c4e26faeaf70277491d9">playRefByUUID</a> (in AString source_ref, in AString media_uuid)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#6896decae2ef7202fe2b36d28fe1042f">playRefByURL</a> (in AString source_ref, in AString url)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#d7b05e8f3bbaaf2c9a5a3c9b6951d81b">playTable</a> (in AString dbGUID, in AString table, in unsigned long index)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#b57fcc60c07c5256ab41427bc9303252">playTableByURL</a> (in AString dbGUID, in AString table, in AString url)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#45f27263d00a74734d35cbf37e79b347">playTableByID</a> (in AString dbGUID, in AString table, in unsigned long row_id)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#8898594a030b26700d61edba881461b9">playTableByUUID</a> (in AString dbGUID, in AString table, in AString uuid)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#72157fee1bd0204207ddc8be31476fab">playObject</a> (in <a class="el" href="interfacesb_i_playlist.html">sbIPlaylist</a> playlist, in unsigned long index)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#6ce2ef75dbeedcd0b450326b124e3d08">playUrl</a> (in AString url)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#3963a143976eb5a846cb80b089ca75cc">playAndImportUrl</a> (in AString url)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#7df6df44648e4eb4da3e17d4ba45b61f">importUrl</a> (in AString url)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3e4afac2bb147a1667cc778207516852"></a><!-- doxytag: member="sbIPlaylistPlayback::REPEAT_MODE_OFF" ref="3e4afac2bb147a1667cc778207516852" args="" -->
 const unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#3e4afac2bb147a1667cc778207516852">REPEAT_MODE_OFF</a> = 0</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">No repeat. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ea3b9ad01a53b7d0821fa612b9ba0e4e"></a><!-- doxytag: member="sbIPlaylistPlayback::REPEAT_MODE_ONE" ref="ea3b9ad01a53b7d0821fa612b9ba0e4e" args="" -->
 const unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#ea3b9ad01a53b7d0821fa612b9ba0e4e">REPEAT_MODE_ONE</a> = 1</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Repeate the current track (again and again and... ). <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a6730ce42c0a5294c6e801070dee37c8"></a><!-- doxytag: member="sbIPlaylistPlayback::REPEAT_MODE_ALL" ref="a6730ce42c0a5294c6e801070dee37c8" args="" -->
 const unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#a6730ce42c0a5294c6e801070dee37c8">REPEAT_MODE_ALL</a> = 2</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Play throught all tracks and then do it again. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="dbe1ce37c7027bb61b79948da98acb17"></a><!-- doxytag: member="sbIPlaylistPlayback::core" ref="dbe1ce37c7027bb61b79948da98acb17" args="" -->
 attribute <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#dbe1ce37c7027bb61b79948da98acb17">core</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current core responsible for playback. This object is the wrapper around the actual playback engine. All calls to the playback engine go through this wrapper. This may be only one of several available playback cores, but it is the current core controlling playback. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0aac261d9e1b35339adc571ccc23eb7c"></a><!-- doxytag: member="sbIPlaylistPlayback::volume" ref="0aac261d9e1b35339adc571ccc23eb7c" args="" -->
 attribute unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#0aac261d9e1b35339adc571ccc23eb7c">volume</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The volume. The volume as reported by the core, or set upon the core. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c6e186d951b95f40cc64952208af941"></a><!-- doxytag: member="sbIPlaylistPlayback::mute" ref="2c6e186d951b95f40cc64952208af941" args="" -->
 attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#2c6e186d951b95f40cc64952208af941">mute</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The mute state. The mute state as reported by the core, or set upon the core. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95a565856615a41a06ad64bdc38f96bb"></a><!-- doxytag: member="sbIPlaylistPlayback::position" ref="95a565856615a41a06ad64bdc38f96bb" args="" -->
 attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#95a565856615a41a06ad64bdc38f96bb">position</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="90e1b2870962a862b388d028222303a2"></a><!-- doxytag: member="sbIPlaylistPlayback::length" ref="90e1b2870962a862b388d028222303a2" args="" -->
-readonly attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#90e1b2870962a862b388d028222303a2">length</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The position within the current track. The number of milliseconds from the start of the current track as reported by or set upon the core. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#90e1b2870962a862b388d028222303a2">length</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9c1b43840438ca39cf5dc7126d3b89f7"></a><!-- doxytag: member="sbIPlaylistPlayback::paused" ref="9c1b43840438ca39cf5dc7126d3b89f7" args="" -->
-readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">paused</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">paused</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a9d8868c0c6ba509a9dd0b9974f7da0a"></a><!-- doxytag: member="sbIPlaylistPlayback::playing" ref="a9d8868c0c6ba509a9dd0b9974f7da0a" args="" -->
 readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#a9d8868c0c6ba509a9dd0b9974f7da0a">playing</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b474c491f7e8e4633843372338f65b98"></a><!-- doxytag: member="sbIPlaylistPlayback::started" ref="b474c491f7e8e4633843372338f65b98" args="" -->
-readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#b474c491f7e8e4633843372338f65b98">started</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The playing state of the core. Seperate from pause state. I. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#1528d6636cf58c3f9eeb6a3005243da0">repeat</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1528d6636cf58c3f9eeb6a3005243da0"></a><!-- doxytag: member="sbIPlaylistPlayback::repeat" ref="1528d6636cf58c3f9eeb6a3005243da0" args="" -->
-attribute unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#1528d6636cf58c3f9eeb6a3005243da0">repeat</a></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Repeat state. This has 3 possible states the are reflected in the constants.  <a href="#1528d6636cf58c3f9eeb6a3005243da0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1d02000aa3ee3049da3db4e5f6825299"></a><!-- doxytag: member="sbIPlaylistPlayback::shuffle" ref="1d02000aa3ee3049da3db4e5f6825299" args="" -->
 attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#1d02000aa3ee3049da3db4e5f6825299">shuffle</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Shuffle state. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="15e6dfaf9ec0786e7018c053cf1a6868"></a><!-- doxytag: member="sbIPlaylistPlayback::itemCount" ref="15e6dfaf9ec0786e7018c053cf1a6868" args="" -->
 readonly attribute unsigned <br>
 long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#15e6dfaf9ec0786e7018c053cf1a6868">itemCount</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Number of items in the current playlist. As reported by the playlistsource. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="99fc99e76b4b271e219ce90131775750"></a><!-- doxytag: member="sbIPlaylistPlayback::currentGUID" ref="99fc99e76b4b271e219ce90131775750" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#99fc99e76b4b271e219ce90131775750">currentGUID</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The GUID for the current track in the playback core. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="244bf5af2fe05920bb2b05aec2729749"></a><!-- doxytag: member="sbIPlaylistPlayback::currentURL" ref="244bf5af2fe05920bb2b05aec2729749" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#244bf5af2fe05920bb2b05aec2729749">currentURL</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The URL for the current track in the playback core. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#b474c491f7e8e4633843372338f65b98">started</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Has playback started. This is mainly used internally. This does not check the state of the player.  <a href="#b474c491f7e8e4633843372338f65b98"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a> <a class="el" href="interfacesb_i_playlist.html">sbIPlaylist</a> An interface that describes the PlaylistPlayback Service </dd></dl>
@@ -79,9 +144,774 @@ readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="57b2697c1029d00279d841c57fa6dd77"></a><!-- doxytag: member="sbIPlaylistPlayback::addCore" ref="57b2697c1029d00279d841c57fa6dd77" args="(in sbICoreWrapper aCore, in boolean aSelect)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistPlayback::addCore           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a>&nbsp;</td>
+          <td class="paramname"> <em>aCore</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>aSelect</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a playback core. Add a playback core to the collection of cores available for media playback. If the core already exists it doesn't get added again but will be selected if aSelect is true. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aCore</em>&nbsp;</td><td>- The Core wrapper that interfaces with the core implementation </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSelect</em>&nbsp;</td><td>- A boolean to indicate if the core should be selected as the current playback core. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>void </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="4e84c439ba33757a27b71c885fba6d59"></a><!-- doxytag: member="sbIPlaylistPlayback::current" ref="4e84c439ba33757a27b71c885fba6d59" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long sbIPlaylistPlayback::current           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the index of the current track. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>the index of the currently playing track </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="42d8906fd9160e75cb35df21462d6408"></a><!-- doxytag: member="sbIPlaylistPlayback::goFullscreen" ref="42d8906fd9160e75cb35df21462d6408" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistPlayback::goFullscreen           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Make the playback take the full screen. This only makes sense for video playback. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>true </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="7df6df44648e4eb4da3e17d4ba45b61f"></a><!-- doxytag: member="sbIPlaylistPlayback::importUrl" ref="7df6df44648e4eb4da3e17d4ba45b61f" args="(in AString url)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long sbIPlaylistPlayback::importUrl           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>url</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d85eb4d3e41869a6a0883614505165fc"></a><!-- doxytag: member="sbIPlaylistPlayback::next" ref="d85eb4d3e41869a6a0883614505165fc" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long sbIPlaylistPlayback::next           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Advance playback to the next track. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>the index of the currently playing track </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="06c688bf56cd5354d78b55edac6ab65a"></a><!-- doxytag: member="sbIPlaylistPlayback::pause" ref="06c688bf56cd5354d78b55edac6ab65a" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::pause           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Halt playback This maintains the position in the track and halts the playback. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>true </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="1f753836239c83c49b88ac2d640baaa2"></a><!-- doxytag: member="sbIPlaylistPlayback::play" ref="1f753836239c83c49b88ac2d640baaa2" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::play           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Begin playback. If previously paused playback will start at the same position. If stopped playback will begin at the beginning of the track. Paused playback will start from the same point. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>true </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="3963a143976eb5a846cb80b089ca75cc"></a><!-- doxytag: member="sbIPlaylistPlayback::playAndImportUrl" ref="3963a143976eb5a846cb80b089ca75cc" args="(in AString url)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playAndImportUrl           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>url</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="72157fee1bd0204207ddc8be31476fab"></a><!-- doxytag: member="sbIPlaylistPlayback::playObject" ref="72157fee1bd0204207ddc8be31476fab" args="(in sbIPlaylist playlist, in unsigned long index)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playObject           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist.html">sbIPlaylist</a>&nbsp;</td>
+          <td class="paramname"> <em>playlist</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>index</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="33257b276cccf8839a5a390be723fe78"></a><!-- doxytag: member="sbIPlaylistPlayback::playRef" ref="33257b276cccf8839a5a390be723fe78" args="(in AString source_ref, in unsigned long index)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playRef           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>source_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>index</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="6af114ec42574ce605ba58a8e8f22e84"></a><!-- doxytag: member="sbIPlaylistPlayback::playRefByID" ref="6af114ec42574ce605ba58a8e8f22e84" args="(in AString source_ref, in unsigned long row_id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playRefByID           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>source_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>row_id</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="6896decae2ef7202fe2b36d28fe1042f"></a><!-- doxytag: member="sbIPlaylistPlayback::playRefByURL" ref="6896decae2ef7202fe2b36d28fe1042f" args="(in AString source_ref, in AString url)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playRefByURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>source_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>url</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="cefd8c74bee4c4e26faeaf70277491d9"></a><!-- doxytag: member="sbIPlaylistPlayback::playRefByUUID" ref="cefd8c74bee4c4e26faeaf70277491d9" args="(in AString source_ref, in AString media_uuid)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playRefByUUID           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>source_ref</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>media_uuid</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d7b05e8f3bbaaf2c9a5a3c9b6951d81b"></a><!-- doxytag: member="sbIPlaylistPlayback::playTable" ref="d7b05e8f3bbaaf2c9a5a3c9b6951d81b" args="(in AString dbGUID, in AString table, in unsigned long index)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playTable           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>dbGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>table</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>index</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="45f27263d00a74734d35cbf37e79b347"></a><!-- doxytag: member="sbIPlaylistPlayback::playTableByID" ref="45f27263d00a74734d35cbf37e79b347" args="(in AString dbGUID, in AString table, in unsigned long row_id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playTableByID           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>dbGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>table</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>row_id</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b57fcc60c07c5256ab41427bc9303252"></a><!-- doxytag: member="sbIPlaylistPlayback::playTableByURL" ref="b57fcc60c07c5256ab41427bc9303252" args="(in AString dbGUID, in AString table, in AString url)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playTableByURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>dbGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>table</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>url</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="8898594a030b26700d61edba881461b9"></a><!-- doxytag: member="sbIPlaylistPlayback::playTableByUUID" ref="8898594a030b26700d61edba881461b9" args="(in AString dbGUID, in AString table, in AString uuid)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playTableByUUID           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>dbGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>table</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>uuid</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="6ce2ef75dbeedcd0b450326b124e3d08"></a><!-- doxytag: member="sbIPlaylistPlayback::playUrl" ref="6ce2ef75dbeedcd0b450326b124e3d08" args="(in AString url)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::playUrl           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>url</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\return</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="449a55e261414fa45742138091597186"></a><!-- doxytag: member="sbIPlaylistPlayback::previous" ref="449a55e261414fa45742138091597186" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long sbIPlaylistPlayback::previous           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set playback to the track before the current one in play order. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>the index of the currently playing track </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="8ba11f526ece608120fcf29b94ba326c"></a><!-- doxytag: member="sbIPlaylistPlayback::removeCore" ref="8ba11f526ece608120fcf29b94ba326c" args="(in sbICoreWrapper aCore)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistPlayback::removeCore           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a>&nbsp;</td>
+          <td class="paramname"> <em>aCore</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Take a core out of the collection of available playback cores. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aCore</em>&nbsp;</td><td>- the core to remove </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>void </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="ee7408cd7d2d62d2a146d83abe5acd6f"></a><!-- doxytag: member="sbIPlaylistPlayback::selectCore" ref="ee7408cd7d2d62d2a146d83abe5acd6f" args="(in sbICoreWrapper aCore)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistPlayback::selectCore           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a>&nbsp;</td>
+          <td class="paramname"> <em>aCore</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Select the core passed in as the current core. If the core passed in doesn't already exist in the collection it gets added first. Then it is selected as the current playback core. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aCore</em>&nbsp;</td><td>- the core to add. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>void </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="73cfaeb60327ced50c221a51da6a49e4"></a><!-- doxytag: member="sbIPlaylistPlayback::stop" ref="73cfaeb60327ced50c221a51da6a49e4" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaylistPlayback::stop           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Halt playback Stops the playback of the current track. Restarting the playback after this call casuses it to start from the beginning of the track. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_INITIALIZED</em>&nbsp;</td><td>if no core has been set. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>true </dd></dl>
+
+</div>
+</div><p>
+<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="90e1b2870962a862b388d028222303a2"></a><!-- doxytag: member="sbIPlaylistPlayback::length" ref="90e1b2870962a862b388d028222303a2" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute long long <a class="el" href="interfacesb_i_playlist_playback.html#90e1b2870962a862b388d028222303a2">sbIPlaylistPlayback::length</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+/brief The length of the current track. Reported by the core. 
+<p>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00101">101</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="9c1b43840438ca39cf5dc7126d3b89f7"></a><!-- doxytag: member="sbIPlaylistPlayback::paused" ref="9c1b43840438ca39cf5dc7126d3b89f7" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute boolean <a class="el" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">sbIPlaylistPlayback::paused</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+/brief The pause state of the core. If paused, playback will continue from the current position. 
+<p>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00107">107</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="1528d6636cf58c3f9eeb6a3005243da0"></a><!-- doxytag: member="sbIPlaylistPlayback::repeat" ref="1528d6636cf58c3f9eeb6a3005243da0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute unsigned short <a class="el" href="interfacesb_i_playlist_playback.html#1528d6636cf58c3f9eeb6a3005243da0">sbIPlaylistPlayback::repeat</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Repeat state. This has 3 possible states the are reflected in the constants. 
+<p>
+<dl compact><dt><b>See also:</b></dt><dd>REPEAT_MODE_NONE <p>
+<a class="el" href="interfacesb_i_playlist_playback.html#a6730ce42c0a5294c6e801070dee37c8">REPEAT_MODE_ALL</a> <p>
+<a class="el" href="interfacesb_i_playlist_playback.html#ea3b9ad01a53b7d0821fa612b9ba0e4e">REPEAT_MODE_ONE</a> </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00127">127</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="b474c491f7e8e4633843372338f65b98"></a><!-- doxytag: member="sbIPlaylistPlayback::started" ref="b474c491f7e8e4633843372338f65b98" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute boolean <a class="el" href="interfacesb_i_playlist_playback.html#b474c491f7e8e4633843372338f65b98">sbIPlaylistPlayback::started</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Has playback started. This is mainly used internally. This does not check the state of the player. 
+<p>
+Does this really need to be exposed through an interface? 
+<p>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00156">156</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/playlistplayback/public/<a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Thu Jul 27 21:59:49 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:33 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

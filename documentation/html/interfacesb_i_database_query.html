@@ -18,65 +18,103 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>sbIDatabaseQuery Interface Reference</h1><!-- doxytag: class="sbIDatabaseQuery" --><code>import &quot;<a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>&quot;;</code>
+<h1>sbIDatabaseQuery Interface Reference</h1><!-- doxytag: class="sbIDatabaseQuery" -->An object responsible for executing SQL queries on the database.  
+<a href="#_details">More...</a>
+<p>
+<code>import &quot;<a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>&quot;;</code>
 <p>
 <a href="interfacesb_i_database_query-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#3010be8388a4dcf2026e62b081b96def">setAsyncQuery</a> (in PRBool bAsyncQuery)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the query to run asynchronously (ie: <a class="el" href="interfacesb_i_database_query.html#911879a9ecd0df09ecc7b3f44eb1e9a3">execute()</a> does not block).  <a href="#3010be8388a4dcf2026e62b081b96def"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#30afe6784335377610ccbe854343c7f7">isAyncQuery</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not the query will run asynchronously.  <a href="#30afe6784335377610ccbe854343c7f7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#d9594c55592a90779bf05df60ec279c4">setPersistentQuery</a> (in PRBool bPersistentQuery)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the query to run persistently.  <a href="#d9594c55592a90779bf05df60ec279c4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#e11f1da815ae55701dfd3f0431b37d0b">isPersistentQuery</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not the query should run persistently.  <a href="#e11f1da815ae55701dfd3f0431b37d0b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#e0bb05525bf143e2bf8e726e5780092f">addSimpleQueryCallback</a> (in <a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> dbPersistCB)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a <a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> instance to the query.  <a href="#e0bb05525bf143e2bf8e726e5780092f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#a36913599717e4c903126dac94eb2e10">removeSimpleQueryCallback</a> (in <a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> dbPersistCB)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a <a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> instance from the query.  <a href="#a36913599717e4c903126dac94eb2e10"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#e23fc826898b53ffb1912491072f0657">setDatabaseGUID</a> (in AString dbGUID)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the database to be queried.  <a href="#e23fc826898b53ffb1912491072f0657"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#f9fe2f4c5732ec9906ebbcacabf83a30">getDatabaseGUID</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the database identifier string.  <a href="#f9fe2f4c5732ec9906ebbcacabf83a30"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#188d8ac26b0b452e3b58a6fb3d20b4fa">addQuery</a> (in AString strQuery)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a SQL query string to the queue.  <a href="#188d8ac26b0b452e3b58a6fb3d20b4fa"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#5328476206d947a38c2a63eb12aaee5e">getQueryCount</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the number of query strings enqueued for execution.  <a href="#5328476206d947a38c2a63eb12aaee5e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#451a801f0d63319782dbb46e9afc3062">getQuery</a> (in PRInt32 nIndex)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the query string at the Nth index.  <a href="#451a801f0d63319782dbb46e9afc3062"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#919882c633a1ac5da38942d05470f334">resetQuery</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Clear out the query and make it all sparkly new.  <a href="#919882c633a1ac5da38942d05470f334"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_database_result.html">sbIDatabaseResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#6dda54df53ed7d5a702d009ad1831315">getResultObject</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_database_result.html">sbIDatabaseResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#b5c58c1d9fcd54edbb64b8b65d07b76a">getResultObjectOrphan</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the results object for the query that has executed.  <a href="#6dda54df53ed7d5a702d009ad1831315"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b5c58c1d9fcd54edbb64b8b65d07b76a"></a><!-- doxytag: member="sbIDatabaseQuery::getResultObjectOrphan" ref="b5c58c1d9fcd54edbb64b8b65d07b76a" args="()" -->
+<a class="el" href="interfacesb_i_database_result.html">sbIDatabaseResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#b5c58c1d9fcd54edbb64b8b65d07b76a">getResultObjectOrphan</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">[DEPRECATED] <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#6a37fab423c745660290c3437218ac53">getLastError</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the last error on the query that has executed.  <a href="#6a37fab423c745660290c3437218ac53"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#0fde6f90db06af44048c336a09c10d97">setLastError</a> (in PRInt32 dbError)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the last error on the query.  <a href="#0fde6f90db06af44048c336a09c10d97"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#911879a9ecd0df09ecc7b3f44eb1e9a3">execute</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Execute the queries enqueued in the object.  <a href="#911879a9ecd0df09ecc7b3f44eb1e9a3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#25ad0e33ac03f59aca11cb8c94e45bda">waitForCompletion</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Wait until the query has finished executing asynchronously.  <a href="#25ad0e33ac03f59aca11cb8c94e45bda"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#0be34c86138def567ec7d89002b9c037">addCallback</a> (in <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> dbCallback)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> instance to the query.  <a href="#0be34c86138def567ec7d89002b9c037"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#38f90315055dc28f3549479159792633">removeCallback</a> (in <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> dbCallback)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> instance from the query.  <a href="#38f90315055dc28f3549479159792633"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#fca6f80c0778a2f5f19578d2eabb7088">isExecuting</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not the query is currently executing.  <a href="#fca6f80c0778a2f5f19578d2eabb7088"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#34d2b51d7f5cad556b0026bef597b08f">currentQuery</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the current index in the queue being indexed.  <a href="#34d2b51d7f5cad556b0026bef597b08f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_database_query.html#0f179af41bd1aa495079d31e3a6848c0">abort</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abort a currently executing query.  <a href="#0f179af41bd1aa495079d31e3a6848c0"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
+An object responsible for executing SQL queries on the database. 
+<p>
+The <a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> object is used to execute queries on the underlying databases that store library and playlist data.<p>
+While client code running from chrome is free to query the databases directly, this object is more commonly passed to the database helper objects (<a class="el" href="interfacesb_i_media_library.html">sbIMediaLibrary</a>, <a class="el" href="interfacesb_i_playlist_manager.html">sbIPlaylistManager</a>) that translate their methods into SQL queries placed into the passed <a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> instance.<p>
+The basic loop for using a query is as follows:<p>
+1) Object Initialization - <a class="el" href="interfacesb_i_database_query.html#e23fc826898b53ffb1912491072f0657">setDatabaseGUID()</a>, optionally <a class="el" href="interfacesb_i_database_query.html#3010be8388a4dcf2026e62b081b96def">setAsyncQuery()</a>, <a class="el" href="interfacesb_i_database_query.html#d9594c55592a90779bf05df60ec279c4">setPersistentQuery()</a>, set callbacks, etc<p>
+2) Query Construction - <a class="el" href="interfacesb_i_database_query.html#188d8ac26b0b452e3b58a6fb3d20b4fa">addQuery()</a>, or calls to the helper objects<p>
+3) Execution - <a class="el" href="interfacesb_i_database_query.html#911879a9ecd0df09ecc7b3f44eb1e9a3">execute()</a>, optionally <a class="el" href="interfacesb_i_database_query.html#25ad0e33ac03f59aca11cb8c94e45bda">waitForCompletion()</a><p>
+4) Get Results - <a class="el" href="interfacesb_i_database_query.html#6dda54df53ed7d5a702d009ad1831315">getResultObject()</a><p>
+5) Reset - optionally <a class="el" href="interfacesb_i_database_query.html#919882c633a1ac5da38942d05470f334">resetQuery()</a>, if you're going to reuse the object with a new set of query strings<p>
+Multiple queries may be added to the object via multiple calls to addQuery, or multiple calls to the helper interfaces. The queries will execute sequentially and the result object will be for the last query executed.<p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a>, <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> </dd></dl>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00099">99</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00173">173</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="0f179af41bd1aa495079d31e3a6848c0"></a><!-- doxytag: member="sbIDatabaseQuery::abort" ref="0f179af41bd1aa495079d31e3a6848c0" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -93,8 +131,10 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Abort a currently executing query. 
+<p>
+This method blocks until the query has aborted<p>
+<dl compact><dt><b>Returns:</b></dt><dd>True, if the query was executing and aborted (false if not executing) </dd></dl>
 
 </div>
 </div><p>
@@ -115,9 +155,11 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Add a <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> instance to the query. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dbPersistCB</em>&nbsp;</td><td>The callback instance </td></tr>
   </table>
 </dl>
 
@@ -140,9 +182,13 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Add a SQL query string to the queue. 
+<p>
+This method enqueues a string to be exectued as a SQL query.<p>
+See: <a href="http://www.sqlite.org/lang.html">http://www.sqlite.org/lang.html</a> for supported query syntax.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>strQuery</em>&nbsp;</td><td>The query string </td></tr>
   </table>
 </dl>
 
@@ -165,9 +211,11 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Add a <a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> instance to the query. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dbPersistCB</em>&nbsp;</td><td>The callback instance </td></tr>
   </table>
 </dl>
 
@@ -189,11 +237,9 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Return the current index in the queue being indexed. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The current query index </dd></dl>
 
 </div>
 </div><p>
@@ -213,11 +259,9 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Execute the queries enqueued in the object. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The error value if synchronous, or 0 if async </dd></dl>
 
 </div>
 </div><p>
@@ -237,11 +281,9 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Get the database identifier string. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The identifier string </dd></dl>
 
 </div>
 </div><p>
@@ -261,11 +303,10 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Get the last error on the query that has executed. 
+<p>
+Don't call this method unless you know the query has completed executing.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The error code, or 0 if no error </dd></dl>
 
 </div>
 </div><p>
@@ -286,9 +327,11 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Get the query string at the Nth index. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>nIndex</em>&nbsp;</td><td>The index into the queue </td></tr>
   </table>
 </dl>
 
@@ -310,11 +353,9 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Return the number of query strings enqueued for execution. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The number of query strings enqueued </dd></dl>
 
 </div>
 </div><p>
@@ -334,35 +375,10 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="b5c58c1d9fcd54edbb64b8b65d07b76a"></a><!-- doxytag: member="sbIDatabaseQuery::getResultObjectOrphan" ref="b5c58c1d9fcd54edbb64b8b65d07b76a" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> sbIDatabaseQuery::getResultObjectOrphan           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Get the results object for the query that has executed. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Don't get this object unless you know the query has completed executing.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The results object </dd></dl>
 
 </div>
 </div><p>
@@ -382,7 +398,10 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Return whether or not the query will run asynchronously. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>If the query will run asynchronously </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html#3010be8388a4dcf2026e62b081b96def">setAsyncQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -402,11 +421,9 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Return whether or not the query is currently executing. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>true if executing </dd></dl>
 
 </div>
 </div><p>
@@ -426,11 +443,10 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Return whether or not the query should run persistently. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>If the query is persistent </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html#d9594c55592a90779bf05df60ec279c4">setPersistentQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -451,9 +467,11 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Remove a <a class="el" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> instance from the query. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dbPersistCB</em>&nbsp;</td><td>The callback instance </td></tr>
   </table>
 </dl>
 
@@ -476,9 +494,11 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Remove a <a class="el" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> instance from the query. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dbPersistCB</em>&nbsp;</td><td>The callback instance </td></tr>
   </table>
 </dl>
 
@@ -500,12 +520,10 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
-
+Clear out the query and make it all sparkly new. 
+<p>
+You *must* call this method if you want to reuse a query object with new query strings.<p>
+Otherwise, you may simply call execute again on a query object to reissue the last set of queries. 
 </div>
 </div><p>
 <a class="anchor" name="3010be8388a4dcf2026e62b081b96def"></a><!-- doxytag: member="sbIDatabaseQuery::setAsyncQuery" ref="3010be8388a4dcf2026e62b081b96def" args="(in PRBool bAsyncQuery)" -->
@@ -525,9 +543,12 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Set the query to run asynchronously (ie: <a class="el" href="interfacesb_i_database_query.html#911879a9ecd0df09ecc7b3f44eb1e9a3">execute()</a> does not block). 
+<p>
+Use callbacks or poll via <a class="el" href="interfacesb_i_database_query.html#fca6f80c0778a2f5f19578d2eabb7088">isExecuting()</a> to know when the query completes.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bAsyncQuery</em>&nbsp;</td><td>If true, do not block on execute (default: false) </td></tr>
   </table>
 </dl>
 
@@ -550,9 +571,14 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Set the database to be queried. 
+<p>
+This function associates the query object with a particular database.<p>
+The dbGUID parameter is any unique string used as a filename to create a queryable database sandbox.<p>
+The special character "*" may be passed to execute a query across all databases tracked by the application.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dbGUID</em>&nbsp;</td><td>The database identifier </td></tr>
   </table>
 </dl>
 
@@ -575,9 +601,12 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Set the last error on the query. 
+<p>
+The database engine calls this. Don't.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dbError</em>&nbsp;</td><td>The error code to insert </td></tr>
   </table>
 </dl>
 
@@ -600,9 +629,13 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
+Set the query to run persistently. 
+<p>
+A persistent query will be executed again if the database engine detects that an update or an insert has occured on the table queried by this object.<p>
+Usually, this is only useful with a callback. :)<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bPersistentQuery</em>&nbsp;</td><td>If true, register as a persistent query (default: false) </td></tr>
   </table>
 </dl>
 
@@ -624,17 +657,16 @@ Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l000
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
-  </table>
-</dl>
+Wait until the query has finished executing asynchronously. 
+<p>
+If the query is not executing, this immediately returns.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>NS_OK </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Thu Jul 27 21:59:49 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

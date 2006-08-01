@@ -25,8 +25,8 @@
  */
 
 /**
- * \file sbIMediaLibrary.idl
- * \brief 
+ * \file sbIDatabaseQuery.idl
+ * \brief Objects for executing SQL queries against the internal database 
  * 
  * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
  */
@@ -36,20 +36,53 @@ interface sbIDatabaseResult;
 
 /**
  * \interface sbIDatabaseSimpleQueryCallback 
- * \brief
+ * \brief A callback object used to inform client code that a query has completed
+ *
+ * This interface is meant to be implemented as a callback by client code.
+ *
+ * Clients that simply need to be informed when a query has completed may
+ * implement this interface and pass it to 
+ * sbIDatabaseQuery::addSimpleQueryCallback().
+ *
+ * For persistent queries, the callback will be called every time the system
+ * detects that the queried table has been changed and has executed the query
+ * again.
+ *
+ * NOTE: The onQueryEnd() method is called from a database thread.
  *
  * \sa sbIDatabaseQueryCallback, sbIDatabaseQuery, sbIDatabaseResult
  */
 [scriptable, uuid(918745AE-0F40-4d08-BA4E-27A739459952)]
 interface sbIDatabaseSimpleQueryCallback : nsISupports
 {
+  /**
+   * \brief Called when the query has completed
+   *
+   * NOTE: The onQueryEnd() method is called from a database thread.
+   *
+   * \param dbResultObject The result object of the completed query
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
+   * \sa sbIDatabaseQuery
+   */
   void onQueryEnd(in sbIDatabaseResult dbResultObject, in AString dbGUID, in AString strQuery);
 };
 
 
 /**
  * \interface sbIDatabaseQueryCallback 
- * \brief
+ * \brief A more complex callback object that can be used to read each row of the results in turn
+ *
+ * This interface is meant to be implemented as a callback by client code.
+ *
+ * Clients that simply need to be informed when a query has completed may
+ * implement this interface and pass it to sbIDatabaseQuery::addCallback().
+ *
+ * For persistent queries, the callback will be called every time the system
+ * detects that the queried table has been changed and has executed the query
+ * again.
+ *
+ * NOTE: The callback methods are called from a database thread.
  *
  * \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQuery
  */
@@ -57,33 +90,48 @@ interface sbIDatabaseSimpleQueryCallback : nsISupports
 interface sbIDatabaseQueryCallback : nsISupports
 {
   /**
-   * \brief 
+   * \brief Called if the query has an error
    *
-   * \param 
+   * NOTE: The onQueryError() method is called from a database thread.
+   *
+   * \param dbError The error code from SQLITE (equivalent to the return from sbIDatabaseQuery::execute)
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
    * \sa sbIDatabaseQuery
    */
   void onQueryError(in PRInt32 dbError, in AString dbGUID, in AString strQuery);
 
   /**
-   * \brief 
+   * \brief Called for each query that executes
    *
-   * \param 
+   * NOTE: The onQueryStart() method is called from a database thread.
+   *
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
    * \sa sbIDatabaseQuery
    */
   void onQueryStart(in AString dbGUID, in AString strQuery);
 
   /**
-   * \brief 
+   * \brief Called as each row is added to the result set
    *
-   * \param 
+   * NOTE: The onQueryRow() method is called from a database thread.
+   *
+   * \param dbResultObject The result object of the completed query
+   * \param dbRowResult The current row filled in the result object
+   * \param dbRowTotal The total rows to be filled in the result object
    * \sa sbIDatabaseQuery
    */
   void onQueryRow(in sbIDatabaseResult dbResultObject, in PRInt32 dbRowResult, in PRInt32 dbRowTotal);
 
   /**
-   * \brief 
+   * \brief Called when the query has completed
    *
-   * \param 
+   * NOTE: The onQueryEnd() method is called from a database thread.
+   *
+   * \param dbResultObject The result object of the completed query
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
    * \sa sbIDatabaseQuery
    */
   void onQueryEnd(in sbIDatabaseResult dbResultObject, in AString dbGUID, in AString strQuery); 
@@ -91,7 +139,33 @@ interface sbIDatabaseQueryCallback : nsISupports
 
 /**
 * \interface sbIDatabaseQuery
-* \brief
+* \brief An object responsible for executing SQL queries on the database
+*
+* The sbIDatabaseQuery object is used to execute queries on the underlying
+* databases that store library and playlist data.
+*
+* While client code running from chrome is free to query the databases
+* directly, this object is more commonly passed to the database helper objects
+* (sbIMediaLibrary, sbIPlaylistManager) that translate their methods into SQL
+* queries placed into the passed sbIDatabaseQuery instance.
+*
+* The basic loop for using a query is as follows:
+*
+* 1) Object Initialization - setDatabaseGUID(), optionally setAsyncQuery(), 
+* setPersistentQuery(), set callbacks, etc
+*
+* 2) Query Construction - addQuery(), or calls to the helper objects
+*
+* 3) Execution - execute(), optionally waitForCompletion()
+*
+* 4) Get Results - getResultObject()
+*
+* 5) Reset - optionally resetQuery(), if you're going to reuse the object
+* with a new set of query strings
+* 
+* Multiple queries may be added to the object via multiple calls to addQuery,
+* or multiple calls to the helper interfaces.  The queries will execute
+* sequentially and the result object will be for the last query executed.
 *
 * \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQueryCallback
 */
@@ -99,185 +173,197 @@ interface sbIDatabaseQueryCallback : nsISupports
 interface sbIDatabaseQuery : nsISupports
 {
   /**
-   * \brief 
+   * \brief Set the query to run asynchronously (ie: execute() does not block)
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * Use callbacks or poll via isExecuting() to know when the query completes.
+   *
+   * \param bAsyncQuery If true, do not block on execute (default: false)
    */
   void setAsyncQuery(in PRBool bAsyncQuery);
 
   /**
-   * \brief 
+   * \brief Return whether or not the query will run asynchronously
    *
-   * \sa sbIDatabaseQuery
+   * \return If the query will run asynchronously
+   * \sa setAsyncQuery
    */
   PRBool isAyncQuery();
   
   /**
-   * \brief 
+   * \brief Set the query to run persistently
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * A persistent query will be executed again if the database engine detects 
+   * that an update or an insert has occured on the table queried by this 
+   * object.
+   *
+   * Usually, this is only useful with a callback.  :)
+   *
+   * \param bPersistentQuery If true, register as a persistent query (default: false)
    */
   void setPersistentQuery(in PRBool bPersistentQuery);
 
   /**
-   * \brief 
+   * \brief Return whether or not the query should run persistently
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \return If the query is persistent
+   * \sa setPersistentQuery
    */
   PRBool isPersistentQuery();
 
   /**
-   * \brief 
+   * \brief Add a sbIDatabaseSimpleQueryCallback instance to the query
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param dbPersistCB The callback instance
    */
   void addSimpleQueryCallback(in sbIDatabaseSimpleQueryCallback dbPersistCB);
 
   /**
-   * \brief 
+   * \brief Remove a sbIDatabaseSimpleQueryCallback instance from the query
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param dbPersistCB The callback instance
    */
   void removeSimpleQueryCallback(in sbIDatabaseSimpleQueryCallback dbPersistCB);
 
   /**
-   * \brief 
+   * \brief Set the database to be queried
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * This function associates the query object with a particular database.
+   *
+   * The dbGUID parameter is any unique string used as a filename to create a
+   * queryable database sandbox.
+   *
+   * The special character "*" may be passed to execute a query across all 
+   * databases tracked by the application.
+   *
+   * \param dbGUID The database identifier
    */
   void setDatabaseGUID(in AString dbGUID);
 
   /**
-   * \brief 
+   * \brief Get the database identifier string
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \return The identifier string 
    */
   AString getDatabaseGUID();
 
   /**
-   * \brief 
+   * \brief Add a SQL query string to the queue
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * This method enqueues a string to be exectued as a SQL query.
+   *
+   * See: http://www.sqlite.org/lang.html for supported query syntax.
+   *
+   * \param strQuery The query string
    */
   void addQuery(in AString strQuery);
 
   /**
-   * \brief 
+   * \brief Return the number of query strings enqueued for execution
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \return The number of query strings enqueued
    */
   PRInt32 getQueryCount();
 
   /**
-   * \brief 
+   * \brief Get the query string at the Nth index
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param nIndex The index into the queue
    */
   AString getQuery(in PRInt32 nIndex);
 
   /**
-   * \brief 
+   * \brief Clear out the query and make it all sparkly new
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * You *must* call this method if you want to reuse a query object with new
+   * query strings.
+   *
+   * Otherwise, you may simply call execute again on a query object to
+   * reissue the last set of queries.
    */
   void resetQuery();
   
   /**
-   * \brief 
+   * \brief Get the results object for the query that has executed
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * Don't get this object unless you know the query has completed executing.
+   *
+   * \return The results object 
    */
   sbIDatabaseResult getResultObject();
 
   /**
-   * \brief 
-   *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \brief [DEPRECATED]
    */
   [noscript] sbIDatabaseResult getResultObjectOrphan();
 
   /**
-   * \brief 
+   * \brief Get the last error on the query that has executed
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * Don't call this method unless you know the query has completed executing.
+   *
+   * \return The error code, or 0 if no error 
    */
   PRInt32 getLastError();
 
   /**
-   * \brief 
+   * \brief Set the last error on the query
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * The database engine calls this.  Don't.
+   *
+   * \param dbError The error code to insert
    */
   void setLastError(in PRInt32 dbError);
 
   /**
-   * \brief 
+   * \brief Execute the queries enqueued in the object
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \return The error value if synchronous, or 0 if async
    */
   PRInt32 execute();
 
   /**
-   * \brief 
+   * \brief Wait until the query has finished executing asynchronously
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * If the query is not executing, this immediately returns.
+   *
+   * \return NS_OK
    */
   PRInt32 waitForCompletion();
 
   /**
-   * \brief 
+   * \brief Add a sbIDatabaseQueryCallback instance to the query
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param dbPersistCB The callback instance
    */
   void addCallback(in sbIDatabaseQueryCallback dbCallback);
 
   /**
-   * \brief 
+   * \brief Remove a sbIDatabaseQueryCallback instance from the query
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \param dbPersistCB The callback instance
    */
   void removeCallback(in sbIDatabaseQueryCallback dbCallback);
 
   /**
-   * \brief 
+   * \brief Return whether or not the query is currently executing
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \return true if executing
    */
   PRBool isExecuting();
 
   /**
-   * \brief 
+   * \brief Return the current index in the queue being indexed
    *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \return The current query index 
    */
   PRInt32 currentQuery();
 
-    /**
-   * \brief 
+  /**
+   * \brief Abort a currently executing query
    *
-   * \return 
-   * \sa sbIDatabaseQuery
+   * This method blocks until the query has aborted
+   *
+   * \return True, if the query was executing and aborted (false if not executing) 
    */
   PRBool abort();
 };

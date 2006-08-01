@@ -17,7 +17,7 @@
     <li><a href="files.html"><span>File&nbsp;List</span></a></li>
     <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
   </ul></div>
-<h1>C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<h1>C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl</h1><a href="sb_i_database_query_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment"> //</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
 <a name="l00004"></a>00004 <span class="comment">// </span>
@@ -47,75 +47,75 @@
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a>;
 <a name="l00036"></a>00036 
-<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(918745AE-0F40-4d08-BA4E-27A739459952)]
-<a name="l00044"></a><a class="code" href="interfacesb_i_database_simple_query_callback.html">00044</a> interface <a class="code" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> : nsISupports
-<a name="l00045"></a>00045 {
-<a name="l00046"></a>00046   <span class="keywordtype">void</span> onQueryEnd(in <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> dbResultObject, in AString dbGUID, in AString strQuery);
-<a name="l00047"></a>00047 };
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049 
-<a name="l00056"></a>00056 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(A901158A-3735-44fd-9AD2-1753F1407284)]
-<a name="l00057"></a><a class="code" href="interfacesb_i_database_query_callback.html">00057</a> interface <a class="code" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> : nsISupports
-<a name="l00058"></a>00058 {
-<a name="l00065"></a>00065   <span class="keywordtype">void</span> onQueryError(in PRInt32 dbError, in AString dbGUID, in AString strQuery);
-<a name="l00066"></a>00066 
-<a name="l00073"></a>00073   <span class="keywordtype">void</span> onQueryStart(in AString dbGUID, in AString strQuery);
-<a name="l00074"></a>00074 
-<a name="l00081"></a>00081   <span class="keywordtype">void</span> onQueryRow(in <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> dbResultObject, in PRInt32 dbRowResult, in PRInt32 dbRowTotal);
-<a name="l00082"></a>00082 
-<a name="l00089"></a>00089   <span class="keywordtype">void</span> onQueryEnd(in <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> dbResultObject, in AString dbGUID, in AString strQuery); 
-<a name="l00090"></a>00090 };
-<a name="l00091"></a>00091 
-<a name="l00098"></a>00098 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(192FE564-1D86-49c8-A31A-5798D62B2525)]
-<a name="l00099"></a><a class="code" href="interfacesb_i_database_query.html">00099</a> interface <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> : nsISupports
-<a name="l00100"></a>00100 {
-<a name="l00107"></a>00107   <span class="keywordtype">void</span> setAsyncQuery(in PRBool bAsyncQuery);
-<a name="l00108"></a>00108 
-<a name="l00114"></a>00114   PRBool isAyncQuery();
-<a name="l00115"></a>00115   
-<a name="l00122"></a>00122   <span class="keywordtype">void</span> setPersistentQuery(in PRBool bPersistentQuery);
-<a name="l00123"></a>00123 
-<a name="l00130"></a>00130   PRBool isPersistentQuery();
-<a name="l00131"></a>00131 
-<a name="l00138"></a>00138   <span class="keywordtype">void</span> addSimpleQueryCallback(in <a class="code" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> dbPersistCB);
+<a name="l00055"></a>00055 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(918745AE-0F40-4d08-BA4E-27A739459952)]
+<a name="l00056"></a><a class="code" href="interfacesb_i_database_simple_query_callback.html">00056</a> interface <a class="code" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> : nsISupports
+<a name="l00057"></a>00057 {
+<a name="l00068"></a>00068   <span class="keywordtype">void</span> onQueryEnd(in <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> dbResultObject, in AString dbGUID, in AString strQuery);
+<a name="l00069"></a>00069 };
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 
+<a name="l00089"></a>00089 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(A901158A-3735-44fd-9AD2-1753F1407284)]
+<a name="l00090"></a><a class="code" href="interfacesb_i_database_query_callback.html">00090</a> interface <a class="code" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> : nsISupports
+<a name="l00091"></a>00091 {
+<a name="l00102"></a>00102   <span class="keywordtype">void</span> onQueryError(in PRInt32 dbError, in AString dbGUID, in AString strQuery);
+<a name="l00103"></a>00103 
+<a name="l00113"></a>00113   <span class="keywordtype">void</span> onQueryStart(in AString dbGUID, in AString strQuery);
+<a name="l00114"></a>00114 
+<a name="l00125"></a>00125   <span class="keywordtype">void</span> onQueryRow(in <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> dbResultObject, in PRInt32 dbRowResult, in PRInt32 dbRowTotal);
+<a name="l00126"></a>00126 
+<a name="l00137"></a>00137   <span class="keywordtype">void</span> onQueryEnd(in <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> dbResultObject, in AString dbGUID, in AString strQuery); 
+<a name="l00138"></a>00138 };
 <a name="l00139"></a>00139 
-<a name="l00146"></a>00146   <span class="keywordtype">void</span> removeSimpleQueryCallback(in <a class="code" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> dbPersistCB);
-<a name="l00147"></a>00147 
-<a name="l00154"></a>00154   <span class="keywordtype">void</span> setDatabaseGUID(in AString dbGUID);
-<a name="l00155"></a>00155 
-<a name="l00162"></a>00162   AString getDatabaseGUID();
-<a name="l00163"></a>00163 
-<a name="l00170"></a>00170   <span class="keywordtype">void</span> addQuery(in AString strQuery);
-<a name="l00171"></a>00171 
-<a name="l00178"></a>00178   PRInt32 getQueryCount();
-<a name="l00179"></a>00179 
-<a name="l00186"></a>00186   AString getQuery(in PRInt32 nIndex);
-<a name="l00187"></a>00187 
-<a name="l00194"></a>00194   <span class="keywordtype">void</span> resetQuery();
-<a name="l00195"></a>00195   
-<a name="l00202"></a>00202   <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> getResultObject();
-<a name="l00203"></a>00203 
-<a name="l00210"></a>00210   [noscript] <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> getResultObjectOrphan();
-<a name="l00211"></a>00211 
-<a name="l00218"></a>00218   PRInt32 getLastError();
+<a name="l00172"></a>00172 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(192FE564-1D86-49c8-A31A-5798D62B2525)]
+<a name="l00173"></a><a class="code" href="interfacesb_i_database_query.html">00173</a> interface <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> : nsISupports
+<a name="l00174"></a>00174 {
+<a name="l00182"></a>00182   <span class="keywordtype">void</span> setAsyncQuery(in PRBool bAsyncQuery);
+<a name="l00183"></a>00183 
+<a name="l00190"></a>00190   PRBool isAyncQuery();
+<a name="l00191"></a>00191   
+<a name="l00203"></a>00203   <span class="keywordtype">void</span> setPersistentQuery(in PRBool bPersistentQuery);
+<a name="l00204"></a>00204 
+<a name="l00211"></a>00211   PRBool isPersistentQuery();
+<a name="l00212"></a>00212 
+<a name="l00218"></a>00218   <span class="keywordtype">void</span> addSimpleQueryCallback(in <a class="code" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> dbPersistCB);
 <a name="l00219"></a>00219 
-<a name="l00226"></a>00226   <span class="keywordtype">void</span> setLastError(in PRInt32 dbError);
-<a name="l00227"></a>00227 
-<a name="l00234"></a>00234   PRInt32 execute();
-<a name="l00235"></a>00235 
-<a name="l00242"></a>00242   PRInt32 waitForCompletion();
-<a name="l00243"></a>00243 
-<a name="l00250"></a>00250   <span class="keywordtype">void</span> addCallback(in <a class="code" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> dbCallback);
-<a name="l00251"></a>00251 
-<a name="l00258"></a>00258   <span class="keywordtype">void</span> removeCallback(in <a class="code" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> dbCallback);
+<a name="l00225"></a>00225   <span class="keywordtype">void</span> removeSimpleQueryCallback(in <a class="code" href="interfacesb_i_database_simple_query_callback.html">sbIDatabaseSimpleQueryCallback</a> dbPersistCB);
+<a name="l00226"></a>00226 
+<a name="l00240"></a>00240   <span class="keywordtype">void</span> setDatabaseGUID(in AString dbGUID);
+<a name="l00241"></a>00241 
+<a name="l00247"></a>00247   AString getDatabaseGUID();
+<a name="l00248"></a>00248 
+<a name="l00258"></a>00258   <span class="keywordtype">void</span> addQuery(in AString strQuery);
 <a name="l00259"></a>00259 
-<a name="l00266"></a>00266   PRBool isExecuting();
-<a name="l00267"></a>00267 
-<a name="l00274"></a>00274   PRInt32 currentQuery();
-<a name="l00275"></a>00275 
-<a name="l00282"></a>00282   PRBool abort();
-<a name="l00283"></a>00283 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Jul 27 21:59:48 2006 for Songbird by&nbsp;
+<a name="l00265"></a>00265   PRInt32 getQueryCount();
+<a name="l00266"></a>00266 
+<a name="l00272"></a>00272   AString getQuery(in PRInt32 nIndex);
+<a name="l00273"></a>00273 
+<a name="l00283"></a>00283   <span class="keywordtype">void</span> resetQuery();
+<a name="l00284"></a>00284   
+<a name="l00292"></a>00292   <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> getResultObject();
+<a name="l00293"></a>00293 
+<a name="l00297"></a>00297   [noscript] <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> getResultObjectOrphan();
+<a name="l00298"></a>00298 
+<a name="l00306"></a>00306   PRInt32 getLastError();
+<a name="l00307"></a>00307 
+<a name="l00315"></a>00315   <span class="keywordtype">void</span> setLastError(in PRInt32 dbError);
+<a name="l00316"></a>00316 
+<a name="l00322"></a>00322   PRInt32 execute();
+<a name="l00323"></a>00323 
+<a name="l00331"></a>00331   PRInt32 waitForCompletion();
+<a name="l00332"></a>00332 
+<a name="l00338"></a>00338   <span class="keywordtype">void</span> addCallback(in <a class="code" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> dbCallback);
+<a name="l00339"></a>00339 
+<a name="l00345"></a>00345   <span class="keywordtype">void</span> removeCallback(in <a class="code" href="interfacesb_i_database_query_callback.html">sbIDatabaseQueryCallback</a> dbCallback);
+<a name="l00346"></a>00346 
+<a name="l00352"></a>00352   PRBool isExecuting();
+<a name="l00353"></a>00353 
+<a name="l00359"></a>00359   PRInt32 currentQuery();
+<a name="l00360"></a>00360 
+<a name="l00368"></a>00368   PRBool abort();
+<a name="l00369"></a>00369 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>
