@@ -226,7 +226,33 @@ void sbMetadataHandlerOGG::ParseChannel()
   // We don't care about the first header?
   sbOGGHeader first_header = ParseHeader();
   if ( first_header.m_Size && first_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
-    m_ChannelHandler->Skip( first_header.m_Size );
+  {
+    m_ChannelHandler->Skip( 7 ); // junq - 7 bytes of "*vorbis"
+
+    PRInt32 version, sample_rate, bitrate_max, bitrate_min, bitrate_nom; // 20 bytes
+    char channels, blocksize; // 2 bytes
+    m_ChannelHandler->ReadInt32( &version );
+    m_ChannelHandler->ReadChar ( &channels );
+    m_ChannelHandler->ReadInt32( &sample_rate );
+    m_ChannelHandler->ReadInt32( &bitrate_max );
+    m_ChannelHandler->ReadInt32( &bitrate_nom );
+    m_ChannelHandler->ReadInt32( &bitrate_min );
+    m_ChannelHandler->ReadChar ( &blocksize );
+
+    PRUint64 bitrate = bitrate_nom ? bitrate_nom : ( bitrate_min + bitrate_max ) / 2;
+    if ( bitrate )
+    {
+      PRUint64 size;
+      m_ChannelHandler->GetSize(&size);
+      PRInt64 length_ms = size * 8000 / bitrate;
+      nsAutoString key, value;
+      key.AppendLiteral("length");
+      value.AppendInt(length_ms);
+      m_Values->SetValue(key, value, 0);
+    }
+
+    m_ChannelHandler->Skip( first_header.m_Size - 7 - 20 - 2 ); // skip the rest of whatever was in the header.
+  }
   else
     return; // Dead monkey.  Empty values.
 
@@ -248,7 +274,7 @@ void sbMetadataHandlerOGG::ParseChannel()
   if ( comment_header.m_Size && comment_header.m_Size < 0x00010000 ) // Ogg says this can never be stupid big.
   {
     // Head block.
-    m_ChannelHandler->Skip( 7 ); // junq
+    m_ChannelHandler->Skip( 7 ); // junq - 7 bytes of "*vorbis"
 
     // Vendor block.
     nsString vendor_string = ReadIntString();
