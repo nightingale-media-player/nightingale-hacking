@@ -252,7 +252,20 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
     quicktime_t *file;
     file = quicktime_open( url, 1, 0, 0 );
     if (file)
+    {
       quicktime_dump_info(file, static_callback, this);
+      PRInt64 sample_rate = quicktime_audio_sample_rate( file, 0 );
+      if ( sample_rate )
+      {
+        PRInt64 sample_duration = quicktime_audio_sample_duration( file, 0 );
+        PRInt64 audio_length = quicktime_audio_length( file, 0 );
+        PRInt64 length_ms = audio_length * sample_duration * 1000 / sample_rate;
+        nsAutoString key, value;
+        key.AppendLiteral("length");
+        value.AppendInt(length_ms);
+        m_Values->SetValue(key, value, 0);
+      }
+    }
     m_Completed = true;
 
     // This handler is always synchronous
