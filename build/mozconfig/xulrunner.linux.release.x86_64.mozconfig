@@ -11,5 +11,8 @@ ac_add_options --enable-canvas
 ac_add_options --enable-extensions=default,inspector,venkman
 ac_add_options --disable-activex --disable-activex-scripting
 ac_add_options --enable-update-packaging
+
+# For GCC bug with visibility pragmas that causes SELinux to stop us with
+# a text relocation violation.
 ac_cv_visibility_pragma=no
 
