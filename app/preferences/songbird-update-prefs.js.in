@@ -21,15 +21,15 @@ pref("app.update.mode", 1);
 pref("app.update.silent", false);
 
 // Update service URL:
-pref("app.update.url", "http://www.songbirdnest.com/update/%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/update.xml");
+pref("app.update.url", "http://updates.songbirdnest.com/update/1/%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/update.xml");
 
 // URL user can browse to manually if for some reason all update installation
 // attempts fail.  TODO: Change this URL
-pref("app.update.url.manual", "http://www.songbirdnest.com");
+pref("app.update.url.manual", "http://www.songbirdnest.com/home");
 
 // A default value for the "More information about this update" link
 // supplied in the "An update is available" page of the update wizard. 
-pref("app.update.url.details", "chrome://browser-region/locale/region.properties");
+pref("app.update.url.details", "http://www.songbirdnest.com/home");
 
 // User-settable override to app.update.url for testing purposes.
 //pref("app.update.url.override", "");
