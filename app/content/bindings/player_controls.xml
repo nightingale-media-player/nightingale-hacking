@@ -383,9 +383,9 @@
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:button sbid="repeat_none" xbl:inherits="class=class,id=repid" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
-       <xul:button sbid="repeat_1" xbl:inherits="class=class,id=rep1id" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
-       <xul:button sbid="repeat_all" xbl:inherits="class=class,id=repallid" oncommand="onRepeat( );" tooltiptext="&tooltip.control.repeat;"/>
+       <xul:button sbid="repeat_none" xbl:inherits="class=class,id=repid" oncommand="onRepeat( );" tooltiptext="&menu.control.repx;"/>
+       <xul:button sbid="repeat_1" xbl:inherits="class=class,id=rep1id" oncommand="onRepeat( );" tooltiptext="&menu.control.rep1;"/>
+       <xul:button sbid="repeat_all" xbl:inherits="class=class,id=repallid" oncommand="onRepeat( );" tooltiptext="&menu.control.repa;"/>
      </xul:stack>
    </content>
 
