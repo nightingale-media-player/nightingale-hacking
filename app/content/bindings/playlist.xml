@@ -563,6 +563,9 @@
           // Load columns upon rebinding.
           this.loadColumns();
         }
+        
+        // Set the UI to the tree
+        this.tree.focus();
       }
       catch( err )
       {
@@ -1583,8 +1586,24 @@
         <parameter name="elem"/>
         <body>
           <![CDATA[
+            // No sort on this column.  It does not exist.
             if (id == "row_id")
-              return; // No sort on this column.  It does not exist.
+              return; 
+
+            // Compare the current value in the playlistsource to make sure we stay in sync
+            var order = this.source.getOrder(this.ref);
+            var orderArray = order.split(" ");
+            
+            // Sync the order column
+            if ( this.sortorder != orderArray[0] )
+              dump("playlist.xml - onCycleHeader - Correcting sort order state. '" + this.sortorder + "' != '" + orderArray[0] + "'\n");
+            this.sortorder = orderArray[0];
+            
+            // Sync the direction
+            if ( this.sortdirection != orderArray[1] )
+              dump("playlist.xml - onCycleHeader - Correcting sort direction state. '" + this.sortdirection + "' != '" + orderArray[1] + "'\n");
+            this.sortdirection = orderArray[1];
+
             if (this.sortorder == id) {
               if (this.sortdirection == "asc") this.sortdirection = "desc";
               else this.sortdirection = "asc";
