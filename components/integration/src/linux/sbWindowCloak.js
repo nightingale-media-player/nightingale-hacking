@@ -45,7 +45,7 @@ WindowCloak.prototype = {
       win.preCloakwidth = win.width;
       win.preCloakheight = win.height;  
       win.cloaked = true; 
-      win.resizeTo(0,0);
+      win.resizeTo(0, 0);
     }
   },
 
@@ -54,9 +54,7 @@ WindowCloak.prototype = {
     dump("sbWindowCloak: uncloaking..\n");
 
     var win = this._getWindowFromDocument(doc);
-    win.resizeTo(0,0);
-    win.width = win.preCloakwidth;
-    win.height = win.preCloakheight;
+    win.resizeTo(win.preCloakwidth, win.preCloakheight);
     win.cloaked = false;
   },
 
