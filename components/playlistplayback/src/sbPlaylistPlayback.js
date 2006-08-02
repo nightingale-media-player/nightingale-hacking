@@ -870,11 +870,13 @@ PlaylistPlayback.prototype = {
         (
           // Protocols at the beginning
           ( aURL.indexOf( "mms:" ) == 0 ) || 
-          ( aURL.indexOf( "rtsp:" ) == 0 ) || 
+          ( aURL.indexOf( "rtsp:" ) == 0 ) ||
+/* OR NOT           
           // For now, still hardcode the playlist types.
           ( aURL.indexOf( ".pls" ) != -1 ) || 
           ( aURL.indexOf( "rss" ) != -1 ) || 
           ( aURL.indexOf( ".m3u" ) != -1 ) || 
+*/          
           // File extensions at the end
           ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
           ( aURL.indexOf( ".ogg" ) == ( aURL.length - 4 ) ) ||

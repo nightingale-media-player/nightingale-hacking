@@ -1661,13 +1661,23 @@ function onLinkContext( evt )
     var theHTMLPopup = document.getElementById( "html_context_menu" );
     theHTMLContextURL = GetHrefFromEvent( evt );
     
-    var theAddItem = document.getElementById( "html.context.add" );
+    // Disable "Add" if the url isn't media or is already there.
     var disabled = "true";
     if ( gPPS.isMediaUrl( theHTMLContextURL ) && ! SBUrlExistsInDatabase( theHTMLContextURL ) )
     {
+      alert("add enabled");
       disabled = "false"
     }
-    theAddItem.setAttribute( "disabled", disabled );
+    document.getElementById( "html.context.add" ).setAttribute( "disabled", disabled );
+    
+    // Disable "Add as Playlist" if the url isn't a playlist (NOTE: any HTML url will go as playlist)
+    disabled = "true";
+    if ( gPPS.isPlaylistUrl( theHTMLContextURL ) )
+    {
+      alert("playlist enabled");
+      disabled = "false"
+    }
+    document.getElementById( "html.context.playlist" ).setAttribute( "disabled", disabled );
     
     theHTMLPopup.showPopup( theMainPane, theMainPane.boxObject.screenX + evt.clientX + 5, theMainPane.boxObject.screenY + evt.clientY, "context", null, null );
   }
@@ -2491,12 +2501,7 @@ var theDropPath = "";
 var theDropIsDir = false;
 function SBDropped()
 {
-  if ( gPPS.isMediaUrl( theDropPath ) )
-  {
-    // add it to the db and play it.
-    playExternalUrl(theDropPath, false);
-  }
-  else if ( theDropIsDir )
+  if ( theDropIsDir )
   {
     theMediaScanIsOpen.boolValue = true;
     // otherwise, fire off the media scan page.
@@ -2506,6 +2511,11 @@ function SBDropped()
     // Open the non-modal dialog
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
     theMediaScanIsOpen.boolValue = false;
+  }
+  else if ( gPPS.isMediaUrl( theDropPath ) )
+  {
+    // add it to the db and play it.
+    playExternalUrl(theDropPath, false);
   }
 }
 
