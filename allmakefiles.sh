@@ -87,6 +87,7 @@ components/Makefile
 
 MAKEFILES_dependencies="
 dependencies/Makefile
+dependencies/vendor/mp4/Makefile
 "
 
 MAKEFILES_feathers="
