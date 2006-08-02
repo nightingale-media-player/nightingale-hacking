@@ -29,6 +29,8 @@ const SONGBIRD_WINDOWCLOAK_CLASSNAME = "Songbird Window Cloak Service Interface"
 const SONGBIRD_WINDOWCLOAK_CID = Components.ID("{F1387DC0-4F82-4d8d-8671-C8EB03D27271}");
 const SONGBIRD_WINDOWCLOAK_IID = Components.interfaces.sbIWindowCloak;
 
+// THIS IS THE MAC VERSION.  IT MOVES THE WINDOW OFFSCREEN.
+
 function WindowCloak() {
 }
 
