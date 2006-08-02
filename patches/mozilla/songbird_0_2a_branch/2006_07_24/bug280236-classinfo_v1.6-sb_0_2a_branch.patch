@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpccomponents.cpp,v
 retrieving revision 1.75.2.12
 diff -u -p -r1.75.2.12 xpccomponents.cpp
 --- js/src/xpconnect/src/xpccomponents.cpp	7 Jul 2006 02:12:02 -0000	1.75.2.12
-+++ js/src/xpconnect/src/xpccomponents.cpp	2 Aug 2006 01:18:00 -0000
++++ js/src/xpconnect/src/xpccomponents.cpp	2 Aug 2006 01:50:47 -0000
 @@ -98,6 +98,105 @@ char * xpc_CheckAccessList(const PRUnich
  
  /***************************************************************************/
@@ -1265,7 +1265,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcconvert.cpp,v
 retrieving revision 1.96.4.4
 diff -u -p -r1.96.4.4 xpcconvert.cpp
 --- js/src/xpconnect/src/xpcconvert.cpp	7 Jul 2006 02:12:02 -0000	1.96.4.4
-+++ js/src/xpconnect/src/xpcconvert.cpp	2 Aug 2006 01:18:01 -0000
++++ js/src/xpconnect/src/xpcconvert.cpp	2 Aug 2006 01:50:48 -0000
 @@ -1273,19 +1273,25 @@ XPCConvert::ConstructException(nsresult 
      static const char format[] = "\'%s\' when calling method: [%s::%s]";
      const char * msg = message;
@@ -1304,7 +1304,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcjsid.cpp,v
 retrieving revision 1.66
 diff -u -p -r1.66 xpcjsid.cpp
 --- js/src/xpconnect/src/xpcjsid.cpp	7 Nov 2004 23:59:26 -0000	1.66
-+++ js/src/xpconnect/src/xpcjsid.cpp	2 Aug 2006 01:18:01 -0000
++++ js/src/xpconnect/src/xpcjsid.cpp	2 Aug 2006 01:50:48 -0000
 @@ -297,23 +297,25 @@ static JSBool gClassObjectsWereInited = 
  NS_DECL_CI_INTERFACE_GETTER(nsJSIID)
  // Can't make this static. http://bugzilla.mozilla.org/show_bug.cgi?id=81436
@@ -1339,7 +1339,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcmodule.cpp,v
 retrieving revision 1.40.28.2
 diff -u -p -r1.40.28.2 xpcmodule.cpp
 --- js/src/xpconnect/src/xpcmodule.cpp	16 May 2006 18:29:35 -0000	1.40.28.2
-+++ js/src/xpconnect/src/xpcmodule.cpp	2 Aug 2006 01:18:01 -0000
++++ js/src/xpconnect/src/xpcmodule.cpp	2 Aug 2006 01:50:49 -0000
 @@ -88,7 +88,7 @@ static const nsModuleComponentInfo compo
    {nsnull, NS_XPCEXCEPTION_CID,                  XPC_EXCEPTION_CONTRACTID,     nsXPCExceptionConstructor, nsnull, nsnull, nsnull, NS_CI_INTERFACE_GETTER_NAME(nsXPCException), nsnull, &NS_CLASSINFO_NAME(nsXPCException)},
    {nsnull, NS_JS_RUNTIME_SERVICE_CID,            XPC_RUNTIME_CONTRACTID,       nsIJSRuntimeServiceConstructor},
@@ -1355,7 +1355,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcprivate.h,v
 retrieving revision 1.162.2.12
 diff -u -p -r1.162.2.12 xpcprivate.h
 --- js/src/xpconnect/src/xpcprivate.h	21 Jul 2006 20:18:03 -0000	1.162.2.12
-+++ js/src/xpconnect/src/xpcprivate.h	2 Aug 2006 01:18:03 -0000
++++ js/src/xpconnect/src/xpcprivate.h	2 Aug 2006 01:50:50 -0000
 @@ -290,7 +290,7 @@ public:
                          {nsAutoMonitor::DestroyMonitor(lock);}
  
@@ -1379,17 +1379,14 @@ diff -u -p -r1.162.2.12 xpcprivate.h
  };
  
  /***************************************************************************
-@@ -2848,8 +2846,9 @@ public:
+@@ -2848,6 +2846,7 @@ public:
           mResolvingWrapper = w; return old;}
  
      void Cleanup();
 +    void ReleaseNatives();
  
--    PRBool IsValid() const {return mJSContextStack != nsnull;}
-+    PRBool IsValid() const {return mJSContextStack;}
+     PRBool IsValid() const {return mJSContextStack != nsnull;}
  
-     static PRLock* GetLock() {return gLock;}
-     // Must be called with the threads locked.
 @@ -2900,6 +2899,8 @@ private:
  #ifdef XPC_CHECK_WRAPPER_THREADSAFETY
      JSUint32             mWrappedNativeThreadsafetyReportDepth;
@@ -1473,7 +1470,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcruntimesvc.cpp,v
 retrieving revision 1.18.6.1
 diff -u -p -r1.18.6.1 xpcruntimesvc.cpp
 --- js/src/xpconnect/src/xpcruntimesvc.cpp	23 Feb 2006 21:41:10 -0000	1.18.6.1
-+++ js/src/xpconnect/src/xpcruntimesvc.cpp	2 Aug 2006 01:18:03 -0000
++++ js/src/xpconnect/src/xpcruntimesvc.cpp	2 Aug 2006 01:50:50 -0000
 @@ -41,11 +41,17 @@
  
  #include "xpcprivate.h"
