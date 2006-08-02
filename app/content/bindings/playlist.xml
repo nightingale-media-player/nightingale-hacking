@@ -1583,6 +1583,8 @@
         <parameter name="elem"/>
         <body>
           <![CDATA[
+            if (id == "row_id")
+              return; // No sort on this column.  It does not exist.
             if (this.sortorder == id) {
               if (this.sortdirection == "asc") this.sortdirection = "desc";
               else this.sortdirection = "asc";
