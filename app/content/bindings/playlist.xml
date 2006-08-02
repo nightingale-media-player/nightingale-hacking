@@ -566,6 +566,28 @@
         
         // Set the UI to the tree
         this.tree.focus();
+
+        // Put the observer back, here.
+        if ( ! this.addedObserver )
+        {
+          // And then listen to the tree? (togglecell, selectionChange)
+          this.tree.view.addObserver(this);
+          this.addedObserver = true;
+        }
+        
+        // Compare the current ordering value in the playlistsource to make sure we stay in sync
+        var order = this.source.getOrder(this.ref);
+        var orderArray = order.split(" ");
+        
+        // Sync the order column
+        if ( this.sortorder != orderArray[0] )
+          dump("playlist.xml - onCycleHeader - Correcting sort order state. '" + this.sortorder + "' != '" + orderArray[0] + "'\n");
+        this.sortorder = orderArray[0];
+        
+        // Sync the direction
+        if ( this.sortdirection != orderArray[1] )
+          dump("playlist.xml - onCycleHeader - Correcting sort direction state. '" + this.sortdirection + "' != '" + orderArray[1] + "'\n");
+        this.sortdirection = orderArray[1];
       }
       catch( err )
       {
@@ -1590,20 +1612,6 @@
             if (id == "row_id")
               return; 
 
-            // Compare the current value in the playlistsource to make sure we stay in sync
-            var order = this.source.getOrder(this.ref);
-            var orderArray = order.split(" ");
-            
-            // Sync the order column
-            if ( this.sortorder != orderArray[0] )
-              dump("playlist.xml - onCycleHeader - Correcting sort order state. '" + this.sortorder + "' != '" + orderArray[0] + "'\n");
-            this.sortorder = orderArray[0];
-            
-            // Sync the direction
-            if ( this.sortdirection != orderArray[1] )
-              dump("playlist.xml - onCycleHeader - Correcting sort direction state. '" + this.sortdirection + "' != '" + orderArray[1] + "'\n");
-            this.sortdirection = orderArray[1];
-
             if (this.sortorder == id) {
               if (this.sortdirection == "asc") this.sortdirection = "desc";
               else this.sortdirection = "asc";
@@ -2008,16 +2016,10 @@
         <![CDATA[
           try
           {
+            // If there is an edit box up, get rid of it.
             this.hidePlaylistEdit();
-            
-            if ( ! this.addedObserver )
-            {
-              // And then listen to the tree? (togglecell, selectionChange)
-              this.tree.view.addObserver(this);
-              this.addedObserver = true;
-            }
-            
-            if ( this.tree.currentIndex != -1 && this.tree.currentIndex == this.tree.lastClickIndex )
+
+            if ( this.tree.currentIndex != -1 )
             {
               var obj = {}, row = {}, col = {}; 
               this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
@@ -2040,9 +2042,8 @@
                     if (ret < 0) ret = 0; if (ret > 100) ret = 100;
                     this.setCellRating(this.edit_row, this.edit_col, ret);
                   } 
-                  else 
+                  else if ( this.tree.currentIndex == this.tree.lastClickIndex  )
                   {
-                    // todo: check readonly bit first !
                     var delay = evt.timeStamp - this.lastClickTimestamp;
                     if ( delay > 1000 && delay < 2000 )
                     {
