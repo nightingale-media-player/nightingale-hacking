@@ -564,17 +564,6 @@
           this.loadColumns();
         }
         
-        // Set the UI to the tree
-        this.tree.focus();
-
-        // Put the observer back, here.
-        if ( ! this.addedObserver )
-        {
-          // And then listen to the tree? (togglecell, selectionChange)
-          this.tree.view.addObserver(this);
-          this.addedObserver = true;
-        }
-        
         // Compare the current ordering value in the playlistsource to make sure we stay in sync
         var order = this.source.getOrder(this.ref);
         var orderArray = order.split(" ");
@@ -2019,6 +2008,21 @@
             // If there is an edit box up, get rid of it.
             this.hidePlaylistEdit();
 
+            // Put the observer back, here.
+            if ( ! this.addedObserver )
+            {
+              // And then listen to the tree? (togglecell, selectionChange)
+              this.tree.view.addObserver(this);
+              this.addedObserver = true;
+              
+              // Handle the fact this might be a click on the header (lame!)
+              if ( evt.target.nodeName == "treecol" )
+              {
+                this.onCycleHeader(evt.target.id, evt.target);
+                return;
+              }
+            }
+            
             if ( this.tree.currentIndex != -1 )
             {
               var obj = {}, row = {}, col = {}; 
