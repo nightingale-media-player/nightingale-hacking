@@ -33,7 +33,9 @@ include $(DEPTH)/build/autodefs.mk
 # These scripts have problems with absolute paths, so use $(DEPTH) instead
 #
 
+ifndef STAGE_DIR
 STAGE_DIR	= $(DEPTH)/update
+endif
 
 SERVER_BASE = http://download.songbirdnest.com/songbird/nightly
 SERVER_PATH = $(SERVER_BASE)/$(SB_BUILD_ID)-$(SB_BRANCHNAME)
@@ -44,21 +46,32 @@ endif
 
 UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE).$(SB_PLATFORM)$(DEBUG_EXT)
 
-tasks: complete-patch \
-       complete-snippet \
+ifneq (,$(SRC_BUILD)$(DST_BUILD))
+PARTIAL_TASKS += partial-patch
+ifneq (,$(SRC_BUILD_ID)$(DST_BUILD_ID)$(DST_BUILD_MS))
+PARTIAL_TASKS += partial-snippet
+SERVER_PATH = $(SERVER_BASE)/$(SRC_BUILD_ID)-$(SB_BRANCHNAME)
+endif
+endif
+
+tasks: complete \
+       $(PARTIAL_TASKS) \
        all \
        $(NULL)
+       
+complete:: complete-patch complete-snippet
+
+partial:: partial-patch partial-snippet
 
 complete-patch::
-	$(MKDIR) -p $(STAGE_DIR)
+	@$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar" \
     "$(DEPTH)/$(DISTDIRNAME)"
 
-
 complete-snippet::
-	$(MKDIR) -p $(STAGE_DIR)
+	@$(MKDIR) -p $(STAGE_DIR)
 	$(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar \
     "complete" \
@@ -69,13 +82,56 @@ complete-snippet::
     "sha1" \
     $(NULL)
 
-partial-patch::
-	$(MKDIR) -p $(STAGE_DIR)
-	MAR=$(MAR) \
-  MBSDIFF=$(MBSDIFF) \
+#
+# To generate partials you need to set the following variables:
+#
+# SRC_BUILD:    the mar or directory containing the unpacked pre-update build
+# DST_BUILD:    the mar or directory containing the unpacked post-update build
+# SRC_BUILD_ID: the build ID of the pre-update build
+# DST_BUILD_ID: the build ID of the post-update build
+# DST_BUILD_MS: the milestone of the post-update build
+#
+
+ifeq (.mar,$(suffix $(SRC_BUILD)))
+PARTIAL_PATCH_TASK = partial-patch-unwrap
+else
+PARTIAL_PATCH_TASK = partial-patch-no-unwrap
+endif
+
+partial-patch:: $(PARTIAL_PATCH_TASK)
+
+partial-patch-unwrap::
+	@$(MKDIR) -p $(STAGE_DIR)/from
+	cd $(STAGE_DIR)/from && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.sh "../$(SRC_BUILD)"
+	@$(MKDIR) -p $(STAGE_DIR)/to
+	cd $(STAGE_DIR)/to && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.sh "../$(DST_BUILD)"
+	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
     $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
-    "$(STAGE_DIR)/$(SB_APPNAME).partial.$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    "$(STAGE_DIR)/from" \
+    "$(STAGE_DIR)/to" \
+    $(NULL)
+	@$(RM) -rf $(STAGE_DIR)/from
+	@$(RM) -rf $(STAGE_DIR)/to
+
+partial-patch-no-unwrap::
+	@$(MKDIR) -p $(STAGE_DIR)
+	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
+    $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
+    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
     "$(SRC_BUILD)" \
     "$(DST_BUILD)"
+
+partial-snippet::
+	@$(MKDIR) -p $(STAGE_DIR)
+	$(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar \
+    "partial" \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).snippet \
+    "$(SERVER_PATH)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    $(DST_BUILD_ID) \
+    $(DST_BUILD_MS) \
+    "sha1" \
+    $(NULL)
 
 include $(topsrcdir)/build/rules.mk
