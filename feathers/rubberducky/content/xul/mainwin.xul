@@ -553,15 +553,6 @@
 
   </stack>
 
-
-  <vbox id="vbox">
-
-    <!-- WE LOVE VLC!!! 
-    <html:object id="core_vlc" width="0" height="0" autoplay="0" loop="0" repeat="0" hidden="1" type="application/x-vlc-plugin" />
-    -->
-
-  </vbox>
-
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
    src="chrome://global/content/dialogOverlay.js" />
@@ -588,12 +579,6 @@
    src="chrome://songbird/content/scripts/player_open.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
-
-  <!-- Load the core wrappers  -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/coreVLC.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/coreWMP.js"/>
 
   <!-- Load the Songbird stuff -->
   <script type="application/x-javascript"   
