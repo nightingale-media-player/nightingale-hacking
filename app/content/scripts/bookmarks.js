@@ -365,7 +365,8 @@ var bmManager = {
 				      url: "http://songbirdnest.com/",
 				      properties: "bookmark",
 				      children: []
-		        },			        
+		        }
+/*		        ,			        
 			      { 
 				      label: "Autodownload",
 				      icon: "chrome://songbird/skin/serviceicons/default.ico",
@@ -373,6 +374,7 @@ var bmManager = {
 				      properties: "bookmark",
 				      children: []
 		        }
+*/		        
 				  ]
 		    },
 			  { /////// SEARCHES
