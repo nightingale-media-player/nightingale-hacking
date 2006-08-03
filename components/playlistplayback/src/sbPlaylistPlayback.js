@@ -990,25 +990,29 @@ PlaylistPlayback.prototype = {
   
   convertUrlToDisplayName: function( aURL )
   {
-    aURL = decodeURI( aURL );
-    // Set the title display  
     var urlDisplay = "";
-    if ( aURL.lastIndexOf('/') != -1 )
+    
+    try {
+      urlDisplay = decodeURI( aURL );
+    } catch(err) {
+      dump("convertURLToDisplayName, oops! URI decode weirdness: " + err + "\n");
+    }
+    
+    // Set the title display  
+    if ( urlDisplay.lastIndexOf('/') != -1 )
     {
-      urlDisplay = aURL.substring( aURL.lastIndexOf('/') + 1, aURL.length );
+      urlDisplay = urlDisplay.substring( urlDisplay.lastIndexOf('/') + 1, urlDisplay.length );
     }
     else if ( aURL.lastIndexOf('\\') != -1 )
     {
-      urlDisplay = aURL.substring( aURL.lastIndexOf('\\') + 1, aURL.length );
+      urlDisplay = urlDisplay.substring( urlDisplay.lastIndexOf('\\') + 1, urlDisplay.length );
     }
-    else
-    {
-      urlDisplay = aURL;
-    }
+
     if ( ! urlDisplay.length )
     {
       urlDisplay = aURL;
     }
+    
     return urlDisplay;
   },
 
