@@ -181,7 +181,7 @@ try
           case "library_cmd_edit":
             if ( this.m_Playlist.tree.currentIndex != -1 )
             {
-              if ( tbb )
+              if ( tbb || this.m_Playlist.tree.view.selection.count > 1 )
               {
                 // Edit the entire track
                 this.m_Playlist.sendEditorEvent();
