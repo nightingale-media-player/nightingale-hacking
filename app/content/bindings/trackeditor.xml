@@ -271,12 +271,16 @@
             if (type == 'numeric') elem.setAttribute("numeric", true);
             if (ro != 0) elem.setAttribute("readonly", "true");
             elem.setAttribute("column", name);
+/*
+  NO, the actual children get these classes set.  Not the outer elements.            
             if (ro != 0) elem.setAttribute("class", "dialog_textbox");
             else elem.setAttribute("class", "dialog_label");
+*/            
             elem.setAttribute("flex", "1");
             // create a container for the element, add a descriptive label and a spacer to it
             var hbox = document.createElement("hbox");
             hbox.setAttribute("height", "32");
+            hbox.setAttribute("align", "center");
             var label = document.createElement("label");
             label.setAttribute("class", "dialog_label");
             if (readablename.slice(0, 1) == "&") 
