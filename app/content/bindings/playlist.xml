@@ -1665,68 +1665,72 @@
       <method name="sendEscEvent">
         <body>
           <![CDATA[
-      try
-      {
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-esc", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - sendEscEvent - " + err )
-      }
-      ]]>
+          try
+          {
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-esc", false, true);
+            this.dispatchEvent(e);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - sendEscEvent - " + err )
+          }
+          ]]>
         </body>
       </method>
 
       <method name="sendEditEvent">
         <body>
           <![CDATA[
-      try
-      {
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-edit", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - sendEditEvent - " + err )
-      }
-      ]]>
+          try
+          {
+            // No inline editing on readonly columns.
+            if ( !this.isReadOnlyColumn( this.edit_col.id ) )
+            {
+              var e = document.createEvent("Events");
+              e.initEvent("playlist-edit", false, true);
+              this.dispatchEvent(e);
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - sendEditEvent - " + err )
+          }
+          ]]>
         </body>
       </method>
 
       <method name="sendEditorEvent">
         <body>
           <![CDATA[
-      try
-      {
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-editor", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - sendEditorEvent - " + err )
-      }
-      ]]>
+          try
+          {
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-editor", false, true);
+            this.dispatchEvent(e);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - sendEditorEvent - " + err )
+          }
+          ]]>
         </body>
       </method>
 
       <method name="sendBurnToCDEvent">
         <body>
           <![CDATA[
-      try
-      {
-        var e = document.createEvent("Events");
-        e.initEvent("playlist-burntocd", false, true);
-        this.dispatchEvent(e);
-      }
-      catch( err )
-      {
-        alert( "playlist.xml - sendBurnToCDEvent - " + err )
-      }
-      ]]>
+          try
+          {
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-burntocd", false, true);
+            this.dispatchEvent(e);
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - sendBurnToCDEvent - " + err )
+          }
+          ]]>
         </body>
       </method>
 
@@ -1992,7 +1996,8 @@
           var destcols = query.getResultObject();
           for (var i=0;i<destcols.getRowCount();i++) {
             var colname = destcols.getRowCellByColumn(i, "column_name");
-            if (colname == col) return (destcols.getRowCellByColumn(i, "readonly") != 0);
+            if (colname == col)
+              return (destcols.getRowCellByColumn(i, "readonly") != 0);
           }
           return true;
         ]]>
@@ -2204,63 +2209,6 @@
           catch( err )
           {
             alert( "playlist.xml - onPlaylistContextMenu - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
-    <method name="onPlaylistEdit">
-      <parameter name="mouse_x"/>
-      <parameter name="mouse_y"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            // First, get the row and column clicked.
-            var obj = {}; 
-            var tree_edit_row = {};
-            var tree_edit_col = {};
-            this.tree.treeBoxObject.getCellAt( mouse_x, mouse_y, tree_edit_row, tree_edit_col, obj );
-            
-            // If the "obj" has a value, it is a cell?
-            if ( obj.value )
-            {
-              // Remember the row and column
-              this.edit_row = tree_edit_row.value;
-              this.edit_col = tree_edit_col.value;
-              
-              // *?* So, instead, we send an event and hope it can find us
-              this.sendEditEvent();
-              
-/* LAME -- The edit popup doesnt work in here.  Phththth.
-              // Is this supposed to be editable?
-              var editable = this.tree.view.isEditable( this.edit_row, this.edit_col );
-              
-              if ( editable )
-              {
-                // Get the info for the cell item.
-                var out_x = {}, out_y = {}, out_w = {}, out_h = {}; 
-                this.tree.treeBoxObject.getCoordsForCellItem( tree_edit_row.value, tree_edit_col.value, "cell",
-                                                                    out_x , out_y , out_w , out_h );
-                var cell_text = this.tree.view.getCellText( tree_edit_row.value, tree_edit_col.value );
-                
-                // Then pop the edit box to the bounds of the cell.
-                var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
-                var extra_y = 22; // Why do I have to give it extra?  What am I calculating wrong?
-                var less_w  = 6;
-                var pos_x = extra_x + this.tree.boxObject.screenX + out_x.value;
-                var pos_y = extra_y + this.tree.boxObject.screenY + out_y.value;
-                this.edit_popup.showPopup( this.tree, pos_x, pos_y, "popup", null, null, null );
-                this.edit_popup.sizeTo( out_w.value - less_w, out_h.value ); // increase the width to the size of the cell.
-                this.edit_box.focus();
-                this.edit_box.value = cell_text;
-              }
-*/              
-            }
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPlaylistEdit - " + err );
           }
         ]]>
       </body>

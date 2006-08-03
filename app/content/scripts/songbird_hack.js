@@ -1192,20 +1192,6 @@ var SBWebPlaylistCommands =
             this.m_Playlist.sendPlayEvent();
           }
         break;
-        case "library_cmd_edit":
-          if ( this.m_Playlist.tree.currentIndex != -1 )
-          {
-            if ( tbb )
-            {
-              // Open the editor for the whole track
-            }
-            else
-            {
-              // Edit the context cell
-              this.m_Playlist.sendEditEvent();
-            }
-          }
-        break;
         case "library_cmd_download":
         {
           try
