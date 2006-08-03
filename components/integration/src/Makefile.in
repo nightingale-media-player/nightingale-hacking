@@ -31,8 +31,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = $(SB_PLATFORM)
+SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js
 
+SUBDIRS = $(SB_PLATFORM)
+ 
 include $(topsrcdir)/build/rules.mk
 
 

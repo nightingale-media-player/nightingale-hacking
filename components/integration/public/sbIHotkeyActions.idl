@@ -1,0 +1,48 @@
+#include "nsISupports.idl"
+
+/**       
+ * \file sbIHotkeyActions.idl
+ * \brief Songbird Hotkey Actions Interface file
+ * This file contains interfaces used by the songbird hotkey actions API, whose purpose is to 
+ * register hotkey actions that can be used automatically by the hotkey manager to bind functionality
+ * to the user defined key.
+ * \sa sbHotkeyActions.js
+ */
+
+/**
+ * \interface sbIHotkeyActionBundle
+ * \brief Songbird hotkey action bundle interface
+ * This interface describes a bundle of hotkey actions and provides a callback
+ * function that is triggered when one of the actions is triggered.
+ * \sa sbIHotkeyActions
+ */
+
+[scriptable, uuid(3C278280-C452-4d4e-9AA6-330370501A45)]
+interface sbIHotkeyActionBundle: nsISupports
+{
+  readonly attribute long actionCount; 
+  AString enumActionLocaleDescription(in long idx); 
+  AString enumActionID(in long idx); 
+  void onAction(in long idx); 
+};
+  
+/**
+ * \interface sbIHotkeyActions
+ * \brief Songbird Hotkey Actions Interface
+ * This is the interface used to register hotkey action objects.
+ * \sa sbIHotkeyActionBundle
+ */
+      
+[scriptable, uuid(C24FBC6E-4007-43e2-86B3-FBFDD6231DBB)]
+interface sbIHotkeyActions : nsISupports
+{
+  /**
+   * \brief Register a hotkey action.
+   * This method registers an sbIHotkeyActionBundle into the hotkey manager. See sbIHotkeyActionBundle for more information.
+   * \sa sbIHotkeyActionObserver
+   */
+  void registerHotkeyActionBundle(in sbIHotkeyActionBundle bundle);
+  readonly attribute long bundleCount;
+  sbIHotkeyActionBundle enumBundle(in long idx);
+};
+

@@ -27,6 +27,7 @@
  // This needs to become an api so plugins can register new actions and callbacks for them
 
 var hotkey_service;
+var hotkeyactions_service;
 
 var user_agent = navigator.userAgent;
 var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
@@ -45,12 +46,20 @@ function initGlobalHotkeys() {
     hotkey_service = globalHotkeys.getService(Components.interfaces.sbIGlobalHotkeys);
     loadHotkeysFromPrefs()
   }
+  var hotkeyActions = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
+  if (hotkeyActions) {
+    hotkeyactions_service = hotkeyActions.getService(Components.interfaces.sbIHotkeyActions);
+  }
 }
 
 function resetGlobalHotkeys() {
+  removeHotkeyBindings();
+  stopWatchingHotkeyRemotes();
+}
+
+function removeHotkeyBindings() {
   // Remove all hotkey bindings
   if (hotkey_service) hotkey_service.removeAllHotkeys();
-  stopWatchingHotkeyRemotes();
 }
 
 // Hotkey handler, this gets called back when the user presses a hotkey that has been registered in loadHotkeysFromPrefs
@@ -58,17 +67,21 @@ var hotkeyHandler =
 {
     onHotkey: function( hotkeyid )
     {
-      switch ( hotkeyid.toLowerCase() )
+      hotkeyid = hotkeyid.toLowerCase();
+      // look through the action bundles to find the right action to trigger
+      for (var i=0;i<hotkeyactions_service.bundleCount;i++)
       {
-        // Call the appropriate action 
-        case "playback: volume up": hotkey_volumeUp(); break;
-        case "playback: volume down": hotkey_volumeDown(); break;
-        case "playback: next in playlist": hotkey_nextTrack(); break;
-        case "playback: previous in playlist": hotkey_previousTrack(); break;
-        case "playback: play/pause": hotkey_playPause(); break;
-        case "playback: pause": hotkey_pause(); break;
-        default: alert("Unknown hotkey action '" + hotkeyid + "'"); break;
+        var bundle = hotkeyactions_service.enumBundle(i);
+        for (var j=0;j<bundle.actionCount;j++)
+        {
+          var id = bundle.enumActionID(j);
+          if (id.toLowerCase() == hotkeyid) {
+            bundle.onAction(j);
+            return;
+          }
+        }
       }
+      alert("Unknown hotkey action '" + hotkeyid + "'"); 
     },
 
     QueryInterface : function(aIID)
@@ -87,7 +100,7 @@ var hotkeyHandler =
 // Load hotkeys
 function loadHotkeysFromPrefs() {
   if (!hotkey_service) return;
-  beginWatchingHotkeyRemotes();
+  if (!songbird_hotkeys_event1) beginWatchingHotkeyRemotes();
   setDefaultGlobalHotkeys();
   var enabled = SBDataGetBoolValue("globalhotkeys.enabled");
   //log("(re)init - hotkeys are " + (enabled ? "enabled" : "disabled"));
@@ -131,45 +144,45 @@ function setDefaultGlobalHotkeys() {
 
     SBDataSetStringValue("globalhotkey.0.key",             "$175");
     SBDataSetStringValue("globalhotkey.0.key.readable",    "volumeup");
-    SBDataSetStringValue("globalhotkey.0.action",          "Playback: Volume up");
+    SBDataSetStringValue("globalhotkey.0.action",          "playback.volumeup");
     
     SBDataSetStringValue("globalhotkey.1.key",             "$174");
     SBDataSetStringValue("globalhotkey.1.key.readable",    "volumedown");
-    SBDataSetStringValue("globalhotkey.1.action",          "Playback: Volume down");
+    SBDataSetStringValue("globalhotkey.1.action",          "playback.volumedown");
     
     SBDataSetStringValue("globalhotkey.2.key",             "$176");
     SBDataSetStringValue("globalhotkey.2.key.readable",    "nexttrack");
-    SBDataSetStringValue("globalhotkey.2.action",          "Playback: Next in playlist");
+    SBDataSetStringValue("globalhotkey.2.action",          "playback.nexttrack");
     
     SBDataSetStringValue("globalhotkey.3.key",             "$177");
     SBDataSetStringValue("globalhotkey.3.key.readable",    "prevtrack");
-    SBDataSetStringValue("globalhotkey.3.action",          "Playback: Previous in playlist");
+    SBDataSetStringValue("globalhotkey.3.action",          "playback.previoustrack");
     
     SBDataSetStringValue("globalhotkey.4.key",             "$179");
     SBDataSetStringValue("globalhotkey.4.key.readable",    "playpause");
-    SBDataSetStringValue("globalhotkey.4.action",          "Playback: Play/Pause");
+    SBDataSetStringValue("globalhotkey.4.action",          "playback.playpause");
     
     // non media keyboard keys :
     
     SBDataSetStringValue("globalhotkey.5.key",             "meta-$38");
     SBDataSetStringValue("globalhotkey.5.key.readable",    meta_key_str + "-up");
-    SBDataSetStringValue("globalhotkey.5.action",          "Playback: Volume up");
+    SBDataSetStringValue("globalhotkey.5.action",          "playback.volumeup");
     
     SBDataSetStringValue("globalhotkey.6.key",             "meta-$40");
     SBDataSetStringValue("globalhotkey.6.key.readable",    meta_key_str + "-down");
-    SBDataSetStringValue("globalhotkey.6.action",          "Playback: Volume down");
+    SBDataSetStringValue("globalhotkey.6.action",          "playback.volumedown");
     
     SBDataSetStringValue("globalhotkey.7.key",             "meta-$39");
     SBDataSetStringValue("globalhotkey.7.key.readable",    meta_key_str + "-right");
-    SBDataSetStringValue("globalhotkey.7.action",          "Playback: Next in playlist");
+    SBDataSetStringValue("globalhotkey.7.action",          "playback.nexttrack");
     
     SBDataSetStringValue("globalhotkey.8.key",             "meta-$37");
     SBDataSetStringValue("globalhotkey.8.key.readable",    meta_key_str + "-left");
-    SBDataSetStringValue("globalhotkey.8.action",          "Playback: Previous in playlist");
+    SBDataSetStringValue("globalhotkey.8.action",          "playback.previoustrack");
     
     SBDataSetStringValue("globalhotkey.9.key",             "meta-$96");
     SBDataSetStringValue("globalhotkey.9.key.readable",    meta_key_str + "-numpad0");
-    SBDataSetStringValue("globalhotkey.9.action",          "Playback: Play/Pause");
+    SBDataSetStringValue("globalhotkey.9.action",          "playback.playpause");
 
   }
 }
@@ -201,7 +214,7 @@ function stopWatchingHotkeyRemotes() {
 }
 
 function globalHotkeysChanged(v) {
-  resetGlobalHotkeys();
+  removeHotkeyBindings();
   loadHotkeysFromPrefs();
 }
 
@@ -215,39 +228,131 @@ function log(str) {
 */
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Hotkey Actions
+// Playback Hotkey Actions
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Playback
+// A Few internal hotkey actions. The same method can be used by extensions or other parts of the app to register their own hotkey actions
 
-var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
+var playbackHotkeyActions = {
+ 
+  // you should change these to match your own actions, strings, and stringbundle (ie, you will need to ship your own translations with your extension
+  // since the description string you use will probably not be in the standard songbird string bundle)
+  _packagename: "playback",
+  _actions: [ "volumeup", "volumedown", "nexttrack", "previoustrack", "playpause", "pause" ],
+  // the string bundle to use to get the localized strings (ie, hotkeys.actions.playback, hotkeys.actions.playback.volumeup, hotkeys.actions.playback.volumedown, etc)
+  _stringbundle: "chrome://songbird/locale/songbird.properties", 
 
-function hotkey_volumeUp() {
-  var volume = gPPS.volume + 8;
-  if (volume > 255) volume = 255;
-  gPPS.volume = volume;
-}
+  // this enumerates the actions, their localized display strings, and their internal ids, so that the hotkey action manager may list them 
+  // in the htokeys preference pane
+  get_actionCount: function() { return this._actions.length; },
+  enumActionLocaleDescription: function (idx) { return this._getLocalizedPackageName() + ": " + this._getLocalizedActionName(this._actions[idx]); },
+  enumActionID: function(idx) { return this._packagename + "." + this._actions[idx]; },
 
-function hotkey_volumeDown() {
-  var volume = gPPS.volume - 8;
-  if (volume < 0) volume = 0;
-  gPPS.volume = volume;
-}
+  // this is called when an action has been triggered
+  onAction: function(idx) {
+    switch (idx) {
+      case 0: this._hotkey_volumeUp(); break;
+      case 1: this._hotkey_volumeDown(); break;
+      case 2: this._hotkey_nextTrack(); break;
+      case 3: this._hotkey_previousTrack(); break;
+      case 4: this._hotkey_playPause(); break;
+      case 5: this._hotkey_pause(); break;
+    }
+  },
+  
+  // -------------------------
+  // actions implementation
 
-function hotkey_nextTrack() {
-  gPPS.next();
-}
+  _gPPS: Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback),
+  
+  _hotkey_volumeUp: function() {
+    var volume = this._gPPS.volume + 8;
+    if (volume > 255) volume = 255;
+    this._gPPS.volume = volume;
+  },
 
-function hotkey_previousTrack() {
-  gPPS.previous();
-}
+  _hotkey_volumeDown: function() {
+    var volume = this._gPPS.volume - 8;
+    if (volume < 0) volume = 0;
+    this._gPPS.volume = volume;
+  },
 
-function hotkey_playPause() {
-  gPPS.play(); // automatically selects play or pause depending on current state
-}
+  _hotkey_nextTrack: function() {
+    this._gPPS.next();
+  },
 
-function hotkey_pause() {
-  gPPS.pause();
+  _hotkey_previousTrack: function() {
+    this._gPPS.previous();
+  },
+
+  _hotkey_playPause: function() {
+    this._gPPS.play(); // automatically selects play or pause depending on current state
+  },
+
+  _hotkey_pause: function() {
+    this._gPPS.pause();
+  },
+
+  // -------------------------
+  // convenience functions
+
+  _localpackagename: null,
+  _sbs: null,
+  _songbirdStrings: null,
+  
+  _getLocalizedString: function(str, defaultstr) {
+    var r = defaultstr;
+    if (!this._sbs) {
+      this._sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+      this._songbirdStrings = this._sbs.createBundle(this._stringbundle);
+    }
+    try {
+      r = this._songbirdStrings.GetStringFromName(str);
+    } catch (err) { /* we have default */ }
+    return r;
+  },
+  
+  // the local package name is taken from the specified string bundle, using the key "hotkeys.actions.package", where package is
+  // the internal name of the package, as specified in this._packagename
+  
+  _getLocalizedPackageName: function() {
+    if (!this._localpackage) 
+      this._localpackage = this._getLocalizedString("hotkeys.actions." + this._packagename, this._packagename); 
+    return this._localpackage;
+  },
+  
+  // the local action name is taken from the specified string bundle, using the key "hotkeys.actions.package.action", where package
+  // is the internal name of the package, as specified in this._packagename, and action is the internal name of the action, as 
+  // specified in the this._actions array.
+  
+  _getLocalizedActionName: function(action) {
+    return this._getLocalizedString("hotkeys.actions." + this._packagename + "." + action, action);
+  },
+
+  // -------------------------
+  // interface code
+
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIHotkeyActionBundle) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+};
+
+playbackHotkeyActions.__defineGetter__( "actionCount", playbackHotkeyActions.get_actionCount);
+
+// register the above object as a hotkey action bundle (sbIHotkeyActionBundle)
+
+// not using the global hotkeyactions_service var here since it hasn't been initialized yet
+var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
+if (hotkeyActionsComponent) {
+  var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
+  if (hotkeyactionsService) hotkeyactionsService.registerHotkeyActionBundle(playbackHotkeyActions);
 }
 

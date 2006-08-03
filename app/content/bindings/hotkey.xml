@@ -60,6 +60,9 @@
         if (PLATFORM_MACOSX) this.meta_key_str = "command";
         if (PLATFORM_LINUX) this.meta_key_str = "meta";
 
+        var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+        this.songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+
         this.shift_down = false;
         this.ctrl_down = false;
         this.alt_down = false;
@@ -169,7 +172,11 @@
 
           // this.log(code);
           switch (code) {
+
             // NO DASH ALLOWED !
+            //
+            // these serve as both defaults for the localization, and part of the root string for finding the locale from the stringbundle
+
             case DOM_VK_CANCEL: return "cancel";
             case DOM_VK_HELP: return "help";
             case DOM_VK_BACK_SPACE: return "backspace";
@@ -276,6 +283,7 @@
       <parameter name="key"/>
       <body>
         <![CDATA[
+          if (!str) str = "";
           if (str != "") str += "-";
           str += key;
           return str;
@@ -365,8 +373,39 @@
           } else {
             if (this.hotkeyCode != 0) str = this.addKeyStr(str, "$" + this.hotkeyCode);
           }
+          if (for_display_purposes) str = this.localizeKeys(str);
           if (for_display_purposes) str = str.toUpperCase();
           return str;
+        ]]>
+      </body>
+    </method>
+
+    <method name="localizeKey">
+      <parameter name="str"/>
+      <body>
+        <![CDATA[
+          var r = str;
+          try {
+            r = this.songbirdStrings.GetStringFromName("keyboard."+str);
+          } catch (err) {  /* we have a default */ }
+          r = r.replace(/-/g, " ");
+          return r;
+        ]]>
+      </body>
+    </method>
+
+    <method name="localizeKeys">
+      <parameter name="str"/>
+      <body>
+        <![CDATA[
+          var res;
+          var keys = str.split("-");
+          for (var i=0;i<keys.length;i++) {
+            var k = keys[i];
+            k = k.toLowerCase();
+            res = this.addKeyStr(res, this.localizeKey(k));
+          }
+          return res;
         ]]>
       </body>
     </method>
@@ -429,17 +468,17 @@
          //this.log("keydown -> " + event.keyCode + " - " + event.charCode);
          this.newKey(event.keyCode);
          event.preventDefault();
-         event.preventBubble();
+         event.stopPropagation();
        ]]>
-     </handler>
+       </handler>
 
-     <handler event="keyup">
-       <![CDATA[
+       <handler event="keyup">
+         <![CDATA[
          //this.log("keyup");
          if (this.isModKey(event.keyCode)) this.handleModState(event.keyCode, false);
          if (this.hotkeyCode == 0 && this.isModKey(event.keyCode)) { this.hotkeyAlt = this.hotkeyShift = this.hotkeyCtrl = this.hotkeyMeta = false; this.updateDisplay(); }
          event.preventDefault();
-         event.preventBubble();
+         event.stopPropagation();
        ]]>
      </handler>
 

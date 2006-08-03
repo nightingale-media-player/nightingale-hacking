@@ -28,13 +28,7 @@
         <label value="&hotkeys.action;"/>
         <menulist id="hotkey.actions" flex="1">
           <menupopup>
-            <!-- This should eventually be loaded off a hotkey api -->
-            <menuitem label="Playback: Volume up"/>
-            <menuitem label="Playback: Volume down"/>
-            <menuitem label="Playback: Next in playlist"/>
-            <menuitem label="Playback: Previous in playlist"/>
-            <menuitem label="Playback: Play/Pause"/>
-            <menuitem label="Playback: Pause"/>
+            <!-- The list of actions is loaded from the hotkeyactions service -->
           </menupopup>
         </menulist>
       </hbox>
@@ -46,6 +40,9 @@
         <button id="hotkey.remove" label="&hotkeys.remove;" oncommand="gHotkeysPane.removeHotkey();"/>
       </hbox>
     </groupbox>
+
+    <!-- this one is hidden, we use it to translate hotkey ids into localized hotkey keystroke -->
+    <hotkey id="hotkey.hotkeytool" hidden="1"/>
 
   </prefpane>
 
