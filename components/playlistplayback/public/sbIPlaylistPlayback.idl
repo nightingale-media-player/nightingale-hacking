@@ -27,6 +27,9 @@
 /**
  * \file sbIPlaylistPlayback.js
  * \brief Contains the interface definition for sbIPlaylistPlayback
+ * Contains the definition of the sbIPlaylistPlayback interface. This interface
+ *   contains methods that provide the ability to play media. Interaction with
+ *   the various playback cores happens through this interace.
  * \sa sbICoreWrapper.idl sbPlaylistPlayback.js
  */
 
@@ -38,7 +41,13 @@ interface sbICoreWrapper;
 
 /**
  * \interface sbIPlaylistPlayback
- * \brief
+ * \brief Defines standard media player playback functionality.
+ * This interface defines the interface for managing playback cores (adding
+ *   selecting and removing)  and for controlling the playback of media in
+ *   the cores (play, stop, pause, etc). Objects wishing to control playback
+ *   should get an instance of this class via Components.Classes() and call
+ *   these methods on that object.
+ *
  * \sa sbICoreWrapper sbIPlaylist
  * An interface that describes the PlaylistPlayback Service
  */
@@ -53,11 +62,11 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   const unsigned short REPEAT_MODE_OFF = 0;
 
-  /** \brief Repeate the current track (again and again and... ).
+  /** \brief Repeat the current track (again and again and... ).
    */
   const unsigned short REPEAT_MODE_ONE = 1;
 
-  /** \brief Play throught all tracks and then do it again.
+  /** \brief Play through all tracks and then do it again.
    */
   const unsigned short REPEAT_MODE_ALL = 2;
 
@@ -103,12 +112,15 @@ interface sbIPlaylistPlayback : nsIObserver
   /**
    * /brief The pause state of the core.
    * If paused, playback will continue from the current position.
+   * \sa playing
    */
   readonly attribute boolean paused;
 
   /**
    * \brief The playing state of the core.
-   * Seperate from pause state. I
+   * Seperate from pause state. A paused track is playing, a stopped track
+   *   is not playing AND not paused. A
+   * \sa paused 
    */
   readonly attribute boolean playing;
 
@@ -403,28 +415,131 @@ interface sbIPlaylistPlayback : nsIObserver
   // --------------------------------------------------------------------------
   // Metadata methods
   // --------------------------------------------------------------------------
-  void getMetadataFields(out unsigned long fieldCount, [array, size_is(fieldCount), retval] out wstring metaFields);
-  AString getCurrentValue(in AString field);
-  void setCurrentValue(in AString field, in AString value);
-  void getCurrentValues(in unsigned long fieldCount, [array, size_is(fieldCount)] in wstring metaFields,
-                        out unsigned long valueCount, [array, size_is(valueCount), retval] out wstring metaValues);
-  void setCurrentValues(in unsigned long fieldCount, [array, size_is(fieldCount)] in wstring metaFields, 
-                        in unsigned long valueCount, [array, size_is(valueCount)] in wstring metaValues);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  void getMetadataFields(out unsigned long aFieldCount,
+                         [array, size_is(aFieldCount), retval] out wstring aMetaFields);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  AString getCurrentValue(in AString aField);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  void setCurrentValue(in AString aField, in AString aValue);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  void getCurrentValues(in unsigned long aFieldCount,
+                        [array, size_is(aFieldCount)] in wstring aMetaFields,
+                        out unsigned long aValueCount,
+                        [array, size_is(aValueCount), retval] out wstring aMetaValues);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  void setCurrentValues(in unsigned long aFieldCount,
+                        [array, size_is(aFieldCount)] in wstring aMetaFields, 
+                        in unsigned long aValueCount,
+                        [array, size_is(aValueCount)] in wstring aMetaValues);
+
 
   // --------------------------------------------------------------------------
   // URL checking
   // --------------------------------------------------------------------------
-  boolean isMediaUrl(in AString url);
-  boolean isVideoUrl(in AString url);
-  boolean isPlaylistUrl(in AString url);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  boolean isMediaUrl(in AString aURL);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  boolean isVideoUrl(in AString aURL);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  boolean isPlaylistUrl(in AString aURL);
 
+ 
   // --------------------------------------------------------------------------
   // String twiddling
   // --------------------------------------------------------------------------
-  AString stripHoursFromTimeString(in AString str);
-  AString emitSecondsToTimeString(in AString seconds);
-  AString convertUrlToDisplayName(in AString url);
-  AString convertUrlToFolder(in AString url);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  AString stripHoursFromTimeString(in AString aTimeString);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  AString emitSecondsToTimeString(in AString aSecondsString);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  AString convertUrlToDisplayName(in AString aURL);
+ 
+  /**
+   * \brief
+   * 
+   * \param
+   * \throw
+   * \return
+   */
+  AString convertUrlToFolder(in AString aURL);
 
 };
 
