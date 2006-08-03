@@ -27,6 +27,13 @@
 #include "nsISupports.idl"
 #include "nsIRDFDataSource.idl"
 
+/**
+* \interface sbIServicesource 
+* \brief USER CODE SHOULD NOT REFERENCE THIS CLASS
+*
+* This object returns the playlistlist as an nsIRDFDataSource
+*
+*/
 [scriptable, uuid(0646A07D-2697-4998-A4F3-D5F77938A7BE)]
 interface sbIServicesource : nsIRDFDataSource
 {

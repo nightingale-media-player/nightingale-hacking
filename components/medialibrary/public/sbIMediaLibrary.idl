@@ -26,7 +26,15 @@
 
 /**
  * \file sbIMediaLibrary.idl
- * \brief 
+ * \brief Media library interfaces.
+ *
+ * sbIMediaLibrary
+ *
+ * sbIMediaScanCallback
+ *
+ * sbIMediaScanQuery
+ *
+ * sbIMediaScan
  * 
  * \sa sbIDatabaseQuery.idl, DatabaseQuery.h, sbIPlaylist.idl
  */
@@ -37,7 +45,11 @@ interface sbIDatabaseQuery;
 
 /**
  * \interface sbIMediaLibrary 
- * \brief
+ * \brief The media library object constructs SQL queries designed to reference the library of a database
+ *
+ * The media library is a "database-helper" object.  Its purpose is to 
+ * translate common library-centric activities into the SQL queries 
+ * required to make it happen.
  *
  * \sa sbIDatabaseQuery, DatabaseQuery.h, sbIPlaylist, sbIPlaylistManager
  */
@@ -63,22 +75,37 @@ interface sbIMediaLibrary : nsISupports
   sbIDatabaseQuery getQueryObject(); /**/
 
   /**
-   * \brief 
+   * \brief Create the library table with default metadata columns
+   *
+   * This method will synchronously execute the query required to create the
+   * default library in the given database.
+   *
    * \sa sbMediaLibrary.js
    */
   void createDefaultLibrary(); /**/
 
   /**
-   * \brief 
+   * \brief Add a new piece of media to the library
    *
-   * \param strMediaURL
-   * \param metaColumnCount
-   * \param metaColumnNames
-   * \param metaValueCount
-   * \param metaValues
-   * \param checkForUniqueFilename
-   * \param willRunQueryLater
-   * \return 
+   * This method constructs the SQL query required to insert a new track into
+   * the library.  If the checkForUniqueFilename parameter is true, the code
+   * will first see if the mediaURL exists and, if so, update that track with
+   * the given metadata information and return that GUID rather than create a
+   * new row in the database.
+   *
+   * Metadata is passed along with the track to fill columns in the database
+   * based upon a pair of string arrays.  The metaColumnNames and metaValues
+   * should have an equal number of members - each index corresponds to each
+   * column-value pair set into the database.
+   *
+   * \param mediaURL The URL to the media to add
+   * \param metaColumnCount The number of items in the metaColumnNames parameter
+   * \param metaColumnNames An array of strings identifying columns to be fill with metadata (matching the metaValues array)
+   * \param metaValueCount The number of items in the metaValues parameter
+   * \param metaValues An array of strings identifying metadata values to be inserted (matching the metaColumnNames array)
+   * \param checkForUniqueFilename If true, see if the file already exists.  If so, return the GUID found.
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return The GUID for the track added (or found)
    * \sa removeMediaByURL, removeMediaByGUID, findByGUID, findByURL
    */
   AString addMedia(in AString mediaURL, 
@@ -90,56 +117,58 @@ interface sbIMediaLibrary : nsISupports
     in PRBool willRunQueryLater); /**/
 
   /**
-   * \brief 
+   * \brief Remove a track from the library
    *
-   * \param mediaURL
-   * \param willRunQueryLater
-   * \return 
+   * \param mediaURL The URL of the track to remove
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return True, if the query was successfully added
    * \sa removeMediaByGUID, addMedia
    */
   PRBool removeMediaByURL(in AString mediaURL, 
     in PRBool willRunQueryLater); /**/
 
   /**
-   * \brief 
+   * \brief Remove a track from the library
    *
-   * \param mediaGUID
-   * \param willRunQueryLater
-   * \return 
-   * \sa sbIDatabaseQuery
+   * \param mediaGUID The GUID of the track to remove
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return True, if the query was successfully added
+   * \sa removeMediaByGUID, addMedia
    */
-  PRBool removeMediaByGUID(in AString mediaGUID, 
-    in PRBool willRunQueryLater); /**/
-  
+
   /**
-   * \brief 
+   * \brief Remove all tracks from the library
    *
-   * \param willRunQueryLater
-   * \return 
-   * \sa sbIDatabaseQuery
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return True, if the query was successfully added
+   * \sa removeMediaByGUID, addMedia
    */
   PRBool purgeDefaultLibrary(in PRBool willRunQueryLater); /**/
 
   /**
-   * \brief 
+   * \brief Get a track's URL from its GUID
    *
-   * \param mediaGUID
-   * \return 
+   * \param mediaGUID The GUID of the track to find
+   * \return The URL of the track
    * \sa findByURL
    */
   AString findByGUID(in AString mediaGUID); /**/
 
   /**
-   * \brief 
+   * \brief Get a track's GUID from its URL
    *
-   * \param mediaURL
-   * \return 
+   * This will find the first track matching the URL if there are more than one.
+   *
+   * \param mediaURL The URL of the track to find
+   * \return The GUID of the track
    * \sa findByGUID
    */
   AString findByURL(in AString mediaURL); /**/
 
   /**
-   * \brief 
+   * \brief Add a column to the library table
+   *
+   * 
    *
    * \param columnName 
    * \param columnType 
