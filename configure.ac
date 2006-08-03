@@ -498,7 +498,7 @@ case "$SB_PLATFORM" in
     XULRUNNERDIR="/XUL.framework"
   ;;
   linux)
-    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -pipe -pthread"
+    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
 #    if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
 #    else
@@ -511,7 +511,7 @@ case "$SB_PLATFORM" in
     GCC_LINKER_FLAGS=""
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
-    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
+    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"
     CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
