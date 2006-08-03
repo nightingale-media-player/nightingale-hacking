@@ -24,81 +24,17 @@
 //
  */
 
-try
-{
-
 /**
- * ----------------------------------------------------------------------------
- * Global Utility Functions (it's fun copying them everywhere...)
- * ----------------------------------------------------------------------------
+ * \file coreTotem.js
+ * \brief The CoreWrapper implementation for the Totem Plugin
+ * \sa sbICoreWrapper.idl coreBase.js
  */
-
+ 
 /**
- * Logs a string to the error console.
- * @param   string
- *          The string to write to the error console..
+ * \class CoreTotem
+ * \brief The CoreWrapper for the VLC Plugin
+ * \sa CoreBase
  */
-function LOG(string) {
-  dump("***CoreTotem*** " + string + "\n");
-} // LOG
-
-/**
- * Dumps an object's properties to the console
- * @param   obj
- *          The object to dump
- * @param   objName
- *          A string containing the name of obj
- */
-function listProperties(obj, objName) {
-  var columns = 1;
-  var count = 0;
-  var result = "";
-  for (var i in obj) {
-      result += objName + "." + i + " = " + obj[i] + "\t\t\t";
-      count = ++count % columns;
-      if ( count == columns - 1 )
-        result += "\n";
-  }
-  LOG("listProperties");
-  dump(result + "\n");
-}
-
-/**
- * Converts seconds to a time string
- * @param   seconds
- *          The number of seconds to convert
- * @return  A string containing the converted time
- */
-function EmitSecondsToTimeString( seconds )
-{
-  if ( seconds < 0 )
-    return "00:00";
-  seconds = parseFloat( seconds );
-  var minutes = parseInt( seconds / 60 );
-  seconds = parseInt( seconds ) % 60;
-  var hours = parseInt( minutes / 60 );
-  if ( hours > 50 ) // lame
-    return "Error";
-  minutes = parseInt( minutes ) % 60;
-  var text = ""
-  if ( hours > 0 )
-  {
-    text += hours + ":";
-  }
-  if ( minutes < 10 )
-  {
-    text += "0";
-  }
-  text += minutes + ":";
-  if ( seconds < 10 )
-  {
-    text += "0";
-  }
-  text += seconds;
-  return text;
-}
-
-// The Totem Plugin Wrapper
 function CoreTotem()
 {
   this._object = null;
@@ -107,260 +43,233 @@ function CoreTotem()
   this._paused  = false;
   this._oldVolume = 0;
   this._muted = false;
+};
 
-  /**
-   *
-   */
-  this._verifyObject = function() {
-    if ( (this._object == undefined) || ( ! this._object ) /*|| ( ! this._object instanceof Components.interfaces.totemMozillaScript )*/ )
-    {
-      LOG("VERIFY OBJECT FAILED.  OBJECT DOES NOT HAVE PROPER Totem API.")
-      throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    }
-  }
+// inherit the prototype from CoreBase
+CoreTotem.prototype = new CoreBase();
 
-  // When another core wrapper takes over, stop.
-  this.onSwappedOut = function onSwappedOut()
+// set the constructor so we use ours and not the one for CoreBase
+CoreTotem.prototype.constructor = CoreTotem();
+
+CoreTotem.prototype.playUrl = function ( aURL )
+{
+  this._verifyObject();
+
+  if (!aURL)
+    throw Components.results.NS_ERROR_INVALID_ARG;
+
+  this._url = this.sanitizeURL(aURL);
+  this._paused = false;
+
+  try
   {
-    this._verifyObject();
-    try
+    if(this._object.IsPlaying) 
     {
-      this._object.Stop();
-    }
-    catch(e)
-    {
-      LOG(e);
-    }
-  }
-
-  // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
-  this.playUrl = function ( url )
-  {
-    this._verifyObject();
-
-    if (!url)
-      throw Components.results.NS_ERROR_INVALID_ARG;
-
-    this._url = url;
-
-    this._paused = false;
-
-    if( url.search(/[A-Za-z].*\:\/\//g) < 0 )
-    {
-      url = "file://" + url;
-    }
-
-    if( url.search(/\\/g))
-    {
-      url.replace(/\\/, '/');
-    }
-
-    try {
-      if(this._object.IsPlaying) {
-        this._object.Close();
-      }
-      this._object.OpenUrl( url );
-      this._object.Play();
-    }
-    catch(e) {
-        LOG(e);
-    }
-
-    return true;
-  }
-
-  this.play      = function ()
-  {
-    this._verifyObject();
-
-    this._paused = false;
-
-    try {
-      this._object.Play();
-    } catch(e) {
-      LOG(e);
-    }
-
-    return true;
-  }
-
-  this.pause     = function ()
-  {
-    if( this._paused )
-      return this._paused;
-
-    this._verifyObject();
-
-    try {
-      this._object.Stop();
-    } catch(e) {
-      LOG(e);
-    }
-
-    this._paused = true;
-
-    return this._paused;
-  }
-
-  this.stop = function ()
-  {
-    this._verifyObject();
-
-    if( !this._object.IsPlaying )
-      return true;
-
-    try {
-      this._object.Rewind();
       this._object.Close();
-      this._paused = false;
-    } catch(e) {
-      LOG(e);
     }
-
-    return true;
+    
+    this._object.OpenUrl( this._url );
+    this._object.Play();
+  }
+  catch(e) 
+  {
+      this.LOG(e);
   }
 
-  this.getPlaying   = function ()
+  return true;
+};
+
+CoreTotem.prototype.play = function ()
+{
+  this._verifyObject();
+
+  this._paused = false;
+
+  try
   {
-    this._verifyObject();
-    return this._object.IsPlaying || this._paused;
+    this._object.Play();
+  }
+  catch(e) 
+  {
+    this.LOG(e);
   }
 
-  this.getPaused    = function ()
-  {
-    this._verifyObject();
+  return true;
+};
+
+CoreTotem.prototype.pause = function ()
+{
+  if( this._paused )
     return this._paused;
-  }
 
-  this.getLength = function ()
+  this._verifyObject();
+
+  try 
   {
-    this._verifyObject();
-    var playLength = 0;
-
-    try {
-      playLength = this._object.StreamLength;
-    } catch(e) {
-      LOG(e);
-    }
-
-    return playLength;
-  }
-
-  this.getPosition = function ()
+    this._object.Stop();
+  } 
+  catch(e) 
   {
-    this._verifyObject();
-    var curPos = 0;
-
-    try {
-      curPos = this._object.CurrentTime;
-    } catch(e) {
-      LOG(e);
-    }
-
-    return curPos;
+    this.LOG(e);
   }
 
-  this.setPosition = function ( pos )
+  this._paused = true;
+
+  return this._paused;
+};
+
+CoreTotem.prototype.stop = function ()
+{
+  this._verifyObject();
+
+  if( !this._object.IsPlaying )
+    return true;
+
+  try 
   {
-    this._verifyObject();
-
-    try {
-      this._object.SeekTime( pos );
-    } catch(e) {
-      LOG(e);
-    }
-  }
-
-  this.getVolume   = function ()
+    this._object.Rewind();
+    this._object.Close();
+    this._paused = false;
+  } 
+  catch(e) 
   {
-    this._verifyObject();
-    return Math.round(this._object.Volume / 100 * 255);
+    this.LOG(e);
   }
 
-  this.setVolume   = function ( volume )
+  return true;
+};
+
+CoreTotem.prototype.getPlaying = function ()
+{
+  this._verifyObject();
+  return this._object.IsPlaying || this._paused;
+};
+
+CoreTotem.prototype.getPaused = function ()
+{
+  this._verifyObject();
+  return this._paused;
+};
+
+CoreTotem.prototype.getLength = function ()
+{
+  this._verifyObject();
+  var playLength = 0;
+
+  try 
   {
-    this._verifyObject();
-    if ((volume < 0) || (volume > 255))
-      throw Components.results.NS_ERROR_INVALID_ARG;
-    this._object.Volume = Math.round(volume / 255 * 100); 
-  }
-
-  this.getMute     = function ()
+    playLength = this._object.StreamLength;
+  } 
+  catch(e) 
   {
-    this._verifyObject();
-    return this._muted;
+    this.LOG(e);
   }
 
-  this.setMute     = function ( mute )
+  return playLength;
+};
+
+CoreTotem.prototype.getPosition = function ()
+{
+  this._verifyObject();
+  var curPos = 0;
+
+  try 
   {
-    this._verifyObject();
-    if(mute) {
-      this._oldVolume = this.getVolume();
-      this._muted = true;
-    }
-    else {
-      this.setVolume(this._oldVolume);
-      this._muted = false;
-    }
-  }
-
-  this.getMetadata = function ( key )
+    curPos = this._object.CurrentTime;
+  } 
+  catch(e) 
   {
-    this._verifyObject();
-    return "";
+    this.LOG(e);
   }
 
-  this.goFullscreen = function ()
+  return curPos;
+};
+
+CoreTotem.prototype.setPosition = function ( pos )
+{
+  this._verifyObject();
+
+  try 
   {
-    this._verifyObject();
-    // Can totem do this?
+    this._object.SeekTime( pos );
   }
-
-  /**
-   *
-   */
-  this.getId = function() {
-    return this._id;
+  catch(e) 
+  {
+    this.LOG(e);
   }
+};
 
-  this.setId = function(id) {
-    if (this._id != id)
-      this._id = id;
+CoreTotem.prototype.getVolume = function ()
+{
+  this._verifyObject();
+  return Math.round(this._object.Volume / 100 * 255);
+};
+
+CoreTotem.prototype.setVolume = function ( volume )
+{
+  this._verifyObject();
+  
+  if ((volume < 0) || (volume > 255))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+    
+  this._object.Volume = Math.round(volume / 255 * 100); 
+};
+
+CoreTotem.prototype.getMute = function ()
+{
+  this._verifyObject();
+  return this._muted;
+};
+
+CoreTotem.prototype.setMute = function ( mute )
+{
+  this._verifyObject();
+  
+  if(mute) 
+  {
+    this._oldVolume = this.getVolume();
+    this._muted = true;
   }
-
-  /**
-   *
-   */
-  this.getObject = function() {
-    return this._object;
+  else 
+  {
+    this.setVolume(this._oldVolume);
+    this._muted = false;
   }
+};
 
-  this.setObject = function(object) {
-   if (this._object != object) {
-      if (this._object)
-        this.swapCore();
-      this._object = object;
-    }
-  }
+CoreTotem.prototype.getMetadata = function ( key )
+{
+  this._verifyObject();
+  return "";
+};
 
-  /**
-   * See nsISupports.idl
-   */
-  this.QueryInterface = function(iid) {
-    if (!iid.equals(Components.interfaces.sbICoreWrapper) &&
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+CoreTotem.prototype.goFullscreen = function ()
+{
+  this._verifyObject();
+  // Can totem do this?
+};
 
-}
+/**
+  * See nsISupports.idl
+  */
+CoreTotem.prototype.QueryInterface = function(iid) {
+  if (!iid.equals(Components.interfaces.sbICoreWrapper) &&
+      !iid.equals(Components.interfaces.nsISupports))
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+  return this;
+};
 
 /**
  * ----------------------------------------------------------------------------
  * Global variables and autoinitialization.
  * ----------------------------------------------------------------------------
  */
-var gTotemCore = new CoreTotem();
+try {
+  var gTotemCore = new CoreTotem();
+}
+catch(err) {
+  dump("ERROR!!! coreFLASH failed to create properly.");
+}
 
 /**
   * This is the function called from a document onload handler to bind everything as playback.
@@ -377,15 +286,9 @@ function CoreTotemDocumentInit( id )
     gTotemCore.setId("Totem1");
     gTotemCore.setObject(totemIframe.contentWindow.document.core_totem);
     gPPS.addCore(gTotemCore, true);
- }
+  }
   catch ( err )
   {
-    LOG( "\n!!! coreTotem failed to bind properly\n" + err );
+    dump( "\n!!! coreTotem failed to bind properly\n" + err );
   }
-}
-
-}
-catch ( err )
-{
-  LOG( "\n!!! coreTotem failed to load properly\n" + err );
-}
+};

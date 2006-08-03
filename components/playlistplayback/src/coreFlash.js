@@ -235,7 +235,7 @@ try {
   var gFlashCore = new CoreFlash();
 }
 catch (err) {
-  dump("ERROR!!! coreFLASH failed to create properly");
+  dump("ERROR!!! coreFLASH failed to create properly.");
 }
 
 /**
@@ -261,4 +261,3 @@ function InitPlaybackCoreFlash ( aElementId )
     dump( "\n!!! Flash PlaybackCore failed to bind properly\n" + err + "\n" );
   }
 };
- 
