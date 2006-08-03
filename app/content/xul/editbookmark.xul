@@ -109,7 +109,6 @@
         <image id="chrome_s" class="sb_faceplate" flex="1"/>
         <image id="chrome_se" class="sb_faceplate"/>
     </hbox>
-    <spacer height="15" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
   </vbox>
 </stack>
   
