@@ -97,10 +97,31 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					RelativePath=".\content\html\eula.html">
 				</File>
 				<File
+					RelativePath=".\content\html\flash.html">
+				</File>
+				<File
+					RelativePath=".\content\html\flashcore.html">
+				</File>
+				<File
 					RelativePath=".\content\html\jar.mn.in">
 				</File>
 				<File
+					RelativePath=".\content\html\mplayer.html">
+				</File>
+				<File
 					RelativePath=".\content\html\not_connected.html">
+				</File>
+				<File
+					RelativePath=".\content\html\qt.html">
+				</File>
+				<File
+					RelativePath=".\content\html\totem.html">
+				</File>
+				<File
+					RelativePath=".\content\html\vlc.html">
+				</File>
+				<File
+					RelativePath=".\content\html\wm.html">
 				</File>
 			</Filter>
 			<Filter
