@@ -1651,7 +1651,6 @@ function onLinkContext( evt )
     var disabled = "true";
     if ( gPPS.isMediaURL( theHTMLContextURL ) && ! SBUrlExistsInDatabase( theHTMLContextURL ) )
     {
-      alert("add enabled");
       disabled = "false"
     }
     document.getElementById( "html.context.add" ).setAttribute( "disabled", disabled );
@@ -1660,7 +1659,6 @@ function onLinkContext( evt )
     disabled = "true";
     if ( gPPS.isPlaylistURL( theHTMLContextURL ) )
     {
-      alert("playlist enabled");
       disabled = "false"
     }
     document.getElementById( "html.context.playlist" ).setAttribute( "disabled", disabled );
