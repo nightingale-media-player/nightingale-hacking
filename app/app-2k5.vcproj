@@ -2127,7 +2127,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\preferences\songbird-debug-prefs.js.in"
+				RelativePath=".\preferences\songbird-debug-prefs.js"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -2175,7 +2175,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\preferences\songbird-update-prefs.js.in"
+				RelativePath=".\preferences\songbird-update-prefs.js"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

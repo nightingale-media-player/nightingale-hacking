@@ -1,59 +1,101 @@
-//Songbird Default Prefs.
-pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");  // DON'T CHANGE THIS.  THIS IS * NOT * BONES.
+// Songbird Default Prefs.
+
+// DON'T CHANGE THIS.  This is not "bones".
+pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
 
 // This SHOULD remove the titlebar from the video window on the mac...
 // But defaultChromeFeatures is only in trunk at the moment.
 // If needed, consider patching nsDefaultCLH.
-// pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
+//pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
 
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
-
 
 // Interim "bones" implementation
 pref("general.bones.selectedMainWinURL", "chrome://rubberducky/content/xul/mainwin.xul");
 pref("general.bones.selectedMiniPlayerURL", "chrome://rubberducky/content/xul/miniplayer.xul");
 
-// HAH.  Okay, so, our skinswitching trick doesn't work unless we shut down their happycache.
+// Our skinswitching trick doesn't work unless we shut down the XUL cache.
 pref("nglayout.debug.disable_xul_cache", true);
 
-pref("config.trim_on_minimize", true); // Dump the current ram footprint when minimized.
+// Dump the current ram footprint when minimized.
+pref("config.trim_on_minimize", true);
 
-pref("browser.sessionhistory.max_total_viewers", 0);
-
-pref("browser.dom.window.dump.enabled", true);
-
-//Scan for some extra plugins.
+// Scan for some extra plugins.
 pref("plugin.scan.SunJRE", "1.3");
 pref("plugin.scan.Acrobat", "5.0");
 pref("plugin.scan.Quicktime", "5.0");
-
 pref("plugin.scan.WindowsMediaPlayer", "7.0");
 pref("plugin.scan.WindowsMediaPlayer", "8.0");
 pref("plugin.scan.WindowsMediaPlayer", "9.0");
 pref("plugin.scan.WindowsMediaPlayer", "10.0");
 
+// Windows Media Player
+pref("capability.policy.default.ClassID.CID6BF52A52-394A-11D3-B153-00C04F79FAA6", "AllAccess");
+pref("capability.policy.default.ClassID.CID74C09E02-F828-11d2-A74B-00A0C905F36E", "AllAccess");
+
+// QuickTime Player
+pref("capability.policy.default.ClassID.CID22D6F312-B0F6-11D0-94AB-0080C74C7E95", "AllAccess");
+
+// ActiveX support
 pref("general.useragent.vendorComment", "ax");
 pref("security.xpconnect.activex.global.hosting_flags", 9);
 pref("security.classID.allowByDefault", true);
 
-/* Windows Media Player */
-pref("capability.policy.default.ClassID.CID6BF52A52-394A-11D3-B153-00C04F79FAA6", "AllAccess");
-pref("capability.policy.default.ClassID.CID74C09E02-F828-11d2-A74B-00A0C905F36E", "AllAccess");
-/* QuickTime Player */
-pref("capability.policy.default.ClassID.CID22D6F312-B0F6-11D0-94AB-0080C74C7E95", "AllAccess");
-
-/* password manager */
+// Password Manager
 pref("signon.rememberSignons", true);
 pref("signon.expireMasterPassword", false);
 pref("signon.SignonFileName", "signons.txt");
 
-//
-// Do the include stuff at the end.
-//
-#includesubst songbird-update-prefs.js.in
+pref("browser.shell.checkDefaultBrowser", false);
+
+pref("browser.formfill.enable", true);
+
+pref("browser.search.update", false);
+pref("browser.search.update.log", false);
+pref("browser.search.updateinterval", 6);
+
+pref("browser.sessionhistory.max_total_viewers", 0);
+pref("browser.sessionhistory.max_entries", 50);
+
+pref("browser.xul.error_pages.enabled", true);
+
+//pref("browser.download.manager.retention", 2);
+//pref("browser.download.useDownloadDir", true);
+
+//pref("browser.link.open_external", 3);
+//pref("browser.link.open_newwindow", 3);
+//pref("browser.link.open_newwindow.restriction", 2);
+//pref("browser.tabs.loadInBackground", true);
+
+// Dynamic Skin Switching
+pref("extensions.dss.enabled", false);
+
+// Non-dynamic switch pending after next restart
+pref("extensions.dss.switchPending", false);
+
+pref("extensions.blocklist.enabled", true);
+pref("extensions.blocklist.interval", 86400);
+pref("extensions.ignoreMTimeChanges", false);
+
+pref("general.autoScroll", false);
+pref("general.smoothScroll", false);
+
+pref("layout.spellcheckDefault", 1);
+
+pref("network.protocol-handler.external.mailto", true);
+pref("network.protocol-handler.external.news", true);
+pref("network.protocol-handler.external.snews", true);
+pref("network.protocol-handler.external.nntp", true);
+
+pref("network.proxy.share_proxy_settings",  false);
+
+pref("plugin.default_plugin_disabled", true);
+pref("security.warn_entering_secure.show_once", true);
+pref("security.warn_leaving_secure.show_once", true);
+
+#includesubst songbird-update-prefs.js
 
 #ifdef DEBUG
-#includesubst songbird-debug-prefs.js.in
+#includesubst songbird-debug-prefs.js
 #endif
-

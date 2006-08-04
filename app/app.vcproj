@@ -1906,24 +1906,21 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\preferences\songbird-debug-prefs.js.in">
+				RelativePath=".\preferences\songbird-debug-prefs.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
-"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
+					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
-"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
@@ -1949,14 +1946,13 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\preferences\songbird-update-prefs.js.in">
+				RelativePath=".\preferences\songbird-update-prefs.js">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
-"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1964,8 +1960,7 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
-"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>

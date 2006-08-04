@@ -78,9 +78,6 @@ pref("extensions.update.interval", 86400);  // Check for updates to Extensions a
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
 pref("extensions.getMoreExtensionsURL", "chrome://mozapps/locale/extensions/extensions.properties");
 pref("extensions.getMoreThemesURL", "chrome://mozapps/locale/extensions/extensions.properties");
-pref("extensions.dss.enabled", false);          // Dynamic Skin Switching                                               
-pref("extensions.dss.switchPending", false);    // Non-dynamic switch pending after next
-                                                // restart.
 
 pref("xpinstall.whitelist.add", "www.songbirdnest.com");
 pref("xpinstall.whitelist.add.103", "www.songbirdnest.com");
