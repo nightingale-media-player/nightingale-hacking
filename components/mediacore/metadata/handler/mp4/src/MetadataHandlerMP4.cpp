@@ -146,44 +146,79 @@ void sbMetadataHandlerMP4::callback( const char *atom_path, const char *value_st
 {
   nsCString atom( atom_path );
   nsString key, value;
-  
+  PRInt32 type = 0; // everything is a string for now?
+
   // "covr.data" is album art.  deal with this later.
-  if ( key.Find("covr.data") == -1 )
+  if ( atom.Find("covr.data") == -1 )
     value = NS_ConvertUTF8toUTF16(value_string);
 
   // Mozilla Find can't handle high-bit characters.  Grrr.
-  if ( atom.Find("nam.data") != -1 )
+  if ( atom.Find("nam.data") != -1 ) {
     key = NS_LITERAL_STRING("title");
-  else if ( atom.Find("ART.data") != -1 )
+  }
+  else if ( atom.Find("ART.data") != -1 ) {
     key = NS_LITERAL_STRING("artist");
-  else if ( atom.Find("alb.data") != -1 )
+  }
+  else if ( atom.Find("alb.data") != -1 ) {
     key = NS_LITERAL_STRING("album");
-  else if ( atom.Find("gen.data") != -1 )
+  }
+  else if ( atom.Find("gen.data") != -1 ) {
     key = NS_LITERAL_STRING("genre");
-  else if ( atom.Find("trkn.data") != -1 )
-    key = NS_LITERAL_STRING("track_no");
-  else if ( atom.Find("disk.data") != -1 )
-    key = NS_LITERAL_STRING("disk_no");
-  else if ( atom.Find("day.data") != -1 )
+  }
+  else if ( atom.Find("trkn.data") != -1 ) {
+    type = 1;
+    PRUint32 track_no_int = (PRUint8)value_string[3];
+    PRUint32 track_total_int = (PRUint8)value_string[5];
+
+    nsAutoString track_no, track_total;
+    track_no.AppendInt( track_no_int );
+    track_total.AppendInt( track_total_int );
+
+    m_Values->SetValue( NS_LITERAL_STRING("track_no"), track_no, type );
+    m_Values->SetValue( NS_LITERAL_STRING("track_total"), track_total, type );
+  }
+  else if ( atom.Find("disk.data") != -1 ) {
+    type = 1;
+    PRUint32 disc_no_int = (PRUint8)value_string[3];
+    PRUint32 disc_total_int = (PRUint8)value_string[5];
+
+    nsAutoString disc_no, disc_total;
+    disc_no.AppendInt( disc_no_int );
+    disc_total.AppendInt( disc_total_int );
+
+    m_Values->SetValue( NS_LITERAL_STRING("disc_no"), disc_no, type );
+    m_Values->SetValue( NS_LITERAL_STRING("disc_total"), disc_total, type );
+  }
+  else if ( atom.Find("day.data") != -1 ) {
     key = NS_LITERAL_STRING("year");
-  else if ( atom.Find("cpil.data") != -1 )
+  }
+  else if ( atom.Find("cpil.data") != -1 ) {
     key = NS_LITERAL_STRING("compilation");
-  else if ( atom.Find("tmpo.data") != -1 )
+  }
+  else if ( atom.Find("tmpo.data") != -1 ) {
     key = NS_LITERAL_STRING("bpm");
-  else if ( atom.Find("too.data") != -1 )
+  }
+  else if ( atom.Find("too.data") != -1 ) {
     key = NS_LITERAL_STRING("vendor");
-  else if ( atom.Find("labl.data") != -1 )
+  }
+  else if ( atom.Find("labl.data") != -1 ) {
     key = NS_LITERAL_STRING("label");
-  else if ( atom.Find("burl.data") != -1 )
+  }
+  else if ( atom.Find("burl.data") != -1 ) {
     key = NS_LITERAL_STRING("source_url");
-  else if ( atom.Find("covr.data") != -1 )
+  }
+  else if ( atom.Find("covr.data") != -1 ) {
     key = NS_LITERAL_STRING("album_art");
-  else if ( atom.Find("wrt.data") != -1 )
+  }
+  else if ( atom.Find("wrt.data") != -1 ) {
     key = NS_LITERAL_STRING("composer");
-  else if ( atom.Find("gnre.data") != -1 )
+  }
+  else if ( atom.Find("gnre.data") != -1 ) {
     key = NS_LITERAL_STRING("genre");
-  else if ( atom.Find("orch.data") != -1 )
+  }
+  else if ( atom.Find("orch.data") != -1 ) {
     key = NS_LITERAL_STRING("orchestra");
+  }
   else
   {
     // Inform the console that we've a mystery.
@@ -196,7 +231,7 @@ void sbMetadataHandlerMP4::callback( const char *atom_path, const char *value_st
 
   if ( key.Length() )
   {
-    m_Values->SetValue( key, value, 0 );
+    m_Values->SetValue( key, value, type );
   }
 } 
 //-----------------------------------------------------------------------------
