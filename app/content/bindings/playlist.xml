@@ -1597,18 +1597,20 @@
         <parameter name="elem"/>
         <body>
           <![CDATA[
-            // No sort on this column.  It does not exist.
-            if (id == "row_id")
-              return; 
+            if (this.source) {
+              // No sort on this column.  It does not exist.
+              if (id == "row_id")
+                return this.source.setOrder(this.ref, ""); 
 
-            if (this.sortorder == id) {
-              if (this.sortdirection == "asc") this.sortdirection = "desc";
-              else this.sortdirection = "asc";
-            } else {
-              this.sortorder = id;
-              this.sortdirection = (id == "rating") ? "desc" : "asc";
+              if (this.sortorder == id) {
+                if (this.sortdirection == "asc") this.sortdirection = "desc";
+                else this.sortdirection = "asc";
+              } else {
+                this.sortorder = id;
+                this.sortdirection = (id == "rating") ? "desc" : "asc";
+              }
+              this.source.setOrder(this.ref, id + " " + this.sortdirection);
             }
-            if (this.source) this.source.setOrder(this.ref, id + " " + this.sortdirection);
           ]]>
         </body>
       </method>
