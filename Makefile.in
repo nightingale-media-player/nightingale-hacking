@@ -56,5 +56,9 @@ SUBDIRS += installer
 SUBDIRDEPS = installer : components app feathers locales
 endif
 
+ifdef SONGBIRD_OFFICIAL
+SUBDIRS += update
+SUBDIRDEPS2 = update : installer
+endif
 
 include $(topsrcdir)/build/rules.mk
