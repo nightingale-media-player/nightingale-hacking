@@ -76,7 +76,8 @@ endif
 ifeq (macosx,$(SB_PLATFORM))
 DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL
 DYNAMIC_LIB_EXTRA_IMPORTS += mozjs \
-                             libmp4 \
+                             $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS = $(MP4LIB_DIR)/lib/libmp4 \
                              $(NULL)
 endif
 

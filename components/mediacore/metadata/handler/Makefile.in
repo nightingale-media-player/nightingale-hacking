@@ -31,11 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = id3 \
           ogg \
+          mp4 \
           $(NONE)
-
-# right now mac not quite there
-ifneq (macosx,$(SB_PLATFORM))
-SUBDIRS += mp4
-endif
 
 include $(topsrcdir)/build/rules.mk
