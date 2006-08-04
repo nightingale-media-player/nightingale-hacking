@@ -290,6 +290,8 @@
       <field name="lastClickIndex">0</field>
       <field name="lastClickTimestamp">0</field>
       <field name="paused_scanning">false</field>
+      <field name="sortorder">""</field>
+      <field name="sortdirection">""</field>
 
       <property name="ref">
         <getter>
@@ -571,12 +573,12 @@
         
         // Sync the order column
         if ( this.sortorder != orderArray[0] )
-          dump("playlist.xml - onCycleHeader - Correcting sort order state. '" + this.sortorder + "' != '" + orderArray[0] + "'\n");
+          dump("playlist.xml - Correcting sort order state. '" + this.sortorder + "' != '" + orderArray[0] + "'\n");
         this.sortorder = orderArray[0];
         
         // Sync the direction
         if ( this.sortdirection != orderArray[1] )
-          dump("playlist.xml - onCycleHeader - Correcting sort direction state. '" + this.sortdirection + "' != '" + orderArray[1] + "'\n");
+          dump("playlist.xml - Correcting sort direction state. '" + this.sortdirection + "' != '" + orderArray[1] + "'\n");
         this.sortdirection = orderArray[1];
       }
       catch( err )
