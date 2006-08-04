@@ -78,23 +78,30 @@ sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
   if (mShutDown)
   {
     aRequest->Cancel(0);
-    return NS_OK;
   }
 
   // If download done for this file then, initiate the next download
   if (aStateFlags & STATE_STOP)
   {
-    // Copy the data so you're not sending stale pointers
-    // ("DownloadDone" deletes this item and frees the strings)
-    nsString deviceString = mDeviceString;
-    nsString table = mTable;
-    nsString index = mIndex;
-
-    // OK Download complete
-    if (mDownlodingDeviceObject)
+    if (mShutDown)
     {
-      mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
-      mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get());
+      // We are asked to shutdown so release the object
+      Release();
+    }
+    else
+    {
+      // Copy the data so you're not sending stale pointers
+      // ("DownloadDone" deletes this item and frees the strings)
+      nsString deviceString = mDeviceString;
+      nsString table = mTable;
+      nsString index = mIndex;
+
+      // OK Download complete
+      if (mDownlodingDeviceObject)
+      {
+        mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
+        mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get());
+      }
     }
 
   }
@@ -416,8 +423,6 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
   nsAutoString lUrl(destination);
   nsCOMPtr<nsILocalFile> linkFile;
   rv = NS_NewLocalFile(lUrl, PR_FALSE, getter_AddRefs(linkFile));
-
-  ReleaseListener();
 
   mListener = new sbDownloadListener(this, deviceString, table, index);
   mListener->AddRef();
