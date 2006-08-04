@@ -566,7 +566,8 @@
         
         // Compare the current ordering value in the playlistsource to make sure we stay in sync
         var order = this.source.getOrder(this.ref);
-        var orderArray = order.split(" ");
+        var orderArray = order.split(","); // Split out any comma delimited values first
+        var orderArray = orderArray[0].split(" "); // And only look at the first value
         
         // Sync the order column
         if ( this.sortorder != orderArray[0] )
@@ -1598,10 +1599,7 @@
         <body>
           <![CDATA[
             if (this.source) {
-              // No sort on this column.  It does not exist.
-              if (id == "row_id")
-                return this.source.setOrder(this.ref, ""); 
-
+              // Flip the sort direction
               if (this.sortorder == id) {
                 if (this.sortdirection == "asc") this.sortdirection = "desc";
                 else this.sortdirection = "asc";
@@ -1609,7 +1607,23 @@
                 this.sortorder = id;
                 this.sortdirection = (id == "rating") ? "desc" : "asc";
               }
-              this.source.setOrder(this.ref, id + " " + this.sortdirection);
+              
+              // Make some metadata columns have secondary columns associated!
+              var order = "";
+              if ( id == "row_id" ) // No sort on this column.  It does not exist.
+                this.sortorder = id;
+              else if ( id == "artist" )
+                order = "artist " + this.sortdirection + ", " +
+                        "album " + this.sortdirection + ", " +
+                        "track_no " + this.sortdirection;
+              else if ( id == "album" )
+                order = "album " + this.sortdirection + ", " +
+                        "track_no " + this.sortdirection;
+              else 
+                order = id + " " + this.sortdirection;
+              
+              // Tell the playlistsource how things should sort  
+              this.source.setOrder(this.ref, order);
             }
           ]]>
         </body>
