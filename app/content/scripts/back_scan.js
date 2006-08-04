@@ -36,8 +36,8 @@ try
   var aMetadataManager = new MetadataManager();
   const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
   var aMediaLibrary = new MediaLibrary();
-  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "service_uuid");
-  const bsDBGuidIdx = 7;
+  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "track_no", "track_total", "disc_no", "disc_total", "service_uuid");
+  const bsDBGuidIdx = 11; // If you add keys, make sure this is the index of "service_guid"
 
   var bsPaused = false;
   var bsDBQuery = null;

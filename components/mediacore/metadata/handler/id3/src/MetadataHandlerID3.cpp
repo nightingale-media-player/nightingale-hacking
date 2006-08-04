@@ -646,7 +646,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       case ID3FID_PUBLISHER: strKey.AppendLiteral("publisher"); break;
 
       //Track number/Position in set.
-      case ID3FID_TRACKNUM: strKey.AppendLiteral("track_no"); break;
+      case ID3FID_TRACKNUM: strKey.AppendLiteral("track_no"); type = 1; break;
 
       //Recording dates.
       case ID3FID_RECORDINGDATES: strKey.AppendLiteral(""); break;
@@ -777,7 +777,35 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
           }
         }
       }
-      m_Values->SetValue( strKey, strValue, type );
+      // Do special stuff if the value is "1 of 12" or "1/12"
+      if ( strKey == NS_LITERAL_STRING("track_no") || strKey == NS_LITERAL_STRING("disc_no") )
+      {
+        PRInt32 mark = strKey.Find("_");
+        nsAutoString totalKey;
+        strKey.Left( totalKey, mark );
+        totalKey.AppendLiteral("_total");
+
+        if ( ( mark = strValue.Find( "of", PR_TRUE ) ) != -1 )
+        {
+          nsAutoString _no, _total;
+          strValue.Left( _no, mark - 1 );
+          strValue.Right( _total, strValue.Length() - mark - 3 );
+          m_Values->SetValue( strKey, _no, type );
+          m_Values->SetValue( totalKey, _total, type );
+        }
+        else if ( ( mark = strValue.Find( "/", PR_TRUE ) ) != -1 )
+        {
+          nsAutoString _no, _total;
+          strValue.Left( _no, mark );
+          strValue.Right( _total, strValue.Length() - mark - 1 );
+          m_Values->SetValue( strKey, _no, type );
+          m_Values->SetValue( totalKey, _total, type );
+        }
+        else
+          m_Values->SetValue( strKey, strValue, type );
+      }
+      else  
+        m_Values->SetValue( strKey, strValue, type );
     }
   }
 
