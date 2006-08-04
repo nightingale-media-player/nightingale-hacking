@@ -253,33 +253,36 @@
               
               var aResObj = aDBQuery.getResultObject();
               var rowCount = aResObj.getRowCount();
-              var node = null, i = 0;
               
-              for(; i < rowCount; ++i)
+              // Hey, some people like to save empty conditions.  Neat.
+              if ( rowCount > 0 )
               {
-                node = new Object;
-                
-                node.metadata = aResObj.getRowCellByColumn(i, "column_name");
-                
-                var conditionName = aResObj.getRowCellByColumn(i, "constraint_name");
-                switch(conditionName)
+                var node = null, i = 0;
+                for(; i < rowCount; ++i)
                 {
-                  case "contains": conditionName = 0; break;
-                  case "does not contain": conditionName = 1; break;
-                  case "is": conditionName = 2; break;
-                  case "is not": conditionName = 3; break;
-                  case "starts with": conditionName = 4; break;
-                  case "ends with": conditionName = 5; break;
+                  node = new Object;
+                  
+                  node.metadata = aResObj.getRowCellByColumn(i, "column_name");
+                  
+                  var conditionName = aResObj.getRowCellByColumn(i, "constraint_name");
+                  switch(conditionName)
+                  {
+                    case "contains": conditionName = 0; break;
+                    case "does not contain": conditionName = 1; break;
+                    case "is": conditionName = 2; break;
+                    case "is not": conditionName = 3; break;
+                    case "starts with": conditionName = 4; break;
+                    case "ends with": conditionName = 5; break;
+                  }
+                  
+                  node.condition = conditionName;
+                  node.value = aResObj.getRowCellByColumn(i, "constraint_value");
+                  
+                  conditionsArray.push(node);
                 }
-                
-                node.condition = conditionName;
-                node.value = aResObj.getRowCellByColumn(i, "constraint_value");
-                
-                conditionsArray.push(node);
+                smartConditions.setConditions(conditionsArray);
+                use_new = false; // Don't make a new one, we loaded the previous conditions.
               }
-              
-              smartConditions.setConditions(conditionsArray);
-              use_new = false; // Don't make a new one, we set conditions.
             }
           }
         }
