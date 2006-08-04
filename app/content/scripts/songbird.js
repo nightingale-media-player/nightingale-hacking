@@ -350,7 +350,7 @@ function SBUrlChanged( value )
         // value _should_ be set correctly now.
         if (value == null)
           value = SBDataGetStringValue("faceplate.play.url");
-        if ( gPPS.isVideoUrl( value ) ) {
+        if ( gPPS.isVideoURL( value ) ) {
           service.uncloak( document ); 
         }
         else {

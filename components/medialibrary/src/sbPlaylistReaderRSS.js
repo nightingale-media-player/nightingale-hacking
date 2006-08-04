@@ -314,7 +314,7 @@ CPlaylistRSS.prototype =
         }
       }
       
-      if(url != "" && this.gPPS.isMediaUrl(url))
+      if(url != "" && this.gPPS.isMediaURL(url))
       {
         var aMetaKeys = new Array("artist", "title", "content_type");
         var aMetaValues = new Array( artist, title, type );

@@ -51,7 +51,7 @@ CoreQT.prototype = new CoreBase();
 CoreQT.prototype.constructor = CoreQT();
 
 // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
-CoreQT.prototype.playUrl = function ( aURL )
+CoreQT.prototype.playURL = function ( aURL )
 {
   this._verifyObject();
 

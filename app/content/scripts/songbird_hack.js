@@ -301,7 +301,7 @@ function SBInitialize()
 //    var the_url = "file:///c:\\vice.html";
 //    var the_url = "http://odeo.com/channel/38104/rss";
 //    var the_url = "http://takeyourmedicinemp3.blogspot.com/atom.xml";
-//    var success = thePlaylistReader.autoLoad(the_url, "songbird", gPPS.convertUrlToDisplayName( the_url ), "http", the_url, "", null);
+//    var success = thePlaylistReader.autoLoad(the_url, "songbird", gPPS.convertURLToDisplayName( the_url ), "http", the_url, "", null);
 
 /*
     try
@@ -1621,7 +1621,7 @@ function onLinkOver( evt )
 {
   var the_url = GetHrefFromEvent( evt )
   theStatusText.stringValue = the_url;
-  if ( gPPS.isMediaUrl( the_url ) )
+  if ( gPPS.isMediaURL( the_url ) )
   {
     theStatusStyle.stringValue = "font-weight: bold;";
   }
@@ -1649,7 +1649,7 @@ function onLinkContext( evt )
     
     // Disable "Add" if the url isn't media or is already there.
     var disabled = "true";
-    if ( gPPS.isMediaUrl( theHTMLContextURL ) && ! SBUrlExistsInDatabase( theHTMLContextURL ) )
+    if ( gPPS.isMediaURL( theHTMLContextURL ) && ! SBUrlExistsInDatabase( theHTMLContextURL ) )
     {
       alert("add enabled");
       disabled = "false"
@@ -1658,7 +1658,7 @@ function onLinkContext( evt )
     
     // Disable "Add as Playlist" if the url isn't a playlist (NOTE: any HTML url will go as playlist)
     disabled = "true";
-    if ( gPPS.isPlaylistUrl( theHTMLContextURL ) )
+    if ( gPPS.isPlaylistURL( theHTMLContextURL ) )
     {
       alert("playlist enabled");
       disabled = "false"
@@ -1687,7 +1687,7 @@ function playExternalUrl(the_url, tryweb)
     }
   } else {
     // otherwise, play the url as external (added to the db, plays the library from that point on)
-    PPS.playAndImportUrl(the_url); // if the url is already in the lib, it is not added twice
+    PPS.playAndImportURL(the_url); // if the url is already in the lib, it is not added twice
   }
 }
 
@@ -1697,7 +1697,7 @@ function onMediaClick( evt )
   try
   {
     var the_url = GetHrefFromEvent( evt );
-    if ( gPPS.isMediaUrl( the_url ) )
+    if ( gPPS.isMediaURL( the_url ) )
     {
       playExternalUrl(the_url, true);
       evt.stopPropagation();
@@ -2214,7 +2214,7 @@ function onHTMLContextMenu( target )
     switch ( v )
     {
       case "html.context.open":
-        if ( gPPS.isMediaUrl( theHTMLContextURL ) )
+        if ( gPPS.isMediaURL( theHTMLContextURL ) )
         {
           playExternalUrl(theHTMLContextURL, true);
         }
@@ -2229,11 +2229,11 @@ function onHTMLContextMenu( target )
       break;
       case "html.context.add":
         var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        PPS.importUrl(theHTMLContextURL);
+        PPS.importURL(theHTMLContextURL);
       break;
       case "html.context.playlist":
         SBScanServiceTreeNewEntryEditable();
-        var success = thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", gPPS.convertUrlToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
+        var success = thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", gPPS.convertURLToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
         SBScanServiceTreeNewEntryStart();
       break;
     }
@@ -2498,7 +2498,7 @@ function SBDropped()
     SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
     theMediaScanIsOpen.boolValue = false;
   }
-  else if ( gPPS.isMediaUrl( theDropPath ) )
+  else if ( gPPS.isMediaURL( theDropPath ) )
   {
     // add it to the db and play it.
     playExternalUrl(theDropPath, false);

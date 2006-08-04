@@ -162,8 +162,8 @@ try
     function( url )     
     {
       var loop_break = false;
-      var is_media = gPPS.isMediaUrl( url );
-//      var is_playlist = gPPS.isPlaylistUrl( url );
+      var is_media = gPPS.isMediaURL( url );
+//      var is_playlist = gPPS.isPlaylistURL( url );
       if ( is_media )
       {
         SBDataSetIntValue( "webplaylist.current", this.i + 1 );
@@ -199,7 +199,7 @@ try
         if ( ! skip )
         {
           var keys = new Array( "title" );
-          var values = new Array( gPPS.convertUrlToDisplayName( url ) );
+          var values = new Array( gPPS.convertURLToDisplayName( url ) );
           var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, false, false );
           // XXXredfive
           this.aPlaylist.addByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
@@ -245,7 +245,7 @@ catch ( err )
           
           if ( rv != 0 )
           {
-            alert( "FAILED: " + gPPS.convertUrlToDisplayName( url ) + "  ----  Result value: " + rv + text );
+            alert( "FAILED: " + gPPS.convertURLToDisplayName( url ) + "  ----  Result value: " + rv + text );
           }
           */
           

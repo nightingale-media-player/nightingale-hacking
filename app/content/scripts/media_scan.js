@@ -115,7 +115,7 @@ function onPollScan()
       if ( len )
       {
         var value = aMediaScanQuery.getLastFileFound();
-        theLabel.value = gPPS.convertUrlToFolder(value);
+        theLabel.value = gPPS.convertURLToFolder(value);
       }
     }
   }
@@ -157,13 +157,13 @@ function onScanComplete( mediaScanQuery )
         var the_url = null;
         var is_url = null;
         the_url = aMediaScanQuery.getFilePath( i );
-        is_url = gPPS.isMediaUrl( the_url );
+        is_url = gPPS.isMediaURL( the_url );
 
         if ( is_url )
         {
           var keys = new Array( "title" );
           var values = new Array();
-          values.push( gPPS.convertUrlToDisplayName( the_url ) );
+          values.push( gPPS.convertURLToDisplayName( the_url ) );
           aMediaLibrary.addMedia( the_url, keys.length, keys, values.length, values, false, true );
           aQueryFileArray.push( values[0] );
         }

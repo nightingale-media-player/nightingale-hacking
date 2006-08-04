@@ -203,7 +203,7 @@ function CoreWMP() {
   /**
    *
    */
-  this.playUrl = function(url) {
+  this.playURL = function(url) {
     this._verifyObject();
     if (!url)
       throw Components.results.NS_ERROR_INVALID_ARG;

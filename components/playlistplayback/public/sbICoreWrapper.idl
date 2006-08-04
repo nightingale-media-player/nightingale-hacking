@@ -156,7 +156,7 @@ interface sbICoreWrapper : nsISupports
    * \throws NS_ERROR_INVALID_ARG If the URL passed in is null/undefined.
    * \throws NS_ERROR_NOT_INITIALIZED If no object has been set.
    */
-  boolean playUrl(in AString aURL);
+  boolean playURL(in AString aURL);
 
   /**
    * \brief Resume paused playback.  Multiple calls do nothing.

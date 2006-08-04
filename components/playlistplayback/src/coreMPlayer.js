@@ -43,7 +43,7 @@ CoreMPlayer.prototype.constructor = CoreMPlayer;
 
   
 // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
-CoreMPlayer.prototype.playUrl = function ( aURL )
+CoreMPlayer.prototype.playURL = function ( aURL )
 {
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;

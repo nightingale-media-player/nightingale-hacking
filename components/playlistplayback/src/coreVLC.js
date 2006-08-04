@@ -58,7 +58,7 @@ CoreVLC.prototype = new CoreBase();
 // set the constructor so we use ours and not the one for CoreBase
 CoreVLC.prototype.constructor = CoreVLC();
 
-CoreVLC.prototype.playUrl = function (aURL)
+CoreVLC.prototype.playURL = function (aURL)
 {
   this._verifyObject();
 

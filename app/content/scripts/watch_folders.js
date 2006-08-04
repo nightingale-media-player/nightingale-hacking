@@ -126,12 +126,12 @@ function onWFLibraryAdd()
   {
     var strURL = wfMediaScanQuery.getFilePath(wfCurrentFile);
     
-    if(gPPS.isMediaUrl(strURL))
+    if(gPPS.isMediaURL(strURL))
     {
       var keys = new Array( "title" );
       var values = new Array();
           
-      values.push( gPPS.convertUrlToDisplayName( strURL ) );
+      values.push( gPPS.convertURLToDisplayName( strURL ) );
       
       wfMediaLibrary.addMedia(strURL, keys.length, keys, values.length, values, false, true);
       

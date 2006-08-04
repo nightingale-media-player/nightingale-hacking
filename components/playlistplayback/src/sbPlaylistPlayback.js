@@ -202,7 +202,7 @@ PlaylistPlayback.prototype = {
    * All the data remotes we probably mess with
    */
   _playButton:         null,
-  _playUrl:            null,
+  _playURL:            null,
   _seenPlaying:        null,
   _lastVolume:         null,
   _volume:             null,
@@ -215,7 +215,7 @@ PlaylistPlayback.prototype = {
   _metadataArtist:     null,
   _metadataAlbum:      null,
   _metadataGenre:      null,
-  _metadataUrl:        null,
+  _metadataURL:        null,
   _metadataPos:        null,
   _metadataLen:        null,
   _metadataPosText:    null,
@@ -271,7 +271,7 @@ PlaylistPlayback.prototype = {
     // Play/Pause image toggle
     this._playButton            = createDataRemote("faceplate.play", null);
     //string current           
-    this._playUrl               = createDataRemote("faceplate.play.url", null);
+    this._playURL               = createDataRemote("faceplate.play.url", null);
     //actually playing         
     this._seenPlaying           = createDataRemote("faceplate.seenplaying", null);
     this._volume                = createDataRemote("faceplate.volume", null);
@@ -288,7 +288,7 @@ PlaylistPlayback.prototype = {
     this._metadataArtist        = createDataRemote("metadata.artist", null);
     this._metadataAlbum         = createDataRemote("metadata.album", null);
     this._metadataGenre         = createDataRemote("metadata.genre", null);
-    this._metadataUrl           = createDataRemote("metadata.url", null);
+    this._metadataURL           = createDataRemote("metadata.url", null);
     this._metadataPos           = createDataRemote("metadata.position", null);
     this._metadataLen           = createDataRemote("metadata.length", null);
     this._resetSearchData       = createDataRemote("faceplate.search.reset", null);
@@ -314,7 +314,7 @@ PlaylistPlayback.prototype = {
     this._faceplateState.boolValue = false;
     this._restartOnPlaybackEnd.boolValue = false;
     this._restartAppNow.boolValue = false;
-    this._metadataUrl.stringValue = "";
+    this._metadataURL.stringValue = "";
     this._metadataTitle.stringValue = "";
     this._metadataArtist.stringValue = "";
     this._metadataAlbum.stringValue = "";
@@ -322,7 +322,7 @@ PlaylistPlayback.prototype = {
     this._statusText.stringValue = "";
     this._statusStyle.stringValue = "";
     this._playingRef.stringValue = "";
-    this._playUrl.stringValue = ""; 
+    this._playURL.stringValue = ""; 
     this._playButton.boolValue = true; // Start on.
 
     // if they have not been set they will be the empty string.
@@ -338,7 +338,7 @@ PlaylistPlayback.prototype = {
   _releaseDataRemotes: function() {
     // And we have to let them go when we are done else all hell breaks loose.
     this._playButton.unbind();
-    this._playUrl.unbind();
+    this._playURL.unbind();
     this._seenPlaying.unbind();
     this._volume.unbind();
     this._muteData.unbind();
@@ -352,7 +352,7 @@ PlaylistPlayback.prototype = {
     this._metadataArtist.unbind();
     this._metadataAlbum.unbind();
     this._metadataGenre.unbind();
-    this._metadataUrl.unbind();
+    this._metadataURL.unbind();
     this._metadataPos.unbind();
     this._metadataLen.unbind();
     this._resetSearchData.unbind();
@@ -513,7 +513,7 @@ PlaylistPlayback.prototype = {
   },
   
   get currentURL() {
-    return this._playUrl;
+    return this._playURL;
   },
   
   // ---------------------------------------------
@@ -596,10 +596,12 @@ PlaylistPlayback.prototype = {
     this._updateCurrentInfo(aSourceRef, aIndex);
 
     // Then play it
-    this.playUrl(this._playUrl.stringValue);
+    var retval = this.playURL(this._playURL.stringValue);
 
     // Hide the intro box and show the normal faceplate box
     this._faceplateState.boolValue = true;
+ 
+    return retval;
   },
 
   playRefByID: function(aSourceRef, aRowID) {
@@ -641,32 +643,87 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     // Start the playback
-    this.playUrl(aURL);
+    var retval = this.playURL(aURL);
 
-    // XXXredfive - Needed? playRef() above does this before calling playUrl()
+    // XXXredfive - Needed? playRef() above does this before calling playURL()
     // update the current info in 250ms
     setTimeout('var index = this._source.getRefRowByColumnValue(' +
                aSourceRef + ', "url",' + aURL + '); this._updateCurrentInfo(' +
                aSourceRef + ', index )', 250
               );
-   
-    return;
+    return retval;
   },
 
-  playTable: function(aDatabaseGUID, aTable, aIndex) {
-    LOG("playTable - db: " + aDatabaseGUID + "\ntable: " + aTable + "\nindex: " + aIndex);
-    
-    if ( !aDatabaseGUID || !aTable || (aIndex == null) )
+  playTable: function(aDatabaseID, aTable, aIndex) {
+    LOG("playTable - db: " + aDatabaseID + "\ntable: " + aTable + "\nindex: " + aIndex);
+    if ( !aDatabaseID || !aTable || (aIndex == null) )
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
+    // Setup the table to play from
+    var ppRef = this._setupTable;
+
+    // And then use the source to play that ref.
+    return this.playRef( ppRef, aIndex );
+  },
+
+  playTableByURL: function(aDatabaseID, aTable, aURL) {
+    LOG("playTableByURL - db: " + aDatabaseID + "\ntable: " + aTable + "\nurl: " + aURL);
+    if ( !aDatabaseID || !aTable || (aURL == "") )
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    // Setup the table to play from
+    var ppRef = this._setupTable(aDatabaseID, aTable);
+
+    // Find the index and play the ref.
+    var index = this._source.getRefRowByColumnValue(aSourceRef, "url", aURL);
+    return this.playRef( ppRef, index );
+  },
+  
+  playTableByID: function(aDatabaseID, aTable, aRowID) {
+    LOG("playTableByID - db: " + aDatabaseID + "\ntable: " + aTable + "\nRowID: " + aRowID);
+    if ( !aDatabaseID || !aTable || (aRowID == null) )
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    // Setup the table to play from
+    var ppRef = this._setupTable(aDatabaseID, aTable);
+
+    // Find the index and play the ref.
+    var index = this._source.getRefRowByColumnValue(ppRef, "id", aRowID);
+    return this.playRef( ppRef, index );
+  },
+
+  playTableByUUID: function(aDatabaseID, aTable, aMediaUUID) {
+    LOG("playTableByID - db: " + aDatabaseID + "\ntable: " + aTable + "\nUUID: " + aMediaUUID);
+    if ( !aDatabaseID || !aTable || (aMediaUUID == "") )
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+
+    // Setup the table to play from
+    var ppRef = this._setupTable(aDatabaseID, aTable);
+
+    // Find the index and play the ref.
+    var index = this._source.getRefRowByColumnValue(ppRef, "uuid", aMediaUUID);
+    return this.playRef( ppRef, index );
+  },
+
+  // PRE: aDatabaseID and aTable must be valid
+  _setupTable: function(aDatabaseID, aTable) {
     // Create a ref different from what playlist.xml uses as a ref.
-    var ppRef = "sbPlaylistPlayback.js_" + aDatabaseGUID + "_" + aTable;
+    var ppRef = "sbPlaylistPlayback.js_" + aDatabaseID + "_" + aTable;
     
     // Tell playlistsource to set up that ref to the requested playlist
-    this._source.feedPlaylist( ppRef, aDatabaseGUID, aTable );
+    this._source.feedPlaylist( ppRef, aDatabaseID, aTable );
     this._source.executeFeed( ppRef );
     
     // Synchronous call!  Woo hoo!
@@ -674,49 +731,33 @@ PlaylistPlayback.prototype = {
 
     // After the call is done, force GetTargets
     this._source.forceGetTargets( ppRef );
-    
-    // And then use the source to play that ref.
-    return this.playRef( ppRef, aIndex );
-  },
 
-  // XXXredfive - borked
-  playTableByUrl: function(aDatabaseGUID, aTable, aURL) {
-    var index = this._source.getRefRowByColumnValue(aSourceRef, "url", aURL);
-    this.playTable(aDatabaseGUID, aTable, index);
+    return ppRef;
   },
   
-  // XXXredfive - borked
-  playTableByID: function(aDatabaseGUID, aTable, aRowID) {
-    var index = this._source.getRefRowByColumnValue(aSourceRef, "id", aRowID);
-    this.playTable(aDatabaseGUID, aTable, index);
-  },
-  
-  playObject: function(playlist, aIndex) {
-    if (!playlist || !aIndex)
+  playObject: function(aPlaylist, aIndex) {
+    if (!aPlaylist || !aPlaylist.ref || !aIndex)
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
       
-    if ( playlist.ref )
-      return this.playRef(playlist.ref, aIndex);
-    else
-      throw Components.results.NS_ERROR_INVALID_ARG;
+    return this.playRef(aPlaylist.ref, aIndex);
   },
 
-  playUrl: function(aURL) {
+  playURL: function(aURL) {
     try  {
       var core = this.core;
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-      this._playUrl.stringValue = aURL;
-      this._metadataUrl.stringValue = aURL;
+      this._playURL.stringValue = aURL;
+      this._metadataURL.stringValue = aURL;
 
       core.stop();
-      core.playUrl( aURL );
+      core.playURL( aURL );
 
-      LOG( "playUrl() '" + core.getId() + "'(" + this.position + "/" +
+      LOG( "playURL() '" + core.getId() + "'(" + this.position + "/" +
            this.length + ") - playing: " + this.playing +
            " paused: " + this.paused
          );
@@ -736,25 +777,25 @@ PlaylistPlayback.prototype = {
       }
       this.metrics_inc("play.attempt", core.getId(), null);
     } catch( err ) {
-      LOG( "playUrl:\n" + err );
+      LOG( "playURL:\n" + err );
       return false;
     }
     return true;
   },
   
-  playAndImportUrl: function(aURL) {
+  playAndImportURL: function(aURL) {
     try  {
-      var row = this._importUrlInLibrary(aURL);
+      var row = this._importURLInLibrary(aURL);
       this.playRefByURL("NC:songbird_library", aURL);
     } catch( err ) {
-      LOG( "playAndImportUrl:\n" + err );
+      LOG( "playAndImportURL:\n" + err );
       return false;
     }
     return true;
   },
   
-  importUrl: function(aURL) {
-    return this._importUrlInLibrary(aURL);
+  importURL: function(aURL) {
+    return this._importURLInLibrary(aURL);
   },
 
   pause: function() {
@@ -861,11 +902,11 @@ PlaylistPlayback.prototype = {
     return;
   },
 
-  isMediaUrl: function(aURL) {
+  isMediaURL: function(aURL) {
     // Case insensitive.
     aURL.toLowerCase();
     
-// NO    if (this.isPlaylistUrl(aURL)) return true;
+// NO    if (this.isPlaylistURL(aURL)) return true;
     if( ( aURL.indexOf ) && 
         (
           // Protocols at the beginning
@@ -899,7 +940,7 @@ PlaylistPlayback.prototype = {
     return false;
   },
 
-  isVideoUrl: function ( aURL )
+  isVideoURL: function ( aURL )
   {
     aURL.toLowerCase();
     if ( ( aURL.indexOf ) && 
@@ -923,7 +964,7 @@ PlaylistPlayback.prototype = {
     return false;
   },
 
-  isPlaylistUrl: function(aURL) {
+  isPlaylistURL: function(aURL) {
     if ( aURL.indexOf )
     {
       // Cache our manager, but not at construction!
@@ -953,25 +994,27 @@ PlaylistPlayback.prototype = {
     return false;
   },
   
-  stripHoursFromTimeString: function ( str )
+  stripHoursFromTimeString: function ( aTimeString )
   {
-    if ( str == null )
-      str = "";
-    var retval = str;
-    if ( ( str.length == 7 ) && ( str[ 0 ] == "0" ) && ( str[ 1 ] == ":" ) )
+    if ( aTimeString == null )
+      aTimeString = "";
+    var retval = aTimeString;
+    if ( ( aTimeString.length == 7 ) &&
+         ( aTimeString[ 0 ] == "0" ) &&
+         ( aTimeString[ 1 ] == ":" ) )
     {
-      retval = str.substring( 2, str.length );
+      retval = aTimeString.substring( 2, aTimeString.length );
     }
     return retval;
   },
 
-  emitSecondsToTimeString: function ( seconds )
+  emitSecondsToTimeString: function ( aSeconds )
   {
-    if ( seconds < 0 )
+    if ( aSeconds < 0 )
       return "00:00";
-    seconds = parseFloat( seconds );
-    var minutes = parseInt( seconds / 60 );
-    seconds = parseInt( seconds ) % 60;
+    aSeconds = parseFloat( aSeconds );
+    var minutes = parseInt( aSeconds / 60 );
+    aSeconds = parseInt( aSeconds ) % 60;
     var hours = parseInt( minutes / 60 );
     if ( hours > 50 ) // lame
       return "Error";
@@ -982,13 +1025,13 @@ PlaylistPlayback.prototype = {
     if ( minutes < 10 )
       text += "0";
     text += minutes + ":";
-    if ( seconds < 10 )
+    if ( aSeconds < 10 )
       text += "0";
-    text += seconds;
+    text += aSeconds;
     return text;
   },
   
-  convertUrlToDisplayName: function( aURL )
+  convertURLToDisplayName: function( aURL )
   {
     var urlDisplay = "";
     
@@ -1016,7 +1059,7 @@ PlaylistPlayback.prototype = {
     return urlDisplay;
   },
 
-  convertUrlToFolder: function( aURL )
+  convertURLToFolder: function( aURL )
   {
     // Set the title display  
     aURL = decodeURI( aURL );
@@ -1187,7 +1230,7 @@ PlaylistPlayback.prototype = {
       // If the current title is part of the url, it is okay to overwrite the title.
       if ( title.length && ( 
           ( this._metadataTitle.stringValue != title ) &&
-          ( this._playUrl.stringValue.indexOf( this._metadataTitle.stringValue ) != -1 )
+          ( this._playURL.stringValue.indexOf( this._metadataTitle.stringValue ) != -1 )
          ) )
         this._set_metadata = true; 
       else
@@ -1210,7 +1253,7 @@ PlaylistPlayback.prototype = {
 
       if ( this._set_metadata ) {
         // Set the metadata into the database table
-        this._setURLMetadata( this._playUrl.stringValue, title, length, album, artist, genre, true );
+        this._setURLMetadata( this._playURL.stringValue, title, length, album, artist, genre, true );
         // Tell the search popup the metadata has changed
         this._resetSearchData.intValue++;
         this._set_metadata = false;
@@ -1267,7 +1310,7 @@ PlaylistPlayback.prototype = {
                                                         // GRRRRRR!
     var cur_index = this._playlistIndex.intValue; // this._findCurrentIndex;
     var cur_ref = this._playingRef.stringValue;
-    var cur_url = this._playUrl.stringValue;
+    var cur_url = this._playURL.stringValue;
   
     // Doublecheck that filters match what they were when we last played something.  
     var panic = false;
@@ -1344,7 +1387,7 @@ PlaylistPlayback.prototype = {
     var retval = -1;
     var ref = this._playingRef.stringValue;
     if ( this._playingRef.stringValue.length > 0 ) {
-      retval = this._source.getRefRowByColumnValue( ref, "url", this._playUrl.stringValue );
+      retval = this._source.getRefRowByColumnValue( ref, "url", this._playURL.stringValue );
     }
     return retval;
   },
@@ -1361,7 +1404,7 @@ PlaylistPlayback.prototype = {
     }
   },
   
-  _importUrlInLibrary: function( aURL )
+  _importURLInLibrary: function( aURL )
   {
     var library = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
 
@@ -1373,7 +1416,7 @@ PlaylistPlayback.prototype = {
     // prepare the data for addMedia call
     var keys = new Array( "title" );
     var values = new Array();
-    values.push( this.convertUrlToDisplayName( aURL ) );
+    values.push( this.convertURLToDisplayName( aURL ) );
 
     // add the url to the library
     var guid = library.addMedia( aURL, keys.length, keys, values.length, values, false, false );
@@ -1440,8 +1483,8 @@ PlaylistPlayback.prototype = {
     var genre = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "genre" );
     
     // Set the data remotes to indicate what is about to play
-    this._playUrl.stringValue = url;
-    this._metadataUrl.stringValue = url;
+    this._playURL.stringValue = url;
+    this._metadataURL.stringValue = url;
     this._metadataTitle.stringValue = title;
     this._metadataArtist.stringValue = artist;
     this._metadataAlbum.stringValue = album;

@@ -51,7 +51,7 @@ CoreTotem.prototype = new CoreBase();
 // set the constructor so we use ours and not the one for CoreBase
 CoreTotem.prototype.constructor = CoreTotem();
 
-CoreTotem.prototype.playUrl = function ( aURL )
+CoreTotem.prototype.playURL = function ( aURL )
 {
   this._verifyObject();
 

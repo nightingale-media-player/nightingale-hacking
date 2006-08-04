@@ -197,7 +197,7 @@ CPlaylistHTML.prototype =
               {
                 var temp = line.substr( href_idx + 6, line.length );
                 var href = temp.substr( 0, temp.indexOf('"') );
-                if ( this.gPPS.isMediaUrl( href ) )
+                if ( this.gPPS.isMediaURL( href ) )
                 {
                   if ( href.indexOf( '://' ) == -1 )
                   {
@@ -290,7 +290,7 @@ CPlaylistHTML.prototype =
           if ( !skip )
           {
             var aMetaKeys = new Array("title");
-            var aMetaValues = new Array( this.gPPS.convertUrlToDisplayName( url ) );
+            var aMetaValues = new Array( this.gPPS.convertURLToDisplayName( url ) );
 
             var guid = pLibrary.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
             pPlaylist.addByGUID( guid, strGUID, -1, replace, true );

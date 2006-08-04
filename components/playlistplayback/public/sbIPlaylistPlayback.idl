@@ -284,7 +284,8 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_INVALID_ARG if aSourceRef or aIndex is null or if aIndex
    *        is negative.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
   boolean playRef(in AString aSourceRef, in unsigned long aIndex);
 
@@ -296,120 +297,129 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_INVALID_ARG if aSourceRef or aRowID is null or if aRowID
    *        is negative.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
   boolean playRefByID(in AString aSourceRef, in unsigned long aRowID);
 
   /**
    * \brief Play a particular track from a source.
    *
-   * \param aSourceRef
-   * \param aMediaUUID
-   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aMediaUUDI is null
+   * \param aSourceRef - A valid table reference in the library
+   * \param aMediaUUID - the UUID for the track to play
+   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aMediaUUID is null
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
   boolean playRefByUUID(in AString aSourceRef, in AString aMediaUUID);
 
   /**
    * \brief Play a particular track from a source.
    *
-   * \param aSourceRef
-   * \param aURL
-   * \throw
+   * \param aSourceRef - A valid table reference in the library
+   * \param aURL - the url of the track to play
+   * \throw NS_ERROR_INVALID_ARG if aSourceRef or aURL is empty
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
   boolean playRefByURL(in AString aSourceRef, in AString aURL);
 
   /**
-   * \brief
+   * \brief Play a table, starting at the index provided
    *
-   * \param aDatabaseGUID
-   * \param aTable
-   * \param aIndex
-   * \throw
+   * \param aDatabaseID - An identifier to a database
+   * \param aTable - A table in the database referenced by the id
+   * \param aIndex - The index at which to start playback.
+   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if aURL
+   *        isn't contained in the table.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
-  boolean playTable(in AString aDatabaseGUID, in AString aTable, in unsigned long aIndex);
+  boolean playTable(in AString aDatabaseID, in AString aTable, in unsigned long aIndex);
 
   /**
-   * \brief
+   * \brief Play a table, starting at the url provided.
    *
-   * \param aDatabaseGUID
-   * \param aTable
-   * \param aURL
-   * \throw
+   * \param aDatabaseID - An identifier to a database
+   * \param aTable - A table in the database referenced by the id
+   * \param aURL - The URL of the track within to the table to start playing
+   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if aURL
+   *        isn't contained in the table.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
-  boolean playTableByURL(in AString aDatabaseGUID, in AString aTable, in AString aURL);
+  boolean playTableByURL(in AString aDatabaseID, in AString aTable, in AString aURL);
 
   /**
-   * \brief
+   * \brief Play a table, starting at the ID provided.
    *
-   * \param aDatabaseGUID
-   * \param aTable
-   * \param aRowID
-   * \throw
+   * \param aDatabaseID - An identifier to a database
+   * \param aTable - A table in the database referenced by the id
+   * \param aRowID - The ID of the row at which to start playback.
+   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if aRowID
+   *        isn't a valid row.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
-  boolean playTableByID(in AString aDatabaseGUID, in AString aTable, in unsigned long aRowID);
+  boolean playTableByID(in AString aDatabaseID, in AString aTable, in unsigned long aRowID);
 
   /**
-   * \brief
+   * \brief Play a table, starting at the UUID provided
    *
-   * \param aDatabaseGUID
-   * \param aTable
-   * \param aUUID
-   * \throw
+   * \param aDatabaseID - An identifier to a database
+   * \param aTable - A table in the database referenced by the id
+   * \param aMediaUUID - The UUID of the row at which to start playback.
+   * \throw NS_ERROR_INVALID_ARG if aDatabaseID or aTable is empty or if 
+   *        aMediaUUID isn't a valid row.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successful
+   * \return false if playback is not successful
    */
-  boolean playTableByUUID(in AString aDatabaseGUID, in AString aTable, in AString aUUID);
+  boolean playTableByUUID(in AString aDatabaseID, in AString aTable, in AString aMediaUUID);
 
   /**
-   * \brief
+   * \brief Play an item in a playlist
    *
-   * \param aPlaylist
-   * \param aIndex
-   * \throw
+   * \param aPlaylist - a valid playlist to play from.
+   * \param aIndex - the index of the track to play
+   * \throw NS_ERROR_INVALID_ARG if the playlist or index is null or if the
+   *        playlist does not have ref.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
   boolean playObject(in sbIPlaylist aPlaylist, in unsigned long aIndex);
 
   /**
-   * \brief
+   * \brief Play a piece of media directly via URL
    *
-   * \param aURL
-   * \throw
+   * \param aURL - the URL of the media to play.
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \return true if playback is successfull
+   * \return false if playback was not successful
    */
-  boolean playUrl(in AString aURL);
+  boolean playURL(in AString aURL);
 
   /**
-   * \brief
+   * \brief Add the track to the library and play it.
    *
-   * \param aURL
-   * \throw
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \param aURL - the URL to the media
+   * \return true if import and playback was successful
+   * \return false if import or playback was not successful
    */
-  boolean playAndImportUrl(in AString aURL);
+  boolean playAndImportURL(in AString aURL);
 
   /**
-   * \brief
+   * \brief Adds a piece of media to the library.
    *
-   * \param aURL
-   * \throw
-   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
-   * \return
+   * \param aURL - the URL of the media to add.
+   * \return the row of the media in the library.
    */
-  long importUrl(in AString aURL);
+  long importURL(in AString aURL);
 
 
   // --------------------------------------------------------------------------
@@ -417,39 +427,46 @@ interface sbIPlaylistPlayback : nsIObserver
   // --------------------------------------------------------------------------
  
   /**
-   * \brief
+   * \brief Return metadata metadata.
+   * Return the number of fields supported and their identifiers
+   * \todo - implement getMetadataFields, currently sets out params to 0 and ""
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aFieldCount - the number of metadata fields supported
+   * \param aMetaFields - An array of metadata identifiers.
+   * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
+   * \return void
    */
   void getMetadataFields(out unsigned long aFieldCount,
                          [array, size_is(aFieldCount), retval] out wstring aMetaFields);
  
   /**
-   * \brief
+   * \brief Give the value of the metadata field specified
+   * \todo - implement getCurrentValue - currently returns ""
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aField - the metadata for which we return the value
+   * \return the value of the metadata
    */
   AString getCurrentValue(in AString aField);
  
   /**
-   * \brief
+   * \brief Set the value of the metadata specified
+   * \todo - implement setCurrentValue - current does nothing.
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aField - the metadata for which to set the data
+   * \param aValue - the value to set the metadata to.
+   * \return void
    */
   void setCurrentValue(in AString aField, in AString aValue);
  
   /**
-   * \brief
+   * \brief Get the values of multiple metadata fields.
+   * \todo implement getCurrentValues - currently sets out paramst to 0 and ""
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aFieldCount - the number of metadata fields to retrieve
+   * \param aMetaFields - the identifiers for the metadata fields
+   * \param aValueCount - the number of metadata values returned
+   * \param aMetaValues - The values of the metadata requested.
+   * \return void
    */
   void getCurrentValues(in unsigned long aFieldCount,
                         [array, size_is(aFieldCount)] in wstring aMetaFields,
@@ -457,9 +474,13 @@ interface sbIPlaylistPlayback : nsIObserver
                         [array, size_is(aValueCount), retval] out wstring aMetaValues);
  
   /**
-   * \brief
+   * \brief Set the values of multiple metadata fields.
+   * \todo implement setCurrentValues - currently does nothing.
    * 
-   * \param
+   * \param aFieldCount - the number of metadata fields to set
+   * \param aMetaFields - the identifiers for the metadata fields
+   * \param aValueCount - the number of metadata values
+   * \param aMetaValues - The values of the metadata to set.
    * \throw
    * \return
    */
@@ -474,31 +495,37 @@ interface sbIPlaylistPlayback : nsIObserver
   // --------------------------------------------------------------------------
  
   /**
-   * \brief
+   * \brief Check to see if an url points to media content
+   * This checks for a number of known file extensions and prefixes to see
+   *   if the URL contains them and is therefore media.
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aURL - the URL to check
+   * \return true if the URL points to media content
+   * \return false if the URL does not point to media content
    */
-  boolean isMediaUrl(in AString aURL);
+  boolean isMediaURL(in AString aURL);
  
   /**
-   * \brief
+   * \brief Check to see if an url points to video content
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore video.
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aURL - the URL to check
+   * \return true if the URL points to video content
+   * \return false if the URL does not point to video content
    */
-  boolean isVideoUrl(in AString aURL);
+  boolean isVideoURL(in AString aURL);
  
   /**
-   * \brief
+   * \brief Check to see if an url points to a playlist
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore a playlist.
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aURL - the URL to check
+   * \return true if the URL points to a playlist
+   * \return false if the URL does not point a playlist
    */
-  boolean isPlaylistUrl(in AString aURL);
+  boolean isPlaylistURL(in AString aURL);
 
  
   // --------------------------------------------------------------------------
@@ -506,40 +533,39 @@ interface sbIPlaylistPlayback : nsIObserver
   // --------------------------------------------------------------------------
  
   /**
-   * \brief
+   * \brief Removes the hours from the string passed in.
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aTimeString - a string in the format HH:MM:SS
+   * \return - The string with the HH:
    */
   AString stripHoursFromTimeString(in AString aTimeString);
  
   /**
-   * \brief
+   * \brief Convert an integer into a time duration
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aSeconds - an integer representing the number of seconds
+   * \return A time string in the format HH:MM:SS
+   * \return "Error" if hours is greater than 50
    */
-  AString emitSecondsToTimeString(in AString aSecondsString);
+  AString emitSecondsToTimeString(in AString aSeconds);
  
   /**
-   * \brief
+   * \brief Un-Escape a URL and find the leaf name
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aURL - the URL to convert
+   * \return The URL passed in if it does not decode properly
+   * \return The text after the last '\' or '//' in the URL
    */
-  AString convertUrlToDisplayName(in AString aURL);
+  AString convertURLToDisplayName(in AString aURL);
  
   /**
-   * \brief
+   * \brief Unescape a URL and find the "basename"
    * 
-   * \param
-   * \throw
-   * \return
+   * \param aURL - the URL to convert
+   * \return The URL passed in if it does not decode properly
+   * \return The text before the last '\' or '//' in the URL
    */
-  AString convertUrlToFolder(in AString aURL);
+  AString convertURLToFolder(in AString aURL);
 
 };
 

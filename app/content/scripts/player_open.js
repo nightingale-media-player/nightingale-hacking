@@ -61,7 +61,7 @@ try
       theArtistText.stringValue = "";
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playAndImportUrl(fp.file.path);
+      PPS.playAndImportURL(fp.file.path);
     }
   }
 
@@ -80,7 +80,7 @@ try
       theArtistText.stringValue = "";
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playAndImportUrl(url_open_data.URL);
+      PPS.playAndImportURL(url_open_data.URL);
     }  
   }
 

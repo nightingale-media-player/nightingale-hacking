@@ -51,7 +51,7 @@ CoreFlash.prototype = new CoreBase();
 // set the constructor so we use ours and not the one for CoreBase
 CoreFlash.prototype.constructor = CoreFlash;
 
-CoreFlash.prototype.playUrl = function ( aURL )
+CoreFlash.prototype.playURL = function ( aURL )
 {
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
