@@ -135,6 +135,8 @@ interface sbIMediaLibrary : nsISupports
    * \return True, if the query was successfully added
    * \sa removeMediaByGUID, addMedia
    */
+  PRBool removeMediaByGUID(in AString mediaGUID, 
+    in PRBool willRunQueryLater); /**/
 
   /**
    * \brief Remove all tracks from the library
