@@ -201,9 +201,8 @@ try
           var keys = new Array( "title" );
           var values = new Array( gPPS.convertURLToDisplayName( url ) );
           var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, false, false );
-          // XXXredfive
           this.aPlaylist.addByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
-          dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
+          //dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
           this.inserted.push( url );
           
           //A***
