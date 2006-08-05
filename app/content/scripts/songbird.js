@@ -209,12 +209,12 @@ function onMinimumWindowSize()
 function onWindowSaveSizeAndPosition()
 {
   var root = "window." + document.documentElement.id;
-
+/*
   dump("******** onWindowSaveSizeAndPosition: root:" + root +
                                   " root.w:" + SBDataGetIntValue(root+'.w') + 
                                   " root.h:" + SBDataGetIntValue(root+'.h') + 
                                   "\n");
-
+*/
   SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
   SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
 
@@ -224,12 +224,12 @@ function onWindowSaveSizeAndPosition()
 function onWindowSavePosition()
 {
   var root = "window." + document.documentElement.id;
-
+/*
   dump("******** onWindowLoadSize: root:" + root +
                                   " root.w:" + SBDataGetIntValue(root+'.x') + 
                                   " root.h:" + SBDataGetIntValue(root+'.y') + 
                                   "\n");
-
+*/
   SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
   SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
 }
@@ -238,14 +238,14 @@ function onWindowSavePosition()
 function onWindowLoadSize()
 {
   var root = "window." + document.documentElement.id;
-
+/*
   dump("******** onWindowLoadSize: root:" + root +
                                   " root.w:" + SBDataGetIntValue(root+'.w') + 
                                   " root.h:" + SBDataGetIntValue(root+'.h') + 
                                   " box.w:" + document.documentElement.boxObject.width +
                                   " box.h:" + document.documentElement.boxObject.height +
                                   "\n");
-
+*/
   // If they have not been set they will be ""
   if ( SBDataGetStringValue( root + ".w" ) == "" ||
        SBDataGetStringValue( root + ".h" ) == "" )
@@ -276,14 +276,14 @@ function onWindowLoadSize()
 function onWindowLoadPosition()
 {
   var root = "window." + document.documentElement.id;
-
+/*
   dump("******** onWindowLoadPosition: root:" + root +
                                   " root.x:" + SBDataGetIntValue(root+'.x') +
                                   " root.y:" + SBDataGetIntValue(root+'.y') +
                                   " box.x:" + document.documentElement.boxObject.screenX +
                                   " box.y:" + document.documentElement.boxObject.screenY +
                                   "\n");
-
+*/
   // If they have not been set they will be ""
   if ( SBDataGetStringValue( root + ".x" ) == "" || 
        SBDataGetStringValue( root + ".y" ) == "" )
