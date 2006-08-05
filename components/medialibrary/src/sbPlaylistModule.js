@@ -109,7 +109,7 @@ var sbPlaylistModule =
       if(!comp.cid)
         continue;
       
-      dump("sbPlaylistModule: registering " + comp.contractid + "\n");
+//      dump("sbPlaylistModule: registering " + comp.contractid + "\n");
       compMgr.registerFactoryLocation(comp.cid,
                                       comp.classname,
                                       comp.contractid,

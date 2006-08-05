@@ -242,7 +242,7 @@ CPlaylistReaderManager.prototype =
             
             bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
             
-            dump("CPlaylistReaderManager::read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
+//            dump("CPlaylistReaderManager::read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
             
             if(bRet)
               return bRet;
@@ -267,7 +267,7 @@ CPlaylistReaderManager.prototype =
             
             bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
             
-            dump("CPlaylistReaderManager::read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
+//            dump("CPlaylistReaderManager::read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
             
             if(bRet)     
               return bRet;

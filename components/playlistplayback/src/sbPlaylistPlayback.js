@@ -85,9 +85,11 @@ var gOS         = null;
  *          The string to write to the error console..
  */  
 function LOG(string) {
+/* Shhh.
     dump("***sbPlaylistPlayback*** " + string + "\n");
     if (gConsole)
       gConsole.logStringMessage(string);
+*/      
 } // LOG
 
 /**
@@ -777,7 +779,7 @@ PlaylistPlayback.prototype = {
       }
       this.metrics_inc("play.attempt", core.getId(), null);
     } catch( err ) {
-      LOG( "playURL:\n" + err );
+      dump( "playURL:\n" + err + "\n" );
       return false;
     }
     return true;
@@ -788,7 +790,7 @@ PlaylistPlayback.prototype = {
       var row = this._importURLInLibrary(aURL);
       this.playRefByURL("NC:songbird_library", aURL);
     } catch( err ) {
-      LOG( "playAndImportURL:\n" + err );
+      dump( "playAndImportURL:\n" + err + "\n" );
       return false;
     }
     return true;
@@ -1159,7 +1161,7 @@ PlaylistPlayback.prototype = {
     }       
     catch ( err )  
     {
-      LOG( "!!! ERROR: sbPlaylistPlayback _onPlayerLoop\n\n" + err + "\n" );
+      dump( "!!! ERROR: sbPlaylistPlayback _onPlayerLoop\n\n" + err + "\n" );
     }
   },
   

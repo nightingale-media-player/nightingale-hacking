@@ -269,7 +269,7 @@ CPlaylistHTML.prototype =
         pLibrary.setQueryObject(pQuery);
         pPlaylist = pPlaylistManager.getPlaylist(strDestTable, pQuery);
         
-        dump( "**********\nstrDestTable - " + strDestTable + "\nstrGUID - " + strGUID + "\npPlaylist - " + pPlaylist + "\n" );
+//        dump( "**********\nstrDestTable - " + strDestTable + "\nstrGUID - " + strGUID + "\npPlaylist - " + pPlaylist + "\n" );
 
         var inserted = new Array();        
         for ( var i in links_array )

@@ -67,7 +67,6 @@ var SBWindowMinMaxCB =
     // However, if in resizing the window size is different from the document's box object
     if (window.innerWidth != document.getElementById('window_parent').boxObject.width)
     { 
-      dump("eeek!\n");
       // That means we found the document's min width.  Because you can't query it directly.
       retval = document.getElementById('window_parent').boxObject.width - 1;
     }

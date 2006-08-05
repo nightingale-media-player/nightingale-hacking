@@ -81,7 +81,7 @@ CPlaylistReaderListener.prototype =
       {
         try {
           strContentType = aChannel.contentType;
-          dump("CPlaylistReaderListener::onStateChange - Playlist Content Type: " + strContentType + "\n");
+//          dump("CPlaylistReaderListener::onStateChange - Playlist Content Type: " + strContentType + "\n");
         } catch (err) {
           dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE\n");
         } // Grrrr.
