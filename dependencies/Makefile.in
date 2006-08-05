@@ -54,6 +54,7 @@ SONGBIRD_XULRUNNER = $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                      $(NULL)
                      
 SONGBIRD_DIST = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
+                $(DEPS_DIR)/plugins/vlc/vlcrc \
                 $(NULL)
                      
 endif
