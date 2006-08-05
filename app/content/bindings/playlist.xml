@@ -571,14 +571,8 @@
         var orderArray = order.split(","); // Split out any comma delimited values first
         var orderArray = orderArray[0].split(" "); // And only look at the first value
         
-        // Sync the order column
-        if ( this.sortorder != orderArray[0] )
-          dump("playlist.xml - Correcting sort order state. '" + this.sortorder + "' != '" + orderArray[0] + "'\n");
+        // Sync the order column and direction
         this.sortorder = orderArray[0];
-        
-        // Sync the direction
-        if ( this.sortdirection != orderArray[1] )
-          dump("playlist.xml - Correcting sort direction state. '" + this.sortdirection + "' != '" + orderArray[1] + "'\n");
         this.sortdirection = orderArray[1];
       }
       catch( err )

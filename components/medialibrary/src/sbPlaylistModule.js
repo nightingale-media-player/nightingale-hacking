@@ -81,11 +81,11 @@ var sbPlaylistModule =
       f.appendRelativePath("scripts");
       f.append(scriptName);
       
-      dump("sbPlaylistModule.js: " + f.path + "\n");
+//      dump("sbPlaylistModule.js: " + f.path + "\n");
       if(jsLoader) {
         try {
           var scriptUri = ioService.newFileURI(f);
-          dump("sbPlaylistModule.js: Loading... " + scriptUri.spec + "\n");
+//          dump("sbPlaylistModule.js: Loading... " + scriptUri.spec + "\n");
           jsLoader.loadSubScript( scriptUri.spec, null );
         } catch (e) {
           dump("sbPlaylistModule.js: Failed to load " + scriptUri.spec + "\n");

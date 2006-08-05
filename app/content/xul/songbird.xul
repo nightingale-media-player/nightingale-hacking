@@ -58,7 +58,6 @@
   <!-- Do the first run test and pop up the mainwin as soon as possible -->
   <script>
   <![CDATA[
-    dump('woo\n');
     try
     {
       var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
