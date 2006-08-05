@@ -11,31 +11,36 @@ REM
 
 if "%1"=="" goto usage
 
+if "%2"=="vs" goto visualstudio
+
+REM Assume Cygwin here...
 set BUILD_ID=%1
 set ICON_FILE=songbird.ico
 set DEPTH=..\..
-set DIST_DEPTH=..
+set DIST_DEPTH=..\..
+set DIST_DIR=%DEPTH%\compiled\dist
 
-if "%2"=="prepare" goto prepare
+:visualstudio
 
-if "%2"=="package" goto package
+if "%3"=="prepare" goto prepare
+
+if "%3"=="package" goto package
 
 :prepare
 @del /s /f /q %DEPTH%\_built_installer\*.*
-@del /q /f %DEPTH%\dist\Songbird_*.exe
 @rd /s /q %DEPTH%\_built_installer
 
-@copy /y Songbird.nsi %DEPTH%\dist\
+@copy /y Songbird.nsi %DIST_DIR%
 
-@mkdir %DEPTH%\dist\chrome\icons\default
-@copy /y %DEPTH%\app\branding\songbird.ico %DEPTH%\dist\chrome\icons\default\frame_outer.ico
-@copy /y %DEPTH%\app\branding\songbird*.ico %DEPTH%\dist\
+@mkdir %DIST_DIR%\chrome\icons\default
+@copy /y %DEPTH%\app\branding\songbird.ico %DIST_DIR%chrome\icons\default\frame_outer.ico
+@copy /y %DEPTH%\app\branding\songbird*.ico %DIST_DIR%
 
-@copy /y LICENSE.txt %DEPTH%\dist\
-@copy /y GPL.txt %DEPTH%\dist\
-@copy /y TRADEMARK.txt %DEPTH%\dist\
+@copy /y LICENSE.txt %DIST_DIR%
+@copy /y GPL.txt %DIST_DIR%
+@copy /y TRADEMARK.txt %DIST_DIR%
 
-@cd %DEPTH%\dist
+@cd %DIST_DIR%
 @%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_APPICON, 1033
 @%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
 @%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite xulrunner\xulrunner.exe, xulrunner\xulrunner.exe, %ICON_FILE%, icongroup, 32512, 1033
@@ -43,14 +48,15 @@ if "%2"=="package" goto package
 @%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
 @cd %DIST_DEPTH%\installer\win32
 
-if "%2"=="prepare" goto end
+if "%3"=="prepare" goto end
 
 :package
-@cd %DEPTH%\dist
-@%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
+@cd %DIST_DIR%
+@%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"%DEPTH%\Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
+@del Songbird.nsi
 @cd %DIST_DEPTH%\installer\win32
 
-if exist "%DEPTH%\dist\Songbird_%BUILD_ID%.exe" goto success
+if exist "%DIST_DIR%\Songbird_%BUILD_ID%.exe" goto success
 goto failure
 
 :success
@@ -62,16 +68,9 @@ goto failure
 @echo.
 
 @mkdir %DEPTH%\_built_installer
-@copy /y %DEPTH%\dist\Songbird_%BUILD_ID%.exe %DEPTH%\_built_installer
+@move /y %DIST_DIR%\Songbird_%BUILD_ID%.exe %DEPTH%\_built_installer
 @%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%.exe > %DEPTH%\_built_installer\Songbird_%BUILD_ID%.exe.md5
 
-if "%2"=="publish" goto publish
-goto nopublish
-
-:publish
-REM @call PublishInstaller.bat %BUILD_ID%
-
-:nopublish
 goto end
 
 :failure
@@ -84,10 +83,10 @@ goto end
 goto end
 
 :usage
-@echo "Usage: PrepareInstaller [build id] [prepare|package|publish]"
+@echo "Usage: PrepareInstaller [build id] [vs|cygwin] [prepare|package]"
+@echo vs: Using output from a Visual Studio Build.
+@echo cygwin: Using output from a Cygwin Build.
 @echo.
-@echo Note: Using the "publish" flag will publish the 
-@echo installer using the "PublishInstaller" script.
 @echo.
 
 :end

@@ -1,6 +1,8 @@
 #!/bin/bash
 
+DEPTH=../../..
 CURRENT_DATE=`date +%Y%m%d`
 
-./PrepareInstaller $CURRENT_DATE cygwin
+cd ${DEPTH}/installer/win32
+PrepareInstaller.bat ${CURRENT_DATE} cygwin
 
