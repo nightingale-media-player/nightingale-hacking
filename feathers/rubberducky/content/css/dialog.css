@@ -150,6 +150,41 @@ THE DIALOG CHROME IMAGES
 
 /** 
 ************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+#frame_resize_t
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_to
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_m
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_mo
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#resize
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
 TOP BAR
 ************************************************************************************************************************************************
 */
