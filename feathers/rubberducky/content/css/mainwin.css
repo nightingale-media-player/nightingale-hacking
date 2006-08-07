@@ -804,9 +804,9 @@ SEARCH WIDGET
 ************************************************************************************************************************************************
 */
 
-#search_temp
+#search_widget
 {
-  width: 143px !important;
+  width: 230px !important;
   height: 21px !important;
 }
 
@@ -822,8 +822,8 @@ SEARCH WIDGET
 
 #search_service_list
 {
-  width: 120px !important;
-  margin: 3px 0px 3px 0px !important; 
+  width: 180px !important;
+  margin: 3px 0px 3px 5px !important; 
 }
 
 
