@@ -1334,12 +1334,17 @@ PlaylistPlayback.prototype = {
     // Doublecheck that filters match what they were when we last played something.  
     var panic = false;
     var num_filters = this._source.getNumFilters( cur_ref );
-    if (num_filters > 0) {
-      var i;
-      for (i = 0; i < num_filters; i++) {
+    if (this.filters.length != num_filters + 2)
+      panic = true;
+    else if ( this.filters[0] != this._source.getSearchString( cur_ref ) )
+      panic = true;
+    else if ( this.filters[1] != this._source.getOrder( cur_ref ) )
+      panic = true;
+    else if (num_filters > 0) {
+      for (var i = 0; i < num_filters; i++) {
         // If they are not the same, just return from this.  No more play for you!
         var filter = this._source.getFilter( cur_ref, i );
-        if (this.filters[i] != filter)
+        if (this.filters[i + 2] != filter)
           panic = true; // WHOA, now what?  Try to use the current url!
       }
     }
@@ -1347,6 +1352,7 @@ PlaylistPlayback.prototype = {
     if (panic) {
       // So, we are in panic mode.  The filters have changed.
       var index = this._source.getRefRowByColumnValue(cur_ref, "url", cur_url);
+      dump("PANIC!!!! " + cur_url + " - " + index + "\n");
       // If we can find the current url in the current list, use that as the index
       if (index != -1)
         cur_index = index;
@@ -1510,6 +1516,8 @@ PlaylistPlayback.prototype = {
     // Record what the filters on the ref are for a check in _playNextPrev()
     this.num_filters = this._source.getNumFilters( aSourceRef );
     this.filters = new Array();
+    this.filters.push( this._source.getSearchString( aSourceRef ) );
+    this.filters.push( this._source.getOrder( aSourceRef ) );
     for ( var i = 0; i < this.num_filters; i++) {
       this.filters.push( this._source.getFilter( aSourceRef, i ) );
     };

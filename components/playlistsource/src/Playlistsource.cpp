@@ -623,6 +623,11 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
   rv = info->m_Query->GetQuery(0, query);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Ugh.  If we have an orderby, remove it.
+  PRInt32 mark = query.Find("order");
+  if ( mark != -1 )
+    query.Left( query, mark );
+
   nsAString::const_iterator start, end;
   query.BeginReading(start);
   query.EndReading(end);
