@@ -158,7 +158,7 @@ function doFirstRunTest(doc, bundle)
   // Data remotes not available for this function
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var eulacheck = "";
-  try { eulacheck = prefs.getCharPref("eulacheck"); } catch (e) { }
+  try { eulacheck = prefs.getCharPref("songbird.firstrun.eulacheck"); } catch (e) { }
   if (eulacheck != "1")
   {
     eula_data.do_eula = 1;
@@ -186,7 +186,7 @@ function firstRunDialog()
       if (eula_data.retval == "accept") 
       {
         var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-        prefs.setCharPref("eulacheck", "1");
+        prefs.setCharPref("songbird.firstrun.eulacheck", "1");
       }
       else
       {
@@ -209,7 +209,7 @@ function firstRunDialog()
   // Data remotes not available for this function
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var firstruncheck = "";
-  try { firstruncheck = prefs.getCharPref("firstruncheck"); } catch (e) { }
+  try { firstruncheck = prefs.getCharPref("songbird.firstrun.firstruncheck"); } catch (e) { }
   if (firstruncheck != "1")
   {
     var data = new Object();
@@ -251,7 +251,7 @@ function doOK()
   if (noext) {
     var r = sbMessageBox_strings("setup.noxpititle", "setup.noxpimsg", "No extension", "Press Ok to keep a minimal installation, or Cancel to go back.", true);
     if (r == "accept") { 
-      prefs.setCharPref("firstruncheck", "1");  
+      prefs.setCharPref("songbird.firstrun.firstruncheck", "1");  
       return true; 
     } else {
       return false;
@@ -259,7 +259,7 @@ function doOK()
   } else {
     bundle.installSelectedExtensions(window);
     switchLocale(wanted_locale);
-    prefs.setCharPref("firstruncheck", "1");  
+    prefs.setCharPref("songbird.firstrun.firstruncheck", "1");  
     prefs.setCharPref("installedbundle", bundle.getBundleVersion());
     if (bundle.getNeedRestart()) {
       var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
