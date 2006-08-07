@@ -1138,6 +1138,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   margin: 2px 0px 2px 3px !important;
   padding: 5px 3px 3px 3px !important;
   -moz-border-radius: 5px !important;
+  min-height: 32px !important;
 }
 
 #browser_url_image
