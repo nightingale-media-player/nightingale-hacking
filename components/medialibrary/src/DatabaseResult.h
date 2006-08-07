@@ -37,6 +37,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <prlock.h>
 
@@ -76,10 +77,12 @@ public:
   nsresult SetRowCells(PRInt32 dbRow, const std::vector<nsString> &vCellValues);
 
   PRInt32 GetColumnIndexFromName(const nsAString &strColumnName);
+  void RebuildColumnResolveMap();
 
 protected:
   typedef std::vector<nsString> dbcolumnnames_t;
   typedef std::vector< std::vector<nsString> > dbrowcells_t;
+  typedef std::map<nsString, PRInt32> dbcolumnresolvemap_t;
   
   dbcolumnnames_t m_ColumnNames;
   PRLock* m_pColumnNamesLock;
@@ -87,6 +90,8 @@ protected:
   dbrowcells_t m_RowCells;
   PRLock* m_pRowCellsLock;
   
+  dbcolumnresolvemap_t m_ColumnResolveMap;
+  PRLock* m_pColumnResolveMap;
 };
 
 #endif // __DATABASE_RESULT_H__

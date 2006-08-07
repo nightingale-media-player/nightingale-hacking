@@ -51,14 +51,16 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseResult, sbIDatabaseResult)
 CDatabaseResult::CDatabaseResult()
 : m_pColumnNamesLock(PR_NewLock())
 , m_pRowCellsLock(PR_NewLock())
+, m_pColumnResolveMap(PR_NewLock())
 {
   NS_ASSERTION(m_pColumnNamesLock, "CDatabaseResult.m_pColumnNamesLock failed");
   NS_ASSERTION(m_pRowCellsLock, "CDatabaseResult.m_pRowCellsLock failed");
 #ifdef DEBUG_locks
   nsCAutoString log;
   log += NS_LITERAL_CSTRING("\n\nCDatabaseResult (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
-  log += NS_LITERAL_CSTRING("m_pColumnNamesLock = ") + nsPrintfCString("%x\n", m_pColumnNamesLock);
-  log += NS_LITERAL_CSTRING("m_pRowCellsLock    = ") + nsPrintfCString("%x\n", m_pRowCellsLock);
+  log += NS_LITERAL_CSTRING("m_pColumnNamesLock  = ") + nsPrintfCString("%x\n", m_pColumnNamesLock);
+  log += NS_LITERAL_CSTRING("m_pRowCellsLock     = ") + nsPrintfCString("%x\n", m_pRowCellsLock);
+  log += NS_LITERAL_CSTRING("m_pColumnResolveMap = ") + nsPrintfCString("%x\n", m_pColumnResolveMap);
   log += NS_LITERAL_CSTRING("\n");
   NS_WARNING(log.get());
 #endif
@@ -71,6 +73,8 @@ CDatabaseResult::~CDatabaseResult()
     PR_DestroyLock(m_pColumnNamesLock);
   if (m_pRowCellsLock)
     PR_DestroyLock(m_pRowCellsLock);
+  if (m_pColumnResolveMap)
+    PR_DestroyLock(m_pColumnResolveMap);
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -193,9 +197,11 @@ NS_IMETHODIMP CDatabaseResult::ClearResultSet()
 {
   nsAutoLock cLock(m_pColumnNamesLock);
   nsAutoLock rLock(m_pRowCellsLock);
+  nsAutoLock mLock(m_pColumnResolveMap);
 
   m_ColumnNames.clear();
   m_RowCells.clear();
+  m_ColumnResolveMap.clear();
 
   return NS_OK;
 } //ClearResultSet
@@ -265,14 +271,32 @@ nsresult CDatabaseResult::SetRowCells(PRInt32 dbRow, const std::vector<nsString>
 //-----------------------------------------------------------------------------
 PRInt32 CDatabaseResult::GetColumnIndexFromName(const nsAString &strColumnName)
 {
-  nsAutoLock lock(m_pColumnNamesLock);
-  PRUint32 nSize =  (PRUint32)m_ColumnNames.size();
+  RebuildColumnResolveMap();
 
-  for(PRUint32 i = 0; i < nSize; i++)
-  {
-    if(strColumnName == m_ColumnNames[i])
-      return i;
-  }
+  nsAutoLock lock(m_pColumnResolveMap);
   
+  dbcolumnresolvemap_t::const_iterator itColumnIndex = m_ColumnResolveMap.find(PromiseFlatString(strColumnName));
+  if(itColumnIndex != m_ColumnResolveMap.end())
+    return itColumnIndex->second;
+
   return -1;
 } //GetColumnIndexFromName
+
+//-----------------------------------------------------------------------------
+void CDatabaseResult::RebuildColumnResolveMap()
+{
+  nsAutoLock cLock(m_pColumnNamesLock);
+  nsAutoLock mLock(m_pColumnResolveMap);
+
+  if(m_ColumnNames.size() != m_ColumnResolveMap.size() ||
+     m_ColumnResolveMap.size() == 0)
+  {
+    m_ColumnResolveMap.clear();
+
+    PRUint32 nSize =  (PRUint32)m_ColumnNames.size();
+    for(PRUint32 i = 0; i < nSize; i++)
+    {
+      m_ColumnResolveMap.insert(std::make_pair<nsString, PRInt32>(m_ColumnNames[i], i));
+    }
+  }
+}

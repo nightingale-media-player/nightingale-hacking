@@ -61,8 +61,12 @@
 
 #define USE_SQLITE_FULL_DISK_CACHING  1
 #define SQLITE_MAX_RETRIES            66
-//#define HARD_SANITY_CHECK             0
 #define QUERY_PROCESSOR_THREAD_COUNT  4
+
+#if defined(DEBUG)
+  #include <nsPrintfCString.h>
+  //#define HARD_SANITY_CHECK             1
+#endif
 
 static NS_NAMED_LITERAL_STRING(allToken, "*");
 static NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
@@ -879,9 +883,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 #if defined(HARD_SANITY_CHECK)
             if(retDB != SQLITE_OK)
             {
-              PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
-              OutputDebugStringW(szErr);
-              OutputDebugStringW(NS_L("\n"));
+              const char *szErr = sqlite3_errmsg(pDB);
+              nsCAutoString log;
+              log.Append(szErr);
+              log.AppendLiteral("\n");
+              NS_WARNING(log.get());
             }
 #endif
           }
@@ -899,9 +905,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 #if defined(HARD_SANITY_CHECK)
             if(retDB != SQLITE_OK)
             {
-              PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
-              OutputDebugStringW(szErr);
-              OutputDebugStringW(NS_L("\n"));
+              const char *szErr = sqlite3_errmsg(pDB);
+              nsCAutoString log;
+              log.Append(szErr);
+              log.AppendLiteral("\n");
+              NS_WARNING(log.get());
             }
 #endif
           }
@@ -917,10 +925,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 #if defined(HARD_SANITY_CHECK)
             if(retDB != SQLITE_OK)
             {
-              PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
-              OutputDebugStringW(szErr);
-              OutputDebugStringW(NS_L("\n"));
-              //__asm int 3;
+              const char *szErr = sqlite3_errmsg(pDB);
+              nsCAutoString log;
+              log.Append(szErr);
+              log.AppendLiteral("\n");
+              NS_WARNING(log.get());
             }
 #endif
 
@@ -1009,9 +1018,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                   pQuery->SetLastError(retDB);
 
 #if defined(HARD_SANITY_CHECK)
-                  PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
-                  OutputDebugStringW(szErr);
-                  OutputDebugStringW(NS_L("\n"));
+                  const char *szErr = sqlite3_errmsg(pDB);
+                  nsCAutoString log;
+                  log.Append(szErr);
+                  log.AppendLiteral("\n");
+                  NS_WARNING(log.get());
 #endif
 
                 }
@@ -1081,10 +1092,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 #if defined(HARD_SANITY_CHECK)
           if(retDB != SQLITE_OK)
           {
-            PRUnichar *szErr = (PRUnichar *)sqlite3_errmsg16(pDB);
-            OutputDebugStringW(szErr);
-            OutputDebugStringW(NS_L("\n"));
-            //__asm int 3;
+            const char *szErr = sqlite3_errmsg(pDB);
+            nsCAutoString log;
+            log.Append(szErr);
+            log.AppendLiteral("\n");
+            NS_WARNING(log.get());
           }
 #endif
 
