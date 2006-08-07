@@ -106,7 +106,14 @@ AC_CANONICAL_SYSTEM
 case "$target" in
   *-cygwin*|*-mingw*|*-msvc*|*-mks*)
     SB_PLATFORM="win32"
-    SB_ARCH=""
+    case "$target_cpu" in
+      *i*86*)
+        SB_ARCH="$target_cpu"
+      ;;
+      *)
+        AC_MSG_ERROR(Unsupported architecture)
+      ;;
+    esac
     # Add the Cygwin wrapper if necessary
     case "$target" in
       *-mingw*)
@@ -124,17 +131,30 @@ case "$target" in
   ;;
   *darwin*)
     SB_PLATFORM="macosx"
-    SB_ARCH=""
+    case "$target_cpu" in
+      powerpc* | ppc)
+        SB_ARCH="ppc"
+      ;;
+      *i*86*)
+        SB_ARCH="$target_cpu"
+      ;;
+      *)
+        AC_MSG_ERROR(Unsupported architecture)
+      ;;
+    esac
   ;;
   *linux*)
     SB_PLATFORM="linux"
     case "$target_cpu" in
+      *86)
+        SB_ARCH="$target_cpu"
+      ;;
       x86_64)
-        SB_ARCH="-x86_64"
+        SB_ARCH="x86_64"
+        HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
-        # SK: Maybe make this i386?
-        SB_ARCH=""
+        AC_MSG_ERROR(Unsupported architecture)
       ;;
     esac
   ;;
@@ -152,7 +172,12 @@ AC_ARG_WITH(dependencies-dir,
             [  --with-dependencies-dir=DIR          the location of the dependencies directory],
             SB_DEPENDENCIES_DIR=$withval)
 if test -z "$SB_DEPENDENCIES_DIR"; then
-  SB_DEPENDENCIES_DIR=$srcdir/dependencies/$SB_PLATFORM$SB_ARCH
+  if test -n "$HAS_ARCH_DEPENDENCIES"; then
+    DEPS_SUBDIR=$SB_PLATFORM-$SB_ARCH
+  else
+    DEPS_SUBDIR=$SB_PLATFORM
+  fi
+  SB_DEPENDENCIES_DIR=$srcdir/dependencies/$DEPS_SUBDIR
 fi
 AC_SUBST(SB_DEPENDENCIES_DIR)
 
@@ -589,7 +614,7 @@ AC_SUBST(BUILD_ID_FILENAME)
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $srcdir/dependencies/$SB_PLATFORM$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
+echo $MAKEFILES | ${PERL} $SB_DEPENDENCIES_DIR/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 
