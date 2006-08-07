@@ -815,6 +815,13 @@ SEARCH WIDGET
   border: none !important;
 }
 
+#search_widget .menulist-editable-input,
+#search_widget .menulist-editable-input:focus
+{
+  border: none !important;
+  padding: 6px 0px 0px 0px !important;
+}
+
 .button-icon
 {
   margin: 0px 0px 0px 5px !important; 
@@ -1159,6 +1166,13 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url input:focus
 {
   font-weight: bolder !important;
+}
+
+#browser_url .textbox-input,
+#browser_url .textbox-input:focus
+{
+  border: none !important;
+  padding: 2px 0px 0px 0px !important;
 }
 
 #browser_url input[selected="true"]
