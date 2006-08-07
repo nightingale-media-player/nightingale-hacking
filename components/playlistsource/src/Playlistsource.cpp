@@ -194,12 +194,11 @@ MyQueryCallback::MyTimerCallbackFunc(nsITimer* aTimer,
   //
   //
   MyQueryCallback *that = reinterpret_cast<MyQueryCallback *>(aClosure);
-  that->MyTimerCallback( aTimer, aClosure );
+  that->MyTimerCallback();
 }
 
 void
-MyQueryCallback::MyTimerCallback(nsITimer* aTimer,
-                                     void* aClosure)
+MyQueryCallback::MyTimerCallback()
 {
   //
   //
@@ -699,6 +698,30 @@ sbPlaylistsource::IsQueryExecuting(const nsAString &aRefName,
   NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
 
   return info->m_Query->IsExecuting(_retval);
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::WaitForQueryCompletion(const nsAString &aRefName,
+                                         PRInt32*          _retval)
+{
+  LOG(("sbPlaylistsource::IsQueryExecuting"));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  METHOD_SHORTCIRCUIT;
+  *_retval = 0;
+
+  // Find the ref string in the stringmap.
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  // Wait for it to be done.
+  info->m_Query->WaitForCompletion(_retval);
+
+  // If there's any results pending, make them happen.
+  if ( info->m_Callback->m_Count )
+    info->m_Callback->MyTimerCallback();
+
+  return NS_OK;
 }
 
 // Adapted from nsNavHistory.cpp

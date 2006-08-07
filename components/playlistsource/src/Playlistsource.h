@@ -263,12 +263,11 @@ class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
 public:
   MyQueryCallback();
   ~MyQueryCallback();
-  void MyTimerCallback(nsITimer *aTimer, void *aClosure);
+  void MyTimerCallback();
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
   NS_IMETHODIMP Post(void);
 
   sbPlaylistsource::sbFeedInfo *m_Info;
-private:
   nsCOMPtr<nsITimer> m_Timer;
   PRMonitor* m_pMonitor;
   PRInt32 m_Count;

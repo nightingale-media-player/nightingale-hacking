@@ -655,16 +655,11 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    // Start the playback
-    var retval = this.playURL(aURL);
+    // Get the index for the row.
+    var index = this._source.getRefRowByColumnValue(aSourceRef, "url", aURL);
 
-    // XXXredfive - Needed? playRef() above does this before calling playURL()
-    // update the current info in 250ms
-    setTimeout('var index = this._source.getRefRowByColumnValue(' +
-               aSourceRef + ', "url",' + aURL + '); this._updateCurrentInfo(' +
-               aSourceRef + ', index )', 250
-              );
-    return retval;
+    // Then play it.
+    return this.playRef(aSourceRef, index);
   },
 
   playTable: function(aDatabaseID, aTable, aIndex) {
@@ -798,7 +793,8 @@ PlaylistPlayback.prototype = {
   
   playAndImportURL: function(aURL) {
     try  {
-      var row = this._importURLInLibrary(aURL);
+      this._importURLInLibrary(aURL);
+      this._source.waitForQueryCompletion("NC:songbird_library");
       this.playRefByURL("NC:songbird_library", aURL);
     } catch( err ) {
       dump( "playAndImportURL:\n" + err + "\n" );
@@ -1445,7 +1441,7 @@ PlaylistPlayback.prototype = {
     var guid = library.addMedia( aURL, keys.length, keys, values.length, values, false, false );
     LOG("add media = " + guid);
 
-    // return the index of the row in the library.
+    // return the index of the row in the library.  // This isn't really the row index.  :(
     var row = library.getValueByGUID(guid, "id");
     LOG("findbyguid = " + row);
     return row;

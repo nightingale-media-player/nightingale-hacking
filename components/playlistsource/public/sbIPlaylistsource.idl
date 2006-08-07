@@ -445,6 +445,14 @@ interface sbIPlaylistsource : nsIRDFDataSource
   PRBool isQueryExecuting( in AString aRefName );
 
   /**
+  * \brief Wait the main thread until the ref is completely updated
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return The last error of the query
+  */
+  PRInt32 waitForQueryCompletion( in AString aRefName );
+
+  /**
   * \brief Force the nsIRDFDataSource::GetTargets() method to be called
   *
   * At times, it may be convenient to feed a playlist, without actually
