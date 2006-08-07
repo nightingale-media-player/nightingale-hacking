@@ -96,47 +96,47 @@ These pieces paint the resizeable window for Songbird.
 
 #mainwin_chrome_nw
 {
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-left-colors: #686a6a #333 !important;
+  -moz-border-top-colors: #7a7c7c #ccc !important;
+  -moz-border-left-colors: #686a6a #ccc !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_n
 {
-  -moz-border-top-colors: #7a7c7c #333 !important;
+  -moz-border-top-colors: #7a7c7c #ccc !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_ne
 {
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
+  -moz-border-top-colors: #7a7c7c #ccc !important;
+  -moz-border-right-colors: #505154 #ccc !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_e
 {
-  -moz-border-right-colors: #505154 #333 !important;
+  -moz-border-right-colors: #505154 #ccc !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_se
 {
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
+  -moz-border-bottom-colors: #eee #ccc !important;
+  -moz-border-right-colors: #505154 #ccc !important;
   background-color: #000 !important;
 }
 
 #mainwin_chrome_s
 {
-  -moz-border-bottom-colors: #333 #333 !important;
+  -moz-border-bottom-colors: #ccc #ccc !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_w
 {
-  -moz-border-left-colors: #686a6a #333 !important;
+  -moz-border-left-colors: #686a6a #ccc !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_sw
 {
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-left-colors: #686a6a #333 !important;
+  -moz-border-bottom-colors: #ccc #ccc !important;
+  -moz-border-left-colors: #686a6a #ccc !important;
   background-color: #000 !important;
 }
 
@@ -464,7 +464,6 @@ THE PLAYLIST
 playlist
 {
   background-color: #000 !important;
-  background-image: url(default/bkgd_flowers.png) !important;
 }
 
 playlist > stack > vbox

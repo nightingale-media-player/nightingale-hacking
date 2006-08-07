@@ -452,13 +452,14 @@ LISTBOXES for dialogs and forms.
 
 .dialog_listbox > listitem
 {
-  background-color: #333 !important; /* doesn't seem to inherit the #333 from .dialog_listbox */
-  color: #FFF !important;
+  background-color: #333 !important;
+  color: #CCC !important;
 }
 
 .dialog_listbox > listitem[selected=true]
 {
   background-color: #4A4E48 !important;
+  color: #FFF !important;
 }
 
 .formgrouping
@@ -645,18 +646,6 @@ ADD TO PLAYLIST
 
 #jump_to_file
 {
-  color: #FFF !important;
-}
-
-#songbird_playlistlist > listitem
-{
-  background-color: #FFF !important;
-  color: #333 !important;
-}
-
-#songbird_playlistlist > listitem[selected=true]
-{
-  background-color: #4A4E48 !important;
   color: #FFF !important;
 }
 
