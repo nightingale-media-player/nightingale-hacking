@@ -681,11 +681,9 @@
             }
           } else {
             var ref = "";
-            var index = -1;
             var playlist = this.getCurrentPlaylist();
             if (playlist) {
               ref = playlist.ref;
-              index = playlist.index;
             } 
             if (ref == "") {
               this.loadLibrary();
