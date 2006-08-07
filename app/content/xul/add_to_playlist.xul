@@ -70,7 +70,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
       <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
-      <vbox class="sb_faceplate chrome_bkgd" flex="1">        
+      <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">        
         <hbox id="window_top" class="sb_faceplate" >
           <label id="app_title" value="&addtoplaylist.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
           <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
