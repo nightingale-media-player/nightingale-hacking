@@ -681,19 +681,17 @@
             }
           } else {
             var ref = "";
-            var index = 0;
+            var index = -1;
             var playlist = this.getCurrentPlaylist();
             if (playlist) {
               ref = playlist.ref;
               index = playlist.index;
             } 
             if (ref == "") {
-              ref = "NC:songbird_library";
-              index = 0;
               this.loadLibrary();
-              this.gPPS.playTable("songbird", "library", index);
+              this.gPPS.play(); // let gpps handle default playback.
             } else {
-              this.gPPS.playRef(ref, index);
+              this.gPPS.playRef(ref, -1);
             }
           }
         ]]>

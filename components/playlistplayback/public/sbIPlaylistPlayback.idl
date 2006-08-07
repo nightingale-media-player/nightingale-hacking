@@ -15,7 +15,7 @@
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL aPRInt32 with this 
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -60,15 +60,15 @@ interface sbIPlaylistPlayback : nsIObserver
 
   /** \brief No repeat.
    */
-  const unsigned short REPEAT_MODE_OFF = 0;
+  const short REPEAT_MODE_OFF = 0;
 
   /** \brief Repeat the current track (again and again and... ).
    */
-  const unsigned short REPEAT_MODE_ONE = 1;
+  const short REPEAT_MODE_ONE = 1;
 
   /** \brief Play through all tracks and then do it again.
    */
-  const unsigned short REPEAT_MODE_ALL = 2;
+  const short REPEAT_MODE_ALL = 2;
 
 
   // --------------------------------------------------------------------------
@@ -88,7 +88,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \brief The volume.
    * The volume as reported by the core, or set upon the core.
    */
-  attribute unsigned short volume;
+  attribute short volume;
 
   /**
    * \brief The mute state.
@@ -101,13 +101,13 @@ interface sbIPlaylistPlayback : nsIObserver
    * The number of milliseconds from the start of the current track as reported
    *   by or set upon the core.
    */
-  attribute long long position;
+  attribute PRInt64 position;
 
   /**
    * /brief The length of the current track.
    * Reported by the core.
    */
-  readonly attribute long long length;
+  readonly attribute PRInt64 length;
 
   /**
    * /brief The pause state of the core.
@@ -136,7 +136,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \sa  REPEAT_MODE_ALL
    * \sa  REPEAT_MODE_ONE
    */
-  attribute unsigned short repeat;
+  attribute short repeat;
 
   /**
    *\brief Shuffle state.
@@ -147,7 +147,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \brief Number of items in the current playlist.
    * As reported by the playlistsource.
    */
-  readonly attribute unsigned long itemCount;
+  readonly attribute PRInt32 itemCount;
 
   /**
    * \brief The GUID for the current track in the playback core.
@@ -244,7 +244,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
    * \return the index of the currently playing track
    */
-  unsigned long next();
+  PRInt32 next();
 
   /**
    * \brief Set playback to the track before the current one in play order
@@ -252,7 +252,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
    * \return the index of the currently playing track
    */
-  unsigned long previous();
+  PRInt32 previous();
 
   /**
    * \brief Get the index of the current track.
@@ -260,7 +260,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_NOT_INITIALIZED if no core has been set.
    * \return the index of the currently playing track
    */
-  unsigned long current();
+  PRInt32 current();
 
   /**
    * \brief Make the playback take the full screen.
@@ -287,7 +287,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \return true if playback is successful
    * \return false if playback is not successful
    */
-  boolean playRef(in AString aSourceRef, in unsigned long aIndex);
+  boolean playRef(in AString aSourceRef, in PRInt32 aIndex);
 
   /**
    * \brief Play a particular track from a source.
@@ -300,7 +300,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \return true if playback is successful
    * \return false if playback is not successful
    */
-  boolean playRefByID(in AString aSourceRef, in unsigned long aRowID);
+  boolean playRefByID(in AString aSourceRef, in PRInt32 aRowID);
 
   /**
    * \brief Play a particular track from a source.
@@ -338,7 +338,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \return true if playback is successful
    * \return false if playback is not successful
    */
-  boolean playTable(in AString aDatabaseID, in AString aTable, in unsigned long aIndex);
+  boolean playTable(in AString aDatabaseID, in AString aTable, in PRInt32 aIndex);
 
   /**
    * \brief Play a table, starting at the url provided.
@@ -366,7 +366,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \return true if playback is successful
    * \return false if playback is not successful
    */
-  boolean playTableByID(in AString aDatabaseID, in AString aTable, in unsigned long aRowID);
+  boolean playTableByID(in AString aDatabaseID, in AString aTable, in PRInt32 aRowID);
 
   /**
    * \brief Play a table, starting at the UUID provided
@@ -392,7 +392,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return
    */
-  boolean playObject(in sbIPlaylist aPlaylist, in unsigned long aIndex);
+  boolean playObject(in sbIPlaylist aPlaylist, in PRInt32 aIndex);
 
   /**
    * \brief Play a piece of media directly via URL
@@ -419,7 +419,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \param aURL - the URL of the media to add.
    * \return the row of the media in the library.
    */
-  long importURL(in AString aURL);
+  PRInt32 importURL(in AString aURL);
 
 
   // --------------------------------------------------------------------------
@@ -436,7 +436,7 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw NS_ERROR_NOT_INITIALIZED if the core has not been set.
    * \return void
    */
-  void getMetadataFields(out unsigned long aFieldCount,
+  void getMetadataFields(out PRUint32 aFieldCount,
                          [array, size_is(aFieldCount), retval] out wstring aMetaFields);
  
   /**
@@ -468,9 +468,9 @@ interface sbIPlaylistPlayback : nsIObserver
    * \param aMetaValues - The values of the metadata requested.
    * \return void
    */
-  void getCurrentValues(in unsigned long aFieldCount,
+  void getCurrentValues(in PRUint32 aFieldCount,
                         [array, size_is(aFieldCount)] in wstring aMetaFields,
-                        out unsigned long aValueCount,
+                        out PRUint32 aValueCount,
                         [array, size_is(aValueCount), retval] out wstring aMetaValues);
  
   /**
@@ -484,9 +484,9 @@ interface sbIPlaylistPlayback : nsIObserver
    * \throw
    * \return
    */
-  void setCurrentValues(in unsigned long aFieldCount,
+  void setCurrentValues(in PRUint32 aFieldCount,
                         [array, size_is(aFieldCount)] in wstring aMetaFields, 
-                        in unsigned long aValueCount,
+                        in PRUint32 aValueCount,
                         [array, size_is(aValueCount)] in wstring aMetaValues);
 
 

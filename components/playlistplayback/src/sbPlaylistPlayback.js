@@ -588,11 +588,22 @@ PlaylistPlayback.prototype = {
   
   playRef: function(aSourceRef, aIndex) {
     LOG("playRef: source = " + aSourceRef + " index = " + aIndex);
-    if (!aSourceRef || (aIndex == null) || (aIndex < 0))
+    if (!aSourceRef || (aIndex == null) || (aIndex < -1))
       throw Components.results.NS_ERROR_INVALID_ARG;
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      
+    // If we're confused about what to play
+    if (aIndex < 0) {
+      aIndex = 0;
+      // See if we should shuffle on it
+      if ( this._shuffle.boolValue ) {
+        var num_items = this._source.getRefRowCount( aSourceRef );
+        var rand = num_items * Math.random();
+        aIndex = Math.floor( rand );
+      }
+    }
 
     // pull metadata and filters from aSourceRef
     this._updateCurrentInfo(aSourceRef, aIndex);
@@ -1313,24 +1324,27 @@ PlaylistPlayback.prototype = {
     var cur_index = this._playlistIndex.intValue; // this._findCurrentIndex;
     var cur_ref = this._playingRef.stringValue;
     var cur_url = this._playURL.stringValue;
-  
+    
+    // If we haven't played anything yet, do the default
+    if (cur_ref == "") {
+      this.play();
+      return;
+    }
+    
     // Doublecheck that filters match what they were when we last played something.  
     var panic = false;
     var num_filters = this._source.getNumFilters( cur_ref );
-    if (num_filters > 0)
-    {
+    if (num_filters > 0) {
       var i;
-      for (i = 0; i < num_filters; i++)
-      {
+      for (i = 0; i < num_filters; i++) {
         // If they are not the same, just return from this.  No more play for you!
         var filter = this._source.getFilter( cur_ref, i );
         if (this.filters[i] != filter)
           panic = true; // WHOA, now what?  Try to use the current url!
-      };
-    };
+      }
+    }
     
-    if (panic)
-    {
+    if (panic) {
       // So, we are in panic mode.  The filters have changed.
       var index = this._source.getRefRowByColumnValue(cur_ref, "url", cur_url);
       // If we can find the current url in the current list, use that as the index
@@ -1338,7 +1352,7 @@ PlaylistPlayback.prototype = {
         cur_index = index;
       else
         return; // Otherwise, stop playback.
-    };
+    }
     
     this._playlistIndex.intValue = cur_index;
 
@@ -1396,14 +1410,15 @@ PlaylistPlayback.prototype = {
   
   _playDefault: function () 
   {
+    // Default if there is no ref yet.
+    dump("******** _playDefault\n");
+    var ref = "NC:songbird_library";
+    var index = -1;
     if ( this._playingRef && this._playingRef.stringValue.length ) {
-      // if there is a song to play, play it
-      this.playRef(this._playingRef.stringValue, 0);
+      ref = this._playingRef.stringValue;
     } 
-    else {
-      // otherwise play the library
-      this.playRef("NC:songbird_library", 0);
-    }
+    // if there is a song to play, play it
+    this.playRef(ref, index);
   },
   
   _importURLInLibrary: function( aURL )
