@@ -82,8 +82,8 @@ goto failure
 @echo.
 
 @mkdir %DEPTH%\_built_installer
-@move /y %DIST_DIR%\Songbird_%BUILD_ID%.exe %DEPTH%\_built_installer
-@%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%.exe > %DEPTH%\_built_installer\Songbird_%BUILD_ID%.exe.md5
+@move /y %DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe %DEPTH%\_built_installer
+@%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%_%ARCH%.exe > %DEPTH%\_built_installer\Songbird_%BUILD_ID%_%ARCH%.exe.md5
 
 goto end
 
