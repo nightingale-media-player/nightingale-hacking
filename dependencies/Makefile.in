@@ -71,7 +71,7 @@ SONGBIRD_PLUGINS    = $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/plugins/libtotem_
 SONGBIRD_PLUGINS   += $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/bin/totem-mozilla-viewer
 SONGBIRD_PLUGINS   += $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/share/mozilla-viewer.glade
 
-ifneq ("-x86_64", "$(SB_ARCH)")
+ifneq ("x86_64", "$(SB_ARCH)")
 
 FLASH_PLUGIN = libflashplayer
 SONGBIRD_COMPONENTS += $(PLUGINS_DIR)/flash/components/flashplayer.xpt
