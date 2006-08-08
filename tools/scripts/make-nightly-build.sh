@@ -16,6 +16,11 @@ cd ${DEPTH}
 make -f songbird.mk clobber
 make -f songbird.mk
 
+unset SONGBIRD_OFFICIAL
+unset UPDATE_CHANNEL
+unset SB_ENABLE_JARS
+unset SB_ENABLE_INSTALLER
+
 notice
 notice "Done. MAR and snippet are in compiled/update."
 notice "Please copy these files to a safe location!"
