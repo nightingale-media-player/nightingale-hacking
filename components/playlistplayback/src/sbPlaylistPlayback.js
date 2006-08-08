@@ -974,6 +974,22 @@ PlaylistPlayback.prototype = {
   },
 
   isPlaylistURL: function(aURL) {
+  
+    if( ( aURL.indexOf ) && 
+        (
+          // For now, still hardcode the playlist types.
+          ( aURL.indexOf( ".pls" ) != -1 ) || 
+          ( aURL.indexOf( "rss" ) != -1 ) || 
+          ( aURL.indexOf( ".m3u" ) != -1 ) 
+        )
+      )
+    {
+      return true;
+    }
+    return false;
+
+/*
+    // GRRRRR.  USE THIS LATER.  ALL HTML IS "TRUE" FOR THIS.  
     if ( aURL.indexOf )
     {
       // Cache our manager, but not at construction!
@@ -1001,6 +1017,7 @@ PlaylistPlayback.prototype = {
       }
     }
     return false;
+*/    
   },
   
   stripHoursFromTimeString: function ( aTimeString )
