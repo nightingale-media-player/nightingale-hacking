@@ -1620,7 +1620,7 @@ function onLinkOver( evt )
 {
   var the_url = GetHrefFromEvent( evt )
   theStatusText.stringValue = the_url;
-  if ( gPPS.isMediaURL( the_url ) )
+  if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
   {
     theStatusStyle.stringValue = "font-weight: bold;";
   }
@@ -1674,7 +1674,7 @@ function playExternalUrl(the_url, tryweb)
 {
   var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
   // figure out if the url is in the webplaylist
-  if (tryweb && theWebPlaylist) 
+  if (tryweb && theWebPlaylist && !theWebPlaylist.hidden) 
   {
     var row = theWebPlaylist.findRowIdByUrl(the_url);
     if (row != -1) 
@@ -1694,7 +1694,7 @@ function onMediaClick( evt )
   try
   {
     var the_url = GetHrefFromEvent( evt );
-    if ( gPPS.isMediaURL( the_url ) )
+    if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
     {
       playExternalUrl(the_url, true);
       evt.stopPropagation();

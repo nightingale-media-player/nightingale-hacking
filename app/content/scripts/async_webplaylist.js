@@ -163,8 +163,12 @@ try
     {
       var loop_break = false;
       var is_media = gPPS.isMediaURL( url );
-//      var is_playlist = gPPS.isPlaylistURL( url );
-      if ( is_media )
+      var is_playlist = gPPS.isPlaylistURL( url );
+      if ( is_playlist )
+      {
+        this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
+      }
+      else if ( is_media )
       {
         SBDataSetIntValue( "webplaylist.current", this.i + 1 );
         this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
