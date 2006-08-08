@@ -33,7 +33,7 @@ UninstallIcon "songbird.ico"
 
 XPStyle on
 
-OutFile "Songbird_${BUILD_ID}.exe"
+OutFile "Songbird_${BUILD_ID}_${ARCH}.exe"
 InstallDir "$PROGRAMFILES\Songbird\"
 ;InstallDirRegKey HKLM SOFTWARE\Songbird "Install_Dir"
 

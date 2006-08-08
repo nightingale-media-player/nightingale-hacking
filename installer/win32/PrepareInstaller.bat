@@ -14,17 +14,31 @@ if "%1"=="" goto usage
 if "%2"=="vs" goto visualstudio
 
 REM Assume Cygwin here...
+
+set ARCH=%3
 set BUILD_ID=%1
 set ICON_FILE=songbird.ico
 set DEPTH=..\..
 set DIST_DEPTH=..\..
 set DIST_DIR=%DEPTH%\compiled\dist
 
+goto prepareorpackage
+
 :visualstudio
 
-if "%3"=="prepare" goto prepare
+set ARCH=%3
+set BUILD_ID=%1
+set ICON_FILE=songbird.ico
+set DEPTH=..
+set DIST_DEPTH=..\..
+set DIST_DIR=%DEPTH%\dist
 
-if "%3"=="package" goto package
+goto prepareorpackage
+
+:prepareorpackage
+
+if "%4"=="prepare" goto prepare
+if "%4"=="package" goto package
 
 :prepare
 @del /s /f /q %DEPTH%\_built_installer\*.*
@@ -48,11 +62,11 @@ if "%3"=="package" goto package
 @%DIST_DEPTH%\tools\win32\reshacker\ResHacker.exe -addoverwrite songbird.exe, songbird.exe, %ICON_FILE%, icongroup, IDI_DOCUMENT, 1033
 @cd %DIST_DEPTH%\installer\win32
 
-if "%3"=="prepare" goto end
+if "%4"=="prepare" goto end
 
 :package
 @cd %DIST_DIR%
-@%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /O"%DEPTH%\Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
+@%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DEPTH%\Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
 @del Songbird.nsi
 @cd %DIST_DEPTH%\installer\win32
 
