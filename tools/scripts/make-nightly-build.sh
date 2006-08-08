@@ -7,10 +7,10 @@ notice() {
 DEPTH=../..
 CURRENT_DIR=`pwd`
 
-SONGBIRD_OFFICIAL=1
-UPDATE_CHANNEL="nightly"
-SB_ENABLE_JARS=1
-SB_ENABLE_INSTALLER=1
+export SONGBIRD_OFFICIAL=1
+export UPDATE_CHANNEL="nightly"
+export SB_ENABLE_JARS=1
+export SB_ENABLE_INSTALLER=1
 
 cd ${DEPTH}
 make -f songbird.mk clobber

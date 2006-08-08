@@ -28,6 +28,6 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
-SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh
+SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh $(SB_ARCH)
 
 include $(topsrcdir)/build/rules.mk
