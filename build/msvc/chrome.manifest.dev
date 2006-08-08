@@ -4,44 +4,44 @@ skin    songbird  rubberducky/0.2   feathers/rubberducky/skin/
 content rubberducky                 feathers/rubberducky/content/
 skin    songbird  dove/0.1          feathers/dove/
 
-locale	songbird	zh-TW	        locales/zh-TW/
-locale	songbird	zh-CN	        locales/zh-CN/
 locale	songbird	uk-UA	        locales/uk-UA/
 locale	songbird	tr-TR	        locales/tr-TR/
 locale	songbird	th-TH	        locales/th-TH/
 locale	songbird	sv-SE	        locales/sv-SE/
+locale	songbird	es-MX	        locales/es-MX/
+locale	songbird	es-ES         locales/es-ES/
+locale	songbird	es-AR	        locales/es-AR/
 locale	songbird	sk-SK	        locales/sk-SK/
 locale  songbird	ru-RU	        locales/ru-RU/
 locale	songbird	pt-BR	        locales/pt-BR/
 locale	songbird	pl-PL	        locales/pl-PL/
 locale	songbird	no-NO	        locales/no-NO/
 locale	songbird	nn-NO	        locales/nn-NO/
-locale	songbird	nl-NL	        locales/nl-NL/
-locale	songbird	nl-BE	        locales/nl-BE/
 locale	songbird	ko-KR	        locales/ko-KR/
 locale	songbird	ja-JP	        locales/ja-JP/
 locale	songbird	it-IT	        locales/it-IT/
 locale	songbird	hu-HU	        locales/hu-HU/
-locale	songbird	hr-HR	        locales/hr-HR/
 locale	songbird	he-IL	        locales/he-IL/
+locale	songbird	el-GR	        locales/el-GR/
+locale	songbird	de-DE	        locales/de-DE/
 locale	songbird	gl-ES	        locales/gl-ES/
 locale	songbird	fr-FR	        locales/fr-FR/
 locale	songbird	fi-FI	        locales/fi-FI/
-locale	songbird	es-MX	        locales/es-MX/
-locale	songbird	es-ES         locales/es-ES/
-locale	songbird	es-AR	        locales/es-AR/
 locale	songbird	en-US	        locales/en-US/
-locale	songbird	el-GR	        locales/el-GR/
-locale	songbird	de-DE	        locales/de-DE/
-locale	songbird	eu-ES	        locales/eu-ES/
 locale  songbird	en-NZ         locales/en-NZ/
 locale	songbird	en-EN	        locales/en-EN/
 locale	songbird	en-AU         locales/en-AU/
+locale	songbird	nl-NL	        locales/nl-NL/
+locale	songbird	nl-BE	        locales/nl-BE/
 locale	songbird	da-DK	        locales/da-DK/
 locale	songbird	cs-CZ	        locales/cs-CZ/
+locale	songbird	hr-HR	        locales/hr-HR/
+locale	songbird	zh-TW	        locales/zh-TW/
+locale	songbird	zh-CN	        locales/zh-CN/
 locale	songbird	ca-ES	        locales/ca-ES/
 locale	songbird	ca-AD	        locales/ca-AD/
 locale	songbird	bs-BA	        locales/bs-BA/
+locale	songbird	eu-ES	        locales/eu-ES/
 
 locale  browser   en-US         content/browser/locale/browser/ 
 content browser                 content/browser/content/
