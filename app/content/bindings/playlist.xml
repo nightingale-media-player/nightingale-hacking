@@ -1620,6 +1620,9 @@
               
               // Tell the playlistsource how things should sort  
               this.source.setOrder(this.ref, order);
+              
+              // Clear the selection
+              this.tree.view.selection.clearSelection();
             }
           ]]>
         </body>
