@@ -376,7 +376,7 @@ function SBMainWindowReopen()
   } catch (err) {}
 
   // Open the window
-  window.open( mainwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
+  window.open( mainwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no" );
   setTimeout( "onExit();", 1000 );
 }
 
@@ -2309,7 +2309,7 @@ function SBMiniplayerOpen()
   } catch (err) {}
 
   // Open the window
-  window.open( miniwin, "", "chrome,modal=no,toolbar=no,popup=yes,titlebar=no" );
+  window.open( miniwin, "", "chrome,modal=no,toolbar=no,popup=yes,titlebar=no,resizable=no" );
   onExit();
 }
 

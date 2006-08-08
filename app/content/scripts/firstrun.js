@@ -215,7 +215,7 @@ function firstRunDialog()
     var data = new Object();
     data.bundle = fwd_bundle;
     data.document = document;
-    window.openDialog( "chrome://songbird/content/xul/firstrun.xul", "firstrun", "chrome,centerscreen,modal=no", data);
+    window.openDialog( "chrome://songbird/content/xul/firstrun.xul", "firstrun", "chrome,centerscreen,titlebar=no,resizable=no,modal=no", data);
     return 1;
   }
   if (eula_data.do_eula) document.__STARTMAINWIN();

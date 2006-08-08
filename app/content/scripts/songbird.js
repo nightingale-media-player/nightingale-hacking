@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright� 2006 POTI, Inc.
+// Copyright? 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the �GPL�).
+// GNU General Public License Version 2 (the ?GPL?).
 // 
 // Software distributed under the License is distributed 
-// on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an ?AS IS? basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -642,6 +642,7 @@ function PopBackscanPause()
 function SBOpenModalDialog( url, param1, param2, param3 )
 {
   PushBackscanPause();
+  param2 += ",resizable=no,titlebar=no"; // bonus stuff to shut the mac up.
   var retval = window.openDialog( url, param1, param2, param3 );
   PopBackscanPause();
   return retval;

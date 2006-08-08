@@ -2282,7 +2282,7 @@
             // Make a data object to get the playlist to add to from the dialog
             var add_to_playlist_data = new Object();
             // Open the modal dialog
-            window.openDialog( "chrome://songbird/content/xul/add_to_playlist.xul", "add_to_playlist", "chrome,modal=yes, centerscreen", add_to_playlist_data );
+            window.openDialog( "chrome://songbird/content/xul/add_to_playlist.xul", "add_to_playlist", "chrome,modal=yes,titlebar=no,resizable=no, centerscreen", add_to_playlist_data );
             if ( add_to_playlist_data.retval == "ok" )
             {
               // add them !

@@ -49,7 +49,7 @@ try
   
   function onJumpToFileKey(evt) {
     if (!document.__JUMPTO__)
-      window.openDialog( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,modal=no, popup=yes", document );
+      window.openDialog( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,titlebar=no,resizable=no,modal=no, popup=yes", document );
   }
 
   function onKeyPress(evt) {

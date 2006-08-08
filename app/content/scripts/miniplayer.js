@@ -282,7 +282,7 @@ try
       } catch (err) {}
      
       // Open the window
-      window.open( mainwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
+      window.open( mainwin, "", "chrome,modal=no,titlebar=no,resizable=no,toolbar=no,popup=no,titlebar=no" );
       onExit();
     }
   }
