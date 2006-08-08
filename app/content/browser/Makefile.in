@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = content \
           locale \
+          skin \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
