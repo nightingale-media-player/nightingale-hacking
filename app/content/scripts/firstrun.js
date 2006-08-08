@@ -249,6 +249,7 @@ function doOK()
     for (var i=0;i<bundle.getNumExtensions();i++) if (bundle.getExtensionInstallState(i)) count++;
     noext = (count == 0);
   }
+  switchLocale(wanted_locale);
   if (noext) {
     var r = sbMessageBox_strings("setup.noxpititle", "setup.noxpimsg", "No extension", "Press Ok to keep a minimal installation, or Cancel to go back.", true);
     if (r == "accept") { 
@@ -259,7 +260,6 @@ function doOK()
     }
   } else {
     bundle.installSelectedExtensions(window);
-    switchLocale(wanted_locale);
     prefs.setCharPref("songbird.firstrun.firstruncheck", "1");  
     prefs.setCharPref("installedbundle", bundle.getBundleVersion());
     if (bundle.getNeedRestart()) {
