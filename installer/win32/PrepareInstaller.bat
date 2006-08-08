@@ -70,7 +70,7 @@ if "%4"=="prepare" goto end
 @del Songbird.nsi
 @cd %DIST_DEPTH%\installer\win32
 
-if exist "%DIST_DIR%\Songbird_%BUILD_ID%.exe" goto success
+if exist "%DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe" goto success
 goto failure
 
 :success
