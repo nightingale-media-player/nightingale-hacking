@@ -145,10 +145,13 @@ CoreVLC.prototype.getVolume = function()
 
   /**
   * Valid volumes are from 0 to 255.
-  * VLC uses a 0-200 scale, so volumes are adjusted accordingly.
+  * VLC uses a 0-50 scale, so volumes are adjusted accordingly.
+  * If you going beyond this 0-50 scale, VLC will amplify the signal.
+  * And it does so poorly, without clipping or compressing the signal.
+  * Great. Amateur night...
   */
   var scaledVolume = this._object.get_volume();
-  var retVolume = Math.round(scaledVolume / 175 * 255);
+  var retVolume = Math.round(scaledVolume / 50 * 255);
   
   return retVolume;
 };
@@ -159,7 +162,7 @@ CoreVLC.prototype.setVolume = function(volume)
   if ( (volume < 0) || (volume > 255) )
     throw Components.results.NS_ERROR_INVALID_ARG;
     
-  var scaledVolume = Math.round(volume / 255 * 175);
+  var scaledVolume = Math.round(volume / 255 * 50);
   
   this._object.set_volume(scaledVolume);
 };
