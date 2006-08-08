@@ -35,47 +35,6 @@ There are three schemes that control the colors in Songbird, the Main Window and
 To achieve a three-dimensional effect, it's important to remember that a user understands their desktop to be lit from the
 upper left corner or directly from above.  Consequently, use the light colors on the top and left borders and dark colors on the 
 right and bottom borders to achieve a dimensional appearance.
-
-The following ARE NOT CLASS NAMES.
-
-Body Material - Rubberducky
--------------------------------
-bright-highlight    #7a7c7c - upperleft borders
-highlight           #686a6a - upperleft borders
-hover               #fff    - text
-foreground          #ccc    - text
-button              #333    - skin
-shadow              #505154 - lowerright borders
-darkshadow          #333    - lowerright borders
-background          #000    - skin
-
-Disabled - Rubberducky
--------------------------------
-bright-highlight    #444
-highlight           #444
-foreground          #505154
-button              #333
-shadow              #505154
-darkshadow          #333
-background          #000
-
-Service Pane - Rubberducky
--------------------------------
-bright-highlight    #7a7c7c
-highlight           #999
-foreground          #cdd4c4
-button              #686a6a
-shadow              #444
-darkshadow          #333
-background          #000
-
-Filterlists - Rubberducky
--------------------------------
-filterlist-light    #343d42
-filterlist-dark     #1d272d
-selected            #4a4e48
-selected-highlight  #99a195
-
 ************************************************************************************************************************************************
 */ 
 
@@ -89,81 +48,81 @@ These pieces paint the resizeable window for dialogs.
 window
 {
   -moz-appearance: none !important; 
-  background-color: #000 !important; /* color of the Main Window **/
+  background-color: #FFF !important; /* color of the Main Window **/
 }
 
 .chrome_iframe_bkgd,
 #chrome_bkgd
 {
-  background-color: #000 !important; /* color of the Main Window **/
+  background-color: #FFF !important; /* color of the Main Window **/
 }
 
 #chrome_nw
 {
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-left-colors: #686a6a #333 !important;
-  background-color: #000 !important;
+  -moz-border-top-colors: #eee #ececec !important;
+  -moz-border-left-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 #chrome_n
 {
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  background-color: #000 !important;
+  -moz-border-top-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 #chrome_ne
 {
-  -moz-border-top-colors: #7a7c7c #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: #000 !important;
+  -moz-border-top-colors: #eee #ececec !important;
+  -moz-border-right-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 #chrome_e
 {
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: #000 !important;
+  -moz-border-right-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 #chrome_se
 {
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-right-colors: #505154 #333 !important;
-  background-color: #000 !important;
+  -moz-border-bottom-colors: #eee #ececec !important;
+  -moz-border-right-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 
 #chrome_s
 {
-  -moz-border-bottom-colors: #333 #333 !important;
-  background-color: #000 !important;
+  -moz-border-bottom-colors: #ececec #ececec !important;
+  background-color: #FFF !important;
 }
 #chrome_w
 {
-  -moz-border-left-colors: #686a6a #333 !important;
-  background-color: #000 !important;
+  -moz-border-left-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 #chrome_sw
 {
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-left-colors: #686a6a #333 !important;
-  background-color: #000 !important;
+  -moz-border-bottom-colors: #ececec #ececec !important;
+  -moz-border-left-colors: #eee #ececec !important;
+  background-color: #FFF !important;
 }
 
 .iframe_bkgd
 {
-  background: #000 !important;
+  background: #FFF !important;
 }
 
 #window_top   /* Title box */
 {
-  border-bottom: 1px solid #3B3C3F !important; /* this draws the line under the title bar */
+  border-bottom: 1px solid #eee !important; /* this draws the line under the title bar */
   background-color: Transparent !important;
 }
 
 #app_title,
 label.dialog_box
 {
-  color: #fff !important;
+  color: #333 !important;
 }
 
 .dialog_label
 {
-  color: #fff !important;
+  color: #333 !important;
 }
 
 
@@ -173,55 +132,37 @@ SCROLLBARS
 ************************************************************************************************************************************************
 */ 
 
-playlist.dialog_playlist scrollbar
+scrollbar.dialog_playlist
 {   
-  background-color: #000 !important;
+  background-color: #FFF !important;
   background-image: none !important; 
 } 
 
-playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+scrollbar.dialog_playlist > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar.dialog_playlist > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+scrollbar.dialog_playlist > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar.dialog_playlist > scrollbarbutton[sbattr="scrollbar-down-bottom"],
+scrollbar.dialog_playlist > slider > thumb
 {   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
   border: 2px solid !important; 
-  background-color: #343d42 !important;  
-  background-position: center center !important; 
+  background-position: center center !important;  
+  background-color: #FFF !important; 
+  -moz-border-top-colors: #eee #ececec !important;
+  -moz-border-left-colors: #eee #ececec  !important;
+  -moz-border-bottom-colors: #ccc #eee !important;
+  -moz-border-right-colors: #ccc #eee !important;
+  color: #666 !important; 
 } 
  
-playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-playlist.dialog_playlist scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important;
-  background-position: center center !important;
-} 
- 
-playlist.dialog_playlist scrollbar > slider > thumb > gripper
+scrollbar.dialog_playlist > slider > thumb > gripper
 {   
   background-color: transparent !important; 
 } 
 
-playlist.dialog_playlist scrollbar > slider > thumb
+scrollbar.dialog_playlist > slider
 {   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important;
-} 
-
-playlist.dialog_playlist scrollbar > slider
-{   
-  background-color: #000 !important;
-} 
+  background-color: #FFF !important;
+}
 
 /** 
 ************************************************************************************************************************************************
@@ -234,27 +175,27 @@ playlist.dialog_playlist tree treecol
   background-image: url(default/treecol.png) !important;
   color: #99A194 !important;  
   -moz-border-right-colors: #333 !important;
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 
 /* column picker **/
 playlist.dialog_playlist tree .tree-columnpicker-icon
 {
-  -moz-border-top-colors: #000 #000 !important;
-  -moz-border-right-colors: #000 #000 !important;
-  -moz-border-bottom-colors: #000 #000 !important;
-  -moz-border-left-colors: #000 #000 !important;
+  -moz-border-top-colors: #FFF #FFF !important;
+  -moz-border-right-colors: #FFF #FFF !important;
+  -moz-border-bottom-colors: #FFF #FFF !important;
+  -moz-border-left-colors: #FFF #FFF !important;
   list-style-image: url(default/column_picker.png) !important;
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 playlist.dialog_playlist tree .treecol-image /* puts a little piece to fill in next to the column picker **/
 {
-  -moz-border-top-colors: #000 #000 !important;
-  -moz-border-right-colors: #000 #000 !important;
-  -moz-border-bottom-colors: #000 #000 !important;
-  -moz-border-left-colors: #000 #000 !important;
+  -moz-border-top-colors: #FFF #FFF !important;
+  -moz-border-right-colors: #FFF #FFF !important;
+  -moz-border-bottom-colors: #FFF #FFF !important;
+  -moz-border-left-colors: #FFF #FFF !important;
   background-image: url(default/treecol.png) !important;
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 
 /** 
@@ -263,7 +204,7 @@ THE PLAYLIST
 ************************************************************************************************************************************************
 */ 
 
-playlist.dialog_playlist
+playlist.dialog_playlist 
 {
   background-color: #000 !important;
   background-image: url(default/bkgd_flowers.png) !important;
@@ -280,70 +221,71 @@ playlist.dialog_playlist > stack > vbox
   background-color: transparent !important;  
 }
 
-.dialog_playlist #playlist_toolbar_bkg,
-playlist.dialog_playlist > stack > vbox > hbox#playlist_toolbar_bkg
-{ 
-  border-top: 1px solid #686a6a;
-}
-
-playlist.dialog_playlist > stack > vbox > hbox.dialog_playlist
+playlist.dialog_playlist > stack > vbox > hbox
 {
-  background-color: #000 !important;
+  background-color: #fff !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-row
 {
-  border: 0px solid #000 !important;
+  border: 0px solid #ececec !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d !important;
+  background-color: #fff !important;
 }
 
 .dialog_playlist #playlist_tree >  treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42 !important;
+  background-color: #ececec !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-cell
 {
-  border-right: 1px solid #505154 !important;
+  border-right: 1px solid #eee !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48 !important;
+  background-color: #bdc1c1 !important;
 }
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #99A195 !important;
+  background-color: #686a6a !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text
 {
-  color: #CCC !important;
+  color: #666 !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #666 !important;
+}
+
+.dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected,focus )
 {
   color: #FFF !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter
 {
- background-color: #333 !important;
- color: #eee !important;
+ background-color: #ccc !important;
+ color: #999 !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter( odd )
 {
- color: #eee !important;
+ background-color: #ececec !important;
+ color: #999 !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
 {
-  background-color: #676D65 !important;
+ background-color: #ececec !important;
+ color: #999 !important;
 }
 
 /** 
@@ -359,29 +301,29 @@ BUTTONS for dialogs and forms.
 */
 .dialog_button 
 {
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
+  -moz-border-top-colors: #ccc !important;
+  -moz-border-left-colors: #ccc !important;
+  -moz-border-bottom-colors: #999 !important;
+  -moz-border-right-colors: #999 !important;
+  background-color: #fff !important;
   color: #99A195 !important;
 }
 
 .dialog_button[disabled="true"],
 .dialog_button:hover[disabled="true"]
 {
-  -moz-border-top-colors: #535751 !important;
-  -moz-border-left-colors: #535751 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
-  color: #535751 !important;
+  -moz-border-top-colors: #ccc !important;
+  -moz-border-left-colors: #ccc !important;
+  -moz-border-bottom-colors: #ccc !important;
+  -moz-border-right-colors: #ccc !important;
+  background-color: #fff !important;
+  color: #666 !important;
 }
 
 .dialog_button:hover
 {
-  color: #FFF !important;
-  background-color: #333 !important;
+  color: #000 !important;
+  background-color: #eee !important;
 }
 
 .backless_button /* Used in Watch Folders **/
@@ -398,37 +340,37 @@ TEXTBOXES for dialogs and forms.
 .dialog_textbox
 {
   border: 2px solid !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
-  color: #FFF !important;
+  -moz-border-top-colors: #ccc #999 !important;
+  -moz-border-left-colors: #ccc #999 !important;
+  -moz-border-right-colors: #eee #ccc !important;
+  -moz-border-bottom-colors: #eee #ccc !important;
+  background-color: #FFF !important; 
+  color: #333 !important;
 }
 
 .dialog_textbox input
 {
-  border-top: 2px solid #000 !important;
-  border-left: 2px solid #000 !important;
-  background-color: #000 !important; 
-  color: #FFF !important;
+  border-top: 2px solid #FFF !important;
+  border-left: 2px solid #FFF !important;
+  background-color: #FFF !important; 
+  color: #333 !important;
 }
 
 .dialog_textbox input:focus
 {
-  border-top: 2px solid #4A4E48 !important;
-  border-left: 2px solid #4A4E48 !important;
-  background-color: #4A4E48 !important; 
+  border-top: 2px solid #eee !important;
+  border-left: 2px solid #eee !important;
+  background-color: #fff !important; 
 }
 
 .dialog_textbox[disabled="true"]
 {
   border: 2px solid !important;
-  -moz-border-top-colors: #333 #222 !important;
-  -moz-border-left-colors: #333 #222 !important;
-  -moz-border-right-colors: #333 #222 !important;
-  -moz-border-bottom-colors: #333 #222 !important;
-  color: #666 !important;
+  -moz-border-top-colors: #eee #eee !important;
+  -moz-border-left-colors: #eee #eee !important;
+  -moz-border-right-colors: #eee #eee !important;
+  -moz-border-bottom-colors: #eee #eee !important;
+  color: #fff !important;
 }
 
 /** 
@@ -442,12 +384,12 @@ LISTBOXES for dialogs and forms.
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
   -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #333 !important; 
+  background-color: #eee !important; 
 }
 
 .dialog_listbox > listitem
 {
-  background-color: #333 !important; /* doesn't seem to inherit the #333 from .dialog_listbox */
+  background-color: #eee !important; /* doesn't seem to inherit the #333 from .dialog_listbox */
   color: #FFF !important;
 }
 
@@ -458,7 +400,7 @@ LISTBOXES for dialogs and forms.
 
 .formgrouping
 {
-  border: 1px solid #3B3C3F !important;
+  border: 1px solid #eee !important;
 }
 
 /** 
@@ -479,7 +421,7 @@ checkbox {
 
 
 .checkbox-label {
-  color: #FFF !important;
+  color: #333 !important;
   background-color: Transparent !important;
 }
 
@@ -500,11 +442,11 @@ checkbox[disabled="true"] {
   -moz-border-left-colors: #535751 #333 !important;
   -moz-border-right-colors: #99A195 #333 !important;
   -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
+  background-color: #FFF !important; 
 }
   
 checkbox:hover:active .checkbox-check {
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 
 /* ..... checked state ..... */
@@ -512,12 +454,12 @@ checkbox:hover:active .checkbox-check {
 checkbox[checked="true"] .checkbox-check 
 {
   -moz-appearance: none !important;
-  background-color: #000 !important;
-  background-image: url("default/check_fff.png") !important;
+  background-color: #FFF !important;
+  background-image: url("default/check_000.png") !important;
 }
 
 checkbox[checked="true"][disabled="true"] .checkbox-check {
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 /* END CHECKBOXES **/
 /** 
@@ -578,13 +520,7 @@ SMART PLAYLIST BUILDER
 .drawer_box,
 .smart_condition_box
 {
-  border: 1px solid #3B3C3F !important;
-}
-
-.drawer_box,
-.smart_condition_box
-{
-  border: 1px solid #99A195 !important;
+  border: 1px solid #ccc !important;
 }
 
 .smart_condition_plus
@@ -605,27 +541,24 @@ MEDIA SCAN
 
 #media_scan
 {
-  background-color: #000 !important;
-  color: #FFF !important;
+  background-color: #eee !important;
 }
 
 #songbird_media_scan 
 { 
-   background-color: #000 !important; 
-   color: #FFF !important;
+   background-color: #eee !important; 
 } 
 
 #songbird_media_scan .progress-bar { 
-   background-color: #666 !important;
+   background-color: #fff !important;
 } 
   
 #songbird_media_scan[mode="undetermined"] { 
-  background-color: #333 !important;
+  background-color: #eee !important;
 } 
 
 #songbird_media_scan_title,
 #songbird_media_scan_label
-{color: #FFF !important;}
 
 /** 
 ***********************************************************************************************
@@ -678,8 +611,8 @@ Poppin' Fresh.
 #songbird_menu > menu[_moz-menuactive="true"],
 #songbird_menu > menu[_moz-menuactive="true"] > label
 {
-  background-color: #666 !important; /* I feel SUPER important! */
-  color: #EEE !important;
+  background-color: #eee !important; /* I feel SUPER important! */
+  color: #333 !important;
 }
 
 /* The Basic Menu Styles **/
@@ -687,30 +620,30 @@ Poppin' Fresh.
 menupopup, 
 popup
 {
-  -moz-border-top-colors: #333 #333 !important;
-  -moz-border-right-colors: #333 #333 !important;
-  -moz-border-bottom-colors: #333 #333 !important;
-  -moz-border-left-colors: #333 #333 !important;
-  background-color: #333 !important;
-  color: #FFF !important;
+  -moz-border-top-colors: #eee #eee !important;
+  -moz-border-right-colors: #eee #eee !important;
+  -moz-border-bottom-colors: #eee #eee !important;
+  -moz-border-left-colors: #eee #eee !important;
+  background-color: #fff !important;
+  color: #333 !important;
 }
 
 menuseparator
 {
-  border-top: 1px solid #999 !important;
-  border-bottom: 1px solid #333 !important;
+  border-top: 1px solid #ccc !important;
+  border-bottom: 1px solid #fff !important;
 }
 
 menupopup > menu,
 popup > menu
 {
-  background-color: #333 !important;
-  color: #FFF !important;
+  background-color: #fff !important;
+  color: #333 !important;
 }
 
 popup, menuitem, popup > menuitem
 {
-  color: #FFF !important;
+  color: #333 !important;
 }
 
 menuitem[_moz-menuactive="true"],  
@@ -734,18 +667,18 @@ menupopup > menu[_moz-menuactive="true"]
 
 menuitem[selected="true"]
 {
-  background-color: #4A4E48 !important;
-  color: #FFF !important;
+	color: #eee !important;
+	background-color: #4A4E48 !important;
 }
 
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
-  list-style-image: url(default/check_fff.png) !important;
+  list-style-image: url(default/check_000.png) !important;
 }
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
-  list-style-image: url(default/check_fff.png) !important;
+  list-style-image: url(default/check_000.png) !important;
 }
 
 /** 
@@ -756,18 +689,18 @@ MENULIST
 
 menulist
 { 
-  background-color: #242527 !important;
-  border: 1px solid #4F5052 !important; 
-  color: #FFF !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important; 
+  background-color: #fff !important;
+  border: 1px solid #eee !important; 
+  color: #333 !important;
+  -moz-border-top-colors: #eee #ececec !important;
+  -moz-border-left-colors: #eee #ececec !important;
+  -moz-border-right-colors: #ccc #999 !important;
+  -moz-border-bottom-colors: #ccc #999 !important; 
 } 
 
 .menulist-label
 {
-  color: #fff !important;
+  color: #333 !important;
 }
 
 .menulist-dropmarker
@@ -779,13 +712,13 @@ menulist
 
 menulist:focus
 {
-  background-color: #4A4E48 !important;
-  color: #fff !important;
+  background-color: #eee !important;
+  color: #333 !important;
 }
 
 menulist:focus > hbox
 {
-  background-color: #4A4E48 !important;
+  background-color: #eee !important;
 }
 
 menulist[disabled="true"]
@@ -801,17 +734,17 @@ menulist[disabled="true"]
 .menulist-editable-input,
 .menulist-editable-box
 {
-  color: #fff !important;
+  color: #333 !important;
   background-color: transparent !important;
 }
 
 .menulist-editable-box
 {
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  background-color: #000 !important;
+  -moz-border-top-colors: #FFF !important;
+  -moz-border-left-colors: #FFF !important;
+  -moz-border-right-colors: #FFF !important;
+  -moz-border-bottom-colors: #FFF !important;
+  background-color: #FFF !important;
 }
 
 .menulist-editable-input[disabled="true"]
@@ -838,7 +771,7 @@ VIDEO WINDOW
 
 #video_window
 {
-  background-color: #000 !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
+  background-color: #FFF !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
  /* background-color: transparent !important; /* mig found a magic trick to allow this to be transparent on mac and linux */
 }
 
@@ -849,7 +782,7 @@ VIDEO WINDOW
 
 iframe#video_controls
 {
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 
 
