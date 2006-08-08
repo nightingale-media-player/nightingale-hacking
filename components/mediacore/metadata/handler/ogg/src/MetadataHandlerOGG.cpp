@@ -290,17 +290,61 @@ void sbMetadataHandlerOGG::ParseChannel()
     {
       for ( int i = 0; i < comment_count; i++ )
       {
+        // This converts the utf8 data to u16
         nsString comment_string = ReadIntString();
         if ( comment_string.Length() )
         {
+          // Their syntax is KEY=value;
           PRInt32 split = comment_string.Find( "=", false );
           if ( split != -1 )
           {
-            nsString key, value;
+            // Split out key and value
+            nsAutoString key, value;
+            PRInt32 type = 0;
             comment_string.Left( key, split );
             comment_string.Right( value, comment_string.Length() - split - 1 );
             ToLowerCase( key );
-            m_Values->SetValue( key, value, 0 ); // Lots of bulletproofing before we get here.
+
+            // Transform their keynames to our keynames
+            if (key == NS_LITERAL_STRING("tracknumber"))
+            {
+              key = NS_LITERAL_STRING("track_no");
+            }
+            if (key == NS_LITERAL_STRING("date"))
+            {
+              key = NS_LITERAL_STRING("year");
+            }
+
+            // Do special stuff if the value is "1 of 12" or "1/12"
+            if ( key == NS_LITERAL_STRING("track_no") || key == NS_LITERAL_STRING("disc_no") )
+            {
+              type = 1; // Int
+              PRInt32 mark = key.Find("_");
+              nsAutoString totalKey;
+              key.Left( totalKey, mark );
+              totalKey.AppendLiteral("_total");
+
+              if ( ( mark = value.Find( "of", PR_TRUE ) ) != -1 )
+              {
+                nsAutoString _no, _total;
+                value.Left( _no, mark - 1 );
+                value.Right( _total, value.Length() - mark - 3 );
+                m_Values->SetValue( key, _no, type );
+                m_Values->SetValue( totalKey, _total, type );
+              }
+              else if ( ( mark = value.Find( "/", PR_TRUE ) ) != -1 )
+              {
+                nsAutoString _no, _total;
+                value.Left( _no, mark );
+                value.Right( _total, value.Length() - mark - 1 );
+                m_Values->SetValue( key, _no, type );
+                m_Values->SetValue( totalKey, _total, type );
+              }
+              else
+                m_Values->SetValue( key, value, type );
+            }
+            else  
+              m_Values->SetValue( key, value, type );
           }
           else break; // Crap
         }
