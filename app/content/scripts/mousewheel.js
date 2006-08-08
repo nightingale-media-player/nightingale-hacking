@@ -74,11 +74,11 @@ try
     }
     catch (err)
     {
-      alert("onMouseWheel - " + err);
+      dump("onMouseWheel - " + err);
     }
   }
 }
 catch (err)
 {
-  alert("mousewheel.js - " + err);
+  dump("mousewheel.js - " + err);
 }
