@@ -574,6 +574,7 @@
         // Sync the order column and direction
         this.sortorder = orderArray[0];
         this.sortdirection = orderArray[1];
+        this.syncColumnSortIndicator();
       }
       catch( err )
       {
@@ -1586,6 +1587,7 @@
             this.refreshCommands(false);
           }
           this._lastviewsummary = viewsummary;
+          this.syncColumnSortIndicator();
         </body>
       </method>
 
@@ -2936,6 +2938,23 @@
         ]]>
         </body>
       </method>
+
+    <method name="syncColumnSortIndicator">
+      <body>
+        <![CDATA[
+          if (this.treecols) {
+            var cols = this.treecols.childNodes;
+            for (var i=0;i<cols.length;i++) {
+              if (cols[i].getAttribute("id") == this.sortorder) {
+                cols[i].setAttribute("sortDirection", (this.sortdirection == "asc") ? "ascending" : "descending");
+              } else {
+                cols[i].setAttribute("sortDirection", "natural");
+              }
+            }
+          }
+        ]]>
+      </body>
+    </method>
 
 </implementation> 
  
