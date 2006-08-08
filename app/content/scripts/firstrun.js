@@ -135,7 +135,8 @@ function setWantedLocale(locale)
 
 function enableCustomInstall() 
 {
-  document.getElementById("custom_button").setAttribute("disabled", "false");
+  // Once we've loaded the stuff, open the box.
+  setTimeout( "customInstall();", 250 );
 }
 
 function enableGoAhead() 

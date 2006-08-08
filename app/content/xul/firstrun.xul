@@ -60,7 +60,7 @@
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <vbox>
               <spacer height="5" width="250" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-              <label id="pleasewait" flex="1" value="&setup.retrievingxpilist;"/>
+              <label id="pleasewait" flex="1" value="&setup.retrievingxpilist;" class="dialog_label sb_faceplate"/>
             </vbox>
           </hbox>
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
@@ -68,11 +68,10 @@
           <sbextensions id="songbird.extensionlist"/>
           <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
           <hbox>
-            <button id="cancel_button" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
             <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-            <button id="custom_button" disabled="true" label="&setup.custominstall;" class="dialog_button sb_faceplate" oncommand="customInstall();"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
             <button id="ok_button" disabled="true" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <button id="cancel_button" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
           </hbox> 
         </vbox>
       <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
