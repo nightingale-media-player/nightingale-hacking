@@ -80,8 +80,12 @@ Bundle.prototype = {
       case 'WIN95':
         url = SONGBIRD_GETBUNDLE_URL_WIN32; 
         break;
-      case 'Linux': url = SONGBIRD_GETBUNDLE_URL_LINUX; break;
-      case 'Darwin': url = SONGBIRD_GETBUNDLE_URL_MACOSX; break;
+      case 'Linux':
+        url = SONGBIRD_GETBUNDLE_URL_LINUX;
+        break;
+      case 'Darwin':
+        url = SONGBIRD_GETBUNDLE_URL_MACOSX;
+        break;
     }
     //this.LOG(url);
     this._req.open('GET', url, true); 
@@ -390,3 +394,4 @@ var gModule = {
 function NSGetModule(comMgr, fileSpec) {
   return gModule;
 } // NSGetModule
+
