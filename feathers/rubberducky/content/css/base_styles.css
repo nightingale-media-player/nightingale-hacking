@@ -248,6 +248,21 @@ playlist > stack > vbox > hbox,
  -moz-appearance: none !important; /* grrrr! */
 }
 
+.treecol-sortdirection[sortDirection="ascending"]
+{
+ -moz-appearance: none !important; /* grrrr! */
+ background-image: none !important;
+ list-style-image: url(chrome://songbird/skin/default/chrome_scroll_up.png) !important;
+ padding: 0px 5px 0px 0px !important;
+} 
+.treecol-sortdirection[sortDirection="descending"]
+{
+ -moz-appearance: none !important; /* grrrr! */
+ background-image: none !important;
+ list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
+ padding: 0px 5px 0px 0px !important;
+}
+
 /** 
 ************************************************************************************************************************************************
 THE WEB PLAYLIST aka THE URL SLURPER
