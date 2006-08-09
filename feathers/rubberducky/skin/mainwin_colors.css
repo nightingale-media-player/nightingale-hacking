@@ -1369,159 +1369,47 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   color: #FFF !important;
 }
 
-
-
 #browser_toolbar
 {
   border-bottom: 1px solid #808583 !important; 
   background-color: transparent !important;
 }
 
-#browser_toolbar button 
+/* the style for all toolbarbuttons */
+#browser_toolbar button,
+#playlist_toolbar > button,
+#playlist_toolbar > button[disabled="false"] 
 {
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: #333 !important;   
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #000 !important;   
+ }
+ 
+#browser_toolbar button:hover,
+#playlist_toolbar > button:hover,
+#playlist_toolbar > button[disabled="false"]:hover  
+{
+  background-color: #333 !important;
+  color: #FFF !important;   
  }
  
 #browser_toolbar button[disabled="true"],
-#browser_toolbar button[disabled="true"]:hover
+#browser_toolbar button[disabled="true"]:hover,
+#playlist_toolbar > button[disabled="true"],
+#playlist_toolbar > button[disabled="true"]:hover
 {
-  -moz-border-top-colors: transparent !important;
-  -moz-border-left-colors: transparent !important;
-  -moz-border-bottom-colors: transparent !important;
-  -moz-border-right-colors: transparent !important;
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
   background-color: transparent !important; 
+  color: #333 !important;  
 }
 
-#browser_back:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_back[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
 
-#browser_refresh:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_refresh[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
 
-#browser_stop:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_stop[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_fwd:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_fwd[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-#browser_home:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_home[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_bookmark:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_bookmark[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_playlist:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_playlist[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
-
-#browser_download:hover
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-}
-#browser_download[disabled="true"]
-{
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
-  background-color: transparent !important; 
-}
 /* END WEB BAR */
 
 /** 
