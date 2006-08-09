@@ -1081,8 +1081,8 @@ var SBWebPlaylistCommands =
     "library_cmd_addtoplaylist",
     "library_cmd_addtolibrary",
     "*separator*",
-    "library_cmd_showdlplaylist",
-    "library_cmd_burntocd"
+    "library_cmd_showdlplaylist"
+//    "library_cmd_burntocd"
 //    "library_cmd_device"
   ),
   
@@ -1095,8 +1095,8 @@ var SBWebPlaylistCommands =
     "&command.addtoplaylist",
     "&command.addtolibrary",
     "*separator*",
-    "&command.showdlplaylist",
-    "&command.burntocd"
+    "&command.showdlplaylist"
+//    "&command.burntocd"
 //    "&command.device"
   ),
   
@@ -1109,8 +1109,8 @@ var SBWebPlaylistCommands =
     "&command.tooltip.addtoplaylist",
     "&command.tooltip.addtolibrary",
     "*separator*",
-    "&command.tooltip.showdlplaylist",
-    "&command.tooltip.burntocd"
+    "&command.tooltip.showdlplaylist"
+//    "&command.tooltip.burntocd"
 //    "&command.tooltip.device"
   ),
 
