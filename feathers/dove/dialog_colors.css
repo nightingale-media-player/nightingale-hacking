@@ -207,7 +207,6 @@ THE PLAYLIST
 playlist.dialog_playlist 
 {
   background-color: #000 !important;
-  background-image: url(default/bkgd_flowers.png) !important;
 }
 
 playlist.dialog_playlist > stack > vbox
@@ -257,12 +256,12 @@ playlist.dialog_playlist > stack > vbox > hbox
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text
 {
-  color: #666 !important;
+  color: #333 !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #666 !important;
+  color: #333 !important;
 }
 
 .dialog_playlist #playlist_tree > treechildren::-moz-tree-cell-text( selected,focus )
