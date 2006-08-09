@@ -151,24 +151,31 @@
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
     </hbox>
-    <hbox id="songbird_top" class="sb_faceplate" ><!-- title and system buttons taken from mainwin.xul -->
-      <spacer width="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <label id="video_window_title" value="Cheezy Video Window" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <button id="sysbtn_minimize" class="sb_faceplate" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
-      <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-      <checkbox id="sysbtn_maximize" class="sb_faceplate" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
-      <spacer width="7" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    <hbox class="sb_faceplate">
+      <spacer width="9" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <vbox id="cheezy_window_top" flex="1" class="sb_faceplate">
+		<hbox class="sb_faceplate" flex="1">      
+		<spacer width="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+		<label id="app_title" value="Cheezy Video Window" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+		<spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+		<spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+		<button id="sysbtn_minimize" class="sb_faceplate" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
+		<spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+		<checkbox id="sysbtn_maximize" class="sb_faceplate" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
+		<spacer width="7" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+		</hbox>
+		<spacer height="9" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      </vbox>
+      <spacer width="9" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
     </hbox>    
-    <vbox class="sb_faceplate" id="frame_outer_pane" flex="1">
+    <vbox class="sb_faceplate" flex="1">
       <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
         <vbox class="sb_faceplate">
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
         </vbox>
-        <vbox id="video_chrome_bkgd" class="sb_faceplate" flex="1">            
+        <vbox id="" class="sb_faceplate" flex="1">            
             <spacer height="10"/>
             <hbox flex="1">
               <spacer width="10"/>
