@@ -809,10 +809,8 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     }
   }
 
-  // For now, leak this?
-  // We crash when we delete it?
-
-//  delete itFrame;
+  // We USED to crash here when we deleted this.  Now we don't anymore.  Beats me.
+  delete itFrame;
 
   // Parse up the happy header info.
   const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
