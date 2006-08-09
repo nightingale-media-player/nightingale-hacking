@@ -118,7 +118,7 @@ These pieces paint the resizeable window for Songbird.
 }
 #mainwin_chrome_se
 {
-  -moz-border-bottom-colors: #eee #ccc !important;
+  -moz-border-bottom-colors: #ccc #ccc !important;
   -moz-border-right-colors: #505154 #ccc !important;
   background-color: #000 !important;
 }
