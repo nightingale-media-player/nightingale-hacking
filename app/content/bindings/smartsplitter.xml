@@ -156,14 +156,17 @@
           if (resizebefore) {
             if (this.isVertical()) {
               var height = SBDataGetStringValue( root + "before.height" );
-              if ( height != "" ) resizebefore.height = height;
-              //dump("loading " + height+ "\r\n");
+              if ( height != "" ) {
+                resizebefore.height = height;
+                resizebefore.setAttribute("flex", "0");
+              }
             } else {
               var width = SBDataGetStringValue( root + "before.width" );
-              if ( width != "" ) resizebefore.width = width;
-              //dump("loading " + width+ "\r\n");
+              if ( width != "" ) {
+                resizebefore.width = width;
+                resizebefore.setAttribute("flex", "0");
+              }
             }
-            resizebefore.setAttribute("flex", "0");
           }
           if (!sizeonly) {
             this.setAttribute( "state", SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open" );
