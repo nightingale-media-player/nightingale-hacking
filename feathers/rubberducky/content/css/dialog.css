@@ -631,6 +631,12 @@ VIDEO WINDOW
 */
 
 
+#video_window
+{
+  height: 600px;
+  width: 800px;
+}
+
 #video_chrome_bkgd
 {
   background-image: url(chrome://songbird/skin/default//chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
