@@ -152,6 +152,11 @@ SERVICE PANE
   list-style-image: url(chrome://songbird/skin/default/twisty_open.png) !important;
 }
 
+#frame_service_tree > treechildren::-moz-tree-twisty( closed )
+{
+  list-style-image: url(chrome://songbird/skin/default/twisty_closed.png) !important;
+}
+
 /* Service Pane Icons **/
 #frame_service_tree > treechildren::-moz-tree-image( playlist )
 {
@@ -199,10 +204,7 @@ clickholdbutton[id="file.new"]
 
 
 
-#frame_service_tree > treechildren::-moz-tree-twisty
-{
-  list-style-image: url(chrome://songbird/skin/default/twisty_closed.png) !important;
-}
+
 /* END SERVICE PANE **/
 
 /** 
