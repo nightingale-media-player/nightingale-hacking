@@ -29,12 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#All disabled, for now.
-
-#SUBDIRS = m3u \
-#          pls \
-#          $(NULL)
-
-SUBDIRS = $(NULL)
+SUBDIRS = m3u \
+          pls \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk
