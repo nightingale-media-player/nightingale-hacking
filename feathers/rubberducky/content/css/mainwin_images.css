@@ -745,7 +745,6 @@ Contains the Main Playback Controls and the Dashboard.
 #songbird_seekbar_thumb
 {
   background-color: #1F292B !important;
-  background-image: url(chrome://songbird/skin/default/seekbar_progress.png) !important;
   border: 1px solid #a7afa2 !important;
 }
 #songbird_seekbar_thumb > gripper
@@ -758,12 +757,12 @@ Contains the Main Playback Controls and the Dashboard.
 }
 #songbird_seekbar_progress > .progress-bar
 {
-  background-image: url(chrome://songbird/skin/default/seekbar_progress.png) !important;
+	background-color: #1F292B !important;
   height: 10px !important;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
-  background-image: url(chrome://songbird/skin/default/seekbar_remainder.png) !important;
+	background-color: #a2aa9e !important;
   height: 10px !important;
 }
 #songbird_seekbar
