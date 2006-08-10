@@ -575,7 +575,6 @@ MENULIST
 
 menulist
 { 
-  height: 24px !important; 
   border: 1px solid !important;
   -moz-border-radius: 3px !important;
 } 
