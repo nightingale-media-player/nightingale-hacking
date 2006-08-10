@@ -744,14 +744,13 @@ Contains the Main Playback Controls and the Dashboard.
 /* the seekbar slider */
 #songbird_seekbar_thumb
 {
-  list-style-image: none !important;
   background-color: #1F292B !important;
+  background-image: none !important;
   border: 1px solid #a7afa2 !important;
 }
 #songbird_seekbar_thumb > gripper
 {
   height: 10px !important;
-  list-style-image: none !important;
 }
 #songbird_seekbar_progress
 {
@@ -759,12 +758,14 @@ Contains the Main Playback Controls and the Dashboard.
 }
 #songbird_seekbar_progress > .progress-bar
 {
-	background-color: #1F292B !important;
+  background-color: #1F292B !important;
+  background-image: none !important;
   height: 10px !important;
 }
 #songbird_seekbar_progress > .progress-remainder
 {
-	background-color: #a2aa9e !important;
+  background-image: none !important;
+  background-color: #a2aa9e !important;
   height: 10px !important;
 }
 #songbird_seekbar
