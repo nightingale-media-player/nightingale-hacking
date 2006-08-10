@@ -206,6 +206,8 @@
    <handlers>
      <handler event="mousedown" action="this.onFwdMouseDown();"/>
      <handler event="mouseup" action="this.onFwdMouseUp();"/>
+     <handler event="mouseout" action="this.onFwdMouseOut();"/>
+     <handler event="mouseover" action="this.onFwdMouseOver();"/>
    </handlers>
 
   <implementation>
@@ -236,6 +238,28 @@
               this.skip_interval = setInterval( this.skipLoop, 1000 );
             }
           }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdMouseOut">
+      <body>
+        <![CDATA[
+           if (this.skip_interval) {
+             clearInterval( this.skip_interval );
+             this.skip_interval = null;
+           }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdMouseOver">
+      <body>
+        <![CDATA[
+           if (this.skip && !this.skip_interval ) {
+              document.__SKIPLOOPOBJECT__ = this;
+              this.skip_interval = setInterval( this.skipLoop, 1000 );
+           }
         ]]>
       </body>
     </method>
@@ -295,6 +319,8 @@
    <handlers>
      <handler event="mousedown" action="this.onBackMouseDown();"/>
      <handler event="mouseup" action="this.onBackMouseUp();"/>
+     <handler event="mouseout" action="this.onBackMouseOut();"/>
+     <handler event="mouseover" action="this.onBackMouseOver();"/>
    </handlers>
 
   <implementation>
@@ -334,6 +360,28 @@
         <![CDATA[
           this.skip = false;
           this.onBackCommand();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackMouseOut">
+      <body>
+        <![CDATA[
+           if (this.skip_interval) {
+             clearInterval( this.skip_interval );
+             this.skip_interval = null;
+           }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackMouseOver">
+      <body>
+        <![CDATA[
+           if (this.skip && !this.skip_interval ) {
+              document.__SKIPLOOPOBJECT__ = this;
+              this.skip_interval = setInterval( this.skipLoop, 1000 );
+           }
         ]]>
       </body>
     </method>
