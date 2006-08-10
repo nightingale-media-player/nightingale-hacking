@@ -51,7 +51,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
         <image id="chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event, true );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="chrome_e" class="sb_faceplate"/>
     </hbox>
     <hbox class="sb_faceplate">
@@ -101,7 +101,7 @@
 
           <spacer height="5" onmousedown="onBkgDown( event, true );" onmouseup="onBkgUp();"/> 
 
-          </vbox>      
+        </vbox>      
       
         <vbox class="sb_faceplate">
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
