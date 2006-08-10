@@ -37,11 +37,17 @@
  */
 function CoreQT()
 {
+  this._sourcewindow = null;
   this._object = null;
   this._url = "";
   this._id = "";
+  this._buffering = false;
   this._playing = false;
   this._paused  = false;
+  this._waitForPlayInterval = null;
+  this._waitRetryCount = 0;
+  this._lastVolume = 0;
+  this._muted = false;
 };
 
 // inherit the prototype from CoreBase
@@ -50,9 +56,75 @@ CoreQT.prototype = new CoreBase();
 // set the constructor so we use ours and not the one for CoreBase
 CoreQT.prototype.constructor = CoreQT();
 
+CoreQT.prototype.cleanupOnError = function ()
+{
+  try {
+    //Probably an error :(
+    this._buffering = false;
+    this._playing = false;
+    this._paused = false;
+    
+    clearInterval(this._waitForPlayInterval);
+    this._waitForPlayInterval = 0;
+    this._waitRetryCount = 0;
+    
+    //XXXAus: Don't ask me why I have to do this twice, I DO NOT KNOW! =P
+    this._sourcewindow.location.reload(false);
+    SetQTObject();
+    
+    this.LOG("CoreQT: cleanupOnError!");
+    
+  } catch(e) {
+    dump(e);
+  }
+}
+
+CoreQT.prototype.waitForPlayer = function ()
+{
+  this._verifyObject();
+  var playerStatus = this._object.GetPluginStatus();
+  
+  switch(playerStatus)
+  {
+    case "Waiting":
+      this._waitRetryCount++;
+      if(this._waitRetryCount > 200) {
+        this.cleanupOnError();
+      }
+    break;
+    
+    case "Loading":
+    break;
+    
+    case "Playable":
+      this.LOG("QTCore: Playable.");
+      this.play();
+      this._buffering = false;
+    break;    
+    
+    case "Complete":
+      this.LOG("QTCore: Complete.");
+      this._buffering = false;
+      clearInterval(this._waitForPlayInterval);
+      this._waitForPlayInterval = 0;
+      this._waitRetryCount = 0;
+      this.play();
+    break;
+    
+    default:
+      if(playerStatus == null || playerStatus.indexOf("Error") != -1)
+      {
+        this.cleanupOnError();
+      }
+  }
+};
+
 // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
 CoreQT.prototype.playURL = function ( aURL )
 {
+  if (this._buffering)
+    this.cleanupOnError();
+
   this._verifyObject();
 
   if (!aURL)
@@ -63,17 +135,18 @@ CoreQT.prototype.playURL = function ( aURL )
   this._paused = false;
   this._playing = true;
 
-  if( aURL.search(/[A-Za-z].*\:\/\//g) < 0 )
+  this._buffering = true;  
+  this._object.SetURL(this._url);
+  
+  this.setVolume(this._lastVolume);
+  
+  if(this._waitForPlayInterval)
   {
-    aURL = "file://" + aURL;
+    clearInterval(this._waitForPlayInterval);
+    this._waitForPlayInterval = 0;
   }
   
-  if( aURL.search(/\\/g))
-  {
-    aURL.replace(/\\/, '/');
-  }
-
-  this._object.playURL( this._url );
+  this._waitForPlayInterval = setInterval("gQTCore.waitForPlayer();", 333);
 
   return true;
 };
@@ -81,16 +154,16 @@ CoreQT.prototype.playURL = function ( aURL )
 CoreQT.prototype.play = function ()
 {
   this._verifyObject();
-  
-  this._paused = false;
-  this._playing = true;
 
   try {
-    this._object.playPlayer();
+      this._object.Play();
   } catch(e) {
     this.LOG(e);
   }
-  
+
+  this._paused = false;
+  this._playing = true;
+
   return true;
 };
   
@@ -98,17 +171,13 @@ CoreQT.prototype.pause = function ()
 {
   this._verifyObject();
 
-  if( this._paused )
-    return this._paused;
-
   try {
-    this._object.pausePlayer();
+    this._object.Stop();
   } catch(e) {
     this.LOG(e);
   }
-
-  this._paused = true;
   
+  this._paused = true;
   return this._paused;
 };
   
@@ -116,17 +185,15 @@ CoreQT.prototype.stop = function ()
 {
   this._verifyObject();
   
-  if( !this._playing )
-    return true;
-    
-  this._paused = false;
-  this._playing = false;
-
   try {
-    this._object.stopPlayer();
+    this.pause();
+    this._object.Rewind();
   } catch(e) {
     this.LOG(e);
   }
+
+  this._paused = false;
+  this._playing = false;
 
   return true;
 };
@@ -156,8 +223,15 @@ CoreQT.prototype.getLength = function ()
   this._verifyObject();
   var playLength = 0;
   
+  if(this._buffering)
+    return 1;
+  
   try {
-    playLength = this._object.getPlayerLength();
+ 
+    var timeScale = this._object.GetTimeScale();
+    var duration = this._object.GetDuration();
+  
+    playLength = (duration / timeScale * 1000);
   } catch(e) {
     this.LOG(e);
   }
@@ -170,8 +244,13 @@ CoreQT.prototype.getPosition = function ()
   this._verifyObject();
   var curPos = 0;
   
+  if(this._buffering)
+    return 0;
+  
   try {
-    curPos = this._object.getPlayerPosition();
+    var currentPos = this._object.GetTime();
+    var timeScale = this._object.GetTimeScale();
+    curPos = (currentPos / timeScale * 1000);
   } catch(e) {
     this.LOG(e);
   }
@@ -179,12 +258,13 @@ CoreQT.prototype.getPosition = function ()
   return curPos;
 };
   
-this.setPosition = function ( pos )
+CoreQT.prototype.setPosition = function ( pos )
 {
   this._verifyObject();
   
   try {
-    this._object.seekPlayer( pos );
+    var timeScale = this._object.GetTimeScale();
+    this._object.SetTime( pos / 1000 * timeScale );
   } catch(e) {
     this.LOG(e);
   }
@@ -193,29 +273,27 @@ this.setPosition = function ( pos )
 CoreQT.prototype.getVolume = function ()
 {
   this._verifyObject();
-  var curVol = this._object.getPlayerVolume();
-  
-  return curVol;
+  return this._object.GetVolume();
 };
   
 CoreQT.prototype.setVolume = function ( vol )
 {
   this._verifyObject();
-  this._object.setPlayerVolume(vol);
+  this._lastVolume = vol;
+  this._object.SetVolume(vol);
 };
   
 CoreQT.prototype.getMute = function ()
 {
   this._verifyObject();
-  var isMuted = this._object.isMuted;
-  
-  return isMuted;
+  return this._muted;
 };
   
 CoreQT.prototype.setMute = function ( mute )
 {
   this._verifyObject();
-  this._object.mutePlayer( mute );
+  this._object.SetMute(mute);
+  this._muted = mute;
 };
 
 CoreQT.prototype.getMetadata = function ( key )
@@ -227,7 +305,6 @@ CoreQT.prototype.getMetadata = function ( key )
 CoreQT.prototype.goFullscreen = function ()
 {
   this._verifyObject();
-  
   // QT has no fullscreen functionality exposed to its plugin :(
   return true;
 };
@@ -255,24 +332,33 @@ catch (err) {
   dump("ERROR!!! coreQT failed to create properly.");
 }
 
+function SetQTObject()
+{
+  var theDocumentQTInstance = document.getElementById( coreQTDocumentElementIdentifier );
+  var theQTInstance = theDocumentQTInstance.contentWindow;
+      
+  gQTCore.setId("QT1");
+  gQTCore.setObject(theQTInstance);
+  gQTCore._sourcewindow = theDocumentQTInstance.contentWindow;
+};
+
 /**
   * This is the function called from a document onload handler to bind everything as playback.
   * The <html:object>s won't have their scriptable APIs attached until the onload.
   */
+var coreQTDocumentElementIdentifier = "";
 function CoreQTDocumentInit( id )
 {
   try
   {
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
-    var theDocumentQTInstance = document.getElementById( id );
-   
-    gQTCore.setId("QT1");
-    gQTCore.setObject(theDocumentQTInstance.contentWindow);
+    coreQTDocumentElementIdentifier = id;
+    SetQTObject();    
     gPPS.addCore(gQTCore, true);
  }
   catch ( err )
   {
-    LOG( "\n!!! coreQT failed to bind properly\n" + err );
+    dump( "\n!!! coreQT failed to bind properly\n" + err );
   }
 };
