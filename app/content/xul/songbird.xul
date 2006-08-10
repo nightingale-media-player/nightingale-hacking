@@ -101,7 +101,7 @@
             var MetricsService = new nsIMetrics();
             if (MetricsService.getSessionFlag()) {
               //alert("previous session did not terminate properly!");
-              metrics_inc("session", "crash");
+              metrics_inc("player", "crash");
             }
             MetricsService.setSessionFlag(true);
             MetricsService.checkUploadMetrics();
