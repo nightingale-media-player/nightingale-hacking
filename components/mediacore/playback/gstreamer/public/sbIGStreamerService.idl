@@ -1,0 +1,18 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]
+interface sbIGStreamerService : nsISupports
+{
+  void init();
+};
+
+%{C++
+// {c27f50c0-6dae-45ee-883e-24fd3b30254b}
+#define SBGSTREAMERSERVICE_CID \
+	{ 0xc27f50c0, 0x6dae, 0x45ee, \
+	{ 0x88, 0x3e, 0x24, 0xfd, 0x3b, 0x30, 0x25, 0x4b } }
+
+#define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"
+#define SBGSTREAMERSERVICE_CLASSNAME  "GStreamerService"
+%}
+

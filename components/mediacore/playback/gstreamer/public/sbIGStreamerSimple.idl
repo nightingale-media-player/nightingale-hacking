@@ -1,0 +1,31 @@
+#include "nsISupports.idl"
+
+interface nsIDOMXULElement;
+
+[scriptable, uuid(7067ba5f-fce9-4d4e-9d79-c08c343ed4dd)]
+interface sbIGStreamerSimple : nsISupports
+{
+  attribute AString uri;
+  attribute double volume;
+  readonly attribute unsigned long long position;
+  readonly attribute boolean isPlaying;
+  readonly attribute unsigned long long streamLength;
+  readonly attribute boolean isAtEndOfStream;
+
+  void init(in nsIDOMXULElement aVideoOutput);
+  void play();
+  void pause();
+  void stop();
+  void seek(in unsigned long long aTimeNanos);
+};
+
+%{C++
+// {7a36e062-6d46-4c80-ad48-27c6241e3915}
+#define SBGSTREAMERSIMPLE_CID \
+	{ 0x7a36e062, 0x6d46, 0x4c80, \
+	{ 0xad, 0x48, 0x27, 0xc6, 0x24, 0x1e, 0x39, 0x15 } }
+
+#define SBGSTREAMERSIMPLE_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1"
+#define SBGSTREAMERSIMPLE_CLASSNAME	 "GStreamerSimple"
+%}
+

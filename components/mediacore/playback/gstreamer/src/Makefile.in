@@ -1,0 +1,73 @@
+DEPTH     = ../../../../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+  
+include $(DEPTH)/build/autodefs.mk
+
+target_name = sbGStreamer
+
+# Linux only for now ;)
+ifeq (linux,$(SB_PLATFORM))
+
+CPP_SRCS   = \
+      sbGStreamerModule.cpp \
+      sbGStreamerService.cpp \
+      sbGStreamerSimple.cpp \
+      $(NULL)
+
+CPP_INCLUDES = \
+      $(DEPTH)/components/mediacore/playback/gstreamer/public \
+      $(MOZSDK_INCLUDE_DIR) \
+      $(MOZSDK_INCLUDE_DIR)/nspr \
+      $(MOZSDK_INCLUDE_DIR)/xpcom \
+      $(MOZSDK_INCLUDE_DIR)/string \
+      $(MOZSDK_INCLUDE_DIR)/layout \
+      $(MOZSDK_INCLUDE_DIR)/gfx \
+      $(MOZSDK_INCLUDE_DIR)/widget \
+      $(MOZSDK_INCLUDE_DIR)/content \
+      $(MOZSDK_INCLUDE_DIR)/necko \
+      $(MOZSDK_INCLUDE_DIR)/locale \
+      $(MOZSDK_INCLUDE_DIR)/dom \
+      $(MOZSDK_INCLUDE_DIR)/docshell \
+      $(MOZSDK_IDL_DIR) \
+      /usr/include/gstreamer-0.10 \
+      /usr/include/glib-2.0 \
+      /usr/lib/glib-2.0/include \
+      /usr/include/libxml2 \
+      /usr/include/gtk-2.0 \
+      /usr/lib/gtk-2.0/include \
+      /usr/include/cairo \
+      /usr/include/pango-1.0 \
+      /usr/include/atk-1.0 \
+      $(NULL)
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = \
+      nspr4 \
+      plds4 \
+      plc4 \
+      xpcom \
+      gstreamer-0.10 \
+      gstinterfaces-0.10 \
+      gobject-2.0 \
+      gthread-2.0 \
+      gmodule-2.0 \
+      dl \
+      glib-2.0 \
+      xml2 \
+      $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = \
+      $(MOZSDK_LIB_DIR) \
+      $(NULL)
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+
+endif
+
+include $(topsrcdir)/build/rules.mk
+
