@@ -44,6 +44,8 @@
  onunload="SBUninitialize();SBInterfaceDeinitialize();"
  class="sb_faceplate"
  onkeypress="onMiniplayerKeypress( event );"
+ ondragover="nsDragAndDrop.dragOver( event, SBMiniDropObserver );"
+ ondragdrop="nsDragAndDrop.drop( event, SBMiniDropObserver );"
 >
 
   <!-- Load the Mozilla helpers -->

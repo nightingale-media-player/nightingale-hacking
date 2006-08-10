@@ -360,10 +360,65 @@ try
       dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
     }
   }
-
 }
 catch ( err )
 {
   alert( err );
 }
 
+var theDropPath = "";
+var theDropIsDir = false;
+var SBMiniDropObserver = 
+{
+  getSupportedFlavours : function () 
+  {
+    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
+                            .getService(Components.interfaces.nsIConsoleService);
+    consoleService.logStringMessage("get flavours");
+    var flavours = new FlavourSet();
+    flavours.appendFlavour("application/x-moz-file","nsIFile");
+//    flavours.appendFlavour("application/x-moz-url");
+    return flavours;
+  },
+  onDragOver: function ( evt, flavour, session )
+  {
+    alert("whoo?");
+  },
+  onDrop: function ( evt, dropdata, session )
+  {
+    alert("woot!");
+    if ( dropdata.data != "" )
+    {
+      // if it has a path property
+      if ( dropdata.data.path )
+      {
+        theDropPath = dropdata.data.path;
+        theDropIsDir = dropdata.data.isDirectory();
+        setTimeout( SBMiniDropped, 10 ); // Next frame
+        
+      }
+    }
+  }
+};
+
+function SBMiniDropped()
+{
+  if ( theDropIsDir )
+  {
+    SBDataSetBoolValue( "media_scan.open", true );
+    theMediaScanIsOpen.boolValue = true;
+    // otherwise, fire off the media scan page.
+    var media_scan_data = new Object();
+    media_scan_data.URL = theDropPath;
+    media_scan_data.retval = "";
+    // Open the non-modal dialog
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
+    SBDataSetBoolValue( "media_scan.open", false );
+  }
+  else if ( gPPS.isMediaURL( theDropPath ) )
+  {
+    // add it to the db and play it.
+    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+    PPS.playAndImportURL(theDropPath); // if the url is already in the lib, it is not added twice
+  }
+}
