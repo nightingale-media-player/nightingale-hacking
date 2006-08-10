@@ -812,6 +812,7 @@ SEARCH WIDGET
 
 #search_widget .menulist-editable-box
 {
+  padding: 3px 0px 0px 0px !important;
   border: none !important;
 }
 
@@ -819,7 +820,6 @@ SEARCH WIDGET
 #search_widget .menulist-editable-input:focus
 {
   border: none !important;
-  padding: 6px 0px 0px 0px !important;
 }
 
 .button-icon
