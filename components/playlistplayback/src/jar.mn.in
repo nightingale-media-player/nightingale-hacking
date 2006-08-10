@@ -11,4 +11,5 @@ songbird.jar:
   content/songbird/scripts/coreBase.js     (coreBase.js)
   content/songbird/scripts/coreFlash.js    (coreFlash.js)
   content/songbird/scripts/coreTotem.js    (coreTotem.js)
+  content/songbird/scripts/coreGStreamerSimple.js (coreGStreamerSimple.js)
 
