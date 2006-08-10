@@ -750,6 +750,7 @@ Contains the Main Playback Controls and the Dashboard.
 #songbird_seekbar_thumb > gripper
 {
   height: 10px !important;
+  list-style-image: none !important;
 }
 #songbird_seekbar_progress
 {
