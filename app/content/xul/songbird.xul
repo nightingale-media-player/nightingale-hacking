@@ -185,7 +185,7 @@
                 <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
               </hbox>
               <hbox id="box_qt" flex="1">
-                <html:iframe id="core_qt_document" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
+                <html:iframe id="core_qt_document" style="border: 0px none;" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
               </hbox>
               <hbox id="box_flash" flex="1">
                 <html:iframe id="core_flash_frame" style="border: 0px none;"  src="chrome://songbird/content/html/flash.html" type="content" flex="1" />
