@@ -188,6 +188,10 @@ components/mediacore/metadata/manager/src/Makefile
 components/mediacore/transcoding/Makefile
 components/mediacore/transcoding/public/Makefile
 components/mediacore/transcoding/src/Makefile
+components/mediacore/playback/Makefile
+components/mediacore/playback/gstreamer/Makefile
+components/mediacore/playback/gstreamer/public/Makefile
+components/mediacore/playback/gstreamer/src/Makefile
 "
 
 MAKEFILES_medialibrary="
