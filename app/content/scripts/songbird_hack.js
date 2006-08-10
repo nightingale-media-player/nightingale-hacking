@@ -397,7 +397,7 @@ function onBkgDown( theEvent )
   try
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
-    if (windowDragger) {
+    if (false && windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service)
         service.beginWindowDrag(0); // automatically ends
@@ -418,7 +418,11 @@ function onBkgMove( theEvent )
 {
   if ( trackerBkg )
   {
-    document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
+    // If the button is not still down, that means we lost our state.  Don't drag the window.
+    if ( theEvent.button != true )
+      onBkgUp();
+    else
+      document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
   }
 }
 
