@@ -48,6 +48,10 @@ function CoreQT()
   this._waitRetryCount = 0;
   this._lastVolume = 0;
   this._muted = false;
+  
+  this.NOT_LOCAL_FILE = -1;
+  this.LOCAL_FILE_NOT_AVAILABLE = 0;
+  this.LOCAL_FILE_AVAILABLE = 1;
 };
 
 // inherit the prototype from CoreBase
@@ -72,7 +76,7 @@ CoreQT.prototype.cleanupOnError = function ()
     this._sourcewindow.location.reload(false);
     SetQTObject();
     
-    this.LOG("CoreQT: cleanupOnError!");
+    this.LOG("cleanupOnError!", "CoreQT");
     
   } catch(e) {
     dump(e);
@@ -97,13 +101,13 @@ CoreQT.prototype.waitForPlayer = function ()
     break;
     
     case "Playable":
-      this.LOG("QTCore: Playable.");
+      this.LOG("Playable.", "CoreQT");
       this.play();
       this._buffering = false;
     break;    
     
     case "Complete":
-      this.LOG("QTCore: Complete.");
+      this.LOG("Complete.", "CoreQT");
       this._buffering = false;
       clearInterval(this._waitForPlayInterval);
       this._waitForPlayInterval = 0;
@@ -119,6 +123,43 @@ CoreQT.prototype.waitForPlayer = function ()
   }
 };
 
+CoreQT.prototype.verifyFileAvailability = function ( aURL )
+{
+  if(!aURL)
+    throw Components.results.NS_ERROR_INVALID_ARG;
+  
+  var localFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+  var localFileURI = (Components.classes["@mozilla.org/network/simple-uri;1"]).createInstance(Components.interfaces.nsIURI);
+  var localFilePath = "";
+  
+  try {
+    localFileURI.spec = aURL;
+  } catch(e) {}
+  
+  if(localFileURI.scheme != "file")
+    return this.NOT_LOCAL_FILE;
+
+  localFilePath = decodeURI(localFileURI.path.slice(3));
+  if(PLATFORM_WIN32) {
+    localFilePath = localFilePath.replace(/\//g, '\\');
+  }
+  
+  try {
+    localFile.initWithPath(localFilePath);
+  } catch(e) {
+    this.LOG("Bad local file." + e , "CoreQT");
+    return this.LOCAL_FILE_NOT_AVAILABLE;
+  }
+  
+  if(localFile.isFile() &&
+     localFile.isReadable())
+  {
+    return this.LOCAL_FILE_AVAILABLE;  
+  }
+
+  return this.LOCAL_FILE_NOT_AVAILABLE;
+};
+
 // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
 CoreQT.prototype.playURL = function ( aURL )
 {
@@ -129,6 +170,10 @@ CoreQT.prototype.playURL = function ( aURL )
 
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
+
+  var isAvailable = this.verifyFileAvailability(aURL);
+  if(isAvailable == this.LOCAL_FILE_NOT_AVAILABLE)
+    throw new Error("Local file not available");
 
   this._url = this.sanitizeURL(aURL);
 
@@ -158,7 +203,7 @@ CoreQT.prototype.play = function ()
   try {
       this._object.Play();
   } catch(e) {
-    this.LOG(e);
+    this.LOG(e, "CoreQT");
   }
 
   this._paused = false;
@@ -174,7 +219,7 @@ CoreQT.prototype.pause = function ()
   try {
     this._object.Stop();
   } catch(e) {
-    this.LOG(e);
+    this.LOG(e, "CoreQT");
   }
   
   this._paused = true;
@@ -189,7 +234,7 @@ CoreQT.prototype.stop = function ()
     this.pause();
     this._object.Rewind();
   } catch(e) {
-    this.LOG(e);
+    this.LOG(e, "CoreQT");
   }
 
   this._paused = false;
@@ -233,7 +278,7 @@ CoreQT.prototype.getLength = function ()
   
     playLength = (duration / timeScale * 1000);
   } catch(e) {
-    this.LOG(e);
+    this.LOG(e, "CoreQT");
   }
   
   return playLength;
@@ -252,7 +297,7 @@ CoreQT.prototype.getPosition = function ()
     var timeScale = this._object.GetTimeScale();
     curPos = (currentPos / timeScale * 1000);
   } catch(e) {
-    this.LOG(e);
+    this.LOG(e, "CoreQT");
   }
   
   return curPos;
@@ -266,7 +311,7 @@ CoreQT.prototype.setPosition = function ( pos )
     var timeScale = this._object.GetTimeScale();
     this._object.SetTime( pos / 1000 * timeScale );
   } catch(e) {
-    this.LOG(e);
+    this.LOG(e, "CoreQT");
   }
 };
   
