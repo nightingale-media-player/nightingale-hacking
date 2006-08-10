@@ -125,13 +125,13 @@ try
       }
       else {
         trackerBkg = true;
-        offsetScrX = document.defaultView.screenX - theEvent.screenX;
-        offsetScrY = document.defaultView.screenY - theEvent.screenY;
+        offsetScrX = document.documentElement.boxObject.screenX - theEvent.screenX;
+        offsetScrY = document.documentElement.boxObject.screenY - theEvent.screenY;
 
-		// ScreenY is reported incorrectly on osx for windows without title bars.
-		if (navigator.userAgent.indexOf("Mac OS X") != -1) {
-			offsetScrY += 20; 
-		}
+        // ScreenY is reported incorrectly on osx for windows without title bars.
+        if (navigator.userAgent.indexOf("Mac OS X") != -1) {
+          offsetScrY += 20; 
+        }
 
         document.addEventListener( "mousemove", onBkgMove, true );
       }

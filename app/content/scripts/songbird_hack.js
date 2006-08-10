@@ -418,11 +418,7 @@ function onBkgMove( theEvent )
 {
   if ( trackerBkg )
   {
-    // If the button is not still down, that means we lost our state.  Don't drag the window.
-    if ( theEvent.button != true )
-      onBkgUp();
-    else
-      document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
+    document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
   }
 }
 
@@ -461,34 +457,6 @@ function switchFeathers(internalName)
   
   SBMainWindowReopen();
 }
-
-// old version, just in case
-/*var trackerBkg = false;
-var offsetScrX = 0;
-var offsetScrY = 0;
-function onBkgDown( theEvent ) 
-{
-  trackerBkg = true;
-  offsetScrX = document.defaultView.screenX - theEvent.screenX;
-  offsetScrY = document.defaultView.screenY - theEvent.screenY;
-  document.addEventListener( "mousemove", onBkgMove, true );
-}
-
-function onBkgMove( theEvent ) 
-{
-  if ( trackerBkg )
-  {
-    document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
-  }
-}
-function onBkgUp( ) 
-{
-  if ( trackerBkg )
-  {
-    trackerBkg = false;
-    document.removeEventListener( "mousemove", onBkgMove, true );
-  }
-}*/
 
 var URL = SB_NewDataRemote( "faceplate.play.url", null );
 var thePlaylistIndex = SB_NewDataRemote( "playlist.index", null );
