@@ -386,59 +386,6 @@ function SBMainWindowReopen()
 // XUL Event Methods
 //
 
-//Necessary when WindowDragger is not available on the current platform.
-var trackerBkg = false;
-var offsetScrX = 0;
-var offsetScrY = 0;
-
-// The background image allows us to move the window around the screen
-function onBkgDown( theEvent ) 
-{
-  try
-  {
-    var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
-    if (windowDragger) {
-      var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
-      if (service)
-        service.beginWindowDrag(0); // automatically ends
-    }
-    else {
-      trackerBkg = true;
-      offsetScrX = document.documentElement.boxObject.screenX - theEvent.screenX;
-      offsetScrY = document.documentElement.boxObject.screenY - theEvent.screenY;
-      // ScreenY is reported incorrectly on osx for windows without title bars.
-      if (navigator.userAgent.indexOf("Mac OS X") != -1) {
-        offsetScrY += 20; 
-      }
-      document.addEventListener( "mousemove", onBkgMove, true );
-    }
-  }
-  catch(err) {
-    dump("Error. songbird_hack.js:onBkgDown() \n" + err + "\n");
-  }
-}
-
-function onBkgMove( theEvent ) 
-{
-  if ( trackerBkg )
-  {
-    document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
-  }
-}
-
-function onBkgUp( ) 
-{
-  var root = "window." + document.documentElement.id;
-  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
-  
-  if ( trackerBkg )
-  {
-    trackerBkg = false;
-    document.removeEventListener( "mousemove", onBkgMove, true );
-  }
-}
-
 function saveWindowPosition()
 {
   var root = "window." + document.documentElement.id;

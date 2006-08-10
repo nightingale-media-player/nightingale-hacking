@@ -53,12 +53,12 @@ var offsetScrX = 0;
 var offsetScrY = 0;
 
 // The background image allows us to move the window around the screen
-function onBkgDown( theEvent ) 
+function onBkgDown( theEvent, popup ) 
 {
   try
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
-    if (windowDragger) {
+    if (false && windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service)
         service.beginWindowDrag(0); // automatically ends
@@ -67,8 +67,8 @@ function onBkgDown( theEvent )
       trackerBkg = true;
       offsetScrX = document.documentElement.boxObject.screenX - theEvent.screenX;
       offsetScrY = document.documentElement.boxObject.screenY - theEvent.screenY;
-      // ScreenY is reported incorrectly on osx for windows without title bars.
-      if (navigator.userAgent.indexOf("Mac OS X") != -1) {
+      // ScreenY is reported incorrectly on osx for non-popup windows without title bars.
+      if ( ( popup != true ) && (navigator.userAgent.indexOf("Mac OS X") != -1) ) {
         // TODO: This will be incorrect in the jumptofile dialog, as it is loaded as a popup.
         // How do I know from this scope whether the window is loaded as popup?
         offsetScrY += 20; 
