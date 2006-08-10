@@ -43,7 +43,7 @@
   
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event, true );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate, dialog" flex="1">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
