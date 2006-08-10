@@ -75,7 +75,7 @@ ifeq ($(SB_PLATFORM), macosx)
 endif
 
 ifeq ($(SB_PLATFORM), linux)
-  DYNAMIC_LIB_STATIC_IMPORTS += unicharutil_s \
+  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_s \
                                 $(NULL)
   DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                                $(NULL)
