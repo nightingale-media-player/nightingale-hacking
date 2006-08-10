@@ -190,9 +190,9 @@ window#mini
 {
   -moz-appearance: none !important;
   height: 6px !important;
-  border-bottom: 1px solid #000 !important;
-  
+  /* border-bottom: 1px solid #000 !important;  This doesn't look right */
 }
+
 #mini_seekbar_thumb
 {
   -moz-appearance: none !important; /* grrrr! */
