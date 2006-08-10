@@ -744,6 +744,7 @@ Contains the Main Playback Controls and the Dashboard.
 /* the seekbar slider */
 #songbird_seekbar_thumb
 {
+  list-style-image: none !important;
   background-color: #1F292B !important;
   border: 1px solid #a7afa2 !important;
 }
