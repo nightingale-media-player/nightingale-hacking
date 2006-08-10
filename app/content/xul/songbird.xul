@@ -80,16 +80,17 @@
         var watcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
                       .getService(Components.interfaces.nsIWindowWatcher);
         var windows = watcher.getWindowEnumerator();
-        var pop = true;    
+        var pop = true;
         while ( windows.hasMoreElements() )
         {
           var win = windows.getNext()
           win = win.QueryInterface(Components.interfaces.nsIDOMWindow);
-          
-          if (win.name == "mainwin")
+          switch (win.name)
           {
-            var pop = false;
-            document.__dont_hide_rmpdemo_window = true;
+            case "mainwin":
+              pop = false;
+              document.__dont_hide_rmpdemo_window = true;
+              break;
           }
         }
         
@@ -118,6 +119,10 @@
           } catch (err) {}
 
           setTimeout( 'window.open( "' + mainwin + '", "mainwin", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );', 0 ); // (sigh)
+        }
+        else
+        {
+          document.defaultView.close(); // Nuke this window.  Don't open a mainwin.
         }
       };
 
