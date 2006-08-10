@@ -215,6 +215,9 @@ function onWindowSavePosition()
 // No forseen need to load _just_ size without position
 function onWindowLoadSize()
 {
+  // Activate whatever window is attempting to reload its info.
+  window.focus();
+  
   var root = "window." + document.documentElement.id;
 /*
   dump("******** onWindowLoadSize: root:" + root +
@@ -253,6 +256,9 @@ function onWindowLoadSize()
 
 function onWindowLoadPosition()
 {
+  // Activate whatever window is attempting to reload its info.
+  window.focus();
+  
   var root = "window." + document.documentElement.id;
 /*
   dump("******** onWindowLoadPosition: root:" + root +

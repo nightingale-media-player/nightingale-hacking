@@ -90,6 +90,7 @@
             case "mainwin":
               pop = false;
               document.__dont_hide_rmpdemo_window = true;
+              win.window.focus();
               break;
           }
         }
