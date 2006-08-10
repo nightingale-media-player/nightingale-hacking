@@ -201,12 +201,15 @@
               <hbox id="box_qt" flex="1">
                 <html:iframe id="core_qt_document" style="border: 0px none;" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
               </hbox>
+              <hbox id="box_gstreamer_simple" flex="1"/>
+              <!--
               <hbox id="box_flash" flex="1">
                 <html:iframe id="core_flash_frame" style="border: 0px none;"  src="chrome://songbird/content/html/flash.html" type="content" flex="1" />
               </hbox>
               <hbox id="box_totem" flex="1">
                 <html:iframe id="core_totem_frame" style="border: 0px none;"  src="chrome://songbird/content/html/totem.html" type="content" flex="1" />
-              </hbox>
+              </hbox> 
+              -->
               <!-- things that might be needed when we finally sort out the playback jumble
               <hbox id="box_wm" flex="1">
                 <html:object id="core_wm" flex="1" classid="CLSID:6BF52A52-394A-11d3-B153-00C04F79FAA6" x_type="application/asx" />
@@ -272,12 +275,15 @@
   <!-- win likes itself -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreWMP.js"/>
-  <!-- linux likes flash and maybe totem -->
+  <!-- linux rules the school with gstreamer -->
+<!--
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/coreFlash.js"/>
+-->
   <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/coreTotem.js"/>
-  <!-- mac likes quicktime -->
+   src="chrome://songbird/content/scripts/coreGStreamerSimple.js"/>
+
+   <!-- mac likes quicktime -->
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/coreQT.js"/>
 

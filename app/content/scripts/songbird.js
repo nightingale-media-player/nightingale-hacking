@@ -443,14 +443,12 @@ function SBAppInitialize()
     var theVLCBox = document.getElementById( "box_vlc" );
 
     /*
-    */
     var theFLInstance = document.getElementById( "core_flash_frame" );
     var theFLBox = document.getElementById( "box_flash" );
-
-    /*
-    */
     var theTotemInstance = document.getElementById( "core_totem_frame" );
     var theTotemBox = document.getElementById( "box_totem" );
+    */
+    var theGStreamerSimpleBox = document.getElementById( "box_gstreamer_simple" );
 
     //
     // Depending upon the platform, initialize one core
@@ -464,10 +462,12 @@ function SBAppInitialize()
       //InitPlaybackCoreFlash( "core_flash_frame" );
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
+      /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
       // Hide Totem
       if (theTotemBox) theTotemBox.hidden = true;
+      */
     }
 
     //MacOSX, prefer QT.
@@ -476,10 +476,12 @@ function SBAppInitialize()
       CoreQTDocumentInit( "core_qt_document" );
       // Hide VLC
       if (theVLCBox) theVLCBox.hidden = true;
+      /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
       // Hide Totem
       if (theTotemBox) theTotemBox.hidden = true;
+      */
     }
     
     //Linux, prefer totem-gstreamer
@@ -487,13 +489,16 @@ function SBAppInitialize()
       //CoreVLCDocumentInit( "core_vlc_document" );
       //InitPlaybackCoreMPlayer( "core_mp_frame" );
       //InitPlaybackCoreFlash( "core_flash_frame" );
-      CoreTotemDocumentInit( "core_totem_frame" );
+      //CoreTotemDocumentInit( "core_totem_frame" );
+      CoreGStreamerSimpleDocumentInit( "box_gstreamer_simple" );
       // Hide VLC
       if (theVLCBox) theVLCBox.hidden = true;
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
+      /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
+      */
     }
     
     // Reset this on application startup. 
