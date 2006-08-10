@@ -26,194 +26,61 @@
  */
 -->
 <html>
-<body onload="bindPlayer();">
-<script language="JavaScript">
-
-var theQTCore = null;
-
-var isBuffering = false;
-var isPlaying = false;
-var isPaused = false;
-var isMuted = false;
-var lastVolume = 0;
-
-var waitForPlayInterval = null;
-
-function bindPlayer()
-{
-  initPlayer();
-}
-
-function initPlayer()
-{
-  if(!theQTCore) {
-    var theCore = document.getElementById("core_qt");
-    theQTCore = theCore;
-  }
-}
-
-function cleanupOnError()
-{
-  try {
-    //Setting the URL to blank doesn't work.
-    //Stopping doesn't help either :(
-    //theQTCore.SetURL("");
-    //stopPlayer();
-  
-    //Probably an error :(
-    isBuffering = false;
-    isPlaying = false;
-    isPaused = false;
-    clearInterval(waitForPlayInterval);
-    waitForPlayInterval = 0;
-    waitRetryCount = 0;
-  } catch(e) {
-    dump(e);
-  }
-}
-
-var waitRetryCount = 0;
-function waitForPlayer()
-{
-  initPlayer();
-  
-  var playerStatus = theQTCore.GetPluginStatus();
-  
-  switch(playerStatus)
-  {
-    case "Waiting":
-      waitRetryCount++;
-      if(waitRetryCount > 200) {
-        cleanupOnError();
-      }
-    break;
-    
-    case "Loading":
-    dump("QTCore: Loading\n");
-    break;
-    
-    case "Playable":
-    case "Complete":
-      isBuffering = false;
-      clearInterval(waitForPlayInterval);
-      waitForPlayInterval = 0;
-      playPlayer();
-    break;
-    
-    default:
-      if(playerStatus == null || playerStatus.indexOf("Error") != -1)
-      {
-        cleanupOnError();
-      }
-  }
-}
-
-function playURL(url)
-{  
-  initPlayer();
-
-  if(isBuffering) {
-    cleanupOnError();
-  }
-
-  isBuffering = true;  
-  theQTCore.SetURL(url);
-  
-  setPlayerVolume(lastVolume);
-  waitForPlayInterval = setInterval("waitForPlayer();", 50);
-}
-
-function playPlayer()
-{
-  initPlayer();
-  
-  if(!isPlaying || isPaused)
-  { 
-    theQTCore.Play();
-    isPlaying = true;
-    isPaused = false;
-  }
-}
-
-function pausePlayer()
-{
-  initPlayer();
-
-  if(!isPaused)
-  {
-    theQTCore.Stop();
-    isPaused = true;
-  }
-  else
-  {
-    theQTCore.Play();
-    isPaused = false;
-  }
-}
-
-function stopPlayer()
-{
-  initPlayer();
-  
-  isPlaying = false;
-  isPaused = false;
-  
-  theQTCore.Stop();
-  theQTCore.Rewind();
-}
-
-function getPlayerVolume()
-{
-  initPlayer();
-  return theQTCore.GetVolume();
-}
-
-function setPlayerVolume(vol)
-{
-  initPlayer();
-  lastVolume = vol;
-  theQTCore.SetVolume(vol);
-}
-
-function mutePlayer( mute )
-{
-  initPlayer();
-  theQTCore.SetMute(mute);
-  isMuted = mute;
-}
-
-function getPlayerLength()
-{
-  initPlayer();
-  
-  //If we're buffering, we don't have the length, but we don't want
-  //playlist playback to go to the next track while we're buffering so
-  //we fake a 1ms length when buffering.
-
-  if(isBuffering) return 1;
- 
-  var timeScale = theQTCore.GetTimeScale();
-  var duration = theQTCore.GetDuration();
-  
-  return (duration / timeScale * 1000);
-}
-
-function getPlayerPosition()
-{
-  initPlayer();
-  var currentPos = theQTCore.GetTime();
-  var timeScale = theQTCore.GetTimeScale();
-  
-  return (currentPos / timeScale * 1000);
-}
-
-function seekPlayer(pos)
-{
-  initPlayer();
-  var timeScale = theQTCore.GetTimeScale();
-  
-  theQTCore.SetTime( pos / 1000 * timeScale );
-}
+<body onload="Initialize();">
+<script language="javascript">
+var q = null;
+function Initialize() {
+  var core = document.getElementById("core_qt");
+  q = core;
+};
+function GetPluginStatus() {
+  Initialize();
+  return q.GetPluginStatus();
+};
+function SetURL(url) {
+  Initialize();
+  return q.SetURL(url);
+};
+function Play() {
+  Initialize();
+  return q.Play();
+};
+function Stop() {
+  Initialize();
+  return q.Stop();
+};
+function Rewind() {
+  Initialize();
+  return q.Rewind();
+};
+function GetTime() {
+  Initialize();
+  return q.GetTime();
+};
+function SetTime(time) {
+  Initialize();
+  return q.SetTime(time);
+};
+function GetTimeScale() {
+  Initialize();
+  return q.GetTimeScale();
+};
+function GetDuration() {
+  Initialize();
+  return q.GetDuration();
+};
+function GetVolume() {
+  Initialize();
+  return q.GetVolume();
+};
+function SetVolume(vol) {
+  Initialize();
+  return q.SetVolume(vol);
+};
+function SetMute(mute) {
+  Initialize();
+  return q.SetMute(mute);
+};
 </script>
 <embed id="core_qt" height="100%" width="100%" scale="aspect" bgcolor="#000000" name="core_qt" EnableJavaScript="true" AllowEmbedTagOverrides="true" SaveEmbedTags="true" autoplay="false" controller="false" target="myself" type="application/x-rtsp">
 </embed>
