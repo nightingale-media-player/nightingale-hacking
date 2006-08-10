@@ -669,12 +669,14 @@ menuitem[selected="true"]
 
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
-  list-style-image: url(default/check_000.png) !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_000.png) !important;
 }
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
-  list-style-image: url(default/check_000.png) !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_000.png) !important;
 }
 
 /** 

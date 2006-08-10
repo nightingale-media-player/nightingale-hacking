@@ -69,7 +69,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
     
-    <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
+      <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
       
         <vbox class="sb_faceplate">
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>

@@ -738,12 +738,14 @@ menuitem[selected="true"]
 
 menuitem[checked="true"] > hbox[checked="true"] 
 { 
-  list-style-image: url(default/check_fff.png) !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
 }
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 { 
-  list-style-image: url(default/check_fff.png) !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
 }
 
 /** 

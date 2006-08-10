@@ -554,7 +554,8 @@ menuitem[checked="true"] > hbox[checked="true"]
   margin: 0px 0px 0px 2px !important;
   height: 7px !important;
   width: 7px !important;
-  list-style-image: url(chrome://songbird/skin/default/check_fff.png) !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
   background-repeat: no-repeat !important;
 }
 
@@ -563,7 +564,8 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   margin: 0px 0px 0px 2px !important;
   height: 7px !important;
   width: 7px !important;
-  list-style-image: url(chrome://songbird/skin/default/check_fff.png) !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
   background-repeat: no-repeat !important;
 }
 
