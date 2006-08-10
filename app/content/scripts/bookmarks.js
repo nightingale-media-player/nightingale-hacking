@@ -1,17 +1,17 @@
-/*
+Ôªø/*
 //
 // BEGIN SONGBIRD GPL
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 POTI, Inc.
+// Copyright¬© 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the ìGPLî).
+// GNU General Public License Version 2 (the ‚ÄúGPL‚Äù).
 // 
 // Software distributed under the License is distributed 
-// on an ìAS ISî basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an ‚ÄúAS IS‚Äù basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -339,7 +339,7 @@ var bmManager = {
 				      children: []
 		        },			        				  
 			      { 
-				      label: "La BlogothËque",
+				      label: "La Blogoth√®que",
 				      icon: "chrome://songbird/skin/serviceicons/default.ico",
 				      url: "http://www.blogotheque.net/mp3/",
 				      properties: "bookmark",
