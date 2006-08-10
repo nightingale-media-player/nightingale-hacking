@@ -404,8 +404,8 @@ function onBkgDown( theEvent )
     }
     else {
       trackerBkg = true;
-      offsetScrX = document.defaultView.screenX - theEvent.screenX;
-      offsetScrY = document.defaultView.screenY - theEvent.screenY;
+      offsetScrX = document.documentElement.boxObject.screenX - theEvent.screenX;
+      offsetScrY = document.documentElement.boxObject.screenY - theEvent.screenY;
       document.addEventListener( "mousemove", onBkgMove, true );
     }
   }
