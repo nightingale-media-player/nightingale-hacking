@@ -128,10 +128,14 @@ try
         offsetScrX = document.documentElement.boxObject.screenX - theEvent.screenX;
         offsetScrY = document.documentElement.boxObject.screenY - theEvent.screenY;
 
+/* 
+  // This is apparently not true if you are a popup.
+  
         // ScreenY is reported incorrectly on osx for windows without title bars.
         if (navigator.userAgent.indexOf("Mac OS X") != -1) {
           offsetScrY += 20; 
         }
+*/
 
         document.addEventListener( "mousemove", onBkgMove, true );
       }
