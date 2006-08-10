@@ -89,6 +89,7 @@ function fillLanguageBox()
 
   var i = 0;
   var select_item = null;
+  var elements = Array();
   while (locales.hasMore()) {
     var locale = locales.getNext();
 
@@ -122,10 +123,21 @@ function fillLanguageBox()
     }
     item.setAttribute("oncommand", "setWantedLocale(\"" + locale + "\")");
 
-    menu.appendChild(item);
+    elements.push(item);
     i++;
   }
+  elements.sort(sortLanguages);
+  for (var i =0;i<elements.length;i++) menu.appendChild(elements[i]);
   list.selectedItem = select_item;
+}
+
+function sortLanguages(a, b) 
+{
+  var aname = a.getAttribute("label");
+  var bname = b.getAttribute("label");
+  if (aname == bname) return 0;
+  if (aname < bname) return -1;
+  return 1;
 }
 
 function setWantedLocale(locale)

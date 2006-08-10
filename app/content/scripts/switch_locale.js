@@ -82,7 +82,8 @@ function fillLocaleList(menu) {
     }
 
     var locales = cr.getLocalesForPackage("songbird");
-
+    var elements = Array();
+    
     while (locales.hasMore()) {
       var locale = locales.getNext();
 
@@ -115,12 +116,24 @@ function fillLocaleList(menu) {
         item.setAttribute("checked", "true");
       }
       item.setAttribute("oncommand", "switchLocale(\"" + locale + "\", true)");
-
-      menu.appendChild(item);
+      
+      elements.push(item);
     }
+    
+    elements.sort(sortLanguages);
+    for (var i =0;i<elements.length;i++) menu.appendChild(elements[i]);
   }
   catch ( err )
   {
     alert( err );
   }
+}
+
+function sortLanguages(a, b) 
+{
+  var aname = a.getAttribute("label");
+  var bname = b.getAttribute("label");
+  if (aname == bname) return 0;
+  if (aname < bname) return -1;
+  return 1;
 }
