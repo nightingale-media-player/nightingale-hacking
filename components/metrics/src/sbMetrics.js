@@ -65,8 +65,6 @@ Metrics.prototype = {
     } 
   },
   
-  
-  
   /**
    * Bundle all metrics info and send it to the server.
    *
@@ -290,10 +288,32 @@ Metrics.prototype = {
     }
     
     return uuid;     
-  },  
+  },
   
+  setSessionFlag: function(value) {
+    var file = this._getSessionFlagFile();
+    if (value) {
+      if (!file.exists()) file.create(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0744);
+    } else {
+      if (file.exists()) file.remove(false);
+    }
+  },
   
+  getSessionFlag: function() {
+    var file = this._getSessionFlagFile();
+    return file.exists();
+  },
   
+  _getSessionFlagFile: function() {
+    var directoryService = Components.classes["@mozilla.org/file/directory_service;1"].createInstance();
+    directoryService = directoryService.QueryInterface(Components.interfaces.nsIProperties);
+    var bResult = new Object;
+    var filename = directoryService.get("DefProfRt", Components.interfaces.nsIFile, bResult); // user profile directory
+    filename.append("songbird.is.flying");
+    var localFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+    localFile.initWithPath(filename.path);
+    return localFile;
+  },
   
   /**
    * See nsISupports.idl

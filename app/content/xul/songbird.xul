@@ -55,6 +55,9 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/firstrun.js" />
 
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/metrics.js" />
+
   <!-- Do the first run test and pop up the mainwin as soon as possible -->
   <script>
   <![CDATA[
@@ -96,6 +99,11 @@
           {
             var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
             var MetricsService = new nsIMetrics();
+            if (MetricsService.getSessionFlag()) {
+              //alert("previous session did not terminate properly!");
+              metrics_inc("session", "crash");
+            }
+            MetricsService.setSessionFlag(true);
             MetricsService.checkUploadMetrics();
           }
           catch ( err )
@@ -275,9 +283,6 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/back_scan.js"/>
 
-  <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/metrics.js" />
-   
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/globalhotkeys.js" />
 

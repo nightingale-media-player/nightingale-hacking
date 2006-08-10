@@ -44,7 +44,7 @@
 interface sbIMetrics : nsISupports
 {
   /**
-   * \brief Perform anonymous metrics upload if needed
+   * \brief Perform anonymous metrics upload if needed.
    * This method checks how much time has elapsed since the last time metrics were uploaded.
    * If enough time has elapsed, metrics data is extracted from the user's dataremote repository
    * and sent to the metrics server. The metrics repository is then emptied and a new metrics 
@@ -52,5 +52,22 @@ interface sbIMetrics : nsISupports
    * This function may return without performing any task if the user has disabled metrics gathering.
    */
   void checkUploadMetrics();
+
+  /**
+   * \brief Returns the session flag.
+   * The session flag is set when the application starts up, and cleared when it terminates. 
+   * This allows a simple detection of crashes if this function returns true before. setSessionFlag(true) 
+   * has been called.
+   */
+  boolean getSessionFlag();
+
+  /**
+   * \brief Sets the session flag.
+   * The session flag is set when the application starts up, and cleared when it terminates. 
+   * This allows a simple detection of crashes if getSessionFlag returns true before this function
+   * has been called with a value of 'true'.
+   * \param flag the value of the session flag (boolean) 
+   */
+  void setSessionFlag(in boolean flag);
 };
 

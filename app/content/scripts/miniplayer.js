@@ -135,14 +135,16 @@ try
 
   function quitApp()
   {
-    onExit();
-
+    var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
+    var MetricsService = new nsIMetrics();
+    MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
     var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
     if (as)
     {
       const V_ATTEMPT = 2;
       as.quit(V_ATTEMPT);
     }
+    onExit();
   }
 
   // Help
