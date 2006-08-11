@@ -64,8 +64,22 @@ CoreVLC.prototype.playURL = function (aURL)
 
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
-    
+  
   this._url = aURL;
+  
+  //Fix paths under win32 for VLC.
+  if(PLATFORM_WIN32) {
+    var localFileURI = (Components.classes["@mozilla.org/network/simple-uri;1"]).createInstance(Components.interfaces.nsIURI);
+    try {
+    localFileURI.spec = aURL;
+    } catch(e) {}
+  
+    if(localFileURI.scheme == "file") {
+      this._url = localFileURI.path.slice(3);
+      this._url = this._url.replace(/\//g, '\\');
+    }
+  }
+  
   this._object.playmrl(this._url);
   
   if (this._object.isplaying()) 
