@@ -609,6 +609,7 @@ menulist[disabled="true"] > dropmarker
   border: none !important;
   padding: 0px 0px 0px 0px !important;
   margin: 0px 0px 0px 0px !important;
+  -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
 }
 
 /** 
