@@ -737,8 +737,8 @@ PlaylistPlayback.prototype = {
     // Synchronous call!  Woo hoo!
     while( this._source.isQueryExecuting( ppRef ) );
 
-    // After the call is done, force GetTargets
-    this._source.forceGetTargets( ppRef );
+    // After the call is done, force GetTargets (and remember that we'll never see a UI)
+    this._source.forceGetTargets( ppRef, true );
 
     return ppRef;
   },

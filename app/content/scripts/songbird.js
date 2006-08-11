@@ -716,6 +716,7 @@ function setVideoMinMaxCallback()
 
 function createLibraryRef() {
  /* // this is so we can playRef the library even if it has never been shown
+*/
   var source = new sbIPlaylistsource();
   source.feedPlaylist( "NC:songbird_library", "songbird", "library");
   source.executeFeed( "NC:songbird_library" );
@@ -723,7 +724,6 @@ function createLibraryRef() {
   while( source.isQueryExecuting( "NC:songbird_library" ) )
     ;
   // After the call is done, force GetTargets
-  source.forceGetTargets( "NC:songbird_library" );
-*/
+  source.forceGetTargets( "NC:songbird_library", false );
 }
 

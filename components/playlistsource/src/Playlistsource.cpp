@@ -1368,7 +1368,7 @@ sbPlaylistsource::UpdateObservers()
        r != old_garbage.end();
        r++) {
     if ((*r).m_ForceGetTargets) {
-      rv = ForceGetTargets((*r).m_Ref);
+      rv = ForceGetTargets((*r).m_Ref, PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -1657,7 +1657,7 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::ForceGetTargets(const nsAString &aRefName)
+sbPlaylistsource::ForceGetTargets(const nsAString &aRefName, const PRBool isPermanent)
 {
   LOG(("sbPlaylistsource::ForceGetTargets"));
 
@@ -1673,8 +1673,8 @@ sbPlaylistsource::ForceGetTargets(const nsAString &aRefName)
                              PR_TRUE, getter_AddRefs(enumer));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // And remember that it's forced.
-    info->m_ForceGetTargets = PR_TRUE;
+    // And maybe remember that it's forced.
+    info->m_ForceGetTargets = isPermanent;
   }
   return NS_OK;
 }

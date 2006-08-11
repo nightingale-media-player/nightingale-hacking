@@ -444,7 +444,10 @@
         
         var feed = false;
         // If there are no rows already loaded for this ref
-        if ( this.source.getRefRowCount( ref ) <= 0 )
+        if (
+              ( this.source.getRefRowCount( ref ) <= 0 ) ||
+              ( filters.length != this.source.getNumFilters( ref ) ) 
+           )
         {
           // We must feed from the sbIPlaylistsource interface
           feed = true;

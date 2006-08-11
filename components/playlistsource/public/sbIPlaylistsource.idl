@@ -465,8 +465,9 @@ interface sbIPlaylistsource : nsIRDFDataSource
   *
   * \todo I'm pretty sure this is broken right now
   * \param aRefName The unique identifier for the datasource 
+  * \param isPermanent If True, preserve the forceGetTargets state.
   */
-  void forceGetTargets( in AString aRefName );
+  void forceGetTargets( in AString aRefName, in PRBool isPermanent );
 
   /**
   * \brief Hint to the interface that an observer is about to be attached.
