@@ -1,6 +1,6 @@
 #filter substitution
 [App]
-Vendor=POTI
+#Vendor=POTI
 Name=@SB_APPNAME@
 Version=@SB_MILESTONE@
 BuildID=@SB_BUILD_ID@
@@ -13,3 +13,4 @@ MaxVersion=1.8.*
  
 [XRE]
 EnableExtensionManager=true
+
