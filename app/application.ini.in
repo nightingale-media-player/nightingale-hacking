@@ -1,6 +1,6 @@
 #filter substitution
 [App]
-Vendor=Pioneers of the Inevitable
+Vendor=POTI
 Name=@SB_APPNAME@
 Version=@SB_MILESTONE@
 BuildID=@SB_BUILD_ID@
