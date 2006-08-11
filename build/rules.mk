@@ -603,7 +603,7 @@ endif #CLONEDIR
 #------------------------------------------------------------------------------
 ifdef FORCE_RANLIB
 force_ranlib:
-  $(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
+	$(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
 .PHONY : force_ranlib
 endif #FORCE_RANLIB
 
