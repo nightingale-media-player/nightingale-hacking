@@ -35,6 +35,10 @@ else
 target_name = sbMetadataHandlerMP4
 endif
 
+ifeq (macosx,$(SB_PLATFORM))
+  FORCE_RANLIB = $(MP4LIB_DIR)/lib/libmp4.a
+endif
+
 CPP_SRCS = MetadataHandlerMP4.cpp \
            MetadataHandlerMP4Component.cpp \
            $(NULL)
