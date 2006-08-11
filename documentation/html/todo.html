@@ -12,7 +12,32 @@
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
   </ul></div>
-<h1><a class="anchor" name="todo">Todo List</a></h1><a class="anchor" name="_todo000010"></a> <dl>
+<h1><a class="anchor" name="todo">Todo List</a></h1><a class="anchor" name="_todo000012"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">sbIMediaLibrary::deleteColumn</a> (in AString columnName) </dt>
+<dd>deleteColumn is not yet implemented </dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000015"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">sbIMediaLibrary::getValueByIndex</a> (in PRInt32 mediaIndex, in AString columnName) </dt>
+<dd>This won't work, it tries to use row number as ID. </dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000016"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">sbIMediaLibrary::getValuesByIndex</a> (in PRInt32 mediaIndex, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues) </dt>
+<dd>This won't work, it tries to use row number as ID. </dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000013"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">sbIMediaLibrary::setValueByIndex</a> (in PRInt32 mediaIndex, in AString columnName, in AString columnValue, in PRBool willRunQueryLater) </dt>
+<dd>This won't work, it tries to use row number as ID. </dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000014"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">sbIMediaLibrary::setValuesByIndex</a> (in PRInt32 mediaIndex, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool willRunQueryLater) </dt>
+<dd>This won't work, it tries to use row number as ID. </dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000010"></a> <dl>
 <dt>Class <a class="el" href="interfacesb_i_media_transcoder.html">sbIMediaTranscoder</a>  </dt>
 <dd>Stub interface. Currently unimplemented. Lots of work. </dd>
 </dl>
@@ -62,22 +87,52 @@
 <dd>Make a list of keys. Make a type enumeration. </dd>
 </dl>
 <p>
-<a class="anchor" name="_todo000012"></a> <dl>
+<a class="anchor" name="_todo000022"></a> <dl>
 <dt>Member <a class="el" href="interfacesb_i_playlist_commands.html#9bc74516c28ae0e6bb744c788a039233">sbIPlaylistCommands::getCommandToolTipText</a> (in PRInt32 index) </dt>
 <dd>The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip. </dd>
 </dl>
 <p>
-<a class="anchor" name="_todo000013"></a> <dl>
-<dt>Member <a class="el" href="interfacesb_i_playlistsource.html#fd039242505df5b636e09409173247c8">sbIPlaylistsource::forceGetTargets</a> (in AString aRefName) </dt>
+<a class="anchor" name="_todo000018"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_playlist_playback.html#0876200cb49aa473e345cddf07ca3d24">sbIPlaylistPlayback::getCurrentValue</a> (in AString aField) </dt>
+<dd>- implement getCurrentValue - currently returns ""<p>
+</dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000020"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_playlist_playback.html#52034b678ca53a540bea83645997fea2">sbIPlaylistPlayback::getCurrentValues</a> (in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, out PRUint32 aValueCount,[array, size_is(aValueCount), retval] out wstring aMetaValues) </dt>
+<dd>implement getCurrentValues - currently sets out paramst to 0 and ""<p>
+</dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000017"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_playlist_playback.html#d21cb95118038ef1c3f51be7d6fbf6e4">sbIPlaylistPlayback::getMetadataFields</a> (out PRUint32 aFieldCount,[array, size_is(aFieldCount), retval] out wstring aMetaFields) </dt>
+<dd>- implement getMetadataFields, currently sets out params to 0 and ""<p>
+</dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000019"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_playlist_playback.html#fe49d1a9aeafe4a6c697ed4e395a8eb0">sbIPlaylistPlayback::setCurrentValue</a> (in AString aField, in AString aValue) </dt>
+<dd>- implement setCurrentValue - current does nothing.<p>
+</dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000021"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_playlist_playback.html#c54bd378b48598fe690ced4a7c44626f">sbIPlaylistPlayback::setCurrentValues</a> (in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, in PRUint32 aValueCount,[array, size_is(aValueCount)] in wstring aMetaValues) </dt>
+<dd>implement setCurrentValues - currently does nothing.<p>
+</dd>
+</dl>
+<p>
+<a class="anchor" name="_todo000023"></a> <dl>
+<dt>Member <a class="el" href="interfacesb_i_playlistsource.html#084b810650bc01feb3811e75a947ce08">sbIPlaylistsource::forceGetTargets</a> (in AString aRefName, in PRBool isPermanent) </dt>
 <dd>I'm pretty sure this is broken right now </dd>
 </dl>
 <p>
-<a class="anchor" name="_todo000015"></a> <dl>
+<a class="anchor" name="_todo000025"></a> <dl>
 <dt>Member <a class="el" href="interfacesb_i_playlistsource.html#0084fd6816e662d61a66ae258dcb2bae">sbIPlaylistsource::getPlaylistCommands</a> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType) </dt>
 <dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd>
 </dl>
 <p>
-<a class="anchor" name="_todo000014"></a> <dl>
+<a class="anchor" name="_todo000024"></a> <dl>
 <dt>Member <a class="el" href="interfacesb_i_playlistsource.html#d4573ffc4adc449ee8fd0fdf365a63b6">sbIPlaylistsource::registerPlaylistCommands</a> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> aCommandObj) </dt>
 <dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd>
 </dl>
@@ -86,7 +141,7 @@
 <dt>File <a class="el" href="sb_i_media_transcoder_8idl.html">sbIMediaTranscoder.idl</a>  </dt>
 <dd>Stub module. Currently unimplemented. </dd>
 </dl>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

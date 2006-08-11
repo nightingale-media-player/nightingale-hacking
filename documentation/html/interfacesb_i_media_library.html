@@ -18,7 +18,10 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>sbIMediaLibrary Interface Reference</h1><!-- doxytag: class="sbIMediaLibrary" --><code>import &quot;<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>&quot;;</code>
+<h1>sbIMediaLibrary Interface Reference</h1><!-- doxytag: class="sbIMediaLibrary" -->The media library object constructs SQL queries designed to reference the library of a database.  
+<a href="#_details">More...</a>
+<p>
+<code>import &quot;<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>&quot;;</code>
 <p>
 <a href="interfacesb_i_media_library-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
@@ -31,58 +34,75 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the database query object that is being used by the library to make database queries.  <a href="#6780878b166b91f13cc3aa498994bb0c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#16b9a0b9ac6b13c486157caeecaa4a98">createDefaultLibrary</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create the library table with default metadata columns.  <a href="#16b9a0b9ac6b13c486157caeecaa4a98"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#2e524d674b4cc24ae1504fb0a3714876">addMedia</a> (in AString mediaURL, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool checkForUniqueFilename, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a new piece of media to the library.  <a href="#2e524d674b4cc24ae1504fb0a3714876"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#567c81fe6fdd4979c3599e95ae9abb60">removeMediaByURL</a> (in AString mediaURL, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a track from the library.  <a href="#567c81fe6fdd4979c3599e95ae9abb60"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#ae044024f3371851ffa673a0850378ad">removeMediaByGUID</a> (in AString mediaGUID, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a track from the library.  <a href="#ae044024f3371851ffa673a0850378ad"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#1ac586fec9a08c09a1564d0c1bdce2f2">purgeDefaultLibrary</a> (in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove all tracks from the library.  <a href="#1ac586fec9a08c09a1564d0c1bdce2f2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#57a093ce663088cc6a5c9e0821f54f44">findByGUID</a> (in AString mediaGUID)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get a track's URL from its GUID.  <a href="#57a093ce663088cc6a5c9e0821f54f44"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#636d3bf4bc3d37dfdad5cb1af491f6c0">findByURL</a> (in AString mediaURL)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get a track's GUID from its URL.  <a href="#636d3bf4bc3d37dfdad5cb1af491f6c0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a> (in AString columnName, in AString columnType)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a column to the library table.  <a href="#dab3cbbe647c5fb1302b557b093b134d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a> (in AString columnName)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a column from the library table.  <a href="#932fd74bb830444b58374e611114f26d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Load the column info for the table into the resultset.  <a href="#2716a52a787bb22ad5eb7543fa0fb52b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a> (in AString columnName, in AString columnReadableName, in PRBool isColumnEverVisible, in PRBool isColumnVisibleByDefault, in PRBool isMetadataColumn, in PRInt32 columnSortWeight, in PRInt32 columnDefaultUIWidth, in AString columnDataType, in PRBool isColumnReadOnly, in PRBool willRunQueryLater)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a> (out PRUint32 metaColumnCount,[array, size_is(metaColumnCount), retval] out wstring metaColumnNames)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a> (in AString columnName, in AString columnType, in PRBool willRunQueryLater)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> (in AString columnName, in PRBool willRunQueryLater)</td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the Column Info table with new data.  <a href="#8b1e4479b033e8815edb23eb0c9df6e0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a> (in AString columnName, out PRUint32 columnUniqueValCount,[array, size_is(columnUniqueValCount), retval] out wstring columnUniqueValues)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the array of metadata column names in the Column Info tableGet the Unique list of values across the library for the column.  <a href="#2a1e02c956ef9707570b0cbab89f4f8d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a> (in PRInt32 mediaIndex, in AString columnName, in AString columnValue, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set cell a value into the library table.  <a href="#14b46d41764873b1bd32a6e80b499cf8"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a> (in PRInt32 mediaIndex, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set multiple values into a single database row.  <a href="#c4a17b445fbc0c5ec09ba4dec8150b7d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a> (in PRInt32 mediaIndex, in AString columnName)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get cell a value from the library table.  <a href="#3aab0777b29917b5924f34e831ad37ab"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a> (in PRInt32 mediaIndex, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get multiple values from a single database row.  <a href="#2ee0999594d3c16b89e68004a06f8aac"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a> (in AString mediaGUID, in AString columnName, in AString columnValue, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set cell a value into the library table.  <a href="#d6625d5b9f8ccd87953afed793a77a76"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a> (in AString mediaGUID, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool willRunQueryLater)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set multiple values into a single database row.  <a href="#c41eb46369e53863259ecc18a3034ba9"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a> (in AString mediaGUID, in AString columnName)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get cell a value from the library table.  <a href="#054eee531354d6fa47df0565351162af"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> (in AString mediaGUID, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get multiple values from a single database row.  <a href="#8d18865741a112d60af3f569d39427f9"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
+The media library object constructs SQL queries designed to reference the library of a database. 
+<p>
+The media library is a "database-helper" object. Its purpose is to translate common library-centric activities into the SQL queries required to make it happen.<p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a>, DatabaseQuery.h, <a class="el" href="interfacesb_i_playlist.html">sbIPlaylist</a>, <a class="el" href="interfacesb_i_playlist_manager.html">sbIPlaylistManager</a> </dd></dl>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="dab3cbbe647c5fb1302b557b093b134d"></a><!-- doxytag: member="sbIMediaLibrary::addColumn" ref="dab3cbbe647c5fb1302b557b093b134d" args="(in AString columnName, in AString columnType)" -->
 <div class="memitem">
 <div class="memproto">
@@ -109,13 +129,15 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
+Add a column to the library table. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnType</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the new column (not human readable -- internal name) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnType</em>&nbsp;</td><td>The type of the new column </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a>, <a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a>, <a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, getMetadataColumns </dd></dl>
 
 </div>
 </div><p>
@@ -175,62 +197,23 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>strMediaURL</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>checkForUniqueFilename</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#567c81fe6fdd4979c3599e95ae9abb60">removeMediaByURL</a>, <a class="el" href="interfacesb_i_media_library.html#ae044024f3371851ffa673a0850378ad">removeMediaByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#57a093ce663088cc6a5c9e0821f54f44">findByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#636d3bf4bc3d37dfdad5cb1af491f6c0">findByURL</a> </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="56c32de92fe95343f510de1f480d7d29"></a><!-- doxytag: member="sbIMediaLibrary::addMetadataColumn" ref="56c32de92fe95343f510de1f480d7d29" args="(in AString columnName, in AString columnType, in PRBool willRunQueryLater)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMediaLibrary::addMetadataColumn           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>columnName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>columnType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in PRBool&nbsp;</td>
-          <td class="paramname"> <em>willRunQueryLater</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Add a new piece of media to the library. 
 <p>
+This method constructs the SQL query required to insert a new track into the library. If the checkForUniqueFilename parameter is true, the code will first see if the mediaURL exists and, if so, update that track with the given metadata information and return that GUID rather than create a new row in the database.<p>
+Metadata is passed along with the track to fill columns in the database based upon a pair of string arrays. The metaColumnNames and metaValues should have an equal number of members - each index corresponds to each column-value pair set into the database.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnType</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The URL to the media to add </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the metaColumnNames parameter </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>An array of strings identifying columns to be fill with metadata (matching the metaValues array) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the metaValues parameter </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>An array of strings identifying metadata values to be inserted (matching the metaColumnNames array) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>checkForUniqueFilename</em>&nbsp;</td><td>If true, see if the file already exists. If so, return the GUID found. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> </dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The GUID for the track added (or found) </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#567c81fe6fdd4979c3599e95ae9abb60">removeMediaByURL</a>, <a class="el" href="interfacesb_i_media_library.html#ae044024f3371851ffa673a0850378ad">removeMediaByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#57a093ce663088cc6a5c9e0821f54f44">findByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#636d3bf4bc3d37dfdad5cb1af491f6c0">findByURL</a> </dd></dl>
 
 </div>
 </div><p>
@@ -250,6 +233,9 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
+Create the library table with default metadata columns. 
+<p>
+This method will synchronously execute the query required to create the default library in the given database.<p>
 <dl compact><dt><b>See also:</b></dt><dd>sbMediaLibrary.js </dd></dl>
 
 </div>
@@ -271,48 +257,15 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a>, <a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a>, <a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="5077c2528dff02c3b79711aca659ea6e"></a><!-- doxytag: member="sbIMediaLibrary::deleteMetadataColumn" ref="5077c2528dff02c3b79711aca659ea6e" args="(in AString columnName, in PRBool willRunQueryLater)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">PRBool sbIMediaLibrary::deleteMetadataColumn           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>columnName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in PRBool&nbsp;</td>
-          <td class="paramname"> <em>willRunQueryLater</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Remove a column from the library table. 
 <p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000012">Todo:</a></b></dt><dd>deleteColumn is not yet implemented </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column to delete </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, getMetadataColumns </dd></dl>
 
 </div>
 </div><p>
@@ -333,12 +286,14 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
+Get a track's URL from its GUID. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td>The GUID of the track to find </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The URL of the track </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#636d3bf4bc3d37dfdad5cb1af491f6c0">findByURL</a> </dd></dl>
 
 </div>
@@ -360,12 +315,15 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
+Get a track's GUID from its URL. 
+<p>
+This will find the first track matching the URL if there are more than one.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The URL of the track to find </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The GUID of the track </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#57a093ce663088cc6a5c9e0821f54f44">findByGUID</a> </dd></dl>
 
 </div>
@@ -386,43 +344,43 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0004
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a>, <a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a>, <a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="87f0aafdb40c13581021befbe4c11ad4"></a><!-- doxytag: member="sbIMediaLibrary::getMetadataColumns" ref="87f0aafdb40c13581021befbe4c11ad4" args="(out PRUint32 metaColumnCount,[array, size_is(metaColumnCount), retval] out wstring metaColumnNames)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMediaLibrary::getMetadataColumns           </td>
-          <td>(</td>
-          <td class="paramtype">out PRUint32&nbsp;</td>
-          <td class="paramname"> <em>metaColumnCount</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">[array, size_is(metaColumnCount), retval] out wstring&nbsp;</td>
-          <td class="paramname"> <em>metaColumnNames</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Load the column info for the table into the resultset. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a>, <a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> </dd></dl>
+Column Info is kept in a separate table with the following columns:<p>
+<div class="fragment"><pre class="fragment">  column_name TEXT UNIQUE, // The column name in the library
+  readable_name TEXT, // The human readable name displayed in the UI
+  is_visible INTEGER(0, 1) DEFAULT 0, // If the column may ever be displayed
+  default_visibility INTEGER(0, 1) DEFAULT 0, // If the column defaults visible
+  is_metadata INTEGER(0, 1) DEFAULT 0, // If the column holds metadata (vs service info)
+  sort_weight INTEGER DEFAULT 0, // The default ordering of columns in the UI
+  width INTEGER DEFAULT -1, // The default relative width
+  type TEXT DEFAULT 'text', // The type of column
+  readonly INTEGER(0,1) DEFAULT 0 // If the column may be edited by the user
+</pre></div><p>
+For instance, to get all of the human readable names of the columns:<p>
+<div class="fragment"><pre class="fragment">function GetColumnNames(aLibrary) {
+  // Create the objects
+  var medialib = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
+    .createInstance(Components.interfaces.sbIMediaLibrary);
+  var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    .createInstance(Components.interfaces.sbIDatabaseQuery);
+
+  // Setup the objects
+  query.setDatabaseGUID(aLibrary)
+  medialib.setQueryObject(query);
+
+  // Get the column info
+  medialib.getColumnInfo();
+  var resultset = query.getResultObject();
+
+  // Parse the resultset
+  var column_names = "";
+  for (var i = 0; i &lt; resultset.getRowCount(); i++) {
+    column_names += resultset.getRowCellByColumn(i, "column_name") + " ";
+  }
+  return column_names;
+}
+</pre></div> <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a>, <a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#8b1e4479b033e8815edb23eb0c9df6e0">setColumnInfo</a>, getMetadataColumns </dd></dl>
 
 </div>
 </div><p>
@@ -481,11 +439,14 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Get the array of metadata column names in the Column Info tableGet the Unique list of values across the library for the column. 
+<p>
+Essentially equivalent to the list in a filterlist UI element.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnUniqueValCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnUniqueValues</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The column for which to retrieve values </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnUniqueValCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnUniqueValues</em>&nbsp;</td><td>The array of unique values </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
@@ -518,13 +479,15 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Get cell a value from the library table. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td>The guid of the cell to get, where media library row GUID equals mediaGUID </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column for the cell to get </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd>The value of the column, where media library row GUID equals mediaGUID. </dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The value of the cell </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
 
 </div>
@@ -555,13 +518,16 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Get cell a value from the library table. 
+<p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to get </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column for the cell to get </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The value of the cell </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
 
 </div>
@@ -610,13 +576,15 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Get multiple values from a single database row. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td>The guid of the cell to get, where media library row GUID equals mediaGUID </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>The array of columns to get </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>The array of values retrieved </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a> </dd></dl>
@@ -667,13 +635,16 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Get multiple values from a single database row. 
+<p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to get </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>The array of columns to get </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>The array of values retrieved </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
@@ -697,13 +668,15 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Remove all tracks from the library. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>True, if the query was successfully added </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#ae044024f3371851ffa673a0850378ad">removeMediaByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2e524d674b4cc24ae1504fb0a3714876">addMedia</a> </dd></dl>
 
 </div>
 </div><p>
@@ -733,14 +706,16 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Remove a track from the library. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td>The GUID of the track to remove </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>True, if the query was successfully added </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#ae044024f3371851ffa673a0850378ad">removeMediaByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2e524d674b4cc24ae1504fb0a3714876">addMedia</a> </dd></dl>
 
 </div>
 </div><p>
@@ -770,13 +745,15 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Remove a track from the library. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The URL of the track to remove </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>True, if the query was successfully added </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#ae044024f3371851ffa673a0850378ad">removeMediaByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2e524d674b4cc24ae1504fb0a3714876">addMedia</a> </dd></dl>
 
 </div>
@@ -855,21 +832,23 @@ Get the database query object that is being used by the library to make database
 <div class="memdoc">
 
 <p>
+Update the Column Info table with new data. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnReadableName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>isColumnEverVisible</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>isColumnVisibleByDefault</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>isMetadataColumn</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnSortWeight</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnDefaultWidth</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnDataType</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>isColumnReadOnly</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The column to be changed </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnReadableName</em>&nbsp;</td><td>The new readable name </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>isColumnEverVisible</em>&nbsp;</td><td>The new global visibility bit </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>isColumnVisibleByDefault</em>&nbsp;</td><td>The new default visibility bit </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>isMetadataColumn</em>&nbsp;</td><td>The new is metadata bit </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnSortWeight</em>&nbsp;</td><td>The new sort weight </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnDefaultWidth</em>&nbsp;</td><td>The new default width </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnDataType</em>&nbsp;</td><td>The new type </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>isColumnReadOnly</em>&nbsp;</td><td>The new readonly bit </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, <a class="el" href="interfacesb_i_media_library.html#87f0aafdb40c13581021befbe4c11ad4">getMetadataColumns</a>, <a class="el" href="interfacesb_i_media_library.html#56c32de92fe95343f510de1f480d7d29">addMetadataColumn</a>, <a class="el" href="interfacesb_i_media_library.html#5077c2528dff02c3b79711aca659ea6e">deleteMetadataColumn</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#dab3cbbe647c5fb1302b557b093b134d">addColumn</a>, <a class="el" href="interfacesb_i_media_library.html#932fd74bb830444b58374e611114f26d">deleteColumn</a>, <a class="el" href="interfacesb_i_media_library.html#2716a52a787bb22ad5eb7543fa0fb52b">getColumnInfo</a>, getMetadataColumns </dd></dl>
 
 </div>
 </div><p>
@@ -939,12 +918,14 @@ Set the database query object that the library will use to make queries to the d
 <div class="memdoc">
 
 <p>
+Set cell a value into the library table. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnValue</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td>The guid of the cell to get, where media library row GUID equals mediaGUID </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column for the cell to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnValue</em>&nbsp;</td><td>The value of the cell to be set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
@@ -990,15 +971,18 @@ Set the database query object that the library will use to make queries to the d
 <div class="memdoc">
 
 <p>
+Set cell a value into the library table. 
+<p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>columnValue</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column for the cell to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnValue</em>&nbsp;</td><td>The value of the cell to be set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>True if the query was properly loaded/executed </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
 
 </div>
@@ -1053,14 +1037,16 @@ Set the database query object that the library will use to make queries to the d
 <div class="memdoc">
 
 <p>
+Set multiple values into a single database row. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaGUID</em>&nbsp;</td><td>The guid of the cell to get, where media library row GUID equals mediaGUID </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>The array of columns to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>The array of values to be set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
@@ -1118,24 +1104,27 @@ Set the database query object that the library will use to make queries to the d
 <div class="memdoc">
 
 <p>
+Set multiple values into a single database row. 
+<p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>The array of columns to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>The array of values to be set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>True if the query was properly loaded/executed </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

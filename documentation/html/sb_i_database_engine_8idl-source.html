@@ -48,16 +48,16 @@
 <a name="l00035"></a>00035 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
 <a name="l00036"></a>00036 [ref] native stlCStringRef(std::string);
 <a name="l00037"></a>00037 
-<a name="l00044"></a>00044 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
-<a name="l00045"></a><a class="code" href="interfacesb_i_database_engine.html">00045</a> interface <a class="code" href="interfacesb_i_database_engine.html">sbIDatabaseEngine</a> : nsISupports
-<a name="l00046"></a>00046 {
-<a name="l00053"></a>00053   [noscript] <span class="keywordtype">void</span> AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
-<a name="l00054"></a>00054 
-<a name="l00061"></a>00061   [noscript] <span class="keywordtype">void</span> RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
-<a name="l00062"></a>00062 
-<a name="l00069"></a>00069   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
-<a name="l00070"></a>00070 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
+<a name="l00046"></a>00046 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
+<a name="l00047"></a><a class="code" href="interfacesb_i_database_engine.html">00047</a> interface <a class="code" href="interfacesb_i_database_engine.html">sbIDatabaseEngine</a> : nsISupports
+<a name="l00048"></a>00048 {
+<a name="l00055"></a>00055   [noscript] <span class="keywordtype">void</span> AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
+<a name="l00056"></a>00056 
+<a name="l00063"></a>00063   [noscript] <span class="keywordtype">void</span> RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
+<a name="l00064"></a>00064 
+<a name="l00071"></a>00071   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
+<a name="l00072"></a>00072 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

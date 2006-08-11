@@ -18,23 +18,32 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>sbIMediaScan Interface Reference</h1><!-- doxytag: class="sbIMediaScan" --><code>import &quot;<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>&quot;;</code>
+<h1>sbIMediaScan Interface Reference</h1><!-- doxytag: class="sbIMediaScan" -->The engine in which to execute <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> objects.  
+<a href="#_details">More...</a>
+<p>
+<code>import &quot;<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>&quot;;</code>
 <p>
 <a href="interfacesb_i_media_scan-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan.html#ce7c9113a80f560c1eacb441558e924b">submitQuery</a> (in <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> pQuery)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Execute a <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> object.  <a href="#ce7c9113a80f560c1eacb441558e924b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan.html#4c2322a9cc922b17e7299e7e51a42d2c">scanDirectory</a> (in AString strDirectory, in PRBool bRecurse, in <a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a> pCallback)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Execute a scan directly to a <a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a> instance.  <a href="#4c2322a9cc922b17e7299e7e51a42d2c"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
+The engine in which to execute <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> objects. 
+<p>
+Create a <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> object, fill out its methods, create one of these and pass the query to the scanner to begin executing.<p>
+Optionally, you may skip the use of a <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> object and just handle the scan directly by calling <a class="el" href="interfacesb_i_media_scan.html#4c2322a9cc922b17e7299e7e51a42d2c">scanDirectory()</a> with your own <a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a> object.<p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a>, <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> </dd></dl>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l00534">534</a> of file <a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l00653">653</a> of file <a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="4c2322a9cc922b17e7299e7e51a42d2c"></a><!-- doxytag: member="sbIMediaScan::scanDirectory" ref="4c2322a9cc922b17e7299e7e51a42d2c" args="(in AString strDirectory, in PRBool bRecurse, in sbIMediaScanCallback pCallback)" -->
 <div class="memitem">
 <div class="memproto">
@@ -67,12 +76,16 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0053
 <div class="memdoc">
 
 <p>
+Execute a scan directly to a <a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a> instance. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>strDirectory</em>&nbsp;</td><td>The directory to scan </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bRecurse</em>&nbsp;</td><td>Whether or not to recurse </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pCallback</em>&nbsp;</td><td>The callback used to process the scan </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan.html#ce7c9113a80f560c1eacb441558e924b">submitQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -93,18 +106,20 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0053
 <div class="memdoc">
 
 <p>
+Execute a <a class="el" href="interfacesb_i_media_scan_query.html">sbIMediaScanQuery</a> object. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pQuery</em>&nbsp;</td><td>The query object to execute </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan.html#4c2322a9cc922b17e7299e7e51a42d2c">scanDirectory</a> </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

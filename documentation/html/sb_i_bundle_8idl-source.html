@@ -18,79 +18,78 @@
     <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
   </ul></div>
 <h1>C:/projects/songbird/components/bundle/public/sbIBundle.idl</h1><a href="sb_i_bundle_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#include "nsISupports.idl"</span>
-<a name="l00002"></a>00002 <span class="preprocessor">#include "nsIArray.idl"</span>
-<a name="l00003"></a>00003 
-<a name="l00012"></a>00012 interface <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a>;
-<a name="l00013"></a>00013 interface <a class="code" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a>;
-<a name="l00014"></a>00014 
-<a name="l00023"></a>00023 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(34C5873F-E5C1-4448-9B02-5AF47F36B36F)]
-<a name="l00024"></a><a class="code" href="interfacesb_i_bundle.html">00024</a> interface <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> : nsISupports
-<a name="l00025"></a>00025 {
-<a name="l00032"></a>00032   <span class="keywordtype">void</span> retrieveBundleFile();
-<a name="l00033"></a>00033 
-<a name="l00041"></a>00041   <span class="keywordtype">void</span> addBundleObserver(in <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> observer);
-<a name="l00042"></a>00042 
-<a name="l00049"></a>00049   <span class="keywordtype">void</span> removeBundleObserver(in <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> observer);
-<a name="l00050"></a>00050 
-<a name="l00056"></a>00056   <span class="keywordtype">long</span> getStatus();
-<a name="l00057"></a>00057 
-<a name="l00064"></a>00064   nsISupports getBundleDocument();
-<a name="l00065"></a>00065 
-<a name="l00072"></a>00072   wstring getTextData();
-<a name="l00073"></a>00073 
-<a name="l00079"></a>00079   wstring getBundleVersion();
-<a name="l00080"></a>00080   
-<a name="l00090"></a>00090   <span class="keywordtype">boolean</span> getExtensionInstallState(in <span class="keywordtype">long</span> idx);
-<a name="l00091"></a>00091   
-<a name="l00098"></a>00098   <span class="keywordtype">void</span> setExtensionInstallState(in <span class="keywordtype">long</span> idx, in <span class="keywordtype">boolean</span> installstate);
-<a name="l00099"></a>00099 
-<a name="l00107"></a>00107   <span class="keywordtype">void</span> installSelectedExtensions(in nsISupports window);
-<a name="l00108"></a>00108 
-<a name="l00118"></a>00118   wstring downloadFile(in wstring url, in <a class="code" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> observer);
-<a name="l00119"></a>00119 
-<a name="l00128"></a>00128   <span class="keywordtype">void</span> deleteLastDownloadedFile();
-<a name="l00129"></a>00129 
-<a name="l00137"></a>00137   <span class="keywordtype">long</span> installXPI(in wstring localFilename);
-<a name="l00138"></a>00138 
-<a name="l00146"></a>00146   <span class="keywordtype">void</span> setNeedRestart(in <span class="keywordtype">boolean</span> needed);
-<a name="l00147"></a>00147 
-<a name="l00155"></a>00155   <span class="keywordtype">long</span> getNeedRestart();
-<a name="l00156"></a>00156   
-<a name="l00157"></a>00157   <span class="comment">// convenience functions (zero based)</span>
-<a name="l00158"></a>00158 
-<a name="l00165"></a>00165   <span class="keywordtype">long</span> getNumExtensions(); 
-<a name="l00166"></a>00166 
-<a name="l00174"></a>00174   wstring getExtensionName(in <span class="keywordtype">long</span> index);
-<a name="l00175"></a>00175 
-<a name="l00183"></a>00183   wstring getExtensionDesc(in <span class="keywordtype">long</span> index);
-<a name="l00184"></a>00184 
-<a name="l00192"></a>00192   wstring getExtensionURL(in <span class="keywordtype">long</span> index);
-<a name="l00193"></a>00193 
-<a name="l00201"></a>00201   wstring getExtesionId(in <span class="keywordtype">long</span> index);
-<a name="l00202"></a>00202 
-<a name="l00210"></a>00210   wstring getTempFilename();
-<a name="l00211"></a>00211 };
-<a name="l00212"></a>00212 
-<a name="l00219"></a>00219 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(62DF6C33-2523-471e-A9AF-A8BA876CF36F)]
-<a name="l00220"></a><a class="code" href="interfacesb_i_bundle_observer.html">00220</a> interface <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> : nsISupports
-<a name="l00221"></a>00221 {
-<a name="l00228"></a>00228   <span class="keywordtype">void</span> onLoad(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle); 
-<a name="l00235"></a>00235   <span class="keywordtype">void</span> onError(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle); 
-<a name="l00236"></a>00236 };
-<a name="l00237"></a>00237 
-<a name="l00244"></a>00244 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(D143A14A-266B-48aa-A15E-94BD4F027BF0)]
-<a name="l00245"></a><a class="code" href="interfacesb_i_download_observer.html">00245</a> interface <a class="code" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> : nsISupports
-<a name="l00246"></a>00246 {
-<a name="l00254"></a>00254   <span class="keywordtype">void</span> onProgress(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle, in <span class="keywordtype">long</span> percent); 
-<a name="l00255"></a>00255 
-<a name="l00262"></a>00262   <span class="keywordtype">void</span> onDownloadComplete(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle);
-<a name="l00263"></a>00263 
-<a name="l00270"></a>00270   <span class="keywordtype">void</span> onError(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle);
-<a name="l00271"></a>00271 };
+<a name="l00002"></a>00002 
+<a name="l00011"></a>00011 interface <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a>;
+<a name="l00012"></a>00012 interface <a class="code" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a>;
+<a name="l00013"></a>00013 
+<a name="l00022"></a>00022 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(34C5873F-E5C1-4448-9B02-5AF47F36B36F)]
+<a name="l00023"></a><a class="code" href="interfacesb_i_bundle.html">00023</a> interface <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> : nsISupports
+<a name="l00024"></a>00024 {
+<a name="l00031"></a>00031   <span class="keywordtype">void</span> retrieveBundleFile();
+<a name="l00032"></a>00032 
+<a name="l00040"></a>00040   <span class="keywordtype">void</span> addBundleObserver(in <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> observer);
+<a name="l00041"></a>00041 
+<a name="l00048"></a>00048   <span class="keywordtype">void</span> removeBundleObserver(in <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> observer);
+<a name="l00049"></a>00049 
+<a name="l00055"></a>00055   <span class="keywordtype">long</span> getStatus();
+<a name="l00056"></a>00056 
+<a name="l00063"></a>00063   nsISupports getBundleDocument();
+<a name="l00064"></a>00064 
+<a name="l00071"></a>00071   AString getTextData();
+<a name="l00072"></a>00072 
+<a name="l00078"></a>00078   AString getBundleVersion();
+<a name="l00079"></a>00079   
+<a name="l00089"></a>00089   <span class="keywordtype">boolean</span> getExtensionInstallState(in <span class="keywordtype">long</span> idx);
+<a name="l00090"></a>00090   
+<a name="l00097"></a>00097   <span class="keywordtype">void</span> setExtensionInstallState(in <span class="keywordtype">long</span> idx, in <span class="keywordtype">boolean</span> installstate);
+<a name="l00098"></a>00098 
+<a name="l00106"></a>00106   <span class="keywordtype">void</span> installSelectedExtensions(in nsISupports window);
+<a name="l00107"></a>00107 
+<a name="l00117"></a>00117   AString downloadFile(in AString url, in <a class="code" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> observer);
+<a name="l00118"></a>00118 
+<a name="l00127"></a>00127   <span class="keywordtype">void</span> deleteLastDownloadedFile();
+<a name="l00128"></a>00128 
+<a name="l00136"></a>00136   <span class="keywordtype">long</span> installXPI(in AString localFilename);
+<a name="l00137"></a>00137 
+<a name="l00145"></a>00145   <span class="keywordtype">void</span> setNeedRestart(in <span class="keywordtype">boolean</span> needed);
+<a name="l00146"></a>00146 
+<a name="l00154"></a>00154   <span class="keywordtype">long</span> getNeedRestart();
+<a name="l00155"></a>00155   
+<a name="l00156"></a>00156   <span class="comment">// convenience functions (zero based)</span>
+<a name="l00157"></a>00157 
+<a name="l00164"></a>00164   <span class="keywordtype">long</span> getNumExtensions(); 
+<a name="l00165"></a>00165 
+<a name="l00173"></a>00173   AString getExtensionName(in <span class="keywordtype">long</span> index);
+<a name="l00174"></a>00174 
+<a name="l00182"></a>00182   AString getExtensionDesc(in <span class="keywordtype">long</span> index);
+<a name="l00183"></a>00183 
+<a name="l00191"></a>00191   AString getExtensionURL(in <span class="keywordtype">long</span> index);
+<a name="l00192"></a>00192 
+<a name="l00200"></a>00200   AString getExtesionId(in <span class="keywordtype">long</span> index);
+<a name="l00201"></a>00201 
+<a name="l00209"></a>00209   AString getTempFilename();
+<a name="l00210"></a>00210 };
+<a name="l00211"></a>00211 
+<a name="l00218"></a>00218 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(62DF6C33-2523-471e-A9AF-A8BA876CF36F)]
+<a name="l00219"></a><a class="code" href="interfacesb_i_bundle_observer.html">00219</a> interface <a class="code" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> : nsISupports
+<a name="l00220"></a>00220 {
+<a name="l00227"></a>00227   <span class="keywordtype">void</span> onLoad(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle); 
+<a name="l00234"></a>00234   <span class="keywordtype">void</span> onError(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle); 
+<a name="l00235"></a>00235 };
+<a name="l00236"></a>00236 
+<a name="l00243"></a>00243 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(D143A14A-266B-48aa-A15E-94BD4F027BF0)]
+<a name="l00244"></a><a class="code" href="interfacesb_i_download_observer.html">00244</a> interface <a class="code" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> : nsISupports
+<a name="l00245"></a>00245 {
+<a name="l00253"></a>00253   <span class="keywordtype">void</span> onProgress(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle, in <span class="keywordtype">long</span> percent); 
+<a name="l00254"></a>00254 
+<a name="l00261"></a>00261   <span class="keywordtype">void</span> onDownloadComplete(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle);
+<a name="l00262"></a>00262 
+<a name="l00269"></a>00269   <span class="keywordtype">void</span> onError(in <a class="code" href="interfacesb_i_bundle.html">sbIBundle</a> bundle);
+<a name="l00270"></a>00270 };
+<a name="l00271"></a>00271 
 <a name="l00272"></a>00272 
 <a name="l00273"></a>00273 
-<a name="l00274"></a>00274 
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

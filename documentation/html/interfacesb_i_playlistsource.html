@@ -81,9 +81,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#b8b46852edde8982064c59af12001ea0">isQueryExecuting</a> (in AString aRefName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine if a datasource is currently executing its internal queries.  <a href="#b8b46852edde8982064c59af12001ea0"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#fd039242505df5b636e09409173247c8">forceGetTargets</a> (in AString aRefName)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#3fc85b63625b392d2e7195a9ae2b39f5">waitForQueryCompletion</a> (in AString aRefName)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Force the nsIRDFDataSource::GetTargets() method to be called.  <a href="#fd039242505df5b636e09409173247c8"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Wait the main thread until the ref is completely updated.  <a href="#3fc85b63625b392d2e7195a9ae2b39f5"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#084b810650bc01feb3811e75a947ce08">forceGetTargets</a> (in AString aRefName, in PRBool isPermanent)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Force the nsIRDFDataSource::GetTargets() method to be called.  <a href="#084b810650bc01feb3811e75a947ce08"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#531d4eed56ba18c723b4cac47683fad6">incomingObserver</a> (in AString aRefName, in nsIDOMNode aObject)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Hint to the interface that an observer is about to be attached.  <a href="#531d4eed56ba18c723b4cac47683fad6"></a><br></td></tr>
@@ -98,7 +101,7 @@
 The internal RDF Data Source that sends playlist data to the UI. 
 <p>
 <a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> acts as the intermediary between the database table that represents a library or a playlist and the display of that info into a &lt;playlist&gt; UI element.<p>
-When a playlist element is told to bind to a specific database table, the playlist asks <a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> to create a new RDF ref that can properly feed data to its internal xul tree (see: <a class="el" href="interfacesb_i_playlistsource.html#7cba66906dfa84b51d53cbfc2ab281ac">feedPlaylist()</a>, <a class="el" href="interfacesb_i_playlistsource.html#c6837b064124287a7d0593d3bcb54c3e">executeFeed()</a>). A table may be fed and made available to this interface without involving a playlist element by calling <a class="el" href="interfacesb_i_playlistsource.html#fd039242505df5b636e09409173247c8">forceGetTargets()</a> for that RefName.<p>
+When a playlist element is told to bind to a specific database table, the playlist asks <a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> to create a new RDF ref that can properly feed data to its internal xul tree (see: <a class="el" href="interfacesb_i_playlistsource.html#7cba66906dfa84b51d53cbfc2ab281ac">feedPlaylist()</a>, <a class="el" href="interfacesb_i_playlistsource.html#c6837b064124287a7d0593d3bcb54c3e">executeFeed()</a>). A table may be fed and made available to this interface without involving a playlist element by calling <a class="el" href="interfacesb_i_playlistsource.html#084b810650bc01feb3811e75a947ce08">forceGetTargets()</a> for that RefName.<p>
 The RefName param passed to <a class="el" href="interfacesb_i_playlistsource.html#7cba66906dfa84b51d53cbfc2ab281ac">feedPlaylist()</a> is used from then on to identify each specific source for further modification or information. If you would like to obtain specific information about the data currently displayed in a playlist object, use that object's .ref property as the RefName parameter to these methods.<p>
 <a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> provides methods to implement various modifications to the underlying SQL queries that drive the display of a playlist table. Filters may be specified that feed a dependent RDF source and are used by the &lt;filterlist&gt; UI element when displaying a standard libaray (see: <a class="el" href="interfacesb_i_playlistsource.html#72443689f82b47f25e78c777519e1e7f">setFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#9095aad2ed77a76875f9df9818a8f514">getNumFilters()</a>, <a class="el" href="interfacesb_i_playlistsource.html#413f15c9035c254e5d105def21c1248f">clearFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#67fab740f41a3f7942cb2faef2d5be05">getFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#c33c099ede486f421d9594cc025e3fc2">getFilterRef()</a>) and an override string may be specified to support a direct search feature (see: <a class="el" href="interfacesb_i_playlistsource.html#2adcd2b83d2e75bddaa538905a4b4832">setSearchString()</a>, <a class="el" href="interfacesb_i_playlistsource.html#1b0ee23d3cfdeac9b4d4c215f7c734a5">getSearchString()</a>).<p>
 This interface also allows direct access to the underlying data returned by the database, avoiding additional queries (see: <a class="el" href="interfacesb_i_playlistsource.html#557de9e5bf5b4762598ae09c5fdeec89">getRefRowCount()</a>, <a class="el" href="interfacesb_i_playlistsource.html#8116add630302d287f0309e1ece0c874">getRefColumnCount()</a>, <a class="el" href="interfacesb_i_playlistsource.html#cbb07ee906cfeb6a1bfd846b92713c69">getRefRowCellByColumn()</a>, <a class="el" href="interfacesb_i_playlistsource.html#1a7c7584eb7e068731feeafedf35fdd3">getRefRowByColumnValue()</a>) and can also return the table and guid of the query (see: <a class="el" href="interfacesb_i_playlistsource.html#1d234687358c422ec6389e41781726fd">getRefGUID()</a>, <a class="el" href="interfacesb_i_playlistsource.html#d4992a81c2566d41f04111449d398c03">getRefTable()</a>).<p>
@@ -249,7 +252,7 @@ The datasource is not actually published until <a class="el" href="interfacesb_i
 
 </div>
 </div><p>
-<a class="anchor" name="fd039242505df5b636e09409173247c8"></a><!-- doxytag: member="sbIPlaylistsource::forceGetTargets" ref="fd039242505df5b636e09409173247c8" args="(in AString aRefName)" -->
+<a class="anchor" name="084b810650bc01feb3811e75a947ce08"></a><!-- doxytag: member="sbIPlaylistsource::forceGetTargets" ref="084b810650bc01feb3811e75a947ce08" args="(in AString aRefName, in PRBool isPermanent)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -257,9 +260,18 @@ The datasource is not actually published until <a class="el" href="interfacesb_i
           <td class="memname">void sbIPlaylistsource::forceGetTargets           </td>
           <td>(</td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aRefName</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aRefName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRBool&nbsp;</td>
+          <td class="paramname"> <em>isPermanent</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -270,10 +282,11 @@ Force the nsIRDFDataSource::GetTargets() method to be called.
 <p>
 At times, it may be convenient to feed a playlist, without actually displaying the playlist (for instance, <a class="el" href="interfacesb_i_playlist_playback.html">sbIPlaylistPlayback</a> operates upon datasources).<p>
 This method forces the internal RDF method called by the consumers of its data in RDF format, and properly constructs the internal structures necessary to properly query this interface for its information.<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>I'm pretty sure this is broken right now </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000023">Todo:</a></b></dt><dd>I'm pretty sure this is broken right now </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>isPermanent</em>&nbsp;</td><td>If True, preserve the forceGetTargets state. </td></tr>
   </table>
 </dl>
 
@@ -448,7 +461,7 @@ Retrieve the <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlayli
 Given the guid, table, and type strings, return a duplicate instance of the <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> object registered.<p>
 The "type" string has precedence over the "guid"/"table" pair.<p>
 This method is only called by the playlist UI object, in playlist.xml<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000025">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aContextGUID</em>&nbsp;</td><td>The guid string for the playlist </td></tr>
@@ -800,7 +813,7 @@ Register <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCo
 <p>
 The <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a playlist ui object (currently, playlist.xml).<p>
 Commands can be registered for an entire database (by setting ContextGUID and leaving TableName null), or for any "type" characteristic.<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000024">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aContextGUID</em>&nbsp;</td><td>The guid string for the database to register against </td></tr>
@@ -954,9 +967,37 @@ Pass a blank string to clear this value.<p>
 
 </div>
 </div><p>
+<a class="anchor" name="3fc85b63625b392d2e7195a9ae2b39f5"></a><!-- doxytag: member="sbIPlaylistsource::waitForQueryCompletion" ref="3fc85b63625b392d2e7195a9ae2b39f5" args="(in AString aRefName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRInt32 sbIPlaylistsource::waitForQueryCompletion           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Wait the main thread until the ref is completely updated. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The last error of the query </dd></dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/playlistsource/public/<a class="el" href="sb_i_playlistsource_8idl-source.html">sbIPlaylistsource.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:33 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

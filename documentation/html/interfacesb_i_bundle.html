@@ -39,12 +39,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsISupports&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the DOM document describing the downloaded bundle This method returns an interface to the bundle DOM document describing each bundled extension.  <a href="#6f906acc57e52ba38d4e345492ece3fa"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#25fa42fce897d930c60508b3574ceeee">getTextData</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#b98d315d9219e94dfced88cfc109324b">getTextData</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the bundle document xml in text format This method returns the xml for the bundle document describing each bundled extension in text format.  <a href="#25fa42fce897d930c60508b3574ceeee"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#8902b9893b80abe786b26660001f7398">getBundleVersion</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the bundle document xml in text format This method returns the xml for the bundle document describing each bundled extension in text format.  <a href="#b98d315d9219e94dfced88cfc109324b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#3be75af063db441b1000a2d66272d792">getBundleVersion</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the version of the downloaded bundle This method returns the version of the downloaded bundle, as extracted from the document's data.  <a href="#8902b9893b80abe786b26660001f7398"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the version of the downloaded bundle This method returns the version of the downloaded bundle, as extracted from the document's data.  <a href="#3be75af063db441b1000a2d66272d792"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#cd8341bb97b183478d35788bd9b9f9a1">getExtensionInstallState</a> (in long idx)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the installation flag for a bundled extension This method returns the installation flag associated with a particular bundled extension. The flag is then used by installSelectedExtensions to determine which, extension should be installed.  <a href="#cd8341bb97b183478d35788bd9b9f9a1"></a><br></td></tr>
@@ -54,15 +54,15 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#fee4eabc6808cdca1a47ca02a42570ea">installSelectedExtensions</a> (in nsISupports window)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Install specified bundled extensions This method installs the extensions whose install flags are set to true. A dialog box showing the installer's progress will be spawned.  <a href="#fee4eabc6808cdca1a47ca02a42570ea"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#6e5bc3b88de4b5e98da9dcbdf951ff4d">downloadFile</a> (in wstring url, in <a class="el" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> observer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#cb649b463839b67ca7f5ecfa3ad45477">downloadFile</a> (in AString url, in <a class="el" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> observer)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Download a file This method asynchronously downloads a file from a URL and sends progress callbacks to the specified sbiDownloadObserver object.  <a href="#6e5bc3b88de4b5e98da9dcbdf951ff4d"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Download a file This method asynchronously downloads a file from a URL and sends progress callbacks to the specified sbiDownloadObserver object.  <a href="#cb649b463839b67ca7f5ecfa3ad45477"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#b600872210f033d7329727cc6d754ed5">deleteLastDownloadedFile</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deletes a temporary download file This method deletes the local file associated with the last downloadFile call.  <a href="#b600872210f033d7329727cc6d754ed5"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#f484359f4a71c7269caff8e9e3dd1288">installXPI</a> (in wstring localFilename)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#3f7e1a0812ab3b579f4b2db87946b8da">installXPI</a> (in AString localFilename)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Install an extension This method installs an XPI extension previously downloaded locally.  <a href="#f484359f4a71c7269caff8e9e3dd1288"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Install an extension This method installs an XPI extension previously downloaded locally.  <a href="#3f7e1a0812ab3b579f4b2db87946b8da"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#6281a3a76a2852931fbe05506e8e88a1">setNeedRestart</a> (in boolean needed)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the flag indicating that a restart is needed This method sets the flag indicating that a restart of the application is needed in order for installed extensions to take effect.  <a href="#6281a3a76a2852931fbe05506e8e88a1"></a><br></td></tr>
@@ -72,21 +72,21 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#d2b606817fa8a9f531ac47327a22d113">getNumExtensions</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the number of extensions in the bundle document This method returns the number of extensions listed in the bundled document.  <a href="#d2b606817fa8a9f531ac47327a22d113"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#1b4a27c96d81eee9fec66e5235f0e01c">getExtensionName</a> (in long index)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#1a558bc642c87120c93b8f5097df3317">getExtensionName</a> (in long index)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the name of an extension from the bundle document This method returns the name of a an extensions listed in the bundled document.  <a href="#1b4a27c96d81eee9fec66e5235f0e01c"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#c645d60fa57498d5fda23dcae6841fb1">getExtensionDesc</a> (in long index)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the name of an extension from the bundle document This method returns the name of a an extensions listed in the bundled document.  <a href="#1a558bc642c87120c93b8f5097df3317"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#479b1362ce259cc69dd406dba5c21153">getExtensionDesc</a> (in long index)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the description of an extension from the bundle document This method returns the description of a an extensions listed in the bundled document.  <a href="#c645d60fa57498d5fda23dcae6841fb1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#ae275d05547bbe0b36186d05bd569de1">getExtensionURL</a> (in long index)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the description of an extension from the bundle document This method returns the description of a an extensions listed in the bundled document.  <a href="#479b1362ce259cc69dd406dba5c21153"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#c5dac5687e3d9ead975039d3021df285">getExtensionURL</a> (in long index)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the URL of an extension from the bundle document This method returns the URL of a an extensions listed in the bundled document.  <a href="#ae275d05547bbe0b36186d05bd569de1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#fa9d53d954684f55147ebaefce9464d5">getExtesionId</a> (in long index)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the URL of an extension from the bundle document This method returns the URL of a an extensions listed in the bundled document.  <a href="#c5dac5687e3d9ead975039d3021df285"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#ad926791278624c704a9680185ff4452">getExtesionId</a> (in long index)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the Id of an extension from the bundle document This method returns the Id of a an extensions listed in the bundled document.  <a href="#fa9d53d954684f55147ebaefce9464d5"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">wstring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#4dc0d85653a1b9db68e46b69f43ee631">getTempFilename</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the Id of an extension from the bundle document This method returns the Id of a an extensions listed in the bundled document.  <a href="#ad926791278624c704a9680185ff4452"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#fb97cce4bb648e98ac2ef2650987662c">getTempFilename</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a temporary filename This method returns a temporary filename that is guaranteed not to already exist and points to the user's temporary files' directory.  <a href="#4dc0d85653a1b9db68e46b69f43ee631"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a temporary filename This method returns a temporary filename that is guaranteed not to already exist and points to the user's temporary files' directory.  <a href="#fb97cce4bb648e98ac2ef2650987662c"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Songbird Bundle Interface This is the main bundle management interface, used to get the bundle data, perform and observe the download process, list the bundle content and install bundled extensions. 
@@ -96,7 +96,7 @@ Songbird Bundle Interface This is the main bundle management interface, used to 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00024">24</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00023">23</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="043e4be7f7a7cfb921c397420c3a2052"></a><!-- doxytag: member="sbIBundle::addBundleObserver" ref="043e4be7f7a7cfb921c397420c3a2052" args="(in sbIBundleObserver observer)" -->
 <div class="memitem">
 <div class="memproto">
@@ -150,18 +150,18 @@ Deletes a temporary download file This method deletes the local file associated 
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>The local temporary filename which will be used to store the downloaded file. </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6e5bc3b88de4b5e98da9dcbdf951ff4d">downloadFile</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#cb649b463839b67ca7f5ecfa3ad45477">downloadFile</a> </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="6e5bc3b88de4b5e98da9dcbdf951ff4d"></a><!-- doxytag: member="sbIBundle::downloadFile" ref="6e5bc3b88de4b5e98da9dcbdf951ff4d" args="(in wstring url, in sbIDownloadObserver observer)" -->
+<a class="anchor" name="cb649b463839b67ca7f5ecfa3ad45477"></a><!-- doxytag: member="sbIBundle::downloadFile" ref="cb649b463839b67ca7f5ecfa3ad45477" args="(in AString url, in sbIDownloadObserver observer)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::downloadFile           </td>
+          <td class="memname">AString sbIBundle::downloadFile           </td>
           <td>(</td>
-          <td class="paramtype">in wstring&nbsp;</td>
+          <td class="paramtype">in AString&nbsp;</td>
           <td class="paramname"> <em>url</em>, </td>
         </tr>
         <tr>
@@ -215,12 +215,12 @@ Gets the DOM document describing the downloaded bundle This method returns an in
 
 </div>
 </div><p>
-<a class="anchor" name="8902b9893b80abe786b26660001f7398"></a><!-- doxytag: member="sbIBundle::getBundleVersion" ref="8902b9893b80abe786b26660001f7398" args="()" -->
+<a class="anchor" name="3be75af063db441b1000a2d66272d792"></a><!-- doxytag: member="sbIBundle::getBundleVersion" ref="3be75af063db441b1000a2d66272d792" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getBundleVersion           </td>
+          <td class="memname">AString sbIBundle::getBundleVersion           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -237,12 +237,12 @@ Gets the version of the downloaded bundle This method returns the version of the
 
 </div>
 </div><p>
-<a class="anchor" name="c645d60fa57498d5fda23dcae6841fb1"></a><!-- doxytag: member="sbIBundle::getExtensionDesc" ref="c645d60fa57498d5fda23dcae6841fb1" args="(in long index)" -->
+<a class="anchor" name="479b1362ce259cc69dd406dba5c21153"></a><!-- doxytag: member="sbIBundle::getExtensionDesc" ref="479b1362ce259cc69dd406dba5c21153" args="(in long index)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getExtensionDesc           </td>
+          <td class="memname">AString sbIBundle::getExtensionDesc           </td>
           <td>(</td>
           <td class="paramtype">in long&nbsp;</td>
           <td class="paramname"> <em>index</em>          </td>
@@ -262,7 +262,7 @@ Gets the description of an extension from the bundle document This method return
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>description of the extension </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1b4a27c96d81eee9fec66e5235f0e01c">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#ae275d05547bbe0b36186d05bd569de1">getExtensionURL</a>, getExtensionId </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1a558bc642c87120c93b8f5097df3317">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#c5dac5687e3d9ead975039d3021df285">getExtensionURL</a>, getExtensionId </dd></dl>
 
 </div>
 </div><p>
@@ -295,12 +295,12 @@ Gets the installation flag for a bundled extension This method returns the insta
 
 </div>
 </div><p>
-<a class="anchor" name="1b4a27c96d81eee9fec66e5235f0e01c"></a><!-- doxytag: member="sbIBundle::getExtensionName" ref="1b4a27c96d81eee9fec66e5235f0e01c" args="(in long index)" -->
+<a class="anchor" name="1a558bc642c87120c93b8f5097df3317"></a><!-- doxytag: member="sbIBundle::getExtensionName" ref="1a558bc642c87120c93b8f5097df3317" args="(in long index)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getExtensionName           </td>
+          <td class="memname">AString sbIBundle::getExtensionName           </td>
           <td>(</td>
           <td class="paramtype">in long&nbsp;</td>
           <td class="paramname"> <em>index</em>          </td>
@@ -320,16 +320,16 @@ Gets the name of an extension from the bundle document This method returns the n
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>Name of the extension </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#c645d60fa57498d5fda23dcae6841fb1">getExtensionDesc</a>, <a class="el" href="interfacesb_i_bundle.html#ae275d05547bbe0b36186d05bd569de1">getExtensionURL</a>, getExtensionId </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#479b1362ce259cc69dd406dba5c21153">getExtensionDesc</a>, <a class="el" href="interfacesb_i_bundle.html#c5dac5687e3d9ead975039d3021df285">getExtensionURL</a>, getExtensionId </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="ae275d05547bbe0b36186d05bd569de1"></a><!-- doxytag: member="sbIBundle::getExtensionURL" ref="ae275d05547bbe0b36186d05bd569de1" args="(in long index)" -->
+<a class="anchor" name="c5dac5687e3d9ead975039d3021df285"></a><!-- doxytag: member="sbIBundle::getExtensionURL" ref="c5dac5687e3d9ead975039d3021df285" args="(in long index)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getExtensionURL           </td>
+          <td class="memname">AString sbIBundle::getExtensionURL           </td>
           <td>(</td>
           <td class="paramtype">in long&nbsp;</td>
           <td class="paramname"> <em>index</em>          </td>
@@ -349,16 +349,16 @@ Gets the URL of an extension from the bundle document This method returns the UR
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>URL of the extension </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1b4a27c96d81eee9fec66e5235f0e01c">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#c645d60fa57498d5fda23dcae6841fb1">getExtensionDesc</a>, getExtensionId </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1a558bc642c87120c93b8f5097df3317">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#479b1362ce259cc69dd406dba5c21153">getExtensionDesc</a>, getExtensionId </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="fa9d53d954684f55147ebaefce9464d5"></a><!-- doxytag: member="sbIBundle::getExtesionId" ref="fa9d53d954684f55147ebaefce9464d5" args="(in long index)" -->
+<a class="anchor" name="ad926791278624c704a9680185ff4452"></a><!-- doxytag: member="sbIBundle::getExtesionId" ref="ad926791278624c704a9680185ff4452" args="(in long index)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getExtesionId           </td>
+          <td class="memname">AString sbIBundle::getExtesionId           </td>
           <td>(</td>
           <td class="paramtype">in long&nbsp;</td>
           <td class="paramname"> <em>index</em>          </td>
@@ -378,7 +378,7 @@ Gets the Id of an extension from the bundle document This method returns the Id 
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>Id for the extension </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1b4a27c96d81eee9fec66e5235f0e01c">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#c645d60fa57498d5fda23dcae6841fb1">getExtensionDesc</a>, <a class="el" href="interfacesb_i_bundle.html#ae275d05547bbe0b36186d05bd569de1">getExtensionURL</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1a558bc642c87120c93b8f5097df3317">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#479b1362ce259cc69dd406dba5c21153">getExtensionDesc</a>, <a class="el" href="interfacesb_i_bundle.html#c5dac5687e3d9ead975039d3021df285">getExtensionURL</a> </dd></dl>
 
 </div>
 </div><p>
@@ -424,7 +424,7 @@ Gets the flag indicating that a restart is needed This method gets the flag indi
 Gets the number of extensions in the bundle document This method returns the number of extensions listed in the bundled document. 
 <p>
 <dl compact><dt><b>Returns:</b></dt><dd>Number of extensions </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1b4a27c96d81eee9fec66e5235f0e01c">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#c645d60fa57498d5fda23dcae6841fb1">getExtensionDesc</a>, <a class="el" href="interfacesb_i_bundle.html#ae275d05547bbe0b36186d05bd569de1">getExtensionURL</a>, getExtensionId </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6f906acc57e52ba38d4e345492ece3fa">getBundleDocument</a>, <a class="el" href="interfacesb_i_bundle.html#1a558bc642c87120c93b8f5097df3317">getExtensionName</a>, <a class="el" href="interfacesb_i_bundle.html#479b1362ce259cc69dd406dba5c21153">getExtensionDesc</a>, <a class="el" href="interfacesb_i_bundle.html#c5dac5687e3d9ead975039d3021df285">getExtensionURL</a>, getExtensionId </dd></dl>
 
 </div>
 </div><p>
@@ -450,12 +450,12 @@ Gets the status of bundle download This method returns the status of the asynchr
 
 </div>
 </div><p>
-<a class="anchor" name="4dc0d85653a1b9db68e46b69f43ee631"></a><!-- doxytag: member="sbIBundle::getTempFilename" ref="4dc0d85653a1b9db68e46b69f43ee631" args="()" -->
+<a class="anchor" name="fb97cce4bb648e98ac2ef2650987662c"></a><!-- doxytag: member="sbIBundle::getTempFilename" ref="fb97cce4bb648e98ac2ef2650987662c" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getTempFilename           </td>
+          <td class="memname">AString sbIBundle::getTempFilename           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -469,16 +469,16 @@ Gets the status of bundle download This method returns the status of the asynchr
 Creates a temporary filename This method returns a temporary filename that is guaranteed not to already exist and points to the user's temporary files' directory. 
 <p>
 <dl compact><dt><b>Returns:</b></dt><dd>Temporary filename </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6e5bc3b88de4b5e98da9dcbdf951ff4d">downloadFile</a>, <a class="el" href="interfacesb_i_bundle.html#b600872210f033d7329727cc6d754ed5">deleteLastDownloadedFile</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#cb649b463839b67ca7f5ecfa3ad45477">downloadFile</a>, <a class="el" href="interfacesb_i_bundle.html#b600872210f033d7329727cc6d754ed5">deleteLastDownloadedFile</a> </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="25fa42fce897d930c60508b3574ceeee"></a><!-- doxytag: member="sbIBundle::getTextData" ref="25fa42fce897d930c60508b3574ceeee" args="()" -->
+<a class="anchor" name="b98d315d9219e94dfced88cfc109324b"></a><!-- doxytag: member="sbIBundle::getTextData" ref="b98d315d9219e94dfced88cfc109324b" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">wstring sbIBundle::getTextData           </td>
+          <td class="memname">AString sbIBundle::getTextData           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -523,14 +523,14 @@ Install specified bundled extensions This method installs the extensions whose i
 
 </div>
 </div><p>
-<a class="anchor" name="f484359f4a71c7269caff8e9e3dd1288"></a><!-- doxytag: member="sbIBundle::installXPI" ref="f484359f4a71c7269caff8e9e3dd1288" args="(in wstring localFilename)" -->
+<a class="anchor" name="3f7e1a0812ab3b579f4b2db87946b8da"></a><!-- doxytag: member="sbIBundle::installXPI" ref="3f7e1a0812ab3b579f4b2db87946b8da" args="(in AString localFilename)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">long sbIBundle::installXPI           </td>
           <td>(</td>
-          <td class="paramtype">in wstring&nbsp;</td>
+          <td class="paramtype">in AString&nbsp;</td>
           <td class="paramname"> <em>localFilename</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
@@ -548,7 +548,7 @@ Install an extension This method installs an XPI extension previously downloaded
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>Indicates the installation's success (1) or failure (0, ie: not a valid XPI, could not be installed). </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#6e5bc3b88de4b5e98da9dcbdf951ff4d">downloadFile</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#cb649b463839b67ca7f5ecfa3ad45477">downloadFile</a> </dd></dl>
 
 </div>
 </div><p>
@@ -669,7 +669,7 @@ Sets the flag indicating that a restart is needed This method sets the flag indi
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/bundle/public/<a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:32 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

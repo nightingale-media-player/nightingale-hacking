@@ -18,73 +18,87 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>sbIMediaScanQuery Interface Reference</h1><!-- doxytag: class="sbIMediaScanQuery" --><code>import &quot;<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>&quot;;</code>
+<h1>sbIMediaScanQuery Interface Reference</h1><!-- doxytag: class="sbIMediaScanQuery" -->An object to scan through the files of a folder (and optionally subfolders).  
+<a href="#_details">More...</a>
+<p>
+<code>import &quot;<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>&quot;;</code>
 <p>
 <a href="interfacesb_i_media_scan_query-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#8b4a82193d18f837383c0616366311c9">setDirectory</a> (in AString strDirectory)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the directory to scan.  <a href="#8b4a82193d18f837383c0616366311c9"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#53696d402eb06a9261233dab7a70c253">getDirectory</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the directory to scan.  <a href="#53696d402eb06a9261233dab7a70c253"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#871ba508889490927aaef8f98d55adee">setRecurse</a> (in PRBool bRecurse)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the scan to run recursively under the given directory.  <a href="#871ba508889490927aaef8f98d55adee"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#4af431e11660c06664c369f45a5844d1">getRecurse</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether or not the scan will run recursively.  <a href="#4af431e11660c06664c369f45a5844d1"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#96fb72973c3acb6a8a91bb23663ef738">setCallback</a> (in <a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a> pCallback)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the callback object for the scan.  <a href="#96fb72973c3acb6a8a91bb23663ef738"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#1ce82e218fbdcd5cd9e40c8796af5874">getCallback</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the callback object for the scan.  <a href="#1ce82e218fbdcd5cd9e40c8796af5874"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#d7dbcfcaf302d7c5f21bec1e007ed370">getFileCount</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#6e0ad6f37c5b19167b263be765557df0">addFilePath</a> (in AString strFilePath)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the number of files found.  <a href="#d7dbcfcaf302d7c5f21bec1e007ed370"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6e0ad6f37c5b19167b263be765557df0"></a><!-- doxytag: member="sbIMediaScanQuery::addFilePath" ref="6e0ad6f37c5b19167b263be765557df0" args="(in AString strFilePath)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#6e0ad6f37c5b19167b263be765557df0">addFilePath</a> (in AString strFilePath)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">USER CODE SHOULD NOT REFERENCE THIS METHOD. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#bb10844488de21d7f8a144e67f7f58e4">getFilePath</a> (in PRUint32 nIndex)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the N'th file from the results of the scan.  <a href="#bb10844488de21d7f8a144e67f7f58e4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#3b087511f162069170a062dcfc5e6f01">isScanning</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#c3c9d071ace92eb5d3cdc711d3ccce1b">setIsScanning</a> (in PRBool bIsScanning)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether or not the scan operation is executing.  <a href="#3b087511f162069170a062dcfc5e6f01"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c3c9d071ace92eb5d3cdc711d3ccce1b"></a><!-- doxytag: member="sbIMediaScanQuery::setIsScanning" ref="c3c9d071ace92eb5d3cdc711d3ccce1b" args="(in PRBool bIsScanning)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#c3c9d071ace92eb5d3cdc711d3ccce1b">setIsScanning</a> (in PRBool bIsScanning)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">USER CODE SHOULD NOT REFERENCE THIS METHOD. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#69cb4e3652c7d5a03dd97f1d7b09599b">getLastFileFound</a> ()</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the most recent file found by the scan.  <a href="#69cb4e3652c7d5a03dd97f1d7b09599b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#4a743fd39e77c2b16b2d2c811ac8dca9">getCurrentScanPath</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#0e53bb27d5bf8e7ab842abe6ab326411">setCurrentScanPath</a> (in AString strScanPath)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the most recent directory scanned.  <a href="#4a743fd39e77c2b16b2d2c811ac8dca9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0e53bb27d5bf8e7ab842abe6ab326411"></a><!-- doxytag: member="sbIMediaScanQuery::setCurrentScanPath" ref="0e53bb27d5bf8e7ab842abe6ab326411" args="(in AString strScanPath)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_scan_query.html#0e53bb27d5bf8e7ab842abe6ab326411">setCurrentScanPath</a> (in AString strScanPath)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">USER CODE SHOULD NOT REFERENCE THIS METHOD. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
+An object to scan through the files of a folder (and optionally subfolders). 
+<p>
+This object is used to rapidly gather a list of all the files found under a given directory path. It runs from a separate thread.<p>
+User code may call <a class="el" href="interfacesb_i_media_scan_query.html#4a743fd39e77c2b16b2d2c811ac8dca9">getCurrentScanPath()</a> and <a class="el" href="interfacesb_i_media_scan_query.html#69cb4e3652c7d5a03dd97f1d7b09599b">getLastFileFound()</a> from the main thread to get a periodic snapshot of the current progress of the scan.<p>
+Execute a scan by creating a scan query, filling it out, and passing it to the <a class="el" href="interfacesb_i_media_scan.html">sbIMediaScan</a> interface for processing: <div class="fragment"><pre class="fragment">function ScanBeneathADirectory(aPath) {
+  // Create the objects
+  var aMediaScan = Components.classes["@songbirdnest.com/Songbird/MediaScan;1"]
+    .createInstance(Components.interfaces.sbIMediaScan);
+  var aMediaScanQuery = Components.classes["@songbirdnest.com/Songbird/MediaScanQuery;1"]
+    .createInstance(Components.interfaces.sbIMediaScanQuery);
+
+  // Setup the query
+  aMediaScanQuery.setDirectory(aPath);
+  aMediaScanQuery.setRecurse(true);
+          
+  // Execute the query
+  aMediaScan.submitQuery(aMediaScanQuery);
+  return aMediaScanQuery;
+}
+</pre></div><p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a>, <a class="el" href="interfacesb_i_media_scan.html">sbIMediaScan</a>, MediaScan.h </dd></dl>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l00412">412</a> of file <a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="6e0ad6f37c5b19167b263be765557df0"></a><!-- doxytag: member="sbIMediaScanQuery::addFilePath" ref="6e0ad6f37c5b19167b263be765557df0" args="(in AString strFilePath)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMediaScanQuery::addFilePath           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>strFilePath</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
-
-</div>
-</div><p>
+Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l00525">525</a> of file <a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="1ce82e218fbdcd5cd9e40c8796af5874"></a><!-- doxytag: member="sbIMediaScanQuery::getCallback" ref="1ce82e218fbdcd5cd9e40c8796af5874" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -101,12 +115,10 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Get the callback object for the scan. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The callback object </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a>, <a class="el" href="interfacesb_i_media_scan_query.html#96fb72973c3acb6a8a91bb23663ef738">setCallback</a> </dd></dl>
 
 </div>
 </div><p>
@@ -126,12 +138,11 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Returns the most recent directory scanned. 
+<p>
+This method may be called while the scan is executing to provide a periodic snapshot of the scan results.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The path to the last file found </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#69cb4e3652c7d5a03dd97f1d7b09599b">getLastFileFound</a>, <a class="el" href="interfacesb_i_media_scan_query.html#0e53bb27d5bf8e7ab842abe6ab326411">setCurrentScanPath</a> </dd></dl>
 
 </div>
 </div><p>
@@ -151,12 +162,10 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Get the directory to scan. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The directory to scan </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#8b4a82193d18f837383c0616366311c9">setDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#871ba508889490927aaef8f98d55adee">setRecurse</a>, <a class="el" href="interfacesb_i_media_scan_query.html#4af431e11660c06664c369f45a5844d1">getRecurse</a> </dd></dl>
 
 </div>
 </div><p>
@@ -176,12 +185,10 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Get the number of files found. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The number of files found </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#bb10844488de21d7f8a144e67f7f58e4">getFilePath</a> </dd></dl>
 
 </div>
 </div><p>
@@ -202,12 +209,15 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
+Get the N'th file from the results of the scan. 
+<p>
+Don't call this while <a class="el" href="interfacesb_i_media_scan_query.html#3b087511f162069170a062dcfc5e6f01">isScanning()</a> is true.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>nIndex</em>&nbsp;</td><td>The index of the files array to retrieve </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#d7dbcfcaf302d7c5f21bec1e007ed370">getFileCount</a> </dd></dl>
 
 </div>
 </div><p>
@@ -227,12 +237,11 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Returns the most recent file found by the scan. 
+<p>
+This method may be called while the scan is executing to provide a periodic snapshot of the scan results.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>The path to the last file found </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#4a743fd39e77c2b16b2d2c811ac8dca9">getCurrentScanPath</a> </dd></dl>
 
 </div>
 </div><p>
@@ -252,12 +261,10 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+Whether or not the scan will run recursively. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>If true, scan subdirectories </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#8b4a82193d18f837383c0616366311c9">setDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#53696d402eb06a9261233dab7a70c253">getDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#871ba508889490927aaef8f98d55adee">setRecurse</a> </dd></dl>
 
 </div>
 </div><p>
@@ -277,11 +284,9 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
+Whether or not the scan operation is executing. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>True, if the scan is executing </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
 
 </div>
@@ -303,38 +308,14 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="0e53bb27d5bf8e7ab842abe6ab326411"></a><!-- doxytag: member="sbIMediaScanQuery::setCurrentScanPath" ref="0e53bb27d5bf8e7ab842abe6ab326411" args="(in AString strScanPath)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMediaScanQuery::setCurrentScanPath           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>strScanPath</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Set the callback object for the scan. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pCallback</em>&nbsp;</td><td>The callback object </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_callback.html">sbIMediaScanCallback</a>, <a class="el" href="interfacesb_i_media_scan_query.html#1ce82e218fbdcd5cd9e40c8796af5874">getCallback</a> </dd></dl>
 
 </div>
 </div><p>
@@ -355,38 +336,14 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#53696d402eb06a9261233dab7a70c253">getDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#871ba508889490927aaef8f98d55adee">setRecurse</a>, <a class="el" href="interfacesb_i_media_scan_query.html#4af431e11660c06664c369f45a5844d1">getRecurse</a> </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="c3c9d071ace92eb5d3cdc711d3ccce1b"></a><!-- doxytag: member="sbIMediaScanQuery::setIsScanning" ref="c3c9d071ace92eb5d3cdc711d3ccce1b" args="(in PRBool bIsScanning)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMediaScanQuery::setIsScanning           </td>
-          <td>(</td>
-          <td class="paramtype">in PRBool&nbsp;</td>
-          <td class="paramname"> <em>bIsScanning</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+Set the directory to scan. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>strDirectory</em>&nbsp;</td><td>The directory to scan </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#53696d402eb06a9261233dab7a70c253">getDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#871ba508889490927aaef8f98d55adee">setRecurse</a>, <a class="el" href="interfacesb_i_media_scan_query.html#4af431e11660c06664c369f45a5844d1">getRecurse</a> </dd></dl>
 
 </div>
 </div><p>
@@ -407,18 +364,20 @@ Definition at line <a class="el" href="sb_i_media_library_8idl-source.html#l0041
 <div class="memdoc">
 
 <p>
+Set the scan to run recursively under the given directory. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>queryObj</em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>bRecurse</em>&nbsp;</td><td>If true, scan subdirectories </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_scan_query.html#8b4a82193d18f837383c0616366311c9">setDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#53696d402eb06a9261233dab7a70c253">getDirectory</a>, <a class="el" href="interfacesb_i_media_scan_query.html#4af431e11660c06664c369f45a5844d1">getRecurse</a> </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Aug 1 00:30:33 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>
