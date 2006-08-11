@@ -66,11 +66,6 @@ GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner-stub$(BIN_SUFFIX)
 
-SONGBIRD_COMPONENTS = $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/components/libtotem_mozilla.xpt
-SONGBIRD_PLUGINS    = $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/plugins/libtotem_mozilla$(DLL_SUFFIX)
-SONGBIRD_PLUGINS   += $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/bin/totem-mozilla-viewer
-SONGBIRD_PLUGINS   += $(PLUGINS_DIR)/totem/$(SB_CONFIGURATION)/share/mozilla-viewer.glade
-
 ifneq ("x86_64", "$(SB_ARCH)")
 
 FLASH_PLUGIN = libflashplayer
