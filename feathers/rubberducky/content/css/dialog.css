@@ -569,6 +569,12 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   background-repeat: no-repeat !important;
 }
 
+.menu-iconic-left
+{
+  -moz-box-pack: center !important;
+  -moz-box-align: center !important;
+}
+
 /** 
 ************************************************************************************************************************************************
 MENULIST
