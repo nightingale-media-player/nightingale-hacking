@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 POTI, Inc.
+// Copyrightï¿½ 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the ï¿½GPLï¿½).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an ï¿½AS ISï¿½ basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -42,8 +42,8 @@ WindowCloak.prototype = {
     var win = this._getWindowFromDocument(doc);
     
     if (!win.cloaked) {
-      win.preCloakwidth = win.width;
-      win.preCloakheight = win.height;  
+      win.preCloakwidth = win.outerWidth;
+      win.preCloakheight = win.outerHeight;  
       win.cloaked = true; 
       win.resizeTo(0, 0);
     }
@@ -65,7 +65,7 @@ WindowCloak.prototype = {
 
     acc = acc.getAccessibleFor(doc).QueryInterface(Components.interfaces.nsIAccessNode).accessibleDocument;
 
-    return acc.window.QueryInterface(Components.interfaces.nsIDOMJSWindow);
+    return acc.window.QueryInterface(Components.interfaces.nsIDOMWindowInternal);
   },
 
 
