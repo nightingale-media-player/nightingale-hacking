@@ -323,11 +323,13 @@ linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 
 makelink_cmd = $(CYGWIN_WRAPPER) $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
 
+ranlib_cmd =
 ifdef FORCE_RANLIB
 	ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
 endif
 
 dll_link: $(DYNAMIC_LIB_OBJS)
+	$(ranlib_cmd)
 	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(linker_objs)
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
