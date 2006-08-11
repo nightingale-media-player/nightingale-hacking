@@ -139,11 +139,16 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
   if(localFileURI.scheme != "file")
     return this.NOT_LOCAL_FILE;
 
-  localFilePath = decodeURI(localFileURI.path.slice(3));
+  localFilePath = decodeURI(localFileURI.path.slice(2));
   if(PLATFORM_WIN32) {
+    localFilePath = localFilePath.slice(1);
     localFilePath = localFilePath.replace(/\//g, '\\');
   }
-  
+
+  if(PLATFORM_MACOSX) {
+    localFilePath = decodeURIComponent(localFilePath);
+  }
+
   try {
     localFile.initWithPath(localFilePath);
   } catch(e) {
@@ -151,8 +156,7 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
     return this.LOCAL_FILE_NOT_AVAILABLE;
   }
   
-  if(localFile.isFile() &&
-     localFile.isReadable())
+  if(localFile.isReadable())
   {
     return this.LOCAL_FILE_AVAILABLE;  
   }
