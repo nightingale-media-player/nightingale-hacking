@@ -443,6 +443,11 @@ function SBAppInitialize()
     var theVLCBox = document.getElementById( "box_vlc" );
 
     /*
+    */
+    var theGSTInstance = document.getElementById( "box_gstreamer_simple" );
+    var theGSTBox = document.getElementById( "box_gstreamer_simple" );
+
+    /*
     var theFLInstance = document.getElementById( "core_flash_frame" );
     var theFLBox = document.getElementById( "box_flash" );
     var theTotemInstance = document.getElementById( "core_totem_frame" );
@@ -462,6 +467,8 @@ function SBAppInitialize()
       //InitPlaybackCoreFlash( "core_flash_frame" );
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
+      // Hide GStreamer
+      if (theGSTBox) theGSTBox.hidden = true;
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
@@ -476,6 +483,8 @@ function SBAppInitialize()
       CoreQTDocumentInit( "core_qt_document" );
       // Hide VLC
       if (theVLCBox) theVLCBox.hidden = true;
+      // Hide GStreamer
+      if (theGSTBox) theGSTBox.hidden = true;
       /*
       // Hide Flash
       if (theFLBox) theFLBox.hidden = true;
