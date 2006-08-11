@@ -151,8 +151,9 @@ NS_IMETHODIMP CDatabaseResult::GetColumnNamePtr(PRInt32 dbColumn, PRUnichar **_r
     nsAutoLock lock(m_pColumnNamesLock);
     if((PRUint32)dbColumn < m_ColumnNames.size())
     {
-      *_retval = ToNewUnicode(m_ColumnNames[dbColumn]);
-      if(!*_retval) return NS_ERROR_OUT_OF_MEMORY;
+      //*_retval = ToNewUnicode(m_ColumnNames[dbColumn]);
+      //if(!*_retval) return NS_ERROR_OUT_OF_MEMORY;
+      *_retval = NS_CONST_CAST(PRUnichar *, (m_ColumnNames[dbColumn]).get());
     }
     else
     {
@@ -172,8 +173,9 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellPtr(PRInt32 dbRow, PRInt32 dbCell, PRUn
     nsAutoLock lock(m_pRowCellsLock);
     if((PRUint32)dbRow < m_RowCells.size() && (PRUint32)dbCell < m_RowCells[dbRow].size())
     {
-      *_retval = ToNewUnicode(m_RowCells[dbRow][dbCell]);
-      if(!*_retval) return NS_ERROR_OUT_OF_MEMORY;
+      //*_retval = ToNewUnicode(m_RowCells[dbRow][dbCell]);
+      //if(!*_retval) return NS_ERROR_OUT_OF_MEMORY;
+      *_retval = NS_CONST_CAST(PRUnichar *, (m_RowCells[dbRow][dbCell]).get());
     }
     else
     {
