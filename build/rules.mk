@@ -119,10 +119,6 @@ ifdef CLONEDIR
 targets += clone_dir
 endif
 
-ifdef FORCE_RANLIB
-targets += force_ranlib
-endif
-
 ifdef SONGBIRD_DIST
 targets += copy_sb_dist
 endif
@@ -326,6 +322,10 @@ endif
 linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 
 makelink_cmd = $(CYGWIN_WRAPPER) $(LN) $(LNFLAGS) $(DYNAMIC_LIB) $(addprefix lib,$(DYNAMIC_LIB))
+
+ifdef FORCE_RANLIB
+	ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
+endif
 
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(linker_objs)
@@ -596,16 +596,6 @@ clone_dir :
 .PHONY : clone_dir
 
 endif #CLONEDIR
-
-#------------------------------------------------------------------------------
-# Force ranlib to be run on static libraries before being used using this
-# rule.
-#------------------------------------------------------------------------------
-ifdef FORCE_RANLIB
-force_ranlib:
-	$(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
-.PHONY : force_ranlib
-endif #FORCE_RANLIB
 
 #-----------------------
 
