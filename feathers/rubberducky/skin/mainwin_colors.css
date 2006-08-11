@@ -108,24 +108,24 @@ These pieces paint the resizeable window for Songbird.
 #mainwin_chrome_ne
 {
   -moz-border-top-colors: #7a7c7c #ccc !important;
-  -moz-border-right-colors: #505154 #ccc !important;
+  -moz-border-right-colors: #505154 #999 !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_e
 {
-  -moz-border-right-colors: #505154 #ccc !important;
+  -moz-border-right-colors: #505154 #999 !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_se
 {
-  -moz-border-bottom-colors: #ccc #ccc !important;
-  -moz-border-right-colors: #505154 #ccc !important;
+  -moz-border-bottom-colors: #666 #999 !important;
+  -moz-border-right-colors: #505154 #999 !important;
   background-color: #000 !important;
 }
 
 #mainwin_chrome_s
 {
-  -moz-border-bottom-colors: #ccc #ccc !important;
+  -moz-border-bottom-colors: #666 #999 !important;
   background-color: #000 !important;
 }
 #mainwin_chrome_w
@@ -135,7 +135,7 @@ These pieces paint the resizeable window for Songbird.
 }
 #mainwin_chrome_sw
 {
-  -moz-border-bottom-colors: #ccc #ccc !important;
+  -moz-border-bottom-colors: #666 #999 !important;
   -moz-border-left-colors: #686a6a #ccc !important;
   background-color: #000 !important;
 }
