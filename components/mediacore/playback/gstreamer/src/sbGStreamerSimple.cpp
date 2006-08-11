@@ -10,6 +10,7 @@
 #include "nsIDocShellTreeOwner.h"
 #include "nsIBaseWindow.h"
 #include "nsIWidget.h"
+#include "nsIBoxObject.h"
 #include "nsString.h"
 #include "prlog.h"
 
@@ -96,13 +97,19 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
 
   LOG(("Found native window %x", win));
 
+  PRInt32 x, y;
+  nsCOMPtr<nsIBoxObject> boxObject;
+  aVideoOutput->GetBoxObject(getter_AddRefs(boxObject));
+  boxObject->GetX(&x);
+  boxObject->GetX(&y);
+
   // Create the video window
   // TODO: get window coords from element's box object
   GdkWindowAttr attributes;
 
   attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.x = 0;
-  attributes.y = 0;
+  attributes.x = x;
+  attributes.y = y;
   attributes.width = 320;
   attributes.height = 240;
   attributes.wclass = GDK_INPUT_OUTPUT;
