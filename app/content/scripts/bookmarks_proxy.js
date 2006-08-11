@@ -118,6 +118,9 @@ function ServicesourceProxy()
 	
 	// Hash table used to map RDF resource names to corresponding node info
 	this.rdfLookup = {};
+	
+	this.strbundle_service = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+	this.stringbundle = this.strbundle_service.createBundle( "chrome://songbird/locale/songbird.properties" );
 }
 
 
@@ -166,7 +169,14 @@ ServicesourceProxy.prototype = {
 		var node = this.rdfLookup[subj.Value];
 		if (node != null) {
 			if (pred == NC_LABEL) {
-				outstring = node.label;
+			  // If it starts with "&" try and translate it from the stringbundle.
+			  var label = node.label;
+        if ( label[ 0 ] == "&" ) {
+          try {
+            label = this.stringbundle.GetStringFromName( label.substr( 1, label.length ) );
+          } catch( err ) {};
+        }
+				outstring = label;
 			} else if (pred == NC_ICON) {
 				outstring = node.icon;
 			} else if (pred == NC_URL) {

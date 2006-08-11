@@ -313,7 +313,7 @@ var bmManager = {
     var nodes = {
 		  children: [
 			  { /////// BOOKMARKS
-				  label: this.getString("servicesource.bookmarks", ""),
+				  label: "&servicesource.bookmarks",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
 				  children: [
@@ -378,7 +378,7 @@ var bmManager = {
 				  ]
 		    },
 			  { /////// SEARCHES
-				  label: this.getString("servicesource.searches", ""),
+				  label: "&servicesource.searches",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
 				  properties: "bookmark",
@@ -407,7 +407,7 @@ var bmManager = {
 				  ]
 		    },	    
 			  { /////// MUSIC STORES
-				  label: this.getString("servicesource.music_stores", ""),
+				  label: "&servicesource.music_stores",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  properties: "bookmark",
 				  url: "",
@@ -499,7 +499,7 @@ var bmManager = {
 				  ]
 		    },			    
 			  { /////// PODCASTS
-				  label: this.getString("servicesource.podcasts", ""),
+				  label: "&servicesource.podcasts",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
 				  properties: "bookmark",
@@ -521,7 +521,7 @@ var bmManager = {
 				  ]
 		    },	
 			  { /////// RADIO
-				  label: this.getString("servicesource.radio", ""),
+				  label: "&servicesource.radio",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
 				  properties: "bookmark",
@@ -550,7 +550,7 @@ var bmManager = {
 				  ]
 		    },	
 			  { /////// NETWORK SERVICES
-				  label: "Network Services",
+				  label: "&servicesource.net.services",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
 				  properties: "bookmark",
@@ -614,7 +614,7 @@ var bmManager = {
 				  ]
 		    },			    		    
 			  { /////// NETWORK DEVICES
-				  label: "Network Devices",
+				  label: "&servicesource.net.devices",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
 				  properties: "bookmark",
