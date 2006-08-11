@@ -216,7 +216,9 @@ function onWindowSavePosition()
 function onWindowLoadSize()
 {
   // Activate whatever window is attempting to reload its info.
-  window.focus();
+  try {
+    window.focus();
+  } catch (e) {}
   
   var root = "window." + document.documentElement.id;
 /*
@@ -257,7 +259,9 @@ function onWindowLoadSize()
 function onWindowLoadPosition()
 {
   // Activate whatever window is attempting to reload its info.
-  window.focus();
+  try {
+    window.focus();
+  } catch (e) {}
   
   var root = "window." + document.documentElement.id;
 /*
