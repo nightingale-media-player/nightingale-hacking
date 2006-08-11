@@ -2305,7 +2305,7 @@ function SBTrackEditorOpen()
 
   if (needToOpen) {
     const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
-    const TEFEATURES = "chrome,dialog=no,resizable";
+    const TEFEATURES = "chrome,dialog=no,resizable=no,titlebar=no";
     window.openDialog(TEURL, "track_editor", TEFEATURES, document);
   }
 }
