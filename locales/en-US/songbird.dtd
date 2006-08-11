@@ -233,7 +233,7 @@
 <!ENTITY metadata.title               "Title" >
 <!ENTITY metadata.album               "Album" >
 <!ENTITY metadata.genre               "Genre" >
-<!ENTITY metadata.length              "Length" >
+<!ENTITY metadata.length              "Time" >
 
 <!ENTITY restartbox.restartnow        "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
