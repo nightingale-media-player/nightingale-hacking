@@ -119,6 +119,10 @@ ifdef CLONEDIR
 targets += clone_dir
 endif
 
+ifdef FORCE_RANLIB
+targets += force_ranlib
+endif
+
 ifdef SONGBIRD_DIST
 targets += copy_sb_dist
 endif
@@ -592,6 +596,16 @@ clone_dir :
 .PHONY : clone_dir
 
 endif #CLONEDIR
+
+#------------------------------------------------------------------------------
+# Force ranlib to be run on static libraries before being used using this
+# rule.
+#------------------------------------------------------------------------------
+ifdef FORCE_RANLIB
+force_ranlib:
+  $(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
+.PHONY : force_ranlib
+endif #FORCE_RANLIB
 
 #-----------------------
 
