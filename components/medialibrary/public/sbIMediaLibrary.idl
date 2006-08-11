@@ -170,44 +170,83 @@ interface sbIMediaLibrary : nsISupports
   /**
    * \brief Add a column to the library table
    *
-   * 
-   *
-   * \param columnName 
-   * \param columnType 
-   * \sa deleteColumn, getColumnInfo, setColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   * \param columnName The name of the new column (not human readable -- internal name)
+   * \param columnType The type of the new column
+   * \sa deleteColumn, getColumnInfo, setColumnInfo, getMetadataColumns
    */
   void addColumn(in AString columnName, 
     in AString columnType); /**/
   
   /**
-   * \brief 
+   * \brief Remove a column from the library table
    *
-   * \param columnName
-   * \sa addColumn, getColumnInfo, setColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   * \todo deleteColumn is not yet implemented
+   * \param columnName The name of the column to delete
+   * \sa addColumn, getColumnInfo, setColumnInfo, getMetadataColumns
    */
   void deleteColumn(in AString columnName); /**/
 
   /**
-   * \brief 
+   * \brief Load the column info for the table into the resultset.
    *
-   * \sa addColumn, deleteColumn, setColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   * Column Info is kept in a separate table with the following columns:
+   *
+\verbatim 
+  column_name TEXT UNIQUE, // The column name in the library
+  readable_name TEXT, // The human readable name displayed in the UI
+  is_visible INTEGER(0, 1) DEFAULT 0, // If the column may ever be displayed
+  default_visibility INTEGER(0, 1) DEFAULT 0, // If the column defaults visible
+  is_metadata INTEGER(0, 1) DEFAULT 0, // If the column holds metadata (vs service info)
+  sort_weight INTEGER DEFAULT 0, // The default ordering of columns in the UI
+  width INTEGER DEFAULT -1, // The default relative width
+  type TEXT DEFAULT 'text', // The type of column
+  readonly INTEGER(0,1) DEFAULT 0 // If the column may be edited by the user
+\endverbatim 
+   *
+   * For instance, to get all of the human readable names of the columns:
+   *
+\verbatim
+function GetColumnNames(aLibrary) {
+  // Create the objects
+  var medialib = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
+    .createInstance(Components.interfaces.sbIMediaLibrary);
+  var query = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    .createInstance(Components.interfaces.sbIDatabaseQuery);
+
+  // Setup the objects
+  query.setDatabaseGUID(aLibrary)
+  medialib.setQueryObject(query);
+
+  // Get the column info
+  medialib.getColumnInfo();
+  var resultset = query.getResultObject();
+
+  // Parse the resultset
+  var column_names = "";
+  for (var i = 0; i < resultset.getRowCount(); i++) {
+    column_names += resultset.getRowCellByColumn(i, "column_name") + " ";
+  }
+  return column_names;
+}
+\endverbatim 
+   * \sa sbIDatabaseQuery, addColumn, deleteColumn, setColumnInfo, getMetadataColumns
    */
   void getColumnInfo(); /**/
 
   /**
-   * \brief 
+   * \brief Update the Column Info table with new data
    *
-   * \param columnName
-   * \param columnReadableName
-   * \param isColumnEverVisible
-   * \param isColumnVisibleByDefault
-   * \param isMetadataColumn
-   * \param columnSortWeight
-   * \param columnDefaultWidth
-   * \param columnDataType
-   * \param isColumnReadOnly
-   * \param willRunQueryLater
-   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, addMetadataColumn, deleteMetadataColumn
+   * \param columnName The column to be changed
+   * \param columnReadableName The new readable name
+   * \param isColumnEverVisible The new global visibility bit
+   * \param isColumnVisibleByDefault The new default visibility bit
+   * \param isMetadataColumn The new is metadata bit
+   * \param columnSortWeight The new sort weight
+   * \param columnDefaultWidth The new default width
+   * \param columnDataType The new type
+   * \param isColumnReadOnly The new readonly bit
+   * \param willRunQueryLater If false, execute the query before returning
+   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns
    */
   void setColumnInfo(in AString columnName, 
     in AString columnReadableName, 
@@ -221,13 +260,14 @@ interface sbIMediaLibrary : nsISupports
     in PRBool willRunQueryLater); /**/
 
   /**
-   * \brief 
+   * \brief Get the array of metadata column names in the Column Info table
    *
-   * \param metaColumnCount
-   * \param metaColumnNames
-   * \sa addColumn, deleteColumn, getColumnInfo, setColumnInfo, addMetadataColumn, deleteMetadataColumn
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of metadata column names
+   * \sa addColumn, deleteColumn, getColumnInfo, setColumnInfo
    */
   /*getMetadataFields*/
+/* This doesn't exist
   void getMetadataColumns(out PRUint32 metaColumnCount, 
     [array, size_is (metaColumnCount), retval] out wstring metaColumnNames); /**/
 
@@ -237,9 +277,10 @@ interface sbIMediaLibrary : nsISupports
    * \param columnName
    * \param columnType
    * \param willRunQueryLater
-   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo, deleteMetadataColumn
+   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo
    */
   /*addMetadataField*/
+/* This doesn't exist
   void addMetadataColumn(in AString columnName, 
     in AString columnType, 
     in PRBool willRunQueryLater); /**/
@@ -249,9 +290,10 @@ interface sbIMediaLibrary : nsISupports
    *
    * \param columnName
    * \param willRunQueryLater
-   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo, addMetadataColumn
+   * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo
    */
   /*deleteMetadataField*/
+/* This doesn't exist
   PRBool deleteMetadataColumn(in AString columnName, 
     in PRBool willRunQueryLater); /**/
 
@@ -265,11 +307,13 @@ interface sbIMediaLibrary : nsISupports
   */
 
   /**
-   * \brief 
+   * \brief Get the Unique list of values across the library for the column
    *
-   * \param columnName
-   * \param columnUniqueValCount
-   * \param columnUniqueValues
+   * Essentially equivalent to the list in a filterlist UI element.
+   *
+   * \param columnName The column for which to retrieve values
+   * \param columnUniqueValCount The number of items in the array
+   * \param columnUniqueValues The array of unique values
    * \sa setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
   void getUniqueValuesByColumn(in AString columnName, 
@@ -277,13 +321,14 @@ interface sbIMediaLibrary : nsISupports
     [array, size_is (columnUniqueValCount), retval] out wstring columnUniqueValues); /**/
 
   /**
-   * \brief 
+   * \brief Set cell a value into the library table
    *
-   * \param mediaIndex
-   * \param columnName
-   * \param columnValue
-   * \param willRunQueryLater
-   * \return 
+   * \todo This won't work, it tries to use row number as ID.
+   * \param mediaIndex The row number of the cell to set
+   * \param columnName The name of the column for the cell to set
+   * \param columnValue The value of the cell to be set
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return True if the query was properly loaded/executed
    * \sa getUniqueValuesByColumn, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
   PRBool setValueByIndex(in PRInt32 mediaIndex, 
@@ -292,15 +337,16 @@ interface sbIMediaLibrary : nsISupports
     in PRBool willRunQueryLater); /**/
   
   /**
-   * \brief 
+   * \brief Set multiple values into a single database row
    *
-   * \param mediaIndex
-   * \param metaColumnCount
-   * \param metaColumnNames
-   * \param metaValueCount
-   * \param metaValues
-   * \param willRunQueryLater 
-   * \return 
+   * \todo This won't work, it tries to use row number as ID.
+   * \param mediaIndex The row number of the cell to set
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of columns to set
+   * \param metaValueCount The number of items in the array
+   * \param metaValues The array of values to be set
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return True if the query was properly loaded/executed
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
   PRBool setValuesByIndex(in PRInt32 mediaIndex, 
@@ -311,24 +357,26 @@ interface sbIMediaLibrary : nsISupports
     in PRBool willRunQueryLater); /**/
 
   /**
-   * \brief 
+   * \brief Get cell a value from the library table
    *
-   * \param mediaIndex
-   * \param columnName
-   * \return 
+   * \todo This won't work, it tries to use row number as ID.
+   * \param mediaIndex The row number of the cell to get
+   * \param columnName The name of the column for the cell to get
+   * \return The value of the cell
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
   AString getValueByIndex(in PRInt32 mediaIndex, 
     in AString columnName); /**/
   
   /**
-   * \brief 
+   * \brief Get multiple values from a single database row
    *
-   * \param mediaIndex
-   * \param metaColumnCount
-   * \param metaColumnNames
-   * \param metaValueCount
-   * \param metaValues
+   * \todo This won't work, it tries to use row number as ID.
+   * \param mediaIndex The row number of the cell to get
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of columns to get
+   * \param metaValueCount The number of items in the array
+   * \param metaValues The array of values retrieved
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByGUID
    */
   void getValuesByIndex(in PRInt32 mediaIndex, 
@@ -338,12 +386,12 @@ interface sbIMediaLibrary : nsISupports
     [array, size_is (metaValueCount), retval] out wstring metaValues); /**/
   
   /**
-   * \brief 
+   * \brief Set cell a value into the library table
    *
-   * \param mediaGUID
-   * \param columName
-   * \param columnValue
-   * \param willRunQueryLater
+   * \param mediaGUID The guid of the cell to get, where media library row GUID equals mediaGUID
+   * \param columnName The name of the column for the cell to set
+   * \param columnValue The value of the cell to be set
+   * \param willRunQueryLater If false, execute the query before returning
    * \return 
    * \sa getUniqueValuesByColumn, setValueByIndex, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
@@ -353,14 +401,14 @@ interface sbIMediaLibrary : nsISupports
     in PRBool willRunQueryLater); /**/
   
   /**
-   * \brief 
+   * \brief Set multiple values into a single database row
    *
-   * \param mediaGUID
-   * \param metaColumnCount
-   * \param metaColumnNames
-   * \param metaValueCount
-   * \param metaValues
-   * \param willRunQueryLater
+   * \param mediaGUID The guid of the cell to get, where media library row GUID equals mediaGUID
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of columns to set
+   * \param metaValueCount The number of items in the array
+   * \param metaValues The array of values to be set
+   * \param willRunQueryLater If false, execute the query before returning
    * \return
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, getValueByIndex, getValueByGUID, getValuesByIndex, getValuesByGUID
    */
@@ -372,24 +420,24 @@ interface sbIMediaLibrary : nsISupports
     in PRBool willRunQueryLater); /**/
 
   /**
-   * \brief 
+   * \brief Get cell a value from the library table
    *
-   * \param mediaGUID
-   * \param columnName
-   * \return The value of the column, where media library row GUID equals mediaGUID.
+   * \param mediaGUID The guid of the cell to get, where media library row GUID equals mediaGUID
+   * \param columnName The name of the column for the cell to get
+   * \return The value of the cell
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValuesByIndex, getValuesByGUID
    */
   AString getValueByGUID(in AString mediaGUID, 
     in AString columnName); /**/
   
   /**
-   * \brief 
+   * \brief Get multiple values from a single database row
    *
-   * \param mediaGUID
-   * \param metaColumnCount
-   * \param metaColumnNames
-   * \param metaValueCount
-   * \param metaValues
+   * \param mediaGUID The guid of the cell to get, where media library row GUID equals mediaGUID
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of columns to get
+   * \param metaValueCount The number of items in the array
+   * \param metaValues The array of values retrieved
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex
    */
   void getValuesByGUID(in AString mediaGUID, 
@@ -401,7 +449,15 @@ interface sbIMediaLibrary : nsISupports
 
 /**
  * \interface sbIMediaScanCallback 
- * \brief
+ * \brief The callback to the sbIMediaScanQuery interface
+ *
+ * This interface is meant to be implemented by user code.
+ *
+ * Create one of these objects to be informed of the progress of the media
+ * scan.
+ *
+ * NOTE: This object's methods are called from the media scan thread.  Not
+ * necessarily safe for javascript!
  *
  * \sa sbIMediaScanQuery, sbIMediaScan, MediaScan.h
  */
@@ -409,24 +465,24 @@ interface sbIMediaLibrary : nsISupports
 interface sbIMediaScanCallback : nsISupports
 {
   /**
-   * \brief 
+   * \brief The media scan is starting
    *
    * \sa onMediaScanFile, onMediaScanEnd, sbIMediaScanQuery, sbIMediaScan
    */
   void onMediaScanStart(); /**/
 
   /**
-   * \brief 
+   * \brief The media scan has found (yet another) file
    *
-   * \param filePath
-   * \param 
+   * \param filePath The path to the file
+   * \param fileCount The number of files found so far
    * \sa onMediaScanStart, onMediaScanEnd, sbIMediaScanQuery, sbIMediaScan
    */
   void onMediaScanFile(in AString filePath, 
     in PRInt32 fileCount); /**/
 
   /**
-   * \brief 
+   * \brief The media scan is complete
    *
    * \sa onMediaScanStart, onMediaScanFile, sbIMediaScanQuery, sbIMediaScan
    */
@@ -435,7 +491,33 @@ interface sbIMediaScanCallback : nsISupports
 
 /**
  * \interface sbIMediaScanQuery 
- * \brief
+ * \brief An object to scan through the files of a folder (and optionally subfolders)
+ *
+ * This object is used to rapidly gather a list of all the files found under a
+ * given directory path.  It runs from a separate thread.
+ *
+ * User code may call getCurrentScanPath() and getLastFileFound() from the main 
+ * thread to get a periodic snapshot of the current progress of the scan.
+ *
+ * Execute a scan by creating a scan query, filling it out, and passing it to
+ * the sbIMediaScan interface for processing:
+\verbatim
+function ScanBeneathADirectory(aPath) {
+  // Create the objects
+  var aMediaScan = Components.classes["@songbirdnest.com/Songbird/MediaScan;1"]
+    .createInstance(Components.interfaces.sbIMediaScan);
+  var aMediaScanQuery = Components.classes["@songbirdnest.com/Songbird/MediaScanQuery;1"]
+    .createInstance(Components.interfaces.sbIMediaScanQuery);
+
+  // Setup the query
+  aMediaScanQuery.setDirectory(aPath);
+  aMediaScanQuery.setRecurse(true);
+          
+  // Execute the query
+  aMediaScan.submitQuery(aMediaScanQuery);
+  return aMediaScanQuery;
+}
+\endverbatim
  *
  * \sa sbIMediaScanCallback, sbIMediaScan, MediaScan.h
  */
@@ -443,121 +525,127 @@ interface sbIMediaScanCallback : nsISupports
 interface sbIMediaScanQuery : nsISupports
 {
   /**
-   * \brief 
+   * \brief Set the directory to scan
    *
-   * \param queryObj
+   * \param strDirectory The directory to scan
    * \sa getDirectory, setRecurse, getRecurse
    */
   void setDirectory(in AString strDirectory); /**/
 
   /**
-   * \brief 
+   * \brief Get the directory to scan
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \return The directory to scan
+   * \sa setDirectory, setRecurse, getRecurse
    */
   AString getDirectory(); /**/
 
   /**
-   * \brief 
+   * \brief Set the scan to run recursively under the given directory
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \param bRecurse If true, scan subdirectories
+   * \sa setDirectory, getDirectory, getRecurse
    */
   void setRecurse(in PRBool bRecurse); /**/
 
   /**
-   * \brief 
+   * \brief Whether or not the scan will run recursively
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \return If true, scan subdirectories
+   * \sa setDirectory, getDirectory, setRecurse
    */
   PRBool getRecurse(); /**/
 
   /**
-   * \brief 
+   * \brief Set the callback object for the scan
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \param pCallback The callback object
+   * \sa sbIMediaScanCallback, getCallback
    */
   void setCallback(in sbIMediaScanCallback pCallback); /**/
 
   /**
-   * \brief 
+   * \brief Get the callback object for the scan
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \return The callback object
+   * \sa sbIMediaScanCallback, setCallback
    */
   sbIMediaScanCallback getCallback(); /**/
 
   /**
-   * \brief 
+   * \brief Get the number of files found
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \return The number of files found
+   * \sa getFilePath
    */
   PRUint32 getFileCount(); /**/
 
   /**
-   * \brief 
-   *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
   void addFilePath(in AString strFilePath); /**/
 
   /**
-   * \brief 
+   * \brief Get the N'th file from the results of the scan
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * Don't call this while isScanning() is true.
+   *
+   * \param nIndex The index of the files array to retrieve
+   * \sa getFileCount
    */
   AString getFilePath(in PRUint32 nIndex); /**/
 
   /**
-   * \brief 
+   * \brief Whether or not the scan operation is executing
    *
-   * \param queryObj
+   * \return True, if the scan is executing
    * \sa sbIDatabaseQuery
    */
   PRBool isScanning();
 
   /**
-   * \brief 
-   *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
   void setIsScanning(in PRBool bIsScanning);
 
   /**
-   * \brief 
+   * \brief Returns the most recent file found by the scan
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * This method may be called while the scan is executing to provide a 
+   * periodic snapshot of the scan results.
+   *
+   * \return The path to the last file found
+   * \sa getCurrentScanPath
    */
   AString getLastFileFound();
 
   /**
-   * \brief 
+   * \brief Returns the most recent directory scanned
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * This method may be called while the scan is executing to provide a 
+   * periodic snapshot of the scan results.
+   *
+   * \return The path to the last file found
+   * \sa getLastFileFound, setCurrentScanPath
    */
   AString getCurrentScanPath();
 
   /**
-   * \brief 
-   *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
   void setCurrentScanPath(in AString strScanPath);
 };
 
 /**
  * \interface sbIMediaScan
- * \brief
+ * \brief The engine in which to execute sbIMediaScanQuery objects
+ *
+ * Create a sbIMediaScanQuery object, fill out its methods, create one of
+ * these and pass the query to the scanner to begin executing.
+ *
+ * Optionally, you may skip the use of a sbIMediaScanQuery object and just
+ * handle the scan directly by calling scanDirectory() with your own
+ * sbIMediaScanCallback object.
  *
  * \sa sbIMediaScanCallback, sbIMediaScanQuery
  */
@@ -565,18 +653,20 @@ interface sbIMediaScanQuery : nsISupports
 interface sbIMediaScan : nsISupports
 { 
   /**
-   * \brief 
+   * \brief Execute a sbIMediaScanQuery object
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \param pQuery The query object to execute
+   * \sa scanDirectory
    */
   void submitQuery(in sbIMediaScanQuery pQuery);
   
   /**
-   * \brief 
+   * \brief Execute a scan directly to a sbIMediaScanCallback instance
    *
-   * \param queryObj
-   * \sa sbIDatabaseQuery
+   * \param strDirectory The directory to scan
+   * \param bRecurse Whether or not to recurse
+   * \param pCallback The callback used to process the scan
+   * \sa submitQuery
    */
   PRInt32 scanDirectory(in AString strDirectory, 
     in PRBool bRecurse, 
