@@ -24,6 +24,11 @@
 //
  */
 
+// Globals
+var wanted_locale = "en-US";
+var fwd_bundle;
+var eula_data = Object();
+var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 var FirstRunBundleCB = 
 {
   onLoad: function(bundle) { bundleDataReady(bundle); },
@@ -50,8 +55,6 @@ function bundleDataReady(bundle) {
   hidePleaseWait();
 }
 
-var wanted_locale = "en-US";
- 
 function initFirstRun() 
 {
   var bundle = window.arguments[0].bundle;
@@ -73,9 +76,8 @@ function fillLanguageBox()
 {
   var list = document.getElementById("language_list");
   var menu = list.childNodes[0];
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   try {
-    wanted_locale = prefs.getCharPref("general.useragent.locale");
+    wanted_locale = gPrefs.getCharPref("general.useragent.locale");
   }
   catch (e) { }
 
@@ -147,7 +149,7 @@ function setWantedLocale(locale)
 
 function enableCustomInstall() 
 {
-  // Once we've loaded the stuff, open the box.
+  // Once we load the stuff, open the box.
   setTimeout( "customInstall();", 250 );
 }
 
@@ -162,26 +164,33 @@ function hidePleaseWait()
   pleasewait.setAttribute("hidden", "true");
 }
 
-var eula_data = Object();
-var fwd_bundle;
 
-function doFirstRunTest(doc, bundle)
+function doFirstRunTest(aBundle)
 {
-  fwd_bundle = bundle;
+  fwd_bundle = aBundle;
   // Data remotes not available for this function
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var eulacheck = "";
-  try { eulacheck = prefs.getCharPref("songbird.firstrun.eulacheck"); } catch (e) { }
-  if (eulacheck != "1")
+  var eulacheck;
+  try { 
+    eulacheck = gPrefs.getBoolPref("songbird.firstrun.eulacheck");
+  } catch (e) { }
+
+  eula_data.do_eula = false;
+
+  // If eula has not been run or accepted
+  if (!eulacheck)
   {
-    eula_data.do_eula = 1;
-    // Why will modal=yes prevent the centerscreen flag from working ? even centerWindowOnScreen() wont work ! Is this related to the fact that we're starting up... ?
-    window.openDialog( "chrome://songbird/content/xul/eula.xul", "eula", "chrome,centerscreen,modal=no", eula_data);
+    eula_data.do_eula = true;
+    // Why will modal=yes prevent the centerscreen flag from working ? even
+    // centerWindowOnScreen() wont work ! Is this related to the fact that
+    // we are starting up... ?
+    window.openDialog( "chrome://songbird/content/xul/eula.xul",
+                       "eula",
+                       "chrome,centerscreen,modal=yes",
+                       eula_data);
     // simulate modal flag
-    setTimeout(firstRunDialog, 100);
-    return 1;
+    //setTimeout(firstRunDialog, 100);
+    //return false;
   } 
-  eula_data.do_eula = 0;
   return firstRunDialog();
 }
 
@@ -189,17 +198,17 @@ function firstRunDialog()
 {
   if (eula_data.do_eula) 
   {
+    // if the eula has not been dismissed, call ourself back later
     if (!eula_data.retval) 
     { 
       setTimeout(firstRunDialog, 100); 
-      return 1;
+      return true;
     } 
     else 
     {
       if (eula_data.retval == "accept") 
       {
-        var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-        prefs.setCharPref("songbird.firstrun.eulacheck", "1");
+        gPrefs.setBoolPref("songbird.firstrun.eulacheck", true);
       }
       else
       {
@@ -208,7 +217,9 @@ function firstRunDialog()
         var MetricsService = new nsIMetrics();
         MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
 
-        var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
+        // get the startup service and tell it to shut us down
+        var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                 .getService(Components.interfaces.nsIAppStartup);
         if (as)
         {
           // do NOT replace '_' with '.', or it will be handled as metrics
@@ -218,25 +229,34 @@ function firstRunDialog()
           SBDataSetBoolValue("metrics_ignorenextstartup", true); 
           const V_ATTEMPT = 2;
           as.quit(V_ATTEMPT);
-          return 0;
+          return false;
         }
       }
     }
   }
   // Data remotes not available for this function
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var firstruncheck = "";
-  try { firstruncheck = prefs.getCharPref("songbird.firstrun.firstruncheck"); } catch (e) { }
-  if (firstruncheck != "1")
+  var firstruncheck;
+  try {
+    firstruncheck = gPrefs.getBoolPref("songbird.firstrun.firstruncheck");
+  } catch (e) { }
+
+  // If this is the first run, ask the user some stuff.
+  if (!firstruncheck)
   {
     var data = new Object();
     data.bundle = fwd_bundle;
     data.document = document;
-    window.openDialog( "chrome://songbird/content/xul/firstrun.xul", "firstrun", "chrome,centerscreen,titlebar=no,resizable=no,modal=no", data);
-    return 1;
+
+    // This cannot be modal it will block the download of extensions
+    window.openDialog( "chrome://songbird/content/xul/firstrun.xul",
+                       "firstrun", 
+                       "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
+                       data );
+    return true;
   }
-  if (eula_data.do_eula) document.__STARTMAINWIN();
-  return 0;
+  if (eula_data.do_eula)
+    document.__STARTMAINWIN();
+  return false;
 }
 
 function continueStartup() {
@@ -258,37 +278,44 @@ function doOK()
 {
   handleOptOut(); // set the pref based upon the opt-out state.
   var bundle = window.arguments[0].bundle;
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var noext = (bundle.getNumExtensions() == 0);
   if (!noext) {
-    var count=0;
-    for (var i=0;i<bundle.getNumExtensions();i++) if (bundle.getExtensionInstallState(i)) count++;
+    var count = 0;
+    for ( var i = 0; i < bundle.getNumExtensions(); i++ ) {
+      if ( bundle.getExtensionInstallState(i) )
+        count++;
+    }
     noext = (count == 0);
   }
   switchLocale(wanted_locale);
   if (noext) {
-    var r = sbMessageBox_strings("setup.noxpititle", "setup.noxpimsg", "No extension", "Press Ok to keep a minimal installation, or Cancel to go back.", true);
-    if (r == "accept") { 
-      prefs.setCharPref("songbird.firstrun.firstruncheck", "1");  
+    var retval = sbMessageBox_strings("setup.noxpititle",
+                                      "setup.noxpimsg", 
+                                      "No extension",
+                                      "Press Ok to keep a minimal installation, or Cancel to go back.",
+                                      true);
+    if (retval == "accept") { 
+      gPrefs.setBoolPref("songbird.firstrun.firstruncheck", true);  
       return true; 
     } else {
       return false;
     }
   } else {
     bundle.installSelectedExtensions(window);
-    prefs.setCharPref("songbird.firstrun.firstruncheck", "1");  
-    prefs.setCharPref("installedbundle", bundle.getBundleVersion());
+    gPrefs.setBoolPref("songbird.firstrun.firstruncheck", true);  
+    gPrefs.setCharPref("installedbundle", bundle.getBundleVersion());
     if (bundle.getNeedRestart()) {
       var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
       var MetricsService = new nsIMetrics();
       MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
-      var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
+      var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+               .getService(Components.interfaces.nsIAppStartup);
       if (as)
       {
-        const V_RESTART = 16;
-        const V_ATTEMPT = 2;
-        as.quit(V_RESTART);
-        as.quit(V_ATTEMPT);
+        //Both calls are needed as the restart path only sets an internal
+        //   variable that gets cached and references during the second call.
+        as.quit(as.eRestart);
+        as.quit(as.eAttemptQuit);
       }
     }
     return true;
@@ -335,8 +362,7 @@ function handleOptOut()
 {
   try {
     var metrics_enabled = document.getElementById("metrics_optout").checked ? 1 : 0;
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    prefs.setCharPref("app.metrics.enabled", metrics_enabled);
+    gPrefs.setCharPref("app.metrics.enabled", metrics_enabled);
   } catch (e) {}; // Stuff likes to throw.
 };
 

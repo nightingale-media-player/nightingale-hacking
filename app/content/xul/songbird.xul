@@ -119,7 +119,9 @@
             mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
           } catch (err) {}
 
-          setTimeout( 'window.open( "' + mainwin + '", "mainwin", "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );', 0 ); // (sigh)
+          window.open( mainwin,
+                       "mainwin",
+                       "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
         }
         else
         {
@@ -127,7 +129,7 @@
         }
       };
 
-      if (!doFirstRunTest(document, BundleService)) {
+      if (!doFirstRunTest(BundleService)) {
         document.__STARTMAINWIN();
       }
     }

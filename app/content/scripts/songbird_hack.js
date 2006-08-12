@@ -1322,12 +1322,11 @@ function onBrowserPlaylistHide()
   // Hide the web table if it exists
   theShowWebPlaylistData.boolValue = false;
  
-  // Can't we just use the "theWebPlaylist" global variable? -redfive 
+  // Can we just use the "theWebPlaylist" global variable? -redfive 
   // And unhook the playlist from the database
   var theTree = document.getElementById( "playlist_web" );
   if ( theTree )
   {
-    // get this as a service? -redfive
     var source = new sbIPlaylistsource();
     theTree.datasources = "";
     theTree.ref = "";
