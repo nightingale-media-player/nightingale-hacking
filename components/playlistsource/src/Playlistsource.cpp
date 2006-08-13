@@ -1663,6 +1663,9 @@ sbPlaylistsource::ForceGetTargets(const nsAString &aRefName, const PRBool isPerm
 
   METHOD_SHORTCIRCUIT;
 
+  PRInt32 retval = 0;
+  WaitForQueryCompletion( aRefName, &retval );
+
   sbFeedInfo* info = GetFeedInfo(aRefName);
   
   if (info) {
