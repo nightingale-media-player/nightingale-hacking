@@ -307,8 +307,8 @@ PlaylistPlayback.prototype = {
     this._metadataPos.intValue = 0;
     this._metadataLen.intValue = 0;
     this._seenPlaying.boolValue = false;
-    this._metadataPosText.stringValue = "0:00:00";
-    this._metadataLenText.stringValue = "0:00:00";
+    this._metadataPosText.stringValue = "0:00";
+    this._metadataLenText.stringValue = "0:00";
     this._showRemaining.boolValue = false;
     //this._muteData.boolValue = false;
     this._playlistRef.stringValue = "";
@@ -1225,7 +1225,7 @@ PlaylistPlayback.prototype = {
 
   // Routes core playback status changes to the play/pause button ui data remote
   _onPollButtons: function ( len, pos, core ) {
-    if ( core.getPlaying() && ( ! core.getPaused() ) && ( len > 0 || pos > 0 ) )
+    if ( core.getPlaying() && ( ! core.getPaused() ) && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) )
       this._playButton.boolValue = false;
     else
       this._playButton.boolValue = true;
@@ -1303,7 +1303,7 @@ PlaylistPlayback.prototype = {
 
   _onPollCompleted: function ( len, pos, core ) {
     // Basically, this logic means that posLoop will run until the player first says it is playing, and then stops.
-    if ( core.getPlaying() && ( len > 0.0 || pos > 0.0 ) ) {
+    if ( core.getPlaying() && ( this._isFLAC() || len > 0.0 || pos > 0.0 ) ) {
       // First time we see it playing, 
       if ( ! this._seenPlaying.boolValue ) {
         // Clear the search popup
@@ -1543,6 +1543,12 @@ PlaylistPlayback.prototype = {
   _restartApp: function() {
     // this is being watched by the main document in order to implement it
     this._restartAppNow.boolValue = true;
+  },
+  
+  // Stooooopid bug.
+  _isFLAC: function() {
+    var url = _playURL.stringValue.toLowerCase();
+    return ( url.indexOf( ".flac" ) != -1 );
   },
   
   /**
