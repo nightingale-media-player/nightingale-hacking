@@ -1543,7 +1543,7 @@ PlaylistPlayback.prototype = {
   
   // Stooooopid bug.
   _isFLAC: function() {
-    var url = _playURL.stringValue.toLowerCase();
+    var url = this._playURL.stringValue.toLowerCase();
     return ( url.indexOf( ".flac" ) != -1 );
   },
   
