@@ -52,6 +52,12 @@
   src="chrome://songbird/content/scripts/language_scan.js" />
    -->
 
+  // Firstrun and metrics need these guys.  :(
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
+
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/firstrun.js" />
 
@@ -256,10 +262,6 @@
    src="chrome://global/content/dialogOverlay.js" />
 
   <!-- Load the interface code -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbIDataRemote.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
   <script type="application/x-javascript" 

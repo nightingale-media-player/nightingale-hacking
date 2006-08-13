@@ -171,7 +171,7 @@ function doFirstRunTest(aBundle)
   // Data remotes not available for this function
   var eulacheck;
   try { 
-    eulacheck = gPrefs.getBoolPref("songbird.firstrun.eulacheck");
+    eulacheck = SBDataGetBoolValue("firstrun.eulacheck");
   } catch (e) { }
 
   eula_data.do_eula = false;
@@ -208,7 +208,7 @@ function firstRunDialog()
     {
       if (eula_data.retval == "accept") 
       {
-        gPrefs.setBoolPref("songbird.firstrun.eulacheck", true);
+        SBDataSetBoolValue("firstrun.eulacheck", true);
       }
       else
       {
@@ -237,7 +237,7 @@ function firstRunDialog()
   // Data remotes not available for this function
   var firstruncheck;
   try {
-    firstruncheck = gPrefs.getBoolPref("songbird.firstrun.firstruncheck");
+    firstruncheck = SBDataGetBoolValue("firstrun.firstruncheck");
   } catch (e) { }
 
   // If this is the first run, ask the user some stuff.
@@ -295,14 +295,14 @@ function doOK()
                                       "Press Ok to keep a minimal installation, or Cancel to go back.",
                                       true);
     if (retval == "accept") { 
-      gPrefs.setBoolPref("songbird.firstrun.firstruncheck", true);  
+      SBDataSetBoolValue("firstrun.firstruncheck", true);  
       return true; 
     } else {
       return false;
     }
   } else {
     bundle.installSelectedExtensions(window);
-    gPrefs.setBoolPref("songbird.firstrun.firstruncheck", true);  
+    SBDataSetBoolValue("firstrun.firstruncheck", true);  
     gPrefs.setCharPref("installedbundle", bundle.getBundleVersion());
     if (bundle.getNeedRestart()) {
       var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
