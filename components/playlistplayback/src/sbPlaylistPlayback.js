@@ -1036,8 +1036,6 @@ PlaylistPlayback.prototype = {
 
   emitSecondsToTimeString: function ( aSeconds )
   {
-    const useLeadingZeros = false;
-  
     if ( aSeconds < 0 )
       return "0:00";
     aSeconds = parseFloat( aSeconds );
@@ -1050,11 +1048,9 @@ PlaylistPlayback.prototype = {
     var text = ""
     if ( hours > 0 )
       text += hours + ":";
-    if ( ( useLeadingZeros || hours > 0 ) && minutes < 10 )
+    if ( hours > 0 && minutes < 10 )
       text += "0";
-    if ( useLeadingZeros || minutes > 0 || hours > 0 )
-      text += minutes
-    text += ":";
+    text += minutes + ":"; // always lead the minutes 0
     if ( aSeconds < 10 ) // always lead the seconds 0
       text += "0";
     text += aSeconds;
