@@ -133,6 +133,7 @@ public:
     nsCOMPtr<nsISimpleEnumerator> m_OldTarget;
     nsString                      m_Ref;
     PRBool                        m_ForceGetTargets;
+    PRBool                        m_Processed;
   };
 
   class resultlist_t : public std::vector<sbResultInfo> {};

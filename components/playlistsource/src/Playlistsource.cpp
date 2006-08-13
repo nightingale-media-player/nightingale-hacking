@@ -1367,9 +1367,11 @@ sbPlaylistsource::UpdateObservers()
   for (resultlist_t::iterator r = old_garbage.begin();
        r != old_garbage.end();
        r++) {
+    (*r).m_Processed = PR_FALSE;
     if ((*r).m_ForceGetTargets) {
       rv = ForceGetTargets((*r).m_Ref, PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
+      (*r).m_Processed = PR_TRUE;
     }
   }
 
@@ -1400,6 +1402,7 @@ sbPlaylistsource::UpdateObservers()
           NS_ENSURE_SUCCESS(rv, rv);
           rv = (*o).m_Observer->OnEndUpdateBatch(this);
           NS_ENSURE_SUCCESS(rv, rv);
+          (*r).m_Processed = PR_TRUE;
         }
       }
     }
@@ -1410,6 +1413,12 @@ sbPlaylistsource::UpdateObservers()
   for (resultlist_t::iterator r = old_garbage.begin();
        r != old_garbage.end();
        r++) {
+    // If the results didn't get processed up there, make sure the internal
+    // data is correct.  This is going to slow things down when downloading.
+    if ( ! (*r).m_Processed ) {
+      rv = ForceGetTargets((*r).m_Ref, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     if ((*r).m_Results.get()) {
       rv = (*r).m_Results->ClearResultSet();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1676,8 +1685,9 @@ sbPlaylistsource::ForceGetTargets(const nsAString &aRefName, const PRBool isPerm
                              PR_TRUE, getter_AddRefs(enumer));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // And maybe remember that it's forced.
-    info->m_ForceGetTargets = isPermanent;
+    // And maybe remember that it's forced.  False doesn't clear the bit.
+    if (isPermanent)
+      info->m_ForceGetTargets = PR_TRUE;
   }
   return NS_OK;
 }
