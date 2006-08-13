@@ -955,40 +955,40 @@ DASHBOARD
   width: auto !important; /* was: max-width: auto !important; */
   color: #1F292B !important;
   overflow: hidden !important;
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
 }
 #songbird_text_artist
 {
   color: #1F292B !important;
   overflow: hidden !important;
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
 }
 #songbird_text_album
 {
   color: #1F292B !important;
   overflow: hidden !important;
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
 }
 #songbird_text_slash
 {
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
   color: #1F292B !important;
 }
 #songbird_text_time
 {
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
   color: #1F292B !important; 
 }
 
 #songbird_text_time_total
 {
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
   color: #1F292B !important;
 }
 
 #songbird_text_time_elapsed
 {
-  font-family: Tahoma, Sans-Serif !important;
+  font-family: tahoma, arial !important;
   color: #1F292B !important;
 }
 

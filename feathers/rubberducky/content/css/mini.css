@@ -374,9 +374,10 @@ window#mini
 /* the texties */
 #mini_text_title
 {
-  font-family: Tahoma, Sans-Serif !important;
-  min-width: 100px !important;
-  height: 13px !important;
+  -moz-box-align: baseline !important;
+  font-family: tahoma, arial !important;
+  min-width: 1px !important;  
+  height: 12px !important;
   color: #E4EADF !important;
   overflow: hidden;
 }
@@ -387,9 +388,10 @@ window#mini
 #mini_text_time_elapsed,
 #mini_text_time_t_txt
 {
-  font-family: Tahoma, Sans-Serif !important;
+  -moz-box-align: baseline !important;
+  font-family: tahoma, arial !important;
   width: auto !important;
-  height: 13px !important;
+  height: 12px !important;
   color: #E4EADF !important;
   overflow: hidden;
 }
