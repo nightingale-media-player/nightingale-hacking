@@ -152,6 +152,7 @@ try
           switch ( this.m_Ids[index] )
           {
             case "library_cmd_device":
+            case "library_cmd_burntocd":
               retval = false;
             break;
             default:
