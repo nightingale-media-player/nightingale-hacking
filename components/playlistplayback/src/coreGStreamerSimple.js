@@ -163,7 +163,14 @@ CoreGStreamerSimple.prototype.getLength = function ()
   }
   catch(e)
   {
-    this.LOG(e);
+    if(e.result == Components.results.NS_ERROR_NOT_AVAILABLE)
+    {
+      return -1;
+    }
+    else
+    {
+      this.LOG(e);
+    }
   }
 
   return playLength;
@@ -185,7 +192,14 @@ CoreGStreamerSimple.prototype.getPosition = function ()
   }
   catch(e)
   {
-    this.LOG(e);
+    if(e.result == Components.results.NS_ERROR_NOT_AVAILABLE)
+    {
+      return -1;
+    }
+    else
+    {
+      this.LOG(e);
+    }
   }
 
   return curPos;

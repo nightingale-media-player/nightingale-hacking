@@ -205,14 +205,14 @@ sbGStreamerSimple::GetPosition(PRUint64* aPosition)
   gboolean res;
   query = gst_query_new_position(GST_FORMAT_TIME);
   res = gst_element_query(mPlay, query);
-  if (res) {
+  if(res) {
     gint64 position;
     gst_query_parse_position(query, NULL, &position);
     *aPosition = position;
     rv = NS_OK;
   }
   else {
-    rv = NS_ERROR_FAILURE;
+    rv = NS_ERROR_NOT_AVAILABLE;
   }
 
   gst_query_unref (query);
@@ -254,14 +254,14 @@ sbGStreamerSimple::GetStreamLength(PRUint64* aStreamLength)
   gboolean res;
   query = gst_query_new_duration(GST_FORMAT_TIME);
   res = gst_element_query(mPlay, query);
-  if (res) {
+  if(res) {
     gint64 duration;
     gst_query_parse_duration(query, NULL, &duration);
     *aStreamLength = duration;
     rv = NS_OK;
   }
   else {
-    rv = NS_ERROR_FAILURE;
+    rv = NS_ERROR_NOT_AVAILABLE;
   }
 
   gst_query_unref (query);
