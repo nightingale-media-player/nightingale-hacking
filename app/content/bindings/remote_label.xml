@@ -43,42 +43,80 @@
 
   <binding id="remote_label">
   
-   <content>
-     <xul:label sbid="label" xbl:inherits="id=id,class=class,value=value,align=align,crop=crop,disabled=disabled,flex=flex" /> 
-   </content>
+    <content>
+      <xul:label sbid="label" xbl:inherits="id=id,class=class,value=value,align=align,crop=crop,disabled=disabled,flex=flex" /> 
+    </content>
 
-  <implementation>
+    <implementation>
 
-    <constructor>
-      <![CDATA[
-        this.dataremote = this.getAttribute("data");
-      ]]>
-    </constructor>
+      <field name="label">this</field>
 
-    <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'label');</field>
-
-    <property name="data">
-      <getter>
-        return this.dataremote;
-      </getter>
-      <setter>
-        // XXXredfive - why do we bind on set property? every time!?!?
-        //     this is crazy, we should be able to do this simpler
-        //     plus I think we can just re-bind to the same DR and not unbind/null
-        this.setAttribute("data", val);
-        this.dataremote = val;
-        if (this.bind) {
-          this.bind.unbind();
-          this.bind = null;
-        }
-        if (val != "") 
-          this.bind = SBDataBindElementProperty ( val, this.label, "value" );
-      </setter>
-    </property>
-        
-   </implementation>
- 
+      <property name="data">
+        <getter>
+          return this.dataremote;
+        </getter>
+        <setter>
+          // XXXredfive - why do we bind on set property? every time!?!?
+          //     this is crazy, we should be able to do this simpler
+          //     plus I think we can just re-bind to the same DR and not unbind/null
+          
+          // mig - I assume we do this to allow us to update the binding at runtime 
+          //       by setting the data property and unbind it by setting "".
+          this.setAttribute("data", val);
+          this.dataremote = val;
+          if (this.bind) {
+            this.bind.unbind();
+            this.bind = null;
+          }
+          if (val != "") 
+            this.bind = SBDataBindElementAttribute ( val, this, "value" );
+        </setter>
+      </property>
+      
+    </implementation>
+    
   </binding>
+
+
+  <binding id="multiremote_label">
+  
+    <content>
+      <xul:label sbid="label" xbl:inherits="id=id,class=class,value=value,align=align,crop=crop,disabled=disabled,flex=flex" /> 
+    </content>
+
+    <implementation>
+
+      <constructor>
+        <![CDATA[
+        ]]>
+      </constructor>
+
+      <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'label');</field>
+
+      <property name="data">
+        <getter>
+          return this.dataremote;
+        </getter>
+        <setter>
+          this.setAttribute("data", val);
+          this.dataremote = val;
+          
+          var strArray = val.split(";");
+          if (this.dataArray.length > 0) {
+            for (var i in this.dataArray) {
+              this.dataArray[i].unbind();
+              this.bind = null;
+            }
+          }
+          if (val != "") 
+            this.bind = SBDataBindElementProperty ( val, this.label, "value" );
+        </setter>
+      </property>
+      
+    </implementation>
+    
+  </binding>
+
 
 </bindings>
 
