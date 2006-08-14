@@ -174,7 +174,7 @@ try
       case "file.window":
         SBMainWindowOpen();
       break;
-      case "file.about":
+      case "aboutName":
         About(); 
       break;
       case "file.exit":

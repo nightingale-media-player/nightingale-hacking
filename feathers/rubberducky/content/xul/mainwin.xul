@@ -192,7 +192,7 @@
                     <!-- <menuitem id="help.demo" label="SVG Demo" value="chrome://songbird/content/svg_events2.xml"/> -->
                     <menuitem id="help.topics" label="&menu.help.topics;" value="&web.url.first;" accesskey="&menu.help.help.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="file.about" label="&menu.help.about;" accesskey="&menu.help.about.accesskey;"/>
+                    <menuitem id="aboutName" label="&menu.help.about;" accesskey="&menu.help.about.accesskey;"/>
                   </menupopup>
                 </menu>
 

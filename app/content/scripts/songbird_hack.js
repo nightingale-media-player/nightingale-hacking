@@ -2035,7 +2035,7 @@ function onMenu( target )
     case "file.koshi":
       SBKoshiOpen();
     break;
-    case "file.about":
+    case "aboutName": // This has to be hardcoded this way for the stinky mac.
       About(); 
     break;
     case "file.exit":
