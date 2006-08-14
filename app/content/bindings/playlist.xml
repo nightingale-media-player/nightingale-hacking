@@ -1612,7 +1612,7 @@
               // Make some metadata columns have secondary columns associated!
               var order = "";
               if ( id == "row_id" ) // No sort on this column.  It does not exist.
-                this.sortorder = id;
+                this.sortorder = "";
               else if ( id == "artist" )
                 order = "artist " + this.sortdirection + ", " +
                         "album " + this.sortdirection + ", " +
@@ -1879,6 +1879,7 @@
           <![CDATA[
           try
           {
+            //dump("onPlaylistContextClick\r\n");
             if ( this.tree.currentIndex > -1 )
             {
               this.hidePlaylistEdit();
@@ -1932,9 +1933,20 @@
               var lyrics_term = document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
               lyrics_term.label = lyricsheader + ": " + this.context_term;
               
-              this.context_x = evt.clientX;
-              this.context_y = evt.clientY;
-              this.context_popup.showPopup( this.tree, evt.screenX + 5, evt.screenY, "context", null, null, null );
+              this.context_x = evt.screenX + 5;
+              this.context_y = evt.screenY;
+              
+              //dump("this.context_x = " + this.context_x + "\r\n");
+              //dump("this.context_y = " + this.context_y + "\r\n");
+              
+              this.context_popup.showPopup( this.tree, this.context_x, this.context_y, "context", null, null, null );
+              
+              //dump("this.context_popup.boxObject.screenX = " + this.context_popup.boxObject.screenX + "\r\n");
+              //dump("this.context_popup.boxObject.screenY = " + this.context_popup.boxObject.screenY + "\r\n");
+              
+              // lone> there seems to be a bug here. sometimes the origin for the popup coords is the top left corner of the parent window
+              // instead of the screen ... it only seems to happen after the user has used the in-place popup edit box and right clicked on it.
+              // it's pretty obscure, i'm not sure if this is a moz or a sb bug ...
             }
           }
           catch( err )
@@ -1951,6 +1963,7 @@
           <![CDATA[
           try
           {
+            //dump("onPlaylistSelectClick\r\n");
             this.hidePlaylistEdit();
             
             // If we have commands, allow them to update
@@ -2030,6 +2043,7 @@
         <![CDATA[
           try
           {
+            //dump("onPlaylistClick\r\n");
             // If there is an edit box up, get rid of it.
             this.hidePlaylistEdit();
 
@@ -2048,7 +2062,7 @@
               }
             }
             
-            if ( this.tree.currentIndex != -1 )
+            if ( evt.button == 0 && this.tree.currentIndex != -1 )
             {
               var obj = {}, row = {}, col = {}; 
               this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
@@ -2777,6 +2791,7 @@
               ret += ";" + n;
               for (var i=0;i<n;i++)
                 ret += ";" + this.source.getFilter(this.ref, 0);
+              ret += "|" + this.source.getSearchString(this.ref);
             }
           }
           catch( err )
@@ -2958,7 +2973,7 @@
         ]]>
       </body>
     </method>
-
+    
 </implementation> 
  
   </binding>
