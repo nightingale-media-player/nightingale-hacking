@@ -967,7 +967,22 @@ function onBrowserStop()
 function onBrowserHome()
 {
   var theServiceTree = document.getElementById( 'frame_servicetree' );
-  theServiceTree.launchServiceURL( "http://songbirdnest.com/player0.2/welcome/" );
+  var defaultHomepage = "http://songbirdnest.com/player0.2/welcome/";
+  
+  try {
+    var homepage;
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"].
+                getService(Components.interfaces.nsIPrefBranch);
+    
+    if (prefs.getPrefType("browser.startup.homepage") == prefs.PREF_STRING){
+      homepage = prefs.getCharPref("browser.startup.homepage");
+    }
+    
+    if(homepage.length)
+      defaultHomepage = homepage;
+      
+    theServiceTree.launchServiceURL( defaultHomepage );
+  } catch(e) {}
 }
 
 // onBrowserBookmark
