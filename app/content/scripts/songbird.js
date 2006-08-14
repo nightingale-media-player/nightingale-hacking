@@ -58,7 +58,7 @@ function onBkgDown( theEvent, popup )
   try
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
-    if (false && windowDragger) {
+    if (windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service)
         service.beginWindowDrag(0); // automatically ends
