@@ -55,6 +55,20 @@ var offsetScrY = 0;
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent, popup ) 
 {
+  // Don't allow dragging on nodes that want their own click handling.
+  switch (theEvent.target.nodeName)
+  {
+    case "player_seekbar":
+    case "player_volume":
+    case "player_playpause":
+    case "player_back":
+    case "player_forward":
+    case "player_mute":
+    case "button":
+    case "resizer":
+      return;
+  }
+//  alert(theEvent.target.nodeName);
   try
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
