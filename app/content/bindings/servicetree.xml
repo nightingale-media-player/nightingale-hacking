@@ -384,11 +384,16 @@
           try {
             var tree = this.tree;
             if ( tree && ( tree.currentIndex != -1 ) ) {
-              var column = tree.columns ?
-                           tree.columns["frame_service_tree_label"] :
-                           "frame_service_tree_label";
-              this.currentSelection = tree.view.getCellText( tree.currentIndex, 
-                                                             column );
+              var column_label = tree.columns ?
+                                 tree.columns["frame_service_tree_label"] :
+                                 "frame_service_tree_label";
+              var column_url   = tree.columns ?
+                                 tree.columns["url"] :
+                                 "url";
+              var label = tree.view.getCellText( tree.currentIndex, column_label );
+              var url = tree.view.getCellText( tree.currentIndex, column_url );
+              if (url && url != "") this.currentSelection = "url=" + url;
+              else this.currentSelection = "label=" + label;
             }
           }
           catch (err)  {
@@ -407,18 +412,31 @@
             if ( tree &&
                  (tree.currentIndex == -1) &&
                  (this.currentSelection.length > 0)) {
-              var column = tree.columns ?
-                           tree.columns["frame_service_tree_label"] :
-                           "frame_service_tree_label";
-              var rowCount = tree.view.rowCount;
-              for ( var index = 0; index < rowCount; index++ ) {
-                if (this.currentSelection ==
-                    tree.view.getCellText(index, column)) {
-                  tree.view.selection.currentIndex = index;
-                  tree.view.selection.select(index);
-                  tree.currentIndex = index;
-                  this.currentSelection = "";
+              var column;
+              var sel_value;
+              var eqpos = this.currentSelection.indexOf('=');
+              var key = this.currentSelection.slice(0, eqpos);
+              sel_value = this.currentSelection.slice(eqpos+1); 
+              switch (key) {
+                case "url":
+                  column = tree.columns ? tree.columns["url"] : "url";
                   break;
+                case "label":
+                  column = tree.columns ? tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
+                  break;
+                default:
+                  break;
+              }
+              if (column) {
+                var rowCount = tree.view.rowCount;
+                for ( var index = 0; index < rowCount; index++ ) {
+                  if (sel_value == tree.view.getCellText(index, column)) {
+                    tree.view.selection.currentIndex = index;
+                    tree.view.selection.select(index);
+                    tree.currentIndex = index;
+                    this.currentSelection = "";
+                    break;
+                  }
                 }
               }
             }
