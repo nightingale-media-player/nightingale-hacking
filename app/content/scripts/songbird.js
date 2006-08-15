@@ -192,11 +192,12 @@ function onMaximize()
 }
 
 // Exit
-function onExit()
+function onExit( skipSave )
 {
   try
   {
-    onWindowSaveSizeAndPosition();
+    if ( skipSave != true )
+      onWindowSaveSizeAndPosition();
   }
   catch ( err )
   {

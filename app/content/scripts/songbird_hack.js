@@ -377,7 +377,7 @@ function SBMainWindowReopen()
 
   // Open the window
   window.open( mainwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no" );
-  setTimeout( "onExit();", 1000 );
+  setTimeout( "onExit(true);", 1000 );
 }
 
 
