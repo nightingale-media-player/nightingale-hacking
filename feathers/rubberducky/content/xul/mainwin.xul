@@ -44,6 +44,9 @@
   onclose="quitApp();" 
   title="&window.dev.title;"
   onkeypress="onMainwinKeypress( event );"
+
+  ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+  onmouseup="onBkgUp(); // Handle the window drag at the top level"
   
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"

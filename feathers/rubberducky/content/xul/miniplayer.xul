@@ -46,9 +46,9 @@
  onkeypress="onMiniplayerKeypress( event );"
  ondragover="nsDragAndDrop.dragOver( event, SBMiniDropObserver );"
  ondragdrop="nsDragAndDrop.drop( event, SBMiniDropObserver );"
- ondblclick="SBMainWindowOpen( ); // Handle the window drag at the top level"
+ ondblclick="SBMainWindowOpen( );"
  ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp();"
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   

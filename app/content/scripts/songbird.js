@@ -64,11 +64,31 @@ function onBkgDown( theEvent, popup )
     case "player_back":
     case "player_forward":
     case "player_mute":
+    case "player_numplaylistitems":
+    case "player_scaning":
+    case "servicetree":
+    case "playlist":
+    case "search":
+    case "splitter":
+    case "smartsplitter":
+    case "clickholdbutton":
+    case "toolbarbutton":
     case "button":
     case "resizer":
+    case "textbox":
+    case "menu":
+    case "menuitem":
+    case "menupopup":
+    case "menuseparator":
+    case "IMG":
+    case "INPUT":
+    case "BODY":
+    case "HTML":
+    case "DIV":
+    case "#text":
       return;
   }
-//  alert(theEvent.target.nodeName);
+  alert(theEvent.target.nodeName);
   try
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
