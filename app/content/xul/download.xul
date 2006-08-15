@@ -40,13 +40,16 @@
  onload="doLoad();"
  flex="1"
  hidechrome="true"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
 
 <windowregion/>
 
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate, dialog" flex="1">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
@@ -54,7 +57,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
         <image id="chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="chrome_e" class="sb_faceplate"/>
     </hbox>
     <hbox class="sb_faceplate">
@@ -83,34 +86,34 @@
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
         
           <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&download.window;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&download.window;" class="sb_faceplate"/>
+            <spacer width="5"/>                    
+            <spacer flex="1"/>           
+            <spacer width="5"/>
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
         
           <vbox flex="1">
-            <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>             
+            <spacer height="5"/>             
             <label class="dialog_label" value="&download.select;"/>
-            <spacer height="3" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>             
+            <spacer height="3"/>             
             <hbox>
               <textbox class="dialog_textbox" id="download_folder_path" />
               <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
             </hbox>        
-            <spacer height="3" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer height="3"/>
             <hbox>
               <checkbox class="dialog_checkbox dialog_label" id="download_check" label="&download.always;" />
             </hbox>              
             
           </vbox>
           
-          <spacer height="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <spacer height="1"/>           
           
           <hbox>
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer flex="1"/>           
             <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5"/>
             <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
           </hbox>
                 

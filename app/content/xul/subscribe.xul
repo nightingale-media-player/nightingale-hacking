@@ -40,13 +40,16 @@
  onkeypress="/* dialog key handling */ if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
  flex="1"
  hidechrome="true"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
 
 
 <windowregion/>
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate, dialog" flex="1">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
@@ -54,7 +57,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
         <image id="chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="chrome_e" class="sb_faceplate"/>
     </hbox>
     <hbox class="sb_faceplate">
@@ -83,10 +86,10 @@
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
         
           <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&subscribe.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&subscribe.title;" class="sb_faceplate"/>
+            <spacer width="5"/>                    
+            <spacer flex="1"/>           
+            <spacer width="5"/>
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
         
@@ -96,9 +99,9 @@
               <label class="dialog_label" value="URL:"/>
               <textbox class="dialog_textbox" id="subscribe_url" value="http://"/>
             </hbox>
-            <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer height="5"/>
             <hbox class="sb_faceplate" align="center">
-            <spacer width="40" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="40"/>
             <checkbox class="dialog_checkbox" id="subscribe_autosubscribe_check" label="&subscribe.autocheck;" checked="true"/>
             <textbox class="dialog_textbox" id="subscribe_interval" value="1"/>
             <menulist id="subscribe_interval_unit" value="days">
@@ -109,7 +112,7 @@
               </menupopup>
             </menulist>
             </hbox>
-            <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>             
+            <spacer height="10"/>             
             <label class="dialog_label" value="&subscribe.destinationfolder;"/>
             <hbox>
               <textbox class="dialog_textbox" id="subscribe_folder_path" flex="1"/>
@@ -117,12 +120,12 @@
             </hbox>        
           </vbox>
           
-          <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <spacer height="8"/>           
           
           <hbox>
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer flex="1"/>           
             <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5"/>
             <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
           </hbox>
                 

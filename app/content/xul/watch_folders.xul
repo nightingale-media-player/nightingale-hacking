@@ -38,12 +38,15 @@
  hidechrome="true"
  onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
  onload="doLoad();"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
   
 <windowregion/>
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate, dialog" flex="1">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
@@ -51,7 +54,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
         <image id="chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="chrome_e" class="sb_faceplate"/>
     </hbox>
     <hbox class="sb_faceplate">
@@ -63,34 +66,34 @@
 
   <vbox class="sb_faceplate">
     <hbox class="sb_faceplate">
-      <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+      <spacer height="8"/> 
     </hbox>
     <hbox class="sb_faceplate" flex="1">
-      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
+      <spacer width="8" />
       <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">        
       
         <hbox id="window_top" class="sb_faceplate" >
-          <label id="app_title" value="&watchfolder.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <label id="app_title" value="&watchfolder.title;" class="sb_faceplate"/>
+          <spacer width="5"/>                    
+          <spacer flex="1"/>           
+          <spacer width="5"/>
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
         
         <label class="dialog_label" value="&watchfolder.folderlist;" />
-        <spacer height="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        <spacer height="1"/>
         <watch_folders id="watch_folders" browse="&window.browse;" flex="1"/>
-        <spacer height="6" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        <spacer height="6"/>
         
         <hbox>
-          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+          <spacer flex="1"/>           
           <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer width="5"/>
           <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
         </hbox>
         
       </vbox>
-      <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+      <spacer width="8"/>
     </hbox>
     <hbox class="sb_faceplate" id="frame_bottom_resizers">
       <x_resizer id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>

@@ -40,12 +40,15 @@
  ondialogaccept="return doOK();"
  ondialogcancel="return doCancel();"
  onload="document.getElementById('songbird_open_url').focus();"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
 <!-- Astounding complexity! -->
 <!--windowregion/-->
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate, dialog" flex="1">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
@@ -53,7 +56,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
         <image id="chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="chrome_e" class="sb_faceplate"/>
     </hbox>
     <hbox class="sb_faceplate">
@@ -63,37 +66,37 @@
     </hbox>
   </vbox>
   
-  <vbox class="sb_faceplate" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate" flex="1">
     <hbox class="sb_faceplate">
-      <spacer height="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+      <spacer height="8"/> 
     </hbox>
     <hbox class="sb_faceplate" flex="1">
-    <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" />
+    <spacer width="8" />
       <vbox class="sb_faceplate" flex="1" id="chrome_bkgd">        
         <hbox id="window_top" class="sb_faceplate" >
-          <label id="app_title" value="&open_url.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-          <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-          <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <label id="app_title" value="&open_url.title;" class="sb_faceplate"/>
+          <spacer width="5"/>                    
+          <spacer flex="1"/>           
+          <spacer width="5"/>
           <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
         </hbox>
          <label class="dialog_label" value="&textbox.songbird_open_url;"/>
         
-        <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+        <spacer height="5"/> 
         <hbox>          
          <textbox class="dialog_textbox" id="songbird_open_url"/> 
         </hbox>
-        <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+        <spacer height="5"/>
         <hbox>
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer flex="1"/>           
             <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5"/>
             <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/> 
           </hbox>
       </vbox>
-    <spacer width="8" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+    <spacer width="8"/>
     </hbox>
-    <spacer height="10" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+    <spacer height="10"/> 
   </vbox>
 </stack>  
  

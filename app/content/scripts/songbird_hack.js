@@ -2190,7 +2190,10 @@ function SBScanMedia( )
     welcome = theSongbirdStrings.getString("faceplate.welcome");
     scan = theSongbirdStrings.getString("faceplate.scan");
   } catch(e) {}
-  fp.init( window, welcome + "!\n\n" + scan, nsIFilePicker.modeGetFolder );
+  if (PLATFORM_MACOSX)
+    fp.init( window, scan, nsIFilePicker.modeGetFolder );
+  else
+    fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );
   var res = fp.show();
   if ( res == nsIFilePicker.returnOK )
   {

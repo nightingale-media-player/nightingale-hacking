@@ -40,6 +40,9 @@
  onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
  flex="1"
  hidechrome="true"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
 
 
@@ -47,7 +50,7 @@
 
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();">
+  <vbox class="sb_faceplate, dialog" flex="1">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
@@ -55,7 +58,7 @@
     </hbox>
     <hbox class="sb_faceplate" flex="1">
         <image id="chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="chrome_e" class="sb_faceplate"/>
     </hbox>
     <hbox class="sb_faceplate">
@@ -84,22 +87,22 @@
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
         
           <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&smart.window;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&smart.window;" class="sb_faceplate"/>
+            <spacer width="5"/>                    
+            <spacer flex="1"/>           
+            <spacer width="5"/>
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
           
           <!-- Commented out until we have multi-library functionality. -->
           <!-- hbox class="sb_faceplate" id="smartpl_select_library" align="center">
-            <label value="&smart.library;" control="smart_library" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label value="&smart.library;" control="smart_library"/>
             <menulist id="smart_library_drop" value="&songbird;">
               <menupopup id="smart_library_popup">
                 <menuitem id="smart_library_songbird" label="&songbird;" value="songbird" />
               </menupopup>
             </menulist>
-            <spacer flex="1" height="20" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer flex="1" height="20"/>           
           </hbox -->
           
           
@@ -114,9 +117,9 @@
                 </menupopup>
               </menulist>       
               <label class="dialog_label" value="&smart.following;"/>
-              <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+              <spacer flex="1"/>           
             </hbox>
-            <spacer height="2" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer height="2"/>
             
             <!-- all the magic, baby -->  
             <!-- eventually we will have to declare different condition types for string, int, date, etc -->
@@ -132,7 +135,7 @@
               
           </vbox>
           
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>  
+          <spacer height="5"/>  
          
           <hbox class="sb_faceplate" align="center">
             <checkbox class="dialog_checkbox" id="smart_songs_check" label="&smart.limit;" checked="false"/>
@@ -147,7 +150,7 @@
               </menupopup>
             </menulist>
             <spacer width="8"/>
-            <label class="dialog_label"  value="Selected by" control="smart_selected_list" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label class="dialog_label"  value="Selected by" control="smart_selected_list"/>
             <menulist id="smart_selected_list" value="&smart.random;">
               <menupopup id="smart_selected_list_popup" >
                 <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />
@@ -165,14 +168,14 @@
                 <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
               </menupopup>
             </menulist>       
-            <spacer flex="1" height="25" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer flex="1" height="25"/>           
           </hbox>
           </vbox><!-- end of grouping -->
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer height="5"/>
           <hbox>
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
+            <spacer flex="1"/>           
             <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <spacer width="5"/>
             <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/> 
           </hbox>
           </vbox>      

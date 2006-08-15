@@ -56,35 +56,61 @@ var offsetScrY = 0;
 function onBkgDown( theEvent, popup ) 
 {
   // Don't allow dragging on nodes that want their own click handling.
-  switch (theEvent.target.nodeName)
+  // This is kinda dumb.  :(
+  switch (theEvent.target.nodeName.toLowerCase())
   {
+    // Songbird Custom Elements
     case "player_seekbar":
     case "player_volume":
+    case "player_repeat":
+    case "player_shuffle":
     case "player_playpause":
     case "player_back":
     case "player_forward":
     case "player_mute":
     case "player_numplaylistitems":
     case "player_scaning":
+    case "dbedit_textbox":
+    case "dbedit_menulist":
+    case "exttrackeditor":
     case "servicetree":
     case "playlist":
     case "search":
-    case "splitter":
     case "smartsplitter":
+    case "sbextensions":
+    case "smart_conditions":
+    case "watch_folders":
     case "clickholdbutton":
-    case "toolbarbutton":
+    // XUL Elements
+    case "splitter":
     case "button":
+    case "toolbarbutton":
+    case "scrollbar":
+    case "slider":
+    case "checkbox":
     case "resizer":
     case "textbox":
+    case "tree":
+    case "listbox":
+    case "listitem":
     case "menu":
+    case "menulist":
     case "menuitem":
     case "menupopup":
     case "menuseparator":
-    case "IMG":
-    case "INPUT":
-    case "BODY":
-    case "HTML":
-    case "DIV":
+    // HTML Elements
+    case "img":
+    case "input":
+    case "body":
+    case "html":
+    case "div":
+    case "a":
+    case "ul":
+    case "ol":
+    case "dl":
+    case "dt":
+    case "dd":
+    case "li":
     case "#text":
       return;
   }

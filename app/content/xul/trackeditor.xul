@@ -43,6 +43,9 @@
  windowtype="track_editor"
  onfocus="onFocus()"
  onblur="onBlur()"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
   
 <windowregion/>

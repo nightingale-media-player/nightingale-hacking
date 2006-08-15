@@ -39,6 +39,9 @@
  buttons="none"
  onload="onLoadJumpToFile();"
  onunload="onUnloadJumpToFile();"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
   
 <stack flex="1">
@@ -80,26 +83,26 @@
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
         
           <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&jumptofile.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>                    
-            <spacer flex="1" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>           
-            <spacer width="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+            <label id="app_title" value="&jumptofile.title;" class="sb_faceplate"/>
+            <spacer width="5"/>                    
+            <spacer flex="1"/>           
+            <spacer width="5"/>
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
 
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer height="5"/>
 
           <hbox>
             <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onFilterKeypress(event);" />
           </hbox>
           
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+          <spacer height="5"/>
 
           <hbox flex="1">
             <playlist class="dialog_playlist" id="jumpto.playlist" flex="1" onkeypress="onListKeypress(event);" />
           </hbox>
 
-          <spacer height="5" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/> 
+          <spacer height="5"/> 
 
         </vbox>      
       
