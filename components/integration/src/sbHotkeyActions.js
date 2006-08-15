@@ -36,12 +36,6 @@ HotkeyActions.prototype.constructor = HotkeyActions;
 
 HotkeyActions.prototype = {
   
-  LOG: function(str) {
-    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage(str);
-  },
-
   registerHotkeyActionBundle: function (bundle) {
     this._bundles.push(bundle);
   },
