@@ -68,8 +68,6 @@
 
      <constructor>
        <![CDATA[
-         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-         jsLoader.loadSubScript( "chrome://songbird/content/scripts/instancetimer.js", this );
          this.boxid = "growbox."+this.getAttribute("id");
          this.size = this.getContentSize();
          this.hflex = document.getElementById(this.getAttribute("hflex"));
@@ -141,11 +139,9 @@
               this.anim_complete = this.onGrowComplete;
               
               // Start our animation loop
-              var animationcallback = { 
-                _that: null, 
-                handleEvent: function( event ) { this._that.animationCallback(); } 
-              } animationcallback._that = this;
-              this.interval = this.instanceTimer.setInterval( animationcallback, 0 );
+              var controller = this;
+              var callback = function() { controller.animationCallback(); };
+              this.interval = setInterval(callback, 0); 
             }
           }
           catch ( err )
@@ -194,11 +190,9 @@
               this.anim_complete = this.onShrinkComplete;
               
               // Start our animation loop
-              var animationcallback = { 
-                _that: null, 
-                handleEvent: function( event ) { this._that.animationCallback(); } 
-              } animationcallback._that = this;
-              this.interval = this.instanceTimer.setInterval( animationcallback, 0 ); // as fast as possible for a quarter second
+              var controller = this;
+              var callback = function() { controller.animationCallback(); };
+              this.interval = setInterval(callback, 0); 
               }
           }
           catch ( err )
@@ -240,12 +234,12 @@
                 this.tracking = false;
                 this.distance = 0;
                 this.current = 0;
-                this.instanceTimer.clearInterval( this.interval );
+                clearInterval( this.interval );
               }
             }
             else
             {
-              this.instanceTimer.clearInterval( this.interval );
+              clearInterval( this.interval );
             }
           }
           catch ( err )
