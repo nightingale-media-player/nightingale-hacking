@@ -50,6 +50,9 @@
           oncommand="onSearchServiceMenu(event.target);"
         >
           <xul:menupopup id="search.popup">
+            <xul:menuitem id="search.popup.elbows" 
+              label="elbo.ws" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/elbows.ico"
+            />
             <xul:menuitem id="search.popup.songbird" sid="search.item.songbird"
               label="Library" class="menuitem-iconic" image="chrome://songbird/skin/default/icon_lib_16x16.png"
             />
@@ -76,7 +79,7 @@
             />
             <xul:menuitem id="search.popup.radiotime" 
               label="Radiotime" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/radiotime.ico"
-            />
+            />          
           </xul:menupopup>
         </xul:button>
          

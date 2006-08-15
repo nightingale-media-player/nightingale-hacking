@@ -106,6 +106,9 @@
                 <xul:menupopup id="playlist.popup.search">
                   <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
                   <xul:menuseparator/>
+                  <xul:menuitem id="search.popup.elbows" 
+                    label="elbo.ws" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/elbows.ico"
+                />
                   <xul:menuitem id="search.popup.google" 
                     label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
                 />

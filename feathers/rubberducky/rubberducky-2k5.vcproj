@@ -886,6 +886,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\skin\serviceicons\elbows.ico"
+					>
+				</File>
+				<File
 					RelativePath=".\skin\serviceicons\emusic.ico"
 					>
 				</File>
