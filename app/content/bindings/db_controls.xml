@@ -69,7 +69,7 @@
 
     <property name="readonly">
       <getter>
-        return this.getAttribute("readonly");;
+        return this.getAttribute("readonly");
       </getter>
       <setter>
         this.setAttribute("readonly", val);
@@ -79,7 +79,7 @@
 
     <property name="column">
       <getter>
-        return this.getAttribute("column");;
+        return this.getAttribute("column");
       </getter>
       <setter>
         this.setAttribute("column", val);
