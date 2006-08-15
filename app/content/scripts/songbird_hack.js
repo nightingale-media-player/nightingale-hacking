@@ -599,6 +599,7 @@ function SBScanServiceTreeNewEntryCallback()
     // Right now, only songbird playlists are editable.
     if ( ( ! found ) && ( url.indexOf( ",songbird" ) != -1 ) )
     {
+/*    
       // This must be the new one?
       theServiceTree_tree.view.selection.currentIndex = i;
       
@@ -606,8 +607,8 @@ function SBScanServiceTreeNewEntryCallback()
       theServiceTree_tree.newPlaylistCreated = true;
       theServiceTree_tree.view.selection.select( i );
       theServiceTree_tree.newPlaylistCreated = false;
-      
-      onServiceEdit();
+*/      
+      onServiceEdit(i);
       done = true;
       break;
     }
@@ -618,7 +619,7 @@ function SBScanServiceTreeNewEntryCallback()
   }
 }
 
-function onServiceEdit()
+function onServiceEdit( index )
 {
   try
   {
@@ -626,26 +627,28 @@ function onServiceEdit()
     if ( theServiceTree)
     {
       var theServiceTree_tree = theServiceTree.tree;
-      if ( theServiceTree_tree && theServiceTree_tree.currentIndex > -1 )
+      if ( index == null ) // Optionally specify which index to edit.
+        index = theServiceTree_tree.currentIndex;
+      if ( theServiceTree_tree && ( index > -1 ) )
       {
         var column = theServiceTree_tree.columns ? theServiceTree_tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
-        var cell_text = theServiceTree_tree.view.getCellText( theServiceTree_tree.currentIndex, column );
+        var cell_text = theServiceTree_tree.view.getCellText( index, column );
 
         // This is nuts!
         var text_x = {}, text_y = {}, text_w = {}, text_h = {}; 
-        theServiceTree_tree.treeBoxObject.getCoordsForCellItem( theServiceTree_tree.currentIndex, column, "text",
-                                                            text_x , text_y , text_w , text_h );
+        theServiceTree_tree.treeBoxObject.
+          getCoordsForCellItem( index, column, "text", text_x, text_y , text_w , text_h );
         var cell_x = {}, cell_y = {}, cell_w = {}, cell_h = {}; 
-        theServiceTree_tree.treeBoxObject.getCoordsForCellItem( theServiceTree_tree.currentIndex, column, "cell",
-                                                            cell_x , cell_y , cell_w , cell_h );
+        theServiceTree_tree.treeBoxObject.
+          getCoordsForCellItem( index, column, "cell", cell_x, cell_y , cell_w , cell_h );
         var image_x = {}, image_y = {}, image_w = {}, image_h = {}; 
-        theServiceTree_tree.treeBoxObject.getCoordsForCellItem( theServiceTree_tree.currentIndex, column, "image",
-                                                            image_x , image_y , image_w , image_h );
+        theServiceTree_tree.treeBoxObject.
+          getCoordsForCellItem( index, column, "image", image_x, image_y , image_w , image_h );
         var twisty_x = {}, twisty_y = {}, twisty_w = {}, twisty_h = {}; 
-        theServiceTree_tree.treeBoxObject.getCoordsForCellItem( theServiceTree_tree.currentIndex, column, "twisty",
-                                                            twisty_x , twisty_y , twisty_w , twisty_h );
+        theServiceTree_tree.treeBoxObject.
+          getCoordsForCellItem( index, column, "twisty", twisty_x, twisty_y , twisty_w , twisty_h );
+          
         var out_x = {}, out_y = {}, out_w = {}, out_h = {};
-        
         out_x = text_x;
         out_y = cell_y;
         out_w.value = cell_w.value - twisty_w.value - image_w.value;
@@ -664,6 +667,7 @@ function onServiceEdit()
         theEditPopup.showPopup( theServiceTree_tree, pos_x, pos_y, "popup" );
         theEditPopup.sizeTo( out_w.value - less_w, out_h.value - less_h ); // increase the width to the size of the cell.
         theEditBox.value = cell_text;
+        theEditBox.index = index;
         theEditBox.focus();
         theEditBox.select();
         isServiceEditShowing = true;
@@ -688,9 +692,9 @@ function onServiceEditChange( evt )
       {
         var theEditBox = document.getElementById( "service_edit" );
 
-        var element = theServiceTree_tree.contentView.getItemAtIndex( theServiceTree_tree.currentIndex );
+        var element = theServiceTree_tree.contentView.getItemAtIndex( theEditBox.index );
         var properties = element.getAttribute( "properties" ).split(" ");
-        if ( properties.length >= 5 )
+        if ( properties.length >= 5 && properties[0] == "playlist" )
         {
           var table = properties[ 1 ];
           var guid = properties[ 2 ];
