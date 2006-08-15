@@ -88,7 +88,7 @@ function onBkgDown( theEvent, popup )
     case "#text":
       return;
   }
-  alert(theEvent.target.nodeName);
+//  alert(theEvent.target.nodeName);
   try
   {
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
