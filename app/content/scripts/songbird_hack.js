@@ -2977,32 +2977,34 @@ var SBDownloadCommands =
 
 }
 
-
-// Register the download commands at startup if we know what the download table is.
-var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
-                                getService(Components.interfaces.sbIDeviceManager);
-
-if (deviceManager)
+try
 {
-  var downloadCategory = 'Songbird Download Device';
-  if (deviceManager.hasDeviceForCategory(downloadCategory))
+  // Register the download commands at startup if we know what the download table is.
+  var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
+                                  getService(Components.interfaces.sbIDeviceManager);
+
+  if (deviceManager)
   {
-    var downloadDevice =
-      deviceManager.getDeviceByCategory(downloadCategory);
-    SBDownloadCommands.m_Device = downloadDevice;
-    var guid = downloadDevice.getContext('');
-    var table = "download"; // downloadDevice.GetTransferTableName('');
-    var source = new sbIPlaylistsource();
-    try
+    var downloadCategory = 'Songbird Download Device';
+    if (deviceManager.hasDeviceForCategory(downloadCategory))
     {
-      source.registerPlaylistCommands( guid, table, "download", SBDownloadCommands );
-    }
-    catch ( err )
-    {
-      alert( "source.registerPlaylistCommands( " + guid+ ", " + table+ " );\r\n" + err )
+      var downloadDevice =
+        deviceManager.getDeviceByCategory(downloadCategory);
+      SBDownloadCommands.m_Device = downloadDevice;
+      var guid = downloadDevice.getContext('');
+      var table = "download"; // downloadDevice.GetTransferTableName('');
+      var source = new sbIPlaylistsource();
+      try
+      {
+        source.registerPlaylistCommands( guid, table, "download", SBDownloadCommands );
+      }
+      catch ( err )
+      {
+        alert( "source.registerPlaylistCommands( " + guid+ ", " + table+ " );\r\n" + err )
+      }
     }
   }
-}
+} catch(e) {}
 
 
 var SBCDCommands = 
