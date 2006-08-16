@@ -9,6 +9,7 @@ interface sbIGStreamerSimple : nsISupports
   attribute double volume;
   readonly attribute unsigned long long position;
   readonly attribute boolean isPlaying;
+  readonly attribute boolean isPaused;
   readonly attribute unsigned long long streamLength;
   readonly attribute boolean isAtEndOfStream;
 

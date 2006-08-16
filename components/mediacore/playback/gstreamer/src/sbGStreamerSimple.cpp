@@ -8,6 +8,12 @@
 #include "nsIDOMAbstractView.h"
 #include "nsIDocShellTreeItem.h"
 #include "nsIDocShellTreeOwner.h"
+#include "nsIDOMEventTarget.h"
+#include "nsIDOMEvent.h"
+#include "nsIDOMEventListener.h"
+#include "nsIDOMWindow.h"
+#include "nsIDocument.h"
+#include "nsIScriptGlobalObject.h"
 #include "nsIBaseWindow.h"
 #include "nsIWidget.h"
 #include "nsIBoxObject.h"
@@ -21,7 +27,7 @@ extern PRLogModuleInfo* gGStreamerLog;
 #define LOG(args)
 #endif
 
-NS_IMPL_ISUPPORTS1(sbGStreamerSimple, sbIGStreamerSimple)
+NS_IMPL_ISUPPORTS2(sbGStreamerSimple, sbIGStreamerSimple, nsIDOMEventListener)
 
 static GstBusSyncReply
 syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
@@ -30,13 +36,29 @@ syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
   return gsts->SyncHandler(bus, message);
 }
 
+static void
+streamInfoSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+{
+  gsts->StreamInfoSet(obj, pspec);
+}
+
+static void
+capsSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+{
+  gsts->CapsSet(obj, pspec);
+}
+
 sbGStreamerSimple::sbGStreamerSimple() :
   mInitialized(PR_FALSE),
   mPlay(NULL),
   mBus(NULL),
+  mPixelAspectRatioN(1),
+  mPixelAspectRatioD(1),
   mVideoSink(NULL),
   mGdkWin(NULL),
-  mIsAtEndOfStream(PR_TRUE)
+  mIsAtEndOfStream(PR_TRUE),
+  mVideoOutputElement(nsnull),
+  mDomWindow(nsnull)
 {
 }
 
@@ -49,6 +71,9 @@ sbGStreamerSimple::~sbGStreamerSimple()
   }
 
   // Do i need to close the video window?
+
+  mDomWindow = nsnull;
+  mVideoOutputElement = nsnull;
 }
 
 NS_IMETHODIMP
@@ -86,49 +111,57 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   rv = docShellTreeItem->GetTreeOwner(getter_AddRefs(docShellTreeOwner));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIBaseWindow> baseWindow(do_QueryInterface(docShellTreeOwner));
-  NS_ENSURE_TRUE(docShellTreeItem, NS_NOINTERFACE);
+  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(docShellTreeOwner);
+  NS_ENSURE_TRUE(baseWindow, NS_NOINTERFACE);
 
   nsCOMPtr<nsIWidget> widget;
   rv = baseWindow->GetMainWidget(getter_AddRefs(widget));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Attach event listeners
+  nsCOMPtr<nsIDocument> document(do_QueryInterface(domDocument));
+  NS_ENSURE_TRUE(document, NS_NOINTERFACE);
+
+  mDomWindow = do_QueryInterface(document->GetScriptGlobalObject());
+  NS_ENSURE_TRUE(mDomWindow, NS_NOINTERFACE);
+
+  nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(mDomWindow));
+  NS_ENSURE_TRUE(target, NS_NOINTERFACE);
+  target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+  target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+
   GdkWindow* win = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
 
   LOG(("Found native window %x", win));
 
-  PRInt32 x, y;
-  nsCOMPtr<nsIBoxObject> boxObject;
-  aVideoOutput->GetBoxObject(getter_AddRefs(boxObject));
-  boxObject->GetX(&x);
-  boxObject->GetX(&y);
-
   // Create the video window
-  // TODO: get window coords from element's box object
   GdkWindowAttr attributes;
 
   attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.x = x;
-  attributes.y = y;
-  attributes.width = 320;
-  attributes.height = 240;
+  attributes.x = 0;
+  attributes.y = 0;
+  attributes.width = 0;
+  attributes.height = 0;
   attributes.wclass = GDK_INPUT_OUTPUT;
   attributes.event_mask = 0;
 
   mGdkWin = gdk_window_new(win, &attributes, GDK_WA_X | GDK_WA_Y);
   gdk_window_show(mGdkWin);
-
   // Set up the playbin
   mPlay = gst_element_factory_make("playbin", "play");
   GstElement *audioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
   g_object_set(mPlay, "audio-sink", audioSink, NULL);
 
-  // TODO: use gconf video config here
+  // TODO: use gconf video config here?
   mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
   g_object_set(mPlay, "video-sink", mVideoSink, NULL);
 
   mBus = gst_element_get_bus(mPlay);
   gst_bus_set_sync_handler(mBus, &syncHandlerHelper, this);
+
+  // This signal lets us get info about the stream
+  g_signal_connect(mPlay, "notify::stream-info",
+    G_CALLBACK(streamInfoSetHelper), this);
 
   mInitialized = PR_TRUE;
 
@@ -242,6 +275,27 @@ sbGStreamerSimple::GetIsPlaying(PRBool* aIsPlaying)
 }
 
 NS_IMETHODIMP
+sbGStreamerSimple::GetIsPaused(PRBool* aIsPaused)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  GstState cur, pending;
+
+  gst_element_get_state(mPlay, &cur, &pending, 0);
+
+  if(cur == GST_STATE_PAUSED || pending == GST_STATE_PAUSED) {
+    *aIsPaused = PR_TRUE;
+  }
+  else {
+    *aIsPaused = PR_FALSE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerSimple::GetStreamLength(PRUint64* aStreamLength)
 {
   if(!mInitialized) {
@@ -334,6 +388,62 @@ sbGStreamerSimple::Seek(PRUint64 aTimeNanos)
   return NS_OK;
 }
 
+// nsIDOMEventListener
+NS_IMETHODIMP
+sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
+{
+  nsAutoString eventType;
+  aEvent->GetType(eventType);
+
+  if(eventType.EqualsLiteral("unload")) {
+    nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(mDomWindow));
+    NS_ENSURE_TRUE(target, NS_NOINTERFACE);
+    target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+    target->RemoveEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+  }
+  else {
+    return Resize();
+  }
+
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::Resize()
+{
+  PRInt32 x, y, width, height;
+  nsCOMPtr<nsIBoxObject> boxObject;
+  mVideoOutputElement->GetBoxObject(getter_AddRefs(boxObject));
+  boxObject->GetX(&x);
+  boxObject->GetY(&y);
+  boxObject->GetWidth(&width);
+  boxObject->GetHeight(&height);
+
+  PRInt32 newX, newY, newWidth, newHeight;
+
+  if(mVideoWidth > 0 && mVideoHeight > 0) {
+
+    float ratioWidth  = (float) width  / (float) mVideoWidth;
+    float ratioHeight = (float) height / (float) mVideoHeight;
+    if(ratioWidth < ratioHeight) {
+      newWidth  = PRInt32(mVideoWidth  * ratioWidth);
+      newHeight = PRInt32(mVideoHeight * ratioWidth);
+      newX = x;
+      newY = ((height - newHeight) / 2) + y;
+    }
+    else {
+      newWidth  = PRInt32(mVideoWidth  * ratioHeight);
+      newHeight = PRInt32(mVideoHeight * ratioHeight);
+      newX = ((width - newWidth) / 2) + x;
+      newY = y;
+    }
+
+    gdk_window_move_resize(mGdkWin, newX, newY, newWidth, newHeight);
+  }
+
+  return NS_OK;
+}
+
+// Callbacks
 GstBusSyncReply
 sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 {
@@ -350,6 +460,9 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       LOG(("Error message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
 
       g_free (debug);
+
+      mIsAtEndOfStream = PR_TRUE;
+
       break;
     }
     case GST_MESSAGE_WARNING: {
@@ -430,5 +543,75 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
   //gst_message_unref(message); XXX: Do i need to unref this?
 
   return GST_BUS_PASS;
+}
+
+void
+sbGStreamerSimple::StreamInfoSet(GObject* obj, GParamSpec* pspec)
+{
+  GList *streaminfo = NULL;
+  GstPad *videopad = NULL;
+
+  g_object_get (mPlay, "stream-info", &streaminfo, NULL);
+  streaminfo = g_list_copy(streaminfo);
+  g_list_foreach (streaminfo, (GFunc) g_object_ref, NULL);
+  for( ; streaminfo != NULL; streaminfo = streaminfo->next) {
+    GObject *info = (GObject*) streaminfo->data;
+    gint type;
+    GParamSpec *pspec;
+    GEnumValue *val;
+
+    if(!info) {
+      continue;
+    }
+
+    g_object_get (info, "type", &type, NULL);
+    pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (info), "type");
+    val = g_enum_get_value (G_PARAM_SPEC_ENUM (pspec)->enum_class, type);
+
+    if(!g_strcasecmp (val->value_nick, "video")) {
+      if (!videopad) {
+        g_object_get(info, "object", &videopad, NULL);
+      }
+    }
+  }
+
+  if(videopad) {
+    GstCaps *caps;
+
+    if((caps = gst_pad_get_negotiated_caps(videopad))) {
+      CapsSet(G_OBJECT(videopad), NULL);
+      gst_caps_unref(caps);
+    }
+    g_signal_connect(videopad, "notify::caps", G_CALLBACK(capsSetHelper), this);
+  }
+
+  g_list_foreach (streaminfo, (GFunc) g_object_unref, NULL);
+  g_list_free (streaminfo);
+}
+
+void
+sbGStreamerSimple::CapsSet(GObject* obj, GParamSpec* pspec)
+{
+  GstPad *pad = GST_PAD(obj);
+  GstStructure *s;
+  GstCaps *caps;
+
+  if(!(caps = gst_pad_get_negotiated_caps(pad))) {
+    return;
+  }
+
+  s = gst_caps_get_structure(caps, 0);
+  if(s) {
+    gst_structure_get_int(s, "width", &mVideoWidth);
+    gst_structure_get_int(s, "height", &mVideoHeight);
+
+    const GValue* par = gst_structure_get_value(s, "pixel-aspect-ratio");
+    mPixelAspectRatioN = gst_value_get_fraction_numerator(par);
+    mPixelAspectRatioD = gst_value_get_fraction_denominator(par);
+
+    Resize();
+  }
+
+  gst_caps_unref(caps);
 }
 

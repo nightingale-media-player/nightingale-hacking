@@ -64,7 +64,7 @@ CoreGStreamerSimple.prototype.playURL = function ( aURL )
 
   try
   {
-    if(this._object.isPlaying)
+    if(this._object.isPlaying || this._object.isPaused)
     {
       this._object.stop();
     }
@@ -302,7 +302,7 @@ function CoreGStreamerSimpleDocumentInit( id )
     var videoElement = document.getElementById( id );
     gGStreamerSimpleCore.setId("GStreamerSimple1");
     var gstSimple = Components.classes["@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1"]
-                              .getService(Components.interfaces.sbIGStreamerSimple);
+                              .createInstance(Components.interfaces.sbIGStreamerSimple);
     gstSimple.init(videoElement);
     gGStreamerSimpleCore.setObject(gstSimple);
     gPPS.addCore(gGStreamerSimpleCore, true);
