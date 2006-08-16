@@ -1013,6 +1013,8 @@ function onBrowserBookmark()
 var SBWebPlaylistCommands = 
 {
   m_Playlist: null,
+  
+  m_Query: null,
 
   m_Ids: new Array
   (
@@ -1105,11 +1107,42 @@ var SBWebPlaylistCommands =
 
   getCommandEnabled: function( index )
   {
+    // First time, make a query to be able to check for the existence of the 
+    // download playlist
+    if ( this.m_Query == null )
+    {
+      // Find the guid and table for the download playlist.
+      var guid = "downloadDB";
+      var table = "download";
+      var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
+                                      getService(Components.interfaces.sbIDeviceManager);
+      if (deviceManager)
+      {
+        var downloadCategory = 'Songbird Download Device';
+        if (deviceManager.hasDeviceForCategory(downloadCategory))
+        {
+          var downloadDevice =
+            deviceManager.getDeviceByCategory(downloadCategory);
+          SBDownloadCommands.m_Device = downloadDevice;
+          guid = downloadDevice.getContext('');
+          table = downloadDevice.getDownloadTable('');
+        }
+      }
+      
+      // Setup a query to execute to test the existence of the table
+      this.m_Query = new sbIDatabaseQuery();
+      this.m_Query.setDatabaseGUID(guid);
+      this.m_Query.addQuery("select * from " + table + " limit 1");
+    }
+  
     var retval = false;
     switch ( this.m_Ids[index] )
     {
       case "library_cmd_device":
         retval = false; // not yet implemented
+      break;
+      case "library_cmd_showdlplaylist":
+        retval = this.m_Query.execute() == 0;
       break;
       default:
         retval = true;
