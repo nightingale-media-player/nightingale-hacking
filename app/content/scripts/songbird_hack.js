@@ -2256,7 +2256,7 @@ function SBMiniplayerOpen()
   } catch (err) {}
 
   // Open the window
-  window.open( miniwin, "", "chrome,modal=no,toolbar=no,popup=yes,titlebar=no,resizable=no" );
+  window.open( miniwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no,alwaysRaised" );
   onExit();
 }
 

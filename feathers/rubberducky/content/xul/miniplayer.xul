@@ -47,7 +47,7 @@
  ondragover="nsDragAndDrop.dragOver( event, SBMiniDropObserver );"
  ondragdrop="nsDragAndDrop.drop( event, SBMiniDropObserver );"
  ondblclick="SBMainWindowOpen( );"
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ ondraggesture="onBkgDown( event, false ); // Handle the window drag at the top level // true if we're a popup, else false" 
  onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
   <!-- Load the Mozilla helpers -->
