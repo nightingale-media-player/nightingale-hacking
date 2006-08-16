@@ -26,16 +26,107 @@
 
 #include "nsISupports.idl"
 
+#include "nsIProgressEventSink.idl"
+#include "nsIPrompt.idl"
+#include "nsIAuthPrompt.idl"
+
+[scriptable, uuid(3FE9E285-F0F8-4154-9C21-8B6E4B8EFA93)]
+interface sbIPlaylistWriterListener : nsIProgressEventSink
+{
+};
+
 [scriptable, uuid(27B68B9B-E471-4367-B159-63B65C581847)]
 interface sbIPlaylistWriter : nsISupports
 {
-  PRBool Write(in AString strPlaylist, in AString strOutURL, in PRBool bReplace, out PRInt32 errorCode);
-  PRInt32 Vote(in AString strURL);
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRBool write(in AString aGUID, 
+               in AString aDestTable, 
+               in PRBool aReplace, 
+               out PRInt32 aErrorCode);
 
-  AString Name();
-  AString Description();
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 vote(in AString aURL);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  AString name();
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  AString description();
   
-  void SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
-  void SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void supportedMIMETypes(out PRUint32 aMIMECount, 
+    [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
 
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void supportedFileExtensions(out PRUint32 aExtCount, 
+    [array, size_is (aExtCount), retval] out wstring aExts);
+};
+
+/**
+ * \interface sbIPlaylistReaderManager 
+ * \brief
+ *
+ * \sa sbIPlaylistReader, sbIPlaylistReaderListener
+ */
+[scriptable, uuid(CB6A505E-D8CB-4711-A50F-38439561C6D0)]
+interface sbIPlaylistWriterManager : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 write(in AString aGUID, 
+    in AString aName, 
+    in AString aOutputContentType,
+    in sbIPlaylistWriterListener aWriterListener);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void supportedMIMETypes(out PRUint32 aMIMECount, 
+    [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  void supportedFileExtensions(out PRUint32 aExtCount, 
+    [array, size_is (aExtCount), retval] out wstring aExts);
 };

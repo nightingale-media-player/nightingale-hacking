@@ -580,6 +580,25 @@ copy /y $(InputPath) $(SolutionDir)dist\scripts\$(InputFileName)
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\sbPlaylistWriterManager.js">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)
+"
+						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\src\sbSimplePlaylist.js">
 				<FileConfiguration
 					Name="Debug|Win32">

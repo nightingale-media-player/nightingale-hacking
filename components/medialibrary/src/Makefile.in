@@ -92,6 +92,7 @@ SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistModule.js \
                       $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistManager.js \
                       $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistReader*.js \
+                      $(COMPONENTS_DIR)/medialibrary/src/sbPlaylistWriter*.js \
                       $(COMPONENTS_DIR)/medialibrary/src/sbSimplePlaylist.js \
                       $(NULL)
                       

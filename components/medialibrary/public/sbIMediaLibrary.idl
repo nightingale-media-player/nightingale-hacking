@@ -293,13 +293,15 @@ function GetColumnNames(aLibrary) {
    * \sa addColumn, deleteColumn, getColumnInfo, getMetadataColumns, setColumnInfo
    */
   /*deleteMetadataField*/
-/* This doesn't exist
+  /* This doesn't exist
   PRBool deleteMetadataColumn(in AString columnName, 
     in PRBool willRunQueryLater); /**/
 
   /*
-  PRBool AddTagByIndex()
+  PRBool AddTagByIndex();
   PRBool AddTagByGUID();
+
+
 
   PRBool DeleteTag
   GetUniqueTags();
