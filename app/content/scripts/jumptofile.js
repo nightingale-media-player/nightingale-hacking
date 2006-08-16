@@ -133,6 +133,8 @@ try
  
   var jumpto_ref;
   var source_ref;
+  var source_guid;
+  var source_table;
   var editIdleInterval;
   
   function onLoadJumpToFile() {
@@ -159,8 +161,8 @@ try
         table = "library";
       }
     }
-    _selectPlaylist( guid, table );
     _setPlaylist( guid, table );
+    _selectPlaylist( guid, table );
   }
 
   function onPlaylistlistSelect( evt ) {
@@ -170,25 +172,51 @@ try
     if (table == "") table = "library";
     _setPlaylist( guid, table );
   }
+
+  var JumpToPlaylistListListener =
+  {
+    junk: "stuff",
   
+    didRebuild: function ( builder ) {
+      var menulist = document.getElementById("playable_list");
+      var menupopup = menulist.menupopup;
+      for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
+        var value = item.getAttribute("value");
+        var label = item.getAttribute("label");
+        if ( value.length > 0 )
+        {
+          var item_guid = item.getAttribute("guid");
+          if (item_guid == "") item_guid = "songbird";
+          var item_table = item.getAttribute("table");
+          if (item_table == "") item_table = "library";
+          
+          if ( source_guid == item_guid && source_table == item_table ) {
+            menulist.selectedItem = item;
+            menulist.setAttribute( "value", value );
+            menulist.setAttribute( "label", label );
+            break;
+          }
+        }
+      }
+    },
+    
+    willRebuild: function ( builder ) {
+    },
+    
+	  QueryInterface: function(iid) {
+      if (!iid.equals(Components.interfaces.nsIXULBuilderListener) &&
+          !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
+          !iid.equals(Components.interfaces.nsISupports)) {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+		  return this;
+	  }    
+  }
+
   function _selectPlaylist( guid, table ) {
     var menulist = document.getElementById("playable_list");
-    var menupopup = menulist.menupopup;
-    for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
-      var item_guid = item.getAttribute("guid");
-      if (item_guid == "") item_guid = "songbird";
-      var item_table = item.getAttribute("table");
-      if (item_table == "") item_table = "library";
-
-      
-      if ( guid == item_guid && table == item_table ) {
-        alert( guid + " - " + table + " - " + item_guid + " - " + item_table );
-        menulist.selectedIndex = i;
-        menulist.selectedItem = item;
-        menulist.value = item.getAttribute("value");
-        break;
-      }
-    }
+    menulist.menupopup.builder.addListener( JumpToPlaylistListListener );
+    JumpToPlaylistListListener.didRebuild();
   }
   
   function _setPlaylist( guid, table ) {
@@ -203,6 +231,8 @@ try
     playlist.addEventListener("playlist-play", onJumpToPlay, false);
     playlist.addEventListener("playlist-esc", onExit, false);
     _applyFilter();
+    source_guid = guid;
+    source_table = table;
   }
   
   // for the playlist 

@@ -92,7 +92,13 @@
 
           <spacer height="5"/>
 
-          <menulist id="playable_list" oncommand="onPlaylistlistSelect(event)" x_onmousedown="eatEvent(event);" x_onmouseup="eatEvent(event);">
+          <menulist id="playable_list" 
+            value="1" 
+            label="poo" 
+            x_editable="false" 
+            oncommand="onPlaylistlistSelect(event)" 
+            onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
+          >
             <menupopup 
               datasources="rdf:Servicesource" 
               ref="NC:ServicesourcePlayable"
