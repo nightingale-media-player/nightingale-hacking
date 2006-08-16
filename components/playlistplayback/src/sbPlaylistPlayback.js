@@ -1236,7 +1236,13 @@ PlaylistPlayback.prototype = {
   _onPollMetadata: function ( len_ms, pos_ms, core )
   {
     // Wait a bit, and then only ask infrequently
-    if ( this._set_metadata || ( ( pos_ms > 250 ) && ( ( this._metadataPollCount++ % 20 ) == 0 ) ) ) {
+    if ( 
+      ( pos_ms > 250 ) && // If we've gone more than a quarter of a second, AND
+      ( 
+        ( ( this._metadataPollCount++ % 20 ) == 0 ) || // We skip 20 times, OR
+        ( this._set_metadata ) // Someone says we're supposed to be setting metadata now.
+      )
+    ) {
       // Ask, and ye shall receive
       var title = "" + core.getMetadata("title");
       var album = "" + core.getMetadata("album");
