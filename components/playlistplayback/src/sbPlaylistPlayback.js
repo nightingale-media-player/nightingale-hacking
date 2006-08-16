@@ -1164,7 +1164,10 @@ PlaylistPlayback.prototype = {
              " ref: " + this._playingRef + "\n" );
         this._once = true;
       }
-        
+
+      // If we miscalculated the length of the track too short, string it out.        
+      if ( pos > len )
+        len = pos;
       // When the length changes, always set metadata.
       if ( this._metadataLen.intValue != len ) 
         this._set_metadata = true; 
@@ -1233,7 +1236,7 @@ PlaylistPlayback.prototype = {
   _onPollMetadata: function ( len_ms, pos_ms, core )
   {
     // Wait a bit, and then only ask infrequently
-    if ( ( pos_ms > 250 ) && ( ( this._metadataPollCount++ % 20 ) == 0 ) ) {
+    if ( this._set_metadata || ( ( pos_ms > 250 ) && ( ( this._metadataPollCount++ % 20 ) == 0 ) ) ) {
       // Ask, and ye shall receive
       var title = "" + core.getMetadata("title");
       var album = "" + core.getMetadata("album");
