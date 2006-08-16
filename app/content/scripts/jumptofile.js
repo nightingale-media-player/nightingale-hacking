@@ -159,6 +159,39 @@ try
         table = "library";
       }
     }
+    _selectPlaylist( guid, table );
+    _setPlaylist( guid, table );
+  }
+
+  function onPlaylistlistSelect( evt ) {
+    var guid = evt.target.getAttribute("guid");
+    if (guid == "") guid = "songbird";
+    var table = evt.target.getAttribute("table");
+    if (table == "") table = "library";
+    _setPlaylist( guid, table );
+  }
+  
+  function _selectPlaylist( guid, table ) {
+    var menulist = document.getElementById("playable_list");
+    var menupopup = menulist.menupopup;
+    for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
+      var item_guid = item.getAttribute("guid");
+      if (item_guid == "") item_guid = "songbird";
+      var item_table = item.getAttribute("table");
+      if (item_table == "") item_table = "library";
+
+      
+      if ( guid == item_guid && table == item_table ) {
+        alert( guid + " - " + table + " - " + item_guid + " - " + item_table );
+        menulist.selectedIndex = i;
+        menulist.selectedItem = item;
+        menulist.value = item.getAttribute("value");
+        break;
+      }
+    }
+  }
+  
+  function _setPlaylist( guid, table ) {
     var playlist = document.getElementById("jumpto.playlist");
     playlist.tree.setAttribute("seltype", "single");
     playlist.forcedcommands = SBEmptyPlaylistCommands;

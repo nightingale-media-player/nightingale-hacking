@@ -247,6 +247,8 @@ void CServicesource::Init(void)
         &kNC_Servicesource);
       gRDFService->GetResource(NS_LITERAL_CSTRING("NC:ServicesourceFlat"),
         &kNC_ServicesourceFlat);
+      gRDFService->GetResource(NS_LITERAL_CSTRING("NC:ServicesourcePlayable"),
+        &kNC_ServicesourcePlayable);
       gRDFService->GetResource(NS_LITERAL_CSTRING(NC_NAMESPACE_URI  "Label"),
         &kNC_Label);
       gRDFService->GetResource(NS_LITERAL_CSTRING(NC_NAMESPACE_URI  "Icon"),
@@ -257,6 +259,10 @@ void CServicesource::Init(void)
         &kNC_Properties);
       gRDFService->GetResource(NS_LITERAL_CSTRING(NC_NAMESPACE_URI  "Open"),
         &kNC_Open);
+      gRDFService->GetResource(NS_LITERAL_CSTRING(NC_NAMESPACE_URI  "DBGUID"),
+        &kNC_DBGUID);
+      gRDFService->GetResource(NS_LITERAL_CSTRING(NC_NAMESPACE_URI  "DBTable"),
+        &kNC_DBTable);
 
       int i,j;
       for ( i = 0; i < NUM_PARENTS; i++ )
@@ -327,11 +333,14 @@ void CServicesource::DeInit (void)
 
       NS_RELEASE(kNC_Servicesource);
       NS_RELEASE(kNC_ServicesourceFlat);
+      NS_RELEASE(kNC_ServicesourcePlayable);
       NS_RELEASE(kNC_Label);
       NS_RELEASE(kNC_Icon);
       NS_RELEASE(kNC_URL);
       NS_RELEASE(kNC_Properties);
       NS_RELEASE(kNC_Open);
+      NS_RELEASE(kNC_DBGUID);
+      NS_RELEASE(kNC_DBTable);
       int i,j;
       for ( i = 0; i < NUM_PARENTS; i++ )
       {
@@ -536,6 +545,18 @@ CServicesource::GetTarget(nsIRDFResource *source,
       {
 //        outstring = NS_LITERAL_STRING("false"); // no!
       }
+      else if (property == kNC_DBGUID)
+      {
+        nsAutoString data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
+        outstring = data;
+      }
+      else if (property == kNC_DBTable)
+      {
+        nsAutoString data;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
+        outstring = data;
+      }
     }
   }
 
@@ -661,6 +682,37 @@ CServicesource::GetTargets(nsIRDFResource *source,
           }
         }
       }
+      return NS_NewArrayEnumerator(targets, nextItemArray);
+    }
+  }
+  if (source == kNC_ServicesourcePlayable)
+  {
+    if (property == kNC_child)
+    {
+      nsresult rv = NS_OK;
+      *targets = NULL;
+
+      // Make the array to hold our response
+      nsCOMArray<nsIRDFResource> nextItemArray;
+
+      nextItemArray.AppendObject( kNC_Parent[ nPlaylistsInsert ] );
+
+      sbIDatabaseResult *resultset;
+      m_PlaylistsQuery->GetResultObject( &resultset );
+      PRInt32 num_rows;
+      resultset->GetRowCount( &num_rows );
+
+      for( PRInt32 j = 0; j < num_rows; j++ )
+      {
+        // Create a new resource for this item
+        nsIRDFResource *next_resource;
+        gRDFService->GetAnonymousResource( &next_resource );
+        nextItemArray.AppendObject( next_resource );
+        m_PlaylistMap[ next_resource ] = j;
+      }
+
+      resultset->Release();
+
       return NS_NewArrayEnumerator(targets, nextItemArray);
     }
   }

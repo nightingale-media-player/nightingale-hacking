@@ -82,12 +82,15 @@ private:
   // pseudo-constants
   nsIRDFResource       *kNC_Servicesource;
   nsIRDFResource       *kNC_ServicesourceFlat;
+  nsIRDFResource       *kNC_ServicesourcePlayable;
 
   nsIRDFResource       *kNC_Label;
   nsIRDFResource       *kNC_Icon;
   nsIRDFResource       *kNC_URL;
   nsIRDFResource       *kNC_Properties;
   nsIRDFResource       *kNC_Open; // THIS DOESN'T WORK, STOP IMPLEMENTING IT.
+  nsIRDFResource       *kNC_DBGUID;
+  nsIRDFResource       *kNC_DBTable;
 
   // Cheezy hardcoded hierarchy
 #define NUM_PARENTS 2
