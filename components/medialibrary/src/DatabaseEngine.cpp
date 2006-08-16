@@ -273,8 +273,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
 // CLASSES ====================================================================
 //-----------------------------------------------------------------------------
 CDatabaseEngine::CDatabaseEngine()
-: m_QueryProcessorQueueHasItem(PR_FALSE)
-, m_QueryProcessorShouldShutdown(PR_FALSE)
+: m_QueryProcessorShouldShutdown(PR_FALSE)
+, m_QueryProcessorQueueHasItem(PR_FALSE)
 {
   m_pDatabasesLock = PR_NewLock();
   m_pDatabaseLocksLock = PR_NewLock();
@@ -793,7 +793,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     // create |nsDependentString|s wrapping PRUnichar* buffers so we can
     // do fancy things in a platform independent way.
     nsAutoString lowercaseGUID(dbGUID);
-    PRBool bEquals = PR_FALSE;
     {
       // UnicharUtils is not threadsafe, so make sure we don't switch threads here.
       nsAutoLock ccLock(pEngine->m_pCaseConversionLock);

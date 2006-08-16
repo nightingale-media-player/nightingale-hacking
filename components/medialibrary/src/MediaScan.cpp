@@ -475,7 +475,7 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
 
     if(pQuery) {
       pQuery->SetIsScanning(PR_TRUE);
-      PRInt32 nCount = pMediaScan->ScanDirectory(pQuery);
+      pMediaScan->ScanDirectory(pQuery);
       pQuery->SetIsScanning(PR_FALSE);
     }
   }
