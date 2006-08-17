@@ -87,6 +87,7 @@
         </vbox>
         
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
+          <menubar id="trackeditor_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
         
           <hbox id="window_top" class="sb_faceplate" >
             <label id="app_title" value="&trackeditor.title;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
