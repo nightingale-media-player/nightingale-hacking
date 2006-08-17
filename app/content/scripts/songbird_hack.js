@@ -1388,6 +1388,7 @@ function onBrowserPlaylistHide()
 // onHTMLUrlChange
 function onHTMLUrlChange( evt )
 {
+
   var value = evt.target.value;
   if ( value && value.length )
   {
@@ -1413,12 +1414,29 @@ function onHTMLURLFocus (evt)
   var text = url.value;
   url.selectionStart = 0;
   url.selectionEnd = text.length;
+  url.setAttribute("savefocus", text);
+}
+
+function onHTMLURLBlur( evt ) 
+{
+  var url = document.getElementById("browser_url");
+  if ( url.getAttribute("savefocus") != "" )
+  {
+    url.value = url.getAttribute("savefocus");
+    url.setAttribute("savefocus", "");
+  }
 }
 
 function onHTMLUrlKeypress( evt )
 {
   switch ( evt.keyCode )
   {
+    case 27: // Esc
+      var oldval = evt.target.getAttribute("savefocus");
+      onHTMLURLBlur(evt);
+      evt.target.setAttribute("savefocus", oldval);
+      break;
+      
     case 13: // Enter
       evt.target.value = SBTabcompleteService( evt.target.value );
       onHTMLUrlChange( evt );

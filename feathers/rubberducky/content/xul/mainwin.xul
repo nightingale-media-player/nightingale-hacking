@@ -471,7 +471,7 @@
                         <button class="sb_faceplate" disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
                         <hbox class="sb_faceplate" id="browser_url_box" flex="1">
                           <image id="browser_url_image" class="sb_faceplate" src=""/>
-                          <textbox id="browser_url" class="sb_faceplate, mainwin_location" onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" flex="1" onfocus="onHTMLURLFocus( event );"/>
+                          <textbox id="browser_url" class="sb_faceplate, mainwin_location" flex="1" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );" onblur="onHTMLURLBlur( event );"/>
                         </hbox>
                         <!-- SEARCH WIDGET -->
                         <search
