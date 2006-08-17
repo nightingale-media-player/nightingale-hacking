@@ -40,9 +40,6 @@
  ondialogaccept="return doClose('accept');"
  ondialogcancel="return doClose('cancel');"
 >
-  <!-- for SB_LOG() -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
 
   <!-- Astounding complexity! -->
   <browser id="songbird.eula" src="chrome://songbird/content/html/eula.html" flex="1"/>
@@ -53,6 +50,8 @@
   <!-- And intrepid instructions! -->  
   <script>
   <![CDATA[
+    var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+
     function doInit() {
       var dialog = document.documentElement;
       dialog.getButton("accept").setAttribute("label", "I Agree");
@@ -62,9 +61,31 @@
     }
 
     function doClose(ret) {
-      SB_LOG("EULA dialog", "doClose\n");
-      if ( typeof( window.arguments[0] ) != 'undefined' )
-        window.arguments[0].retval = ret;
+      // arg[0] is the eulaData passed in from the call that opened us.
+      var data = window.arguments[0];
+
+      if ( typeof( data ) != 'undefined' ) {
+        data.retval = ret;
+
+        if ( data.retval == "accept" ) {
+          gPrefs.setBoolPref("songbird.eulacheck", true);
+          if ( typeof(data.acceptAction) == "function" ) {
+            retval = data.acceptAction();
+          }
+          else {
+            retval = eval(data.acceptAction);
+          }
+        }
+        else {
+          gPrefs.setBoolPref( "songbird.eulacheck", false );
+          if ( typeof(data.cancelAction) == "function" ) {
+            retval = data.cancelAction();
+          }
+          else {
+            retval = eval(data.cancelAction);
+          }
+        }
+      }
       return true;
     }
     

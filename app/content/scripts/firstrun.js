@@ -180,52 +180,31 @@ function doEULA(aAcceptAction, aCancelAction)
   var retval = false;
   try { 
     // setup the callbacks
-    //eulaData.acceptAction = aAcceptAction;
-    //eulaData.cancelAction = aCancelAction;
+    var eulaData = new Object();
+    eulaData.acceptAction = aAcceptAction;
+    eulaData.cancelAction = aCancelAction;
 
     var eulaCheck;
     try {
       eulaCheck = gPrefs.getBoolPref("songbird.eulacheck");
     } catch (err) { /* prefs throws an exepction if the pref is not there */ }
 
-    var eulaData = new Object();
     if ( !eulaCheck ) {
       window.openDialog( "chrome://songbird/content/xul/eula.xul",
                          "eula",
-                         "chrome,centerscreen,modal=yes,titlebar=yes",
+                         "chrome,centerscreen,modal=no,titlebar=yes",
                          eulaData );
 
-      // EULA dialog sets the retval to accept or cancel
-      if (eulaData.retval == "accept") {
-        gPrefs.setBoolPref("songbird.eulacheck", true);
-        if (typeof(aAcceptAction) == "function") {
-          retval = aAcceptAction();
-        }
-        else {
-          retval = eval(aAcceptAction);
-        }
-      }
-      else { // ret must be "cancel"
-        gPrefs.setBoolPref("songbird.eulacheck", false);
-        if (typeof(aCancelAction) == "function") {
-          retval = aCancelAction();
-        }
-        else {
-          retval = eval(aCancelAction);
-        }
-      }
       // We do not want to open the main window until we know EULA is accepted
-      //return false;
+      return false;
     }
-    else {
-      // Eula has been previously accepted, move along, move along.
-      retval = true;  // if no accept action, just return true
-      if (aAcceptAction) {
-        if (typeof(aAcceptAction) == "function")
-          retval = aAcceptAction();
-        else
-          retval = eval(aAcceptAction);
-      }
+    // Eula has been previously accepted, move along, move along.
+    retval = true;  // if no accept action, just return true
+    if (aAcceptAction) {
+      if (typeof(aAcceptAction) == "function")
+        retval = aAcceptAction();
+      else
+        retval = eval(aAcceptAction);
     }
   } catch (err) {
     SB_LOG("doEula", "" + err);
