@@ -12,7 +12,7 @@ rubberducky.jar:
   feathers/rubberducky/songbird/content/css/mini.css                             (content/css/mini.css)  
   feathers/rubberducky/songbird/content/css/dialog.css                           (content/css/dialog.css)    
   feathers/rubberducky/songbird/content/css/mainwin.css                          (content/css/mainwin.css)
-  feathers/rubberducky/songbird/content/xul/mainwin.xul                          (content/xul/mainwin.xul)
+* feathers/rubberducky/songbird/content/xul/mainwin.xul                          (content/xul/mainwin.xul)
   feathers/rubberducky/songbird/content/xul/miniplayer.xul                       (content/xul/miniplayer.xul)  
   feathers/rubberducky/songbird/skin/dialog_colors.css                           (skin/dialog_colors.css)
   feathers/rubberducky/songbird/skin/mainwin_colors.css                          (skin/mainwin_colors.css)

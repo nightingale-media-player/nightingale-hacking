@@ -127,8 +127,10 @@
                     <menuitem id="menu.preferences" label="&menu.preferences;" class="sb_faceplate" accesskey="&menu.preferences.accesskey;"/>
                     <menuitem id="menu.extensions" label="&menu.extensions;" class="sb_faceplate" accesskey="&menu.extensions.accesskey;"/>
                     <menuitem id="menu.dominspector" label="DOM Inspector" class="sb_faceplate"/>
+#ifndef XP_MACOSX
                     <menuseparator/>
                     <menuitem id="file.exit" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
+#endif
                   </menupopup>
                 </menu>
                 <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
