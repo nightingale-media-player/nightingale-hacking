@@ -28,15 +28,16 @@
 //  sbMessageBox
 //
 
-function sbMessageBox( title, message, wantcancel )
+function sbMessageBox( title, message, wantcancel, notmodal )
 {
   try
   {
+    var modal = ( notmodal == true ) ? "no" : "yes";
     var messagebox_data = new Object();
     messagebox_data.title = title;
     messagebox_data.message = message;
     messagebox_data.wantcancel = wantcancel;
-    window.openDialog( "chrome://songbird/content/xul/messagebox.xul", "messagebox", "chrome,titlebar=yes,resizable=no,modal=yes, centerscreen", messagebox_data );
+    window.openDialog( "chrome://songbird/content/xul/messagebox.xul", "messagebox", "chrome,titlebar=yes,resizable=no,modal="+modal+", centerscreen", messagebox_data );
     return messagebox_data.result;
   }
   catch ( err )
@@ -46,7 +47,7 @@ function sbMessageBox( title, message, wantcancel )
   return 0;
 }
 
-function sbMessageBox_strings(titlestring, msgstring, deftitle, defmsg, wantcancel)
+function sbMessageBox_strings(titlestring, msgstring, deftitle, defmsg, wantcancel, notmodal)
 {
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
   var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
@@ -56,6 +57,6 @@ function sbMessageBox_strings(titlestring, msgstring, deftitle, defmsg, wantcanc
     msg = songbirdStrings.GetStringFromName(msgstring);
     title = songbirdStrings.GetStringFromName(titlestring);
   } catch (e) {}
-  return sbMessageBox(title, msg, wantcancel);
+  return sbMessageBox(title, msg, wantcancel, notmodal);
 }
 

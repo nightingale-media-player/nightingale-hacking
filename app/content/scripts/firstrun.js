@@ -49,7 +49,7 @@ function bundleDataReady(bundle) {
     loaded_bundle = true;
     enableCustomInstall(); 
   } else {
-    sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false);
+    sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false, true);
   }
   enableGoAhead();
   hidePleaseWait();
