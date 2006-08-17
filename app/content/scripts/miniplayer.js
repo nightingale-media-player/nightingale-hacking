@@ -69,6 +69,9 @@ try
     
     if ( PLATFORM_MACOSX ) {
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
+      if ( location.indexOf("?video") == -1 ) {
+        document.getElementById("mini_btn_max").setAttribute("hidden", "true");
+      }
     }
     
     window.addEventListener( "keydown", checkAltF4, true );
