@@ -1166,7 +1166,7 @@ PlaylistPlayback.prototype = {
       }
 
       // If we miscalculated the length of the track too short, string it out.        
-      if ( pos > len )
+      if ( pos > len && len > 0 )
         len = pos;
       // When the length changes, always set metadata.
       if ( this._metadataLen.intValue != len ) 
