@@ -371,7 +371,8 @@ function handleKeyDown(event)
   switch (event.keyCode)
   {
     case VK_ESCAPE:
-      document.getElementById("cancel_button").doCommand();
+      //document.getElementById("cancel_button").doCommand();
+      if ( doCancel() ) onExit( );
       break;
     case VK_ENTER:
       document.getElementById("ok_button").doCommand();
