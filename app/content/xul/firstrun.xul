@@ -52,7 +52,7 @@
             <spacer width="5"/>                    
             <spacer flex="1"/>           
             <spacer width="5"/>
-            <button id="sysbtn_close" class="sb_faceplate" oncommand="if (doCancel()) onExit( );" tooltiptext="&tooltip.exit;"/>
+            <!--button id="sysbtn_close" class="sb_faceplate" oncommand="if (doCancel()) onExit( );" tooltiptext="&tooltip.exit;"/-->
           </hbox>
           <spacer height="8"/>
           <hbox id="window_content" class="sb_faceplate" >
@@ -73,8 +73,10 @@
           <hbox>
             <spacer flex="1"/>           
             <button id="ok_button" disabled="true" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
-            <spacer width="5"/>
-            <button id="cancel_button" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+            <!--
+              <spacer width="5"/>
+              <button id="cancel_button" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+            -->
           </hbox> 
         </vbox>
       <spacer width="8"/>

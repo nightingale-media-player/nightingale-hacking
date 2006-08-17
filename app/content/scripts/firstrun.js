@@ -26,6 +26,7 @@
 
 // Globals
 var wanted_locale = "en-US";
+var loaded_bundle = false;
 var fwd_bundle;
 var FirstRunBundleCB = 
 {
@@ -45,6 +46,7 @@ var FirstRunBundleCB =
 
 function bundleDataReady(bundle) {
   if (bundle.getNumExtensions() > 0) {
+    loaded_bundle = true;
     enableCustomInstall(); 
   } else {
     sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false);
@@ -311,17 +313,21 @@ function doOK()
   }
   switchLocale(wanted_locale);
   if (noext) {
-    var retval = sbMessageBox_strings("setup.noxpititle",
-                                      "setup.noxpimsg", 
-                                      "No extension",
-                                      "Press Ok to keep a minimal installation, or Cancel to go back.",
-                                      true);
-    if (retval == "accept") { 
-      gPrefs.setBoolPref("songbird.firstruncheck", true);  
-      return true; 
-    } else {
-      return false;
+    var remember_firstrun = true;
+    if (!loaded_bundle)
+    {
+      var retval = sbMessageBox_strings("setup.noxpititle",
+                                        "setup.noxpimsg", 
+                                        "No extension",
+                                        "Press Ok to keep a minimal installation, or Cancel to see this dialog again on restart.",
+                                        true);
+                                        
+      remember_firstrun = (retval == "accept");
     }
+    
+    // If we didn't download a bundle, ask again?
+    gPrefs.setBoolPref("songbird.firstruncheck", remember_firstrun);  
+    return true; 
   } else {
     bundle.installSelectedExtensions(window);
     gPrefs.setBoolPref("songbird.firstruncheck", true);  
