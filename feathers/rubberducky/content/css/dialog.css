@@ -569,7 +569,15 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   background-repeat: no-repeat !important;
 }
 
-.menu-iconic-icon
+/* All menuitem icons are 16x16 */
+menuitem > .menu-iconic-icon
+{
+  height: 16px !important;
+  width: 16px !important;
+}
+
+/* Unless it's a command */
+menuitem[sbtype="command"] > .menu-iconic-icon
 {
   height: 8px !important;
   width: 11px !important;
