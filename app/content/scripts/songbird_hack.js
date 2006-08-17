@@ -1160,11 +1160,14 @@ var SBWebPlaylistCommands =
       switch( event.target.id )
       {
         case "library_cmd_play":
-          if ( this.m_Playlist.tree.currentIndex != -1 )
+          // If the user hasn't selected anything, select the first thing for him.
+          if ( this.m_Playlist.tree.currentIndex == -1 )
           {
-            // Repurpose the command to act as if a doubleclick
-            this.m_Playlist.sendPlayEvent();
+            this.m_Playlist.tree.view.selection.currentIndex = 0;
+            this.m_Playlist.tree.view.selection.select( 0 );
           }
+          // Repurpose the command to act as if a doubleclick
+          this.m_Playlist.sendPlayEvent();
         break;
         case "library_cmd_download":
         {
