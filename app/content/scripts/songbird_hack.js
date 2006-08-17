@@ -1392,6 +1392,7 @@ function onHTMLUrlChange( evt )
   var value = evt.target.value;
   if ( value && value.length )
   {
+    url.setAttribute("savefocus", "");
     // Make sure the value is an url
     value = SBGetUrlFromService( value );
     // And then put it back in the box as a service
