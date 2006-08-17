@@ -404,7 +404,8 @@ function SBUrlChanged( value )
         if (value == null)
           value = SBDataGetStringValue("faceplate.play.url");
         if ( gPPS.isVideoURL( value ) ) {
-          service.uncloak( document ); 
+          service.uncloak( document );
+          window.focus(); 
         }
         else {
           service.cloak( document ); 
