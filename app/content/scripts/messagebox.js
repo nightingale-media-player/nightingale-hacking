@@ -36,7 +36,7 @@ function sbMessageBox( title, message, wantcancel )
     messagebox_data.title = title;
     messagebox_data.message = message;
     messagebox_data.wantcancel = wantcancel;
-    window.openDialog( "chrome://songbird/content/xul/messagebox.xul", "messagebox", "chrome,titlebar=no,resizable=no,modal=yes, centerscreen", messagebox_data );
+    window.openDialog( "chrome://songbird/content/xul/messagebox.xul", "messagebox", "chrome,titlebar=yes,resizable=no,modal=yes, centerscreen", messagebox_data );
     return messagebox_data.result;
   }
   catch ( err )

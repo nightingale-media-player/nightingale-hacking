@@ -192,7 +192,7 @@ function doEULA(aAcceptAction, aCancelAction)
     if ( !eulaCheck ) {
       window.openDialog( "chrome://songbird/content/xul/eula.xul",
                          "eula",
-                         "chrome,centerscreen,modal=yes",
+                         "chrome,centerscreen,modal=yes,titlebar=yes",
                          eulaData );
 
       // EULA dialog sets the retval to accept or cancel
