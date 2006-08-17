@@ -292,14 +292,24 @@ function onWindowSavePosition()
   SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
 }
 
-// No forseen need to load _just_ size without position
-function onWindowLoadSize()
+function windowFocus()
 {
-  // Activate whatever window is attempting to reload its info.
+  // Try to activate the window.
   try {
     window.focus();
   } catch (e) {}
-  
+}
+
+function delayedActivate()
+{
+  setTimeout( windowFocus, 50 );
+}
+
+// No forseen need to load _just_ size without position
+function onWindowLoadSize()
+{
+  delayedActivate();
+
   var root = "window." + document.documentElement.id;
 /*
   dump("******** onWindowLoadSize: root:" + root +
@@ -339,9 +349,7 @@ function onWindowLoadSize()
 function onWindowLoadPosition()
 {
   // Activate whatever window is attempting to reload its info.
-  try {
-    window.focus();
-  } catch (e) {}
+  delayedActivate();
   
   var root = "window." + document.documentElement.id;
 /*

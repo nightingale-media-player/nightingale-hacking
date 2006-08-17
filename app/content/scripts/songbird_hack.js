@@ -169,6 +169,7 @@ var theWebPlaylistQuery = null;
 function SBInitialize()
 {
   dump("SBInitialize *** \n");
+  window.focus();
 
   const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
   const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
