@@ -78,6 +78,7 @@ dove.jar:
   feathers/dove/songbird/default/shuf_on_active.png                   (default/shuf_on_active.png)
   feathers/dove/songbird/default/shuf_on_normal.png                   (default/shuf_on_normal.png)
   feathers/dove/songbird/default/sysbtn_close_9x9.png                 (default/sysbtn_close_9x9.png)
+  feathers/dove/songbird/default/sysbtn_fullscreen_9x9.png            (default/sysbtn_fullscreen_9x9.png)
   feathers/dove/songbird/default/sysbtn_maximize_9x9.png              (default/sysbtn_maximize_9x9.png)
   feathers/dove/songbird/default/sysbtn_minimize_9x9.png              (default/sysbtn_minimize_9x9.png)
   feathers/dove/songbird/default/sysbtn_minimode_9x9.png              (default/sysbtn_minimode_9x9.png)
