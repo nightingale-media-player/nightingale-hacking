@@ -125,11 +125,11 @@
                     </menu>
                     <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="sb_faceplate"/> -->
                     <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
-					<menuitem id="menu_preferences" label="&menu.preferences;" class="sb_faceplate" accesskey="&menu.preferences.accesskey;"/>
+                    <menuitem id="menu_preferences" label="&menu.preferences;" class="sb_faceplate" accesskey="&menu.preferences.accesskey;"/>
                     <menuitem id="menu.extensions" label="&menu.extensions;" class="sb_faceplate" accesskey="&menu.extensions.accesskey;"/>
                     <menuitem id="menu.dominspector" label="DOM Inspector" class="sb_faceplate"/>
 
-					<!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
+                    <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
                     <menuseparator id="menu_FileQuitSeparator"/>
                     <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
 
