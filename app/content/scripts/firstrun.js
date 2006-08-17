@@ -27,8 +27,6 @@
 // Globals
 var wanted_locale = "en-US";
 var fwd_bundle;
-var eula_data = Object();
-var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 var FirstRunBundleCB = 
 {
   onLoad: function(bundle) { bundleDataReady(bundle); },
@@ -164,102 +162,125 @@ function hidePleaseWait()
   pleasewait.setAttribute("hidden", "true");
 }
 
-
-function doFirstRunTest(aBundle)
+// New method
+// If it has not already been accepted, show the EULA and ask the user to
+//   accept. If it is not accepted we call or eval the aCancelAction, if
+//   it is accepted we call/eval aAcceptAction. The processing of the
+//   actions happens in a different scope (eula.xul) so the best way
+//   is to pass functions in that get called, instead of js.
+// returns false if the main window should not be opened as we are showing
+//   the EULA and awaitng acceptance by the user
+// returns true if the EULA has already been accepted previously
+function doEULA(aAcceptAction, aCancelAction)
 {
-  fwd_bundle = aBundle;
-  // Data remotes not available for this function
-  var eulacheck;
+  SB_LOG("doEULA");
+  // set to false just to be cautious
+  var retval = false;
   try { 
-    eulacheck = SBDataGetBoolValue("firstrun.eulacheck");
-  } catch (e) { }
+    // setup the callbacks
+    //eulaData.acceptAction = aAcceptAction;
+    //eulaData.cancelAction = aCancelAction;
 
-  eula_data.do_eula = false;
+    var eulaCheck;
+    try {
+      eulaCheck = gPrefs.getBoolPref("songbird.eulacheck");
+    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
 
-  // If eula has not been run or accepted
-  if (!eulacheck)
-  {
-    eula_data.do_eula = true;
-    // Why will modal=yes prevent the centerscreen flag from working ? even
-    // centerWindowOnScreen() wont work ! Is this related to the fact that
-    // we are starting up... ?
-    window.openDialog( "chrome://songbird/content/xul/eula.xul",
-                       "eula",
-                       "chrome,centerscreen,modal=yes",
-                       eula_data);
-    // simulate modal flag
-    //setTimeout(firstRunDialog, 100);
-    //return false;
-  } 
-  return firstRunDialog();
-}
+    var eulaData = new Object();
+    if ( !eulaCheck ) {
+      window.openDialog( "chrome://songbird/content/xul/eula.xul",
+                         "eula",
+                         "chrome,centerscreen,modal=yes",
+                         eulaData );
 
-function firstRunDialog()
-{
-  if (eula_data.do_eula) 
-  {
-    // if the eula has not been dismissed, call ourself back later
-    if (!eula_data.retval) 
-    { 
-      setTimeout(firstRunDialog, 100); 
-      return true;
-    } 
-    else 
-    {
-      if (eula_data.retval == "accept") 
-      {
-        SBDataSetBoolValue("firstrun.eulacheck", true);
-      }
-      else
-      {
-        // eula was not accepted, exit app !
-        var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-        var MetricsService = new nsIMetrics();
-        MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
-
-        // get the startup service and tell it to shut us down
-        var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-                 .getService(Components.interfaces.nsIAppStartup);
-        if (as)
-        {
-          // do NOT replace '_' with '.', or it will be handled as metrics
-          //    data: it would be posted to the metrics aggregator, then reset
-          //    to 0 automatically
-          // do not count next startup in metrics, since we counted this one, but it was aborted
-          SBDataSetBoolValue("metrics_ignorenextstartup", true); 
-          const V_ATTEMPT = 2;
-          as.quit(V_ATTEMPT);
-          return false;
+      // EULA dialog sets the retval to accept or cancel
+      if (eulaData.retval == "accept") {
+        gPrefs.setBoolPref("songbird.eulacheck", true);
+        if (typeof(aAcceptAction) == "function") {
+          retval = aAcceptAction();
+        }
+        else {
+          retval = eval(aAcceptAction);
         }
       }
+      else { // ret must be "cancel"
+        gPrefs.setBoolPref("songbird.eulacheck", false);
+        if (typeof(aCancelAction) == "function") {
+          retval = aCancelAction();
+        }
+        else {
+          retval = eval(aCancelAction);
+        }
+      }
+      // We do not want to open the main window until we know EULA is accepted
+      //return false;
     }
+    else {
+      // Eula has been previously accepted, move along, move along.
+      retval = true;  // if no accept action, just return true
+      if (aAcceptAction) {
+        if (typeof(aAcceptAction) == "function")
+          retval = aAcceptAction();
+        else
+          retval = eval(aAcceptAction);
+      }
+    }
+  } catch (err) {
+    SB_LOG("doEula", "" + err);
   }
-  // Data remotes not available for this function
-  var firstruncheck;
+  return retval; 
+}
+
+// XXXredfive New method
+// Check the pref to see if this is the first run. If so, launch the firstrun
+//   dialog and return. The handling in the firstrun dialog will cause the
+//   main window to be launched.
+// returns true to indicate the window should be launched
+// returns false to indicate that the window should not be launched yet as the
+//   firstrun dialog has been launched asynchronously and will launch the
+//   main window on exit.
+function doFirstRun()
+{
+  SB_LOG("doFirstRun");
   try {
-    firstruncheck = SBDataGetBoolValue("firstrun.firstruncheck");
-  } catch (e) { }
-
-  // If this is the first run, ask the user some stuff.
-  if (!firstruncheck)
-  {
-    var data = new Object();
-    data.bundle = fwd_bundle;
-    data.document = document;
-
-    // This cannot be modal it will block the download of extensions
-    window.openDialog( "chrome://songbird/content/xul/firstrun.xul",
-                       "firstrun", 
-                       "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                       data );
-    return true;
+    var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
+    var bundle = new nsIBundle();
+    bundle.retrieveBundleFile();
+  } catch ( err ) {
+    SB_LOG("doFirstRun", "" + err );
   }
-  if (eula_data.do_eula)
-    document.__STARTMAINWIN();
-  return false;
+    
+  try {
+    var haveRun;
+    try {
+      haveRun = gPrefs.getBoolPref("songbird.firstruncheck");
+    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
+
+    if ( ! haveRun ) {
+      var data = new Object();
+      data.bundle = bundle;
+      data.document = document;
+
+      // This cannot be modal it will block the download of extensions
+      window.openDialog( "chrome://songbird/content/xul/firstrun.xul",
+                         "firstrun", 
+                         "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
+                         data );
+
+      // Do not open main window until the non-modal first run dialog returns
+      return false;
+    }
+  } catch (err) {
+    SB_LOG("doFirstRun", "" + err);
+  }
+
+  // If we reach this point this is not the first run and the user has accepted
+  //   the EULA so launch the main window.
+  return true;
 }
 
 function continueStartup() {
+  SB_LOG("continueStartup");
   window.arguments[0].document.__STARTMAINWIN();
 }
 
@@ -276,6 +297,7 @@ function customInstall()
 
 function doOK() 
 {
+  SB_LOG("doOK");
   handleOptOut(); // set the pref based upon the opt-out state.
   var bundle = window.arguments[0].bundle;
   var noext = (bundle.getNumExtensions() == 0);
@@ -295,14 +317,15 @@ function doOK()
                                       "Press Ok to keep a minimal installation, or Cancel to go back.",
                                       true);
     if (retval == "accept") { 
-      SBDataSetBoolValue("firstrun.firstruncheck", true);  
+      gPrefs.setBoolPref("songbird.firstruncheck", true);  
       return true; 
     } else {
       return false;
     }
   } else {
     bundle.installSelectedExtensions(window);
-    SBDataSetBoolValue("firstrun.firstruncheck", true);  
+    gPrefs.setBoolPref("songbird.firstruncheck", true);  
+    // XXXredfive - songbird.installedbundle maybe?
     gPrefs.setCharPref("installedbundle", bundle.getBundleVersion());
     if (bundle.getNeedRestart()) {
       var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
@@ -325,6 +348,8 @@ function doOK()
 
 function doCancel()
 {
+  SB_LOG("doCancel");
+  handleOptOut(); // set the pref based upon the opt-out state.
   var r = sbMessageBox_strings("setup.bypasstitle", "setup.bypassmsg", "Proceed ?", "Are you sure you want to bypass the final setup? (you will be offered another opportunity to revisit this screen the next time you run Songbird).", true); 
   if (r == "accept") { 
     window.arguments[0].cancelled = true; 

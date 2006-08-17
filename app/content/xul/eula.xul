@@ -40,10 +40,15 @@
  ondialogaccept="return doClose('accept');"
  ondialogcancel="return doClose('cancel');"
 >
+  <!-- for SB_LOG() -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbird_interfaces.js"/>
 
   <!-- Astounding complexity! -->
   <browser id="songbird.eula" src="chrome://songbird/content/html/eula.html" flex="1"/>
-  <checkbox id="songbird.accepteula" label="By clicking the “I Agree” button, I accept the terms of the license agreement" oncommand="onAcceptChanged()"/>
+  <checkbox id="songbird.accepteula" 
+            label="By clicking the “I Agree” button, I accept the terms of the license agreement" 
+            oncommand="onAcceptChanged()"/>
 
   <!-- And intrepid instructions! -->  
   <script>
@@ -55,7 +60,9 @@
       var dialog = document.documentElement;
       onAcceptChanged();
     }
+
     function doClose(ret) {
+      SB_LOG("EULA dialog", "doClose\n");
       if ( typeof( window.arguments[0] ) != 'undefined' )
         window.arguments[0].retval = ret;
       return true;

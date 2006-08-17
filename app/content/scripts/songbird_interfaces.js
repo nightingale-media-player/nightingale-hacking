@@ -47,6 +47,21 @@ const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasourc
 const sbISimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
 const sbISmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
 
+// XXXredfive - this goes in the sbWindowUtils.js file when I get around to making it.
+var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
+               .getService(Components.interfaces.nsIConsoleService);
+// log to JS console AND to the command line (in case of crashes)
+function SB_LOG (scopeStr, msg) {
+  msg = msg ? msg : ""; 
+  //This works, but adds everything as an Error
+  //Components.utils.reportError( scopeStr + " : " + msg);
+  gConsole.logStringMessage( scopeStr + " : " + msg );
+  dump( scopeStr + " : " + msg + "\n");
+}
+
+
+
 //
 // SBBindInterface - take an object and make it a wrapper of the given type.
 //
