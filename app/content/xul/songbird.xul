@@ -203,6 +203,7 @@
     <hbox class="sb_faceplate">
       <spacer width="9"/>
       <vbox id="cheezy_window_top" flex="1" class="sb_faceplate">
+        <menubar id="video_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
         <hbox class="sb_faceplate" flex="1">      
           <spacer width="10"/>
           <label id="app_title" value="Cheezy Video Window" class="sb_faceplate"/>

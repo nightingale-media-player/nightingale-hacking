@@ -73,6 +73,7 @@
     </vbox>
 
     <hbox flex="1">
+      <menubar id="mini_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
       <spacer width="4" height="18" id="mini_dash_w"/>
       <vbox id="mini_dash" flex="1">        
         <hbox id="mini_text_time" class="sb_faceplate" flex="1" >
