@@ -2096,7 +2096,7 @@ function onMenu( target )
     case "aboutName": // This has to be hardcoded this way for the stinky mac.
       About(); 
     break;
-    case "file.exit":
+    case "menu_FileQuitItem": // Stinky mac again.  See nsMenuBarX::AquifyMenuBar
       quitApp();
     break;
     case "control.play":
@@ -2123,7 +2123,7 @@ function onMenu( target )
     case "menu.extensions":
       SBExtensionsManagerOpen();
     break;
-    case "menu.preferences":
+    case "menu_preferences":
       SBOpenPreferences();
     break;
 /*    case "menu.downloadmgr":

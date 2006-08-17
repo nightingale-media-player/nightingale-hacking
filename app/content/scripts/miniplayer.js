@@ -177,7 +177,8 @@ try
       case "aboutName":
         About(); 
       break;
-      case "file.exit":
+      case "file.exit": 
+      case "menu_FileQuitItem": 
         quitApp();
         document.defaultView.close();
       break;
