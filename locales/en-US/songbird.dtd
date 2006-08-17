@@ -69,6 +69,7 @@
 <!ENTITY tooltip.minimize         "Minimize" >
 <!ENTITY tooltip.maximize         "Maximize/Restore" >
 <!ENTITY tooltip.exit             "Exit" >
+<!ENTITY tooltip.hide             "Hide" >
 <!ENTITY tooltip.control.back     "Previous Track" >
 <!ENTITY tooltip.control.play     "Play" >
 <!ENTITY tooltip.control.pause    "Pause" >

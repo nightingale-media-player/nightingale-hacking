@@ -206,6 +206,25 @@ function onExit( skipSave )
   document.defaultView.close();
 }
 
+// Hide
+function onHide()
+{
+  try
+  {
+    var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
+    if (windowCloak) {
+      var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
+      if (service) {
+        service.cloak( document ); 
+      }
+    }
+  }
+  catch(e)
+  {
+    dump(e);
+  }
+}
+
 function onMinimumWindowSize()
 {
 /*
