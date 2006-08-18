@@ -131,7 +131,7 @@ function onBkgDown( theEvent, popup )
       if ( ( popup != true ) && (navigator.userAgent.indexOf("Mac OS X") != -1) ) {
         // TODO: This will be incorrect in the jumptofile dialog, as it is loaded as a popup.
         // How do I know from this scope whether the window is loaded as popup?
-        offsetScrY -= 20; 
+        offsetScrY -= 22; 
       }
       document.addEventListener( "mousemove", onBkgMove, true );
     }
