@@ -172,8 +172,8 @@ CMediaLibrary.prototype =
       
       if(bCheckForUniqueFileName)
       {
-        var filenamePos = strMediaURL.lastIndexOf("/") + 1;
-        if(!filenamePos) filenamePos = strMediaURL.lastIndexOf("\\") + 1;
+        var filenamePos = strMediaURL.lastIndexOf("/");
+        if(!filenamePos) filenamePos = strMediaURL.lastIndexOf("\\");
         
         if(filenamePos)        
         {
