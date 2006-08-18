@@ -76,7 +76,7 @@
     }
     catch ( err )
     {
-      alert( "App Init - Bundle - " + err );
+      SB_LOG( "App Init - Bundle - ", "" + err );
     }
     try
     {
@@ -109,7 +109,7 @@
             var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
             var MetricsService = new nsIMetrics();
             if (MetricsService.getSessionFlag()) {
-              //alert("previous session did not terminate properly!");
+              //SB_LOG("previous session did not terminate properly!");
               metrics_inc("player", "crash");
             }
             MetricsService.setSessionFlag(true);
@@ -117,7 +117,7 @@
           }
           catch ( err )
           {
-            alert( "App Init - Metrics - " + err );
+            SB_LOG( "App Init - Metrics - ", "" + err );
           }
           // Get mainwin URL
           var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
@@ -147,7 +147,6 @@
         var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
                .getService(Components.interfaces.nsIAppStartup);
         if (as) {
-          SB_LOG("doShutdown", "telling app service to shut us down");
           // do NOT replace '_' with '.', or it will be handled as metrics
           //    data: it would be posted to the metrics aggregator, then reset
           //    to 0 automatically
@@ -168,7 +167,7 @@
     }
     catch ( err )
     {
-      alert( "App Init - Window Watcher - " + err );
+      SB_LOG( "App Init", "" + err );
     }
   ]]>
   </script>

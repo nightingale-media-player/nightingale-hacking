@@ -175,7 +175,7 @@ function hidePleaseWait()
 // returns true if the EULA has already been accepted previously
 function doEULA(aAcceptAction, aCancelAction)
 {
-  SB_LOG("doEULA");
+  //SB_LOG("doEULA");
   // set to false just to be cautious
   var retval = false;
   try { 
@@ -222,7 +222,7 @@ function doEULA(aAcceptAction, aCancelAction)
 //   main window on exit.
 function doFirstRun()
 {
-  SB_LOG("doFirstRun");
+  //SB_LOG("doFirstRun");
   try {
     var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     var bundle = new nsIBundle();
@@ -261,7 +261,7 @@ function doFirstRun()
 }
 
 function continueStartup() {
-  SB_LOG("continueStartup");
+  //SB_LOG("continueStartup");
   window.arguments[0].document.__STARTMAINWIN();
 }
 
@@ -278,7 +278,7 @@ function customInstall()
 
 function doOK() 
 {
-  SB_LOG("doOK");
+  //SB_LOG("doOK");
   handleOptOut(); // set the pref based upon the opt-out state.
   var bundle = window.arguments[0].bundle;
   var noext = (bundle.getNumExtensions() == 0);
