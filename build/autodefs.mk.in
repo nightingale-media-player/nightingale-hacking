@@ -170,6 +170,9 @@ UNZIPFLAGS_EXTRACT    = @UNZIPFLAGS_EXTRACT@
 
 XPIDLFLAGS_INCLUDE    = -I
 
+GSTREAMER_CFLAGS      = @GSTREAMER_CFLAGS@
+GTK_CFLAGS            = @GTK_CFLAGS@
+
 #------------------------------------------------------------------------------
 endif #AUTODEFS_MK_INCLUDED
 #------------------------------------------------------------------------------
