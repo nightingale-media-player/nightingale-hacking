@@ -358,6 +358,40 @@ CoreQT.prototype.goFullscreen = function ()
   return true;
 };
   
+CoreQT.prototype.isMediaURL = function(aURL) {
+  if( ( aURL.indexOf ) && 
+      (
+        // Protocols at the beginning
+        ( aURL.indexOf( "rtsp:" ) == 0 ) ||
+        // File extensions at the end
+        ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
+      )
+    )
+  {
+    return true;
+  }
+  return false;
+}
+
+CoreQT.prototype.isVideoURL = function ( aURL )
+{
+  if ( ( aURL.indexOf ) && 
+        (
+          ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
+        )
+      )
+  {
+    return true;
+  }
+  return false;
+}
+
 /**
   * See nsISupports.idl
   */

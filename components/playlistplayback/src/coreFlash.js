@@ -215,6 +215,34 @@ CoreFlash.prototype.getMetadata = function (aKey)
   return null;
 };
 
+CoreFlash.prototype.isMediaURL = function(aURL) {
+  if( ( aURL.indexOf ) && 
+      (
+        ( aURL.indexOf( ".swf" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".flv" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) )
+      )
+    )
+  {
+    return true;
+  }
+  return false;
+}
+
+CoreFlash.prototype.isVideoURL = function ( aURL )
+{
+  if ( ( aURL.indexOf ) && 
+        (
+          ( aURL.indexOf( ".flv" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".swf" ) == ( aURL.length - 4 ) )
+        )
+      )
+  {
+    return true;
+  }
+  return false;
+}
+
 /**
  * See nsISupports.idl
  */
@@ -225,6 +253,7 @@ CoreFlash.prototype.QueryInterface = function(iid)
     throw Components.results.NS_ERROR_NO_INTERFACE;
   return this;
 };
+
 
 /**
  * ----------------------------------------------------------------------------

@@ -234,6 +234,44 @@ CoreMPlayer.prototype.getMetadata = function ( key )
   return "";
 }
 
+CoreMPlayer.prototype.isMediaURL = function(aURL) {
+  if( ( aURL.indexOf ) && 
+      (
+        // Protocols at the beginning
+        ( aURL.indexOf( "mms:" ) == 0 ) || 
+        ( aURL.indexOf( "rtsp:" ) == 0 ) ||
+        // File extensions at the end
+        ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".ogg" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".flac" ) == ( aURL.length - 5 ) ) ||
+        ( aURL.indexOf( ".wav" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
+      )
+    )
+  {
+    return true;
+  }
+  return false;
+}
+
+CoreMPlayer.prototype.isVideoURL = function ( aURL )
+{
+  if ( ( aURL.indexOf ) && 
+        (
+          ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
+        )
+      )
+  {
+    return true;
+  }
+  return false;
+}
+
 /**
  * See nsISupports.idl
  */

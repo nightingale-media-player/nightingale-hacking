@@ -191,5 +191,29 @@ interface sbICoreWrapper : nsISupports
    * \return void
    */
   void onSwapCore();
+
+ 
+  /**
+   * \brief Check to see if an url points to media content
+   * This checks for a number of known file extensions and prefixes to see
+   *   if the URL contains them and is therefore media.
+   * 
+   * \param aURL - the URL to check
+   * \return true if the URL points to media content
+   * \return false if the URL does not point to media content
+   */
+  boolean isMediaURL(in AString aURL);
+ 
+  /**
+   * \brief Check to see if an url points to video content
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore video.
+   * 
+   * \param aURL - the URL to check
+   * \return true if the URL points to video content
+   * \return false if the URL does not point to video content
+   */
+  boolean isVideoURL(in AString aURL);
+
 };
 

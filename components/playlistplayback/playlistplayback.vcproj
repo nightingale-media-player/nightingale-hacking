@@ -161,6 +161,9 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\coreGStreamerSimple.js">
+			</File>
+			<File
 				RelativePath=".\src\coreMPlayer.js">
 			</File>
 			<File
