@@ -526,7 +526,7 @@ case "$SB_PLATFORM" in
     # Our GStreamer component needs GTK headers (we don't link, so we only
     #   take the flags). We only check for gtk2 right now, if we _really_
     #    need gtk1 support we can add it later but we should resist at all costs.
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= 0.10.7)
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
     AC_SUBST(GTK_CFLAGS)
