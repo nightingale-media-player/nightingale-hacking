@@ -93,7 +93,10 @@
       <button id="mini_btn_jump" class="sb_faceplate" oncommand="onJumpToFileKey();" tooltiptext="&jumptofile.title;"/>
     </vbox>
     <vbox>
-      <button id="mini_btn_max"  class="sb_faceplate" oncommand="SBMainWindowOpen( );" />
+      <button id="mini_btn_max"  class="sb_faceplate" oncommand="SBMainWindowOpen();" />
+    </vbox>
+    <vbox>
+      <button id="mini_btn_fullscreen"  class="sb_faceplate" oncommand="SBFullscreen();" />
     </vbox>
     <button id="mini_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
     <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>

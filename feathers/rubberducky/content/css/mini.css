@@ -347,6 +347,18 @@ window#mini
   background-position: center center;
 }
 
+/* Fullscreen */
+#mini_btn_fullscreen
+{
+  width: 16px !important;
+  height: 16px !important;
+  margin-left: 3px !important;
+  background-image: url(chrome://songbird/skin/default/sysbtn_fullscreen_9x9.png) !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  background-position: center center;
+}
+
 /* Jump-to */
 #mini_btn_jump
 {
