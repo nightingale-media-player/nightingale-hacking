@@ -197,7 +197,7 @@ CMediaLibrary.prototype =
       aDBQuery.waitForCompletion();
 
       var resObj = aDBQuery.getResultObject();
-      if(resObj.getRowCount() > 0)
+      if(resObj.getRowCount() == 1)
       {
         guid = resObj.getRowCell(0, 0);
         if(guid)
