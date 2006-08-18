@@ -110,12 +110,14 @@ Section "Songbird Base (Required)"
   ExecWait '$R1 /S _?=$INSTDIR'
   
 NoUninstall:
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Force creation of new profile / cache for Songbird
   ;; for nightly / developer builds.
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  RMDir /r "$APPDATA\Pioneers of the Inevitable\"
-  RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\"
+  ;;RMDir /r "$APPDATA\Pioneers of the Inevitable\"
+  ;;RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\"
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
   File *.ini
   File *.exe
