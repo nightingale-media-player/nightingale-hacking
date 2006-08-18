@@ -331,28 +331,11 @@ function doOK()
   return false;
 }
 
-function doCancel()
-{
-  SB_LOG("doCancel");
-  handleOptOut(); // set the pref based upon the opt-out state.
-  var r = sbMessageBox_strings("setup.bypasstitle", "setup.bypassmsg", "Proceed ?", "Are you sure you want to bypass the final setup? (you will be offered another opportunity to revisit this screen the next time you run Songbird).", true); 
-  if (r == "accept") { 
-    window.arguments[0].cancelled = true; 
-    return true; 
-  }
-  return false;
-}
-
 function handleKeyDown(event) 
 {
-  const VK_ESCAPE = 27;
   const VK_ENTER = 13;
   switch (event.keyCode)
   {
-    case VK_ESCAPE:
-      //document.getElementById("cancel_button").doCommand();
-      if ( doCancel() ) onExit( );
-      break;
     case VK_ENTER:
       document.getElementById("ok_button").doCommand();
       break;
@@ -365,7 +348,6 @@ function checkAltF4(evt)
   if (evt.keyCode == VK_F4 && evt.altKey) 
   {
     evt.preventDefault();
-    if (doCancel()) onExit();
   }
 }
 
