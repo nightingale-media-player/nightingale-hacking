@@ -42,7 +42,6 @@ class CDatabaseQuery;
 
 #include "sbIDatabaseQuery.h"
 #include "DatabaseResult.h"
-#include "DatabaseEngine.h"
 
 #include <prlock.h>
 #include <prmon.h>
@@ -63,7 +62,7 @@ class CDatabaseQuery;
   {0xa9, 0x41, 0xd4, 0x88, 0xab, 0xb5, 0xa8, 0xaa}        \
 }
 // CLASSES ====================================================================
-class sbIDatabaseEngine;
+class CDatabaseEngine;
 
 class CDatabaseQuery : public sbIDatabaseQuery
 {

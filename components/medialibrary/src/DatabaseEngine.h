@@ -78,7 +78,7 @@ public:
     return s_Engine;
   };
 
-  static DestroySingleton()
+  static void DestroySingleton()
   {
     --s_EngineRefCount;
     if(s_EngineRefCount < 0) s_EngineRefCount = 0;

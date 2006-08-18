@@ -1282,3 +1282,4 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, nsAString &str
 
   return NS_OK;
 } //GetDBStorePath
+
