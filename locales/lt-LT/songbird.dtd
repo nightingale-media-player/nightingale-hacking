@@ -1,0 +1,233 @@
+﻿
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/spp" >
+<!ENTITY window.ok          "Gerai" >
+<!ENTITY window.cancel      "Atšaukti" >
+<!ENTITY window.browse      "Naršyti..." >
+
+<!ENTITY menu.file          "Failas" >
+<!ENTITY menu.file.new      "New Grojaraštis..." >
+<!ENTITY menu.file.smart    "New Gudrus Grojaraštis..." >
+<!ENTITY menu.file.remote   "New Nutolęs Grojaraštis..." >
+<!ENTITY menu.file.open     "Atidaryti Failą..." >
+<!ENTITY menu.file.url      "Atidaryti URL ..." >
+<!ENTITY menu.file.playlist "Atidaryti Grojaraštį..." >
+<!ENTITY menu.file.scan     "Skenuoti Media..." >
+<!ENTITY menu.file.dlfolder "Nustatyti Atsisiuntimo katalogą..." >
+<!ENTITY menu.file.watch    "Nustatyti Sekamus katalogus..." >
+<!ENTITY menu.file.htmlbar  "Visada Rodyti Interneto Juostą" >
+<!ENTITY menu.file.skin     "Alternatyvus Apvalkalas" >
+<!ENTITY menu.file.window   "Atidaryti Pagrindinį Langą" >
+<!ENTITY menu.file.mini     "Atidaryit Mini Grotuvą" >
+<!ENTITY menu.file.about    "Apie Songbird..." >
+<!ENTITY menu.file.exit     "Išeiti" >
+
+<!ENTITY menu.edit          "Keisti" >
+<!ENTITY menu.edit.undo     "Anuliuoti" >
+<!ENTITY menu.edit.cut      "Iškirpti" >
+<!ENTITY menu.edit.copy     "Kopijuoti" >
+<!ENTITY menu.edit.paste    "Įterpti" >
+<!ENTITY menu.edit.clear    "Išvalyti" >
+<!ENTITY menu.edit.selall   "Pasirinkti Viską" >
+<!ENTITY menu.edit.selnone  "Nieko Nepasirinkti" >
+
+<!ENTITY menu.controls      "Valdymas" >
+<!ENTITY menu.control.play  "Groti/Pauzė" >
+<!ENTITY menu.control.next  "Kitas takelis" >
+<!ENTITY menu.control.prev  "Ansktesnis takelis" >
+<!ENTITY menu.control.shuf  "Maišyti" >
+<!ENTITY menu.control.repa  "Kartoti Visus" >
+<!ENTITY menu.control.rep1  "Kartoti Vieną" >
+<!ENTITY menu.control.repx  "Nieko Nekartoti" >
+
+<!ENTITY menu.services        "Paslaugos" >
+<!ENTITY menu.services.browse "Naršyti paslaugas..." >
+
+<!ENTITY menu.devices       "Prietaisai" >
+
+<!ENTITY menu.help          "Pagalba" >
+<!ENTITY menu.help.topics   "Pagalbos Temos..." >
+<!ENTITY menu.help.about    "Apie Songbird..." >
+
+<!ENTITY html.context.open  "Atidaryti" >
+<!ENTITY html.context.play  "Groti" >
+<!ENTITY html.context.add   "Pridėti į biblioteką" >
+
+<!ENTITY playlist.context.remove  "Pašalinti" >
+<!ENTITY playlist.context.rename  "Pervardinti" >
+<!ENTITY playlist.context.search  "Ieškoti" >
+<!ENTITY playlist.context.lyrics  "Dainos Žodžiai" >
+
+<!ENTITY tooltip.miniplayer       "Perjingti į Mini Grotuvą" >
+<!ENTITY tooltip.minimize         "Suamžinti" >
+<!ENTITY tooltip.maximize         "Padidinti/Atstatyti" >
+<!ENTITY tooltip.exit             "Išeiti" >
+<!ENTITY tooltip.control.back     "Ankstesnis Takelis" >
+<!ENTITY tooltip.control.play     "Groti" >
+<!ENTITY tooltip.control.pause    "Pauzė" >
+<!ENTITY tooltip.control.fwd      "Kitas Takelis" >
+<!ENTITY tooltip.control.mute     "Išjungti Garsą" >
+<!ENTITY tooltip.control.volume   "Garsumas" >
+<!ENTITY tooltip.control.repeat   "Kartoti" >
+<!ENTITY tooltip.control.shuffle  "Maišyti" >
+<!ENTITY tooltip.control.curtrack "Surasti Dabartinį Takelį" >
+<!ENTITY tooltip.control.service  "Perjungti į Faceplate Ekraną" >
+<!ENTITY tooltip.search           "Ieškoti" >
+<!ENTITY tooltip.browser.back     "Naršyklė Atgal" >
+<!ENTITY tooltip.browser.fwd      "Naršyklė Pirmyn" >
+<!ENTITY tooltip.browser.stop     "Sustabdyti Naršyklę" >
+<!ENTITY tooltip.browser.home     "Namų Puslapis" >
+<!ENTITY tooltip.browser.playlist "Rodyti Galima Media Šiame Puslapyje" >
+<!ENTITY tooltip.browser.download "Radyti Dabartinius Siuntinius" >
+
+<!ENTITY smart.window             "Gudraus Grojaraščio Vedlys" >
+<!ENTITY smart.library            "pasirinkti Biblioteką:" >
+<!ENTITY smart.limit              "riboti " >
+<!ENTITY smart.match              "atitinka" >
+<!ENTITY smart.any                "bet kurį" >
+<!ENTITY smart.all                "visus" >
+<!ENTITY smart.following          "vieną iš šių sąlygų:" >   
+<!ENTITY smart.random             "atsitiktinai" >
+<!ENTITY smart.album              "albumas" >
+<!ENTITY smart.artist             "atlikėjas" >
+<!ENTITY smart.genre              "žanras" >
+<!ENTITY smart.title              "pavadinimas" >
+<!ENTITY smart.high_rating        "aukštas įvertinimas" >
+<!ENTITY smart.low_rating         "žemas įvetinimas" >
+<!ENTITY smart.most_recent        "pastaruoju metu groti" >
+<!ENTITY smart.least_recent       "pastaruoju metu negroti" >
+<!ENTITY smart.most_often         "dažniausi" >
+<!ENTITY smart.least_often        "rečiausi" >
+<!ENTITY smart.most_added         "daugiausia pridėta" >
+<!ENTITY smart.least_added        "mažiausia pridėta" >
+<!ENTITY smart.minutes            "minutės" >
+<!ENTITY smart.hours              "valandos" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "dainos" >
+<!ENTITY smart.contains           "turi" >
+<!ENTITY smart.not_contain        "neturi" >
+<!ENTITY smart.is                 "yra" >
+<!ENTITY smart.is_not             "nėra" >
+<!ENTITY smart.starts             "prasideda" >
+<!ENTITY smart.ends               "baigiasi" >
+         
+<!ENTITY download.window          "Atsisiuntimai" >
+<!ENTITY download.select          "Pasirinkti atsisiuntimo katalogą:" >
+<!ENTITY download.always          "Visąlaik naudoti šį katalogą" >
+
+<!ENTITY textbox.rmp_demo_open_url "Įveskite URL ar kelią medijos kurią norite groti:">
+
+<!ENTITY open_url.title           "Atidaryti URL">
+<!ENTITY subscribe.title          "Užsiprenumeruoti">
+<!ENTITY subscribe.minutes        "Minutė(s)">
+<!ENTITY subscribe.hours          "Valanda(os)">
+<!ENTITY subscribe.days           "Diena(os)">
+<!ENTITY subscribe.autocheck      "Autoamtiškai atnaujinti kas">
+<!ENTITY subscribe.destinationfolder      "Pasirinkti katalogą:">
+
+<!ENTITY exists.title             "Grojaraštis yra">
+<!ENTITY exists.exists            "Grojaraštis su tuo pačiu vardu jau yra!">
+
+<!ENTITY media_scan.title          "Skenuoti Media">
+<!ENTITY media_scan.watch          "Sekti šį katalogą naujai medijai">
+
+<!ENTITY new_playlist.title       "Sukurti naują grojaraštį ">
+<!ENTITY new_playlist.name        "Iveskite naujo grojaraščio vardą.">
+
+<!ENTITY addtoplaylist.title      "Pridėti į grojaraštį">
+<!ENTITY addtoplaylist.create      "Sukurti naują grojaraštį">
+
+<!ENTITY watchfolder.title        "Sekti katalogą(us)">
+<!ENTITY watchfolder.folderlist   "Sektį katalogus naujai medijai:">
+
+<!ENTITY locale.language          "Kalba" >
+
+
+
+<!ENTITY window.dev.title "Songbird not-yet-ready-to-be-called-0.2" >
+<!ENTITY window.undo "Undo" >
+<!ENTITY window.apply "Apply" >
+<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.extensions "Extensions..." >
+<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "Version" >
+<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.custominstall "Custom Install" >
+<!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.url "URL:" >
+<!ENTITY bookmarks.edit.label "Name:" >
+<!ENTITY bookmarks.edit.icon "Icon:" >
+<!ENTITY trackeditor.title "Track Editor" >
+<!ENTITY trackeditor.trackdata "Track Data" >
+<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.tags "Tags" >
+<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY jumptofile.title "Jump to" >
+<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
+<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.hotkey "Hotkey" >
+<!ENTITY hotkeys.add "Add" >
+<!ENTITY hotkeys.set "Set" >
+<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.prefpane "Hotkeys" >
+<!ENTITY metadata.uuid "Media UUID" >
+<!ENTITY metadata.url "Location" >
+<!ENTITY metadata.artist "Artist" >
+<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.genre "Genre" >
+<!ENTITY metadata.length "Time" >
+<!ENTITY restartbox.restartnow "Restart Now" >
+<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
+<!ENTITY restartbox.restartlater "Restart Later" >
+<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+
+
