@@ -387,26 +387,26 @@ function SBMainWindowReopen()
 // XUL Event Methods
 //
 
-function saveWindowPosition()
-{
-  var root = "window." + document.documentElement.id;
-  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
-  SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
-  SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
-}
-
 function switchFeathers(internalName)
 {
+  // Save our current values before flipping out.
+  onWindowSaveSizeAndPosition();
+  
+  // Figure out if we're being asked to switch to what we already are
   var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
   var curfeathers = "rubberducky";
   try {
     curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
   } catch (err) {}
   if (curfeathers == internalName) return;
+  
+  // Minimize (so the user doesn't see the graphical glitch on the next step)
   onMinimize();
+  
+  // Change the feathers (XUL skin) -- this only changes colors on the currently loaded windows, not images.
   prefs.setCharPref("general.skins.selectedSkin", internalName);  
   
+  // Open another copy of the mainwin and close this one once it's mostly done.
   SBMainWindowReopen();
 }
 
