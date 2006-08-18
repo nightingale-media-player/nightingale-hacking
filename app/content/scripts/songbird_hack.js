@@ -726,7 +726,7 @@ function onServiceEditChange( evt )
             playlist.setReadableName(strReadableName);
           }
         }      
-        HideServiceEdit();
+        HideServiceEdit( null );
       }
     }
   }
@@ -736,31 +736,41 @@ function onServiceEditChange( evt )
   }
 }
 
+var hasServiceEditBeenModified = false;
 function onServiceEditKeypress( evt )
 {
   switch ( evt.keyCode )
   {
     case 27: // Esc
-      HideServiceEdit();
+      HideServiceEdit( null );
       break;
     case 13: // Return
       onServiceEditChange( evt );
       break;
+    default:
+      hasServiceEditBeenModified = true;
   }
 }
 
 var isServiceEditShowing = false;
-function HideServiceEdit()
+function HideServiceEdit( evt )
 {
   try
   {
+    if (hasServiceEditBeenModified && evt)
+    {
+      hasServiceEditBeenModified = false;
+      onServiceEditChange( evt );
+    }
+
     if ( isServiceEditShowing )
     {
       var theEditBox = document.getElementById( "service_edit" );
       theEditBox.setAttribute( "hidden", "true" );
       var theEditPopup = document.getElementById( "service_edit_popup" );
       theEditPopup.hidePopup();
-      isServiceEditShowing = false;        
+      isServiceEditShowing = false;
+      
     }
   }
   catch ( err )
