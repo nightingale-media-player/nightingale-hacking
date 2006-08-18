@@ -35,9 +35,6 @@ const SONGBIRD_PLAYLISTWRITERMANAGER_IID = Components.interfaces.sbIPlaylistWrit
 
 function CPlaylistWriterManager()
 {
-  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-
   var m_rootContractID = "@songbirdnest.com/Songbird/Playlist/Writer/";
   var m_interfaceID = Components.interfaces.sbIPlaylistWriter;
   var m_Writers = new Array();
@@ -178,3 +175,4 @@ function NSGetModule(comMgr, fileSpec)
 { 
   return sbPlaylistWriterManagerModule;
 } //NSGetModule
+

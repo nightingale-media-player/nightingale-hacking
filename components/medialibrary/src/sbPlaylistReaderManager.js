@@ -35,9 +35,6 @@ const SONGBIRD_PLAYLISTREADERMANAGER_IID = Components.interfaces.sbIPlaylistRead
 
 function CPlaylistReaderManager()
 {
-  jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-  
   // Cache the valid components
   for(var contractID in Components.classes)
   {
@@ -363,3 +360,4 @@ function NSGetModule(comMgr, fileSpec)
 { 
   return sbPlaylistReaderManagerModule;
 } //NSGetModule
+

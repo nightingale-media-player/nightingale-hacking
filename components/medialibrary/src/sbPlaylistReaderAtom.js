@@ -35,8 +35,6 @@ const SONGBIRD_PLAYLISTATOM_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistAtom()
 {
-  jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
   this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 }
 
@@ -87,12 +85,13 @@ CPlaylistAtom.prototype =
             {
               const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
               const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+              const DatabaseQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
 
               this.m_guid = strGUID;
               this.m_table = strDestTable;
               this.m_append = bAppendOrReplace;
               
-              this.m_query = new this.sbIDatabaseQuery();
+              this.m_query = new DatabaseQuery();
               this.m_query.setAsyncQuery(true);
               this.m_query.setDatabaseGUID(strGUID);
 

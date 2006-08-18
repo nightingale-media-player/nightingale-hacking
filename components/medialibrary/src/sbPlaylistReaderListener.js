@@ -35,9 +35,6 @@ const SONGBIRD_PLAYLISTREADERLISTENER_CID = Components.ID("{b4fac7ab-7d23-47c5-9
 
 function CPlaylistReaderListener()
 {
-  jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/sbIDataRemote.js", this );
 }
 
 CPlaylistReaderListener.prototype.constructor = CPlaylistReaderListener;
@@ -69,11 +66,10 @@ CPlaylistReaderListener.prototype =
   {
     if (aStateFlags & 16 /*this.STATE_STOP*/)
     {
-      const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-      var aPlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
-      
-      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-      var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
+      var playlistReaderMngr = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                                      .createInstance(Components.interfaces.sbIPlaylistReaderManager);
+      var playlistManager =   Components.classes["@songbirdnest.com/Songbird/PlaylistManager;1"]
+                                      .createInstance(Components.interfaces.sbIPlaylistManager);
       
       var strContentType = "";
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
@@ -86,27 +82,30 @@ CPlaylistReaderListener.prototype =
           dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE\n");
         } // Grrrr.
       }
-      aPlaylistReader.originalURL = this.originalURL;
-      var success = aPlaylistReader.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
-                                                 this.readableName, this.playlistType, this.description, 
-                                                 strContentType, this.appendOrReplace, null);
+      playlistReaderMngr.originalURL = this.originalURL;
+      var success = playlistReaderMngr.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
+                                                    this.readableName, this.playlistType, this.description, 
+                                                    strContentType, this.appendOrReplace, null);
       
       if(success)
       {
-        var dpDownloadContext = this.SB_NewDataRemote( "download.context", null );
-        var dpDownloadTable = this.SB_NewDataRemote( "download.table", null );
+        const DataRemote = new Components.Constructor( "@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+        var dbQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                                      .createInstance(Components.interfaces.sbIDatabaseQuery);
 
-        var dbQuery = new this.sbIDatabaseQuery();
+        var dpDownloadContext = new DataRemote( "download.context", null );
+        var dpDownloadTable = new DataRemote( "download.table", null );
+
         dbQuery.setDatabaseGUID(this.serviceGuid);
         dbQuery.setAsyncQuery(false);
-        var playlist = aPlaylistManager.getDynamicPlaylist(this.destinationTable, dbQuery);
+        var playlist = playlistManager.getDynamicPlaylist(this.destinationTable, dbQuery);
         
         if(playlist)
         {
-          const SUBSCRIBE_FOLDER_KEY = "download.folder";
-          var destFolder = this.SBDataGetStringValue(SUBSCRIBE_FOLDER_KEY);
- 
-          deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
+          //var destFolderRemote = new DataRemote( "download.folder", null );
+          var destFolder = (new DataRemote("download.folder", null)).stringValue;
+
+          var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].
                                       getService(Components.interfaces.sbIDeviceManager);
           if (!deviceManager)
             return false;
@@ -212,3 +211,4 @@ function NSGetModule(comMgr, fileSpec)
 { 
   return sbPlaylistReaderListenerModule;
 } //NSGetModule
+

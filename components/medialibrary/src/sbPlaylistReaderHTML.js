@@ -35,8 +35,6 @@ const SONGBIRD_PLAYLISTHTML_IID = Components.interfaces.sbIPlaylistReader;
 
 function CPlaylistHTML()
 {
-  jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript( "chrome://songbird/content/scripts/songbird_interfaces.js", this );
   this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 }
 
@@ -257,15 +255,16 @@ CPlaylistHTML.prototype =
       retval = false;
       if ( links_array.length > 0 )
       {
-        var pQuery = new this.sbIDatabaseQuery();
+        var pQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                               .createInstance(Components.interfaces.sbIDatabaseQuery);
+        var pLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
+                               .createInstance(Components.interfaces.sbIMediaLibrary);
+        var pPlaylistManager = Components.classes["@songbirdnest.com/Songbird/PlaylistManager;1"]
+                               .createInstance(Components.interfaces.sbIPlaylistManager);
+
         pQuery.setAsyncQuery(true);
         pQuery.setDatabaseGUID(strGUID);
 
-        const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-        var pLibrary = new MediaLibrary();
-        const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-        var pPlaylistManager = new PlaylistManager();
-        
         pLibrary.setQueryObject(pQuery);
         pPlaylist = pPlaylistManager.getPlaylist(strDestTable, pQuery);
         
