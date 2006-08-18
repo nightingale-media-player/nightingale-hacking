@@ -1392,11 +1392,9 @@ function onBrowserPlaylistHide()
 // onHTMLUrlChange
 function onHTMLUrlChange( evt )
 {
-
   var value = evt.target.value;
   if ( value && value.length )
   {
-    url.setAttribute("savefocus", "");
     // Make sure the value is an url
     value = SBGetUrlFromService( value );
     // And then put it back in the box as a service
@@ -1443,10 +1441,13 @@ function onHTMLUrlKeypress( evt )
       break;
       
     case 13: // Enter
+      evt.target.setAttribute("savefocus", "");
       evt.target.value = SBTabcompleteService( evt.target.value );
       onHTMLUrlChange( evt );
+/*      
       evt.target.selectionStart = 0;
       evt.target.selectionEnd = evt.target.value.length;
+*/      
       break;
           
 /*      
