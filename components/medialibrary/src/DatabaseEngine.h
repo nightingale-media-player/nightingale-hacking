@@ -41,7 +41,6 @@
 #include <map>
 
 #include "DatabaseQuery.h"
-#include "sbIDatabaseEngine.h"
 
 #include <prlock.h>
 #include <prmon.h>
@@ -51,45 +50,65 @@
 
 #include <string/nsString.h>
 
-// DEFINES ====================================================================
-#define SONGBIRD_DATABASEENGINE_CONTRACTID                \
-  "@songbirdnest.com/Songbird/DatabaseEngine;1"
-#define SONGBIRD_DATABASEENGINE_CLASSNAME                 \
-  "Songbird Database Engine Interface"
-#define SONGBIRD_DATABASEENGINE_CID                       \
-{ /* 67d9edfd-9a76-4d60-9d76-59181801e193 */              \
-  0x67d9edfd,                                             \
-  0x9a76,                                                 \
-  0x4d60,                                                 \
-  {0x9d, 0x76, 0x59, 0x18, 0x18, 0x1, 0xe1, 0x93}         \
-}
 // FUNCTIONS ==================================================================
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
 
 // CLASSES ====================================================================
 class QueryProcessorThread;
 
-class CDatabaseEngine : public sbIDatabaseEngine
+class CDatabaseEngine
 {
 public:
+  friend int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
   friend class QueryProcessorThread;
+  friend class CDatabaseQuery;
 
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIDATABASEENGINE
+  static CDatabaseEngine *GetSingleton()
+  {
+    if(s_Engine == nsnull)
+    {
+      CDatabaseEngine *pEngine = new CDatabaseEngine();
+      
+      if(pEngine) s_Engine = pEngine;
+      else return nsnull;
+    }
 
+    s_EngineRefCount++;
+
+    return s_Engine;
+  };
+
+  static DestroySingleton()
+  {
+    --s_EngineRefCount;
+    if(s_EngineRefCount < 0) s_EngineRefCount = 0;
+
+    if(s_EngineRefCount == 0 && s_Engine)
+    {
+      delete s_Engine;
+      s_Engine = nsnull;
+    }
+  };
+
+private:
   CDatabaseEngine();
+
+public:
   virtual ~CDatabaseEngine();
 
 protected:
+  static CDatabaseEngine *s_Engine;
+  static long s_EngineRefCount;
+
   PRInt32 OpenDB(const nsAString &dbGUID);
   PRInt32 CloseDB(const nsAString &dbGUID);
 
   PRInt32 DropDB(const nsAString &dbGUID);
 
-  PRInt32 SubmitQueryPrivate(CDatabaseQuery *dbQuery);
+  PRInt32 SubmitQuery(CDatabaseQuery *dbQuery);
 
-  void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName);
-  void RemovePersistentQueryPrivate(CDatabaseQuery *pQuery);
+  void AddPersistentQuery(CDatabaseQuery *pQuery, const nsACString &strTableName);
+  void RemovePersistentQuery(CDatabaseQuery *pQuery);
 
   nsresult LockDatabase(sqlite3 *pDB);
   nsresult UnlockDatabase(sqlite3 *pDB);

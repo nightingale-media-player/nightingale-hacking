@@ -22,7 +22,7 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 //
 // sbIPlaylistWriterManager Object
@@ -35,11 +35,11 @@ const SONGBIRD_PLAYLISTWRITERMANAGER_IID = Components.interfaces.sbIPlaylistWrit
 
 function CPlaylistWriterManager()
 {
-  var m_rootContractID = "@songbirdnest.com/Songbird/Playlist/Writer/";
-  var m_interfaceID = Components.interfaces.sbIPlaylistWriter;
-  var m_Writers = new Array();
-  var m_Extensions = new Array();
-  var m_MIMETypes = new Array();
+  this.m_rootContractID = "@songbirdnest.com/Songbird/Playlist/Writer/";
+  this.m_interfaceID = Components.interfaces.sbIPlaylistWriter;
+  this.m_Writers = new Array();
+  this.m_Extensions = new Array();
+  this.m_MIMETypes = new Array();
 
   // Cache the valid components
   for(var contractID in Components.classes)

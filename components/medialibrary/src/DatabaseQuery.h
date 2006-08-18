@@ -121,7 +121,7 @@ protected:
   PRLock* m_pModifiedTablesLock;
   modifiedtables_t m_ModifiedTables;
 
-  nsCOMPtr<sbIDatabaseEngine> m_Engine;
+  CDatabaseEngine *m_Engine;
 };
 
 #endif // __DATABASE_QUERY_H__

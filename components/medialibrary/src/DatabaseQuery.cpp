@@ -100,7 +100,7 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_QueryResult, "Failed to create DatabaseQuery.m_QueryResult");
   m_QueryResult->AddRef();
 
-  m_Engine = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
+  m_Engine = CDatabaseEngine::GetSingleton();
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -126,6 +126,8 @@ CDatabaseQuery::~CDatabaseQuery()
     PR_DestroyLock(m_pModifiedTablesLock);
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
+
+  CDatabaseEngine::DestroySingleton();
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -339,7 +341,7 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
     nsAutoMonitor mon(m_pQueryRunningMonitor);
     m_QueryHasCompleted = PR_FALSE;
   }
-  m_Engine->SubmitQuery(this, _retval);
+  *_retval = m_Engine->SubmitQuery(this);
   return NS_OK;
 } //Execute
 

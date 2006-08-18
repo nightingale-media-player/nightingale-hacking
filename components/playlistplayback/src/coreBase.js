@@ -105,7 +105,7 @@ CoreBase.prototype =
     }
 
     if( aURL.search(/\\/g)) {
-      aURL.replace(/\\/, '/');
+      aURL = aURL.replace(/\\/, '/');
     }
     return aURL;
   },
