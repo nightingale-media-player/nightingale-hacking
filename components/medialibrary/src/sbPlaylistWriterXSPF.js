@@ -127,13 +127,13 @@ CPlaylistWriterXSPF.prototype.supportedFileExtensions = function( /* out */ nExt
 CPlaylistWriterXSPF.prototype.QueryInterface = function(iid)
 {
     if (!iid.equals(Components.interfaces.nsISupports) &&
-        !iid.equals(SONGBIRD_PLAYLISTRSS_IID))
+        !iid.equals(SONGBIRD_PLAYLISTWRITERXSPF_IID))
         throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
 };
 
 /**
- * \class sbPlaylistRSSModule
+ * \class sbPlaylistXSPFModule
  * \brief 
  */
 var sbPlaylistWriterXSPFModule = 
@@ -183,7 +183,7 @@ var sbPlaylistWriterXSPFFactory =
 
     return (new CPlaylistWriterXSPF()).QueryInterface(iid);
   }
-}; //sbPlaylistRSSFactory
+}; //sbPlaylistXSPFFactory
 
 /**
  * \function NSGetModule
