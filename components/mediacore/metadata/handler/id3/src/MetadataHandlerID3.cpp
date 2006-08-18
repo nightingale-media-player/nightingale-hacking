@@ -744,7 +744,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
             strValue.Assign( uni_string );
             nsMemory::Free( uni_string );
 #else
-            strValue = NS_ConvertUTF8toUTF16(iso_string); // This probably won't work at all.
+            strValue = NS_ConvertASCIItoUTF16(iso_string); // This probably won't work at all.
 #endif
             break;
           }
