@@ -52,6 +52,8 @@
 //   not  - Optionally assign the data as a boolean NOT of the value
 //   eval - Optionally apply an eval string where `value = eval( eval_string );`
 
+const SB_NewDataRemote = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+
 /**
  * \brief Create a DataRemote and bind an Element's property to the data.
  * This method creates a DataRemote associated with the key passed in and
