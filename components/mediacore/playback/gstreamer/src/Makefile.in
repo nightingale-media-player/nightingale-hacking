@@ -31,15 +31,11 @@ CPP_INCLUDES = \
       $(MOZSDK_INCLUDE_DIR)/dom \
       $(MOZSDK_INCLUDE_DIR)/docshell \
       $(MOZSDK_IDL_DIR) \
-      /usr/include/gstreamer-0.10 \
-      /usr/include/glib-2.0 \
-      /usr/lib/glib-2.0/include \
-      /usr/include/libxml2 \
-      /usr/include/gtk-2.0 \
-      /usr/lib/gtk-2.0/include \
-      /usr/include/cairo \
-      /usr/include/pango-1.0 \
-      /usr/include/atk-1.0 \
+      $(NULL)
+
+CPP_EXTRA_INCLUDES = \
+      $(GSTREAMER_CFLAGS) \
+      $(GTK_CFLAGS) \
       $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
