@@ -29,6 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+JAR_MANIFEST = jar.mn
+
 SONGBIRD_COMPONENTS = $(COMPONENTS_DIR)/dataremote/src/sbDataRemote.js \
                       $(NULL)
 
