@@ -510,7 +510,7 @@ DIALOG BOXES and their buttons
 #songbird_makenewplaylist:focus,
 #button_browse:focus
 {
-/*  -moz-appearance: none !important; Apparently, we don't need to do this! */
+  -moz-appearance: none !important;
 }
 
 /** 
