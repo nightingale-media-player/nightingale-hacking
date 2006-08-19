@@ -1,0 +1,8 @@
+songbird.jar:
+#if USING_FLAT_JARS
+% content  songbird  songbird/content/songbird/
+#else
+% content  songbird  jar:songbird.jar!/content/songbird/
+#endif
+  content/songbird/scripts/sbDataRemoteUtils.js       (sbDataRemoteUtils.js)
+

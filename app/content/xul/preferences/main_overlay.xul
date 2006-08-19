@@ -11,7 +11,7 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
-  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbIDataRemote.js" />
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
  <prefWindow id="BrowserPreferences">
   <prefpane id="paneHotkeys" label="&hotkeys.prefpane;" insertafter="paneContent" src="chrome://songbird/content/xul/preferences/hotkeys.xul" />

@@ -86,7 +86,7 @@
    </stack>
 
  <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/sbIDataRemote.js" />
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
  <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/songbird_interfaces.js" />
  <script type="application/x-javascript" 

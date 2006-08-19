@@ -26,7 +26,6 @@ songbird.jar:
   content/songbird/scripts/restartbox.js                (restartbox.js)
   content/songbird/scripts/sbIAsyncForLoop.js           (sbIAsyncForLoop.js)
   content/songbird/scripts/sbIDOMEval.js                (sbIDOMEval.js)
-  content/songbird/scripts/sbIDataRemote.js             (sbIDataRemote.js)
   content/songbird/scripts/setup_progress.js            (setup_progress.js)
   content/songbird/scripts/smilScript.js                (smilScript.js)
   content/songbird/scripts/songbird.js                  (songbird.js)

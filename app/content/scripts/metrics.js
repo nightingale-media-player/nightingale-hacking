@@ -26,7 +26,7 @@
 
 // Metrics
 
-// Not assuming sbIDataRemote.js is loaded because this file may be used by a js component
+// Not assuming sbDataRemoteUtils.js is loaded because this file may be used by a js component
 
 function getValue(key)
 {

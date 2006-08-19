@@ -152,7 +152,7 @@
  
 <!-- SCRIPTS -->
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird.js" />
-<script type="application/x-javascript" src="chrome://songbird/content/scripts/sbIDataRemote.js" />
+<script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/dynamic_playlist_updater.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/messagebox.js" />
