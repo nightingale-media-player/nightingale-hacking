@@ -1808,30 +1808,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\scripts\sbIDataRemote.js"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)&#x0D;&#x0A;"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\scripts\sbIDOMEval.js"
 					>
 					<FileConfiguration

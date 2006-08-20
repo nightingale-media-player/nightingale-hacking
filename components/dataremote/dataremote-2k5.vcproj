@@ -79,7 +79,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputName).xpt"
 					/>
@@ -90,7 +90,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="XPIDL: $(InputFileName) -&gt; $(InputName).h and $(InputName).xpt"
-						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m header -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typelib -I $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl -I $(InputDir) -o $(OutDir)\$(InputName) $(InputPath)&#x0D;&#x0A;copy /y $(OutDir)\$(InputName).xpt $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputName).xpt"
 					/>
@@ -109,7 +109,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
 					/>
@@ -120,9 +120,32 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="$(InputFileName) --"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt;&gt; $(SolutionDir)dist\components\$(InputFileName)&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
 						AdditionalDependencies="$(SolutionDir)dist\vcbuild\$(ProjectName).vcbuild"
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\sbDataRemoteUtils.js"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step $(InputFileName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+						Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
 					/>
 				</FileConfiguration>
 			</File>

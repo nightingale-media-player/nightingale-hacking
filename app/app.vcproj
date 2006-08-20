@@ -1625,27 +1625,6 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\content\scripts\sbIDataRemote.js">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
-"
-							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\content\scripts\sbIDOMEval.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1891,7 +1870,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1899,7 +1879,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
@@ -1931,7 +1912,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1939,7 +1921,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Copying $(InputName)"
-						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)"
+						CommandLine="copy /y $(InputPath) $(SolutionDir)dist\defaults\preferences\$(InputName)
+"
 						Outputs="$(SolutionDir)dist\defaults\preferences\$(InputName)"/>
 				</FileConfiguration>
 			</File>
