@@ -282,6 +282,15 @@ scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
   background-color: #343d42 !important;  
   background-position: center center !important; 
 } 
+
+scrollbar > scrollbarbutton:active,
+scrollbar > slider > thumb:active
+{   	
+  -moz-border-top-colors: #333 #000 !important;
+  -moz-border-right-colors: #666 #333 !important;
+  -moz-border-bottom-colors: #666 #333 !important;
+  -moz-border-left-colors: #333 #000 !important;
+} 
  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
 scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
@@ -337,8 +346,7 @@ scrollbar > slider
   background-color: #686A6A !important; 
 } 
 
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+#frame_service_tree scrollbar > scrollbarbutton
 {    
   -moz-border-top-colors: #999 #666 !important;
   -moz-border-right-colors: #666 #333 !important;
@@ -347,17 +355,16 @@ scrollbar > slider
   border: 2px solid !important; 
   background-color: transparent !important;
 } 
- 
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-border-top-colors: #999 #666 !important;
-  -moz-border-right-colors: #666 #333 !important;
-  -moz-border-bottom-colors: #666 #333 !important;
-  -moz-border-left-colors: #999 #666 !important;
-  border: 2px solid !important; 
-  background-color: transparent !important; 
+
+#frame_service_tree scrollbar > scrollbarbutton:active,
+#frame_service_tree scrollbar > slider > thumb:active
+{    
+  -moz-border-bottom-colors: #999 #666 !important;
+  -moz-border-left-colors: #666 #333 !important;
+  -moz-border-top-colors: #666 #333 !important;
+  -moz-border-right-colors: #999 #666 !important;
 } 
+
 /* END SCROLLBARS **/
 
 
@@ -565,17 +572,19 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-#playlist_toolbar > button[disabled="true"]
+button[disabled="true"],
+button[disabled="true"]:active,
+button[disabled="true"]:hover
 {
-  -moz-border-top-colors: #444 !important;
-  -moz-border-left-colors: #444 !important;
-  -moz-border-bottom-colors: #444 !important;
-  -moz-border-right-colors: #444 !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-bottom-colors: #000 !important;
+  -moz-border-right-colors: #000 !important;
   background-color: #333 !important;
   color: #99A195 !important;
 }
 
-#playlist_toolbar > button[disabled="false"]
+button[disabled="false"]
 {
   -moz-border-top-colors: #99A195 !important;
   -moz-border-left-colors: #99A195 !important;
@@ -585,351 +594,44 @@ contextual menu.
   color: #99A195 !important;  
 }
 
-/* 
-  These are the actual command elements created,
-  a toolbarbutton and a menuitem for each command id.
-
-  You should attach each command's icon, here.
-*/
-
-/* Toolbar: Play Button */
-button#library_cmd_play
-{  
-  color: #99A195 !important;
-}
-button#library_cmd_play:hover
+button
 {
-  color: #FFF !important;
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #333 !important;
+  color: #99A195 !important;  
 }
-button#library_cmd_play[disabled="true"]
+
+button:active
 {
-  color: #505154 !important;
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #99A195 !important;
+  -moz-border-right-colors: #99A195 !important;
 }
-menuitem#library_cmd_play
+
+button:hover
 {
   color: #FFF !important;  
 }
-menuitem#library_cmd_play[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_play[disabled="true"]
-{
-  color: #99A195 !important;
-}
 
-/* Toolbar: remove Button */
-button#library_cmd_remove
+menuitem
 {
-  color: #99A195 !important;  
+  color: #FFF !important;  
 }
-button#library_cmd_remove:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_remove[disabled="true"]
+menuitem:hover
 {
   color: #505154 !important;
 }
-menuitem#library_cmd_remove
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_remove[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_remove[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: edit Button */
-button#library_cmd_edit
-{
-  color: #99A195 !important;
-}
-button#library_cmd_edit:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_edit[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_edit
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_edit[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_edit[disabled="true"]
+menuitem[disabled="true"]
 {
   color: #99A195 !important;
 }
 
 
-/* Toolbar: addtoplaylist Button */
-button#library_cmd_addtoplaylist
-{
-  color: #99A195 !important;
-}
-button#library_cmd_addtoplaylist:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_addtoplaylist[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtoplaylist
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_addtoplaylist[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtoplaylist[disabled="true"]
-{
-  color: #99A195 !important;
-}
 
-/* Toolbar: burntocd Button */
-button#library_cmd_burntocd
-{
-  color: #99A195 !important;
-}
-button#library_cmd_burntocd:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_burntocd[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_burntocd
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_burntocd[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_burntocd[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: device Button */
-button#library_cmd_device
-{
-  color: #99A195 !important;
-}
-button#library_cmd_device:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_device[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_device
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_device[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_device[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: addtolibrary Button */
-button#library_cmd_addtolibrary
-{
-  color: #99A195 !important;
-}
-button#library_cmd_addtolibrary[active="true"]:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_addtolibrary[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtolibrary
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_addtolibrary[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_addtolibrary[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: download Button */
-button#library_cmd_download
-{
-  color: #99A195 !important;
-}
-button#library_cmd_download:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_download[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_download
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_download[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_download[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: subscribe Button */
-button#library_cmd_subscribe
-{
-  color: #99A195 !important;
-}
-button#library_cmd_subscribe:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_subscribe[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_subscribe
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_subscribe[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_subscribe[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: pause Button */
-button#library_cmd_pause
-{
-  color: #99A195 !important;
-}
-button#library_cmd_pause:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_pause[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_pause
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_pause[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_pause[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: resume Button */
-button#library_cmd_resume
-{
-  color: #99A195 !important;
-}
-button#library_cmd_resume:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_resume[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_resume
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_resume[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_resume[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: switch to downloads Button */
-button#library_cmd_showdlplaylist
-{
-  color: #99A195 !important;
-}
-button#library_cmd_showdlplaylist:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_showdlplaylist[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_showdlplaylist
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_showdlplaylist[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_showdlplaylist[disabled="true"]
-{
-  color: #99A195 !important;
-}
-
-/* Toolbar: switch to webplaylist Button */
-button#library_cmd_showwebplaylist
-{
-  color: #99A195 !important;
-}
-button#library_cmd_showwebplaylist:hover
-{
-  color: #FFF !important;
-}
-button#library_cmd_showwebplaylist[disabled="true"]
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_showwebplaylist
-{
-  color: #FFF !important;
-}
-menuitem#library_cmd_showwebplaylist[active="true"]:hover
-{
-  color: #505154 !important;
-}
-menuitem#library_cmd_showwebplaylist[disabled="true"]
-{
-  color: #99A195 !important;
-}
 
 /** 
 ************************************************************************************************************************************************
@@ -1374,41 +1076,6 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border-bottom: 1px solid #808583 !important; 
   background-color: transparent !important;
 }
-
-/* the style for all toolbarbuttons */
-#browser_toolbar button,
-#playlist_toolbar > button,
-#playlist_toolbar > button[disabled="false"] 
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #000 !important;   
- }
- 
-#browser_toolbar button:hover,
-#playlist_toolbar > button:hover,
-#playlist_toolbar > button[disabled="false"]:hover  
-{
-  background-color: #333 !important;
-  color: #FFF !important;   
- }
- 
-#browser_toolbar button[disabled="true"],
-#browser_toolbar button[disabled="true"]:hover,
-#playlist_toolbar > button[disabled="true"],
-#playlist_toolbar > button[disabled="true"]:hover
-{
-  -moz-border-top-colors: #333 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-bottom-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  background-color: transparent !important; 
-  color: #333 !important;  
-}
-
-
 
 /* END WEB BAR */
 
