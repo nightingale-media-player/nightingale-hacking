@@ -153,6 +153,15 @@ scrollbar.dialog_playlist > slider > thumb
   -moz-border-right-colors: #ccc #eee !important;
   color: #666 !important; 
 } 
+
+scrollbar.dialog_playlist > scrollbarbutton:active
+scrollbar.dialog_playlist > slider > thumb:active
+{   
+  -moz-border-bottom-colors: #eee #ececec !important;
+  -moz-border-left-colors: #ccc #eee !important;
+  -moz-border-top-colors: #ccc #eee !important;  
+  -moz-border-right-colors: #eee #ececec  !important;
+} 
  
 scrollbar.dialog_playlist > slider > thumb > gripper
 {   
@@ -306,6 +315,14 @@ BUTTONS for dialogs and forms.
   -moz-border-right-colors: #999 !important;
   background-color: #fff !important;
   color: #99A195 !important;
+}
+
+.dialog_button:active
+{
+  -moz-border-bottom-colors: #ccc !important;
+  -moz-border-left-colors: #999 !important;
+  -moz-border-top-colors: #999 !important;
+  -moz-border-right-colors: #ccc !important;
 }
 
 .dialog_button[disabled="true"],
