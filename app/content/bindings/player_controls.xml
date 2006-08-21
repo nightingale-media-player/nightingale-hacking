@@ -56,7 +56,7 @@
                     .getService(Components.interfaces.sbIPlaylistPlayback);
  
         // observer for DataRemote 
-        var on_remote_volume_change = { 
+        const on_remote_volume_change = { 
           _that: null, 
           observe: function( aSubject, aTopic, aData ) { this._that.onRemoteVolumeChange(); } 
         };
@@ -74,8 +74,10 @@
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.remote_volume)
+        if (this.remote_volume) {
           this.remote_volume.unbind();
+          this.remote_volume = null;
+        }
       ]]>
     </destructor>
     
@@ -163,10 +165,15 @@
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.bindmuteon)
+        //SB_LOG("player_controls.js", "mute binding destructor");
+        if (this.bindmuteon) {
           this.bindmuteon.unbind();
-        if (this.bindmuteoff)
+          this.bindmuteon = null;
+        }
+        if (this.bindmuteoff) {
           this.bindmuteoff.unbind();
+          this.bindmuteoff = null;
+        }
       ]]>
     </destructor>
 
@@ -452,12 +459,21 @@
       ]]>
     </constructor>
     <destructor>
-      if (this.repnonebinding)
-        this.repnonebinding.unbind();
-      if (this.rep1binding)
-        this.rep1binding.unbind();
-      if (this.repallbinding)
-        this.repallbinding.unbind();
+      <![CDATA[
+        //SB_LOG("player_controls.js", "repeat binding destructor");
+        if (this.repnonebinding) {
+          this.repnonebinding.unbind();
+          this.repnonebinding = null;
+        }
+        if (this.rep1binding) {
+          this.rep1binding.unbind();
+          this.rep1binding = null;
+        }
+        if (this.repallbinding) {
+          this.repallbinding.unbind();
+          this.repallbinding = null;
+        }
+      ]]>
     </destructor>
 
     <field name="repeat_none">document.getAnonymousElementByAttribute(this, 'sbid', 'repeat_none');</field>
@@ -522,10 +538,15 @@
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.bindshuffleoff)
+        //SB_LOG("player_controls.js", "shuffle binding destructor");
+        if (this.bindshuffleoff) {
           this.bindshuffleoff.unbind()
-        if (this.bindshuffleon)
+          this.bindshuffleoff = null;
+        }
+        if (this.bindshuffleon) {
           this.bindshuffleon.unbind()
+          this.bindshuffleon = null;
+        }
       ]]>
     </destructor>
 
@@ -567,7 +588,7 @@
                     .getService(Components.interfaces.sbIPlaylistPlayback);
 
         // observer for DataRemote 
-        var on_remote_position_change = { 
+        const on_remote_position_change = { 
           _that: null, 
           observe: function( aSubject, aTopic, aData ) { this._that.onRemotePositionChange(); } 
         };
@@ -583,10 +604,15 @@
     </constructor>
     <destructor>
       <![CDATA[
-        if (this.remote_position)
+        //SB_LOG("player_controls.js", "seekbar binding destructor");
+        if (this.remote_position) {
           this.remote_position.unbind();
-        if (this.remote_length)
+          this.remote_position = null;
+        }
+        if (this.remote_length) {
           this.remote_length.unbind();
+          this.remote_length = null;
+        }
       ]]>
     </destructor>
     
@@ -649,8 +675,13 @@
       ]]>
     </constructor>
     <destructor>
-      if (this.bindtotaltime)
-        this.bindtotaltime.unbind();
+      <![CDATA[
+        //SB_LOG("player_controls.js", "totaltime binding destructor");
+        if (this.bindtotaltime) {
+          this.bindtotaltime.unbind();
+          this.bindtotaltime = null;
+        }
+      ]]>
     </destructor>
 
     <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'timelabel');</field>
@@ -701,15 +732,23 @@
         this.remote_playingRef =  SB_NewDataRemote( "playing.ref", null ); 
         this.remote_playlistIndex =  SB_NewDataRemote( "playlist.index", null ); 
 
+        // Bind to the hidden attribute for each field
         this.playbinding = SBDataBindElementAttribute( "faceplate.play", this.play, "hidden", true, true );
         this.pausebinding = SBDataBindElementAttribute( "faceplate.play", this.pause, "hidden", true );
       ]]>
     </constructor>
     <destructor>
-      if (this.pausebinding)
-        this.pausebinding.unbind();
-      if (this.playbinding)
-        this.playbinding.unbind();
+      <![CDATA[
+        //SB_LOG("player_controls.js", "playpause binding destructor");
+        if (this.pausebinding) {
+          this.pausebinding.unbind();
+          this.pausebinding = null;
+        }
+        if (this.playbinding) {
+          this.playbinding.unbind();
+          this.playbinding = null;
+        }
+      ]]>
     </destructor>
 
     <field name="play">document.getAnonymousElementByAttribute(this, 'sbid', 'play');</field>
@@ -821,7 +860,7 @@
         this.autotip = this.getAttribute("autotip");
         if (this.autotip) {
           // observer for DataRemote 
-          var on_remote_artist_album_change = { 
+          const on_remote_artist_album_change = { 
             _that: null, 
             observe: function( aSubject, aTopic, aData ) { this._that.rebuildTip(); } 
           };
@@ -840,10 +879,14 @@
 
     <destructor>
       <![CDATA[
-        if (this.remote_album)
+        if (this.remote_album) {
           this.remote_album.unbind();
-        if (this.remote_artist)
+          this.remote_album = null;
+        }
+        if (this.remote_artist) {
           this.remote_artist.unbind();
+          this.remote_artist = null
+        }
       ]]>
     </destructor>
 
@@ -966,17 +1009,23 @@
   <implementation>
 
     <constructor>
-      this.data  = "backscan.status";
+      <![CDATA[
+        this.data  = "backscan.status";
 
-      // Create and bind data remote
-      this.bindvisible = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
+        // Create and bind data remote
+        this.bindvisible = SBDataBindElementAttribute( "backscan.status", this.label, "hidden", true, false, "value == ''" );
 
-      // XXXredfive - backscan paused in an int, I think we want to do something different here
-      this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
+        this.setAttribute("onmousedown", "SBDataSetIntValue('backscan.paused', SBDataGetIntValue('backscan.paused') == 0 );");
+      ]]>
     </constructor>
     <destructor>
-      if (this.bindvisible)
-        this.bindvisible.unbind();
+      <![CDATA[
+        //SB_LOG("player_controls.js", "scanning binding destructor");
+        if (this.bindvisible) {
+          this.bindvisible.unbind();
+          this.bindvisible = null;
+        }
+      ]]>
     </destructor>
 
    </implementation>

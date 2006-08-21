@@ -30,13 +30,17 @@ try
   
 //  const sbDatabaseGUID = "songbird";
   const sbDatabaseGUID = "*";
-  var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+/* gPPS gets defined in another file
+  const gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                            .getService(Components.interfaces.sbIPlaylistPlayback);
+*/
+  const gMetadataManager = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
+                            .createInstance(Components.interfaces.sbIMetadataManager);
+  const gMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"]
+                            .createInstance(Components.interfaces.sbIMediaLibrary);
 
-  const MetadataManager = new Components.Constructor("@songbirdnest.com/Songbird/MetadataManager;1", "sbIMetadataManager");
-  var aMetadataManager = new MetadataManager();
-  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-  var aMediaLibrary = new MediaLibrary();
-  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "track_no", "track_total", "disc_no", "disc_total", "service_uuid");
+  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "track_no",
+                         "track_total", "disc_no", "disc_total", "service_uuid");
   const bsDBGuidIdx = 11; // If you add keys, make sure this is the index of "service_guid"
 
   var bsPaused = false;
@@ -75,6 +79,11 @@ try
   var bsSongbirdStrings = document.getElementById( "songbird_strings" );
   
   var bsQueryString = "SELECT uuid, url, length, title, service_uuid FROM library where length=\"0\"";
+
+  // observer for DataRemote
+  const bs_data_change = {
+    observe: function ( aSubject, aTopic, aData) { BSDataChange(aData); }
+  };
   
   // Init the text box to the last url played (shrug).
   function BSInitialize()
@@ -84,9 +93,6 @@ try
       if ( ENABLE_BACKSCAN )
       {
         // Bind a function to let us pause and unpause
-        var bs_data_change = {
-          observe: function ( aSubject, aTopic, aData) { BSDataChange(aData); }
-        };
         bsScanningPaused.bindObserver( bs_data_change, true );
       
         // Go start an async query on the library
@@ -112,6 +118,7 @@ try
   {
     try {
       bsScanningPaused.unbind();
+      bsScanningPaused = null;
     }
     catch ( err ) {
       dump("ERROR! SBDeInitialized()\n" + err + "\n");
@@ -218,7 +225,7 @@ try
       var url = result.getRowCellByColumn( bsLastRow, "url" );
       try
       {
-        bsMDHandler = aMetadataManager.getHandlerForMediaURL(url);
+        bsMDHandler = gMetadataManager.getHandlerForMediaURL(url);
       } 
       catch(e)
       {
@@ -278,13 +285,13 @@ try
       // Prepare the query
       bsCurQuery.resetQuery();
       bsCurQuery.setDatabaseGUID( dbGUID );
-      aMediaLibrary.setQueryObject(bsCurQuery);
+      gMediaLibrary.setQueryObject(bsCurQuery);
       
       // Add the metadata
       for ( var i = 0; i < bsMetadataArray.length; i++ )
       {
         // Go submit the metdadata update, and stash the query so we know when the update is done.
-        aMediaLibrary.setValuesByGUID( bsGUIDArray[i], keys.length, keys, bsMetadataArray[i].length, bsMetadataArray[i], true );
+        gMediaLibrary.setValuesByGUID( bsGUIDArray[i], keys.length, keys, bsMetadataArray[i].length, bsMetadataArray[i], true );
       }
       bsCurQuery.execute();
 

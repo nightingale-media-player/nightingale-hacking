@@ -60,7 +60,9 @@
      <destructor>
        <![CDATA[
          this.descbinding.unbind();
+         this.descbinding = null;
          this.stylebinding.unbind();
+         this.stylebinding = null;
        ]]>
      </destructor>
 

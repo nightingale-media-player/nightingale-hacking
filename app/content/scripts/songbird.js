@@ -458,6 +458,7 @@ function SBInterfaceDeinitialize()
 {
   // Unbind restartapp remote
   songbird_restartNow.unbind();
+  songbird_restartNow = null;
 }
 
 function SBAppDeinitialize()
@@ -473,6 +474,7 @@ function SBAppDeinitialize()
   //thePlayerRepeater.unbind();
   // Unbind the playback url viewer. (used by the code that uncloaks the video window)
   songbird_playURL.unbind();
+  songbird_playURL = null;
   // Remember where the video window is.
   resetGlobalHotkeys();
   onWindowSaveSizeAndPosition();
@@ -492,13 +494,20 @@ function SBMetricsAppStart()
   SBDataSetIntValue("startup_timestamp", timestamp.getTime());
 }
 
+// observer for DataRemote
+const sb_restart_app = {
+    observe: function ( aSubject, aTopic, aData ) { restartApp(); }
+}
+
 function SBInterfaceInitialize() 
 {
-  var sb_restart_app = {
-    observe: function ( aSubject, aTopic, aData ) { restartApp(); }
-  };
   songbird_restartNow = SB_NewDataRemote( "restart.restartnow", null );
   songbird_restartNow.bindObserver( sb_restart_app, true );
+}
+
+// observer for DataRemote
+const sb_url_changed = {
+  observe: function ( aSubject, aTopic, aData ) { SBUrlChanged(aData); }
 }
 
 function SBAppInitialize()
@@ -510,11 +519,6 @@ function SBAppInitialize()
     onWindowLoadSize();
     createLibraryRef();
     initGlobalHotkeys();
-
-    // observer for DataRemote
-    var sb_url_changed = {
-      observe: function ( aSubject, aTopic, aData ) { SBUrlChanged(aData); }
-    };
 
     // Create and bind DataRemote
     songbird_playURL = SB_NewDataRemote( "faceplate.play.url", null );

@@ -192,20 +192,7 @@
         this._lastviewsummary = "";
         this.lastfiltersstate = "open";
 
-        // event handler for the data remote 
-        var on_play_url_change = { 
-          _that: null, 
-          // sync the playlist but do not scroll
-          observe: function( aSubject, aTopic, aData ) { this._that.syncPlaylistIndex(false); } 
-        };
-        on_play_url_change._that = this;
-
-        // Create and bind data remotes
-        this.playingRef = SB_NewDataRemote( "playing.ref", null );
-        this.playlistRef = SB_NewDataRemote( "playlist.ref", null );
-        this.playUrl = SB_NewDataRemote( "faceplate.play.url", null );
-        this.playUrl.bindObserver(on_play_url_change, true);
-        
+        this.bindDataRemotes();
         if ( this._constructed ) dump("playlist.xml - constructor - THIS SHOULD NEVER GET CALLED\n"); // ???
         this._constructed = true; // ???
       }
@@ -246,7 +233,7 @@
         this.stopWatchingDragObjects();
 
         // detach from the DataRemote
-        this.playUrl.unbind();
+        this.unbindDataRemotes();
         this._constructed = false; // ???
       } catch (err) {
         dump("playlist.xml - destructor: " + err + "\n");
@@ -397,7 +384,7 @@
         <parameter name="refsuffix"/>
         <body>
           <![CDATA[
-           // dump("XXXredfive - playlist::bind ********* guid:" + guid + " ******** table:" + table + " ******* \n");
+            //SB_LOG("playlist.xml", "playlist::bind ********* guid:" + guid + " ******** table:" + table + " *******");
       try
       {
         // Perhaps we need to reload our columns
@@ -406,7 +393,8 @@
         // Make sure we have a playlist source.
         if ( this.source == null )
         {
-          this.source = Components.classes[ "@mozilla.org/rdf/datasource;1?name=playlist" ].getService( Components.interfaces.sbIPlaylistsource );
+          this.source = Components.classes["@mozilla.org/rdf/datasource;1?name=playlist"]
+                                   .getService( Components.interfaces.sbIPlaylistsource );
         }
         
         // Reset some variables used elsewhere.
@@ -2976,7 +2964,40 @@
         ]]>
       </body>
     </method>
+
+    <method name="bindDataRemotes">
+      <body>
+        <![CDATA[
+          // event handler for the data remote 
+          const on_play_url_change = { 
+            _that: null, 
+            // sync the playlist but do not scroll
+            observe: function( aSubject, aTopic, aData ) {
+              this._that.syncPlaylistIndex(false);
+            } 
+          };
+          on_play_url_change._that = this;
+
+          // Create and bind data remotes
+          this.playingRef = SB_NewDataRemote( "playing.ref", null );
+          this.playlistRef = SB_NewDataRemote( "playlist.ref", null );
+          this.playUrl = SB_NewDataRemote( "faceplate.play.url", null );
+          this.playUrl.bindObserver(on_play_url_change, true);
+        ]]>
+      </body>
+    </method>
     
+    <method name="unbindDataRemotes">
+      <body>
+        <![CDATA[
+          if (this.playUrl) {
+            this.playUrl.unbind();
+            this.playUrl = null;
+          }
+        ]]>
+      </body>
+    </method>
+
 </implementation> 
  
   </binding>

@@ -47,6 +47,7 @@ try
 
   function onSBMainwinDataLoad()
   {
+    //SB_LOG("onSBMainwinDataLoad", "");
     try
     {
       // Do the magic binding stuff here.
@@ -117,12 +118,14 @@ try
 
   function onSBMainwinDataUnload()
   {
+    //SB_LOG("onSBMainwinDataUnload", "");
     try
     {
       // Unbind the observers!
       for ( var i = 0; i < MainwinDataRemotes.length; i++ )
       {
         MainwinDataRemotes[ i ].unbind();
+        MainwinDataRemotes[ i ] = null;
       }
     }  
     catch ( err )
@@ -167,16 +170,16 @@ try
     }
   }
 
+  // event handler for data remotes
+  const on_artist_album_changed = {
+    observe: function ( aSubject, aTopic, aData ) { onSBArtistAlbumChanged(); }
+  };
+
   function onSBMainwinComplexLoad()
   {
     try
     {
       // Title/<slash>/Album Box Complex -- two data items for one callback.
-
-      // event handler for data remotes
-      var on_artist_album_changed = {
-        observe: function ( aSubject, aTopic, aData ) { onSBArtistAlbumChanged(); }
-      };
 
       // Create and bind the data remotes
       MainwinArtistRemote = SB_NewDataRemote( "metadata.title", null ); // changed to title cuz we like to be odd.

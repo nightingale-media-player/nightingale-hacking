@@ -36,6 +36,7 @@ var gHotkeysPane = {
   onUnload: function()
   {
     this._binding_enabled.unbind();
+    this._binding_enabled = null;
   },
   
   loadActions: function() 

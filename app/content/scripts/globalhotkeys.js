@@ -196,10 +196,11 @@ function stringToKeyCode( str ) {
 var songbird_hotkeys_event1;
 var songbird_hotkeys_event2;
 
+const global_hotkeys_changed = {
+  observe : function ( aSubject, aTopic, aData ) { globalHotkeysChanged(); }
+}
+
 function beginWatchingHotkeyRemotes() {
-  var global_hotkeys_changed = {
-    observe : function ( aSubject, aTopic, aData ) { globalHotkeysChanged(); }
-  }
   songbird_hotkeys_event1 = SB_NewDataRemote ("globalhotkeys.changed", null);
   songbird_hotkeys_event1.bindObserver( global_hotkeys_changed, true )
   songbird_hotkeys_event2 = SB_NewDataRemote("globalhotkeys.enabled", null);
@@ -207,10 +208,14 @@ function beginWatchingHotkeyRemotes() {
 }
 
 function stopWatchingHotkeyRemotes() {
-  if (songbird_hotkeys_event1)
+  if (songbird_hotkeys_event1) {
     songbird_hotkeys_event1.unbind();
-  if (songbird_hotkeys_event2)
+    songbird_hotkeys_event1 = null;
+  }
+  if (songbird_hotkeys_event2) {
     songbird_hotkeys_event2.unbind();
+    songbird_hotkeys_event2 = null;
+  }
 }
 
 function globalHotkeysChanged(v) {
