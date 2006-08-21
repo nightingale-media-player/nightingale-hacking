@@ -136,6 +136,7 @@ dove.jar:
   feathers/dove/songbird/default/volume_progress_bar.png              (default/volume_progress_bar.png)
   feathers/dove/songbird/default/volume_progress_remainder.png        (default/volume_progress_remainder.png)
   feathers/dove/songbird/default/volume_thumb.png                     (default/volume_thumb.png)
+  feathers/dove/songbird/default/volume_thumb_active.png              (default/volume_thumb_active.png)
   feathers/dove/songbird/default/volume_w.png                         (default/volume_w.png)
   feathers/dove/songbird/default/webbar_addtoplaylist_disabled.png    (default/webbar_addtoplaylist_disabled.png)
   feathers/dove/songbird/default/webbar_addtoplaylist_hover.png       (default/webbar_addtoplaylist_hover.png)
