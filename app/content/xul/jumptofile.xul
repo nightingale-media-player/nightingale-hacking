@@ -93,36 +93,42 @@
 
           <spacer height="5"/>
 
-          <menulist id="playable_list" 
-            value="1" 
-            label="poo" 
-            x_editable="false" 
-            oncommand="onPlaylistlistSelect(event)" 
-            onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
-          >
-            <menupopup 
-              datasources="rdf:Servicesource" 
-              ref="NC:ServicesourcePlayable"
+          <hbox align="center">
+            <label id="jumpto_playlist_label" class="dialog_label" value="&jumptofile.playlist;" />
+
+            <menulist id="playable_list" 
+              value="1" 
+              label="poo" 
+              x_editable="false" 
+              oncommand="onPlaylistlistSelect(event)" 
+              onmousedown="eatEvent(event);" onmouseup="eatEvent(event);"
+              flex="1"
             >
-              <template>
-                <rule>
-                  <menuitem uri="rdf:*"
-                    id="rdf:http://home.netscape.com/NC-rdf#Label" 
-                    label="rdf:http://home.netscape.com/NC-rdf#Label"
-                    value="rdf:http://home.netscape.com/NC-rdf#URL"
-                    class="menuitem-iconic"
-                    image="rdf:http://home.netscape.com/NC-rdf#Icon"
-                    guid="rdf:http://home.netscape.com/NC-rdf#DBGUID"
-                    table="rdf:http://home.netscape.com/NC-rdf#DBTable"
-                  />
-                </rule>
-              </template>
-            </menupopup>
-          </menulist>
+              <menupopup 
+                datasources="rdf:Servicesource" 
+                ref="NC:ServicesourcePlayable"
+              >
+                <template>
+                  <rule>
+                    <menuitem uri="rdf:*"
+                      id="rdf:http://home.netscape.com/NC-rdf#Label" 
+                      label="rdf:http://home.netscape.com/NC-rdf#Label"
+                      value="rdf:http://home.netscape.com/NC-rdf#URL"
+                      class="menuitem-iconic"
+                      image="rdf:http://home.netscape.com/NC-rdf#Icon"
+                      guid="rdf:http://home.netscape.com/NC-rdf#DBGUID"
+                      table="rdf:http://home.netscape.com/NC-rdf#DBTable"
+                    />
+                  </rule>
+                </template>
+              </menupopup>
+            </menulist>
+          </hbox>
 
           <spacer height="5"/>
 
-          <hbox>
+          <hbox align="center">
+            <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
             <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onFilterKeypress(event);" />
           </hbox>
           

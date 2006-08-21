@@ -288,3 +288,9 @@
 <!ENTITY menu.updateCmd.accessKey "o" >
 
 
+
+
+<!ENTITY jumptofile.playlist "Playlist:" >
+<!ENTITY jumptofile.search "Search:" >
+
+
