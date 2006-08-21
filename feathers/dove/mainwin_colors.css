@@ -831,8 +831,20 @@ Contains the Main Playback Controls and the Dashboard.
 /* the seekbar slider */
 #songbird_seekbar_thumb
 {
-  background-color: #1F292B !important;
-  border: 1px solid #a7afa2 !important;
+  background-color: #a2aa9e !important;
+  border: 1px solid !important;
+  -moz-border-top-colors: #ccd4c7 !important;
+  -moz-border-right-colors: #888f85 !important;
+  -moz-border-bottom-colors: #888f85 !important;
+  -moz-border-left-colors: #ccd4c7 !important;
+}
+
+#songbird_seekbar_thumb:active
+{
+  -moz-border-bottom-colors: #ccd4c7 !important;
+  -moz-border-left-colors: #888f85 !important;
+  -moz-border-top-colors: #888f85 !important;
+  -moz-border-right-colors: #ccd4c7 !important;
 }
 
 #songbird_seekbar
