@@ -46,19 +46,9 @@ endif
 
 UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE)-$(SB_BUILD_ID).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
 
-ifneq (,$(SRC_BUILD)$(DST_BUILD))
-PARTIAL_TASKS += partial-patch
-ifneq (,$(SRC_BUILD_ID)$(DST_BUILD_ID)$(DST_BUILD_MS))
-PARTIAL_TASKS += partial-snippet
-SERVER_PATH = $(SERVER_BASE)/$(SRC_BUILD_ID)-$(SB_BRANCHNAME)
-endif
-endif
+# MUST specify a target, no default rule
+default: all
 
-tasks: complete \
-       $(PARTIAL_TASKS) \
-       all \
-       $(NULL)
-       
 complete:: complete-patch complete-snippet
 
 partial:: partial-patch partial-snippet
