@@ -284,3 +284,9 @@
 <!ENTITY tooltip.hide "Hide" >
 
 
+
+
+<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY menu.updateCmd.accessKey "o" >
+
+

@@ -231,3 +231,9 @@
 <!ENTITY setupprogress.installingextensions "Installing Extensions" >
 
 
+
+
+<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY menu.updateCmd.accessKey "o" >
+
+
