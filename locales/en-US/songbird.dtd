@@ -53,6 +53,7 @@
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.topics   "Help Topics..." >
 <!ENTITY menu.help.about    "About Songbird..." >
+
 <!ENTITY menu.preferences   "Preferences..." >
 <!ENTITY menu.extensions    "Extensions..." >
 
@@ -202,6 +203,7 @@
 <!ENTITY menu.help.help.accesskey     "H" >
 <!ENTITY menu.help.about.accesskey    "A" >
 
+
 <!ENTITY bookmarks.edit.title  "Edit Bookmark" >
 <!ENTITY bookmarks.edit.url    "URL:" >
 <!ENTITY bookmarks.edit.label  "Name:" >
@@ -241,3 +243,6 @@
 <!ENTITY restartbox.restartlater      "Restart Later" >
 
 <!ENTITY setupprogress.installingextensions "Installing Extensions" >
+
+<!ENTITY menu.updateCmd.label     "Check for Updates...">
+<!ENTITY menu.updateCmd.accessKey "o">

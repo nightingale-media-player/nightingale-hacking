@@ -194,12 +194,25 @@
                   </menupopup>
                 </menu>
                 <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                <menu id="songbird_menu_item_help" label="&menu.help;" class="sb_faceplate" accesskey="&menu.help.accesskey;">
+                <menu id="songbird_menu_item_help"
+                      label="&menu.help;"
+                      class="sb_faceplate"
+                      accesskey="&menu.help.accesskey;"
+                      onpopupshowing="buildHelpMenu();">
                   <menupopup id="help-popup">
-                    <!-- <menuitem id="help.demo" label="SVG Demo" value="chrome://songbird/content/svg_events2.xml"/> -->
-                    <menuitem id="help.topics" label="&menu.help.topics;" value="&web.url.first;" accesskey="&menu.help.help.accesskey;"/>
+                    <menuitem id="help.topics"
+                              label="&menu.help.topics;"
+                              value="&web.url.first;"
+                              accesskey="&menu.help.help.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="aboutName" label="&menu.help.about;" accesskey="&menu.help.about.accesskey;"/>
+                    <menuitem id="updateCmd"
+                              label="&menu.updateCmd.label;"
+                              accesskey="&menu.updateCmd.accessKey;"
+                              oncommand="checkForUpdates();"/>
+                    <menuseparator/>
+                    <menuitem id="aboutName"
+                              label="&menu.help.about;"
+                              accesskey="&menu.help.about.accesskey;"/>
                   </menupopup>
                 </menu>
 
