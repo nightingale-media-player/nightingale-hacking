@@ -68,16 +68,7 @@
   <!-- Do the first run test and pop up the mainwin as soon as possible -->
   <script>
   <![CDATA[
-    try
-    {
-      var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
-      var BundleService = new nsIBundle();
-      BundleService.retrieveBundleFile();
-    }
-    catch ( err )
-    {
-      SB_LOG( "App Init - Bundle - ", "" + err );
-    }
+
     try
     {
       document.__STARTMAINWIN = function( ) { 

@@ -27,7 +27,6 @@
 // Globals
 var wanted_locale = "en-US";
 var loaded_bundle = false;
-var fwd_bundle;
 var FirstRunBundleCB = 
 {
   onLoad: function(bundle) { bundleDataReady(bundle); },
@@ -57,7 +56,18 @@ function bundleDataReady(bundle) {
 
 function initFirstRun() 
 {
-  var bundle = window.arguments[0].bundle;
+ 
+  try {
+    var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
+    var bundle = new nsIBundle();
+    bundle.retrieveBundleFile();
+  } catch ( err ) {
+    SB_LOG("initFirstRun", "" + err );
+  }
+
+  // Bundle is expected as a window arg
+  window.arguments[0].bundle = bundle;
+   
   bundle.addBundleObserver(FirstRunBundleCB);
   var s = bundle.getStatus();
   if (s != 0) bundleDataReady(bundle);
@@ -212,7 +222,7 @@ function doEULA(aAcceptAction, aCancelAction)
   return retval; 
 }
 
-// XXXredfive New method
+
 // Check the pref to see if this is the first run. If so, launch the firstrun
 //   dialog and return. The handling in the firstrun dialog will cause the
 //   main window to be launched.
@@ -223,13 +233,6 @@ function doEULA(aAcceptAction, aCancelAction)
 function doFirstRun()
 {
   //SB_LOG("doFirstRun");
-  try {
-    var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
-    var bundle = new nsIBundle();
-    bundle.retrieveBundleFile();
-  } catch ( err ) {
-    SB_LOG("doFirstRun", "" + err );
-  }
     
   try {
     var haveRun;
@@ -239,7 +242,10 @@ function doFirstRun()
 
     if ( ! haveRun ) {
       var data = new Object();
-      data.bundle = bundle;
+
+      // Can't create the bundle here, as at this point there is no window?
+      //data.bundle = bundle; 
+      
       data.document = document;
 
       // This cannot be modal it will block the download of extensions
@@ -310,8 +316,8 @@ function doOK()
   } else {
     bundle.installSelectedExtensions(window);
     gPrefs.setBoolPref("songbird.firstruncheck", true);  
-    // XXXredfive - songbird.installedbundle maybe?
-    gPrefs.setCharPref("installedbundle", bundle.getBundleVersion());
+    
+    gPrefs.setCharPref("songbird.installedbundle", bundle.getBundleVersion());
     if (bundle.getNeedRestart()) {
       var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
       var MetricsService = new nsIMetrics();
