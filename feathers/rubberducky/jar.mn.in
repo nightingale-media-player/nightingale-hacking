@@ -165,6 +165,7 @@ rubberducky.jar:
   feathers/rubberducky/songbird/skin/default/volume_progress_bar.png             (skin/default/volume_progress_bar.png)
   feathers/rubberducky/songbird/skin/default/volume_progress_remainder.png       (skin/default/volume_progress_remainder.png)
   feathers/rubberducky/songbird/skin/default/volume_thumb.png                    (skin/default/volume_thumb.png)
+  feathers/rubberducky/songbird/skin/default/volume_thumb_active.png             (skin/default/volume_thumb_active.png)
   feathers/rubberducky/songbird/skin/default/volume_w.png                        (skin/default/volume_w.png)
   feathers/rubberducky/songbird/skin/default/webbar_addtoplaylist_disabled.png   (skin/default/webbar_addtoplaylist_disabled.png)
   feathers/rubberducky/songbird/skin/default/webbar_addtoplaylist_hover.png      (skin/default/webbar_addtoplaylist_hover.png)
