@@ -80,7 +80,6 @@
           <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right"/>
           <spacer width="20" height="5" class="sb_faceplate"/>
           <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1"/>
-          <label id="mini_text_time_e_txt" class="sb_faceplate"/>
           <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate"/>
           <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate"/>
           <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" />

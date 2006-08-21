@@ -68,7 +68,7 @@
       </hbox>
       <hbox class="sb_faceplate" flex="1">
         <image id="mainwin_chrome_w" class="sb_faceplate"/>
-        <spacer onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" flex="1"/>
+        <spacer flex="1"/>
         <image id="mainwin_chrome_e" class="sb_faceplate"/>
       </hbox>
       <hbox class="sb_faceplate">
@@ -100,8 +100,8 @@
             <!-- DRAGGER AND SYSTEM BUTTONS -->
             <hbox id="songbird_top" class="sb_faceplate" >
               <image id="app_icon" ondblclick="quitApp( );"/>
-              <label id="mainwin_app_title" value="&window.dev.title;" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-              <spacer width="5" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+              <label id="mainwin_app_title" value="&window.dev.title;" class="sb_faceplate"/>
+              <spacer width="5"/>
               <menubar id="songbird_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)">
                 <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
                   <menupopup id="file-popup">
@@ -135,7 +135,7 @@
 
                   </menupopup>
                 </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate" accesskey="&menu.edit.accesskey;">
                   <menupopup id="edit-popup">
                     <menuitem id="edit.undo" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
@@ -149,7 +149,7 @@
                     <menuitem id="edit.selnone" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
                   </menupopup>
                 </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_controls" label="&menu.controls;" class="sb_faceplate" accesskey="&menu.controls.accesskey;">
                   <menupopup id="controls-popup">
                     <menuitem id="control.play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
@@ -164,7 +164,7 @@
                     <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" checked="true" accesskey="&menu.control.repx.accesskey;"/>
                   </menupopup>
                 </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_services" label="&menu.services;" class="sb_faceplate" accesskey="&menu.services.accesskey;">
                   <!-- TRY FILLING THE MENUBAR WITH THE SAME DATA AS THE SERVICE PANE? -->
                   <menupopup 
@@ -187,13 +187,13 @@
                     </template>
                   </menupopup>
                 </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate" accesskey="&menu.devices.accesskey;">
                   <menupopup id="devices-popup">
                     <menuitem label="No Devices Yet"/>
                   </menupopup>
                 </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_help"
                       label="&menu.help;"
                       class="sb_faceplate"
@@ -218,17 +218,17 @@
 
               </menubar>
 
-              <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+              <spacer flex="1"/>
               <button id="sysbtn_minimode" class="sb_faceplate" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
-              <spacer width="5" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+              <spacer width="5"/>
               <button id="sysbtn_minimize" class="sb_faceplate" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
-              <spacer width="5" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+              <spacer width="5"/>
               <checkbox id="sysbtn_maximize" class="sb_faceplate" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
-              <spacer width="5" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+              <spacer width="5"/>
               <button id="sysbtn_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
             </hbox>
 
-            <spacer height="7" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+            <spacer height="7"/>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
             <hbox id="frame_mini" hidden="true">
@@ -252,13 +252,12 @@
               <hbox flex="1">
                 <spacer width="4" height="18" id="mini_dash_w"/>
                 <vbox id="mini_dash" flex="1">
-                  <hbox id="mini_text_time" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" flex="1" >
-                    <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" crop="right"/>
-                    <spacer width="20" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                    <player_title id="mini_text_title" class="sb_faceplate" autotip="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" crop="right" flex="1"/>
-                    <label id="mini_text_time_e_txt"   class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                    <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                    <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                  <hbox id="mini_text_time" class="sb_faceplate" flex="1" >
+                    <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right"/>
+                    <spacer width="20"/>
+                    <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1"/>
+                    <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate"/>
+                    <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate"/>
                     <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" />
                   </hbox>
                   <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
@@ -319,11 +318,11 @@
               <hbox id="frame_control_pane" pack="center" align="center" class="sb_faceplate" src="control_pane/control_pane.xul">
 
                 <vbox id="control_left_box" class="sb_faceplate" pack="center" align="center">
-                  <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                  <spacer flex="1"/>
                   <!-- PLAY BUTTONS -->
                   <hbox id="playbutton_box" class="sb_faceplate">
                     <player_back id="songbird_btn_back"  class="sb_faceplate" tooltiptext="&tooltip.control.back;" />
-                    <spacer width="2" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                    <spacer width="2"/>
                     <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" class="sb_faceplate" flex="1"/>
                     <!-- 
                   <stack id="songbird_btn_play_pause" class="sb_faceplate" flex="1">
@@ -331,27 +330,27 @@
                     <button id="songbird_btn_pause" class="sb_faceplate" oncommand="onPause( );" tooltiptext="&tooltip.control.pause;" />
                   </stack>
                   -->
-                    <spacer width="2" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                    <spacer width="2"/>
                     <player_forward id="songbird_btn_fwd" class="sb_faceplate" tooltiptext="&tooltip.control.fwd;" /> -->
                   </hbox>
                   <hbox id="volume_box" class="sb_faceplate">
                     <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
                     <spacer width="2"/>
                     <vbox>
-                      <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                      <spacer flex="1"/>
                       <hbox>
                         <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
                         <player_volume id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
                         <spacer width="3" height="5" id="songbird_volume_e"/>
                       </hbox>
-                      <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                      <spacer flex="1"/>
                     </vbox>
                   </hbox>
-                  <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                  <spacer flex="1"/>
                 </vbox>
 
                 <!-- SPACER -->
-                <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" height="60"/>
+                <spacer flex="1" height="60"/>
 
                 <hbox id="control_right_box" class="sb_faceplate">
                   <!-- REPEAT/SHUFFLE -->
@@ -384,34 +383,34 @@
                         <vbox flex="1" class="sb_faceplate" id="dashboard_bkgd">
                           <spacer flex="1"/>
                           <!-- SONG ARTIST/SONGTITLE DISPLAY -->
-                          <hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();">
-                            <player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" />
+                          <hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate">
+                            <player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" />
                           </hbox>
                           <!-- SONG ALBUM DISPLAY -->
-                          <hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();">
-                            <player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                            <label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                            <player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                          <hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate">
+                            <player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end"/>
+                            <label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end"/>
+                            <player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end"/>
                           </hbox>
                           <!-- SEEK BAR -->
                           <hbox class="sb_faceplate">
-                            <spacer width="10" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                            <player_timeelapsed id="songbird_text_time_elapsed" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
-                            <spacer width="2" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                            <spacer width="10"/>
+                            <player_timeelapsed id="songbird_text_time_elapsed" class="sb_faceplate"/>
+                            <spacer width="2"/>
                             <vbox flex="1">
-                              <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                              <spacer flex="1"/>
                               <player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100"/>
-                              <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                              <spacer flex="1"/>
                             </vbox>
-                            <spacer width="2" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                            <spacer width="2"/>
                             <player_totaltime id="songbird_text_time_total" class="sb_faceplate" />
-                            <spacer width="10" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>
+                            <spacer width="10"/>
                           </hbox>
 
                           <spacer flex="1"/>
 
-                          <label id="songbird_text_rep"   value="" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" hidden="true"/>
-                          <label id="songbird_text_shuf"  value="Shuffle" class="sb_faceplate" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" hidden="true"/>
+                          <label id="songbird_text_rep"   value="" class="sb_faceplate" hidden="true"/>
+                          <label id="songbird_text_shuf"  value="Shuffle" class="sb_faceplate" hidden="true"/>
                         </vbox>
                         <spacer width="10" id="dashboard_e"/>
                       </hbox>
@@ -430,20 +429,20 @@
 
                 <!-- SEARCH WIDGET 
               <vbox>
-                <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>       
+                <spacer flex="1"/>       
                 <search
                   id="search_widget" 
                   listid="search_service_list"
                   buttonid="search_service_button"
                   tooltiptext="&tooltip.search;"
                 />
-                <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();"/>           
+                <spacer flex="1"/>           
               </vbox>
               -->
                 <!-- SEARCH WIDGET -->
 
                 <!-- SPACER -->
-                <spacer flex="1" onmousedown="onBkgDown( event, false );" onmouseup="onBkgUp();" height="60"/>
+                <spacer flex="1" height="60"/>
               </hbox>
 
               <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane">
