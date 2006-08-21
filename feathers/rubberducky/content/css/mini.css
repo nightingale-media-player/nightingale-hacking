@@ -295,6 +295,11 @@ window#mini
   background-repeat: no-repeat !important;
 }
 
+#mini_volume_thumb:active
+{
+  background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) !important;
+}
+
 #mini_volume_progress
 {
   top: 0px !important;
