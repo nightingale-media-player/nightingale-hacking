@@ -1136,6 +1136,11 @@ Mute and Slider
   background-image: url(chrome://songbird/skin/default/volume_thumb.png) !important;
 }
 
+#songbird_volume_thumb:active
+{
+  background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) !important;
+}
+
 #songbird_volume_progress > .progress-bar
 {
   background-image: url(chrome://songbird/skin/default/volume_progress_bar.png) !important;
