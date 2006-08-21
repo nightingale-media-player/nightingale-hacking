@@ -221,6 +221,15 @@ Love your boxes.
   background-color: #686A6A !important;
   color: #99A195 !important; 
 }
+
+#frame_service_buttonbar button:active
+{
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-bottom-colors: #99A195 !important;
+  -moz-border-right-colors: #99A195 !important;
+}
+
 #frame_service_buttonbar button:hover
 {
   color: #FFF !important;
@@ -272,7 +281,9 @@ scrollbar
 } 
 
 scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 {   
   -moz-border-top-colors: #666 #333 !important;
   -moz-border-right-colors: #333 #000 !important;
@@ -290,18 +301,6 @@ scrollbar > slider > thumb:active
   -moz-border-right-colors: #666 #333 !important;
   -moz-border-bottom-colors: #666 #333 !important;
   -moz-border-left-colors: #333 #000 !important;
-} 
- 
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-border-top-colors: #666 #333 !important;
-  -moz-border-right-colors: #333 #000 !important;
-  -moz-border-bottom-colors: #333 #000 !important;
-  -moz-border-left-colors: #666 #333 !important;
-  border: 2px solid !important; 
-  background-color: #343d42 !important;
-  background-position: center center !important;
 } 
  
 scrollbar > slider > thumb > gripper
