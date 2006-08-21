@@ -408,3 +408,9 @@ window#mini
   overflow: hidden;
 }
 
+#mini_text_time
+{
+  height: 12px !important;
+  max-height: 12px !important;
+  min-height: 12px !important;
+}
