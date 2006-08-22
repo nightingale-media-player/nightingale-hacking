@@ -44,28 +44,28 @@
 <a name="l00025"></a>00025 <span class="comment"> */</span>
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00033"></a>00033 
-<a name="l00040"></a>00040 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(D711447E-B6B0-4e63-A50E-3523794E08DF)]
-<a name="l00041"></a><a class="code" href="interfacesb_i_database_result.html">00041</a> interface <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> : nsISupports
-<a name="l00042"></a>00042 {
-<a name="l00049"></a>00049   PRInt32 getColumnCount();
-<a name="l00050"></a>00050 
-<a name="l00057"></a>00057   AString getColumnName(in PRInt32 dbColumn);
-<a name="l00058"></a>00058 
-<a name="l00065"></a>00065   PRInt32 getRowCount();
-<a name="l00066"></a>00066 
-<a name="l00073"></a>00073   AString getRowCell(in PRInt32 dbRow, in PRInt32 dbCell);
-<a name="l00074"></a>00074 
-<a name="l00081"></a>00081   AString getRowCellByColumn(in PRInt32 dbRow, in AString dbColumn);
-<a name="l00082"></a>00082 
-<a name="l00089"></a>00089   [noscript] wstring getColumnNamePtr(in PRInt32 dbColumn);
-<a name="l00090"></a>00090 
-<a name="l00097"></a>00097   [noscript] wstring getRowCellPtr(in PRInt32 dbRow, in PRInt32 dbCell);
-<a name="l00098"></a>00098 
-<a name="l00105"></a>00105   [noscript] wstring getRowCellByColumnPtr(in PRInt32 dbRow, in AString dbColumn);
-<a name="l00106"></a>00106 
-<a name="l00113"></a>00113   [noscript] <span class="keywordtype">void</span> clearResultSet();
-<a name="l00114"></a>00114 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
+<a name="l00042"></a>00042 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(D711447E-B6B0-4e63-A50E-3523794E08DF)]
+<a name="l00043"></a><a class="code" href="interfacesb_i_database_result.html">00043</a> interface <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a> : nsISupports
+<a name="l00044"></a>00044 {
+<a name="l00051"></a>00051   PRInt32 getColumnCount();
+<a name="l00052"></a>00052 
+<a name="l00060"></a>00060   AString getColumnName(in PRInt32 aColumnIndex);
+<a name="l00061"></a>00061 
+<a name="l00068"></a>00068   PRInt32 getRowCount();
+<a name="l00069"></a>00069 
+<a name="l00078"></a>00078   AString getRowCell(in PRInt32 aRowIndex, in PRInt32 aColumnIndex);
+<a name="l00079"></a>00079 
+<a name="l00088"></a>00088   AString getRowCellByColumn(in PRInt32 aRowIndex, in AString aColumnName);
+<a name="l00089"></a>00089 
+<a name="l00100"></a>00100   [noscript] wstring getColumnNamePtr(in PRInt32 aColumnIndex);
+<a name="l00101"></a>00101 
+<a name="l00113"></a>00113   [noscript] wstring getRowCellPtr(in PRInt32 aRowIndex, in PRInt32 aColumnIndex);
+<a name="l00114"></a>00114 
+<a name="l00126"></a>00126   [noscript] wstring getRowCellByColumnPtr(in PRInt32 aRowIndex, in AString aColumnName);
+<a name="l00127"></a>00127 
+<a name="l00137"></a>00137   [noscript] <span class="keywordtype">void</span> clearResultSet();
+<a name="l00138"></a>00138 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

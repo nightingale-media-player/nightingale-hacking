@@ -1,7 +1,41 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+/**
+ * \file sbIGStreamerSimple.idl
+ * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS. 
+ * 
+ */
 #include "nsISupports.idl"
 
 interface nsIDOMXULElement;
 
+/**
+ * \interface sbIGStreamerSimple
+ * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS.
+ */
 [scriptable, uuid(7067ba5f-fce9-4d4e-9d79-c08c343ed4dd)]
 interface sbIGStreamerSimple : nsISupports
 {

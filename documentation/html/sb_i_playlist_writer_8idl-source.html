@@ -45,20 +45,51 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(27B68B9B-E471-4367-B159-63B65C581847)]
-<a name="l00030"></a><a class="code" href="interfacesb_i_playlist_writer.html">00030</a> interface <a class="code" href="interfacesb_i_playlist_writer.html">sbIPlaylistWriter</a> : nsISupports
-<a name="l00031"></a>00031 {
-<a name="l00032"></a>00032   PRBool Write(in AString strPlaylist, in AString strOutURL, in PRBool bReplace, out PRInt32 errorCode);
-<a name="l00033"></a>00033   PRInt32 Vote(in AString strURL);
-<a name="l00034"></a>00034 
-<a name="l00035"></a>00035   AString Name();
-<a name="l00036"></a>00036   AString Description();
-<a name="l00037"></a>00037   
-<a name="l00038"></a>00038   <span class="keywordtype">void</span> SupportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
-<a name="l00039"></a>00039   <span class="keywordtype">void</span> SupportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
-<a name="l00040"></a>00040 
-<a name="l00041"></a>00041 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
+<a name="l00029"></a>00029 <span class="preprocessor">#include "nsIProgressEventSink.idl"</span>
+<a name="l00030"></a>00030 <span class="preprocessor">#include "nsIPrompt.idl"</span>
+<a name="l00031"></a>00031 <span class="preprocessor">#include "nsIAuthPrompt.idl"</span>
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(3FE9E285-F0F8-4154-9C21-8B6E4B8EFA93)]
+<a name="l00034"></a><a class="code" href="interfacesb_i_playlist_writer_listener.html">00034</a> interface <a class="code" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a> : nsIProgressEventSink
+<a name="l00035"></a>00035 {
+<a name="l00036"></a>00036 };
+<a name="l00037"></a>00037 
+<a name="l00038"></a>00038 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(27B68B9B-E471-4367-B159-63B65C581847)]
+<a name="l00039"></a><a class="code" href="interfacesb_i_playlist_writer.html">00039</a> interface <a class="code" href="interfacesb_i_playlist_writer.html">sbIPlaylistWriter</a> : nsISupports
+<a name="l00040"></a>00040 {
+<a name="l00047"></a>00047   PRBool write(in AString aGUID, 
+<a name="l00048"></a>00048                in AString aDestTable, 
+<a name="l00049"></a>00049                in PRBool aReplace, 
+<a name="l00050"></a>00050                out PRInt32 aErrorCode);
+<a name="l00051"></a>00051 
+<a name="l00058"></a>00058   PRInt32 vote(in AString aURL);
+<a name="l00059"></a>00059 
+<a name="l00066"></a>00066   AString name();
+<a name="l00067"></a>00067 
+<a name="l00074"></a>00074   AString description();
+<a name="l00075"></a>00075   
+<a name="l00082"></a>00082   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 aMIMECount, 
+<a name="l00083"></a>00083     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+<a name="l00084"></a>00084 
+<a name="l00091"></a>00091   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 aExtCount, 
+<a name="l00092"></a>00092     [array, size_is (aExtCount), retval] out wstring aExts);
+<a name="l00093"></a>00093 };
+<a name="l00094"></a>00094 
+<a name="l00101"></a>00101 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(CB6A505E-D8CB-4711-A50F-38439561C6D0)]
+<a name="l00102"></a><a class="code" href="interfacesb_i_playlist_writer_manager.html">00102</a> interface <a class="code" href="interfacesb_i_playlist_writer_manager.html">sbIPlaylistWriterManager</a> : nsISupports
+<a name="l00103"></a>00103 {
+<a name="l00110"></a>00110   PRInt32 write(in AString aGUID, 
+<a name="l00111"></a>00111     in AString aName, 
+<a name="l00112"></a>00112     in AString aOutputContentType,
+<a name="l00113"></a>00113     in <a class="code" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a> aWriterListener);
+<a name="l00114"></a>00114 
+<a name="l00121"></a>00121   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 aMIMECount, 
+<a name="l00122"></a>00122     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+<a name="l00123"></a>00123 
+<a name="l00130"></a>00130   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 aExtCount, 
+<a name="l00131"></a>00131     [array, size_is (aExtCount), retval] out wstring aExts);
+<a name="l00132"></a>00132 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

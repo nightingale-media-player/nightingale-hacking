@@ -29,9 +29,17 @@
 
 /**
 * \interface sbIServicesource 
-* \brief USER CODE SHOULD NOT REFERENCE THIS CLASS
+* \brief The internal RDF Data Source that sends playlistlist data to the UI.
 *
 * This object returns the playlistlist as an nsIRDFDataSource
+*
+* It has two ref values:
+*
+* ref="NC:ServicesourcePlayable" - The list of all playable playlists in the system
+*
+* ref="NC:Servicesource" - The above, plus the "Welcome" node at the beginning
+*
+* But it has no user-accessible methods.
 *
 */
 [scriptable, uuid(0646A07D-2697-4998-A4F3-D5F77938A7BE)]

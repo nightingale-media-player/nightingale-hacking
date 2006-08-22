@@ -57,7 +57,7 @@ interface sbIGlobalHotkeyCallback : nsISupports
 };
 
 /**
- * \interface sbIGlobalHotkey IGlobalHotkeys.h
+ * \interface sbIGlobalHotkeys IGlobalHotkeys.h
  * \brief Global hotkey registration/unregistration interface
  * This interface is used to register or unregister hotkey callbacks
  * \sa sbIGlobalHotkeyCallback

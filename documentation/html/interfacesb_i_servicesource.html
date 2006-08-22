@@ -18,7 +18,7 @@
     <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul></div>
-<h1>sbIServicesource Interface Reference</h1><!-- doxytag: class="sbIServicesource" -->USER CODE SHOULD NOT REFERENCE THIS CLASS.  
+<h1>sbIServicesource Interface Reference</h1><!-- doxytag: class="sbIServicesource" -->The internal RDF Data Source that sends playlistlist data to the UI.  
 <a href="#_details">More...</a>
 <p>
 <code>import &quot;<a class="el" href="sb_i_servicesource_8idl-source.html">sbIServicesource.idl</a>&quot;;</code>
@@ -27,15 +27,19 @@
 <tr><td></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-USER CODE SHOULD NOT REFERENCE THIS CLASS. 
+The internal RDF Data Source that sends playlistlist data to the UI. 
 <p>
-This object returns the playlistlist as an nsIRDFDataSource 
+This object returns the playlistlist as an nsIRDFDataSource<p>
+It has two ref values:<p>
+ref="NC:ServicesourcePlayable" - The list of all playable playlists in the system<p>
+ref="NC:Servicesource" - The above, plus the "Welcome" node at the beginning<p>
+But it has no user-accessible methods. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_servicesource_8idl-source.html#l00038">38</a> of file <a class="el" href="sb_i_servicesource_8idl-source.html">sbIServicesource.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_servicesource_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_servicesource_8idl-source.html">sbIServicesource.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/servicesource/public/<a class="el" href="sb_i_servicesource_8idl-source.html">sbIServicesource.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:56 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

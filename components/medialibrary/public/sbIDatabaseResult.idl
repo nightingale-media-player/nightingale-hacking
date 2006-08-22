@@ -25,7 +25,7 @@
  */
 /**
  * \file sbIDatabaseResult.idl
- * \brief 
+ * \brief An object containing the results of a database query. 
  * 
  * \sa sbIDatabaseQuery.idl
  */
@@ -33,7 +33,9 @@
 
 /**
  * \interface sbIDatabaseResult
- * \brief
+ * \brief An object containing the results of a database SELECT query.
+ *
+ * User code retrieves one of these objects from sbIDatabaseQuery::getResultObject()
  *
  * \sa sbIDatabaseQuery
  */
@@ -41,73 +43,95 @@
 interface sbIDatabaseResult : nsISupports
 {
   /**
-   * \brief 
+   * \brief The number of columns in the result.
    *
-   * \param 
+   * \return The number of columns in the result. 
    * \sa sbIDatabaseQuery
    */
   PRInt32 getColumnCount();
 
   /**
-   * \brief 
+   * \brief The name of a particular column.
    *
-   * \param 
+   * \param aColumnIndex The index of the column to access.
+   * \return The name of the column.
    * \sa sbIDatabaseQuery
    */
-  AString getColumnName(in PRInt32 dbColumn);
+  AString getColumnName(in PRInt32 aColumnIndex);
 
   /**
-   * \brief 
+   * \brief The number of rows in the result.
    *
-   * \param 
+   * \return The number of rows in the result.
    * \sa sbIDatabaseQuery
    */
   PRInt32 getRowCount();
 
   /**
-   * \brief 
+   * \brief Retrieve the value of a cell at a particular row and column.
    *
-   * \param 
+   * \param aRowIndex The row index of the cell to retrieve.
+   * \param aColumnIndex The column index of the cell to retrieve.
+   * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  AString getRowCell(in PRInt32 dbRow, in PRInt32 dbCell);
+  AString getRowCell(in PRInt32 aRowIndex, in PRInt32 aColumnIndex);
 
   /**
-   * \brief 
+   * \brief Retrieve the value of a cell at a particular row for a named column.
    *
-   * \param 
+   * \param aRowIndex The row index of the cell to retrieve.
+   * \param aColumnName The column name of the cell to retrieve.
+   * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  AString getRowCellByColumn(in PRInt32 dbRow, in AString dbColumn);
+  AString getRowCellByColumn(in PRInt32 aRowIndex, in AString aColumnName);
 
   /**
-   * \brief 
+   * \brief [noscript] Get the internal pointer to the column name.
    *
-   * \param 
+   * This method is not available from script.  It returns the internal
+   * pointer to the value, to reduce unnecessary memory copies.
+   *
+   * \param aColumnIndex The index of the column to access.
+   * \return The name of the column.
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring getColumnNamePtr(in PRInt32 dbColumn);
+  [noscript] wstring getColumnNamePtr(in PRInt32 aColumnIndex);
 
   /**
-   * \brief 
+   * \brief [noscript] Get the internal pointer to the cell value.
    *
-   * \param 
+   * This method is not available from script.  It returns the internal
+   * pointer to the value, to reduce unnecessary memory copies.
+   *
+   * \param aRowIndex The row index of the cell to retrieve.
+   * \param aColumnIndex The column index of the cell to retrieve.
+   * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring getRowCellPtr(in PRInt32 dbRow, in PRInt32 dbCell);
+  [noscript] wstring getRowCellPtr(in PRInt32 aRowIndex, in PRInt32 aColumnIndex);
 
   /**
-   * \brief 
+   * \brief [noscript] Get the internal pointer to the cell value (by named column).
    *
-   * \param 
+   * This method is not available from script.  It returns the internal
+   * pointer to the value, to reduce unnecessary memory copies.
+   *
+   * \param aRowIndex The row index of the cell to retrieve.
+   * \param aColumnName The column name of the cell to retrieve.
+   * \return The cell value.
    * \sa sbIDatabaseQuery
    */
-  [noscript] wstring getRowCellByColumnPtr(in PRInt32 dbRow, in AString dbColumn);
+  [noscript] wstring getRowCellByColumnPtr(in PRInt32 aRowIndex, in AString aColumnName);
 
   /**
-   * \brief 
+   * \brief [noscript] Free the internally allocated resources of this results object.
    *
-   * \param 
+   * This method is not available from script.  It deallocates the internal
+   * memory used to contain the results data.  This allows code to free most
+   * of the used memory long before the garbage collector would.
+   *
    * \sa sbIDatabaseQuery
    */
   [noscript] void clearResultSet();

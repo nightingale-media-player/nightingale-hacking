@@ -86,6 +86,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#f09b4eab4ef7c38c23c779dff1ede3f6">onSwapCore</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the core is swapping. Allows the core to do any cleaning up it needs to. Also stops the playback of any media.  <a href="#f09b4eab4ef7c38c23c779dff1ede3f6"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#fd90762a67bf33051b2961f5cbcd52d4">isMediaURL</a> (in AString aURL)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to media content This checks for a number of known file extensions and prefixes to see if the URL contains them and is therefore media.  <a href="#fd90762a67bf33051b2961f5cbcd52d4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#79d8fad16b1eab43475cf366cb635d68">isVideoURL</a> (in AString aURL)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to video content This checks for a number of known file extensions to see if the URL contains them and is therefore video.  <a href="#79d8fad16b1eab43475cf366cb635d68"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A wrapper for various media cores Defines the inteface for objects that will provide playback functionality. 
@@ -322,6 +328,64 @@ Get the volume.
 Maximize the plugin window to be fullscreen. Have the plugin render to the full size of the screen. 
 <p>
 <dl compact><dt><b>Returns:</b></dt><dd>void </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="fd90762a67bf33051b2961f5cbcd52d4"></a><!-- doxytag: member="sbICoreWrapper::isMediaURL" ref="fd90762a67bf33051b2961f5cbcd52d4" args="(in AString aURL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbICoreWrapper::isMediaURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aURL</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Check to see if an url points to media content This checks for a number of known file extensions and prefixes to see if the URL contains them and is therefore media. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aURL</em>&nbsp;</td><td>- the URL to check </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>true if the URL points to media content <p>
+false if the URL does not point to media content </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="79d8fad16b1eab43475cf366cb635d68"></a><!-- doxytag: member="sbICoreWrapper::isVideoURL" ref="79d8fad16b1eab43475cf366cb635d68" args="(in AString aURL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbICoreWrapper::isVideoURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aURL</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Check to see if an url points to video content This checks for a number of known file extensions to see if the URL contains them and is therefore video. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aURL</em>&nbsp;</td><td>- the URL to check </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>true if the URL points to video content <p>
+false if the URL does not point to video content </dd></dl>
 
 </div>
 </div><p>
@@ -585,7 +649,7 @@ Stop playback.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/playlistplayback/public/<a class="el" href="sb_i_core_wrapper_8idl-source.html">sbICoreWrapper.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:54 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

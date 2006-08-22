@@ -20,15 +20,216 @@
   </ul></div>
 <h1>sbIPlaylistWriter Interface Reference</h1><!-- doxytag: class="sbIPlaylistWriter" --><a href="interfacesb_i_playlist_writer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#d084241db5a6c238a5b5159dcf37b241">write</a> (in AString aGUID, in AString aDestTable, in PRBool aReplace, out PRInt32 aErrorCode)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#93bdf5a267467fb9b3ef581339612de9">vote</a> (in AString aURL)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#dd16799af17404cf1f53b3bd4d603846">name</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#54fb8fabdd3d3dd98b3f6aaf207ad3b3">description</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#0a3790bd97bf000be6d8f8661bdf7ab7">supportedMIMETypes</a> (out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#9fa8fada5cae500f460f7a6e9db7e850">supportedFileExtensions</a> (out PRUint32 aExtCount,[array, size_is(aExtCount), retval] out wstring aExts)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00030">30</a> of file <a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00039">39</a> of file <a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="54fb8fabdd3d3dd98b3f6aaf207ad3b3"></a><!-- doxytag: member="sbIPlaylistWriter::description" ref="54fb8fabdd3d3dd98b3f6aaf207ad3b3" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIPlaylistWriter::description           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="dd16799af17404cf1f53b3bd4d603846"></a><!-- doxytag: member="sbIPlaylistWriter::name" ref="dd16799af17404cf1f53b3bd4d603846" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIPlaylistWriter::name           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="9fa8fada5cae500f460f7a6e9db7e850"></a><!-- doxytag: member="sbIPlaylistWriter::supportedFileExtensions" ref="9fa8fada5cae500f460f7a6e9db7e850" args="(out PRUint32 aExtCount,[array, size_is(aExtCount), retval] out wstring aExts)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWriter::supportedFileExtensions           </td>
+          <td>(</td>
+          <td class="paramtype">out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aExtCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aExtCount), retval] out wstring&nbsp;</td>
+          <td class="paramname"> <em>aExts</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="0a3790bd97bf000be6d8f8661bdf7ab7"></a><!-- doxytag: member="sbIPlaylistWriter::supportedMIMETypes" ref="0a3790bd97bf000be6d8f8661bdf7ab7" args="(out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistWriter::supportedMIMETypes           </td>
+          <td>(</td>
+          <td class="paramtype">out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aMIMECount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aMIMECount), retval] out wstring&nbsp;</td>
+          <td class="paramname"> <em>aMIMETypes</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="93bdf5a267467fb9b3ef581339612de9"></a><!-- doxytag: member="sbIPlaylistWriter::vote" ref="93bdf5a267467fb9b3ef581339612de9" args="(in AString aURL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRInt32 sbIPlaylistWriter::vote           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aURL</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d084241db5a6c238a5b5159dcf37b241"></a><!-- doxytag: member="sbIPlaylistWriter::write" ref="d084241db5a6c238a5b5159dcf37b241" args="(in AString aGUID, in AString aDestTable, in PRBool aReplace, out PRInt32 aErrorCode)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRBool sbIPlaylistWriter::write           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aDestTable</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRBool&nbsp;</td>
+          <td class="paramname"> <em>aReplace</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out PRInt32&nbsp;</td>
+          <td class="paramname"> <em>aErrorCode</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Thu Aug 10 23:07:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:56 2006 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>
