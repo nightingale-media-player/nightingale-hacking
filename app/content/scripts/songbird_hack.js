@@ -632,8 +632,9 @@ function onServiceEdit( index )
         index = theServiceTree_tree.currentIndex;
       if ( theServiceTree_tree && ( index > -1 ) )
       {
-        var column = theServiceTree_tree.columns ? theServiceTree_tree.columns["frame_service_tree_label"] : "frame_service_tree_label";
+        var column = theServiceTree_tree.columns["frame_service_tree_label"];
         var cell_text = theServiceTree_tree.view.getCellText( index, column );
+        var cell_url =  theServiceTree_tree.view.getCellText( index, theServiceTree_tree.columns["url"] );
 
         // This is nuts!
         var text_x = {}, text_y = {}, text_w = {}, text_h = {}; 
@@ -669,6 +670,7 @@ function onServiceEdit( index )
         theEditPopup.sizeTo( out_w.value - less_w, out_h.value - less_h ); // increase the width to the size of the cell.
         theEditBox.value = cell_text;
         theEditBox.index = index;
+        theEditBox.url = cell_url;
         theEditBox.focus();
         theEditBox.select();
         isServiceEditShowing = true;
@@ -679,6 +681,24 @@ function onServiceEdit( index )
   {
     alert( "onServiceEdit - " + err );
   }
+}
+
+function getItemByUrl( tree, url )
+{
+  var retval = null;
+
+  for ( var i = 0; i < tree.view.rowCount; i++ )
+  {
+    var cell_url =  tree.view.getCellText( i, tree.columns["url"] );
+    
+    if ( cell_url == url )
+    {
+      retval = tree.contentView.getItemAtIndex( i );
+      break;
+    }
+  }
+  
+  return retval;
 }
 
 function onServiceEditChange( evt )
@@ -693,7 +713,11 @@ function onServiceEditChange( evt )
       {
         var theEditBox = document.getElementById( "service_edit" );
 
-        var element = theServiceTree_tree.contentView.getItemAtIndex( theEditBox.index );
+        var element = getItemByUrl( theServiceTree_tree, theEditBox.url );
+        
+        if ( element == null ) 
+          return; // ??
+        
         var properties = element.getAttribute( "properties" ).split(" ");
         if ( properties.length >= 5 && properties[0] == "playlist" )
         {
