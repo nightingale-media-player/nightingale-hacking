@@ -1019,7 +1019,7 @@ function onBrowserHome()
       homepage = prefs.getCharPref("browser.startup.homepage");
     }
     
-    if(homepage.length)
+    if(homepage && homepage != "")
       defaultHomepage = homepage;
       
     theServiceTree.launchServiceURL( defaultHomepage );
