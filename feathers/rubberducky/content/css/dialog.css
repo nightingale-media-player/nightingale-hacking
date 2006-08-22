@@ -573,14 +573,22 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
 menuitem > .menu-iconic-icon
 {
   height: 16px !important;
+  min-height: 16px !important;
+  min-height: 16px !important;
   width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
 }
 
 /* Unless it's a command */
 menuitem[sbtype="command"] > .menu-iconic-icon
 {
   height: 8px !important;
+  min-height: 8px !important;
+  max-height: 8px !important;
   width: 11px !important;
+  min-width: 11px !important;
+  max-width: 11px !important;
 }
 
 /** 
