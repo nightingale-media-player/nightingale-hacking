@@ -39,10 +39,13 @@
  height="360"
  onload="return doInit();"
  ondialogaccept="return doOK();"
+
+ ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
+ onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
 
   <!-- Astounding complexity! -->
-  <label id="version_number" value="&about.version;" class="sb_faceplate" onmousedown="onBkgDown( event );" onmouseup="onBkgUp();"/>
+  <label id="version_number" value="&about.version;" class="sb_faceplate"/>
   <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" flex="1"/>
 
   <!-- And intrepid instructions! -->  
