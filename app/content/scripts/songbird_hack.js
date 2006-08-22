@@ -661,6 +661,8 @@ function onServiceEdit( index )
         var theEditBox = document.getElementById( "service_edit" );
         var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
         var extra_y = 7; // Why do I have to give it extra?  What am I calculating wrong?
+        if (PLATFORM_MACOSX)
+          extra_y -= 1;  // And an extra pixel on the mac.  Great.
         var less_w  = 5;
         var less_h  = -2;
         var pos_x = extra_x + theServiceTree_tree.boxObject.screenX + out_x.value;
