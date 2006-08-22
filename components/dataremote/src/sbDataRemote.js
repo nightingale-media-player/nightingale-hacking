@@ -82,7 +82,7 @@ DataRemote.prototype = {
                   .QueryInterface(Components.interfaces.nsIPrefBranch2);
     if (!this._prefBranch)
       throw Components.results.NS_ERROR_FAILURE;
-      
+
     this._initialized = true;
   },
 
@@ -108,7 +108,10 @@ DataRemote.prototype = {
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
       this._prefBranch.removeObserver(this._key, this);
-    this._prefBranch.addObserver(this._key, this, true);
+
+    // Temporary change in how we attach as observers
+    //this._prefBranch.addObserver(this._key, this, true);
+    this._prefBranch.addObserver(this._key, this, false);
     this._observing = true;
 
     // Now we are linked to an nsIObserver object
@@ -139,7 +142,10 @@ DataRemote.prototype = {
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
       this._prefBranch.removeObserver(this._key, this);
-    this._prefBranch.addObserver(this._key, this, true);
+
+    // Temporary change in how we attach as observers
+    //this._prefBranch.addObserver(this._key, this, true);
+    this._prefBranch.addObserver(this._key, this, false);
     this._observing = true;
 
     // Now we are linked to property on an element
@@ -169,7 +175,10 @@ DataRemote.prototype = {
     // Clear and reinsert ourselves as an observer.
     if ( this._observing )
       this._prefBranch.removeObserver(this._key, this);
-    this._prefBranch.addObserver(this._key, this, true);
+
+    // Temporary change in how we attach as observers
+    //this._prefBranch.addObserver(this._key, this, true);
+    this._prefBranch.addObserver(this._key, this, false);
     this._observing = true;
     
     // Now we are linked to an attribute on an element
@@ -185,14 +194,14 @@ DataRemote.prototype = {
     this.observe(null, null, this._key);
   },
 
-  get_stringValue : function() {
+  get stringValue() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     return this._getValue();
   },
 
-  set_stringValue : function(aStringValue) {
+  set stringValue(aStringValue) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
@@ -202,14 +211,14 @@ DataRemote.prototype = {
     this._setValue(aStringValue);
   },
 
-  get_boolValue : function () {
+  get boolValue() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     return (this._makeIntValue(this._getValue()) != 0);
   },
 
-  set_boolValue : function(aBoolValue) {
+  set boolValue(aBoolValue) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
@@ -218,14 +227,14 @@ DataRemote.prototype = {
     this._setValue(aBoolValue);
   },
 
-  get_intValue : function () {
+  get intValue() {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     return this._makeIntValue(this._getValue());
   },
 
-  set_intValue : function(aIntValue) {
+  set intValue(aIntValue) {
     if (!this._initialized)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
@@ -352,14 +361,6 @@ DataRemote.prototype = {
 
 // be specific
 DataRemote.prototype.constructor = DataRemote;
-
-// Um, LAME!!! xpconnect does not automaticaly map js attributes to their getFoo()/setFoo() methods
-DataRemote.prototype.__defineGetter__( "stringValue", DataRemote.prototype.get_stringValue );
-DataRemote.prototype.__defineSetter__( "stringValue", DataRemote.prototype.set_stringValue );
-DataRemote.prototype.__defineGetter__( "boolValue", DataRemote.prototype.get_boolValue );
-DataRemote.prototype.__defineSetter__( "boolValue", DataRemote.prototype.set_boolValue );
-DataRemote.prototype.__defineGetter__( "intValue", DataRemote.prototype.get_intValue );
-DataRemote.prototype.__defineSetter__( "intValue", DataRemote.prototype.set_intValue );
 
 /**
  * ----------------------------------------------------------------------------
