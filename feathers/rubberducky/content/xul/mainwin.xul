@@ -39,8 +39,8 @@
   id="frame_outer"
   hidechrome="true"
   class="sb_faceplate, mainwin"
-  onload="SBInitialize();onSBMainwinDataLoad();SBInterfaceInitialize();"
-  onunload="SBUninitialize();onSBMainwinDataUnload();SBInterfaceDeinitialize();"
+  onload="SBInitialize();onSBMainwinDataLoad();"
+  onunload="SBUninitialize();onSBMainwinDataUnload();"
   onclose="return false; /*quitApp();*/" 
   title="&window.dev.title;"
   onkeypress="onMainwinKeypress( event );"
@@ -601,7 +601,7 @@
 
   <!-- Load the Songbird stuff -->
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/songbird.js" />
+   src="chrome://songbird/content/scripts/window_utils.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   

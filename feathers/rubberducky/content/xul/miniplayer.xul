@@ -40,8 +40,8 @@
  id="mini"
  title="&window.dev.title;"
  hidechrome="true"
- onload="{centerWindowOnScreen();SBInitialize();SBInterfaceInitialize();}"
- onunload="SBUninitialize();SBInterfaceDeinitialize();"
+ onload="{centerWindowOnScreen();SBInitialize();}"
+ onunload="SBUninitialize();"
  class="sb_faceplate"
  onkeypress="onMiniplayerKeypress( event );"
  ondragover="nsDragAndDrop.dragOver( event, SBMiniDropObserver );"
@@ -117,7 +117,7 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/miniplayer.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/songbird.js" />
+   src="chrome://songbird/content/scripts/window_utils.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/jumptofile.js" />
 

@@ -98,7 +98,7 @@
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird.js" />
+   src="chrome://songbird/content/scripts/window_utils.js" />
   <script>
   <![CDATA[
   

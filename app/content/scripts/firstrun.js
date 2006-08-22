@@ -27,6 +27,8 @@
 // Globals
 var wanted_locale = "en-US";
 var loaded_bundle = false;
+var bundle = null;
+
 var FirstRunBundleCB = 
 {
   onLoad: function(bundle) { bundleDataReady(bundle); },
@@ -59,15 +61,13 @@ function initFirstRun()
  
   try {
     var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
-    var bundle = new nsIBundle();
+    bundle = new nsIBundle();
     bundle.retrieveBundleFile();
   } catch ( err ) {
     SB_LOG("initFirstRun", "" + err );
   }
 
-  // Bundle is expected as a window arg
-  window.arguments[0].bundle = bundle;
-   
+  // XXX Matt: Ah crap, this is totally going to leak
   bundle.addBundleObserver(FirstRunBundleCB);
   var s = bundle.getStatus();
   if (s != 0) bundleDataReady(bundle);
@@ -77,7 +77,6 @@ function initFirstRun()
 
 function shutdownFirstRun()
 {
-  var bundle = window.arguments[0].bundle;
   bundle.removeBundleObserver(FirstRunBundleCB);
   continueStartup();
 }
@@ -174,106 +173,14 @@ function hidePleaseWait()
   pleasewait.setAttribute("hidden", "true");
 }
 
-// New method
-// If it has not already been accepted, show the EULA and ask the user to
-//   accept. If it is not accepted we call or eval the aCancelAction, if
-//   it is accepted we call/eval aAcceptAction. The processing of the
-//   actions happens in a different scope (eula.xul) so the best way
-//   is to pass functions in that get called, instead of js.
-// returns false if the main window should not be opened as we are showing
-//   the EULA and awaitng acceptance by the user
-// returns true if the EULA has already been accepted previously
-function doEULA(aAcceptAction, aCancelAction)
-{
-  //SB_LOG("doEULA");
-  // set to false just to be cautious
-  var retval = false;
-  try { 
-    // setup the callbacks
-    var eulaData = new Object();
-    eulaData.acceptAction = aAcceptAction;
-    eulaData.cancelAction = aCancelAction;
-
-    var eulaCheck;
-    try {
-      eulaCheck = gPrefs.getBoolPref("songbird.eulacheck");
-    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
-
-    if ( !eulaCheck ) {
-      window.openDialog( "chrome://songbird/content/xul/eula.xul",
-                         "eula",
-                         "chrome,centerscreen,modal=no,titlebar=yes",
-                         eulaData );
-
-      // We do not want to open the main window until we know EULA is accepted
-      return false;
-    }
-    // Eula has been previously accepted, move along, move along.
-    retval = true;  // if no accept action, just return true
-    if (aAcceptAction) {
-      if (typeof(aAcceptAction) == "function")
-        retval = aAcceptAction();
-      else
-        retval = eval(aAcceptAction);
-    }
-  } catch (err) {
-    SB_LOG("doEula", "" + err);
-  }
-  return retval; 
-}
-
-
-// Check the pref to see if this is the first run. If so, launch the firstrun
-//   dialog and return. The handling in the firstrun dialog will cause the
-//   main window to be launched.
-// returns true to indicate the window should be launched
-// returns false to indicate that the window should not be launched yet as the
-//   firstrun dialog has been launched asynchronously and will launch the
-//   main window on exit.
-function doFirstRun()
-{
-  //SB_LOG("doFirstRun");
-    
-  try {
-    var haveRun;
-    try {
-      haveRun = gPrefs.getBoolPref("songbird.firstruncheck");
-    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
-
-    if ( ! haveRun ) {
-      var data = new Object();
-
-      // Can't create the bundle here, as at this point there is no window?
-      //data.bundle = bundle; 
-      
-      data.document = document;
-
-      // This cannot be modal it will block the download of extensions
-      window.openDialog( "chrome://songbird/content/xul/firstrun.xul",
-                         "firstrun", 
-                         "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                         data );
-
-      // Do not open main window until the non-modal first run dialog returns
-      return false;
-    }
-  } catch (err) {
-    SB_LOG("doFirstRun", "" + err);
-  }
-
-  // If we reach this point this is not the first run and the user has accepted
-  //   the EULA so launch the main window.
-  return true;
-}
 
 function continueStartup() {
   //SB_LOG("continueStartup");
-  window.arguments[0].document.__STARTMAINWIN();
+  window.arguments[0].onComplete();
 }
 
 function customInstall()
 {
-  var bundle = window.arguments[0].bundle;
   var extlist = document.getElementById("songbird.extensionlist");
   if (extlist)
   {
@@ -286,7 +193,6 @@ function doOK()
 {
   //SB_LOG("doOK");
   handleOptOut(); // set the pref based upon the opt-out state.
-  var bundle = window.arguments[0].bundle;
   var noext = (bundle.getNumExtensions() == 0);
   if (!noext) {
     var count = 0;

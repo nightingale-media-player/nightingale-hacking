@@ -46,7 +46,7 @@ function sbRestartBox( title, message )
               break;
       case 1: // restart now
               restartOnPlaybackEnd.boolValue = false;
-              restartApp(); // assumes the current document has this function, bad.
+              SBDataSetBoolValue("restart.restartnow", true);
               break;
       case 2: // restart on end of playback
               restartOnPlaybackEnd.boolValue = true;

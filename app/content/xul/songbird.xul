@@ -39,8 +39,8 @@
   hidechrome="true"
   class="sb_faceplate"  
   title="Cheezy Video Window"  
-  onload="SBAppInitialize();BSInitialize();"
-  onunload="SBAppDeinitialize();BSDeInitialize();"
+  onload="SBAppInitialize();BSInitialize();SBInterfaceInitialize();"
+  onunload="SBAppDeinitialize();BSDeInitialize();SBInterfaceDeinitialize;"
   onclose="return false; /*quitApp();*/" 
   
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -61,105 +61,14 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/firstrun.js" />
-  <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/metrics.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/songbird.js"/>   
 
-  <!-- Do the first run test and pop up the mainwin as soon as possible -->
+  <!-- Try to open mainwin as early as possible -->
   <script>
   <![CDATA[
-
-    try
-    {
-      document.__STARTMAINWIN = function( ) { 
-        //
-        // Stupid pet tricks for when the user loads this page into his mainwin browser.  Duh.
-        //
-        var watcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                      .getService(Components.interfaces.nsIWindowWatcher);
-        var windows = watcher.getWindowEnumerator();
-        var pop = true;
-        while ( windows.hasMoreElements() )
-        {
-          var win = windows.getNext()
-          win = win.QueryInterface(Components.interfaces.nsIDOMWindow);
-          switch (win.name)
-          {
-            case "mainwin":
-              pop = false;
-              document.__dont_hide_rmpdemo_window = true;
-              win.window.focus();
-              break;
-          }
-        }
-        
-        if ( pop )
-        {
-          try
-          {
-            var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-            var MetricsService = new nsIMetrics();
-            if (MetricsService.getSessionFlag()) {
-              //SB_LOG("previous session did not terminate properly!");
-              metrics_inc("player", "crash");
-            }
-            MetricsService.setSessionFlag(true);
-            MetricsService.checkUploadMetrics();
-          }
-          catch ( err )
-          {
-            SB_LOG( "App Init - Metrics - ", "" + err );
-          }
-          // Get mainwin URL
-          var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-          var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
-          try {
-            mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
-          } catch (err) {}
-
-          window.open( mainwin,
-                       "mainwin",
-                       "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
-        }
-        else
-        {
-          document.defaultView.close(); // Nuke this window.  Don't open a mainwin.
-        }
-      };
-
-      // Gets called from doEULA, if user rejects EULA
-      var doShutdown = function() {
-       try {
-        var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-        var MetricsService = new nsIMetrics();
-        MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
-
-        // get the startup service and tell it to shut us down
-        var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-               .getService(Components.interfaces.nsIAppStartup);
-        if (as) {
-          // do NOT replace '_' with '.', or it will be handled as metrics
-          //    data: it would be posted to the metrics aggregator, then reset
-          //    to 0 automatically
-          // do not count next startup in metrics, since we counted this one, but it was aborted
-          SBDataSetBoolValue("metrics_ignorenextstartup", true);
-          //gPrefs.setBoolPref("songbird.metrics_ignorenextstartup", true);
-          as.quit(as.eAttemptQuit);
-        }
-       } catch (err) {
-         SB_LOG("doShutdown", "" + err);
-       }
-      };
-
-      // Show EULA, then the first run (if accepted) or exit (if rejected)
-      if ( doEULA( doFirstRun, doShutdown ) ) {
-        document.__STARTMAINWIN();
-      }
-    }
-    catch ( err )
-    {
-      SB_LOG( "App Init", "" + err );
-    }
+    SBAppStartup();
   ]]>
   </script>
 
@@ -323,6 +232,7 @@
    src="chrome://songbird/content/scripts/globalhotkeys.js" />
 
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird.js"/>
+   src="chrome://songbird/content/scripts/window_utils.js"/>
+
    
 </window>
