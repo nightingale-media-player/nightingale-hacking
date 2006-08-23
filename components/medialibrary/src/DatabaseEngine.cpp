@@ -224,7 +224,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
         //into the list of persistent queries.
         if(pQuery->m_PersistentQuery && strnicmp( "sqlite_", pArgA, 7 ) )
         {
-          pQuery->m_Engine->AddPersistentQuery( pQuery, nsCAutoString(pArgA) );
+          CDatabaseEngine::GetSingleton()->AddPersistentQuery( pQuery, nsCAutoString(pArgA) );
         }
       }
       break;
