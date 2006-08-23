@@ -40,7 +40,7 @@
   class="sb_faceplate"  
   title="Cheezy Video Window"  
   onload="SBAppInitialize();BSInitialize();SBInterfaceInitialize();"
-  onunload="SBAppDeinitialize();BSDeInitialize();SBInterfaceDeinitialize;"
+  onunload="SBAppDeinitialize();BSDeInitialize();SBInterfaceDeinitialize();"
   onclose="return false; /*quitApp();*/" 
   
   xmlns:html="http://www.w3.org/1999/xhtml"
