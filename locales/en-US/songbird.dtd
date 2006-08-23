@@ -79,6 +79,7 @@
 <!ENTITY tooltip.control.volume   "Volume" >
 <!ENTITY tooltip.control.repeat   "Repeat" >
 <!ENTITY tooltip.control.shuffle  "Shuffle" >
+<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
 <!ENTITY tooltip.control.curtrack "Find Current Track" >
 <!ENTITY tooltip.control.service  "Switch Faceplate Display" >
 <!ENTITY tooltip.search           "Search" >

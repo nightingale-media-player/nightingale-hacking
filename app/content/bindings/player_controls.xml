@@ -518,7 +518,7 @@
   
    <content>
      <xul:stack xbl:inherits="class=class" >
-       <xul:button sbid="shuffle_off" xbl:inherits="class=class,id=shuffleoffid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
+       <xul:button sbid="shuffle_off" xbl:inherits="class=class,id=shuffleoffid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuf_off;"/>
        <xul:button sbid="shuffle_on" xbl:inherits="class=class,id=shuffleonid" oncommand="onShuffle( );" tooltiptext="&tooltip.control.shuffle;"/>
      </xul:stack>
    </content>
