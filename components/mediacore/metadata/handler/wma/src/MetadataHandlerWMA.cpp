@@ -65,10 +65,8 @@ const nsString wm_keys[][2] =
   { NS_LITERAL_STRING("WM/Lyrics"),         NS_LITERAL_STRING("lyrics")  },
   { NS_LITERAL_STRING("WM/Year"),           NS_LITERAL_STRING("year")  },
   { NS_LITERAL_STRING("Bitrate"),           NS_LITERAL_STRING("bitrate")  },
-  { NS_LITERAL_STRING("Duration"),          NS_LITERAL_STRING("length")  },
   { NS_LITERAL_STRING("Rating"),            NS_LITERAL_STRING("rating")  },
   { NS_LITERAL_STRING("Description"),       NS_LITERAL_STRING("description")  },
-  { NS_LITERAL_STRING("Duration"),          NS_LITERAL_STRING("length")  },
   { NS_LITERAL_STRING("Duration"),          NS_LITERAL_STRING("length")  },
   { nsString(), nsString() } // Blank signals the end.
 };
@@ -81,6 +79,7 @@ NS_IMPL_ISUPPORTS1(sbMetadataHandlerWMA, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerWMA::sbMetadataHandlerWMA()
 {
+  m_Completed = false;
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -247,7 +246,8 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Read(PRInt32 *_retval)
       ReadMetadata( wm_keys[i][0], wm_keys[i][1], hi3 );
     }
 
-    printf( "WMA METADATA: %s\n", u8url );
+    m_pReader->Close();
+    m_Completed = true;
   }
   else
   {

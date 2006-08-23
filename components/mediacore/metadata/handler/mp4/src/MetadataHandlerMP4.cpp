@@ -53,6 +53,7 @@ NS_IMPL_ISUPPORTS1(sbMetadataHandlerMP4, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerMP4::sbMetadataHandlerMP4()
 {
+  m_Completed = false;
 } //ctor
 
 //-----------------------------------------------------------------------------
