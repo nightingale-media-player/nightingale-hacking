@@ -117,6 +117,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usb_mass_storage", "compone
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatahandlerwma", "components\mediacore\metadata\handler\wma\metadatahandlerwma.vcproj", "{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -218,6 +223,10 @@ Global
 		{5DF6F1EA-D56E-4459-BE1B-6DAA2197B911}.Release.Build.0 = Release|Win32
 		{E61D8808-C882-479C-B447-DD957B60E62C}.Debug.ActiveCfg = Debug|Win32
 		{E61D8808-C882-479C-B447-DD957B60E62C}.Release.ActiveCfg = Release|Win32
+		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Debug.ActiveCfg = Debug|Win32
+		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Debug.Build.0 = Debug|Win32
+		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Release.ActiveCfg = Release|Win32
+		{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

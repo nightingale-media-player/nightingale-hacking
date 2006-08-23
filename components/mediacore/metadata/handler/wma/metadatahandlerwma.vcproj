@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\vendor\wma&quot;;&quot;$(SolutionDir)dependencies\vendor\wma\include&quot;;C:\projects\WMSDK\WMFSDK95\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;METADATAHANDLERWMA_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN;WMALIB_LINKOPTION=3"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -40,7 +40,7 @@
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib wmvcore.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerWMA_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)&quot;;C:\projects\WMSDK\WMFSDK95\lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerWMA.pdb"
 				SubSystem="2"
@@ -81,7 +81,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\vendor\wma&quot;;&quot;$(SolutionDir)dependencies\vendor\wma\include&quot;;C:\projects\WMSDK\WMFSDK95\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;METADATAHANDLERWMA_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN;WMALIB_LINKOPTION=3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -96,7 +96,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib wmvcore.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerWMA.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)&quot;;C:\projects\WMSDK\WMFSDK95\lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerWMA.pdb"
 				SubSystem="2"

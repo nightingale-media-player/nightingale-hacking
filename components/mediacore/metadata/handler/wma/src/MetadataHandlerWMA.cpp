@@ -115,9 +115,8 @@ NS_IMETHODIMP sbMetadataHandlerWMA::GetChannel(nsIChannel **_retval)
 
 //-----------------------------------------------------------------------------
 /* PRInt32 SetChannel (in nsIChannel urlChannel); */
-NS_IMETHODIMP sbMetadataHandlerWMA::SetChannel(nsIChannel *urlChannel, PRInt32 *_retval)
+NS_IMETHODIMP sbMetadataHandlerWMA::SetChannel(nsIChannel *urlChannel)
 {
-  *_retval = 0;
   m_Channel = urlChannel;
 
   return NS_OK;
@@ -128,7 +127,7 @@ NS_IMETHODIMP sbMetadataHandlerWMA::OnChannelData( nsISupports *channel )
   return NS_OK;
 }
 
-NS_IMETHODIMP sbMetadataHandlerWMA::Completed(PRBool *_retval)
+NS_IMETHODIMP sbMetadataHandlerWMA::GetCompleted(PRBool *_retval)
 {
   *_retval = m_Completed;
 
@@ -147,10 +146,9 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Close()
   return NS_OK;
 } //Close
 
-NS_IMETHODIMP sbMetadataHandlerWMA::Vote(const PRUnichar *url, PRInt32 *_retval )
+NS_IMETHODIMP sbMetadataHandlerWMA::Vote(const nsAString & url, PRInt32 *_retval )
 {
-  nsString strUrl( url );
-
+  nsPromiseFlatString strUrl(url);
   if ( 
         ( strUrl.Find( ".wma", PR_TRUE ) != -1 ) || 
         ( strUrl.Find( ".wmv", PR_TRUE ) != -1 ) ||
@@ -268,7 +266,7 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Write(PRInt32 *_retval)
 } //Write
 
 /* sbIMetadataValues GetValuesMap (); */
-NS_IMETHODIMP sbMetadataHandlerWMA::GetValuesMap(sbIMetadataValues **_retval)
+NS_IMETHODIMP sbMetadataHandlerWMA::GetValues(sbIMetadataValues **_retval)
 {
   *_retval = m_Values;
   if ( (*_retval) )
@@ -277,57 +275,11 @@ NS_IMETHODIMP sbMetadataHandlerWMA::GetValuesMap(sbIMetadataValues **_retval)
 }
 
 /* void SetValuesMap (in sbIMetadataValues values); */
-NS_IMETHODIMP sbMetadataHandlerWMA::SetValuesMap(sbIMetadataValues *values)
+NS_IMETHODIMP sbMetadataHandlerWMA::SetValues(sbIMetadataValues *values)
 {
   m_Values = values;
   return NS_ERROR_NOT_IMPLEMENTED;
 }
-
-//-----------------------------------------------------------------------------
-/* PRInt32 GetNumAvailableTags (); */
-NS_IMETHODIMP sbMetadataHandlerWMA::GetNumAvailableTags(PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_OK;
-} //GetNumAvailableTags
-
-//-----------------------------------------------------------------------------
-/* void GetAvailableTags (out PRUint32 tagCount, [array, size_is (tagCount), retval] out wstring tags); */
-NS_IMETHODIMP sbMetadataHandlerWMA::GetAvailableTags(PRUint32 *tagCount, PRUnichar ***tags)
-{
-  return NS_OK;
-} //GetAvailableTags
-
-//-----------------------------------------------------------------------------
-/* wstring GetTag (in wstring tagName); */
-NS_IMETHODIMP sbMetadataHandlerWMA::GetTag(const PRUnichar *tagName, PRUnichar **_retval)
-{
-
-  return NS_OK;
-} //GetTag
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTag (in wstring tagName, in wstring tagValue); */
-NS_IMETHODIMP sbMetadataHandlerWMA::SetTag(const PRUnichar *tagName, const PRUnichar *tagValue, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTag
-
-//-----------------------------------------------------------------------------
-/* void GetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, out PRUint32 valueCount, [array, size_is (valueCount), retval] out wstring values); */
-NS_IMETHODIMP sbMetadataHandlerWMA::GetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 *valueCount, PRUnichar ***values)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //GetTags
-
-//-----------------------------------------------------------------------------
-/* PRInt32 SetTags (in PRUint32 tagCount, [array, size_is (tagCount)] in wstring tags, in PRUint32 valueCount, [array, size_is (valueCount)] in wstring values); */
-NS_IMETHODIMP sbMetadataHandlerWMA::SetTags(PRUint32 tagCount, const PRUnichar **tags, PRUint32 valueCount, const PRUnichar **values, PRInt32 *_retval)
-{
-  *_retval = 0;
-  return NS_ERROR_NOT_IMPLEMENTED;
-} //SetTags
 
 void sbMetadataHandlerWMA::ReadMetadata( const nsString &ms_key, const nsString &sb_key, IWMHeaderInfo3 *hi3 )
 {
@@ -382,6 +334,7 @@ void sbMetadataHandlerWMA::ReadMetadata( const nsString &ms_key, const nsString 
   }
 
   // Calculate the value
+  PRInt32 datatype = 0;
   nsString value;
   switch( type )
   {
@@ -393,6 +346,7 @@ void sbMetadataHandlerWMA::ReadMetadata( const nsString &ms_key, const nsString 
     case WMT_TYPE_DWORD:
     case WMT_TYPE_BOOL:
       value.AppendInt( (PRUint32)*(DWORD*)data ); // Whee!
+      datatype = 1;
       break;
     case WMT_TYPE_QWORD:
       break;
@@ -405,7 +359,7 @@ void sbMetadataHandlerWMA::ReadMetadata( const nsString &ms_key, const nsString 
   // If there is a value, add it to the Songbird values.
   if ( value.Length() )
   {
-    m_Values->SetValue( sb_key.get(), value.get(), 0 );
+    m_Values->SetValue( sb_key, value, datatype );
   }
 
   // Free the space for the indices
