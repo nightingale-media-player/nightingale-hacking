@@ -384,6 +384,33 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
           strURL = Substring(start, end);
           strURL.CompressWhitespace();
 
+          nsDependentString strPathToM3U(pPathToFile);
+          nsCOMPtr<nsILocalFile> m3uFile;
+          nsCOMPtr<nsILocalFile> mediaFile = do_CreateInstance("@mozilla.org/file/local;1");
+
+          if(NS_SUCCEEDED(NS_NewLocalFile(strPathToM3U, PR_FALSE, getter_AddRefs(m3uFile))))
+          {
+            nsAutoString strm3uDir;
+            nsAutoString strMediaFilePath;
+            
+            m3uFile->GetPath(strm3uDir);
+            mediaFile->InitWithPath(strURL);
+
+            PRBool mediaFileExists = PR_FALSE;
+            mediaFile->Exists(&mediaFileExists);
+
+            if(!mediaFileExists)
+            {
+              nsAutoString strLeafName;
+              m3uFile->GetLeafName(strLeafName);
+              mediaFile->GetPath(strMediaFilePath);
+              if(strMediaFilePath.Length() == 0)
+              {
+                strURL.Insert(strm3uDir.get(), 0, strm3uDir.Length() - strLeafName.Length());
+              }
+            }
+          }
+
 #if defined(XP_WIN)
           if(!strURL.IsEmpty() && strURL.First() == '\\')
           {
