@@ -1,134 +1,190 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8.00"
 	Name="metadatahandlerwma"
 	ProjectGUID="{CD3FFE4C-C536-490C-BC92-FF8EF05C6B56}"
 	RootNamespace="metadatahandlerwma"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="obj\$(ConfigurationName)"
 			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
-			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\vendor\wma&quot;;&quot;$(SolutionDir)dependencies\vendor\wma\include&quot;;C:\projects\WMSDK\WMFSDK95\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;METADATAHANDLERWMA_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN;WMALIB_LINKOPTION=3"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				SmallerTypeCheck="TRUE"
+				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
+				BufferSecurityCheck="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
-				ForcedIncludeFiles="mozilla-config.h"/>
+				ForcedIncludeFiles="mozilla-config.h"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib wmvcore.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib unicharutil_s.lib wmvcore.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerWMA_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)&quot;;C:\projects\WMSDK\WMFSDK95\lib"
-				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\lib&quot;"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerWMA.pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/MetadataHandlerWMA.lib"
-				TargetMachine="1"/>
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components
-mkdir $(SolutionDir)dist\xulrunner
-copy /y $(TargetPath) $(SolutionDir)dist\components
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="obj\$(ConfigurationName)"
 			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="1"
-			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\vendor\wma&quot;;&quot;$(SolutionDir)dependencies\vendor\wma\include&quot;;C:\projects\WMSDK\WMFSDK95\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\src&quot;;&quot;$(SolutionDir)components\mediacore\metadata\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;METADATAHANDLERWMA_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN;WMALIB_LINKOPTION=3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				ForcedIncludeFiles="mozilla-config.h"/>
+				ForcedIncludeFiles="mozilla-config.h"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib wmvcore.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib unicharutil_s.lib wmvcore.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerWMA.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)&quot;;C:\projects\WMSDK\WMFSDK95\lib"
-				GenerateDebugInformation="TRUE"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\wma\$(ConfigurationName)\lib&quot;"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/MetadataHandlerWMA.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				ImportLibrary="$(OutDir)/MetadataHandlerWMA.lib"
-				TargetMachine="1"/>
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\components
-mkdir $(SolutionDir)dist\xulrunner
-copy /y $(TargetPath) $(SolutionDir)dist\components
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				CommandLine="mkdir $(SolutionDir)dist\components&#x0D;&#x0A;mkdir $(SolutionDir)dist\xulrunner&#x0D;&#x0A;copy /y $(TargetPath) $(SolutionDir)dist\components&#x0D;&#x0A;echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg&#x0D;&#x0A;"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -136,19 +192,22 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 	<Files>
 		<Filter
 			Name="public"
-			Filter="">
+			>
 		</Filter>
 		<Filter
 			Name="src"
-			Filter="">
+			>
 			<File
-				RelativePath=".\src\MetadataHandlerWMA.cpp">
+				RelativePath=".\src\MetadataHandlerWMA.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\src\MetadataHandlerWMA.h">
+				RelativePath=".\src\MetadataHandlerWMA.h"
+				>
 			</File>
 			<File
-				RelativePath=".\src\MetadataHandlerWMAComponent.cpp">
+				RelativePath=".\src\MetadataHandlerWMAComponent.cpp"
+				>
 			</File>
 		</Filter>
 	</Files>
