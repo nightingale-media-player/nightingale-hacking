@@ -70,7 +70,6 @@ CDatabaseQuery::CDatabaseQuery()
 , m_pCallbackListLock(PR_NewLock())
 , m_pPersistentCallbackListLock(PR_NewLock())
 , m_pModifiedTablesLock(PR_NewLock())
-, m_Engine(nsnull)
 {
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
@@ -100,13 +99,12 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_QueryResult, "Failed to create DatabaseQuery.m_QueryResult");
   m_QueryResult->AddRef();
 
-  m_Engine = CDatabaseEngine::GetSingleton();
 } //ctor
 
 //-----------------------------------------------------------------------------
 CDatabaseQuery::~CDatabaseQuery()
 {
-  m_Engine->RemovePersistentQuery(this);
+  CDatabaseEngine::GetSingleton()->RemovePersistentQuery(this);
   
   NS_IF_RELEASE(m_QueryResult);
 
@@ -341,7 +339,7 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
     nsAutoMonitor mon(m_pQueryRunningMonitor);
     m_QueryHasCompleted = PR_FALSE;
   }
-  *_retval = m_Engine->SubmitQuery(this);
+  *_retval = CDatabaseEngine::GetSingleton()->SubmitQuery(this);
   return NS_OK;
 } //Execute
 
