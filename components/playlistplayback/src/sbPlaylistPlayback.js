@@ -511,11 +511,11 @@ PlaylistPlayback.prototype = {
   get currentGUID() {
     return this._source.getRefRowCellByColumn( this._playlistRef.stringValue, 
                                                this._playlistIndex.intValue,
-                                               "id");
+                                               "uuid");
   },
   
   get currentURL() {
-    return this._playURL;
+    return this._playURL.stringValue;
   },
   
   // ---------------------------------------------
