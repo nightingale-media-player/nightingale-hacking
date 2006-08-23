@@ -53,8 +53,6 @@ function myPlaybackEvent( key, value )
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
 
-
-
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
 
 var SBWindowMinMaxCB = 
@@ -112,7 +110,7 @@ var SBWindowMinMaxCB =
     
     return this;
   }
-}
+}; // SBWindowMinMax callback class definition
 
 function setMinMaxCallback()
 {
@@ -208,7 +206,7 @@ function SBInitialize()
       }
     }
     
-    // Install listeners on the main pane.
+    // Install listeners on the main pane. - This is the browser xul element from mainwin.xul
     var theMainPane = document.getElementById("frame_main_pane");
     if (!mainpane_listener_set)
     {
@@ -860,6 +858,7 @@ var SBDocStartListener = {
   
   onLocationChange : function( aWebProgress, aRequest, aLocation ) 
   {
+    //SB_LOG("songbird_hack.js", "SBDocStartListener::onLocationChange");
     try
     {
       // Set the value in the text box (shown or not)
@@ -912,8 +911,7 @@ var SBDocStartListener = {
       if ( ! theServiceTree.urlFromServicePane )
       {
         // Clear the service tree selection (asynchronously?  is this from out of thread?)
-        setTimeout( 
-                    "document.getElementById( 'frame_servicetree' ).tree.view.selection.currentIndex = -1;" +
+        setTimeout( "document.getElementById( 'frame_servicetree' ).tree.view.selection.currentIndex = -1;" +
                     "document.getElementById( 'frame_servicetree' ).tree.view.selection.clearSelection();",
                     50 );
       }
@@ -949,7 +947,7 @@ var SBDocStartListener = {
       alert( "onLocationChange\n\n" + err );
     }
   }
-}
+}; // SBDocStartListener definition
 
 // onBrowserBack
 function onBrowserBack()
@@ -993,6 +991,7 @@ function onBrowserStop()
 {
   try
   {
+    //SB_LOG("songbird_hack.js", "onBrowserStop");
     var theMainPane = document.getElementById( "frame_main_pane" );
     theMainPane.stop();
     mainpane_listener_set = false;
@@ -1318,7 +1317,7 @@ var SBWebPlaylistCommands =
     
     return this;
   }
-} // SBWebPlaylistCommands declaration
+}; // SBWebPlaylistCommands declaration
 
 // Register the web playlist commands at startup
 if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
@@ -1329,6 +1328,7 @@ if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
 
 function onBrowserPlaylist()
 {
+  //SB_LOG("songbird_hack.js", "onBrowserPlaylist");
   metrics_inc("player", "urlslurp", null);
   if ( ! thePlaylistTree )
   {
@@ -1411,10 +1411,10 @@ function onBrowserDownload()
 
 function onBrowserPlaylistHide()
 {
+  //SB_LOG("songbird_hack.js", "onBrowserPlaylistHide");
   // Hide the web table if it exists
   theShowWebPlaylistData.boolValue = false;
  
-  // Can we just use the "theWebPlaylist" global variable? -redfive 
   // And unhook the playlist from the database
   var theTree = document.getElementById( "playlist_web" );
   if ( theTree )
@@ -1509,6 +1509,7 @@ var thePlaylistTree;
 var theCurrentMainPaneDocument = null;
 function onMainPaneLoad()
 {
+  //SB_LOG("songbird_hack.js", "onMainPaneLoad");
   try
   {
     if ( ! mainpane_listener_set )
@@ -1516,6 +1517,7 @@ function onMainPaneLoad()
       var theMainPane = document.getElementById( "frame_main_pane" );
       if ( typeof( theMainPane ) == 'undefined' )
       {
+        //SB_LOG("songbird_hack.js", "onMainPaneLoad - returning early, no browser object yet");
         return;
       }
       
@@ -1525,14 +1527,19 @@ function onMainPaneLoad()
       //
       //
       var installed_listener = false;
+      // the element main_iframe is the browser element for the full playlist objects
+      //   that is used for library view, web playlist view, download view when loaded
+      //   from the service pane.  It is defined in main_pane.xul
       var main_iframe = theMainPane.contentDocument.getElementById( "main_iframe" );
       if ( main_iframe )
       {
+        //SB_LOG("songbird_hack.js", "onMainPaneLoad - there is a main_iframe");
         if ( main_iframe.wrappedJSObject )
           main_iframe = main_iframe.wrappedJSObject;
         // Doublecheck that the playlist piece loaded properly?
         if ( ( ! main_iframe.contentDocument ) || ( ! main_iframe.contentDocument.getElementById ) )
         {
+          //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout, haven't loaded yet");
           // Try again in 250 ms?
           setTimeout( onMainPaneLoad, 250 );
           return;
@@ -1548,6 +1555,7 @@ function onMainPaneLoad()
           // Wait until after the bind call?
           if ( thePlaylistTree.ref == "" )
           {
+            //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout(2), haven't loaded yet");
             // Try again in 250 ms?
             setTimeout( onMainPaneLoad, 250 );
             return;
@@ -1585,25 +1593,29 @@ function onMainPaneLoad()
       }
       else
       {
+        //SB_LOG("songbird_hack.js", "onMainPaneLoad - no main_iframe, setting playlists to null");
         thePlaylistTree = null;
         theLibraryPlaylist = null;
         // hack, to let play buttons find the visible playlist if needed
         document.__CURRENTPLAYLIST__ = null;
       }
 
-      // If we don't install a playlist listener, install an url listener.
+      // If we have not installed a playlist listener, install an url listener.
       if ( ! installed_listener )
       {
-
-        if ( theMainPane.contentDocument && theMainPane.contentDocument.getElementsByTagName('A').length == 0 )
+        // wait until the document exists to see if there are any A tags
+        if ( ! theMainPane.contentDocument )
         {
+          //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout(3), no document");
           setTimeout( onMainPaneLoad, 2500 );
           return;
         }
-          
-        AsyncWebDocument( theMainPane.contentDocument );
+        else if ( theMainPane.contentDocument.getElementsByTagName('A').length != 0 )
+        {
+          AsyncWebDocument( theMainPane.contentDocument );
+        }
         
-        // Hide the progress bar now that we're loaded.
+        // Hide the progress bar now that we are loaded.
         thePaneLoadingData.boolValue = false;
         mainpane_listener_set = true;
       }
@@ -1613,10 +1625,12 @@ function onMainPaneLoad()
   {
     alert( err );
   }
+  //SB_LOG("songbird_hack.js", "onMainPaneLoad - leaving");
 }
 
 function onMainPaneUnload()
 {
+  //SB_LOG("songbird_hack.js", "onMainPaneUnload");
   try
   {
   }
@@ -3085,7 +3099,7 @@ var SBDownloadCommands =
     return this;
   }
 
-}
+}; // SBDownloadCommands definition
 
 try
 {
@@ -3310,7 +3324,7 @@ var SBCDCommands =
     return this;
   }
 
-};
+}; // SBCDCommands definition
 
 var SBRippingCommands = 
 {
@@ -3455,7 +3469,7 @@ var SBRippingCommands =
     return this;
   }
 
-};
+}; // SBRippingCommands definition
 
 
 function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aFilterValues, aCDDevice)
@@ -3768,7 +3782,7 @@ var SBCDBurningCommands =
     return this;
   }
 
-};
+};  // SBCDBurningCommands class definition
 
 function onStartCDBurn(cdDevice, deviceName, table)
 {
@@ -3996,3 +4010,4 @@ function buildHelpMenu()
   }
   checkForUpdates.label = getStringWithUpdateName("updateCmd_" + key);
 }
+
