@@ -32,6 +32,11 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = id3 \
           ogg \
           mp4 \
-          $(NONE)
+          $(NULL)
+
+ifeq ($(SB_PLATFORM), win32)
+  SUBDIRS += wma \
+             $(NULL)
+endif
 
 include $(topsrcdir)/build/rules.mk

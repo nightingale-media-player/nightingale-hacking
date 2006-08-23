@@ -182,6 +182,9 @@ components/mediacore/metadata/handler/mp4/src/Makefile
 components/mediacore/metadata/handler/ogg/Makefile
 components/mediacore/metadata/handler/ogg/public/Makefile
 components/mediacore/metadata/handler/ogg/src/Makefile
+components/mediacore/metadata/handler/wma/public/Makefile
+components/mediacore/metadata/handler/wma/Makefile
+components/mediacore/metadata/handler/wma/src/Makefile
 components/mediacore/metadata/manager/Makefile
 components/mediacore/metadata/manager/public/Makefile
 components/mediacore/metadata/manager/src/Makefile
