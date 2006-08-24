@@ -1613,7 +1613,21 @@ function onMainPaneLoad()
         else if ( theMainPane.contentDocument.getElementsByTagName('A').length != 0 )
         {
           AsyncWebDocument( theMainPane.contentDocument );
+        } 
+
+
+        // XXXlone -- we need this to happen so that the playlist gets initialized if it wasn't ready yet but is coming up soon !
+        // unfortunately, if the page is not going to be a playlist, but is a document with no A element, we'll keep hitting this code
+        // and rerun this function every 2.5s, forever. We need to detect that a page is a not a playlist in the process of being loaded 
+        // so that we can avoid issuing a setTimeout(onMainPaneLoad, 2500) in this case, but ONLY in this case.
+        else 
+        {
+          setTimeout( onMainPaneLoad, 2500 );
+          return;
         }
+        // XXXlone -- end case where page is going to be a playlist but contentDocument does not yet contains a playlist
+
+
         
         // Hide the progress bar now that we are loaded.
         thePaneLoadingData.boolValue = false;
