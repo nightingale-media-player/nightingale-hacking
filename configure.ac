@@ -515,12 +515,12 @@ case "$SB_PLATFORM" in
     AC_SUBST(GSTREAMER_CFLAGS)
     AC_SUBST(GTK_CFLAGS)
 
-    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
-#    if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
-#    else
+    GCC_COMPILER_FLAGS="-c -g -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
+    if test "$enable_debug" = "yes"; then
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -fno-inline"
+    else
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -O3"
-#    fi
+    fi
 
     # We always want to include "mozilla-config.h"
     GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
