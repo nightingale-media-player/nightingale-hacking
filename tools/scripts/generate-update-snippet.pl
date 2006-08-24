@@ -39,7 +39,8 @@
 # This is a slightly modified excerpt from post-mozilla-rel.pl
 #   (http://lxr.mozilla.org/mozilla/source/tools/tinderbox/post-mozilla-rel.pl)
 #
-# Specifically, it has been modified to only create third-gen update snippets.
+# Specifically, it has been modified to only create third-gen update snippets
+#   and it allows alternate tools to be used for computing hash values.
 
 use strict;
 use IO::File;
@@ -59,11 +60,15 @@ sub update_create_stats {
 
   ($size) = (stat($update))[7];
 
+  my $hashTool;
   if ($hashfunction eq "sha1") {
-    $hashvalue = `sha1sum $update`;
+    $hashTool = $ENV{'SHA1SUM'};
+    $hashTool = 'sha1sum' if (not defined($hashTool));
   } else {
-    $hashvalue = `md5sum $update`;
+    $hashTool = $ENV{'MD5SUM'};
+    $hashTool = "md5sum" if (not defined($hashTool));
   }
+  $hashvalue = `$hashTool $update`;
   chomp($hashvalue);
 
   $hashvalue =~ s:^(\w+)\s.*$:$1:g;

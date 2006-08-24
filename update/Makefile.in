@@ -69,7 +69,7 @@ complete-patch::
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
-	$(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
+	SHA1SUM=$(SHA1SUM) $(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar \
     "complete" \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).snippet \
@@ -121,7 +121,7 @@ partial-patch-no-unwrap::
 
 partial-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
-	$(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
+	SHA1SUM=$(SHA1SUM) $(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar \
     "partial" \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).snippet \

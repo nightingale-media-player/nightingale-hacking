@@ -218,10 +218,17 @@ if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
 AC_CHECK_PROG(AWK, awk, awk)
 if test -z "$AWK"; then AC_MSG_ERROR(Awk not found); fi
 
+AC_CHECK_PROGS(CP, ${CP} gnucp gcp cp, "")
+if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
+
+AC_CHECK_PROG(GZIP, gzip, gzip)
+AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
+AC_CHECK_PROG(TAR, tar, tar)
+
+AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
+
 case "$SB_PLATFORM" in
   win32)
-    AC_CHECK_PROG(CP, cp, cp)
-    if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, ml, ml)
@@ -233,40 +240,17 @@ case "$SB_PLATFORM" in
     AC_CHECK_PROG(MT, mt, mt)
     if test -z "$MT"; then AC_MSG_ERROR(Mt not found); fi
   ;;
-  linux)
-    AC_CHECK_PROG(CP, cp, cp)
-    if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
+  *)
     AC_CHECK_PROG(LD, ${CC}, ${CC})
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, as, as)
     if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
     AC_CHECK_PROG(AR, ar, ar)
-	if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
-	AC_CHECK_PROG(RANLIB, ranlib, ranlib)
-	if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
-    AC_CHECK_PROG(GZIP, gzip, gzip)
+	  if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
+	  AC_CHECK_PROG(RANLIB, ranlib, ranlib)
+	  if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
     if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
-    AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
     if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
-    AC_CHECK_PROG(TAR, tar, tar)
-    if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
-  ;;
-  macosx)
-    AC_CHECK_PROG(CP, gcp, gcp)
-    if test -z "$CP"; then AC_MSG_ERROR(GNU cp not found); fi
-    AC_CHECK_PROG(LD, ${CC}, ${CC})
-    if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
-    AC_CHECK_PROG(AS, as, as)
-    if test -z "$AS"; then AC_MSG_ERROR(Assembler not found); fi
-    AC_CHECK_PROG(AR, ar, ar)
-	if test -z "$AR"; then AC_MSG_ERROR(Archiver not found); fi
-	AC_CHECK_PROG(RANLIB, ranlib, ranlib)
-	if test -z "$RANLIB"; then AC_MSG_ERROR(Ranlib not found); fi
-    AC_CHECK_PROG(GZIP, gzip, gzip)
-    if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
-    AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
-    if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
-    AC_CHECK_PROG(TAR, tar, tar)
     if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
   ;;
 esac
