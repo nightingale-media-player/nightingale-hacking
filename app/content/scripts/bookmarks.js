@@ -435,7 +435,7 @@ var bmManager = {
 		        },			        			      
 			      { 
 				      label: "Beatport",
-				      icon: "https://www.beatport.com/favicon.ico",
+				      icon: "http://www.beatport.com/favicon.ico",
 				      url: "http://beatport.com/",
 				      properties: "bookmark",
 				      children: []
