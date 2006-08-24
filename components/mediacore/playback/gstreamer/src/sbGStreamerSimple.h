@@ -2,6 +2,7 @@
 #define _SB_GSTREAMER_SIMPLE_H_
 
 #include "nsCOMPtr.h"
+#include "nsString.h"
 #include "nsIDOMEventListener.h"
 #include "nsIDOMWindow.h"
 
@@ -54,6 +55,11 @@ private:
 
   nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;
   nsCOMPtr<nsIDOMWindow> mDomWindow;
+
+  nsString  mArtist;
+  nsString  mAlbum;
+  nsString  mTitle;
+  nsString  mGenre;
 
 protected:
   /* additional members */

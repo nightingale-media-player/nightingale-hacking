@@ -60,6 +60,10 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mVideoOutputElement(nsnull),
   mDomWindow(nsnull)
 {
+  mArtist.Assign(EmptyString());
+  mAlbum.Assign(EmptyString());
+  mTitle.Assign(EmptyString());
+  mGenre.Assign(EmptyString());
 }
 
 sbGStreamerSimple::~sbGStreamerSimple()
@@ -336,6 +340,54 @@ sbGStreamerSimple::GetIsAtEndOfStream(PRBool* aIsAtEndOfStream)
 }
 
 NS_IMETHODIMP
+sbGStreamerSimple::GetArtist(nsAString& aArtist)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  aArtist.Assign(mArtist);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::GetAlbum(nsAString& aAlbum)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  aAlbum.Assign(mAlbum);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::GetTitle(nsAString& aTitle)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  aTitle.Assign(mTitle);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::GetGenre(nsAString& aGenre)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  aGenre.Assign(mGenre);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerSimple::Play()
 {
   if(!mInitialized) {
@@ -396,10 +448,19 @@ sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
   aEvent->GetType(eventType);
 
   if(eventType.EqualsLiteral("unload")) {
+
+    // Clean up here
     nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(mDomWindow));
     NS_ENSURE_TRUE(target, NS_NOINTERFACE);
     target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
     target->RemoveEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+
+    mDomWindow = nsnull;
+    mVideoOutputElement = nsnull;
+
+    mInitialized = PR_FALSE;
+
+    return NS_OK;
   }
   else {
     return Resize();
@@ -489,7 +550,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       GstState old_state, new_state;
       gchar *src_name;
 
-      gst_message_parse_state_changed (message, &old_state, &new_state, NULL);
+      gst_message_parse_state_changed(message, &old_state, &new_state, NULL);
 
       src_name = gst_object_get_name(message->src);
       LOG(("stage-changed: %s changed state from %s to %s", src_name,
@@ -498,17 +559,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       g_free (src_name);
       break;
     }
-/*
-    case GST_MESSAGE_CLOCK_PROVIDE: {
-      GstClock *clock;
-      gboolean ready;
 
-      gst_message_parse_clock_provide(msg, &clock, &ready);
-      GstClockTime clockTime = gst_clock_get_internal_time(clock);
-      LOG(("clock-provide: %d", clockTime));
-      break;
-    }
-*/
     case GST_MESSAGE_ELEMENT: {
       if(gst_structure_has_name(message->structure, "prepare-xwindow-id") && mVideoSink != NULL) {
         GstElement *element = NULL;
@@ -533,6 +584,41 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
         gst_x_overlay_set_xwindow_id(xoverlay, window);
         LOG(("Set xoverlay %d to windowid %d\n", xoverlay, window));
       }
+      break;
+    }
+
+    case GST_MESSAGE_TAG: {
+      GstTagList *tag_list;
+      gchar *value = NULL;
+      nsCAutoString temp;
+
+      gst_message_parse_tag(message, &tag_list);
+
+      if(gst_tag_list_get_string(tag_list, GST_TAG_ARTIST, &value)) {
+        temp.Assign(value);
+        mArtist.Assign(NS_ConvertUTF8toUTF16(temp).get());
+        g_free(value);
+      }
+
+      if(gst_tag_list_get_string(tag_list, GST_TAG_ALBUM, &value)) {
+        temp.Assign(value);
+        mAlbum.Assign(NS_ConvertUTF8toUTF16(temp).get());
+        g_free(value);
+      }
+
+      if(gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &value)) {
+        temp.Assign(value);
+        mTitle.Assign(NS_ConvertUTF8toUTF16(temp).get());
+        g_free(value);
+      }
+
+      if(gst_tag_list_get_string(tag_list, GST_TAG_GENRE, &value)) {
+        temp.Assign(value);
+        mGenre.Assign(NS_ConvertUTF8toUTF16(temp).get());
+        g_free(value);
+      }
+
+      gst_tag_list_free(tag_list);
       break;
     }
 

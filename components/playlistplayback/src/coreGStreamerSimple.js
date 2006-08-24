@@ -260,7 +260,27 @@ CoreGStreamerSimple.prototype.setMute = function ( mute )
 CoreGStreamerSimple.prototype.getMetadata = function ( key )
 {
   this._verifyObject();
-  return "";
+  var rv;
+
+  switch(key) {
+      case "title":
+        rv = this._object.title;
+      break;
+      case "album":
+        rv = this._object.album;
+      break;
+      case "artist":
+        rv = this._object.artist;
+      break;
+      case "genre":
+        rv = this._object.genre;
+      break;
+      default:
+        rv = "";
+      break;
+  }
+
+  return rv;
 };
 
 CoreGStreamerSimple.prototype.goFullscreen = function ()
