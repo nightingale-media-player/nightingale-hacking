@@ -91,10 +91,12 @@ function onBkgDown( theEvent, popup )
     case "clickholdbutton":
     // XUL Elements
     case "splitter":
+    case "grippy":
     case "button":
     case "toolbarbutton":
     case "scrollbar":
     case "slider":
+    case "thumb":
     case "checkbox":
     case "resizer":
     case "textbox":
@@ -109,6 +111,10 @@ function onBkgDown( theEvent, popup )
     // HTML Elements
     case "img":
     case "input":
+    case "select":
+    case "option":
+    case "object":
+    case "embed":
     case "body":
     case "html":
     case "div":
