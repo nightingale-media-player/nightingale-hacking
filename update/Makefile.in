@@ -46,6 +46,13 @@ endif
 
 UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE)-$(SB_BUILD_ID).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
 
+#
+# On OS X we need to diff from the 'Contents' subdir inside the app bundle.
+#
+ifeq (macosx,$(SB_PLATFORM))
+APPBUNDLE_SUFFIX = /$(MACOSX_APPBUNDLE)
+endif
+
 # MUST specify a target, no default rule
 default: all
 
@@ -58,7 +65,7 @@ complete-patch::
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar" \
-    "$(DEPTH)/$(DISTDIRNAME)"
+    "$(DEPTH)/$(DISTDIRNAME)$(APPBUNDLE_SUFFIX)"
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
