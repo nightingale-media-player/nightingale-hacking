@@ -202,6 +202,11 @@ sbGStreamerSimple::SetUri(const nsAString& aUri)
   // XXX: What are these glib strings?
   g_object_set(G_OBJECT(mPlay), "uri", NS_ConvertUTF16toUTF8(aUri).get(), NULL);
 
+  mArtist.Assign(EmptyString());
+  mAlbum.Assign(EmptyString());
+  mTitle.Assign(EmptyString());
+  mGenre.Assign(EmptyString());
+
   return NS_OK;
 }
 
