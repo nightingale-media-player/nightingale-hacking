@@ -2900,7 +2900,7 @@ var SBDownloadCommands =
   (
     "&command.play",
     "&command.remove",
-    "&command.pause",
+    "&command.pausedl",
     "*separator*",
     "&command.showwebplaylist"
   ),
@@ -2960,11 +2960,11 @@ var SBDownloadCommands =
       {
         if ( this.m_Device.getDeviceState('') == this.DEVICE_DOWNLOAD_PAUSED )
         {
-          this.m_Names[ index ] = "&command.resume";
+          this.m_Names[ index ] = "&command.resumedl";
         }
         else
         {
-          this.m_Names[ index ] = "&command.pause";
+          this.m_Names[ index ] = "&command.pausedl";
         }
       }
     }

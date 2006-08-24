@@ -533,27 +533,27 @@ menuitem#library_cmd_pause[disabled="true"]
 /* Toolbar: resume Button */
 button#library_cmd_resume
 {
-  list-style-image: url(chrome://songbird/skin/default/toolbar_resume_normal.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_normal.png) !important;
 }
 button#library_cmd_resume:hover
 {
-  list-style-image: url(chrome://songbird/skin/default/toolbar_resume_hover.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_hover.png) !important;
 }
 button#library_cmd_resume[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/default/toolbar_resume_disabled.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_disabled.png) !important;
 }
 menuitem#library_cmd_resume
 {
-  list-style-image: url(chrome://songbird/skin/default/toolbar_resume_hover.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_hover.png) !important;
 }
 menuitem#library_cmd_resume[active="true"]:hover
 {
-  list-style-image: url(chrome://songbird/skin/default/toolbar_resume_disabled.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_disabled.png) !important;
 }
 menuitem#library_cmd_resume[disabled="true"]
 {
-  list-style-image: url(chrome://songbird/skin/default/toolbar_resume_normal.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_normal.png) !important;
 }
 
 /* Toolbar: switch to downloads Button */
