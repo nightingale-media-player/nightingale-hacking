@@ -1928,6 +1928,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\build\msvc\application.ini">
+		</File>
+		<File
 			RelativePath=".\xulrunner\updater.ini">
 		</File>
 	</Files>
