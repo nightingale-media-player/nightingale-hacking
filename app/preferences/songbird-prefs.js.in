@@ -99,3 +99,5 @@ pref("security.warn_leaving_secure.show_once", true);
 #ifdef DEBUG
 #includesubst songbird-debug-prefs.js
 #endif
+
+pref("browser.dom.window.dump.enabled", true);
