@@ -66,8 +66,8 @@ if "%4"=="prepare" goto end
 
 :package
 cd %DIST_DIR%
-%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DEPTH%\Songbird_%BUILD_ID%.log" /V4 Songbird.nsi
-del Songbird.nsi
+%DIST_DEPTH%\tools\win32\nsis\makensis /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DIST_DEPTH%\Songbird_%BUILD_ID%.log" /V4 songbird.nsi
+del songbird.nsi
 cd %DIST_DEPTH%\installer\win32
 
 if exist "%DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe" goto success
