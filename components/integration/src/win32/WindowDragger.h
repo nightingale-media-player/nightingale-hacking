@@ -45,7 +45,7 @@ namespace std
 };
 #endif
 
-#ifdef WIN32
+#ifdef XP_WIN
 #include <windows.h>
 #endif
 

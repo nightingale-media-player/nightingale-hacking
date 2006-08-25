@@ -47,7 +47,7 @@ NS_IMPL_ISUPPORTS1(CWindowResizeHook, sbIWindowResizeHook)
 //-----------------------------------------------------------------------------
 CWindowResizeHook::CWindowResizeHook()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   m_hookid = SetWindowsHookEx(WH_CALLWNDPROCRET, ResizeHook, GetModuleHandle(NULL), GetCurrentThreadId());
 #endif
 } // ctor
@@ -55,7 +55,7 @@ CWindowResizeHook::CWindowResizeHook()
 //-----------------------------------------------------------------------------
 CWindowResizeHook::~CWindowResizeHook()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   UnhookWindowsHookEx(m_hookid);
   m_hookid = 0;
 #endif
@@ -113,11 +113,11 @@ CWindowResizeHookItem *CWindowResizeHook::findItemByWindow(NATIVEWINDOW wnd)
 //-----------------------------------------------------------------------------
 
 std::list<CWindowResizeHookItem *> CWindowResizeHook::m_items;
-#ifdef WIN32
+#ifdef XP_WIN
 HHOOK CWindowResizeHook::m_hookid = 0;
 #endif
 
-#ifdef WIN32
+#ifdef XP_WIN
 //-----------------------------------------------------------------------------
 LRESULT CALLBACK ResizeHook(int code, WPARAM wParam, LPARAM lParam)
 {

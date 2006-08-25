@@ -32,7 +32,7 @@
 #include "WindowMinMaxSubclass.h"
 #include "WindowMinMax.h"
 
-#ifdef WIN32
+#ifdef XP_WIN
 #include <dbt.h>
 #include <cguid.h>
 #include <objbase.h>
@@ -55,7 +55,7 @@
 // CWindowMinMaxSubclass Class
 //=============================================================================
 
-#ifdef WIN32
+#ifdef XP_WIN
 //-----------------------------------------------------------------------------
 static LRESULT CALLBACK WindowMinMaxSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -78,13 +78,13 @@ CWindowMinMaxSubclass::CWindowMinMaxSubclass(nsISupports *window, sbIWindowMinMa
 //-----------------------------------------------------------------------------
 CWindowMinMaxSubclass::~CWindowMinMaxSubclass()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   UnsubclassWindow();
   NS_RELEASE(m_callback);
 #endif
 } // dtor
 
-#ifdef WIN32
+#ifdef XP_WIN
 //-----------------------------------------------------------------------------
 LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -259,67 +259,94 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
       }
     }
     break;
-    // Added WM_DEVICECHANGE handler for CDDevice object, as a Windows specific implementation,
-    // for receiving media insert and removal notifications.
+
+    // Added WM_DEVICECHANGE handler for CDDevice object, as a Windows specific
+    // implementation, for receiving media insert and removal notifications.
     case WM_DEVICECHANGE:
+    {
+      nsresult rv;
+      nsCOMPtr<sbIDeviceManager> deviceManager =
+        do_GetService("@songbirdnest.com/Songbird/DeviceManager;1", &rv);
+      if (NS_FAILED(rv))
       {
-        nsCOMPtr<sbIDeviceManager> deviceManager = do_GetService("@songbirdnest.com/Songbird/DeviceManager;1");
-        if (deviceManager)
-        {
-          PRBool retVal;
-          nsCOMPtr<sbIDeviceBase> cdDeviceBaseObject;
-          nsCOMPtr<sbIDeviceBase> usbDeviceBaseObject;
-
-          deviceManager->GetDeviceByCategory(NS_LITERAL_STRING("Songbird CD Device"), getter_AddRefs(cdDeviceBaseObject));
-          if (cdDeviceBaseObject)
-          {
-            nsCOMPtr<sbICDDevice> cdDevice;
-            nsIID cdIID = SBICDDEVICE_IID;
-            cdDeviceBaseObject->QueryInterface(cdIID, getter_AddRefs(cdDevice));
-            if (cdDevice)
-            {
-              cdDevice->OnCDDriveEvent(DBT_DEVICEARRIVAL==wParam, &retVal);
-            }
-          }
-
-          if(DBT_DEVICEARRIVAL == wParam ||
-             DBT_DEVICEREMOVECOMPLETE == wParam)
-          {
-            nsString strDeviceName;
-            nsString strDeviceGUID;
-
-            GUID deviceGUID = GUID_NULL;
-
-            PDEV_BROADCAST_HDR pBroadcastHeader = (PDEV_BROADCAST_HDR) lParam;
-            if(pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
-            {
-              PDEV_BROADCAST_DEVICEINTERFACE pDevBroadcastHeader = (PDEV_BROADCAST_DEVICEINTERFACE) pBroadcastHeader;
-
-              strDeviceName = (PRUnichar *)pDevBroadcastHeader->dbcc_name;
-              deviceGUID = pDevBroadcastHeader->dbcc_classguid;
-
-              wchar_t wszGUID[64] = {0};
-              StringFromGUID2(deviceGUID, wszGUID, 63);
-
-              strDeviceGUID = wszGUID;
-            }
-
-            deviceManager->GetDeviceByCategory(NS_LITERAL_STRING("Songbird USBMassStorage Device"), getter_AddRefs(usbDeviceBaseObject));
-            if ( usbDeviceBaseObject && strDeviceName.get() && (deviceGUID != GUID_NULL) )
-            {
-              nsCOMPtr<sbIUSBMassStorageDevice> usbDevice;
-              nsIID usbIID = SBIUSBMASSSTORAGEDEVICE_IID;
-              usbDeviceBaseObject->QueryInterface(usbIID, getter_AddRefs(usbDevice));
-              if (usbDevice)
-              {
-                
-                usbDevice->OnUSBDeviceEvent(DBT_DEVICEARRIVAL == wParam, strDeviceName, strDeviceGUID, &retVal);
-              }
-            }
-          }
-        }
+        NS_WARNING("Failed to get the DeviceManager!");
         break;
       }
+
+      // Send an event to the CDDevice, if present.
+      PRBool hasCDDevice;
+      NS_NAMED_LITERAL_STRING(cdCategory, "Songbird CD Device");
+
+      rv = deviceManager->HasDeviceForCategory(cdCategory, &hasCDDevice);
+      if (NS_SUCCEEDED(rv) && hasCDDevice)
+      {
+        nsCOMPtr<sbIDeviceBase> baseDevice;
+        rv = deviceManager->GetDeviceByCategory(cdCategory,
+                                                getter_AddRefs(baseDevice));
+        if (NS_SUCCEEDED(rv))
+        {
+          nsCOMPtr<sbICDDevice> cdDevice = do_QueryInterface(baseDevice, &rv);
+          if (NS_SUCCEEDED(rv))
+          {
+            PRBool retVal;
+            PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
+            rv = cdDevice->OnCDDriveEvent(mediaInserted, &retVal);
+          }
+        }
+      }
+
+      // Send an event to the USBDevice, if present.
+      PRBool hasUSBDevice;
+      NS_NAMED_LITERAL_STRING(usbCategory, "Songbird USBMassStorage Device");
+
+      rv = deviceManager->HasDeviceForCategory(usbCategory, &hasUSBDevice);
+      if (NS_SUCCEEDED(rv) && hasUSBDevice)
+      {
+        // Bail if we don't care about the message
+        if (DBT_DEVICEARRIVAL != wParam &&
+            DBT_DEVICEREMOVECOMPLETE != wParam)
+          break;
+
+        nsAutoString strDeviceName, strDeviceGUID;
+        GUID deviceGUID = GUID_NULL;
+        PDEV_BROADCAST_HDR pBroadcastHeader = (PDEV_BROADCAST_HDR) lParam;
+
+        if (pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+        {
+          PDEV_BROADCAST_DEVICEINTERFACE pDevBroadcastHeader =
+            (PDEV_BROADCAST_DEVICEINTERFACE) pBroadcastHeader;
+
+          strDeviceName.Assign((PRUnichar*)pDevBroadcastHeader->dbcc_name);
+          if (strDeviceName.IsEmpty())
+            break;
+
+          deviceGUID = pDevBroadcastHeader->dbcc_classguid;
+          if (deviceGUID == GUID_NULL)
+            break;
+
+          wchar_t wszGUID[64] = {0};
+          StringFromGUID2(deviceGUID, wszGUID, 63);
+          strDeviceGUID.Assign(wszGUID);
+
+          nsCOMPtr<sbIDeviceBase> baseDevice;
+          rv = deviceManager->GetDeviceByCategory(usbCategory,
+                                                  getter_AddRefs(baseDevice));
+          if (NS_FAILED(rv))
+            break;
+
+          nsCOMPtr<sbIUSBMassStorageDevice> usbDevice =
+            do_QueryInterface(baseDevice, &rv);
+          if (NS_FAILED(rv))
+            break;
+          
+          PRBool retVal;
+          PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
+          rv = usbDevice->OnUSBDeviceEvent(mediaInserted, strDeviceName,
+                                           strDeviceGUID, &retVal);
+        }
+      }
+      break;
+    }
     // Added WM_SYSCOMMAND handler for taskbar buttons' close command
     case WM_SYSCOMMAND:
     {
@@ -356,7 +383,7 @@ HWND CWindowMinMaxSubclass::getNativeWindow()
 //-----------------------------------------------------------------------------
 void CWindowMinMaxSubclass::SubclassWindow()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   if (m_prevWndProc != NULL) UnsubclassWindow();
   m_prevWndProc = (WNDPROC)GetWindowLong(m_hwnd, GWL_WNDPROC);
   SetWindowLong(m_hwnd, GWL_USERDATA, (LONG)this);
@@ -390,7 +417,7 @@ void CWindowMinMaxSubclass::SubclassWindow()
 //-----------------------------------------------------------------------------
 void CWindowMinMaxSubclass::UnsubclassWindow()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   if (m_prevWndProc == NULL) return;
   SetWindowLong(m_hwnd, GWL_WNDPROC, (LONG)m_prevWndProc);
   SetWindowLong(m_hwnd, GWL_USERDATA, 0);

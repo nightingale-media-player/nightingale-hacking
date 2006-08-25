@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 {
-#ifdef WIN32
+#ifdef XP_WIN
   HWND wnd = NULL;
   
   nsIDOMNode *node = NULL;

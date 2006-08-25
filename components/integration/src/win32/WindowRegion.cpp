@@ -68,7 +68,7 @@ NS_IMETHODIMP CWindowRegion::SetWindowRegion(nsISupports *window, nsISupports *r
   
   if (rgn)
   {
-#ifdef WIN32
+#ifdef XP_WIN
     void *hrgn;
     rgn->GetNativeRegion(hrgn);
     ::SetWindowRgn(wnd, (HRGN)hrgn, TRUE);

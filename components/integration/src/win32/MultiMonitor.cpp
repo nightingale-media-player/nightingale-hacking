@@ -29,7 +29,7 @@
  * \brief Songbird Multiple Montir Support - Implementation.
  */
 
-#ifdef WIN32
+#ifdef XP_WIN
 
 #include <windows.h>
 #include <memory.h>
@@ -55,7 +55,7 @@ DECLARE_HANDLE(HMONITOR);
 /* Implementation file */
 
 void CMultiMonitor::GetMonitorFromPoint(RECT *r, POINT *pt, bool excludeTaskbar) {
-#ifdef WIN32  
+#ifdef XP_WIN  
   if (pt != NULL) 
   {
     // Load dll dynamically so as to be compatible with older versions of Win32

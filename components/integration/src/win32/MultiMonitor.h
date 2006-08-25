@@ -32,7 +32,7 @@
 #ifndef __MULTI_MONITOR_H__
 #define __MULTI_MONITOR_H__
 
-#ifdef WIN32
+#ifdef XP_WIN
 #include <windows.h>
 #else
 typedef long LONG;

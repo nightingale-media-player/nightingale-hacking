@@ -36,14 +36,14 @@
 
 #include <nsString.h>
 
-#ifdef WIN32
+#ifdef XP_WIN
 #include <windows.h>
 #endif
 
 #include "IGlobalHotkeys.h"
 #include <list>
 
-#ifdef WIN32
+#ifdef XP_WIN
 #define HOTKEY_HANDLE int
 #else
 // set types for other platforms
@@ -76,12 +76,12 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIGLOBALHOTKEYS
 
-#ifdef WIN32
+#ifdef XP_WIN
   LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
   
 protected:
-#ifdef WIN32
+#ifdef XP_WIN
   HWND m_window;
   static PRInt32 m_autoinc;
   UINT makeWin32Mask(PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey);

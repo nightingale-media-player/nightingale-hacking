@@ -61,7 +61,7 @@ NS_IMETHODIMP CWindowCloak::Cloak( nsISupports *window )
   
   NATIVEWINDOW oldparent = NULL;
   
-#ifdef WIN32
+#ifdef XP_WIN
   // Detach window from group
   oldparent = SetParent(wnd, NULL);
   // Hide it
@@ -100,7 +100,7 @@ NS_IMETHODIMP CWindowCloak::Uncloak(nsISupports *window )
   WindowCloakEntry *wce = findItem(wnd);
   if (!wce) return NS_OK; // Fail silent
   
-#ifdef WIN32
+#ifdef XP_WIN
   // restore window
   SetParent(wce->m_hwnd, wce->m_oldparent);
   ShowWindow(wce->m_hwnd, SW_SHOW);

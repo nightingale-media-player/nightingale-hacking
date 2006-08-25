@@ -82,7 +82,7 @@ public:
   NS_DECL_SBIWINDOWRESIZEHOOK
   
 public:
-#ifdef WIN32
+#ifdef XP_WIN
   static HHOOK m_hookid;
 #endif
   static CWindowResizeHookItem *findItemByWindow(NATIVEWINDOW wnd);

@@ -41,7 +41,7 @@
 /* Implementation file */
 NS_IMPL_ISUPPORTS1(CGlobalHotkeys, sbIGlobalHotkeys)
 
-#ifdef WIN32
+#ifdef XP_WIN
 
 #define GLOBALHOTKEYS_WNDCLASS NS_L("sbGlobalHotkeys")
 PRInt32 CGlobalHotkeys::m_autoinc = 1;
@@ -58,7 +58,7 @@ static LRESULT CALLBACK GlobalHotkeysProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 //-----------------------------------------------------------------------------
 CGlobalHotkeys::CGlobalHotkeys()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   m_window = NULL;
 
   WNDCLASS wndClass;
@@ -76,7 +76,7 @@ CGlobalHotkeys::CGlobalHotkeys()
 //-----------------------------------------------------------------------------
 CGlobalHotkeys::~CGlobalHotkeys()
 {
-#ifdef WIN32
+#ifdef XP_WIN
   RemoveAllHotkeys();
   DestroyWindow(m_window);
   m_window = NULL;
@@ -130,7 +130,7 @@ NS_IMETHODIMP CGlobalHotkeys::RemoveAllHotkeys()
 } // RemoveAllHotkeys
 
 
-#ifdef WIN32
+#ifdef XP_WIN
 
 //-----------------------------------------------------------------------------
 LRESULT CGlobalHotkeys::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -151,7 +151,7 @@ LRESULT CGlobalHotkeys::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 //-----------------------------------------------------------------------------
 HOTKEY_HANDLE CGlobalHotkeys::registerHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey)
 {
-#ifdef WIN32
+#ifdef XP_WIN
   if (m_autoinc == 0xBFFF) return NULL;
   RegisterHotKey(m_window, m_autoinc, makeWin32Mask(altKey, ctrlKey, shiftKey, metaKey), keyCode);
   return m_autoinc++;
@@ -162,7 +162,7 @@ HOTKEY_HANDLE CGlobalHotkeys::registerHotkey(PRInt32 keyCode, PRBool altKey, PRB
 //-----------------------------------------------------------------------------
 void CGlobalHotkeys::unregisterHotkey(HOTKEY_HANDLE handle)
 {
-#ifdef WIN32
+#ifdef XP_WIN
   UnregisterHotKey(m_window, handle);
 #endif
 }
@@ -191,7 +191,7 @@ GlobalHotkeyEntry *CGlobalHotkeys::findHotkeyByHandle(HOTKEY_HANDLE handle)
   return NULL;
 }
 
-#ifdef WIN32
+#ifdef XP_WIN
 //-----------------------------------------------------------------------------
 UINT CGlobalHotkeys::makeWin32Mask(PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey)
 {

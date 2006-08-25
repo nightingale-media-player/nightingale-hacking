@@ -59,7 +59,7 @@ public:
   CWindowMinMaxSubclass(nsISupports *window, sbIWindowMinMaxCallback *cb);
   virtual ~CWindowMinMaxSubclass();
 
-#ifdef WIN32
+#ifdef XP_WIN
   LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
   
