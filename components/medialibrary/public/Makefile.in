@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIDatabaseQuery.idl \
+XPIDL_SRCS = sbIDatabaseEngine.idl \
+             sbIDatabaseQuery.idl \
              sbIDatabaseResult.idl \
              sbIMediaLibrary.idl \
              sbIPlaylist.idl \
