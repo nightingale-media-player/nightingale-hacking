@@ -2,17 +2,17 @@
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
   <RDF:Seq about="urn:mozilla:locale:root">
-    <RDF:li resource="urn:mozilla:locale:no-NO"/>
+    <RDF:li resource="urn:mozilla:locale:nb-NO"/>
   </RDF:Seq>
   <!-- locale information -->
-  <RDF:Description about="urn:mozilla:locale:no-NO"
+  <RDF:Description about="urn:mozilla:locale:nb-NO"
         chrome:displayName="Norwegian"
         chrome:author="Espen Ottersen"
-        chrome:name="no-NO"
-        chrome:previewURL="http://www.mozilla.org/locales/no-NO.gif">
+        chrome:name="nb-NO"
+        chrome:previewURL="http://www.mozilla.org/locales/nb-NO.gif">
     <chrome:packages>
-      <RDF:Seq about="urn:mozilla:locale:no-NO:packages">
-        <RDF:li resource="urn:mozilla:locale:no-NO:songbird"/>
+      <RDF:Seq about="urn:mozilla:locale:nb-NO:packages">
+        <RDF:li resource="urn:mozilla:locale:nb-NO:songbird"/>
       </RDF:Seq>
     </chrome:packages>
   </RDF:Description>
