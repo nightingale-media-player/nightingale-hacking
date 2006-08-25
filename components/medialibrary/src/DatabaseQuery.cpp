@@ -98,13 +98,13 @@ CDatabaseQuery::CDatabaseQuery()
   NS_NEWXPCOM(m_QueryResult, CDatabaseResult);
   NS_ASSERTION(m_QueryResult, "Failed to create DatabaseQuery.m_QueryResult");
   m_QueryResult->AddRef();
-
 } //ctor
 
 //-----------------------------------------------------------------------------
 CDatabaseQuery::~CDatabaseQuery()
 {
-  CDatabaseEngine::GetSingleton()->RemovePersistentQuery(this);
+  nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
+  if(p) p->RemovePersistentQuery(this);
   
   NS_IF_RELEASE(m_QueryResult);
 
@@ -124,8 +124,6 @@ CDatabaseQuery::~CDatabaseQuery()
     PR_DestroyLock(m_pModifiedTablesLock);
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
-
-  CDatabaseEngine::DestroySingleton();
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -335,11 +333,16 @@ NS_IMETHODIMP CDatabaseQuery::SetLastError(PRInt32 dbError)
 NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = 1;
+
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
     m_QueryHasCompleted = PR_FALSE;
   }
-  *_retval = CDatabaseEngine::GetSingleton()->SubmitQuery(this);
+
+  nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
+  if(p) p->SubmitQuery(this, _retval);
+
   return NS_OK;
 } //Execute
 

@@ -37,16 +37,16 @@
 
 #include "MediaScan.h"
 
-//#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
-//  static _Interface * _Interface##SimpletonConstructor( void )                  \
-//  {                                                                             \
-//  static _Interface * m_Simpleton = nsnull;                                     \
-//  NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
-//  return m_Simpleton;                                                         \
-//  }                                                                             \
-//  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
-//
-//NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CDatabaseEngine)
+#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
+  static _Interface * _Interface##SimpletonConstructor( void )                  \
+  {                                                                             \
+  static _Interface * m_Simpleton = nsnull;                                     \
+  NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
+  return m_Simpleton;                                                         \
+  }                                                                             \
+  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
+
+NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CDatabaseEngine)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseQuery)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
@@ -55,12 +55,12 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CMediaScanQuery)
 
 static nsModuleComponentInfo sbMediaLibrary[] =
 {
-  //{
-  //  SONGBIRD_DATABASEENGINE_CLASSNAME,
-  //  SONGBIRD_DATABASEENGINE_CID,
-  //  SONGBIRD_DATABASEENGINE_CONTRACTID,
-  //  CDatabaseEngineConstructor
-  //},
+  {
+    SONGBIRD_DATABASEENGINE_CLASSNAME,
+    SONGBIRD_DATABASEENGINE_CID,
+    SONGBIRD_DATABASEENGINE_CONTRACTID,
+    CDatabaseEngineConstructor
+  },
 
   {
     SONGBIRD_DATABASEQUERY_CLASSNAME,

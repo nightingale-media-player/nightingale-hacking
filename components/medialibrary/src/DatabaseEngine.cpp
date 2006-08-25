@@ -73,9 +73,6 @@ static NS_NAMED_LITERAL_STRING(strAttachToken, "ATTACH DATABASE \"");
 static NS_NAMED_LITERAL_STRING(strStartToken, "AS \"");
 static NS_NAMED_LITERAL_STRING(strEndToken, "\"");
 
-CDatabaseEngine *CDatabaseEngine::s_Engine = nsnull;
-long CDatabaseEngine::s_EngineRefCount = 0;
-
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger)
 {
   int ret = SQLITE_OK;
@@ -224,7 +221,8 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
         //into the list of persistent queries.
         if(pQuery->m_PersistentQuery && strnicmp( "sqlite_", pArgA, 7 ) )
         {
-          CDatabaseEngine::GetSingleton()->AddPersistentQuery( pQuery, nsCAutoString(pArgA) );
+          nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
+          if(p) p->AddPersistentQuery( pQuery, nsCAutoString(pArgA) );
         }
       }
       break;
@@ -269,7 +267,10 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
   return ret;
 } //SQLiteAuthorizer
 
+NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseEngine, sbIDatabaseEngine)
 NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
+
+
 // CLASSES ====================================================================
 //-----------------------------------------------------------------------------
 CDatabaseEngine::CDatabaseEngine()
@@ -334,8 +335,8 @@ CDatabaseEngine::CDatabaseEngine()
       m_QueryProcessorThreads[i]->Join();
   }
 
-  ClearAllDBLocks();
   CloseAllDB();
+  ClearAllDBLocks();
 
   m_DatabaseLocks.clear();
   m_Databases.clear();
@@ -411,14 +412,14 @@ PRInt32 CDatabaseEngine::DropDB(const nsAString &dbGUID)
 
 //-----------------------------------------------------------------------------
 /* [noscript] PRInt32 SubmitQuery (in CDatabaseQueryPtr dbQuery); */
-//NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_retval)
-//{
-//  *_retval = SubmitQueryPrivate(dbQuery);
-//  return NS_OK;
-//}
+NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_retval)
+{
+  *_retval = SubmitQueryPrivate(dbQuery);
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
-PRInt32 CDatabaseEngine::SubmitQuery(CDatabaseQuery *dbQuery)
+PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *dbQuery)
 {
   PRInt32 ret = 0;
 
@@ -449,14 +450,14 @@ PRInt32 CDatabaseEngine::SubmitQuery(CDatabaseQuery *dbQuery)
 
 //-----------------------------------------------------------------------------
 /* [noscript] void AddPersistentQuery (in CDatabaseQueryPtr dbQuery, in stlCStringRef strTableName); */
-//NS_IMETHODIMP CDatabaseEngine::AddPersistentQuery(CDatabaseQuery * dbQuery, const nsACString & strTableName)
-//{
-//  AddPersistentQueryPrivate(dbQuery, strTableName);
-//  return NS_OK;
-//}
+NS_IMETHODIMP CDatabaseEngine::AddPersistentQuery(CDatabaseQuery * dbQuery, const nsACString & strTableName)
+{
+  AddPersistentQueryPrivate(dbQuery, strTableName);
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
-void CDatabaseEngine::AddPersistentQuery(CDatabaseQuery *pQuery, const nsACString &strTableName)
+void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const nsACString &strTableName)
 {
   nsAutoLock lock(m_pPersistentQueriesLock);
 
@@ -514,14 +515,14 @@ void CDatabaseEngine::AddPersistentQuery(CDatabaseQuery *pQuery, const nsACStrin
 
 //-----------------------------------------------------------------------------
 /* [noscript] void RemovePersistentQuery (in CDatabaseQueryPtr dbQuery); */
-//NS_IMETHODIMP CDatabaseEngine::RemovePersistentQuery(CDatabaseQuery * dbQuery)
-//{
-//  RemovePersistentQueryPrivate(dbQuery);
-//  return NS_OK;
-//}
+NS_IMETHODIMP CDatabaseEngine::RemovePersistentQuery(CDatabaseQuery * dbQuery)
+{
+  RemovePersistentQueryPrivate(dbQuery);
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
-void CDatabaseEngine::RemovePersistentQuery(CDatabaseQuery *pQuery)
+void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
 {
   if(!pQuery->m_IsPersistentQueryRegistered)
     return;
@@ -662,10 +663,11 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
   PRBool bFlag = PR_FALSE;
   nsresult rv;
 
+  nsCOMPtr<nsIFile> pDBDirectory;
   nsCOMPtr<nsIServiceManager> svcMgr;
   rv = NS_GetServiceManager(getter_AddRefs(svcMgr));
 
-  nsCOMPtr<nsIFile> pDBDirectory;
+  nsAutoLock lock(m_pDBStorePathLock);
   rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(pDBDirectory));  
   if(NS_FAILED(rv)) return 0;
 
@@ -1157,7 +1159,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
             querylist_t::iterator itQueries = itTableQuery->second.begin();
             for(; itQueries != itTableQuery->second.end(); itQueries++)
             {
-              SubmitQuery((*itQueries));
+              SubmitQueryPrivate((*itQueries));
             }
           }
         }
@@ -1180,7 +1182,7 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
             for(; itQueries != itTableQuery->second.end(); itQueries++)
             {
               (*itQueries)->SetDatabaseGUID(allToken);
-              SubmitQuery((*itQueries));
+              SubmitQueryPrivate((*itQueries));
             }
           }
         }
@@ -1235,7 +1237,7 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, nsAString &str
   nsresult rv = NS_ERROR_FAILURE;
   nsAutoLock lock(m_pDBStorePathLock);
 
-  if(m_DBStorePath.IsEmpty())
+  if(!m_DBStorePath.Length())
   {
     nsCOMPtr<nsIFile> f;
 

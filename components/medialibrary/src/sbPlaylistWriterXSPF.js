@@ -35,20 +35,63 @@ const SONGBIRD_PLAYLISTWRITERXSPF_IID = Components.interfaces.sbIPlaylistWriter;
 
 function CPlaylistWriterXSPF()
 {
-  this.m_document = null;
+  this.m_guid = null;
+  this.m_table = null;
   this.m_playlistmgr = null;
   this.m_playlist = null;
   this.m_library = null;
   this.m_query = null;
+  this.m_listener = null;
+  this.m_document = null;
 };
 
 /* I actually need a constructor in this case. */
 CPlaylistWriterXSPF.prototype.constructor = CPlaylistWriterXSPF();
 
 /* the CPlaylistWriterXSPF class def */
-CPlaylistWriterXSPF.prototype.write = function(aGUID, aDestTable, aReplace, aErrorCode)
+CPlaylistWriterXSPF.prototype.createEntry = function()
 {
+  return null; 
+};
+
+CPlaylistWriterXSPF.prototype.writeXSPF = function(playlist, url, contenttype)
+{
+  playlist.getAllEntries();
+  
+};
+
+CPlaylistWriterXSPF.prototype.write = function(aGUID, aSourcePlaylist, aOutputURL, aOutputContentType, aErrorCode)
+{
+  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+  const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+  const DatabaseQuery = new Components.Constructor("@songbirdnest.com/Songbird/DatabaseQuery;1", "sbIDatabaseQuery");
+
   aErrorCode.value = 0;
+  
+  if(!aGUID) throw "CPlaylistWriterXSPF::write aGUID cannot be null!";
+  if(!aSourcePlaylist) throw "CPlaylistWriterXSPF::write aSourcePlaylist cannot be null!";
+  
+  this.m_guid = aGUID;
+  this.m_table = aSourcePlaylist;
+  
+  this.m_document = document.implementation.createDocument("", "", null);
+  
+  this.m_query = new DatabaseQuery();
+  this.m_query.setAsyncQuery(false);
+  this.m_query.setDatabaseGUID(this.m_guid);
+
+  this.m_library = new MediaLibrary();
+  this.m_playlistmgr = new PlaylistManager();
+  
+  this.m_library.setQueryObject(this.m_query);
+  var playlist = this.m_playlistmgr.getPlaylist(this.m_table, this.m_query);
+  
+  if(playlist)
+  {
+    aErrorCode.value = this.writeXSPF(playlist, aOutputURL, aOutputContentType);
+    return true;
+  }
+  
   return false;
 };
 
@@ -95,7 +138,7 @@ CPlaylistWriterXSPF.prototype.supportedMIMETypes = function( /* out */ nMIMECoun
   
   try
   {
-    retval.push( "" );
+    retval.push( "application/xspf+xml" );
     nMIMECount.value = retval.length;
   }
   catch ( err )
@@ -113,6 +156,7 @@ CPlaylistWriterXSPF.prototype.supportedFileExtensions = function( /* out */ nExt
   try
   {
     retval.push( "xspf" );
+    retval.push( "xml" );
     nExtCount.value = retval.length;
   }
   catch ( err )

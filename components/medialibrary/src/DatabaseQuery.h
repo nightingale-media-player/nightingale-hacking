@@ -119,8 +119,6 @@ protected:
   typedef std::set<nsCString> modifiedtables_t;
   PRLock* m_pModifiedTablesLock;
   modifiedtables_t m_ModifiedTables;
-
-//  CDatabaseEngine *m_Engine;  // not anymore.  just use the CDatabaseEngine::GetSingleton().
 };
 
 #endif // __DATABASE_QUERY_H__

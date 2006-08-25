@@ -57,22 +57,6 @@ CSmartPlaylist.prototype.removeByGUID = function(mediaGUID, bWillRunLater) {
 };
   
 CSmartPlaylist.prototype.removeByIndex = function(mediaIndex, bWillRunLater) {
-  if(this.m_queryObject != null)
-  {
-    if(!bWillRunLater)
-      this.m_queryObject.resetQuery();
-
-    this.m_queryObject.addQuery("DELETE FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + mediaIndex + "\"");
-    
-    if(!bWillRunLater)
-    {
-      this.m_queryObject.execute();
-      this.m_queryObject.waitForCompletion();
-    }
-    
-    return true;
-  }
-  
   return false;
 };
 

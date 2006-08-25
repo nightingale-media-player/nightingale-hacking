@@ -86,9 +86,47 @@ CPlaylistWriterManager.prototype.getFileExtension = function(strURL)
   return strExtension;
 };
 
-CPlaylistWriterManager.prototype.write = function(aGUID, aName, aOutputContentType, aWriterListener)
+CPlaylistWriterManager.prototype.write = function(aGUID, aName, aOutputURL, aOutputContentType, aWriterListener)
 {
-  return 0;
+  var theExtension = this.getFileExtension(aOutputURL);
+  var retVal = 0;
+  
+  for(var r in this.m_Writers)
+  {
+    var aWriter = this.m_Writers[r];
+    if(aOutputContentType == "")
+    {
+      var nExtensionsCount = new Object;
+      var theExtensions = aWriter.supportedFileExtensions(nExtensionsCount);
+      
+      for(var i = 0; i < theExtensions.length; i++)
+      {
+        if(theExtensions[i] == theExtension)
+        {
+          var writerError = new Object;
+          retVal = aWriter.write(aGUID, aName, aOutputURL, aOutputContentType, aWriterListener, writerError);
+          dump("CPlaylistWriterManager::write (by extension: " + theExtensions[i] + ") - Last Attempt: " + retVal + "\n");
+        }
+      }
+    }
+    else
+    {
+      var nMIMTypeCount = new Object;
+      var theMIMETypes = aWriter.supportedMIMETypes(nMIMTypeCount);
+      
+      for(var i = 0; i < theMIMETypes.length; i++)
+      {
+        if(theMIMETypes[i] == aOutputContentType)
+        {
+          var writerError = new Object;
+          retVal = aReader.write(aGUID, aName, aOutputURL, aOutputContentType, aWriterListener, writerError);
+          dump("CPlaylistWriterManager::write (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + retVal + "\n");
+        }
+      }
+    }
+  }
+  
+  return retVal;
 };
 
 CPlaylistWriterManager.prototype.supportedFileExtensions = function(nExtCount)

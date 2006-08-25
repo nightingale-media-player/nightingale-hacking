@@ -38,6 +38,8 @@ interface sbIPlaylistWriterListener : nsIProgressEventSink
 [scriptable, uuid(27B68B9B-E471-4367-B159-63B65C581847)]
 interface sbIPlaylistWriter : nsISupports
 {
+  attribute sbIPlaylistWriterListener writerListener;
+
   /**
    * \brief 
    *
@@ -45,8 +47,9 @@ interface sbIPlaylistWriter : nsISupports
    * \sa sbIDatabaseQuery
    */
   PRBool write(in AString aGUID, 
-               in AString aDestTable, 
-               in PRBool aReplace, 
+               in AString aSourcePlaylist,
+               in AString aOutputURL,
+               in AString aOutputContentType,
                out PRInt32 aErrorCode);
 
   /**
@@ -108,7 +111,8 @@ interface sbIPlaylistWriterManager : nsISupports
    * \sa sbIDatabaseQuery
    */
   PRInt32 write(in AString aGUID, 
-    in AString aName, 
+    in AString aName,
+    in AString aOutputURL,
     in AString aOutputContentType,
     in sbIPlaylistWriterListener aWriterListener);
 

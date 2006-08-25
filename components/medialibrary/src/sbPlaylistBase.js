@@ -288,7 +288,9 @@ CPlaylistBase.prototype =
     if(this.m_queryObject != null)
     {
       this.m_queryObject.resetQuery();
-      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "\" WHERE playlist_id = \"" + nEntry + "\"");
+      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "\" LEFT JOIN library ON \"" + 
+                                  this.m_strName + "\".playlist_uuid = library.uuid WHERE \"" + 
+                                  this.m_strName + "\".playlist_id = \"" + nEntry + "\"");
       
       this.m_queryObject.execute();
       this.m_queryObject.waitForCompletion();
@@ -304,7 +306,7 @@ CPlaylistBase.prototype =
     if(this.m_queryObject != null)
     {
       this.m_queryObject.resetQuery();
-      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "\"");
+      this.m_queryObject.addQuery("SELECT * FROM \"" + this.m_strName + "\" LEFT JOIN library ON \"" + this.m_strName + "\".playlist_uuid = library.uuid");
       
       this.m_queryObject.execute();
       this.m_queryObject.waitForCompletion();
