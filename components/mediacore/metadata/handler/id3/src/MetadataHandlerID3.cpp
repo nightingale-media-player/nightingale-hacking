@@ -41,6 +41,7 @@
 
 #include <necko/nsIURI.h>
 #include <necko/nsIFileStreams.h>
+#include <nsISeekableStream.h>
 #include <necko/nsIIOService.h>
 #include <necko/nsNetUtil.h>
 
@@ -151,6 +152,114 @@ public:
       m_Channel->GetBuf( &buf );
       m_Channel->GetSize( &size );
       throw MetadataHandlerID3Exception( seek, buf, size );
+    }
+    return pos;
+  }
+};
+
+class ID3_FileReader : public ID3_Reader
+{
+  nsCOMPtr<nsIFile> m_File;
+  nsCOMPtr<nsIInputStream> m_Stream;
+protected:
+public:
+  ID3_FileReader()
+  {
+  }
+  ID3_FileReader(nsCString & path)
+  {
+    if ( NS_SUCCEEDED( NS_GetFileFromURLSpec(path, getter_AddRefs(m_File)) ) )
+    {
+      m_Stream = do_GetService("@mozilla.org/network/file-input-stream;1");
+
+      nsCOMPtr<nsIFileInputStream> fstream;
+      m_Stream->QueryInterface(NS_GET_IID(nsIFileInputStream), getter_AddRefs(fstream));
+      if (fstream.get())
+      {
+        fstream->Init( m_File.get(), PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
+        this->setCur( 0 );  // Open it as a restartable channel
+      }
+    }
+  };
+  virtual ~ID3_FileReader() { ; }
+  virtual void close() { ; }
+
+  virtual int_type peekChar() 
+  { 
+    if (!this->atEnd() || !this->getCur())
+    {
+      unsigned char aByte = 0;
+      pos_type pos = this->getCur();
+      PRUint32 count = readChars( &aByte, 1 ); // 1 byte, please.
+      if (count)
+        this->setCur( pos ); // Now back up 1 byte.  Streams shouldn't peek!
+      return aByte;
+    }
+    return END_OF_READER;
+  }
+
+  virtual size_type readChars(char buf[], size_type len)
+  {
+    PRUint32 count = 0;
+    if ( ! NS_SUCCEEDED( m_Stream->Read( buf, len, &count ) ) )
+    {
+      PRUint64 pos = getCur(), size = getEnd();
+      throw MetadataHandlerID3Exception( pos + len, size, size );
+    }
+    return count;
+  }
+  virtual size_type readChars(char_type buf[], size_type len)
+  {
+    return this->readChars(reinterpret_cast<char *>(buf), len);
+  }
+
+  virtual pos_type getCur() 
+  { 
+    PRInt64 pos = 0;
+    nsCOMPtr<nsISeekableStream> sstream;
+    m_Stream->QueryInterface(NS_GET_IID(nsISeekableStream), getter_AddRefs(sstream));
+    if (sstream.get())
+    {
+      sstream->Tell( &pos );
+    }
+    return (pos_type)pos;
+  }
+
+  virtual pos_type getBeg()
+  {
+    return 0;
+  }
+
+  virtual pos_type getEnd()
+  {
+    PRInt64 size = 0;
+    m_File->GetFileSize( &size );
+    return (pos_type)size;
+  }
+
+  virtual pos_type remainingBytes()
+  {
+    return getEnd() - getCur();
+  }
+
+  virtual pos_type skipChars(pos_type skip)
+  {
+    return setCur( getCur() + skip );
+  }
+
+  virtual pos_type setCur(pos_type pos)
+  {
+    PRInt64 pos64 = pos;
+    nsCOMPtr<nsISeekableStream> sstream;
+    m_Stream->QueryInterface(NS_GET_IID(nsISeekableStream), getter_AddRefs(sstream));
+    if (sstream.get())
+    {
+      if ( !NS_SUCCEEDED( sstream->Seek( nsISeekableStream::NS_SEEK_SET, pos64 ) ) )
+      {
+        PRUint64 cur = getCur(), size = getEnd();
+        throw MetadataHandlerID3Exception( pos, cur, size );
+
+      }
     }
     return pos;
   }
@@ -343,7 +452,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   pURI->GetSpec(cstrSpec);
   if(cstrScheme.Equals(NS_LITERAL_CSTRING("file")))
   {
-#if defined(XP_WIN)
+#if 0 // defined(XP_WIN)
     nsCString::iterator itBegin, itEnd;
     if(StringBeginsWith(cstrPath, NS_LITERAL_CSTRING("/")))
       cstrPath.Cut(0, 1);
@@ -358,24 +467,31 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     }
 
     if ( cstrPath.Find( NS_LITERAL_CSTRING(":\\") ) == 1 )
+#endif
     {
       async = false;
     }
-#endif
   }
 
   // Attempt to do it locally, without using the channel.
   if ( !async )
   {
-    // Right now, only the fast Windows code uses the synchronous reader on local files.
     ID3_Tag  tag;
-    size_t nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ID3V2);
+    size_t nTagSize;
+#if 0
+    nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ID3V2);
     if ( nTagSize == 0 )
     {
       nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ALL);
     }
-    *_retval = nTagSize;
-
+#else
+    ID3_FileReader file_reader( cstrSpec );
+    nTagSize = tag.Link(file_reader, ID3TT_ID3V2);
+    if ( nTagSize == 0 )
+    {
+      nTagSize = tag.Link(file_reader, ID3TT_ALL);
+    }
+#endif
     if ( nTagSize > 0 )
     {
       const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
@@ -419,6 +535,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     {
       async = true; // So, a blocking parse failed.  Try again, using the nsIChannel
     }
+    *_retval = nTagSize;
     nRet = NS_OK;
   }
 
@@ -925,9 +1042,9 @@ const PRInt32 gFrequencies[3][4] =
 //-----------------------------------------------------------------------------
 void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length, PRUint64 file_size)
 {
-  const char byte_zero = 0xFF;
-  const char byte_one = 0xE0;
-  // Skip ID3v2 2k block.
+  const char byte_zero = (const char)0xFF;
+  const char byte_one = (const char)0xE0;
+  // Skip ID3v2 2k block.  Hope there is no album art.
   if ( length > 2048 && buffer[2048] == byte_zero )
   {
     length -= 2048;
