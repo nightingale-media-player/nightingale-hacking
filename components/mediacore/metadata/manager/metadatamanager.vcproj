@@ -137,6 +137,14 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			Name="public"
 			Filter="">
 			<File
+				RelativePath=".\public\sbIMetadataBackscanner.idl">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\public\sbIMetadataChannel.idl">
 				<FileConfiguration
 					Name="Debug|Win32">

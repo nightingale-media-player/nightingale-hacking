@@ -80,6 +80,9 @@ NS_IMETHODIMP sbMetadataChannel::Open(nsIChannel *channel, sbIMetadataHandler *h
 /* void Close (); */
 NS_IMETHODIMP sbMetadataChannel::Close()
 {
+  if(m_Channel)
+    m_Channel->Cancel(NS_ERROR_ABORT);
+
   m_Pos = 0;
   m_Buf = 0;
   m_Blocks.clear();
