@@ -77,6 +77,7 @@ try
   var bsPlaylistRef = SB_NewDataRemote( "playlist.ref", null );
   var bsScanningPaused = SB_NewDataRemote( "backscan.paused", null );
   var bsSongbirdStrings = document.getElementById( "songbird_strings" );
+  var bsInterval = null;
   
   var bsQueryString = "SELECT uuid, url, length, title, service_uuid FROM library where length=\"0\"";
 
@@ -102,10 +103,14 @@ try
 
         // Fire us off in a little bit
         bsWaitForExecuting = true;
-        setTimeout( BSExecute, 5000 );
+        setTimeout( BSExecute, 15000 );
         
         // And start scanning in the background.
-        setInterval( onBackScan, 150 );
+        if(bsInterval)  {
+          clearInterval(bsInterval);
+        }
+        
+        bsInterval = setInterval( onBackScan, 300 );
       }
     }
     catch ( err )
@@ -119,6 +124,10 @@ try
     try {
       bsScanningPaused.unbind();
       bsScanningPaused = null;
+      if(bsInterval) {
+        clearInterval(bsInterval);
+        bsInterval = 0;
+      }
     }
     catch ( err ) {
       dump("ERROR! SBDeInitialized()\n" + err + "\n");
@@ -171,7 +180,7 @@ try
           {
             // ...we need to resubmit the query.
             bsWaitForExecuting = true;
-            setTimeout( BSExecute, 2000 );
+            setTimeout( BSExecute, 10000 );
             bsScanningText.stringValue = "";
           }
           else
@@ -201,7 +210,7 @@ try
     else
     {
       // Try again in a bit.
-      setTimeout( BSExecute, 2000 );
+      setTimeout( BSExecute, 10000 );
     }
   }
   
