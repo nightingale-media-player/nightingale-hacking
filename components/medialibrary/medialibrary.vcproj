@@ -100,7 +100,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="XPT Linking: sbMediaLibrary.xpt"
-				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt
+				CommandLine="$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpt_link $(ProjectDir)$(OutDir)\sbMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIDatabaseEngine.xpt $(ProjectDir)$(OutDir)\sbIDatabaseQuery.xpt $(ProjectDir)$(OutDir)\sbIDatabaseResult.xpt $(ProjectDir)$(OutDir)\sbIMediaLibrary.xpt $(ProjectDir)$(OutDir)\sbIPlaylist.xpt $(ProjectDir)$(OutDir)\sbIPlaylistReader.xpt $(ProjectDir)$(OutDir)\sbIPlaylistWriter.xpt
 "
 				AdditionalDependencies="$(OutDir)\sbIPlaylist.xpt"
 				Outputs="$(OutDir)\sbMediaLibrary.xpt"/>
