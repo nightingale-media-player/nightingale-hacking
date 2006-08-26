@@ -14,7 +14,7 @@ diff -u -8 -p -r1.8 regionNames.properties
  ru	=	Russia
  se	=	Sweden
  jp	=	Japan
-+ir  = Iran
++ir	=	Iran
 +ba	=	Bosnia and Herzegovina
 +bg	=	Bulgaria
 +ad	=	Andorra
@@ -47,7 +47,7 @@ diff -u -8 -p -r1.4 regionNames.properties
  ru	=	Russia
  se	=	Sweden
  jp	=	Japan
-+ir  = Iran
++ir	=	Iran
 +ba	=	Bosnia and Herzegovina
 +bg	=	Bulgaria
 +ad	=	Andorra
