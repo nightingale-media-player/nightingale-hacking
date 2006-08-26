@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 targetdir="$1"
 
 notice() {

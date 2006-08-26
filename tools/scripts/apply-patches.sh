@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 if [ $# = 0 ]; then
   echo usage: apply-patches patchdir targetdir [-R]
   exit 1

@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 if [ $# = 0 ]; then
   echo usage: flatten-dir sourcedir targetdir
   exit 1

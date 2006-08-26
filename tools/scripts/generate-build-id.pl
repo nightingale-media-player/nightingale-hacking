@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 #
 # BEGIN SONGBIRD GPL
 # 
