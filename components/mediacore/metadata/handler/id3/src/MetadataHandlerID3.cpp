@@ -75,7 +75,7 @@ public:
     setChannel( channel );
   };
   virtual ~ID3_ChannelReader() { ; }
-  virtual void close() { ; }
+  virtual void close() { if(m_Channel) m_Channel->Close(); }
 
   void setChannel(sbIMetadataChannel* channel)
   {
@@ -99,7 +99,7 @@ public:
   virtual size_type readChars(char buf[], size_type len)
   {
     PRUint32 count = 0;
-    if ( ! NS_SUCCEEDED( m_Channel->Read( buf, len, &count ) ) )
+    if ( NS_FAILED( m_Channel->Read( buf, len, &count ) ) )
     {
       PRUint64 pos, buf, size;
       m_Channel->GetPos( &pos );
@@ -145,7 +145,7 @@ public:
 
   virtual pos_type setCur(pos_type pos)
   {
-    if ( !NS_SUCCEEDED( m_Channel->SetPos( pos ) ) )
+    if ( NS_FAILED( m_Channel->SetPos( pos ) ) )
     {
       PRUint64 seek, buf, size;
       m_Channel->GetPos( &seek );
@@ -203,7 +203,7 @@ public:
   virtual size_type readChars(char buf[], size_type len)
   {
     PRUint32 count = 0;
-    if ( ! NS_SUCCEEDED( m_Stream->Read( buf, len, &count ) ) )
+    if ( NS_FAILED( m_Stream->Read( buf, len, &count ) ) )
     {
       PRUint64 pos = getCur(), size = getEnd();
       throw MetadataHandlerID3Exception( pos + len, size, size );
