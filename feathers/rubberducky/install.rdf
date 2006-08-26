@@ -6,32 +6,28 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>rubberducky@songbirdnest.com</em:id>
     <em:version>1.0</em:version>
-    
-    <!-- Target Application this theme can install into, 
-        with minimum and maximum supported versions. --> 
+
+    <!-- Songbird -->
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>0.1</em:minVersion>
-        <em:maxVersion>1.0</em:maxVersion>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>0.2</em:maxVersion>
       </Description>
     </em:targetApplication>
-    
-    <!-- Front End MetaData -->
+
     <em:name>Songbird Rubberducky (default)</em:name>
     <em:description>Default Songbird theme</em:description>
-    
     <em:locked>true</em:locked>
-
-    <!-- Front End Integration Hooks (used by Theme Manager)-->
     <em:creator>Pioneers of the Inevitable</em:creator>
 
-    <!-- CURSES!  internalName sets "skin-only mode" for the extension, 
-         and prevents declaration of content or overlays.
-         Therefore turning it off for now so that we can put the 
-         default bones in with rubberducky.
-         <em:internalName>rubberducky/0.2</em:internalName> 
-    -->
-  </Description>      
+    <!-- internalName sets "skin" mode for the extension and prevents
+         declaration of content or overlays. Turning it off for now so that we
+         can put the default bones in with rubberducky. Also adding the
+         <em:hidden> tag to keep it from showing up in the EM. -->
+
+    <!-- <em:internalName>rubberducky/0.2</em:internalName> -->
+    <em:hidden>true</em:hidden>
+  </Description>
 
 </RDF>

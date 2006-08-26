@@ -6,27 +6,22 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>dove@songbirdnest.com</em:id>
     <em:version>1.0</em:version>
-    
-    <!-- Target Application this theme can install into, 
-        with minimum and maximum supported versions. --> 
+
+    <!-- Songbird --> 
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>0.1</em:minVersion>
-        <em:maxVersion>1.0</em:maxVersion>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>0.2</em:maxVersion>
       </Description>
     </em:targetApplication>
-    
-    <!-- Front End MetaData -->
+
     <em:name>Dove</em:name>
     <em:description>Dove Feathers</em:description>
-    
     <em:locked>true</em:locked>
-
-    <!-- Front End Integration Hooks (used by Theme Manager)-->
     <em:creator>Pioneers of the Inevitable</em:creator>
 
     <em:internalName>dove/0.1</em:internalName>
-  </Description>      
+  </Description>
 
 </RDF>
