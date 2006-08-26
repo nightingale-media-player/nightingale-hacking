@@ -30,7 +30,6 @@ locales.jar:
 % locale  songbird  hu-HU  @LOCALE_LOCATION@/locale/hu-HU/songbird/
 % locale  songbird  it-IT  @LOCALE_LOCATION@/locale/it-IT/songbird/
 % locale  songbird  ja-JP  @LOCALE_LOCATION@/locale/ja-JP/songbird/
-% locale  songbird  jp-JP  @LOCALE_LOCATION@/locale/jp-JP/songbird/
 % locale  songbird  ko-KR  @LOCALE_LOCATION@/locale/ko-KR/songbird/
 % locale  songbird  lt-LT  @LOCALE_LOCATION@/locale/lt-LT/songbird/
 % locale  songbird  nl-BE  @LOCALE_LOCATION@/locale/nl-BE/songbird/
@@ -97,8 +96,6 @@ locales.jar:
   locale/it-IT/songbird/songbird.properties     (it-IT/songbird.properties)
   locale/ja-JP/songbird/songbird.dtd            (ja-JP/songbird.dtd)
   locale/ja-JP/songbird/songbird.properties     (ja-JP/songbird.properties)
-  locale/jp-JP/songbird/songbird.dtd            (jp-JP/songbird.dtd)
-  locale/jp-JP/songbird/songbird.properties     (jp-JP/songbird.properties)
   locale/ko-KR/songbird/songbird.dtd            (ko-KR/songbird.dtd)
   locale/ko-KR/songbird/songbird.properties     (ko-KR/songbird.properties)
   locale/lt-LT/songbird/songbird.dtd            (lt-LT/songbird.dtd)
