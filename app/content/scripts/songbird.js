@@ -472,22 +472,6 @@ function SBAppInitialize()
       alert("WFInit() - " + err);
     }
 
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-
-    try { prefs.getCharPref("extensions.getMoreExtensionsURL"); } 
-    catch (e) { prefs.setCharPref("extensions.getMoreExtensionsURL", "http://songbirdnest.com/extensions.rdf"); }
-    try { prefs.getCharPref("extensions.getMoreThemesURL"); } 
-    catch (e) { prefs.setCharPref("extensions.getMoreThemesURL", "http://songbirdnest.com/themes.rdf"); }
-
-    prefs.setCharPref("xpinstall.dialog.confirm", "chrome://mozapps/content/xpinstall/xpinstallConfirm.xul");
-    prefs.setCharPref("xpinstall.dialog.progress.chrome", "chrome://mozapps/content/extensions/extensions.xul?type=extensions");
-    prefs.setCharPref("xpinstall.dialog.progress.skin", "chrome://mozapps/content/extensions/extensions.xul?type=themes");
-    prefs.setCharPref("xpinstall.dialog.progress.type.chrome", "Extension:Manager-extensions");
-    prefs.setCharPref("xpinstall.dialog.progress.type.skin", "Extension:Manager-themes");
-    
-    prefs.setBoolPref("browser.preferences.animateFadeIn", false);
-    prefs.setBoolPref("browser.preferences.instantApply", true);
-    
     // If we are a top level window, hide us.
     if ( window.parent == window )
     {
