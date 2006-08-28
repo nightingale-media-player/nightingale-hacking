@@ -199,6 +199,13 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   height: 9px !important;
   background-repeat: no-repeat !important;
 }
+
+#sysbtn_hide
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
 /* END CHROME **/
 
 /** 
@@ -637,6 +644,423 @@ contextual menu.
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
   height: 25px !important;  
+}
+
+/* Toolbar: Play Button */
+button#library_cmd_play
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_play:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_play[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_play
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_play[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_play[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: remove Button */
+button#library_cmd_remove
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_remove:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_remove[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_remove
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_remove[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_remove[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: edit Button */
+button#library_cmd_edit
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_edit:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_edit[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_edit
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_edit[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_edit[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+
+/* Toolbar: addtoplaylist Button */
+button#library_cmd_addtoplaylist
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_addtoplaylist:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_addtoplaylist[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_addtoplaylist
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_addtoplaylist[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_addtoplaylist[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: burntocd Button */
+button#library_cmd_burntocd
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_burntocd:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_burntocd[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_burntocd
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_burntocd[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_burntocd[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: device Button */
+button#library_cmd_device
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_device:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_device[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_device
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_device[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_device[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: addtolibrary Button */
+button#library_cmd_addtolibrary
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_addtolibrary[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_addtolibrary[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_addtolibrary
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_addtolibrary[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_addtolibrary[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: download Button */
+button#library_cmd_download
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_download:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_download[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_download
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_download[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_download[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: subscribe Button */
+button#library_cmd_subscribe
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_subscribe:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_subscribe[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_subscribe
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_subscribe[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_subscribe[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: pause Button */
+button#library_cmd_pause
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_pause:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_pause[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_pause
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_pause[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_pause[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: resume Button */
+button#library_cmd_resume
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_resume:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_resume[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_resume
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_resume[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_resume[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: switch to downloads Button */
+button#library_cmd_showdlplaylist
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_showdlplaylist:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_showdlplaylist[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_showdlplaylist
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_showdlplaylist[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_showdlplaylist[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+
+/* Toolbar: switch to webplaylist Button */
+button#library_cmd_showwebplaylist
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_showwebplaylist:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+button#library_cmd_showwebplaylist[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_showwebplaylist
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_showwebplaylist[active="true"]:hover
+{
+  height: 8px !important;
+  width: 11px !important;
+}
+menuitem#library_cmd_showwebplaylist[disabled="true"]
+{
+  height: 8px !important;
+  width: 11px !important;
 }
 
 /** 
