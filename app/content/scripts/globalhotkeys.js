@@ -291,7 +291,10 @@ var playbackHotkeyActions = {
   },
 
   _hotkey_playPause: function() {
-    this._gPPS.play(); // automatically selects play or pause depending on current state
+    if (this._gPPS.paused)
+      this._gPPS.play();
+    else
+      this._gPPS.pause();
   },
 
   _hotkey_pause: function() {
