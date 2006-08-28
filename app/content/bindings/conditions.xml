@@ -352,7 +352,7 @@
               // Then update our "current" and "distance" calculations to
               // reflect the size correction (for multiple insertions).
               this.current += miscalculation;
-              this.distance = parseInt( ( ( parseInt( this.distance / this.size ) - 1 ) * box_size ) + 0.5 ); // Why -1?  Folders works without -1.
+              this.distance = parseInt( ( ( parseInt( this.distance / this.size ) ) * box_size ) + 0.5 );
               // Remember the correct box size from here out
               this.size = box_size;
             }
