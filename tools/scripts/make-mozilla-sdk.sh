@@ -79,6 +79,7 @@ sdkdir="`cd \"$temp1\" 2>/dev/null && pwd || echo \"$temp1\"`/$temp2"
 mkdir -p "$sdkdir"
 
 # build in bsdiff to enable partial update patches (binary diffs)
+notice "making bsdiff..."
 cd "$objdir"/other-licenses/bsdiff && make
 
 notice "copying binary files..."
