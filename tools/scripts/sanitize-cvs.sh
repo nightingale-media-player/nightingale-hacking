@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 if [ $# = 0 ]; then
   echo usage: sanitize-cvs targetdir

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 . $(dirname "$0")/common.sh
 
