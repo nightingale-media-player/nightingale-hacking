@@ -1634,7 +1634,9 @@ sbDeviceBase::AutoDownloadTable(const nsAString& aDeviceString,
   nsAutoString strDevice(aDeviceString), strTable(aTransferTable);
 
   *_retval = PR_FALSE;
-  if (IsDeviceIdle(strDevice.get()) || IsDownloadInProgress(strDevice.get()))
+  if (IsDeviceIdle(strDevice.get()) || 
+    IsDownloadInProgress(strDevice.get()) ||
+    IsDownloadPaused(strDevice.get()))
   {
     if (CreateTransferTable(aDeviceString, aContextInput, aTableName,
                             aFilterColumn, aFilterCount, aFilterValues,
@@ -1678,7 +1680,9 @@ sbDeviceBase::AutoUploadTable(const nsAString& aDeviceString,
   nsAutoString strDevice(aDeviceString), strTable(aTransferTable);
 
   *_retval = PR_FALSE;
-  if (IsDeviceIdle(strDevice.get()) || IsUploadInProgress(strDevice.get()))
+  if (IsDeviceIdle(strDevice.get()) || 
+    IsUploadInProgress(strDevice.get()) ||
+    IsUploadPaused(strDevice.get()))
   {
     if (CreateTransferTable(aDeviceString, aContextInput, aTableName,
                             aFilterColumn, aFilterCount, aFilterValues,
