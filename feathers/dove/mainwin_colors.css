@@ -198,12 +198,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-color: transparent !important;
 }
 
-#sysbtn_minimize
-{
-  background-color: transparent !important;
-}
-
-#sysbtn_minimode
+#sysbtn_minimize,
+#sysbtn_minimode,
+#sysbtn_hide
 {
   background-color: transparent !important;
 }
