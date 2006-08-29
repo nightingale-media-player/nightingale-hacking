@@ -117,17 +117,17 @@
                     <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
                     <menuseparator/>
                     <menuitem id="file.window" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
-                    <menu id="songbird_menu_locale" label="&locale.language;" class="sb_faceplate" accesskey="&locale.language.accesskey;">
+                    <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
                       <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
                     </menu>
-                    <menu id="songbird_menu_feathers" label="&menu.feathers;" class="sb_faceplate" accesskey="&menu.feathers.accesskey;">
+                    <menu id="songbird_menu_feathers" label="&menu.feathers;" class="menuitem-iconic" accesskey="&menu.feathers.accesskey;">
                       <menupopup id="feathers.popup" onpopupshowing="fillFeathersList(this);" />
                     </menu>
-                    <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="sb_faceplate"/> -->
+                    <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
                     <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
-                    <menuitem id="menu_preferences" label="&menu.preferences;" class="sb_faceplate" accesskey="&menu.preferences.accesskey;"/>
-                    <menuitem id="menu.extensions" label="&menu.extensions;" class="sb_faceplate" accesskey="&menu.extensions.accesskey;"/>
-                    <menuitem id="menu.dominspector" label="DOM Inspector" class="sb_faceplate"/>
+                    <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
+                    <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
+                    <menuitem id="menu.dominspector" label="DOM Inspector" class="menuitem-iconic"/>
 
                     <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
                     <menuseparator id="menu_FileQuitSeparator"/>
