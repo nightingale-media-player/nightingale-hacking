@@ -2427,29 +2427,19 @@ function SBKoshiOpen()
 
 function SBExtensionsManagerOpen()
 {
-  const EMTYPE = "Extension:Manager";
+  const EM_TYPE = "Extension:Manager";
   
-  var aOpenMode = 'extensions';
-
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
-  var needToOpen = true;
-  var windowType = EMTYPE + "-" + aOpenMode;
-  var windows = wm.getEnumerator(windowType);
-  while (windows.hasMoreElements()) {
-    var theEM = windows.getNext().QueryInterface(Components.interfaces.nsIDOMWindowInternal);
-    if (theEM.document.documentElement.getAttribute("windowtype") == windowType) {
-      theEM.focus();
-      needToOpen = false;
-      break;
-    }
+  var theEMWindow = wm.getMostRecentWindow(EM_TYPE);
+  if (theEMWindow) {
+    theEMWindow.focus();
+    return;
   }
-
-  if (needToOpen) {
-    const EMURL = "chrome://mozapps/content/extensions/extensions.xul?type=" + aOpenMode;
-    const EMFEATURES = "chrome,dialog=no,resizable";
-    window.openDialog(EMURL, "", EMFEATURES);
-  }
+  
+  const EM_URL = "chrome://mozapps/content/extensions/extensions.xul?type=extensions";
+  const EM_FEATURES = "chrome,menubar,extra-chrome,toolbar,dialog=no,resizable";
+  window.openDialog(EM_URL, "", EM_FEATURES);
 }
 
 function SBTrackEditorOpen()
