@@ -179,7 +179,8 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 #sysbtn_maximize > image,
 #sysbtn_maximize[checked="true"] > image, /* Restore */
 #sysbtn_minimize,
-#sysbtn_minimode
+#sysbtn_minimode,
+#sysbtn_hide
 {
   background-color: transparent !important;
 }
