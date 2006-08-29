@@ -87,6 +87,7 @@
 <!ENTITY tooltip.browser.fwd      "Browse Forward" >
 <!ENTITY tooltip.browser.stop     "Stop Browser" >
 <!ENTITY tooltip.browser.home     "Home" >
+<!ENTITY tooltip.browser.refresh  "Refresh" >
 <!ENTITY tooltip.browser.bookmark "Bookmark" >
 <!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
 <!ENTITY tooltip.browser.download "View Current Downloads" >
@@ -122,7 +123,8 @@
 <!ENTITY smart.is_not             "is not" >
 <!ENTITY smart.starts             "starts with" >
 <!ENTITY smart.ends               "ends with" >
-         
+<!ENTITY smart.selectedby         "Selected by" >
+
 <!ENTITY download.window          "Download" >
 <!ENTITY download.select          "Select destination folder:" >
 <!ENTITY download.always          "Always use this folder" >

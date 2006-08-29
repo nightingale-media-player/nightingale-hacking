@@ -49,6 +49,19 @@
 
     <constructor>
       this.tree.builder.addListener(this);
+      var src = "chrome://songbird/locale/songbird.properties";
+      var stringBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+      var stringbundle = stringBundleService.createBundle( src );
+      this.oneitem = "item";
+      this.manyitems = "items";
+      this.noitem = "no item";
+      try {
+        this.oneitem = stringbundle.GetStringFromName( "library.oneitem" );
+        this.manyitems = stringbundle.GetStringFromName( "library.manyitems" );
+        this.noitem = stringbundle.GetStringFromName( "library.noitem" );
+      } catch (e) {
+        /* we have defaults */
+      }
     </constructor>
 
     <destructor>
@@ -400,10 +413,11 @@
           if (column != null) {
             var label = column.element.__filterlist_original_label__;
             if ( this.source.getRefColumnCount( this.ref ) > 0 ) {
-              label += " (" + (this.tree.view.rowCount-1) + " item";
-              if (this.tree.view.rowCount > 1) label += "s";
+              label += " (" + (this.tree.view.rowCount-1) + " ";
+              if (this.tree.view.rowCount > 2) label += this.manyitems; // > 2 because we subtract 1 for 'All'
+              else label += this.oneitem;
               label += ")";
-            } else label += " (no item)";
+            } else label += " (" + this.noitem + ")";
             column.element.setAttribute("label", label);
           }
         }

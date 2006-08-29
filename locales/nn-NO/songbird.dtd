@@ -307,3 +307,9 @@
 <!ENTITY tooltip.control.shuf_off "Shuffle Off" >
 
 
+
+
+<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY smart.selectedby "Selected by" >
+
+

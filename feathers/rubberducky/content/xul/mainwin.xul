@@ -481,7 +481,7 @@
                       <hbox id="browser_toolbar" class="sb_faceplate" flex="1">
                         <button class="sb_faceplate" disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
                         <button class="sb_faceplate" disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
-                        <button class="sb_faceplate" disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="Refresh"/>
+                        <button class="sb_faceplate" disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
                         <button class="sb_faceplate" disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
                         <button class="sb_faceplate" disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
                         <button class="sb_faceplate" disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>

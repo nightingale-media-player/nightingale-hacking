@@ -150,7 +150,7 @@
               </menupopup>
             </menulist>
             <spacer width="8"/>
-            <label class="dialog_label"  value="Selected by" control="smart_selected_list"/>
+            <label class="dialog_label"  value="&smart.selectedby;" control="smart_selected_list"/>
             <menulist id="smart_selected_list" value="&smart.random;">
               <menupopup id="smart_selected_list_popup" >
                 <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />

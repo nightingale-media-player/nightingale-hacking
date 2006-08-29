@@ -176,7 +176,7 @@
           var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
           var defaultsearchstring = "Search";
           try {
-            defaultsearchstring = songbirdStrings.GetStringFromName("search.label");
+            defaultsearchstring = songbirdStrings.GetStringFromName("search.defaultstring");
           } catch (err) { /* ignore error, we have default strings */ }
           return defaultsearchstring;
         ]]>
