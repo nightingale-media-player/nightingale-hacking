@@ -112,6 +112,7 @@ rubberducky.jar:
   feathers/rubberducky/songbird/skin/default/sysbtn_minimize_9x9.png             (skin/default/sysbtn_minimize_9x9.png)
   feathers/rubberducky/songbird/skin/default/sysbtn_minimode_9x9.png             (skin/default/sysbtn_minimode_9x9.png)
   feathers/rubberducky/songbird/skin/default/sysbtn_restore_9x9.png              (skin/default/sysbtn_restore_9x9.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_hide_9x9.png                 (skin/default/sysbtn_hide_9x9.png)
   feathers/rubberducky/songbird/skin/default/thumb_20x10.png                     (skin/default/thumb_20x10.png)
   feathers/rubberducky/songbird/skin/default/toolbar_addtolibrary_disabled.png   (skin/default/toolbar_addtolibrary_disabled.png)
   feathers/rubberducky/songbird/skin/default/toolbar_addtolibrary_hover.png      (skin/default/toolbar_addtolibrary_hover.png)
