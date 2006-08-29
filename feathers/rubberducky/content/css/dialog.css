@@ -581,7 +581,7 @@ menuitem > .menu-iconic-icon
 }
 
 /* Unless it's a command */
-menuitem[sbtype="command"] > .menu-iconic-icon
+menuitem[sbtype="command"] .menu-iconic-icon
 {
   height: 8px !important;
   min-height: 8px !important;
