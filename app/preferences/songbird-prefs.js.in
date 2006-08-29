@@ -101,3 +101,15 @@ pref("security.warn_leaving_secure.show_once", true);
 #endif
 
 pref("browser.dom.window.dump.enabled", true);
+
+#ifdef XP_WIN
+pref("browser.preferences.instantApply", false);
+#else
+pref("browser.preferences.instantApply", true);
+#endif
+
+#ifdef XP_MACOSX
+pref("browser.preferences.animateFadeIn", true);
+#else
+pref("browser.preferences.animateFadeIn", false);
+#endif
