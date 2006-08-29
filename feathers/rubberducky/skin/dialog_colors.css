@@ -230,6 +230,14 @@ playlist.dialog_playlist scrollbar > slider > thumb
   -moz-border-left-colors: #666 #333 !important;
   border: 2px solid !important; 
   background-color: #343d42 !important;
+}
+
+playlist.dialog_playlist scrollbar > slider > thumb:active
+{   
+  -moz-border-bottom-colors: #666 #333 !important;
+  -moz-border-left-colors: #333 #000 !important;
+  -moz-border-top-colors: #333 #000 !important;
+  -moz-border-right-colors: #666 #333 !important;
 } 
 
 playlist.dialog_playlist scrollbar > slider
