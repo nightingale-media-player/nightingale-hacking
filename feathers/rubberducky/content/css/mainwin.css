@@ -606,6 +606,11 @@ playlist > stack > vbox > hbox
   border: none !important;
 }
 
+#playlist_context_popup
+{
+	min-width: 160px !important;
+}
+
 /** 
 ************************************************************************************************************************************************
 THE WEB PLAYLIST aka THE URL SLURPER
