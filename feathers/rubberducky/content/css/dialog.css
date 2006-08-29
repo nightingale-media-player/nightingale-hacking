@@ -570,7 +570,7 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
 }
 
 /* All menuitem icons are 16x16 */
-menuitem > .menu-iconic-icon
+menuitem .menu-iconic-icon
 {
   height: 16px !important;
   min-height: 16px !important;
