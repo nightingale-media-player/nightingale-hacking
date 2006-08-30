@@ -46,13 +46,6 @@ try
 
   function SBInitialize()
   {
-/*  
-    // Watch the metadata if the core is playing.
-    var location = "" + window.location; // Grrr.  Dumb objects.
-    if ( location.indexOf("?video") == -1 )
-        SBInitPlayerLoop(); // Don't loop if we're initializing into the video window.
-*/
-    
     // initialize player controls for this faceplate  
     window.focus();
     SBInitMouseWheel();
@@ -134,111 +127,6 @@ try
     }
   }
 
-  function onExit()
-  {
-    try
-    {
-      var location = "" + window.location; // Grrr.  Dumb objects.
-      if ( location.indexOf("?video") == -1 )
-      {
-        onWindowSaveSizeAndPosition();
-      }
-    }
-    catch ( err )
-    {
-      // If you don't have data functions, just close.
-      alert(err);
-    }
-    document.defaultView.close();
-  }
-
-
-
-  // Help
-  function onHelp()
-  {
-    alert( "Aieeeeee, ayudame!" );
-  }
-
-  // Menubar handling
-  function onMenu( target )
-  {
-    var v = target.getAttribute( "id" );
-    switch ( v )
-    {
-      case "file.file":
-        SBFileOpen();
-      break;
-      case "file.url":
-        SBUrlOpen();
-      break;
-      case "file.mab":
-        SBMabOpen();
-      break;
-      case "file.playlist":
-        SBNewPlaylist();
-      break;
-      case "file.window":
-        SBMainWindowOpen();
-      break;
-      case "aboutName":
-        About(); 
-      break;
-      case "file.exit": 
-      case "menu_FileQuitItem": 
-        quitApp();
-        document.defaultView.close();
-      break;
-    }
-  }
-
-  function SBMabOpen()
-  {
-    var mab_data = new Object();
-    mab_data.retval = "";
-    
-    // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome,modal=no", mab_data );
-  }
-
-  function SBNewPlaylist()
-  {
-    var playlist_data = new Object();
-    playlist_data.retval = "";
-    
-    // Open the window
-    window.open( "chrome://songbird/content/xul/playlist_test.xul", "Testing Playlist Datafeed", "chrome,modal=no", playlist_data );
-  }
-
-  function SBMainWindowOpen()
-  {
-    var location = "" + window.location; // Grrr.  Dumb objects.
-    if ( location.indexOf("?video") == -1 )
-    {
-      // Get mainwin URL
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-      var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
-      try {
-        mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
-      } catch (err) {}
-     
-      // Open the window
-      window.open( mainwin, "", "chrome,modal=no,titlebar=no,resizable=no,toolbar=no,popup=no,titlebar=no" );
-      onExit();
-    }
-  }
-
-  function About( )
-  {
-    // Make a magic data object to get passed to the dialog
-    var about_data = new Object();
-    about_data.retval = "";
-    // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,modal=yes,centerscreen", about_data );
-    if ( about_data.retval == "ok" )
-    {
-    }  
-  }
 
   function onMiniplayerKeypress( evt )
   {
@@ -273,36 +161,6 @@ try
           onPlay( );
         break;
     }
-  }
-
-  function onWindowSaveSizeAndPosition()
-  {
-    var root = "window." + document.documentElement.id;
-    SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
-    SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
-    SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
-    SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
-  }
-
-  function onWindowLoadSizeAndPosition()
-  {
-    var root = "window." + document.documentElement.id;
-    if (SBDataGetStringValue( root + ".x" ) == "" && SBDataGetStringValue( root + ".w" ) == "") { return; }
-    if ( SBDataGetIntValue( root + ".w" ) && SBDataGetIntValue( root + ".h" ) )
-    {
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
-      // YAY YAY YAY the windowregion hack actualy fixes this :D
-      window.resizeTo( SBDataGetIntValue( root + ".w" ), SBDataGetIntValue( root + ".h" ) );
-      // for some reason, the resulting size isn't what we're asking (window currently has a border?) so determine what the difference is and add it to the resize
-      var diffw = SBDataGetIntValue( root + ".w" ) - document.documentElement.boxObject.width;
-      var diffh = SBDataGetIntValue( root + ".h" ) - document.documentElement.boxObject.height;
-      window.resizeTo( SBDataGetIntValue( root + ".w" ) + diffw, SBDataGetIntValue( root + ".h" ) + diffh);
-    }
-    window.moveTo( SBDataGetIntValue( root + ".x" ), SBDataGetIntValue( root + ".y" ) );
-    // do the (more or less) same adjustment for x,y as we did for w,h
-    var diffx = SBDataGetIntValue( root + ".x" ) - document.documentElement.boxObject.screenX;
-    var diffy = SBDataGetIntValue( root + ".y" ) - document.documentElement.boxObject.screenY;
-    window.moveTo( SBDataGetIntValue( root + ".x" ) - diffx, SBDataGetIntValue( root + ".y" ) - diffy );
   }
 
   var SBWindowMinMaxCB = 

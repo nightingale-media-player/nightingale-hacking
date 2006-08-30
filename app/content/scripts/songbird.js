@@ -356,7 +356,7 @@ function SBAppInitialize()
   {
     SBMetricsAppStart();
     setVideoMinMaxCallback();
-    onWindowLoadSize();
+    onWindowLoadSizeAndPosition();
     createLibraryRef();
     initGlobalHotkeys();
 

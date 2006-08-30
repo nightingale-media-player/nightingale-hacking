@@ -194,7 +194,7 @@ function SBInitialize()
 
   try
   {
-    onWindowLoadSize();
+    onWindowLoadSizeAndPosition();
     setMinMaxCallback();
     SBInitMouseWheel();
     initJumpToFileHotkey();

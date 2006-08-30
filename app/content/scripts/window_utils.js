@@ -287,7 +287,7 @@ function onWindowSavePosition()
 {
   var root = "window." + document.documentElement.id;
 /*
-  dump("******** onWindowLoadSize: root:" + root +
+  dump("******** onWindowSavePosition: root:" + root +
                                   " root.w:" + SBDataGetIntValue(root+'.x') + 
                                   " root.h:" + SBDataGetIntValue(root+'.y') + 
                                   "\n");
@@ -310,13 +310,13 @@ function delayedActivate()
 }
 
 // No forseen need to load _just_ size without position
-function onWindowLoadSize()
+function onWindowLoadSizeAndPosition()
 {
   delayedActivate();
 
   var root = "window." + document.documentElement.id;
 /*
-  dump("******** onWindowLoadSize: root:" + root +
+  dump("******** onWindowLoadSizeAndPosition: root:" + root +
                                   " root.w:" + SBDataGetIntValue(root+'.w') + 
                                   " root.h:" + SBDataGetIntValue(root+'.h') + 
                                   " box.w:" + document.documentElement.boxObject.width +
@@ -453,4 +453,22 @@ function quitApp()
     as.quit(V_ATTEMPT);
   }
   onExit();
+}
+
+function SBMainWindowOpen()
+{
+  var location = "" + window.location; // Grrr.  Dumb objects.
+  if ( location.indexOf("?video") == -1 )
+  {
+    // Get mainwin URL
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+    var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
+    try {
+      mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
+    } catch (err) {}
+   
+    // Open the window
+    window.open( mainwin, "", "chrome,modal=no,titlebar=no,resizable=no,toolbar=no,popup=no,titlebar=no" );
+    onExit();
+  }
 }

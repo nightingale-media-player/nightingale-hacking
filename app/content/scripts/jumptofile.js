@@ -138,7 +138,7 @@ try
   var editIdleInterval;
   
   function onLoadJumpToFile() {
-    onWindowLoadSize();
+    onWindowLoadSizeAndPosition();
     window.arguments[0].__JUMPTO__ = document;
     var guid;
     var table;
