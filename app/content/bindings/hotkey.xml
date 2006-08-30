@@ -50,18 +50,39 @@
 
     <constructor>
       <![CDATA[
-        var user_agent = navigator.userAgent;
-        var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
-        var PLATFORM_MACOSX = user_agent.indexOf("Mac OS X") != -1;
-        var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
+        var platform;
+        try {
+          var sysInfo =
+            Components.classes["@mozilla.org/system-info;1"]
+                      .getService(Components.interfaces.nsIPropertyBag2);
+          platform = sysInfo.getProperty("name");                                          
+        }
+        catch (e) {
+          dump("System-info not available, trying the user agent string.\n");
+          var user_agent = navigator.userAgent;
+          if (user_agent.indexOf("Windows") != -1)
+            platform = "Windows_NT";
+          else if (user_agent.indexOf("Mac OS X") != -1)
+            platform = "Darwin";
+          else if (user_agent.indexOf("Linux") != -1)
+            platform = "Linux";
+        }
 
-        this.meta_key_str = "meta";
-        if (PLATFORM_WIN32) this.meta_key_str = "win";
-        if (PLATFORM_MACOSX) this.meta_key_str = "command";
-        if (PLATFORM_LINUX) this.meta_key_str = "meta";
+        if (platform == "Windows_NT")
+          this.meta_key_str = "win";
+        else if (platform == "Darwin")
+          this.meta_key_str = "command";
+        else if (platform == "Linux")
+          this.meta_key_str = "meta";
+        else
+          this.meta_key_str = "meta";
 
-        var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-        this.songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+        var sbs =
+          Components.classes["@mozilla.org/intl/stringbundle;1"]
+                    .getService(Components.interfaces.nsIStringBundleService);
+        if (sbs)
+          this.songbirdStrings =
+            sbs.createBundle("chrome://songbird/locale/songbird.properties");
 
         this.shift_down = false;
         this.ctrl_down = false;

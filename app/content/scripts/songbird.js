@@ -392,13 +392,32 @@ function SBAppInitialize()
     */
     var theGStreamerSimpleBox = document.getElementById( "box_gstreamer_simple" );
 
+    var platform;
+    try {
+      var sysInfo =
+        Components.classes["@mozilla.org/system-info;1"]
+                  .getService(Components.interfaces.nsIPropertyBag2);
+      platform = sysInfo.getProperty("name");                                          
+    }
+    catch (e) {
+      dump("System-info not available, trying the user agent string.\n");
+      var user_agent = navigator.userAgent;
+      if (user_agent.indexOf("Windows") != -1)
+        platform = "Windows_NT";
+      else if (user_agent.indexOf("Mac OS X") != -1)
+        platform = "Darwin";
+      else if (user_agent.indexOf("Linux") != -1)
+        platform = "Linux";
+    }
+
     //
     // Depending upon the platform, initialize one core
     // and hide all of the rest of them.
     //
+    
+    if (platform == "Windows_NT") {
+      //Windows, prefer VLC.
 
-    //Windows, prefer VLC.
-    if ( PLATFORM_WIN32 ) {
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
       //InitPlaybackCoreFlash( "core_flash_frame" );
@@ -413,9 +432,9 @@ function SBAppInitialize()
       if (theTotemBox) theTotemBox.hidden = true;
       */
     }
+    else if (platform == "Darwin") {
+      //MacOSX, prefer QT.
 
-    //MacOSX, prefer QT.
-    if( PLATFORM_MACOSX ) {
       // Initialize with Quicktime
       CoreQTDocumentInit( "core_qt_document" );
       // Hide VLC
@@ -429,9 +448,9 @@ function SBAppInitialize()
       if (theTotemBox) theTotemBox.hidden = true;
       */
     }
-    
-    //Linux, prefer totem-gstreamer
-    if( PLATFORM_LINUX ) {
+    else if (platform == "Linux") {
+      //Linux, prefer totem-gstreamer
+
       //CoreVLCDocumentInit( "core_vlc_document" );
       //InitPlaybackCoreMPlayer( "core_mp_frame" );
       //InitPlaybackCoreFlash( "core_flash_frame" );

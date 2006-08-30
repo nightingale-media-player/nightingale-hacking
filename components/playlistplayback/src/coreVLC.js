@@ -67,14 +67,28 @@ CoreVLC.prototype.playURL = function (aURL)
   
   this._url = aURL;
   
+  var platform;
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    platform = sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      platform = "Windows_NT";
+  }
+
   //Fix paths under win32 for VLC.
-  if(PLATFORM_WIN32) {
+  if (platform == "Windows_NT") {
     var localFileURI = (Components.classes["@mozilla.org/network/simple-uri;1"]).createInstance(Components.interfaces.nsIURI);
     try {
-    localFileURI.spec = aURL;
+      localFileURI.spec = aURL;
     } catch(e) {}
   
-    if(localFileURI.scheme == "file") {
+    if (localFileURI.scheme == "file") {
       this._url = localFileURI.path.slice(3);
       this._url = this._url.replace(/\//g, '\\');
     }

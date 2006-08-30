@@ -44,13 +44,6 @@ if (PLATFORM_WIN32)
 }
 */
  
- // Figure out what platform we're on.
-var user_agent = navigator.userAgent;
-var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
-var PLATFORM_MACOSX = user_agent.indexOf("Mac OS X") != -1;
-var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
- 
-
 //
 // XUL Event Methods
 //
@@ -387,8 +380,22 @@ function onWindowLoadPosition()
   var diffX = rootX - document.documentElement.boxObject.screenX;
   var diffY = rootY - document.documentElement.boxObject.screenY;
 
+  var platform;
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    platform = sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Linux") != -1)
+      platform = "Linux";
+  }
+
   // This fix not needed for Linux - might need to add a MacOSX check.
-  if (!PLATFORM_LINUX)
+  if (platform != "Linux")
     window.moveTo( rootX - diffX, rootY - diffY );
 }
 

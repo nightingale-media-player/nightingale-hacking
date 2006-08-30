@@ -140,12 +140,28 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
     return this.NOT_LOCAL_FILE;
 
   localFilePath = decodeURI(localFileURI.path.slice(2));
-  if(PLATFORM_WIN32) {
+  
+  var platform;
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    platform = sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      platform = "Windows_NT";
+    else if (user_agent.indexOf("Mac OS X") != -1)
+      platform = "Darwin";
+  }
+
+  if (platform == "Windows_NT") {
     localFilePath = localFilePath.slice(1);
     localFilePath = localFilePath.replace(/\//g, '\\');
   }
-
-  if(PLATFORM_MACOSX) {
+  else if (platform == "Darwin") {
     localFilePath = decodeURIComponent(localFilePath);
   }
 

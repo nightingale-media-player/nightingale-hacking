@@ -53,6 +53,24 @@ function myPlaybackEvent( key, value )
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
 
+var gPlatform;
+try {
+  var sysInfo =
+    Components.classes["@mozilla.org/system-info;1"]
+              .getService(Components.interfaces.nsIPropertyBag2);
+  gPlatform = sysInfo.getProperty("name");                                          
+}
+catch (e) {
+  dump("System-info not available, trying the user agent string.\n");
+  var user_agent = navigator.userAgent;
+  if (user_agent.indexOf("Windows") != -1)
+    gPlatform = "Windows_NT";
+  else if (user_agent.indexOf("Mac OS X") != -1)
+    gPlatform = "Darwin";
+  else if (user_agent.indexOf("Linux") != -1)
+    gPlatform = "Linux";
+}
+
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
 
 var SBWindowMinMaxCB = 
@@ -659,7 +677,7 @@ function onServiceEdit( index )
         var theEditBox = document.getElementById( "service_edit" );
         var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
         var extra_y = 7; // Why do I have to give it extra?  What am I calculating wrong?
-        if (PLATFORM_MACOSX)
+        if (gPlatform == "Darwin")
           extra_y -= 1;  // And an extra pixel on the mac.  Great.
         var less_w  = 5;
         var less_h  = -2;
@@ -2335,7 +2353,7 @@ function SBScanMedia( )
     welcome = theSongbirdStrings.getString("faceplate.welcome");
     scan = theSongbirdStrings.getString("faceplate.scan");
   } catch(e) {}
-  if (PLATFORM_MACOSX)
+  if (gPlatform == "Darwin")
     fp.init( window, scan, nsIFilePicker.modeGetFolder );
   else
     fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );

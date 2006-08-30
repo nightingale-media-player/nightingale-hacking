@@ -57,6 +57,20 @@ try
     window.focus();
     SBInitMouseWheel();
 
+    var platform;
+    try {
+      var sysInfo =
+        Components.classes["@mozilla.org/system-info;1"]
+                  .getService(Components.interfaces.nsIPropertyBag2);
+      platform = sysInfo.getProperty("name");                                          
+    }
+    catch (e) {
+      dump("System-info not available, trying the user agent string.\n");
+      var user_agent = navigator.userAgent;
+      if (user_agent.indexOf("Mac OS X") != -1)
+        platform = "Darwin";
+    }
+
     var location = "" + window.location; // Grrr.  Dumb objects.
     if ( location.indexOf("?video") == -1 ) {
       initJumpToFileHotkey();
@@ -64,13 +78,15 @@ try
       document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
     } else {
       document.getElementById("mini_close").hidden = true;
-      if ( PLATFORM_MACOSX )
+
+      if (platform == "Darwin")
         document.getElementById("mini_btn_fullscreen").setAttribute("hidden", "true");
+
       document.getElementById("mini_btn_max").setAttribute("hidden", "true");
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     }
     
-    if ( PLATFORM_MACOSX ) {
+    if (platform == "Darwin") {
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     }
     

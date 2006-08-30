@@ -31,20 +31,6 @@
 
 try
 {
-
-  // Figure out what platform we're on.
-  var user_agent = navigator.userAgent;
-  var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
-  var PLATFORM_MACOSX = user_agent.indexOf("Mac OS X") != -1;
-  var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
-
-  //
-  //
-  //  Make platform specific hacks to mainwin.xul here
-  //
-  //
-
-
   function onSBMainwinDataLoad()
   {
     //SB_LOG("onSBMainwinDataLoad", "");

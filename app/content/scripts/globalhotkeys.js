@@ -29,15 +29,33 @@
 var hotkey_service;
 var hotkeyactions_service;
 
-var user_agent = navigator.userAgent;
-var PLATFORM_WIN32 = user_agent.indexOf("Windows") != -1;
-var PLATFORM_MACOSX = user_agent.indexOf("Mac OS X") != -1;
-var PLATFORM_LINUX = user_agent.indexOf("Linux") != -1;
+var platform;
+try {
+  var sysInfo =
+    Components.classes["@mozilla.org/system-info;1"]
+              .getService(Components.interfaces.nsIPropertyBag2);
+  platform = sysInfo.getProperty("name");                                          
+}
+catch (e) {
+  dump("System-info not available, trying the user agent string.\n");
+  var user_agent = navigator.userAgent;
+  if (user_agent.indexOf("Windows") != -1)
+    platform = "Windows_NT";
+  else if (user_agent.indexOf("Mac OS X") != -1)
+    platform = "Darwin";
+  else if (user_agent.indexOf("Linux") != -1)
+    platform = "Linux";
+}
 
-var meta_key_str = "meta";
-if (PLATFORM_WIN32) meta_key_str = "win";
-if (PLATFORM_MACOSX) meta_key_str = "command";
-if (PLATFORM_LINUX) meta_key_str = "meta";
+var meta_key_str;
+if (platform == "Windows_NT")
+  meta_key_str = "win";
+else if (platform == "Darwin")
+  meta_key_str = "command";
+else if (platform == "Linux")
+  meta_key_str = "meta";
+else
+  meta_key_str = "meta";
 
 function initGlobalHotkeys() {
   // Access global hotkeys component (if it exists)
