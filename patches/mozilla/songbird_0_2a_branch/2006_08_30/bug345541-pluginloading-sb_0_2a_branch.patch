@@ -1,0 +1,38 @@
+Index: modules/plugin/base/src/nsPluginsDirUnix.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/modules/plugin/base/src/nsPluginsDirUnix.cpp,v
+retrieving revision 1.37.4.1
+diff -u -8 -p -r1.37.4.1 nsPluginsDirUnix.cpp
+--- modules/plugin/base/src/nsPluginsDirUnix.cpp	24 Apr 2006 05:06:48 -0000	1.37.4.1
++++ modules/plugin/base/src/nsPluginsDirUnix.cpp	21 Jul 2006 22:42:28 -0000
+@@ -446,19 +446,28 @@ nsresult nsPluginFile::GetPluginInfo(nsP
+         // are just XPCOM components, but there are some Mozilla
+         // Classic holdovers that live in the plugins directory but
+         // implement nsIPlugin and the factory stuff.
+         static NS_DEFINE_CID(kPluginCID, NS_PLUGIN_CID);
+ 
+         nsCOMPtr<nsIFactory> factory;
+         rv = nsGetFactory(mgr, kPluginCID, nsnull, nsnull, 
+ 			  getter_AddRefs(factory));
+-        if (NS_FAILED(rv)) return rv;
+ 
+-        plugin = do_QueryInterface(factory);
++        if (NS_FAILED(rv)) {
++            // HACK: The symbol lookup for "NSGetFactory" mistakenly returns
++            // a reference to an unrelated function when we have an NSAPI
++            // plugin linked to libxul.so.  Give this plugin another shot as
++            // an NSAPI plugin
++            rv = ns4xPlugin::CreatePlugin(mgr, 0, 0, pLibrary,
++                          getter_AddRefs(plugin));
++            if (NS_FAILED(rv)) return rv;
++        } else {
++            plugin = do_QueryInterface(factory);
++        }
+     } else {
+         // It's old sk00l
+         // if fileName parameter == 0 ns4xPlugin::CreatePlugin() will not call NP_Initialize()
+         rv = ns4xPlugin::CreatePlugin(mgr, 0, 0, pLibrary, 
+ 				      getter_AddRefs(plugin));
+         if (NS_FAILED(rv)) return rv;
+     }
+ 

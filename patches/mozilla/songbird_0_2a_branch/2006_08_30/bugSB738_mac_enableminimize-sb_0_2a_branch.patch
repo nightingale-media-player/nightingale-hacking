@@ -1,0 +1,30 @@
+Index: widget/src/mac/nsMacWindow.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/mac/nsMacWindow.cpp,v
+retrieving revision 1.158.2.18
+diff -u -r1.158.2.18 nsMacWindow.cpp
+--- widget/src/mac/nsMacWindow.cpp	21 Jul 2006 15:24:03 -0000	1.158.2.18
++++ widget/src/mac/nsMacWindow.cpp	15 Aug 2006 00:51:46 -0000
+@@ -587,6 +587,22 @@
+   NS_ASSERTION ( err == noErr, "couldn't set a property on the window, event handling will fail" );
+   if ( err != noErr )
+     return NS_ERROR_FAILURE;
++  
++  
++  // Make the window obey the "minimizable" attribute.
++  // NOTES:
++  //  - We can't use kWindowCollapseBoxAttribute since it does not work
++  //    for windows without titlebars.  
++  //  - All non-dialog windows are given eBorderStyle_minimize,
++  //    so for now setting "minimizable=no" has no effect.
++  if (!(aInitData->mBorderStyle & eBorderStyle_minimize)) {	
++    err = ::HIWindowChangeFeatures(mWindowPtr, 0, kWindowCanCollapse);	 // Clear CanCollapse bit
++  }
++  else {
++    err = ::HIWindowChangeFeatures(mWindowPtr, kWindowCanCollapse, 0);   // Set CanCollapse bit
++  }
++  NS_ASSERTION ( err == noErr, "couldn't change window collapsiblity feature" );	
++	
+ 
+   // reset the coordinates to (0,0) because it's the top level widget
+   // and adjust for any adjustment required to requested window bottom
