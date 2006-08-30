@@ -515,9 +515,11 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
   if (!data)
     return PR_FALSE;
 
-  nsString dbContext = ((TransferData *)data)->dbContext;
-  nsString tableName = ((TransferData *)data)->dbTable;
-  PRUnichar* deviceString = (PRUnichar *) ((TransferData *)data)->deviceString.get();
+  TransferData* transData = NS_REINTERPRET_CAST(TransferData*, data);
+
+  nsString dbContext = transData->dbContext;
+  nsString tableName = transData->dbTable;
+  PRUnichar* deviceString = (PRUnichar*)transData->deviceString.get();
 
 
   // Read the table for Transferring files
@@ -642,7 +644,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
     DeviceIdle(deviceString);
   }
 
-  delete data;
+  delete transData;
   data = nsnull;
 
   return PR_TRUE;
