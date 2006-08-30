@@ -1,6 +1,11 @@
 ? .mozconfig.mk
 ? .mozconfig.out
 ? bug176182-jsautorequest-sb_0_2a_branch.patch
+? bug204114-unicharutils-sb_0_2a_branch.patch
+? bug280236-classinfo_v1.6-sb_0_2a_branch.patch
+? bug330640-accessibility-sb_0_2a_branch.patch
+? js_gclogging-sb_0_2a_branch.patch
+? js_tracerefcnt-sb_0_2a_branch.patch
 ? sanity.diff
 Index: caps/src/nsScriptSecurityManager.cpp
 ===================================================================
@@ -8,7 +13,7 @@ RCS file: /cvsroot/mozilla/caps/src/nsScriptSecurityManager.cpp,v
 retrieving revision 1.266.2.14
 diff -u -p -r1.266.2.14 nsScriptSecurityManager.cpp
 --- caps/src/nsScriptSecurityManager.cpp	6 Jul 2006 21:07:15 -0000	1.266.2.14
-+++ caps/src/nsScriptSecurityManager.cpp	25 Jul 2006 00:01:44 -0000
++++ caps/src/nsScriptSecurityManager.cpp	30 Aug 2006 22:59:01 -0000
 @@ -98,6 +98,7 @@ JSRuntime       *nsScriptSecurityManager
  static inline const PRUnichar *
  JSValIDToString(JSContext *cx, const jsval idval)
@@ -66,7 +71,7 @@ RCS file: /cvsroot/mozilla/caps/src/nsSecurityManagerFactory.cpp,v
 retrieving revision 1.41
 diff -u -p -r1.41 nsSecurityManagerFactory.cpp
 --- caps/src/nsSecurityManagerFactory.cpp	22 Jul 2005 19:05:40 -0000	1.41
-+++ caps/src/nsSecurityManagerFactory.cpp	25 Jul 2006 00:01:44 -0000
++++ caps/src/nsSecurityManagerFactory.cpp	30 Aug 2006 22:59:01 -0000
 @@ -294,6 +294,7 @@ nsSecurityNameSet::InitializeNameSet(nsI
       */
      JSObject *obj = global;
@@ -81,7 +86,7 @@ RCS file: /cvsroot/mozilla/content/base/src/nsScriptLoader.cpp,v
 retrieving revision 1.74.2.4
 diff -u -p -r1.74.2.4 nsScriptLoader.cpp
 --- content/base/src/nsScriptLoader.cpp	7 Jul 2006 02:12:00 -0000	1.74.2.4
-+++ content/base/src/nsScriptLoader.cpp	25 Jul 2006 00:01:45 -0000
++++ content/base/src/nsScriptLoader.cpp	30 Aug 2006 22:59:01 -0000
 @@ -774,6 +774,8 @@ nsScriptLoader::EvaluateScript(nsScriptL
    // Put the old script back in case it wants to do anything else.
    mCurrentScript = oldCurrent;
@@ -94,11 +99,11 @@ diff -u -p -r1.74.2.4 nsScriptLoader.cpp
 Index: content/base/src/nsXMLHttpRequest.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/content/base/src/nsXMLHttpRequest.cpp,v
-retrieving revision 1.156.2.5
-diff -u -p -r1.156.2.5 nsXMLHttpRequest.cpp
---- content/base/src/nsXMLHttpRequest.cpp	13 Jul 2006 23:27:26 -0000	1.156.2.5
-+++ content/base/src/nsXMLHttpRequest.cpp	25 Jul 2006 00:01:45 -0000
-@@ -1044,6 +1044,7 @@ nsXMLHttpRequest::Open(const nsACString&
+retrieving revision 1.156.2.6
+diff -u -p -r1.156.2.6 nsXMLHttpRequest.cpp
+--- content/base/src/nsXMLHttpRequest.cpp	1 Aug 2006 22:19:28 -0000	1.156.2.6
++++ content/base/src/nsXMLHttpRequest.cpp	30 Aug 2006 22:59:02 -0000
+@@ -1046,6 +1046,7 @@ nsXMLHttpRequest::Open(const nsACString&
      }
  
      if (argc > 2) {
@@ -112,7 +117,7 @@ RCS file: /cvsroot/mozilla/content/events/src/nsEventListenerManager.cpp,v
 retrieving revision 1.206.2.8
 diff -u -p -r1.206.2.8 nsEventListenerManager.cpp
 --- content/events/src/nsEventListenerManager.cpp	15 Jun 2006 03:15:46 -0000	1.206.2.8
-+++ content/events/src/nsEventListenerManager.cpp	25 Jul 2006 00:01:46 -0000
++++ content/events/src/nsEventListenerManager.cpp	30 Aug 2006 22:59:02 -0000
 @@ -1428,6 +1428,7 @@ nsEventListenerManager::RegisterScriptEv
  
    if (cx) {
@@ -124,11 +129,11 @@ diff -u -p -r1.206.2.8 nsEventListenerManager.cpp
 Index: content/html/document/src/nsHTMLDocument.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/content/html/document/src/nsHTMLDocument.cpp,v
-retrieving revision 3.615.2.24
-diff -u -p -r3.615.2.24 nsHTMLDocument.cpp
---- content/html/document/src/nsHTMLDocument.cpp	21 Jul 2006 20:15:01 -0000	3.615.2.24
-+++ content/html/document/src/nsHTMLDocument.cpp	25 Jul 2006 00:01:48 -0000
-@@ -2349,6 +2349,8 @@ nsHTMLDocument::ScriptWriteCommon(PRBool
+retrieving revision 3.615.2.31
+diff -u -p -r3.615.2.31 nsHTMLDocument.cpp
+--- content/html/document/src/nsHTMLDocument.cpp	18 Aug 2006 17:33:28 -0000	3.615.2.31
++++ content/html/document/src/nsHTMLDocument.cpp	30 Aug 2006 22:59:03 -0000
+@@ -2357,6 +2357,8 @@ nsHTMLDocument::ScriptWriteCommon(PRBool
      NS_ENSURE_TRUE(argv, NS_ERROR_UNEXPECTED);
  
      if (argc == 1) {
@@ -137,7 +142,7 @@ diff -u -p -r3.615.2.24 nsHTMLDocument.cpp
        JSString *jsstr = JS_ValueToString(cx, argv[0]);
        NS_ENSURE_TRUE(jsstr, NS_ERROR_OUT_OF_MEMORY);
  
-@@ -2363,6 +2365,8 @@ nsHTMLDocument::ScriptWriteCommon(PRBool
+@@ -2371,6 +2373,8 @@ nsHTMLDocument::ScriptWriteCommon(PRBool
        nsAutoString string_buffer;
  
        for (i = 0; i < argc; ++i) {
@@ -152,7 +157,7 @@ RCS file: /cvsroot/mozilla/content/xbl/src/nsXBLBinding.cpp,v
 retrieving revision 1.199.2.2
 diff -u -p -r1.199.2.2 nsXBLBinding.cpp
 --- content/xbl/src/nsXBLBinding.cpp	15 Jun 2006 03:15:46 -0000	1.199.2.2
-+++ content/xbl/src/nsXBLBinding.cpp	25 Jul 2006 00:01:48 -0000
++++ content/xbl/src/nsXBLBinding.cpp	30 Aug 2006 22:59:03 -0000
 @@ -1001,6 +1001,7 @@ nsXBLBinding::DoInitJSClass(JSContext *c
  
    nsCAutoString className(aClassName);
@@ -164,10 +169,10 @@ diff -u -p -r1.199.2.2 nsXBLBinding.cpp
 Index: content/xbl/src/nsXBLDocumentInfo.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/content/xbl/src/nsXBLDocumentInfo.cpp,v
-retrieving revision 1.29.2.6
-diff -u -p -r1.29.2.6 nsXBLDocumentInfo.cpp
---- content/xbl/src/nsXBLDocumentInfo.cpp	23 Oct 2005 09:13:04 -0000	1.29.2.6
-+++ content/xbl/src/nsXBLDocumentInfo.cpp	25 Jul 2006 00:01:49 -0000
+retrieving revision 1.29.2.7
+diff -u -p -r1.29.2.7 nsXBLDocumentInfo.cpp
+--- content/xbl/src/nsXBLDocumentInfo.cpp	16 Aug 2006 23:49:16 -0000	1.29.2.7
++++ content/xbl/src/nsXBLDocumentInfo.cpp	30 Aug 2006 22:59:03 -0000
 @@ -266,6 +266,8 @@ nsXBLDocGlobalObject::GetContext()
  
      JSContext *cx = (JSContext *)mScriptContext->GetNativeContext();
@@ -183,7 +188,7 @@ RCS file: /cvsroot/mozilla/content/xbl/src/nsXBLProtoImplField.cpp,v
 retrieving revision 1.12.26.2
 diff -u -p -r1.12.26.2 nsXBLProtoImplField.cpp
 --- content/xbl/src/nsXBLProtoImplField.cpp	26 Sep 2005 13:30:07 -0000	1.12.26.2
-+++ content/xbl/src/nsXBLProtoImplField.cpp	25 Jul 2006 00:01:49 -0000
++++ content/xbl/src/nsXBLProtoImplField.cpp	30 Aug 2006 22:59:04 -0000
 @@ -138,8 +138,9 @@ nsXBLProtoImplField::InstallMember(nsISc
    if (!undefined) {
      // Define the evaluated result as a JS property
@@ -201,7 +206,7 @@ RCS file: /cvsroot/mozilla/content/xbl/src/nsXBLProtoImplMethod.cpp,v
 retrieving revision 1.22.2.4
 diff -u -p -r1.22.2.4 nsXBLProtoImplMethod.cpp
 --- content/xbl/src/nsXBLProtoImplMethod.cpp	1 Jun 2006 21:51:48 -0000	1.22.2.4
-+++ content/xbl/src/nsXBLProtoImplMethod.cpp	25 Jul 2006 00:01:49 -0000
++++ content/xbl/src/nsXBLProtoImplMethod.cpp	30 Aug 2006 22:59:04 -0000
 @@ -156,6 +156,7 @@ nsXBLProtoImplMethod::InstallMember(nsIS
    // now we want to reevaluate our property using aContext and the script object for this window...
    if (mJSMethodObject && targetClassObject) {
@@ -235,7 +240,7 @@ RCS file: /cvsroot/mozilla/content/xbl/src/nsXBLProtoImplProperty.cpp,v
 retrieving revision 1.19.2.4
 diff -u -p -r1.19.2.4 nsXBLProtoImplProperty.cpp
 --- content/xbl/src/nsXBLProtoImplProperty.cpp	10 Mar 2006 18:39:43 -0000	1.19.2.4
-+++ content/xbl/src/nsXBLProtoImplProperty.cpp	25 Jul 2006 00:01:49 -0000
++++ content/xbl/src/nsXBLProtoImplProperty.cpp	30 Aug 2006 22:59:04 -0000
 @@ -194,6 +194,7 @@ nsXBLProtoImplProperty::InstallMember(ns
    // now we want to reevaluate our property using aContext and the script object for this window...
    if ((mJSGetterObject || mJSSetterObject) && targetClassObject) {
@@ -247,11 +252,11 @@ diff -u -p -r1.19.2.4 nsXBLProtoImplProperty.cpp
 Index: content/xul/content/src/nsXULElement.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/content/xul/content/src/nsXULElement.cpp,v
-retrieving revision 1.578.2.14
-diff -u -p -r1.578.2.14 nsXULElement.cpp
---- content/xul/content/src/nsXULElement.cpp	21 Jul 2006 20:16:22 -0000	1.578.2.14
-+++ content/xul/content/src/nsXULElement.cpp	25 Jul 2006 00:01:51 -0000
-@@ -3333,6 +3333,7 @@ nsXULPrototypeScript::Serialize(nsIObjec
+retrieving revision 1.578.2.17
+diff -u -p -r1.578.2.17 nsXULElement.cpp
+--- content/xul/content/src/nsXULElement.cpp	3 Aug 2006 00:47:51 -0000	1.578.2.17
++++ content/xul/content/src/nsXULElement.cpp	30 Aug 2006 22:59:04 -0000
+@@ -3343,6 +3343,7 @@ nsXULPrototypeScript::Serialize(nsIObjec
  
      JSScript *script = NS_REINTERPRET_CAST(JSScript*,
                                             ::JS_GetPrivate(cx, mJSObject));
@@ -259,7 +264,7 @@ diff -u -p -r1.578.2.14 nsXULElement.cpp
      if (! ::JS_XDRScript(xdr, &script)) {
          rv = NS_ERROR_FAILURE;  // likely to be a principals serialization error
      } else {
-@@ -3468,6 +3469,7 @@ nsXULPrototypeScript::Deserialize(nsIObj
+@@ -3478,6 +3479,7 @@ nsXULPrototypeScript::Deserialize(nsIObj
              rv = NS_ERROR_OUT_OF_MEMORY;
          } else {
              xdr->userdata = (void*) aStream;
@@ -270,10 +275,10 @@ diff -u -p -r1.578.2.14 nsXULElement.cpp
 Index: content/xul/document/src/nsXULPrototypeDocument.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/content/xul/document/src/nsXULPrototypeDocument.cpp,v
-retrieving revision 1.64.2.3
-diff -u -p -r1.64.2.3 nsXULPrototypeDocument.cpp
---- content/xul/document/src/nsXULPrototypeDocument.cpp	12 Oct 2005 20:19:49 -0000	1.64.2.3
-+++ content/xul/document/src/nsXULPrototypeDocument.cpp	25 Jul 2006 00:01:51 -0000
+retrieving revision 1.64.2.4
+diff -u -p -r1.64.2.4 nsXULPrototypeDocument.cpp
+--- content/xul/document/src/nsXULPrototypeDocument.cpp	16 Aug 2006 23:49:16 -0000	1.64.2.4
++++ content/xul/document/src/nsXULPrototypeDocument.cpp	30 Aug 2006 22:59:05 -0000
 @@ -829,6 +829,8 @@ nsXULPDGlobalObject::GetContext()
  
          JSContext *cx = (JSContext *)mScriptContext->GetNativeContext();
@@ -286,10 +291,10 @@ diff -u -p -r1.64.2.3 nsXULPrototypeDocument.cpp
 Index: dom/src/base/nsDOMClassInfo.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/dom/src/base/nsDOMClassInfo.cpp,v
-retrieving revision 1.292.2.46
-diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
---- dom/src/base/nsDOMClassInfo.cpp	21 Jul 2006 20:17:23 -0000	1.292.2.46
-+++ dom/src/base/nsDOMClassInfo.cpp	25 Jul 2006 00:01:56 -0000
+retrieving revision 1.292.2.51
+diff -u -p -r1.292.2.51 nsDOMClassInfo.cpp
+--- dom/src/base/nsDOMClassInfo.cpp	4 Aug 2006 18:23:16 -0000	1.292.2.51
++++ dom/src/base/nsDOMClassInfo.cpp	30 Aug 2006 22:59:07 -0000
 @@ -1318,6 +1318,8 @@ nsDOMClassInfo::DefineStaticJSVals(JSCon
      return NS_ERROR_OUT_OF_MEMORY;                                            \
    }
@@ -308,7 +313,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    do {
      nsCOMPtr<nsIExceptionService> xs =
        do_GetService(NS_EXCEPTIONSERVICE_CONTRACTID);
-@@ -3031,6 +3035,8 @@ nsDOMClassInfo::GetArrayIndexFromId(JSCo
+@@ -3032,6 +3036,8 @@ nsDOMClassInfo::GetArrayIndexFromId(JSCo
      *aIsNumber = PR_FALSE;
    }
  
@@ -317,7 +322,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    if (!::JS_ValueToNumber(cx, id, &array_index)) {
      return -1;
    }
-@@ -3222,6 +3228,8 @@ nsDOMClassInfo::PostCreate(nsIXPConnectW
+@@ -3223,6 +3229,8 @@ nsDOMClassInfo::PostCreate(nsIXPConnectW
  
    wrapper->GetJSObjectPrototype(&proto);
  
@@ -326,7 +331,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    JSObject *proto_proto = ::JS_GetPrototype(cx, proto);
  
    JSClass *proto_proto_class = JS_GET_CLASS(cx, proto_proto);
-@@ -3351,6 +3359,7 @@ nsDOMClassInfo::ResolveConstructor(JSCon
+@@ -3352,6 +3360,7 @@ nsDOMClassInfo::ResolveConstructor(JSCon
    JSObject *global = GetGlobalJSObject(cx, obj);
  
    jsval val;
@@ -334,7 +339,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    if (!::JS_GetProperty(cx, global, mData->mName, &val)) {
      return NS_ERROR_UNEXPECTED;
    }
-@@ -3828,6 +3837,7 @@ nsWindowSH::PreCreate(nsISupports *nativ
+@@ -3829,6 +3838,7 @@ nsWindowSH::PreCreate(nsISupports *nativ
  
    if (!sObjectClass) {
      JSObject *obj, *proto = globalObj;
@@ -342,7 +347,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
  
      do {
        obj = proto;
-@@ -4007,6 +4017,8 @@ nsWindowSH::InvalidateGlobalScopePollute
+@@ -4008,6 +4018,8 @@ nsWindowSH::InvalidateGlobalScopePollute
  {
    JSObject *proto;
  
@@ -351,7 +356,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    while ((proto = ::JS_GetPrototype(cx, obj))) {
      if (JS_GET_CLASS(cx, proto) == &sGlobalScopePolluterClass) {
        nsIHTMLDocument *doc = (nsIHTMLDocument *)::JS_GetPrivate(cx, proto);
-@@ -4037,6 +4049,8 @@ nsWindowSH::InstallGlobalScopePolluter(J
+@@ -4038,6 +4050,8 @@ nsWindowSH::InstallGlobalScopePolluter(J
      return NS_OK;
    }
  
@@ -360,7 +365,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    JSObject *gsp = ::JS_NewObject(cx, &sGlobalScopePolluterClass, nsnull, obj);
    if (!gsp) {
      return NS_ERROR_OUT_OF_MEMORY;
-@@ -4099,18 +4113,23 @@ nsWindowSH::GetProperty(nsIXPConnectWrap
+@@ -4100,18 +4114,23 @@ nsWindowSH::GetProperty(nsIXPConnectWrap
  {
    nsGlobalWindow *win = nsGlobalWindow::FromWrapper(wrapper);
  
@@ -391,7 +396,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      }
    }
  #endif
-@@ -4289,6 +4308,8 @@ nsWindowSH::SetProperty(nsIXPConnectWrap
+@@ -4290,6 +4309,8 @@ nsWindowSH::SetProperty(nsIXPConnectWrap
    }
  
    if (id == sLocation_id) {
@@ -400,7 +405,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      JSString *val = ::JS_ValueToString(cx, *vp);
      NS_ENSURE_TRUE(val, NS_ERROR_UNEXPECTED);
  
-@@ -6015,6 +6036,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6016,6 +6037,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
  
          sDoSecurityCheckInAddProperty = PR_FALSE;
  
@@ -409,7 +414,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
          PRBool ok = ::JS_DefineUCProperty(cx, obj, chars,
                                            ::JS_GetStringLength(str), v, nsnull,
                                            nsnull, 0);
-@@ -6036,6 +6059,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6037,6 +6060,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
    // for assignment, since only read-write properties get dealt
    // with there.
    if (!(flags & JSRESOLVE_ASSIGNING)) {
@@ -418,7 +423,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      // Call GlobalResolve() after we call FindChildWithName() so
      // that named child frames will override external properties
      // which have been registered with the script namespace manager.
-@@ -6059,6 +6084,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6060,6 +6085,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
  
      JSObject *windowObj = win->GetGlobalJSObject();
  
@@ -427,7 +432,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      JSFunction *fun = ::JS_NewFunction(cx, ContentWindowGetter, 0, 0,
                                         windowObj, "_content");
      if (!fun) {
-@@ -6117,6 +6144,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6118,6 +6145,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
      PRBool doSecurityCheckInAddProperty = sDoSecurityCheckInAddProperty;
      sDoSecurityCheckInAddProperty = PR_FALSE;
  
@@ -436,7 +441,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      JSBool ok = ::JS_DefineUCProperty(cx, obj, ::JS_GetStringChars(str),
                                        ::JS_GetStringLength(str), v, nsnull,
                                        nsnull, JSPROP_ENUMERATE);
-@@ -6141,6 +6170,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6142,6 +6171,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
        // undefined to override the predefined property. This is done
        // for compatibility with other browsers.
  
@@ -445,7 +450,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
        if (!::JS_DefineUCProperty(cx, obj, ::JS_GetStringChars(str),
                                   ::JS_GetStringLength(str),
                                   JSVAL_VOID, nsnull, nsnull,
-@@ -6164,6 +6195,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6165,6 +6196,8 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
                        getter_AddRefs(holder));
        NS_ENSURE_SUCCESS(rv, rv);
  
@@ -454,7 +459,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
        if (!::JS_DefineUCProperty(cx, obj, ::JS_GetStringChars(str),
                                   ::JS_GetStringLength(str), v, nsnull,
                                   nsnull, JSPROP_ENUMERATE)) {
-@@ -6198,14 +6231,15 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
+@@ -6199,14 +6232,15 @@ nsWindowSH::NewResolve(nsIXPConnectWrapp
        win = win->GetOuterWindowInternal();
        NS_ENSURE_TRUE(win, NS_ERROR_NOT_AVAILABLE);
  
@@ -475,7 +480,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
        *objp = obj;
  
        return NS_OK;
-@@ -6870,6 +6904,8 @@ nsEventReceiverSH::SetProperty(nsIXPConn
+@@ -6875,6 +6909,8 @@ nsEventReceiverSH::SetProperty(nsIXPConn
                                 JSContext *cx, JSObject *obj, jsval id,
                                 jsval *vp, PRBool *_retval)
  {
@@ -484,7 +489,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    if ((::JS_TypeOfValue(cx, *vp) != JSTYPE_FUNCTION && !JSVAL_IS_NULL(*vp)) ||
        !JSVAL_IS_STRING(id) || id == sAddEventListener_id) {
      return NS_OK;
-@@ -7045,6 +7081,7 @@ nsGenericArraySH::Enumerate(nsIXPConnect
+@@ -7050,6 +7086,7 @@ nsGenericArraySH::Enumerate(nsIXPConnect
    sCurrentlyEnumerating = PR_TRUE;
  
    jsval len_val;
@@ -492,7 +497,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    JSBool ok = ::JS_GetProperty(cx, obj, "length", &len_val);
  
    if (ok && JSVAL_IS_INT(len_val)) {
-@@ -7421,6 +7458,8 @@ nsDocumentSH::NewResolve(nsIXPConnectWra
+@@ -7426,6 +7463,8 @@ nsDocumentSH::NewResolve(nsIXPConnectWra
      PRBool doSecurityCheckInAddProperty = sDoSecurityCheckInAddProperty;
      sDoSecurityCheckInAddProperty = PR_FALSE;
  
@@ -501,7 +506,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      JSString *str = JSVAL_TO_STRING(id);
      JSBool ok = ::JS_DefineUCProperty(cx, obj, ::JS_GetStringChars(str),
                                        ::JS_GetStringLength(str), v, nsnull,
-@@ -7517,6 +7556,8 @@ nsDocumentSH::SetProperty(nsIXPConnectWr
+@@ -7522,6 +7561,8 @@ nsDocumentSH::SetProperty(nsIXPConnectWr
      NS_ENSURE_SUCCESS(rv, rv);
  
      if (location) {
@@ -510,7 +515,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
        JSString *val = ::JS_ValueToString(cx, *vp);
        NS_ENSURE_TRUE(val, NS_ERROR_UNEXPECTED);
  
-@@ -8172,6 +8213,9 @@ nsHTMLDocumentSH::NewResolve(nsIXPConnec
+@@ -8177,6 +8218,9 @@ nsHTMLDocumentSH::NewResolve(nsIXPConnec
  
    if (!(flags & JSRESOLVE_ASSIGNING)) {
      // For native wrappers, do not resolve random names on document
@@ -520,7 +525,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      if (!ObjectIsNativeWrapper(cx, obj)) {
        nsCOMPtr<nsISupports> result;
  
-@@ -8294,6 +8338,8 @@ nsHTMLDocumentSH::GetProperty(nsIXPConne
+@@ -8299,6 +8343,8 @@ nsHTMLDocumentSH::GetProperty(nsIXPConne
    
    nsCOMPtr<nsISupports> result;
  
@@ -529,7 +534,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    rv = ResolveImpl(cx, wrapper, id, getter_AddRefs(result));
    NS_ENSURE_SUCCESS(rv, rv);
  
-@@ -8349,6 +8395,7 @@ nsHTMLElementSH::NewResolve(nsIXPConnect
+@@ -8354,6 +8400,7 @@ nsHTMLElementSH::NewResolve(nsIXPConnect
  {
    if (id == sScrollIntoView_id && !(JSRESOLVE_ASSIGNING & flags)) {
      JSString *str = JSVAL_TO_STRING(id);
@@ -537,7 +542,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      JSFunction *cfnc =
        ::JS_DefineFunction(cx, obj, ::JS_GetStringBytes(str), ScrollIntoView,
                            0, 0);
-@@ -8508,6 +8555,7 @@ nsHTMLFormElementSH::NewResolve(nsIXPCon
+@@ -8513,6 +8560,7 @@ nsHTMLFormElementSH::NewResolve(nsIXPCon
      FindNamedItem(form, str, getter_AddRefs(result));
  
      if (result) {
@@ -545,7 +550,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
        *_retval = ::JS_DefineUCProperty(cx, obj, ::JS_GetStringChars(str),
                                         ::JS_GetStringLength(str),
                                         JSVAL_VOID, nsnull, nsnull, 0);
-@@ -8619,6 +8667,9 @@ nsHTMLFormElementSH::NewEnumerate(nsIXPC
+@@ -8624,6 +8672,9 @@ nsHTMLFormElementSH::NewEnumerate(nsIXPC
            // If name is not there, use index instead
            attr.AppendInt(index);
          }
@@ -555,7 +560,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
          JSString *jsname =
            JS_NewUCStringCopyN(cx, NS_REINTERPRET_CAST(const jschar *,
                                                        attr.get()),
-@@ -8682,9 +8733,10 @@ nsresult
+@@ -8687,9 +8738,10 @@ nsresult
  nsHTMLSelectElementSH::SetOption(JSContext *cx, jsval *vp, PRUint32 aIndex,
                                   nsIDOMNSHTMLOptionCollection *aOptCollection)
  {
@@ -568,7 +573,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      return NS_ERROR_UNEXPECTED;
    }
  
-@@ -8796,6 +8848,8 @@ IsObjInProtoChain(JSContext *cx, JSObjec
+@@ -8801,6 +8853,8 @@ IsObjInProtoChain(JSContext *cx, JSObjec
  {
    JSObject *o = obj;
  
@@ -577,7 +582,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    while (o) {
      JSObject *p = ::JS_GetPrototype(cx, o);
  
-@@ -8864,6 +8918,8 @@ nsHTMLExternalObjSH::PostCreate(nsIXPCon
+@@ -8869,6 +8923,8 @@ nsHTMLExternalObjSH::PostCreate(nsIXPCon
    rv = wrapper->GetJSObjectPrototype(&my_proto);
    NS_ENSURE_SUCCESS(rv, rv);
  
@@ -586,7 +591,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    // Set 'this.__proto__' to pi
    if (!::JS_SetPrototype(cx, obj, pi_obj)) {
      return NS_ERROR_UNEXPECTED;
-@@ -8942,6 +8998,8 @@ nsHTMLExternalObjSH::GetProperty(nsIXPCo
+@@ -8947,6 +9003,8 @@ nsHTMLExternalObjSH::GetProperty(nsIXPCo
                                   JSContext *cx, JSObject *obj, jsval id,
                                   jsval *vp, PRBool *_retval)
  {
@@ -595,7 +600,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    JSObject *pi_obj = ::JS_GetPrototype(cx, obj);
  
    const jschar *id_chars = nsnull;
-@@ -8984,6 +9042,8 @@ nsHTMLExternalObjSH::SetProperty(nsIXPCo
+@@ -8989,6 +9047,8 @@ nsHTMLExternalObjSH::SetProperty(nsIXPCo
                                   JSContext *cx, JSObject *obj, jsval id,
                                   jsval *vp, PRBool *_retval)
  {
@@ -604,7 +609,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    JSObject *pi_obj = ::JS_GetPrototype(cx, obj);
  
    const jschar *id_chars = nsnull;
-@@ -9049,6 +9109,7 @@ nsHTMLExternalObjSH::Call(nsIXPConnectWr
+@@ -9054,6 +9114,7 @@ nsHTMLExternalObjSH::Call(nsIXPConnectWr
    // XPConnect passes us the XPConnect wrapper JSObject as obj, and
    // not the 'this' parameter that the JS engine passes in. Pass in
    // the real this parameter from JS (argv[-1]) here.
@@ -612,7 +617,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
    *_retval = ::JS_CallFunctionValue(cx, JSVAL_TO_OBJECT(argv[-1]),
                                      OBJECT_TO_JSVAL(pi_obj), argc, argv, vp);
  
-@@ -9323,6 +9384,9 @@ nsHTMLOptionsCollectionSH::NewResolve(ns
+@@ -9328,6 +9389,9 @@ nsHTMLOptionsCollectionSH::NewResolve(ns
  {
    if (id == sAdd_id) {
      JSString *str = JSVAL_TO_STRING(id);
@@ -622,7 +627,7 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
      JSFunction *fnc =
        ::JS_DefineFunction(cx, obj, ::JS_GetStringBytes(str),
                            Add, 0, JSPROP_ENUMERATE);
-@@ -9540,6 +9604,8 @@ nsStringArraySH::GetProperty(nsIXPConnec
+@@ -9545,6 +9609,8 @@ nsStringArraySH::GetProperty(nsIXPConnec
  
    // XXX: Null strings?
  
@@ -634,10 +639,10 @@ diff -u -p -r1.292.2.46 nsDOMClassInfo.cpp
 Index: dom/src/base/nsGlobalWindow.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/dom/src/base/nsGlobalWindow.cpp,v
-retrieving revision 1.761.2.50
-diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
---- dom/src/base/nsGlobalWindow.cpp	20 Jul 2006 20:03:57 -0000	1.761.2.50
-+++ dom/src/base/nsGlobalWindow.cpp	25 Jul 2006 00:01:59 -0000
+retrieving revision 1.761.2.56
+diff -u -p -r1.761.2.56 nsGlobalWindow.cpp
+--- dom/src/base/nsGlobalWindow.cpp	19 Aug 2006 05:56:13 -0000	1.761.2.56
++++ dom/src/base/nsGlobalWindow.cpp	30 Aug 2006 22:59:09 -0000
 @@ -53,6 +53,7 @@
  #include "nsXPIDLString.h"
  #include "nsJSUtils.h"
@@ -646,7 +651,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
  #include "jsdbgapi.h"           // for JS_ClearWatchPointsForObject
  #include "nsReadableUtils.h"
  #include "nsDOMClassInfo.h"
-@@ -523,6 +524,8 @@ nsGlobalWindow::FreeInnerObjects(JSConte
+@@ -524,6 +525,8 @@ nsGlobalWindow::FreeInnerObjects(JSConte
    mDocument = nsnull;
  
    if (mJSObject && cx) {
@@ -655,7 +660,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      ::JS_ClearScope(cx, mJSObject);
      ::JS_ClearWatchPointsForObject(cx, mJSObject);
  
-@@ -851,6 +854,8 @@ WindowStateHolder::~WindowStateHolder()
+@@ -852,6 +855,8 @@ WindowStateHolder::~WindowStateHolder()
        return;
      }
  
@@ -664,7 +669,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      mInnerWindow->FreeInnerObjects(cx);
    }
  }
-@@ -1058,6 +1063,8 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
+@@ -1059,6 +1064,8 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
  
      PRUint32 flags = 0;
  
@@ -673,7 +678,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      // Make sure to clear scope on the outer window *before* we
      // initialize the new inner window. If we don't, things
      // (Object.prototype etc) could leak from the old outer to the new
-@@ -1179,6 +1186,9 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
+@@ -1180,6 +1187,9 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
              // calling scope.
              NS_ASSERTION(!currentInner->IsFrozen(),
                  "How does this opened window get into session history");
@@ -683,7 +688,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
              callerScx->SetTerminationFunction(ClearWindowScope,
                                                NS_STATIC_CAST(nsIDOMWindow *,
                                                               currentInner));
-@@ -1191,6 +1201,7 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
+@@ -1192,6 +1202,7 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
          // held in the bfcache.
          if (!currentInner->IsFrozen()) {
            if (!termFuncSet) {
@@ -691,7 +696,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
              ::JS_ClearScope(cx, currentInner->mJSObject);
              ::JS_ClearWatchPointsForObject(cx, currentInner->mJSObject);
            }
-@@ -1210,6 +1221,8 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
+@@ -1211,6 +1222,8 @@ nsGlobalWindow::SetNewDocument(nsIDOMDoc
        // Loading a new page and creating a new inner window, *not*
        // restoring from session history.
  
@@ -745,7 +750,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
    if (mArguments) {
      ::JS_UnlockGCThing(cx, mArguments);
      mArguments = nsnull;
-@@ -3481,18 +3504,18 @@ nsGlobalWindow::Prompt(nsAString& aRetur
+@@ -3479,18 +3502,18 @@ nsGlobalWindow::Prompt(nsAString& aRetur
    PRUint32 savePassword = nsIAuthPrompt::SAVE_PASSWORD_NEVER;
  
    if (argc > 0) {
@@ -775,7 +780,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      }
    }
  
-@@ -4343,14 +4366,16 @@ nsGlobalWindow::Open(nsIDOMWindow **_ret
+@@ -4354,14 +4377,16 @@ nsGlobalWindow::Open(nsIDOMWindow **_ret
    ncc->GetArgvPtr(&argv);
  
    if (argc > 0) {
@@ -799,7 +804,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      }
    }
  
-@@ -4408,14 +4433,16 @@ nsGlobalWindow::OpenDialog(nsIDOMWindow*
+@@ -4419,14 +4444,16 @@ nsGlobalWindow::OpenDialog(nsIDOMWindow*
    ncc->GetArgvPtr(&argv);
  
    if (argc > 0) {
@@ -823,7 +828,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      }
    }
  
-@@ -4940,38 +4967,44 @@ nsGlobalWindow::Find(PRBool *aDidFind)
+@@ -4951,38 +4978,44 @@ nsGlobalWindow::Find(PRBool *aDidFind)
    PRBool searchInFrames = PR_FALSE;
  
    if (argc > 0) {
@@ -900,7 +905,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
    }
  
    return FindInternal(searchStr, caseSensitive, backwards, wrapAround,
-@@ -5489,6 +5522,8 @@ nsGlobalWindow::GetObjectProperty(const 
+@@ -5500,6 +5533,8 @@ nsGlobalWindow::GetObjectProperty(const 
  
    jsval propertyVal;
  
@@ -909,7 +914,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
    if (!::JS_LookupUCProperty(cx, mJSObject,
                               NS_REINTERPRET_CAST(const jschar *, aProperty),
                               nsCRT::strlen(aProperty), &propertyVal)) {
-@@ -6267,6 +6302,8 @@ nsGlobalWindow::ClearWindowScope(nsISupp
+@@ -6274,6 +6309,8 @@ nsGlobalWindow::ClearWindowScope(nsISupp
      JSContext *cx = (JSContext *)scx->GetNativeContext();
      JSObject *global = sgo->GetGlobalJSObject();
  
@@ -918,7 +923,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
      if (global) {
        ::JS_ClearScope(cx, global);
        ::JS_ClearWatchPointsForObject(cx, global);
-@@ -6322,17 +6359,19 @@ nsGlobalWindow::SetTimeoutOrInterval(PRB
+@@ -6329,17 +6366,19 @@ nsGlobalWindow::SetTimeoutOrInterval(PRB
    nsTimeout *timeout;
    jsdouble interval = 0.0;
  
@@ -941,7 +946,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
  
      return ncc->SetExceptionWasThrown(PR_TRUE);
    }
-@@ -6352,7 +6391,7 @@ nsGlobalWindow::SetTimeoutOrInterval(PRB
+@@ -6359,7 +6398,7 @@ nsGlobalWindow::SetTimeoutOrInterval(PRB
  
    default:
      ::JS_ReportError(cx, "useless %s call (missing quotes around argument?)",
@@ -950,7 +955,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
  
      return ncc->SetExceptionWasThrown(PR_TRUE);
    }
-@@ -6950,6 +6989,8 @@ nsGlobalWindow::ClearTimeoutOrInterval()
+@@ -6969,6 +7008,8 @@ nsGlobalWindow::ClearTimeoutOrInterval()
  
    int32 timer_id;
  
@@ -959,7 +964,7 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
    if (argv[0] == JSVAL_VOID || !::JS_ValueToInt32(cx, argv[0], &timer_id) ||
        timer_id <= 0) {
      // Undefined or non-positive number passed as argument, return
-@@ -8145,6 +8186,8 @@ nsNavigator::Preference()
+@@ -8182,6 +8223,8 @@ nsNavigator::Preference()
    rv = ncc->GetJSContext(&cx);
    NS_ENSURE_SUCCESS(rv, rv);
  
@@ -971,11 +976,11 @@ diff -u -p -r1.761.2.50 nsGlobalWindow.cpp
 Index: dom/src/base/nsJSEnvironment.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/dom/src/base/nsJSEnvironment.cpp,v
-retrieving revision 1.262.2.9
-diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
---- dom/src/base/nsJSEnvironment.cpp	23 Jun 2006 22:48:01 -0000	1.262.2.9
-+++ dom/src/base/nsJSEnvironment.cpp	25 Jul 2006 00:02:00 -0000
-@@ -928,8 +928,11 @@ nsJSContext::EvaluateStringWithValue(con
+retrieving revision 1.262.2.12
+diff -u -p -r1.262.2.12 nsJSEnvironment.cpp
+--- dom/src/base/nsJSEnvironment.cpp	31 Jul 2006 07:03:19 -0000	1.262.2.12
++++ dom/src/base/nsJSEnvironment.cpp	30 Aug 2006 22:59:09 -0000
+@@ -902,8 +902,11 @@ nsJSContext::EvaluateStringWithValue(con
      if (ok) {
        JSVersion oldVersion = JSVERSION_UNKNOWN;
  
@@ -987,7 +992,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
        ok = ::JS_EvaluateUCScriptForPrincipals(mContext,
                                                (JSObject *)aScopeObject,
                                                jsprin,
-@@ -1112,8 +1115,11 @@ nsJSContext::EvaluateString(const nsAStr
+@@ -1086,8 +1089,11 @@ nsJSContext::EvaluateString(const nsAStr
      if (ok) {
        JSVersion oldVersion = JSVERSION_UNKNOWN;
  
@@ -999,7 +1004,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
        ok = ::JS_EvaluateUCScriptForPrincipals(mContext,
                                                (JSObject *)aScopeObject,
                                                jsprin,
-@@ -1142,6 +1148,7 @@ nsJSContext::EvaluateString(const nsAStr
+@@ -1116,6 +1122,7 @@ nsJSContext::EvaluateString(const nsAStr
  
    // If all went well, convert val to a string (XXXbe unless undefined?).
    if (ok) {
@@ -1007,7 +1012,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
      rv = JSValueToAString(mContext, val, aRetValue, aIsUndefined);
    }
    else {
-@@ -1204,6 +1211,9 @@ nsJSContext::CompileScript(const PRUnich
+@@ -1178,6 +1185,9 @@ nsJSContext::CompileScript(const PRUnich
      if (!aVersion ||
          (newVersion = ::JS_StringToVersion(aVersion)) != JSVERSION_UNKNOWN) {
        JSVersion oldVersion = JSVERSION_UNKNOWN;
@@ -1017,7 +1022,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
        if (aVersion)
          oldVersion = ::JS_SetVersion(mContext, newVersion);
  
-@@ -1221,8 +1231,7 @@ nsJSContext::CompileScript(const PRUnich
+@@ -1195,8 +1205,7 @@ nsJSContext::CompileScript(const PRUnich
            ::JS_DestroyScript(mContext, script);
            script = nsnull;
          }
@@ -1027,7 +1032,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
          rv = NS_ERROR_OUT_OF_MEMORY;
  
        if (aVersion)
-@@ -1276,6 +1285,7 @@ nsJSContext::ExecuteScript(void* aScript
+@@ -1250,6 +1259,7 @@ nsJSContext::ExecuteScript(void* aScript
    JSBool ok;
  
    nsJSContext::TerminationFuncHolder holder(this);
@@ -1035,7 +1040,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
    ok = ::JS_ExecuteScript(mContext,
                            (JSObject*) aScopeObject,
                            (JSScript*) ::JS_GetPrivate(mContext,
-@@ -1284,7 +1294,6 @@ nsJSContext::ExecuteScript(void* aScript
+@@ -1258,7 +1268,6 @@ nsJSContext::ExecuteScript(void* aScript
  
    if (ok) {
      // If all went well, convert val to a string (XXXbe unless undefined?).
@@ -1043,7 +1048,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
      rv = JSValueToAString(mContext, val, aRetValue, aIsUndefined);
    } else {
      if (aIsUndefined) {
-@@ -1373,6 +1382,8 @@ nsJSContext::CompileEventHandler(void *a
+@@ -1347,6 +1356,8 @@ nsJSContext::CompileEventHandler(void *a
  
    const char *argList[] = { aEventName };
  
@@ -1052,7 +1057,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
    JSFunction* fun =
        ::JS_CompileUCFunctionForPrincipals(mContext,
                                            aShared ? nsnull : target, jsprin,
-@@ -1422,6 +1433,9 @@ nsJSContext::CompileFunction(void* aTarg
+@@ -1396,6 +1407,9 @@ nsJSContext::CompileFunction(void* aTarg
    }
  
    JSObject *target = (JSObject*)aTarget;
@@ -1062,7 +1067,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
    JSFunction* fun =
        ::JS_CompileUCFunctionForPrincipals(mContext,
                                            aShared ? nsnull : target, jsprin,
-@@ -1470,8 +1484,10 @@ nsJSContext::CallEventHandler(JSObject *
+@@ -1444,8 +1458,10 @@ nsJSContext::CallEventHandler(JSObject *
  
    if (NS_SUCCEEDED(rv)) {
      jsval funval = OBJECT_TO_JSVAL(aHandler);
@@ -1075,7 +1080,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
  
      if (!ok) {
        // Tell XPConnect about any pending exceptions. This is needed
-@@ -1491,6 +1507,8 @@ nsJSContext::CallEventHandler(JSObject *
+@@ -1465,6 +1481,8 @@ nsJSContext::CallEventHandler(JSObject *
    if (NS_FAILED(stack->Pop(nsnull)))
      return NS_ERROR_FAILURE;
  
@@ -1084,7 +1089,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
    // Need to lock, since ScriptEvaluated can GC.
    PRBool locked = PR_FALSE;
    if (NS_SUCCEEDED(rv) && JSVAL_IS_GCTHING(*rval)) {
-@@ -1531,6 +1549,8 @@ nsJSContext::BindCompiledEventHandler(vo
+@@ -1505,6 +1523,8 @@ nsJSContext::BindCompiledEventHandler(vo
      return NS_ERROR_FAILURE;
    }
  
@@ -1093,7 +1098,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
    // Make sure the handler function is parented by its event target object
    if (funobj && ::JS_GetParent(mContext, funobj) != target) {
      funobj = ::JS_CloneFunctionObject(mContext, funobj, target);
-@@ -1671,6 +1691,7 @@ nsJSContext::InitContext(nsIScriptGlobal
+@@ -1645,6 +1665,7 @@ nsJSContext::InitContext(nsIScriptGlobal
      // Now check whether we need to grab a pointer to the
      // XPCNativeWrapper class
      if (!NS_DOMClassInfo_GetXPCNativeWrapperClass()) {
@@ -1101,7 +1106,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
        rv = FindXPCNativeWrapperClass(holder);
        NS_ENSURE_SUCCESS(rv, rv);
      }
-@@ -1739,6 +1760,7 @@ nsJSContext::InitializeLiveConnectClasse
+@@ -1713,6 +1734,7 @@ nsJSContext::InitializeLiveConnectClasse
          do_QueryInterface(jvmManager);
  
        if (liveConnectManager) {
@@ -1109,7 +1114,7 @@ diff -u -p -r1.262.2.9 nsJSEnvironment.cpp
          rv = liveConnectManager->InitLiveConnectClasses(mContext, aGlobalObj);
        }
      }
-@@ -2042,6 +2064,8 @@ nsJSContext::InitClasses(JSObject *aGlob
+@@ -2016,6 +2038,8 @@ nsJSContext::InitClasses(JSObject *aGlob
    rv = InitializeLiveConnectClasses(aGlobalObj);
    NS_ENSURE_SUCCESS(rv, rv);
  
@@ -1124,7 +1129,7 @@ RCS file: /cvsroot/mozilla/dom/src/base/nsLocation.cpp,v
 retrieving revision 1.136.2.2
 diff -u -p -r1.136.2.2 nsLocation.cpp
 --- dom/src/base/nsLocation.cpp	22 Jun 2006 22:19:29 -0000	1.136.2.2
-+++ dom/src/base/nsLocation.cpp	25 Jul 2006 00:02:00 -0000
++++ dom/src/base/nsLocation.cpp	30 Aug 2006 22:59:09 -0000
 @@ -913,6 +913,7 @@ nsLocation::Reload()
      rv = ncc->GetJSContext(&cx);
      NS_ENSURE_SUCCESS(rv, rv);
@@ -1139,7 +1144,7 @@ RCS file: /cvsroot/mozilla/dom/src/base/nsPluginArray.cpp,v
 retrieving revision 1.29.12.1
 diff -u -p -r1.29.12.1 nsPluginArray.cpp
 --- dom/src/base/nsPluginArray.cpp	25 Jun 2006 06:57:13 -0000	1.29.12.1
-+++ dom/src/base/nsPluginArray.cpp	25 Jul 2006 00:02:00 -0000
++++ dom/src/base/nsPluginArray.cpp	30 Aug 2006 22:59:09 -0000
 @@ -270,6 +270,7 @@ nsPluginArray::Refresh()
      rv = ncc->GetJSContext(&cx);
      NS_ENSURE_SUCCESS(rv, rv);
@@ -1154,7 +1159,7 @@ RCS file: /cvsroot/mozilla/dom/src/events/nsJSEventListener.cpp,v
 retrieving revision 1.50.2.1
 diff -u -p -r1.50.2.1 nsJSEventListener.cpp
 --- dom/src/events/nsJSEventListener.cpp	19 Sep 2005 19:09:11 -0000	1.50.2.1
-+++ dom/src/events/nsJSEventListener.cpp	25 Jul 2006 00:02:00 -0000
++++ dom/src/events/nsJSEventListener.cpp	30 Aug 2006 22:59:09 -0000
 @@ -60,6 +60,8 @@ nsJSEventListener::nsJSEventListener(nsI
    if (aScopeObject && aContext) {
      JSContext *cx = (JSContext *)aContext->GetNativeContext();
@@ -1216,11 +1221,11 @@ diff -u -p -r1.50.2.1 nsJSEventListener.cpp
 Index: embedding/components/windowwatcher/src/nsWindowWatcher.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/embedding/components/windowwatcher/src/nsWindowWatcher.cpp,v
-retrieving revision 1.100.2.13
-diff -u -p -r1.100.2.13 nsWindowWatcher.cpp
---- embedding/components/windowwatcher/src/nsWindowWatcher.cpp	20 Jul 2006 23:50:12 -0000	1.100.2.13
-+++ embedding/components/windowwatcher/src/nsWindowWatcher.cpp	25 Jul 2006 00:02:02 -0000
-@@ -2074,7 +2074,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
+retrieving revision 1.100.2.15
+diff -u -p -r1.100.2.15 nsWindowWatcher.cpp
+--- embedding/components/windowwatcher/src/nsWindowWatcher.cpp	15 Aug 2006 00:06:30 -0000	1.100.2.15
++++ embedding/components/windowwatcher/src/nsWindowWatcher.cpp	30 Aug 2006 22:59:10 -0000
+@@ -2083,7 +2083,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
  
        p->GetData(data);
  
@@ -1230,7 +1235,7 @@ diff -u -p -r1.100.2.13 nsWindowWatcher.cpp
        JSString *str = ::JS_NewStringCopyN(cx, data.get(), data.Length());
        NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
  
-@@ -2090,6 +2091,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
+@@ -2099,6 +2100,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
  
        p->GetData(data);
  
@@ -1239,7 +1244,7 @@ diff -u -p -r1.100.2.13 nsWindowWatcher.cpp
        // cast is probably safe since wchar_t and jschar are expected
        // to be equivalent; both unsigned 16-bit entities
        JSString *str =
-@@ -2157,6 +2160,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
+@@ -2166,6 +2169,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
  
        p->GetData(&data);
  
@@ -1248,7 +1253,7 @@ diff -u -p -r1.100.2.13 nsWindowWatcher.cpp
        JSString *str = ::JS_NewStringCopyN(cx, &data, 1);
        NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
  
-@@ -2196,6 +2201,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
+@@ -2205,6 +2210,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
  
        p->GetData(&data);
  
@@ -1257,7 +1262,7 @@ diff -u -p -r1.100.2.13 nsWindowWatcher.cpp
        jsdouble *d = ::JS_NewDouble(cx, data);
  
        *aArgv = DOUBLE_TO_JSVAL(d);
-@@ -2210,6 +2217,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
+@@ -2219,6 +2226,8 @@ nsWindowWatcher::AddSupportsTojsvals(nsI
  
        p->GetData(&data);
  
@@ -1272,7 +1277,7 @@ RCS file: /cvsroot/mozilla/js/jsd/jsd_high.c,v
 retrieving revision 3.12
 diff -u -p -r3.12 jsd_high.c
 --- js/jsd/jsd_high.c	18 Apr 2004 21:57:30 -0000	3.12
-+++ js/jsd/jsd_high.c	25 Jul 2006 00:02:09 -0000
++++ js/jsd/jsd_high.c	30 Aug 2006 22:59:14 -0000
 @@ -135,12 +135,14 @@ _newJSDContext(JSRuntime*         jsrt, 
      if( ! jsdc->dumbContext )
          goto label_newJSDContext_failure;
@@ -1302,7 +1307,7 @@ RCS file: /cvsroot/mozilla/js/jsd/jsd_stak.c,v
 retrieving revision 3.21
 diff -u -p -r3.21 jsd_stak.c
 --- js/jsd/jsd_stak.c	8 Aug 2004 19:56:49 -0000	3.21
-+++ js/jsd/jsd_stak.c	25 Jul 2006 00:02:09 -0000
++++ js/jsd/jsd_stak.c	30 Aug 2006 22:59:14 -0000
 @@ -316,7 +316,9 @@ jsd_GetScopeChainForStackFrame(JSDContex
  
      if( jsd_IsValidFrameInThreadState(jsdc, jsdthreadstate, jsdframe) )
@@ -1319,7 +1324,7 @@ RCS file: /cvsroot/mozilla/js/jsd/jsd_val.c,v
 retrieving revision 3.9.28.1
 diff -u -p -r3.9.28.1 jsd_val.c
 --- js/jsd/jsd_val.c	7 Jul 2006 02:12:01 -0000	3.9.28.1
-+++ js/jsd/jsd_val.c	25 Jul 2006 00:02:09 -0000
++++ js/jsd/jsd_val.c	30 Aug 2006 22:59:14 -0000
 @@ -153,15 +153,16 @@ jsd_IsValueNative(JSDContext* jsdc, JSDV
  
      if(jsd_IsValueFunction(jsdc, jsdval))
@@ -1517,7 +1522,7 @@ RCS file: /cvsroot/mozilla/js/jsd/jsd_xpc.cpp,v
 retrieving revision 1.72.2.1
 diff -u -p -r1.72.2.1 jsd_xpc.cpp
 --- js/jsd/jsd_xpc.cpp	20 Jun 2006 15:54:58 -0000	1.72.2.1
-+++ js/jsd/jsd_xpc.cpp	25 Jul 2006 00:02:10 -0000
++++ js/jsd/jsd_xpc.cpp	30 Aug 2006 22:59:15 -0000
 @@ -1017,6 +1017,7 @@ PCMapEntry *
  jsdScript::CreatePPLineMap()
  {    
@@ -1588,7 +1593,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/loader/mozJSSubScriptLoader.cpp,v
 retrieving revision 1.18.56.2
 diff -u -p -r1.18.56.2 mozJSSubScriptLoader.cpp
 --- js/src/xpconnect/loader/mozJSSubScriptLoader.cpp	24 Jun 2006 02:27:01 -0000	1.18.56.2
-+++ js/src/xpconnect/loader/mozJSSubScriptLoader.cpp	25 Jul 2006 00:02:10 -0000
++++ js/src/xpconnect/loader/mozJSSubScriptLoader.cpp	30 Aug 2006 22:59:15 -0000
 @@ -137,6 +137,8 @@ mozJSSubScriptLoader::LoadSubScript (con
              return rv;
  
@@ -1604,7 +1609,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/shell/xpcshell.cpp,v
 retrieving revision 1.87.2.1
 diff -u -p -r1.87.2.1 xpcshell.cpp
 --- js/src/xpconnect/shell/xpcshell.cpp	1 Sep 2005 23:21:12 -0000	1.87.2.1
-+++ js/src/xpconnect/shell/xpcshell.cpp	25 Jul 2006 00:02:11 -0000
++++ js/src/xpconnect/shell/xpcshell.cpp	30 Aug 2006 22:59:15 -0000
 @@ -1087,12 +1087,19 @@ main(int argc, char **argv, char **envp)
              NS_ASSERTION(glob == nsnull, "bad GetJSObject?");
              return 1;
@@ -1633,7 +1638,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/XPCNativeWrapper.cpp,v
 retrieving revision 1.31.2.9
 diff -u -p -r1.31.2.9 XPCNativeWrapper.cpp
 --- js/src/xpconnect/src/XPCNativeWrapper.cpp	15 Jun 2006 03:59:46 -0000	1.31.2.9
-+++ js/src/xpconnect/src/XPCNativeWrapper.cpp	25 Jul 2006 00:02:11 -0000
++++ js/src/xpconnect/src/XPCNativeWrapper.cpp	30 Aug 2006 22:59:15 -0000
 @@ -693,6 +693,8 @@ XPC_NW_NewResolve(JSContext *cx, JSObjec
        return JS_TRUE;
      }
@@ -1660,7 +1665,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcdebug.cpp,v
 retrieving revision 1.14
 diff -u -p -r1.14 xpcdebug.cpp
 --- js/src/xpconnect/src/xpcdebug.cpp	23 May 2005 21:00:06 -0000	1.14
-+++ js/src/xpconnect/src/xpcdebug.cpp	25 Jul 2006 00:02:13 -0000
++++ js/src/xpconnect/src/xpcdebug.cpp	30 Aug 2006 22:59:16 -0000
 @@ -48,6 +48,7 @@
  
  static const char* JSVAL2String(JSContext* cx, jsval val, JSBool* isString)
@@ -1691,11 +1696,11 @@ diff -u -p -r1.14 xpcdebug.cpp
 Index: js/src/xpconnect/src/xpcjsruntime.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcjsruntime.cpp,v
-retrieving revision 1.43
-diff -u -p -r1.43 xpcjsruntime.cpp
---- js/src/xpconnect/src/xpcjsruntime.cpp	15 Jun 2005 00:23:32 -0000	1.43
-+++ js/src/xpconnect/src/xpcjsruntime.cpp	25 Jul 2006 00:02:14 -0000
-@@ -912,7 +912,10 @@ XPCJSRuntime::SyncXPCContextList(JSConte
+retrieving revision 1.43.4.1
+diff -u -p -r1.43.4.1 xpcjsruntime.cpp
+--- js/src/xpconnect/src/xpcjsruntime.cpp	30 Jul 2006 20:17:24 -0000	1.43.4.1
++++ js/src/xpconnect/src/xpcjsruntime.cpp	30 Aug 2006 22:59:17 -0000
+@@ -942,7 +942,10 @@ XPCJSRuntime::SyncXPCContextList(JSConte
  
          // if it is our first context then we need to generate our string ids
          if(!mStrIDs[0])
@@ -1712,7 +1717,7 @@ RCS file: /cvsroot/mozilla/js/src/xpconnect/src/xpcwrappednativeinfo.cpp,v
 retrieving revision 1.12.4.3
 diff -u -p -r1.12.4.3 xpcwrappednativeinfo.cpp
 --- js/src/xpconnect/src/xpcwrappednativeinfo.cpp	10 Mar 2006 18:38:07 -0000	1.12.4.3
-+++ js/src/xpconnect/src/xpcwrappednativeinfo.cpp	25 Jul 2006 00:02:16 -0000
++++ js/src/xpconnect/src/xpcwrappednativeinfo.cpp	30 Aug 2006 22:59:18 -0000
 @@ -180,6 +180,8 @@ XPCNativeMember::Resolve(XPCCallContext&
          callback = XPC_WN_GetterSetter;
      }
@@ -1725,11 +1730,11 @@ diff -u -p -r1.12.4.3 xpcwrappednativeinfo.cpp
 Index: modules/plugin/base/src/ns4xPlugin.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/modules/plugin/base/src/ns4xPlugin.cpp,v
-retrieving revision 1.127.2.4
-diff -u -p -r1.127.2.4 ns4xPlugin.cpp
---- modules/plugin/base/src/ns4xPlugin.cpp	20 Jul 2006 03:18:30 -0000	1.127.2.4
-+++ modules/plugin/base/src/ns4xPlugin.cpp	25 Jul 2006 00:02:26 -0000
-@@ -1559,6 +1559,7 @@ _getstringidentifier(const NPUTF8* name)
+retrieving revision 1.127.2.5
+diff -u -p -r1.127.2.5 ns4xPlugin.cpp
+--- modules/plugin/base/src/ns4xPlugin.cpp	7 Aug 2006 23:20:48 -0000	1.127.2.5
++++ modules/plugin/base/src/ns4xPlugin.cpp	30 Aug 2006 22:59:22 -0000
+@@ -1561,6 +1561,7 @@ _getstringidentifier(const NPUTF8* name)
    if (!cx)
      return NULL;
  
@@ -1737,7 +1742,7 @@ diff -u -p -r1.127.2.4 ns4xPlugin.cpp
    return doGetIdentifier(cx, name);
  }
  
-@@ -1576,6 +1577,8 @@ _getstringidentifiers(const NPUTF8** nam
+@@ -1578,6 +1579,8 @@ _getstringidentifiers(const NPUTF8** nam
    if (!cx)
      return;
  
@@ -1749,11 +1754,11 @@ diff -u -p -r1.127.2.4 ns4xPlugin.cpp
 Index: modules/plugin/base/src/nsJSNPRuntime.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/modules/plugin/base/src/nsJSNPRuntime.cpp,v
-retrieving revision 1.7.2.5
-diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
---- modules/plugin/base/src/nsJSNPRuntime.cpp	25 Mar 2006 00:59:41 -0000	1.7.2.5
-+++ modules/plugin/base/src/nsJSNPRuntime.cpp	25 Jul 2006 00:02:27 -0000
-@@ -501,6 +501,7 @@ nsJSObjWrapper::NP_HasMethod(NPObject *n
+retrieving revision 1.7.2.6
+diff -u -p -r1.7.2.6 nsJSNPRuntime.cpp
+--- modules/plugin/base/src/nsJSNPRuntime.cpp	7 Aug 2006 23:20:48 -0000	1.7.2.6
++++ modules/plugin/base/src/nsJSNPRuntime.cpp	30 Aug 2006 22:59:22 -0000
+@@ -504,6 +504,7 @@ nsJSObjWrapper::NP_HasMethod(NPObject *n
  
    nsJSObjWrapper *npjsobj = (nsJSObjWrapper *)npobj;
    jsval v;
@@ -1761,7 +1766,7 @@ diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
    JSBool ok = GetProperty(cx, npjsobj->mJSObj, identifier, &v);
  
    return ok && !JSVAL_IS_PRIMITIVE(v) &&
-@@ -520,6 +521,8 @@ doInvoke(NPObject *npobj, NPIdentifier m
+@@ -523,6 +524,8 @@ doInvoke(NPObject *npobj, NPIdentifier m
      return PR_FALSE;
    }
  
@@ -1770,7 +1775,7 @@ diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
    // Initialize *result
    VOID_TO_NPVARIANT(*result);
  
-@@ -610,6 +613,8 @@ nsJSObjWrapper::NP_HasProperty(NPObject 
+@@ -619,6 +622,8 @@ nsJSObjWrapper::NP_HasProperty(NPObject 
    jsval id = (jsval)identifier;
    JSBool found, ok = JS_FALSE;
  
@@ -1779,7 +1784,7 @@ diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
    if (JSVAL_IS_STRING(id)) {
      JSString *str = JSVAL_TO_STRING(id);
  
-@@ -640,6 +645,7 @@ nsJSObjWrapper::NP_GetProperty(NPObject 
+@@ -649,6 +654,7 @@ nsJSObjWrapper::NP_GetProperty(NPObject 
    AutoCXPusher pusher(cx);
  
    jsval v;
@@ -1787,15 +1792,15 @@ diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
    return (GetProperty(cx, npjsobj->mJSObj, identifier, &v) &&
            JSValToNPVariant(npp, cx, v, result));
  }
-@@ -660,6 +666,7 @@ nsJSObjWrapper::NP_SetProperty(NPObject 
+@@ -669,6 +675,7 @@ nsJSObjWrapper::NP_SetProperty(NPObject 
    JSBool ok = JS_FALSE;
  
    AutoCXPusher pusher(cx);
 +  JSAutoRequest ar(cx);
  
    jsval v = NPVariantToJSVal(npp, cx, value);
- 
-@@ -694,6 +701,7 @@ nsJSObjWrapper::NP_RemoveProperty(NPObje
+   JSAutoTempValueRooter tvr(cx, v);
+@@ -704,6 +711,7 @@ nsJSObjWrapper::NP_RemoveProperty(NPObje
    JSBool ok = JS_FALSE;
  
    AutoCXPusher pusher(cx);
@@ -1803,7 +1808,7 @@ diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
  
    if (JSVAL_IS_STRING(id)) {
      JSString *str = JSVAL_TO_STRING(id);
-@@ -838,6 +846,8 @@ nsJSObjWrapper::GetNewOrUsed(NPP npp, JS
+@@ -848,6 +856,8 @@ nsJSObjWrapper::GetNewOrUsed(NPP npp, JS
  
    NS_ASSERTION(wrapper->mNpp == npp, "nsJSObjWrapper::mNpp not initialized!");
  
@@ -1812,7 +1817,7 @@ diff -u -p -r1.7.2.5 nsJSNPRuntime.cpp
    // Root the JSObject, its lifetime is now tied to that of the
    // NPObject.
    if (!::JS_AddNamedRoot(cx, &wrapper->mJSObj, "nsJSObjWrapper::mJSObject")) {
-@@ -1270,6 +1280,8 @@ nsNPObjWrapper::GetNewOrUsed(NPP npp, JS
+@@ -1280,6 +1290,8 @@ nsNPObjWrapper::GetNewOrUsed(NPP npp, JS
    entry->mNPObj = npobj;
    entry->mNpp = npp;
  
