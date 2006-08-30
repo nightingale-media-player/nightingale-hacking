@@ -41,6 +41,7 @@
 #include <necko/nsNetUtil.h>
 
 #include <string/nsReadableUtils.h>
+#include <unicharutil/nsUnicharUtils.h>
 #include <xpcom/nsEscape.h>
 
 // DEFINES ====================================================================
@@ -124,9 +125,12 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Close()
 
 NS_IMETHODIMP sbMetadataHandlerMP4::Vote(const nsAString &url, PRInt32 *_retval )
 {
-  nsPromiseFlatString strUrl( url );
+  nsAutoString strUrl( url );
+  ToLowerCase(strUrl);
 
-  if ( ( strUrl.Find( ".mp4", PR_TRUE ) != -1 ) || ( strUrl.Find( ".m4a", PR_TRUE ) != -1 ) || ( strUrl.Find( ".mov", PR_TRUE ) != -1 ) )
+  if ( ( strUrl.Find( ".mp4", PR_TRUE ) != -1 ) || 
+       ( strUrl.Find( ".m4a", PR_TRUE ) != -1 ) || 
+       ( strUrl.Find( ".mov", PR_TRUE ) != -1 ) )
     *_retval = 1;
   else
     *_retval = -1;

@@ -149,7 +149,8 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Close()
 
 NS_IMETHODIMP sbMetadataHandlerOGG::Vote( const nsAString &url, PRInt32 *_retval )
 {
-  nsPromiseFlatString strUrl( url );
+  nsAutoString strUrl( url );
+  ToLowerCase(strUrl);
 
   if ( strUrl.Find( ".ogg", PR_TRUE ) != -1 )
     *_retval = 1;

@@ -46,6 +46,7 @@
 #include <necko/nsNetUtil.h>
 
 #include <string/nsReadableUtils.h>
+#include <unicharutil/nsUnicharUtils.h>
 #include <xpcom/nsEscape.h>
 
 // DEFINES ====================================================================
@@ -399,7 +400,8 @@ NS_IMETHODIMP sbMetadataHandlerID3::Close()
 
 NS_IMETHODIMP sbMetadataHandlerID3::Vote(const nsAString &url, PRInt32 *_retval )
 {
-  nsPromiseFlatString strUrl( url );
+  nsAutoString strUrl( url );
+  ToLowerCase(strUrl);
 
   if ( strUrl.Find( ".mp3", PR_TRUE ) != -1 )
     *_retval = 1; // Yes, we want this.
@@ -935,42 +937,41 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
   // We USED to crash here when we deleted this.  Now we don't anymore.  Beats me.
   delete itFrame;
 
+  nsAutoString str;
+
   // Parse up the happy header info.
   const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
   if ( headerinfo )
   {
     // Bitrate.
-    nsString br;
-    br.AppendInt( (PRInt32)headerinfo->bitrate );
-    m_Values->SetValue( NS_LITERAL_STRING("bitrate"), br, 0 );
+    str.AppendInt( (PRInt32)headerinfo->bitrate );
+    m_Values->SetValue( NS_LITERAL_STRING("bitrate"), str, 0 );
 
     // Frequency.
-    nsString fr;
-    fr.AppendInt( (PRInt32)headerinfo->frequency );
-    m_Values->SetValue( NS_LITERAL_STRING("frequency"), fr, 0 );
+    str = EmptyString();
+    str.AppendInt( (PRInt32)headerinfo->frequency );
+    m_Values->SetValue( NS_LITERAL_STRING("frequency"), str, 0 );
 
     // Length.
-    nsAutoString value;
-    m_Values->GetValue(NS_LITERAL_STRING("length"), value);
-    if (!value.Length())
+    m_Values->GetValue(NS_LITERAL_STRING("length"), str);
+    if (!str.Length())
     {
-      nsString ln;
-      ln.AppendInt( (PRInt32)headerinfo->time * 1000 );
-      m_Values->SetValue( NS_LITERAL_STRING("length"), ln, 0 );
+      str = EmptyString();
+      str.AppendInt( (PRInt32)headerinfo->time * 1000 );
+      m_Values->SetValue( NS_LITERAL_STRING("length"), str, 0 );
     }
   }
 
   // Fixup the genre info because iTunes is stupid.
-  nsAutoString genre;
-  m_Values->GetValue(NS_LITERAL_STRING("genre"), genre);
-  if (genre.Length())
+  m_Values->GetValue(NS_LITERAL_STRING("genre"), str);
+  if (str.Length())
   {
-    PRInt32 lparen = genre.Find("(");
-    PRInt32 rparen = genre.Find(")");
+    PRInt32 lparen = str.Find("(");
+    PRInt32 rparen = str.Find(")");
     if ( lparen != -1 && rparen != -1 )
     {
       nsAutoString gen;
-      genre.Mid( gen, lparen + 1, rparen - 1 );
+      str.Mid( gen, lparen + 1, rparen - 1 );
       PRInt32 aErrorCode;
       PRInt32 g = gen.ToInteger(&aErrorCode);
       if ( !aErrorCode && g < ID3_NR_OF_V1_GENRES )
@@ -1113,17 +1114,16 @@ void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length,
 
   if (found)
   {
-    nsAutoString br;
-    br.AppendInt(bitrate);
-    m_Values->SetValue(NS_LITERAL_STRING("bitrate"), br, 0);
+    nsAutoString str;
+    str.AppendInt(bitrate);
+    m_Values->SetValue(NS_LITERAL_STRING("bitrate"), str, 0);
 
-    nsAutoString fr;
-    fr.AppendInt(frequency);
-    m_Values->SetValue(NS_LITERAL_STRING("frequency"), fr, 0);
+    str = EmptyString();
+    str.AppendInt(frequency);
+    m_Values->SetValue(NS_LITERAL_STRING("frequency"), str, 0);
 
-    nsAutoString value;
-    m_Values->GetValue(NS_LITERAL_STRING("length"), value);
-    if (!value.Length() && bitrate > 0 && file_size > 0)
+    m_Values->GetValue(NS_LITERAL_STRING("length"), str);
+    if (!str.Length() && bitrate > 0 && file_size > 0)
     {
       // Okay, so, the id3 didn't specify length.  Calculate that, too.
       PRUint32 length_in_ms = (PRUint32)( ( ( ( file_size * (PRUint64)8 ) ) / (PRUint64)bitrate ) & 0x00000000FFFFFFFF );

@@ -40,6 +40,7 @@
 #include <necko/nsIIOService.h>
 #include <necko/nsNetUtil.h>
 
+#include <unicharutil/nsUnicharUtils.h>
 #include <xpcom/nsEscape.h>
 
 #include <wmsdk.h>
@@ -147,7 +148,9 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Close()
 
 NS_IMETHODIMP sbMetadataHandlerWMA::Vote(const nsAString & url, PRInt32 *_retval )
 {
-  nsPromiseFlatString strUrl(url);
+  nsAutoString strUrl(url);
+  ToLowerCase(strUrl);
+
   if ( 
         ( strUrl.Find( ".wma", PR_TRUE ) != -1 ) || 
         ( strUrl.Find( ".wmv", PR_TRUE ) != -1 ) ||

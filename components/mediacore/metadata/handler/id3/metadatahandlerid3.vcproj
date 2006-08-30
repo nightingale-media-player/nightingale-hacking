@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib id3lib.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib unicharutil_s.lib xpcom.lib xul.lib id3lib.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerID3_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\debug\lib&quot;"
@@ -94,7 +94,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib id3lib.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib unicharutil_s.lib xpcom.lib xul.lib id3lib.lib"
 				OutputFile="$(OutDir)/sbMetadataHandlerID3.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)dependencies\win32\id3lib\release\lib&quot;"
