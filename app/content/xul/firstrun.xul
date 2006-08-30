@@ -52,7 +52,7 @@
             <spacer width="5"/>                    
             <spacer flex="1"/>           
             <spacer width="5"/>
-            <!--button id="sysbtn_close" class="sb_faceplate" oncommand="if (doCancel()) onExit( );" tooltiptext="&tooltip.exit;"/-->
+            <button id="sysbtn_close" class="sb_faceplate" oncommand="quitApp();" tooltiptext="&tooltip.exit;"/>
           </hbox>
           <spacer height="8"/>
           <hbox id="window_content" class="sb_faceplate" >
