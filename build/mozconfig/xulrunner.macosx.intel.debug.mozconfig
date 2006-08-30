@@ -1,5 +1,5 @@
 mk_add_options MOZ_CO_PROJECT=xulrunner
-mk_add_options MOZ_CO_TAG=SONGBIRD_0_2A_2006_07_24_BRANCH
+mk_add_options MOZ_CO_TAG=SONGBIRD_0_2A_20060830_BRANCH
 mk_add_options MOZ_CO_MODULE=mozilla/other-licenses/bsdiff,mozilla/tools/update-packaging
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/compiled/xulrunner-debug
 mk_add_options MOZ_MAKE_FLAGS=-j4
