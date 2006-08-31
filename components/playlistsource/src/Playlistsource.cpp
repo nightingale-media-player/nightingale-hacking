@@ -1593,9 +1593,17 @@ sbPlaylistsource::GetTarget(nsIRDFResource* source,
   // If we only have one value for this source ref, always return it.
   // Magic special case for the filter lists.
   if (valInfo.m_Info->m_ColumnMap.size() == 1) {
-    if (valInfo.m_All)
-      outstring += NS_LITERAL_STRING("All");
-    else {
+    if (valInfo.m_All) {
+      nsresult rv;
+      PRUnichar *value = nsnull;
+      rv = m_StringBundle->GetStringFromName(NS_LITERAL_STRING("library.all").get(), &value);    
+      if (NS_SUCCEEDED(rv)) {
+        outstring += value;
+        PR_Free(value);
+      } else {
+        outstring += NS_LITERAL_STRING("All");
+      }
+    } else {
       PRUnichar *val = nsnull;
       rv = valInfo.m_Info->m_Resultset->GetRowCellPtr(valInfo.m_Row,
                                                       0,
