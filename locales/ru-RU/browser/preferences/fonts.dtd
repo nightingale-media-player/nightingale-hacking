@@ -1,0 +1,63 @@
+<!ENTITY allowPagesToUse.accesskey "Р">
+<!ENTITY allowPagesToUse.label "Разрешить страницам использовать свои шрифты вместо выбранных мною шрифтов">
+<!ENTITY cursive.accesskey "К">
+<!ENTITY cursive.label "Курсив:">
+<!ENTITY fantasy.accesskey "Д">
+<!ENTITY fantasy.label "Декоративный:">
+<!ENTITY font.langGroup.arabic "Арабские">
+<!ENTITY font.langGroup.armenian "Армянский">
+<!ENTITY font.langGroup.baltic "Прибалтийский">
+<!ENTITY font.langGroup.bengali "Бенгальский">
+<!ENTITY font.langGroup.canadian "Общеканадский слоговой">
+<!ENTITY font.langGroup.cyrillic "Кириллица">
+<!ENTITY font.langGroup.devanagari "Деванагари">
+<!ENTITY font.langGroup.el "Греческий">
+<!ENTITY font.langGroup.ethiopic "Эфиопский">
+<!ENTITY font.langGroup.georgian "Грузинский">
+<!ENTITY font.langGroup.gujarati "Гуджарати">
+<!ENTITY font.langGroup.gurmukhi "Гурмуки">
+<!ENTITY font.langGroup.hebrew "Иврит">
+<!ENTITY font.langGroup.japanese "Японский">
+<!ENTITY font.langGroup.khmer "Кхмерский">
+<!ENTITY font.langGroup.korean "Корейский">
+<!ENTITY font.langGroup.latin1 "Западноевропейский">
+<!ENTITY font.langGroup.latin2 "Центральноевропейский">
+<!ENTITY font.langGroup.malayalam "Малайялам">
+<!ENTITY font.langGroup.simpl-chinese "Упрощённый китайский">
+<!ENTITY font.langGroup.tamil "Тамильский">
+<!ENTITY font.langGroup.thai "Тайский">
+<!ENTITY font.langGroup.trad-chinese "Традиционный китайский">
+<!ENTITY font.langGroup.trad-chinese-hk "Традиционный китайский (Гонконг)">
+<!ENTITY font.langGroup.turkish "Турецкий">
+<!ENTITY font.langGroup.unicode "Другие языки">
+<!ENTITY font.langGroup.user-def "Определённая пользователем">
+<!ENTITY fontsDialog.title "Шрифты">
+<!ENTITY fontsize.units "пикселов">
+<!ENTITY language.accesskey "Ш">
+<!ENTITY language.label "Шрифты для набора символов:">
+<!ENTITY languages.customize.Charset.grouplabel "Кодировка">
+<!ENTITY languages.customize.DefaultCharset.accesskey "К">
+<!ENTITY languages.customize.DefaultCharset.label "Кодировка по умолчанию:">
+<!ENTITY minSize.accesskey "м">
+<!ENTITY minSize.label "Наименьший размер шрифта:">
+<!ENTITY minSize.none "Нет">
+<!ENTITY monospace.accesskey "ш">
+<!ENTITY monospace.label "Моноширинный:">
+<!ENTITY proportional.accesskey "П">
+<!ENTITY proportional.label "Пропорциональный">
+<!ENTITY resolution.accesskey "Р">
+<!ENTITY resolution.label "Разрешение экрана:">
+<!ENTITY resolution.other "Другое...">
+<!ENTITY resolution.system.label "Системные настройки">
+<!ENTITY sans-serif.accesskey "е">
+<!ENTITY sans-serif.label "Без засечек:">
+<!ENTITY serif.accesskey "з">
+<!ENTITY serif.label "С засечками:">
+<!ENTITY size.accesskey1 "з">
+<!ENTITY size.accesskey2 "м">
+<!ENTITY size.label "Размер:">
+<!ENTITY useDefaultFontSansSerif.label "Без засечек">
+<!ENTITY useDefaultFontSerif.label "С засечками">
+<!ENTITY window.macWidth "58em">
+<!ENTITY window.unixWidth "56em">
+<!ENTITY window.width "54em">

@@ -1,0 +1,30 @@
+<!ENTITY advancedFonts.accesskey "Д">
+<!ENTITY advancedFonts.label "Дополнительно...">
+<!ENTITY advancedJS.accesskey "Д">
+<!ENTITY advancedJS.label "Дополнительно...">
+<!ENTITY allowedSitesPopup.accesskey "р">
+<!ENTITY allowedSitesPopup.label "Разрешённые сайты">
+<!ENTITY colors.accesskey "Ц">
+<!ENTITY colors.label "Цвета...">
+<!ENTITY defaultFont.accesskey "у">
+<!ENTITY defaultFont.label "Шрифт по умолчанию:">
+<!ENTITY defaultFontSize.accesskey "Р">
+<!ENTITY defaultFontSize.label "Размер:">
+<!ENTITY enableImages.accesskey "и">
+<!ENTITY enableImages.label "Загружать изображения">
+<!ENTITY enableJavaScript.accesskey "И">
+<!ENTITY enableJavaScript.label "Использовать JavaScript">
+<!ENTITY enableXPInstallWarning.accesskey "р">
+<!ENTITY enableXPInstallWarning.label "Предупреждать меня при попытке веб-сайта установить расширения или темы">
+<!ENTITY enbJavaCheck.accesskey "с">
+<!ENTITY enbJavaCheck.label "Использовать Java">
+<!ENTITY exceptions.accesskey "с">
+<!ENTITY exceptions.label "Исключения">
+<!ENTITY exceptionsSoftware.accesskey "к">
+<!ENTITY exceptionsSoftware.label "Исключения">
+<!ENTITY fonts.caption "Шрифты и цвета">
+<!ENTITY forOriginatingSiteOnly.accesskey "т">
+<!ENTITY forOriginatingSiteOnly.label "принадлежащие только этому сайту">
+<!ENTITY lHeader "Web-функции">
+<!ENTITY popupReject.accesskey "Б">
+<!ENTITY popupReject.label "Блокировать всплывающие окна">

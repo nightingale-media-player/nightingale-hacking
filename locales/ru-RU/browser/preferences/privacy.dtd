@@ -1,0 +1,67 @@
+<!ENTITY acceptForSession.label "пока я не закрою &brandShortName;">
+<!ENTITY acceptNormally.label "пока не истечёт срок их действия">
+<!ENTITY askAboutCookies.label "спрашивать для каждой cookie">
+<!ENTITY cache.intro "Просмотренные вами страницы хранятся в кэше, чтобы сократить время их повторной загрузки.">
+<!ENTITY cacheSize.label "МБ дискового пространства">
+<!ENTITY cacheUseUpTo.accesskey "д">
+<!ENTITY cacheUseUpTo.label "Использовать для кэша до:">
+<!ENTITY clear.label "Очистить">
+<!ENTITY clearCache.accesskey "О">
+<!ENTITY clearCache.label "Очистить кэш">
+<!ENTITY clearCookies.accesskey "C">
+<!ENTITY clearCookies.label "Очистить Cookies">
+<!ENTITY clearDownloads.accesskey "з">
+<!ENTITY clearDownloads.label "Очистить журнал загрузок">
+<!ENTITY clearFormData.accesskey "ф">
+<!ENTITY clearFormData.label "Очистить сохранённые данные форм">
+<!ENTITY clearHistory.accesskey "п">
+<!ENTITY clearHistory.label "Очистить журнал посещений">
+<!ENTITY cookieExceptions.accesskey "С">
+<!ENTITY cookies.intro "Cookies - фрагменты информации, сохраняемые сайтами на вашем компьютере. Они используются для запоминания информации для регистрации на сайтах и других данных.">
+<!ENTITY downloadManager.intro "В журнале загрузок хранится информация о недавно загруженных файлах.">
+<!ENTITY downloadsRemoveExit.label "При закрытии &brandShortName;">
+<!ENTITY downloadsRemoveImmediately.label "По завершении загрузки">
+<!ENTITY downloadsRemoveManually.label "Вручную">
+<!ENTITY downloadsRetentionPolicy.accesskey "У">
+<!ENTITY downloadsRetentionPolicy.label "Удалять файлы из журнала загрузок:">
+<!ENTITY enableCookies.accesskey "Р">
+<!ENTITY enableCookies.label "Разрешать сайтам устанавливать cookies">
+<!ENTITY enableCookiesForOriginating.accesskey "т">
+<!ENTITY enableCookiesForOriginating.label "принадлежащие только этому сайту">
+<!ENTITY enableCookiesNotRemoved.accesskey "у">
+<!ENTITY enableCookiesNotRemoved.label "если я не удалил ранее cookies, установленные этим сайтом">
+<!ENTITY enableFormFill.accesskey "С">
+<!ENTITY enableFormFill.label "Сохранять информацию, введённую в формы и панель поиска">
+<!ENTITY enablePasswords.accesskey "З">
+<!ENTITY enablePasswords.label "Запоминать пароли">
+<!ENTITY exceptions.label "Исключения">
+<!ENTITY itemCache.label "Кэш">
+<!ENTITY itemCookies.label "Cookies">
+<!ENTITY itemDownloads.label "Журнал загрузок">
+<!ENTITY itemFormData.label "Сохранённые данные форм">
+<!ENTITY itemHistory.label "Журнал посещений">
+<!ENTITY itemPasswords.label "Пароли">
+<!ENTITY keepCookies.accesskey "С">
+<!ENTITY keepCookies.label "Сохранять Cookies:">
+<!ENTITY masterPassword.intro "Будучи установленным, мастер-пароль будет использован для защиты всех ваших паролей. Вам нужно будет вводить его один раз в сессию.">
+<!ENTITY privacy.intro "Во время работы в сети &brandShortName; сохраняет информацию о том, где вы были, что делали и т.д. в следующих местах:">
+<!ENTITY privacy.label "Приватность">
+<!ENTITY rememberDays.label "дней">
+<!ENTITY rememberPages.accesskey "ч">
+<!ENTITY rememberPages.label "Удалять страницы из журнала через">
+<!ENTITY removeMasterPassword.accesskey "У">
+<!ENTITY removeMasterPassword.label "Удалить мастер-пароль...">
+<!ENTITY sanitize.intro "Очистка личных данных может быть использована для удаления всей личной информации. Это произойдёт при закрытии &brandShortName; или при нажатии вами определённой комбинации клавиш.">
+<!ENTITY sanitizeSettings.accesskey "о">
+<!ENTITY sanitizeSettings.label "Настройки...">
+<!ENTITY savedFormData.intro "Информация, вводимая вами в формы на веб-страницах и в панель поиска, сохраняется, чтобы ускорить последующий поиск и заполнение форм.">
+<!ENTITY savedPasswords.intro "&brandShortName; может запоминать регистрационную информацию так, что вам не придётся вводить её снова при последующих посещениях тех же сайтов. ">
+<!ENTITY setMasterPassword.accesskey "М">
+<!ENTITY setMasterPassword.label "Мастер-пароль">
+<!ENTITY view.label "Просмотр">
+<!ENTITY viewCookies.accesskey "П">
+<!ENTITY viewCookies.label "Просмотр Cookies">
+<!ENTITY viewDownloads.accesskey "ж">
+<!ENTITY viewDownloads.label "Просмотреть журнал загрузок">
+<!ENTITY viewPasswords.accesskey "с">
+<!ENTITY viewPasswords.label "Просмотр сохранённых паролей">

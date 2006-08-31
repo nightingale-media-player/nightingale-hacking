@@ -1,0 +1,19 @@
+<!ENTITY addpermission.label "Новый сайт">
+<!ENTITY address.label "Адрес сайта:">
+<!ENTITY allow.accesskey "Р">
+<!ENTITY allow.label "Разрешить">
+<!ENTITY block.accesskey "Б">
+<!ENTITY block.label "Блокировать">
+<!ENTITY button.close.accesskey "З">
+<!ENTITY button.close.label "Закрыть">
+<!ENTITY removeallpermissions.accesskey "в">
+<!ENTITY removeallpermissions.label "Удалить все сайты">
+<!ENTITY removepermission.accesskey "У">
+<!ENTITY removepermission.label "Удалить сайт">
+<!ENTITY session.accesskey "с">
+<!ENTITY session.label "Разрешить на сессию">
+<!ENTITY treehead.sitename.label "Сайт">
+<!ENTITY treehead.status.label "Статус">
+<!ENTITY window.title "Исключения">
+<!ENTITY window.width "36em">
+<!ENTITY windowClose.key "w">

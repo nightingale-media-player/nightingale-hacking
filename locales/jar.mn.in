@@ -39,6 +39,7 @@ locales.jar:
 % locale  songbird  pl-PL  @LOCALE_LOCATION@/locale/pl-PL/songbird/
 % locale  songbird  pt-BR  @LOCALE_LOCATION@/locale/pt-BR/songbird/
 % locale  songbird  ru-RU  @LOCALE_LOCATION@/locale/ru-RU/songbird/
+% locale  browser   ru-RU  @LOCALE_LOCATION@/locale/ru-RU/browser/
 % locale  songbird  sk-SK  @LOCALE_LOCATION@/locale/sk-SK/songbird/
 % locale  songbird  sv-SE  @LOCALE_LOCATION@/locale/sv-SE/songbird/
 % locale  songbird  th-TH  @LOCALE_LOCATION@/locale/th-TH/songbird/
@@ -112,8 +113,26 @@ locales.jar:
   locale/pl-PL/songbird/songbird.properties     (pl-PL/songbird.properties)
   locale/pt-BR/songbird/songbird.dtd            (pt-BR/songbird.dtd)
   locale/pt-BR/songbird/songbird.properties     (pt-BR/songbird.properties)
-  locale/ru-RU/songbird/songbird.dtd            (ru-RU/songbird.dtd)
-  locale/ru-RU/songbird/songbird.properties     (ru-RU/songbird.properties)
+  locale/ru-RU/songbird/songbird.dtd                      (ru-RU/songbird/songbird.dtd)
+  locale/ru-RU/songbird/songbird.properties               (ru-RU/songbird/songbird.properties)
+  locale/ru-RU/browser/preferences/advanced.dtd           (ru-RU/browser/preferences/advanced.dtd)
+  locale/ru-RU/browser/preferences/advanced-scripts.dtd   (ru-RU/browser/preferences/advanced-scripts.dtd)
+  locale/ru-RU/browser/preferences/changeaction.dtd       (ru-RU/browser/preferences/changeaction.dtd)
+  locale/ru-RU/browser/preferences/colors.dtd             (ru-RU/browser/preferences/colors.dtd)
+  locale/ru-RU/browser/preferences/connection.dtd         (ru-RU/browser/preferences/connection.dtd)
+  locale/ru-RU/browser/preferences/content.dtd            (ru-RU/browser/preferences/content.dtd)
+  locale/ru-RU/browser/preferences/cookies.dtd            (ru-RU/browser/preferences/cookies.dtd)
+  locale/ru-RU/browser/preferences/downloadactions.dtd    (ru-RU/browser/preferences/downloadactions.dtd)
+  locale/ru-RU/browser/preferences/downloads.dtd          (ru-RU/browser/preferences/downloads.dtd)
+  locale/ru-RU/browser/preferences/fonts.dtd              (ru-RU/browser/preferences/fonts.dtd)
+  locale/ru-RU/browser/preferences/general.dtd            (ru-RU/browser/preferences/general.dtd)
+  locale/ru-RU/browser/preferences/languages.dtd          (ru-RU/browser/preferences/languages.dtd)
+  locale/ru-RU/browser/preferences/permissions.dtd        (ru-RU/browser/preferences/permissions.dtd)
+  locale/ru-RU/browser/preferences/preferences.dtd        (ru-RU/browser/preferences/preferences.dtd)
+  locale/ru-RU/browser/preferences/preferences.properties (ru-RU/browser/preferences/preferences.properties)
+  locale/ru-RU/browser/preferences/privacy.dtd            (ru-RU/browser/preferences/privacy.dtd)
+  locale/ru-RU/browser/preferences/sanitize.dtd           (ru-RU/browser/preferences/sanitize.dtd)
+  locale/ru-RU/browser/preferences/tabs.dtd               (ru-RU/browser/preferences/tabs.dtd)
   locale/sk-SK/songbird/songbird.dtd            (sk-SK/songbird.dtd)
   locale/sk-SK/songbird/songbird.properties     (sk-SK/songbird.properties)
   locale/sv-SE/songbird/songbird.dtd            (sv-SE/songbird.dtd)

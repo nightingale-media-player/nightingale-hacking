@@ -1,0 +1,22 @@
+<!ENTITY forceNewWindowLinks.accesskey "З">
+<!ENTITY forceNewWindowLinks.label "Заставлять ссылки, открывающие новые окна, открываться в:">
+<!ENTITY hideTabBar.accesskey "к">
+<!ENTITY hideTabBar.label "Скрывать панель вкладок, если открыт только один веб-сайт">
+<!ENTITY loadBookmarksInBackground.accesskey "з">
+<!ENTITY loadBookmarksInBackground.label "Переходить на новые вкладки, открываемые из ссылок в закладках или журнале">
+<!ENTITY loadInBackground.accesskey "с">
+<!ENTITY loadInBackground.label "Переходить на новые вкладки, открываемые из ссылок на странице">
+<!ENTITY newTab.accesskey "н">
+<!ENTITY newTab.label "новой вкладке">
+<!ENTITY newTabInRecentWindow.accesskey "в">
+<!ENTITY newTabInRecentWindow.label "новой вкладке последнего окна">
+<!ENTITY newWindow.accesskey "о">
+<!ENTITY newWindow.label "новом окне">
+<!ENTITY openExternalLinksIn.label "Открывать ссылки из других приложений в:">
+<!ENTITY recentWindowOrTab.accesskey "п">
+<!ENTITY recentWindowOrTab.label "последней вкладке/окне">
+<!ENTITY sameTabOrWindow.accesskey "ж">
+<!ENTITY sameTabOrWindow.label "той же вкладке/окне, что и ссылка">
+<!ENTITY tabsTab.label "Вкладки">
+<!ENTITY warnOnClose.accesskey "е">
+<!ENTITY warnOnClose.label "Предупреждать при закрытии нескольких вкладок">

@@ -12,7 +12,8 @@ locale	songbird	es-MX	        locales/es-MX/
 locale	songbird	es-ES         locales/es-ES/
 locale	songbird	es-AR	        locales/es-AR/
 locale	songbird	sk-SK	        locales/sk-SK/
-locale  songbird	ru-RU	        locales/ru-RU/
+locale  songbird	ru-RU	        locales/ru-RU/songbird/
+locale  browser 	ru-RU	        locales/ru-RU/browser/
 locale	songbird	pt-BR	        locales/pt-BR/
 locale	songbird	pl-PL	        locales/pl-PL/
 locale	songbird	nb-NO	        locales/nb-NO/
