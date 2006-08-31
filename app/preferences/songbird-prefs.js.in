@@ -88,6 +88,11 @@ pref("network.protocol-handler.external.news", true);
 pref("network.protocol-handler.external.snews", true);
 pref("network.protocol-handler.external.nntp", true);
 
+// Don't warn when opening external http urls
+// This is to allow for launching _blank targeted links in the default browser
+pref("network.protocol-handler.warn-external.http", false);
+pref("network.protocol-handler.warn-external.https", false);
+
 pref("network.proxy.share_proxy_settings",  false);
 
 pref("plugin.default_plugin_disabled", true);

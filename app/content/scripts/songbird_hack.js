@@ -233,8 +233,16 @@ function SBInitialize()
         theMainPane.addEventListener("DOMContentLoaded", onMainPaneLoad, false);
         theMainPane.addEventListener("unload", onMainPaneUnload, true);
         theMainPane.addProgressListener(SBDocStartListener);
+        
+        // Trap clicks on links with target=_blank or _new
+        // and launch them in the default browser.
+        // Note: _new isn't valid.. but seems to be used frequently
+        // so we might as well support it.
+        theMainPane.addEventListener("click", onBrowserClick, true);
+
       }
     }
+    
     
     var theServiceTree = document.getElementById( 'frame_servicetree' );
     theServiceTree.init(theMainPane);
@@ -1063,6 +1071,35 @@ function onBrowserBookmark()
     alert( "onBrowserBookmark\n" + err );
   }
 }
+
+
+
+// onBrowserClick
+// Catches links with target=_blank and opens them with the default browser.
+// Added as a click listener to theMainPane.
+function onBrowserClick(evt)
+{
+  if (evt.target && evt.button == 0 && evt.target.tagName == "A") {
+
+    //dump("\n\n\nClick in main pane: "
+    //    + "tag " + evt.target.tagName + "\n"
+    //    + "href "  + evt.target.href + "\n" 
+    //    + "target " + evt.target.target
+    //    + "\n\n\n");  
+        
+    if (evt.target.target == "_blank" || evt.target.target == "_new") {
+      var externalLoader = (Components
+            .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+            .getService(Components.interfaces.nsIExternalProtocolService));
+      var nsURI = (Components
+            .classes["@mozilla.org/network/io-service;1"]
+            .getService(Components.interfaces.nsIIOService)
+            .newURI(evt.target.href, null, null));
+      externalLoader.loadURI(nsURI, null);
+    }
+  }
+}
+
 
 var SBWebPlaylistCommands = 
 {
