@@ -1,0 +1,19 @@
+? xpcom/sanity.diff
+Index: xpcom/base/nsUUIDGenerator.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/base/nsUUIDGenerator.cpp,v
+retrieving revision 1.3.4.3
+diff -u -p -r1.3.4.3 nsUUIDGenerator.cpp
+--- xpcom/base/nsUUIDGenerator.cpp	18 Apr 2006 11:54:39 -0000	1.3.4.3
++++ xpcom/base/nsUUIDGenerator.cpp	4 Aug 2006 04:28:25 -0000
+@@ -139,7 +139,9 @@ nsUUIDGenerator::GenerateUUIDInPlace(nsI
+         long rval = random();
+ 
+         PRUint8 *src = (PRUint8*)&rval;
+-#ifdef IS_LITTLE_ENDIAN
++        // We want to grab the mRBytes least significant bytes of rval, since
++        // mRBytes less than sizeof(rval) means the high bytes are 0.
++#ifdef IS_BIG_ENDIAN
+         src += sizeof(rval) - mRBytes;
+ #endif
+         PRUint8 *dst = ((PRUint8*) id) + (sizeof(nsID) - bytesLeft);
