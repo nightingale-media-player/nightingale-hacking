@@ -1582,7 +1582,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   -moz-appearance: none !important; /* grrrr! */
   height: 16px !important;
   width: 16px !important;
-  margin: 1px 0px 3px 5px !important;
+  margin: 3px 0px 3px 5px !important;
 }
 
 #browser_url,
