@@ -316,18 +316,25 @@ var bmManager = {
 				  label: "&servicesource.bookmarks",
 				  icon: "chrome://songbird/skin/default/icon_folder.png",
 				  url: "",
-				  children: [
-			      { 
-				      label: "Pitchfork",
-				      icon: "http://www.pitchforkmedia.com/favicon.ico",
-				      url: "http://www.pitchforkmedia.com/page/downloads/",
-				      properties: "bookmark",
-				      children: []
-		        },	
+				  children: [	
 			      { 
 				      label: "Podbop",
 				      icon: "http://podbop.org/favicon.ico",
 				      url: "http://podbop.org/",
+				      properties: "bookmark",
+				      children: []
+		        },
+		          { 
+				      label: "Scissorkick",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://www.scissorkick.com/",
+				      properties: "bookmark",
+				      children: []
+		        },			        				  
+			      { 
+				      label: "Fluxblog",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://fluxblog.org",
 				      properties: "bookmark",
 				      children: []
 		        },	
@@ -346,19 +353,33 @@ var bmManager = {
 				      children: []
 		        },	
 			      { 
-				      label: "Medicine",
+				      label: "Banana Nutrament",
 				      icon: "chrome://songbird/skin/serviceicons/default.ico",
-				      url: "http://takeyourmedicinemp3.blogspot.com/",
+				      url: "http://banananutrament.blogspot.com/",
 				      properties: "bookmark",
 				      children: []
-		        },			        				  
+		        },
 			      { 
-				      label: "OpenBSD",
+				      label: "Beggars Group",
 				      icon: "chrome://songbird/skin/serviceicons/default.ico",
-				      url: "http://openbsd.mirrors.tds.net/pub/OpenBSD/songs/",
+				      url: "http://www.beggars.com/us/audio_video/index.html",
 				      properties: "bookmark",
 				      children: []
-		        },	
+		        },
+			      { 
+				      label: "Up Records",
+				      icon: "chrome://songbird/skin/serviceicons/default.ico",
+				      url: "http://www.uprecords.com/mp3s/",
+				      properties: "bookmark",
+				      children: []
+		        },
+			      { 
+				      label: "The Hype Machine",
+				      icon: "http://hype.non-standard.net/favicon.ico",
+				      url: "http://hype.non-standard.net/list/",
+				      properties: "bookmark",
+				      children: []
+		        },
 			      { 
 				      label: "Songbirdnest",
 				      icon: "chrome://songbird/skin/default/logo_16.png",
@@ -366,6 +387,8 @@ var bmManager = {
 				      properties: "bookmark",
 				      children: []
 		        }
+		        
+		        
 /*		        ,			        
 			      { 
 				      label: "Autodownload",
