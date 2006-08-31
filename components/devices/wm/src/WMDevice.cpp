@@ -46,13 +46,14 @@
 #include "nsIWebProgressListener.h"
 #include "nsNetUtil.h"
 
+#ifdef WIN32
+#include "win32/WMDImplementation.h"
+#endif
+
 /* Implementation file */
 
-#define NAME_WINDOWS_MEDIA_DEVICE_LEN NS_LITERAL_STRING("Songbird Windows Media Device").Length()
-#define NAME_WINDOWS_MEDIA_DEVICE NS_LITERAL_STRING("Songbird Windows Media Device").get()
-
-#define CONTEXT_WINDOWS_MEDIA_DEVICE_LEN  NS_LITERAL_STRING("windowsmediaDB").Length()
-#define CONTEXT_WINDOWS_MEDIA_DEVICE      NS_LITERAL_STRING("windowsmediaDB").get()
+#define NAME_WINDOWS_MEDIA_DEVICE_LEN     NS_LITERAL_STRING("Songbird Windows Media Device").Length()
+#define NAME_WINDOWS_MEDIA_DEVICE         NS_LITERAL_STRING("Songbird Windows Media Device").get()
 
 // CLASSES ====================================================================
 NS_IMPL_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
@@ -61,26 +62,27 @@ NS_IMPL_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
 sbWMDevice::sbWMDevice():
   sbDeviceBase(PR_TRUE)
 {
+  mDeviceManager = new WMDManager(this);
 } //ctor
 
 //-----------------------------------------------------------------------------
 sbWMDevice::~sbWMDevice() 
 {
+  delete mDeviceManager;
+  mDeviceManager = NULL;
 } //dtor
-
-// ***************************
-// sbIDeviceBase implementation 
-// Just forwarding calls to mBaseDevice
 
 NS_IMETHODIMP
 sbWMDevice::Initialize(PRBool *_retval)
 {
+  mDeviceManager->Initialize();
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbWMDevice::Finalize(PRBool *_retval)
 {
+  mDeviceManager->Finalize();
   return NS_OK;
 }
 
@@ -115,7 +117,8 @@ NS_IMETHODIMP
 sbWMDevice::GetContext(const nsAString& aDeviceString,
                        nsAString& _retval)
 {
-  _retval.Assign(CONTEXT_WINDOWS_MEDIA_DEVICE);
+  if (mDeviceManager)
+    mDeviceManager->GetContext(aDeviceString, _retval);
   return NS_OK;
 }
 

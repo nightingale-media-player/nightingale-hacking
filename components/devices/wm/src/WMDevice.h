@@ -42,7 +42,7 @@
 #define SONGBIRD_WMDevice_CONTRACTID                      \
   "@songbirdnest.com/Songbird/Device/WMDevice;1"
 #define SONGBIRD_WMDevice_CLASSNAME                       \
-  "Songbird Download Device"
+  "Songbird WM Device"
 #define SONGBIRD_WMDevice_CID                             \
 { /* 3cc1058a-9fc6-4dd7-bfda-778cf482c13b */              \
   0x3cc1058a,                                             \
@@ -50,10 +50,15 @@
   0x4dd7,                                                 \
   {0xbf, 0xda, 0x77, 0x8c, 0xf4, 0x82, 0xc1, 0x3b}        \
 }
+#define CONTEXT_WINDOWS_MEDIA_DEVICE "wmdeviceDB-"
 
 // CLASSES ====================================================================
 
-class sbWMDevice : public sbIWMDevice,
+#include "WMDCrossPlatformDefs.h"
+
+class sbDownloadListener;
+
+class sbWMDevice :  public sbIWMDevice, 
                    public sbDeviceBase
 {
 public:
@@ -75,6 +80,8 @@ private:
 
   virtual PRBool IsEjectSupported();
   virtual PRBool SuspendCurrentTransfer(const nsAString& aDeviceString);
+
+  sbWMDObjectManager* mDeviceManager;
 };
 
 #endif // __WM_DEVICE_H__
