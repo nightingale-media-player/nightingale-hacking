@@ -1,0 +1,28 @@
+Index: widget/src/mac/nsMacWindow.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/mac/nsMacWindow.cpp,v
+retrieving revision 1.158.2.20
+diff -u -8 -p -r1.158.2.20 nsMacWindow.cpp
+--- widget/src/mac/nsMacWindow.cpp	7 Aug 2006 21:00:02 -0000	1.158.2.20
++++ widget/src/mac/nsMacWindow.cpp	1 Sep 2006 19:38:29 -0000
+@@ -613,17 +613,20 @@ nsresult nsMacWindow::StandardCreate(nsI
+       ::SetWindowActivationScope(mWindowPtr, kWindowActivationScopeNone);
+     }
+ 
+     if ( mWindowType != eWindowType_invisible &&
+          mWindowType != eWindowType_plugin &&
+          mWindowType != eWindowType_java) {
+       const EventTypeSpec kScrollEventList[] = {
+         { kEventClassMouse, kEventMouseWheelMoved },
++#if 0
++        // Disabled due to bug 347626
+         { kEventClassMouse, kEventMouseScroll },
++#endif
+       };
+ 
+       static EventHandlerUPP sScrollEventHandlerUPP;
+       if (!sScrollEventHandlerUPP)
+         sScrollEventHandlerUPP = ::NewEventHandlerUPP(ScrollEventHandler);
+ 
+       err = ::InstallWindowEventHandler(mWindowPtr,
+                                         sScrollEventHandlerUPP,
