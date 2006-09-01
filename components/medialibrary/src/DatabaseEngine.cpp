@@ -329,9 +329,6 @@ CDatabaseEngine::CDatabaseEngine()
 //-----------------------------------------------------------------------------
 /*virtual*/ CDatabaseEngine::~CDatabaseEngine()
 {
-  ClearPersistentQueries();
-  ClearQueryQueue();
-
   PRInt32 count = m_QueryProcessorThreads.Count();
   if (count) {
 
@@ -345,11 +342,14 @@ CDatabaseEngine::CDatabaseEngine()
       m_QueryProcessorThreads[i]->Join();
   }
 
-  ClearAllDBLocks();
   CloseAllDB();
+  ClearAllDBLocks();
 
   m_DatabaseLocks.clear();
   m_Databases.clear();
+
+  ClearPersistentQueries();
+  ClearQueryQueue();
 
   if (m_pDatabasesLock)
     PR_DestroyLock(m_pDatabasesLock);
@@ -425,6 +425,7 @@ PRInt32 CDatabaseEngine::CloseDB(const nsAString &dbGUID)
 
   if(itDatabases != m_Databases.end())
   {
+    sqlite3_interrupt(itDatabases->second);
     ret = sqlite3_close(itDatabases->second);
     m_Databases.erase(itDatabases);
   }
@@ -658,6 +659,7 @@ nsresult CDatabaseEngine::CloseAllDB()
 
   if(itDatabases != m_Databases.end())
   {
+    sqlite3_interrupt(itDatabases->second);
     ret = sqlite3_close(itDatabases->second);
     m_Databases.erase(itDatabases);
   }
@@ -834,7 +836,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
       // Handle shutdown request
       if (pEngine->m_QueryProcessorShouldShutdown) {
 #if defined(XP_WIN)
-        sqlite3_thread_cleanup();
+//        sqlite3_thread_cleanup();
 #endif
         return;
       }
