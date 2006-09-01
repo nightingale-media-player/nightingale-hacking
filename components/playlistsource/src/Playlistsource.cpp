@@ -282,22 +282,23 @@ NS_IMPL_ISUPPORTS2(sbPlaylistsource, sbIPlaylistsource, nsIRDFDataSource)
 sbPlaylistsource*
 sbPlaylistsource::GetSingleton()
 {
-  if (gPlaylistsource) {
+  if (!gPlaylistsource) {
+    NS_NEWXPCOM(gPlaylistsource, sbPlaylistsource);
+    if (!gPlaylistsource)
+        return nsnull;
+
+    // We're going to end up AddRef'ing twice upon first creation so that the
+    // Component has a ref to delete upon XPCOM shutdown.
     NS_ADDREF(gPlaylistsource);
-    return gPlaylistsource;
+    nsresult rv = gPlaylistsource->Init();
+    if (NS_FAILED(rv)) {
+      NS_ERROR("sbPlaylistsource::Init failed!");
+      NS_RELEASE(gPlaylistsource);
+      return gPlaylistsource = nsnull;
+    }
   }
 
-  NS_NEWXPCOM(gPlaylistsource, sbPlaylistsource);
-  if (!gPlaylistsource)
-      return nsnull;
- 
   NS_ADDREF(gPlaylistsource);
-  nsresult rv = gPlaylistsource->Init();
-  if (NS_FAILED(rv)) {
-    NS_ERROR("sbPlaylistsource::Init failed!");
-    NS_RELEASE(gPlaylistsource);
-    return nsnull;
-  }
   return gPlaylistsource;
 }
 
