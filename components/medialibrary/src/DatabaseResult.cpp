@@ -153,7 +153,7 @@ NS_IMETHODIMP CDatabaseResult::GetColumnNamePtr(PRInt32 dbColumn, PRUnichar **_r
     {
       //*_retval = ToNewUnicode(m_ColumnNames[dbColumn]);
       //if(!*_retval) return NS_ERROR_OUT_OF_MEMORY;
-      *_retval = NS_CONST_CAST(PRUnichar *, (m_ColumnNames[dbColumn]).get());
+      *_retval = NS_CONST_CAST(PRUnichar *, PromiseFlatString(m_ColumnNames[dbColumn]).get());
     }
     else
     {
@@ -175,7 +175,7 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellPtr(PRInt32 dbRow, PRInt32 dbCell, PRUn
     {
       //*_retval = ToNewUnicode(m_RowCells[dbRow][dbCell]);
       //if(!*_retval) return NS_ERROR_OUT_OF_MEMORY;
-      *_retval = NS_CONST_CAST(PRUnichar *, (m_RowCells[dbRow][dbCell]).get());
+      *_retval = NS_CONST_CAST(PRUnichar *, PromiseFlatString(m_RowCells[dbRow][dbCell]).get());
     }
     else
     {

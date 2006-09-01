@@ -37,16 +37,7 @@
 
 #include "MediaScan.h"
 
-#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
-  static _Interface * _Interface##SimpletonConstructor( void )                  \
-  {                                                                             \
-  static _Interface * m_Simpleton = nsnull;                                     \
-  NS_IF_ADDREF( m_Simpleton ? m_Simpleton : ( NS_IF_ADDREF( m_Simpleton = new _Interface() ), m_Simpleton ) ); \
-  return m_Simpleton;                                                         \
-  }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
-
-NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(CDatabaseEngine)
+NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(CDatabaseEngine, CDatabaseEngine::GetSingleton)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseQuery)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
@@ -92,4 +83,11 @@ static nsModuleComponentInfo sbMediaLibrary[] =
   
 };
 
-NS_IMPL_NSGETMODULE("SongbirdMediaLibraryComponent", sbMediaLibrary)
+// When everything else shuts down, delete it.
+static void sbMediaLibraryDestructor(nsIModule* me)
+{
+  NS_IF_RELEASE(gEngine);
+  gEngine = nsnull;
+}
+
+NS_IMPL_NSGETMODULE_WITH_DTOR("SongbirdMetadataManagerComponent", sbMediaLibrary, sbMediaLibraryDestructor)
