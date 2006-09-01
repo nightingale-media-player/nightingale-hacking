@@ -406,7 +406,7 @@ window#mini
 #mini_text_time_t_txt
 {
   -moz-box-align: baseline !important;
-  font-family: tahoma, arial !important;
+  font-family: tahoma, arial, cursor !important;
   width: auto !important;
   height: 14px !important;
   color: #E4EADF !important;
