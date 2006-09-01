@@ -17,8 +17,8 @@ diff -u -r1.3.2.3 install.rdf
 +           info available (unless we can pass it in via configure. -->
 +      <Description>
 +        <em:id>songbird@songbirdnest.com</em:id>
-+        <em:minVersion>0.1</em:minVersion>
-+        <em:maxVersion>1.0+</em:maxVersion>
++        <em:minVersion>0.2</em:minVersion>
++        <em:maxVersion>0.2</em:maxVersion>
 +      </Description>
 +    </em:targetApplication>
 +
