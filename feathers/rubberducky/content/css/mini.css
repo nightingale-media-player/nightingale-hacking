@@ -183,13 +183,13 @@ window#mini
 #songbird_seekbar_slider.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 6px !important;
+  height: 4px !important;
   width: auto !important;
 }
 #mini_seekbar
 {
   -moz-appearance: none !important;
-  height: 6px !important;
+  height: 4px !important;
   /* border-bottom: 1px solid #000 !important;  This doesn't look right */
 }
 
@@ -197,7 +197,7 @@ window#mini
 {
   -moz-appearance: none !important; /* grrrr! */
   width: 11px !important;
-  height: 6px !important;
+  height: 4px !important;
   background-image: url(chrome://songbird/skin/mini/seekbar_thumb.png) !important;
   background-color: transparent !important;
   background-repeat: no-repeat !important;
@@ -205,29 +205,29 @@ window#mini
 #mini_seekbar_thumb > gripper
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 6px !important;
+  height: 4px !important;
 }
 #mini_seekbar_progress
 {
   -moz-appearance: none !important;
-  height: 6px !important;
+  height: 4px !important;
 }
 #mini_seekbar_progress .progress-bar
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(chrome://songbird/skin/mini/seekbar_progress.png) !important;
-  height: 6px !important;
+  height: 4px !important;
 }
 #mini_seekbar_progress .progress-remainder
 {
   -moz-appearance: none !important; /* grrrr! */
   background-image: url(chrome://songbird/skin/mini/seekbar_remainder.png) !important;
-  height: 6px !important;
+  height: 4px !important;
 }
 #songbird_seekbar.miniplayer
 {
   -moz-appearance: none !important; /* grrrr! */
-  height: 6px !important;
+  height: 4px !important;
   border: none !important;
   background-color: transparent !important;
 }
@@ -394,7 +394,7 @@ window#mini
   -moz-box-align: baseline !important;
   font-family: tahoma, arial !important;
   min-width: 1px !important;  
-  height: 12px !important;
+  height: 14px !important;
   color: #E4EADF !important;
   overflow: hidden;
 }
@@ -408,14 +408,14 @@ window#mini
   -moz-box-align: baseline !important;
   font-family: tahoma, arial !important;
   width: auto !important;
-  height: 12px !important;
+  height: 14px !important;
   color: #E4EADF !important;
   overflow: hidden;
 }
 
 #mini_text_time
 {
-  height: 12px !important;
-  max-height: 12px !important;
-  min-height: 12px !important;
+  height: 14px !important;
+  max-height: 14px !important;
+  min-height: 14px !important;
 }
