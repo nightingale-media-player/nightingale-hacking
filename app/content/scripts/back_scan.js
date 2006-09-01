@@ -48,7 +48,6 @@ try
   var bsLastRow = 0;
   var bsTry = 0;
   var bsMaxTries = 5;
-  var bsSource = new sbIPlaylistsource();
   var bsSkip = 0;
   var bsMDHandler = null;
 

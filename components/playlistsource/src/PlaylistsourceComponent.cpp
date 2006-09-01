@@ -36,30 +36,17 @@
 
 #include "Playlistsource.h"
 
-#define NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR( _Interface )                  \
-  static _Interface * g_Simpleton = NULL;                                       \
-  static _Interface * _Interface##SimpletonConstructor( void )                  \
-  {                                                                             \
-    NS_IF_ADDREF( g_Simpleton ? g_Simpleton : ( NS_IF_ADDREF( g_Simpleton = new _Interface() ), g_Simpleton ) ); \
-    return g_Simpleton;                                                         \
-  }                                                                             \
-  NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR( _Interface, _Interface##SimpletonConstructor )
+NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbPlaylistsource,
+                                         sbPlaylistsource::GetSingleton)
 
-NS_GENERIC_FACTORY_SIMPLETON_CONSTRUCTOR(sbPlaylistsource)
-
-// When everything else shuts down, delete the playlistsource.
-static void sbPlaylistsourceDTOR(nsIModule* me)
+static void sbPlaylistsourceDestructor(nsIModule* module)
 {
-  // Hey, look, I can make it go away now!
-  if( g_Simpleton )
-  {
-    delete g_Simpleton;
-    g_Simpleton = nsnull;
-  }
+  NS_IF_RELEASE(gPlaylistsource);
+  gPlaylistsource = nsnull;
 }
 
 
-static nsModuleComponentInfo components[] =
+static const nsModuleComponentInfo components[] =
 {
   {
     SONGBIRD_PLAYLISTSOURCE_CLASSNAME, 
@@ -69,6 +56,7 @@ static nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE_WITH_DTOR("SongbirdPlaylistsourceComponent", components, sbPlaylistsourceDTOR)
+NS_IMPL_NSGETMODULE_WITH_DTOR("Songbird Playlistsource Component", components,
+                              sbPlaylistsourceDestructor)
 
 #pragma warning(pop)

@@ -81,6 +81,9 @@ public:
 
   sbPlaylistsource();
   virtual ~sbPlaylistsource();
+
+  static sbPlaylistsource* GetSingleton();
+
   NS_IMETHODIMP UpdateObservers();
 
   struct sbObserver
@@ -255,6 +258,8 @@ NS_IMETHODIMP    GetTargets2(nsIRDFResource*       source,
                              nsISimpleEnumerator** targets /* out */);
 
 };
+
+extern sbPlaylistsource* gPlaylistsource;
 
 class MyQueryCallback : public sbIDatabaseSimpleQueryCallback
 {

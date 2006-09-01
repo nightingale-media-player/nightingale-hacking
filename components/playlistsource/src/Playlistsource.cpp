@@ -88,7 +88,7 @@ static PRLogModuleInfo* gPlaylistsourceLog =
 
 #define LOG(args) PR_LOG(gPlaylistsourceLog, PR_LOG_DEBUG, args)
 
-static sbPlaylistsource* gPlaylistPlaylistsource = nsnull;
+sbPlaylistsource* gPlaylistsource = nsnull;
 
 // Strings that we'll use to compose all the goofy queries.
 NS_NAMED_LITERAL_STRING(select_str, "select ");
@@ -167,7 +167,7 @@ MyQueryCallback::OnQueryEnd(sbIDatabaseResult* dbResultObject,
   LOG(("MyQueryCallback::OnQueryEnd"));
   NS_ENSURE_ARG_POINTER(dbResultObject);
 
-  NS_ENSURE_TRUE(gPlaylistPlaylistsource, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(gPlaylistsource, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_Timer, NS_ERROR_OUT_OF_MEMORY);
 
   if ( m_Count++ == 0 )
@@ -208,11 +208,11 @@ MyQueryCallback::MyTimerCallback()
   PRInt32 count = 0;
   { // SCOPE ADDED TO CONSTRAIN AUTOMONITORS
     LOG(("MyQueryCallback::MyTimerCallbackFunc"));
-    NS_ASSERTION(gPlaylistPlaylistsource,
+    NS_ASSERTION(gPlaylistsource,
       "MyQueryCallback timer fired before Playlistsource initialized");
 
     // LOCK IT.
-    nsAutoMonitor mon_global(gPlaylistPlaylistsource->g_pMonitor);
+    nsAutoMonitor mon_global(gPlaylistsource->g_pMonitor);
 
     if (!m_Info) {
       NS_WARNING("No m_Info on this Playlistsource::MyQueryCallback object!!!");
@@ -225,7 +225,7 @@ MyQueryCallback::MyTimerCallback()
     if ( exec )
     {
       // Just ignore this one, but always go on the next one.
-      gPlaylistPlaylistsource->g_ActiveQueryCount = 0;
+      gPlaylistsource->g_ActiveQueryCount = 0;
       m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
                                     100, nsITimer::TYPE_ONE_SHOT);
       return;
@@ -238,8 +238,8 @@ MyQueryCallback::MyTimerCallback()
     }
 
     // This is ok by design
-    if (gPlaylistPlaylistsource->g_ActiveQueryCount < 0)
-      gPlaylistPlaylistsource->g_ActiveQueryCount = 0;
+    if (gPlaylistsource->g_ActiveQueryCount < 0)
+      gPlaylistsource->g_ActiveQueryCount = 0;
 
     sbPlaylistsource::sbResultInfo result;
 
@@ -256,7 +256,7 @@ MyQueryCallback::MyTimerCallback()
     result.m_ForceGetTargets = m_Info->m_ForceGetTargets;
 
     // Push the old resultset onto the garbage stack.
-    gPlaylistPlaylistsource->g_ResultGarbage.push_back(result);
+    gPlaylistsource->g_ResultGarbage.push_back(result);
 
     // Orphan the result for the query.
     nsCOMPtr<sbIDatabaseResult> res;
@@ -265,11 +265,11 @@ MyQueryCallback::MyTimerCallback()
       m_Info->m_Resultset = res;
   }
   // Decrement and update if needbe.
-  gPlaylistPlaylistsource->g_ActiveQueryCount -= count;
-  if (gPlaylistPlaylistsource->g_ActiveQueryCount <= 0) {
-    gPlaylistPlaylistsource->g_ActiveQueryCount = 0;
-    gPlaylistPlaylistsource->g_NeedUpdate = PR_TRUE;
-    gPlaylistPlaylistsource->UpdateObservers();
+  gPlaylistsource->g_ActiveQueryCount -= count;
+  if (gPlaylistsource->g_ActiveQueryCount <= 0) {
+    gPlaylistsource->g_ActiveQueryCount = 0;
+    gPlaylistsource->g_NeedUpdate = PR_TRUE;
+    gPlaylistsource->UpdateObservers();
   }
 }
 
@@ -278,25 +278,36 @@ MyQueryCallback::MyTimerCallback()
 
 // Playlistsource
 NS_IMPL_ISUPPORTS2(sbPlaylistsource, sbIPlaylistsource, nsIRDFDataSource)
+
+sbPlaylistsource*
+sbPlaylistsource::GetSingleton()
+{
+  if (gPlaylistsource) {
+    NS_ADDREF(gPlaylistsource);
+    return gPlaylistsource;
+  }
+
+  NS_NEWXPCOM(gPlaylistsource, sbPlaylistsource);
+  if (!gPlaylistsource)
+      return nsnull;
+ 
+  NS_ADDREF(gPlaylistsource);
+  nsresult rv = gPlaylistsource->Init();
+  if (NS_FAILED(rv)) {
+    NS_ERROR("sbPlaylistsource::Init failed!");
+    NS_RELEASE(gPlaylistsource);
+    return nsnull;
+  }
+  return gPlaylistsource;
+}
+
 //-----------------------------------------------------------------------------
 sbPlaylistsource::sbPlaylistsource() :
   g_pMonitor(nsnull),
   g_ActiveQueryCount(0),
-  sRefCnt(0),
   g_NeedUpdate(false)
 {
   LOG(("sbPlaylistsource::sbPlaylistsource"));
-
-  NS_ASSERTION(!gPlaylistPlaylistsource,
-               "Playlistsource initialized more than once!");
-
-  if (!g_pMonitor)
-    g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
-
-  NS_ASSERTION(g_pMonitor, "sbPlaylistsource.g_pMonitor failed");
-
-  nsresult rv = Init();
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Init failed!");
 }
 
 //-----------------------------------------------------------------------------
@@ -304,13 +315,79 @@ sbPlaylistsource::~sbPlaylistsource()
 {
   LOG(("sbPlaylistsource::~sbPlaylistsource"));
 
-  nsresult rv = DeInit();
-  NS_ASSERTION(NS_SUCCEEDED(rv), "DeInit failed!");
-
   if (g_pMonitor) {
     nsAutoMonitor::DestroyMonitor(g_pMonitor);
     g_pMonitor = nsnull;
   }
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::Init()
+{
+  LOG(("sbPlaylistsource::Init"));
+
+  METHOD_SHORTCIRCUIT;
+
+  g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
+  NS_ENSURE_TRUE(g_pMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  // Make the shared query
+  m_SharedQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
+  NS_ENSURE_TRUE(m_SharedQuery, NS_ERROR_FAILURE);
+
+  nsresult rv;
+  rv = m_SharedQuery->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the string bundle for our strings
+  nsCOMPtr<nsIStringBundleService> sbs =
+    do_GetService("@mozilla.org/intl/stringbundle;1");
+  NS_ENSURE_TRUE(sbs, NS_ERROR_FAILURE);
+
+  rv = sbs->CreateBundle("chrome://songbird/locale/songbird.properties",
+                          getter_AddRefs(m_StringBundle));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sRDFService = do_GetService("@mozilla.org/rdf/rdf-service;1");
+  NS_ENSURE_TRUE(sRDFService, NS_ERROR_FAILURE);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING("NC:Playlist"),
+                                       getter_AddRefs(kNC_Playlist));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI NS_L("child")),
+                                getter_AddRefs(kNC_child));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI NS_L("pulse")),
+                                getter_AddRefs(kNC_pulse));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("instanceOf")),
+                                getter_AddRefs(kRDF_InstanceOf));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("type")),
+                                getter_AddRefs(kRDF_type));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("nextVal")),
+                                getter_AddRefs(kRDF_nextVal));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("Seq")),
+                                getter_AddRefs(kRDF_Seq));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetLiteral(NS_LITERAL_STRING("PR_TRUE").get(),
+                               getter_AddRefs(kLiteralTrue));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sRDFService->GetLiteral(NS_LITERAL_STRING("PR_FALSE").get(),
+                               getter_AddRefs(kLiteralFalse));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1425,86 +1502,6 @@ sbPlaylistsource::UpdateObservers()
     }
   }
 
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbPlaylistsource::Init()
-{
-  LOG(("sbPlaylistsource::Init"));
-  NS_ENSURE_TRUE(sRefCnt == 0, NS_ERROR_ALREADY_INITIALIZED);
-
-  METHOD_SHORTCIRCUIT;
-
-  // Make the shared query
-  m_SharedQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
-  NS_ENSURE_TRUE(m_SharedQuery, NS_ERROR_FAILURE);
-
-  nsresult rv;
-  rv = m_SharedQuery->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the string bundle for our strings
-  nsCOMPtr<nsIStringBundleService> sbs =
-    do_GetService("@mozilla.org/intl/stringbundle;1");
-  NS_ENSURE_TRUE(sbs, NS_ERROR_FAILURE);
-
-  rv = sbs->CreateBundle("chrome://songbird/locale/songbird.properties",
-                          getter_AddRefs(m_StringBundle));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sRDFService = do_GetService("@mozilla.org/rdf/rdf-service;1");
-  NS_ENSURE_TRUE(sRDFService, NS_ERROR_FAILURE);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING("NC:Playlist"),
-                                       getter_AddRefs(kNC_Playlist));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI NS_L("child")),
-                                getter_AddRefs(kNC_child));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(NC_NAMESPACE_URI NS_L("pulse")),
-                                getter_AddRefs(kNC_pulse));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("instanceOf")),
-                                getter_AddRefs(kRDF_InstanceOf));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("type")),
-                                getter_AddRefs(kRDF_type));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("nextVal")),
-                                getter_AddRefs(kRDF_nextVal));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetUnicodeResource(NS_LITERAL_STRING(RDF_NAMESPACE_URI NS_L("Seq")),
-                                getter_AddRefs(kRDF_Seq));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetLiteral(NS_LITERAL_STRING("PR_TRUE").get(),
-                               getter_AddRefs(kLiteralTrue));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sRDFService->GetLiteral(NS_LITERAL_STRING("PR_FALSE").get(),
-                               getter_AddRefs(kLiteralFalse));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  gPlaylistPlaylistsource = this;
-  sRefCnt++;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbPlaylistsource::DeInit()
-{
-  LOG(("sbPlaylistsource::DeInit"));
-  NS_ENSURE_TRUE(sRefCnt == 1, NS_ERROR_UNEXPECTED);
-  METHOD_SHORTCIRCUIT;
-  gPlaylistPlaylistsource = nsnull;
-  sRefCnt--;
   return NS_OK;
 }
 
