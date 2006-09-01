@@ -175,13 +175,65 @@ function binaryToHex(input)
   return result;
 }
 
+// This functionality should be encapsulated into its own xbl.
+function NumItemsPoll()
+{
+  try
+  {
+    // Display the number of items in the currently viewed playlist.
+    var tree_ref = "";
+    var display_string = "";
+    // thePlaylistTree is non-null when a playlist is showing.
+    if ( thePlaylistTree )
+    {
+      tree_ref = thePlaylistTree.getAttribute( "ref" );
+    }
+    else if ( theWebPlaylistQuery )
+    {
+      // If there is a web playlist query, then we can pop the webplaylist.
+      var mediafound = "Media Found"; 
+      try {
+        mediafound = theSongbirdStrings.getString("faceplate.mediafound");
+      } catch(e) { /* ignore error, we have a default string*/ }
+      var pct = parseInt( SBDataGetIntValue( "webplaylist.current" ) * 100 / SBDataGetIntValue( "webplaylist.total" ) );
+      if ( pct < 100 )
+      {
+        display_string = mediafound + " " + pct + "%";
+      }
+      else
+      {
+        tree_ref = theWebPlaylist.ref;
+      }
+    }
+    
+    if ( tree_ref.length )
+    {
+      var rows = Poll.getRefRowCount( tree_ref );
+      if ( rows > 0 )
+      {
+        var items = "items";
+        try {
+          items = theSongbirdStrings.getString("faceplate.items");
+        } catch(e) { /* ignore error, we have a default string*/ }
+        display_string = rows + " " + items;
+      }
+    }
+    
+    NumPlaylistItemsRemote.stringValue = display_string;
+  }
+  catch ( err )
+  {
+    alert( "PFU - " + err );
+  }
+}    
 
 //
-// Core Wrapper Initialization (in XUL, this must happen after the entire page loads). 
+// Mainwin Initialization
 //
 var Poll = null;
 var theWebPlaylist = null;
 var theWebPlaylistQuery = null;
+var NumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 function SBInitialize()
 {
   dump("SBInitialize *** \n");
@@ -256,7 +308,7 @@ function SBInitialize()
     // hack, to let play buttons find the visible playlist if needed
     document.__CURRENTWEBPLAYLIST__ = theWebPlaylist;
     theWebPlaylist.addEventListener( "playlist-play", onPlaylistPlay, true );
-    theWebPlaylist.addEventListener( "playlist-noplaylist", function () { document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/main_pane.xul?library' ); }, true );
+//    theWebPlaylist.addEventListener( "playlist-noplaylist", onPlaylistNoPlaylist, true );
     
 // no!    theWebPlaylist.addEventListener( "playlist-edit", onPlaylistEdit, true );
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
@@ -264,59 +316,8 @@ function SBInitialize()
     
     // Poll the playlist source every 500ms to drive the display update (STOOOOPID!)
     Poll = new sbIPlaylistsource();
-    var NumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
     NumPlaylistItemsRemote.stringValue = "";
-    function PFU()
-    {
-      try
-      {
-        // Display the number of items in the currently viewed playlist.
-        var tree_ref = "";
-        var display_string = "";
-        // thePlaylistTree is non-null when a playlist is showing.
-        if ( thePlaylistTree )
-        {
-          tree_ref = thePlaylistTree.getAttribute( "ref" );
-        }
-        else if ( theWebPlaylistQuery )
-        {
-          // If there is a web playlist query, then we can pop the webplaylist.
-          var mediafound = "Media Found"; 
-          try {
-            mediafound = theSongbirdStrings.getString("faceplate.mediafound");
-          } catch(e) { /* ignore error, we have a default string*/ }
-          var pct = parseInt( SBDataGetIntValue( "webplaylist.current" ) * 100 / SBDataGetIntValue( "webplaylist.total" ) );
-          if ( pct < 100 )
-          {
-            display_string = mediafound + " " + pct + "%";
-          }
-          else
-          {
-            tree_ref = theWebPlaylist.ref;
-          }
-        }
-        
-        if ( tree_ref.length )
-        {
-          var rows = Poll.getRefRowCount( tree_ref );
-          if ( rows > 0 )
-          {
-            var items = "items";
-            try {
-              items = theSongbirdStrings.getString("faceplate.items");
-            } catch(e) { /* ignore error, we have a default string*/ }
-            display_string = rows + " " + items;
-          }
-        }
-        
-        NumPlaylistItemsRemote.stringValue = display_string;
-      }
-      catch ( err )
-      {
-        alert( "PFU - " + err );
-      }
-    }    
-    setInterval( PFU, 500 );
+    setInterval( NumItemsPoll, 500 );
     
 //    
 // Let's test loading all sorts of random urls as if they were playlists!    
@@ -1627,7 +1628,7 @@ function onMainPaneLoad()
           thePlaylistTree.addEventListener( "playlist-editor", onPlaylistEditor, true );
           thePlaylistTree.addEventListener( "playlist-play", onPlaylistPlay, true );
           thePlaylistTree.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
-          thePlaylistTree.addEventListener( "playlist-noplaylist", function () { document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/main_pane.xul?library' ); }, true );
+          thePlaylistTree.addEventListener( "playlist-noplaylist", onPlaylistNoPlaylist, true );
           thePlaylistTree.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
             
           // Remember some values
@@ -1879,6 +1880,11 @@ function onPlaylistBurnToCD( evt )
 	}
 	
     onAddToCDBurn( playlist.guid, playlist.table, filterCol, filterVals.length, filterVals );
+}
+
+function onPlaylistNoPlaylist() 
+{ 
+  document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/main_pane.xul?library' ); 
 }
 
 function onPlaylistDblClick( evt )

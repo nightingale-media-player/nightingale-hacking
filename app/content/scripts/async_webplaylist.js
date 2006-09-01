@@ -41,6 +41,7 @@ try
     if ( href_loop )
     {
       href_loop.cancel();
+      href_loop = null;
     }
   }
   function AsyncWebDocument( theDocument )
@@ -135,6 +136,9 @@ try
         SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
         SBDataSetIntValue( "webplaylist.total", this.a_array.length );
         SBDataSetIntValue( "webplaylist.current", this.a_array.length );
+        
+        // Release the global reference
+        href_loop = null;
       },
       20, // 20 steps per interval
       0 // No pause per interval (each UI frame)
