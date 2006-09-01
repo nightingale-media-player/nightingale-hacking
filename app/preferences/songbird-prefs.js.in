@@ -2,11 +2,7 @@
 
 // DON'T CHANGE THIS.  This is not "bones".
 pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
-
-// This SHOULD remove the titlebar from the video window on the mac...
-// But defaultChromeFeatures is only in trunk at the moment.
-// If needed, consider patching nsDefaultCLH.
-//pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
+pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
 
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
