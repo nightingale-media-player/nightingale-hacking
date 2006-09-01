@@ -58,7 +58,7 @@ class MetadataHandlerID3Exception
 private:
 //  MetadataHandlerID3Exception() {}
 public:
-  MetadataHandlerID3Exception( PRUint64 seek = -1, PRUint64 buf = -1, PRUint64 size = -1 ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
+  MetadataHandlerID3Exception( PRUint64 seek = LL_MAXUINT, PRUint64 buf = LL_MAXUINT, PRUint64 size = LL_MAXUINT ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
   PRUint64 m_Seek, m_Buf, m_Size;
 };
 
@@ -322,16 +322,16 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
 {
   nsCOMPtr<sbIMetadataChannel> mc( do_QueryInterface(channel) ) ;
 
-  // If the channel thinks it's done, then the handler must be done, too.
-  PRBool completed = PR_FALSE;
-  mc->GetCompleted( &completed );
-  if ( completed )
-    m_Completed = PR_TRUE;
-
   if ( mc.get() )
   {
     try
     {
+      // If the channel thinks it's done, then the handler must be done, too.
+      PRBool completed = PR_FALSE;
+      mc->GetCompleted( &completed );
+      if ( completed )
+        m_Completed = PR_TRUE;
+
       if ( !m_Completed )
       {
         ID3_Tag  tag;
@@ -365,7 +365,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
     catch ( const MetadataHandlerID3Exception err )
     {
       // If it's a tiny file, it's probably a 404 error
-      if ( err.m_Seek == -1 || err.m_Seek > ( err.m_Size - 1024 ) )
+      if ( err.m_Seek == LL_MAXUINT || err.m_Buf == LL_MAXUINT || err.m_Size == LL_MAXUINT || err.m_Seek > ( err.m_Size - 1024 ) )
       {
         // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
         m_Completed = PR_TRUE;
@@ -494,9 +494,10 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     }
     catch (MetadataHandlerID3Exception)
     {
-      // Oops, failed.  That's not good.  Assume it's a total failure and don't try the channel.
+      // Oops, failed in the file reader.  That's not good.  
+      // Assume it's a total failure and don't waste time trying the channel.
       m_Completed = PR_TRUE; 
-//      return NS_OK;
+      return NS_OK;
     }
 
     if ( nTagSize > 0 )

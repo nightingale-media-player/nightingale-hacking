@@ -56,7 +56,7 @@ NS_IMPL_ISUPPORTS1(sbMetadataHandlerOGG, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerOGG::sbMetadataHandlerOGG()
 {
-  m_Completed = false;
+  m_Completed = PR_FALSE;
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -109,18 +109,18 @@ NS_IMETHODIMP sbMetadataHandlerOGG::OnChannelData( nsISupports *channel )
       if ( !m_Completed )
       {
         ParseChannel();
-        m_Completed = true;
+        m_Completed = PR_TRUE;
       }
     }
     catch ( const MetadataHandlerOGGException err )
     {
-      PRBool completed = false;
+      PRBool completed = PR_FALSE;
       mc->GetCompleted( &completed );
       // If it's a tiny file, it's probably a 404 error
       if ( completed || ( err.m_Seek > ( err.m_Size - 1024 ) ) )
       {
         // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
-        m_Completed = true;
+        m_Completed = PR_TRUE;
       }
     }
   }
@@ -166,8 +166,8 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  // If we fail, we're complete.  If we're async, we'll set it false down below.
-  m_Completed = true; 
+  // If we fail, we're complete.  If we're async, we'll set it PR_FALSE down below.
+  m_Completed = PR_TRUE; 
 
   *_retval = 0;  // Zero is failure
   if(!m_Channel)
@@ -187,7 +187,7 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
 
   // This read is always asynchronous
   *_retval = -1;
-  m_Completed = false; 
+  m_Completed = PR_FALSE; 
 
   rv = NS_OK;
 
@@ -292,7 +292,7 @@ void sbMetadataHandlerOGG::ParseChannel()
         if ( comment_string.Length() )
         {
           // Their syntax is KEY=value;
-          PRInt32 split = comment_string.Find( "=", false );
+          PRInt32 split = comment_string.Find( "=", PR_FALSE );
           if ( split != -1 )
           {
             // Split out key and value
@@ -355,7 +355,7 @@ sbMetadataHandlerOGG::sbOGGHeader sbMetadataHandlerOGG::ParseHeader()
 {
   sbOGGHeader retval;
 
-  PRBool failed = false;
+  PRBool failed = PR_FALSE;
   char test[] = { 'O', 'g', 'g', 'S' };
   char test_char;
   for ( int i = 0; i < sizeof(test); i++ )
@@ -363,7 +363,7 @@ sbMetadataHandlerOGG::sbOGGHeader sbMetadataHandlerOGG::ParseHeader()
     m_ChannelHandler->ReadChar( &test_char );
     if ( test_char != test[ i ] )
     {
-      failed = true;
+      failed = PR_TRUE;
       break;
     }
   }
