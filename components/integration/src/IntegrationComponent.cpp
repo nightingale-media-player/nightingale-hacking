@@ -33,17 +33,24 @@
 
 #include "WindowDragger.h"
 #include "WindowCloak.h"
+
+#ifdef XP_WIN
 #include "WindowMinMax.h"
 #include "WindowResizeHook.h"
 #include "WindowRegion.h"
 #include "GlobalHotkeys.h"
+#endif
+
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowCloak)
+
+#ifdef XP_WIN
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
+#endif
 
 static nsModuleComponentInfo sbIntegration[] =
 {
@@ -61,6 +68,7 @@ static nsModuleComponentInfo sbIntegration[] =
     CWindowCloakConstructor
   },
 
+#ifdef XP_WIN
   {
     SONGBIRD_WINDOWMINMAX_CLASSNAME,
     SONGBIRD_WINDOWMINMAX_CID,
@@ -88,7 +96,7 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_GLOBALHOTKEYS_CONTRACTID,
     CGlobalHotkeysConstructor
   },
-
+#endif
 };
 
 NS_IMPL_NSGETMODULE("SongbirdIntegrationComponent", sbIntegration)

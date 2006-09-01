@@ -1,16 +1,15 @@
-#
 # BEGIN SONGBIRD GPL
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright 2006 POTI, Inc.
+# Copyright© 2006 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the GPL).
+# GNU General Public License Version 2 (the ìGPLî).
 # 
 # Software distributed under the License is distributed 
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an ìAS ISî basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -29,6 +28,63 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbWindowCloak.js
+
+ifdef DEBUG
+target_name = sbIntegration_d$(DLL_SUFFIX)
+else
+target_name = sbIntegration$(DLL_SUFFIX)
+endif
+
+
+CPP_INCLUDES = $(DEPTH)/components/integration/public \
+               $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/devices/manager/public \
+               $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/cd/public \
+               $(DEPTH)/components/devices/usb_mass_storage/public \
+               $(COMPONENTS_DIR)/integration/src/win32 \
+               $(COMPONENTS_DIR)/devices/base/src \
+               $(COMPONENTS_DIR)/devices/cd/src \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/gfx \
+               $(MOZSDK_INCLUDE_DIR)/accessibility \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/xultmpl \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)
+
+DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4  \
+                            plc4  \
+                            xpcom \
+                            $(NULL)
+
+CPP_EXTRA_FLAGS= -isysroot /Developer/SDKs/MacOSX10.4u.sdk
+DYNAMIC_LIB_EXTRA_FLAGS= -framework Carbon -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk
+
+DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
+DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+
+CPP_SRCS = ../WindowDragger.cpp \
+           ../NativeWindowFromNode.cpp \
+           ../WindowCloak.cpp \
+           ../IntegrationComponent.cpp \
+           $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(target_name)
 
 include $(topsrcdir)/build/rules.mk
+

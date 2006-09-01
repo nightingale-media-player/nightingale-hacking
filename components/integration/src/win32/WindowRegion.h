@@ -46,7 +46,7 @@ namespace std
 #endif
 
 #include "IWindowRegion.h"
-#include "NativeWindowFromNode.h"
+#include "../NativeWindowFromNode.h"
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWREGION_CONTRACTID                  \

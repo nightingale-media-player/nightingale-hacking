@@ -45,7 +45,7 @@ namespace std
 };
 #endif
 
-#ifdef XP_WIN
+#ifdef WIN32
 #include <windows.h>
 #endif
 
@@ -53,6 +53,7 @@ namespace std
 
 #include "nsCOMPtr.h"
 class sbIDataRemote;
+
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWDRAGGER_CONTRACTID                 \
@@ -77,6 +78,8 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIWINDOWDRAGGER
   
+
+#ifdef XP_WIN
   LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   
 protected:
@@ -99,7 +102,10 @@ protected:
   nsCOMPtr<sbIDataRemote> m_pauseScan;
 
   POINT m_relativeClickPos;
+#endif // XP_WIN
+
 };
+
 
 #endif // __WINDOW_DRAGGER_H__
 

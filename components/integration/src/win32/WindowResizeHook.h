@@ -46,7 +46,7 @@ namespace std
 #endif
 
 #include "IWindowResizeHook.h"
-#include "NativeWindowFromNode.h"
+#include "../NativeWindowFromNode.h"
 #include <list>
 
 // DEFINES ====================================================================

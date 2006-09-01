@@ -59,19 +59,39 @@ NS_IMETHODIMP CWindowCloak::Cloak( nsISupports *window )
   if (!wnd) return NS_OK;  // Fail silent
   if (findItem(wnd)) return NS_OK; // Fail silently.  Multiple cloaks are ok, no refcount.
   
-  NATIVEWINDOW oldparent = NULL;
   
 #ifdef XP_WIN
+  NATIVEWINDOW oldparent = NULL;	
   // Detach window from group
   oldparent = SetParent(wnd, NULL);
   // Hide it
   ShowWindow(wnd, SW_HIDE);
 #endif
 
+#ifdef XP_MACOSX
+
+  // Can't just use HideWindow as the playback plugins don't properly instantiate unless visible
+  // ::HideWindow(wnd);
+  
+  // Can use transitions in debug mode, but for some reason not in release 
+  // ::TransitionWindow(wnd, kWindowFadeTransitionEffect, kWindowHideTransitionAction,  NULL);
+
+  // So instead, just throw it off screen
+  Rect bounds;
+  ::GetWindowBounds(wnd, kWindowGlobalPortRgn, &bounds);
+  ::MoveWindow(wnd, -32000, -32000, false);
+#endif
+
   // Remember it
   WindowCloakEntry *wce = new WindowCloakEntry();
   wce->m_hwnd = wnd;
+#ifdef XP_WIN
   wce->m_oldparent = oldparent;
+#endif
+#ifdef XP_MACOSX
+  wce->m_oldX = bounds.left;
+  wce->m_oldY = bounds.top;
+#endif
   m_items.push_back(wce);
 
   return NS_OK;
@@ -104,6 +124,9 @@ NS_IMETHODIMP CWindowCloak::Uncloak(nsISupports *window )
   // restore window
   SetParent(wce->m_hwnd, wce->m_oldparent);
   ShowWindow(wce->m_hwnd, SW_SHOW);
+#endif
+#ifdef XP_MACOSX
+  ::MoveWindow(wce->m_hwnd, wce->m_oldX, wce->m_oldY, true);
 #endif
   
   m_items.remove(wce);

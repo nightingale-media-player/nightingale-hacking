@@ -33,7 +33,9 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js
 
+
 SUBDIRS = $(SB_PLATFORM)
+
  
 include $(topsrcdir)/build/rules.mk
 

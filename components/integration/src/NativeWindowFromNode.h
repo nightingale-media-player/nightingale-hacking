@@ -37,10 +37,15 @@
 #include <dbt.h>
 #define NATIVEWINDOW HWND
 #define NATIVEDEVICENOTIFY HDEVNOTIFY 
+#elif defined(XP_MACOSX)
+#include <Carbon/Carbon.h>
+#define NATIVEWINDOW WindowPtr
 #else
 #define NATIVEWINDOW void*
 #define NATIVEDEVICENOTIFY void* 
 #endif
+
+
 
 // INCLUDES ===================================================================
 

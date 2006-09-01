@@ -380,6 +380,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\NativeWindowFromNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\NativeWindowFromNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\WindowCloak.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\WindowCloak.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\WindowDragger.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\WindowDragger.h"
+				>
+			</File>			
+			
+			<File
 				RelativePath=".\src\sbHotkeyActions.js"
 				>
 				<FileConfiguration
@@ -426,30 +451,6 @@
 				</File>
 				<File
 					RelativePath=".\src\win32\MultiMonitor.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\win32\NativeWindowFromNode.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\win32\NativeWindowFromNode.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\win32\WindowCloak.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\win32\WindowCloak.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\win32\WindowDragger.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\win32\WindowDragger.h"
 					>
 				</File>
 				<File

@@ -37,15 +37,26 @@
  // Oh, yeah, and, this code is totally not portable. spank me.
 
 #include "WindowDragger.h"
-#include "MultiMonitor.h"
-#include "sbIDataRemote.h"
-#include <math.h>
+
+#ifdef XP_MACOSX
+#include <Carbon/Carbon.h>
+#include "nsIWidget.h"
+#include "nsIToolkit.h"
+#endif
+
 
 #include "nscore.h"
 #include "nspr.h"
 #include "nsXPCOM.h"
 #include "nsComponentManagerUtils.h"  // THIS for "do_CreateInstance" ??
 #include "nsString.h"
+
+#include <math.h>
+
+#ifdef XP_WIN
+#include "MultiMonitor.h"
+#include "sbIDataRemote.h"
+#endif
 
 
 // CLASSES ====================================================================
@@ -71,12 +82,14 @@ NS_IMPL_ISUPPORTS1(CWindowDragger, sbIWindowDragger)
 
 #define WINDOWDRAGGER_WNDCLASS NS_L("sbWindowDraggerWindow")
 
+#ifdef XP_WIN
 //-----------------------------------------------------------------------------
 static LRESULT CALLBACK WindowDraggerProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   CWindowDragger *_this = reinterpret_cast<CWindowDragger *>(GetWindowLong(hWnd, GWL_USERDATA));
   return _this->WndProc(hWnd, uMsg, wParam, lParam);
 } // WindowDraggerProc
+
 
 //-----------------------------------------------------------------------------
 CWindowDragger::CWindowDragger()
@@ -277,3 +290,43 @@ void CWindowDragger::DecPause()
   }
 }
 
+#endif  // END OF WIN32 VERSION
+
+
+
+
+#ifdef XP_MACOSX
+
+//-----------------------------------------------------------------------------
+CWindowDragger::CWindowDragger()
+{
+} // ctor
+
+//-----------------------------------------------------------------------------
+CWindowDragger::~CWindowDragger()
+{
+} // dtor
+
+//-----------------------------------------------------------------------------
+// Start the window dragging.  
+// Notes:
+//      - Ends automatically on mouseup
+//      - dockdistance is ignored for now
+NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance)
+{
+  Point click;
+  WindowPtr     whichWindow;
+
+  // Find selected window using the current mouse location (better way?)
+  GetMouse(&click);
+  ::LocalToGlobal(&click);
+  ::FindWindow(click, &whichWindow);
+	
+  // Tell the OS to start dragging the window
+  Rect screenRect;
+  ::GetRegionBounds(::GetGrayRgn(), &screenRect);
+  ::DragWindow(whichWindow, click, &screenRect);
+
+  return NS_OK;
+} // BeginWindowDrag
+#endif  // END OS X VERSION

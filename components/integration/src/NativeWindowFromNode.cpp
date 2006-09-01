@@ -36,6 +36,11 @@
 #include "nsIAccessNode.h"
 #include "nsIAccessible.h"
 #include "nsIDOMNode.h"
+
+#ifdef XP_MACOSX
+#include "nsIWidget.h"
+#endif
+
 #include "nsIAccessibilityService.h"
 #include <xpcom/nsCOMPtr.h>
 #include "nsIServiceManager.h"
@@ -43,8 +48,7 @@
 //-----------------------------------------------------------------------------
 NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 {
-#ifdef XP_WIN
-  HWND wnd = NULL;
+  NATIVEWINDOW wnd = NULL;
   
   nsIDOMNode *node = NULL;
   if (window) window->QueryInterface(NS_GET_IID(nsIDOMNode), (void **)&node);
@@ -76,13 +80,20 @@ NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
     return NULL;
   }
 
-  accdocument->GetWindowHandle((void **)&wnd);
-  
-  while (GetWindowLong(wnd, GWL_STYLE) & WS_CHILD) wnd = GetParent(wnd);
 
-  return wnd;
-#else
-  return NULL;
+#ifdef XP_WIN
+  accdocument->GetWindowHandle((void **)&wnd);
+  while (GetWindowLong(wnd, GWL_STYLE) & WS_CHILD) wnd = GetParent(wnd);
+#elif defined(XP_MACOSX)
+  // accdocument->GetWindowHandle will give us a void* to the mac nsWindow widget.
+  void *temp = NULL;
+  accdocument->GetWindowHandle(&temp);
+  nsIWidget *windowWidget = reinterpret_cast<nsIWidget*>(temp);
+
+  // Once we have the nsWindow, we can request the actual window pointer
+  wnd = reinterpret_cast<NATIVEWINDOW>(windowWidget->GetNativeData(NS_NATIVE_DISPLAY)); 
 #endif
+
+  return wnd; 
 } // NativeWindowFromNode::get
 

@@ -32,7 +32,7 @@
   // Yet another shameful hack from lone
 #include "WindowMinMax.h"
 #include "WindowMinMaxSubclass.h"
-#include "NativeWindowFromNode.h"
+#include "../NativeWindowFromNode.h"
 
 // CLASSES ====================================================================
 //=============================================================================

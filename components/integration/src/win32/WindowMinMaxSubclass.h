@@ -47,7 +47,7 @@ namespace std
 #endif
 */
 
-#include "NativeWindowFromNode.h"
+#include "../NativeWindowFromNode.h"
 
 class nsISupports;
 class sbIWindowMinMaxCallback;
