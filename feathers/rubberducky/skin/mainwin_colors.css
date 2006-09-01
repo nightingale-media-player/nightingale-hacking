@@ -580,26 +580,23 @@ button[disabled="true"]:hover
   -moz-border-left-colors: #000 !important;
   -moz-border-bottom-colors: #000 !important;
   -moz-border-right-colors: #000 !important;
-  background-color: #333 !important;
-  color: #99A195 !important;
+  background-color: #000 !important;
+  color: #333 !important;
 }
 
 button[disabled="false"]
 {
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
+  
   background-color: #333 !important;
   color: #99A195 !important;  
 }
 
 button
 {
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
+  -moz-border-top-colors: #333 !important;
+  -moz-border-left-colors: #333 !important;
+  -moz-border-bottom-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
   background-color: #333 !important;
   color: #99A195 !important;  
 }
@@ -614,6 +611,10 @@ button:active
 
 button:hover
 {
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
   color: #FFF !important;  
 }
 
