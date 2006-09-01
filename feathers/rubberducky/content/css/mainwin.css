@@ -651,6 +651,12 @@ contextual menu.
   height: 25px !important;  
 }
 
+button
+{
+	-moz-border-radius: 3px !important;
+	border: 1px solid !important;
+}
+
 /* Toolbar: Play Button */
 button#library_cmd_play
 {
