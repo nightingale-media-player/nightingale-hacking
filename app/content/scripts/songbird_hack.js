@@ -208,7 +208,7 @@ function NumItemsPoll()
     
     if ( tree_ref.length )
     {
-      var rows = Poll.getRefRowCount( tree_ref );
+      var rows = thePollPlaylistService.getRefRowCount( tree_ref );
       if ( rows > 0 )
       {
         var items = "items";
@@ -219,7 +219,7 @@ function NumItemsPoll()
       }
     }
     
-    NumPlaylistItemsRemote.stringValue = display_string;
+    theNumPlaylistItemsRemote.stringValue = display_string;
   }
   catch ( err )
   {
@@ -230,10 +230,10 @@ function NumItemsPoll()
 //
 // Mainwin Initialization
 //
-var Poll = null;
+var thePollPlaylistService = null;
 var theWebPlaylist = null;
 var theWebPlaylistQuery = null;
-var NumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
+var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 function SBInitialize()
 {
   dump("SBInitialize *** \n");
@@ -314,9 +314,9 @@ function SBInitialize()
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
     theWebPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
     
-    // Poll the playlist source every 500ms to drive the display update (STOOOOPID!)
-    Poll = new sbIPlaylistsource();
-    NumPlaylistItemsRemote.stringValue = "";
+    // Poll the playlist source every 500ms to drive the display update (STOOOOPID! This should be encapsulated)
+    thePollPlaylistService = new sbIPlaylistsource();
+    theNumPlaylistItemsRemote.stringValue = "";
     setInterval( NumItemsPoll, 500 );
     
 //    
