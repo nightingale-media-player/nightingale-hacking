@@ -43,7 +43,9 @@
 #include <unicharutil/nsUnicharUtils.h>
 #include <xpcom/nsEscape.h>
 
+#ifdef XP_WIN
 #include <wmsdk.h>
+#endif
 
 // DEFINES ====================================================================
 
@@ -169,27 +171,21 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Vote(const nsAString & url, PRInt32 *_retval
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerWMA::Read(PRInt32 *_retval)
 {
-  nsresult nRet = NS_ERROR_UNEXPECTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  m_Completed = true; // We're never asynchronous.
 
   *_retval = 0;
   if(!m_Channel)
-  {
-    *_retval = -1;
     return NS_ERROR_FAILURE;
-  }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
-  m_Values->Clear();
-  if(!m_Values.get())
-  {
-    *_retval = -1;
-    return NS_ERROR_FAILURE;
-  }
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1", &rv);
+  if(NS_FAILED(rv)) return rv;
 
   nsCOMPtr<nsIURI> pURI;
-  nRet = m_Channel->GetURI(getter_AddRefs(pURI));
-  if(NS_FAILED(nRet)) return nRet;
+  rv = m_Channel->GetURI(getter_AddRefs(pURI));
+  if(NS_FAILED(rv)) return rv;
 
   nsCString cstrScheme, cstrPath;
   pURI->GetScheme(cstrScheme);
@@ -212,7 +208,6 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Read(PRInt32 *_retval)
       if( (*itBegin) == '/') (*itBegin) = '\\';
       itBegin++;
     }
-#endif
 
     // ?? Local file
     char *u8url = const_cast<char *>(NS_UnescapeURL(cstrPath).get());
@@ -250,14 +245,19 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Read(PRInt32 *_retval)
     }
 
     m_pReader->Close();
-    m_Completed = true;
+#endif
+
+    // Setup retval with the number of values read
+    PRInt32 num_values;
+    m_Values->GetNumValues(&num_values);
+    *_retval = num_values;
   }
   else
   {
     // ?? Remote file
   }
 
-  return nRet;
+  return rv;
 } //Read
 
 //-----------------------------------------------------------------------------

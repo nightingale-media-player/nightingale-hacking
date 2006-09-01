@@ -243,7 +243,10 @@ void sbMetadataHandlerMP4::callback( const char *atom_path, const char *value_st
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
 {
-  nsresult nRet = NS_ERROR_UNEXPECTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // This handler is always synchronous
+  m_Completed = true; 
 
   *_retval = 0; // Zero is failure
   if(!m_Channel)
@@ -252,16 +255,12 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
   }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
-  m_Values->Clear();
-  if(!m_Values.get())
-  {
-    return NS_ERROR_FAILURE;
-  }
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1", &rv);
+  if(NS_FAILED(rv)) return rv;
 
   nsCOMPtr<nsIURI> pURI;
-  nRet = m_Channel->GetURI(getter_AddRefs(pURI));
-  if(NS_FAILED(nRet)) return nRet;
+  rv = m_Channel->GetURI(getter_AddRefs(pURI));
+  if(NS_FAILED(rv)) return rv;
 
   nsCString cstrScheme, cstrPath;
   pURI->GetScheme(cstrScheme);
@@ -306,9 +305,6 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
         m_Values->SetValue(key, value, 0);
       }
     }
-    m_Completed = true;
-
-    // This handler is always synchronous
 
     // Setup retval with the number of values read
     PRInt32 num_values;
@@ -321,7 +317,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
     // We need better metadata parsing code, however.
   }
 
-  return nRet;
+  return rv;
 } //Read
 
 //-----------------------------------------------------------------------------

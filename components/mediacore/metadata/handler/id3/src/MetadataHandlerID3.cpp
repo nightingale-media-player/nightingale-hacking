@@ -56,9 +56,9 @@
 class MetadataHandlerID3Exception
 {
 private:
-  MetadataHandlerID3Exception() {}
+//  MetadataHandlerID3Exception() {}
 public:
-  MetadataHandlerID3Exception( PRUint64 seek, PRUint64 buf, PRUint64 size ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
+  MetadataHandlerID3Exception( PRUint64 seek = -1, PRUint64 buf = -1, PRUint64 size = -1 ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
   PRUint64 m_Seek, m_Buf, m_Size;
 };
 
@@ -75,8 +75,8 @@ public:
   {
     setChannel( channel );
   };
-  virtual ~ID3_ChannelReader() { ; }
-  virtual void close() { if(m_Channel) m_Channel->Close(); }
+  virtual ~ID3_ChannelReader() { close(); }
+  virtual void close() { if(m_Channel) { m_Channel->Close(); m_Channel = nsnull; } }
 
   void setChannel(sbIMetadataChannel* channel)
   {
@@ -118,7 +118,9 @@ public:
   virtual pos_type getCur() 
   { 
     PRUint64 pos = 0;
-    m_Channel->GetPos( &pos );
+    nsresult rv = m_Channel->GetPos( &pos );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
     return (pos_type)pos;
   }
 
@@ -130,7 +132,9 @@ public:
   virtual pos_type getEnd()
   {
     PRUint64 size = 0;
-    m_Channel->GetSize( &size );
+    nsresult rv = m_Channel->GetSize( &size );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
     return (pos_type)size;
   }
 
@@ -162,30 +166,36 @@ class ID3_FileReader : public ID3_Reader
 {
   nsCOMPtr<nsIFile> m_File;
   nsCOMPtr<nsIInputStream> m_Stream;
+  nsCOMPtr<nsISeekableStream> m_Seek;
 protected:
 public:
-  explicit ID3_FileReader(nsACString & path)
+  explicit ID3_FileReader(nsACString & spec)
   {
-    if ( NS_SUCCEEDED( NS_GetFileFromURLSpec(path, getter_AddRefs(m_File)) ) )
-    {
-      nsresult rv;
-      m_Stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
-      NS_ASSERTION(NS_SUCCEEDED(rv), "ID3_FileReader::ctor, m_Stream failed to initialize.");
+    nsresult rv;
+    PRBool success = PR_FALSE;
+
+    rv = NS_GetFileFromURLSpec(spec, getter_AddRefs(m_File));
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
+
+    m_Stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
       
-      nsCOMPtr<nsIFileInputStream> fstream = do_QueryInterface(m_Stream, &rv);
-      NS_ASSERTION(NS_SUCCEEDED(rv), "ID3_FileReader::ctor, fstream failed to initialize.");
+    nsCOMPtr<nsIFileInputStream> fstream = do_QueryInterface(m_Stream, &rv);
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
 
-      if(NS_SUCCEEDED(rv))
-      {
-        rv = fstream->Init( m_File, PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "ID3_FileReader::ctor, fstream->Init failed.");
+    rv = fstream->Init( m_File, PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
 
-        this->setCur( 0 );  // Open it as a restartable channel
-      }
-    }
+    m_Seek = do_QueryInterface( m_Stream, &rv );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
   };
-  virtual ~ID3_FileReader() { ; }
-  virtual void close() { if(m_Stream) m_Stream->Close(); }
+  virtual ~ID3_FileReader() { close(); }
+  virtual void close() { if(m_Stream) { m_Stream->Close(); m_Stream = nsnull; } }
 
   virtual int_type peekChar() 
   { 
@@ -204,13 +214,12 @@ public:
   virtual size_type readChars(char buf[], size_type len)
   {
     PRUint32 count = 0;
-    if ( NS_FAILED( m_Stream->Read( buf, len, &count ) ) )
-    {
-      PRUint64 pos = getCur(), size = getEnd();
-      throw MetadataHandlerID3Exception( pos + len, size, size );
-    }
+    nsresult rv =  m_Stream->Read( buf, len, &count );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
     return count;
   }
+
   virtual size_type readChars(char_type buf[], size_type len)
   {
     return this->readChars(reinterpret_cast<char *>(buf), len);
@@ -218,14 +227,10 @@ public:
 
   virtual pos_type getCur() 
   { 
-    nsresult rv;
     PRInt64 pos = 0;
-    nsCOMPtr<nsISeekableStream> sstream = do_QueryInterface(m_Stream, &rv);
-    if (NS_SUCCEEDED(rv))
-    {
-      sstream->Tell( &pos );
-    }
-
+    nsresult rv = m_Seek->Tell( &pos );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
     return (pos_type)pos;
   }
 
@@ -237,7 +242,9 @@ public:
   virtual pos_type getEnd()
   {
     PRInt64 size = 0;
-    m_File->GetFileSize( &size );
+    nsresult rv = m_File->GetFileSize( &size );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
     return (pos_type)size;
   }
 
@@ -253,18 +260,10 @@ public:
 
   virtual pos_type setCur(pos_type pos)
   {
-    nsresult rv;
     PRInt64 pos64 = pos;
-
-    nsCOMPtr<nsISeekableStream> sstream = do_QueryInterface(m_Stream, &rv);
-    if (NS_SUCCEEDED(rv))
-    {
-      if ( NS_FAILED( sstream->Seek( nsISeekableStream::NS_SEEK_SET, pos64 ) ) )
-      {
-        PRUint64 cur = getCur(), size = getEnd();
-        throw MetadataHandlerID3Exception( pos, cur, size );
-      }
-    }
+    nsresult rv = m_Seek->Seek( nsISeekableStream::NS_SEEK_SET, pos64 );
+    if ( NS_FAILED(rv) )
+      throw MetadataHandlerID3Exception();
     return pos;
   }
 };
@@ -277,13 +276,13 @@ NS_IMPL_ISUPPORTS1(sbMetadataHandlerID3, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerID3::sbMetadataHandlerID3()
 {
-  m_Completed = false;
+  m_Completed = PR_FALSE;
 } //ctor
 
 //-----------------------------------------------------------------------------
 sbMetadataHandlerID3::~sbMetadataHandlerID3()
 {
-  m_Completed = true;
+  m_Completed = PR_TRUE;
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -323,6 +322,12 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
 {
   nsCOMPtr<sbIMetadataChannel> mc( do_QueryInterface(channel) ) ;
 
+  // If the channel thinks it's done, then the handler must be done, too.
+  PRBool completed = PR_FALSE;
+  mc->GetCompleted( &completed );
+  if ( completed )
+    m_Completed = PR_TRUE;
+
   if ( mc.get() )
   {
     try
@@ -360,21 +365,15 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
     catch ( const MetadataHandlerID3Exception err )
     {
       // If it's a tiny file, it's probably a 404 error
-      if ( err.m_Seek > ( err.m_Size - 1024 ) )
+      if ( err.m_Seek == -1 || err.m_Seek > ( err.m_Size - 1024 ) )
       {
         // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
-        m_Completed = true;
+        m_Completed = PR_TRUE;
       }
 
       // Otherwise, take another spin around and try again.
     }
   }
-
-  // If the channel thinks it's done, then the handler must be done, too.
-  PRBool completed = false;
-  mc->GetCompleted( &completed );
-  if ( completed )
-    m_Completed = true;
 
   return NS_OK;
 }
@@ -424,7 +423,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Vote(const nsAString &url, PRInt32 *_retval 
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 {
-  nsresult nRet = NS_ERROR_UNEXPECTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   // Zero is failure.
   *_retval = 0;
@@ -433,23 +432,23 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     return NS_ERROR_UNEXPECTED;
   }
 
+  // If we fail, we're complete.  If we're async, we'll set it PR_FALSE down below.
+  m_Completed = PR_TRUE; 
+
   if(!m_Channel)
   {
     return NS_ERROR_FAILURE;
   }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
-  if(!m_Values.get())
-  {
-    return NS_ERROR_FAILURE;
-  }
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1", &rv);
+  if(NS_FAILED(rv)) return rv;
 
   nsCOMPtr<nsIURI> pURI;
-  nRet = m_Channel->GetURI(getter_AddRefs(pURI));
-  if(NS_FAILED(nRet)) return nRet;
+  rv = m_Channel->GetURI(getter_AddRefs(pURI));
+  if(NS_FAILED(rv)) return rv;
 
-  PRBool async = true;
+  PRBool async = PR_TRUE;
 
   nsCString cstrScheme, cstrPath, cstrSpec;
   pURI->GetScheme(cstrScheme);
@@ -474,7 +473,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     if ( cstrPath.Find( NS_LITERAL_CSTRING(":\\") ) == 1 )
 #endif
     {
-      async = false;
+      async = PR_FALSE;
     }
   }
 
@@ -482,21 +481,24 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
   if ( !async )
   {
     ID3_Tag  tag;
-    size_t nTagSize;
-#if 0
-    nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ID3V2);
-    if ( nTagSize == 0 )
+    size_t nTagSize = 0;
+
+    try
     {
-      nTagSize = tag.Link(NS_UnescapeURL(cstrPath).get(), ID3TT_ALL);
+      ID3_FileReader file_reader( cstrSpec );
+      nTagSize = tag.Link(file_reader, ID3TT_ID3V2);
+      if ( nTagSize == 0 )
+      {
+        nTagSize = tag.Link(file_reader, ID3TT_ALL);
+      }
     }
-#else
-    ID3_FileReader file_reader( cstrSpec );
-    nTagSize = tag.Link(file_reader, ID3TT_ID3V2);
-    if ( nTagSize == 0 )
+    catch (MetadataHandlerID3Exception)
     {
-      nTagSize = tag.Link(file_reader, ID3TT_ALL);
+      // Oops, failed.  That's not good.  Assume it's a total failure and don't try the channel.
+      m_Completed = PR_TRUE; 
+//      return NS_OK;
     }
-#endif
+
     if ( nTagSize > 0 )
     {
       const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
@@ -537,33 +539,47 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
         //Close the stream so the file can be freed as well.
         stream->Close();
+
+        // ps: the fact that the stream doesn't close itself when it is released in this scope is kinda lame.
       }
     }
     else
     {
-      async = true; // So, a blocking parse failed.  Try again, using the nsIChannel
+      async = PR_TRUE; // So, a blocking parse failed.  Try again, using the nsIChannel
     }
-    *_retval = nTagSize;
-    nRet = NS_OK;
+
+    // Setup retval with the number of values read
+    PRInt32 num_values;
+    m_Values->GetNumValues(&num_values);
+    *_retval = num_values;
+
+    rv = NS_OK;
   }
 
   if (async)
   {
-    // Get a new channel handler for async operation.
-    m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1");
-    if(!m_ChannelHandler.get())
+    try
     {
-      return NS_ERROR_FAILURE;
-    }
-    m_ChannelHandler->Open( m_Channel, this );
+      // Get a new channel handler for async operation.
+      m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1", &rv);
+      if(NS_FAILED(rv)) return rv;
 
-    nRet = NS_OK;
+      rv = m_ChannelHandler->Open( m_Channel, this );
+      if(NS_FAILED(rv)) return NS_OK;
+    }
+    catch (MetadataHandlerID3Exception)
+    {
+      // Oops, failed.  That's not good, either.
+      return NS_OK;
+    }
 
     // -1 means we're asynchronous.
     *_retval = -1;
+    m_Completed = PR_FALSE; // And we're therefore not completed.
+    rv = NS_OK;
   }
 
-  return nRet;
+  return rv;
 } //Read
 
 //-----------------------------------------------------------------------------
@@ -851,7 +867,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       if (nsnull != pField)
       {
         ID3_TextEnc enc = pField->GetEncoding();
-        PRBool swap = true;
+        PRBool swap = PR_TRUE;
         switch( enc )
         {
           case ID3TE_NONE:
@@ -861,7 +877,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
 #ifdef XP_WIN
             // Just for fun, some systems like to save their values in the current windows codepage.
             // This doesn't guarantee we'll translate them properly, but we'll at least have a better chance.
-            int size = MultiByteToWideChar( CP_ACP, 0, iso_string.get(), iso_string.Length(), NULL, 0 );
+            int size = MultiByteToWideChar( CP_ACP, 0, iso_string.get(), iso_string.Length(), nsnull, 0 );
             PRUnichar *uni_string = reinterpret_cast< PRUnichar * >( nsMemory::Alloc( (size + 1) * sizeof( PRUnichar ) ) );
             int read = MultiByteToWideChar( CP_ACP, 0, iso_string.get(), iso_string.Length(), uni_string, size );
             NS_ASSERTION(size == read, "Win32 ISO8859 conversion failed.");
@@ -874,7 +890,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
             break;
           }
           case ID3TE_UTF16BE: // ?? what do we do with big endian?  cry?
-            swap = false; // maybe id3lib is just backwards?
+            swap = PR_FALSE; // maybe id3lib is just backwards?
           case ID3TE_UTF16:
           {
             size_t size = pField->Size();
@@ -981,7 +997,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     }
   }
 
-  m_Completed = true;  // And, we're done.
+  m_Completed = PR_TRUE;  // And, we're done.
   return ret;
 } //ReadTag
 
@@ -1057,7 +1073,7 @@ void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length,
     length -= 2048;
     buffer += 2048;
   }
-  PRBool found = false;
+  PRBool found = PR_FALSE;
   PRInt32 version = -1; // 0 = V1, 1 = V2, 2 = V2.5
   PRInt32 layer = -1; // 0 = L1, 1 = L2, 2 = L3
   PRInt32 bitrate = -1;
@@ -1106,7 +1122,7 @@ void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length,
       if ( bitrate > 0 && frequency > 0 )
       {
         // Okay, we're done!
-        found = true;
+        found = PR_TRUE;
         break;
       }
     }

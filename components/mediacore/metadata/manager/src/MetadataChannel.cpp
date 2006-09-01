@@ -72,9 +72,7 @@ NS_IMETHODIMP sbMetadataChannel::Open(nsIChannel *channel, sbIMetadataHandler *h
   // Open the channel with ourselves as the listener and the handler as the context.
   m_Channel = channel;
   m_Handler = handler;
-  m_Channel->AsyncOpen( this, handler );
-
-  return NS_OK;
+  return m_Channel->AsyncOpen( this, handler );
 }
 
 /* void Close (); */

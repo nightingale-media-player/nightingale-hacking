@@ -78,6 +78,7 @@ try
   var bsScanningPaused = SB_NewDataRemote( "backscan.paused", null );
   var bsSongbirdStrings = document.getElementById( "songbird_strings" );
   var bsInterval = null;
+  bsScanningText.stringValue = "";
   
   var bsQueryString = "SELECT uuid, url, length, title, service_uuid FROM library where length=\"0\"";
 

@@ -164,38 +164,34 @@ NS_IMETHODIMP sbMetadataHandlerOGG::Vote( const nsAString &url, PRInt32 *_retval
 /* PRInt32 Read (); */
 NS_IMETHODIMP sbMetadataHandlerOGG::Read(PRInt32 *_retval)
 {
-  nsresult nRet = NS_ERROR_UNEXPECTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // If we fail, we're complete.  If we're async, we'll set it false down below.
+  m_Completed = true; 
 
   *_retval = 0;  // Zero is failure
   if(!m_Channel)
-  {
     return NS_ERROR_FAILURE;
-  }
 
   // Get a new values object.
-  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1");
-  m_Values->Clear();
-  if(!m_Values.get())
-  {
-    return NS_ERROR_FAILURE;
-  }
+  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1", &rv);
+  if(NS_FAILED(rv)) return rv;
 
   // Get a new channel handler.
-  m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1");
-  if(!m_ChannelHandler.get())
-  {
-    return NS_ERROR_FAILURE;
-  }
+  m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1", &rv);
+  if(NS_FAILED(rv)) return rv;
 
   // Start reading the data.
-  m_ChannelHandler->Open( m_Channel, this );
+  rv = m_ChannelHandler->Open( m_Channel, this );
+  if(NS_FAILED(rv)) return rv;
 
   // This read is always asynchronous
   *_retval = -1;
+  m_Completed = false; 
 
-  nRet = NS_OK;
+  rv = NS_OK;
 
-  return nRet;
+  return rv;
 } //Read
 
 //-----------------------------------------------------------------------------
