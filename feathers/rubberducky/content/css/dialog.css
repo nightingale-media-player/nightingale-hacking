@@ -602,8 +602,7 @@ menulist
   border: 1px solid !important;
   -moz-border-radius: 3px !important;
 } 
-.dropmarker-icon,
-.menulist-dropmarker
+.dropmarker-icon
 {
   -moz-appearance: none !important;
   background-repeat: no-repeat !important;
@@ -614,6 +613,22 @@ menulist
   min-height:4px !important;
   max-width:6px !important;
   max-height:4px !important;
+  margin: 0px 0px 0px 0px !important;
+  background-position: center center !important;
+  border: none !important;
+}
+.menulist-dropmarker
+{
+  -moz-appearance: none !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  width:24px !important;
+  height:24px !important;
+  min-width:24px !important;
+  min-height:24px !important;
+  max-width:24x !important;
+  max-height:24px !important;
+  margin: 0px 0px 0px 0px !important;
   background-position: center center !important;
   border: none !important;
 }
