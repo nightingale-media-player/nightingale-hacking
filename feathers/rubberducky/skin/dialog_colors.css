@@ -797,8 +797,7 @@ menulist
 .dropmarker-icon,
 .menulist-dropmarker
 {
-  list-style-image: none !important;
-  background-image: url(chrome://songbird/skin/default/dropmarker.png) !important;
+  list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
   background-color: transparent !important;
 }
 
