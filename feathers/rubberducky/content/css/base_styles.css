@@ -681,7 +681,8 @@ MENULIST
 menulist,
 .menulist-dropmarker,
 menulist:focus,
-menulist:focus > hbox
+menulist:focus > hbox,
+.dropmarker-icon,
 {
   -moz-appearance: none !important; /* grrrr! */
 }
