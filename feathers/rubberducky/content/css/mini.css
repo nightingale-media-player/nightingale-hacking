@@ -58,6 +58,12 @@ window#mini
   width: 1px !important;
 }
 
+/** 
+************************************************************************************************************************************************
+Back, Play, Pause, Forward Buttons
+************************************************************************************************************************************************
+*/
+
 /* the back button */
 #mini_btn_back
 {
@@ -179,60 +185,11 @@ window#mini
 }
 
 
-/* the seekbar slider */
-#songbird_seekbar_slider.miniplayer
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 4px !important;
-  width: auto !important;
-}
-#mini_seekbar
-{
-  -moz-appearance: none !important;
-  height: 4px !important;
-  /* border-bottom: 1px solid #000 !important;  This doesn't look right */
-}
-
-#mini_seekbar_thumb
-{
-  -moz-appearance: none !important; /* grrrr! */
-  width: 11px !important;
-  height: 4px !important;
-  background-image: url(chrome://songbird/skin/mini/seekbar_thumb.png) !important;
-  background-color: transparent !important;
-  background-repeat: no-repeat !important;
-}
-#mini_seekbar_thumb > gripper
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 4px !important;
-}
-#mini_seekbar_progress
-{
-  -moz-appearance: none !important;
-  height: 4px !important;
-}
-#mini_seekbar_progress .progress-bar
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(chrome://songbird/skin/mini/seekbar_progress.png) !important;
-  height: 4px !important;
-}
-#mini_seekbar_progress .progress-remainder
-{
-  -moz-appearance: none !important; /* grrrr! */
-  background-image: url(chrome://songbird/skin/mini/seekbar_remainder.png) !important;
-  height: 4px !important;
-}
-#songbird_seekbar.miniplayer
-{
-  -moz-appearance: none !important; /* grrrr! */
-  height: 4px !important;
-  border: none !important;
-  background-color: transparent !important;
-}
-
-/* mini dashboard */
+/** 
+************************************************************************************************************************************************
+MINI DASH BOARD
+************************************************************************************************************************************************
+*/
 
 #mini_dash
 {
@@ -260,6 +217,91 @@ window#mini
   background-repeat: no-repeat !important;
   background-image: url(chrome://songbird/skin/mini/mini.bkg.dashboard_w.png) !important;
 }
+
+/* the artist and title */
+#mini_text_title
+{
+  -moz-box-align: baseline !important;
+  font-family: tahoma, arial !important;
+  min-width: 1px !important;
+  color: #E4EADF !important;
+  overflow: hidden;
+}
+#mini_text_time,
+#mini_text_artist,
+#mini_text_album,
+#mini_text_time_total,
+#mini_text_time_elapsed,
+#mini_text_time_t_txt
+{
+  -moz-box-align: baseline !important;
+  font-family: tahoma, arial, cursor !important;
+  width: auto !important;
+  height: 16px !important;
+  color: #E4EADF !important;
+  overflow: hidden;
+}
+
+#mini_text_time
+{
+  
+}
+
+/* the seekbar slider */
+#songbird_seekbar_slider.miniplayer
+{
+  -moz-appearance: none !important; /* grrrr! */
+  height: 4px !important;
+  width: auto !important;
+}
+#mini_seekbar
+{
+  border: 0px solid red !important;
+  -moz-appearance: none !important;
+  height: 4px !important;
+  margin-top: 12px !important;
+}
+
+#mini_seekbar_thumb
+{
+  -moz-appearance: none !important; /* grrrr! */
+  width: 11px !important;
+  height: 4px !important;
+  background-image: url(chrome://songbird/skin/mini/seekbar_thumb.png) !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+}
+#mini_seekbar_thumb > gripper
+{
+  -moz-appearance: none !important; /* grrrr! */
+  height: 4px !important;
+}
+#mini_seekbar_progress
+{
+  -moz-appearance: none !important;
+  height: 4px !important;
+}
+#mini_seekbar_progress .progress-bar
+{
+  -moz-appearance: none !important; /* grrrr! */
+  background-color: #5a5c5c !important;
+  height: 4px !important;
+}
+#mini_seekbar_progress .progress-remainder
+{
+  -moz-appearance: none !important; /* grrrr! */
+  background-color: #5a5c5c !important;  
+  height: 4px !important;
+}
+#songbird_seekbar.miniplayer
+{
+  -moz-appearance: none !important; /* grrrr! */
+  height: 4px !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+
 
 /* volume */
 
@@ -388,34 +430,3 @@ window#mini
 }
 
 
-/* the texties */
-#mini_text_title
-{
-  -moz-box-align: baseline !important;
-  font-family: tahoma, arial !important;
-  min-width: 1px !important;  
-  height: 14px !important;
-  color: #E4EADF !important;
-  overflow: hidden;
-}
-#mini_text_time,
-#mini_text_artist,
-#mini_text_album,
-#mini_text_time_total,
-#mini_text_time_elapsed,
-#mini_text_time_t_txt
-{
-  -moz-box-align: baseline !important;
-  font-family: tahoma, arial, cursor !important;
-  width: auto !important;
-  height: 14px !important;
-  color: #E4EADF !important;
-  overflow: hidden;
-}
-
-#mini_text_time
-{
-  height: 14px !important;
-  max-height: 14px !important;
-  min-height: 14px !important;
-}
