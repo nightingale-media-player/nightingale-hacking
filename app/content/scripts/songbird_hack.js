@@ -2364,6 +2364,16 @@ function onHTMLContextMenu( target )
           theServiceTree.launchURL( theHTMLContextURL );
         }
       break;
+      case "html.context.openexternal":
+          var externalLoader = (Components
+                   .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                  .getService(Components.interfaces.nsIExternalProtocolService));
+          var nsURI = (Components
+                  .classes["@mozilla.org/network/io-service;1"]
+                  .getService(Components.interfaces.nsIIOService)
+                  .newURI(theHTMLContextURL, null, null));
+          externalLoader.loadURI(nsURI, null);
+      break;      
       case "html.context.play":
         playExternalUrl(theHTMLContextURL, true);
       break;

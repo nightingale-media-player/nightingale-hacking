@@ -58,6 +58,7 @@
 <!ENTITY menu.extensions    "Extensions..." >
 
 <!ENTITY html.context.open  "Open" >
+<!ENTITY html.context.openexternal  "Open with Default Browser" >
 <!ENTITY html.context.play  "Play" >
 <!ENTITY html.context.add   "Add to library" >
 
