@@ -708,7 +708,7 @@ SEARCH WIDGET
 {
   background-image: url(chrome://songbird/skin/default/search_temp.png) !important;
 }
-
+.dropmarker-icon,
 .button-menu-dropmarker
 {
   background-image: url(chrome://songbird/skin/default/dropmarker.png) !important;
