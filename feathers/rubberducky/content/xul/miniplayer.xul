@@ -75,7 +75,8 @@
     <hbox flex="1">
       <menubar id="mini_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
       <spacer width="4" height="18" id="mini_dash_w"/>
-      <vbox id="mini_dash" flex="1">        
+      <vbox id="mini_dash" flex="1">
+      <stack>
         <hbox id="mini_text_time" class="sb_faceplate" flex="1" >
           <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right"/>
           <spacer width="20" height="5" class="sb_faceplate"/>
@@ -85,6 +86,7 @@
           <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" />
         </hbox>
         <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+        </stack>
       </vbox>
       <spacer width="4" height="18" id="mini_dash_e"/>
     </hbox>
