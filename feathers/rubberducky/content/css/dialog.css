@@ -608,11 +608,11 @@ menulist
   -moz-appearance: none !important;
   background-repeat: no-repeat !important;
   background-color: transparent !important;
-  border: none !important;
-  width:16px !important;
-  height:16px !important;
-  margin: 2px 4px 2px 0px !important;
+  width:6px !important;
+  height:4px !important;
+  
   background-position: center center !important;
+  border: none !important;
 }
 
 menulist[disabled="true"]
