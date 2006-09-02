@@ -610,7 +610,10 @@ menulist
   background-color: transparent !important;
   width:6px !important;
   height:4px !important;
-  
+  min-width:6px !important;
+  min-height:4px !important;
+  max-width:6px !important;
+  max-height:4px !important;
   background-position: center center !important;
   border: none !important;
 }
