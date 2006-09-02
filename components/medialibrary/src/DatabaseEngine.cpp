@@ -60,12 +60,12 @@
 #endif
 
 #define USE_SQLITE_FULL_DISK_CACHING  1
-#define SQLITE_MAX_RETRIES            66
+#define SQLITE_MAX_RETRIES            666
 #define QUERY_PROCESSOR_THREAD_COUNT  4
 
 #if defined(DEBUG)
   #include <nsPrintfCString.h>
-  //#define HARD_SANITY_CHECK             1
+  #define HARD_SANITY_CHECK             1
 #endif
 
 static NS_NAMED_LITERAL_STRING(allToken, "*");
@@ -284,14 +284,12 @@ CDatabaseEngine::CDatabaseEngine()
   m_pDatabaseLocksLock = PR_NewLock();
   m_pQueryProcessorMonitor  = nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor");
   m_pPersistentQueriesLock = PR_NewLock();
-  //m_pCaseConversionLock = PR_NewLock();
   m_pDBStorePathLock = PR_NewLock();
 
   NS_ASSERTION(m_pDatabasesLock, "CDatabaseEngine.mpDatabaseLock failed");
   NS_ASSERTION(m_pDatabaseLocksLock, "CDatabaseEngine.m_pDatabasesLocksLock failed");
   NS_ASSERTION(m_pQueryProcessorMonitor, "CDatabaseEngine.m_pQueryProcessorMonitor failed");
   NS_ASSERTION(m_pPersistentQueriesLock, "CDatabaseEngine.m_pPersistentQueriesLock failed");
-  //NS_ASSERTION(m_pCaseConversionLock, "CDatabaseEngine.m_pCaseConversionLock failed");
   NS_ASSERTION(m_pDBStorePathLock, "CDatabaseEngine.m_pDBStorePathLock failed");
 
 #ifdef DEBUG_locks
@@ -359,8 +357,6 @@ CDatabaseEngine::CDatabaseEngine()
     nsAutoMonitor::DestroyMonitor(m_pQueryProcessorMonitor);
   if (m_pPersistentQueriesLock)
     PR_DestroyLock(m_pPersistentQueriesLock);
-  //if (m_pCaseConversionLock)
-    //PR_DestroyLock(m_pCaseConversionLock);
   if (m_pDBStorePathLock)
     PR_DestroyLock(m_pDBStorePathLock);
 } //dtor
@@ -402,7 +398,7 @@ PRInt32 CDatabaseEngine::OpenDB(const nsAString &dbGUID)
     m_Databases.insert(std::make_pair(PromiseFlatString(dbGUID), pDB));
 
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
-    sqlite3_busy_timeout(pDB, 5000);
+    sqlite3_busy_timeout(pDB, 30000);
 
     char *strErr = nsnull;
     sqlite3_exec(pDB, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
@@ -426,7 +422,9 @@ PRInt32 CDatabaseEngine::CloseDB(const nsAString &dbGUID)
   if(itDatabases != m_Databases.end())
   {
     sqlite3_interrupt(itDatabases->second);
-    ret = sqlite3_close(itDatabases->second);
+    while((ret = sqlite3_close(itDatabases->second)) != SQLITE_OK)
+      PR_Sleep(33);
+
     m_Databases.erase(itDatabases);
   }
  
@@ -641,7 +639,7 @@ nsresult CDatabaseEngine::ClearAllDBLocks()
   {
     lock = itLock->second;
     if (lock) {
-      nsAutoMonitor::DestroyMonitor(lock);
+      PR_DestroyMonitor(lock);
       lock = nsnull;
     }
   }
@@ -660,7 +658,9 @@ nsresult CDatabaseEngine::CloseAllDB()
   if(itDatabases != m_Databases.end())
   {
     sqlite3_interrupt(itDatabases->second);
-    ret = sqlite3_close(itDatabases->second);
+    while((ret = sqlite3_close(itDatabases->second)) != SQLITE_OK)
+      PR_Sleep(33);
+
     m_Databases.erase(itDatabases);
   }
 
@@ -728,16 +728,19 @@ PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
   PRBool bFlag = PR_FALSE;
   nsresult rv;
 
-  nsCOMPtr<nsIFile> pDBDirectory;
+  nsCOMPtr<nsILocalFile> pDBDirectory;
   nsCOMPtr<nsIServiceManager> svcMgr;
   rv = NS_GetServiceManager(getter_AddRefs(svcMgr));
 
-  nsAutoLock lock(m_pDBStorePathLock);
-  rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, getter_AddRefs(pDBDirectory));  
+  {
+    nsAutoLock lock(m_pDBStorePathLock);
+    rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(pDBDirectory));
+  }
+
   if(NS_FAILED(rv)) return 0;
 
-  pDBDirectory->Append(NS_LITERAL_STRING("db"));
   rv = pDBDirectory->IsDirectory(&bFlag);
+  if(NS_FAILED(rv)) return 0;
 
   if(bFlag)
   {
@@ -1054,7 +1057,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
                   pRes->AddRow(vCellValues);
                   PR_Unlock(pQuery->m_pQueryResultLock);
-                  //pRes->Release();
                 }
                 break;
 
@@ -1069,7 +1071,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 {
                   if(nRetryCount++ > SQLITE_MAX_RETRIES)
                   {
-                    PR_Sleep(33);
+                    PR_Sleep(PR_MillisecondsToInterval(66));
                     retDB = SQLITE_ROW;
                   }
                 }
@@ -1105,8 +1107,6 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
               PRBool bFound = PR_FALSE;
               nsString::const_iterator itStrStart, itStart, itEnd;
               {
-                // UnicharUtils is not threadsafe, so make sure we don't switch threads here
-                //nsAutoLock ccLock(pEngine->m_pCaseConversionLock);
                 ToLowerCase(strTableName);
 
                 strTableName.BeginReading(itStrStart);
@@ -1161,12 +1161,13 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
             NS_WARNING(log.get());
           }
 #endif
-          if(pSecondDB != nsnull)
-          {
-            pEngine->UnlockDatabase(pSecondDB);
-          }
         }
       }
+    }
+
+    if(pSecondDB != nsnull)
+    {
+      pEngine->UnlockDatabase(pSecondDB);
     }
 
     pQuery->m_IsExecuting = PR_FALSE;

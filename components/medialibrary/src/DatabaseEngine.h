@@ -115,6 +115,7 @@ protected:
 private:
   //[database guid/name]
   typedef std::map<nsString, sqlite3 *>  databasemap_t;
+  //typedef std::map<sqlite3 *, PRMonitor *> databaselockmap_t;
   typedef std::map<sqlite3 *, PRMonitor *> databaselockmap_t;
   typedef std::list<CDatabaseQuery *> querylist_t;
   //[table guid/name]
