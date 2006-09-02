@@ -794,7 +794,7 @@ menulist
 {
   color: #fff !important;
 }
-
+.dropmarker-icon,
 .menulist-dropmarker
 {
   list-style-image: none !important;
