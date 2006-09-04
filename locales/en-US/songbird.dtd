@@ -46,7 +46,7 @@
 <!ENTITY menu.control.repx  "Repeat None" >
 
 <!ENTITY menu.services        "Services" >
-<!ENTITY menu.services.browse "Browse Services..." >
+<!ENTITY menu.services.browse "Browse Extensions..." >
 
 <!ENTITY menu.devices       "Devices" >
 
