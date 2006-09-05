@@ -59,13 +59,10 @@ WindowCloak.prototype = {
   },
 
 
-  _getWindowFromDocument: function(doc) {
-    var acc = Components.classes["@mozilla.org/accessibilityService;1"]
-                        .getService(Components.interfaces.nsIAccessibilityService);
-
-    acc = acc.getAccessibleFor(doc).QueryInterface(Components.interfaces.nsIAccessNode).accessibleDocument;
-
-    return acc.window.QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+  _getWindowFromDocument: function(aDoc) {
+    var domDocumentView = aDoc.QueryInterface(Components.interfaces.nsIDOMDocumentView);
+    var domWindowInternal = domDocumentView.defaultView.QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+    return domWindowInternal;
   },
 
 
