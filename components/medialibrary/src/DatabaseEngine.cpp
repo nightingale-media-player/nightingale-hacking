@@ -65,7 +65,7 @@
 
 #if defined(DEBUG)
   #include <nsPrintfCString.h>
-  #define HARD_SANITY_CHECK             1
+  //#define HARD_SANITY_CHECK             1
 #endif
 
 static NS_NAMED_LITERAL_STRING(allToken, "*");
