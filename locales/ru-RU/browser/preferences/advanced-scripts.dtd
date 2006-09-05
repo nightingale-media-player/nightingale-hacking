@@ -11,3 +11,8 @@
 <!ENTITY raiseLowerWindows.accesskey "д">
 <!ENTITY raiseLowerWindows.label "Перемещать окна над или под другие">
 <!ENTITY window.width "42em">
+
+
+<!ENTITY window.width "37em" >
+
+

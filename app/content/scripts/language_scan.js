@@ -26,66 +26,84 @@
  
 try 
 {
-  // Don't turn this on unless you change the locale folder to your own hd.
-  var ENABLE_LANGUAGESCAN = 1;
+  // Builds from makefiles use an extra "../"
+  var USING_MSVC = 1;
   
-  var lsLocaleFolder = "c:\\projects\\songbird\\locales"; // Change this to whatever your local trunk folder is + locales
+  // Go find the current directory (the xulrunner directory)
+  var lsXulrunnerFolder = Components.classes["@mozilla.org/file/directory_service;1"]
+                     .getService(Components.interfaces.nsIProperties)
+                     .get("CurProcD", Components.interfaces.nsIFile);
+                     
+  var lsSlash = "/";
+  if ( lsXulrunnerFolder.path.indexOf( "\\" ) != -1 )
+    lsSlash = "\\";
   
-  var lsDTDFileName = "songbird.dtd";
-  var lsDTDMasterFile = lsLocaleFolder + "\\en-US\\" + lsDTDFileName;
-
-  var lsPropFileName = "songbird.properties";
-  var lsPropMasterFile = lsLocaleFolder + "\\en-US\\" + lsPropFileName;
+  var lsLocaleFolder = ""
+  if ( USING_MSVC )  
+    lsLocaleFolder = lsXulrunnerFolder.path + lsSlash + ".." + lsSlash + ".." + lsSlash + "locales";
+  else
+    lsLocaleFolder = lsXulrunnerFolder.path + lsSlash + ".." + lsSlash + ".." + lsSlash + ".." + lsSlash + "locales";
+  
+  var lsMasterFolder = lsLocaleFolder + lsSlash + "en-US" + lsSlash;
   
   var language_scan_text = ""; // Output.
-
+  
   function LSRunScan()
   {
   try
   {
     alert( "scanning property and dtd files for missing entries" );
-    
-    // Scan the master file to know what to compare against.
-    var lsDTDMasterArray = LSScanDTD( lsDTDMasterFile );
-    var lsPropMasterArray = LSScanProp( lsPropMasterFile );
 
+    // Scan the master folder to know what to compare against.
+    var lsMasterFolderFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+    lsMasterFolderFile.initWithPath( lsMasterFolder );
+    var lsMasterMap = LSScanFolder( lsMasterFolderFile );
+    
     // Go through the locale folder
-    var aLocaleFolder = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-    aLocaleFolder.initWithPath( lsLocaleFolder );
-    var subfolders = aLocaleFolder.directoryEntries;
+    var localeFolder = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+    localeFolder.initWithPath( lsLocaleFolder );
+    var subfolders = localeFolder.directoryEntries;
     while ( subfolders.hasMoreElements() )
     {
+      // Process folders that have a dash in their name
       var folder = subfolders.getNext().QueryInterface( Components.interfaces.nsILocalFile );      
       if ( folder.isDirectory() && folder.leafName.indexOf( '-' ) != -1 )
       {
-        var files = folder.directoryEntries;
-        while ( files.hasMoreElements() )
+        // Scan all the files in the folder
+        var localMap = LSScanFolder( folder );
+        
+        // Then for every file in the master map
+        for ( var key in lsMasterMap )
         {
-          var file = files.getNext().QueryInterface( Components.interfaces.nsILocalFile );
-          if ( file.leafName.indexOf( '.dtd' ) != -1 )
+          // See if that file also exists in the local map
+          if ( localMap[ key ] )
           {
-            language_scan_text += "file: " + file.path + "\n";
-            LSFixDTD( lsDTDMasterArray, file );
-          }
-          if ( file.leafName.indexOf( '.properties' ) != -1 )
-          {
-            language_scan_text += "file: " + file.path + "\n";
-            LSFixProp( lsPropMasterArray, file );
+            // If so, create a path to the file.
+            var filePath = folder.path + key;
+            // And make a file object.            
+            var file = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+            file.initWithPath( filePath );
+            
+            // And process as a dtd or prop.
+            var dtd = key.indexOf( '.dtd' );
+            var prop = key.indexOf( '.properties' );
+            if ( dtd != -1 && dtd == key.length - 4 )
+            {
+              LSFixDTD( lsMasterMap[ key ], localMap[ key ], file );
+            }
+            if ( prop != -1 && prop == key.length - 11 )
+            {
+              LSFixProp( lsMasterMap[ key ], localMap[ key ], file );
+            }
           }
         }
       }
     }
     
-    alert( language_scan_text );
-
-/*
-    language_scan_text += lsDTDMasterArray.length + " items.\n\n";
-    for ( var i in lsDTDMasterArray )
-    {
-      language_scan_text += "key: '" + lsDTDMasterArray[ i ].key + "'   value: '" + lsDTDMasterArray[ i ].value + "'\n";   
-    }
-    alert( language_scan_text );
-*/ 
+    if ( language_scan_text.length > 0 )
+      alert( "Language Scan:\n" + language_scan_text );
+    else
+      alert( "Language Scan:\n" + "No changes found!" );
   }
   catch ( err )   
   {
@@ -94,39 +112,76 @@ try
   
   }
 
-  function LSFixDTD( lsDTDMasterArray, file )
+  // This function takes a nsILocalFile to a folder and returns a map of filenames against scan arrays
+  function LSScanFolder( file, key_root )
   {
-    // Scan the file to know what it has.
-    var lsLocalArray = LSScanDTD( file.path );
-    
-    // Then doublescan the arrays to know which ones are missing.
-    var lsFixArray = new Array();
+    var retval = {};
+    // Construct a key for this file.
+    var key = ( key_root == null ) ? "" : key_root + lsSlash + file.leafName;
+    // If we really are a folder  
+    if ( file.isDirectory() )
+    {
+      var children = file.directoryEntries;
+      while ( children.hasMoreElements() )
+      {
+        // Process all the children
+        var child = children.getNext().QueryInterface( Components.interfaces.nsILocalFile );      
+        var return_array = LSScanFolder( child, key );
+        // Stuff the values into our own map
+        for ( var i in return_array )
+        {
+          retval[ i ] = return_array[ i ];
+        }
+      }
+    }
+    // Otherwise, we're a real gosh-darn file.
+    else
+    {
+      // So process as a dtd or prop or nothing.
+      var dtd = key.indexOf( '.dtd' );
+      var prop = key.indexOf( '.properties' );
+      if ( dtd != -1 && dtd == key.length - 4 )
+      {
+        retval[ key ] = LSScanDTD( file );
+      }
+      if ( prop != -1 && prop == key.length - 11 )
+      {
+        retval[ key ] = LSScanProp( file );
+      }
+    }
+    return retval;
+  }
+
+  function LSFixDTD( lsDTDMasterArray, lsLocalArray, file )
+  {
+    // Then map scan the arrays to know which ones are missing.
+    var anything = false;
+    var lsFixArray = {};
     for ( var i in lsDTDMasterArray )
     {
-      var found = false;
-      for ( var j in lsLocalArray )
+      if ( typeof( lsLocalArray[ i ] ) == "undefined" )
       {
-        if ( lsLocalArray[ j ].key == lsDTDMasterArray[ i ].key )
-        {
-          found = true;
-          break;
-        }
-      }
-      if ( !found )
-      {
-        lsFixArray.push( lsDTDMasterArray[ i ] );
+/*
+          alert( "file: " + file.path + "\n" + 
+                "\tmaster - " + i + ": " + lsDTDMasterArray[ i ] + "\n" +
+                "\tlocal - " + i + ": " + lsLocalArray[ i ] + "\n"  );
+*/
+        lsFixArray[ i ] = lsDTDMasterArray[ i ];
+        anything = true;
       }
     }
 
-    if ( lsFixArray.length )
+    if ( anything )
     {
+/*
+      language_scan_text += "file: " + file.path + "\n";
       for ( var i in lsFixArray )
       {
-        language_scan_text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
+        language_scan_text += "\tkey: '" + i + "'   value: '" + lsFixArray[ i ] + "'\n";   
       }
-/*
       alert( language_scan_text );
 */    
+      
       var aFileWriter = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);      
       aFileWriter.init( file, /* PR_RDWR | PR_APPEND */ 0x04 | 0x10, 0, null );
       var spacer = "\n\n";
@@ -134,23 +189,29 @@ try
       // Let's append!
       for ( var i in lsFixArray )
       {
-        var append = '<!ENTITY ' + lsFixArray[ i ].key + ' "' + lsFixArray[ i ].value + '" >\n';
+        var append = '<!ENTITY ' + i + ' "' + lsFixArray[ i ] + '" >\n';
         aFileWriter.write( append, append.length );
       }
       aFileWriter.write( spacer, spacer.length );
       aFileWriter.close();    
     }
   }
-
-  function LSScanDTD( path )
+  
+  function LSStripMultispace( aStr )
   {
-    var retval = new Array();
+    var split = -1;
+    while ( ( split = aStr.indexOf("  ") ) != -1 ) // Search for 2 spaces
+    {
+      aStr = aStr.substr( 0, split + 1 ) + aStr.substr( split + 2, aStr.length ); // Remove the extra space
+    }
+    return aStr;  
+  };
+
+  function LSScanDTD( aLocalFile )
+  {
+    var retval = {};
     
-    // Get the requested file
-    var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-    aLocalFile.initWithPath( path );
-    
-    if ( aLocalFile.isFile() )
+    if ( aLocalFile.isFile )
     {
       // Get a file reader for it
       var aFileReader = (Components.classes["@mozilla.org/network/file-input-stream;1"]).createInstance(Components.interfaces.nsIFileInputStream);
@@ -163,18 +224,22 @@ try
       var out = {};
       while ( aLineReader.readLine( out ) )
       {
-        var line = out.value;        
-        // Split by quotes to get the value
-        var qsplit = line.split( '"' );        
-        if ( qsplit.length > 1 )
+        // If it's a valid entity line
+        var line = out.value;
+        if ( line.indexOf( "ENTITY" ) != -1 )
         {
-          // Split by space to get the key
-          var ssplit = qsplit[ 0 ].split( ' ' );
-          var obj = {};
-          obj.value = qsplit[ 1 ];
-          obj.key = ssplit[ 1 ];           
-          retval.push( obj );
-        }
+          // Split by quotes to get the value
+          var qsplit = line.split( '"' );
+          // Strip all the extra spaces out
+          var raw_key = LSStripMultispace( qsplit[ 0 ] );
+          if ( qsplit.length > 1 )
+          {
+            // Split by space to get the key
+            var ssplit = raw_key.split( ' ' );
+            var key = ssplit[ 1 ];           
+            retval[ key ] = qsplit[ 1 ];
+          }
+        };
       }
       aFileReader.close();
     }
@@ -182,37 +247,33 @@ try
     return retval;
   }
 
-  function LSFixProp( lsPropMasterArray, file )
+  function LSFixProp( lsPropMasterArray, lsLocalArray, file )
   {
-    // Scan the file to know what it has.
-    var lsLocalArray = LSScanProp( file.path );
-    
-    // Then doublescan the arrays to know which ones are missing.
-    var lsFixArray = new Array();
+    // Then map scan the arrays to know which ones are missing.
+    var anything = false;
+    var lsFixArray = {};
     for ( var i in lsPropMasterArray )
     {
-      var found = false;
-      for ( var j in lsLocalArray )
+      if ( typeof( lsLocalArray[ i ] ) == "undefined" )
       {
-        if ( lsLocalArray[ j ].key == lsPropMasterArray[ i ].key )
-        {
-          found = true;
-          break;
-        }
-      }
-      if ( !found )
-      {
-        lsFixArray.push( lsPropMasterArray[ i ] );
+/*
+        alert( "file: " + file.path + "\n" + 
+              "\tmaster - " + i + ": " + lsPropMasterArray[ i ] + "\n" +
+              "\tlocal - " + i + ": " + lsLocalArray[ i ] + "\n"  );
+*/
+        lsFixArray[ i ] = lsPropMasterArray[ i ];
+        anything = true;
       }
     }
 
-    if ( lsFixArray.length )
+    if ( anything )
     {
+/*
+      language_scan_text += "file: " + file.path + "\n";
       for ( var i in lsFixArray )
       {
-        language_scan_text += "key: '" + lsFixArray[ i ].key + "'   value: '" + lsFixArray[ i ].value + "'\n";   
+        language_scan_text += "\tkey: '" + i + "'   value: '" + lsFixArray[ i ] + "'\n";   
       }
-/*
       alert( language_scan_text );
 */    
       var aFileWriter = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);      
@@ -222,7 +283,7 @@ try
       // Let's append!
       for ( var i in lsFixArray )
       {
-        var append = lsFixArray[ i ].key + '=' + lsFixArray[ i ].value + '\n\n';
+        var append = i + '=' + lsFixArray[ i ] + '\n';
         aFileWriter.write( append, append.length );
       }
       aFileWriter.write( spacer, spacer.length );
@@ -230,15 +291,11 @@ try
     }
   }
 
-  function LSScanProp( path )
+  function LSScanProp( aLocalFile )
   {
-    var retval = new Array();
+    var retval = {};
     
-    // Get the requested file
-    var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-    aLocalFile.initWithPath( path );
-    
-    if ( aLocalFile.isFile() )
+    if ( aLocalFile.isFile )
     {
       // Get a file reader for it
       var aFileReader = (Components.classes["@mozilla.org/network/file-input-stream;1"]).createInstance(Components.interfaces.nsIFileInputStream);
@@ -251,13 +308,15 @@ try
       var out = {};
       while ( aLineReader.readLine( out ) )
       {
-        var line = out.value;        
-        // Split by equals to get the key and value
-        var qsplit = line.split( '=' );
-        var obj = {};        
-        obj.value = qsplit[ 1 ];
-        obj.key = qsplit[ 0 ];           
-        retval.push( obj );
+        // If it's a valid properties line
+        var line = out.value;
+        if ( line.length > 0 && line[ 0 ] != "#" && line.indexOf( '=' ) != -1 )
+        {
+          // Split by equals to get the key and value
+          var qsplit = line.split( '=' );
+          var key = qsplit[ 0 ];           
+          retval[ key ] = qsplit[ 1 ];
+        }
       }
       aFileReader.close();
     }
@@ -265,9 +324,8 @@ try
     return retval;
   }
 
-  // If we're supposed to, run it!
-  if ( ENABLE_LANGUAGESCAN )
-    LSRunScan();
+  // Run it!
+  LSRunScan();
 
 // EOF
 }

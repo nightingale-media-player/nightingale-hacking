@@ -3,7 +3,7 @@
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "Ок" >
+<!ENTITY window.ok          "Начали" >
 <!ENTITY window.cancel      "Отменить" >
 <!ENTITY window.browse      "Просмотреть..." >
 
@@ -48,7 +48,7 @@
 <!ENTITY menu.devices       "Устройства" >
 
 <!ENTITY menu.help          "Помощь" >
-<!ENTITY menu.help.topics   "Разделы помощи..." >
+<!ENTITY menu.help.topics   "Темы помощи..." >
 <!ENTITY menu.help.about    "Про Songbird..." >
 
 <!ENTITY html.context.open  "Открыть" >
@@ -75,8 +75,8 @@
 <!ENTITY tooltip.control.curtrack "Найти текущую композицию" >
 <!ENTITY tooltip.control.service  "Изменить Faceplate Display" >
 <!ENTITY tooltip.search           "Искать" >
-<!ENTITY tooltip.browser.back     "Назад" >
-<!ENTITY tooltip.browser.fwd      "Вперед" >
+<!ENTITY tooltip.browser.back     "Искать назад" >
+<!ENTITY tooltip.browser.fwd      "Искать вперед" >
 <!ENTITY tooltip.browser.stop     "Остановить браузер" >
 <!ENTITY tooltip.browser.home     "Домой" >
 <!ENTITY tooltip.browser.playlist "Просмотреть доступные композиции на этой странице" >
@@ -153,25 +153,25 @@
 
 
 
-<!ENTITY menu.feathers "Оперение" >
+<!ENTITY menu.feathers "Feathers" >
 
 
 
 
-<!ENTITY about.version "Версия" >
+<!ENTITY about.version "Version" >
 
 
 
 
-<!ENTITY tooltip.browser.bookmark "Закладка" >
+<!ENTITY tooltip.browser.bookmark "Bookmark" >
 
 
 
 
-<!ENTITY setup.retrievingxpilist "Загрузка списка расширений . Пожалуйста подождите..." >
-<!ENTITY setup.custominstall "Ручная Установка" >
-<!ENTITY setup.title "Настройки Установки Songbird" >
-<!ENTITY setupprogress.pleasewait "Пожалуйста подождите..." >
+<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.custominstall "Custom Install" >
+<!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setupprogress.pleasewait "Please wait..." >
 
 
 
@@ -217,27 +217,27 @@
 
 
 
-<!ENTITY bookmarks.edit.title "Изменить закладку" >
+<!ENTITY bookmarks.edit.title "Edit Bookmark" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Название:" >
-<!ENTITY bookmarks.edit.icon "Пиктограмма:" >
+<!ENTITY bookmarks.edit.label "Name:" >
+<!ENTITY bookmarks.edit.icon "Icon:" >
 
 
 
 
-<!ENTITY trackeditor.title "Редактор свойств трека" >
-<!ENTITY trackeditor.trackdata "Данные" >
-<!ENTITY trackeditor.exttrackdata "Дополнительые данные" >
-<!ENTITY trackeditor.tags "Метки" >
-<!ENTITY trackeditor.addtag.title "Добавить Метку" >
-<!ENTITY trackeditor.addtag.tag "Метка:" >
-<!ENTITY jumptofile.title "Перейти к" >
+<!ENTITY trackeditor.title "Track Editor" >
+<!ENTITY trackeditor.trackdata "Track Data" >
+<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.tags "Tags" >
+<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY jumptofile.title "Jump to" >
 
 
 
 
-<!ENTITY window.undo "Отменить" >
-<!ENTITY window.apply "Применить" >
+<!ENTITY window.undo "Undo" >
+<!ENTITY window.apply "Apply" >
 
 
 
@@ -247,19 +247,19 @@
 
 
 
-<!ENTITY metrics.optout "Позволить Songbird посылать анонимную статистику использования (рекомендуется)" >
+<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
 
 
 
 
-<!ENTITY hotkeys.useglobalhotkeys "Использовать глобальные горячие клавиши" >
+<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Действие" >
-<!ENTITY hotkeys.hotkey "Горячая клавиша" >
-<!ENTITY hotkeys.add "Добавить" >
-<!ENTITY hotkeys.set "Установить" >
-<!ENTITY hotkeys.remove "Удалить" >
-<!ENTITY hotkeys.prefpane "Горячие клавиши" >
+<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.hotkey "Hotkey" >
+<!ENTITY hotkeys.add "Add" >
+<!ENTITY hotkeys.set "Set" >
+<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.prefpane "Hotkeys" >
 
 
 
@@ -275,35 +275,42 @@
 
 
 
-<!ENTITY restartbox.restartnow "Перезапустить сейчас" >
-<!ENTITY restartbox.restartonplaybackend "Перезапустить после окончания воспроизведения" >
-<!ENTITY restartbox.restartlater "Перезапустить позже" >
-<!ENTITY setupprogress.installingextensions "Установка расширений" >
+<!ENTITY restartbox.restartnow "Restart Now" >
+<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
+<!ENTITY restartbox.restartlater "Restart Later" >
+<!ENTITY setupprogress.installingextensions "Installing Extensions" >
 
 
 
 
-<!ENTITY tooltip.hide "Скрыть" >
+<!ENTITY tooltip.hide "Hide" >
 
 
 
 
-<!ENTITY menu.updateCmd.label "Проверить обовления..." >
+<!ENTITY menu.updateCmd.label "Check for Updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
 
 
 
 
-<!ENTITY jumptofile.playlist "Плейлист:" >
-<!ENTITY jumptofile.search "Поиск:" >
+<!ENTITY jumptofile.playlist "Playlist:" >
+<!ENTITY jumptofile.search "Search:" >
 
 
 
 
-<!ENTITY tooltip.control.shuf_off "По порядку" >
+<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+
+
 
 
 <!ENTITY tooltip.browser.refresh "Refresh" >
 <!ENTITY smart.selectedby "Selected by" >
 
+
+
+
 <!ENTITY html.context.openexternal "Open with Default Browser" >
+
+
