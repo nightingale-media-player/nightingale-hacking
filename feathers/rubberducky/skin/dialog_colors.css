@@ -794,8 +794,7 @@ menulist
 {
   color: #fff !important;
 }
-.dropmarker-icon,
-.menulist-dropmarker
+.dropmarker-icon
 {
   list-style-image: url(chrome://songbird/skin/default/chrome_scroll_down.png) !important;
   background-color: transparent !important;
