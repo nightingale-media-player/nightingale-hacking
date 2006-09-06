@@ -1241,7 +1241,8 @@ SEARCH WIDGET
 
 #search_widget
 {
-  width: 230px !important;
+  width: auto !important;
+  min-width: 0px !important;
   height: 21px !important;
 }
 
@@ -1264,7 +1265,8 @@ SEARCH WIDGET
 
 #search_service_list
 {
-  width: 180px !important;
+  width: 100 !important;
+  min-width: 50px !important;
   margin: 3px 0px 3px 5px !important; 
 }
 
