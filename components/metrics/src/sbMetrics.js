@@ -56,7 +56,7 @@ Metrics.prototype = {
   {
     if (!this._isEnabled()) return;
     
-    var updated = this._checkUpgradeOccurred();
+    var updated = this._hasVersionChanged();
     var timeUp = this._isWaitPeriodUp();
     
     if (timeUp || updated)
@@ -107,6 +107,8 @@ Metrics.prototype = {
     var platform = appInfo.OS + "_" + abi;
     
     
+    var updated = this._hasUpdateOccurred();
+    
     // build xml
     
     var xml = "";
@@ -116,6 +118,7 @@ Metrics.prototype = {
             + '" product="' + appInfo.name
             + '" platform="' + platform
             + '" os="' + user_os 
+            + '" updated="' + updated 
             + '">';
     for (var i = 0; i < metrics.length; i++) 
     {
@@ -169,6 +172,7 @@ Metrics.prototype = {
         
         pref.setCharPref("app.metrics.last_upload", now);
         pref.setCharPref("app.metrics.last_version", this._getCurrentVersion());
+        pref.setIntPref("app.metrics.last_update_count", this._getUpdateCount());
         
         this.LOG("metrics reset");
     }    
@@ -231,7 +235,7 @@ Metrics.prototype = {
   /**
    * Has the version changed since last metrics submission
    */
-  _checkUpgradeOccurred: function() {
+  _hasVersionChanged: function() {
   
     var upgraded = false;
     
@@ -252,6 +256,35 @@ Metrics.prototype = {
     return upgraded;
   },
   
+  
+  /**
+   * Has the update manager updated songbird since the last time metrics were submitted
+   */
+  _hasUpdateOccurred: function() {
+  
+    var updated = false;
+    
+    var currentCount = this._getUpdateCount();
+    var lastCount = null;
+    
+    try 
+    {
+      lastCount = this.prefs.getIntPref("app.metrics.last_update_count");
+    }
+    catch (e) 
+    { 
+      // If the pref didn't exist, then we must not have updated
+      return false; 
+    }    
+    
+    if (currentCount != lastCount) 
+    {
+        updated = true;
+    }
+    
+    return updated;
+  },
+  
  
   
   /**
@@ -261,6 +294,15 @@ Metrics.prototype = {
   
     var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
     return appInfo.name + " " + appInfo.version + " - " + appInfo.appBuildID;    
+  },
+  
+
+  /**
+   * Find out how many updates have been applied through the update manager
+   */  
+  _getUpdateCount: function() {
+    var updateManager = Components.classes["@mozilla.org/updates/update-manager;1"].getService(Components.interfaces.nsIUpdateManager);
+    return updateManager.updateCount;    
   },
   
   
