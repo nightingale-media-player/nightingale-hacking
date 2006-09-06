@@ -2173,6 +2173,7 @@ function onSearchTerm( target, in_term )
 function onMenu( target )
 {
   var v = target.getAttribute( "id" );
+  
   switch ( v )
   {
     case "file.new":
@@ -2280,7 +2281,12 @@ function onMenu( target )
         prompter.checkForUpdates();
     }
     break;
+    case "services.browse":
+      var theServiceTree = document.getElementById( 'frame_servicetree' );
+      theServiceTree.launchURL( "http://extensions.songbirdnest.com/" );
+    break;
     
+    // ==== Default is to launch the value property if one exists, or do nothing.      
     default:
       if ( target.value )
       {

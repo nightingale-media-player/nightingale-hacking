@@ -172,10 +172,10 @@
                     datasources="rdf:Servicesource"
                     ref="NC:ServicesourceFlat"
                 >
-                    <template>
+                    <menuitem id="services.browse" label="&menu.services.browse;"/>
+                    <menuseparator/>   
+                    <template>                 
                       <rule>
-                        <menuitem id="services.browse" label="&menu.services.browse;"/>
-                        <menuseparator/>
                         <menuitem uri="rdf:*"
                           id="rdf:http://home.netscape.com/NC-rdf#Label" 
                           label="rdf:http://home.netscape.com/NC-rdf#Label"
