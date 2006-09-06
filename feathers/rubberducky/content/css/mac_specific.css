@@ -63,7 +63,6 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-image: url(chrome://songbird/skin/default/sysbtn_min_active_15x15mac.png) !important;
 }
 
-
 #sysbtn_close
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_cl_normal_15x15mac.png) !important;
@@ -79,3 +78,21 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_cl_active_15x15mac.png) !important;
 }
+
+#sysbtn_mini
+{
+  background-image: url(chrome://songbird/skin/default/sysbtn_mini_normal_25x15mac.png) !important;  
+  width: 25px !important;
+  height: 15px !important;
+  background-repeat: no-repeat !important;
+}
+#sysbtn_mini:hover
+{
+  background-image: url(chrome://songbird/skin/default/sysbtn_mini_hover_25x15mac.png) !important;
+}
+#sysbtn_mini:active
+{
+  background-image: url(chrome://songbird/skin/default/sysbtn_mini_active_25x15mac.png) !important;
+}
+
+
