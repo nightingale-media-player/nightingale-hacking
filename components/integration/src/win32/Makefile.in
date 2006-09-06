@@ -56,6 +56,7 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(MOZSDK_INCLUDE_DIR)/xultmpl \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 

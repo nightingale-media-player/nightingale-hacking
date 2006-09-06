@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\accessibility&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\gfx&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\dom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)components\dataremote\src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\dataremote\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\usb_mass_storage\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\cd\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\accessibility&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\gfx&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\dom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\docshell&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\widget&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)components\dataremote\src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\dataremote\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\usb_mass_storage\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\cd\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;INTEGRATION_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -86,7 +86,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\accessibility&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\gfx&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\dom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)components\dataremote\src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\dataremote\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\usb_mass_storage\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\cd\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\accessibility&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\gfx&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\dom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\docshell&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\widget&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)components\dataremote\src&quot;;&quot;$(ProjectDir)src\win32&quot;;&quot;$(ProjectDir)obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\dataremote\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\manager\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\usb_mass_storage\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\cd\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)components\devices\base\obj\$(ConfigurationName)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;INTEGRATION_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -322,19 +322,6 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 				RelativePath=".\src\NativeWindowFromNode.h">
 			</File>
 			<File
-				RelativePath=".\src\WindowCloak.cpp">
-			</File>
-			<File
-				RelativePath=".\src\WindowCloak.h">
-			</File>
-			<File
-				RelativePath=".\src\WindowDragger.cpp">
-			</File>
-			<File
-				RelativePath=".\src\WindowDragger.h">
-			</File>			
-			
-			<File
 				RelativePath=".\src\sbHotkeyActions.js">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -352,6 +339,18 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 "
 						Outputs="$(SolutionDir)dist\components\$(InputFileName)"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\src\WindowCloak.cpp">
+			</File>
+			<File
+				RelativePath=".\src\WindowCloak.h">
+			</File>
+			<File
+				RelativePath=".\src\WindowDragger.cpp">
+			</File>
+			<File
+				RelativePath=".\src\WindowDragger.h">
 			</File>
 			<Filter
 				Name="win32"

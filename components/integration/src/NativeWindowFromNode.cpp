@@ -32,68 +32,57 @@
   // Abuse the accessibility interfaces to extract a native window handle from a DOM node
   
 #include "NativeWindowFromNode.h"
+#include "nsIInterfaceRequestorUtils.h"
 #include "nsIAccessibleDocument.h"
 #include "nsIAccessNode.h"
 #include "nsIAccessible.h"
 #include "nsIDOMNode.h"
 
-#ifdef XP_MACOSX
-#include "nsIWidget.h"
-#endif
-
 #include "nsIAccessibilityService.h"
 #include <xpcom/nsCOMPtr.h>
 #include "nsIServiceManager.h"
+#include "nsIDOMDocument.h"
+#include "nsIDOMDocumentView.h"
+#include "nsIDOMAbstractView.h"
+#include "nsIWebNavigation.h"
+#include "nsIDocShellTreeItem.h"
+#include "nsIDocShellTreeOwner.h"
+#include "nsIBaseWindow.h"
+#include "nsIWidget.h"
 
 //-----------------------------------------------------------------------------
 NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 {
   NATIVEWINDOW wnd = NULL;
   
-  nsIDOMNode *node = NULL;
-  if (window) window->QueryInterface(NS_GET_IID(nsIDOMNode), (void **)&node);
-  if (!node) return NULL;
+  nsCOMPtr<nsIDOMDocumentView> domDocumentView(do_QueryInterface(window));
+  if (!domDocumentView) return NULL;
 
-  nsCOMPtr<nsIAccessibilityService> accService = do_GetService("@mozilla.org/accessibilityService;1");
+  nsCOMPtr<nsIDOMAbstractView> domAbstractView; 
+  domDocumentView->GetDefaultView(getter_AddRefs(domAbstractView)); 
+  if (!domAbstractView) return NULL;
 
-  nsCOMPtr<nsIAccessible> accessible;
-  accService->GetAccessibleFor(node, getter_AddRefs(accessible));
-  if (!accessible) 
-  {
-    NS_RELEASE(node);
-    return NULL;
-  }
+  nsCOMPtr<nsIWebNavigation> webNavigation(do_GetInterface(domAbstractView)); 
+  nsCOMPtr<nsIDocShellTreeItem> docShellTreeItem(do_QueryInterface(webNavigation)); 
+  if (!docShellTreeItem) return NULL;
 
-  nsIAccessNode *accnode = NULL;
-  accessible->QueryInterface(NS_GET_IID(nsIAccessNode), (void **)&accnode);
-  if (!accnode) 
-  {
-    NS_RELEASE(node);
-    return NULL;
-  }
-  
-  nsIAccessibleDocument *accdocument = NULL;
-  accnode->GetAccessibleDocument(&accdocument);
-  if (!accdocument) {
-    NS_RELEASE(accnode);
-    NS_RELEASE(node);
-    return NULL;
-  }
+  nsCOMPtr<nsIDocShellTreeOwner> docShellTreeOwner; 
+  docShellTreeItem->GetTreeOwner(getter_AddRefs(docShellTreeOwner)); 
+  if (!docShellTreeOwner) return NULL;
 
+  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(docShellTreeOwner); 
+  if (!baseWindow) return NULL;
+
+  nsCOMPtr<nsIWidget> widget; 
+  baseWindow->GetMainWidget(getter_AddRefs(widget)); 
+  if (!widget) return NULL;
 
 #ifdef XP_WIN
-  accdocument->GetWindowHandle((void **)&wnd);
-  while (GetWindowLong(wnd, GWL_STYLE) & WS_CHILD) wnd = GetParent(wnd);
+  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_WIDGET));
 #elif defined(XP_MACOSX)
-  // accdocument->GetWindowHandle will give us a void* to the mac nsWindow widget.
-  void *temp = NULL;
-  accdocument->GetWindowHandle(&temp);
-  nsIWidget *windowWidget = reinterpret_cast<nsIWidget*>(temp);
-
-  // Once we have the nsWindow, we can request the actual window pointer
-  wnd = reinterpret_cast<NATIVEWINDOW>(windowWidget->GetNativeData(NS_NATIVE_DISPLAY)); 
+  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_DISPLAY)); 
 #endif
 
-  return wnd; 
+  return wnd;
 } // NativeWindowFromNode::get
 
