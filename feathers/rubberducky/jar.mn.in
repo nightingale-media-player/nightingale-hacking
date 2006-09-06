@@ -113,6 +113,18 @@ rubberducky.jar:
   feathers/rubberducky/songbird/skin/default/sysbtn_minimode_9x9.png             (skin/default/sysbtn_minimode_9x9.png)
   feathers/rubberducky/songbird/skin/default/sysbtn_restore_9x9.png              (skin/default/sysbtn_restore_9x9.png)
   feathers/rubberducky/songbird/skin/default/sysbtn_hide_9x9.png                 (skin/default/sysbtn_hide_9x9.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_cl_active_15x15mac.png       (skin/default/sysbtn_cl_active_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_cl_hover_15x15mac.png        (skin/default/sysbtn_cl_hover_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_cl_normal_15x15mac.png       (skin/default/sysbtn_cl_normal_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_max_active_15x15mac.png      (skin/default/sysbtn_max_active_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_max_hover_15x15mac.png       (skin/default/sysbtn_max_hover_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_max_normal_15x15mac.png      (skin/default/sysbtn_max_normal_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_min_active_15x15mac.png      (skin/default/sysbtn_min_active_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_min_hover_15x15mac.png       (skin/default/sysbtn_min_hover_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_min_normal_15x15mac.png      (skin/default/sysbtn_min_normal_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_mini_active_15x15mac.png     (skin/default/sysbtn_mini_active_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_mini_hover_15x15mac.png      (skin/default/sysbtn_mini_hover_15x15mac.png)
+  feathers/rubberducky/songbird/skin/default/sysbtn_mini_normal_15x15mac.png     (skin/default/sysbtn_mini_normal_15x15mac.png)
   feathers/rubberducky/songbird/skin/default/thumb_20x10.png                     (skin/default/thumb_20x10.png)
   feathers/rubberducky/songbird/skin/default/toolbar_addtolibrary_disabled.png   (skin/default/toolbar_addtolibrary_disabled.png)
   feathers/rubberducky/songbird/skin/default/toolbar_addtolibrary_hover.png      (skin/default/toolbar_addtolibrary_hover.png)
@@ -243,4 +255,7 @@ rubberducky.jar:
   feathers/rubberducky/songbird/skin/serviceicons/u2.ico                         (skin/serviceicons/u2.ico)
   feathers/rubberducky/songbird/skin/serviceicons/yahoo.ico                      (skin/serviceicons/yahoo.ico)
   feathers/rubberducky/songbird/skin/serviceicons/elbows.ico                     (skin/serviceicons/elbows.ico)
+
+
+
 
