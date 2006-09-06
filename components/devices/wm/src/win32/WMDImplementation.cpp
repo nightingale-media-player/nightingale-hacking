@@ -684,8 +684,8 @@ PRBool WMDevice::Initialize()
     mDeviceString += DEVICE_STRING_SUFFIX;
 
     mDeviceContext.AssignLiteral(CONTEXT_WINDOWS_MEDIA_DEVICE);
-    mDeviceContext += mDeviceNumber ++;
-
+    mDeviceContext.AppendInt(mDeviceNumber ++);
+    
     EnumTracks();
     ClearLibraryData();
     UpdateDeviceLibraryData();

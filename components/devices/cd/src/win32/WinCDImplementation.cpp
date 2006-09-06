@@ -283,9 +283,6 @@ WinCDObject::UpdateCDLibraryData()
                                           pQuery, getter_AddRefs(pPlaylist));
     SB_CHECK_FAILURE(rv);
 
-    rv = pQuery->Execute(&bRet);
-    SB_CHECK_FAILURE(rv);
-
     rv = pQuery->ResetQuery();
     SB_CHECK_FAILURE(rv);
 
@@ -352,8 +349,6 @@ WinCDObject::UpdateCDLibraryData()
       nsMemory::Free(aMetaValues[1]);
       nsMemory::Free(aMetaValues);
     }
-    rv = pQuery->Execute(&bRet);
-    SB_CHECK_FAILURE(rv);
 
     // Notify listeners of the event
     mParentCDManager->GetBasesbDevice()->DoDeviceConnectCallback(GetDeviceString());
