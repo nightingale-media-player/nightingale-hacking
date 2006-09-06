@@ -4,6 +4,7 @@ var bundle;
 var n_ext;
 var cur_ext;
 var destFile;
+var afailure = false;
 
 function init()
 {
@@ -19,7 +20,7 @@ function init()
 function installNextXPI()
 {
   cur_ext++;
-  if (cur_ext+1 > n_ext) { window.close(); return; }
+  if (cur_ext+1 > n_ext) { bundle.setInstallResult(afailure ? "failure" : "success"); window.close(); return; }
   
   if (!bundle.getExtensionInstallState(cur_ext)) {
     setTimeout(installNextXPI, 0);
@@ -70,6 +71,7 @@ var downloadListener =
       couldnotdownload = songbirdStrings.GetStringFromName("setupprogress.couldnotdownload");
     } catch (e) {}
     sbMessageBox("Error", couldnotdownload + " " + bundle.getExtensionName(cur_ext), false);
+    afailure = true;
     setTimeout(installNextXPI, 0);
   },
 

@@ -102,8 +102,18 @@ interface sbIBundle : nsISupports
    * the installer's progress will be spawned.
    * \param window The parent for the progress dialog box
    * \sa setExtensionInstallState, getExtensionInstallState
+   * \return A string describing the result of the download and installation attempt ("success" or "failure")
    */
-  void installSelectedExtensions(in nsISupports window);
+  AString installSelectedExtensions(in nsISupports window);
+
+  /**
+   * \brief Sets the result of the installation attempt
+   * This method records the result of the extension installation attempt. It should be called by the 
+   * dialog implementing download and XPI installation.
+   * \param window The parent for the progress dialog box
+   * \sa setExtensionInstallState, getExtensionInstallState
+   */
+  void setInstallResult(in AString result);
 
   /**
    * \brief Download a file

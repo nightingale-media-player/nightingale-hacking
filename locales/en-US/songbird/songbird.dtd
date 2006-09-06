@@ -159,7 +159,6 @@
 <!ENTITY menu.feathers            "Feathers" >
 <!ENTITY about.version            "Version" >
 
-<!ENTITY setup.retrievingxpilist  "Retrieving extensions list. Please wait..." >
 <!ENTITY setup.custominstall      "Custom Install" >
 <!ENTITY setup.title              "Songbird Setup Options" >
 <!ENTITY setupprogress.pleasewait "Please wait..." >
@@ -252,3 +251,4 @@
 
 <!ENTITY menu.updateCmd.label     "Check for Updates...">
 <!ENTITY menu.updateCmd.accessKey "o">
+<!ENTITY firstrun.connectionsettings "Connection Settings">

@@ -28,7 +28,6 @@
 var wanted_locale = "en-US";
 var loaded_bundle = false;
 var bundle = null;
-
 var FirstRunBundleCB = 
 {
   onLoad: function(bundle) { bundleDataReady(bundle); },
@@ -50,10 +49,10 @@ function bundleDataReady(bundle) {
     loaded_bundle = true;
     enableCustomInstall(); 
   } else {
-    sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false, true);
+    sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false, false);
+    var extlist = document.getElementById("songbird.extensionlist");
+    if (extlist) extlist.closeList();
   }
-  enableGoAhead();
-  hidePleaseWait();
 }
 
 function initFirstRun() 
@@ -73,6 +72,8 @@ function initFirstRun()
   if (s != 0) bundleDataReady(bundle);
   if (window.addEventListener) window.addEventListener("keydown", checkAltF4, true);
   fillLanguageBox();
+  var extlist = document.getElementById("songbird.extensionlist");
+  if (extlist) extlist.openList();
 }
 
 function shutdownFirstRun()
@@ -162,18 +163,6 @@ function enableCustomInstall()
   setTimeout( "customInstall();", 250 );
 }
 
-function enableGoAhead() 
-{
-  document.getElementById("ok_button").setAttribute("disabled", "false");
-}
-
-function hidePleaseWait()
-{
-  var pleasewait = document.getElementById("pleasewait");
-  pleasewait.setAttribute("hidden", "true");
-}
-
-
 function continueStartup() {
   //SB_LOG("continueStartup");
   window.arguments[0].onComplete();
@@ -185,7 +174,11 @@ function customInstall()
   if (extlist)
   {
     extlist.bundleInterface = bundle;
-    extlist.toggleList();
+    if (extlist.state == "open") {
+      extlist.recreateContent();
+    } else {
+      extlist.openList();
+    }
   }
 }
 
@@ -220,7 +213,8 @@ function doOK()
     gPrefs.setBoolPref("songbird.firstruncheck", remember_firstrun);  
     return true; 
   } else {
-    bundle.installSelectedExtensions(window);
+    var res = bundle.installSelectedExtensions(window);
+    if (res == "failure") return false;
     gPrefs.setBoolPref("songbird.firstruncheck", true);  
     
     gPrefs.setCharPref("songbird.installedbundle", bundle.getBundleVersion());
@@ -271,3 +265,24 @@ function handleOptOut()
   } catch (e) {}; // Stuff likes to throw.
 };
 
+function openConnectionSettings()
+{
+  window.openDialog( "chrome://browser/content/preferences/connection.xul", "Connections", "chrome,modal=yes,centerscreen", document );
+  if (!bundle) {
+    bundle = new nsIBundle();
+    bundle.addBundleObserver(FirstRunBundleCB);
+  }
+  var extlist = document.getElementById("songbird.extensionlist");
+  if (extlist) {
+    if (extlist.state == "open")
+      extlist.pleaseWait();
+    else {
+      extlist.bundleInterface = null;
+      extlist.openList();
+    }
+  }
+  loaded_bundle = false;
+  bundle.retrieveBundleFile();
+  var s = bundle.getStatus();
+  if (s != 0) bundleDataReady(bundle);
+}

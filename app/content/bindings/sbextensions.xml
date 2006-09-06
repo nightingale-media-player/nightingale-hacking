@@ -96,6 +96,7 @@
           <![CDATA[
           try
           {
+            if (this.state == "open") return;
             // No animations until we finish
             if ( ! this.tracking )
             {
@@ -138,6 +139,7 @@
           <![CDATA[
           try
           {
+            if (this.state == "closed") return;
             this.state = "closed";
             // No animations until we finish
             if ( ! this.tracking )
@@ -321,27 +323,7 @@
             this.parent.insertBefore( vbox, before );
             this.size = vbox.boxObject.height;
 
-            var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
-            var n = this.bundleInterface.getNumExtensions();
-            for (var i=0;i<n;i++)
-            {
-              var item = document.createElement( "richlistitem" );
-              var checkbox = document.createElement( "checkbox" );
-              checkbox.setAttribute("checked", this.bundleInterface.getExtensionInstallState(i));
-              item.appendChild(checkbox);
-              var label = document.createElement( "label" );
-              label.setAttribute("value", this.bundleInterface.getExtensionName(i) + " - " + this.bundleInterface.getExtensionDesc(i));
-              item.setAttribute("url", this.bundleInterface.getExtensionURL(i));
-              var oncommand = { 
-                _that: null, 
-                _checkbox: null,
-                _index: 0,
-                handleEvent: function( event ) { this._that.onToggle(this._index, this._checkbox); } 
-              } oncommand._that = this; oncommand._checkbox = checkbox; oncommand._index = i;
-              checkbox.addEventListener("command", oncommand, true);
-              item.appendChild(label);
-              listbox.appendChild(item);
-            }
+            this.insertListItems();
           }
           catch ( err )
           {
@@ -350,12 +332,94 @@
           ]]>
         </body>
       </method>
+
+      <method name="insertListItems">
+        <body>
+          <![CDATA[
+          try
+          {
+            var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
+            if (this.bundleInterface) {
+              var n = this.bundleInterface.getNumExtensions();
+              for (var i=0;i<n;i++)
+              {
+                var item = document.createElement( "richlistitem" );
+                var checkbox = document.createElement( "checkbox" );
+                checkbox.setAttribute("checked", this.bundleInterface.getExtensionInstallState(i));
+                item.appendChild(checkbox);
+                var label = document.createElement( "label" );
+                label.setAttribute("value", this.bundleInterface.getExtensionName(i) + " - " + this.bundleInterface.getExtensionDesc(i));
+                item.setAttribute("url", this.bundleInterface.getExtensionURL(i));
+                var oncommand = { 
+                  _that: null, 
+                  _checkbox: null,
+                  _index: 0,
+                  handleEvent: function( event ) { this._that.onToggle(this._index, this._checkbox); } 
+                } oncommand._that = this; oncommand._checkbox = checkbox; oncommand._index = i;
+                checkbox.addEventListener("command", oncommand, true);
+                item.appendChild(label);
+                listbox.appendChild(item);
+              }
+            } else {
+              var item = document.createElement( "richlistitem" );
+              var label = document.createElement( "label" );
+              var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+              var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+              var pleasewait = "Retrieving extensions list. Please wait...";
+              try {
+                pleasewait = songbirdStrings.GetStringFromName("setup.retrievingxpilist");
+              } catch (err) { /* ignore error, we have default strings */ }
+              label.setAttribute("value", pleasewait);
+              var spacer = document.createElement( "spacer" );
+              spacer.setAttribute("width", "8");
+              item.appendChild(spacer);
+              item.appendChild(label);
+              listbox.appendChild(item);
+            }
+          }
+          catch ( err )
+          {
+            alert( "insertListItems - " + err );
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="destroyListItems">
+        <body>
+          <![CDATA[
+            var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
+            while (listbox.firstChild) {
+              listbox.removeChild(listbox.firstChild);
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="recreateContent">
+        <body>
+          <![CDATA[
+            this.destroyListItems();
+            this.insertListItems();
+          ]]>
+        </body>
+      </method>
+      
+      <method name="pleaseWait">
+        <body>
+          <![CDATA[
+            this.destroyListItems();
+            this.bundleInterface = null;
+            this.insertListItems();
+          ]]>
+        </body>
+      </method>
       
       <method name="onToggle">
         <parameter name="index"/>
         <parameter name="checkbox"/>
         <body>
-          this.bundleInterface.setExtensionInstallState(index, checkbox.checked);
+          if (this.bundleInterface) this.bundleInterface.setExtensionInstallState(index, checkbox.checked);
         </body>
       </method>
       

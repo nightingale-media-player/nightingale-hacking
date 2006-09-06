@@ -51,6 +51,10 @@ Bundle.prototype = {
   _needrestart: false,
   _bundleversion: 0,
   _simulate_lots_of_entries: false,
+  _init: false,
+  _onload: null,
+  _onerror: null,
+  _installresult: "",
   
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
@@ -60,19 +64,27 @@ Bundle.prototype = {
 
   retrieveBundleFile: function() {
   
-    var onload = { 
+    if (this._init && this._req) {
+      this._req.abort();
+      this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).removeEventListener("load", this._onload, false);
+      this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).removeEventListener("error", this._onerror, false);
+      this._req = null;
+      this._status = 0;
+    }
+    
+    this._onload = { 
       _that: null, 
       handleEvent: function( event ) { this._that.onLoad(); } 
-    } onload._that = this;
+    }; this._onload._that = this;
     
-    var onerror = { 
+    this._onerror = { 
       _that: null, 
       handleEvent: function( event ) { this._that.onError(); } 
-    } onerror._that = this;
+    }; this._onerror._that = this;
     
     this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
-    this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onload, false);
-    this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", onerror, false);
+    this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", this._onload, false);
+    this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", this._onerror, false);
     var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);
     var url;
     switch (xulRuntime.OS) {
@@ -87,9 +99,12 @@ Bundle.prototype = {
         url = SONGBIRD_GETBUNDLE_URL_MACOSX;
         break;
     }
+
     //this.LOG(url);
-    this._req.open('GET', url, true); 
+    
+    this._req.open('GET', url + this._getRandomParameter(), true); 
     this._req.send(null);
+    this._init = true;
   },
         
   getBundleDocument: function() {
@@ -146,7 +161,13 @@ Bundle.prototype = {
                             .getService(Components.interfaces.nsIWindowWatcher);
                             
     // TODO: do the install !
+    this._installresult = "";
     windowWatcherService.openWindow(window, "chrome://songbird/content/xul/setup_progress.xul", "_blank", "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal", this);
+    return this._installresult;
+  },
+  
+  setInstallResult: function(result) {
+    this._installresult = result;
   },
   
   getExtensionList: function() {
@@ -221,7 +242,7 @@ Bundle.prototype = {
     aLocalFile.initWithPath(destFile);
     this._file = aLocalFile;
     
-    var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(url, null, null);
+    var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(url + this._getRandomParameter(), null, null);
 
     const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
     var flags = nsIWBP.PERSIST_FLAGS_NO_CONVERSION |
@@ -260,6 +281,13 @@ Bundle.prototype = {
     aTempFolder.append(aUUID);
     
     return aTempFolder.path;
+  },
+  
+  _getRandomParameter: function() {
+    var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
+    aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
+    var aUUID = aUUIDGenerator.generateUUID();
+    return "?randomguid=" + aUUID;
   },
   
   installXPI: function(localFilename)
