@@ -128,7 +128,7 @@
     <method name="sendChangeEvent">
       <body>
         var e = document.createEvent("Events");
-        e.initEvent("progress_slider-change", false, true);
+        e.initEvent("progressSliderChange", false, true);
         this.dispatchEvent(e);
       </body>
     </method>
@@ -136,7 +136,7 @@
     <method name="sendReleaseEvent">
       <body>
         var e = document.createEvent("Events");
-        e.initEvent("progress_slider-release", false, true);
+        e.initEvent("progressSliderRelease", false, true);
         this.dispatchEvent(e);
       </body>
     </method>

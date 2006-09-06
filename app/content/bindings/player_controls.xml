@@ -44,8 +44,8 @@
   <binding id="volume" extends="chrome://songbird/content/bindings/progress_slider.xml#progress_slider">
 
    <handlers>
-     <handler event="progress_slider-change" action="this.onTrackVolume();"/>
-     <handler event="progress_slider-release" action="this.onReleaseVolume();"/>
+     <handler event="progressSliderChange" action="this.onTrackVolume();"/>
+     <handler event="progressSliderRelease" action="this.onReleaseVolume();"/>
    </handlers>
 
   <implementation>
@@ -576,8 +576,8 @@
   <binding id="seekbar" extends="chrome://songbird/content/bindings/progress_slider.xml#progress_slider">
 
    <handlers>
-     <handler event="progress_slider-change" action="this.onTrackSeekbar();"/>
-     <handler event="progress_slider-release" action="this.onReleaseSeekbar();"/>
+     <handler event="progressSliderChange" action="this.onTrackSeekbar();"/>
+     <handler event="progressSliderRelease" action="this.onReleaseSeekbar();"/>
    </handlers>
 
   <implementation>
