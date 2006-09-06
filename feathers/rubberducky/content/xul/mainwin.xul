@@ -18,10 +18,10 @@
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
+// GNU General Public License Version 2 (the SGPL⬝).
 // 
 // Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an SAS IS⬝ basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -490,7 +490,7 @@
                         <button class="sb_faceplate" disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
                         <hbox class="sb_faceplate" id="browser_url_box" flex="6">
                           <image id="browser_url_image" class="sb_faceplate" src=""/>
-                          <textbox id="browser_url" class="sb_faceplate, mainwin_location" flex="1" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );" onblur="onHTMLURLBlur( event );"/>
+                          <textbox id="browser_url" class="sb_faceplate, mainwin_location" flex="1" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );"/>
                         </hbox>
                         <!-- SEARCH WIDGET -->
                         <search
