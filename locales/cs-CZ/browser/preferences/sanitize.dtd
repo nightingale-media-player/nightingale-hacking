@@ -1,26 +1,30 @@
-<!ENTITY sanitizeDialog.title         "Clear Private Data">
-<!ENTITY window.width                 "30em">
+<!ENTITY sanitizeDialog.title "Vymazání důvěrných dat">
+<!ENTITY window.width "30em">
 
-<!ENTITY items.label                  "Private Data">
-<!ENTITY sanitizeItems.label          "Select the items to be cleared:">
-<!ENTITY itemHistory.label            "Browsing History">
-<!ENTITY itemHistory.accesskey        "B">
-<!ENTITY itemFormData.label           "Saved Form Information">
-<!ENTITY itemFormData.accesskey       "F">
-<!ENTITY itemPasswords.label          "Saved Passwords">
-<!ENTITY itemPasswords.accesskey      "P">
-<!ENTITY itemCookies.label            "Cookies">
-<!ENTITY itemCookies.accesskey        "C">
-<!ENTITY itemCache.label              "Cache">
-<!ENTITY itemCache.accesskey          "a">
-<!ENTITY itemDownloads.label          "Download History">
-<!ENTITY itemDownloads.accesskey      "D">
-<!ENTITY itemSessions.label           "Authenticated Sessions">
-<!ENTITY itemSessions.accesskey       "S">
+<!ENTITY items.label "Důvěrná data">
+<!ENTITY sanitizeItems.label "Zvolte důvěrná data, která mají být vymazána:">
+<!ENTITY itemHistory.label "Historie prohlížení">
+<!ENTITY itemHistory.accesskey "H">
+<!ENTITY itemFormData.label "Informace z formulářů">
+<!ENTITY itemFormData.accesskey "f">
+<!ENTITY itemPasswords.label "Uložená hesla">
+<!ENTITY itemPasswords.accesskey "U">
+<!ENTITY itemCookies.label "Cookies">
+<!ENTITY itemCookies.accesskey "C">
+<!ENTITY itemCache.label "Vyrovnávací paměť">
+<!ENTITY itemCache.accesskey "p">
+<!ENTITY itemDownloads.label "Historie stahování">
+<!ENTITY itemDownloads.accesskey "s">
+<!ENTITY itemSessions.label "Relace s autentizací">
+<!ENTITY itemSessions.accesskey "R"> 
 
-<!ENTITY settings.label               "Settings">
-<!ENTITY sanitizeOnShutDown.label     "Clear private data when closing &brandShortName;">
-<!ENTITY sanitizeOnShutDown.accesskey "e">
-<!ENTITY promptOnSanitize.label       "Ask me before clearing private data">
-<!ENTITY promptOnSanitize.accesskey   "k">
+<!ENTITY settings.label "Nastavení">
+<!ENTITY sanitizeOnShutDown.label "Vymazat důvěrná data při ukončení aplikace &brandShortName;">
+<!ENTITY sanitizeOnShutDown.accesskey "m">
+<!ENTITY promptOnSanitize.label "Zeptat se před vymazáním důvěrných dat">
+<!ENTITY promptOnSanitize.accesskey "Z">
+
+
+<!ENTITY promptOnSanitize.accesskey "k" >
+
 

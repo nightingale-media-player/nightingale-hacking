@@ -8,82 +8,82 @@
 <!ENTITY window.browse      "Zoek..." >
 
 <!ENTITY menu.file          "Bestand" >
-<!ENTITY menu.file.new      "Nieuwe Afspeellijst..." >
-<!ENTITY menu.file.smart    "Nieuwe Slimme Afspeellijst..." >
-<!ENTITY menu.file.remote   "Nieuwe Netwerk Afspeellijst..." >
-<!ENTITY menu.file.open     "Open Bestand..." >
-<!ENTITY menu.file.url      "Open van locatie..." >
-<!ENTITY menu.file.playlist "Laad een Afspeellijst..." >
-<!ENTITY menu.file.scan     "Doorzoek Media..." >
-<!ENTITY menu.file.dlfolder "Stel Downloadmap in..." >
-<!ENTITY menu.file.watch    "Stel Bekeken map in..." >
+<!ENTITY menu.file.new      "Nieuwe afspeellijst..." >
+<!ENTITY menu.file.smart    "Nieuwe slimme afspeellijst..." >
+<!ENTITY menu.file.remote   "Nieuwe netwerk afspeellijst..." >
+<!ENTITY menu.file.open     "Bestand openen..." >
+<!ENTITY menu.file.url      "Locatie openen..." >
+<!ENTITY menu.file.playlist "Afspeellijst laden..." >
+<!ENTITY menu.file.scan     "Media doorzoeken..." >
+<!ENTITY menu.file.dlfolder "Downloadmap instellen..." >
+<!ENTITY menu.file.watch    "Bekeken map instellen..." >
 <!ENTITY menu.file.htmlbar  "Webbalk altijd tonen" >
-<!ENTITY menu.file.skin     "Alternatieve Skin" >
-<!ENTITY menu.file.window   "Open Hoofdvenster" >
-<!ENTITY menu.file.mini     "Open Minispeler" >
+<!ENTITY menu.file.skin     "Alternatieve skin" >
+<!ENTITY menu.file.window   "Open hoofdvenster" >
+<!ENTITY menu.file.mini     "Open minispeler" >
 <!ENTITY menu.file.about    "Over Songbird..." >
 <!ENTITY menu.file.exit     "Afsluiten" >
 
-<!ENTITY menu.edit          "Bewerk" >
-<!ENTITY menu.edit.undo     "Annuleer" >
-<!ENTITY menu.edit.cut      "Knip" >
-<!ENTITY menu.edit.copy     "Kopieer" >
-<!ENTITY menu.edit.paste    "Plak" >
-<!ENTITY menu.edit.clear    "Wis" >
-<!ENTITY menu.edit.selall   "Selecteer Alles" >
-<!ENTITY menu.edit.selnone  "Selecteer Niets" >
+<!ENTITY menu.edit          "Bewerken" >
+<!ENTITY menu.edit.undo     "Annuleren" >
+<!ENTITY menu.edit.cut      "Knippen" >
+<!ENTITY menu.edit.copy     "Kopieren" >
+<!ENTITY menu.edit.paste    "Plakken" >
+<!ENTITY menu.edit.clear    "Verwijderen" >
+<!ENTITY menu.edit.selall   "Alles selecteren" >
+<!ENTITY menu.edit.selnone  "Niets selecteren" >
 
 <!ENTITY menu.controls      "Controls" >
-<!ENTITY menu.control.play  "Spelen/Pause" >
-<!ENTITY menu.control.next  "Volgende Titel" >
-<!ENTITY menu.control.prev  "Vorige Titel" >
+<!ENTITY menu.control.play  "Spelen/Pauze" >
+<!ENTITY menu.control.next  "Volgende titel" >
+<!ENTITY menu.control.prev  "Vorige titel" >
 <!ENTITY menu.control.shuf  "Shuffle" >
-<!ENTITY menu.control.repa  "Alle Herhalen" >
-<!ENTITY menu.control.rep1  "Eén Herhalen" >
-<!ENTITY menu.control.repx  "Niets Herhalen" >
+<!ENTITY menu.control.repa  "Alles herhalen" >
+<!ENTITY menu.control.rep1  "Eén herhalen" >
+<!ENTITY menu.control.repx  "Niets herhalen" >
 
 <!ENTITY menu.services        "Services" >
-<!ENTITY menu.services.browse "Doorblader Services..." >
+<!ENTITY menu.services.browse "Doorblader services..." >
 
 <!ENTITY menu.devices       "Apparaten" >
 
 <!ENTITY menu.help          "Help" >
-<!ENTITY menu.help.topics   "Help Onderwerpen..." >
+<!ENTITY menu.help.topics   "Help onderwerpen..." >
 <!ENTITY menu.help.about    "Over Songbird..." >
 
-<!ENTITY html.context.open  "Open" >
-<!ENTITY html.context.play  "Speel" >
-<!ENTITY html.context.add   "Toevoegen aan Bibliotheek" >
+<!ENTITY html.context.open  "Openen" >
+<!ENTITY html.context.play  "Afspelen" >
+<!ENTITY html.context.add   "Toevoegen aan bibliotheek" >
 
 <!ENTITY playlist.context.remove  "Verwijder" >
 <!ENTITY playlist.context.rename  "Hernoem" >
 <!ENTITY playlist.context.search  "Zoek" >
-<!ENTITY playlist.context.lyrics  "Tekst" >
+<!ENTITY playlist.context.lyrics  "Liedtekst" >
 
-<!ENTITY tooltip.miniplayer       "Schakel om naar Minipspeler" >
+<!ENTITY tooltip.miniplayer       "Schakel om naar minipspeler" >
 <!ENTITY tooltip.minimize         "Minimaliseren" >
 <!ENTITY tooltip.maximize         "Maximaliseren/Herstellen" >
 <!ENTITY tooltip.exit             "Afsluiten" >
-<!ENTITY tooltip.control.back     "Vorige Titel" >
+<!ENTITY tooltip.control.back     "Vorige titel" >
 <!ENTITY tooltip.control.play     "Afspelen" >
 <!ENTITY tooltip.control.pause    "Pauzeren" >
-<!ENTITY tooltip.control.fwd      "Volgende Titel" >
+<!ENTITY tooltip.control.fwd      "Volgende titel" >
 <!ENTITY tooltip.control.mute     "Mute" >
 <!ENTITY tooltip.control.volume   "Volume" >
 <!ENTITY tooltip.control.repeat   "Herhalen" >
 <!ENTITY tooltip.control.shuffle  "Shuffle" >
-<!ENTITY tooltip.control.curtrack "Zoek Huidige Titel" >
+<!ENTITY tooltip.control.curtrack "Zoek huidige titel" >
 <!ENTITY tooltip.control.service  "Schakel Faceplate Display in" >
 <!ENTITY tooltip.search           "Zoek" >
-<!ENTITY tooltip.browser.back     "Blader Terug" >
-<!ENTITY tooltip.browser.fwd      "Blader Vooruit" >
-<!ENTITY tooltip.browser.stop     "Browser Stoppen" >
-<!ENTITY tooltip.browser.home     "Thuis" >
+<!ENTITY tooltip.browser.back     "Blader terug" >
+<!ENTITY tooltip.browser.fwd      "Blader vooruit" >
+<!ENTITY tooltip.browser.stop     "Browser stoppen" >
+<!ENTITY tooltip.browser.home     "Welkom" >
 <!ENTITY tooltip.browser.playlist "Toon beschikbare media op deze website" >
 <!ENTITY tooltip.browser.download "Toon huidige downloads" >
 
-<!ENTITY smart.window             "Bouw Slimme Afspeellijst" >
-<!ENTITY smart.library            "Selecteer Bibliotheek:" >
+<!ENTITY smart.window             "Bouw slimme afspeellijst" >
+<!ENTITY smart.library            "Selecteer bibliotheek:" >
 <!ENTITY smart.limit              "Beperk tot" >
 <!ENTITY smart.match              "Overeenkomst" >
 <!ENTITY smart.any                "één" >
@@ -147,8 +147,8 @@
 
 
 
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
+<!ENTITY menu.preferences "Voorkeuren..." >
+<!ENTITY menu.extensions "Extensies..." >
 
 
 
@@ -158,48 +158,48 @@
 
 
 
-<!ENTITY about.version "Version" >
+<!ENTITY about.version "Versie" >
 
 
 
 
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY tooltip.browser.bookmark "Bladwijzer" >
 
 
 
 
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setup.retrievingxpilist "Bezig met het ontvangen van de extensieslijst. Even geduld..." >
+<!ENTITY setup.custominstall "Aangepaste Installatie" >
+<!ENTITY setup.title "Songbird Installatie Opties" >
+<!ENTITY setupprogress.pleasewait "Even geduld..." >
 
 
 
 
-<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.accesskey "B" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
 <!ENTITY menu.file.remote.accesskey "R" >
 <!ENTITY menu.file.open.accesskey "O" >
-<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.url.accesskey "L" >
 <!ENTITY menu.file.playlist.accesskey "I" >
 <!ENTITY menu.file.scan.accesskey "M" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
-<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.watch.accesskey "E" >
 <!ENTITY menu.file.mini.accesskey "M" >
 <!ENTITY locale.language.accesskey "L" >
 <!ENTITY menu.feathers.accesskey "F" >
-<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.preferences.accesskey "V" >
 <!ENTITY menu.extensions.accesskey "E" >
-<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.file.exit.accesskey "A" >
 <!ENTITY menu.edit.accesskey "E" >
 <!ENTITY menu.edit.undo.accesskey "U" >
-<!ENTITY menu.edit.cut.accesskey "T" >
-<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.cut.accesskey "N" >
+<!ENTITY menu.edit.copy.accesskey "K" >
 <!ENTITY menu.edit.paste.accesskey "P" >
-<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.clear.accesskey "V" >
 <!ENTITY menu.edit.selall.accesskey "A" >
-<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.edit.selnone.accesskey "I" >
 <!ENTITY menu.controls.accesskey "C" >
 <!ENTITY menu.control.play.accesskey "P" >
 <!ENTITY menu.control.next.accesskey "N" >
@@ -209,35 +209,35 @@
 <!ENTITY menu.control.rep1.accesskey "O" >
 <!ENTITY menu.control.repx.accesskey "E" >
 <!ENTITY menu.services.accesskey "S" >
-<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.devices.accesskey "A" >
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
-<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY menu.help.about.accesskey "O" >
 
 
 
 
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.title "Bladwijzer aanpassen" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
+<!ENTITY bookmarks.edit.label "Naam:" >
+<!ENTITY bookmarks.edit.icon "Icoon:" >
 
 
 
 
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.exttrackdata "Uitgebreide Data" >
 <!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.title "Tag toevoegen" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
+<!ENTITY jumptofile.title "Spring naar" >
 
 
 
 
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
+<!ENTITY window.undo "Ongedaan maken" >
+<!ENTITY window.apply "Toepassen" >
 
 
 
@@ -247,75 +247,72 @@
 
 
 
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
+<!ENTITY metrics.optout "Laat Songbird toe om anonieme gebruikersdata door te sturen (aangewezen)" >
 
 
 
 
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys "Gebruik Globale Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.action "Actie" >
 <!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.add "Toevoegen" >
+<!ENTITY hotkeys.set "Instellen" >
+<!ENTITY hotkeys.remove "Verwijderen" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
 
 
 
 
 <!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.url "Locatie" >
+<!ENTITY metadata.artist "Artiest" >
+<!ENTITY metadata.title "Titel" >
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Length" >
+<!ENTITY metadata.length "Duur" >
 
 
 
 
-<!ENTITY restartbox.restartnow "Restart Now" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
-<!ENTITY restartbox.restartlater "Restart Later" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+<!ENTITY restartbox.restartnow "Nu opnieuw starten" >
+<!ENTITY restartbox.restartonplaybackend "Herstart na afspelen" >
+<!ENTITY restartbox.restartlater "Later opnieuw starten" >
+<!ENTITY setupprogress.installingextensions "Bezig met installeren extensies" >
 
 
 
 
-<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.hide "Verbergen" >
 
 
 
 
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY menu.updateCmd.label "Controleren op updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
 
 
 
 
-<!ENTITY jumptofile.playlist "Playlist:" >
-<!ENTITY jumptofile.search "Search:" >
+<!ENTITY jumptofile.playlist "Afspeellijst:" >
+<!ENTITY jumptofile.search "Zoeken:" >
 
 
 
 
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY tooltip.control.shuf_off "Shuffle uit" >
 
 
 
 
 <!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
+<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY smart.selectedby "Selected by" >
 <!ENTITY firstrun.connectionsettings "Connection Settings" >
+
+
+
+
+
 
 

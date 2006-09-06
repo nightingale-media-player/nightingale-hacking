@@ -1,23 +1,28 @@
 
-<!ENTITY tabsTab.label                       "Tabs">
-<!ENTITY openExternalLinksIn.label           "Open links from other applications in:">
-<!ENTITY newWindow.label                     "a new window">
-<!ENTITY newWindow.accesskey                 "w">
-<!ENTITY newTabInRecentWindow.label          "a new tab in the most recent window">
-<!ENTITY newTabInRecentWindow.accesskey      "t">
-<!ENTITY recentWindowOrTab.label             "the most recent tab/window">
-<!ENTITY recentWindowOrTab.accesskey         "r">
-<!ENTITY forceNewWindowLinks.label           "Force links that open new windows to open in:">
-<!ENTITY forceNewWindowLinks.accesskey       "F">
-<!ENTITY sameTabOrWindow.label               "the same tab/window as the link">
-<!ENTITY sameTabOrWindow.accesskey           "s">
-<!ENTITY newTab.label                        "a new tab">
-<!ENTITY newTab.accesskey                    "n">
-<!ENTITY hideTabBar.label                    "Hide the tab bar when only one web site is open">
-<!ENTITY hideTabBar.accesskey                "d">
-<!ENTITY loadInBackground.label              "Select new tabs opened from links">
-<!ENTITY loadInBackground.accesskey          "l">
-<!ENTITY loadBookmarksInBackground.label     "Select new tabs opened from bookmarks or history">
-<!ENTITY loadBookmarksInBackground.accesskey "b">
-<!ENTITY warnOnClose.label                   "Warn when closing multiple tabs">
-<!ENTITY warnOnClose.accesskey               "m">
+<!ENTITY tabsTab.label "Panely">
+<!ENTITY openExternalLinksIn.label "Odkazy z ostatních aplikací otevírat v">
+<!ENTITY newWindow.label "novém okně">
+<!ENTITY newWindow.accesskey "o">
+<!ENTITY newTabInRecentWindow.label "novém panelu naposledy použitého okna">
+<!ENTITY newTabInRecentWindow.accesskey "p">
+<!ENTITY recentWindowOrTab.label "naposledy použitém panelu/okně">
+<!ENTITY recentWindowOrTab.accesskey "d">
+<!ENTITY forceNewWindowLinks.label "Odkazy otevírající nové okno otevírat v">
+<!ENTITY forceNewWindowLinks.accesskey "k">
+<!ENTITY sameTabOrWindow.label "tom samém panelu/okně jako odkaz">
+<!ENTITY sameTabOrWindow.accesskey "s">
+<!ENTITY newTab.label "novém panelu">
+<!ENTITY newTab.accesskey "n">
+<!ENTITY hideTabBar.label "Skrýt lištu s panely, pokud je otevřena pouze jedna stránka">
+<!ENTITY hideTabBar.accesskey "l">
+<!ENTITY loadInBackground.label "Přepnout na nový panel otevřený z odkazu">
+<!ENTITY loadInBackground.accesskey "v">
+<!ENTITY loadBookmarksInBackground.label "Přepnout na nový panel otevřený ze záložek či historie">
+<!ENTITY loadBookmarksInBackground.accesskey "z">
+<!ENTITY warnOnClose.label "Varovat, je-li zavíráno více panelů najednou">
+<!ENTITY warnOnClose.accesskey "r">
+
+
+<!ENTITY warnOnClose.accesskey "m" >
+
+

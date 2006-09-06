@@ -1,76 +1,81 @@
-<!ENTITY  fontsDialog.title                       "Fonts">
-<!ENTITY  window.width                            "39em">
-<!ENTITY  window.macWidth                         "43em">
-<!ENTITY  window.unixWidth                        "41em">
+<!ENTITY  fontsDialog.title                       "Polices">
+<!ENTITY  window.width                            "53em">
+<!ENTITY  window.macWidth                         "49em">
+<!ENTITY  window.unixWidth                        "49em">
 
-<!ENTITY  language.label                          "Fonts for:">
-<!ENTITY  language.accesskey                      "F">
+<!ENTITY  language.label                          "Polices pour :">
+<!ENTITY  language.accesskey                      "c">
 
-<!ENTITY  size.label                              "Size:">
-<!ENTITY  size.accesskey1                         "z">
+<!ENTITY  size.label                              "Taille :">
+<!ENTITY  size.accesskey1                         "T">
 <!ENTITY  size.accesskey2                         "e">
 
-<!ENTITY  proportional.label                      "Proportional:">
+<!ENTITY  proportional.label                      "Proportionnelle :">
 <!ENTITY  proportional.accesskey                  "P">
 
-<!ENTITY  serif.label                             "Serif:">
+<!ENTITY  serif.label                             "Serif :">
 <!ENTITY  serif.accesskey                         "S">
-<!ENTITY  sans-serif.label                        "Sans-serif:">
+<!ENTITY  sans-serif.label                        "Sans serif :">
 <!ENTITY  sans-serif.accesskey                    "n">
-<!ENTITY  monospace.label                         "Monospace:">
+<!ENTITY  monospace.label                         "Monospace :">
 <!ENTITY  monospace.accesskey                     "M">
 <!-- LOCALIZATION NOTE (fantasy.label): 'Fantasy' means 'Ornate' -->
-<!ENTITY  fantasy.label                           "Fantasy:">
+<!ENTITY  fantasy.label                           "Fantaisie :">
 <!ENTITY  fantasy.accesskey                       "F">
-<!ENTITY  cursive.label                           "Cursive:">
+<!ENTITY  cursive.label                           "Cursive :">
 <!ENTITY  cursive.accesskey                       "C">
 
 <!ENTITY  fontsize.units                          "pixels">
 
-<!ENTITY  font.langGroup.latin1                   "Western">
-<!ENTITY  font.langGroup.latin2                   "Central European">
-<!ENTITY  font.langGroup.japanese                 "Japanese">
-<!ENTITY  font.langGroup.trad-chinese             "Traditional Chinese (Taiwan)">
-<!ENTITY  font.langGroup.simpl-chinese            "Simplified Chinese">
-<!ENTITY  font.langGroup.trad-chinese-hk          "Traditional Chinese (Hong Kong)">
-<!ENTITY  font.langGroup.korean                   "Korean">
-<!ENTITY  font.langGroup.cyrillic                 "Cyrillic">
-<!ENTITY  font.langGroup.baltic                   "Baltic">
-<!ENTITY  font.langGroup.el                       "Greek">
-<!ENTITY  font.langGroup.turkish                  "Turkish">
-<!ENTITY  font.langGroup.unicode                  "Other Languages">
-<!ENTITY  font.langGroup.user-def                 "User Defined">
+<!ENTITY  font.langGroup.latin1                   "Occidental">
+<!ENTITY  font.langGroup.latin2                   "Europe centrale">
+<!ENTITY  font.langGroup.japanese                 "Japonais">
+<!ENTITY  font.langGroup.trad-chinese             "Chinois traditionnel (Taiwan)">
+<!ENTITY  font.langGroup.simpl-chinese            "Chinois simplifié">
+<!ENTITY  font.langGroup.trad-chinese-hk          "Chinois traditionnel (Hong Kong)">
+<!ENTITY  font.langGroup.korean                   "Coréen">
+<!ENTITY  font.langGroup.cyrillic                 "Cyrillique">
+<!ENTITY  font.langGroup.baltic                   "Balte">
+<!ENTITY  font.langGroup.el                       "Grec">
+<!ENTITY  font.langGroup.turkish                  "Turc">
+<!ENTITY  font.langGroup.unicode                  "Autres langues">
+<!ENTITY  font.langGroup.user-def                 "Défini par l'utilisateur">
 <!ENTITY  font.langGroup.thai                     "Thai">
-<!ENTITY  font.langGroup.hebrew                   "Hebrew">
-<!ENTITY  font.langGroup.arabic                   "Arabic">
+<!ENTITY  font.langGroup.hebrew                   "Hébreu">
+<!ENTITY  font.langGroup.arabic                   "Arabe">
 <!ENTITY  font.langGroup.devanagari               "Devanagari">
 <!ENTITY  font.langGroup.tamil                    "Tamil">
-<!ENTITY  font.langGroup.armenian                 "Armenian">
+<!ENTITY  font.langGroup.armenian                 "Arménien">
 <!ENTITY  font.langGroup.bengali                  "Bengali">
-<!ENTITY  font.langGroup.canadian                 "Unified Canadian Syllabary">
-<!ENTITY  font.langGroup.ethiopic                 "Ethiopic">
-<!ENTITY  font.langGroup.georgian                 "Georgian">
-<!ENTITY  font.langGroup.gujarati                 "Gujarati">
+<!ENTITY  font.langGroup.canadian                 "Syllabaire canadien unifié">
+<!ENTITY  font.langGroup.ethiopic                 "Éthiopien">
+<!ENTITY  font.langGroup.georgian                 "Géorgien">
+<!ENTITY  font.langGroup.gujarati                 "Goudjarati">
 <!ENTITY  font.langGroup.gurmukhi                 "Gurmukhi">
 <!ENTITY  font.langGroup.khmer                    "Khmer">
-<!ENTITY  font.langGroup.malayalam                "Malayalam">
+<!ENTITY  font.langGroup.malayalam                "Malayalam">                  
 <!-- Minimum font size -->
-<!ENTITY minSize.label                            "Minimum font size:">
-<!ENTITY minSize.accesskey                        "o">
-<!ENTITY minSize.none                             "None">
+<!ENTITY minSize.label                            "Taille de police minimale :">
+<!ENTITY minSize.accesskey                        "m">
+<!ENTITY minSize.none                             "Aucune">
 
 <!-- default font type -->
 <!ENTITY  useDefaultFontSerif.label               "Serif">
-<!ENTITY  useDefaultFontSansSerif.label           "Sans Serif">
+<!ENTITY  useDefaultFontSansSerif.label           "Sans serif">
 
-<!ENTITY  resolution.label                        "Display resolution:">
-<!ENTITY  resolution.accesskey                    "D">
-<!ENTITY  resolution.system.label                 "System setting">
-<!ENTITY  resolution.other                        "Other...">
+<!ENTITY  resolution.label                        "Résolution d'affichage :">
+<!ENTITY  resolution.accesskey                    "R">
+<!ENTITY  resolution.system.label                 "Paramètres système">
+<!ENTITY  resolution.other                        "Autre...">
 
-<!ENTITY  allowPagesToUse.label                   "Allow pages to choose their own fonts, instead of my selections above">
-<!ENTITY  allowPagesToUse.accesskey               "A">
+<!ENTITY  allowPagesToUse.label                   "Permettre aux pages de choisir leurs propres polices au lieu de celles choisies ci-dessus">
+<!ENTITY  allowPagesToUse.accesskey               "h">
 
-<!ENTITY languages.customize.Charset.grouplabel         "Character Encoding">
-<!ENTITY languages.customize.DefaultCharset.label       "Default Character Encoding:">
-<!ENTITY languages.customize.DefaultCharset.accesskey   "C">
+<!ENTITY languages.customize.Charset.grouplabel         "Encodage des caractères">
+<!ENTITY languages.customize.DefaultCharset.label       "Encodage par défaut :">
+<!ENTITY languages.customize.DefaultCharset.accesskey   "f">
+
+
+<!ENTITY languages.customize.DefaultCharset.accesskey "C" >
+
+

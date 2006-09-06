@@ -1,23 +1,27 @@
-<!ENTITY askOnSave.label              "Download Folder">
-<!ENTITY alwaysAsk.label              "Ask me where to save every file">
-<!ENTITY alwaysAsk.accesskey          "A">
-<!ENTITY neverAsk.label               "Save all files to this folder:">
-<!ENTITY neverAsk.accesskey           "S">
-<!ENTITY desktop.label                "Desktop">
-<!ENTITY downloads.label              "My Downloads">
-<!ENTITY chooseFolderWin.label        "Browse...">
-<!ENTITY chooseFolderWin.accesskey    "B">
-<!ENTITY chooseFolderMac.label        "Choose...">
-<!ENTITY chooseFolderMac.accesskey    "h">
+<!ENTITY askOnSave.label "Složka pro stažené soubory">
+<!ENTITY alwaysAsk.label "U každého souboru se zeptat, kam ho uložit">
+<!ENTITY alwaysAsk.accesskey "k">
+<!ENTITY neverAsk.label "Uložit všechny soubory do této složky:">
+<!ENTITY neverAsk.accesskey "U">
+<!ENTITY desktop.label "Plocha">
+<!ENTITY downloads.label "Mé stažené soubory">
+<!ENTITY chooseFolderWin.label "Procházet...">
+<!ENTITY chooseFolderWin.accesskey "P">
+<!ENTITY chooseFolderMac.label "Vybrat...">
+<!ENTITY chooseFolderMac.accesskey "b">
 
-<!ENTITY downloadManagerWindow.label  "Download Manager">
-<!ENTITY showWhenStarting.label       "Show Download Manager when a download begins">
-<!ENTITY showWhenStarting.accesskey   "o">
-<!ENTITY closeWhenDone.label          "Close the Download Manager when all downloads are complete">
-<!ENTITY closeWhenDone.accesskey      "C">
+<!ENTITY downloadManagerWindow.label "Správce stahování">
+<!ENTITY showWhenStarting.label "Zobrazit okno Správce stahování při začátku stahování">
+<!ENTITY showWhenStarting.accesskey "o">
+<!ENTITY closeWhenDone.label "Zavřít Správce stahování po dokončení všech stahování">
+<!ENTITY closeWhenDone.accesskey "S">
 
-<!ENTITY fileTypes.label              "Download Actions">
-<!ENTITY configureActions.label       "View &amp; Edit Actions...">
-<!ENTITY configureActions.accesskey   "V">
-<!ENTITY fileTypesDescription.label   "&brandShortName; can automatically download or open files of certain types.">
+<!ENTITY fileTypes.label "Akce pro stahování">
+<!ENTITY configureActions.label "Zobrazit a upravit akce...">
+<!ENTITY configureActions.accesskey "Z">
+<!ENTITY fileTypesDescription.label "Aplikace &brandShortName; může automaticky stahovat či otevírat soubory určitých typů.">
+
+
+<!ENTITY fileTypesDescription.label "&brandShortName; can automatically download or open files of certain types." >
+
 

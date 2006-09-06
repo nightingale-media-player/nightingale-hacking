@@ -1,23 +1,24 @@
+<!ENTITY header2.label "Domovská stránka">
+<!ENTITY location.label "Adresa(y):">
+<!ENTITY location.accesskey "d">
+<!ENTITY useCurrent.label "Použít aktuální stránku">
+<!ENTITY useCurrent.accesskey "a">
+<!ENTITY useCurrentMultiple.label "Použít aktuální stránky">
+<!ENTITY useBookmark.label "Použít záložku...">
+<!ENTITY useBookmark.accesskey "z">
+<!ENTITY useBlank.label "Použít prázdnou stránku">
+<!ENTITY useBlank.accesskey "P">
+<!ENTITY defaultBrowserGroup.label "Výchozí prohlížeč">
+<!ENTITY checkForDefault.label "Při startu kontrolovat, zda je &brandShortName; výchozím prohlížečem.">
+<!ENTITY checkForDefault.accesskey "s">
+<!ENTITY checkNow.label "Zkontrolovat">
+<!ENTITY checkNow.accesskey "k">
+<!ENTITY showConnections.label "Nastavení připojení...">
+<!ENTITY showConnections.accesskey "N">
+<!ENTITY proxiesInfo.label "Určuje, jak je aplikace &brandShortName; připojena k síti Internet.">
+<!ENTITY connectionsInfo.caption "Připojení">
 
-<!ENTITY header2.label             "Home Page">
-<!ENTITY location.label            "Location(s):">
-<!ENTITY location.accesskey        "a">
-<!ENTITY useCurrent.label          "Use Current Page">
-<!ENTITY useCurrent.accesskey      "C">
-<!ENTITY useCurrentMultiple.label  "Use Current Pages">
-<!ENTITY useBookmark.label         "Use Bookmark...">
-<!ENTITY useBookmark.accesskey     "U">
-<!ENTITY useBlank.label            "Use Blank Page">
-<!ENTITY useBlank.accesskey        "B">
 
-<!ENTITY defaultBrowserGroup.label  "Default Browser">
-<!ENTITY checkForDefault.label      "&brandShortName; should check to see if it is the default browser when starting.">
-<!ENTITY checkForDefault.accesskey  "d">
-<!ENTITY checkNow.label             "Check Now">
-<!ENTITY checkNow.accesskey         "N">
+<!ENTITY connectionsInfo.caption "Connection" >
 
-<!ENTITY showConnections.label      "Connection Settings...">
-<!ENTITY showConnections.accesskey  "o">
-<!ENTITY proxiesInfo.label          "Determine how &brandShortName; connects to the Internet.">
-<!ENTITY connectionsInfo.caption    "Connection">
 

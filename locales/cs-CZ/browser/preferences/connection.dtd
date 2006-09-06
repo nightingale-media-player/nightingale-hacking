@@ -1,44 +1,49 @@
 
-<!ENTITY connectionsDialog.title       "Connection Settings">
-<!ENTITY window.width                  "37em">
-<!ENTITY window.macWidth               "39em">
+<!ENTITY connectionsDialog.title "Nastavení připojení">
+<!ENTITY window.width "40em">
+<!ENTITY window.macWidth "40em">
 
-<!ENTITY proxyTitle.label              "Configure Proxies to Access the Internet">
-<!ENTITY directTypeRadio.label         "Direct connection to the Internet">
-<!ENTITY directTypeRadio.accesskey     "d">
-<!ENTITY WPADTypeRadio.label           "Auto-detect proxy settings for this network">
-<!ENTITY WPADTypeRadio.accesskey       "w">
-<!ENTITY manualTypeRadio.label         "Manual proxy configuration:">
-<!ENTITY manualTypeRadio.accesskey     "m">
-<!ENTITY autoTypeRadio.label           "Automatic proxy configuration URL:">
-<!ENTITY autoTypeRadio.accesskey       "a">
-<!ENTITY configAutoconfigText.label    "Configuration location (URL):">
-<!ENTITY configAutoconfigText.accesskey "u">
-<!ENTITY reload.label                  "Reload">
-<!ENTITY reload.accesskey              "e">
-<!ENTITY ftp.label                     "FTP Proxy:">
-<!ENTITY ftp.accesskey                 "F">
-<!ENTITY gopher.label                  "Gopher Proxy:">
-<!ENTITY gopher.accesskey              "G">
-<!ENTITY http.label                    "HTTP Proxy:">
-<!ENTITY http.accesskey                "y">
-<!ENTITY ssl.label                     "SSL Proxy:">
-<!ENTITY ssl.accesskey                 "S">
-<!ENTITY socks.label                   "SOCKS Host:">
-<!ENTITY socks.accesskey               "C">
-<!ENTITY socks4.label                  "SOCKS v4">
-<!ENTITY socks4.accesskey              "K">
-<!ENTITY socks5.label                  "SOCKS v5">
-<!ENTITY socks5.accesskey              "v">
-<!ENTITY port.label                    "Port:">
-<!ENTITY HTTPport.accesskey            "P">
-<!ENTITY SSLport.accesskey             "o">
-<!ENTITY FTPport.accesskey             "r">
+<!ENTITY proxyTitle.label "Nastavení proxy serverů pro přístup na Internet">
+<!ENTITY directTypeRadio.label "Přímé připojení k síti">
+<!ENTITY directTypeRadio.accesskey "P">
+<!ENTITY WPADTypeRadio.label "Automaticky detekovat nastavení">
+<!ENTITY WPADTypeRadio.accesskey "A">
+<!ENTITY manualTypeRadio.label "Ruční konfigurace proxy serverů">
+<!ENTITY manualTypeRadio.accesskey "R">
+<!ENTITY autoTypeRadio.label "Použít skript pro automatickou konfiguraci:">
+<!ENTITY autoTypeRadio.accesskey "a">
+<!ENTITY configAutoconfigText.label "Adresa skriptu:">
+<!ENTITY configAutoconfigText.accesskey "A">
+<!ENTITY reload.label "Znovu načíst">
+<!ENTITY reload.accesskey "Z">
+<!ENTITY ftp.label "FTP proxy:">
+<!ENTITY ftp.accesskey "F">
+<!ENTITY gopher.label "Gopher proxy:">
+<!ENTITY gopher.accesskey "G">
+<!ENTITY http.label "HTTP proxy:">
+<!ENTITY http.accesskey "H">
+<!ENTITY ssl.label "SSL proxy:">
+<!ENTITY ssl.accesskey "S">
+<!ENTITY socks.label "SOCKS server:">
+<!ENTITY socks.accesskey "C">
+<!ENTITY socks4.label "SOCKS v4">
+<!ENTITY socks4.accesskey "K">
+<!ENTITY socks5.label "SOCKS v5">
+<!ENTITY socks5.accesskey "v">
+<!ENTITY port.label "Port:">
+<!ENTITY HTTPport.accesskey "p">
+<!ENTITY SSLport.accesskey "o">
+<!ENTITY FTPport.accesskey "r">
 <!-- No accesskey for gopher (':' doesn't go well) - mpt's going to redesign the window -->
-<!ENTITY gopherPort.accesskey          "">
-<!ENTITY SOCKSport.accesskey           "t">
-<!ENTITY noproxy.label                 "No Proxy for:">
-<!ENTITY noproxy.accesskey             "n">
-<!ENTITY noproxyExplain.label          "Example: .mozilla.org, .net.nz, 192.168.1.0/24">
-<!ENTITY shareproxy.label              "Use this proxy server for all protocols">
-<!ENTITY shareproxy.accesskey          "x">
+<!ENTITY gopherPort.accesskey "">
+<!ENTITY SOCKSport.accesskey "t">
+<!ENTITY noproxy.label "Nepoužívat pro:">
+<!ENTITY noproxy.accesskey "N">
+<!ENTITY noproxyExplain.label "Příklad: .firma.com, .domena.cz, 192.168.1.0/24">
+<!ENTITY shareproxy.label "Pro všechny protokoly používat tento proxy server">
+<!ENTITY shareproxy.accesskey "P">
+
+
+<!ENTITY shareproxy.accesskey "x" >
+
+

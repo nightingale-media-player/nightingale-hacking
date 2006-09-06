@@ -82,6 +82,8 @@ locale	songbird	eu-ES	        locales/eu-ES/songbird/
 locale	browser 	eu-ES	        locales/eu-ES/browser/
 locale  songbird	ru-RU	        locales/ru-RU/songbird/
 locale  browser 	ru-RU	        locales/ru-RU/browser/
+locale  songbird	ka-GE	        locales/ka-GE/songbird/
+locale  browser 	ka-GE	        locales/ka-GE/browser/
 
 locale  browser   en-US         content/browser/locale/browser/ 
 content browser                 content/browser/content/

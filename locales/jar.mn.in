@@ -86,6 +86,8 @@ locales.jar:
 % locale  browser   zh-TW  @LOCALE_LOCATION@/locale/zh-TW/browser/
 % locale  songbird  ru-RU  @LOCALE_LOCATION@/locale/ru-RU/songbird/
 % locale  browser   ru-RU  @LOCALE_LOCATION@/locale/ru-RU/browser/
+% locale  songbird  ka-GE  @LOCALE_LOCATION@/locale/ka-GE/songbird/
+% locale  browser   ka-GE  @LOCALE_LOCATION@/locale/ka-GE/browser/
   locale/branding/brand.dtd                               (branding/brand.dtd)
   locale/branding/brand.properties                        (branding/brand.properties)
   locale/bg-BG/songbird/songbird.dtd            (bg-BG/songbird/songbird.dtd)
@@ -888,3 +890,23 @@ locales.jar:
   locale/ru-RU/browser/preferences/privacy.dtd            (ru-RU/browser/preferences/privacy.dtd)
   locale/ru-RU/browser/preferences/sanitize.dtd           (ru-RU/browser/preferences/sanitize.dtd)
   locale/ru-RU/browser/preferences/tabs.dtd               (ru-RU/browser/preferences/tabs.dtd)
+  locale/ka-GE/songbird/songbird.dtd            (ka-GE/songbird/songbird.dtd)
+  locale/ka-GE/songbird/songbird.properties     (ka-GE/songbird/songbird.properties)
+  locale/ka-GE/browser/preferences/advanced.dtd           (ka-GE/browser/preferences/advanced.dtd)
+  locale/ka-GE/browser/preferences/advanced-scripts.dtd   (ka-GE/browser/preferences/advanced-scripts.dtd)
+  locale/ka-GE/browser/preferences/changeaction.dtd       (ka-GE/browser/preferences/changeaction.dtd)
+  locale/ka-GE/browser/preferences/colors.dtd             (ka-GE/browser/preferences/colors.dtd)
+  locale/ka-GE/browser/preferences/connection.dtd         (ka-GE/browser/preferences/connection.dtd)
+  locale/ka-GE/browser/preferences/content.dtd            (ka-GE/browser/preferences/content.dtd)
+  locale/ka-GE/browser/preferences/cookies.dtd            (ka-GE/browser/preferences/cookies.dtd)
+  locale/ka-GE/browser/preferences/downloadactions.dtd    (ka-GE/browser/preferences/downloadactions.dtd)
+  locale/ka-GE/browser/preferences/downloads.dtd          (ka-GE/browser/preferences/downloads.dtd)
+  locale/ka-GE/browser/preferences/fonts.dtd              (ka-GE/browser/preferences/fonts.dtd)
+  locale/ka-GE/browser/preferences/general.dtd            (ka-GE/browser/preferences/general.dtd)
+  locale/ka-GE/browser/preferences/languages.dtd          (ka-GE/browser/preferences/languages.dtd)
+  locale/ka-GE/browser/preferences/permissions.dtd        (ka-GE/browser/preferences/permissions.dtd)
+  locale/ka-GE/browser/preferences/preferences.dtd        (ka-GE/browser/preferences/preferences.dtd)
+  locale/ka-GE/browser/preferences/preferences.properties (ka-GE/browser/preferences/preferences.properties)
+  locale/ka-GE/browser/preferences/privacy.dtd            (ka-GE/browser/preferences/privacy.dtd)
+  locale/ka-GE/browser/preferences/sanitize.dtd           (ka-GE/browser/preferences/sanitize.dtd)
+  locale/ka-GE/browser/preferences/tabs.dtd               (ka-GE/browser/preferences/tabs.dtd)

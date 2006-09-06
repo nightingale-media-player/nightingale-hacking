@@ -1,10 +1,13 @@
 ﻿
-<!ENTITY window.main.title  "Songbird 0.1 Ukázka" >
+<!ENTITY window.main.title  "Songbird 0.2" >
+<!ENTITY window.dev.title   "Songbird 0.2 alpha" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome/" >
 <!ENTITY window.ok          "OK" >
-<!ENTITY window.cancel      "Storno" >
+<!ENTITY window.undo        "Zpět" >
+<!ENTITY window.apply       "Použít" >
+<!ENTITY window.cancel      "Zrušit" >
 <!ENTITY window.browse      "Procházet..." >
 
 <!ENTITY menu.file          "Soubor" >
@@ -14,13 +17,13 @@
 <!ENTITY menu.file.open     "Otevřít soubor..." >
 <!ENTITY menu.file.url      "Otevřít adresu URL..." >
 <!ENTITY menu.file.playlist "Načíst seznam stop..." >
-<!ENTITY menu.file.scan     "Hledat mediální soubory..." >
+<!ENTITY menu.file.scan     "Hledat multimediální soubory..." >
 <!ENTITY menu.file.dlfolder "Nastavit složku pro stažené soubory..." >
 <!ENTITY menu.file.watch    "Nastavit sledované složky..." >
 <!ENTITY menu.file.htmlbar  "Vždy zobrazit webovou lištu" >
 <!ENTITY menu.file.skin     "Vybrat jiný vzhled" >
 <!ENTITY menu.file.window   "Otevřít hlavní okno" >
-<!ENTITY menu.file.mini     "Otevřít Mini přehrávač" >
+<!ENTITY menu.file.mini     "Přepnout na Mini přehrávač" >
 <!ENTITY menu.file.about    "O aplikaci Songbird..." >
 <!ENTITY menu.file.exit     "Ukončit" >
 
@@ -29,7 +32,7 @@
 <!ENTITY menu.edit.cut      "Vyjmout" >
 <!ENTITY menu.edit.copy     "Kopírovat" >
 <!ENTITY menu.edit.paste    "Vložit" >
-<!ENTITY menu.edit.clear    "Vyčistit" >
+<!ENTITY menu.edit.clear    "Smazat" >
 <!ENTITY menu.edit.selall   "Vybrat vše" >
 <!ENTITY menu.edit.selnone  "Zrušit výběr" >
 
@@ -47,9 +50,12 @@
 
 <!ENTITY menu.devices       "Zařízení" >
 
-<!ENTITY menu.help          "Nápověda" >
+<!ENTITY menu.help         	"Nápověda" >
 <!ENTITY menu.help.topics   "Témata nápovědy..." >
 <!ENTITY menu.help.about    "O aplikaci Songbird..." >
+
+<!ENTITY menu.preferences   "Možnosti..." >
+<!ENTITY menu.extensions    "Rozšíření..." >
 
 <!ENTITY html.context.open  "Otevřít" >
 <!ENTITY html.context.play  "Přehrát" >
@@ -58,12 +64,13 @@
 <!ENTITY playlist.context.remove  "Odstranit" >
 <!ENTITY playlist.context.rename  "Přejmenovat" >
 <!ENTITY playlist.context.search  "Hledat" >
-<!ENTITY playlist.context.lyrics  "Texty" >
+<!ENTITY playlist.context.lyrics  "Text" >
 
 <!ENTITY tooltip.miniplayer       "Přepnout na Mini přehrávač" >
 <!ENTITY tooltip.minimize         "Minimalizovat" >
 <!ENTITY tooltip.maximize         "Maximalizovat/Obnovit" >
 <!ENTITY tooltip.exit             "Ukončit" >
+<!ENTITY tooltip.hide             "Skrýt" >
 <!ENTITY tooltip.control.back     "Předchozí stopa" >
 <!ENTITY tooltip.control.play     "Přehrát" >
 <!ENTITY tooltip.control.pause    "Pozastavit" >
@@ -71,16 +78,19 @@
 <!ENTITY tooltip.control.mute     "Ztlumit" >
 <!ENTITY tooltip.control.volume   "Hlasitost" >
 <!ENTITY tooltip.control.repeat   "Opakovat" >
-<!ENTITY tooltip.control.shuffle  "Náhodné přehrávání" >
+<!ENTITY tooltip.control.shuffle  "Náhodné přehrávání zapnuto" >
+<!ENTITY tooltip.control.shuf_off "Náhodné přehrávání vypnuto" >
 <!ENTITY tooltip.control.curtrack "Najít aktuální skladbu" >
 <!ENTITY tooltip.control.service  "Přepnout zobrazení displeje" >
 <!ENTITY tooltip.search           "Hledat" >
-<!ENTITY tooltip.browser.back     "Procházet zpět" >
-<!ENTITY tooltip.browser.fwd      "Procházet vpřed" >
-<!ENTITY tooltip.browser.stop     "Zastavit prohlížení" >
+<!ENTITY tooltip.browser.back     "Přejít o jednu stránku zpět" >
+<!ENTITY tooltip.browser.fwd      "Přejít na následující stránku" >
+<!ENTITY tooltip.browser.stop     "Zastavit načítání stránky" >
 <!ENTITY tooltip.browser.home     "Domů" >
-<!ENTITY tooltip.browser.playlist "Zobrazit dostupná média na této webové stránce" >
-<!ENTITY tooltip.browser.download "Zobrazit aktuální stahování" >
+<!ENTITY tooltip.browser.bookmark "Přidat stránku do záložek" >
+<!ENTITY tooltip.browser.playlist "Zobrazit/Skrýt webový seznam stop" >
+<!-- <!ENTITY tooltip.browser.playlist "Zobrazit dostupná média na této webové stránce" > -->
+<!ENTITY tooltip.browser.download "Zobrazit stahované soubory" >
 
 <!ENTITY smart.window             "Vytvořit chytrý seznam stop" >
 <!ENTITY smart.library            "Vybrat knihovnu medií:" >
@@ -115,207 +125,141 @@
 <!ENTITY smart.ends               "končí na" >
          
 <!ENTITY download.window          "Stáhnout" >
-<!ENTITY download.select          "Zvolit cílový adresář:" >
-<!ENTITY download.always          "Vždy používat tento adresář" >
+<!ENTITY download.select          "Zvolit cílovou složku:" >
+<!ENTITY download.always          "Vždy používat tuto složku" >
 
 <!ENTITY textbox.songbird_open_url "Zadejte adresu URL nebo cestu k souboru který chcete přehrát:">
 
 <!ENTITY open_url.title           "Otevřít adresu URL">
 <!ENTITY subscribe.title          "Přihlásit">
-<!ENTITY subscribe.minutes        "Minutu(y)">
-<!ENTITY subscribe.hours          "Hodinu(y)">
-<!ENTITY subscribe.days           "Den(Dny)">
-<!ENTITY subscribe.autocheck      "Automaticky obnovit každou">
+<!ENTITY subscribe.minutes        "Minuty">
+<!ENTITY subscribe.hours          "Hodiny">
+<!ENTITY subscribe.days           "Dny">
+<!ENTITY subscribe.autocheck      "Automaticky obnovit každé">
 <!ENTITY subscribe.destinationfolder      "Zvolit cílovou složku:">
 
 <!ENTITY exists.title             "Seznam stop již existuje">
 <!ENTITY exists.exists            "Seznam stop s tímto jménem již existuje!">
 
-<!ENTITY media_scan.title          "Hledat mediální soubory...">
-<!ENTITY media_scan.watch          "Hledat nové soubory v této složce">
+<!ENTITY media_scan.title         "Hledat multimediální soubory...">
+<!ENTITY media_scan.watch         "Hledat nové soubory v této složce">
 
 <!ENTITY new_playlist.title       "Vytvořit nový seznam stop">
 <!ENTITY new_playlist.name        "Zadejte jméno nového seznamu stop.">
 
 <!ENTITY addtoplaylist.title      "Přidat do seznamu stop">
-<!ENTITY addtoplaylist.create      "Vytvořit nový seznam stop">
+<!ENTITY addtoplaylist.create     "Vytvořit nový seznam stop">
 
-<!ENTITY watchfolder.title        "Sledovat adresáře">
+<!ENTITY watchfolder.title        "Sledovat složky">
 <!ENTITY watchfolder.folderlist   "Hledat nové soubory v těchto složkách:">
 
 <!ENTITY locale.language          "Jazyk" >
-
-
-
-<!ENTITY menu.preferences "Možnosti..." >
-<!ENTITY menu.extensions "Rozšíření..." >
-
-
-
-
-<!ENTITY menu.feathers "Feathers" >
-
-
-
-
-<!ENTITY about.version "Version" >
-
-
-
-
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
-
-
-
-
-<!ENTITY menu.file.accesskey "F" >
-<!ENTITY menu.file.new.accesskey "N" >
-<!ENTITY menu.file.smart.accesskey "S" >
-<!ENTITY menu.file.remote.accesskey "R" >
-<!ENTITY menu.file.open.accesskey "O" >
-<!ENTITY menu.file.url.accesskey "U" >
-<!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
-<!ENTITY menu.file.dlfolder.accesskey "D" >
-<!ENTITY menu.file.watch.accesskey "W" >
-<!ENTITY menu.file.mini.accesskey "M" >
-<!ENTITY locale.language.accesskey "L" >
-<!ENTITY menu.feathers.accesskey "F" >
-<!ENTITY menu.preferences.accesskey "P" >
-<!ENTITY menu.extensions.accesskey "E" >
-<!ENTITY menu.file.exit.accesskey "X" >
-<!ENTITY menu.edit.accesskey "E" >
-<!ENTITY menu.edit.undo.accesskey "U" >
-<!ENTITY menu.edit.cut.accesskey "T" >
-<!ENTITY menu.edit.copy.accesskey "C" >
-<!ENTITY menu.edit.paste.accesskey "P" >
-<!ENTITY menu.edit.clear.accesskey "L" >
-<!ENTITY menu.edit.selall.accesskey "A" >
-<!ENTITY menu.edit.selnone.accesskey "N" >
-<!ENTITY menu.controls.accesskey "C" >
-<!ENTITY menu.control.play.accesskey "P" >
-<!ENTITY menu.control.next.accesskey "N" >
-<!ENTITY menu.control.prev.accesskey "R" >
-<!ENTITY menu.control.shuf.accesskey "S" >
-<!ENTITY menu.control.repa.accesskey "A" >
-<!ENTITY menu.control.rep1.accesskey "O" >
-<!ENTITY menu.control.repx.accesskey "E" >
-<!ENTITY menu.services.accesskey "S" >
-<!ENTITY menu.devices.accesskey "D" >
-<!ENTITY menu.help.accesskey "H" >
-<!ENTITY menu.help.help.accesskey "H" >
-<!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
-<!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
-
-
-
-
-<!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
-
-
-
-
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
-
-
-
-
-<!ENTITY window.dev.title "Songbird 0.2 alpha" >
-
-
-
-
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
-
-
-
-
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
-<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Action" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
-<!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
-<!ENTITY metadata.album "Album" >
-<!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Length" >
-
-
-
-
-<!ENTITY restartbox.restartnow "Restart Now" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
-<!ENTITY restartbox.restartlater "Restart Later" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
-
-
-
-
-<!ENTITY tooltip.hide "Hide" >
-
-
-
-
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
-<!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.playlist "Playlist:" >
-<!ENTITY jumptofile.search "Search:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-
-
+<!ENTITY menu.feathers            "Motivy vzhledu" >
+<!ENTITY about.version            "Verze" >
+
+<!ENTITY setup.retrievingxpilist  "Získávání seznamu rozšíření. Prosím čekejte..." >
+<!ENTITY setup.custominstall      "Vlastní instalace" >
+<!ENTITY setup.title              "Nastavení instalace aplikace Songbird" >
+<!ENTITY setupprogress.pleasewait "Prosím čekejte..." >
+
+<!ENTITY menu.file.accesskey          "S" >
+<!ENTITY menu.file.new.accesskey      "N" >
+<!ENTITY menu.file.smart.accesskey    "C" >
+<!ENTITY menu.file.remote.accesskey   "Z" >
+<!ENTITY menu.file.open.accesskey     "O" >
+<!ENTITY menu.file.url.accesskey      "U" >
+<!ENTITY menu.file.playlist.accesskey "A" >
+<!ENTITY menu.file.scan.accesskey     "H" >
+<!ENTITY menu.file.dlfolder.accesskey "T" >
+<!ENTITY menu.file.watch.accesskey    "S" >
+<!ENTITY menu.file.mini.accesskey     "I" >
+<!ENTITY locale.language.accesskey    "J" >
+<!ENTITY menu.feathers.accesskey      "V" >
+<!ENTITY menu.preferences.accesskey   "M" >
+<!ENTITY menu.extensions.accesskey    "R" >
+<!ENTITY menu.file.exit.accesskey     "K" >
+
+<!ENTITY menu.edit.accesskey          "A" >
+<!ENTITY menu.edit.undo.accesskey     "Z" >
+<!ENTITY menu.edit.cut.accesskey      "V" >
+<!ENTITY menu.edit.copy.accesskey     "K" >
+<!ENTITY menu.edit.paste.accesskey    "L" >
+<!ENTITY menu.edit.clear.accesskey    "M" >
+<!ENTITY menu.edit.selall.accesskey   "A" >
+<!ENTITY menu.edit.selnone.accesskey  "R" >
+
+<!ENTITY menu.controls.accesskey      "O" >
+<!ENTITY menu.control.play.accesskey  "P" >
+<!ENTITY menu.control.next.accesskey  "D" >
+<!ENTITY menu.control.prev.accesskey  "S" >
+<!ENTITY menu.control.shuf.accesskey  "N" >
+<!ENTITY menu.control.repa.accesskey  "O" >
+<!ENTITY menu.control.rep1.accesskey  "J" >
+<!ENTITY menu.control.repx.accesskey  "E" >
+
+<!ENTITY menu.services.accesskey      "S" >
+
+<!ENTITY menu.devices.accesskey       "Z" >
+
+<!ENTITY menu.help.accesskey          "V" >
+<!ENTITY menu.help.help.accesskey     "T" >
+<!ENTITY menu.help.about.accesskey    "O" >
+
+
+<!ENTITY bookmarks.edit.title  "Upravit záložku" >
+<!ENTITY bookmarks.edit.url    "URL:" >
+<!ENTITY bookmarks.edit.label  "Jméno:" >
+<!ENTITY bookmarks.edit.icon   "Ikona:" >
+
+
+<!ENTITY trackeditor.title            "Upravit informace o skladbě" >
+<!ENTITY trackeditor.trackdata        "Informace o skladbě" >
+<!ENTITY trackeditor.exttrackdata     "Rozšířené informace" >
+<!ENTITY trackeditor.tags             "Štítky" >
+<!ENTITY trackeditor.addtag.title     "Přidat štítek" >
+<!ENTITY trackeditor.addtag.tag       "Štítek:" >
+
+<!ENTITY jumptofile.title             "Přeskočit na" >
+<!ENTITY jumptofile.playlist          "Seznam stop:" >
+<!ENTITY jumptofile.search            "Hledat:" >
+
+<!ENTITY metrics.optout               "Povolit Songbirdu odeslání anonymní uživatelské statistiky (doporučeno)" >
+
+<!ENTITY hotkeys.useglobalhotkeys     "Používat Globální klávesové zkratky" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "P" >
+<!ENTITY hotkeys.action               "Akce" >
+<!ENTITY hotkeys.hotkey               "Klávesová zkratka" >
+<!ENTITY hotkeys.add                  "Přidat" >
+<!ENTITY hotkeys.set                  "Nastavit" >
+<!ENTITY hotkeys.remove               "Odstranit" >
+<!ENTITY hotkeys.prefpane             "Klávesové zkratky" >
+
+<!ENTITY metadata.uuid                "UUID Media" >
+<!ENTITY metadata.url                 "Umístění" >
+<!ENTITY metadata.artist              "Umělec" >
+<!ENTITY metadata.title               "Název" >
+<!ENTITY metadata.album               "Album" >
+<!ENTITY metadata.genre               "Žánr" >
+<!ENTITY metadata.length              "Délka" >
+
+<!ENTITY restartbox.restartnow        "Restartovat nyní" >
+<!ENTITY restartbox.restartonplaybackend "Restartovat po skončení přehrávání" >
+<!ENTITY restartbox.restartlater      "Restartovat později" >
+
+<!ENTITY setupprogress.installingextensions "Instalace rozšíření" >
+
+<!ENTITY menu.updateCmd.label     "Zkontrolovat aktualizace..." >
+<!ENTITY menu.updateCmd.accessKey "a">
 
 
 <!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
+<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY smart.selectedby "Selected by" >
 <!ENTITY firstrun.connectionsettings "Connection Settings" >
+
+
+
+
+
 
 

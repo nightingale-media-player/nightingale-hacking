@@ -1,84 +1,88 @@
 
-<!ENTITY privacy.intro               "As you browse the web, &brandShortName; keeps information about where you have been, what you have done etc. in the following areas:">
-<!ENTITY clear.label                 "Clear">
-<!ENTITY view.label                  "View">
+<!ENTITY privacy.intro "Při prohlížení webových stránek ukládá &brandShortName; některé informace do následujících oblastí:">
+<!ENTITY clear.label "Vymazat">
+<!ENTITY view.label "Zobrazit">
 
-<!ENTITY privacy.label               "Privacy">
+<!ENTITY privacy.label "Soukromí">
 
-<!ENTITY itemHistory.label           "History">
-<!ENTITY rememberPages.label         "Remember visited pages for the last">
-<!ENTITY rememberPages.accesskey     "d">
-<!ENTITY rememberDays.label          "days.">
-<!ENTITY clearHistory.label          "Clear Browsing History Now">
-<!ENTITY clearHistory.accesskey      "C">
+<!ENTITY itemHistory.label "Historie">
+<!ENTITY rememberPages.label "Platnost stránek v historii vyprší za">
+<!ENTITY rememberPages.accesskey "P">
+<!ENTITY rememberDays.label "dnů">
+<!ENTITY clearHistory.label "Vymazat historii stránek">
+<!ENTITY clearHistory.accesskey "h">
 
-<!ENTITY itemFormData.label          "Saved Forms">
-<!ENTITY savedFormData.intro         "Information entered in forms and the Search Bar is saved to make filling out forms and searching faster.">
-<!ENTITY enableFormFill.label        "Save information I enter in forms and the Search Bar.">
-<!ENTITY enableFormFill.accesskey    "S">
-<!ENTITY clearFormData.label         "Clear Saved Form Data Now">
-<!ENTITY clearFormData.accesskey     "F">
+<!ENTITY itemFormData.label "Formuláře">
+<!ENTITY savedFormData.intro "Informace zadané do formulářů webových stránek a vyhledávacího pole jsou ukládány pro rychlejší vyplnění formulářů a vyhledávání.">
+<!ENTITY enableFormFill.label "Ukládat informace zadané do formulářů a vyhledávacího pole">
+<!ENTITY enableFormFill.accesskey "U">
+<!ENTITY clearFormData.label "Vymazat uložené formuláře">
+<!ENTITY clearFormData.accesskey "f">
 
-<!ENTITY itemPasswords.label         "Passwords">
-<!ENTITY savedPasswords.intro        "&brandShortName; can remember login information for web pages so that you do not need to re-enter your login details every time you visit.">
-<!ENTITY enablePasswords.label       "Remember Passwords">
-<!ENTITY enablePasswords.accesskey   "b">
-<!ENTITY masterPassword.intro        "When set, the Master Password protects all your passwords - but you must enter it once per session.">
-<!ENTITY setMasterPassword.label     "Master Password">
-<!ENTITY setMasterPassword.accesskey "M">
-<!ENTITY removeMasterPassword.label  "Remove Master Password...">
-<!ENTITY removeMasterPassword.accesskey "R">
-<!ENTITY viewPasswords.label         "View Saved Passwords">
-<!ENTITY viewPasswords.accesskey     "V">
+<!ENTITY itemPasswords.label "Hesla">
+<!ENTITY savedPasswords.intro "Aplikace &brandShortName; si může pamatovat přihlašovací údaje k jednotlivým webovým stránkám  a vy je tak nebudete nemuset znovu zadávat při každé návštěvě stránky.">
+<!ENTITY enablePasswords.label "Pamatovat si hesla">
+<!ENTITY enablePasswords.accesskey "P">
+<!ENTITY masterPassword.intro "Hlavní heslo, je-li nastaveno, chrání všechna vaše ostatní hesla. Jeho vložení je ale vyžadováno jednou během relace.">
+<!ENTITY setMasterPassword.label "Hlavní heslo">
+<!ENTITY setMasterPassword.accesskey "H">
+<!ENTITY removeMasterPassword.label "Odstranit hlavní heslo...">
+<!ENTITY removeMasterPassword.accesskey "O">
+<!ENTITY viewPasswords.label "Správce hesel...">
+<!ENTITY viewPasswords.accesskey "S">
 
-<!ENTITY itemDownloads.label         "Download History">
-<!ENTITY downloadManager.intro       "The Downloads window keeps track of recently downloaded files.">
-<!ENTITY downloadsRetentionPolicy.label      
-                                      "Remove files from the Download Manager:">
-<!ENTITY downloadsRetentionPolicy.accesskey  
-                                      "e">
-<!ENTITY downloadsRemoveImmediately.label    
-                                      "Upon successful download">
-<!ENTITY downloadsRemoveExit.label   "When &brandShortName; exits">
-<!ENTITY downloadsRemoveManually.label       
-                                      "Manually">
-<!ENTITY viewDownloads.label         "View Download History">
-<!ENTITY viewDownloads.accesskey     "y">
-<!ENTITY clearDownloads.label        "Clear Download History Now">
-<!ENTITY clearDownloads.accesskey    "a">
+<!ENTITY itemDownloads.label "Historie stahování">
+<!ENTITY downloadManager.intro "Správce stahování uchovává seznam naposledy stažených souborů.">
+<!ENTITY downloadsRetentionPolicy.label "Odebrat soubory ze Správce stahování:">
 
-<!ENTITY itemCookies.label           "Cookies">
-<!ENTITY cookies.intro               "Cookies are pieces of information stored by sites on your computer. They are used to remember login information and other data.">
-<!ENTITY enableCookies.label         "Allow sites to set Cookies">
-<!ENTITY enableCookies.accesskey     "l">
-<!ENTITY exceptions.label            "Exceptions">
-<!ENTITY cookieExceptions.accesskey  "x">
-<!ENTITY enableCookiesForOriginating.label 
-                                      "for the originating site only">
-<!ENTITY enableCookiesForOriginating.accesskey
-                                      "g">
-<!ENTITY enableCookiesNotRemoved.label     
-                                      "unless I have removed cookies set by the site">
-<!ENTITY enableCookiesNotRemoved.accesskey
-                                      "u">
-<!ENTITY keepCookies.label           "Keep Cookies:">
-<!ENTITY keepCookies.accesskey       "K">
-<!ENTITY acceptNormally.label        "until they expire">
-<!ENTITY acceptForSession.label      "until I close &brandShortName;">
-<!ENTITY askAboutCookies.label       "ask me every time">
-<!ENTITY viewCookies.label           "View Cookies">
-<!ENTITY viewCookies.accesskey       "w">
-<!ENTITY clearCookies.label          "Clear Cookies Now">
-<!ENTITY clearCookies.accesskey      "o">
+<!ENTITY downloadsRetentionPolicy.accesskey "b">
 
-<!ENTITY itemCache.label             "Cache">
-<!ENTITY cache.intro                 "Pages you view are stored in the cache for faster viewing later on.">
-<!ENTITY cacheUseUpTo.label          "Use up to:">
-<!ENTITY cacheUseUpTo.accesskey      "p">
-<!ENTITY cacheSize.label             "MB of disk space for the cache.">
-<!ENTITY clearCache.label            "Clear Cache Now">
-<!ENTITY clearCache.accesskey        "N">
+<!ENTITY downloadsRemoveImmediately.label "Po úspěšném stažení">
 
-<!ENTITY sanitizeSettings.label      "Settings...">
-<!ENTITY sanitizeSettings.accesskey  "t">
-<!ENTITY sanitize.intro              "The Clear Private Data tool can be used to erase your private data using a keyboard shortcut or when &brandShortName; closes.">
+<!ENTITY downloadsRemoveExit.label "Při ukončení aplikace ">
+<!ENTITY downloadsRemoveManually.label "Ručně">
+
+<!ENTITY viewDownloads.label "Správce stahování...">
+<!ENTITY viewDownloads.accesskey "S">
+<!ENTITY clearDownloads.label "Vymazat historii stahování">
+<!ENTITY clearDownloads.accesskey "t">
+<!ENTITY itemCookies.label "Cookies">
+<!ENTITY cookies.intro "Cookies jsou krátké textové informace ukládané webovými servery na váš počítač. Obvykle slouží k zapamatování některých vašich nastavení či přihlášení na server.">
+<!ENTITY enableCookies.label "Povolit serverům nastavovat cookies">
+<!ENTITY enableCookies.accesskey "P">
+<!ENTITY exceptions.label "Výjimky...">
+<!ENTITY cookieExceptions.accesskey "j">
+<!ENTITY enableCookiesForOriginating.label "pouze pro zdrojový server">
+
+<!ENTITY enableCookiesForOriginating.accesskey "z">
+
+<!ENTITY enableCookiesNotRemoved.label "pouze pokud cookies nastavené serverem nebyly ručně odebrány">
+
+<!ENTITY enableCookiesNotRemoved.accesskey "u">
+
+<!ENTITY keepCookies.label "Ponechat cookies:">
+<!ENTITY keepCookies.accesskey "n">
+<!ENTITY acceptNormally.label "do konce doby platnosti">
+<!ENTITY acceptForSession.label "do konce relace">
+<!ENTITY askAboutCookies.label "vždy se dotázat">
+<!ENTITY viewCookies.label "Správce cookies...">
+<!ENTITY viewCookies.accesskey "S">
+<!ENTITY clearCookies.label "Vymazat cookies">
+<!ENTITY clearCookies.accesskey "c">
+
+<!ENTITY itemCache.label "Vyrovnávací paměť">
+<!ENTITY cache.intro "Navštívené stránky jsou ukládány do diskové vyrovnávací paměti, aby se při další návštěvě mohly zobrazit rychleji.">
+<!ENTITY cacheUseUpTo.label "Použít nejvíce:">
+<!ENTITY cacheUseUpTo.accesskey "e">
+<!ENTITY cacheSize.label "MB na disku pro vyrovnávací paměť.">
+<!ENTITY clearCache.label "Vymazat diskovou vyrovnávací paměť">
+<!ENTITY clearCache.accesskey "p">
+
+<!ENTITY sanitizeSettings.label "Nastavení...">
+<!ENTITY sanitizeSettings.accesskey "N">
+<!ENTITY sanitize.intro "Pomocí nástroje Vymazání důvěrných dat můžete stiskem klávesové zkratky nebo automaticky při ukončení aplikace odstranit všechna důvěrná data z aplikace &brandShortName;.">
+
+
+<!ENTITY sanitize.intro "The Clear Private Data tool can be used to erase your private data using a keyboard shortcut or when &brandShortName; closes." >
+
+

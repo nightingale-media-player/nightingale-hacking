@@ -1,63 +1,67 @@
 
-<!ENTITY generalTab.label               "General">
-<!ENTITY accessibility.label            "Accessibility">
-<!ENTITY moveSystemCaret.label          "Allow text to be selected with the keyboard">
-<!ENTITY moveSystemCaret.accesskey      "b">
-<!ENTITY useTypeAheadFind.label         "Begin finding when you begin typing">
-<!ENTITY useTypeAheadFind.accesskey     "g">
-<!ENTITY browsing.label                 "Browsing">
-<!ENTITY enableAutoImageResizing.label  "Resize large images to fit in the browser window">
-<!ENTITY enableAutoImageResizing.accesskey "z">
-<!ENTITY useAutoScrolling.label         "Use autoscrolling">
-<!ENTITY useAutoScrolling.accesskey     "s">
-<!ENTITY useSmoothScrolling.label       "Use smooth scrolling">
-<!ENTITY useSmoothScrolling.accesskey   "m">
+<!ENTITY generalTab.label "Obecné">
+<!ENTITY accessibility.label "Usnadnění">
+<!ENTITY moveSystemCaret.label "Umožnit označení textu pomocí klávesnice">
+<!ENTITY moveSystemCaret.accesskey "U">
+<!ENTITY useTypeAheadFind.label "Psaním vyhledávat text na stránce">
+<!ENTITY useTypeAheadFind.accesskey "P">
+<!ENTITY browsing.label "Prohlížení">
+<!ENTITY enableAutoImageResizing.label "Změnit velikost větších obrázků tak, aby se vešly do okna prohlížeče">
+<!ENTITY enableAutoImageResizing.accesskey "Z">
+<!ENTITY useAutoScrolling.label "Použít automatické posunování">
+<!ENTITY useAutoScrolling.accesskey "a">
+<!ENTITY useSmoothScrolling.label "Použít jemné posunování">
+<!ENTITY useSmoothScrolling.accesskey "j">
 
-<!ENTITY updateTab.label                "Update">
-<!ENTITY autoCheck.label                "Automatically check for updates to:">
-<!ENTITY enableAppUpdate.label          "&brandShortName;">
-<!ENTITY enableAppUpdate.accesskey      "F">
-<!ENTITY enableExtensionUpdate.label    "Installed Extensions and Themes">
-<!ENTITY enableExtensionUpdate.accesskey "x">
-<!ENTITY enableSearchUpdate.label       "Search Engines">
-<!ENTITY enableSearchUpdate.accesskey   "h">
-<!ENTITY checkNow.label                 "Check Now...">
-<!ENTITY appCheckNow.accesskey          "N">
-<!ENTITY whenUpdatesFound.label         "When updates to &brandShortName; are found:">
-<!ENTITY modeAskMe.label                "Ask me what I want to do">
-<!ENTITY modeAskMe.accesskey            "A">
-<!ENTITY modeAutomatic.label            "Automatically download and install the update">
-<!ENTITY modeAutomatic.accesskey        "d">
-<!ENTITY modeAutoWarn.label             "Warn me if this will disable extensions or themes">
-<!ENTITY modeAutoWarn.accesskey         "W">
-<!ENTITY showUpdates.label              "Show Update History">
-<!ENTITY showUpdates.accesskey          "U">
+<!ENTITY updateTab.label "Aktualizace">
+<!ENTITY autoCheck.label "Automaticky kontrolovat aktualizace pro:">
+<!ENTITY enableAppUpdate.label "Aplikace &brandShortName;">
+<!ENTITY enableAppUpdate.accesskey "A">
+<!ENTITY enableExtensionUpdate.label "Rozšíření a motivy vzhledu">
+<!ENTITY enableExtensionUpdate.accesskey "R">
+<!ENTITY enableSearchUpdate.label "Vyhledávací moduly">
+<!ENTITY enableSearchUpdate.accesskey "m">
+<!ENTITY checkNow.label "Zkontrolovat...">
+<!ENTITY appCheckNow.accesskey "k">
+<!ENTITY whenUpdatesFound.label "Je-li dostupná aktualizace pro aplikaci &brandShortName;:">
+<!ENTITY modeAskMe.label "Vždy se dotázat na další postup">
+<!ENTITY modeAskMe.accesskey "V">
+<!ENTITY modeAutomatic.label "Automaticky aktualizaci stáhnout a nainstalovat">
+<!ENTITY modeAutomatic.accesskey "t">
+<!ENTITY modeAutoWarn.label "Upozornit, pokud by nainstalování aktualizace zakázalo některé doplňky">
+<!ENTITY modeAutoWarn.accesskey "U">
+<!ENTITY showUpdates.label "Zobrazit historii aktualizací...">
+<!ENTITY showUpdates.accesskey "Z"> 
 
-<!ENTITY securityTab.label              "Security">
-<!ENTITY protocols.label                "Protocols">
-<!ENTITY useSSL2.label                  "Use SSL 2.0">
-<!ENTITY useSSL2.accesskey              "2">
-<!ENTITY useSSL3.label                  "Use SSL 3.0">
-<!ENTITY useSSL3.accesskey              "3">
-<!ENTITY useTLS1.label                  "Use TLS 1.0">
-<!ENTITY useTLS1.accesskey              "1">
-<!ENTITY certificates.label             "Certificates">
-<!ENTITY certselect.description         "When a web site requires a certificate:">
-<!ENTITY certselect.auto                "Select one automatically">
-<!ENTITY certselect.auto.accesskey      "e">
-<!ENTITY certselect.ask                 "Ask me every time">
-<!ENTITY certselect.ask.accesskey       "k">
-<!ENTITY viewCertificates.label         "View Certificates">
-<!ENTITY viewCertificates.accesskey     "C">
-<!ENTITY viewCRLs.label                 "Revocation Lists">
-<!ENTITY viewCRLs.accesskey             "R">
-<!ENTITY viewOCSP.label                 "Verification">
-<!ENTITY viewOCSP.accesskey             "V">
-<!ENTITY viewSecurityDevices.label      "Security Devices">
-<!ENTITY viewSecurityDevices.accesskey  "y">
+<!ENTITY securityTab.label "Zabezpečení">
+<!ENTITY protocols.label "Protokoly">
+<!ENTITY useSSL2.label "Použít SSL 2.0">
+<!ENTITY useSSL2.accesskey "2">
+<!ENTITY useSSL3.label "Použít SSL 3.0">
+<!ENTITY useSSL3.accesskey "3">
+<!ENTITY useTLS1.label "Použít TLS 1.0">
+<!ENTITY useTLS1.accesskey "1">
+<!ENTITY certificates.label "Certifikáty">
+<!ENTITY certselect.description "Pokud stránka vyžaduje certifikát:">
+<!ENTITY certselect.auto "Zvolit automaticky">
+<!ENTITY certselect.auto.accesskey "v">
+<!ENTITY certselect.ask "Vždy se dotázat">
+<!ENTITY certselect.ask.accesskey "d">
+<!ENTITY viewCertificates.label "Certifikáty...">
+<!ENTITY viewCertificates.accesskey "C">
+<!ENTITY viewCRLs.label "Zneplatnění...">
+<!ENTITY viewCRLs.accesskey "Z">
+<!ENTITY viewOCSP.label "Ověřování...">
+<!ENTITY viewOCSP.accesskey "O">
+<!ENTITY viewSecurityDevices.label "Bezpečnostní zařízení...">
+<!ENTITY viewSecurityDevices.accesskey  "B">
 
-<!ENTITY languages.caption              "Languages">
-<!ENTITY languagesInfo.label            "Choose Languages web pages are displayed in.">
-<!ENTITY showLanguages.label            "Edit Languages...">
-<!ENTITY showLanguages.accesskey        "L">
+<!ENTITY languages.caption "Jazyky">
+<!ENTITY languagesInfo.label "Zvolte jazyky pro zobrazování webových stránek.">
+<!ENTITY showLanguages.label "Vybrat jazyky...">
+<!ENTITY showLanguages.accesskey "k">
+
+
+<!ENTITY showLanguages.accesskey "L" >
+
 

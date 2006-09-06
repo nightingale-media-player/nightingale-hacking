@@ -1,0 +1,265 @@
+﻿
+<!ENTITY window.main.title  "Songbird 0.2" >
+<!ENTITY window.dev.title   "Songbird 0.2 alpha" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome/" >
+<!ENTITY window.ok          "კარგი" >
+<!ENTITY window.undo        "დაბრუნება" >
+<!ENTITY window.apply       "მისადაგება" >
+<!ENTITY window.cancel      "გაუქმება" >
+<!ENTITY window.browse      "ძიება..." >
+
+<!ENTITY menu.file          "ფაილი" >
+<!ENTITY menu.file.new      "ახალი დაკვრის სია..." >
+<!ENTITY menu.file.smart    "ახალი ჭკვიანი დაკვრის სია..." >
+<!ENTITY menu.file.remote   "ახალი დისტანციური დაკვრის სია..." >
+<!ENTITY menu.file.open     "ფაილის გახსნა..." >
+<!ENTITY menu.file.url      "ინტერნეტში გახსნა..." >
+<!ENTITY menu.file.playlist "დაკვრის სიის ჩატვირთვა..." >
+<!ENTITY menu.file.scan     "მედიუმის ძებნა..." >
+<!ENTITY menu.file.dlfolder "ჩამოტვირთვების საქაღალდის ამორჩევა..." >
+<!ENTITY menu.file.watch "საქაღალდის ამორჩევა..." >
+<!ENTITY menu.file.htmlbar  "ინტერნეტის ზოლის ყოველთვის ჩვენება" >
+<!ENTITY menu.file.skin     "ალტერნატიული დეკორაცია" >
+<!ENTITY menu.file.window   "მთავარი ფანჯრის გახსნა" >
+<!ENTITY menu.file.mini     "მინი დამკვრელის გახსნა" >
+<!ENTITY menu.file.about    "Songbird-ის შესახებ..." >
+<!ENTITY menu.file.exit     "გამოსვლა" >
+
+<!ENTITY menu.edit          "რედაქტირება" >
+<!ENTITY menu.edit.undo     "დაბრუნება" >
+<!ENTITY menu.edit.cut      "ამოჭრა" >
+<!ENTITY menu.edit.copy     "ასლი" >
+<!ENTITY menu.edit.paste    "ჩასმა" >
+<!ENTITY menu.edit.clear    "გასუფთავება" >
+<!ENTITY menu.edit.selall   "ყველაფრის მონიშვნა" >
+<!ENTITY menu.edit.selnone  "მონიშვნის გაუქმება" >
+
+<!ENTITY menu.controls      "მართვა" >
+<!ENTITY menu.control.play  "დაკვრა/პაუზა" >
+<!ENTITY menu.control.next  "შემდეგი კომპოზიცია" >
+<!ENTITY menu.control.prev  "წინა კომპოზიცია" >
+<!ENTITY menu.control.shuf  "შემთხვევით" >
+<!ENTITY menu.control.repa  "ყველას გამეორება" >
+<!ENTITY menu.control.rep1  "ერთის გამეორება" >
+<!ENTITY menu.control.repx  "გამეორების გარეშე" >
+
+<!ENTITY menu.services        "სერვისები" >
+<!ENTITY menu.services.browse "სერვისების მოძიება..." >
+
+<!ENTITY menu.devices       "მოწყობილობები" >
+
+<!ENTITY menu.help          "დახმარება" >
+<!ENTITY menu.help.topics   "დახმარების თემები..." >
+<!ENTITY menu.help.about    "Songbird-ის შესახებ..." >
+
+<!ENTITY menu.preferences "პარამეტრები..." >
+<!ENTITY menu.extensions "გაფართოებები..." >
+
+<!ENTITY html.context.open  "გახსნა" >
+<!ENTITY html.context.play  "დაკვრა" >
+<!ENTITY html.context.add   "ბიბლიოთეკაში დამატება" >
+
+<!ENTITY playlist.context.remove  "ამოღება" >
+<!ENTITY playlist.context.rename  "გადარქმევა" >
+<!ENTITY playlist.context.search  "ძებნა" >
+<!ENTITY playlist.context.lyrics  "სიმღერის ტექსტი" >
+
+<!ENTITY tooltip.miniplayer       "მინი დამკვრელზე გადართვა" >
+<!ENTITY tooltip.minimize         "ჩაკეცვა" >
+<!ENTITY tooltip.maximize         "გაშლა/აღდგენა" >
+<!ENTITY tooltip.exit             "გამოსვლა" >
+<!ENTITY tooltip.hide             "დამალვა" >
+<!ENTITY tooltip.control.back     "წინა კომპოზიცია" >
+<!ENTITY tooltip.control.play     "დაკვრა" >
+<!ENTITY tooltip.control.pause    "პაუზა" >
+<!ENTITY tooltip.control.fwd      "შემდეგი კომპოზიცია" >
+<!ENTITY tooltip.control.mute     "ხმის გამორთვა" >
+<!ENTITY tooltip.control.volume   "ხმა" >
+<!ENTITY tooltip.control.repeat   "გამეორება" >
+<!ENTITY tooltip.control.shuffle  "შემთხვევით" >
+<!ENTITY tooltip.control.shuf_off "შემთხვევით დაკვრა გამორთულია" >
+<!ENTITY tooltip.control.curtrack "მიმდინარე კომპოზიციის ძებნა" >
+<!ENTITY tooltip.control.service  "Faceplate Display-ის გადართვა" >
+<!ENTITY tooltip.search           "ძებნა" >
+<!ENTITY tooltip.browser.back     "ძებნა უკან" >
+<!ENTITY tooltip.browser.fwd      "ძებნა წინ" >
+<!ENTITY tooltip.browser.stop     "ბრაუზერის შეჩერება" >
+<!ENTITY tooltip.browser.home     "შინ" >
+<!ENTITY tooltip.browser.bookmark "სანიშნე" >
+<!ENTITY tooltip.browser.playlist "ამ ვებგვერდზე ხელმისაწვდომი კომპოზიციების ნახვა" >
+<!ENTITY tooltip.browser.download "მიმდინარე ჩამოტვირთვების ნახვა" >
+
+<!ENTITY smart.window             "ჭკვიანი დაკვრის სიის შექმნა" >
+<!ENTITY smart.library            "ბიბლიოთეკის ამორჩევა:" >
+<!ENTITY smart.limit              "შეზღუდვა" >
+<!ENTITY smart.match              "თანხვედრა" >
+<!ENTITY smart.any                "ნებისმიერი" >
+<!ENTITY smart.all                "ზუსტი" >
+<!ENTITY smart.following          "შემდეგი პირობით:" >   
+<!ENTITY smart.random             "შემთხვევით" >
+<!ENTITY smart.album              "ალბომი" >
+<!ENTITY smart.artist             "შემსრულებელი" >
+<!ENTITY smart.genre              "ჟანრი" >
+<!ENTITY smart.title              "სათაური" >
+<!ENTITY smart.high_rating        "მაღალი რეიტინგი" >
+<!ENTITY smart.low_rating         "დაბალი რეიტინგი" >
+<!ENTITY smart.most_recent        "ბოლო" >
+<!ENTITY smart.least_recent       "პირველი" >
+<!ENTITY smart.most_often         "ხშირი" >
+<!ENTITY smart.least_often        "იშვიათი" >
+<!ENTITY smart.most_added         "ხშირად დამატებადი" >
+<!ENTITY smart.least_added        "იშვიათად დამატებადი" >
+<!ENTITY smart.minutes            "წუთი" >
+<!ENTITY smart.hours              "საათი" >
+<!ENTITY smart.mb                 "მბ" >
+<!ENTITY smart.gb                 "გბ" >
+<!ENTITY smart.songs              "სიმღერა" >
+<!ENTITY smart.contains           "შეიცავს" >
+<!ENTITY smart.not_contain        "არ შეიცავს" >
+<!ENTITY smart.is                 "არის" >
+<!ENTITY smart.is_not             "არ არის" >
+<!ENTITY smart.starts             "იწყება" >
+<!ENTITY smart.ends               "არ იწყება" >
+         
+<!ENTITY download.window          "ჩამოტვირთვა" >
+<!ENTITY download.select          "დანიშნულების საქაღალდის ამორჩევა:" >
+<!ENTITY download.always          "ყოველთვის ამ საქაღალდის გამოყენება" >
+
+<!ENTITY textbox.rmp_demo_open_url "კომპოზიციის დაკვრისათვის შეიყვანეთ ინტერნეტის მისამართი ან მდებარეობა:" >
+
+<!ENTITY open_url.title "ინტერნეტ მისამართის გახსნა" >
+<!ENTITY subscribe.title "გაწევრიანება" >
+<!ENTITY subscribe.minutes "წუთში" >
+<!ENTITY subscribe.hours "საათში" >
+<!ENTITY subscribe.days "დღეში" >
+<!ENTITY subscribe.autocheck "ავტომატური განახლება ყოველ" >
+<!ENTITY subscribe.destinationfolder "დანიშნულების საქაღალდის არჩევა:" >
+
+<!ENTITY exists.title "დაკვრის სია უკვე არსებობს" >
+<!ENTITY exists.exists "დაკვრის სია ასეთი სახელით უკვე არსებობს!" >
+
+<!ENTITY media_scan.title "მედიის ძებნა" >
+<!ENTITY media_scan.watch "ამ საქაღალდეში მედია ფაილების ძებნა" >
+
+<!ENTITY new_playlist.title "ახალი დაკვრის სიის შექმნა" >
+<!ENTITY new_playlist.name "შეიყვანეთ ახალი დაკვრის სიის სახელი." >
+
+<!ENTITY addtoplaylist.title "დაკვრის სიაში დამატება" >
+<!ENTITY addtoplaylist.create "ახალი დაკვრის სიის შექმნა" >
+
+<!ENTITY watchfolder.title "საქაღალდეების თვალყურის დევნება" >
+<!ENTITY watchfolder.folderlist "ამ საქაღალდეების თვალყურის დევნება ახალი ფაილების დამატებაზე:" >
+
+<!ENTITY locale.language          "ენა" >
+<!ENTITY menu.feathers            "ბუმბული" >
+<!ENTITY about.version            "ვერსია" >
+
+<!ENTITY setup.retrievingxpilist  "გაფართოებების სიის ძებნა. გთხოვთ დაიცადოთ..." >
+<!ENTITY setup.custominstall      "მორგებული დაყენება" >
+<!ENTITY setup.title              "Songbird-ის დაყენების პარამეტრები" >
+<!ENTITY setupprogress.pleasewait "გთხოვთ დაიცადოთ..." >
+
+<!ENTITY menu.file.accesskey          "ფ" >
+<!ENTITY menu.file.new.accesskey      "ა" >
+<!ENTITY menu.file.smart.accesskey    "ხ" >
+<!ENTITY menu.file.remote.accesskey   "დ" >
+<!ENTITY menu.file.open.accesskey     "გ" >
+<!ENTITY menu.file.url.accesskey      "ტ" >
+<!ENTITY menu.file.playlist.accesskey "კ" >
+<!ENTITY menu.file.scan.accesskey     "უ" >
+<!ENTITY menu.file.dlfolder.accesskey "ქ" >
+<!ENTITY menu.file.watch.accesskey    "ვ" >
+<!ENTITY menu.file.mini.accesskey     "მ" >
+<!ENTITY locale.language.accesskey    "ე" >
+<!ENTITY menu.feathers.accesskey      "ბ" >
+<!ENTITY menu.preferences.accesskey   "პ" >
+<!ENTITY menu.extensions.accesskey    "ი" >
+<!ENTITY menu.file.exit.accesskey     "ლ" >
+
+<!ENTITY menu.edit.accesskey          "რ" >
+<!ENTITY menu.edit.undo.accesskey     "დ" >
+<!ENTITY menu.edit.cut.accesskey      "რ" >
+<!ENTITY menu.edit.copy.accesskey     "ა" >
+<!ENTITY menu.edit.paste.accesskey    "მ" >
+<!ENTITY menu.edit.clear.accesskey    "გ" >
+<!ENTITY menu.edit.selall.accesskey   "ყ" >
+<!ENTITY menu.edit.selnone.accesskey  "ქ" >
+
+<!ENTITY menu.controls.accesskey      "მ" >
+<!ENTITY menu.control.play.accesskey  "დ" >
+<!ENTITY menu.control.next.accesskey  "ე" >
+<!ENTITY menu.control.prev.accesskey  "წ" >
+<!ENTITY menu.control.shuf.accesskey  "ხ" >
+<!ENTITY menu.control.repa.accesskey  "ყ" >
+<!ENTITY menu.control.rep1.accesskey  "ბ" >
+<!ENTITY menu.control.repx.accesskey  "ო" >
+
+<!ENTITY menu.services.accesskey      "ს" >
+
+<!ENTITY menu.devices.accesskey       "წ" >
+
+<!ENTITY menu.help.accesskey          "დ" >
+<!ENTITY menu.help.help.accesskey     "ხ" >
+<!ENTITY menu.help.about.accesskey    "ბ" >
+
+
+<!ENTITY bookmarks.edit.title  "სანიშნის რედაქტირება" >
+<!ENTITY bookmarks.edit.url    "URL:" >
+<!ENTITY bookmarks.edit.label  "სახელი:" >
+<!ENTITY bookmarks.edit.icon   "ხატულა:" >
+
+
+<!ENTITY trackeditor.title            "კომპოზიციის რედაქტორი" >
+<!ENTITY trackeditor.trackdata        "კომპოზიციის მონაცემები" >
+<!ENTITY trackeditor.exttrackdata     "დამატებითი ინფორმაცია" >
+<!ENTITY trackeditor.tags             "ტეგები" >
+<!ENTITY trackeditor.addtag.title     "ტეგის დამატება" >
+<!ENTITY trackeditor.addtag.tag       "ტეგი:" >
+
+<!ENTITY jumptofile.title             "გადასვლა" >
+<!ENTITY jumptofile.playlist          "დაკვრის სია:" >
+<!ENTITY jumptofile.search            "ძებნა:" >
+
+<!ENTITY metrics.optout               "Allow Songbird to send anonymous usage metrics (სასურველია)" >
+
+<!ENTITY hotkeys.useglobalhotkeys     "გლობალური შეღწევადი კლავიშების გამოყენება" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "გ" >
+<!ENTITY hotkeys.action               "ქმედება" >
+<!ENTITY hotkeys.hotkey               "შეღწევადი კლავიში" >
+<!ENTITY hotkeys.add                  "დამატება" >
+<!ENTITY hotkeys.set                  "აწყობა" >
+<!ENTITY hotkeys.remove               "ამოღება" >
+<!ENTITY hotkeys.prefpane             "შეღწევადი კლავიშები" >
+
+<!ENTITY metadata.uuid                "UUID მედია" >
+<!ENTITY metadata.url                 "მდებარეობა" >
+<!ENTITY metadata.artist              "შემსრულებელი" >
+<!ENTITY metadata.title               "სათაური" >
+<!ENTITY metadata.album               "ალბომი" >
+<!ENTITY metadata.genre               "ჟანრი" >
+<!ENTITY metadata.length              "დრო" >
+
+<!ENTITY restartbox.restartnow        "ხელახალი ჩატვირთვა" >
+<!ENTITY restartbox.restartonplaybackend "ხელახალი ჩატვირთვა დაკვირს სეწყვეტის შემდეგ" >
+<!ENTITY restartbox.restartlater      "ხელახალი ჩატვირთვა მოგვიანებით" >
+
+<!ENTITY setupprogress.installingextensions "გაფათოებების ჩაყენება" >
+
+<!ENTITY menu.updateCmd.label     "განახლებებზე შემოწმება...">
+<!ENTITY menu.updateCmd.accessKey "გ">
+
+
+<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY firstrun.connectionsettings "Connection Settings" >
+
+
+
+
+
+
+

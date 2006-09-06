@@ -1,23 +1,23 @@
 
-<!ENTITY header2.label             "Home Page">
-<!ENTITY location.label            "Location(s):">
-<!ENTITY location.accesskey        "a">
-<!ENTITY useCurrent.label          "Use Current Page">
-<!ENTITY useCurrent.accesskey      "C">
-<!ENTITY useCurrentMultiple.label  "Use Current Pages">
-<!ENTITY useBookmark.label         "Use Bookmark...">
-<!ENTITY useBookmark.accesskey     "U">
-<!ENTITY useBlank.label            "Use Blank Page">
-<!ENTITY useBlank.accesskey        "B">
+<!ENTITY  header2.label             "Startseite">
+<!ENTITY  location.label            "Adresse(n):">
+<!ENTITY  location.accesskey        "a">
+<!ENTITY  useCurrent.label          "Aktuelle Seite verwenden">
+<!ENTITY  useCurrent.accesskey      "C">
+<!ENTITY  useCurrentMultiple.label  "Aktuelle Seiten verwenden">
+<!ENTITY  useBookmark.label         "Lesezeichen verwenden...">
+<!ENTITY  useBookmark.accesskey     "U">
+<!ENTITY  useBlank.label            "Leere Seite verwenden">
+<!ENTITY  useBlank.accesskey        "B">
 
-<!ENTITY defaultBrowserGroup.label  "Default Browser">
-<!ENTITY checkForDefault.label      "&brandShortName; should check to see if it is the default browser when starting.">
+<!ENTITY defaultBrowserGroup.label  "Standardbrowser">
+<!ENTITY checkForDefault.label      "&brandShortName; soll beim starten überprüfen ob es als Standardbrowser gewählt ist.">
 <!ENTITY checkForDefault.accesskey  "d">
-<!ENTITY checkNow.label             "Check Now">
+<!ENTITY checkNow.label             "Jetzt Überprüfen">
 <!ENTITY checkNow.accesskey         "N">
 
-<!ENTITY showConnections.label      "Connection Settings...">
+<!ENTITY showConnections.label      "Verbindungseinstellungen...">
 <!ENTITY showConnections.accesskey  "o">
-<!ENTITY proxiesInfo.label          "Determine how &brandShortName; connects to the Internet.">
-<!ENTITY connectionsInfo.caption    "Connection">
+<!ENTITY proxiesInfo.label          "Festellen wie &brandShortName; sich mit dem Internet verbindet.">
+<!ENTITY connectionsInfo.caption    "Verbindung">
 

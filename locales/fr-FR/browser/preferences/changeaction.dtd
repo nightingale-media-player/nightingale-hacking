@@ -1,23 +1,28 @@
-<!ENTITY  changeAction.title                  "Change Action">
+<!ENTITY  changeAction.title                  "Modification de l'action">
 <!ENTITY window.width                         "36em">
 
-<!ENTITY  whenDownloading.label               "When downloading files like this:">
+<!ENTITY  whenDownloading.label               "Lors du téléchargement de fichiers de ce type :">
 
-<!ENTITY  openDefault.label                   "Open them with the default application:">
-<!ENTITY  openDefault.accesskey               "O">
-<!ENTITY  openApplication.label               "Open them with this application:">
+<!ENTITY  openDefault.label                   "Les ouvrir avec l'application par défaut :">
+<!ENTITY  openDefault.accesskey               "L">
+<!ENTITY  openApplication.label               "Les ouvrir avec cette application :">
 <!ENTITY  openApplication.accesskey           "e">
-<!ENTITY  changeApp.label                     "Browse...">
-<!ENTITY  changeApp.accesskey                 "B">
-<!ENTITY  saveToDisk.label                    "Save them on my computer">
-<!ENTITY  saveToDisk.accesskey                "S">
-<!ENTITY  saveToDefaultFolder.label           "in the default download folder">
+<!ENTITY  changeApp.label                     "Parcourir...">
+<!ENTITY  changeApp.accesskey                 "P">
+<!ENTITY  saveToDisk.label                    "Les enregistrer localement">
+<!ENTITY  saveToDisk.accesskey                "n">
+<!ENTITY  saveToDefaultFolder.label           "dans le dossier de téléchargement par défaut">
 <!ENTITY  saveToDefaultFolder.accesskey       "d">
-<!ENTITY  saveToThisFolder.label              "in this folder:">
-<!ENTITY  saveToThisFolder.accesskey          "h">
-<!ENTITY  chooseFolder.label                  "Browse...">
-<!ENTITY  chooseFolder.accesskey              "w">
-<!ENTITY  saveToAskMe.label                   "ask me where to save the file">
-<!ENTITY  saveToAskMe.accesskey               "a">
-<!ENTITY  usePlugin.label                     "Use this Plugin:">
-<!ENTITY  usePlugin.accesskey                 "P">
+<!ENTITY  saveToThisFolder.label              "dans ce dossier :">
+<!ENTITY  saveToThisFolder.accesskey          "c">
+<!ENTITY  chooseFolder.label                  "Parcourir...">
+<!ENTITY  chooseFolder.accesskey              "a">
+<!ENTITY  saveToAskMe.label                   "demander où enregistrer le fichier">
+<!ENTITY  saveToAskMe.accesskey               "o">
+<!ENTITY  usePlugin.label                     "Utiliser ce plugin :">
+<!ENTITY  usePlugin.accesskey                 "g">
+
+
+<!ENTITY usePlugin.accesskey "P" >
+
+

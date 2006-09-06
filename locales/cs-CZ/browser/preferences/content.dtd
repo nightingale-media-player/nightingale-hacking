@@ -1,35 +1,39 @@
-<!ENTITY lHeader                           "Web Features">
+<!ENTITY lHeader "Webové stránky">
 
-<!ENTITY enbJavaCheck.label                "Enable Java">
-<!ENTITY enbJavaCheck.accesskey            "J">
-<!ENTITY enableJavaScript.label            "Enable JavaScript">
-<!ENTITY enableJavaScript.accesskey        "S">
-<!ENTITY advancedJS.label                  "Advanced...">
-<!ENTITY advancedJS.accesskey              "v">
+<!ENTITY enbJavaCheck.label "Povolit Javu">
+<!ENTITY enbJavaCheck.accesskey "J">
+<!ENTITY enableJavaScript.label "Povolit JavaScript">
+<!ENTITY enableJavaScript.accesskey "S">
+<!ENTITY advancedJS.label  "Rozšířené...">
+<!ENTITY advancedJS.accesskey "R">
 
-<!ENTITY enableImages.label                "Load Images">
-<!ENTITY enableImages.accesskey            "I">
-<!ENTITY forOriginatingSiteOnly.label      "for the originating web site only">
-<!ENTITY forOriginatingSiteOnly.accesskey  "w">
-<!ENTITY popupReject.label                 "Block Popup Windows">
-<!ENTITY popupReject.accesskey             "B">
-<!ENTITY enableXPInstallWarning.label      "Warn me when web sites try to install extensions or themes">
-<!ENTITY enableXPInstallWarning.accesskey  "a">
+<!ENTITY enableImages.label "Načíst obrázky">
+<!ENTITY enableImages.accesskey "N">
+<!ENTITY forOriginatingSiteOnly.label "pouze ze stejného serveru">
+<!ENTITY forOriginatingSiteOnly.accesskey "t">
+<!ENTITY popupReject.label "Blokovat vyskakovací okna">
+<!ENTITY popupReject.accesskey "l">
+<!ENTITY enableXPInstallWarning.label "Vždy upozornit při pokusu o instalaci doplňku">
+<!ENTITY enableXPInstallWarning.accesskey "o">
 
-<!ENTITY allowedSitesPopup.label           "Allowed Sites">
-<!ENTITY allowedSitesPopup.accesskey       "l">
-<!ENTITY exceptionsSoftware.label          "Exceptions">
-<!ENTITY exceptionsSoftware.accesskey      "x">
-<!ENTITY exceptions.label                  "Exceptions">
-<!ENTITY exceptions.accesskey              "E">
+<!ENTITY allowedSitesPopup.label "Důvěryhodné servery...">
+<!ENTITY allowedSitesPopup.accesskey "D">
+<!ENTITY exceptionsSoftware.label "Důvěryhodné servery...">
+<!ENTITY exceptionsSoftware.accesskey "h"> 
+<!ENTITY exceptions.label "Výjimky...">
+<!ENTITY exceptions.accesskey "j">
 
-<!ENTITY fonts.caption                     "Fonts &amp; Colors">
-<!ENTITY advancedFonts.label               "Advanced...">
-<!ENTITY advancedFonts.accesskey           "d">
-<!ENTITY colors.label                      "Colors...">
-<!ENTITY colors.accesskey                  "C">
-<!ENTITY defaultFontSize.label             "Size:">
-<!ENTITY defaultFontSize.accesskey         "z">
-<!ENTITY defaultFont.label                 "Default Font:">
-<!ENTITY defaultFont.accesskey             "F">
+<!ENTITY fonts.caption "Písma a Barvy">
+<!ENTITY advancedFonts.label "Rozšířené...">
+<!ENTITY advancedFonts.accesskey "R">
+<!ENTITY colors.label "Barvy...">
+<!ENTITY colors.accesskey "B">
+<!ENTITY defaultFontSize.label "Velikost:">
+<!ENTITY defaultFontSize.accesskey "k">
+<!ENTITY defaultFont.label "Výchozí písmo:">
+<!ENTITY defaultFont.accesskey "p">
+
+
+<!ENTITY defaultFont.accesskey "F" >
+
 

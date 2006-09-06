@@ -12,10 +12,10 @@
 <!ENTITY menu.file.smart                  "Nový Smart zoznam..." >
 <!ENTITY menu.file.remote                 "Nový vzdialený zoznam..." >
 <!ENTITY menu.file.open                   "Otvoriť súbor..." >
-<!ENTITY menu.file.url                    "Otvoriť z adresy URL..." >
+<!ENTITY menu.file.url                    "Otvoriť z adresy..." >
 <!ENTITY menu.file.playlist               "Načítať zoznam skladieb..." >
 <!ENTITY menu.file.scan                   "Hľadať médiá..." >
-<!ENTITY menu.file.dlfolder               "Nastaviť priečinok sťahovania..." >
+<!ENTITY menu.file.dlfolder               "Nastaviť priečinok preberania..." >
 <!ENTITY menu.file.watch                  "Nastaviť sledované priečinky..." >
 <!ENTITY menu.file.htmlbar                "Vždy zobrazovať panel Web" >
 <!ENTITY menu.file.skin                   "Alternatívna téma" >
@@ -114,7 +114,7 @@
 <!ENTITY smart.starts                     "začínajúce na" >
 <!ENTITY smart.ends                       "končiace na" >
          
-<!ENTITY download.window                  "Sťahovanie" >
+<!ENTITY download.window                  "Preberanie" >
 <!ENTITY download.select                  "Vyberte cieľový priečinok:" >
 <!ENTITY download.always                  "Vždy použiť tento priečinok" >
 
@@ -178,7 +178,7 @@
 <!ENTITY menu.file.smart.accesskey "t" >
 <!ENTITY menu.file.remote.accesskey "v" >
 <!ENTITY menu.file.open.accesskey "O" >
-<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.url.accesskey "a" >
 <!ENTITY menu.file.playlist.accesskey "Z" >
 <!ENTITY menu.file.scan.accesskey "H" >
 <!ENTITY menu.file.dlfolder.accesskey "e" >
@@ -273,7 +273,7 @@
 
 
 <!ENTITY restartbox.restartnow "Reštartovať teraz" >
-<!ENTITY restartbox.restartonplaybackend "Reštarovať na konci prehrávania" >
+<!ENTITY restartbox.restartonplaybackend "Reštartovať na konci prehrávania" >
 <!ENTITY restartbox.restartlater "Reštartovať neskôr" >
 <!ENTITY setupprogress.installingextensions "Inštalácia rozšírení" >
 
@@ -281,39 +281,37 @@
 
 
 
-<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.hide "Skryť" >
 
 
 
 
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY menu.updateCmd.label "Kontrola aktualizácií..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
 
 
 
 
-<!ENTITY jumptofile.playlist "Playlist:" >
-<!ENTITY jumptofile.search "Search:" >
+<!ENTITY jumptofile.playlist "Zoznam skladieb:" >
+<!ENTITY jumptofile.search "Hľadať:" >
 
 
 
 
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+<!ENTITY tooltip.control.shuf_off "Náhodne vyp." >
 
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
 
 
 
 
 <!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
+<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY smart.selectedby "Selected by" >
 <!ENTITY firstrun.connectionsettings "Connection Settings" >
+
+
+
+
+
 
 

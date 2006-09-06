@@ -1,18 +1,22 @@
 <!-- ***** BEGIN LICENSE BLOCK *****
    - ***** END LICENSE BLOCK ***** -->
 
-<!ENTITY advancedJSDialog.title         "Advanced JavaScript Settings">
+<!ENTITY advancedJSDialog.title         "Rozšířené nastavení JavaScriptu">
 <!ENTITY window.width                   "37em">
 
-<!ENTITY allowScripts.label             "Allow scripts to:">
+<!ENTITY allowScripts.label             "Umožnit skriptům:">
 
-<!ENTITY moveResizeWindows.label        "Move or resize existing windows">
-<!ENTITY moveResizeWindows.accesskey    "M">
-<!ENTITY raiseLowerWindows.label        "Raise or lower windows">
-<!ENTITY raiseLowerWindows.accesskey    "R">
-<!ENTITY disableContextMenus.label      "Disable or replace context menus">
-<!ENTITY disableContextMenus.accesskey  "D">
-<!ENTITY hideStatusBar.label            "Hide the status bar">
-<!ENTITY hideStatusBar.accesskey        "H">
-<!ENTITY changeStatusBar.label          "Change status bar text">
-<!ENTITY changeStatusBar.accesskey      "C">
+<!ENTITY moveResizeWindows.label        "Přemístit nebo změnit velikost okna">
+<!ENTITY moveResizeWindows.accesskey    "m">
+<!ENTITY raiseLowerWindows.label        "Přenést okno do popředí nebo do pozadí">
+<!ENTITY raiseLowerWindows.accesskey    "P">
+<!ENTITY disableContextMenus.label      "Zakázat nebo nahradit místní nabídku">
+<!ENTITY disableContextMenus.accesskey  "Z">
+<!ENTITY hideStatusBar.label            "Skrýt stavový řádek">
+<!ENTITY hideStatusBar.accesskey        "S">
+<!ENTITY changeStatusBar.label          "Měnit text ve stavovém řádku">
+<!ENTITY changeStatusBar.accesskey      "s">
+
+<!ENTITY changeStatusBar.accesskey "C" >
+
+

@@ -1,23 +1,23 @@
-<!ENTITY askOnSave.label              "Download Folder">
-<!ENTITY alwaysAsk.label              "Ask me where to save every file">
+<!ENTITY askOnSave.label              "Downloadpfad">
+<!ENTITY alwaysAsk.label              "Nachfargen wo eine Datei gespeichert werden soll">
 <!ENTITY alwaysAsk.accesskey          "A">
-<!ENTITY neverAsk.label               "Save all files to this folder:">
+<!ENTITY neverAsk.label               "Alle dateien in folgendes Verzeichnis speichern:">
 <!ENTITY neverAsk.accesskey           "S">
-<!ENTITY desktop.label                "Desktop">
-<!ENTITY downloads.label              "My Downloads">
-<!ENTITY chooseFolderWin.label        "Browse...">
+<!ENTITY desktop.label                "Schreibtisch">
+<!ENTITY downloads.label              "Meine Downloads">
+<!ENTITY chooseFolderWin.label        "Durchsuchen...">
 <!ENTITY chooseFolderWin.accesskey    "B">
-<!ENTITY chooseFolderMac.label        "Choose...">
+<!ENTITY chooseFolderMac.label        "Durchsuchen...">
 <!ENTITY chooseFolderMac.accesskey    "h">
 
-<!ENTITY downloadManagerWindow.label  "Download Manager">
-<!ENTITY showWhenStarting.label       "Show Download Manager when a download begins">
+<!ENTITY downloadManagerWindow.label  "Downloadmanager">
+<!ENTITY showWhenStarting.label       "Downloadmanager anzeigen wenn ein Download beginnt">
 <!ENTITY showWhenStarting.accesskey   "o">
-<!ENTITY closeWhenDone.label          "Close the Download Manager when all downloads are complete">
+<!ENTITY closeWhenDone.label          "Downloadmanager schließen wenn alle Downloads beendet sind">
 <!ENTITY closeWhenDone.accesskey      "C">
 
-<!ENTITY fileTypes.label              "Download Actions">
-<!ENTITY configureActions.label       "View &amp; Edit Actions...">
+<!ENTITY fileTypes.label              "Download Aktionen">
+<!ENTITY configureActions.label       "&amp; anzeigen Aktionen bearbeiten...">
 <!ENTITY configureActions.accesskey   "V">
-<!ENTITY fileTypesDescription.label   "&brandShortName; can automatically download or open files of certain types.">
+<!ENTITY fileTypesDescription.label   "&brandShortName; kann automatisch bestimte Dateitypen downloaden oder öffenen.">
 

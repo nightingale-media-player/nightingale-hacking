@@ -1,84 +1,89 @@
 
-<!ENTITY  privacy.intro               "As you browse the web, &brandShortName; keeps information about where you have been, what you have done etc. in the following areas:">
-<!ENTITY  clear.label                 "Clear">
-<!ENTITY  view.label                  "View">
+<!ENTITY  privacy.intro               "Lorsque vous naviguez sur le Web, &brandShortName; conserve des informations sur les sites que vous avez visités, ce que vous y avez fait etc. aux emplacements suivants :">
+<!ENTITY  clear.label                 "Supprimer">
+<!ENTITY  view.label                  "Afficher">
 
-<!ENTITY  privacy.label               "Privacy">
+<!ENTITY  privacy.label               "Vie privée">
 
-<!ENTITY  itemHistory.label           "History">
-<!ENTITY  rememberPages.label         "Remember visited pages for the last">
-<!ENTITY  rememberPages.accesskey     "d">
-<!ENTITY  rememberDays.label          "days.">
-<!ENTITY  clearHistory.label          "Clear Browsing History Now">
-<!ENTITY  clearHistory.accesskey      "C">
+<!ENTITY  itemHistory.label           "Historique">
+<!ENTITY  rememberPages.label         "Se souvenir des pages visitées lors des">
+<!ENTITY  rememberPages.accesskey     "r">
+<!ENTITY  rememberDays.label          "derniers jours.">
+<!ENTITY  clearHistory.label          "Vider l'historique de navigation">
+<!ENTITY  clearHistory.accesskey      "S">
 
-<!ENTITY  itemFormData.label          "Saved Forms">
-<!ENTITY  savedFormData.intro         "Information entered in forms and the Search Bar is saved to make filling out forms and searching faster.">
-<!ENTITY  enableFormFill.label        "Save information I enter in forms and the Search Bar.">
-<!ENTITY  enableFormFill.accesskey    "S">
-<!ENTITY  clearFormData.label         "Clear Saved Form Data Now">
-<!ENTITY  clearFormData.accesskey     "F">
+<!ENTITY  itemFormData.label          "Formulaires">
+<!ENTITY  savedFormData.intro         "Les informations entrées dans les formulaires et la Barre de recherche sont enregistrées pour rendre les entrées et les recherches plus rapides.">
+<!ENTITY  enableFormFill.label        "Enregistrer les informations entrées dans les formulaires et la Barre de recherche.">
+<!ENTITY  enableFormFill.accesskey    "g">
+<!ENTITY  clearFormData.label         "Effacer les données de formulaires enregistrées">
+<!ENTITY  clearFormData.accesskey     "f">
 
-<!ENTITY  itemPasswords.label         "Passwords">
-<!ENTITY  savedPasswords.intro        "&brandShortName; can remember login information for web pages so that you do not need to re-enter your login details every time you visit.">
-<!ENTITY  enablePasswords.label       "Remember Passwords">
-<!ENTITY  enablePasswords.accesskey   "b">
-<!ENTITY  masterPassword.intro        "When set, the Master Password protects all your passwords - but you must enter it once per session.">
-<!ENTITY  setMasterPassword.label     "Master Password">
+<!ENTITY  itemPasswords.label         "Mots de passe">
+<!ENTITY  savedPasswords.intro        "&brandShortName; peut conserver les informations d'identification pour les pages Web ; vous n'avez ainsi pas besoin de les saisir à chaque visite.">
+<!ENTITY  enablePasswords.label       "Enregistrer les mots de passe">
+<!ENTITY  enablePasswords.accesskey   "p">
+<!ENTITY  masterPassword.intro        "Lorsqu'il est défini, le mot de passe principal protège tous vos mots de passe ; mais vous devez l'entrer une fois par session de navigation.">
+<!ENTITY  setMasterPassword.label     "Mot de passe principal">
 <!ENTITY  setMasterPassword.accesskey "M">
-<!ENTITY  removeMasterPassword.label  "Remove Master Password...">
-<!ENTITY  removeMasterPassword.accesskey "R">
-<!ENTITY  viewPasswords.label         "View Saved Passwords">
-<!ENTITY  viewPasswords.accesskey     "V">
+<!ENTITY  removeMasterPassword.label  "Supprimer le mot de passe principal…">
+<!ENTITY  removeMasterPassword.accesskey "r">
+<!ENTITY  viewPasswords.label         "Afficher les mots de passe enregistrés">
+<!ENTITY  viewPasswords.accesskey     "c">
 
-<!ENTITY  itemDownloads.label         "Download History">
-<!ENTITY  downloadManager.intro       "The Downloads window keeps track of recently downloaded files.">
-<!ENTITY  downloadsRetentionPolicy.label      
-                                      "Remove files from the Download Manager:">
-<!ENTITY  downloadsRetentionPolicy.accesskey  
+<!ENTITY  itemDownloads.label         "Téléchargements">
+<!ENTITY  downloadManager.intro       "La fenêtre des téléchargements garde la trace des fichiers téléchargés récemment.">
+<!ENTITY  downloadsRetentionPolicy.label
+                                      "Retirer les fichiers du gestionnaire de téléchargements ">
+<!ENTITY  downloadsRetentionPolicy.accesskey
                                       "e">
-<!ENTITY  downloadsRemoveImmediately.label    
-                                      "Upon successful download">
-<!ENTITY  downloadsRemoveExit.label   "When &brandShortName; exits">
-<!ENTITY  downloadsRemoveManually.label       
-                                      "Manually">
-<!ENTITY  viewDownloads.label         "View Download History">
-<!ENTITY  viewDownloads.accesskey     "y">
-<!ENTITY  clearDownloads.label        "Clear Download History Now">
+<!ENTITY  downloadsRemoveImmediately.label
+                                      "À la fin d'un téléchargement réussi">
+<!ENTITY  downloadsRemoveExit.label   "À la sortie de &brandShortName;">
+<!ENTITY  downloadsRemoveManually.label
+                                      "Manuellement">
+<!ENTITY  viewDownloads.label         "Afficher l'historique de téléchargement">
+<!ENTITY  viewDownloads.accesskey     "i">
+<!ENTITY  clearDownloads.label        "Vider l'historique de téléchargement">
 <!ENTITY  clearDownloads.accesskey    "a">
 
 <!ENTITY  itemCookies.label           "Cookies">
-<!ENTITY  cookies.intro               "Cookies are pieces of information stored by sites on your computer. They are used to remember login information and other data.">
-<!ENTITY  enableCookies.label         "Allow sites to set Cookies">
+<!ENTITY  cookies.intro               "Les cookies sont des informations enregistrées par certains sites Web sur votre ordinateur. Ils servent à conserver vos données d'identification et d'autres données.">
+<!ENTITY  enableCookies.label         "Autoriser les sites à placer des cookies">
 <!ENTITY  enableCookies.accesskey     "l">
 <!ENTITY  exceptions.label            "Exceptions">
 <!ENTITY  cookieExceptions.accesskey  "x">
 <!ENTITY  enableCookiesForOriginating.label 
-                                      "for the originating site only">
+                                      "pour le site d'origine uniquement">
 <!ENTITY  enableCookiesForOriginating.accesskey
                                       "g">
 <!ENTITY  enableCookiesNotRemoved.label     
-                                      "unless I have removed cookies set by the site">
+                                      "tant que je n'ai pas supprimé de cookies venant du site">
 <!ENTITY  enableCookiesNotRemoved.accesskey
                                       "u">
-<!ENTITY  keepCookies.label           "Keep Cookies:">
-<!ENTITY  keepCookies.accesskey       "K">
-<!ENTITY  acceptNormally.label        "until they expire">
-<!ENTITY  acceptForSession.label      "until I close &brandShortName;">
-<!ENTITY  askAboutCookies.label       "ask me every time">
-<!ENTITY  viewCookies.label           "View Cookies">
-<!ENTITY  viewCookies.accesskey       "w">
-<!ENTITY  clearCookies.label          "Clear Cookies Now">
+<!ENTITY  keepCookies.label           "Garder les cookies :">
+<!ENTITY  keepCookies.accesskey       "d">
+<!ENTITY  acceptNormally.label        "jusqu'à leur expiration">
+<!ENTITY  acceptForSession.label      "jusqu'à la fermeture de &brandShortName;">
+<!ENTITY  askAboutCookies.label       "me demander à chaque fois">
+<!ENTITY  viewCookies.label           "Afficher les cookies">
+<!ENTITY  viewCookies.accesskey       "i">
+<!ENTITY  clearCookies.label          "Supprimer les cookies">
 <!ENTITY  clearCookies.accesskey      "o">
 
 <!ENTITY  itemCache.label             "Cache">
-<!ENTITY  cache.intro                 "Pages you view are stored in the cache for faster viewing later on.">
-<!ENTITY  cacheUseUpTo.label          "Use up to:">
-<!ENTITY  cacheUseUpTo.accesskey      "p">
-<!ENTITY  cacheSize.label             "MB of disk space for the cache.">
-<!ENTITY  clearCache.label            "Clear Cache Now">
-<!ENTITY  clearCache.accesskey        "N">
+<!ENTITY  cache.intro                 "Les pages visitées sont conservées dans le cache pour rendre leur affichage ultérieur plus rapide.">
+<!ENTITY  cacheUseUpTo.label          "Utiliser jusqu'à :">
+<!ENTITY  cacheUseUpTo.accesskey      "q">
+<!ENTITY  cacheSize.label             "Mo d'espace disque pour le cache.">
+<!ENTITY  clearCache.label            "Vider le cache">
+<!ENTITY  clearCache.accesskey        "h">
 
-<!ENTITY  sanitizeSettings.label      "Settings...">
+<!ENTITY  sanitizeSettings.label      "Paramètres…">
 <!ENTITY  sanitizeSettings.accesskey  "t">
-<!ENTITY  sanitize.intro              "The Clear Private Data tool can be used to erase your private data using a keyboard shortcut or when &brandShortName; closes.">
+<!ENTITY  sanitize.intro              "L'outil d'effacement des traces peut supprimer les informations affectant votre vie privée via un raccourci clavier ou à la fermeture de &brandShortName;.">
+
+
+<!ENTITY sanitize.intro "The Clear Private Data tool can be used to erase your private data using a keyboard shortcut or when &brandShortName; closes." >
+
+

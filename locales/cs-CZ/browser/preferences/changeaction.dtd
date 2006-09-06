@@ -1,23 +1,26 @@
-<!ENTITY changeAction.title                  "Change Action">
-<!ENTITY window.width                         "36em">
+<!ENTITY changeAction.title "Změnit akci">
+<!ENTITY window.width "36em">
+<!ENTITY whenDownloading.label "Při stahování souborů jako je tento:">
+<!ENTITY openDefault.label "Otevřít je ve výchozí aplikaci">
+<!ENTITY openDefault.accesskey "O">
+<!ENTITY openApplication.label "Otevřít je v této aplikaci">
+<!ENTITY openApplication.accesskey "a">
+<!ENTITY changeApp.label "Procházet...">
+<!ENTITY changeApp.accesskey "P">
+<!ENTITY saveToDisk.label "Uložit je do počítače">
+<!ENTITY saveToDisk.accesskey "U">
+<!ENTITY saveToDefaultFolder.label "do složky pro stažené soubory">
+<!ENTITY saveToDefaultFolder.accesskey "d">
+<!ENTITY saveToThisFolder.label "do této složky:">
+<!ENTITY saveToThisFolder.accesskey "t">
+<!ENTITY chooseFolder.label "Procházet...">
+<!ENTITY chooseFolder.accesskey "r">
+<!ENTITY saveToAskMe.label "zeptat se, kam soubor uložit">
+<!ENTITY saveToAskMe.accesskey "s">
+<!ENTITY usePlugin.label "Použít tento zásuvný modul:">
+<!ENTITY usePlugin.accesskey "P">
 
-<!ENTITY whenDownloading.label               "When downloading files like this:">
 
-<!ENTITY openDefault.label                   "Open them with the default application:">
-<!ENTITY openDefault.accesskey               "O">
-<!ENTITY openApplication.label               "Open them with this application:">
-<!ENTITY openApplication.accesskey           "e">
-<!ENTITY changeApp.label                     "Browse...">
-<!ENTITY changeApp.accesskey                 "B">
-<!ENTITY saveToDisk.label                    "Save them on my computer">
-<!ENTITY saveToDisk.accesskey                "S">
-<!ENTITY saveToDefaultFolder.label           "in the default download folder">
-<!ENTITY saveToDefaultFolder.accesskey       "d">
-<!ENTITY saveToThisFolder.label              "in this folder:">
-<!ENTITY saveToThisFolder.accesskey          "h">
-<!ENTITY chooseFolder.label                  "Browse...">
-<!ENTITY chooseFolder.accesskey              "w">
-<!ENTITY saveToAskMe.label                   "ask me where to save the file">
-<!ENTITY saveToAskMe.accesskey               "a">
-<!ENTITY usePlugin.label                     "Use this Plugin:">
-<!ENTITY usePlugin.accesskey                 "P">
+<!ENTITY usePlugin.accesskey "P" >
+
+

@@ -161,10 +161,10 @@ try
     {
       if ( typeof( lsLocalArray[ i ] ) == "undefined" )
       {
-/*
           alert( "file: " + file.path + "\n" + 
                 "\tmaster - " + i + ": " + lsDTDMasterArray[ i ] + "\n" +
                 "\tlocal - " + i + ": " + lsLocalArray[ i ] + "\n"  );
+/*
 */
         lsFixArray[ i ] = lsDTDMasterArray[ i ];
         anything = true;
@@ -173,12 +173,12 @@ try
 
     if ( anything )
     {
-/*
       language_scan_text += "file: " + file.path + "\n";
       for ( var i in lsFixArray )
       {
         language_scan_text += "\tkey: '" + i + "'   value: '" + lsFixArray[ i ] + "'\n";   
       }
+/*
       alert( language_scan_text );
 */    
       
@@ -238,6 +238,7 @@ try
             var ssplit = raw_key.split( ' ' );
             var key = ssplit[ 1 ];           
             retval[ key ] = qsplit[ 1 ];
+            if ( key.indexOf("testing.") != -1 ) alert( aLocalFile.path + ":\n" + key + ": " + retval[ key ] );
           }
         };
       }
@@ -268,12 +269,12 @@ try
 
     if ( anything )
     {
-/*
       language_scan_text += "file: " + file.path + "\n";
       for ( var i in lsFixArray )
       {
         language_scan_text += "\tkey: '" + i + "'   value: '" + lsFixArray[ i ] + "'\n";   
       }
+/*
       alert( language_scan_text );
 */    
       var aFileWriter = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);      
