@@ -1265,7 +1265,7 @@ SEARCH WIDGET
 
 #search_service_list
 {
-  width: 100 !important;
+  width: 100px !important;
   min-width: 50px !important;
   margin: 3px 0px 3px 5px !important; 
 }
