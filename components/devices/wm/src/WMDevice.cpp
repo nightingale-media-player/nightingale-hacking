@@ -80,9 +80,16 @@ sbWMDevice::~sbWMDevice()
 NS_IMETHODIMP
 sbWMDevice::Initialize(PRBool *_retval)
 {
+  InitializeAsync();
+  return NS_OK;
+}
+
+PRBool sbWMDevice::InitializeSync()
+{
   CleanupWMDEntries();
   mDeviceManager->Initialize();
-  return NS_OK;
+
+  return PR_TRUE;
 }
 
 NS_IMETHODIMP
@@ -91,6 +98,7 @@ sbWMDevice::Finalize(PRBool *_retval)
   mDeviceManager->Finalize();
   return NS_OK;
 }
+
 
 NS_IMETHODIMP
 sbWMDevice::AddCallback(sbIDeviceBaseCallback* aCallback,

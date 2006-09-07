@@ -84,6 +84,7 @@ private:
   virtual PRBool  IsEjectSupported();
   virtual PRBool  SuspendCurrentTransfer(const nsAString& aDeviceString);
   void            CleanupWMDEntries();
+  virtual PRBool  InitializeSync();
 
   sbWMDObjectManager* mDeviceManager;
 };
