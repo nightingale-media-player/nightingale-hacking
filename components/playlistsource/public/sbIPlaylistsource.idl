@@ -214,7 +214,7 @@ interface sbIPlaylistCommands : nsISupports
 * the underlying SQL queries that drive the display of a playlist table.
 * Filters may be specified that feed a dependent RDF source and are used by
 * the <filterlist> UI element when displaying a standard libaray (see:
-* setFilter(), getNumFilters(), clearFilter(), getFilter(), getFilterRef())
+* setFilter(), getNumFilters(), replaceFilter(), getFilter(), getFilterRef())
 * and an override string may be specified to support a direct search feature
 * (see: setSearchString(), getSearchString()).
 *
@@ -313,15 +313,20 @@ interface sbIPlaylistsource : nsIRDFDataSource
   PRInt32 getNumFilters( in AString aRefName );
   
   /**
-  * \brief Remove a filter from a datasource
+  * \brief Remove a filter (entirely) from a datasource
+  *
+  * This method entirely removes a filter from being bound to a playlist.
+  * Set aFilterString to blank ("") if you want to make the filter have no
+  * current filtering value.
   *
   * This value can only be used for enumeration if setFilter() was properly
   * called with its indices in order from 0
   *
   * \param aRefName The unique identifier for the datasource 
   * \param aIndex The index value of the filter to be referenced
+  * \sa setFilter()
   */
-  void clearFilter( in AString aRefName, in PRInt32 aIndex);
+  void replaceFilter( in AString aRefName, in PRInt32 aIndex);
   
   /**
   * \brief Get the filter string from a datasource's filter

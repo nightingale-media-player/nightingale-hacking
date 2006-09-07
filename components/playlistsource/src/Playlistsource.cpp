@@ -1002,10 +1002,10 @@ sbPlaylistsource::GetNumFilters(const nsAString &aRefName,
 }
 
 NS_IMETHODIMP
-sbPlaylistsource::ClearFilter(const nsAString &aRefName,
+sbPlaylistsource::ReplaceFilter(const nsAString &aRefName,
                               PRInt32          aIndex)
 {
-  LOG(("sbPlaylistsource::ClearFilter"));
+  LOG(("sbPlaylistsource::ReplaceFilter"));
 
   METHOD_SHORTCIRCUIT;
 
