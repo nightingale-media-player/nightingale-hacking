@@ -72,12 +72,12 @@ pref("app.update.incompatible.mode", 0);
 //  .. etc ..
 //
 pref("extensions.update.enabled", true);
-pref("extensions.update.url", "chrome://mozapps/locale/extensions/extensions.properties");
+pref("extensions.update.url", "https://extensions.songbirdnest.com/update/versioncheck/?reqVersion=%REQ_VERSION%&id=%ITEM_ID%&version=%ITEM_VERSION%&maxAppVersion=%ITEM_MAXAPPVERSION%&appID=%APP_ID%&appVersion=%APP_VERSION%&appOS=%APP_OS%&appABI=%APP_ABI%)");
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and 
-                                            // Themes every week
+                                            // Feathers every week
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
-pref("extensions.getMoreExtensionsURL", "chrome://mozapps/locale/extensions/extensions.properties");
-pref("extensions.getMoreThemesURL", "chrome://mozapps/locale/extensions/extensions.properties");
+pref("extensions.getMoreExtensionsURL", "https://extensions.songbirdnest.com/extensions/");
+pref("extensions.getMoreThemesURL", "https://extensions.songbirdnest.com/feathers/");
 
-pref("xpinstall.whitelist.add", "www.songbirdnest.com");
-pref("xpinstall.whitelist.add.103", "www.songbirdnest.com");
+pref("xpinstall.whitelist.add", "extensions.songbirdnest.com");
+pref("xpinstall.whitelist.add.103", "extensions.songbirdnest.com");
