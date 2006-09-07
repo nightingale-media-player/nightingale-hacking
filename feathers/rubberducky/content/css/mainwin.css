@@ -249,6 +249,8 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 {
   width: 15px !important;
   height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
   border: none !important;
   margin: 0px !important;
   padding: 0px !important;
@@ -259,6 +261,8 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 {
   width: 15px !important;
   height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
   border: none !important;
   margin: 0px !important;
   padding: 0px !important;
@@ -269,18 +273,30 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 { 
   width: 15px !important;
   height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
+  margin: 0px !important;
+  padding: 0px !important;
   background-repeat: no-repeat !important;
 }
 .mac > #sysbtn_close
 {
   width: 15px !important;
   height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
+  margin: 0px !important;
+  padding: 0px !important;
   background-repeat: no-repeat !important;
 }
 .mac > #sysbtn_minimode
 {  
   width: 25px !important;
   height: 15px !important;
+  max-width: 25px !important;
+  max-height: 15px !important;
+  margin: 0px !important;
+  padding: 0px !important;
   background-repeat: no-repeat !important;
 }
 
