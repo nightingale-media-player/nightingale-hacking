@@ -206,6 +206,39 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   height: 9px !important;
   background-repeat: no-repeat !important;
 }
+
+/** 
+************************************************************************************************************************************************
+MAC OSX SPECIFIC CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+.mac > #sysbtn_maximize
+{
+  width: 15px !important;
+  height: 15px !important;
+  background-repeat: no-repeat !important;
+}
+.mac > #sysbtn_minimize
+{ 
+  width: 15px !important;
+  height: 15px !important;
+  background-repeat: no-repeat !important;
+}
+.mac > #sysbtn_close
+{
+  width: 15px !important;
+  height: 15px !important;
+  background-repeat: no-repeat !important;
+}
+.mac > #sysbtn_mini
+{  
+  width: 25px !important;
+  height: 15px !important;
+  background-repeat: no-repeat !important;
+}
+
 /* END CHROME **/
 
 /** 
