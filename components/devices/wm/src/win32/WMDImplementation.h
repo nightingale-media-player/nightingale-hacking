@@ -39,9 +39,9 @@
 #include "wmdrmdeviceapp.h"
 #include "sac.h"
 #include "SCClient.h"
-#include <list>
 
-const PRUint32 NumWMDSupported = 100;
+
+#include <list>
 
 class CWMDProgress : public IWMDMProgress
 {
@@ -159,7 +159,7 @@ public:
     WMDevice* deviceObject;
   };
 
-  WMDevice(class WMDManager* parent, IWMDMDevice* pIDevice);
+  WMDevice(class sbWMDObjectManager* parent, IWMDMDevice* pIDevice);
   ~WMDevice();
 
   PRBool      Initialize();
@@ -201,12 +201,13 @@ public:
   PRBool      IsEjectSupported(){return PR_FALSE;}
   PRBool      EjectDevice(){return PR_FALSE;}
   PRBool      IsUpdateSupported(){return PR_FALSE;}
-  PRUint32    GetDeviceNumber() { return mDeviceNum; }
 
 private:
   WMDevice() {}
 
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
+
+  static PRUint32 mDeviceNumber;
 
   DWORD mNumTracks;
   DWORD mUsedSpace;
@@ -233,7 +234,7 @@ private:
 
   std::list<BurnTrackInfo> mBurnTracksWeight;
 
-  class WMDManager* mParentWMDManager;
+  class PlatformCDObjectManager* mParentCDManager;
 
 private:
   PRBool  IsMediaPlayer();
@@ -242,6 +243,7 @@ private:
   PRBool  IsFileFormatAcceptable(const char* fileFormat);
   void    EnumTracks();
   PRBool  UpdateDeviceLibraryData();
+  void    ClearLibraryData();
 
   _WAVEFORMATEX   mFormat;
   WMDMDATETIME    mDateTime;
@@ -257,7 +259,6 @@ private:
   WMDMID          mSerialNumber;
   DWORD           mType;
   WMDeviceFolder  mRootFolder;
-  PRUint32        mDeviceNum;
 };
 
 class CNotificationHandler : public IWMDMNotification
@@ -323,8 +324,6 @@ public:
   virtual PRBool      IsTransferPaused(const nsAString& deviceString);
   virtual void        TransferComplete(const nsAString& deviceString);
 
-  class sbWMDevice* GetSongbirdDeviceObject() { return mParentDevice; }
-  PRUint32          GetNextAvailableDBNumber();
 private:
   WMDevice* GetDeviceMatchingString(const nsAString& deviceString);
   WMDManager() {}
@@ -350,6 +349,4 @@ private:
   IWMDeviceManager  *mWMDevMgr;
   DWORD mdwNotificationCookie;
   CSecureChannelClient* mSAC;
-
-  PRBool mDBAvaliable[NumWMDSupported];
 };
