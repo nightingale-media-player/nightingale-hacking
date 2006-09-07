@@ -1947,16 +1947,21 @@ function onPlaylistEditor( evt )
 var theCurrentlyEditingPlaylist = null;
 function onPlaylistEdit( evt )
 {
+  var playlist = evt.target;
+  if ( playlist.wrappedJSObject )
+    playlist = playlist.wrappedJSObject;
+  theCurrentlyEditingPlaylist = playlist;
+  setTimeout(doPlaylistEdit, 0);
+}
+
+function doPlaylistEdit()
+{
   try
   {
-    var playlist = evt.target;
-    if ( playlist.wrappedJSObject )
-      playlist = playlist.wrappedJSObject;
-    
     // Make sure it's something with a uuid column.
     var filter = "uuid";
-    var filter_column = playlist.tree.columns ? playlist.tree.columns[filter] : filter;
-    var filter_value = playlist.tree.view.getCellText( playlist.tree.currentIndex, filter_column );
+    var filter_column = theCurrentlyEditingPlaylist.tree.columns ? theCurrentlyEditingPlaylist.tree.columns[filter] : filter;
+    var filter_value = theCurrentlyEditingPlaylist.tree.view.getCellText( theCurrentlyEditingPlaylist.tree.currentIndex, filter_column );
     if ( !filter_value )
     {
       return;
@@ -1964,10 +1969,10 @@ function onPlaylistEdit( evt )
     
     // We want to resize the edit box to the size of the cell.
     var out_x = {}, out_y = {}, out_w = {}, out_h = {}; 
-    playlist.tree.treeBoxObject.getCoordsForCellItem( playlist.edit_row, playlist.edit_col, "cell",
+    theCurrentlyEditingPlaylist.tree.treeBoxObject.getCoordsForCellItem( theCurrentlyEditingPlaylist.edit_row, theCurrentlyEditingPlaylist.edit_col, "cell",
                                                         out_x , out_y , out_w , out_h );
                            
-    var cell_text = playlist.tree.view.getCellText( playlist.edit_row, playlist.edit_col );
+    var cell_text = theCurrentlyEditingPlaylist.tree.view.getCellText( theCurrentlyEditingPlaylist.edit_row, theCurrentlyEditingPlaylist.edit_col );
     
     // Then pop the edit box to the bounds of the cell.
     var theMainPane = document.getElementById( "frame_main_pane" );
@@ -1977,8 +1982,8 @@ function onPlaylistEdit( evt )
     var extra_y = 21; // Why do I have to give it extra?  What am I calculating wrong?
     var less_w  = 6;
     var less_h  = 0;
-    var pos_x = extra_x + playlist.tree.boxObject.screenX + out_x.value;
-    var pos_y = extra_y + playlist.tree.boxObject.screenY + out_y.value;
+    var pos_x = extra_x + theCurrentlyEditingPlaylist.tree.boxObject.screenX + out_x.value;
+    var pos_y = extra_y + theCurrentlyEditingPlaylist.tree.boxObject.screenY + out_y.value;
     theEditBox.setAttribute( "hidden", "false" );
     theEditPopup.showPopup( theMainPane, pos_x, pos_y, "context" );
     theEditPopup.sizeTo( out_w.value - less_w, out_h.value - less_h ); // increase the width to the size of the cell.
@@ -1986,7 +1991,8 @@ function onPlaylistEdit( evt )
     theEditBox.focus();
     theEditBox.select();
     isPlaylistEditShowing = true;
-    theCurrentlyEditingPlaylist = playlist;
+    theCurrentlyEditingPlaylist.theCurrentlyEditedUUID = filter_value;
+    theCurrentlyEditingPlaylist.theCurrentlyEditedOldValue = cell_text;
   }
   catch ( err )
   {
@@ -1998,35 +2004,35 @@ function onPlaylistEditChange( evt )
 {
   try
   {
-    var theEditBox = document.getElementById( "playlist_edit" );
-    
-    // Find the url column.
-    var filter = "uuid";
-    var filter_column = theCurrentlyEditingPlaylist.tree.columns ? theCurrentlyEditingPlaylist.tree.columns[filter] : filter;
-    var filter_value = theCurrentlyEditingPlaylist.tree.view.getCellText( theCurrentlyEditingPlaylist.tree.currentIndex, filter_column );
-    
-    var the_table_column = theCurrentlyEditingPlaylist.edit_col.id;
-    var the_new_value = theEditBox.value
-    
-    var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-    var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
-    
-    if ( ! aDBQuery || ! aMediaLibrary)
-      return;
-    
-    aDBQuery.setAsyncQuery(true);
-    aDBQuery.setDatabaseGUID(theCurrentlyEditingPlaylist.guid);
-    aMediaLibrary.setQueryObject(aDBQuery);
-    
-    aMediaLibrary.setValueByGUID(filter_value, the_table_column, the_new_value, false);
-    
-    //var table = "library" // hmm... // theCurrentlyEditingPlaylist.table;
-    //var q = 'update ' + table + ' set ' + the_table_column + '="' + the_new_value + '" where ' + filter + '="' + filter_value + '"';
-    //aDBQuery.addQuery( q );
-    
-    //var ret = aDBQuery.execute();
-    
-    HidePlaylistEdit();
+    if (isPlaylistEditShowing) {
+      var theEditBox = document.getElementById( "playlist_edit" );
+      
+      var filter_value = theCurrentlyEditingPlaylist.theCurrentlyEditedUUID;
+      
+      var the_table_column = theCurrentlyEditingPlaylist.edit_col.id;
+      var the_new_value = theEditBox.value
+      if (theCurrentlyEditingPlaylist.theCurrentlyEditedOldValue != the_new_value) {
+      
+        var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+        var aMediaLibrary = Components.classes["@songbirdnest.com/Songbird/MediaLibrary;1"].createInstance(Components.interfaces.sbIMediaLibrary);
+        
+        if ( ! aDBQuery || ! aMediaLibrary)
+          return;
+        
+        aDBQuery.setAsyncQuery(true);
+        aDBQuery.setDatabaseGUID(theCurrentlyEditingPlaylist.guid);
+        aMediaLibrary.setQueryObject(aDBQuery);
+        
+        aMediaLibrary.setValueByGUID(filter_value, the_table_column, the_new_value, false);
+        
+        //var table = "library" // hmm... // theCurrentlyEditingPlaylist.table;
+        //var q = 'update ' + table + ' set ' + the_table_column + '="' + the_new_value + '" where ' + filter + '="' + filter_value + '"';
+        //aDBQuery.addQuery( q );
+        
+        //var ret = aDBQuery.execute();
+      }    
+      HidePlaylistEdit();
+    }
   }
   catch ( err )
   {

@@ -290,7 +290,7 @@
                 </popup>
                 <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
                 <popup id="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
-                  <textbox id="playlist_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="HidePlaylistEdit()"/>
+                  <textbox id="playlist_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
                 </popup>
                 <!-- EDIT POPUP FOR THE SERVICE PANE -->
                 <popup id="service_edit_popup" class="sb_faceplate" ignorekeys="true">
