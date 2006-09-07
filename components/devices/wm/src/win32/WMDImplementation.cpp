@@ -82,7 +82,6 @@ using namespace std;
 #define DEVICE_STRING         NS_LITERAL_STRING("wmdevice.name").get()
 #define DEVICE_STRING_PREFIX  NS_LITERAL_STRING(" (").get()
 #define DEVICE_STRING_SUFFIX  NS_LITERAL_STRING(":)").get()
-#define TRACK_TABLE           NS_LITERAL_STRING("WMDeviceTracks").get()
 
 struct 
 {
@@ -107,6 +106,7 @@ PRUint32 WMDeviceTrack::mNextTrackID = 0;
   /* return PR_FALSE; /**/                            \
   }                                                     \
   PR_END_MACRO
+
 
 WMDeviceTrack::WMDeviceTrack():
   mIWMDMStorage(NULL),
@@ -596,9 +596,8 @@ WMDeviceTrack* WMDeviceFolder::GetMediaTrackByTrackIDIncSubFolders(PRUint32 medi
 
 // WMDevice class definitions
 //
-PRUint32 WMDevice::mDeviceNumber = 0;
-
-WMDevice::WMDevice(class sbWMDObjectManager* parent, IWMDMDevice* pIDevice):
+WMDevice::WMDevice(class WMDManager* parent, IWMDMDevice* pIDevice):
+  mParentWMDManager(parent),
   mIWMDevice(pIDevice),
   mIWMRootStorage(NULL),
   mRootFolder(NULL),
@@ -615,6 +614,7 @@ WMDevice::WMDevice(class sbWMDObjectManager* parent, IWMDMDevice* pIDevice):
 
 WMDevice::~WMDevice()
 {
+
   CoTaskMemFree(mWaveFormatEx);
   CoTaskMemFree(mMimeFormats);
 
@@ -683,11 +683,12 @@ PRBool WMDevice::Initialize()
     mDeviceString += mDeviceName;
     mDeviceString += DEVICE_STRING_SUFFIX;
 
-    mDeviceContext.AssignLiteral(CONTEXT_WINDOWS_MEDIA_DEVICE);
-    mDeviceContext.AppendInt(mDeviceNumber ++);
-    
+    mDeviceNum = mParentWMDManager->GetNextAvailableDBNumber();
+
+    mDeviceContext = CONTEXT_WINDOWS_MEDIA_DEVICE;
+    mDeviceContext.AppendInt(mDeviceNum);
+
     EnumTracks();
-    ClearLibraryData();
     UpdateDeviceLibraryData();
   }
 
@@ -696,9 +697,6 @@ PRBool WMDevice::Initialize()
 
 PRBool WMDevice::Finalize()
 {
-
-  ClearLibraryData();
-
   return PR_TRUE;
 }
 
@@ -774,7 +772,7 @@ PRBool WMDevice::UpdateDeviceLibraryData()
     // Create record for each track
     for (unsigned int trackNum = 0; trackNum < mNumTracks; trackNum ++)
     {
-      WMDeviceTrack* currentTrack = mRootFolder.GetMediaTrackByTrackIDIncSubFolders(trackNum);
+      WMDeviceTrack* currentTrack = mRootFolder.GetMediaTrackIncSubFolders(trackNum);
       if (currentTrack == NULL)
         continue;
 
@@ -846,37 +844,8 @@ PRBool WMDevice::UpdateDeviceLibraryData()
     SB_CHECK_FAILURE(rv);
 
   }
-  else
-  {
-    // Remove all the info about this CD
-    ClearLibraryData();
-  }
 
   return PR_TRUE;
-}
-
-// Clears any previous entries in the database for this WM Drive.
-void WMDevice::ClearLibraryData()
-{
-  nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
-  pQuery->SetAsyncQuery(PR_FALSE);
-  pQuery->SetDatabaseGUID(GetDeviceContext());
-
-  PRBool retVal;
-
-  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
-  nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
-
-  if(pPlaylistManager.get())
-  {
-    pPlaylistManager->DeletePlaylist(GetTracksTable(), pQuery, &retVal);
-
-    if(pLibrary.get())
-    {
-      pLibrary->SetQueryObject(pQuery);
-      pLibrary->PurgeDefaultLibrary(PR_FALSE, &retVal);
-    }
-  }
 }
 
 PRBool WMDevice::IsTetheredDownloadCapable()
@@ -904,9 +873,18 @@ PRBool WMDevice::IsTetheredDownloadCapable()
 
 PRBool WMDevice::IsFileFormatAcceptable(const char* fileFormat)
 {
+  // if the extension happens to have a '.' then go past that .
   char* extension = strrchr(fileFormat, '.');
-  if (extension == NULL || *(++extension) == NULL)
+
+  if (extension)
+  {
+    if (*(++extension) == NULL)
     return PR_FALSE;
+  }
+  else
+  {
+    extension = (char *) fileFormat;
+  }
 
   _strlwr(extension);
 
@@ -946,6 +924,10 @@ PRBool WMDevice::IsMediaPlayer()
   // Check if this really is a media device
   if (mNumFormats == 0) // No codecs so not a player
     return PR_FALSE;
+
+  // Not sure why IsFileFormatAcceptable is not working but check for
+  // mNumFormats might be good enough for now
+  return PR_TRUE;
 
   if ((mType & (WMDM_DEVICE_TYPE_PLAYBACK | 
       WMDM_DEVICE_TYPE_RECORD | WMDM_DEVICE_TYPE_DECODE | WMDM_DEVICE_TYPE_VIEW_PREF_METADATAVIEW)) == 0)
@@ -1133,6 +1115,10 @@ WMDManager::WMDManager(class sbWMDevice* parent):
   mWMDevMgr(NULL),
   mSAC(NULL)
 {
+  for (PRUint32 index = 0; index < MAX_WMD_SUPPORTED; index ++)
+  {
+    mDBAvaliable[index] = PR_TRUE;
+  }
 }
 
 WMDManager::~WMDManager()
@@ -1147,6 +1133,21 @@ WMDManager::~WMDManager()
   SAFE_RELEASE(mWMDevMgr);
 
   CoUninitialize();
+}
+
+// Function used to re-use DB numbers for suffixing db names
+PRUint32 WMDManager::GetNextAvailableDBNumber()
+{
+  for (PRUint32 index = 0; index < MAX_WMD_SUPPORTED; index ++)
+  {
+    if (mDBAvaliable[index] == PR_TRUE)
+    {
+      // Mark this as used
+      mDBAvaliable[index] = PR_FALSE;
+      break;
+    }
+  }
+  return index;
 }
 
 void WMDManager::Initialize()
@@ -1632,9 +1633,12 @@ PRInt32 WMDManager::RemoveDevice(LPCWSTR pCanonicalName)
   {
     if ((*iteratorWMObjectects)->GetDeviceCanonincalName() == nsString(pCanonicalName))
     {
+      WMDevice* device = (*iteratorWMObjectects);
       // Notify listeners of the event
-      mParentDevice->DoDeviceConnectCallback((*iteratorWMObjectects)->GetDeviceString());
-      delete (*iteratorWMObjectects);
+      mParentDevice->DoDeviceDisconnectCallback(device->GetDeviceString());
+      mDBAvaliable[device->GetDeviceNumber()] = PR_TRUE;
+      mParentDevice->ClearLibraryData(device->GetDeviceContext());
+      delete device;
       mDevices.erase(iteratorWMObjectects);
 
       return PR_TRUE;
@@ -1652,7 +1656,12 @@ PRInt32 WMDManager::RemoveDevice(WMDevice *wmdevice)
   {
     if ((*iteratorWMObjectects) == wmdevice)
     {
-      delete (*iteratorWMObjectects);
+      WMDevice* device = (*iteratorWMObjectects);
+      // Notify listeners of the event
+      mDBAvaliable[device->GetDeviceNumber()] = PR_TRUE;
+      mParentDevice->DoDeviceDisconnectCallback(device->GetDeviceString());
+      mParentDevice->ClearLibraryData(device->GetDeviceContext());
+      delete device;
       mDevices.erase(iteratorWMObjectects);
 
       return PR_TRUE;

@@ -22,12 +22,12 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 /** 
- * \file  WMDevice.h
- * \brief Songbird WMDevice Component Definition.
- */
+* \file  WMDevice.h
+* \brief Songbird WMDevice Component Definition.
+*/
 
 #ifndef __WM_DEVICE_H__
 #define __WM_DEVICE_H__
@@ -50,7 +50,8 @@
   0x4dd7,                                                 \
   {0xbf, 0xda, 0x77, 0x8c, 0xf4, 0x82, 0xc1, 0x3b}        \
 }
-#define CONTEXT_WINDOWS_MEDIA_DEVICE "wmdeviceDB-"
+#define CONTEXT_WINDOWS_MEDIA_DEVICE  NS_LITERAL_STRING("songbird_wmd_").get()
+#define TRACK_TABLE                   NS_LITERAL_STRING("WMDeviceTracks").get()
 
 // CLASSES ====================================================================
 
@@ -59,15 +60,17 @@
 class sbDownloadListener;
 
 class sbWMDevice :  public sbIWMDevice, 
-                   public sbDeviceBase
+  public sbDeviceBase
 {
 public:
 
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIDEVICEBASE
-  NS_DECL_SBIWMDEVICE
+    NS_DECL_SBIDEVICEBASE
+    NS_DECL_SBIWMDEVICE
 
-  sbWMDevice();
+    sbWMDevice();
+
+  void  ClearLibraryData(nsAString& dbContext);
 
 private:
 
@@ -78,8 +81,9 @@ private:
   virtual void OnThreadBegin();
   virtual void OnThreadEnd();
 
-  virtual PRBool IsEjectSupported();
-  virtual PRBool SuspendCurrentTransfer(const nsAString& aDeviceString);
+  virtual PRBool  IsEjectSupported();
+  virtual PRBool  SuspendCurrentTransfer(const nsAString& aDeviceString);
+  void            CleanupWMDEntries();
 
   sbWMDObjectManager* mDeviceManager;
 };

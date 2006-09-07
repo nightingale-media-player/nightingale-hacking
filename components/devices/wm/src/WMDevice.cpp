@@ -46,6 +46,11 @@
 #include "nsIWebProgressListener.h"
 #include "nsNetUtil.h"
 
+#include "sbIDatabaseResult.h"
+#include "sbIDatabaseQuery.h"
+#include "sbIMediaLibrary.h"
+#include "sbIPlaylist.h"
+
 #ifdef WIN32
 #include "win32/WMDImplementation.h"
 #endif
@@ -60,7 +65,7 @@ NS_IMPL_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
 
 //-----------------------------------------------------------------------------
 sbWMDevice::sbWMDevice():
-  sbDeviceBase(PR_TRUE)
+sbDeviceBase(PR_TRUE)
 {
   mDeviceManager = new WMDManager(this);
 } //ctor
@@ -75,6 +80,7 @@ sbWMDevice::~sbWMDevice()
 NS_IMETHODIMP
 sbWMDevice::Initialize(PRBool *_retval)
 {
+  CleanupWMDEntries();
   mDeviceManager->Initialize();
   return NS_OK;
 }
@@ -179,7 +185,7 @@ sbWMDevice::GetTrackTable(const nsAString& aDeviceString,
                           PRBool *_retval)
 {
   return sbDeviceBase::GetTrackTable(aDeviceString, aDBContext, aTableName,
-                                     _retval);
+    _retval);
 }
 
 NS_IMETHODIMP
@@ -225,7 +231,7 @@ sbWMDevice::DeleteTable(const nsAString& aDeviceString,
                         PRBool *_retval)
 {
   return sbDeviceBase::DeleteTable(aDeviceString, aDBContext, aTableName,
-                                   _retval);
+    _retval);
 }
 
 NS_IMETHODIMP
@@ -318,11 +324,11 @@ sbWMDevice::MakeTransferTable(const nsAString& aDeviceString,
                               PRBool* _retval)
 {
   return sbDeviceBase::MakeTransferTable(aDeviceString, aContextInput,
-                                         aTableName, aFilterColumn,
-                                         aFilterCount, aFilterValues,
-                                         aSourcePath, aDestPath,
-                                         aDownloading, aTransferTable,
-                                         _retval);
+    aTableName, aFilterColumn,
+    aFilterCount, aFilterValues,
+    aSourcePath, aDestPath,
+    aDownloading, aTransferTable,
+    _retval);
 }
 
 NS_IMETHODIMP
@@ -421,3 +427,64 @@ sbWMDevice::GetUploadFileType(const nsAString& aDeviceString,
 {
   return sbDeviceBase::GetUploadFileType(aDeviceString, _retval);
 }
+
+void sbWMDevice::CleanupWMDEntries()
+{
+  // Setup the list of playlists as a persistent query
+  nsCOMPtr<sbIDatabaseQuery>  playlistQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
+  playlistQuery->SetAsyncQuery( PR_FALSE );
+  playlistQuery->SetDatabaseGUID( NS_LITERAL_STRING("songbird") );
+
+  nsCOMPtr< sbIPlaylistManager > pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
+  if(pPlaylistManager.get())
+    pPlaylistManager->GetAllPlaylistList( playlistQuery );
+
+  nsCOMPtr<sbIDatabaseResult> resultset;
+  playlistQuery->GetResultObject( getter_AddRefs(resultset) );
+  if (resultset.get())
+  {
+    PRInt32 rowcount = 0;
+    resultset->GetRowCount( &rowcount );
+    nsString databaseName;
+    const nsString wmdDBPrefix(CONTEXT_WINDOWS_MEDIA_DEVICE);
+    for (PRInt32 rowNumber = 0; rowNumber < rowcount; rowNumber ++)
+    {
+      resultset->GetRowCellByColumn( rowNumber, NS_LITERAL_STRING("service_uuid"), databaseName);
+
+      if (databaseName.Length() > wmdDBPrefix.Length())
+      {
+        nsString dbprefix;
+        databaseName.Left(dbprefix, wmdDBPrefix.Length());
+        if (dbprefix == wmdDBPrefix)
+        {
+          // Found one, clear entries
+          ClearLibraryData(databaseName);
+        }
+      }
+    }
+  }
+}
+
+void sbWMDevice::ClearLibraryData(nsAString& dbContext)
+{
+  nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
+  pQuery->SetAsyncQuery(PR_FALSE);
+  pQuery->SetDatabaseGUID(dbContext);
+
+  PRBool retVal;
+
+  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistManager;1" );
+  nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
+
+  if(pPlaylistManager.get())
+  {
+    pPlaylistManager->DeletePlaylist(nsString(TRACK_TABLE), pQuery, &retVal);
+
+    if(pLibrary.get())
+    {
+      pLibrary->SetQueryObject(pQuery);
+      pLibrary->PurgeDefaultLibrary(PR_FALSE, &retVal);
+    }
+  }
+}
+

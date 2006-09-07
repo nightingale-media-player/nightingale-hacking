@@ -40,8 +40,9 @@
 #include "sac.h"
 #include "SCClient.h"
 
-
 #include <list>
+
+#define MAX_WMD_SUPPORTED 100
 
 class CWMDProgress : public IWMDMProgress
 {
@@ -159,7 +160,7 @@ public:
     WMDevice* deviceObject;
   };
 
-  WMDevice(class sbWMDObjectManager* parent, IWMDMDevice* pIDevice);
+  WMDevice(class WMDManager* parent, IWMDMDevice* pIDevice);
   ~WMDevice();
 
   PRBool      Initialize();
@@ -201,6 +202,7 @@ public:
   PRBool      IsEjectSupported(){return PR_FALSE;}
   PRBool      EjectDevice(){return PR_FALSE;}
   PRBool      IsUpdateSupported(){return PR_FALSE;}
+  PRUint32    GetDeviceNumber() { return mDeviceNum; }
 
 private:
   WMDevice() {}
@@ -234,7 +236,7 @@ private:
 
   std::list<BurnTrackInfo> mBurnTracksWeight;
 
-  class PlatformCDObjectManager* mParentCDManager;
+  WMDManager* mParentWMDManager;
 
 private:
   PRBool  IsMediaPlayer();
@@ -259,6 +261,7 @@ private:
   WMDMID          mSerialNumber;
   DWORD           mType;
   WMDeviceFolder  mRootFolder;
+  PRUint32        mDeviceNum;
 };
 
 class CNotificationHandler : public IWMDMNotification
@@ -324,6 +327,8 @@ public:
   virtual PRBool      IsTransferPaused(const nsAString& deviceString);
   virtual void        TransferComplete(const nsAString& deviceString);
 
+  PRUint32 GetNextAvailableDBNumber();
+
 private:
   WMDevice* GetDeviceMatchingString(const nsAString& deviceString);
   WMDManager() {}
@@ -349,4 +354,5 @@ private:
   IWMDeviceManager  *mWMDevMgr;
   DWORD mdwNotificationCookie;
   CSecureChannelClient* mSAC;
+  PRUint32  mDBAvaliable[MAX_WMD_SUPPORTED];
 };
