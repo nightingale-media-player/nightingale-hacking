@@ -1512,7 +1512,7 @@ function onHTMLURLFocus (evt)
   url.setAttribute("savefocus", text);
 }
 
-function onHTMLURLBlur( evt ) 
+function onHTMLURLRestore( evt ) 
 {
   var url = document.getElementById("browser_url");
   if ( url.getAttribute("savefocus") != "" )
@@ -1528,7 +1528,7 @@ function onHTMLUrlKeypress( evt )
   {
     case 27: // Esc
       var oldval = evt.target.getAttribute("savefocus");
-      onHTMLURLBlur(evt);
+      onHTMLURLRestore(evt);
       evt.target.setAttribute("savefocus", oldval);
       break;
       
