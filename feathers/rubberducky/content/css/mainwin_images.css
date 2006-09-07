@@ -154,6 +154,33 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_normal_15x15mac.png) !important; 
 }
+.mac > #sysbtn_maximize hbox,
+.mac > #sysbtn_maximize
+{ 
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+.mac > #sysbtn_maximize > hbox > image,
+.mac > #sysbtn_maximize > hbox > label,
+.mac > #sysbtn_maximize > hbox
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+.mac > #sysbtn_maximize .checkbox-check
+{
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/sysbtn_max_normal_15x15mac.png) !important; 
+}
+
+.mac > #sysbtn_maximize[checked="true"] .checkbox-check /* Restore */
+{
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/sysbtn_max_normal_15x15mac.png) !important;
+}
+
 .mac > #sysbtn_maximize:hover
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_max_hover_15x15mac.png) !important;
@@ -202,19 +229,19 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-image: url(chrome://songbird/skin/default/sysbtn_cl_disabled_15x15mac.png) !important;
 }
 
-.mac > #sysbtn_mini
+.mac > #sysbtn_minimode
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_mini_normal_25x15mac.png) !important;  
 }
-.mac > #sysbtn_mini:hover
+.mac > #sysbtn_minimode:hover
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_mini_hover_25x15mac.png) !important;
 }
-.mac > #sysbtn_mini:active
+.mac > #sysbtn_minimode:active
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_mini_active_25x15mac.png) !important;
 }
-.mac > #sysbtn_mini[disabled="true"]
+.mac > #sysbtn_minimode[disabled="true"]
 {
   background-image: url(chrome://songbird/skin/default/sysbtn_mini_disabled_15x15mac.png) !important;
 }

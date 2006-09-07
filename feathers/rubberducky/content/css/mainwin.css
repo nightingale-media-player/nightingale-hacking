@@ -220,6 +220,51 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   height: 15px !important;
   background-repeat: no-repeat !important;
 }
+.mac > #sysbtn_maximize hbox,
+.mac > #sysbtn_maximize
+{
+  width: 15px !important;
+  height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
+  border: none !important;
+  margin: -2px 0px 0px 0px !important;
+  padding: 0px !important;
+}
+
+.mac > #sysbtn_maximize > hbox > image,
+.mac > #sysbtn_maximize > hbox > label,
+.mac > #sysbtn_maximize > hbox
+{
+  width: 0px !important;
+  height: 0px !important;
+  max-width: 0px !important;
+  max-height: 0px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+.mac > #sysbtn_maximize > image
+{
+  width: 15px !important;
+  height: 15px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+.mac > #sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  width: 15px !important;
+  height: 15px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
 .mac > #sysbtn_minimize
 { 
   width: 15px !important;
@@ -232,7 +277,7 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   height: 15px !important;
   background-repeat: no-repeat !important;
 }
-.mac > #sysbtn_mini
+.mac > #sysbtn_minimode
 {  
   width: 25px !important;
   height: 15px !important;
