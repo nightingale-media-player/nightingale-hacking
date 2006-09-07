@@ -88,6 +88,8 @@ locales.jar:
 % locale  browser   ru-RU  @LOCALE_LOCATION@/locale/ru-RU/browser/
 % locale  songbird  ka-GE  @LOCALE_LOCATION@/locale/ka-GE/songbird/
 % locale  browser   ka-GE  @LOCALE_LOCATION@/locale/ka-GE/browser/
+% locale  songbird  pt-PT  @LOCALE_LOCATION@/locale/pt-PT/songbird/
+% locale  browser   pt-PT  @LOCALE_LOCATION@/locale/pt-PT/browser/
   locale/branding/brand.dtd                               (branding/brand.dtd)
   locale/branding/brand.properties                        (branding/brand.properties)
   locale/bg-BG/songbird/songbird.dtd            (bg-BG/songbird/songbird.dtd)
@@ -910,3 +912,23 @@ locales.jar:
   locale/ka-GE/browser/preferences/privacy.dtd            (ka-GE/browser/preferences/privacy.dtd)
   locale/ka-GE/browser/preferences/sanitize.dtd           (ka-GE/browser/preferences/sanitize.dtd)
   locale/ka-GE/browser/preferences/tabs.dtd               (ka-GE/browser/preferences/tabs.dtd)
+  locale/pt-PT/songbird/songbird.dtd            (pt-PT/songbird/songbird.dtd)
+  locale/pt-PT/songbird/songbird.properties     (pt-PT/songbird/songbird.properties)
+  locale/pt-PT/browser/preferences/advanced.dtd           (pt-PT/browser/preferences/advanced.dtd)
+  locale/pt-PT/browser/preferences/advanced-scripts.dtd   (pt-PT/browser/preferences/advanced-scripts.dtd)
+  locale/pt-PT/browser/preferences/changeaction.dtd       (pt-PT/browser/preferences/changeaction.dtd)
+  locale/pt-PT/browser/preferences/colors.dtd             (pt-PT/browser/preferences/colors.dtd)
+  locale/pt-PT/browser/preferences/connection.dtd         (pt-PT/browser/preferences/connection.dtd)
+  locale/pt-PT/browser/preferences/content.dtd            (pt-PT/browser/preferences/content.dtd)
+  locale/pt-PT/browser/preferences/cookies.dtd            (pt-PT/browser/preferences/cookies.dtd)
+  locale/pt-PT/browser/preferences/downloadactions.dtd    (pt-PT/browser/preferences/downloadactions.dtd)
+  locale/pt-PT/browser/preferences/downloads.dtd          (pt-PT/browser/preferences/downloads.dtd)
+  locale/pt-PT/browser/preferences/fonts.dtd              (pt-PT/browser/preferences/fonts.dtd)
+  locale/pt-PT/browser/preferences/general.dtd            (pt-PT/browser/preferences/general.dtd)
+  locale/pt-PT/browser/preferences/languages.dtd          (pt-PT/browser/preferences/languages.dtd)
+  locale/pt-PT/browser/preferences/permissions.dtd        (pt-PT/browser/preferences/permissions.dtd)
+  locale/pt-PT/browser/preferences/preferences.dtd        (pt-PT/browser/preferences/preferences.dtd)
+  locale/pt-PT/browser/preferences/preferences.properties (pt-PT/browser/preferences/preferences.properties)
+  locale/pt-PT/browser/preferences/privacy.dtd            (pt-PT/browser/preferences/privacy.dtd)
+  locale/pt-PT/browser/preferences/sanitize.dtd           (pt-PT/browser/preferences/sanitize.dtd)
+  locale/pt-PT/browser/preferences/tabs.dtd               (pt-PT/browser/preferences/tabs.dtd)

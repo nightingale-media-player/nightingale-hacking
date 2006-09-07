@@ -1,0 +1,23 @@
+﻿
+<!ENTITY  header2.label             "Página inicial">
+<!ENTITY  location.label            "Endereço:">
+<!ENTITY  location.accesskey        "E">
+<!ENTITY  useCurrent.label          "Usar página actual">
+<!ENTITY  useCurrent.accesskey      "p">
+<!ENTITY  useCurrentMultiple.label  "Usar páginas actuais">
+<!ENTITY  useBookmark.label         "Usar Favorito...">
+<!ENTITY  useBookmark.accesskey     "F">
+<!ENTITY  useBlank.label            "Usar página vazia">
+<!ENTITY  useBlank.accesskey        "z">
+
+<!ENTITY defaultBrowserGroup.label  "Browser por omissão">
+<!ENTITY checkForDefault.label      "Verificar se é o browser por omissão ao iniciar.">
+<!ENTITY checkForDefault.accesskey  "V">
+<!ENTITY checkNow.label             "Verificar agora">
+<!ENTITY checkNow.accesskey         "a">
+
+<!ENTITY showConnections.label      "Definições de ligação...">
+<!ENTITY showConnections.accesskey  "D">
+<!ENTITY proxiesInfo.label          "Escolha como ligar o &brandShortName; à Internet.">
+<!ENTITY connectionsInfo.caption    "Ligação">
+

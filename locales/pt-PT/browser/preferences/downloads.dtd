@@ -1,0 +1,23 @@
+﻿<!ENTITY askOnSave.label              "Pasta de transferência">
+<!ENTITY alwaysAsk.label              "Perguntar onde guardar cada ficheiro">
+<!ENTITY alwaysAsk.accesskey          "A">
+<!ENTITY neverAsk.label               "Guardar todos os ficheiros nesta pasta:">
+<!ENTITY neverAsk.accesskey           "S">
+<!ENTITY desktop.label                "Desktop">
+<!ENTITY downloads.label              "Minhas transferências">
+<!ENTITY chooseFolderWin.label        "Navegar...">
+<!ENTITY chooseFolderWin.accesskey    "B">
+<!ENTITY chooseFolderMac.label        "Escolher...">
+<!ENTITY chooseFolderMac.accesskey    "h">
+
+<!ENTITY downloadManagerWindow.label  "Gestor de transferências">
+<!ENTITY showWhenStarting.label       "Mostrar Gestor de transferências  ao iniciar transferência">
+<!ENTITY showWhenStarting.accesskey   "o">
+<!ENTITY closeWhenDone.label          "Fechar Gestor de transferências quando todas as transferências tiverem terminado">
+<!ENTITY closeWhenDone.accesskey      "C">
+
+<!ENTITY fileTypes.label              "Acções de transferência">
+<!ENTITY configureActions.label       "Ver &amp; editar acções...">
+<!ENTITY configureActions.accesskey   "V">
+<!ENTITY fileTypesDescription.label   "O &brandShortName; pode abrir ou transferir automaticamente certos tipos de ficheiros.">
+

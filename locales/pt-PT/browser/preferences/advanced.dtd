@@ -1,0 +1,63 @@
+﻿
+<!ENTITY generalTab.label               "Geral">
+<!ENTITY accessibility.label            "Acessibilidade">
+<!ENTITY moveSystemCaret.label          "Permitir seleccionar texto com o teclado">
+<!ENTITY moveSystemCaret.accesskey      "P">
+<!ENTITY useTypeAheadFind.label         "Começar a procurar enquanto escreve">
+<!ENTITY useTypeAheadFind.accesskey     "C">
+<!ENTITY browsing.label                 "Navegação">
+<!ENTITY enableAutoImageResizing.label  "Ajustar imagens à janela">
+<!ENTITY enableAutoImageResizing.accesskey "j">
+<!ENTITY useAutoScrolling.label         "Activar autoscrolling">
+<!ENTITY useAutoScrolling.accesskey     "a">
+<!ENTITY useSmoothScrolling.label       "Activar scrolling suave">
+<!ENTITY useSmoothScrolling.accesskey   "s">
+
+<!ENTITY updateTab.label                "Actualizações">
+<!ENTITY autoCheck.label                "Procurar automaticamente por actualizações para:">
+<!ENTITY enableAppUpdate.label          "&brandShortName;">
+<!ENTITY enableAppUpdate.accesskey      "S">
+<!ENTITY enableExtensionUpdate.label    "Extensões e Temas instalados">
+<!ENTITY enableExtensionUpdate.accesskey "E">
+<!ENTITY enableSearchUpdate.label       "Motores de Pesquisa">
+<!ENTITY enableSearchUpdate.accesskey   "M">
+<!ENTITY checkNow.label                 "Procurar agora...">
+<!ENTITY appCheckNow.accesskey          "N">
+<!ENTITY whenUpdatesFound.label         "Ao encontrar actualizações para o &brandShortName;:">
+<!ENTITY modeAskMe.label                "Perguntar o que fazer">
+<!ENTITY modeAskMe.accesskey            "P">
+<!ENTITY modeAutomatic.label            "Transferir e instalar automaticamente">
+<!ENTITY modeAutomatic.accesskey        "T">
+<!ENTITY modeAutoWarn.label             "Avisar se for necessário desactivar extensões ou temas">
+<!ENTITY modeAutoWarn.accesskey         "A">
+<!ENTITY showUpdates.label              "Mostrar histórico de actualizações">
+<!ENTITY showUpdates.accesskey          "H">
+
+<!ENTITY securityTab.label              "Segurança">
+<!ENTITY protocols.label                "Protocolos">
+<!ENTITY useSSL2.label                  "Usar SSL 2.0">
+<!ENTITY useSSL2.accesskey              "2">
+<!ENTITY useSSL3.label                  "Usar SSL 3.0">
+<!ENTITY useSSL3.accesskey              "3">
+<!ENTITY useTLS1.label                  "Usar TLS 1.0">
+<!ENTITY useTLS1.accesskey              "1">
+<!ENTITY certificates.label             "Certificados">
+<!ENTITY certselect.description         "Quando um site requere um certificado:">
+<!ENTITY certselect.auto                "Seleccionar um automaticamente">
+<!ENTITY certselect.auto.accesskey      "S">
+<!ENTITY certselect.ask                 "Perguntar sempre">
+<!ENTITY certselect.ask.accesskey       "P">
+<!ENTITY viewCertificates.label         "Ver certificados">
+<!ENTITY viewCertificates.accesskey     "C">
+<!ENTITY viewCRLs.label                 "Listas de revogação">
+<!ENTITY viewCRLs.accesskey             "R">
+<!ENTITY viewOCSP.label                 "Verificação">
+<!ENTITY viewOCSP.accesskey             "V">
+<!ENTITY viewSecurityDevices.label      "Dispositivos de segurança">
+<!ENTITY viewSecurityDevices.accesskey  "D">
+
+<!ENTITY languages.caption              "Linguagem">
+<!ENTITY languagesInfo.label            "Escolher linguagem de apresentação das páginas Web.">
+<!ENTITY showLanguages.label            "Editar linguagens...">
+<!ENTITY showLanguages.accesskey        "L">
+

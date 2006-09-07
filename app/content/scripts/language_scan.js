@@ -161,10 +161,10 @@ try
     {
       if ( typeof( lsLocalArray[ i ] ) == "undefined" )
       {
+/*
           alert( "file: " + file.path + "\n" + 
                 "\tmaster - " + i + ": " + lsDTDMasterArray[ i ] + "\n" +
                 "\tlocal - " + i + ": " + lsLocalArray[ i ] + "\n"  );
-/*
 */
         lsFixArray[ i ] = lsDTDMasterArray[ i ];
         anything = true;

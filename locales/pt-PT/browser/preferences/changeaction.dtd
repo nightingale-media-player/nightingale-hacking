@@ -1,0 +1,23 @@
+﻿<!ENTITY  changeAction.title                  "Alterar acção">
+<!ENTITY window.width                         "36em">
+
+<!ENTITY  whenDownloading.label               "Ao descarregar ficheiros destes:">
+
+<!ENTITY  openDefault.label                   "Abrir com aplicação por omissão:">
+<!ENTITY  openDefault.accesskey               "O">
+<!ENTITY  openApplication.label               "Abrir com esta aplicação:">
+<!ENTITY  openApplication.accesskey           "e">
+<!ENTITY  changeApp.label                     "Navegar...">
+<!ENTITY  changeApp.accesskey                 "B">
+<!ENTITY  saveToDisk.label                    "Guardar no computador">
+<!ENTITY  saveToDisk.accesskey                "S">
+<!ENTITY  saveToDefaultFolder.label           "na pasta por omissão de downloads">
+<!ENTITY  saveToDefaultFolder.accesskey       "d">
+<!ENTITY  saveToThisFolder.label              "na seguinte pasta:">
+<!ENTITY  saveToThisFolder.accesskey          "h">
+<!ENTITY  chooseFolder.label                  "Navegar...">
+<!ENTITY  chooseFolder.accesskey              "w">
+<!ENTITY  saveToAskMe.label                   "perguntar onde guardar ficheiro">
+<!ENTITY  saveToAskMe.accesskey               "a">
+<!ENTITY  usePlugin.label                     "Usar este Plugin:">
+<!ENTITY  usePlugin.accesskey                 "P">

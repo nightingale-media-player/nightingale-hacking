@@ -1,0 +1,21 @@
+﻿<!ENTITY  colorsDialog.title              "Cores">
+<!ENTITY window.width                     "38em">
+
+<!ENTITY  allowPagesToUse.label           "Permitir que cada página especifique as próprias cores a usar">
+<!ENTITY  allowPagesToUse.accesskey       "P">
+
+<!ENTITY  color                           "Texto e fundo">
+<!ENTITY  textColor.label                 "Texto:">
+<!ENTITY  textColor.accesskey             "t">
+<!ENTITY  backgroundColor.label           "Fundo:">
+<!ENTITY  backgroundColor.accesskey       "F">
+<!ENTITY  useSystemColors.label           "Usar cores do sistema">
+<!ENTITY  useSystemColors.accesskey       "U">
+
+<!ENTITY  underlineLinks.label            "Sublinhar hiperligações">
+<!ENTITY  underlineLinks.accesskey        "S">
+<!ENTITY  links                           "Hiperligações">
+<!ENTITY  linkColor.label                 "Não visitadas:">
+<!ENTITY  linkColor.accesskey             "N">
+<!ENTITY  visitedLinkColor.label          "Visitadas:">
+<!ENTITY  visitedLinkColor.accesskey      "V">

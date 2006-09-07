@@ -1,0 +1,18 @@
+﻿<!-- ***** BEGIN LICENSE BLOCK *****
+   - ***** END LICENSE BLOCK ***** -->
+
+<!ENTITY advancedJSDialog.title         "Definições avançadas de JavaScript">
+<!ENTITY window.width                   "37em">
+
+<!ENTITY allowScripts.label             "Permitir que scripts:">
+
+<!ENTITY moveResizeWindows.label        "Movam ou redimensionem janelas existentes">
+<!ENTITY moveResizeWindows.accesskey    "M">
+<!ENTITY raiseLowerWindows.label        "Alterem a janela com Foco">
+<!ENTITY raiseLowerWindows.accesskey    "F">
+<!ENTITY disableContextMenus.label      "Desactivem ou substituam menus de contexto">
+<!ENTITY disableContextMenus.accesskey  "D">
+<!ENTITY hideStatusBar.label            "Escondam a barra de estado">
+<!ENTITY hideStatusBar.accesskey        "E">
+<!ENTITY changeStatusBar.label          "Alterem o texto da barra de estado">
+<!ENTITY changeStatusBar.accesskey      "A">
