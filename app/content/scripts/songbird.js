@@ -544,8 +544,18 @@ function HideCoreWindow()
     var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
     if (windowCloak) {
       var service = windowCloak.createInstance(Components.interfaces.sbIWindowCloak);
-      if (service)
+      if (service) 
+      {
         service.cloak( document ); 
+
+        // Stop playback, since it looks weird for video to keep playing offscreen
+        var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                      .getService(Components.interfaces.sbIPlaylistPlayback);
+        if (gPPS.playing)
+        {
+          gPPS.stop();
+        }
+      }
     }
   }
   catch (err) {

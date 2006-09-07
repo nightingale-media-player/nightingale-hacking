@@ -112,7 +112,7 @@
           
           <checkbox id="sysbtn_maximize" class="sb_faceplate" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
           <spacer width="5"/>
-          <button id="sysbtn_hide" class="sb_faceplate" oncommand="onHide( );" tooltiptext="&tooltip.hide;"/>
+          <button id="sysbtn_hide" class="sb_faceplate" oncommand="HideCoreWindow();" tooltiptext="&tooltip.hide;"/>
           <!--spacer width="5"/-->
         </hbox>
         <spacer height="9"/>
