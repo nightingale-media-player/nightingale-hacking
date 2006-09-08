@@ -105,6 +105,8 @@ rubberducky.jar:
   feathers/rubberducky/songbird/skin/default/shuf_on_active.png                  (skin/default/shuf_on_active.png)
   feathers/rubberducky/songbird/skin/default/shuf_on_normal.png                  (skin/default/shuf_on_normal.png)
   feathers/rubberducky/songbird/skin/default/spinner.gif                         (skin/default/spinner.gif)
+  feathers/rubberducky/songbird/skin/default/spinner_spin.gif                    (skin/default/spinner_spin.gif)
+  feathers/rubberducky/songbird/skin/default/spinner_stopped.gif                 (skin/default/spinner_stopped.gif)
   feathers/rubberducky/songbird/skin/default/svc_pane_bkgd.png                   (skin/default/svc_pane_bkgd.png)
   feathers/rubberducky/songbird/skin/default/sysbtn_close_9x9.png                (skin/default/sysbtn_close_9x9.png)
   feathers/rubberducky/songbird/skin/default/sysbtn_fullscreen_9x9.png           (skin/default/sysbtn_fullscreen_9x9.png)
