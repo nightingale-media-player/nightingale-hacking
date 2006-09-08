@@ -249,6 +249,8 @@
         this.on_play_url_change = null;
 
         this._constructed = false; // ???
+        this.m_queryObj = null;
+        this.commands = null;
       } catch (err) {
         dump("playlist.xml - destructor: " + err + "\n");
       }
