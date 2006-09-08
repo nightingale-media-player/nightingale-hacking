@@ -184,14 +184,17 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 .mac > #sysbtn_maximize:hover .checkbox-check,
 .mac > #sysbtn_maximize:hover
 {
+  list-style-image: none !important;	
   background-image: url(chrome://songbird/skin/default/sysbtn_max_hover_15x15mac.png) !important;
 }
 .mac > #sysbtn_maximize:active
 {
+  list-style-image: none !important;	
   background-image: url(chrome://songbird/skin/default/sysbtn_max_active_15x15mac.png) !important;
 }
-.mac > #sysbtn_maximize[disabled="true"]
+.mac > #sysbtn_maximize[disabled="true"] .checkbox-check
 {
+  list-style-image: none !important;	
   background-image: url(chrome://songbird/skin/default/sysbtn_max_disabled_15x15mac.png) !important;
 }
 
