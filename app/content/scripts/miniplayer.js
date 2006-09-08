@@ -126,7 +126,76 @@ try
       quitApp();
     }
   }
-
+  
+  
+  function onDblClick( evt ) 
+  {
+    switch (evt.target.nodeName.toLowerCase())
+    {
+      // Songbird Custom Elements
+      case "player_seekbar":
+      case "player_volume":
+      case "player_repeat":
+      case "player_shuffle":
+      case "player_playpause":
+      case "player_back":
+      case "player_forward":
+      case "player_mute":
+      case "player_numplaylistitems":
+      case "player_scaning":
+      case "dbedit_textbox":
+      case "dbedit_menulist":
+      case "exttrackeditor":
+      case "servicetree":
+      case "playlist":
+      case "search":
+      case "smartsplitter":
+      case "sbextensions":
+      case "smart_conditions":
+      case "watch_folders":
+      case "clickholdbutton":
+      // XUL Elements
+      case "splitter":
+      case "grippy":
+      case "button":
+      case "toolbarbutton":
+      case "scrollbar":
+      case "slider":
+      case "thumb":
+      case "checkbox":
+      case "resizer":
+      case "textbox":
+      case "tree":
+      case "listbox":
+      case "listitem":
+      case "menu":
+      case "menulist":
+      case "menuitem":
+      case "menupopup":
+      case "menuseparator":
+      // HTML Elements
+      case "img":
+      case "input":
+      case "select":
+      case "option":
+      case "object":
+      case "embed":
+      case "body":
+      case "html":
+      case "div":
+      case "a":
+      case "ul":
+      case "ol":
+      case "dl":
+      case "dt":
+      case "dd":
+      case "li":
+      case "#text":
+        return;
+    }  
+  
+    SBMainWindowOpen();
+  }
 
   function onMiniplayerKeypress( evt )
   {
