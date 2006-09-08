@@ -661,7 +661,7 @@ var songbird_restartNow;
 
 
 const sb_restart_app = {
-    observe: function ( aSubject, aTopic, aData ) { restartApp(); }
+    observe: function ( aSubject, aTopic, aData ) { setTimeout("restartApp();", 0); }
 }
 
 function SBInterfaceInitialize() 
