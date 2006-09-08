@@ -40,6 +40,15 @@ HotkeyActions.prototype = {
     this._bundles.push(bundle);
   },
   
+  unregisterHotkeyActionBundle: function (bundle) {
+    var newarray = [];
+    var n = this._bundles.length;
+    for (var i=0;i<n;i++) {
+      if (this._bundles[i] != bundle) newarray.push(this._bundles[i]);
+    }
+    this._bundles = newarray;
+  },
+  
   get_bundleCount: function () {
     return this._bundles.length;
   },

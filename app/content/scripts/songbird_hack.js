@@ -312,6 +312,9 @@ function SBInitialize()
     //theServiceTree.setDefaultPopup(document.getElementById( "?" ));
     theServiceTree.setNotAnItemPopup(document.getElementById( "service_popup_none" ));
     theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
+    document.__THESERVICETREE__ = theServiceTree;
+
+    document.__SEARCHWIDGET__ = document.getElementById( "search_widget" );
 
     theWebPlaylist = document.getElementById( "playlist_web" );
     // hack, to let play buttons find the visible playlist if needed

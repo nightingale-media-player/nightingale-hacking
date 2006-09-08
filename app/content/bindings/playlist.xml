@@ -473,6 +473,12 @@
         this.addedObserver = false;
         
         this._lastviewsummary = "";
+        
+        /* 
+        // this is wrong, getFilter returns filter *values*, we should use getFilterColumn instead.
+        // also, some usage of playlist.xml may not want autocreation of filterlists from the source,
+        // so, disable this code until we have a use case that makes it clear if/how we should autoreload the filters
+        
         // If the source says we have filters, use them.
         if ( filters == null )
         {
@@ -486,6 +492,8 @@
             }
           }
         }
+        */
+        
         if ( filters && filters.length )
         {
           for ( var i = 0; i < filters.length; ++i )
@@ -2994,6 +3002,18 @@
             this.playUrl.unbind();
             this.playUrl = null;
           }
+        ]]>
+      </body>
+    </method>
+
+    <method name="resetFilterLists">
+      <body>
+        <![CDATA[
+          var n = this.filters.length;
+          for (var i=0;i<n;i++) {
+            this.source.setFilter( this.ref, i, "", this.filters[i].ref, this.filters[i].column);
+          }
+          this.source.executeFeed( this.ref );
         ]]>
       </body>
     </method>

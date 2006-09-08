@@ -336,6 +336,15 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * \return The filter string
   */
   AString getFilter( in AString aRefName, in PRInt32 aIndex ); 
+
+  /**
+  * \brief Get the filter column from a datasource's filter
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aIndex The index value of the filter to be referenced
+  * \return The filter column string
+  */
+  AString getFilterColumn( in AString aRefName, in PRInt32 aIndex ); 
   
   /**
   * \brief Get the ref for the filter's published RDF datasource
@@ -528,4 +537,17 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * \sa sbIPlaylistCommands, playlist.xml
   */
   sbIPlaylistCommands getPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType );
+
+  /**
+  * \brief Calculate the unique identifier for a playlist based on a guid and a table
+  *
+  * Given a guid and table, calculate the unique identifier of a playlist and return it. 
+  *
+  * This function should only be used for normal playlists
+  *
+  * \param aGuidContextGUID The guid string for the playlist
+  * \param aTableName The name of the playlist
+  * \return The unique identifier for the playlist
+  */
+  AString calculateRef( in AString aContextGUID, in AString aTableName );
 };

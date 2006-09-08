@@ -42,6 +42,12 @@ interface sbIHotkeyActions : nsISupports
    * \sa sbIHotkeyActionObserver
    */
   void registerHotkeyActionBundle(in sbIHotkeyActionBundle bundle);
+  /**
+   * \brief Unregister a hotkey action.
+   * This method unregisters an sbIHotkeyActionBundle from the hotkey manager. See sbIHotkeyActionBundle for more information.
+   * \sa sbIHotkeyActionObserver
+   */
+  void unregisterHotkeyActionBundle(in sbIHotkeyActionBundle bundle);
   readonly attribute long bundleCount;
   sbIHotkeyActionBundle enumBundle(in long idx);
 };

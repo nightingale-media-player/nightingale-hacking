@@ -108,6 +108,7 @@
                 datasources="rdf:Servicesource" 
                 ref="NC:ServicesourcePlayable"
               >
+                <menuitem id="current_play_queue" label="Current Play Queue"/> <!-- todo: internationalize -->
                 <template>
                   <rule>
                     <menuitem uri="rdf:*"
@@ -129,7 +130,7 @@
 
           <hbox align="center">
             <label id="jumpto_search_label" class="dialog_label" value="&jumptofile.search;" />
-            <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onFilterKeypress(event);" />
+            <textbox class="dialog_textbox" id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
           </hbox>
           
           <spacer height="5"/>

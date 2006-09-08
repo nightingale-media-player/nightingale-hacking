@@ -1053,6 +1053,34 @@ sbPlaylistsource::GetFilter(const nsAString &aRefName,
 }
 
 NS_IMETHODIMP
+sbPlaylistsource::GetFilterColumn(const nsAString &aRefName,
+                                  PRInt32          aIndex,
+                                  nsAString       &_retval)
+{
+  LOG(("sbPlaylistsource::GetFilterColumn"));
+
+  METHOD_SHORTCIRCUIT;
+
+  // LOCK IT.
+  nsAutoMonitor mon(g_pMonitor);
+
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+
+  if (info) {
+    filtermap_t::iterator f = info->m_Filters.find(aIndex);
+    if (f != info->m_Filters.end()) {
+      _retval = (*f).second.m_Column;
+      return NS_OK;
+    }
+  }
+
+  // in no info, blank string
+  _retval = NS_LITERAL_STRING("");
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlaylistsource::GetFilterRef(const nsAString &aRefName,
                                PRInt32          aIndex,
                                nsAString       &_retval)
@@ -1162,6 +1190,7 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
                                   playlist_simple_query_str;
 
   nsAutoString main_query_str = simple_query_str + where_str;
+  nsAutoString main_query_wherestr;
 
   info->m_SimpleQueryStr = simple_query_str;
 
@@ -1263,8 +1292,8 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
     if (any_filter) {
       // Append this filter's constraints to the main query
       if (anything)
-        main_query_str += and_str;
-      main_query_str += op_str + sql_filter_str + cp_str;
+        main_query_wherestr += and_str;
+      main_query_wherestr += op_str + sql_filter_str + cp_str;
     }
 
     // Compose the sub query
@@ -1334,6 +1363,12 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
     // but if there is a search in progress, restrict to its filters
     if (search_count)
       main_query_str += where_str + search_query_str;
+  } else {
+    // if we have active filters, we still need to apply the search string on top of them
+    if (search_count) {
+      main_query_wherestr = op_str + main_query_wherestr + cp_str + and_str + op_str + search_query_str + cp_str;
+    }
+    main_query_str += main_query_wherestr;
   }
 
   if (!info->m_SortOrder.IsEmpty()) {
@@ -1414,6 +1449,24 @@ sbPlaylistsource::GetPlaylistCommands(const nsAString      &aContextGUID,
   }
 
   *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::CalculateRef(const nsAString &aContextGUID, 
+                               const nsAString &aTableName,
+                               nsAString       &_retval)
+{
+  LOG(("sbPlaylistsource::CalculateRef"));
+  METHOD_SHORTCIRCUIT;
+
+  nsAutoString ref( NS_LITERAL_STRING("NC:") );
+  ref += aContextGUID;
+  ref += NS_LITERAL_STRING("_");
+  ref += aTableName;
+  
+  _retval = ref;
+
   return NS_OK;
 }
 

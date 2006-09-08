@@ -156,7 +156,7 @@ function setDefaultGlobalHotkeys() {
     SBDataSetBoolValue("globalhotkeys.changed", true);
     SBDataSetBoolValue("globalhotkeys.enabled", true);
 
-    SBDataSetIntValue("globalhotkeys.count", 10);
+    SBDataSetIntValue("globalhotkeys.count", 11);
 
     // media keyboard keys :
 
@@ -175,7 +175,7 @@ function setDefaultGlobalHotkeys() {
     SBDataSetStringValue("globalhotkey.3.key",             "$177");
     SBDataSetStringValue("globalhotkey.3.key.readable",    "prevtrack");
     SBDataSetStringValue("globalhotkey.3.action",          "playback.previoustrack");
-    
+
     SBDataSetStringValue("globalhotkey.4.key",             "$179");
     SBDataSetStringValue("globalhotkey.4.key.readable",    "playpause");
     SBDataSetStringValue("globalhotkey.4.action",          "playback.playpause");
@@ -201,6 +201,14 @@ function setDefaultGlobalHotkeys() {
     SBDataSetStringValue("globalhotkey.9.key",             "meta-$96");
     SBDataSetStringValue("globalhotkey.9.key.readable",    meta_key_str + "-numpad0");
     SBDataSetStringValue("globalhotkey.9.action",          "playback.playpause");
+
+    SBDataSetStringValue("globalhotkey.10.key",            "ctrl-$74");
+    SBDataSetStringValue("globalhotkey.10.key.readable",   "CTRL-J");
+    SBDataSetStringValue("globalhotkey.10.action",         "jumpto.open");
+
+    //SBDataSetStringValue("globalhotkey.?.key",             "$178");
+    //SBDataSetStringValue("globalhotkey.?.key.readable",    "stop");
+    //SBDataSetStringValue("globalhotkey.?.action",          "playback.stop");
 
   }
 }
@@ -261,7 +269,7 @@ var playbackHotkeyActions = {
   // you should change these to match your own actions, strings, and stringbundle (ie, you will need to ship your own translations with your extension
   // since the description string you use will probably not be in the standard songbird string bundle)
   _packagename: "playback",
-  _actions: [ "volumeup", "volumedown", "nexttrack", "previoustrack", "playpause", "pause" ],
+  _actions: [ "volumeup", "volumedown", "nexttrack", "previoustrack", "playpause", "pause"/*, "stop" */],
   // the string bundle to use to get the localized strings (ie, hotkeys.actions.playback, hotkeys.actions.playback.volumeup, hotkeys.actions.playback.volumedown, etc)
   _stringbundle: "chrome://songbird/locale/songbird.properties", 
 
@@ -280,6 +288,7 @@ var playbackHotkeyActions = {
       case 3: this._hotkey_previousTrack(); break;
       case 4: this._hotkey_playPause(); break;
       case 5: this._hotkey_pause(); break;
+      //case 6: this._hotkey_stop(); break;
     }
   },
   
@@ -318,6 +327,10 @@ var playbackHotkeyActions = {
   _hotkey_pause: function() {
     this._gPPS.pause();
   },
+
+/*  _hotkey_stop: function() {
+    this._gPPS.stop();
+  },*/
 
   // -------------------------
   // convenience functions
