@@ -212,7 +212,7 @@ try
         if ( !thePlaylistTree && !theLastSearchEventTarget )
         {
           var theServiceTree = document.getElementById( 'frame_servicetree' );
-          if (theServiceTree) theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?library" );
+          if (theServiceTree) theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
         }
         
         if ( thePlaylistRef.stringValue.length )

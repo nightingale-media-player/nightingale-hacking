@@ -146,7 +146,7 @@
       // if the fist page loaded on startup is a webpage, we should switch to the last websearch engine.
       // do this manually here because calling onBrowserUrlDataChanged on startup would reset the default 
       // search string
-      if (!this.isMainPaneUrl(this.browserUrl.stringValue)) {
+      if (!this.isPlaylistUrl(this.browserUrl.stringValue)) {
         if (this.theLastWebSearchSelection) {
           this.theCurrentSearchSelection = this.theLastWebSearchSelection;
           this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
@@ -489,7 +489,7 @@
     <method name="loadSearchStringForCurrentUrl">
       <body>
         <![CDATA[
-          if (this.isMainPaneUrl(this.browserUrl.stringValue)) {
+          if (this.isPlaylistUrl(this.browserUrl.stringValue)) {
             this.theCurrentSearchSelection = this.theSongbirdSearchSelection;
             this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
             this.loadPlaylistSearchString(this.playlistRef.stringValue);
@@ -510,7 +510,7 @@
     <method name="onPlaylistRefChanged">
       <body>
         <![CDATA[
-          if (this.isMainPaneUrl(this.browserUrl.stringValue)) {
+          if (this.isPlaylistUrl(this.browserUrl.stringValue)) {
             this.loadPlaylistSearchString(this.playlistRef.stringValue);
           }
         ]]>
@@ -532,13 +532,13 @@
       </body>
     </method>
 
-    <method name="isMainPaneUrl">
+    <method name="isPlaylistUrl">
       <parameter name="url"/>
       <body>
         <![CDATA[
           var qmark = url.indexOf("?")
           if (qmark > -1) url = url.substr(0, qmark);
-          return (url.toLowerCase() == "chrome://songbird/content/xul/main_pane.xul");
+          return (url.toLowerCase() == "chrome://songbird/content/xul/playlist_test.xul");
         ]]>
       </body>
     </method>

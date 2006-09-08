@@ -124,14 +124,22 @@ function doMainwinStart()
     }
     // Get mainwin URL
     var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
+    var mainwin = "";
     try {
-      mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
+      // XXXredfive - probably can go ahead and make this a required pref
+      mainwin = prefs.getCharPref("songbird.general.bones.selectedMainWinURL", mainwin);  
     } catch (err) {}
 
+    if (!mainwin) {
+      mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
+
+      // save it for later restarts and down the road if we want to allow file->new window
+      prefs.setCharPref("songbird.general.bones.selectedMainWinURL", mainwin);  
+    }
+
     window.open( mainwin,
-                  "mainwin",
-                  "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
+                 "mainwin",
+                 "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
   }
   else
   {

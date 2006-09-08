@@ -16,7 +16,6 @@ songbird.jar:
   content/songbird/xul/jumptofile.xul       (jumptofile.xul)
   content/songbird/xul/koshi_test.xul       (koshi_test.xul)
   content/songbird/xul/mab.xul              (mab.xul)
-  content/songbird/xul/main_pane.xul        (main_pane.xul)
   content/songbird/xul/media_scan.xul       (media_scan.xul)
   content/songbird/xul/messagebox.xul       (messagebox.xul)
   content/songbird/xul/new_playlist.xul     (new_playlist.xul)

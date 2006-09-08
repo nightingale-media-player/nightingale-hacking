@@ -115,7 +115,7 @@ var sbIServiceDropObserver = {
           // hack for library, fix
           var urlcolumn = this.m_serviceTree.columns ? this.m_serviceTree.columns["url"] : "url";
           var tree_url = this.m_serviceTree.view.getCellText( this.m_curSelectedTarget, urlcolumn );
-          if (tree_url.indexOf("main_pane.xul") == -1) return false;
+          if (tree_url.indexOf("playlist_test.xul") == -1) return false;
         } else {
           if (properties[4] == "dynamic") return false; // dynamic playlists should only contain items from their dynamic source
         }

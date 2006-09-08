@@ -129,7 +129,7 @@ NS_IMETHODIMP MyServicesourceQueryCallback::OnQueryEnd(sbIDatabaseResult *dbResu
 // Lame hardcode to find the playlist folder
 const int nPlaylistsInsert = 1;
 
-static nsString gPlaylistUrl( NS_LITERAL_STRING("chrome://songbird/content/xul/main_pane.xul?") );
+static nsString gPlaylistUrl( NS_LITERAL_STRING("chrome://songbird/content/xul/playlist_test.xul?") );
 
 static nsString     gParentLabels[ NUM_PARENTS ] =
 {
@@ -146,7 +146,7 @@ static nsString     gParentIcons[ NUM_PARENTS ] =
 static nsString     gParentUrls[ NUM_PARENTS ] =
 {
   NS_LITERAL_STRING("http://songbirdnest.com/player0.2/welcome/"),
-  NS_LITERAL_STRING("chrome://songbird/content/xul/main_pane.xul?library"),
+  NS_LITERAL_STRING("chrome://songbird/content/xul/playlist_test.xul?library"),
 };
 
 static nsString     gParentOpen[ NUM_PARENTS ] =

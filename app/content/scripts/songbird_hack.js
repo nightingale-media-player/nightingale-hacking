@@ -494,11 +494,11 @@ function onCurrentTrack()
   
   var theServiceTree = document.getElementById( 'frame_servicetree' );
   if (guid == "songbird" && table == "library") { 
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?library" );
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?library" );
   }
   else 
   {
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?" + table+ "," + guid);
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
   } 
   theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
 }
@@ -1414,7 +1414,9 @@ function onBrowserPlaylist()
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?" + WEB_PLAYLIST_TABLE + "," + WEB_PLAYLIST_CONTEXT );
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" +
+                                     WEB_PLAYLIST_TABLE + "," +
+                                     WEB_PLAYLIST_CONTEXT );
   }
 }
 
@@ -1473,7 +1475,7 @@ function onBrowserDownload()
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
+    theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid );
   }
 }
 
@@ -1595,73 +1597,53 @@ function onMainPaneLoad()
       //
       //
       var installed_listener = false;
-      // the element main_iframe is the browser element for the full playlist objects
-      //   that is used for library view, web playlist view, download view when loaded
-      //   from the service pane.  It is defined in main_pane.xul
-      var main_iframe = theMainPane.contentDocument.getElementById( "main_iframe" );
-      if ( main_iframe )
-      {
-        //SB_LOG("songbird_hack.js", "onMainPaneLoad - there is a main_iframe");
-        if ( main_iframe.wrappedJSObject )
-          main_iframe = main_iframe.wrappedJSObject;
-        // Doublecheck that the playlist piece loaded properly?
-        if ( ( ! main_iframe.contentDocument ) || ( ! main_iframe.contentDocument.getElementById ) )
+      var playlist = theMainPane.contentDocument.getElementById( "playlist_test" );
+      if (playlist) {
+        // Crack the security if necessary
+        if ( playlist.wrappedJSObject )
+          playlist = playlist.wrappedJSObject;
+
+        // Wait until after the bind call?
+        if ( playlist.ref == "" )
         {
-          //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout, haven't loaded yet");
+          //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout(2), haven't loaded yet");
           // Try again in 250 ms?
           setTimeout( onMainPaneLoad, 250 );
           return;
         }
-        
-        thePlaylistTree = main_iframe.contentDocument.getElementById( "playlist_test" );
-        if ( thePlaylistTree )
-        {
-          // Crack the security if necessary
-          if ( thePlaylistTree.wrappedJSObject )
-            thePlaylistTree = thePlaylistTree.wrappedJSObject;
-            
-          // Wait until after the bind call?
-          if ( thePlaylistTree.ref == "" )
-          {
-            //SB_LOG("songbird_hack.js", "onMainPaneLoad - setting timeout(2), haven't loaded yet");
-            // Try again in 250 ms?
-            setTimeout( onMainPaneLoad, 250 );
-            return;
-          }
 
-          // hack, to let play buttons find the visible playlist if needed
-          document.__CURRENTPLAYLIST__ = thePlaylistTree;
+        // hack, to let play buttons find the visible playlist if needed
+        document.__CURRENTPLAYLIST__ = playlist;
 
-          // Drag and Drop tracker object
-          thePlaylistTree.setDnDSourceTracker(sbDnDSourceTracker);
+        // Drag and Drop tracker object
+        playlist.setDnDSourceTracker(sbDnDSourceTracker);
 
-          // Events on the playlist object itself.            
-          thePlaylistTree.addEventListener( "playlist-edit", onPlaylistEdit, true );
-          thePlaylistTree.addEventListener( "playlist-editor", onPlaylistEditor, true );
-          thePlaylistTree.addEventListener( "playlist-play", onPlaylistPlay, true );
-          thePlaylistTree.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
-          thePlaylistTree.addEventListener( "playlist-noplaylist", onPlaylistNoPlaylist, true );
-          thePlaylistTree.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
-            
-          // Remember some values
-          theLibraryPlaylist = thePlaylistTree;
-          thePlaylistTree = thePlaylistTree.tree;
-          thePlaylistRef.stringValue = thePlaylistTree.getAttribute( "ref" ); // is this set yet?
-          
-          // Set the current selection
-          theLibraryPlaylist.syncPlaylistIndex(false);
-          
-          // And remember that we did this
-          installed_listener = true;
-          
-          // Hide the progress bar now that we're loaded.
-          thePaneLoadingData.boolValue = false;
-          mainpane_listener_set = true;
-        }
+        // Events on the playlist object itself.            
+        playlist.addEventListener( "playlist-edit", onPlaylistEdit, true );
+        playlist.addEventListener( "playlist-editor", onPlaylistEditor, true );
+        playlist.addEventListener( "playlist-play", onPlaylistPlay, true );
+        playlist.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
+        playlist.addEventListener( "playlist-noplaylist", onPlaylistNoPlaylist, true );
+        playlist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
+
+        // Remember some values
+        thePlaylistTree = playlist;
+        theLibraryPlaylist = playlist;
+        playlist = playlist.tree;
+        thePlaylistRef.stringValue = playlist.getAttribute( "ref" ); // is this set yet?
+
+        // Set the current selection
+        theLibraryPlaylist.syncPlaylistIndex(false);
+
+        // And remember that we did this
+        installed_listener = true;
+
+        // Hide the progress bar now that we're loaded.
+        thePaneLoadingData.boolValue = false;
+        mainpane_listener_set = true;
       }
-      else
-      {
-        //SB_LOG("songbird_hack.js", "onMainPaneLoad - no main_iframe, setting playlists to null");
+      else {
+        //SB_LOG("songbird_hack.js", "onMainPaneLoad - no playlist_test setting playlists to null");
         thePlaylistTree = null;
         theLibraryPlaylist = null;
         // hack, to let play buttons find the visible playlist if needed
@@ -1896,7 +1878,7 @@ function onPlaylistBurnToCD( evt )
 
 function onPlaylistNoPlaylist() 
 { 
-  document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/main_pane.xul?library' ); 
+  document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/playlist_test.xul?library' ); 
 }
 
 function onPlaylistDblClick( evt )
@@ -4027,7 +4009,7 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
   else
   {
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.launchURL( "chrome://songbird/content/xul/main_pane.xul?" + table + "," + guid );
+    theServiceTree.launchURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid );
   }
 
 }// END

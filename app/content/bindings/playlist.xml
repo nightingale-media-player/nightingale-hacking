@@ -166,6 +166,7 @@
 
       <constructor>
         <![CDATA[
+          //SB_LOG("playlist.xml", "creating...");
       try
       {
         // Load the javascript we want to use
@@ -192,6 +193,15 @@
         this._lastviewsummary = "";
         this.lastfiltersstate = "open";
 
+        // event handler for the data remote.
+        this.on_play_url_change = { 
+          _that: this, 
+          // sync the playlist but do not scroll
+          observe: function( aSubject, aTopic, aData ) {
+            this._that.syncPlaylistIndex(false);
+          } 
+        };
+
         this.bindDataRemotes();
         if ( this._constructed ) dump("playlist.xml - constructor - THIS SHOULD NEVER GET CALLED\n"); // ???
         this._constructed = true; // ???
@@ -205,6 +215,7 @@
 
       <destructor>
         <![CDATA[
+          //SB_LOG("playlist.xml", "destroying [" + this.ref + "]");
       try {
         if ( ! this._constructed )
         {
@@ -234,6 +245,9 @@
 
         // detach from the DataRemote
         this.unbindDataRemotes();
+        this.on_play_url_change._that = null; // be sure to let-go of ourself.
+        this.on_play_url_change = null;
+
         this._constructed = false; // ???
       } catch (err) {
         dump("playlist.xml - destructor: " + err + "\n");
@@ -316,6 +330,7 @@
           <![CDATA[
       try
       {
+            //SB_LOG("playlist.xml", "playlist::load ********* guid:" + guid + " ******** table:" + table + " ******* " + url + " *******");
 /*      
         alert(
         "   url: " + url + "\n" +
@@ -2976,21 +2991,11 @@
     <method name="bindDataRemotes">
       <body>
         <![CDATA[
-          // event handler for the data remote 
-          const on_play_url_change = { 
-            _that: null, 
-            // sync the playlist but do not scroll
-            observe: function( aSubject, aTopic, aData ) {
-              this._that.syncPlaylistIndex(false);
-            } 
-          };
-          on_play_url_change._that = this;
-
           // Create and bind data remotes
           this.playingRef = SB_NewDataRemote( "playing.ref", null );
           this.playlistRef = SB_NewDataRemote( "playlist.ref", null );
           this.playUrl = SB_NewDataRemote( "faceplate.play.url", null );
-          this.playUrl.bindObserver(on_play_url_change, true);
+          this.playUrl.bindObserver(this.on_play_url_change, true);
         ]]>
       </body>
     </method>
