@@ -500,6 +500,8 @@
                           tooltiptext="&tooltip.search;"
                           flex="1"
                         />
+                        <spacer width="16" height="16" class="spinner_spin"/>
+				        <spacer width="16" height="16" class="spinner_stopped"/>
                       </hbox>
                     </vbox>
 
