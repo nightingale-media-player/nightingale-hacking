@@ -109,6 +109,11 @@
     
     function initFocus()
     {
+      try {
+        fixOSXWindow("window_top", "app_title");
+      }
+      catch (e) { }
+
       var textbox = document.getElementById("songbird_addtag_name");
       if (textbox) textbox.focus();
     }

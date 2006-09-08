@@ -94,16 +94,16 @@
   </vbox>
   
   <vbox class="sb_faceplate" flex="1">
-    <hbox class="sb_faceplate" id="frame_top_resizers">
+    <hbox class="sb_faceplate" id="frame_resizers_top">
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
     </hbox>
     <hbox class="sb_faceplate">
       <spacer width="9"/>
-      <vbox id="cheezy_window_top" flex="1" class="sb_faceplate">
+      <vbox flex="1" class="sb_faceplate">
         <menubar id="video_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
-        <hbox class="sb_faceplate" flex="1">      
+        <hbox id="cheezy_window_top" class="sb_faceplate" flex="1">
           <spacer width="10"/>
           <label id="app_title" value="Cheezy Video Window" class="sb_faceplate"/>
           <spacer width="5"/>
@@ -121,7 +121,7 @@
     </hbox>    
     <vbox class="sb_faceplate" flex="1">
       <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
-        <vbox class="sb_faceplate">
+        <vbox id="frame_resizers_left" class="sb_faceplate">
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
@@ -170,14 +170,14 @@
               <spacer width="5"/>
             </hbox>
         </vbox>
-        <vbox class="sb_faceplate">
+        <vbox id="frame_resizers_right" class="sb_faceplate">
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
           <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
         </vbox>  
       </hbox> <!-- frame_middle_resizers --> 
     </vbox> <!-- frame_outer_pane -->    
-    <hbox class="sb_faceplate" id="frame_bottom_resizers">
+    <hbox class="sb_faceplate" id="frame_resizers_bottom">
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
       <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>

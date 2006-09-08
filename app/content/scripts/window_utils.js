@@ -476,10 +476,10 @@ function SBMainWindowOpen()
 /* Temporary hack to get the system buttons in the right (er, left) place on a
  * mac. To be replaced with some sort of XBL/preprocessor magic after 0.2.
  *
- * hBoxId  - The id of the <hbox> element used for the titlebar
- * labelId - The id of the <label> element used to display the title
+ * aBoxId  - The id of the <hbox> element used for the titlebar
+ * aLabelId - The id of the <label> element used to display the title
  */
-function fixOSXWindow(hBoxId, labelId)
+function fixOSXWindow(aBoxId, aLabelId)
 {
   var platform;
   try {
@@ -500,7 +500,7 @@ function fixOSXWindow(hBoxId, labelId)
   if (platform != "Darwin")
     return;
 
-  if (!(hBoxId && labelId))
+  if (!(aBoxId && aLabelId))
     throw Components.results.NS_ERROR_INVALID_ARG;
 
   // Constants for titlebar manipulation
@@ -512,6 +512,8 @@ function fixOSXWindow(hBoxId, labelId)
   const BUTTON_MIN_ID    = "sysbtn_minimize";
   const BUTTON_MAX_ID    = "sysbtn_maximize";
   const BUTTON_MINI_ID   = "sysbtn_minimode";
+  const BUTTON_HIDE_ID   = "sysbtn_hide";
+  const BUTTON_APP_ID    = "app_icon";
 
   const CLASS_SYSBTNS    = "sb_faceplate";
   const CLASS_HBOX_OSX   = "mac";
@@ -522,18 +524,18 @@ function fixOSXWindow(hBoxId, labelId)
   const HBOX_RESIZERS_RIGHT_ID  = "frame_resizers_right";
   const HBOX_RESIZERS_BOTTOM_ID = "frame_resizers_bottom";
   
-  const RESIZER_SPACE_SIZE = 8;
+  const RESIZER_SPACE_SIZE = 9;
 
   // Small helper to apply default attributes to new buttons
-  function createNewSysButton(id) {
-    if (!id)
+  function createNewSysButton(aTag, aId) {
+    if (!(aTag && aId))
       throw Components.results.NS_ERROR_INVALID_ARG;
 
-    var button = document.createElement("button");
+    var button = document.createElement(aTag);
     if (!button)
       throw Components.results.NS_ERROR_OUT_OF_MEMORY;
 
-    button.id = id;
+    button.id = aId;
     button.setAttribute("class", CLASS_SYSBTNS);
     button.disabled = true;
 
@@ -541,36 +543,41 @@ function fixOSXWindow(hBoxId, labelId)
   }
   
   // Small helper to create a spacer with a default width of 5 (unless given)
-  function createNewSpacer(width) {
+  function createNewSpacer(aWidth) {
     var spacer = document.createElement("spacer");
     if (!spacer)
       throw Components.results.NS_ERROR_OUT_OF_MEMORY;
 
-    spacer.width = width ? width : 5;
+    spacer.width = aWidth ? aWidth : 6;
     return spacer;
   }
   
   // Small helper to remove all children of a certain tag
-  function removeAllChildrenByTag(parent, tag) {
-    if (!(parent && tag))
+  function removeAllChildrenByTag(aParent, aTag) {
+    if (!(aParent && aTag))
       throw Components.results.NS_ERROR_INVALID_ARG;
   
-    var children = parent.getElementsByTagName(tag);
+    var children = aParent.getElementsByTagName(aTag);
     var count = children.length;
     for (var index = 0; index < count; index++) {
       var child = children.item(0);
       if (child)
-        parent.removeChild(child);
+        aParent.removeChild(child);
     }
   }
 
   // Get the titlebar
-  var topBar = document.getElementById(hBoxId);
+  var topBar = document.getElementById(aBoxId);
   topBar.align = "center";
   
   // Get the title label
-  var topLabel = document.getElementById(labelId);
+  var topLabel = document.getElementById(aLabelId);
   topBar.removeChild(topLabel);
+
+  // Remove the app icon, if it exists
+  var appIcon = document.getElementById(BUTTON_APP_ID);
+  if (appIcon)
+    topBar.removeChild(appIcon);
 
   // Get the close, minimize, and maximize buttons
   var closeButton = document.getElementById(BUTTON_CLOSE_ID);
@@ -582,6 +589,9 @@ function fixOSXWindow(hBoxId, labelId)
   if (miniButton)
     topBar.removeChild(miniButton);
 
+  // And then there's the 'hide' button on the video window
+  var hideButton = document.getElementById(BUTTON_HIDE_ID);
+
   // Create a new hbox to hold the system buttons
   var controlBox = document.createElement("hbox");
   controlBox.id = HBOX_CONTROLS_ID;
@@ -589,27 +599,42 @@ function fixOSXWindow(hBoxId, labelId)
   controlBox.setAttribute("class", CLASS_HBOX_OSX);
 
   // Add buttons and spacers to controlBox, removing them from the original
-  // hbox.
-  if (closeButton)
+  // hbox. Also yank tooltips, as OS X assumes you know what the buttons do.
+
+  // The hide button is to be used rather than the close button on the video
+  // window.
+  if (hideButton) {
+    closeButton = hideButton;
+    closeButton.removeAttribute("tooltiptext");
+    closeButton.id = BUTTON_CLOSE_ID;
+    topBar.removeChild(hideButton);
+  }
+  else if (closeButton) {
     topBar.removeChild(closeButton);
+    closeButton.removeAttribute("tooltiptext");
+  }
   else
-    closeButton = createNewSysButton(BUTTON_CLOSE_ID);
+    closeButton = createNewSysButton("button", BUTTON_CLOSE_ID);
   controlBox.appendChild(closeButton);
 
   controlBox.appendChild(createNewSpacer());
 
-  if (minButton)
-    topBar.removeChild(minButton)
+  if (minButton) {
+    topBar.removeChild(minButton);
+    minButton.removeAttribute("tooltiptext");
+  }
   else
-    minButton = createNewSysButton(BUTTON_MIN_ID);
+    minButton = createNewSysButton("button", BUTTON_MIN_ID);
   controlBox.appendChild(minButton);
   
   controlBox.appendChild(createNewSpacer());
   
-  if (maxButton)
+  if (maxButton) {
     topBar.removeChild(maxButton);
+    maxButton.removeAttribute("tooltiptext");
+  }
   else
-    maxButton = createNewSysButton(BUTTON_MAX_ID);
+    maxButton = createNewSysButton("checkbox", BUTTON_MAX_ID);
   controlBox.appendChild(maxButton);
   
   // Make a stack so that the title stays centered regardless of the buttons
@@ -622,11 +647,11 @@ function fixOSXWindow(hBoxId, labelId)
   topStack.appendChild(oldContentsBox);
   
   // Now clear the contents of topBar
-  var child = topBar.firstChild;
-  while (child != topBar.lastChild) {
-    var nextChild = child.nextSibling;
+  var childList = topBar.childNodes;
+  var childCount = childList.length;
+  for (var index = 0; index < childCount; index++) {
+    var child = childList.item(0);
     topBar.removeChild(child);
-    child = nextChild;
   }
   
   // And replace with our new stack
@@ -665,7 +690,9 @@ function fixOSXWindow(hBoxId, labelId)
   buttonBox.appendChild(bigSpacer);
 
   // Add a miniplayer button?
-  if (miniButton) {	
+  if (miniButton) {
+    miniButton.removeAttribute("tooltiptext");
+
     // Create a new hbox for the mini button
     var miniBox = document.createElement("hbox");
     miniBox.id = HBOX_MINI_ID;

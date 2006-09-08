@@ -206,6 +206,11 @@
   <![CDATA[
     function doLoad()
     {
+      try {
+        fixOSXWindow("window_top", "app_title");
+      }
+      catch (e) { }
+
       document.getElementById( "smart_match_check" ).checked = true;
       
       try

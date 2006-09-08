@@ -149,6 +149,11 @@
     
     function initFocus()
     {
+      try {
+        fixOSXWindow("window_top", "app_title");
+      }
+      catch (e) { }
+
       var list = document.getElementById("songbird_playlistlist");
       if (list != null) list.focus();
     }

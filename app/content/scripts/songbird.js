@@ -363,6 +363,12 @@ function SBAppInitialize()
   try
   {
     SBMetricsAppStart();
+
+    try {
+      fixOSXWindow("cheezy_window_top", "app_title");
+    }
+    catch (e) { }
+
     setVideoMinMaxCallback();
     onWindowLoadSizeAndPosition();
     createLibraryRef();

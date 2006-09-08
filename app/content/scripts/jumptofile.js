@@ -134,6 +134,11 @@ try
   var source_playlist;
   
   function onLoadJumpToFile() {
+    try {
+      fixOSXWindow("window_top", "app_title");
+    }
+    catch (e) { }
+
     onWindowLoadSizeAndPosition();
     window.arguments[0].__JUMPTO__ = document;
     service_tree = window.arguments[0].__THESERVICETREE__;

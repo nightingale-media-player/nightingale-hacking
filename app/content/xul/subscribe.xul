@@ -161,6 +161,11 @@
   <![CDATA[
     function doLoad()
     {
+      try {
+        fixOSXWindow("window_top", "app_title");
+      }
+      catch (e) { }
+
       const SUBSCRIBE_FOLDER_KEY = "download.folder";
       try
       {

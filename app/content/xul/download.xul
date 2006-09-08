@@ -147,6 +147,11 @@
   <![CDATA[
     function doLoad()
     {
+      try {
+        fixOSXWindow("window_top", "app_title");
+      }
+      catch (e) { }
+
       var theTextbox = document.getElementById( "download_folder_path" );
       theTextbox.value = SBDataGetStringValue( "download.folder" );
       var theCheckbox = document.getElementById( "download_check" );
