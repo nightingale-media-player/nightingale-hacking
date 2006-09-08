@@ -57,7 +57,11 @@ function bundleDataReady(bundle) {
 
 function initFirstRun() 
 {
- 
+  try {
+    fixOSXWindow("window_top", "app_title");
+  }
+  catch (e) { }
+  
   try {
     var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     bundle = new nsIBundle();

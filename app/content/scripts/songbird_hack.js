@@ -53,22 +53,25 @@ function myPlaybackEvent( key, value )
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                       .getService(Components.interfaces.sbIPlaylistPlayback);
 
-var gPlatform;
-try {
-  var sysInfo =
-    Components.classes["@mozilla.org/system-info;1"]
-              .getService(Components.interfaces.nsIPropertyBag2);
-  gPlatform = sysInfo.getProperty("name");                                          
-}
-catch (e) {
-  dump("System-info not available, trying the user agent string.\n");
-  var user_agent = navigator.userAgent;
-  if (user_agent.indexOf("Windows") != -1)
-    gPlatform = "Windows_NT";
-  else if (user_agent.indexOf("Mac OS X") != -1)
-    gPlatform = "Darwin";
-  else if (user_agent.indexOf("Linux") != -1)
-    gPlatform = "Linux";
+function getPlatformString()
+{
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    return sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      return "Windows_NT";
+    else if (user_agent.indexOf("Mac OS X") != -1)
+      return "Darwin";
+    else if (user_agent.indexOf("Linux") != -1)
+      return "Linux";
+    return "";
+  }
 }
 
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
@@ -237,6 +240,12 @@ var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 function SBInitialize()
 {
   dump("SBInitialize *** \n");
+  
+  try {
+    fixOSXWindow("songbird_top", "mainwin_app_title");
+  }
+  catch(e) { }
+
   window.focus();
 
   const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
@@ -686,7 +695,7 @@ function onServiceEdit( index )
         var theEditBox = document.getElementById( "service_edit" );
         var extra_x = 3; // Why do I have to give it extra?  What am I calculating wrong?
         var extra_y = 7; // Why do I have to give it extra?  What am I calculating wrong?
-        if (gPlatform == "Darwin")
+        if (getPlatformString() == "Darwin")
           extra_y -= 1;  // And an extra pixel on the mac.  Great.
         var less_w  = 5;
         var less_h  = -2;
@@ -2418,7 +2427,7 @@ function SBScanMedia( )
     welcome = theSongbirdStrings.getString("faceplate.welcome");
     scan = theSongbirdStrings.getString("faceplate.scan");
   } catch(e) {}
-  if (gPlatform == "Darwin")
+  if (getPlatformString() != "Darwin")
     fp.init( window, scan, nsIFilePicker.modeGetFolder );
   else
     fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );

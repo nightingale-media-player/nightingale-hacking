@@ -79,7 +79,7 @@
     </vbox>
 
     <vbox class="sb_faceplate" flex="1">
-      <hbox class="sb_faceplate" id="frame_top_resizers">
+      <hbox class="sb_faceplate" id="frame_resizers_top">
         <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
         <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
         <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
@@ -89,7 +89,7 @@
 
         <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
 
-          <vbox class="sb_faceplate">
+          <vbox class="sb_faceplate" id="frame_resizers_left">
             <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
             <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
             <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
@@ -555,7 +555,7 @@
             <!-- inner_frame -->
           </vbox>
 
-          <vbox class="sb_faceplate">
+          <vbox class="sb_faceplate" id="frame_resizers_right">
             <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
             <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
             <resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
@@ -567,7 +567,7 @@
       </vbox>
       <!-- frame_outer_pane -->
 
-      <hbox class="sb_faceplate" id="frame_bottom_resizers">
+      <hbox class="sb_faceplate" id="frame_resizers_bottom">
         <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
         <resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
         <resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>

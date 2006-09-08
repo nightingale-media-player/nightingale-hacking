@@ -472,3 +472,260 @@ function SBMainWindowOpen()
     onExit();
   }
 }
+
+/* Temporary hack to get the system buttons in the right (er, left) place on a
+ * mac. To be replaced with some sort of XBL/preprocessor magic after 0.2.
+ *
+ * hBoxId  - The id of the <hbox> element used for the titlebar
+ * labelId - The id of the <label> element used to display the title
+ */
+function fixOSXWindow(hBoxId, labelId)
+{
+  var platform;
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    platform = sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Mac OS X") != -1)
+      platform = "Darwin";
+    else
+      platform = "";
+  }
+
+  // Currently we only care about fixing OS X.
+  if (platform != "Darwin")
+    return;
+
+  if (!(hBoxId && labelId))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+
+  // Constants for titlebar manipulation
+  const HBOX_CONTROLS_ID = "controlBox";
+  const HBOX_TITLE_ID    = "titleBox";
+  const HBOX_MINI_ID     = "miniBox";
+
+  const BUTTON_CLOSE_ID  = "sysbtn_close";
+  const BUTTON_MIN_ID    = "sysbtn_minimize";
+  const BUTTON_MAX_ID    = "sysbtn_maximize";
+  const BUTTON_MINI_ID   = "sysbtn_minimode";
+
+  const CLASS_SYSBTNS    = "sb_faceplate";
+  const CLASS_HBOX_OSX   = "mac";
+  
+  // Constants for resizer manipulation
+  const HBOX_RESIZERS_TOP_ID    = "frame_resizers_top";
+  const HBOX_RESIZERS_LEFT_ID   = "frame_resizers_left";
+  const HBOX_RESIZERS_RIGHT_ID  = "frame_resizers_right";
+  const HBOX_RESIZERS_BOTTOM_ID = "frame_resizers_bottom";
+  
+  const RESIZER_SPACE_SIZE = 8;
+
+  // Small helper to apply default attributes to new buttons
+  function createNewSysButton(id) {
+    if (!id)
+      throw Components.results.NS_ERROR_INVALID_ARG;
+
+    var button = document.createElement("button");
+    if (!button)
+      throw Components.results.NS_ERROR_OUT_OF_MEMORY;
+
+    button.id = id;
+    button.setAttribute("class", CLASS_SYSBTNS);
+    button.disabled = true;
+
+    return button;
+  }
+  
+  // Small helper to create a spacer with a default width of 5 (unless given)
+  function createNewSpacer(width) {
+    var spacer = document.createElement("spacer");
+    if (!spacer)
+      throw Components.results.NS_ERROR_OUT_OF_MEMORY;
+
+    spacer.width = width ? width : 5;
+    return spacer;
+  }
+  
+  // Small helper to remove all children of a certain tag
+  function removeAllChildrenByTag(parent, tag) {
+    if (!(parent && tag))
+      throw Components.results.NS_ERROR_INVALID_ARG;
+  
+    var children = parent.getElementsByTagName(tag);
+    var count = children.length;
+    for (var index = 0; index < count; index++) {
+      var child = children.item(0);
+      if (child)
+        parent.removeChild(child);
+    }
+  }
+
+  // Get the titlebar
+  var topBar = document.getElementById(hBoxId);
+  topBar.align = "center";
+  
+  // Get the title label
+  var topLabel = document.getElementById(labelId);
+  topBar.removeChild(topLabel);
+
+  // Get the close, minimize, and maximize buttons
+  var closeButton = document.getElementById(BUTTON_CLOSE_ID);
+  var minButton = document.getElementById(BUTTON_MIN_ID);
+  var maxButton = document.getElementById(BUTTON_MAX_ID);  
+
+  // Get the miniplayer button
+  var miniButton = document.getElementById(BUTTON_MINI_ID);
+  if (miniButton)
+    topBar.removeChild(miniButton);
+
+  // Create a new hbox to hold the system buttons
+  var controlBox = document.createElement("hbox");
+  controlBox.id = HBOX_CONTROLS_ID;
+  controlBox.align = "center";
+  controlBox.setAttribute("class", CLASS_HBOX_OSX);
+
+  // Add buttons and spacers to controlBox, removing them from the original
+  // hbox.
+  if (closeButton)
+    topBar.removeChild(closeButton);
+  else
+    closeButton = createNewSysButton(BUTTON_CLOSE_ID);
+  controlBox.appendChild(closeButton);
+
+  controlBox.appendChild(createNewSpacer());
+
+  if (minButton)
+    topBar.removeChild(minButton)
+  else
+    minButton = createNewSysButton(BUTTON_MIN_ID);
+  controlBox.appendChild(minButton);
+  
+  controlBox.appendChild(createNewSpacer());
+  
+  if (maxButton)
+    topBar.removeChild(maxButton);
+  else
+    maxButton = createNewSysButton(BUTTON_MAX_ID);
+  controlBox.appendChild(maxButton);
+  
+  // Make a stack so that the title stays centered regardless of the buttons
+  var topStack = document.createElement("stack");
+  topStack.flex = 1;
+  
+  // Move all the other stuff out of topBar and into the stack. This seems
+  // silly, but we have to save the menu bar...
+  var oldContentsBox = topBar.cloneNode(true);
+  topStack.appendChild(oldContentsBox);
+  
+  // Now clear the contents of topBar
+  var child = topBar.firstChild;
+  while (child != topBar.lastChild) {
+    var nextChild = child.nextSibling;
+    topBar.removeChild(child);
+    child = nextChild;
+  }
+  
+  // And replace with our new stack
+  topBar.appendChild(topStack);
+  
+  // Make the button hbox
+  var buttonBox = document.createElement("hbox");
+  buttonBox.flex = 1;
+  
+  // Make the text hbox
+  var titleBox = document.createElement("hbox");
+  titleBox.id = HBOX_TITLE_ID;
+  titleBox.flex = 1;
+  titleBox.align = "center";
+  
+  // Add the hboxes to the stack
+  topStack.appendChild(titleBox);
+  topStack.appendChild(buttonBox);
+
+  // Insert the new control box
+  buttonBox.appendChild(controlBox);
+  
+  // Create spacers to center the titlebar text
+  var leftSpacer = document.createElement("spacer");
+  var rightSpacer = document.createElement("spacer");
+  leftSpacer.flex = rightSpacer.flex = 1;
+  
+  // Construct the new titlebar
+  titleBox.appendChild(leftSpacer);
+  titleBox.appendChild(topLabel);
+  titleBox.appendChild(rightSpacer);
+
+  // Add some space between the control box and the mini button
+  var bigSpacer = document.createElement("spacer");
+  bigSpacer.flex = 1;
+  buttonBox.appendChild(bigSpacer);
+
+  // Add a miniplayer button?
+  if (miniButton) {	
+    // Create a new hbox for the mini button
+    var miniBox = document.createElement("hbox");
+    miniBox.id = HBOX_MINI_ID;
+    miniBox.align = "center";
+    miniBox.setAttribute("class", CLASS_HBOX_OSX);
+
+    // Add the miniButton
+    miniBox.appendChild(miniButton);
+  
+    // Add to the topBar with a spacer
+    buttonBox.appendChild(createNewSpacer());
+    buttonBox.appendChild(miniBox);
+  }
+  
+  // Now for the resizers...
+  var resizersTopBox = document.getElementById(HBOX_RESIZERS_TOP_ID);
+  var resizersLeftBox = document.getElementById(HBOX_RESIZERS_LEFT_ID);
+  var resizersRightBox = document.getElementById(HBOX_RESIZERS_RIGHT_ID);
+  var resizersBottomBox = document.getElementById(HBOX_RESIZERS_BOTTOM_ID);
+  
+  // Kill all the resizers in the top and left boxes and add back some space
+  // so that the border shows up properly.
+  if (resizersTopBox) {
+    removeAllChildrenByTag(resizersTopBox, "resizer");
+    var spacer = createNewSpacer();
+    spacer.height = RESIZER_SPACE_SIZE;
+    spacer.flex = 1;
+    resizersTopBox.insertBefore(spacer, resizersTopBox.firstChild);
+  }
+  if (resizersLeftBox) {
+    removeAllChildrenByTag(resizersLeftBox, "resizer");
+    var spacer = createNewSpacer(RESIZER_SPACE_SIZE);
+    spacer.flex = 1;
+    resizersLeftBox.insertBefore(spacer, resizersLeftBox.firstChild);
+  }
+  
+  // Now kill all other resizers except the two in the bottom right corner
+  var boxList = [];
+  if (resizersRightBox)
+    boxList.push(resizersRightBox);
+  if (resizersBottomBox)
+    boxList.push(resizersBottomBox);
+  var boxCount = boxList.length;
+  
+  // Loop over all boxes and all child resizer elements
+  for (var boxIndex = 0; boxIndex < boxCount; boxIndex++) {
+    var box = boxList[boxIndex];
+    var resizersList = box.getElementsByTagName("resizer");
+    var resizersCount = resizersList.length;
+    for (var resizersIndex = 0;
+         resizersIndex < resizersCount;
+         resizersIndex++) {
+      var resizer = resizersList.item(0);
+      if (resizer.dir != "bottomright")
+        box.removeChild(resizer);
+    }
+    // Add a spacer to make sure the resizer stays in the correct spot
+    var newSpacer = createNewSpacer();
+    newSpacer.flex = 1;
+    box.insertBefore(newSpacer, box.firstChild);
+  }
+  
+}
