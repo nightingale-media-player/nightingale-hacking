@@ -16,9 +16,9 @@
 <!ENTITY menu.file.playlist "Cargar Lista de Reproducción..." >
 <!ENTITY menu.file.scan     "Buscar Medios..." >
 <!ENTITY menu.file.dlfolder "Establecer Carpeta para las Descargas..." >
-<!ENTITY menu.file.watch    "Set Watched Folders..." >
-<!ENTITY menu.file.htmlbar  "Always Show Web Bar" >
-<!ENTITY menu.file.skin     "Alternate Skin" >
+<!ENTITY menu.file.watch    "Establecer Carpeta para las Descargas..." >
+<!ENTITY menu.file.htmlbar  "Siempre mostrar la barra Web" >
+<!ENTITY menu.file.skin     "Alternar Skin" >
 <!ENTITY menu.file.window   "Abrir Ventana Principal" >
 <!ENTITY menu.file.mini     "Abrir Mini Reproductor" >
 <!ENTITY menu.file.about    "Acerca de Songbird..." >
@@ -128,27 +128,27 @@
 <!ENTITY subscribe.autocheck      "Actualizar automaticamente cada">
 <!ENTITY subscribe.destinationfolder      "Seleccione carpeta de destino:">
 
-<!ENTITY exists.title             "Playlist Exists">
-<!ENTITY exists.exists            "A playlist with that name already exists!">
+<!ENTITY exists.title             "Listas de reproduccion existentes">
+<!ENTITY exists.exists            "Una lista de reproduccion con ese nombre ya existe!">
 
-<!ENTITY media_scan.title          "Scan for Media">
-<!ENTITY media_scan.watch          "Watch this folder for new media">
+<!ENTITY media_scan.title          "Buscar Medios">
+<!ENTITY media_scan.watch          "Explorar esta carpata por nuevos medios">
 
 <!ENTITY new_playlist.title       "Crear nueva Lista de Reproducción">
-<!ENTITY new_playlist.name        "Enter the name of the new playlist.">
+<!ENTITY new_playlist.name        "Ingresar el nombre de la nueva Lista de Reproduccion.">
 
 <!ENTITY addtoplaylist.title      "Agregar a la Lista de Reproducción">
 <!ENTITY addtoplaylist.create      "Crear nueva Lista de Reproducción">
 
-<!ENTITY watchfolder.title        "Watch Folders">
-<!ENTITY watchfolder.folderlist   "Watch these folders for new media:">
+<!ENTITY watchfolder.title        "Explorar Carpetas">
+<!ENTITY watchfolder.folderlist   "Explorar estas carpetas por nuevos medios:">
 
 <!ENTITY locale.language          "Idioma" >
 
 
 
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
+<!ENTITY menu.preferences "Preferencias..." >
+<!ENTITY menu.extensions "Extensiones..." >
 
 
 
@@ -163,15 +163,15 @@
 
 
 
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY tooltip.browser.bookmark "Marcadores" >
 
 
 
 
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setup.retrievingxpilist "Obteniendo el listado de extensiones. Por favor espere..." >
+<!ENTITY setup.custominstall "Instalacion personalizada" >
+<!ENTITY setup.title "Opciones de instalacion de Songbird" >
+<!ENTITY setupprogress.pleasewait "Por favor espere..." >
 
 
 
@@ -217,27 +217,27 @@
 
 
 
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.title "Editar Marcadores" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
+<!ENTITY bookmarks.edit.label "Nombre:" >
+<!ENTITY bookmarks.edit.icon "Icono:" >
 
 
 
 
-<!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.title "Editor de Pista" >
+<!ENTITY trackeditor.trackdata "Dato de Pista" >
+<!ENTITY trackeditor.exttrackdata "Datos extendidos" >
 <!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.title "Agregar Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
+<!ENTITY jumptofile.title "Ir a" >
 
 
 
 
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
+<!ENTITY window.undo "Deshacer" >
+<!ENTITY window.apply "Aplicar" >
 
 
 
@@ -247,80 +247,74 @@
 
 
 
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
+<!ENTITY metrics.optout "Permitir a Songbird enviar estadisticas anonimas del uso (recomendado)" >
 
 
 
 
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys "Usar accesos rapidos Globales" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Action" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
+<!ENTITY hotkeys.action "Accion" >
+<!ENTITY hotkeys.hotkey "Accesos rapidos" >
+<!ENTITY hotkeys.add "Agregar" >
+<!ENTITY hotkeys.set "Establecer" >
+<!ENTITY hotkeys.remove "Eliminar" >
+<!ENTITY hotkeys.prefpane "Acceso Rapido" >
 
 
 
 
-<!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.uuid "UUID del Medio" >
+<!ENTITY metadata.url "Hubicacion" >
+<!ENTITY metadata.artist "Artista" >
+<!ENTITY metadata.title "Titulo" >
 <!ENTITY metadata.album "Album" >
-<!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Length" >
+<!ENTITY metadata.genre "Genero" >
+<!ENTITY metadata.length "Tiempo" >
 
 
 
 
-<!ENTITY restartbox.restartnow "Restart Now" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
-<!ENTITY restartbox.restartlater "Restart Later" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+<!ENTITY restartbox.restartnow "Reiniciar Ahora" >
+<!ENTITY restartbox.restartonplaybackend "Reiniciar cuando termine la lista de reproduccion" >
+<!ENTITY restartbox.restartlater "Reiniciar luego" >
+<!ENTITY setupprogress.installingextensions "Instalando Extensiones" >
 
 
 
 
-<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.hide "Ocultar" >
 
 
 
 
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY menu.updateCmd.label "Buscar actualizaciones..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
 
 
 
 
-<!ENTITY jumptofile.playlist "Playlist:" >
-<!ENTITY jumptofile.search "Search:" >
+<!ENTITY jumptofile.playlist "Lista de Reproduccion:" >
+<!ENTITY jumptofile.search "Buscar:" >
 
 
 
 
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+<!ENTITY tooltip.control.shuf_off "No Mezclar" >
 
 
 
 
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY tooltip.browser.refresh "Actualizar" >
+<!ENTITY smart.selectedby "Seleccionado por" >
 
 
 
 
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-
+<!ENTITY html.context.openexternal "Abrir con el explorador por defecto" >
 
 
 
 <!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
 
 
