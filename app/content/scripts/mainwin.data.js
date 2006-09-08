@@ -61,6 +61,8 @@ try
       MainwinAdd( SBDataBindElementProperty ( "faceplate.search.reset", "search_widget", "reset" ) );
       
       MainwinAdd( SBDataBindElementProperty ( "faceplate.loading", "status_progress", "mode", false, false, "if ( value == '1' ) value = 'undetermined'; else value = ''; value;" ) );
+      MainwinAdd( SBDataBindElementProperty ( "faceplate.loading", "spinner_spin", "hidden", true, false );
+      MainwinAdd( SBDataBindElementProperty ( "faceplate.loading", "spinner_stopped", "hidden", true, true );
       
       // Browser Items
       MainwinAdd( SBDataBindElementAttribute( "browser.cangoback", "browser_back", "disabled", true, true ) );
