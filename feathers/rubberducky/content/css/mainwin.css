@@ -213,22 +213,26 @@ MAC OSX SPECIFIC CHROME - Top Bar
 Minimize, Maximize, Restore, and Switch to Mini-Mode
 ************************************************************************************************************************************************
 */
+.mac
+{
+	-moz-appearance: none !important;
+}
 
 
 
 .mac > #sysbtn_maximize
 {
   width: 15px !important;
-  height: 15px !important;
+  height: 17px !important;
   background-repeat: no-repeat !important;
 }
 .mac > #sysbtn_maximize hbox,
 .mac > #sysbtn_maximize
 {
   width: 15px !important;
-  height: 15px !important;
+  height: 17px !important;
   max-width: 15px !important;
-  max-height: 15px !important;
+  max-height: 17px !important;
   border: none !important;
   margin: -1px 0px 0px 0px !important;
   padding: 0px !important;
@@ -250,9 +254,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 .mac > #sysbtn_maximize > image
 {
   width: 15px !important;
-  height: 15px !important;
+  height: 17px !important;
   max-width: 15px !important;
-  max-height: 15px !important;
+  max-height: 17px !important;
   border: none !important;
   margin: 0px !important;
   padding: 0px !important;
@@ -262,9 +266,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 .mac > #sysbtn_maximize[checked="true"] > image /* Restore */
 {
   width: 15px !important;
-  height: 15px !important;
+  height: 17px !important;
   max-width: 15px !important;
-  max-height: 15px !important;
+  max-height: 17px !important;
   border: none !important;
   margin: 0px !important;
   padding: 0px !important;
@@ -274,9 +278,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 .mac > #sysbtn_minimize
 { 
   width: 15px !important;
-  height: 15px !important;
+  height: 17px !important;
   max-width: 15px !important;
-  max-height: 15px !important;
+  max-height: 17px !important;
   margin: -1px 0px 0px 0px !important;
   padding: 0px !important;
   background-repeat: no-repeat !important;
@@ -284,9 +288,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 .mac > #sysbtn_close
 {
   width: 15px !important;
-  height: 15px !important;
+  height: 17px !important;
   max-width: 15px !important;
-  max-height: 15px !important;
+  max-height: 17px !important;
   margin: -1px 0px 0px 0px !important;
   padding: 0px !important;
   background-repeat: no-repeat !important;
@@ -294,9 +298,9 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 .mac > #sysbtn_minimode
 {  
   width: 25px !important;
-  height: 15px !important;
+  height: 17px !important;
   max-width: 25px !important;
-  max-height: 15px !important;
+  max-height: 17px !important;
   margin: -1px 0px 0px 0px !important;
   padding: 0px !important;
   background-repeat: no-repeat !important;
@@ -1407,6 +1411,21 @@ SEARCH WIDGET
 }
 /* END SEARCH WIDGET **/
 
+/** 
+************************************************************************************************************************************************
+SPINNER for the browser to show network activity.
+************************************************************************************************************************************************
+*/
+.spinner_spin
+{
+  background-repeat: no-repeat !important;
+  margin: 10px 0px 10px 0px !important;
+}
+.spinner_stopped
+{
+  background-repeat: no-repeat !important;
+  margin: 10px 0px 10px 0px !important;
+}
 
 /** 
 ************************************************************************************************************************************************
