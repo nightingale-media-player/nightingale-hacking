@@ -33,6 +33,7 @@ XPIDL_SRCS = sbIMetadataHandler.idl \
              sbIMetadataManager.idl \
              sbIMetadataValues.idl \
              sbIMetadataChannel.idl \
+             sbIMetadataBackscanner.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMetadataManager.xpt

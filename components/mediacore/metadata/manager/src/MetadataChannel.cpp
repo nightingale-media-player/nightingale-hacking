@@ -46,7 +46,7 @@
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS3(sbMetadataChannel, sbIMetadataChannel, nsIStreamListener, nsIRequestObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataChannel, sbIMetadataChannel, nsIStreamListener, nsIRequestObserver)
 
 //-----------------------------------------------------------------------------
 sbMetadataChannel::sbMetadataChannel() : m_Pos( 0 ), m_Buf( 0 ), m_Blocks(), m_Completed( false )
@@ -72,6 +72,18 @@ NS_IMETHODIMP sbMetadataChannel::Open(nsIChannel *channel, sbIMetadataHandler *h
   // Open the channel with ourselves as the listener and the handler as the context.
   m_Channel = channel;
   m_Handler = handler;
+
+  {
+    nsCOMPtr<nsIRequest> request = do_QueryInterface(m_Channel);
+    PRUint32 loadFlags = nsIRequest::INHIBIT_CACHING | 
+      nsIRequest::INHIBIT_PERSISTENT_CACHING |
+      nsIRequest::LOAD_BYPASS_CACHE;
+    nsresult rv = request->SetLoadFlags(loadFlags);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Setting load flags failed :( Watch out, app will deadlock.");
+    if(NS_FAILED(rv))
+      return rv;
+  }
+
   return m_Channel->AsyncOpen( this, handler );
 }
 
@@ -79,7 +91,12 @@ NS_IMETHODIMP sbMetadataChannel::Open(nsIChannel *channel, sbIMetadataHandler *h
 NS_IMETHODIMP sbMetadataChannel::Close()
 {
   if(m_Channel)
-    m_Channel->Cancel(NS_ERROR_ABORT);
+  {
+    PRBool pendingRequest = PR_FALSE;
+    m_Channel->IsPending(&pendingRequest);
+    if(pendingRequest)
+      m_Channel->Cancel(NS_ERROR_ABORT);
+  }
 
   m_Pos = 0;
   m_Buf = 0;

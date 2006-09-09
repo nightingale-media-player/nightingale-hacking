@@ -33,5 +33,16 @@
 [scriptable, uuid(6FE563F3-A217-4e16-A6C5-52BA0F3C09DF)]
 interface sbIMetadataBackscanner : nsISupports
 {
+  attribute PRUint32 scanInterval;
+
+  attribute PRUint32 scannedMediaCount;
+  attribute PRUint32 totalMediaCount;
+
+  attribute PRUint32 updateQueueSize;
+
+  attribute AString  currentFile;
+
+  void start();
+  void stop();
 
 };

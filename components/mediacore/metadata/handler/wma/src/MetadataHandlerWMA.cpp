@@ -77,7 +77,7 @@ const nsString wm_keys[][2] =
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS1(sbMetadataHandlerWMA, sbIMetadataHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerWMA, sbIMetadataHandler)
 
 //-----------------------------------------------------------------------------
 sbMetadataHandlerWMA::sbMetadataHandlerWMA()

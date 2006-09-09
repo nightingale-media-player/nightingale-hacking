@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;METADATA_EXPORTS;MOZILLA_INTERNAL_API;DEBUG;XP_WIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib unicharutil_s.lib xpcom.lib xul.lib"
 				OutputFile="$(OutDir)/sbMetadata_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;"
@@ -80,7 +80,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 			DeleteExtensionsOnClean="*.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)components\medialibrary\obj\$(ConfigurationName)&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\idl&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\xpcom&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\string&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\nspr&quot;;&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\include\necko&quot;;&quot;$(ProjectDir)$(OutDir)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;METADATA_EXPORTS;MOZILLA_INTERNAL_API;XP_WIN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -92,7 +92,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib unicharutil_s.lib xpcom.lib xul.lib"
 				OutputFile="$(OutDir)/sbMetadata.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;"
@@ -256,6 +256,12 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			Name="src"
 			Filter="">
 			<File
+				RelativePath=".\src\MetadataBackscanner.cpp">
+			</File>
+			<File
+				RelativePath=".\src\MetadataBackscanner.h">
+			</File>
+			<File
 				RelativePath=".\src\MetadataChannel.cpp">
 			</File>
 			<File
@@ -269,6 +275,13 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 			</File>
 			<File
 				RelativePath=".\src\MetadataManagerComponent.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						GeneratePreprocessedFile="0"
+						ExpandAttributedSource="FALSE"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\MetadataValues.cpp">

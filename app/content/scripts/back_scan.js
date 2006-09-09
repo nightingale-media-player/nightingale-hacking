@@ -26,7 +26,7 @@
  
 try 
 {
-  var ENABLE_BACKSCAN = 1;
+  var ENABLE_BACKSCAN = 0;
   
 //  const sbDatabaseGUID = "songbird";
   const sbDatabaseGUID = "*";

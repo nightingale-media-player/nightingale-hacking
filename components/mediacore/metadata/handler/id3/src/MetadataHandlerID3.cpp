@@ -271,7 +271,7 @@ public:
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS1(sbMetadataHandlerID3, sbIMetadataHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerID3, sbIMetadataHandler)
 
 //-----------------------------------------------------------------------------
 sbMetadataHandlerID3::sbMetadataHandlerID3()

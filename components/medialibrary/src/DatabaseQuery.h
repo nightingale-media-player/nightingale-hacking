@@ -117,8 +117,10 @@ protected:
   persistentcallbacklist_t m_PersistentCallbackList;
 
   typedef std::set<nsCString> modifiedtables_t;
-  PRLock* m_pModifiedTablesLock;
-  modifiedtables_t m_ModifiedTables;
+  typedef std::map<nsCString, modifiedtables_t> modifieddata_t;
+  
+  PRLock* m_pModifiedDataLock;
+  modifieddata_t m_ModifiedData;
 };
 
 #endif // __DATABASE_QUERY_H__

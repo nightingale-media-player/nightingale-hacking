@@ -51,7 +51,7 @@ public:
 };
 
 
-NS_IMPL_ISUPPORTS1(sbMetadataHandlerOGG, sbIMetadataHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerOGG, sbIMetadataHandler)
 
 //-----------------------------------------------------------------------------
 sbMetadataHandlerOGG::sbMetadataHandlerOGG()

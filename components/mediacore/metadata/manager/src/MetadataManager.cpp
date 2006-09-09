@@ -36,6 +36,7 @@
 #include <nspr.h>
 #include "MetadataManager.h"
 
+#include <xpcom/nsAutoLock.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsMemory.h>
@@ -58,12 +59,19 @@
 
 // FUNCTIONS ==================================================================
 
+// GLOBALS ====================================================================
+sbMetadataManager *gMetadataManager = nsnull;
+
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS1(sbMetadataManager, sbIMetadataManager)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataManager, sbIMetadataManager)
 
 //-----------------------------------------------------------------------------
 sbMetadataManager::sbMetadataManager()
+: m_pContractListLock(nsnull)
 {
+  m_pContractListLock = PR_NewLock();
+  NS_ASSERTION(m_pContractListLock, "Failed to create sbMetadataManager::m_pContractListLock! Object *not* threadsafe!");
+
   // Find the list of handlers for this object.
   nsresult rv;
   nsCOMPtr<nsIComponentRegistrar> registrar;
@@ -95,12 +103,37 @@ sbMetadataManager::sbMetadataManager()
 //-----------------------------------------------------------------------------
 sbMetadataManager::~sbMetadataManager()
 {
+  if(m_pContractListLock)
+  {
+    PR_DestroyLock(m_pContractListLock);
+    m_pContractListLock = nsnull;
+  }
+}
+
+//-----------------------------------------------------------------------------
+sbMetadataManager *sbMetadataManager::GetSingleton()
+{
+  if (gMetadataManager) {
+    NS_ADDREF(gMetadataManager);
+    return gMetadataManager;
+  }
+
+  NS_NEWXPCOM(gMetadataManager, sbMetadataManager);
+  if (!gMetadataManager)
+    return nsnull;
+
+  NS_ADDREF(gMetadataManager);
+  NS_ADDREF(gMetadataManager);
+
+  return gMetadataManager;
 }
 
 //-----------------------------------------------------------------------------
 /* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
 NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
 {
+  nsAutoLock lock(m_pContractListLock);
+
   *_retval = nsnull;
   nsresult nRet = NS_ERROR_UNEXPECTED;
   if(!_retval) return NS_ERROR_NULL_POINTER;
@@ -145,7 +178,6 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   if (!m_ContractList.size())
     throw;
 
-
   // Go through the list of contract ids, and make them vote on the url
   for (contractlist_t::iterator i = m_ContractList.begin(); i != m_ContractList.end(); i++ )
   {
@@ -163,8 +195,6 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
       }
     }
   }
-
-
 
   // If there's anything in the list
   if ( handlerlist.rbegin() != handlerlist.rend() )
@@ -185,7 +215,6 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   if(nRet != 0) return nRet;
 
   pHandler->AddRef();
-  pHandler->AddRef(); // Twice?  Dunno, but my handlers get destroyed, so it's somehow okay.
   *_retval = pHandler;
 
   nRet = NS_OK;

@@ -63,7 +63,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 
 ifeq (macosx,$(SB_PLATFORM))
 DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
-#DYNAMIC_LIB_STATIC_IMPORTS = unicharutil_s
 DYNAMIC_LIB_EXTRA_IMPORTS += sqlite3 \
                              mozjs \
                              $(NULL)

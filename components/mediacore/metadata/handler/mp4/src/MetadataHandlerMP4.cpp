@@ -49,7 +49,7 @@
 // FUNCTIONS ==================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS1(sbMetadataHandlerMP4, sbIMetadataHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerMP4, sbIMetadataHandler)
 
 //-----------------------------------------------------------------------------
 sbMetadataHandlerMP4::sbMetadataHandlerMP4()

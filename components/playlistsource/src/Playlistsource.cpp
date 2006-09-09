@@ -299,6 +299,8 @@ sbPlaylistsource::GetSingleton()
   }
 
   NS_ADDREF(gPlaylistsource);
+  NS_ADDREF(gPlaylistsource);
+
   return gPlaylistsource;
 }
 

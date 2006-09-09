@@ -69,7 +69,7 @@ CDatabaseQuery::CDatabaseQuery()
 , m_QueryHasCompleted(PR_FALSE)
 , m_pCallbackListLock(PR_NewLock())
 , m_pPersistentCallbackListLock(PR_NewLock())
-, m_pModifiedTablesLock(PR_NewLock())
+, m_pModifiedDataLock(PR_NewLock())
 {
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
@@ -77,7 +77,7 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_pDatabaseQueryListLock, "CDatabaseQuery.m_pDatabaseQueryListLock failed");
   NS_ASSERTION(m_pCallbackListLock, "CDatabaseQuery.m_pCallbackListLock failed");
   NS_ASSERTION(m_pPersistentCallbackListLock, "CDatabaseQuery.m_pPersistentCallbackListLock failed");
-  NS_ASSERTION(m_pModifiedTablesLock, "CDatabaseQuery.m_pModifiedTablesLock failed");
+  NS_ASSERTION(m_pModifiedDataLock, "CDatabaseQuery.m_pModifiedDataLock failed");
   NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
 
 #ifdef DEBUG_locks
@@ -120,8 +120,8 @@ CDatabaseQuery::~CDatabaseQuery()
     PR_DestroyLock(m_pCallbackListLock);
   if (m_pPersistentCallbackListLock)
     PR_DestroyLock(m_pPersistentCallbackListLock);
-  if (m_pModifiedTablesLock)
-    PR_DestroyLock(m_pModifiedTablesLock);
+  if (m_pModifiedDataLock)
+    PR_DestroyLock(m_pModifiedDataLock);
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
 } //dtor
@@ -303,7 +303,7 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
   pRes->m_RowCells = m_QueryResult->m_RowCells;
   pRes->AddRef();
 
-  NS_ASSERTION(sc == m_QueryResult->m_RowCells.size(), "Query Result Size Changed During Object Orphan Event");
+  NS_ASSERTION(sc == pRes->m_RowCells.size(), "Query Result Size Changed During Object Orphan Event");
 
   //Transfer references to the callee.
   *_retval = pRes;

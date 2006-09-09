@@ -34,6 +34,7 @@
 
 // INCLUDES ===================================================================
 #include <nscore.h>
+#include <prlock.h>
 #include "sbIMetadataManager.h"
 #include "sbIMetadataHandler.h"
 #include <nsCOMPtr.h>
@@ -65,6 +66,8 @@ class sbMetadataManager : public sbIMetadataManager
   sbMetadataManager();
   virtual ~sbMetadataManager();
 
+  static sbMetadataManager *GetSingleton();
+
   struct sbMetadataHandlerItem
   {
     nsCOMPtr<sbIMetadataHandler> m_Handler;
@@ -81,7 +84,10 @@ class sbMetadataManager : public sbIMetadataManager
   class handlerlist_t : public std::set< sbMetadataHandlerItem > {};
   class contractlist_t : public std::list< nsCString > {};
   contractlist_t m_ContractList;
+  PRLock *m_pContractListLock;
 };
+
+extern sbMetadataManager *gMetadataManager;
 
 #endif // __METADATA_MANAGER_H__
 

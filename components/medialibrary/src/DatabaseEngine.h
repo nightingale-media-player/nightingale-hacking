@@ -108,6 +108,7 @@ protected:
   sqlite3 *GetDBByGUID(const nsAString &dbGUID, PRBool bCreateIfNotOpen = PR_FALSE);
   sqlite3 *FindDBByGUID(const nsAString &dbGUID);
 
+  void GenerateDBGUIDList();
   PRInt32 GetDBGUIDList(std::vector<nsString> &vGUIDList);
 
   static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine);
@@ -115,13 +116,12 @@ protected:
 private:
   //[database guid/name]
   typedef std::map<nsString, sqlite3 *>  databasemap_t;
-  //typedef std::map<sqlite3 *, PRMonitor *> databaselockmap_t;
   typedef std::map<sqlite3 *, PRMonitor *> databaselockmap_t;
   typedef std::list<CDatabaseQuery *> querylist_t;
   //[table guid/name]
   typedef std::map<nsCString, querylist_t> tablepersistmap_t;
   //[database guid/name]
-  typedef std::map<nsString, tablepersistmap_t > querypersistmap_t;
+  typedef std::map<nsCString, tablepersistmap_t > querypersistmap_t;
   typedef std::deque<CDatabaseQuery *> queryqueue_t;
 
   void UpdatePersistentQueries(CDatabaseQuery *pQuery);
@@ -133,6 +133,9 @@ private:
 private:
   PRLock * m_pDBStorePathLock;
   nsString m_DBStorePath;
+
+  std::vector<nsString> m_DatabasesGUIDList;
+  PRLock *m_pDatabasesGUIDListLock;
 
   databasemap_t m_Databases;
   PRLock* m_pDatabasesLock;
@@ -148,8 +151,6 @@ private:
 
   PRLock* m_pPersistentQueriesLock;
   querypersistmap_t m_PersistentQueries;
-
-  //PRLock* m_pCaseConversionLock;
 };
 
 class QueryProcessorThread : public nsIRunnable

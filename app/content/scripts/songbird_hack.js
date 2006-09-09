@@ -326,6 +326,13 @@ function SBInitialize()
     theWebPlaylist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
     theWebPlaylist.setDnDSourceTracker(sbDnDSourceTracker);
     
+    try {
+      var metadataBackscanner = Components.classes["@songbirdnest.com/Songbird/MetadataBackscanner;1"]
+        .getService(Components.interfaces.sbIMetadataBackscanner);
+      metadataBackscanner.start();
+      
+    } catch(err) { dump(err); }
+    
     // Poll the playlist source every 500ms to drive the display update (STOOOOPID! This should be encapsulated)
     thePollPlaylistService = new sbIPlaylistsource();
     theNumPlaylistItemsRemote.stringValue = "";
@@ -345,7 +352,7 @@ function SBInitialize()
     {
       const MetadataManager = new Components.Constructor("@songbirdnest.com/Songbird/MetadataManager;1", "sbIMetadataManager");
       var aMetadataManager = new MetadataManager();
-      aMetadataHandler = aMetadataManager.getHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
+      var aMetadataHandler = aMetadataManager.getHandlerForMediaURL("http://www.morphius.com/label/mp3/Labtekwon_RealEmcee.mp3");
       //aMetadataHandler = aMetadataManager.getHandlerForMediaURL("file://c:/junq/01_The_Gimp_Sometimes.mp3");
       var retval = aMetadataHandler.Read();
       
@@ -380,8 +387,6 @@ function SBInitialize()
     alert("songbird_hack.js - SBInitialize - " +  err);
   }
 }
-
-var aMetadataHandler = null;
 
 function SBUninitialize()
 {

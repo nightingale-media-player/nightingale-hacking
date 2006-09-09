@@ -38,10 +38,12 @@ endif
 CPP_SRCS = MetadataManager.cpp \
            MetadataValues.cpp \
            MetadataChannel.cpp \
+           MetadataBackscanner.cpp \
            MetadataManagerComponent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

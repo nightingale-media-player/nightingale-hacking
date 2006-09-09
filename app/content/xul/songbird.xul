@@ -39,8 +39,8 @@
   hidechrome="true"
   class="sb_faceplate"  
   title="Cheezy Video Window"  
-  onload="SBAppInitialize();BSInitialize();SBInterfaceInitialize();"
-  onunload="SBAppDeinitialize();BSDeInitialize();SBInterfaceDeinitialize();"
+  onload="SBAppInitialize();SBInterfaceInitialize();"
+  onunload="SBAppDeinitialize();SBInterfaceDeinitialize();"
   onclose="return false; /*quitApp();*/" 
   
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -225,8 +225,6 @@
    src="chrome://songbird/content/scripts/dynamic_playlist_updater.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/watch_folders.js"/>
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/back_scan.js"/>
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/globalhotkeys.js" />
