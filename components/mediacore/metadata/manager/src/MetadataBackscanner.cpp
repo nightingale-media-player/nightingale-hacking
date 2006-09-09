@@ -217,7 +217,7 @@ sbMetadataBackscanner::sbMetadataBackscanner()
       //Windows and MacOSX accept the creation of an event queue on another thread
       //than the main thread. Linux however only accepts event queue usage from the
       //main thread.
-#if !defined(XP_UNIX) || defined(XP_MACOSX)
+#if !defined(XP_UNIX) //|| defined(XP_MACOSX)
       nsCOMPtr<nsIEventQueueService> pEventQueueService;
       rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
       if(NS_SUCCEEDED(rv)) {
