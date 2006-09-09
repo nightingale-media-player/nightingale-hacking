@@ -7,6 +7,8 @@ dove.jar:
   feathers/dove/songbird/bindings.xml                                 (bindings.xml)
   feathers/dove/songbird/songbird.css                                 (songbird.css)
   feathers/dove/songbird/mainwin_colors.css                           (mainwin_colors.css)
+  feathers/dove/songbird/mainwin_images.css                           (mainwin_images.css)
+  feathers/dove/songbird/mini.css                                     (mini.css)
   feathers/dove/songbird/dialog_colors.css                            (dialog_colors.css)    
   feathers/dove/songbird/songbird_old.css                             (songbird_old.css)      
   feathers/dove/songbird/default/about.png                            (default/about.png)
