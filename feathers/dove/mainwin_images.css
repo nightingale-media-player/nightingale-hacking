@@ -1,0 +1,390 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+************************************************************************************************************************************************
+DOVE IMAGES
+
+This css files specifies the images for everything in the main application window.  
+For colors, see mainwin_colors.css.  For size and positioning, see mainwin.css.
+All other styles affecting the elements below are found in songbird.css.
+************************************************************************************************************************************************
+*/
+
+/** 
+************************************************************************************************************************************************
+VOLUME CONTROL, Main Window
+************************************************************************************************************************************************
+*/
+#songbird_volume_thumb
+{
+  background-image: url(chrome://songbird/skin/default/volume_thumb.png) !important;
+}
+
+#songbird_volume_thumb:active
+{
+  background-image: url(chrome://songbird/skin/default/volume_thumb_active.png) !important;
+}
+
+
+/* Toolbar: Play Button */
+button#library_cmd_play
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_play_normal.png) !important; 
+}
+button#library_cmd_play:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_play_disabled.png) !important;
+}
+button#library_cmd_play[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_play_hover.png) !important;
+}
+menuitem#library_cmd_play
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_play_hover.png) !important;
+}
+menuitem#library_cmd_play[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_play_disabled.png) !important;
+}
+menuitem#library_cmd_play[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_play_normal.png) !important;
+}
+
+/* Toolbar: remove Button */
+button#library_cmd_remove
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_remove_normal.png) !important;
+}
+button#library_cmd_remove:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_remove_disabled.png) !important;
+}
+button#library_cmd_remove[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_remove_hover.png) !important;
+}
+menuitem#library_cmd_remove
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_remove_hover.png) !important;
+}
+menuitem#library_cmd_remove[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_remove_disabled.png) !important;
+}
+menuitem#library_cmd_remove[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_remove_normal.png) !important;
+}
+
+/* Toolbar: edit Button */
+button#library_cmd_edit
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_info_normal.png) !important;
+}
+button#library_cmd_edit:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_info_disabled.png) !important;
+}
+button#library_cmd_edit[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_info_hover.png) !important;
+}
+menuitem#library_cmd_edit
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_info_hover.png) !important;
+}
+menuitem#library_cmd_edit[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_info_disabled.png) !important;
+}
+menuitem#library_cmd_edit[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_info_normal.png) !important;
+}
+
+
+/* Toolbar: addtoplaylist Button */
+button#library_cmd_addtoplaylist
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtoplaylist_normal.png) !important;
+}
+button#library_cmd_addtoplaylist:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtoplaylist_disabled.png) !important;
+}
+button#library_cmd_addtoplaylist[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtoplaylist_hover.png) !important;
+}
+menuitem#library_cmd_addtoplaylist
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtoplaylist_hover.png) !important;
+}
+menuitem#library_cmd_addtoplaylist[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtoplaylist_disabled.png) !important;
+}
+menuitem#library_cmd_addtoplaylist[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtoplaylist_normal.png) !important;
+}
+
+/* Toolbar: burntocd Button */
+button#library_cmd_burntocd
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_burntocd_normal.png) !important;
+}
+button#library_cmd_burntocd:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_burntocd_disabled.png) !important;
+}
+button#library_cmd_burntocd[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_burntocd_hover.png) !important;
+}
+menuitem#library_cmd_burntocd
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_burntocd_hover.png) !important;
+}
+menuitem#library_cmd_burntocd[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_burntocd_disabled.png) !important;
+}
+menuitem#library_cmd_burntocd[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_burntocd_normal.png) !important;
+}
+
+/* Toolbar: device Button */
+button#library_cmd_device
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_device_normal.png) !important;
+}
+button#library_cmd_device:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_device_disabled.png) !important;
+}
+button#library_cmd_device[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_device_hover.png) !important;
+}
+menuitem#library_cmd_device
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_device_hover.png) !important;
+}
+menuitem#library_cmd_device[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_device_disabled.png) !important;
+}
+menuitem#library_cmd_device[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_device_normal.png) !important;
+}
+
+/* Toolbar: addtolibrary Button */
+button#library_cmd_addtolibrary
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtolibrary_normal.png) !important;
+}
+button#library_cmd_addtolibrary[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtolibrary_disabled.png) !important;
+}
+button#library_cmd_addtolibrary[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtolibrary_hover.png) !important;
+}
+menuitem#library_cmd_addtolibrary
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtolibrary_hover.png) !important;
+}
+menuitem#library_cmd_addtolibrary[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtolibrary_disabled.png) !important;
+}
+menuitem#library_cmd_addtolibrary[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_addtolibrary_normal.png) !important;
+}
+
+/* Toolbar: download Button */
+button#library_cmd_download
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_normal.png) !important;
+}
+button#library_cmd_download:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_disabled.png) !important;
+}
+button#library_cmd_download[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_hover.png) !important;
+}
+menuitem#library_cmd_download
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_hover.png) !important;
+}
+menuitem#library_cmd_download[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_disabled.png) !important;
+}
+menuitem#library_cmd_download[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_normal.png) !important;
+}
+
+/* Toolbar: subscribe Button */
+button#library_cmd_subscribe
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_subscribe_normal.png) !important;
+}
+button#library_cmd_subscribe:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_subscribe_disabled.png) !important;
+}
+button#library_cmd_subscribe[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_subscribe_hover.png) !important;
+}
+menuitem#library_cmd_subscribe
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_subscribe_hover.png) !important;
+}
+menuitem#library_cmd_subscribe[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_subscribe_disabled.png) !important;
+}
+menuitem#library_cmd_subscribe[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_subscribe_normal.png) !important;
+}
+
+/* Toolbar: pause Button */
+button#library_cmd_pause
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_pause_normal.png) !important;
+}
+button#library_cmd_pause:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_pause_disabled.png) !important;
+}
+button#library_cmd_pause[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_pause_hover.png) !important;
+}
+menuitem#library_cmd_pause
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_pause_hover.png) !important;
+}
+menuitem#library_cmd_pause[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_pause_disabled.png) !important;
+}
+menuitem#library_cmd_pause[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_pause_normal.png) !important;
+}
+
+/* Toolbar: resume Button */
+button#library_cmd_resume
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_normal.png) !important;
+}
+button#library_cmd_resume:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_disabled.png) !important;
+}
+button#library_cmd_resume[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_hover.png) !important;
+}
+menuitem#library_cmd_resume
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_hover.png) !important;
+}
+menuitem#library_cmd_resume[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_disabled.png) !important;
+}
+menuitem#library_cmd_resume[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_download_normal.png) !important;
+}
+
+/* Toolbar: switch to downloads Button */
+button#library_cmd_showdlplaylist
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_downloads_normal.png) !important;
+}
+button#library_cmd_showdlplaylist:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_downloads_disabled.png) !important;
+}
+button#library_cmd_showdlplaylist[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_downloads_hover.png) !important;
+}
+menuitem#library_cmd_showdlplaylist
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_downloads_hover.png) !important;
+}
+menuitem#library_cmd_showdlplaylist[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_downloads_disabled.png) !important;
+}
+menuitem#library_cmd_showdlplaylist[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_downloads_normal.png) !important;
+}
+
+/* Toolbar: switch to webplaylist Button */
+button#library_cmd_showwebplaylist
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_webplaylist_normal.png) !important;
+}
+button#library_cmd_showwebplaylist:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_webplaylist_disabled.png) !important;
+}
+button#library_cmd_showwebplaylist[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_webplaylist_hover.png) !important;
+}
+menuitem#library_cmd_showwebplaylist
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_webplaylist_hover.png) !important;
+}
+menuitem#library_cmd_showwebplaylist[active="true"]:hover
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_webplaylist_disabled.png) !important;
+}
+menuitem#library_cmd_showwebplaylist[disabled="true"]
+{
+  list-style-image: url(chrome://songbird/skin/default/toolbar_webplaylist_normal.png) !important;
+}
