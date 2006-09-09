@@ -42,7 +42,7 @@
 
  ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
  onmouseup="onBkgUp(); // Handle the window drag at the top level"
- onload="try { fixOSXWindow("window_top", "app_title"); } catch (e) { }"
+ onload="try { fixOSXWindow('window_top', 'app_title'); } catch (e) { }"
 >
 <!-- Astounding complexity! -->    
 <windowregion/>
