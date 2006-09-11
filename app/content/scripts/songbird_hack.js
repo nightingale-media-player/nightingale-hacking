@@ -1629,6 +1629,7 @@ function onMainPaneLoad()
         playlist.addEventListener( "playlist-play", onPlaylistPlay, true );
         playlist.addEventListener( "playlist-burntocd", onPlaylistBurnToCD, true );
         playlist.addEventListener( "playlist-noplaylist", onPlaylistNoPlaylist, true );
+        playlist.addEventListener( "playlist-filterchange", onPlaylistFilterChange, true );
         playlist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
 
         // Remember some values
@@ -1646,6 +1647,8 @@ function onMainPaneLoad()
         // Hide the progress bar now that we're loaded.
         thePaneLoadingData.boolValue = false;
         mainpane_listener_set = true;
+        
+        if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
       }
       else {
         //SB_LOG("songbird_hack.js", "onMainPaneLoad - no playlist_test setting playlists to null");
@@ -1884,6 +1887,10 @@ function onPlaylistBurnToCD( evt )
 function onPlaylistNoPlaylist() 
 { 
   document.getElementById( 'frame_servicetree' ).launchServiceURL( 'chrome://songbird/content/xul/playlist_test.xul?library' ); 
+}
+
+function onPlaylistFilterChange() {
+  if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
 }
 
 function onPlaylistDblClick( evt )

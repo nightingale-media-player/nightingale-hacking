@@ -108,7 +108,7 @@
                 datasources="rdf:Servicesource" 
                 ref="NC:ServicesourcePlayable"
               >
-                <menuitem id="current_play_queue" label="Current Play Queue"/> <!-- todo: internationalize -->
+                <menuitem id="current_play_queue" label="-"/>
                 <template>
                   <rule>
                     <menuitem uri="rdf:*"

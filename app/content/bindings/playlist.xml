@@ -851,6 +851,7 @@
         filterlist.playlist = this;
         
         filterlist.addEventListener( "dblclick", this.onFilterDblClick, true );
+        filterlist.addEventListener("filterlist-filterchange", this.sendFilterChangeEvent, true);
         
         if ( feed )
         {
@@ -3021,6 +3022,17 @@
             this.source.setFilter( this.ref, i, "", this.filters[i].ref, this.filters[i].column);
           }
           this.source.executeFeed( this.ref );
+        ]]>
+      </body>
+    </method>
+
+    <method name="sendFilterChangeEvent">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var e = document.createEvent("Events");
+          e.initEvent("playlist-filterchange", false, true);
+          this.dispatchEvent(e);
         ]]>
       </body>
     </method>

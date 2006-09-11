@@ -132,6 +132,14 @@ try
   var service_tree;
   var search_widget;
   var source_playlist;
+
+  var playingRef_remote;
+  var showWebPlaylist_remote;
+  
+  function syncJumpTo() {
+    // because the change to the playlist.ref property may happen after this function has been triggered by an event or a remote observer, introduce a timeout
+    setTimeout("doSyncJumpTo(true);", 0);
+  }
   
   function onLoadJumpToFile() {
     try {
@@ -140,7 +148,26 @@ try
     catch (e) { }
 
     onWindowLoadSizeAndPosition();
+
+    playingRef_remote = SB_NewDataRemote( "playing.ref", null );
+    showWebPlaylist_remote = SB_NewDataRemote( "browser.playlist.show", null );
+
+    const on_playingRef_change = { 
+      observe: function( aSubject, aTopic, aData ) { syncJumpTo(); } 
+    };
+    const on_showWebPlaylist_change = { 
+      observe: function( aSubject, aTopic, aData ) { syncJumpTo(); } 
+    };
+
+    playingRef_remote.bindObserver(on_playingRef_change, true);
+    showWebPlaylist_remote.bindObserver(on_showWebPlaylist_change, true);
+
+    syncJumpTo();
+  }
+  
+  function doSyncJumpTo(nofocus) {
     window.arguments[0].__JUMPTO__ = document;
+    document.syncJumpTo = syncJumpTo;
     service_tree = window.arguments[0].__THESERVICETREE__;
     search_widget = window.arguments[0].__SEARCHWIDGET__;
     var source = new sbIPlaylistsource();
@@ -162,9 +189,15 @@ try
       if (source_playlist) {
         // nothing playing, but a playlist object is visible in the source window
         displayed_ref = source_playlist.ref;
-        guid = source_playlist.guid;
-        table = source_playlist.table
-        ref = source_playlist.ref;
+        if (!displayed_ref || displayed_ref == "") {
+          guid = "songbird";
+          table = "library";
+          ref = "NC:songbird_library";
+        } else {
+          guid = source_playlist.guid;
+          table = source_playlist.table
+          ref = displayed_ref;
+        }
       } else {
         // nothing playing, no playlist object in source window, use the library
         guid = "songbird";
@@ -180,7 +213,7 @@ try
     }
     filters = _getFilters( source, ref );
     filtersColumn = _getFiltersColumn( source, ref );
-    _setPlaylist( guid, table, search, filters, filtersColumn );
+    _setPlaylist( guid, table, search, filters, filtersColumn, nofocus );
     _selectPlaylist( guid, table );
     _updateSubSearchItem(search, filters, filtersColumn);
   }
@@ -259,7 +292,7 @@ try
     JumpToPlaylistListListener.didRebuild();
   }
   
-  function _setPlaylist( guid, table, search, filters, filtersColumn ) {
+  function _setPlaylist( guid, table, search, filters, filtersColumn, nofocus ) {
     var playlist = document.getElementById("jumpto.playlist");
     playlist.tree.setAttribute("seltype", "single");
     playlist.forcedcommands = SBEmptyPlaylistCommands;
@@ -274,8 +307,10 @@ try
       source_filtersColumn = [];
     }
     var textbox = document.getElementById("jumpto.textbox");
-    window.focus();
-    textbox.focus();
+    if (!nofocus) {
+      window.focus();
+      textbox.focus();
+    }
     playlist.addEventListener("playlist-play", onJumpToPlay, false);
     playlist.addEventListener("playlist-esc", onExit, false);
     _applySearch();
@@ -420,6 +455,9 @@ try
     playlist.removeEventListener("playlist-esc", onExit, false);
     playlist.removeEventListener("playlist-play", onJumpToPlay, false);
     window.arguments[0].__JUMPTO__ = null;
+    
+    playingRef_remote.unbind();
+    showWebPlaylist_remote.unbind();
   }
   
   function _updateSubSearchItem(search, filters, filtersColumn) {
@@ -431,7 +469,7 @@ try
       item.setAttribute("hidden", "true");
     } else {
       item.setAttribute("hidden", "false");
-      var label = "Current Play Queue"
+      var label = ""
       if (!(no_search && no_filter)) {
         var cat = "";
         if (!no_search) cat = 'Searched by "' + search + '"';
@@ -446,11 +484,11 @@ try
           }
         }
         if (cat != "") {
-          if (source_ref == "NC:songbird_library") label += " (Library " + cat + ")";
+          if (source_ref == "NC:songbird_library") label = "Library " + cat;
           else {
             var pllabel = getPlaylistLabel(source_guid, source_table);
-            if (pllabel) label += ' (Playlist "' + pllabel + '" ' + cat + ")";
-            else label += " (" + cat + ")";
+            if (pllabel) label += pllabel + ' ' + cat;
+            else label += cat ;
           }
         }
       }

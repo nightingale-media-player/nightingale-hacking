@@ -225,6 +225,7 @@ try
             // ...before attempting to override.
             source.setSearchString( thePlaylistRef.stringValue, widget.list.label );
             theLastSearchEventTarget = null;
+            if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
             return;
           }
         }
