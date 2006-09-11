@@ -1857,24 +1857,26 @@
           try
           {
             //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
-            if (evt.charCode == 97 && evt.ctrlKey) {
+            if (evt.charCode == 97 && evt.ctrlKey) {  // ctrl-a
               this.tree.view.selection.selectAll();
             } else {
               switch ( evt.keyCode )
               {
-                case 46: // Del
+                case KeyEvent.DOM_VK_DELETE: 
+                case KeyEvent.DOM_VK_BACK_SPACE: 
                   if ( this.tree.currentIndex != -1 )
                   {
                     this.removeTracks();
                   }
                   break;
-                case 13: // Return
+                case KeyEvent.DOM_VK_RETURN:
+                case KeyEvent.DOM_VK_ENTER: 
                   if ( this.tree.currentIndex != -1 )
                   {
                     this.sendPlayEvent();
                   }
                   break;
-                case 27:
+                case KeyEvent.DOM_VK_ESCAPE:
                   {
                     this.sendEscEvent();
                   }
