@@ -29,20 +29,71 @@
 * \brief The Metadata Backscanner scans unscanned media items for new metadata.
 */
 #include "nsISupports.idl"
-
+/**
+* \interface sbIMetadataBackscanner sbIMetadataBackscanner.h
+* \brief Metadata Backscanner scans local and remote pieces
+* of media in the users libraries for metadata in the background.
+* 
+* The backscanner can be started via the start() method and 
+* stopped via stop(). Local media and local area network shares
+* benefit from a threaded backscanning process for extra speed.
+* 
+* To qualify as local media the URI for the piece of media must
+* begin with the following scheme: 
+* 
+* - file://.
+*
+* Remote media is scanned from the main thread using timer based
+* workers. 
+*
+* The metadata backscanner is a service and should be called
+* via do_GetService.
+* 
+* \sa sbIMediaLibrary
+*/
 [scriptable, uuid(6FE563F3-A217-4e16-A6C5-52BA0F3C09DF)]
 interface sbIMetadataBackscanner : nsISupports
 {
+  /**
+   * \brief Every 'scanInterval' seconds, the backscanner
+   * will find media in the users libraries that hasn't 
+   * been scanned for metadata.
+   */
   attribute PRUint32 scanInterval;
 
+  /**
+   * \brief Number of items in the queue that have been scanned.
+   * \todo This is not implemented.
+   */
   attribute PRUint32 scannedMediaCount;
+  /**
+   * \brief Total number of items to be scanned in the queue.
+   * \todo This is not implemented.
+   */
   attribute PRUint32 totalMediaCount;
-
+  /**
+   * \brief Number of items to scan before updating
+   * the users library.
+   */
   attribute PRUint32 updateQueueSize;
-
+  /**
+   * \brief Current 
+   * \todo This is not implemented.
+   */
   attribute AString  currentFile;
 
+  /**
+   * \brief Start the metadata backscanner.
+   */
   void start();
+
+  /**
+   * \brief Stop the metadata backscanner.
+   *
+   * Note that this method gets called automatically
+   * at destruction time. However, it is suggested that
+   * you shut it down before shutdown of the application.
+   */
   void stop();
 
 };
