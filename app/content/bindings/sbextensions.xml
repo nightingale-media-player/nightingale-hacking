@@ -209,11 +209,13 @@
                 that.distance = 0;
                 that.current = 0;
                 clearInterval( that.interval );
+                that.interval = null;
               }
             }
             else
             {
               clearInterval( that.interval );
+              that.interval = null;
             }
           }
           catch ( err )
@@ -420,6 +422,14 @@
         <parameter name="checkbox"/>
         <body>
           if (this.bundleInterface) this.bundleInterface.setExtensionInstallState(index, checkbox.checked);
+        </body>
+      </method>
+      
+      <method name="isAnimating">
+        <body>
+          <![CDATA[
+            return this.interval != null;
+          ]]>
         </body>
       </method>
       

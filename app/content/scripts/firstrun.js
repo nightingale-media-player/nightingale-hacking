@@ -30,8 +30,8 @@ var loaded_bundle = false;
 var bundle = null;
 var FirstRunBundleCB = 
 {
-  onLoad: function(bundle) { bundleDataReady(bundle); },
-  onError: function(bundle) { bundleDataReady(bundle); },
+  onLoad: function(bundle) { bundleDataReady(); },
+  onError: function(bundle) { bundleDataReady(); },
   QueryInterface : function(aIID)
   {
     if (!aIID.equals(Components.interfaces.sbIBundleObserver) &&
@@ -44,13 +44,18 @@ var FirstRunBundleCB =
   }
 }
 
-function bundleDataReady(bundle) {
+function bundleDataReady() {
+  var extlist = document.getElementById("songbird.extensionlist");
+  // if the callback is called before the list has finished opening or closing, delay it a bit
+  if (extlist && extlist.isAnimating()) {
+    setTimeout("bundleDataReady();", 10);
+    return;
+  }
   if (bundle.getNumExtensions() > 0) {
     loaded_bundle = true;
     enableCustomInstall(); 
   } else {
     sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false, false);
-    var extlist = document.getElementById("songbird.extensionlist");
     if (extlist) extlist.closeList();
   }
 }
@@ -76,8 +81,10 @@ function initFirstRun()
   if (s != 0) bundleDataReady(bundle);
   if (window.addEventListener) window.addEventListener("keydown", checkAltF4, true);
   fillLanguageBox();
-  var extlist = document.getElementById("songbird.extensionlist");
-  if (extlist) extlist.openList();
+  if (s != -1) {
+    var extlist = document.getElementById("songbird.extensionlist");
+    if (extlist) extlist.openList();
+  }
 }
 
 function shutdownFirstRun()
@@ -276,17 +283,19 @@ function openConnectionSettings()
     bundle = new nsIBundle();
     bundle.addBundleObserver(FirstRunBundleCB);
   }
-  var extlist = document.getElementById("songbird.extensionlist");
-  if (extlist) {
-    if (extlist.state == "open")
-      extlist.pleaseWait();
-    else {
-      extlist.bundleInterface = null;
-      extlist.openList();
-    }
-  }
   loaded_bundle = false;
   bundle.retrieveBundleFile();
   var s = bundle.getStatus();
   if (s != 0) bundleDataReady(bundle);
+  if (s != -1) {
+    var extlist = document.getElementById("songbird.extensionlist");
+    if (extlist) {
+      if (extlist.state == "open")
+        extlist.pleaseWait();
+      else {
+        extlist.bundleInterface = null;
+        extlist.openList();
+      }
+    }
+  }
 }
