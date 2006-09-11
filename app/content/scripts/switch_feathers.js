@@ -25,7 +25,6 @@
  */
 
 const RDFURI_INSTALL_MANIFEST_ROOT    = "urn:mozilla:install-manifest";
-const TYPE_THEME = 4;
 const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
 const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
 
@@ -119,8 +118,8 @@ function fillFeathersList(menu) {
     var extmgr = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
     var RDF = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService(Components.interfaces.nsIRDFService);
      
-    var items = extmgr.getItemList(TYPE_THEME, {});
-    for (var i in items)
+    var items = extmgr.getItemList(Components.interfaces.nsIUpdateItem.TYPE_THEME, {});
+    for (var i = 0; i < items.length; i++)
     {
       var item = RDF.GetResource(ITEM_NS(items[i].id));
       var target = extmgr.datasource.GetTarget(item, RDF.GetResource(EM_NS("internalName")), true);
