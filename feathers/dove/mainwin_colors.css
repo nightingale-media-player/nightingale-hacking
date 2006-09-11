@@ -439,7 +439,7 @@ Organize your collection with genre/artist/album filterlists.
 
 filterlist
 {
-  background-image: url(default/bkgd_clouds.png) !important;
+  background-color: #FFF !important;
 }
 
 filterlist > tree
