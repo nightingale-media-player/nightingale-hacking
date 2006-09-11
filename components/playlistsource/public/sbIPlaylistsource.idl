@@ -236,6 +236,15 @@ interface sbIPlaylistCommands : nsISupports
 interface sbIPlaylistsource : nsIRDFDataSource
 {
   /**
+  * \brief Determine whether or not a ref value is already loaded in the system.
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \return True, if the ref exists in the system.
+  */
+  PRBool refExists( in AString aRefName );
+
+
+  /**
   * \brief Prepare a database table to be made available to the UI as an RDFDataSource
   *
   * This method is called with the guid and table of a playlist and a string

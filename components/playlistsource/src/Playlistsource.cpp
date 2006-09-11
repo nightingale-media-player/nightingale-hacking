@@ -583,6 +583,25 @@ NS_IMETHODIMP sbPlaylistsource::GetRefGUID(const nsAString &aRefName, nsAString 
   return NS_OK;
 }
 
+/* PRBool RefExists (in nsAString RefName); */
+NS_IMETHODIMP sbPlaylistsource::RefExists(const nsAString &aRefName, PRBool *_retval)
+{
+  LOG(("sbPlaylistsource::RefExists"));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  METHOD_SHORTCIRCUIT;
+  nsAutoMonitor mon(g_pMonitor);
+
+  // Find the ref string in the stringmap.
+  *_retval = PR_FALSE;
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+
+  if (info)
+    *_retval = PR_TRUE;
+
+  return NS_OK;
+}
+
 /* wstring GetRefTable (in wstring RefName); */
 NS_IMETHODIMP sbPlaylistsource::GetRefTable(const nsAString &aRefName, nsAString &_retval)
 {
