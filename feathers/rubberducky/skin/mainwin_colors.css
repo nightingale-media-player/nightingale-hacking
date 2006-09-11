@@ -752,6 +752,7 @@ SEARCH WIDGET
 #search_widget
 { 
   background-color: #000 !important;
+  border: 1px solid #4a4e48 !important;
 } 
 
 #search_widget input
