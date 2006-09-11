@@ -13,7 +13,7 @@
 <!ENTITY menu.file          "File" >
 <!ENTITY menu.file.new      "New Playlist..." >
 <!ENTITY menu.file.smart    "New Smart Playlist..." >
-<!ENTITY menu.file.remote   "New Remote Playlist..." >
+<!ENTITY menu.file.remote   "New Subscription..." >
 <!ENTITY menu.file.open     "Open a File..." >
 <!ENTITY menu.file.url      "Open from URL..." >
 <!ENTITY menu.file.playlist "Import a Playlist..." >
