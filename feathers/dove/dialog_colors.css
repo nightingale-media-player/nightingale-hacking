@@ -215,7 +215,7 @@ THE PLAYLIST
 
 playlist.dialog_playlist 
 {
-  background-color: #000 !important;
+  background-color: #FFF !important;
 }
 
 playlist.dialog_playlist > stack > vbox
