@@ -40,7 +40,6 @@
         datasources="" 
         flags="dont-build-content"
         flex="1" 
-        onclick="onFilterListSelect(event);"
       >
       </xul:tree>
     </content>
@@ -75,7 +74,7 @@
     <field name="column"></field>
     <field name="ref_pl"></field>
     <field name="index">0</field>
-    <field name="_disable_selevent">false</field>
+    <field name="rebuildPending">false</field>
 
     <property name="ref">
       <getter>
@@ -92,6 +91,72 @@
       </getter>
       <setter>
         return this.tree.setAttribute("datasources", val);
+      </setter>
+    </property>
+
+    <!--
+      Concatenate all of the selections into a semicolon delimited filter string
+      Returns value of empty string means ALL, null means nothing selected
+    -->
+    <property name="filterString">
+      <getter>
+      <![CDATA[
+      var rangeCount = this.tree.view.selection.getRangeCount();
+      if ( rangeCount == 0 )
+        return null;
+
+      var filter_string = "";
+
+      var column = this.tree.columns.getColumnAt(0);
+      for ( var i=0; column != null && i < rangeCount; i++ )
+      {
+        var start = {};
+        var end = {};
+        this.tree.view.selection.getRangeAt( i, start, end );
+        for( var c = start.value; c <= end.value; c++ )
+        {
+          // Check for stupid things.
+          if ( c >= this.tree.view.rowCount )
+            break; // WTF?
+          // Zero is "All" which is always an empty filter string
+          if( c == 0 )
+            return "";
+          filter_string += ";" + this.tree.view.getCellText( c, column );
+        }
+      }
+      return filter_string;
+      ]]>
+      </getter>
+      <setter>
+      <![CDATA[
+      try {
+        this.tree.view.selection.selectEventsSuppressed = true;
+        var any_items = false; // Are there any items to find?
+        var any_found = false; // Did we find any?
+        var selection_string = val
+        if (selection_string != null) {
+          var selection = selection_string.split(";");
+          var column = this.tree.columns.getColumnAt(0);
+          while (selection.length > 0) {
+            var value = selection.pop();
+            if (value != "" && value != null) {
+              any_items = true;
+              var vindex = this.findCell(column, value);
+              if (vindex != -1) {
+                any_found = true;
+                this.tree.view.selection.rangedSelect(vindex, vindex, true);
+              }
+            }
+          }
+        }
+        if ( ! any_found ) { // If we weren't able to restore any of our previous selection
+          this.tree.view.selection.rangedSelect(0, 0, true);
+        } // This can happen when we delete all the tracks of a filter
+      }
+      finally {
+        this.tree.view.selection.selectEventsSuppressed = false;
+      }
+      ]]>
       </setter>
     </property>
 
@@ -201,70 +266,25 @@
     <!-- Selection/Filter handling -->
 
     <method name="onFilterListSelect">
-      <parameter name="event"/>
       <body>
         <![CDATA[
-          try
-          {
-            // Only if we click on a cell.
-            var obj = {}, row = {}, col = {}; 
-            this.tree.treeBoxObject.getCellAt( event.clientX, event.clientY, row, col, obj );
-            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( ( obj.value ) && ( row.value != null ) && ( row.value != -1 ) )
-            {
-              if (this._disable_selevent) { return; }
-              if (this.source == null) { alert("<filterlist/>: source is null"); return; }
-              // Concatenate all of the selections into a semicolon delimited filter string
-              var filter_string = "";
-              var rangeCount = this.tree.view.selection.getRangeCount();
-              var column = this.tree.columns.getColumnAt(0);
-              var anything_besides_zero = false;
-              var including_zero = false;
-              for ( var i=0; column != null && i < rangeCount; i++ )
-              {
-                var start = {};
-                var end = {};
-                this.tree.view.selection.getRangeAt( i, start, end );
-                for( var c = start.value; c <= end.value; c++ )
-                {
-                  // Check for stupid things.
-                  if ( c >= this.tree.view.rowCount )
-                    break; // WTF?
-                  filter_string += ";" + this.tree.view.getCellText( c, column );
-                  // Zero is "All"
-                  if ( c != 0 )
-                    anything_besides_zero = true;
-                  else
-                    including_zero = true;
-                }
-              }
-              // If there isn't anything selected or we've selected 'All'
-              if ( ! anything_besides_zero || including_zero )
-              {
-                // Reset the filter
-                filter_string = "";
-              }
-              // If there's anything else selected along with 'All'
-              if ( anything_besides_zero && including_zero )
-              {
-                // Select only 'All'
-                this.tree.view.selection.rangedSelect(0, 0, false);
-              }
-              
-              // Set the filter and relaunch the queries
-              this.source.setFilter( this.ref_pl, this.index, filter_string, this.ref, this.column );
-              this.source.executeFeed( this.ref_pl );
+          // Ignore select events while we're rebuilding
+          if(this.rebuildPending) {
+            return;
+          }
 
-              // Fire an event, in case someone wants it          
-              var e = document.createEvent("Events");
-              e.initEvent("filterlist-filterchange", false, true);
-              this.dispatchEvent(e);
-            }
-          }
-          catch( err )
-          {
-            alert( err );
-          }
+          if (this.source == null) { alert("<filterlist/>: source is null"); return; }
+          
+          var filter_string = this.filterString;
+          var current_filter_string =  this.source.getFilter(this.ref_pl, this.index);
+
+          this.source.setFilter( this.ref_pl, this.index, filter_string, this.ref, this.column );
+          this.source.executeFeed( this.ref_pl );
+
+          // Fire an event, in case someone wants it          
+          var e = document.createEvent("Events");
+          e.initEvent("filterlist-filterchange", false, true);
+          this.dispatchEvent(e);
         ]]>
       </body>
     </method> 
@@ -324,84 +344,13 @@
       </body>
     </method>
 
-    <method name="selectAtLeastAll">
-      <body>
-        <![CDATA[
-          try
-          {
-            if (this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
-              this._disable_selevent = true;
-              if (this.tree.view.selection.count == 0) {
-                this.tree.view.selection.rangedSelect(0, 0, true);
-              }
-            }
-          }
-          catch( err )
-          {
-            alert( err );
-          }
-          finally 
-          {
-            this._disable_selevent = false;
-          }
-        ]]>
-      </body>
-    </method>
-    
-    <method name="reselectFilter">
-      <body>
-        <![CDATA[
-          try
-          {
-            var any_items = false; // Are there any items to find?
-            var any_found = false; // Did we find any?
-            if (this.source != null) {
-              var selection_string = this.source.getFilter(this.ref_pl, this.index);
-              if (selection_string != null) {
-                var selection = selection_string.split(";");
-                this._disable_selevent = true;
-                var column = this.tree.columns.getColumnAt(0);
-                while (selection.length > 0) {
-                  var value = selection.pop();
-                  if (value != "" && value != null) {
-                    any_items = true;
-                    var vindex = this.findCell(column, value);
-                    if (vindex != -1) {
-                      any_found = true;
-                      this.tree.view.selection.rangedSelect(vindex, vindex, true);
-                    }
-                  }
-                }
-              }
-            }
-            if ( any_items && ! any_found ) { // If we weren't able to restore any of our previous selection
-              if (this.tree.view.selection.count == 0) { // Select the "All," without blocking the filtering action
-                var prev = this._disable_selevent;
-                this._disable_selevent = false;
-                this.tree.view.selection.rangedSelect(0, 0, true);
-                this._disable_selevent = prev;
-              }
-            } // This can happen when we delete all the tracks of a filter
-          }
-          catch( err )
-          {
-            alert( err );
-          }
-          finally 
-          {
-            this._disable_selevent = false;
-          }
-        ]]>
-
-      </body>
-    </method>
-
     <!-- nsIXULBuilderListener implementation -->
 
     <method name="willRebuild">
       <param name="builder"/>
       <body>
-        if (this.ref != null) this.loadcolumn(); 
+        if (this.ref != null) this.loadcolumn();
+        this.rebuildPending = true;
       </body>
     </method>
 
@@ -421,13 +370,19 @@
             column.element.setAttribute("label", label);
           }
         }
-        this.reselectFilter();
-        this.selectAtLeastAll();
+        this.filterString = this.source.getFilter(this.ref_pl, this.index);
+        this.rebuildPending = false;
       </body>
     </method>
 
    </implementation> 
- 
+
+    <handlers>
+      <handler event="select">
+        this.onFilterListSelect();
+      </handler>
+    </handlers>
+
   </binding>
 
 </bindings>
