@@ -50,12 +50,10 @@ THE DIALOG CHROME
 These pieces paint the resizeable window for dialogs.
 *******************************************************************************************
 */
-
 #chrome_bkgd
 {
   -moz-appearance: none !important; 
 }
-
 
 #chrome_n
 {
@@ -200,6 +198,7 @@ TOP BAR
 label.dialog_box
 {
   margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 7px !important;
   font-family: tahoma, arial !important;
   font-weight: bold !important;
   font-size: 11px !important;
@@ -372,7 +371,8 @@ SMART PLAYLIST BUILDER
 {
   -moz-border-radius: 5px !important; 
   border: 1px solid !important;
-  padding-right: 5px !important;
+  margin: 0px 0px 10px 0px !important;
+  padding: 5px 5px 5px 0px !important;
 }
 
 #smart_playlist_name_label
