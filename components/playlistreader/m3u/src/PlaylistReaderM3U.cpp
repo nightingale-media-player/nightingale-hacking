@@ -40,20 +40,21 @@
 #include "sbIPlaylist.h"
 
 #include <xpcom/nscore.h>
+#include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
-#include <necko/nsIURI.h>
 #include <necko/nsIFileStreams.h>
 #include <xpcom/nsILocalFile.h>
+#include <necko/nsIURI.h>
+#include <necko/nsNetUtil.h>
 #include <webbrowserpersist/nsIWebBrowserPersist.h>
-#include <string/nsStringAPI.h>
-#include <string/nsString.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
-#include <xpcom/nsXPCOM.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsAutoLock.h>
 
-#include <prmem.h>
+#include <string/nsString.h>
+#include <string/nsReadableUtils.h>
+#include <unicharutil/nsUnicharUtils.h>
 
 // CLASSES ====================================================================
 //=============================================================================
@@ -384,41 +385,56 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
           strURL = Substring(start, end);
           strURL.CompressWhitespace();
 
-          nsDependentString strPathToM3U(pPathToFile);
-          nsCOMPtr<nsILocalFile> m3uFile;
-          nsCOMPtr<nsILocalFile> mediaFile = do_CreateInstance("@mozilla.org/file/local;1");
-
-          if(NS_SUCCEEDED(NS_NewLocalFile(strPathToM3U, PR_FALSE, getter_AddRefs(m3uFile))))
+          PRBool isRemoteFile = PR_FALSE;
+          nsCOMPtr<nsIURI> mediaURI;
+          if(NS_SUCCEEDED(NS_NewURI(getter_AddRefs(mediaURI), strURL)))
           {
-            nsAutoString strm3uDir;
-            nsAutoString strMediaFilePath;
-            
-            m3uFile->GetPath(strm3uDir);
-            mediaFile->InitWithPath(strURL);
+            mediaURI->SchemeIs("file", &isRemoteFile);
+            isRemoteFile = !isRemoteFile;
+          }
+          else
+          {
+            isRemoteFile = !StringBeginsWith(strURL, NS_LITERAL_STRING("file:"), nsCaseInsensitiveStringComparator());
+          }
 
-            PRBool mediaFileExists = PR_FALSE;
-            mediaFile->Exists(&mediaFileExists);
+          if(!isRemoteFile)
+          {
+            nsDependentString strPathToM3U(pPathToFile);
+            nsCOMPtr<nsILocalFile> m3uFile;
+            nsCOMPtr<nsILocalFile> mediaFile = do_CreateInstance("@mozilla.org/file/local;1");
 
-            if(!mediaFileExists)
+            if(NS_SUCCEEDED(NS_NewLocalFile(strPathToM3U, PR_FALSE, getter_AddRefs(m3uFile))))
             {
-              nsAutoString strLeafName;
-              m3uFile->GetLeafName(strLeafName);
-              mediaFile->GetPath(strMediaFilePath);
-              if(strMediaFilePath.Length() == 0)
+              nsAutoString strm3uDir;
+              nsAutoString strMediaFilePath;
+
+              m3uFile->GetPath(strm3uDir);
+              mediaFile->InitWithPath(strURL);
+
+              PRBool mediaFileExists = PR_FALSE;
+              mediaFile->Exists(&mediaFileExists);
+
+              if(!mediaFileExists)
               {
-                strURL.Insert(strm3uDir.get(), 0, strm3uDir.Length() - strLeafName.Length());
+                nsAutoString strLeafName;
+                m3uFile->GetLeafName(strLeafName);
+                mediaFile->GetPath(strMediaFilePath);
+                if(strMediaFilePath.Length() == 0)
+                {
+                  strURL.Insert(strm3uDir.get(), 0, strm3uDir.Length() - strLeafName.Length());
+                }
               }
             }
-          }
 
 #if defined(XP_WIN)
-          if(!strURL.IsEmpty() && strURL.First() == '\\')
-          {
-            nsDependentString strPath(pPathToFile);
-            //Drive letter is missing, append it.
-            strURL = Substring(strPath, 0, 2) + strURL;
-          }
+            if(!strURL.IsEmpty() && strURL.First() == '\\')
+            {
+              nsDependentString strPath(pPathToFile);
+              //Drive letter is missing, append it.
+              strURL = Substring(strPath, 0, 2) + strURL;
+            }
 #endif
+          }
 
           // Try and load the entry as a playlist
           // If it's not a playlist add it as a playstring
