@@ -82,18 +82,15 @@
         >
           </xul:tree>
 
-          <!-- Playlist Toolbar
-        -->
+          <!-- Playlist Toolbar -->
           <xul:hbox id="playlist_toolbar_bkg" sbid="playlist_toolbar">
             <xul:hbox id="playlist_toolbar" sbid="toolbar_parent" flex="1" oncommand="onToolbarCommand( event )">
             </xul:hbox>
           </xul:hbox>
 
-          <!-- Popupset
-        -->
+          <!-- Popupset -->
           <xul:popupset>
-            <!-- Context Popup 
-          -->
+            <!-- Context Popup -->
             <xul:popup 
               id="playlist_context_popup" 
               sbid="playlist_context_popup" 
@@ -146,8 +143,7 @@
               </xul:menu>
               <children/>
             </xul:popup>
-            <!-- Edit Popup (doesn't work)
-          -->
+            <!-- Edit Popup (doesn't work) -->
             <xul:popup id="playlist_edit_popup" sbid="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
               <xul:textbox id="playlist_edit_box"
                            sbid="playlist_edit_box"
@@ -1659,7 +1655,7 @@
       onPerformAction()
       onPerformActionOnRow()
       onPerformActionOnCell()
-    -->
+      -->
 
       <!-- nsITreeView implementation -->
       <method name="isEditable">
