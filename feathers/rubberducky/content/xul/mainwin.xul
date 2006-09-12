@@ -492,6 +492,7 @@
                           <image id="browser_url_image" class="sb_faceplate" src=""/>
                           <textbox id="browser_url" class="sb_faceplate, mainwin_location" flex="1" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );"/>
                         </hbox>
+                        
                         <!-- SEARCH WIDGET -->
                         <search
                           id="search_widget" 
@@ -500,9 +501,10 @@
                           tooltiptext="&tooltip.search;"
                           flex="1"
                         />
+                        <spacer width="5" height="16"/>
                         <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
                         <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
-                        <spacer width="10" height="16"/>
+                        <spacer width="8" height="16"/>
                       </hbox>
                     </vbox>
 
@@ -541,8 +543,10 @@
               <!-- STATUS PANE -->
               <hbox id="frame_status_pane" class="sb_faceplate">
                 <vbox flex="1">
-                  <spacer flex="1"/>
+                  <spacer flex="1" height="3"/>
                   <hbox>
+                    <spacer height="16" width="16" class="extenstion_favicon"/>
+                    <spacer flex="1"/>
                     <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
                     <player_numplaylistitems id="library_text" value=" " crop="end"/>
                     <player_scanning id="scanning_text" value=" " crop="end"/>
