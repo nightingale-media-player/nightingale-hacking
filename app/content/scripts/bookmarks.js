@@ -560,14 +560,7 @@ var bmManager = {
                       url: "http://www.shoutcast.com/",
                       properties: "bookmark",
                       children: []
-                  },  
-                  { 
-                      label: "Radiotime",
-                      icon: "chrome://songbird/skin/serviceicons/radiotime.ico",
-                      url: "http://radiotime.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
+                  },   
                   { 
                       label: "MVY Radio",
                       icon: "http://www.mvyradio.com/favicon.ico",
