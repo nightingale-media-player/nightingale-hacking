@@ -545,8 +545,7 @@
                 <vbox flex="1">
                   <spacer flex="1" height="3"/>
                   <hbox>
-                    <spacer height="16" width="16" class="extenstion_favicon"/>
-                    <spacer flex="1"/>
+                    
                     <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
                     <player_numplaylistitems id="library_text" value=" " crop="end"/>
                     <player_scanning id="scanning_text" value=" " crop="end"/>
