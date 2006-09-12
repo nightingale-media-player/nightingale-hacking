@@ -66,9 +66,10 @@
         <label id="trackeditor.label.genre" class="dialog_label" value="&metadata.genre;" width="96"/>
         <dbedit_menulist editable="true" populateuniques="1" id="trackeditor.genre" column="genre" flex="1"/>
       </hbox>
+      <spacer height="8"/> 
       <hbox align="center">
         <label id="trackeditor.label.length" class="dialog_label" value="&metadata.length;" width="96"/>
-        <dbedit_textbox id="trackeditor.length" readonly="1" column="length" flex="1"/>
+        <dbedit_label id="trackeditor.length" readonly="1" column="length" flex="1"/>
       </hbox>
     </vbox>
     <spacer width="3"/> 
