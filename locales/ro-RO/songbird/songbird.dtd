@@ -1,0 +1,241 @@
+﻿
+<!ENTITY window.main.title  "Songbird 0.1 Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player/welcome/" >
+<!ENTITY window.ok          "OK" >
+<!ENTITY window.cancel      "Anulează" >
+<!ENTITY window.browse      "Răsfoieşte..." >
+
+<!ENTITY menu.file          "Fişier" >
+<!ENTITY menu.file.new      "Listă de Piese Nouă..." >
+<!ENTITY menu.file.smart    "Listă de Piese Inteligentă Nouă..." >
+<!ENTITY menu.file.remote   "Listă de Piese Îndepărtată Nouă..." >
+<!ENTITY menu.file.open     "Deschide un Fişier..." >
+<!ENTITY menu.file.url      "Deschide de la URL..." >
+<!ENTITY menu.file.playlist "Importă o Listă de Piese..." >
+<!ENTITY menu.file.scan     "Scanează după Media..." >
+<!ENTITY menu.file.dlfolder "Stabileşte Dosarul pt Descărcări..." >
+<!ENTITY menu.file.watch    "Stabileşte Dosarele Supravegheate..." >
+<!ENTITY menu.file.htmlbar  "Arată Întotdeauna Bara Web" >
+<!ENTITY menu.file.skin     "Skin Alternativ" >
+<!ENTITY menu.file.window   "Deschide Main Window" >
+<!ENTITY menu.file.mini     "Deschide Mini Player" >
+<!ENTITY menu.file.about    "Despre Songbird..." >
+<!ENTITY menu.file.exit     "Ieşire" >
+
+<!ENTITY menu.edit          "Modifică" >
+<!ENTITY menu.edit.undo     "Renunţă" >
+<!ENTITY menu.edit.cut      "Taie" >
+<!ENTITY menu.edit.copy     "Copiază" >
+<!ENTITY menu.edit.paste    "Lipeşte" >
+<!ENTITY menu.edit.clear    "Şterge" >
+<!ENTITY menu.edit.selall   "Selectează Tot" >
+<!ENTITY menu.edit.selnone  "Selectează Nimic" >
+
+<!ENTITY menu.controls      "Controale" >
+<!ENTITY menu.control.play  "Play/Pauză" >
+<!ENTITY menu.control.next  "Piesa Următoare" >
+<!ENTITY menu.control.prev  "Piesa Anterioară" >
+<!ENTITY menu.control.shuf  "Amestecă" >
+<!ENTITY menu.control.repa  "Repetă Toate" >
+<!ENTITY menu.control.rep1  "Repetă Una" >
+<!ENTITY menu.control.repx  "Repetă Niciuna" >
+
+<!ENTITY menu.services        "Servicii" >
+<!ENTITY menu.services.browse "Răsfoieşte Servicii..." >
+
+<!ENTITY menu.devices       "Echipamente" >
+
+<!ENTITY menu.help          "Ajutor" >
+<!ENTITY menu.help.topics   "Teme Ajutor..." >
+<!ENTITY menu.help.about    "Despre Songbird..." >
+<!ENTITY menu.preferences   "Preferinţe..." >
+<!ENTITY menu.extensions    "Extensii..." >
+
+<!ENTITY html.context.open  "Deschide" >
+<!ENTITY html.context.play  "Play" >
+<!ENTITY html.context.add   "Adaugă la bibliotecă" >
+
+<!ENTITY playlist.context.remove  "Elimină" >
+<!ENTITY playlist.context.rename  "Redenumeşte" >
+<!ENTITY playlist.context.search  "Caută" >
+<!ENTITY playlist.context.lyrics  "Versuri" >
+
+<!ENTITY tooltip.miniplayer       "Schimbă la Miniplayer" >
+<!ENTITY tooltip.minimize         "Minimizează" >
+<!ENTITY tooltip.maximize         "Maximizează/Restaurează" >
+<!ENTITY tooltip.exit             "Ieşire" >
+<!ENTITY tooltip.control.back     "Piesa Anterioară" >
+<!ENTITY tooltip.control.play     "Play" >
+<!ENTITY tooltip.control.pause    "Pauză" >
+<!ENTITY tooltip.control.fwd      "Piesa Următoare" >
+<!ENTITY tooltip.control.mute     "Mut" >
+<!ENTITY tooltip.control.volume   "Volum" >
+<!ENTITY tooltip.control.repeat   "Repetă" >
+<!ENTITY tooltip.control.shuffle  "Amestecă" >
+<!ENTITY tooltip.control.curtrack "Caută Piesa Actuală" >
+<!ENTITY tooltip.control.service  "Schimbă  Faceplate Display" >
+<!ENTITY tooltip.search           "Caută" >
+<!ENTITY tooltip.browser.back     "Răsfoieşte Înapoi" >
+<!ENTITY tooltip.browser.fwd      "Răsfoieşte Înainte" >
+<!ENTITY tooltip.browser.stop     "Termină Răsfoirea" >
+<!ENTITY tooltip.browser.home     "Acasă" >
+<!ENTITY tooltip.browser.playlist "Arată/Ascunde Lista de Piese Web" >
+<!ENTITY tooltip.browser.download "Vezi Descărcările Actuale" >
+
+<!ENTITY smart.window             "Constructor Inteligent a Listelor de Piese" >
+<!ENTITY smart.library            "Selectează Biblioteca:" >
+<!ENTITY smart.limit              "Limitează la" >
+<!ENTITY smart.match              "Potriveşte" >
+<!ENTITY smart.any                "orice" >
+<!ENTITY smart.all                "tot" >
+<!ENTITY smart.following          "din următoarele condiţii:" >   
+<!ENTITY smart.random             "aleatoriu" >
+<!ENTITY smart.album              "album" >
+<!ENTITY smart.artist             "artist" >
+<!ENTITY smart.genre              "gen" >
+<!ENTITY smart.title              "titlu" >
+<!ENTITY smart.high_rating        "cea mai bună evaluare" >
+<!ENTITY smart.low_rating         "cea mai slabă evaluare" >
+<!ENTITY smart.most_recent        "cea mai recentă" >
+<!ENTITY smart.least_recent       "cea mai veche" >
+<!ENTITY smart.most_often         "cea mai frecventă" >
+<!ENTITY smart.least_often        "cea mai puţin frecventă" >
+<!ENTITY smart.most_added         "ultima adăugată" >
+<!ENTITY smart.least_added        "prima adăugată" >
+<!ENTITY smart.minutes            "minute" >
+<!ENTITY smart.hours              "ore" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "melodii" >
+<!ENTITY smart.contains           "conţine" >
+<!ENTITY smart.not_contain        "nu conţine" >
+<!ENTITY smart.is                 "este" >
+<!ENTITY smart.is_not             "nu este" >
+<!ENTITY smart.starts             "începe cu" >
+<!ENTITY smart.ends               "se termină cu" >
+         
+<!ENTITY download.window          "Descarcă" >
+<!ENTITY download.select          "Selectează dosarul destinaţie:" >
+<!ENTITY download.always          "Întotdeauna foloseşte acest dosar" >
+
+<!ENTITY textbox.rmp_demo_open_url "Introdu URL sau calea pentru media pe care doreşti să o urmăreşti:">
+
+<!ENTITY open_url.title           "Deschide URL">
+<!ENTITY subscribe.title          "Subscrie">
+<!ENTITY subscribe.minutes        "Minut(e)">
+<!ENTITY subscribe.hours          "Oră(e)">
+<!ENTITY subscribe.days           "Zi(le)">
+<!ENTITY subscribe.autocheck      "Actualizează automat la fiecare">
+<!ENTITY subscribe.destinationfolder      "Selectează dosarul destinaţie:">
+
+<!ENTITY exists.title             "Lista de Piese Există">
+<!ENTITY exists.exists            "O Listă de Piese cu acest nume există deja!">
+
+<!ENTITY media_scan.title          "Scanează după Media">
+<!ENTITY media_scan.watch          "Supraveghează acest dosar după media">
+
+<!ENTITY new_playlist.title       "Crează o Nouă Listă de Piese">
+<!ENTITY new_playlist.name        "Introdu numele noii Liste de Piese.">
+
+<!ENTITY addtoplaylist.title      "Adaugă la Lista de Piese">
+<!ENTITY addtoplaylist.create      "Crează o nouă listă de piese">
+
+<!ENTITY watchfolder.title        "Dosarele Supravegheate">
+<!ENTITY watchfolder.folderlist   "Supraveghează acest dosare după media noi:">
+
+<!ENTITY locale.language          "Limbă" >
+
+
+
+<!ENTITY window.dev.title "Songbird not-yet-ready-to-be-called-0.2" >
+<!ENTITY window.undo "Undo" >
+<!ENTITY window.apply "Apply" >
+<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "Version" >
+<!ENTITY setup.custominstall "Custom Install" >
+<!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.url "URL:" >
+<!ENTITY bookmarks.edit.label "Name:" >
+<!ENTITY bookmarks.edit.icon "Icon:" >
+<!ENTITY trackeditor.title "Track Editor" >
+<!ENTITY trackeditor.trackdata "Track Data" >
+<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.tags "Tags" >
+<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY jumptofile.title "Jump to" >
+<!ENTITY jumptofile.playlist "Playlist:" >
+<!ENTITY jumptofile.search "Search:" >
+<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
+<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.hotkey "Hotkey" >
+<!ENTITY hotkeys.add "Add" >
+<!ENTITY hotkeys.set "Set" >
+<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.prefpane "Hotkeys" >
+<!ENTITY metadata.uuid "Media UUID" >
+<!ENTITY metadata.url "Location" >
+<!ENTITY metadata.artist "Artist" >
+<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.genre "Genre" >
+<!ENTITY metadata.length "Time" >
+<!ENTITY restartbox.restartnow "Restart Now" >
+<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
+<!ENTITY restartbox.restartlater "Restart Later" >
+<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY menu.updateCmd.accessKey "o" >
+<!ENTITY firstrun.connectionsettings "Connection Settings" >
+
+

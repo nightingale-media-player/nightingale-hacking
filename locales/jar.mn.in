@@ -90,6 +90,8 @@ locales.jar:
 % locale  browser   ka-GE  @LOCALE_LOCATION@/locale/ka-GE/browser/
 % locale  songbird  pt-PT  @LOCALE_LOCATION@/locale/pt-PT/songbird/
 % locale  browser   pt-PT  @LOCALE_LOCATION@/locale/pt-PT/browser/
+% locale  songbird  ro-RO  @LOCALE_LOCATION@/locale/ro-RO/songbird/
+% locale  browser   ro-RO  @LOCALE_LOCATION@/locale/ro-RO/browser/
   locale/branding/brand.dtd                               (branding/brand.dtd)
   locale/branding/brand.properties                        (branding/brand.properties)
   locale/bg-BG/songbird/songbird.dtd            (bg-BG/songbird/songbird.dtd)
@@ -932,3 +934,23 @@ locales.jar:
   locale/pt-PT/browser/preferences/privacy.dtd            (pt-PT/browser/preferences/privacy.dtd)
   locale/pt-PT/browser/preferences/sanitize.dtd           (pt-PT/browser/preferences/sanitize.dtd)
   locale/pt-PT/browser/preferences/tabs.dtd               (pt-PT/browser/preferences/tabs.dtd)
+  locale/ro-RO/songbird/songbird.dtd            (ro-RO/songbird/songbird.dtd)
+  locale/ro-RO/songbird/songbird.properties     (ro-RO/songbird/songbird.properties)
+  locale/ro-RO/browser/preferences/advanced.dtd           (ro-RO/browser/preferences/advanced.dtd)
+  locale/ro-RO/browser/preferences/advanced-scripts.dtd   (ro-RO/browser/preferences/advanced-scripts.dtd)
+  locale/ro-RO/browser/preferences/changeaction.dtd       (ro-RO/browser/preferences/changeaction.dtd)
+  locale/ro-RO/browser/preferences/colors.dtd             (ro-RO/browser/preferences/colors.dtd)
+  locale/ro-RO/browser/preferences/connection.dtd         (ro-RO/browser/preferences/connection.dtd)
+  locale/ro-RO/browser/preferences/content.dtd            (ro-RO/browser/preferences/content.dtd)
+  locale/ro-RO/browser/preferences/cookies.dtd            (ro-RO/browser/preferences/cookies.dtd)
+  locale/ro-RO/browser/preferences/downloadactions.dtd    (ro-RO/browser/preferences/downloadactions.dtd)
+  locale/ro-RO/browser/preferences/downloads.dtd          (ro-RO/browser/preferences/downloads.dtd)
+  locale/ro-RO/browser/preferences/fonts.dtd              (ro-RO/browser/preferences/fonts.dtd)
+  locale/ro-RO/browser/preferences/general.dtd            (ro-RO/browser/preferences/general.dtd)
+  locale/ro-RO/browser/preferences/languages.dtd          (ro-RO/browser/preferences/languages.dtd)
+  locale/ro-RO/browser/preferences/permissions.dtd        (ro-RO/browser/preferences/permissions.dtd)
+  locale/ro-RO/browser/preferences/preferences.dtd        (ro-RO/browser/preferences/preferences.dtd)
+  locale/ro-RO/browser/preferences/preferences.properties (ro-RO/browser/preferences/preferences.properties)
+  locale/ro-RO/browser/preferences/privacy.dtd            (ro-RO/browser/preferences/privacy.dtd)
+  locale/ro-RO/browser/preferences/sanitize.dtd           (ro-RO/browser/preferences/sanitize.dtd)
+  locale/ro-RO/browser/preferences/tabs.dtd               (ro-RO/browser/preferences/tabs.dtd)

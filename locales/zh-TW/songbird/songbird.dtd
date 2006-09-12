@@ -1,4 +1,252 @@
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY songbird           "Songbird" >
+<!ENTITY web.url.first.old  "" >
+<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
+<!ENTITY window.ok          "確定" >
+<!ENTITY window.cancel      "取消" >
+<!ENTITY window.browse      "瀏覽..." >
 
+<!ENTITY menu.file          "檔案" >
+<!ENTITY menu.file.new      "新增播放清單..." >
+<!ENTITY menu.file.smart    "新增智慧型播放清單..." >
+<!ENTITY menu.file.remote   "新增遠端播放清單..." >
+<!ENTITY menu.file.open     "開啟檔案..." >
+<!ENTITY menu.file.url      "從網址開啟..." >
+<!ENTITY menu.file.playlist "載入播放清單..." >
+<!ENTITY menu.file.scan     "掃描媒體檔..." >
+<!ENTITY menu.file.htmlbar  "總是顯示網路列" >
+<!ENTITY menu.file.skin     "其他面板" >
+<!ENTITY menu.file.window   "開啟主視窗" >
+<!ENTITY menu.file.mini     "開啟迷你播放器" >
+<!ENTITY menu.file.about    "關於 Songbird..." >
+<!ENTITY menu.file.exit     "關閉" >
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY menu.file.exit.accesskey "X" >
+
+<!ENTITY menu.edit          "編輯" >
+<!ENTITY menu.edit.undo     "復原" >
+<!ENTITY menu.edit.cut      "剪下" >
+<!ENTITY menu.edit.copy     "複製" >
+<!ENTITY menu.edit.paste    "貼上" >
+<!ENTITY menu.edit.clear    "清除" >
+<!ENTITY menu.edit.selall   "全選" >
+<!ENTITY menu.edit.selnone  "取消全選" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+
+<!ENTITY menu.controls      "控制" >
+<!ENTITY menu.control.play  "播放/暫停" >
+<!ENTITY menu.control.next  "下一曲" >
+<!ENTITY menu.control.prev  "上一曲" >
+<!ENTITY menu.control.shuf  "隨機播放" >
+<!ENTITY menu.control.repa  "重複全部" >
+<!ENTITY menu.control.rep1  "重複單曲" >
+<!ENTITY menu.control.repx  "不要重複" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+
+<!ENTITY menu.services        "服務" >
+<!ENTITY menu.services.browse "瀏覽服務..." >
+<!ENTITY menu.services.accesskey "S" >
+
+<!ENTITY menu.devices       "裝置" >
+<!ENTITY menu.devices.accesskey "D" >
+
+<!ENTITY menu.help          "說明" >
+<!ENTITY menu.help.topics   "說明主題..." >
+<!ENTITY menu.help.about    "關於 Songbird ..." >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+
+<!ENTITY menu.preferences "偏好設定..." >
+<!ENTITY menu.extensions "擴充套件..." >
+<!ENTITY menu.feathers "佈景羽毛" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+
+<!ENTITY html.context.open  "開啟" >
+<!ENTITY html.context.play  "播放" >
+<!ENTITY html.context.add   "新增到媒體庫" >
+
+<!ENTITY playlist.context.remove  "移除" >
+<!ENTITY playlist.context.rename  "重新命名" >
+<!ENTITY playlist.context.search  "搜尋" >
+<!ENTITY playlist.context.lyrics  "歌詞" >
+
+<!ENTITY tooltip.miniplayer       "切換到迷你播放器" >
+<!ENTITY tooltip.minimize         "最小化" >
+<!ENTITY tooltip.maximize         "最大化/還原" >
+<!ENTITY tooltip.exit             "離開" >
+<!ENTITY tooltip.control.back     "上一曲" >
+<!ENTITY tooltip.control.play     "播放" >
+<!ENTITY tooltip.control.pause    "暫停" >
+<!ENTITY tooltip.control.fwd      "下一曲" >
+<!ENTITY tooltip.control.mute     "靜音" >
+<!ENTITY tooltip.control.volume   "音量" >
+<!ENTITY tooltip.control.repeat   "重複" >
+<!ENTITY tooltip.control.shuffle  "隨機播放" >
+<!ENTITY tooltip.control.curtrack "尋找目前曲目" >
+<!ENTITY tooltip.control.service  "切換資訊面板顯示" >
+<!ENTITY tooltip.search           "搜尋" >
+<!ENTITY tooltip.browser.back     "瀏覽上一頁" >
+<!ENTITY tooltip.browser.fwd      "瀏覽下一頁" >
+<!ENTITY tooltip.browser.stop     "停止瀏覽器" >
+<!ENTITY tooltip.browser.home     "首頁" >
+<!ENTITY tooltip.browser.playlist "檢視本網頁的可用媒體" >
+<!ENTITY tooltip.browser.download "檢視目前下載" >
+
+<!ENTITY smart.window             "智慧型播放清單建構器" >
+<!ENTITY smart.library            "選擇媒體庫:" >
+<!ENTITY smart.limit              "限制到" >
+<!ENTITY smart.match              "符合" >
+<!ENTITY smart.any                "任何" >
+<!ENTITY smart.all                "所有" >
+<!ENTITY smart.following          "的下列條件：" >   
+<!ENTITY smart.random             "隨機" >
+<!ENTITY smart.album              "專輯" >
+<!ENTITY smart.artist             "演出者" >
+<!ENTITY smart.genre              "類型" >
+<!ENTITY smart.title              "標題" >
+<!ENTITY smart.high_rating        "高評價" >
+<!ENTITY smart.low_rating         "低評價" >
+<!ENTITY smart.most_recent        "最近期" >
+<!ENTITY smart.least_recent       "最不近期" >
+<!ENTITY smart.most_often         "最經常" >
+<!ENTITY smart.least_often        "最不經常" >
+<!ENTITY smart.most_added         "新增最多" >
+<!ENTITY smart.least_added        "新增最少" >
+<!ENTITY smart.minutes            "分鐘" >
+<!ENTITY smart.hours              "小時" >
+<!ENTITY smart.mb                 "MB" >
+<!ENTITY smart.gb                 "GB" >
+<!ENTITY smart.songs              "歌曲" >
+<!ENTITY smart.contains           "包含" >
+<!ENTITY smart.not_contain        "不包含" >
+<!ENTITY smart.is                 "是" >
+<!ENTITY smart.is_not             "不是" >
+<!ENTITY smart.starts             "開頭是" >
+<!ENTITY smart.ends               "結尾是" >
+         
+<!ENTITY download.window          "下載" >
+<!ENTITY download.select          "選擇目的地資料夾：" >
+<!ENTITY download.always          "總是使用此資料夾" >
+
+
+
+<!ENTITY locale.language          "語言" >
+
+
+<!ENTITY menu.file.dlfolder "設定下載資料夾..." >
+<!ENTITY menu.file.watch "設定監看資料夾..." >
+<!ENTITY textbox.songbird_open_url "輸入你希望播放的媒體的網址或路徑:" >
+<!ENTITY open_url.title "開啟網址" >
+<!ENTITY subscribe.title "訂閱" >
+<!ENTITY subscribe.minutes "分鐘" >
+<!ENTITY subscribe.hours "小時" >
+<!ENTITY subscribe.days "天" >
+<!ENTITY subscribe.autocheck "每隔多久自動更新" >
+<!ENTITY subscribe.destinationfolder "選擇目的地資料夾:" >
+<!ENTITY exists.title "播放清單已存在" >
+<!ENTITY exists.exists "擁有該名稱的播放清單已存在!" >
+<!ENTITY media_scan.title "掃描媒體" >
+<!ENTITY media_scan.watch "監看此資料夾是否有新媒體" >
+<!ENTITY new_playlist.title "建立新播放清單" >
+<!ENTITY new_playlist.name "輸入新播放清單的名稱。" >
+<!ENTITY addtoplaylist.title "新增至播放清單" >
+<!ENTITY addtoplaylist.create "建立新播放清單" >
+<!ENTITY watchfolder.title "監看資料夾" >
+<!ENTITY watchfolder.folderlist "監看下列資料夾是否有新媒體:" >
+
+<!ENTITY about.version "版本" >
+
+<!ENTITY tooltip.browser.bookmark "書籤" >
+
+<!ENTITY setup.retrievingxpilist "擷取擴充套件清單中。請稍待..." >
+<!ENTITY setup.custominstall "自訂安裝" >
+<!ENTITY setup.title "Songbird 安裝選項" >
+<!ENTITY setupprogress.pleasewait "請稍待..." >
+
+<!ENTITY bookmarks.edit.title "編輯書籤" >
+<!ENTITY bookmarks.edit.url "網址:" >
+<!ENTITY bookmarks.edit.label "名稱:" >
+<!ENTITY bookmarks.edit.icon "圖示:" >
+
+<!ENTITY trackeditor.title "音軌編輯器" >
+<!ENTITY trackeditor.trackdata "音軌資料" >
+<!ENTITY trackeditor.exttrackdata "延伸資料" >
+<!ENTITY trackeditor.tags "標籤" >
+<!ENTITY trackeditor.addtag.title "新增標籤" >
+<!ENTITY trackeditor.addtag.tag "標籤:" >
+<!ENTITY jumptofile.title "跳至" >
+
+<!ENTITY window.undo "復原" >
+<!ENTITY window.apply "套用" >
+
+<!ENTITY window.dev.title "Songbird 0.2 alpha" >
+
+<!ENTITY metrics.optout "允許 Songbird 傳送匿名的使用資料數據 (建議)" >
+
+<!ENTITY hotkeys.useglobalhotkeys "使用全域快速鍵" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "動作" >
+<!ENTITY hotkeys.hotkey "快速鍵" >
+<!ENTITY hotkeys.add "新增" >
+<!ENTITY hotkeys.set "設定" >
+<!ENTITY hotkeys.remove "移除" >
+<!ENTITY hotkeys.prefpane "快速鍵" >
+
+<!ENTITY metadata.uuid "媒體 UUID" >
+<!ENTITY metadata.url "位置" >
+<!ENTITY metadata.artist "演出者" >
+<!ENTITY metadata.title "標題" >
+<!ENTITY metadata.album "專輯" >
+<!ENTITY metadata.genre "分類" >
+<!ENTITY metadata.length "長度" >
+
+<!ENTITY restartbox.restartnow "馬上重新啟動" >
+<!ENTITY restartbox.restartonplaybackend "播放完後重新啟動" >
+<!ENTITY restartbox.restartlater "先不重新啟動" >
+<!ENTITY setupprogress.installingextensions "安裝擴充套件中" >
+
+<!ENTITY tooltip.hide "隱藏" >
+
+<!ENTITY menu.updateCmd.label "檢查更新..." >
+<!ENTITY menu.updateCmd.accessKey "o" >
+
+<!ENTITY jumptofile.playlist "播放清單:" >
+<!ENTITY jumptofile.search "搜尋:" >
+
+<!ENTITY tooltip.control.shuf_off "關閉隨機播放" >
+
+<<<<<<< .mine
+<!ENTITY html.context.openexternal "Open with Default Browser" >
+=======
 <!ENTITY window.main.title  "Songbird User Preview" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
@@ -297,27 +545,10 @@
 
 
 
+>>>>>>> .r2351
 <!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
 <!ENTITY tooltip.browser.refresh "Refresh" >
 <!ENTITY smart.selectedby "Selected by" >
-
-
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
 <!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
 
 

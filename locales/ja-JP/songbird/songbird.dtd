@@ -1,176 +1,257 @@
 ﻿
-<!ENTITY window.main.title  "Songbird" >
-<!ENTITY songbird           "Songbird" >
+<!ENTITY window.main.title  "Songbird 0.2" >
+<!ENTITY window.dev.title  "Songbird not-yet-ready-to-be-called-0.2" >
+<!ENTITY songbird  "Songbird" >
 <!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "OK" >
-<!ENTITY window.cancel      "Cancel" >
-<!ENTITY window.browse      "Browse..." >
+<!ENTITY web.url.first  "http://songbirdnest.com/player0.2/welcome/" >
+<!ENTITY window.ok  "OK" >
+<!ENTITY window.undo  "`" >
+<!ENTITY window.apply  "適" >
+<!ENTITY window.cancel  "㒣㒳㒫" >
+<!ENTITY window.browse  "&..." >
 
-<!ENTITY menu.file          "ファイル" >
-<!ENTITY menu.file.new      "新しいプレイリスト" >
-<!ENTITY menu.file.smart    "新しいスマートプレイリスト" >
-<!ENTITY menu.file.remote   "新しいリモートプレイリスト" >
-<!ENTITY menu.file.open     "ファイルを開く" >
-<!ENTITY menu.file.url      "URLを開く" >
-<!ENTITY menu.file.playlist "プレイリストを読む" > 
-<!ENTITY menu.file.scan     "メディアを探す" > 
-<!ENTITY menu.file.dlfolder "ダウンロードフォルダの設定" >
-<!ENTITY menu.file.watch    "フォルダを設定" >
-<!ENTITY menu.file.htmlbar  "常にWebバーを表示する" >
-<!ENTITY menu.file.skin     "スキンの変更" >
-<!ENTITY menu.file.window   "メイン画面を開く" >
-<!ENTITY menu.file.mini     "ミニプレイヤーを開く" >
-<!ENTITY menu.file.about    "Songbirdについて" >
-<!ENTITY menu.file.exit     "終了" >
+<!ENTITY menu.file  ""㒫" >
+<!ENTITY menu.file.new  "規㒬㒪..." >
+<!ENTITY menu.file.smart  "規~㒼㒬㒪..." >
+<!ENTITY menu.file.remote  "規㒪㒢㒼㒬㒪..." >
+<!ENTITY menu.file.open  ""㒫9く..." >
+<!ENTITY menu.file.url  "URL 9く..." >
+<!ENTITY menu.file.playlist  "㒬㒪`込..." >
+<!ENTITY menu.file.scan  "㒡!!9"S索..." >
+<!ENTITY menu.file.dlfolder  "㒬㒳㒭㒼0"㒫㒬設a..." >
+<!ENTITY menu.file.watch  "㒒㒁"㒫㒬設a..." >
+<!ENTITY menu.file.htmlbar  "常に Web 㒐㒼表示" >
+<!ENTITY menu.file.skin  "Skin の0:" >
+<!ENTITY menu.file.window  "㒡㒳㒳09く" >
+<!ENTITY menu.file.mini  "x9㒬㒼㒤㒼9く" >
+<!ENTITY menu.file.about  "Songbird につて..." >
+<!ENTITY menu.file.exit  "09" >
 
-<!ENTITY menu.edit          "編集" >
-<!ENTITY menu.edit.undo     "元に戻す" >
-<!ENTITY menu.edit.cut      "カット" >
-<!ENTITY menu.edit.copy     "コピー" >
-<!ENTITY menu.edit.paste    "貼り付け" >
-<!ENTITY menu.edit.clear    "削除" >
-<!ENTITY menu.edit.selall   "すべて選択" >
-<!ENTITY menu.edit.selnone  "選択を解除" >
-<!ENTITY menu.controls      "コントロール" >
-<!ENTITY menu.control.play  "再生/停止" >
-<!ENTITY menu.control.next  "次のトラック" >
-<!ENTITY menu.control.prev  "前のトラック" >
-<!ENTITY menu.control.shuf  "シャッフル" >
-<!ENTITY menu.control.repa  "すべてリピート" >
-<!ENTITY menu.control.rep1  "１曲リピート" >
-<!ENTITY menu.control.repx  "リピート解除" >
+<!ENTITY menu.edit  "編: " >
+<!ENTITY menu.edit.undo  "`" >
+<!ENTITY menu.edit.cut  "!``" >
+<!ENTITY menu.edit.copy  "㒼" >
+<!ENTITY menu.edit.paste  "貼`" >
+<!ENTITY menu.edit.clear  "㒪" >
+<!ENTITY menu.edit.selall  ""べて選`~" >
+<!ENTITY menu.edit.selnone  ""選`~な" >
 
-<!ENTITY menu.services        "サービス" >
-<!ENTITY menu.services.browse "Browse Services..." >
+<!ENTITY menu.controls  "㒳㒭㒼㒫" >
+<!ENTITY menu.control.play  " x／丬"S止" >
+<!ENTITY menu.control.next  "次の:" >
+<!ENTITY menu.control.prev  "0の:" >
+<!ENTITY menu.control.shuf  "㒣㒒"㒫" >
+<!ENTITY menu.control.repa  "&&:㒪㒼"9" >
+<!ENTITY menu.control.rep1  "1 &:㒪㒼"9" >
+<!ENTITY menu.control.repx  "㒪㒼な" >
 
-<!ENTITY menu.devices       "デバイス" >
+<!ENTITY menu.services  "㒼" >
+<!ENTITY menu.services.browse  "9張x蒽&..." >
 
-<!ENTITY menu.help          "ヘルプ" >
-<!ENTITY menu.help.topics   "トピック目次" >
-<!ENTITY menu.help.about    "Songbirdについて" >
+<!ENTITY menu.devices  "!㒐" >
 
-<!ENTITY html.context.open  "開く" >
-<!ENTITY html.context.play  "再生" >
-<!ENTITY html.context.add   "ライブラリに追加" >
+<!ENTITY menu.help  "㒫" >
+<!ENTITY menu.help.topics  "㒫の㒒..." >
+<!ENTITY menu.help.about  "Songbird につて..." >
 
-<!ENTITY playlist.context.remove  "削除" >
-<!ENTITY playlist.context.rename  "名前の変更" >
-<!ENTITY playlist.context.search  "検索" >
-<!ENTITY playlist.context.lyrics  "歌詞" >
+<!ENTITY menu.preferences  "設a..." >
+<!ENTITY menu.extensions  "9張x蒽..." >
 
-<!ENTITY tooltip.miniplayer       "ミニプレイヤー" >
-<!ENTITY tooltip.minimize         "最小化" >
-<!ENTITY tooltip.maximize         "最大化/元のサイズに戻す" >
-<!ENTITY tooltip.exit             "終了" >
-<!ENTITY tooltip.control.back     "前のトラック" >
-<!ENTITY tooltip.control.play     "再生" >
-<!ENTITY tooltip.control.pause    "一時停止" >
-<!ENTITY tooltip.control.fwd      "次のトラック" >
-<!ENTITY tooltip.control.mute     "ミュート" >
-<!ENTITY tooltip.control.volume   "音量" >
-<!ENTITY tooltip.control.repeat   "リピート" >
-<!ENTITY tooltip.control.shuffle  "シャッフル" >
-<!ENTITY tooltip.control.curtrack "現在のトラックを探す" >
-<!ENTITY tooltip.control.service  "外観の変更" >
-<!ENTITY tooltip.search           "検索" >
-<!ENTITY tooltip.browser.back     "戻る" >
-<!ENTITY tooltip.browser.fwd      "進む" >
-<!ENTITY tooltip.browser.stop     "中止" >
-<!ENTITY tooltip.browser.home     "ホーム" >
-<!ENTITY tooltip.browser.playlist "このWebページで利用可能なメディアを見る" >
-<!ENTITY tooltip.browser.download "現在のダウンロード" >
+<!ENTITY html.context.open  "9く" >
+<!ENTITY html.context.openexternal  "!"㒫の㒩で9く" >
+<!ENTITY html.context.play  " x" >
+<!ENTITY html.context.add  "㒩㒩㒪に追`" >
 
-<!ENTITY smart.window             "スマートプレイリストビルダー" >
-<!ENTITY smart.library            "ライブラリの選択:" >
-<!ENTITY smart.limit              "絞り込む" >
-<!ENTITY smart.match              "マッチ" >
-<!ENTITY smart.any                "どれか" >
-<!ENTITY smart.all                "すべて" >
-<!ENTITY smart.following          "以下の条件で:" > 
-<!ENTITY smart.random             "ランダム" >
-<!ENTITY smart.album              "アルバム" >
-<!ENTITY smart.artist             "アーティスト" >
-<!ENTITY smart.genre              "ジャンル" >
-<!ENTITY smart.title              "タイトル" >
-<!ENTITY smart.high_rating        "高評価" >
-<!ENTITY smart.low_rating         "低評価" >
-<!ENTITY smart.most_recent        "最新" >
-<!ENTITY smart.least_recent       "最も古い" >
-<!ENTITY smart.most_often         "最もよく聞く" >
-<!ENTITY smart.least_often        "ほとんど聞かない" >
-<!ENTITY smart.most_added         "最も追加された" >
-<!ENTITY smart.least_added        "ほとんど追加されてない" >
-<!ENTITY smart.minutes            "分" >
-<!ENTITY smart.hours              "時間" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "曲" >
-<!ENTITY smart.contains           "含む" >
-<!ENTITY smart.not_contain        "含まない" >
-<!ENTITY smart.is                 "is" >
-<!ENTITY smart.is_not             "is not" >
-<!ENTITY smart.starts             "開始" >
-<!ENTITY smart.ends               "終了" >
-         
-<!ENTITY download.window          "ダウンロード" >
-<!ENTITY download.select          "対象のフォルダを選択:" >
-<!ENTITY download.always          "常にこのフォルダを使う" >
+<!ENTITY playlist.context.remove  "0`"" >
+<!ENTITY playlist.context.rename  "名00:" >
+<!ENTITY playlist.context.search  "S索" >
+<!ENTITY playlist.context.lyrics  "R~" >
 
-<!ENTITY textbox.songbird_open_url "再生したいメディアのURLかパスを入力してください。:">
+<!ENTITY tooltip.miniplayer  "x9㒬㒼㒤㒼に!`:" >
+<!ENTITY tooltip.minimize  "S小R" >
+<!ENTITY tooltip.maximize  "S大R／&のにƻ"" >
+<!ENTITY tooltip.exit  "09" >
+<!ENTITY tooltip.hide  "ま " >
+<!ENTITY tooltip.control.back  "0の:" >
+<!ENTITY tooltip.control.play  " x" >
+<!ENTITY tooltip.control.pause  "S止" >
+<!ENTITY tooltip.control.fwd  "次の:" >
+<!ENTITY tooltip.control.mute  "x㒥㒼" >
+<!ENTITY tooltip.control.volume  "x!" >
+<!ENTITY tooltip.control.repeat  "㒪㒼" >
+<!ENTITY tooltip.control.shuffle  "㒣㒒"㒫" >
+<!ENTITY tooltip.control.shuf_off  "㒣㒒"㒫解"" >
+<!ENTITY tooltip.control.curtrack  "現Sの:S索" >
+<!ENTITY tooltip.control.service  ""㒬㒼表示に!`:" >
+<!ENTITY tooltip.search  "S索" >
+<!ENTITY tooltip.browser.back  "ƻ9" >
+<!ENTITY tooltip.browser.fwd  "鬲" >
+<!ENTITY tooltip.browser.stop  "S止" >
+<!ENTITY tooltip.browser.home  ":㒼㒠a㒼" >
+<!ENTITY tooltip.browser.refresh  ":" >
+<!ENTITY tooltip.browser.bookmark  "㒒~㒼" >
+<!ENTITY tooltip.browser.playlist  "Web 㒬㒪表示／~表示" >
+<!ENTITY tooltip.browser.download  "現S㒬㒳㒭㒼0xの表示" >
 
-<!ENTITY open_url.title           "URLを開く">
-<!ENTITY subscribe.title          "登録">
-<!ENTITY subscribe.minutes        "分(s)">
-<!ENTITY subscribe.hours          "時間(s)">
-<!ENTITY subscribe.days           "日(s)">
-<!ENTITY subscribe.autocheck      "毎に自動的にアップデートする">
-<!ENTITY subscribe.destinationfolder      "対象のフォルダを選択:">
+<!ENTITY smart.window  "~㒼㒬㒪㒫㒬" >
+<!ENTITY smart.library  "㒩㒩㒪の選`~ :" >
+<!ENTITY smart.limit  "`"" >
+<!ENTITY smart.match  "丬!"9のは" >
+<!ENTITY smart.any  "aR9の" >
+<!ENTITY smart.all  ""べての" >
+<!ENTITY smart.following  "次の㒫㒼㒫 :" >
+<!ENTITY smart.random  "㒩㒳㒬㒠" >
+<!ENTITY smart.album  "㒫㒐㒠" >
+<!ENTITY smart.artist  "㒼 " >
+<!ENTITY smart.genre  "㒣㒳㒫" >
+<!ENTITY smart.title  "㒫" >
+<!ENTITY smart.high_rating  "S㒬㒼" >
+<!ENTITY smart.low_rating  "S}㒬㒼" >
+<!ENTITY smart.most_recent  "SRに xx&:" >
+<!ENTITY smart.least_recent  "S以0に xx&:" >
+<!ENTITY smart.most_often  " x頻度のS&:" >
+<!ENTITY smart.least_often  " x頻度のS}&:" >
+<!ENTITY smart.most_added  "SRに追`x&:" >
+<!ENTITY smart.least_added  "S以0に追`x&:" >
+<!ENTITY smart.minutes  "" >
+<!ENTITY smart.hours  """ >
+<!ENTITY smart.mb  "MB" >
+<!ENTITY smart.gb  "GB" >
+<!ENTITY smart.songs  ":" >
+<!ENTITY smart.contains  "含" >
+<!ENTITY smart.not_contain  "含まな" >
+<!ENTITY smart.is  "で9" >
+<!ENTITY smart.is_not  "ではな" >
+<!ENTITY smart.starts  "で9ま9" >
+<!ENTITY smart.ends  "で9" >
+<!ENTITY smart.selectedby  "Selected by" >
 
-<!ENTITY exists.title             "プレイリストは存在します">
-<!ENTITY exists.exists            "その名前のプレイリストはすでに存在します！">
+<!ENTITY download.window  "㒬㒳㒭㒼0" >
+<!ENTITY download.select  "保"9"㒫㒬選`~ :" >
+<!ENTITY download.always  "常にの"㒫㒬使" >
 
-<!ENTITY media_scan.title          "メディアを検索">
-<!ENTITY media_scan.watch          "新しいメディアのためにこのフォルダーを見る">
+<!ENTITY textbox.songbird_open_url  " x"9㒡!の URL まxは&`: :" >
 
-<!ENTITY new_playlist.title       "新しいプレイリストを作成">
-<!ENTITY new_playlist.name        "新しいプレイリストの名前を入力してください">
+<!ENTITY open_url.title  "URL 9く" >
+<!ENTITY subscribe.title  "購読" >
+<!ENTITY subscribe.minutes  "" >
+<!ENTITY subscribe.hours  """ >
+<!ENTITY subscribe.days  "" >
+<!ENTITY subscribe.autocheck  "!9":a" >
+<!ENTITY subscribe.destinationfolder  "保"9"㒫㒬選`~ :" >
 
-<!ENTITY addtoplaylist.title      "プレイリストに追加">
-<!ENTITY addtoplaylist.create      "新しいプレイリストを作成">
+<!ENTITY exists.title  "㒬㒪の!!" >
+<!ENTITY exists.exists  "その名0の㒬㒪はにSてま"}" >
 
-<!ENTITY watchfolder.title        "フォルダを見る">
-<!ENTITY watchfolder.folderlist   "新しいメディアのためにこれらのフォルダを見る:">
+<!ENTITY media_scan.title  "㒡!のS索" >
+<!ENTITY media_scan.watch  "の"㒫㒬の㒡!㒒㒁" >
 
-<!ENTITY locale.language          "言語" >
+<!ENTITY new_playlist.title  "規㒬㒪のSƐ" >
+<!ENTITY new_playlist.name  "規㒬㒪の名0&`:" >
+
+<!ENTITY addtoplaylist.title  "㒬㒪に追`" >
+<!ENTITY addtoplaylist.create  "規㒬㒪のSƐ" >
+
+<!ENTITY watchfolder.title  "㒒㒁"㒫㒬" >
+<!ENTITY watchfolder.folderlist  "R0の"㒫㒬の㒡!㒒㒁" >
+
+<!ENTITY locale.language  "訬~" >
+<!ENTITY menu.feathers  "Feathers" >
+<!ENTITY about.version  "㒐㒼㒧㒳" >
+
+<!ENTITY setup.custominstall  "㒠㒳㒼㒫" >
+<!ENTITY setup.title  "Songbird 㒒㒒㒧㒳" >
+<!ENTITY setupprogress.pleasewait  "`&ちくだ"..." >
+
+<!ENTITY menu.file.accesskey  "F" >
+<!ENTITY menu.file.new.accesskey  "N" >
+<!ENTITY menu.file.smart.accesskey  "S" >
+<!ENTITY menu.file.remote.accesskey  "R" >
+<!ENTITY menu.file.open.accesskey  "O" >
+<!ENTITY menu.file.url.accesskey  "U" >
+<!ENTITY menu.file.playlist.accesskey  "I" >
+<!ENTITY menu.file.scan.accesskey  "M" >
+<!ENTITY menu.file.dlfolder.accesskey  "D" >
+<!ENTITY menu.file.watch.accesskey  "W" >
+<!ENTITY menu.file.mini.accesskey  "M" >
+<!ENTITY locale.language.accesskey  "L" >
+<!ENTITY menu.feathers.accesskey  "F" >
+<!ENTITY menu.preferences.accesskey  "P" >
+<!ENTITY menu.extensions.accesskey  "E" >
+<!ENTITY menu.file.exit.accesskey  "X" >
+
+<!ENTITY menu.edit.accesskey  "E" >
+<!ENTITY menu.edit.undo.accesskey  "U" >
+<!ENTITY menu.edit.cut.accesskey  "T" >
+<!ENTITY menu.edit.copy.accesskey  "C" >
+<!ENTITY menu.edit.paste.accesskey  "P" >
+<!ENTITY menu.edit.clear.accesskey  "L" >
+<!ENTITY menu.edit.selall.accesskey  "A" >
+<!ENTITY menu.edit.selnone.accesskey  "N" >
+
+<!ENTITY menu.controls.accesskey  "C" >
+<!ENTITY menu.control.play.accesskey  "P" >
+<!ENTITY menu.control.next.accesskey  "N" >
+<!ENTITY menu.control.prev.accesskey  "R" >
+<!ENTITY menu.control.shuf.accesskey  "S" >
+<!ENTITY menu.control.repa.accesskey  "A" >
+<!ENTITY menu.control.rep1.accesskey  "O" >
+<!ENTITY menu.control.repx.accesskey  "E" >
+
+<!ENTITY menu.services.accesskey  "S" >
+
+<!ENTITY menu.devices.accesskey  "D" >
+
+<!ENTITY menu.help.accesskey  "H" >
+<!ENTITY menu.help.help.accesskey  "H" >
+<!ENTITY menu.help.about.accesskey  "A" >
 
 
-
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
-
-
-
-
-<!ENTITY menu.feathers "Feathers" >
+<!ENTITY bookmarks.edit.title  "㒒~㒼の編: " >
+<!ENTITY bookmarks.edit.url  "URL:" >
+<!ENTITY bookmarks.edit.label  "名0 :" >
+<!ENTITY bookmarks.edit.icon  "㒳 :" >
 
 
+<!ENTITY trackeditor.title  ":&報の編: " >
+<!ENTITY trackeditor.trackdata  ":の&報" >
+<!ENTITY trackeditor.exttrackdata  "9張&報" >
+<!ENTITY trackeditor.tags  "" >
+<!ENTITY trackeditor.addtag.title  "の追`" >
+<!ENTITY trackeditor.addtag.tag  " :" >
 
+<!ENTITY jumptofile.title  "㒣㒳&" >
+<!ENTITY jumptofile.playlist  "㒬㒪 :" >
+<!ENTITY jumptofile.search  "S索 :" >
 
-<!ENTITY about.version "Version" >
+<!ENTITY metrics.optout  "Songbird RƩ`況R名で鬁信"9の許可 (}奨)" >
 
+<!ENTITY hotkeys.useglobalhotkeys  "Global :㒒㒼使" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey  "U" >
+<!ENTITY hotkeys.action  "㒧㒳" >
+<!ENTITY hotkeys.hotkey  ":㒒㒼" >
+<!ENTITY hotkeys.add  "追`" >
+<!ENTITY hotkeys.set  "設a" >
+<!ENTITY hotkeys.remove  "0`"" >
+<!ENTITY hotkeys.prefpane  ":㒒㒼" >
 
+<!ENTITY metadata.uuid  "㒡! UUID" >
+<!ENTITY metadata.url  "場0" >
+<!ENTITY metadata.artist  "㒼 " >
+<!ENTITY metadata.title  "㒫" >
+<!ENTITY metadata.album  "㒫㒐㒠" >
+<!ENTITY metadata.genre  "㒣㒳㒫" >
+<!ENTITY metadata.length  """ >
 
+<!ENTITY restartbox.restartnow  "で 起9"" >
+<!ENTITY restartbox.restartonplaybackend  " x Rに 起9"" >
+<!ENTITY restartbox.restartlater  "Rで 起9"" >
 
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY setupprogress.installingextensions  "9張x蒽の㒳㒼㒫中" >
 
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY menu.updateCmd.label  ":㒁㒒中..." >
+<!ENTITY menu.updateCmd.accessKey  "o" >
+<!ENTITY firstrun.connectionsettings  "}a設a" >
 
 
 
