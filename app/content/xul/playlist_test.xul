@@ -139,29 +139,47 @@ try
   
     getCommandEnabled: function( index )
     {
-      var retval = false;
-      if ( this.m_Playlist )
+      var playlist = this.m_Playlist;
+      
+      // Bail out early if we don't have our playlist somehow
+      if ( ! playlist )
+        return false;
+
+      var command = this.m_Ids[index];    
+
+      switch ( command )
       {
-        if ((this.m_Playlist.table != "library") && 
-            (this.m_Playlist.tree.view.rowCount > 0 && 
-             (this.m_Ids[index] == "library_cmd_addtoplaylist" || this.m_Ids[index] == "library_cmd_addtolibrary")
-            )
-           ) retval = true;
-        else 
+        case "library_cmd_addtoplaylist":
         {
-          switch ( this.m_Ids[index] )
-          {
-            case "library_cmd_device":
-            case "library_cmd_burntocd":
-              retval = false;
-            break;
-            default:
-              retval = this.m_Playlist.tree.view.selection.getRangeCount() > 0;
-            break;
-          }
+          // Always make sure the "Add To Playlist" command is enabled,
+          // regardless of whether there is a selection
+          if ( playlist.table != "library" &&
+               playlist.tree.view.rowCount )
+            return true;
         }
+        break;
+        
+        case "library_cmd_device":
+        case "library_cmd_burntocd":
+        {
+          // These commands are not fully implemented yet
+          return false;
+        }
+        break;
+
+        case "library_cmd_remove":
+        {
+          // Special case for the Smart Playlist - "Remove" makes no sense and
+          // should be disabled. If this isn't a Smart Playlist then default
+          // logic is appropriate.
+          if ( playlist.base_type == "smart" )
+            return false;
+        }
+        break;
       }
-      return retval;
+
+      // By default return true if there is at least one item selected
+      return playlist.tree.view.selection.getRangeCount() > 0;
     },
   
     onCommand: function( event )
