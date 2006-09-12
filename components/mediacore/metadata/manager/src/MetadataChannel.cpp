@@ -147,6 +147,9 @@ NS_IMETHODIMP sbMetadataChannel::GetSize(PRUint64 *_retval)
     return NS_ERROR_NULL_POINTER;
 
   PRInt32 ret = 0;
+  
+  NS_ASSERTION(m_Channel, "sbMetadataChannel::GetSize called without m_Channel set!");
+  
   if(m_Channel)
     m_Channel->GetContentLength( &ret ); 
 
