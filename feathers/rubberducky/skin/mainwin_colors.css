@@ -728,51 +728,6 @@ THE STATUS PANE
 
 /** 
 ************************************************************************************************************************************************
-SEARCH WIDGET
-************************************************************************************************************************************************
-*/
-
-#search_temp
-{
-  background-color: transparent !important;
-}
-
-#search_service_button
-{
-  background-color: transparent !important;
-}
-
-
-#search_service_list
-{
-  background-color: transparent !important;
-}
-
-
-#search_widget
-{ 
-  background-color: #000 !important;
-  border: 1px solid #4a4e48 !important;
-} 
-
-#search_widget input
-{
-  color: #CCC !important;
-}
-
-#search_widget input:focus
-{
-  background-color: #99A195 !important;
-  color: #FFF !important;
-}
-
-.button-menu-dropmarker
-{
-  background-color: transparent !important;
-}
-
-/** 
-************************************************************************************************************************************************
 TOOLTIPS
 ************************************************************************************************************************************************
 */
@@ -1052,9 +1007,18 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 /* the box with the url image and the url textbox */
 #browser_url_box
 {
-  border: 1px solid #4A4E48 !important;
-  background-color: transparent !important;
-  color: #CCC !important;
+  border: 2px solid !important;
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #000 !important; 
+  color: #FFF !important;
+}
+
+#browser_url_box:focus
+{
+  background-color: #99A195 !important;
 }
 
 #browser_url_image
@@ -1065,7 +1029,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url
 {
   background-color: transparent !important;
-  color: #CCC !important;  
+  color: #FFF !important;  
 }
 
 #browser_url input:focus
@@ -1087,6 +1051,62 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 }
 
 /* END WEB BAR */
+/** 
+************************************************************************************************************************************************
+SEARCH WIDGET
+************************************************************************************************************************************************
+*/
+
+#search_temp
+{
+  background-color: transparent !important;
+}
+
+#search_service_button
+{
+  background-color: transparent !important;
+  -moz-border-top-colors: transparent !important;
+  -moz-border-right-colors: transparent !important;
+  -moz-border-bottom-colors: transparent !important;
+  -moz-border-left-colors: transparent !important;
+}
+
+
+#search_service_list
+{
+  background-color: transparent !important;
+}
+
+
+#search_widget
+{
+  border: 2px solid !important;
+  -moz-border-top-colors: #535751 #333 !important;
+  -moz-border-left-colors: #535751 #333 !important;
+  -moz-border-right-colors: #99A195 #333 !important;
+  -moz-border-bottom-colors: #99A195 #333 !important;
+  background-color: #000 !important; 
+  color: #FFF !important;
+}
+
+#search_widget input
+{
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+
+#search_widget input:focus
+{
+  background-color: #99A195 !important;
+  color: #FFF !important;
+}
+
+.button-menu-dropmarker
+{
+  background-color: transparent !important;
+}
+
 
 /** 
 ************************************************************************************************************************************************
