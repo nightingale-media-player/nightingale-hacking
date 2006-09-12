@@ -1349,86 +1349,6 @@ RESIZERS
 
 /** 
 ************************************************************************************************************************************************
-SEARCH WIDGET
-************************************************************************************************************************************************
-*/
-
-#search_widget
-{
-  width: auto !important;
-  min-width: 0px !important;
-  height: 21px !important;
-}
-
-#search_widget .menulist-editable-box
-{
-  margin: 3px 0px 0px 0px !important;
-  border: none !important;
-}
-
-#search_widget .menulist-editable-input,
-#search_widget .menulist-editable-input:focus
-{
-  border: none !important;
-}
-
-.button-icon
-{
-  margin: 0px 0px 0px 5px !important; 
-}
-
-#search_service_list
-{
-  width: 100px !important;
-  min-width: 50px !important;
-  margin: 3px 0px 3px 5px !important; 
-}
-
-
-#search_widget
-{ 
-  border: 1px solid !important; 
-  -moz-border-radius: 5px !important;
-  margin: 2px 2px 2px 2px !important; 
-} 
-
-#search_widget input
-{
-  padding-top: 2px !important;
-}
-
-#search_widget input:focus
-{
-  padding-top: 2px !important;
-}
-
-.button-menu-dropmarker
-{
-  background-color: transparent !important;
-  background-repeat: no-repeat !important;
-  height: 9px !important;
-  width: 9px !important;
-}
-/* END SEARCH WIDGET **/
-
-/** 
-************************************************************************************************************************************************
-SPINNER for the browser to show network activity.
-************************************************************************************************************************************************
-*/
-.spinner_spin
-{
-  background-repeat: no-repeat !important;
-  margin: 10px 0px 10px 0px !important;
-}
-.spinner_stopped
-{
-  background-repeat: no-repeat !important;
-  margin: 10px 0px 10px 0px !important;
-}
-
-/** 
-************************************************************************************************************************************************
 CONTROL BOX
 Contains the Main Playback Controls and the Dashboard.
 ************************************************************************************************************************************************
@@ -1709,9 +1629,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_url_box
 {
   margin: 2px 0px 2px 3px !important;
-  padding: 5px 3px 3px 3px !important;
-  -moz-border-radius: 5px !important;
-  min-height: 32px !important;
+  padding: 4px 3px 2px 3px !important;
+  -moz-border-radius: 3px !important;
 }
 
 #browser_url_image
@@ -1848,6 +1767,83 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border: 1px solid !important;
 }
 /* END WEB BAR */
+
+
+/** 
+************************************************************************************************************************************************
+SEARCH WIDGET
+************************************************************************************************************************************************
+*/
+
+#search_widget
+{
+  width: auto !important;
+  min-width: 0px !important;
+  height: 21px !important;
+}
+
+#search_widget .menulist-editable-box
+{
+  margin: 3px 0px 0px 0px !important;
+  border: none !important;
+}
+
+#search_widget .menulist-editable-input,
+#search_widget .menulist-editable-input:focus
+{
+  border: none !important;
+}
+
+.button-icon
+{
+  margin: 0px 0px 0px 5px !important; 
+}
+
+#search_service_list
+{
+  width: 100px !important;
+  min-width: 50px !important;
+  margin: 3px 0px 3px 5px !important; 
+}
+
+
+#search_widget
+{ 
+  border: 1px solid !important; 
+  -moz-border-radius: 3px !important;
+  margin: 2px 2px 2px 2px !important; 
+} 
+
+#search_widget input
+{
+  padding-top: 2px !important;
+}
+
+.button-menu-dropmarker
+{
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
+}
+/* END SEARCH WIDGET **/
+
+/** 
+************************************************************************************************************************************************
+SPINNER for the browser to show network activity.
+************************************************************************************************************************************************
+*/
+.spinner_spin
+{
+  background-repeat: no-repeat !important;
+  margin: 10px 0px 10px 0px !important;
+}
+.spinner_stopped
+{
+  background-repeat: no-repeat !important;
+  margin: 10px 0px 10px 0px !important;
+}
+
 
 /** 
 ************************************************************************************************************************************************
