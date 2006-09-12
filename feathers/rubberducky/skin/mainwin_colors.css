@@ -621,10 +621,13 @@ menuitem:hover
 {
   color: #505154 !important;
 }
-menuitem[disabled="true"]
+menuitem[disabled="true"],
+menuitem[disabled="true"]:hover
 {
   color: #99A195 !important;
 }
+
+
 
 
 
