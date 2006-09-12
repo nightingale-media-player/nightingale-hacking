@@ -42,8 +42,7 @@
           </xul:vbox>
         </xul:vbox>
         <xul:vbox flex="1" class="sb_faceplate" style="margin: 0px;padding: 0px;">
-          <!-- Playlist Filters
-        -->
+          <!-- Playlist Filters -->
           <xul:hbox sbid="filter_parent" style="min-height: 60px;" flex="1" hidden="false">
           </xul:hbox>
 
@@ -58,7 +57,7 @@
             hidden="true"
             metricscategory="player" 
             metricsid="collapse.library" 
-        >
+          >
             <xul:grippy/>
           </xul:smartsplitter>
 
@@ -79,7 +78,7 @@
             onclick="onPlaylistClick( event );"
             onscroll="onPlaylistScroll( event );"
             ondraggesture="onDrag(event);"
-        >
+          >
           </xul:tree>
 
           <!-- Playlist Toolbar -->
@@ -97,7 +96,7 @@
               onpopupshown="onPopupShown( event );"
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
-          >
+            >
               <xul:menuseparator sbid="playlist_context_before"/>
               <xul:menu id="playlist.context.search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist.popup.search">
@@ -138,7 +137,7 @@
                   <xul:menuseparator/>
                   <xul:menuitem id="lyrics.popup.google" 
                     label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
-                />
+                  />
                 </xul:menupopup>
               </xul:menu>
               <children/>
@@ -3035,7 +3034,7 @@
       </body>
     </method>
 
-</implementation> 
+    </implementation> 
  
   </binding>
 
