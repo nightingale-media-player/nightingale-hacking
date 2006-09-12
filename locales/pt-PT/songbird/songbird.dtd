@@ -219,7 +219,6 @@
 <!ENTITY trackeditor.addtag.tag       "Tag:" >
 
 <!ENTITY jumptofile.title             "Ir para" >
-<!ENTITY jumptofile.playlist          "Lista:" >
 <!ENTITY jumptofile.search            "Pesquisar:" >
 
 <!ENTITY metrics.optout               "Permitir o envio de estatísticas de utilização anónimas (recomendado)" >

@@ -1,4 +1,4 @@
-﻿
+
 <!ENTITY window.main.title  "Vista Prèvia de l'Usuari Songbird" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
@@ -292,7 +292,6 @@
 
 
 
-<!ENTITY jumptofile.playlist "Playlist:" >
 <!ENTITY jumptofile.search "Search:" >
 
 

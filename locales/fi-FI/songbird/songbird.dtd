@@ -219,7 +219,6 @@
 <!ENTITY trackeditor.addtag.tag       "Tagi:" >
 
 <!ENTITY jumptofile.title             "Siirry" >
-<!ENTITY jumptofile.playlist          "Soittolista:" >
 <!ENTITY jumptofile.search            "Etsi:" >
 
 <!ENTITY metrics.optout               "Anna Songbirdin lähettää tietoja käyttötavoistasi (suositus)" >

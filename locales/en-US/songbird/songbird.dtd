@@ -221,7 +221,6 @@
 <!ENTITY trackeditor.addtag.tag       "Tag:" >
 
 <!ENTITY jumptofile.title             "Jump to" >
-<!ENTITY jumptofile.playlist          "Playlist:" >
 <!ENTITY jumptofile.search            "Search:" >
 
 <!ENTITY metrics.optout               "Allow Songbird to send anonymous usage metrics (recommended)" >

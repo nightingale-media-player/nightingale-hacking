@@ -132,6 +132,10 @@ try
   var service_tree;
   var search_widget;
   var source_playlist;
+  
+  var string_searchedby = "Searched by";
+  var string_filteredby = "Filtered by";
+  var string_library = "Library";
 
   var playingRef_remote;
   var showWebPlaylist_remote;
@@ -148,6 +152,14 @@ try
     catch (e) { }
 
     onWindowLoadSizeAndPosition();
+
+    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+    try {
+      string_searchedby = songbirdStrings.GetStringFromName("jumptofile.searchedby");
+      string_filteredby = songbirdStrings.GetStringFromName("jumptofile.filteredby");
+      string_library = songbirdStrings.GetStringFromName("jumptofile.library");
+    } catch (err) { /* ignore error, we have default strings */ }
 
     playingRef_remote = SB_NewDataRemote( "playing.ref", null );
     showWebPlaylist_remote = SB_NewDataRemote( "browser.playlist.show", null );
@@ -472,10 +484,10 @@ try
       var label = ""
       if (!(no_search && no_filter)) {
         var cat = "";
-        if (!no_search) cat = 'Searched by "' + search + '"';
+        if (!no_search) cat = string_searchedby + ' "' + search + '"';
         if (_hasFilters(filters)) { // test the actual content of each filter entry
           if (cat != "") cat += ", ";
-          cat += 'Filtered by ';
+          cat += string_filteredby + ' ';
           for (var i=0;i<filtersColumn.length;i++) {
             if (filters[i] != "") {
               if (i > 0) cat += ", ";
@@ -484,7 +496,7 @@ try
           }
         }
         if (cat != "") {
-          if (source_ref == "NC:songbird_library") label = "Library " + cat;
+          if (source_ref == "NC:songbird_library") label = string_library + " " + cat;
           else {
             var pllabel = getPlaylistLabel(source_guid, source_table);
             if (pllabel) label += pllabel + ' ' + cat;

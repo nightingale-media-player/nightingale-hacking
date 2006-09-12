@@ -219,7 +219,6 @@
 <!ENTITY trackeditor.addtag.tag       "Balise :" >
 
 <!ENTITY jumptofile.title             "Aller à" >
-<!ENTITY jumptofile.playlist          "Sélection :" >
 <!ENTITY jumptofile.search            "Rechercher :" >
 
 <!ENTITY metrics.optout               "Permet à Songbird d'envoyer des statistiques d'utilisation anonymes (recommandé)" >

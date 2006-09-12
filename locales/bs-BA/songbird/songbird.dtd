@@ -1,4 +1,4 @@
-﻿
+
 <!ENTITY window.main.title  "Songbird" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
@@ -294,7 +294,6 @@
 
 
 
-<!ENTITY jumptofile.playlist "Playlist:" >
 <!ENTITY jumptofile.search "Search:" >
 
 

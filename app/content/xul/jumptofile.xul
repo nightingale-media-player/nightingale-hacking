@@ -94,8 +94,6 @@
           <spacer height="5"/>
 
           <hbox align="center">
-            <label id="jumpto_playlist_label" class="dialog_label" value="&jumptofile.playlist;" />
-
             <menulist id="playable_list" 
               value="1" 
               label="poo" 

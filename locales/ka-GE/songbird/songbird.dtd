@@ -219,7 +219,6 @@
 <!ENTITY trackeditor.addtag.tag       "ტეგი:" >
 
 <!ENTITY jumptofile.title             "გადასვლა" >
-<!ENTITY jumptofile.playlist          "დაკვრის სია:" >
 <!ENTITY jumptofile.search            "ძებნა:" >
 
 <!ENTITY metrics.optout               "Allow Songbird to send anonymous usage metrics (სასურველია)" >

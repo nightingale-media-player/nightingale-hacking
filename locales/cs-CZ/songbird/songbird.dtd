@@ -1,4 +1,4 @@
-﻿
+
 <!ENTITY window.main.title  "Songbird 0.2" >
 <!ENTITY window.dev.title   "Songbird 0.2 alpha" >
 <!ENTITY songbird           "Songbird" >
@@ -220,7 +220,6 @@
 <!ENTITY trackeditor.addtag.tag       "Štítek:" >
 
 <!ENTITY jumptofile.title             "Přeskočit na" >
-<!ENTITY jumptofile.playlist          "Seznam stop:" >
 <!ENTITY jumptofile.search            "Hledat:" >
 
 <!ENTITY metrics.optout               "Povolit Songbirdu odeslání anonymní uživatelské statistiky (doporučeno)" >

@@ -69,7 +69,7 @@
       <spacer height="8"/> 
       <hbox align="center">
         <label id="trackeditor.label.length" class="dialog_label" value="&metadata.length;" width="96"/>
-        <dbedit_label id="trackeditor.length" readonly="1" column="length" flex="1"/>
+        <dbedit_label id="trackeditor.length" column="length" flex="1"/>
       </hbox>
     </vbox>
     <spacer width="3"/> 
