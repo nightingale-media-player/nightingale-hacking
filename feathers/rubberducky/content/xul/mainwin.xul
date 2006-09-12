@@ -138,15 +138,15 @@
                 <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate" accesskey="&menu.edit.accesskey;">
                   <menupopup id="edit-popup">
-                    <menuitem id="edit.undo" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
+                    <menuitem id="edit.undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="edit.cut" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-                    <menuitem id="edit.copy" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-                    <menuitem id="edit.paste" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
-                    <menuitem id="edit.clear" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
+                    <menuitem id="edit.cut" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+                    <menuitem id="edit.copy" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+                    <menuitem id="edit.paste" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+                    <menuitem id="edit.clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="edit.selall" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
-                    <menuitem id="edit.selnone" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
+                    <menuitem id="edit.selall" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+                    <menuitem id="edit.selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
                   </menupopup>
                 </menu>
                 <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
