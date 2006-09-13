@@ -183,7 +183,7 @@
         this.tree.builder.addListener(this);
 
         // These are all the possible column ids whose cell content we can use as unique ids (for saveSelection/restoreSelection)
-        this._selection_key_array = Array("row_id", "idx", "id", "playlist_uuid", "playlist_id");
+        this._selection_key_array = Array("id", "uuid", "playlist_uuid", "playlist_id", "row_id");
         
         this._lastviewsummary = "";
         this.lastfiltersstate = "open";
@@ -1364,31 +1364,38 @@
                   break;
                 }
               }
-              // save selection array
+              // save selection array, this is potentially slow if many items are selected
               if (column != null) {
                 this._saved_selection = Array();
+                this._saved_selection.all = false;
+                this._saved_selection.ranges = Array();
                 this._saved_nitems = this.tree.view.rowCount;
+                this._saved_order = this.source.getOrder(this.ref); // save the old order, if it is empty and the new is empty as well then we will be able to reselect much faster
                 var rangeCount = this.tree.view.selection.getRangeCount();
                 for (var i=0; i < rangeCount; i++) {
                   var start = {};
                   var end = {};
                   this.tree.view.selection.getRangeAt( i, start, end );
-                  for( var c = start.value; c <= end.value; c++ )
-                  {
-                    if (c >= this.tree.view.rowCount) 
+                  this._saved_selection.ranges.push([start.value, end.value]);
+                  if (start.value == 0 && end.value == this.tree.view.rowCount-1) this._saved_selection.all = true;
+                  else {
+                    for( var c = start.value; c <= end.value; c++ )
                     {
-                      return; //alert( "playlist.xml - saveSelection - selection item c (" + c + ") is not in range! (rowCount = " + this.tree.view.rowCount + ")");
+                      if (c >= this.tree.view.rowCount) 
+                      {
+                        return; //alert( "playlist.xml - saveSelection - selection item c (" + c + ") is not in range! (rowCount = " + this.tree.view.rowCount + ")");
+                      }
+                      try
+                      {
+                        var value = this.tree.view.getCellText( c, column );
+                      }
+                      catch ( e )
+                      {
+                        alert( "Error? " + column + " - " + c + "\r\n" + e );
+                        return;  // wtf?!
+                      }
+                      this._saved_selection.push([ c, value ]);
                     }
-                    try
-                    {
-                      var index = this.tree.view.getCellText( c, column );
-                    }
-                    catch ( e )
-                    {
-                      alert( "Error? " + column + " - " + c + "\r\n" + e );
-                      return;  // wtf?!
-                    }
-                    this._saved_selection.push(index);
                   }
                 }
               }
@@ -1408,29 +1415,94 @@
           try
           {
             this.restoring_selection = true;
+            
+            //dump("start restore\n");
             if (this._saved_selection != null && this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
-              if (1) { //this.tree.view.rowCount == this._saved_nitems) {
-                // use the key we picked in saveSelection
-                var column = this.tree.columns.getNamedColumn(this._selection_key); 
-                if (column != null) {
-                  // restore selection from array
+              // use the key we picked in saveSelection
+              var column = this.tree.columns.getNamedColumn(this._selection_key); 
+              if (column != null) {
+                
+                // restore selection from array
+                
+                // first try to restore from selection ranges. this can only be done for unsorted 
+                // playlists, because sorted playlists may move the items in a rebuild.
+                // an exception to this is when *all* items are selected, then it doesn't matter if 
+                // the items moved since all should be reselected (but this is only true if the number 
+                // of items did not change)
+
+                if ((this._saved_order == "" && this.source.getOrder(this.ref) == "") || 
+                    (this._saved_selection.all && this._saved_nitems == this.tree.view.rowCount)) {
+                
+                  while (this._saved_selection.ranges.length > 0) {
+                    var item = this._saved_selection.ranges.pop();
+                    var start = item[0];
+                    var end = item[1];
+                    this.tree.view.selection.rangedSelect(start, end, true);
+                  }
+                
+                } else {
+                
+                  // next try to restore based on the item's position in the list. 
+                  // for each item, check that the unique value is still the one it was
+                  
+                  var by_position_failed = false;
+                  
                   while (this._saved_selection.length > 0) {
-                    var cell = this._saved_selection.pop();
-                    var row = this.findCell(column, cell);
-                    if (row != -1) 
-                    {
+                    var item = this._saved_selection.pop();
+                    var row = item[0];
+                    var value = item[1];
+                    
+                    var cell = this.tree.view.getCellText( row, column );
+                    if (value == cell) {
+                      // the item at that position is still the right item, select it
                       this.tree.view.selection.rangedSelect(row, row, true);
-                    } 
-                    else
-                    {
-                      this.tree.view.selection.clearSelection();
-                      this.restoring_selection = false;
-                      return;
+                    } else {
+                      // an item has changed position, put it back in the list and stop trusting item positions
+                      this._saved_selection.push(item);
+                      by_position_failed = true;
+                      break;
+                    }
+                  }
+                  
+                  if (by_position_failed) {
+                    
+                    // last, if neither of the previous method succeeded (which implies some items moved around), 
+                    // enumerate the new playlist items until each previously selected one has been reselected.
+                    // this is potentially slow
+                    
+                    var position = 0;
+                    var nitems = this.tree.view.rowCount;
+
+                    while (position < nitems && this._saved_selection.length > 0) { // if theres nothing left in the array, or we reached the end of the playlist, we're done
+                      // get the cell text
+                      var cell = this.tree.view.getCellText( position, column );
+                      
+                      // try to find it in the array
+                      var nsel = this._saved_selection.length;
+                      for (var i=0;i<nsel;i++) {
+                        var value = this._saved_selection[i][1];
+                        if (value == cell) { // found ?
+                          
+                          // reselect this item in the playlist
+                          this.tree.view.selection.rangedSelect(position, position, true);
+                          
+                          // remove the entry from the saved selection list
+                          this._saved_selection.splice(i, 1);
+                          
+                          // stop looking for this selection item
+                          break;
+                        }
+                      }
+                      
+                      position++; // next playlist item
                     }
                   }
                 }
-              } 
-            } 
+              }
+            }
+
+            //dump("end restore\n");
+
             this.restoring_selection = false;
           }
           catch( err )
@@ -3077,6 +3149,14 @@
           var e = document.createEvent("Events");
           e.initEvent("playlist-filterchange", false, true);
           this.dispatchEvent(e);
+        ]]>
+      </body>
+    </method>
+
+    <method name="deselectAll">
+      <body>
+        <![CDATA[
+          this.tree.view.selection.clearSelection();
         ]]>
       </body>
     </method>
