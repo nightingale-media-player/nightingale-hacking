@@ -41,6 +41,7 @@ function CoreQT()
   this._object = null;
   this._url = "";
   this._id = "";
+  this._isremote = false;
   this._buffering = false;
   this._playing = false;
   this._paused  = false;
@@ -48,6 +49,7 @@ function CoreQT()
   this._waitRetryCount = 0;
   this._lastVolume = 0;
   this._muted = false;
+  this._starttime = 0;
   
   this.NOT_LOCAL_FILE = -1;
   this.LOCAL_FILE_NOT_AVAILABLE = 0;
@@ -73,6 +75,8 @@ CoreQT.prototype.cleanupOnError = function ()
     this._waitRetryCount = 0;
     
     //XXXAus: Don't ask me why I have to do this twice, I DO NOT KNOW! =P
+    this._sourcewindow.location.reload(false);
+    SetQTObject();
     this._sourcewindow.location.reload(false);
     SetQTObject();
     
@@ -101,18 +105,17 @@ CoreQT.prototype.waitForPlayer = function ()
     break;
     
     case "Playable":
-      this.LOG("Playable.", "CoreQT");
       this.play();
       this._buffering = false;
     break;    
     
     case "Complete":
       this.LOG("Complete.", "CoreQT");
+      this.play();
       this._buffering = false;
       clearInterval(this._waitForPlayInterval);
       this._waitForPlayInterval = 0;
       this._waitRetryCount = 0;
-      this.play();
     break;
     
     default:
@@ -194,6 +197,13 @@ CoreQT.prototype.playURL = function ( aURL )
   var isAvailable = this.verifyFileAvailability(aURL);
   if(isAvailable == this.LOCAL_FILE_NOT_AVAILABLE)
     throw new Error("Local file not available");
+  
+  this._isremote = false;
+  if(isAvailable == this.NOT_LOCAL_FILE)
+  {
+    this._starttime = new Date();
+    this._isremote = true;
+  }
 
   this._url = this.sanitizeURL(aURL);
 
@@ -266,10 +276,14 @@ CoreQT.prototype.stop = function ()
 CoreQT.prototype.getPlaying = function ()
 {
   this._verifyObject();
-  
+
+  if(this._buffering)
+    return true;
+ 
   //XXXAus: I remember I did this for a good reason, but I don't remember why exactly.
   //Just don't change it for now =)
-  if( this.getLength() == this.getPosition() )
+  if( !this._isremote &&
+      this.getLength() == this.getPosition() )
   {
     this.stop();
   }
@@ -297,10 +311,14 @@ CoreQT.prototype.getLength = function ()
     var duration = this._object.GetDuration();
   
     playLength = (duration / timeScale * 1000);
+    
+    if(playLength > 3579139410)
+      playLength = 0;
+
   } catch(e) {
     this.LOG(e, "CoreQT");
   }
-  
+ 
   return playLength;
 };
   
@@ -311,11 +329,19 @@ CoreQT.prototype.getPosition = function ()
   
   if(this._buffering)
     return 0;
-  
+
   try {
     var currentPos = this._object.GetTime();
+    this.LOG(currentPos, "CoreQT: Current Pos: ");
     var timeScale = this._object.GetTimeScale();
+    this.LOG(timeScale, "CoreQT: Current Scale: ");
     curPos = (currentPos / timeScale * 1000);
+    this.LOG(curPos, "CoreQT: Current pos in ms: ");
+    
+    if(!currentPos && this._isremote) {
+      var now = new Date();
+      return now.getTime() - this._starttime.getTime();
+    }
   } catch(e) {
     this.LOG(e, "CoreQT");
   }
@@ -338,14 +364,27 @@ CoreQT.prototype.setPosition = function ( pos )
 CoreQT.prototype.getVolume = function ()
 {
   this._verifyObject();
-  return this._object.GetVolume();
+  var curVol = 0;
+  
+  try {
+    curVol = this._object.GetVolume();
+  } catch(e) {
+    this.LOG(e, "CoreQT");
+  }
+  
+  return curVol;
 };
   
 CoreQT.prototype.setVolume = function ( vol )
 {
   this._verifyObject();
   this._lastVolume = vol;
-  this._object.SetVolume(vol);
+  
+  try {
+    this._object.SetVolume(vol);
+  } catch(e) {
+    this.LOG(e, "CoreQT");
+  }
 };
   
 CoreQT.prototype.getMute = function ()
