@@ -1019,26 +1019,30 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
     rv = pPlaylistDest->AddColumn(NS_LITERAL_STRING("status"),
                                   NS_LITERAL_STRING("text"));
 
-    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"),
-                                      NS_LITERAL_STRING("Source URL"),
-                                      PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70,
-                                      NS_LITERAL_STRING("text"), PR_TRUE,
-                                      PR_FALSE);
-    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"),
-                                      NS_LITERAL_STRING("Destination URL"),
-                                      PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70,
-                                      NS_LITERAL_STRING("text"), PR_TRUE,
-                                      PR_FALSE);
-    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"),
-                                      NS_LITERAL_STRING("Download Progress"),
-                                      PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20,
-                                      NS_LITERAL_STRING("progress"), PR_TRUE,
-                                      PR_FALSE);
-    rv = pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"),
-                                      NS_LITERAL_STRING("Status"), PR_TRUE,
-                                      PR_TRUE, PR_FALSE, -7000, 20,
-                                      NS_LITERAL_STRING("text"), PR_TRUE,
-                                      PR_FALSE);
+    rv =
+      pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("source"),
+                                   NS_LITERAL_STRING("&playlist.download.sourceURL"),
+                                   PR_TRUE, PR_TRUE, PR_FALSE, -10000, 70,
+                                   NS_LITERAL_STRING("text"), PR_TRUE,
+                                   PR_FALSE);
+    rv =
+      pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("destination"),
+                                   NS_LITERAL_STRING("&playlist.download.destURL"),
+                                   PR_TRUE, PR_TRUE, PR_FALSE, -9000, 70,
+                                   NS_LITERAL_STRING("text"), PR_TRUE,
+                                   PR_FALSE);
+    rv =
+      pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("progress"),
+                                   NS_LITERAL_STRING("&playlist.download.progress"),
+                                   PR_TRUE, PR_TRUE, PR_FALSE, -8000, 20,
+                                   NS_LITERAL_STRING("progress"), PR_TRUE,
+                                   PR_FALSE);
+    rv =
+      pPlaylistDest->SetColumnInfo(NS_LITERAL_STRING("status"),
+                                   NS_LITERAL_STRING("&playlist.download.status"),
+                                   PR_TRUE, PR_TRUE, PR_FALSE, -7000, 20,
+                                   NS_LITERAL_STRING("text"), PR_TRUE,
+                                   PR_FALSE);
   }
 
   PRInt32 dummy;
