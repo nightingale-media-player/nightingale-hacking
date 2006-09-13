@@ -97,7 +97,7 @@
               onpopuphidden="onPopupHidden( event );"
               oncommand="onPlaylistContextMenu( event );"
             >
-              <xul:menuseparator sbid="playlist_context_before"/>
+              <xul:menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <xul:menu id="playlist.context.search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist.popup.search">
                   <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
@@ -1891,81 +1891,128 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
-          try
-          {
-            //dump("onPlaylistContextClick\r\n");
-            if ( this.tree.currentIndex > -1 )
-            {
-              this.hidePlaylistEdit();
+          try {
+            const COLUMN_TITLE = "title";
+            const CONTEXT_IDS = ["playlist_context_before",
+                                 "playlist.context.search",
+                                 "playlist.context.lyrics"];
 
-              // Find the url column. 
-              var title_column = this.tree.columns.getNamedColumn("title");
-              if (!title_column) return;
-              // Get the text of the hidden tree cell, this contains the url.
-              var play_title = this.tree.view.getCellText( this.tree.currentIndex, title_column );
-              
-              var cell_text = "";
+            // Small helper to loop through a list of the ids for the context
+            // menu items and show or hide each element.
+            //
+            // aShow - a boolean specifying if items are to be shown or
+            //           hidden. Defaults to true.
+            function showContextItems(aShow) {
+              if (aShow === undefined)
+                aShow = true;
 
-              // First, get the row and column clicked.
-              var obj = {}, row = {}, col = {}; 
-              this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
-              // If the "obj" has a value, it is a cell?
-              if ( obj.value )
-              {
-                cell_text = this.tree.view.getCellText( row.value, col.value );
-                this.edit_row = row.value;
-                this.edit_col = col.value;
-              }
-              else
-              {
-                return;
-              }
-              
-              // And if it's good, launch the popup for it.
-              if ( cell_text.length > 0 )
-              {
-                this.context_term = cell_text;
-              }
-              else
-              {
-                this.context_term = play_title;
-              }
-              
-              SBDataSetStringValue( "playlist.context.term", this.context_term );
+              var items = CONTEXT_IDS;
+              var count = items.length;
+              for (var index = 0; index < count; index++) {
+                var id = items[index];
+                var item = document.getElementById(id);
+                if (!item)
+                  continue;
 
-              var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-              var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-              var searchheader = "Search";
-              var lyricsheader = "Lyrics";
-              try {
-                searchheader = songbirdStrings.GetStringFromName("playlist.context.searchheader");
-                lyricsheader = songbirdStrings.GetStringFromName("playlist.context.lyricsheader");
-              } catch (err) { /* ignore error, we have default strings */ }
-              
-              var search_term = document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
-              search_term.label = searchheader + ": " + this.context_term;
-              var lyrics_term = document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
-              lyrics_term.label = lyricsheader + ": " + this.context_term;
-              
-              this.context_x = evt.screenX + 5;
-              this.context_y = evt.screenY;
-              
-              //dump("this.context_x = " + this.context_x + "\r\n");
-              //dump("this.context_y = " + this.context_y + "\r\n");
-              
-              this.context_popup.showPopup( this.tree, this.context_x, this.context_y, "context", null, null, null );
-              
-              //dump("this.context_popup.boxObject.screenX = " + this.context_popup.boxObject.screenX + "\r\n");
-              //dump("this.context_popup.boxObject.screenY = " + this.context_popup.boxObject.screenY + "\r\n");
-              
-              // lone> there seems to be a bug here. sometimes the origin for the popup coords is the top left corner of the parent window
-              // instead of the screen ... it only seems to happen after the user has used the in-place popup edit box and right clicked on it.
-              // it's pretty obscure, i'm not sure if this is a moz or a sb bug ...
+                var isHidden = item.hasAttribute("hidden");
+
+                if (aShow && isHidden) {
+                  item.removeAttribute("hidden");
+                }
+                else if (!aShow && !isHidden) {
+                  item.setAttribute("hidden", "true");
+                }
+              }
             }
+
+            var tree = this.tree;            
+            if (tree.currentIndex < 0)
+              return;
+
+            this.hidePlaylistEdit();
+
+            // First, get the row and column clicked.
+            var childElement = {}, rowObject = {}, columnObject = {};
+            tree.treeBoxObject.getCellAt(evt.clientX, evt.clientY, rowObject,
+                                         columnObject, childElement);
+
+            // Bail if we got a bad result
+            if (rowObject.value == -1)
+              return;
+
+            this.edit_row = rowObject.value;
+            this.edit_col = columnObject.value;
+            
+            var cellText =
+              tree.view.getCellText(rowObject.value, columnObject.value);
+
+            if (!cellText) {
+              // If we couldn't get text from the cell then we'll try to pull it
+              // out another way
+              var titleColumn = tree.columns.getNamedColumn(COLUMN_TITLE);
+              if (titleColumn)
+                cellText = tree.view.getCellText(tree.currentIndex, titleColumn);
+            }
+
+            // Make sure that everyone knows about our context
+            this.context_term = cellText;
+            SBDataSetStringValue("playlist.context.term", cellText);
+
+            if (cellText) {
+              var sbs =
+                Components.classes["@mozilla.org/intl/stringbundle;1"]
+                          .getService(Components.interfaces.nsIStringBundleService);
+              var songbirdStrings =
+                sbs.createBundle("chrome://songbird/locale/songbird.properties");
+
+              var searchHeader, lyricsHeader;
+              try {
+                searchHeader =
+                  songbirdStrings.GetStringFromName("playlist.context.searchheader");
+                lyricsHeader =
+                  songbirdStrings.GetStringFromName("playlist.context.lyricsheader");
+              }
+              catch (err) {
+                searchHeader = "Search";
+                lyricsHeader = "Lyrics";
+              }
+
+              var searchTerm =
+                document.getAnonymousElementByAttribute(this, 'sbid', 'search_popup_term');
+              searchTerm.label = searchHeader + ": " + cellText;
+
+              var lyricsTerm =
+                document.getAnonymousElementByAttribute(this, 'sbid', 'lyrics_popup_term');
+              lyricsTerm.label = lyricsHeader + ": " + cellText;
+
+              // Make sure that the search and lyrics menus are visible
+              showContextItems(true);
+            }
+            else {
+              // We couldn't get any context, so hide the search and lyrics
+              // menu items.
+              showContextItems(false);
+            }
+            
+            this.context_x = evt.screenX + 5;
+            this.context_y = evt.screenY;
+            
+            //dump("this.context_x = " + this.context_x + "\r\n");
+            //dump("this.context_y = " + this.context_y + "\r\n");
+            
+            this.context_popup.showPopup(tree, this.context_x, this.context_y,
+                                         "context", null, null, null);
+            
+            //dump("this.context_popup.boxObject.screenX = " + this.context_popup.boxObject.screenX + "\r\n");
+            //dump("this.context_popup.boxObject.screenY = " + this.context_popup.boxObject.screenY + "\r\n");
+            
+            // lone> there seems to be a bug here. sometimes the origin for the popup coords is the top left corner of the parent window
+            // instead of the screen ... it only seems to happen after the user has used the in-place popup edit box and right clicked on it.
+            // it's pretty obscure, i'm not sure if this is a moz or a sb bug ...
           }
-          catch( err )
+          catch( e )
           {
-            alert( "playlist.xml - onPlaylistContextClick - " + err );
+            dump("playlist.xml - onPlaylistContextClick:\nException = " + e + "\n");
           }
         ]]>
         </body>
