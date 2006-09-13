@@ -71,13 +71,11 @@
             flags="dont-build-content"
             flex="3" 
             onmouseup="saveColumnsProperties();"
-            ondblclick="onPlaylistDblClick( event );"
             onkeypress="onPlaylistKeypress( event );"
             oncontextmenu="onPlaylistContextClick( event );"
             onselect="onPlaylistSelectClick( event );"
             onclick="onPlaylistClick( event );"
             onscroll="onPlaylistScroll( event );"
-            ondraggesture="onDrag(event);"
           >
           </xul:tree>
 
@@ -200,6 +198,20 @@
         this.bindDataRemotes();
         if ( this._constructed ) dump("playlist.xml - constructor - THIS SHOULD NEVER GET CALLED\n"); // ???
         this._constructed = true; // ???
+
+        // Attach event handler closures.
+        var self = this;
+        this._onFilterDblClickClosure = function(event) {
+          self.onFilterDblClick(event);
+        };
+        this._onPlaylistDblClickClosure = function(event) {
+          self.onPlaylistDblClick(event);
+        };
+        this._onDragClosure = function(event) {
+          self.onDrag(event);
+        };
+        this.addEventListener("dblclick", this._onPlaylistDblClickClosure, false);
+        this.addEventListener("draggesture", this._onDragClosure, false);
       }
       catch ( err )
       {
@@ -246,6 +258,18 @@
         this._constructed = false; // ???
         this.m_queryObj = null;
         this.commands = null;
+
+        this.removeEventListener("dblclick", this._onPlaylistDblClickClosure, false);
+        this.removeEventListener("draggesture", this._onDragClosure, false);
+
+        for each(var filter in this.filters) {
+          filter.removeEventListener("dblclick", this._onFilterDblClickClosure, true);
+          filter.removeEventListener("filterlist-filterchange", this.sendFilterChangeEvent, true);
+        }
+        this._onPlaylistDblClickClosure = null;
+        this._onDragClosure - null;
+        this._onFilterDblClickClosure = null;
+
       } catch (err) {
         dump("playlist.xml - destructor: " + err + "\n");
       }
@@ -844,8 +868,8 @@
         filterlist.column = meta_column;
         filterlist.datasources = "rdf:playlist";
         filterlist.playlist = this;
-        
-        filterlist.addEventListener( "dblclick", this.onFilterDblClick, true );
+
+        filterlist.addEventListener( "dblclick", this._onFilterDblClickClosure, true );
         filterlist.addEventListener("filterlist-filterchange", this.sendFilterChangeEvent, true);
         
         if ( feed )
@@ -1865,10 +1889,7 @@
           <![CDATA[
           try
           {
-            var obj = {}, row = {}, col = {}; 
-            this.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
-            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( ( obj.value ) && ( row.value != null ) && ( row.value != -1 ) )
+            if( this.pointInTreeRows( this.tree, evt.clientX, evt.clientY ) )
             {
               if ( this.tree.currentIndex != -1 )
               {
@@ -1890,11 +1911,7 @@
           <![CDATA[
           try
           {
-
-            var obj = {}, row = {}, col = {}; 
-            evt.target.tree.treeBoxObject.getCellAt( evt.clientX, evt.clientY, row, col, obj );
-            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( ( obj.value ) && ( row.value != null ) && ( row.value != -1 ) )
+            if( this.pointInTreeRows( evt.target.tree, evt.clientX, evt.clientY ) )
             {
               var playlist = evt.target.playlist;
               
@@ -2885,7 +2902,7 @@
     </method>
     
     <method name="onDrag">
-      <parameter name="event"/>
+      <parameter name="evt"/>
       <body>
         <![CDATA[
           try
@@ -2894,13 +2911,10 @@
             //  Do something interesting to indicate the drag of a column?
             //
 
-            var obj = {}, row = {}, col = {}; 
-            this.tree.treeBoxObject.getCellAt( event.clientX, event.clientY, row, col, obj );
-            // If the "obj" has a value, it is a cell.  Otherwise, it could be anything.
-            if ( obj.value )
+            if( this.pointInTreeRows( this.tree, evt.clientX, evt.clientY ) )
             {
               // Heheh, only drag if you're dragging a cell.  Otherwise, don't screw with the scrollbar
-              this.nsDragAndDrop.startDrag(event,this.sbIPlaylistDragObserver);
+              this.nsDragAndDrop.startDrag(evt, this.sbIPlaylistDragObserver);
             }
           }
           catch( err )
@@ -3153,15 +3167,46 @@
       </body>
     </method>
 
-    <method name="deselectAll">
-      <body>
+    <method name="pointInTreeRows">
+      <parameter name="tree"/>
+      <parameter name="mouseX"/>
+      <parameter name="mouseY"/>
+        <body>
+        <![CDATA[
+          // Make sure the user actually double clicked on a tree cell.
+          // Previously this used getCellAt() on the tree, however, it was
+          // unreliable.  This code compares the mouse position with the box
+          // object of the contaier of the tree's rows (which excludes the
+          // column headers and scroll bar)
+          var treeRows = document.getAnonymousElementByAttribute(tree, "class", "tree-rows");
+          if(!treeRows) {
+              return false;
+          }
+          var treeBodyBox = document.getAnonymousElementByAttribute(treeRows, "class", "tree-bodybox");
+          if(!treeBodyBox) {
+              return false;
+          }
+          var bo = treeBodyBox.boxObject;
+          if(mouseX >= bo.x && mouseX <= (bo.x + bo.width) &&
+             mouseY >= bo.y && mouseY <= (bo.y + bo.height)) {
+             return true;
+          }
+          else {
+            return false;
+          }
+        ]]>
+        </body>
+      </method>
+
+      <method name="deselectAll">
+        <body>
         <![CDATA[
           this.tree.view.selection.clearSelection();
         ]]>
-      </body>
-    </method>
+        </body>
+      </method>
 
-    </implementation> 
+    </implementation>
  
   </binding>
 
