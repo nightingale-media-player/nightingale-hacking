@@ -28,9 +28,9 @@ const SONGBIRD_BUNDLE_CLASSNAME = "Songbird Bundle Service Interface";
 const SONGBIRD_BUNDLE_CID = Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}");
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
-const SONGBIRD_GETBUNDLE_URL_WIN32 = 'http://www.songbirdnest.com/bundle/firstrun_win32.xml';
-const SONGBIRD_GETBUNDLE_URL_MACOSX = 'http://www.songbirdnest.com/bundle/firstrun_macosx.xml';
-const SONGBIRD_GETBUNDLE_URL_LINUX = 'http://www.songbirdnest.com/bundle/firstrun_linux.xml';
+const SONGBIRD_GETBUNDLE_URL_WIN32 = 'http://www.songbirdnest.com/firstrun/bundle/win32';
+const SONGBIRD_GETBUNDLE_URL_MACOSX = 'http://www.songbirdnest.com/firstrun/bundle/macosx';
+const SONGBIRD_GETBUNDLE_URL_LINUX = 'http://www.songbirdnest.com/firstrun/bundle/linux';
 
 function Bundle() {
   this._observers = new Array();
@@ -287,7 +287,7 @@ Bundle.prototype = {
     var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
     aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
     var aUUID = aUUIDGenerator.generateUUID();
-    return "?randomguid=" + aUUID;
+    return "?randomguid=" + escape(aUUID);
   },
   
   installXPI: function(localFilename)
