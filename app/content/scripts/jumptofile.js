@@ -558,20 +558,10 @@ try
     return "";
   }
   
-  function refExists( ref ) {
-    var exists = false;
-    try {
-      var source = new sbIPlaylistsource();
-      source.getSearchString(ref);
-      exists = true;
-    } catch (e) {}
-    return exists;
-  }
-  
   function ensureRefExists( ref, guid, table ) {
-    var exists = refExists(ref);
+    var source = new sbIPlaylistsource();
+    var exists = source.refExists(ref);
     if (!exists) {
-      var source = new sbIPlaylistsource();
       source.feedPlaylist( ref, guid, table );
       source.executeFeed( ref );
       // Synchronous call!  Woo hoo!
