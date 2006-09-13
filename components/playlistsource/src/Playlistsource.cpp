@@ -2460,8 +2460,7 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
     if ( val.m_Id == id ) {
       val.m_Resultset = result;
       val.m_ResultsRow = i - value.m_ResMapIndex;
-    } else
-      printf( "PlaylistPlayback cache miss? Row %d\n", val.m_Row ); // Hmmm.  Less than optimal.
+    }
   }
 
   return NS_OK;
