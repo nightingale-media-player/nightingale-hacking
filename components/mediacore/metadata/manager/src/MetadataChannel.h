@@ -91,9 +91,14 @@ class sbMetadataChannel : public sbIMetadataChannel
   nsCOMPtr<sbIMetadataHandler> m_Handler;
   PRUint64 m_Pos;
   PRUint64 m_Buf;
+  PRUint64 m_BufDeadZoneStart;
+  PRUint64 m_BufDeadZoneEnd;
   blockmap_t m_Blocks;
   PRBool   m_Completed;
 };
+
+// Now I have a slightly smaller chance of getting screwed.
+#define NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
 
 #endif // __METADATA_CHANNEL_H__
 

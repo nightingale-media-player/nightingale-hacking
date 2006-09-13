@@ -45,6 +45,7 @@ CPP_SRCS = MetadataHandlerID3.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(topsrcdir)/components/mediacore/metadata/manager/src \
                $(ID3LIB_DIR)/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \

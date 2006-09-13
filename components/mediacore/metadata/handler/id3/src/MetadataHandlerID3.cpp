@@ -55,11 +55,8 @@
   
 class MetadataHandlerID3Exception
 {
-private:
-//  MetadataHandlerID3Exception() {}
 public:
-  MetadataHandlerID3Exception( PRUint64 seek = LL_MAXUINT, PRUint64 buf = LL_MAXUINT, PRUint64 size = LL_MAXUINT ) : m_Seek( seek ), m_Buf( buf ), m_Size( size ) {}
-  PRUint64 m_Seek, m_Buf, m_Size;
+  MetadataHandlerID3Exception() {}
 };
 
 
@@ -76,7 +73,7 @@ public:
     setChannel( channel );
   };
   virtual ~ID3_ChannelReader() { close(); }
-  virtual void close() { if(m_Channel) { m_Channel->Close(); m_Channel = nsnull; } }
+  virtual void close() { if(m_Channel) { /* m_Channel->Close(); Someone else does this */ m_Channel = nsnull; } }
 
   void setChannel(sbIMetadataChannel* channel)
   {
@@ -102,11 +99,7 @@ public:
     PRUint32 count = 0;
     if ( NS_FAILED( m_Channel->Read( buf, len, &count ) ) )
     {
-      PRUint64 pos, buf, size;
-      m_Channel->GetPos( &pos );
-      m_Channel->GetBuf( &buf );
-      m_Channel->GetSize( &size );
-      throw MetadataHandlerID3Exception( pos + len, buf, size );
+      return PR_UINT32_MAX; // overflow, try again.
     }
     return count;
   }
@@ -150,13 +143,16 @@ public:
 
   virtual pos_type setCur(pos_type pos)
   {
-    if ( NS_FAILED( m_Channel->SetPos( pos ) ) )
+    nsresult rv = m_Channel->SetPos( pos );
+    if ( rv == NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART )
     {
-      PRUint64 seek, buf, size;
-      m_Channel->GetPos( &seek );
-      m_Channel->GetBuf( &buf );
-      m_Channel->GetSize( &size );
-      throw MetadataHandlerID3Exception( seek, buf, size );
+      // If I can edit the id3lib code, I can do what I want with calling conventions.
+      return PR_UINT32_MAX;
+    }
+    else if ( NS_FAILED( rv ) )
+    {
+      // Throw the angry exception that forces completion
+      throw MetadataHandlerID3Exception();
     }
     return pos;
   }
@@ -334,9 +330,19 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
 
       if ( !m_Completed )
       {
+        size_t nTagSize = 0;
         ID3_Tag  tag;
-        ID3_ChannelReader channel_reader( mc.get() );
-        bool ok = tag.Parse( channel_reader );
+        ID3_ChannelReader channel_reader( mc );
+        nTagSize = tag.Link(channel_reader, ID3TT_ID3V2);
+        if ( nTagSize == PR_UINT32_MAX)
+          return NS_OK; // Need to wait a bit longer, just loop around till the next onchanneldata call.  (THIS DOESN'T WORK, I ONLY GET A REQUEST STOP)
+        if ( nTagSize == 0 )
+        {
+          ID3_ChannelReader channel_reader( mc );
+          nTagSize = tag.Link(channel_reader, ID3TT_ALL);
+        }
+        if ( nTagSize == PR_UINT32_MAX)
+          return NS_OK; // Need to wait a bit longer, just loop around till the next onchanneldata call.
         const Mp3_Headerinfo *headerinfo = tag.GetMp3HeaderInfo();
         ReadTag(tag);
 
@@ -362,16 +368,9 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
         }
       }
     }
-    catch ( const MetadataHandlerID3Exception err )
+    catch ( const MetadataHandlerID3Exception )
     {
-      // If it's a tiny file, it's probably a 404 error
-      if ( err.m_Seek == LL_MAXUINT || err.m_Buf == LL_MAXUINT || err.m_Size == LL_MAXUINT || err.m_Seek > ( err.m_Size - 1024 ) )
-      {
-        // If it's a big file, this means it's an ID3v1 and it needs to seek to the end of the track?  Ooops.
-        m_Completed = PR_TRUE;
-      }
-
-      // Otherwise, take another spin around and try again.
+      m_Completed = PR_TRUE;
     }
   }
 
@@ -985,7 +984,7 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
   {
     PRInt32 lparen = str.Find("(");
     PRInt32 rparen = str.Find(")");
-    if ( lparen != -1 && rparen != -1 )
+    if ( lparen == 0 && rparen != -1 )
     {
       nsAutoString gen;
       str.Mid( gen, lparen + 1, rparen - 1 );

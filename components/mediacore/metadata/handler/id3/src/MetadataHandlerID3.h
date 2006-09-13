@@ -44,6 +44,7 @@
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"
 #include "sbIMetadataChannel.h"
+#include "MetadataChannel.h"
 
 #include <id3/tag.h>
 

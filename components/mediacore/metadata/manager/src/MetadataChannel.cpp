@@ -37,7 +37,12 @@
 
 #include <string/nsStringAPI.h>
 #include <nsIInputStream.h>
+#include <nsIResumableChannel.h>
 #include <nsIChannel.h>
+#include <necko/nsIURI.h>
+#include <necko/nsIFileStreams.h>
+#include <necko/nsIIOService.h>
+#include <necko/nsNetUtil.h>
 
 #include "MetadataChannel.h"
 
@@ -49,7 +54,13 @@
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataChannel, sbIMetadataChannel, nsIStreamListener, nsIRequestObserver)
 
 //-----------------------------------------------------------------------------
-sbMetadataChannel::sbMetadataChannel() : m_Pos( 0 ), m_Buf( 0 ), m_Blocks(), m_Completed( false )
+sbMetadataChannel::sbMetadataChannel() : 
+  m_Pos( 0 ), 
+  m_Buf( 0 ), 
+  m_BufDeadZoneStart( 0 ), 
+  m_BufDeadZoneEnd( 0 ), 
+  m_Blocks(), 
+  m_Completed( PR_FALSE )
 {
 }
 
@@ -100,6 +111,8 @@ NS_IMETHODIMP sbMetadataChannel::Close()
 
   m_Pos = 0;
   m_Buf = 0;
+  m_BufDeadZoneStart = 0;
+  m_BufDeadZoneEnd = 0;
   m_Blocks.clear();
   m_Channel = nsnull;
   m_Handler = nsnull;
@@ -110,8 +123,64 @@ NS_IMETHODIMP sbMetadataChannel::Close()
 NS_IMETHODIMP sbMetadataChannel::SetPos(PRUint64 pos)
 {
   // For now, disallow seeks past our buffering point.
-  if ( m_Pos > m_Buf )
+  if ( pos > m_Buf )
+  {
+    // NOTE: This block of code is neat and everything, but it doesn't work.
+    // When I attempt to do it, I just get an OnStopRequest without any data.
+
+    // We should only ever see one overflowing seek.
+    if (m_BufDeadZoneStart) 
+      return NS_ERROR_UNEXPECTED;
+
+    nsresult rv;
+
+    // See if this is a "resumable" channel.
+    nsCOMPtr<nsIResumableChannel> testing_to_see_if_this_exists_but_never_going_to_use( do_QueryInterface(m_Channel, &rv) );
+    NS_ENSURE_SUCCESS( rv, rv );
+  
+    // Remember what our target file is.
+    nsCOMPtr<nsIURI> pURI;
+    rv = m_Channel->GetURI( getter_AddRefs(pURI) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // Shutdown to prepare for opening a new one.
+    // Read this: http://developer.mozilla.org/en/docs/Implementing_Download_Resuming
+    if(m_Channel)
+      m_Channel->Cancel(NS_ERROR_ABORT);
+    m_Channel = nsnull;
+    // Apparently, this interface isn't REALLY meant for "read from the end of a file online"
+
+    // Get a new channel.
+    nsCOMPtr<nsIIOService> pIOService = do_GetIOService(&rv);
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = pIOService->NewChannelFromURI(pURI, getter_AddRefs(m_Channel));
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // See if this is a "resumable" channel.  Again.
+    nsCOMPtr<nsIResumableChannel> resume( do_QueryInterface(m_Channel, &rv) );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // Reopen everybody and rock out.
+    rv = resume->ResumeAt( pos, NS_LITERAL_CSTRING("") );
+    NS_ENSURE_SUCCESS( rv, rv );
+    rv = m_Channel->AsyncOpen( this, m_Handler );
+    NS_ENSURE_SUCCESS( rv, rv );
+
+    // Now we start reading from pos and remember we have a hole in the buffer.
+    m_BufDeadZoneStart = m_Buf;
+    m_BufDeadZoneEnd = m_Buf = pos;
+
+    // Tell the code to abort this time and start over when new data comes in.
+    return NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART;
+    // Hopefully none of those functions up there return error abort.
+  }
+
+  // No, you can't seek into the deadzone.
+  if ( m_BufDeadZoneStart && pos >= m_BufDeadZoneStart && pos < m_BufDeadZoneEnd )
+  {
+    NS_WARNING("****** METADATACHANNEL ****** Can't seek into the deadzone");
     return NS_ERROR_UNEXPECTED;
+  }
 
   m_Pos = pos;
 
@@ -251,7 +320,7 @@ NS_IMETHODIMP sbMetadataChannel::GetSeekable(PRBool *_retval)
   if ( ! _retval )
     return NS_ERROR_NULL_POINTER;
 
-  *_retval = false;
+  *_retval = PR_FALSE;
 
   return NS_OK;
 }
@@ -294,7 +363,7 @@ sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
   PRUint64 size;
   GetSize( &size );
   // Don't send until you get to the end or are over the block size or its broke or something
-  if ( ( size == -1 ) || ( m_Buf >= size ) || ( m_Buf >= BLOCK_SIZE ) ) 
+  if ( m_Buf >= BLOCK_SIZE ) 
   {
     // Inform the handler that we read data.
     nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt) );
@@ -322,10 +391,18 @@ sbMetadataChannel::OnStopRequest(nsIRequest *aRequest,
                                         nsISupports *ctxt,
                                         nsresult status)
 {
+  // Ignore the stop something we're aborting
+  nsresult rv, request_status;
+  rv = aRequest->GetStatus( &request_status );
+  NS_ENSURE_SUCCESS(rv, rv);
+  if ( request_status == NS_ERROR_ABORT )
+    return NS_OK;
+
   // Okay, we're done.
-  m_Completed = true;
+  m_Completed = PR_TRUE;
   // Inform the handler that we read data.
-  nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt) );
+  nsCOMPtr<sbIMetadataHandler> handler( do_QueryInterface(ctxt, &rv) );
+  NS_ENSURE_SUCCESS(rv, rv);
   if ( handler.get() )
   {
     handler->OnChannelData( this );
