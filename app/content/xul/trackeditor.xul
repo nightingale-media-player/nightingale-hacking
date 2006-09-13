@@ -97,10 +97,12 @@
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
           <spacer height="3"/>
-          <!--
-          <label value="Editing: Songtitle, by Artist" class="sb_faceplate, dialog_label"/>
+          
+          <description class="dialog_label">
+          The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well.
+          </description>
           <spacer height="8"/>
-          -->
+          
 
           <hbox id="trackeditor.hflex">
             <trackeditor id="trackeditor.trackeditor" hflex="trackeditor.hflex" title="&trackeditor.trackdata;" flex="1" />
