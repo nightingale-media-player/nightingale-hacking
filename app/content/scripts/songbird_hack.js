@@ -1633,9 +1633,8 @@ function onMainPaneLoad()
         playlist.addEventListener( "command", onPlaylistContextMenu, false );  // don't force it!
 
         // Remember some values
-        thePlaylistTree = playlist;
         theLibraryPlaylist = playlist;
-        playlist = playlist.tree;
+        thePlaylistTree = playlist = playlist.tree;
         thePlaylistRef.stringValue = playlist.getAttribute( "ref" ); // is this set yet?
 
         // Set the current selection
