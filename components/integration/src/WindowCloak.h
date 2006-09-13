@@ -67,13 +67,8 @@ class WindowCloakEntry
 {
 public:
   NATIVEWINDOW m_hwnd;
-#ifdef XP_WIN
-  NATIVEWINDOW m_oldparent;
-#endif
-#ifdef XP_MACOSX
   short m_oldX;
   short m_oldY;
-#endif
 };
 
 class CWindowCloak : public sbIWindowCloak

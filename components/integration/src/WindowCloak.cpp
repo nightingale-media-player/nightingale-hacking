@@ -61,11 +61,16 @@ NS_IMETHODIMP CWindowCloak::Cloak( nsISupports *window )
   
   
 #ifdef XP_WIN
-  NATIVEWINDOW oldparent = NULL;	
-  // Detach window from group
-  oldparent = SetParent(wnd, NULL);
-  // Hide it
+  RECT bounds;
+  GetWindowRect(wnd, &bounds);
+  
+  // Can't just use hide the window because mozilla may decide to make it visible again without telling us,
+  // so move it outside the screen area and change its flags so it doesn't show up in the task bar (this last
+  // bit requires hiding the window first)
   ShowWindow(wnd, SW_HIDE);
+  SetWindowLong(wnd, GWL_EXSTYLE, GetWindowLong(wnd, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
+  SetWindowPos(wnd, NULL, -32000, -32000, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
+  ShowWindow(wnd, SW_NORMAL);
 #endif
 
 #ifdef XP_MACOSX
@@ -85,13 +90,8 @@ NS_IMETHODIMP CWindowCloak::Cloak( nsISupports *window )
   // Remember it
   WindowCloakEntry *wce = new WindowCloakEntry();
   wce->m_hwnd = wnd;
-#ifdef XP_WIN
-  wce->m_oldparent = oldparent;
-#endif
-#ifdef XP_MACOSX
   wce->m_oldX = bounds.left;
   wce->m_oldY = bounds.top;
-#endif
   m_items.push_back(wce);
 
   return NS_OK;
@@ -121,9 +121,10 @@ NS_IMETHODIMP CWindowCloak::Uncloak(nsISupports *window )
   if (!wce) return NS_OK; // Fail silent
   
 #ifdef XP_WIN
-  // restore window
-  SetParent(wce->m_hwnd, wce->m_oldparent);
-  ShowWindow(wce->m_hwnd, SW_SHOW);
+  ShowWindow(wnd, SW_HIDE);
+  SetWindowLong(wnd, GWL_EXSTYLE, GetWindowLong(wnd, GWL_EXSTYLE) & ~WS_EX_TOOLWINDOW);
+  SetWindowPos(wnd, NULL, wce->m_oldX, wce->m_oldY, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
+  ShowWindow(wnd, SW_NORMAL);
 #endif
 #ifdef XP_MACOSX
   ::MoveWindow(wce->m_hwnd, wce->m_oldX, wce->m_oldY, true);
