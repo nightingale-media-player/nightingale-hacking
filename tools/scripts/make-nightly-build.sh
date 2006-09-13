@@ -15,6 +15,7 @@ export SB_ENABLE_INSTALLER=1
 cd ${DEPTH}
 make -f songbird.mk clobber
 make -f songbird.mk
+make -C compiled/update complete
 
 unset SONGBIRD_OFFICIAL
 unset UPDATE_CHANNEL
