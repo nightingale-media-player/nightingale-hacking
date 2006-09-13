@@ -408,7 +408,7 @@ try
     if ( ! source.isQueryExecuting( jumpto_ref ) )
     {
       // ...before attempting to override.
-      source.setSearchString( jumpto_ref, search );
+      source.setSearchString( jumpto_ref, search, false /* don't reset the filters */ );
     }
   }
   
@@ -444,10 +444,8 @@ try
     // check whether the user has selected an unfiltered entry, and if that's the case, reset the search and filters for the playlist.
     if (source_search == "" && source_filters.length == 0) {
       var source = new sbIPlaylistsource();
-      source.setSearchString(source_ref, "");
+      source.setSearchString(source_ref, "", true /* reset the filters */);
       if (search_widget) search_widget.loadPlaylistSearchString();
-      //if (source_playlist) source_playlist.resetFilterLists();
-      resetFilterLists(source, source_ref);
     }
     var source = new sbIPlaylistsource();
     while( source.isQueryExecuting( source_ref ) )

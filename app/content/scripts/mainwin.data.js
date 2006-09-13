@@ -223,7 +223,7 @@ try
           if ( ! source.isQueryExecuting( thePlaylistRef.stringValue ) )
           {
             // ...before attempting to override.
-            source.setSearchString( thePlaylistRef.stringValue, widget.list.label );
+            source.setSearchString( thePlaylistRef.stringValue, widget.list.label, true /* reset the filters */ );
             theLastSearchEventTarget = null;
             if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
             return;

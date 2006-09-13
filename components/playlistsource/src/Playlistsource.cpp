@@ -864,7 +864,8 @@ ParseStringIntoArray(const nsString& aString,
 
 NS_IMETHODIMP
 sbPlaylistsource::SetSearchString(const nsAString &aRefName,
-                                  const nsAString &aSearchString)
+                                  const nsAString &aSearchString,
+                                        PRBool aResetFilters)
 {
   LOG(("sbPlaylistsource::SetSearchString"));
 
@@ -889,6 +890,10 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
   // check to see if the new query is more restrictive
   PRBool subquery = FindInReadable(info->m_SearchString, start, end);
 
+/*
+  // Uhm... for now, I'm going to remove this optimization because it
+  // is disruptive to the new functionality.
+
   if ( col_count == 0 && subquery ) {
     // we have no results and the filter string is at least as
     //  restrictive meaning we won't have a chance at getting
@@ -896,10 +901,27 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
     mon.Exit();
     return NS_OK;
   }
+*/
 
   info->m_SearchString = aSearchString;
 
   mon.Exit();
+
+  // Reset the filters
+  if ( aResetFilters )
+  {
+    PRInt32 i, num_filters = 0;
+    GetNumFilters( aRefName, &num_filters );
+    for (i = 0; i < num_filters; i++ )
+    {
+      nsAutoString filter_ref, filter_column;
+      GetFilterRef( aRefName, i, filter_ref );
+      GetFilterColumn( aRefName, i, filter_column );
+      SetFilter( aRefName, i, NS_LITERAL_STRING(""), filter_ref, filter_column );
+    }
+  }
+
+  // And execute the feed.
   return ExecuteFeed(aRefName, nsnull);
 }
 

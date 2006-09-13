@@ -375,8 +375,9 @@ interface sbIPlaylistsource : nsIRDFDataSource
   *
   * \param aRefName The unique identifier for the datasource 
   * \param aSearchString The string defining the search
+  * \param aResetFilters If true, setting this string will also reset the filters.
   */
-  void setSearchString( in AString aRefName, in AString aSearchString );
+  void setSearchString( in AString aRefName, in AString aSearchString, in PRBool aResetFilters );
   
   /**
   * \brief Get the search string on a datasource
