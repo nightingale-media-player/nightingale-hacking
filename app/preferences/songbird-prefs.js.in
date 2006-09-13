@@ -72,6 +72,9 @@ pref("extensions.dss.switchPending", false);
 
 pref("extensions.blocklist.enabled", true);
 pref("extensions.blocklist.interval", 86400);
+// XXXredfive - these two should change once we get our extensions site live
+pref("extensions.blocklist.url", "https://addons.mozilla.org/blocklist/1/%APP_ID%/%APP_VERSION%/");
+pref("extensions.blocklist.detailsURL", "http://www.mozilla.com/blocklist/");
 pref("extensions.ignoreMTimeChanges", false);
 
 pref("general.autoScroll", false);
