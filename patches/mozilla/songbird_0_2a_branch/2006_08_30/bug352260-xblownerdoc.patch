@@ -1,0 +1,16 @@
+Index: nsXULElement.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/content/xul/content/src/nsXULElement.cpp,v
+retrieving revision 1.578.2.17
+diff -u -p -r1.578.2.17 nsXULElement.cpp
+--- nsXULElement.cpp	3 Aug 2006 00:47:51 -0000	1.578.2.17
++++ nsXULElement.cpp	14 Sep 2006 02:25:54 -0000
+@@ -2589,7 +2589,7 @@ nsXULElement::GetBoxObject(nsIBoxObject*
+   *aResult = nsnull;
+ 
+   // XXX sXBL/XBL2 issue! Owner or current document?
+-  nsCOMPtr<nsIDOMNSDocument> nsDoc(do_QueryInterface(GetCurrentDoc()));
++  nsCOMPtr<nsIDOMNSDocument> nsDoc(do_QueryInterface(GetOwnerDoc()));
+   NS_ENSURE_TRUE(nsDoc, NS_ERROR_FAILURE);
+   return nsDoc->GetBoxObjectFor(this, aResult);
+ }
