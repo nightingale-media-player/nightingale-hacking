@@ -857,7 +857,9 @@ var theShowWebPlaylistData = SB_NewDataRemote( "browser.playlist.show", null );
 
 var SBDocStartListener = {
 
-  m_CurrentRequestURI: "",
+  // An array of URIs currently loading. We use this to keep track of when the
+  // spinner should stop.
+  _pendingURIs: null,
   
   QueryInterface : function(aIID) {
     if (!aIID.equals(Components.interfaces.nsIWebProgressListener) &&
@@ -871,20 +873,90 @@ var SBDocStartListener = {
 
   onStateChange : function( aWebProgress, aRequest, aState, aStatus ) 
   {
-    const STATE_STOP = 0x10;
-    const STATE_IS_DOCUMENT = 0x20000;
+    const nsIWebProgressListener =
+      Components.interfaces.nsIWebProgressListener;
+    const nsIChannel =
+      Components.interfaces.nsIChannel;
 
-    try
-    {
-      if ( ( ( aState & ( STATE_STOP | STATE_IS_DOCUMENT ) ) != 0 ) && ( aStatus == 0x804B001E ) ) // ? 0x804B001E?
-      {
-      var theServiceTree = document.getElementById( 'frame_servicetree' );
-      theServiceTree.launchURL( "chrome://songbird/content/html/cannot_load.html" );
+    const NS_ERROR_UNKNOWN_HOST = 0x804B001E;
+
+    const URI_PAGE_CANNOT_LOAD =
+      "chrome://songbird/content/html/cannot_load.html";
+
+    // If we have an error then show the "Page Not Found" page
+    if ((aState & (nsIWebProgressListener.STATE_STOP |
+                    nsIWebProgressListener.STATE_IS_DOCUMENT)) &&
+        (aStatus == NS_ERROR_UNKNOWN_HOST)) {
+      var serviceTree = document.getElementById("frame_servicetree");
+      serviceTree.launchURL(URI_PAGE_CANNOT_LOAD);
+    }
+
+    if (aState & nsIWebProgressListener.STATE_START) {
+      // Right now we're only concerned with WINDOW state changes
+      if (aState & nsIWebProgressListener.STATE_IS_WINDOW) {
+        // See if we have a valid request
+        if (aRequest instanceof nsIChannel || "URI" in aRequest) {
+
+          // Make sure our array is set up
+          if (!this._pendingURIs)
+            this._pendingURIs = new Array();
+
+          var uri = aRequest.URI;
+
+          // See if this URI has already been added to our list
+          var alreadyAdded = false;
+          var count = this._pendingURIs.length;
+          for (var index = 0; index < count; index++) {
+            if (uri == this._pendingURIs[index]) {
+              alreadyAdded = true;
+              break;
+            }
+          }
+
+          if (!alreadyAdded)
+            this._pendingURIs.push(uri);
+
+          // Start the spinner if necessary
+          if (!thePaneLoadingData.boolValue)
+            thePaneLoadingData.boolValue = true;
+        }
       }
     }
-    catch ( err )
-    {
-      alert( "onStateChange - " + err );
+    else if (aState & nsIWebProgressListener.STATE_STOP) {
+
+      // Right now we're only concerned with WINDOW state changes
+      if (aState & nsIWebProgressListener.STATE_IS_WINDOW) {
+         // See if we have a valid request
+        if (aRequest instanceof nsIChannel || "URI" in aRequest) {
+
+          var uri = aRequest.URI;
+
+          // See if this URI has been added to our list
+          var found = false;
+          var count = this._pendingURIs.length;
+          for (var index = 0; index < count; index++) {
+            if (uri == this._pendingURIs[index]) {
+              this._pendingURIs.splice(index, 1);
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            // Shouldn't ever see this...
+            throw Components.results.NS_ERROR_UNEXPECTED;
+          }
+
+          if (!this._pendingURIs.length) {
+            // Destroy our array
+            this._pendingURIs = null;
+
+            // And stop the spinner if necessary
+            if (thePaneLoadingData.boolValue)
+              thePaneLoadingData.boolValue = false;
+          }
+        }
+      }
     }
   },
   
@@ -911,7 +983,6 @@ var SBDocStartListener = {
       var cur_uri = aLocation.asciiSpec;
       if ( aRequest && aRequest.name )    
       {
-        m_CurrentRequestURI = aRequest.name;
         // Set the box
         theBrowserUriData.stringValue = cur_uri;
         theBrowserUrlData.stringValue = SBGetServiceFromUrl( cur_uri ) ;
@@ -960,7 +1031,6 @@ var SBDocStartListener = {
                     50 );
       }
       theServiceTree.urlFromServicePane = false;
-      thePaneLoadingData.boolValue = true;
       
       // Clear the playlist tree variable so we are not confused.
       thePlaylistTree = null;
@@ -1643,8 +1713,6 @@ function onMainPaneLoad()
         // And remember that we did this
         installed_listener = true;
 
-        // Hide the progress bar now that we're loaded.
-        thePaneLoadingData.boolValue = false;
         mainpane_listener_set = true;
         
         if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
@@ -1684,10 +1752,6 @@ function onMainPaneLoad()
         }
         // XXXlone -- end case where page is going to be a playlist but contentDocument does not yet contains a playlist
 
-
-        
-        // Hide the progress bar now that we are loaded.
-        thePaneLoadingData.boolValue = false;
         mainpane_listener_set = true;
       }
     }
