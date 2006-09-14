@@ -106,6 +106,8 @@ CDatabaseQuery::~CDatabaseQuery()
   nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
   if(p) p->RemovePersistentQuery(this);
   
+  RemoveAllCallbacks();
+
   NS_IF_RELEASE(m_QueryResult);
 
   if (m_pPersistentQueryTableLock)
@@ -342,6 +344,14 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
 
   nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
   if(p) p->SubmitQuery(this, _retval);
+  
+  if(_retval != 0)
+  {
+    nsAutoMonitor mon(m_pQueryRunningMonitor);
+
+    m_QueryHasCompleted = PR_TRUE;
+    mon.NotifyAll();
+  }
 
   return NS_OK;
 } //Execute
@@ -447,3 +457,25 @@ CDatabaseResult *CDatabaseQuery::GetResultObject()
   //m_QueryResult->AddRef();
   return m_QueryResult;
 } //GetResultObject
+
+//-----------------------------------------------------------------------------
+void CDatabaseQuery::RemoveAllCallbacks()
+{
+  {
+    nsAutoLock lock(m_pCallbackListLock);
+    callbacklist_t::iterator itCallback = m_CallbackList.begin();
+    for(; itCallback != m_CallbackList.end(); itCallback++)
+      (*itCallback)->Release();
+    m_CallbackList.clear();
+  }
+
+  {
+    nsAutoLock lock(m_pPersistentCallbackListLock);
+    persistentcallbacklist_t::iterator itCallback = m_PersistentCallbackList.begin();
+    for(; itCallback != m_PersistentCallbackList.end(); itCallback++)
+      (*itCallback)->Release();
+    m_PersistentCallbackList.clear();
+  }
+
+  return;
+}

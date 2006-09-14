@@ -78,6 +78,8 @@ public:
   NS_DECL_SBIDATABASEQUERY
 
 protected:
+  void RemoveAllCallbacks();
+
   CDatabaseResult* GetResultObject();
 
   PRBool m_IsPersistentQueryRegistered;

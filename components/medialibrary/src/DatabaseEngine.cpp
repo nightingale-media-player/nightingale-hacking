@@ -1349,7 +1349,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     {
       nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
       pQuery->m_QueryHasCompleted = PR_TRUE;
-      mon.Notify();
+      mon.NotifyAll();
     }
 
     //Check if this query changed any data 
