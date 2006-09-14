@@ -41,8 +41,7 @@
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsMemory.h>
-#include <string/nsStringAPI.h>
-#include "NSString.h"
+#include <string/nsString.h>
 #include "nsIWebProgressListener.h"
 #include "nsNetUtil.h"
 
@@ -61,20 +60,31 @@
 #define NAME_WINDOWS_MEDIA_DEVICE         NS_LITERAL_STRING("Songbird Windows Media Device").get()
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
 
 //-----------------------------------------------------------------------------
-sbWMDevice::sbWMDevice():
-sbDeviceBase(PR_TRUE)
+sbWMDevice::sbWMDevice()
+: sbDeviceBase(PR_FALSE)
+, mpMonitor(nsnull)
 {
+  mpMonitor = PR_NewMonitor();
+  NS_ASSERTION(mpMonitor, "sbWMDevice::mpMonitor failed to be created.");
+
   mDeviceManager = new WMDManager(this);
+  NS_ASSERTION(mDeviceManager, "sbWMDevice::mDeviceManager failed to be created.");
 } //ctor
 
 //-----------------------------------------------------------------------------
 sbWMDevice::~sbWMDevice() 
 {
+  PR_EnterMonitor(mpMonitor);
+
   delete mDeviceManager;
-  mDeviceManager = NULL;
+  mDeviceManager = nsnull;
+
+  PR_ExitMonitor(mpMonitor);
+  PR_DestroyMonitor(mpMonitor);
+  mpMonitor = nsnull;
 } //dtor
 
 NS_IMETHODIMP
@@ -87,7 +97,13 @@ sbWMDevice::Initialize(PRBool *_retval)
 PRBool sbWMDevice::InitializeSync()
 {
   CleanupWMDEntries();
-  mDeviceManager->Initialize();
+
+  NS_ASSERTION(mDeviceManager, 
+    "Warning! sbWMDevice::InitializeSync called with \
+    null sbWMDevice::mDeviceManager!");
+
+  if(mDeviceManager)
+    mDeviceManager->Initialize();
 
   return PR_TRUE;
 }
@@ -131,8 +147,9 @@ NS_IMETHODIMP
 sbWMDevice::GetContext(const nsAString& aDeviceString,
                        nsAString& _retval)
 {
-  if (mDeviceManager)
-    mDeviceManager->GetContext(aDeviceString, _retval);
+  NS_ASSERTION(mDeviceManager, "sbWMDevice::mDeviceManager is null! WTF!?!?!");
+  if(mDeviceManager) mDeviceManager->GetContext(aDeviceString, _retval);
+
   return NS_OK;
 }
 
@@ -282,6 +299,7 @@ sbWMDevice::IsEjectSupported()
 void
 sbWMDevice::OnThreadBegin()
 {
+  PR_EnterMonitor(mpMonitor);
   CoInitializeEx(0, COINIT_MULTITHREADED);
 }
 
@@ -289,6 +307,7 @@ void
 sbWMDevice::OnThreadEnd()
 {
   CoUninitialize();
+  PR_ExitMonitor(mpMonitor);
 }
 
 NS_IMETHODIMP

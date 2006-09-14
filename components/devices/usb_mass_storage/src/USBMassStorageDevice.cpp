@@ -71,7 +71,7 @@
 #define USBMASSSTORAGE_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("USB Mass Storage").get()
 
 // CLASSES ====================================================================
-NS_IMPL_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevice)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevice)
 
 //-----------------------------------------------------------------------------
 sbUSBMassStorageDevice::sbUSBMassStorageDevice()

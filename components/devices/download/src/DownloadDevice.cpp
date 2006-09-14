@@ -67,7 +67,7 @@
 #define DOWNLOAD_DEVICE_TABLE_DESCRIPTION NS_LITERAL_STRING("&device.download").get()
 #define DOWNLOAD_DEVICE_TABLE_TYPE        NS_LITERAL_STRING("&device.download").get()
 
-NS_IMPL_ISUPPORTS1(sbDownloadListener, nsIWebProgressListener)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDownloadListener, nsIWebProgressListener)
 
 NS_IMETHODIMP
 sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,

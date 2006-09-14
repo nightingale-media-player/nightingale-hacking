@@ -32,6 +32,9 @@
 #ifndef __WM_DEVICE_H__
 #define __WM_DEVICE_H__
 
+#include <prmon.h>
+#include <prlock.h>
+
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
 #include "nsIRDFLiteral.h"
@@ -65,10 +68,10 @@ class sbWMDevice :  public sbIWMDevice,
 public:
 
   NS_DECL_ISUPPORTS
-    NS_DECL_SBIDEVICEBASE
-    NS_DECL_SBIWMDEVICE
+  NS_DECL_SBIDEVICEBASE
+  NS_DECL_SBIWMDEVICE
 
-    sbWMDevice();
+  sbWMDevice();
 
   void  ClearLibraryData(nsAString& dbContext);
 
@@ -76,7 +79,7 @@ private:
 
   friend class sbDownloadListener;
 
-  ~sbWMDevice();
+  virtual ~sbWMDevice();
 
   virtual void OnThreadBegin();
   virtual void OnThreadEnd();
@@ -86,6 +89,7 @@ private:
   void            CleanupWMDEntries();
   virtual PRBool  InitializeSync();
 
+  PRMonitor *mpMonitor;
   sbWMDObjectManager* mDeviceManager;
 };
 

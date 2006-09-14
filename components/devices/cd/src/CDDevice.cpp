@@ -61,7 +61,7 @@
 
 #define SONGBIRD_PROPERTIES "chrome://songbird/locale/songbird.properties"
 
-NS_IMPL_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbCDDevice, sbIDeviceBase, sbICDDevice)
 
 sbCDDevice::sbCDDevice() :
   sbDeviceBase(PR_TRUE),
