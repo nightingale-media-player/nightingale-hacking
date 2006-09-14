@@ -100,7 +100,7 @@ dove.jar:
   feathers/dove/songbird/default/sysbtn_mini_hover_25x15mac.png       (default/sysbtn_mini_hover_25x15mac.png)
   feathers/dove/songbird/default/sysbtn_mini_normal_25x15mac.png      (default/sysbtn_mini_normal_25x15mac.png)
   feathers/dove/songbird/default/sysbtn_mini_disabled_25x15mac.png    (default/sysbtn_mini_disabled_25x15mac.png)
-  feathers/rubberducky/songbird/skin/default/help_downarrow.png       (default/help_downarrow.png)    
+  feathers/dove/songbird/default/help_downarrow.png                   (default/help_downarrow.png)    
   feathers/dove/songbird/default/thumb_20x10.png                      (default/thumb_20x10.png)
   feathers/dove/songbird/default/toolbar_addtolibrary_disabled.png    (default/toolbar_addtolibrary_disabled.png)
   feathers/dove/songbird/default/toolbar_addtolibrary_hover.png       (default/toolbar_addtolibrary_hover.png)
