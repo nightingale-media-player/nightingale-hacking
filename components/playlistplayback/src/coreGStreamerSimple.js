@@ -159,7 +159,12 @@ CoreGStreamerSimple.prototype.getLength = function ()
 
   try
   {
-    playLength = this._object.streamLength / (1000 * 1000);
+    if(!this.getPlaying()) {
+      playLength = 0;
+    }
+    else {
+      playLength = this._object.streamLength / (1000 * 1000);
+    }
   }
   catch(e)
   {
@@ -183,7 +188,7 @@ CoreGStreamerSimple.prototype.getPosition = function ()
 
   try
   {
-    if(this._object.isAtEndOfStream) {
+    if(this._object.isAtEndOfStream || !this.getPlaying()) {
       curPos = 0;
     }
     else {
