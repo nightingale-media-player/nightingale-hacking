@@ -37,6 +37,9 @@
 //                  - mig
 //
 
+// The global progress filter, set in SBInitialize and released in SBUnitialize
+var gProgressFilter = null;
+
 try
 {
 const LOAD_FLAGS_BYPASS_HISTORY = 64;
@@ -237,8 +240,13 @@ var thePollPlaylistService = null;
 var theWebPlaylist = null;
 var theWebPlaylistQuery = null;
 var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
+
 function SBInitialize()
 {
+  const BROWSER_FILTER_CONTRACTID =
+    "@mozilla.org/appshell/component/browser-status-filter;1";
+  const nsIWebProgress = Components.interfaces.nsIWebProgress;
+
   dump("SBInitialize *** \n");
   
   try {
@@ -293,8 +301,17 @@ function SBInitialize()
       if (theMainPane.addEventListener) {
         theMainPane.addEventListener("DOMContentLoaded", onMainPaneLoad, false);
         theMainPane.addEventListener("unload", onMainPaneUnload, true);
-        theMainPane.addProgressListener(SBDocStartListener);
         
+        // Initialize the global progress filter
+        if (!gProgressFilter) {
+          gProgressFilter = Components.classes[BROWSER_FILTER_CONTRACTID]
+                                      .createInstance(nsIWebProgress);
+        }
+        // And add our own filter to it
+        gProgressFilter.addProgressListener(sbWebProgressListener,
+                                            nsIWebProgress.NOTIFY_ALL);
+        theMainPane.addProgressListener(gProgressFilter);
+
         // Trap clicks on links with target=_blank or _new
         // and launch them in the default browser.
         // Note: _new isn't valid.. but seems to be used frequently
@@ -390,6 +407,10 @@ function SBInitialize()
 
 function SBUninitialize()
 {
+  // Make sure to destroy the global progress filter
+  if (gProgressFilter)
+    gProgressFilter = null;
+
   resetJumpToFileHotkey();
   closeJumpTo();
   try {
@@ -855,12 +876,8 @@ var theBrowserImageData = SB_NewDataRemote( "browser.url.image", null );
 var theBrowserUriData = SB_NewDataRemote( "browser.uri", null );
 var theShowWebPlaylistData = SB_NewDataRemote( "browser.playlist.show", null );
 
-var SBDocStartListener = {
+var sbWebProgressListener = {
 
-  // An array of URIs currently loading. We use this to keep track of when the
-  // spinner should stop.
-  _pendingURIs: null,
-  
   QueryInterface : function(aIID) {
     if (!aIID.equals(Components.interfaces.nsIWebProgressListener) &&
         !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
@@ -875,88 +892,24 @@ var SBDocStartListener = {
   {
     const nsIWebProgressListener =
       Components.interfaces.nsIWebProgressListener;
-    const nsIChannel =
-      Components.interfaces.nsIChannel;
 
     const NS_ERROR_UNKNOWN_HOST = 0x804B001E;
 
     const URI_PAGE_CANNOT_LOAD =
       "chrome://songbird/content/html/cannot_load.html";
 
-    // If we have an error then show the "Page Not Found" page
-    if ((aState & (nsIWebProgressListener.STATE_STOP |
-                    nsIWebProgressListener.STATE_IS_DOCUMENT)) &&
-        (aStatus == NS_ERROR_UNKNOWN_HOST)) {
-      var serviceTree = document.getElementById("frame_servicetree");
-      serviceTree.launchURL(URI_PAGE_CANNOT_LOAD);
-    }
-
     if (aState & nsIWebProgressListener.STATE_START) {
-      // Right now we're only concerned with WINDOW state changes
-      if (aState & nsIWebProgressListener.STATE_IS_WINDOW) {
-        // See if we have a valid request
-        if (aRequest instanceof nsIChannel || "URI" in aRequest) {
-
-          // Make sure our array is set up
-          if (!this._pendingURIs)
-            this._pendingURIs = new Array();
-
-          var uri = aRequest.URI;
-
-          // See if this URI has already been added to our list
-          var alreadyAdded = false;
-          var count = this._pendingURIs.length;
-          for (var index = 0; index < count; index++) {
-            if (uri == this._pendingURIs[index]) {
-              alreadyAdded = true;
-              break;
-            }
-          }
-
-          if (!alreadyAdded)
-            this._pendingURIs.push(uri);
-
-          // Start the spinner if necessary
-          if (!thePaneLoadingData.boolValue)
-            thePaneLoadingData.boolValue = true;
-        }
-      }
+      // Start the spinner if necessary
+      thePaneLoadingData.boolValue = true;
     }
     else if (aState & nsIWebProgressListener.STATE_STOP) {
-
-      // Right now we're only concerned with WINDOW state changes
-      if (aState & nsIWebProgressListener.STATE_IS_WINDOW) {
-         // See if we have a valid request
-        if (aRequest instanceof nsIChannel || "URI" in aRequest) {
-
-          var uri = aRequest.URI;
-
-          // See if this URI has been added to our list
-          var found = false;
-          var count = this._pendingURIs.length;
-          for (var index = 0; index < count; index++) {
-            if (uri == this._pendingURIs[index]) {
-              this._pendingURIs.splice(index, 1);
-              found = true;
-              break;
-            }
-          }
-
-          if (!found) {
-            // Shouldn't ever see this...
-            throw Components.results.NS_ERROR_UNEXPECTED;
-          }
-
-          if (!this._pendingURIs.length) {
-            // Destroy our array
-            this._pendingURIs = null;
-
-            // And stop the spinner if necessary
-            if (thePaneLoadingData.boolValue)
-              thePaneLoadingData.boolValue = false;
-          }
-        }
+      // If we have an error then show the "Page Not Found" page
+      if (aStatus == NS_ERROR_UNKNOWN_HOST) {
+        var serviceTree = document.getElementById("frame_servicetree");
+        serviceTree.launchURL(URI_PAGE_CANNOT_LOAD);
       }
+      // Stop the spinner if necessary
+      thePaneLoadingData.boolValue = false;
     }
   },
   
@@ -974,7 +927,6 @@ var SBDocStartListener = {
   
   onLocationChange : function( aWebProgress, aRequest, aLocation ) 
   {
-    //SB_LOG("songbird_hack.js", "SBDocStartListener::onLocationChange");
     try
     {
       // Set the value in the text box (shown or not)
@@ -1061,7 +1013,7 @@ var SBDocStartListener = {
       alert( "onLocationChange\n\n" + err );
     }
   }
-}; // SBDocStartListener definition
+}; // sbWebProgressListener definition
 
 // onBrowserBack
 function onBrowserBack()
