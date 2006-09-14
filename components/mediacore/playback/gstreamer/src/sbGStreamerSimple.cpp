@@ -527,6 +527,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       g_free (debug);
 
+      gst_element_set_state(mPlay, GST_STATE_NULL);
       mIsAtEndOfStream = PR_TRUE;
 
       break;
