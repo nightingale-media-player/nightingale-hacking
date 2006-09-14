@@ -345,7 +345,7 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
   nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
   if(p) p->SubmitQuery(this, _retval);
   
-  if(_retval != 0)
+  if(*_retval != 0)
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
 
