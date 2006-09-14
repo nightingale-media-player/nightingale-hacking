@@ -50,13 +50,12 @@
 #define SONGBIRD_DATABASERESULT_CLASSNAME                 \
   "Songbird Database Result Interface"
 #define SONGBIRD_DATABASERESULT_CID                       \
-{ /* 9a5fcaf6-4441-11db-9651-00e08161165f */              \
-  0x9a5fcaf6,                                             \
-  0x4441,                                                 \
-  0x11db,                                                 \
-	{0x96, 0x51, 0x0, 0xe0, 0x81, 0x61, 0x16, 0x5f}         \
+{ /* 9079e1b1-01e9-4cb8-9f2a-08fdf69597cf */              \
+  0x9079e1b1,                                             \
+  0x1e9,                                                  \
+  0x4cb8,                                                 \
+  {0x9f, 0x2a, 0x8, 0xfd, 0xf6, 0x95, 0x97, 0xcf}         \
 }
-
 // CLASSES ====================================================================
 class CDatabaseResult : public sbIDatabaseResult
 {
