@@ -1,76 +1,76 @@
-<!ENTITY  fontsDialog.title                       "Fonts">
+<!ENTITY  fontsDialog.title                       "字体">
 <!ENTITY  window.width                            "39em">
 <!ENTITY  window.macWidth                         "43em">
 <!ENTITY  window.unixWidth                        "41em">
 
-<!ENTITY  language.label                          "Fonts for:">
+<!ENTITY  language.label                          "语言编码：">
 <!ENTITY  language.accesskey                      "F">
 
-<!ENTITY  size.label                              "Size:">
+<!ENTITY  size.label                              "大小:">
 <!ENTITY  size.accesskey1                         "z">
 <!ENTITY  size.accesskey2                         "e">
 
-<!ENTITY  proportional.label                      "Proportional:">
+<!ENTITY  proportional.label                      "比例:">
 <!ENTITY  proportional.accesskey                  "P">
 
-<!ENTITY  serif.label                             "Serif:">
+<!ENTITY  serif.label                             "衬线字体：">
 <!ENTITY  serif.accesskey                         "S">
-<!ENTITY  sans-serif.label                        "Sans-serif:">
+<!ENTITY  sans-serif.label                        "无衬线字体：">
 <!ENTITY  sans-serif.accesskey                    "n">
-<!ENTITY  monospace.label                         "Monospace:">
+<!ENTITY  monospace.label                         "等宽字体:">
 <!ENTITY  monospace.accesskey                     "M">
 <!-- LOCALIZATION NOTE (fantasy.label): 'Fantasy' means 'Ornate' -->
-<!ENTITY  fantasy.label                           "Fantasy:">
+<!ENTITY  fantasy.label                           "装饰字体：">
 <!ENTITY  fantasy.accesskey                       "F">
-<!ENTITY  cursive.label                           "Cursive:">
+<!ENTITY  cursive.label                           "草体">
 <!ENTITY  cursive.accesskey                       "C">
 
-<!ENTITY  fontsize.units                          "pixels">
+<!ENTITY  fontsize.units                          "像素">
 
-<!ENTITY  font.langGroup.latin1                   "Western">
-<!ENTITY  font.langGroup.latin2                   "Central European">
-<!ENTITY  font.langGroup.japanese                 "Japanese">
-<!ENTITY  font.langGroup.trad-chinese             "Traditional Chinese (Taiwan)">
-<!ENTITY  font.langGroup.simpl-chinese            "Simplified Chinese">
-<!ENTITY  font.langGroup.trad-chinese-hk          "Traditional Chinese (Hong Kong)">
-<!ENTITY  font.langGroup.korean                   "Korean">
-<!ENTITY  font.langGroup.cyrillic                 "Cyrillic">
-<!ENTITY  font.langGroup.baltic                   "Baltic">
-<!ENTITY  font.langGroup.el                       "Greek">
-<!ENTITY  font.langGroup.turkish                  "Turkish">
-<!ENTITY  font.langGroup.unicode                  "Other Languages">
-<!ENTITY  font.langGroup.user-def                 "User Defined">
-<!ENTITY  font.langGroup.thai                     "Thai">
-<!ENTITY  font.langGroup.hebrew                   "Hebrew">
-<!ENTITY  font.langGroup.arabic                   "Arabic">
-<!ENTITY  font.langGroup.devanagari               "Devanagari">
-<!ENTITY  font.langGroup.tamil                    "Tamil">
-<!ENTITY  font.langGroup.armenian                 "Armenian">
-<!ENTITY  font.langGroup.bengali                  "Bengali">
-<!ENTITY  font.langGroup.canadian                 "Unified Canadian Syllabary">
-<!ENTITY  font.langGroup.ethiopic                 "Ethiopic">
-<!ENTITY  font.langGroup.georgian                 "Georgian">
+<!ENTITY  font.langGroup.latin1                   "西方">
+<!ENTITY  font.langGroup.latin2                   "中欧">
+<!ENTITY  font.langGroup.japanese                 "日语">
+<!ENTITY  font.langGroup.trad-chinese             "繁体中文（台湾）">
+<!ENTITY  font.langGroup.simpl-chinese            "简体中文">
+<!ENTITY  font.langGroup.trad-chinese-hk          "繁体中文（香港）">
+<!ENTITY  font.langGroup.korean                   "朝鲜语">
+<!ENTITY  font.langGroup.cyrillic                 "西里尔语">
+<!ENTITY  font.langGroup.baltic                   "波罗的海语言">
+<!ENTITY  font.langGroup.el                       "希腊语">
+<!ENTITY  font.langGroup.turkish                  "土耳其语">
+<!ENTITY  font.langGroup.unicode                  "其他语言">
+<!ENTITY  font.langGroup.user-def                 "用户定义">
+<!ENTITY  font.langGroup.thai                     "泰语">
+<!ENTITY  font.langGroup.hebrew                   "希伯莱语">
+<!ENTITY  font.langGroup.arabic                   "阿拉伯语">
+<!ENTITY  font.langGroup.devanagari               "梵文">
+<!ENTITY  font.langGroup.tamil                    "泰米尔语">
+<!ENTITY  font.langGroup.armenian                 "亚美尼亚语">
+<!ENTITY  font.langGroup.bengali                  "孟加拉语">
+<!ENTITY  font.langGroup.canadian                 "加拿大标准音节">
+<!ENTITY  font.langGroup.ethiopic                 "埃塞俄比亚语">
+<!ENTITY  font.langGroup.georgian                 "乔治亚语">
 <!ENTITY  font.langGroup.gujarati                 "Gujarati">
-<!ENTITY  font.langGroup.gurmukhi                 "Gurmukhi">
-<!ENTITY  font.langGroup.khmer                    "Khmer">
-<!ENTITY  font.langGroup.malayalam                "Malayalam">
+<!ENTITY  font.langGroup.gurmukhi                 "果鲁穆奇语">
+<!ENTITY  font.langGroup.khmer                    "高棉语">
+<!ENTITY  font.langGroup.malayalam                "马来西亚语">
 <!-- Minimum font size -->
-<!ENTITY minSize.label                            "Minimum font size:">
+<!ENTITY minSize.label                            "最小字体大小：">
 <!ENTITY minSize.accesskey                        "o">
-<!ENTITY minSize.none                             "None">
+<!ENTITY minSize.none                             "无">
 
 <!-- default font type -->
-<!ENTITY  useDefaultFontSerif.label               "Serif">
-<!ENTITY  useDefaultFontSansSerif.label           "Sans Serif">
+<!ENTITY  useDefaultFontSerif.label               "衬线字体">
+<!ENTITY  useDefaultFontSansSerif.label           "无衬线字体">
 
-<!ENTITY  resolution.label                        "Display resolution:">
+<!ENTITY  resolution.label                        "屏幕解析度：">
 <!ENTITY  resolution.accesskey                    "D">
-<!ENTITY  resolution.system.label                 "System setting">
-<!ENTITY  resolution.other                        "Other...">
+<!ENTITY  resolution.system.label                 "系统设置">
+<!ENTITY  resolution.other                        "其他...">
 
-<!ENTITY  allowPagesToUse.label                   "Allow pages to choose their own fonts, instead of my selections above">
+<!ENTITY  allowPagesToUse.label                   "允许页面选择显示字体而无需使用上面的设置">
 <!ENTITY  allowPagesToUse.accesskey               "A">
 
-<!ENTITY languages.customize.Charset.grouplabel         "Character Encoding">
-<!ENTITY languages.customize.DefaultCharset.label       "Default Character Encoding:">
+<!ENTITY languages.customize.Charset.grouplabel         "字符编码">
+<!ENTITY languages.customize.DefaultCharset.label       "默认字符编码">
 <!ENTITY languages.customize.DefaultCharset.accesskey   "C">

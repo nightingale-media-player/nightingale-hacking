@@ -1,30 +1,30 @@
 <!ENTITY window.width                       "36em">
 
-<!ENTITY     cookiesonsystem.label          "The following cookies are stored on your computer:">
-<!ENTITY     cookiename.label               "Cookie Name">
-<!ENTITY     cookiedomain.label             "Site"> 
-<!ENTITY     button.removecookie.label      "Remove Cookie">
+<!ENTITY     cookiesonsystem.label          "您的计算机中已保存的 cookie:">
+<!ENTITY     cookiename.label               "Cookie 名称">
+<!ENTITY     cookiedomain.label             "站点"> 
+<!ENTITY     button.removecookie.label      "移除 Cookie">
 <!ENTITY     button.removecookie.accesskey  "R">
-<!ENTITY     button.removeallcookies.label  "Remove All Cookies">
+<!ENTITY     button.removeallcookies.label  "移除所有 Cookie">
 <!ENTITY     button.removeallcookies.accesskey "A">
 
-<!ENTITY     props.name.label               "Name:">
-<!ENTITY     props.value.label              "Content:">
-<!ENTITY     props.domain.label             "Host:">
-<!ENTITY     props.path.label               "Path:">
-<!ENTITY     props.secure.label             "Send For:">
-<!ENTITY     props.expires.label            "Expires:">
+<!ENTITY     props.name.label               "名称:">
+<!ENTITY     props.value.label              "内容:">
+<!ENTITY     props.domain.label             "主机:">
+<!ENTITY     props.path.label               "路径:">
+<!ENTITY     props.secure.label             "发送条件:">
+<!ENTITY     props.expires.label            "过期时间:">
 
 <!ENTITY     window.title                   "Cookies">
 <!ENTITY     windowClose.key                "w">
 <!ENTITY     focusSearch1.key               "f">
 <!ENTITY     focusSearch2.key               "k">
 
-<!ENTITY     filter.label                   "Search:">
+<!ENTITY     filter.label                   "搜索:">
 <!ENTITY     filter.accesskey               "S">
-<!ENTITY     clear.label                    "Clear">
+<!ENTITY     clear.label                    "清空">
 <!ENTITY     clear.accesskey                "l">
 
-<!ENTITY     button.close.label             "Close">
+<!ENTITY     button.close.label             "关闭">
 <!ENTITY     button.close.accesskey         "C">
 

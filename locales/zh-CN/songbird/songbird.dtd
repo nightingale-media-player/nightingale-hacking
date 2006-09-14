@@ -1,160 +1,160 @@
 ﻿
-<!ENTITY window.main.title  "SongbirdƷ0" >
+<!ENTITY window.main.title  "Songbird用户预览版" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://songbirdnest.com/spp" >
-<!ENTITY window.ok          "确a" >
-<!ENTITY window.cancel      "" >
-<!ENTITY window.browse      "浏..." >
+<!ENTITY window.ok          "确定" >
+<!ENTITY window.cancel      "取消" >
+<!ENTITY window.browse      "浏览..." >
 
-<!ENTITY menu.file          "!件" >
-<!ENTITY menu.file.new      "建表..." >
-<!ENTITY menu.file.smart    "建"蒽表..." >
-<!ENTITY menu.file.remote   "建S9表..." >
-<!ENTITY menu.file.open     "0弬!件..." >
-<!ENTITY menu.file.url      "}URL0弬..." >
-<!ENTITY menu.file.playlist "0弬表..." >
-<!ENTITY menu.file.scan     "S索!件..." >
-<!ENTITY menu.file.htmlbar  "丬:ܾ示页工&条" >
-<!ENTITY menu.file.skin     "&宒a" >
-<!ENTITY menu.file.window   "0弬主口" >
-<!ENTITY menu.file.mini     "!换ư迷你模式" >
-<!ENTITY menu.file.about    "&}Songbird..." >
-<!ENTITY menu.file.dlfolder	"9载!件夹" >
-<!ENTITY menu.file.watch	": " >
-<!ENTITY menu.file.exit     "鬬!" >
+<!ENTITY menu.file          "文件" >
+<!ENTITY menu.file.new      "新建播放列表..." >
+<!ENTITY menu.file.smart    "新建智能播放列表..." >
+<!ENTITY menu.file.remote   "新建远程播放列表..." >
+<!ENTITY menu.file.open     "打开文件..." >
+<!ENTITY menu.file.url      "从URL打开..." >
+<!ENTITY menu.file.playlist "打开播放列表..." >
+<!ENTITY menu.file.scan     "扫描媒体文件..." >
+<!ENTITY menu.file.htmlbar  "总是显示网页工具条" >
+<!ENTITY menu.file.skin     "其它皮肤" >
+<!ENTITY menu.file.window   "打开主窗口" >
+<!ENTITY menu.file.mini     "切换到迷你模式" >
+<!ENTITY menu.file.about    "关于Songbird..." >
+<!ENTITY menu.file.dlfolder	"下载文件夹" >
+<!ENTITY menu.file.watch	"监视" >
+<!ENTITY menu.file.exit     "退出" >
 
-<!ENTITY menu.edit          "" >
-<!ENTITY menu.edit.undo     "" >
-<!ENTITY menu.edit.cut      "0!" >
-<!ENTITY menu.edit.copy     "复ƶ" >
-<!ENTITY menu.edit.paste    "贴" >
-<!ENTITY menu.edit.clear    "&"" >
-<!ENTITY menu.edit.selall   "&钨09" >
-<!ENTITY menu.edit.selnone  "09" >
+<!ENTITY menu.edit          "编辑" >
+<!ENTITY menu.edit.undo     "撤销" >
+<!ENTITY menu.edit.cut      "剪切" >
+<!ENTITY menu.edit.copy     "复制" >
+<!ENTITY menu.edit.paste    "粘贴" >
+<!ENTITY menu.edit.clear    "删除" >
+<!ENTITY menu.edit.selall   "全部选择" >
+<!ENTITY menu.edit.selnone  "取消选择" >
 
-<!ENTITY menu.controls      "}ƶ" >
-<!ENTITY menu.control.play  "/aS" >
-<!ENTITY menu.control.next  "9丬!件" >
-<!ENTITY menu.control.prev  "0丬!件" >
-<!ENTITY menu.control.shuf  "aS" >
-<!ENTITY menu.control.repa  "循}&钨" >
-<!ENTITY menu.control.rep1  "循}"" >
-<!ENTITY menu.control.repx  "不!复" >
+<!ENTITY menu.controls      "播放" >
+<!ENTITY menu.control.play  "播放/暂停" >
+<!ENTITY menu.control.next  "下一文件" >
+<!ENTITY menu.control.prev  "前一文件" >
+<!ENTITY menu.control.shuf  "随机" >
+<!ENTITY menu.control.repa  "循环全部" >
+<!ENTITY menu.control.rep1  "循环单曲" >
+<!ENTITY menu.control.repx  "不循环" >
 
-<!ENTITY menu.services        "S`" >
-<!ENTITY menu.services.browse "浏S`..." >
+<!ENTITY menu.services        "服务" >
+<!ENTITY menu.services.browse "浏览服务..." >
 
-<!ENTITY menu.devices       "设!" >
+<!ENTITY menu.devices       "设备" >
 
-<!ENTITY menu.help          "帮`" >
-<!ENTITY menu.help.topics   "帮`主..." >
-<!ENTITY menu.help.about    "&}Songbird..." >
+<!ENTITY menu.help          "帮助" >
+<!ENTITY menu.help.topics   "帮助内容..." >
+<!ENTITY menu.help.about    "关于Songbird..." >
 
-<!ENTITY html.context.open  "0弬" >
-<!ENTITY html.context.play  "" >
-<!ENTITY html.context.add   "添`ư" >
+<!ENTITY html.context.open  "打开" >
+<!ENTITY html.context.play  "播放" >
+<!ENTITY html.context.add   "添加到媒体库" >
 
-<!ENTITY playlist.context.remove  "Ơ"" >
-<!ENTITY playlist.context.rename  "!名" >
-<!ENTITY playlist.context.search  "S索" >
-<!ENTITY playlist.context.lyrics  "R词" >
+<!ENTITY playlist.context.remove  "删除" >
+<!ENTITY playlist.context.rename  "重命名" >
+<!ENTITY playlist.context.search  "搜索" >
+<!ENTITY playlist.context.lyrics  "歌词" >
 
-<!ENTITY tooltip.miniplayer       "!换ư迷你模式" >
-<!ENTITY tooltip.minimize         "S小R" >
-<!ENTITY tooltip.maximize         "S大R/恢复" >
-<!ENTITY tooltip.exit             "鬬!" >
-<!ENTITY tooltip.control.back     "0丬x轨" >
-<!ENTITY tooltip.control.play     "" >
-<!ENTITY tooltip.control.pause    "aS" >
-<!ENTITY tooltip.control.fwd      "9丬x轨" >
-<!ENTITY tooltip.control.mute     ""x" >
-<!ENTITY tooltip.control.volume   "x!" >
-<!ENTITY tooltip.control.repeat   "!复" >
-<!ENTITY tooltip.control.shuffle  "aS" >
-<!ENTITY tooltip.control.curtrack "x00x轨" >
-<!ENTITY tooltip.control.service  "!换面板" >
-<!ENTITY tooltip.search           "x0" >
-<!ENTITY tooltip.browser.back     "}鬬" >
-<!ENTITY tooltip.browser.fwd      "0" >
-<!ENTITY tooltip.browser.stop     "S止" >
+<!ENTITY tooltip.miniplayer       "切换到迷你模式" >
+<!ENTITY tooltip.minimize         "最小化" >
+<!ENTITY tooltip.maximize         "最大化/还原" >
+<!ENTITY tooltip.exit             "退出" >
+<!ENTITY tooltip.control.back     "前一音轨" >
+<!ENTITY tooltip.control.play     "播放" >
+<!ENTITY tooltip.control.pause    "暂停" >
+<!ENTITY tooltip.control.fwd      "下一音轨" >
+<!ENTITY tooltip.control.mute     "静音" >
+<!ENTITY tooltip.control.volume   "音量" >
+<!ENTITY tooltip.control.repeat   "重复" >
+<!ENTITY tooltip.control.shuffle  "随机" >
+<!ENTITY tooltip.control.curtrack "查找当前音轨" >
+<!ENTITY tooltip.control.service  "切换面板" >
+<!ENTITY tooltip.search           "查找" >
+<!ENTITY tooltip.browser.back     "后退" >
+<!ENTITY tooltip.browser.fwd      "前近" >
+<!ENTITY tooltip.browser.stop     "停止" >
 <!ENTITY tooltip.browser.home     "主页" >
-<!ENTITY tooltip.browser.playlist "SS页`xS9可a!件" >
-<!ENTITY tooltip.browser.download "xS99载a &容" >
+<!ENTITY tooltip.browser.playlist "在本网页上查看可用的媒体文件" >
+<!ENTITY tooltip.browser.download "查看下载的内容" >
 
-<!ENTITY smart.window             "建9"蒽表" >
-<!ENTITY smart.library            "09" >
-<!ENTITY smart.limit              ""ƶS" >
-<!ENTITY smart.match              "符" >
-<!ENTITY smart.any                "任" >
-<!ENTITY smart.all                "0S0" >
-<!ENTITY smart.following          "9述条件:" >   
-<!ENTITY smart.random             "aS" >
-<!ENTITY smart.album              ": " >
-<!ENTITY smart.artist             "0S家" >
-<!ENTITY smart.genre              "流派" >
-<!ENTITY smart.title              "!" >
-<!ENTITY smart.high_rating        "级" >
-<!ENTITY smart.low_rating         "}级" >
-<!ENTITY smart.most_recent        "" >
-<!ENTITY smart.least_recent       "S" >
-<!ENTITY smart.most_often         "S经常" >
+<!ENTITY smart.window             "建立智能播放列表" >
+<!ENTITY smart.library            "选择媒体库" >
+<!ENTITY smart.limit              "限制在" >
+<!ENTITY smart.match              "符合" >
+<!ENTITY smart.any                "任意" >
+<!ENTITY smart.all                "所有" >
+<!ENTITY smart.following          "下述条件:" >   
+<!ENTITY smart.random             "随机" >
+<!ENTITY smart.album              "专集" >
+<!ENTITY smart.artist             "艺术家" >
+<!ENTITY smart.genre              "类型" >
+<!ENTITY smart.title              "曲目" >
+<!ENTITY smart.high_rating        "高评级" >
+<!ENTITY smart.low_rating         "低评级" >
+<!ENTITY smart.most_recent        "新近" >
+<!ENTITY smart.least_recent       "最近很少" >
+<!ENTITY smart.most_often         "最经常" >
 <!ENTITY smart.least_often        "不经常" >
-<!ENTITY smart.most_added         "经常添`a" >
-<!ENTITY smart.least_added        "添`a" >
-<!ENTITY smart.minutes            " x" >
-<!ENTITY smart.hours              "小" >
+<!ENTITY smart.most_added         "经常添加的" >
+<!ENTITY smart.least_added        "很少添加的" >
+<!ENTITY smart.minutes            "分钟" >
+<!ENTITY smart.hours              "小时" >
 <!ENTITY smart.mb                 "MB" >
 <!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "R:" >
-<!ENTITY smart.contains           "R&含" >
-<!ENTITY smart.not_contain        "不R&含" >
-<!ENTITY smart.is                 "ܯ" >
-<!ENTITY smart.is_not             "不ܯ" >
-<!ENTITY smart.starts             "弬9}" >
-<!ENTITY smart.ends               "x}" >
+<!ENTITY smart.songs              "歌曲" >
+<!ENTITY smart.contains           "包含" >
+<!ENTITY smart.not_contain        "不包含" >
+<!ENTITY smart.is                 "是" >
+<!ENTITY smart.is_not             "不是" >
+<!ENTITY smart.starts             "开始于" >
+<!ENTITY smart.ends               "结束于" >
          
-<!ENTITY download.window          "9载" >
-<!ENTITY download.select          "09:!!件夹a" >
-<!ENTITY download.always          "欻ܯ使"个!件夹" >
+<!ENTITY download.window          "下载" >
+<!ENTITY download.select          "选择目标文件夹：" >
+<!ENTITY download.always          "总是使用这个文件夹" >
 
 
 
-<!ENTITY locale.language          "语訬" >
+<!ENTITY locale.language          "语言" >
 
 
-<!ENTITY menu.file.dlfolder "设置9载:"" >
-<!ENTITY menu.file.watch "设置: :"" >
-<!ENTITY menu.preferences "0项..." >
-<!ENTITY menu.extensions "0"..." >
-<!ENTITY textbox.songbird_open_url "&要!aURL路:" >
-<!ENTITY open_url.title "0弬 URL" >
-<!ENTITY subscribe.title "订&" >
-<!ENTITY subscribe.minutes " x" >
-<!ENTITY subscribe.hours "小" >
+<!ENTITY menu.file.dlfolder "设置下载目录" >
+<!ENTITY menu.file.watch "设置监视目录" >
+<!ENTITY menu.preferences "选项..." >
+<!ENTITY menu.extensions "扩展..." >
+<!ENTITY textbox.songbird_open_url "输入要重放媒体的URL或路径:" >
+<!ENTITY open_url.title "打开 URL" >
+<!ENTITY subscribe.title "订阅" >
+<!ENTITY subscribe.minutes "分钟" >
+<!ENTITY subscribe.hours "小时" >
 <!ENTITY subscribe.days "天" >
-<!ENTITY subscribe.autocheck "!`:每" >
-<!ENTITY subscribe.destinationfolder "09:!!件夹:" >
-<!ENTITY exists.title "Sa表" >
-<!ENTITY exists.exists "R名表已经S!" >
-<!ENTITY media_scan.title "0描以}" >
-<!ENTITY media_scan.watch ": 此!件价" >
-<!ENTITY new_playlist.title "建表" >
-<!ENTITY new_playlist.name "&建表a名." >
-<!ENTITY addtoplaylist.title "添`ư表" >
-<!ENTITY addtoplaylist.create "建表" >
-<!ENTITY watchfolder.title ": !件夹" >
-<!ENTITY watchfolder.folderlist ": 以9!件夹:" >
+<!ENTITY subscribe.autocheck "自动更新每" >
+<!ENTITY subscribe.destinationfolder "选择目标文件夹:" >
+<!ENTITY exists.title "存在的播放列表" >
+<!ENTITY exists.exists "同名播放列表已经存在!" >
+<!ENTITY media_scan.title "扫描以获得媒体" >
+<!ENTITY media_scan.watch "监视此文件价" >
+<!ENTITY new_playlist.title "新建播放列表" >
+<!ENTITY new_playlist.name "输入新建播放列表的名字." >
+<!ENTITY addtoplaylist.title "添加到播放列表" >
+<!ENTITY addtoplaylist.create "新建播放列表" >
+<!ENTITY watchfolder.title "监视文件夹" >
+<!ENTITY watchfolder.folderlist "监视以下文件夹:" >
 
 
 
 
-<!ENTITY menu.feathers "羽:" >
+<!ENTITY menu.feathers "羽毛" >
 
 
 
 
-<!ENTITY about.version "0S" >
+<!ENTITY about.version "版本" >
 
 
 
@@ -164,10 +164,10 @@
 
 
 
-<!ENTITY setup.retrievingxpilist "}0"表R请0&..." >
-<!ENTITY setup.custominstall "!a00&" >
-<!ENTITY setup.title "Songbird 设置0项" >
-<!ENTITY setupprogress.pleasewait "请0&..." >
+<!ENTITY setup.retrievingxpilist "获取扩展列表，请等待..." >
+<!ENTITY setup.custominstall "自定义安装" >
+<!ENTITY setup.title "Songbird 设置选项" >
+<!ENTITY setupprogress.pleasewait "请等待..." >
 
 
 
@@ -213,27 +213,27 @@
 
 
 
-<!ENTITY bookmarks.edit.title "书签" >
+<!ENTITY bookmarks.edit.title "编辑书签" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "名称:" >
-<!ENTITY bookmarks.edit.icon ":!:" >
+<!ENTITY bookmarks.edit.icon "图标:" >
 
 
 
 
-<!ENTITY trackeditor.title "x轨"" >
-<!ENTITY trackeditor.trackdata "x轨"据" >
-<!ENTITY trackeditor.exttrackdata "0""据" >
-<!ENTITY trackeditor.tags "!签" >
-<!ENTITY trackeditor.addtag.title "添`!签" >
-<!ENTITY trackeditor.addtag.tag "!签:" >
-<!ENTITY jumptofile.title "跳转ư" >
+<!ENTITY trackeditor.title "音轨编辑器" >
+<!ENTITY trackeditor.trackdata "音轨数据" >
+<!ENTITY trackeditor.exttrackdata "扩展数据" >
+<!ENTITY trackeditor.tags "标签" >
+<!ENTITY trackeditor.addtag.title "添加标签" >
+<!ENTITY trackeditor.addtag.tag "标签:" >
+<!ENTITY jumptofile.title "跳转到" >
 
 
 
 
-<!ENTITY window.undo "" >
-<!ENTITY window.apply "" >
+<!ENTITY window.undo "撤销" >
+<!ENTITY window.apply "应用" >
 
 
 
@@ -243,15 +243,15 @@
 
 
 
-<!ENTITY metrics.optout "&许 Songbird 鬁R名使"据 (}荐)" >
+<!ENTITY metrics.optout "允许 Songbird 发送匿名使用数据 (推荐)" >
 
 
 
 
-<!ENTITY hotkeys.useglobalhotkeys "使&屬快捷" >
+<!ENTITY hotkeys.useglobalhotkeys "使用全局快捷键" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "`S" >
-<!ENTITY hotkeys.hotkey "快捷" >
+<!ENTITY hotkeys.action "动作" >
+<!ENTITY hotkeys.hotkey "快捷键" >
 <!ENTITY hotkeys.add "Add" >
 <!ENTITY hotkeys.set "Set" >
 <!ENTITY hotkeys.remove "Remove" >
@@ -260,59 +260,59 @@
 
 
 
-<!ENTITY metadata.uuid " UUID" >
+<!ENTITY metadata.uuid "媒体 UUID" >
 <!ENTITY metadata.url "位置" >
-<!ENTITY metadata.artist "0S家" >
-<!ENTITY metadata.title "!" >
-<!ENTITY metadata.album ": " >
-<!ENTITY metadata.genre "流派" >
-<!ENTITY metadata.length "R续" >
+<!ENTITY metadata.artist "艺术家" >
+<!ENTITY metadata.title "曲目" >
+<!ENTITY metadata.album "专集" >
+<!ENTITY metadata.genre "类型" >
+<!ENTITY metadata.length "持续时间" >
 
 
 
 
-<!ENTITY restartbox.restartnow "9即!起" >
-<!ENTITY restartbox.restartonplaybackend "x!起" >
-<!ENTITY restartbox.restartlater "稍}!起" >
-<!ENTITY setupprogress.installingextensions "正S0&a0"" >
+<!ENTITY restartbox.restartnow "立即重起" >
+<!ENTITY restartbox.restartonplaybackend "播放结束时重起" >
+<!ENTITY restartbox.restartlater "稍后重起" >
+<!ENTITY setupprogress.installingextensions "正在安装的扩展" >
 
 
 
 
-<!ENTITY tooltip.hide "a" >
+<!ENTITY tooltip.hide "隐藏" >
 
 
 
 
-<!ENTITY menu.updateCmd.label "棬x:..." >
+<!ENTITY menu.updateCmd.label "检查更新..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
 
 
 
 
-<!ENTITY jumptofile.playlist "表:" >
-<!ENTITY jumptofile.search "S索:" >
+<!ENTITY jumptofile.playlist "播放列表:" >
+<!ENTITY jumptofile.search "搜索:" >
 
 
 
 
-<!ENTITY tooltip.control.shuf_off "S止aS" >
+<!ENTITY tooltip.control.shuf_off "停止随机播放" >
 
 
 
 
-<!ENTITY tooltip.browser.refresh "Ʒ" >
-<!ENTITY smart.selectedby "09" >
+<!ENTITY tooltip.browser.refresh "刷新" >
+<!ENTITY smart.selectedby "选择" >
 
 
 
 
-<!ENTITY html.context.openexternal "认浏"0弬" >
+<!ENTITY html.context.openexternal "用默认浏览器打开" >
 
 
 
 
-<!ENTITY firstrun.connectionsettings "~}设置" >
+<!ENTITY firstrun.connectionsettings "连接设置" >
 
 
 

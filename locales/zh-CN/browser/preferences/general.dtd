@@ -1,23 +1,23 @@
 
-<!ENTITY  header2.label             "">
-<!ENTITY  location.label            "Location(s):">
+<!ENTITY  header2.label             "主页">
+<!ENTITY  location.label            "地址(s):">
 <!ENTITY  location.accesskey        "a">
-<!ENTITY  useCurrent.label          "Use Current Page">
+<!ENTITY  useCurrent.label          "使用当前页">
 <!ENTITY  useCurrent.accesskey      "C">
-<!ENTITY  useCurrentMultiple.label  "Use Current Pages">
-<!ENTITY  useBookmark.label         "Use Bookmark...">
+<!ENTITY  useCurrentMultiple.label  "使用当前页组">
+<!ENTITY  useBookmark.label         "使用书签...">
 <!ENTITY  useBookmark.accesskey     "U">
-<!ENTITY  useBlank.label            "Use Blank Page">
+<!ENTITY  useBlank.label            "使用空白页">
 <!ENTITY  useBlank.accesskey        "B">
 
-<!ENTITY defaultBrowserGroup.label  "Default Browser">
-<!ENTITY checkForDefault.label      "&brandShortName; should check to see if it is the default browser when starting.">
+<!ENTITY defaultBrowserGroup.label  "默认浏览器">
+<!ENTITY checkForDefault.label      "&brandShortName; 启动时检查是否为默认浏览器">
 <!ENTITY checkForDefault.accesskey  "d">
-<!ENTITY checkNow.label             "Check Now">
+<!ENTITY checkNow.label             "立即检查">
 <!ENTITY checkNow.accesskey         "N">
 
-<!ENTITY showConnections.label      "Connection Settings...">
+<!ENTITY showConnections.label      "连接设置...">
 <!ENTITY showConnections.accesskey  "o">
-<!ENTITY proxiesInfo.label          "Determine how &brandShortName; connects to the Internet.">
-<!ENTITY connectionsInfo.caption    "Connection">
+<!ENTITY proxiesInfo.label          " 设置&brandShortName; 连接网络方式">
+<!ENTITY connectionsInfo.caption    "连接">
 

@@ -1,18 +1,18 @@
-<!-- ***** BEGIN LICENSE BLOCK *****
-   - ***** END LICENSE BLOCK ***** -->
+<!ENTITY advancedJSDialog.title "JavaScript 高级设置">
+<!ENTITY allowScripts.label "允许脚本:">
+<!ENTITY changeStatusBar.accesskey "C">
+<!ENTITY changeStatusBar.label "修改状态栏内容">
+<!ENTITY disableContextMenus.accesskey "D">
+<!ENTITY disableContextMenus.label "禁用或替换上下文菜单">
+<!ENTITY hideStatusBar.accesskey "H">
+<!ENTITY hideStatusBar.label "隐藏状态栏">
+<!ENTITY moveResizeWindows.accesskey "M">
+<!ENTITY moveResizeWindows.label "移动或改变窗口大小">
+<!ENTITY raiseLowerWindows.accesskey "R">
+<!ENTITY raiseLowerWindows.label "前置或后置窗口">
+<!ENTITY window.width "37em">
 
-<!ENTITY advancedJSDialog.title         "Advanced JavaScript Settings">
-<!ENTITY window.width                   "37em">
 
-<!ENTITY allowScripts.label             "Allow scripts to:">
+<!ENTITY window.width "37em" >
 
-<!ENTITY moveResizeWindows.label        "Move or resize existing windows">
-<!ENTITY moveResizeWindows.accesskey    "M">
-<!ENTITY raiseLowerWindows.label        "Raise or lower windows">
-<!ENTITY raiseLowerWindows.accesskey    "R">
-<!ENTITY disableContextMenus.label      "Disable or replace context menus">
-<!ENTITY disableContextMenus.accesskey  "D">
-<!ENTITY hideStatusBar.label            "Hide the status bar">
-<!ENTITY hideStatusBar.accesskey        "H">
-<!ENTITY changeStatusBar.label          "Change status bar text">
-<!ENTITY changeStatusBar.accesskey      "C">
+

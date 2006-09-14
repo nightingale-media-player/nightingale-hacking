@@ -1,26 +1,26 @@
-<!ENTITY sanitizeDialog.title         "Clear Private Data">
+<!ENTITY sanitizeDialog.title         "清除私人数据">
 <!ENTITY window.width                 "30em">
 
-<!ENTITY items.label                  "Private Data">
-<!ENTITY sanitizeItems.label          "Select the items to be cleared:">
-<!ENTITY itemHistory.label            "Browsing History">
+<!ENTITY items.label                  "私人数据">
+<!ENTITY sanitizeItems.label          "选择清除项:">
+<!ENTITY itemHistory.label            "浏览历史">
 <!ENTITY itemHistory.accesskey        "B">
-<!ENTITY itemFormData.label           "Saved Form Information">
+<!ENTITY itemFormData.label           "保存的表单信息">
 <!ENTITY itemFormData.accesskey       "F">
-<!ENTITY itemPasswords.label          "Saved Passwords">
+<!ENTITY itemPasswords.label          "保存的密码">
 <!ENTITY itemPasswords.accesskey      "P">
 <!ENTITY itemCookies.label            "Cookies">
 <!ENTITY itemCookies.accesskey        "C">
-<!ENTITY itemCache.label              "Cache">
+<!ENTITY itemCache.label              "缓存">
 <!ENTITY itemCache.accesskey          "a">
-<!ENTITY itemDownloads.label          "Download History">
+<!ENTITY itemDownloads.label          "下载历史">
 <!ENTITY itemDownloads.accesskey      "D">
-<!ENTITY itemSessions.label           "Authenticated Sessions">
+<!ENTITY itemSessions.label           "通过验证的会话">
 <!ENTITY itemSessions.accesskey       "S">
 
-<!ENTITY settings.label               "Settings">
-<!ENTITY sanitizeOnShutDown.label     "Clear private data when closing &brandShortName;">
+<!ENTITY settings.label               "设置">
+<!ENTITY sanitizeOnShutDown.label     "关闭 &brandShortName;时自动清除私人数据">
 <!ENTITY sanitizeOnShutDown.accesskey "e">
-<!ENTITY promptOnSanitize.label       "Ask me before clearing private data">
+<!ENTITY promptOnSanitize.label       "清除私人数据之前询问我">
 <!ENTITY promptOnSanitize.accesskey   "k">
 

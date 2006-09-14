@@ -1,23 +1,23 @@
-<!ENTITY  changeAction.title                  "Change Action">
+<!ENTITY  changeAction.title                  "更换动作">
 <!ENTITY window.width                         "36em">
 
-<!ENTITY  whenDownloading.label               "When downloading files like this:">
+<!ENTITY  whenDownloading.label               "当下载此类型文件时:">
 
-<!ENTITY  openDefault.label                   "Open them with the default application:">
+<!ENTITY  openDefault.label                   "使用默认应用程序打开:">
 <!ENTITY  openDefault.accesskey               "O">
-<!ENTITY  openApplication.label               "Open them with this application:">
+<!ENTITY  openApplication.label               "使用下列应用程序打开:">
 <!ENTITY  openApplication.accesskey           "e">
-<!ENTITY  changeApp.label                     "Browse...">
+<!ENTITY  changeApp.label                     "浏览...">
 <!ENTITY  changeApp.accesskey                 "B">
-<!ENTITY  saveToDisk.label                    "Save them on my computer">
+<!ENTITY  saveToDisk.label                    "将它们保存到我的计算机">
 <!ENTITY  saveToDisk.accesskey                "S">
-<!ENTITY  saveToDefaultFolder.label           "in the default download folder">
+<!ENTITY  saveToDefaultFolder.label           "到默认下载文件夹">
 <!ENTITY  saveToDefaultFolder.accesskey       "d">
-<!ENTITY  saveToThisFolder.label              "in this folder:">
+<!ENTITY  saveToThisFolder.label              "到此文件夹:">
 <!ENTITY  saveToThisFolder.accesskey          "h">
-<!ENTITY  chooseFolder.label                  "Browse...">
+<!ENTITY  chooseFolder.label                  "浏览...">
 <!ENTITY  chooseFolder.accesskey              "w">
-<!ENTITY  saveToAskMe.label                   "ask me where to save the file">
+<!ENTITY  saveToAskMe.label                   "保存文件前询问存储位置">
 <!ENTITY  saveToAskMe.accesskey               "a">
-<!ENTITY  usePlugin.label                     "Use this Plugin:">
+<!ENTITY  usePlugin.label                     "使用此插件:">
 <!ENTITY  usePlugin.accesskey                 "P">

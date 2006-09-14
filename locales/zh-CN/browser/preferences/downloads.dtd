@@ -1,23 +1,23 @@
-<!ENTITY askOnSave.label              "Download Folder">
-<!ENTITY alwaysAsk.label              "Ask me where to save every file">
+<!ENTITY askOnSave.label              "下载文件夹">
+<!ENTITY alwaysAsk.label              "保存每个文件前询问存储位置">
 <!ENTITY alwaysAsk.accesskey          "A">
-<!ENTITY neverAsk.label               "Save all files to this folder:">
+<!ENTITY neverAsk.label               "将所有文件保存至此文件夹:">
 <!ENTITY neverAsk.accesskey           "S">
-<!ENTITY desktop.label                "Desktop">
-<!ENTITY downloads.label              "My Downloads">
-<!ENTITY chooseFolderWin.label        "Browse...">
+<!ENTITY desktop.label                "桌面">
+<!ENTITY downloads.label              "我的下载">
+<!ENTITY chooseFolderWin.label        "浏览...">
 <!ENTITY chooseFolderWin.accesskey    "B">
-<!ENTITY chooseFolderMac.label        "Choose...">
+<!ENTITY chooseFolderMac.label        "选择...">
 <!ENTITY chooseFolderMac.accesskey    "h">
 
-<!ENTITY downloadManagerWindow.label  "Download Manager">
-<!ENTITY showWhenStarting.label       "Show Download Manager when a download begins">
+<!ENTITY downloadManagerWindow.label  "下载管理器">
+<!ENTITY showWhenStarting.label       "下载开始时显示下载管理器。">
 <!ENTITY showWhenStarting.accesskey   "o">
-<!ENTITY closeWhenDone.label          "Close the Download Manager when all downloads are complete">
+<!ENTITY closeWhenDone.label          "当所有下载任务完成后关闭下载管理器。">
 <!ENTITY closeWhenDone.accesskey      "C">
 
-<!ENTITY fileTypes.label              "Download Actions">
-<!ENTITY configureActions.label       "View &amp; Edit Actions...">
+<!ENTITY fileTypes.label              "下载动作">
+<!ENTITY configureActions.label       "查看 &amp; 编辑动作...">
 <!ENTITY configureActions.accesskey   "V">
-<!ENTITY fileTypesDescription.label   "&brandShortName; can automatically download or open files of certain types.">
+<!ENTITY fileTypesDescription.label   "&brandShortName; 可自动下载或者打开指定类型的文件类型。">
 
