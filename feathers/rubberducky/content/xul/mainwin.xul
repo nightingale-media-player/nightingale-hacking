@@ -429,21 +429,6 @@
                   </vbox>
                 </hbox>
 
-
-                <!-- SEARCH WIDGET 
-              <vbox>
-                <spacer flex="1"/>       
-                <search
-                  id="search_widget" 
-                  listid="search_service_list"
-                  buttonid="search_service_button"
-                  tooltiptext="&tooltip.search;"
-                />
-                <spacer flex="1"/>           
-              </vbox>
-              -->
-                <!-- SEARCH WIDGET -->
-
                 <!-- SPACER -->
                 <spacer flex="1" height="60"/>
               </hbox>
@@ -498,7 +483,6 @@
                           id="search_widget" 
                           listid="search_service_list"
                           buttonid="search_service_button"
-                          tooltiptext="&tooltip.search;"
                           flex="1"
                         />
                         <spacer width="5" height="16"/>
