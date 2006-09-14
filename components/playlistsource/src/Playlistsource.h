@@ -54,11 +54,11 @@
 #define SONGBIRD_PLAYLISTSOURCE_CLASSNAME                 \
   "Songbird Media Data Source Component"
 #define SONGBIRD_PLAYLISTSOURCE_CID                       \
-{ /* 46d6999a-7584-4e21-b1c4-c170ec8236e8 */              \
-  0x46d6999a,                                             \
-  0x7584,                                                 \
-  0x4e21,                                                 \
-  {0xb1, 0xc4, 0xc1, 0x70, 0xec, 0x82, 0x36, 0xe8}        \
+{ /* 32437aa0-4442-11db-9651-00e08161165f */              \
+  0x32437aa0,                                             \
+  0x4442,                                                 \
+  0x11db,                                                 \
+	{ 0x96, 0x51, 0x0, 0xe0, 0x81, 0x61, 0x16, 0x5f }       \
 }
 #define SONGBIRD_PLAYLISTSOURCE_DESCRIPTION SONGBIRD_PLAYLISTSOURCE_CLASSNAME
 

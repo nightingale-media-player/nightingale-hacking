@@ -66,7 +66,7 @@ duplicate: function() {
 * 
 * \sa playlist.xml, playlist_test.xul
 */
-[scriptable, uuid(A0C79C6C-BED5-4b13-8567-37D105FA12E1)]
+[scriptable, uuid(32437aa0-4442-11db-9651-00e08161165f)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**

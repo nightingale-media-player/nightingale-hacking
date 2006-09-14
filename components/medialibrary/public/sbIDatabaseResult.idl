@@ -39,7 +39,7 @@
  *
  * \sa sbIDatabaseQuery
  */
-[scriptable, uuid(D711447E-B6B0-4e63-A50E-3523794E08DF)]
+[scriptable, uuid(9a5fcaf6-4441-11db-9651-00e08161165f)]
 interface sbIDatabaseResult : nsISupports
 {
   /**
