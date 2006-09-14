@@ -75,6 +75,7 @@
     <field name="ref_pl"></field>
     <field name="index">0</field>
     <field name="rebuildPending">false</field>
+    <field name="needsSelectionReset">false</field>
 
     <property name="ref">
       <getter>
@@ -149,8 +150,11 @@
             }
           }
         }
-        if ( ! any_found ) { // If we weren't able to restore any of our previous selection
-          this.tree.view.selection.rangedSelect(0, 0, true);
+        // If we weren't able to restore any of our previous selection
+        if ( any_items && ! any_found ) { 
+          // Reset the selection to "All" when you're back to a place where
+          // setting the selection would do anything.
+          this.needsSelectionReset = true;
         } // This can happen when we delete all the tracks of a filter
       }
       finally {
@@ -368,6 +372,15 @@
         }
         this.filterString = this.source.getFilter(this.ref_pl, this.index);
         this.rebuildPending = false;
+        
+        // When we set filterString, it might detect that it can't restore any of its
+        // previous selected items, so it will set this variable here to force the
+        // selection to "All" after we are allowed to respond to selection events.
+        if ( this.needsSelectionReset ) {
+          // This'll make us have to rebuild.  Better not loop!
+          this.tree.view.selection.rangedSelect(0, 0, true);
+          this.needsSelectionReset = false;
+        }
       </body>
     </method>
 
