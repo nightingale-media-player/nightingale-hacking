@@ -99,7 +99,7 @@
           <spacer height="3"/>
           
           <description class="dialog_label">
-          The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well.
+          &trackeditor.disclaimer;
           </description>
           <spacer height="8"/>
           
