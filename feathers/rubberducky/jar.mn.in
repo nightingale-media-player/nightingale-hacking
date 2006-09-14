@@ -99,6 +99,7 @@ rubberducky.jar:
   feathers/rubberducky/songbird/skin/default/seekbar_remainder.png               (skin/default/seekbar_remainder.png)
   feathers/rubberducky/songbird/skin/default/seekbar_thumb.png                   (skin/default/seekbar_thumb.png)
   feathers/rubberducky/songbird/skin/default/shuf_active.png                     (skin/default/shuf_active.png)
+  feathers/rubberducky/songbird/skin/default/help_downarrow.png                  (skin/default/help_downarrow.png)  
   feathers/rubberducky/songbird/skin/default/shuf_disabled.png                   (skin/default/shuf_disabled.png)
   feathers/rubberducky/songbird/skin/default/shuf_disabled_25x25.png             (skin/default/shuf_disabled_25x25.png)
   feathers/rubberducky/songbird/skin/default/shuf_normal.png                     (skin/default/shuf_normal.png)

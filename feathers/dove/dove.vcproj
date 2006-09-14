@@ -216,6 +216,9 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				RelativePath=".\default\grippy_webplaylist.png">
 			</File>
 			<File
+				RelativePath=".\default\help_downarrow.png">
+			</File>
+			<File
 				RelativePath=".\default\icon_cd_16x16.png">
 			</File>
 			<File

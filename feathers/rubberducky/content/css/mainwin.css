@@ -1920,3 +1920,39 @@ Mute and Slider
   background-repeat: no-repeat !important;
 }
 
+
+
+/** 
+************************************************************************************************************************************************
+HELP CALLOUT
+Callout box used to give extra information
+************************************************************************************************************************************************
+*/
+
+
+#callout_bar_content 
+{
+  -moz-border-radius: 10px !important; 
+  margin: 10px 10px 0px 10px !important; 
+  height: 30px !important;    
+  padding: 10px 10px 10px 10px !important;
+}
+
+callout label, callout-once label
+{
+  font-family: Georgia, serif !important;
+  font-size: large !important;
+}
+
+#callout_bar_arrow
+{
+  height: 10px !important;
+  width: 20px !important;
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 30px !important;
+  background-repeat: no-repeat !important;
+}
+
+                        
+                        
+

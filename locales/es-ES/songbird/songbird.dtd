@@ -334,3 +334,8 @@
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
 
 
+
+
+<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks:" >
+
+

@@ -25,4 +25,5 @@ songbird.jar:
   content/songbird/bindings/smartsplitter.xml     (smartsplitter.xml)
   content/songbird/bindings/clickholdbutton.xml   (clickholdbutton.xml)
   content/songbird/bindings/hotkey.xml            (hotkey.xml)
-  
+  content/songbird/bindings/calloutbox.xml        (calloutbox.xml)  
+

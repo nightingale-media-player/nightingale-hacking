@@ -78,6 +78,9 @@
           this.remote_volume.unbind();
           this.remote_volume = null;
         }
+        if (this.remote_lastVolume) {
+          this.remote_lastVolume = null;
+        }
       ]]>
     </destructor>
     

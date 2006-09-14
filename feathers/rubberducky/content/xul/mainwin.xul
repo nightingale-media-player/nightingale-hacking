@@ -497,26 +497,41 @@
                     <splitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" collapse="after" onmouseup="onBrowserPlaylistResize();">
                       <grippy/>
                     </splitter>
+                    
+                    
+                    <vbox
+                        id="playlist_web_vbox"
+                        height="200"
+                        hidden="true"
+                        minheight="0"
+                        _resize_height="200"
+                    >
+                    
+                      <callout-once id="calloutbox_web_playlist" hidden="true" class="sb_faceplate">
+                        <label value="&callout.firstwebplaylist;"/>
+                      </callout-once>
 
-                    <playlist 
-                      id="playlist_web" 
-                      height="105"
-                      hidden="true"
-                      enableColumnDrag="true"
-                      minheight="0"
-                      _resize_height="105"
-                  >
-                      <!--
-                    <menuseparator/>
-                    <menuitem id="playlist.context.test" label="Test"/>
-                  -->
-                    </playlist>
+                      <playlist 
+                        id="playlist_web" 
+                        height="105"
+                        flex="1"
+                        hidden="true"
+                        enableColumnDrag="true"
+                        minheight="0"
+                        _resize_height="105"
+                    >
+                        <!--
+                      <menuseparator/>
+                      <menuitem id="playlist.context.test" label="Test"/>
+                    -->
+                      </playlist>
+                    </vbox>
+                    
 
                   </vbox>
                   
                   
-                  
-                  
+                    
                 </hbox>
               </vbox>
               <!-- frame_middle_pane -->

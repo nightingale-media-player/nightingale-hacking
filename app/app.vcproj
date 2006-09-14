@@ -789,6 +789,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\bindings\calloutbox.xml">
+				</File>
+				<File
 					RelativePath=".\content\bindings\clickholdbutton.xml">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1817,7 +1820,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1825,7 +1829,8 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)dist\songbird
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Performing Custom Build Step $(InputFileName)"
-							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
+"
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>

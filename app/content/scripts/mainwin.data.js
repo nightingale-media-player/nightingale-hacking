@@ -75,6 +75,36 @@ try
       MainwinAdd( SBDataBindElementProperty ( "browser.url.image", "browser_url_image", "src" ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web", "hidden", true, true ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_split", "hidden", true, true ) );
+      MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_vbox", "hidden", true, true ) );
+        
+      
+      // Set up the trigger for the webplaylist callout 
+      var webplaylistCalloutTrigger = SB_NewDataRemote( "browser.playlist.show", null );
+      var webplaylistCalloutObserver = { 
+          observe: function( aSubject, aTopic, aData ) { 
+            try {
+              var callout = document.getElementById('calloutbox_web_playlist'); 
+              // If closed, never show again
+              if (callout.hasBeenClosed) {
+                return;
+              }
+              if (aSubject.boolValue) {
+                callout.show();
+              } else {
+                callout.hide();
+              }
+            } catch (e) {
+              dump("\nCouldn't trigger web playlist callout box: \n" + e + "\n");
+            }
+          } 
+      };
+      webplaylistCalloutTrigger.bindObserver(webplaylistCalloutObserver, true);
+      MainwinAdd( webplaylistCalloutTrigger );
+      
+      // Must null out the dataremote so that we to avoid creating a cycle with the observer.
+      // (Otherwise observer has the dataremote in scope)
+      webplaylistCalloutTrigger = null;
+      
       
       // Options
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );
