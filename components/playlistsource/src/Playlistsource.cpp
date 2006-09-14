@@ -213,6 +213,7 @@ MyQueryCallback::MyTimerCallback()
 
     // LOCK IT.
     nsAutoMonitor mon_global(gPlaylistsource->g_pMonitor);
+    nsAutoMonitor mon_local(m_pMonitor);
 
     if (!m_Info) {
       NS_WARNING("No m_Info on this Playlistsource::MyQueryCallback object!!!");
@@ -225,17 +226,13 @@ MyQueryCallback::MyTimerCallback()
     if ( exec )
     {
       // Just ignore this one, but always go on the next one.
-      gPlaylistsource->g_ActiveQueryCount = 0;
       m_Timer->InitWithFuncCallback(&MyTimerCallbackFunc, this,
                                     100, nsITimer::TYPE_ONE_SHOT);
       return;
     }
 
-    nsAutoMonitor mon_local(m_pMonitor);
-    {
-      count = m_Count;
-      m_Count = 0;
-    }
+    count = m_Count;
+    m_Count = 0;
 
     // This is ok by design
     if (gPlaylistsource->g_ActiveQueryCount < 0)
@@ -250,6 +247,7 @@ MyQueryCallback::MyTimerCallback()
     } else {
       m_Info->m_Query->GetResultObjectOrphan(getter_AddRefs(result.m_Results));
     }
+
     result.m_Source = m_Info->m_RootResource;
     result.m_OldTarget = m_Info->m_RootTargets;
     result.m_Ref = m_Info->m_Ref;
@@ -936,7 +934,12 @@ sbPlaylistsource::GetSearchString(const nsAString &aRefName,
   nsAutoMonitor mon(g_pMonitor);
 
   sbFeedInfo* info = GetFeedInfo(aRefName);
-  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  // Setting properties on the filter XBL bindings causes rebuilds early in
+  // startup cycle and we get here before we have a feedinfo. Just return,
+  // we are cool.
+  if (nsnull == info)
+    return NS_RDF_NO_VALUE;
 
   _retval = info->m_SearchString;
 
@@ -1171,7 +1174,12 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   nsAutoMonitor mon(g_pMonitor);
 
   sbFeedInfo* info = GetFeedInfo(aRefName);
-  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  // Setting properties on the filter XBL bindings causes rebuilds early in
+  // startup cycle and we get here before we have a feedinfo. Just return,
+  // we are cool.
+  if (nsnull == info)
+    return NS_RDF_NO_VALUE;
 
   nsAutoString table_name(info->m_Table);
 
@@ -1866,7 +1874,12 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
   // Okay, so, the "source" item should be found in the Map
   sbFeedInfo* info = GetFeedInfo(source);
-  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  // Setting properties on the filter XBL bindings causes rebuilds early in
+  // startup cycle and we get here before we have a feedinfo. Just return,
+  // we are cool.
+  if (nsnull == info)
+    return NS_RDF_NO_VALUE;
 
   info->m_RefCount++; // Pleah.  This got away from me.
 

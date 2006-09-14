@@ -202,10 +202,6 @@
 
           var treerow_node = document.createElement("treerow");
 
-          // Ooops, the data isn't ready yet!
-          if ( source.getRefRowCount( ref ) == 0 )
-            return;
-
           // Fill in the necessary information for the tree column.
           var name = "" + this.column;
           if ( name.length )

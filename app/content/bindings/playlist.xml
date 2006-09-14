@@ -857,40 +857,45 @@
         
         parent.appendChild( filterlist );          
         
-        // And set it up properly.
+        // The ref for the filter contains the column header identifier
         var ref = this.ref + "_" + meta_column;
-        this.source.incomingObserver( ref, filterlist ); // HEY YOU GUYYYYYYYS!!
+
+        // This preps the Playlistsource for the XUL Tree Builder to hook up
+        // and only listen to changes to this ref.
+        this.source.incomingObserver( ref, filterlist );
+
+        // There is a VERY delicate ordering here that breaks if you start
+        // moving things around. If you do, make sure you test thoroughly.
         filterlist.source = this.source;
-        filterlist.ref_pl = this.ref;
-        filterlist.ref = ref; // YOU MUST SET THIS VARIABLE AFTER 
-                              // filterlist.source AND filterlist.ref_pl !!!!!
         filterlist.index = this.filters.length;
         filterlist.column = meta_column;
         filterlist.datasources = "rdf:playlist";
         filterlist.playlist = this;
+        filterlist.ref_pl = this.ref;
+
+        // setting the ref causes a rebuild of the filter and a
+        // select to happen, which calls setFilter, so you BETTER have index,
+        // ref and column set before setting the ref.
+        filterlist.ref = ref;
 
         filterlist.addEventListener( "dblclick", this._onFilterDblClickClosure, true );
-        filterlist.addEventListener("filterlist-filterchange", this.sendFilterChangeEvent, true);
-        
+        filterlist.addEventListener( "filterlist-filterchange", this.sendFilterChangeEvent, true );
+
+        // We still need to call setFilter here despite it getting called from
+        // the setting of ref above, otherwise the filters will not draw
         if ( feed )
         {
-          this.source.setFilter(  this.ref, 
-                                  filterlist.index, 
-                                  "", 
-                                  filterlist.ref,
-                                  filterlist.column  );
+          this.source.setFilter( this.ref, 
+                                 filterlist.index, 
+                                 "", 
+                                 filterlist.ref,
+                                 filterlist.column );
         }
-                
+
         filterlist.builder.refresh();
         
-        
-        if ( feed )
-        {
-          this.source.executeFeed( this.ref );
-        }
-        
         this.filters.push( filterlist );
-        thesplitter.restoreLastState(true);
+        thesplitter.restoreLastState( true );
       }
       catch( err )
       {
