@@ -120,7 +120,7 @@ CoreVLC.prototype.stop = function()
   this._verifyObject();
   this._object.stop();
   this._paused = false;
-  return false;
+  return this._object.isplaying() == false;
 };
   
 CoreVLC.prototype.pause = function()

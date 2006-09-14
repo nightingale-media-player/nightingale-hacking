@@ -235,7 +235,7 @@ PlaylistPlayback.prototype = {
 
   _started:           false,
   _set_metadata:      false,
-  
+  _stopNextLoop:      false,
   _playlistReaderManager: null,
 
   
@@ -820,7 +820,14 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     core.stop();
+/*
+  // Hmm, okay, so, if we stop the loop here, we never actually SEE that we stop,
+  // so we don't get a chance to clean everything up.
+    
     this._stopPlayerLoop(); // oh VERY important!
+    
+*/    
+    this._stopNextLoop = true;
     return true;
   },
 
@@ -1278,8 +1285,10 @@ PlaylistPlayback.prototype = {
       // Oh, NOW you say we stopped, eh?
       this._seenPlaying.boolValue = false;
       this._stopPlayerLoop();
-      
-      this._playNextPrev(1);
+      // Don't go on to the next track if we see that we're stopping.
+      if ( ! this._stopNextLoop )
+        this._playNextPrev(1);
+      this._stopNextLoop = false;
     }
     else {
       // After 10 seconds or fatal error, give up and go to the next one?
