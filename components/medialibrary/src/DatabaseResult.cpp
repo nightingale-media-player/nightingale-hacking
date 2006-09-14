@@ -106,6 +106,18 @@ NS_IMETHODIMP CDatabaseResult::GetColumnName(PRInt32 dbColumn, nsAString &_retva
 } //GetColumnName
 
 //-----------------------------------------------------------------------------
+/* wstring GetColumnName (in PRInt32 dbColumn); */
+NS_IMETHODIMP CDatabaseResult::GetColumnIndex(const nsAString &aColumnName, PRInt32 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = GetColumnIndexFromName(aColumnName);
+
+  return NS_OK;
+} //GetColumnIndex
+
+
+//-----------------------------------------------------------------------------
 /* PRInt32 GetRowCount (); */
 NS_IMETHODIMP CDatabaseResult::GetRowCount(PRInt32 *_retval)
 {

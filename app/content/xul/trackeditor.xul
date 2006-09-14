@@ -244,7 +244,7 @@
   }
   
   function doOK() {
-    if (playlist) playlist.deselectAll();
+    //if (playlist) playlist.deselectAll();
     document.getElementById("trackeditor.trackeditor").apply();
     document.getElementById("trackeditor.exttrackeditor").apply();
     //document.getElementById("trackeditor.tageditor").apply();

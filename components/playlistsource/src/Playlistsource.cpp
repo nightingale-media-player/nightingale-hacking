@@ -781,6 +781,131 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
 }
 
 NS_IMETHODIMP
+sbPlaylistsource::GetRefRowsByColumnValues(const nsAString &aRefName,
+                                           const nsAString &aColumn,
+                                           PRUint32 aValueCount, const PRUnichar **aValues,
+                                           PRUint32 *nRowCount, PRUint32 **aRows)
+{
+  LOG(("sbPlaylistsource::GetRefRowsByColumnValues"));
+  NS_ENSURE_ARG_POINTER(aValues);
+  NS_ENSURE_ARG_POINTER(nRowCount);
+  NS_ENSURE_ARG_POINTER(aRows);
+
+  METHOD_SHORTCIRCUIT;
+  nsAutoMonitor mon(g_pMonitor);
+  
+  // Find the ref string in the stringmap.
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  nsresult rv;
+
+  // get the total number of rows in the result set
+  PRInt32 i, rowcount, colindex;
+  rv = info->m_Resultset->GetRowCount(&rowcount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the index for the column
+  rv = info->m_Resultset->GetColumnIndex(aColumn, &colindex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // allocate a return array
+  PRUint32 *out = (PRUint32 *) nsMemory::Alloc(aValueCount * sizeof(PRUint32));
+  if (!out) return NS_ERROR_OUT_OF_MEMORY;
+
+  // initialize the return array to -1 for all items
+  PRUint32 j;
+  for (j = 0 ; j < aValueCount; j++ ) out[j] = -1;
+
+  nsAutoString value;
+  // for all rows
+  for (i = 0 ; i < rowcount; i++ ) {
+    // get the column value
+    rv = info->m_Resultset->GetRowCell(i, colindex, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    int comparecount = 0;
+    // for all values to find
+    for (j = 0 ; j < aValueCount; j++ ) {
+      // if the value has already been found, go to the next one
+      if (out[j] != -1) continue;
+      comparecount++;
+      nsDependentString s(aValues[j]);
+      // if the value is the same as the one we're looking for then record its row in the return array
+      if (s == value) {
+        out[j] = i;
+        break;
+      }
+    }
+    // if we skipped everything, we're done
+    if (comparecount == 0) break;
+  }
+  
+  *nRowCount = aValueCount;
+  *aRows = out;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistsource::GetRefColumnValuesByRows(const nsAString &aRefName,
+                                           const nsAString &aColumn,
+                                           PRUint32 aRowCount, PRUint32 *aRows,
+                                           PRUint32 *nValueCount, PRUnichar ***aValues)
+{
+  LOG(("sbPlaylistsource::GetRefColumnValuesByRows"));
+  NS_ENSURE_ARG_POINTER(aRows);
+  NS_ENSURE_ARG_POINTER(nValueCount);
+  NS_ENSURE_ARG_POINTER(aValues);
+
+  METHOD_SHORTCIRCUIT;
+  nsAutoMonitor mon(g_pMonitor);
+
+  // Find the ref string in the stringmap.
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  nsresult rv;
+
+  // get the total number of rows in the result set
+  PRInt32 rowcount, colindex;
+  rv = info->m_Resultset->GetRowCount(&rowcount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the index for the column
+  rv = info->m_Resultset->GetColumnIndex(aColumn, &colindex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // allocate a return array
+  PRUnichar **out = (PRUnichar **) nsMemory::Alloc(aRowCount * sizeof(PRUnichar *));
+  if (!out) return NS_ERROR_OUT_OF_MEMORY;
+
+  PRUint32 i;
+  nsAutoString value;
+
+  // for all requested rows
+  for (i = 0 ; i < aRowCount; i++ ) {
+    // if the row is valid
+    if (aRows[i] < (PRUint32)rowcount) {
+      // get the value for the column
+      rv = info->m_Resultset->GetRowCell(aRows[i], colindex, value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      // and record it in the return array
+      out[i] = ToNewUnicode(value);
+      if (!out[i]) return NS_ERROR_OUT_OF_MEMORY;
+    } else {
+      // otherwise set it to undefined
+      out[i] = NULL;
+    }
+  }
+ 
+  *nValueCount = aRowCount;
+  *aValues = out;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlaylistsource::IsQueryExecuting(const nsAString &aRefName,
                                    PRBool*          _retval)
 {

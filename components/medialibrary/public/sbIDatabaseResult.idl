@@ -60,6 +60,15 @@ interface sbIDatabaseResult : nsISupports
   AString getColumnName(in PRInt32 aColumnIndex);
 
   /**
+   * \brief The index of a particular column.
+   *
+   * \param aColumnName The name of the column to access.
+   * \return The index of the column.
+   * \sa sbIDatabaseQuery
+   */
+  PRInt32 getColumnIndex(in AString aColumnIndex);
+
+  /**
    * \brief The number of rows in the result.
    *
    * \return The number of rows in the result.

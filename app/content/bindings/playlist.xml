@@ -262,7 +262,8 @@
         this.removeEventListener("dblclick", this._onPlaylistDblClickClosure, false);
         this.removeEventListener("draggesture", this._onDragClosure, false);
 
-        for each(var filter in this.filters) {
+        for(var i=0;i<this.filters.length;i++) {
+          var filter = this.filters[i];
           filter.removeEventListener("dblclick", this._onFilterDblClickClosure, true);
           filter.removeEventListener("filterlist-filterchange", this.sendFilterChangeEvent, true);
         }
@@ -1396,6 +1397,7 @@
               // save selection array, this is potentially slow if many items are selected
               if (column != null) {
                 this._saved_selection = Array();
+                this._saved_selection.position = Array();
                 this._saved_selection.all = false;
                 this._saved_selection.ranges = Array();
                 this._saved_nitems = this.tree.view.rowCount;
@@ -1405,6 +1407,9 @@
                   var start = {};
                   var end = {};
                   this.tree.view.selection.getRangeAt( i, start, end );
+                  if (start.value == -1 || end.value == -1) {
+                    continue;
+                  }
                   this._saved_selection.ranges.push([start.value, end.value]);
                   if (start.value == 0 && end.value == this.tree.view.rowCount-1) this._saved_selection.all = true;
                   else {
@@ -1423,9 +1428,15 @@
                         alert( "Error? " + column + " - " + c + "\r\n" + e );
                         return;  // wtf?!
                       }
-                      this._saved_selection.push([ c, value ]);
+                      this._saved_selection.push(value);
+                      this._saved_selection.position.push(c);
                     }
                   }
+                }
+                // did our selection just get screwed for no reason ? this happens when all selection ranges are invalid ! eek !!
+                if (rangeCount > 0 && this._saved_selection.length == 0) {
+                  // fix the internal selection ranges, or we'll keep getting (-1,-1)'s :(
+                  this.tree.view.selection.clearSelection();
                 }
               }
             } 
@@ -1446,13 +1457,13 @@
             this.restoring_selection = true;
             
             //dump("start restore\n");
-            if (this._saved_selection != null && this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
+            if (this._saved_selection != null && this._saved_selection.length > 0 && this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
               // use the key we picked in saveSelection
               var column = this.tree.columns.getNamedColumn(this._selection_key); 
               if (column != null) {
-                
+
                 // restore selection from array
-                
+
                 // first try to restore from selection ranges. this can only be done for unsorted 
                 // playlists, because sorted playlists may move the items in a rebuild.
                 // an exception to this is when *all* items are selected, then it doesn't matter if 
@@ -1477,9 +1488,8 @@
                   var by_position_failed = false;
                   
                   while (this._saved_selection.length > 0) {
-                    var item = this._saved_selection.pop();
-                    var row = item[0];
-                    var value = item[1];
+                    var value = this._saved_selection.pop();
+                    var row = this._saved_selection.position.pop();
                     
                     var cell = this.tree.view.getCellText( row, column );
                     if (value == cell) {
@@ -1487,43 +1497,26 @@
                       this.tree.view.selection.rangedSelect(row, row, true);
                     } else {
                       // an item has changed position, put it back in the list and stop trusting item positions
-                      this._saved_selection.push(item);
+                      this._saved_selection.push(value);
+                      this._saved_selection.position.push(row);
                       by_position_failed = true;
                       break;
                     }
                   }
                   
                   if (by_position_failed) {
-                    
-                    // last, if neither of the previous method succeeded (which implies some items moved around), 
-                    // enumerate the new playlist items until each previously selected one has been reselected.
-                    // this is potentially slow
-                    
-                    var position = 0;
-                    var nitems = this.tree.view.rowCount;
 
-                    while (position < nitems && this._saved_selection.length > 0) { // if theres nothing left in the array, or we reached the end of the playlist, we're done
-                      // get the cell text
-                      var cell = this.tree.view.getCellText( position, column );
-                      
-                      // try to find it in the array
-                      var nsel = this._saved_selection.length;
-                      for (var i=0;i<nsel;i++) {
-                        var value = this._saved_selection[i][1];
-                        if (value == cell) { // found ?
-                          
-                          // reselect this item in the playlist
-                          this.tree.view.selection.rangedSelect(position, position, true);
-                          
-                          // remove the entry from the saved selection list
-                          this._saved_selection.splice(i, 1);
-                          
-                          // stop looking for this selection item
-                          break;
-                        }
-                      }
-                      
-                      position++; // next playlist item
+                    // last, if neither of the previous method succeeded (which implies some items moved around), 
+                    // ask the playlist source to find the previously recorded values and return an array of new rows
+                    // this is potentially slow for really big libraries on slow machines
+
+                    var nrows = {};
+                    var rows = this.source.getRefRowsByColumnValues(this.ref, this._selection_key, this._saved_selection.length, this._saved_selection, nrows);
+                    
+                    for (var i=0;i<nrows.value;i++) {
+                      var row = rows[i];
+                      if (row == -1) continue;
+                      this.tree.view.selection.rangedSelect(row, row, true);
                     }
                   }
                 }
@@ -1554,12 +1547,8 @@
             {
               return value - 1;   
             }
-            var n = this.tree.view.rowCount;
-            for( var c = 0; c < n; c++ )
-            {
-              var cell = this.tree.view.getCellText( c, column );
-              if (cell == value) return c;
-            }
+            var row = this.source.getRefRowByColumnValue(this.ref, column.id, value);
+            return row;
           }
           catch( err )
           {

@@ -461,6 +461,30 @@ interface sbIPlaylistsource : nsIRDFDataSource
   PRInt32 getRefRowByColumnValue( in AString aRefName, in AString aColumn, in AString aValue );
   
   /**
+  * \brief Calculate the row indices of an array of cells based upon their values for a column
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aColumn The column name on which to perform the search
+  * \param aValueCount The number of values passed in the array
+  * \param aValues The array of values to test against
+  * \param aRowCount The number of rows returned in the array
+  * \return The array of row indices (items for values that were not found are set to -1)
+  */
+  void getRefRowsByColumnValues( in AString aRefName, in AString aColumn, in PRUint32 aValueCount, [array, size_is(aValueCount)] in wstring aValues, out PRUint32 aRowCount, [array, size_is (aRowCount), retval] out PRUint32 aRows);
+  
+  /**
+  * \brief Extract the values of a column based on the rows for an array of cells
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aColumn The column name on which to perform the extraction
+  * \param aRowCount The number of rows passed in the array
+  * \param aRows The array of rows for which to extract column values
+  * \param aValueCount The number of values extracted and returned in the array
+  * \return The array of values (items for rows that were invalid are set to undefined)
+  */
+  void getRefColumnValuesByRows( in AString aRefName, in AString aColumn, in PRUint32 aRowCount, [array, size_is(aRowCount)] in PRUint32 aRows, out PRUint32 aValueCount, [array, size_is (aValueCount), retval] out wstring aValues);
+  
+  /**
   * \brief Determine if a datasource is currently executing its internal queries
   *
   * \param aRefName The unique identifier for the datasource 
