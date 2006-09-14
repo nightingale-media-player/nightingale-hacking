@@ -26,6 +26,9 @@
 
 
 
+// Make this an honest global.
+var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+              .getService(Components.interfaces.sbIPlaylistPlayback);
 
 
 
@@ -319,9 +322,6 @@ function SBMetricsAppShutdown()
 
 function SBAppDeinitialize()
 {
-  // Make sure we stop before shutdown or our timer kills us.
-  var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
   try {
     gPPS.stop(); // else we crash?
   } catch (e) {}
@@ -554,33 +554,9 @@ function SBInitializeNamedDatabase( db_name )
 var coreInitialCloakDone = 0;
 function HideCoreWindow() 
 {
-  try {
-    var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
-    if (windowCloak) {
-      var service = windowCloak.createInstance(Components.interfaces.sbIWindowCloak);
-      if (service) 
-      {
-        service.cloak( document ); 
-
-        // Stop playback, since it looks weird for video to keep playing offscreen
-        var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
-        if (gPPS.playing)
-        {
-          gPPS.stop();
-        }
-      }
-    }
-  }
-  catch (err) {
-    //No component
-    dump("Error. Songbird.js:HideCoreWindow \n" + err + "\n");
-  }
+  onHide();
   coreInitialCloakDone = 1;
 }
-
-
-
 
 var SBVideoMinMaxCB = 
 {
