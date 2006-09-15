@@ -537,7 +537,7 @@ function fixOSXWindow(aBoxId, aLabelId)
 
     button.id = aId;
     button.setAttribute("class", CLASS_SYSBTNS);
-    button.disabled = true;
+    button.setAttribute("disabled", "true");
 
     return button;
   }
