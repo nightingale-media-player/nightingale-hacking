@@ -55,6 +55,7 @@ var bmManager = {
   serviceSourceProxy : null, 
   serviceTree : null, 
   bookmark_nodes : null,
+  extensionsFolderNode : null,
 
   init : function() {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -89,7 +90,7 @@ var bmManager = {
     this.serviceTree.database.RemoveDataSource(current);
     this.serviceSourceProxy = new ServicesourceProxy();
     this.serviceTree.database.AddDataSource(this.serviceSourceProxy);
-      
+    
     this.serviceMenu.database.RemoveDataSource(current);
     this.serviceMenu.database.AddDataSource(this.serviceSourceProxy);
   },
@@ -105,8 +106,13 @@ var bmManager = {
     }
   },
   
-  saveBookmarks : function() {    
-    SBDataSetStringValue("bookmarks.serializedTree", this.bookmark_nodes.toJSONString());
+  saveBookmarks : function() {
+    // Don't save the Extension node by filtering it out before the stringify
+    var filteredNodes = {};
+    filteredNodes.children = this.bookmark_nodes.children.filter(function(o) {
+      return o != this.extensionsFolderNode;
+    }, this);
+    SBDataSetStringValue("bookmarks.serializedTree", JSON.stringify(filteredNodes));
   },
   
   loadBookmarks : function() {
@@ -121,10 +127,62 @@ var bmManager = {
     else
     {
       var serializedTree = SBDataGetStringValue("bookmarks.serializedTree");
-      this.bookmark_nodes = serializedTree.parseJSON();
+      this.bookmark_nodes = JSON.parse(serializedTree);
     }
+    this.appendExtensionBookmarks();
 
     return this.bookmark_nodes;
+  },
+  
+  appendExtensionBookmarks : function() {
+    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                                        .getService(Components.interfaces.nsIPrefService);
+
+    // Scan this branch for extension bookmarks
+    var branch = prefService.getBranch("bookmarks.extensions");
+    if(branch) {
+      var extensions = {};
+      var count = { value : 0 };
+      var children = branch.getChildList("", count);
+      var hasExtensionBookmarks = false;
+      for(var i = 0; i < count.value; i++) {
+        var a = children[i].split(".", 2);
+        if(a.length == 2) {
+          var name = "." + a[1];
+          if(!extensions[name]) {
+            try {
+              var extension = {};
+              extension.icon       = branch.getCharPref(name + ".icon");
+              extension.label      = branch.getCharPref(name + ".label");
+              extension.url        = branch.getCharPref(name + ".url");
+              extension.properties = "bookmark";
+              extension.children   = [];
+              extensions[name] = extension;
+              hasExtensionBookmarks = true;
+            }
+            catch(e) {
+              // Extension bookmark pref was invalid, just skip
+            }
+          }
+        }
+      }
+
+      if(hasExtensionBookmarks) {
+        this.extensionsFolderNode = {
+          label: "Extensions",
+          icon: "chrome://songbird/skin/default/icon_folder.png",
+          url: "",
+          properties: "bookmark",
+          children: []
+        };
+        this.bookmark_nodes.children.push(this.extensionsFolderNode);
+
+        for(var extension in extensions) {
+          this.extensionsFolderNode.children.push(extensions[extension]);
+        }
+      }
+
+    }
   },
   
   findBookmark : function(url) {
@@ -654,10 +712,10 @@ var bmManager = {
                       properties: "bookmark",
                       children: []
                     }         
-                    ] // end of devices children
-               }       
+                  ] // end of devices children
+              }
           ]
-    };  
+    };
     return nodes;
   }
 };
