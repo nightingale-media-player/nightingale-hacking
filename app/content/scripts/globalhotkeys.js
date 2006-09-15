@@ -318,10 +318,13 @@ var playbackHotkeyActions = {
   },
 
   _hotkey_playPause: function() {
-    if (this._gPPS.paused)
-      this._gPPS.play();
-    else
-      this._gPPS.pause();
+    // If paused or stopped, then start playing
+    if (this._gPPS.paused == this._gPPS.playing) {
+      this._gPPS.play(); 
+    // Otherwise pause
+    } else {
+      this._gPPS.pause();  
+    }
   },
 
   _hotkey_pause: function() {
