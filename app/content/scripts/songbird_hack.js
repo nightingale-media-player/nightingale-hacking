@@ -890,9 +890,6 @@ var sbWebProgressListener = {
 
   onStateChange : function( aWebProgress, aRequest, aState, aStatus ) 
   {
-    // don't handle someone else's browser, heh
-    if (aWebProgress.DOMWindow.name != "frame_main_pane") return;
-
     const nsIWebProgressListener =
       Components.interfaces.nsIWebProgressListener;
 
@@ -932,9 +929,6 @@ var sbWebProgressListener = {
   {
     try
     {
-      // don't handle someone else's browser, heh
-      if (aWebProgress.DOMWindow.name != "frame_main_pane") return;
-      
       // Set the value in the text box (shown or not)
       var theServiceTree = document.getElementById( "frame_servicetree" );
       var theMainPane = document.getElementById( "frame_main_pane" );
