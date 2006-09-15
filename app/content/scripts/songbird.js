@@ -558,6 +558,21 @@ function HideCoreWindow()
   coreInitialCloakDone = 1;
 }
 
+function onHideButtonClick()
+{
+  // Stop video playback
+  gPPS.stop();
+  // Hide our video window
+  onHide();
+
+  // And focus the main window
+  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Components.interfaces.nsIWindowMediator);
+  var mainWin = wm.getMostRecentWindow("Songbird:Main");
+  if (mainWin)
+    mainWin.focus();
+}
+
 var SBVideoMinMaxCB = 
 {
   // Shrink until the box doesn't match the window, then stop.

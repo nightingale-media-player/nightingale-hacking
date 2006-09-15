@@ -44,6 +44,7 @@
   onclose="return false; /*quitApp();*/" 
   title="&window.dev.title;"
   onkeypress="onMainwinKeypress( event );"
+  windowtype="Songbird:Main"
 
   ondraggesture="onBkgDown( event, false ); // Handle the window drag at the top level" 
   onmouseup="onBkgUp(); // Handle the window drag at the top level"

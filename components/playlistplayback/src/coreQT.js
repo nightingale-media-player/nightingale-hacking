@@ -50,6 +50,7 @@ function CoreQT()
   this._lastVolume = 0;
   this._muted = false;
   this._starttime = 0;
+  this._playFromBeginning = true;
   
   this.NOT_LOCAL_FILE = -1;
   this.LOCAL_FILE_NOT_AVAILABLE = 0;
@@ -81,7 +82,7 @@ CoreQT.prototype.cleanupOnError = function ()
     SetQTObject();
     
     this.LOG("cleanupOnError!", "CoreQT");
-    
+
   } catch(e) {
     dump(e);
   }
@@ -231,7 +232,13 @@ CoreQT.prototype.play = function ()
   this._verifyObject();
 
   try {
-      this._object.Play();
+    if (this._playFromBeginning) {
+      try {
+        this._object.Rewind();
+      } catch(e) { }
+      this._playFromBeginning = false;
+    }
+    this._object.Play();
   } catch(e) {
     this.LOG(e, "CoreQT");
   }
@@ -259,12 +266,16 @@ CoreQT.prototype.pause = function ()
 CoreQT.prototype.stop = function ()
 {
   this._verifyObject();
+  this._playFromBeginning = true;
   
   try {
-    this.pause();
-    this._object.Rewind();
+    if (this._playing) {
+      this._object.Stop();
+      this.cleanupOnError();
+    }
   } catch(e) {
     this.LOG(e, "CoreQT");
+    this.cleanupOnError();
   }
 
   this._paused = false;
@@ -364,7 +375,7 @@ CoreQT.prototype.setPosition = function ( pos )
 CoreQT.prototype.getVolume = function ()
 {
   this._verifyObject();
-  var curVol = 0;
+  var curVol = this._lastVolume;
   
   try {
     curVol = this._object.GetVolume();
