@@ -66,7 +66,7 @@ duplicate: function() {
 * 
 * \sa playlist.xml, playlist_test.xul
 */
-[scriptable, uuid(32437aa0-4442-11db-9651-00e08161165f)]
+[scriptable, uuid(47bc06b4-44c5-11db-9652-00e08161165f)]
 interface sbIPlaylistCommands : nsISupports 
 {
   /**
@@ -459,6 +459,16 @@ interface sbIPlaylistsource : nsIRDFDataSource
   * \return The row index, or -1
   */
   PRInt32 getRefRowByColumnValue( in AString aRefName, in AString aColumn, in AString aValue );
+
+  /**
+  * \brief Extract the value of a column based on the cell row
+  *
+  * \param aRefName The unique identifier for the datasource 
+  * \param aColumn The column name on which to get the value
+  * \param aRow The row for which to extract column values
+  * \return The value (or undefined if the row is invalid)
+  */
+  AString getRefColumnValueByRow( in AString aRefName, in AString aColumn, in PRUint32 aRow);
   
   /**
   * \brief Calculate the row indices of an array of cells based upon their values for a column

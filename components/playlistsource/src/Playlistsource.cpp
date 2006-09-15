@@ -906,6 +906,38 @@ sbPlaylistsource::GetRefColumnValuesByRows(const nsAString &aRefName,
 }
 
 NS_IMETHODIMP
+sbPlaylistsource::GetRefColumnValueByRow(const nsAString &aRefName,
+                                           const nsAString &aColumn,
+                                           PRUint32 aRow,
+                                           nsAString &_retval)
+{
+  LOG(("sbPlaylistsource::GetRefColumnValueByRow"));
+
+  METHOD_SHORTCIRCUIT;
+  nsAutoMonitor mon(g_pMonitor);
+
+  // Find the ref string in the stringmap.
+  sbFeedInfo* info = GetFeedInfo(aRefName);
+  NS_ENSURE_TRUE(info, NS_ERROR_NULL_POINTER);
+
+  nsresult rv;
+
+  // get the total number of rows in the result set
+  PRInt32 rowcount;
+  rv = info->m_Resultset->GetRowCount(&rowcount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // if the row is valid
+  if (aRow < (PRUint32)rowcount) {
+    // get the value for the column
+    rv = info->m_Resultset->GetRowCellByColumn(aRow, aColumn, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+ 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlaylistsource::IsQueryExecuting(const nsAString &aRefName,
                                    PRBool*          _retval)
 {
