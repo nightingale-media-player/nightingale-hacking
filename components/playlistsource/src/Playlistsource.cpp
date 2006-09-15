@@ -2644,14 +2644,52 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   else
     end = value.m_Info->m_ResList.size();
 
+  // Let's try to sort this with some kind of reality.
+  typedef std::map< nsString, PRInt32 > valmap_t;
+  valmap_t valmap;
+
+  // First, construct a map of return values
+//  nsAutoString ids;
   for (PRInt32 i = value.m_ResMapIndex; i < end; i++) {
-    sbValueInfo& val = g_ValueMap[value.m_Info->m_ResList[i]];
     nsAutoString id;
     result->GetRowCellByColumn( i - value.m_ResMapIndex, NS_LITERAL_STRING("id"), id );
-    // Make sure this is a valid assignment!
-    if ( val.m_Id == id ) {
+    valmap[ id ] = i - value.m_ResMapIndex;
+//    ids += id;
+//    ids.AppendLiteral(" ");
+  }
+  // Next, go through the possible values for the map and see if you can get something useful.
+  for (PRInt32 i = value.m_ResMapIndex; i < end; i++) {
+    sbValueInfo& val = g_ValueMap[value.m_Info->m_ResList[i]];
+    valmap_t::iterator vi = valmap.find( val.m_Id );
+    if ( vi != valmap.end() ) {
       val.m_Resultset = result;
-      val.m_ResultsRow = i - value.m_ResMapIndex;
+      val.m_ResultsRow = (*vi).second;
+#if 0
+      printf("!");
+    }
+    else
+    {
+      nsAutoString out;
+      out.AppendLiteral( "WARNING!  Playlistsource cache miss." );
+      out.AppendLiteral( "\n ref: " );
+      out += value.m_Info->m_Ref;
+      out.AppendLiteral( "\n start resmap index: " );
+      out.AppendInt( value.m_ResMapIndex );
+      out.AppendLiteral( "\n start row: " );
+      out.AppendInt( value.m_Row );
+      out.AppendLiteral( "\n current row: " );
+      out.AppendInt( i );
+      out.AppendLiteral( "\n missed resmap index: " );
+      out.AppendInt( val.m_ResMapIndex );
+      out.AppendLiteral( "\n missed row: " );
+      out.AppendInt( val.m_Row );
+      out.AppendLiteral( "\n missed id: " );
+      out += val.m_Id;
+      out.AppendLiteral( "\n available ids: " );
+      out += ids;
+      out.AppendLiteral( "\n" );
+      printf(NS_ConvertUTF16toUTF8(out).get());
+#endif
     }
   }
 
