@@ -46,6 +46,7 @@ interface sbIGStreamerSimple : nsISupports
   readonly attribute boolean isPaused;
   readonly attribute unsigned long long streamLength;
   readonly attribute boolean isAtEndOfStream;
+  readonly attribute long lastErrorCode;
 
   readonly attribute AString artist;
   readonly attribute AString album;

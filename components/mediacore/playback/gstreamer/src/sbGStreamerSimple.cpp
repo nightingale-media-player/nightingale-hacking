@@ -57,6 +57,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mVideoSink(NULL),
   mGdkWin(NULL),
   mIsAtEndOfStream(PR_TRUE),
+  mLastErrorCode(0),
   mVideoOutputElement(nsnull),
   mDomWindow(nsnull)
 {
@@ -345,6 +346,18 @@ sbGStreamerSimple::GetIsAtEndOfStream(PRBool* aIsAtEndOfStream)
 }
 
 NS_IMETHODIMP
+sbGStreamerSimple::GetLastErrorCode(PRInt32* aLastErrorCode)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  *aLastErrorCode = mLastErrorCode;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerSimple::GetArtist(nsAString& aArtist)
 {
   if(!mInitialized) {
@@ -401,6 +414,7 @@ sbGStreamerSimple::Play()
 
   gst_element_set_state(mPlay, GST_STATE_PLAYING);
   mIsAtEndOfStream = PR_FALSE;
+  mLastErrorCode = 0;
 
   return NS_OK;
 }
@@ -527,7 +541,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       g_free (debug);
 
-      gst_element_set_state(mPlay, GST_STATE_NULL);
+      mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
 
       break;
@@ -536,7 +550,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       GError *error = NULL;
       gchar *debug = NULL;
 
-      gst_message_parse_warning (message, &error, &debug);
+      gst_message_parse_warning(message, &error, &debug);
 
       LOG(("Warning message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
 

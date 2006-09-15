@@ -159,7 +159,10 @@ CoreGStreamerSimple.prototype.getLength = function ()
 
   try
   {
-    if(!this.getPlaying()) {
+    if(this._object.lastErrorCode > 0) {
+      return -1;
+    }
+    else if(!this.getPlaying()) {
       playLength = 0;
     }
     else {
@@ -188,7 +191,10 @@ CoreGStreamerSimple.prototype.getPosition = function ()
 
   try
   {
-    if(this._object.isAtEndOfStream || !this.getPlaying()) {
+    if(this._object.lastErrorCode > 0) {
+      return -1;
+    }
+    else if(this._object.isAtEndOfStream || !this.getPlaying()) {
       curPos = 0;
     }
     else {
