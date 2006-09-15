@@ -761,12 +761,14 @@
       <body>
         <![CDATA[
           var ref = "";
-          if (this.gPPS.started) {
+          if (this.gPPS.started ||
+               (this.remote_playingRef.stringValue != "" &&
+                this.remote_playlistIndex.stringValue != "") ) {
             if (this.gPPS.paused) {
               gPPS.play();
             } else {
-              // player is buffering, because the play button is visible (not started) yet pause is not set and the player is started
-              // start the playlist again at the current spot
+              // player is buffering (or stopped!), because the play button is visible (not started) yet 
+              // pause is not set and the player is started.  start the playlist again at the current spot
               this.gPPS.playRef( this.remote_playingRef.stringValue, this.remote_playlistIndex.intValue );
             }
           } else {
