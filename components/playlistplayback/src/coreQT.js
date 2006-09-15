@@ -45,6 +45,7 @@ function CoreQT()
   this._buffering = false;
   this._playing = false;
   this._paused  = false;
+  this._availability = 0;
   this._waitForPlayInterval = null;
   this._waitRetryCount = 0;
   this._lastVolume = 0;
@@ -52,9 +53,13 @@ function CoreQT()
   this._starttime = 0;
   this._playFromBeginning = true;
   
+  this._pokingUrl = false;
+  this._request = null;
+  
   this.NOT_LOCAL_FILE = -1;
-  this.LOCAL_FILE_NOT_AVAILABLE = 0;
+  this.FILE_NOT_AVAILABLE = 0;
   this.LOCAL_FILE_AVAILABLE = 1;
+  this.REMOTE_FILE_AVAILABLE = 2;
 };
 
 // inherit the prototype from CoreBase
@@ -125,7 +130,30 @@ CoreQT.prototype.waitForPlayer = function ()
         this.cleanupOnError();
       }
   }
+  
+  return;
 };
+
+CoreQT.prototype.pokingUrlListener = function ( )
+{
+  if(gQTCore._request.readyState == 2)
+  {    
+    if(gQTCore._request.status == 200 &&
+       gQTCore._request.channel.contentLength > 4096 )
+    {
+      gQTCore._availability = gQTCore.REMOTE_FILE_AVAILABLE;
+      gQTCore.playURL(gQTCore._url);
+    }
+    else
+	{
+      gQTCore._availability = gQTCore.FILE_NOT_AVAILABLE;
+      gQTCore._buffering = false;
+      gQTCore._playing = false;
+	}
+    gQTCore._pokingUrl = false;
+    gQTCore._request.abort();
+  }
+}
 
 CoreQT.prototype.verifyFileAvailability = function ( aURL )
 {
@@ -141,7 +169,16 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
   } catch(e) {}
   
   if(localFileURI.scheme != "file")
+  {
+    this._pokingUrl = true;
+    
+    this._request = new XMLHttpRequest();
+    this._request.onreadystatechange = gQTCore.pokingUrlListener;
+    this._request.open("GET", aURL, true);
+    this._request.send(null);
+    
     return this.NOT_LOCAL_FILE;
+  }
 
   localFilePath = decodeURI(localFileURI.path.slice(2));
   
@@ -173,7 +210,7 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
     localFile.initWithPath(localFilePath);
   } catch(e) {
     this.LOG("Bad local file." + e , "CoreQT");
-    return this.LOCAL_FILE_NOT_AVAILABLE;
+    return this.FILE_NOT_AVAILABLE;
   }
   
   if(localFile.isReadable())
@@ -181,13 +218,14 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
     return this.LOCAL_FILE_AVAILABLE;  
   }
 
-  return this.LOCAL_FILE_NOT_AVAILABLE;
+  return this.FILE_NOT_AVAILABLE;
 };
 
 // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
 CoreQT.prototype.playURL = function ( aURL )
 {
-  if (this._buffering)
+  if (this._buffering &&
+	  this._pokingUrl == false)
     this.cleanupOnError();
 
   this._verifyObject();
@@ -195,25 +233,36 @@ CoreQT.prototype.playURL = function ( aURL )
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
 
-  var isAvailable = this.verifyFileAvailability(aURL);
-  if(isAvailable == this.LOCAL_FILE_NOT_AVAILABLE)
-    throw new Error("Local file not available");
+  var isAvailable = this.FILE_NOT_AVAILABLE;
   
-  this._isremote = false;
-  if(isAvailable == this.NOT_LOCAL_FILE)
-  {
-    this._starttime = new Date();
-    this._isremote = true;
-  }
+  if(this._availability == this.REMOTE_FILE_AVAILABLE)
+    isAvailable = this._availability;
+  else
+    isAvailable = this.verifyFileAvailability(aURL);
 
   this._url = this.sanitizeURL(aURL);
-
   this._paused = false;
   this._playing = true;
-
   this._buffering = true;  
-  this._object.SetURL(this._url);
   
+  if(isAvailable == this.FILE_NOT_AVAILABLE)
+    throw new Error("Local file not available");
+
+  if(isAvailable == this.REMOTE_FILE_AVAILABLE ||
+     isAvailable == this.NOT_LOCAL_FILE)
+  {
+    this._isremote = true;
+
+    if(isAvailable == this.NOT_LOCAL_FILE)
+      return true;
+  }
+  else
+  {
+     this._isremote = false;
+  }
+
+  this._availability = 0;
+  this._object.SetURL(this._url);
   this.setVolume(this._lastVolume);
   
   if(this._waitForPlayInterval)
@@ -271,11 +320,15 @@ CoreQT.prototype.stop = function ()
   try {
     if (this._playing) {
       this._object.Stop();
-      this.cleanupOnError();
+      
+      if(this._isremote)
+        this.cleanupOnError();
     }
   } catch(e) {
     this.LOG(e, "CoreQT");
-    this.cleanupOnError();
+    
+    if(this._isremote)
+      this.cleanupOnError();
   }
 
   this._paused = false;
@@ -343,11 +396,8 @@ CoreQT.prototype.getPosition = function ()
 
   try {
     var currentPos = this._object.GetTime();
-    this.LOG(currentPos, "CoreQT: Current Pos: ");
     var timeScale = this._object.GetTimeScale();
-    this.LOG(timeScale, "CoreQT: Current Scale: ");
     curPos = (currentPos / timeScale * 1000);
-    this.LOG(curPos, "CoreQT: Current pos in ms: ");
     
     if(!currentPos && this._isremote) {
       var now = new Date();
