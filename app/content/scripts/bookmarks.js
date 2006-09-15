@@ -112,7 +112,7 @@ var bmManager = {
     filteredNodes.children = this.bookmark_nodes.children.filter(function(o) {
       return o != this.extensionsFolderNode;
     }, this);
-    SBDataSetStringValue("bookmarks.serializedTree", JSON.stringify(filteredNodes));
+    SBDataSetStringValue("bookmarks.serializedTree", filteredNodes.toJSONString());
   },
   
   loadBookmarks : function() {
@@ -127,7 +127,7 @@ var bmManager = {
     else
     {
       var serializedTree = SBDataGetStringValue("bookmarks.serializedTree");
-      this.bookmark_nodes = JSON.parse(serializedTree);
+      this.bookmark_nodes = serializedTree.parseJSON();
     }
     this.appendExtensionBookmarks();
 
