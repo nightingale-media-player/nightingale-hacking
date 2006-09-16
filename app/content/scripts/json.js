@@ -99,7 +99,9 @@ var JSON = function () {
                         }
                         a[a.length] = '}';
                     } else {
-                        return;
+                        // Songbird edit: add "undefined" as the return value 
+                        // to prevent javascript warning
+                        return undefined;
                     }
                     return a.join('');
                 }
