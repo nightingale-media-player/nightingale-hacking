@@ -22,6 +22,7 @@
     <em:creator>Pioneers of the Inevitable</em:creator>
 
     <em:internalName>dove/0.1</em:internalName>
+    <em:hidden>true</em:hidden>
   </Description>
 
 </RDF>
