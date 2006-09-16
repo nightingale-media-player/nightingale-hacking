@@ -101,6 +101,8 @@ function onBkgDown( theEvent, popup )
     case "menuitem":
     case "menupopup":
     case "menuseparator":
+    // Heehee
+    case "parsererror":
     // HTML Elements
     case "img":
     case "input":
