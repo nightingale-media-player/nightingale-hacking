@@ -2732,7 +2732,7 @@
               
               if (playlist)
               {
-                column = this.tree.columns.getNamedColumn("row_id");
+                column = this.tree.columns.getNamedColumn("uuid");
                 if (column)
                 {
                   var params = Array(playlist, column);
@@ -2826,7 +2826,7 @@
             var playlist = params[0];
             var column = params[1];
             var index = _this.tree.view.getCellText( item, column );
-            playlist.removeByIndex(index, true);
+            playlist.removeByGUID(index, true);
           }
           catch( err )
           {
