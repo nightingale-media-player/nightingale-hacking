@@ -52,13 +52,36 @@
      <constructor>
        <![CDATA[
          // Create and bind data remotes
-         this.descbinding = SBDataBindElementProperty( "faceplate.status.text", this.desc, "value" );
-         this.stylebinding = SBDataBindElementAttribute( "faceplate.status.style", this.desc, "style" );
+         this.on_status_change = { 
+           _that: null, 
+           observe: function( aSubject, aTopic, aData ) { this._that.onStatusChange(); } 
+         };
+         this.on_status_change._that = this;
+         this.on_override_change = { 
+           _that: null, 
+           observe: function( aSubject, aTopic, aData ) { this._that.onSetOverride(); } 
+         };
+         this.on_override_change._that = this;
+
+         this.descbinding = SB_NewDataRemote( "faceplate.status.text", null );
+         this.descbinding.bindObserver(this.on_status_change, true);
+         this.stylebinding = SB_NewDataRemote( "faceplate.status.style", null );
+         this.stylebinding.bindObserver(this.on_status_change, true);
+
+         this.override_descbinding = SB_NewDataRemote( "faceplate.status.override.text", null );
+         this.override_descbinding.bindObserver(this.on_override_change, true);
+         this.override_stylebinding = SB_NewDataRemote( "faceplate.status.override.style", null );
+         this.override_stylebinding.bindObserver(this.on_status_change, true);
        ]]>
      </constructor>
 
      <destructor>
        <![CDATA[
+         this.resetOverride();
+         this.on_status_change._that = null;
+         this.on_status_change = null;
+         this.on_override_change._that = null;
+         this.on_override_change = null;
          this.descbinding.unbind();
          this.descbinding = null;
          this.stylebinding.unbind();
@@ -67,6 +90,60 @@
      </destructor>
 
      <field name="desc">document.getAnonymousElementByAttribute(this, 'sbid', 'desc');</field>
+
+     <method name="onStatusChange">
+       <body>
+         <![CDATA[
+          // if there is an override, use it
+          if (this.override_descbinding.stringValue != "") {
+            this.desc.value = this.override_descbinding.stringValue;
+            this.desc.setAttribute("style", this.override_stylebinding.stringValue);
+          } else {
+            // otherwise use the normal status text
+            this.desc.value = this.descbinding.stringValue;
+            this.desc.setAttribute("style", this.stylebinding.stringValue);
+          }
+         ]]>
+       </body>
+     </method>
+     
+     <method name="onSetOverride">
+       <body>
+         <![CDATA[
+            // if the override was set, start a timeout for reseting it
+            if (this.override_descbinding.stringValue != "") {
+              this.resetTimeout();
+              var controller = this;
+              this.callback = function() { controller.resetOverride(); };
+              this.timeout = setTimeout(this.callback, 5000); 
+            }
+            this.onStatusChange();
+         ]]>
+       </body>
+     </method>
+
+     <method name="resetTimeout">
+       <parameter name=""/>
+       <body>
+         <![CDATA[
+           if (this.timeout) 
+             clearTimeout(this.timeout);
+           this.timeout = null;
+           this.callback = null; 
+         ]]>
+       </body>
+     </method>
+
+     
+     <method name="resetOverride">
+       <body>
+         <![CDATA[
+           this.resetTimeout();
+           this.override_descbinding.stringValue = "";
+           this.override_stylebinding.stringValue = "";
+         ]]>
+       </body>
+     </method>
 
    </implementation>
 

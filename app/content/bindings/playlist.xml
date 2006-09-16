@@ -212,6 +212,23 @@
         };
         this.addEventListener("dblclick", this._onPlaylistDblClickClosure, false);
         this.addEventListener("draggesture", this._onDragClosure, false);
+
+        var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+        var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+        this.str_tracksaddedto = "tracks added to"
+        this.str_trackaddedto = "track added to"
+        this.str_library = "Library";
+        this.str_playlist = "Playlist";
+        this.str_trackalreadypresent = "track already present";
+        this.str_tracksalreadypresent = "tracks already present";
+        try {
+          this.str_tracksaddedto = songbirdStrings.GetStringFromName("library.tracksaddedto");
+          this.str_trackaddedto = songbirdStrings.GetStringFromName("library.trackaddedto");
+          this.str_trackalreadypresent = songbirdStrings.GetStringFromName("library.trackalreadypresent");
+          this.str_tracksalreadypresent = songbirdStrings.GetStringFromName("library.tracksalreadypresent");
+          this.str_library = songbirdStrings.GetStringFromName("library");
+          this.str_playlist = songbirdStrings.GetStringFromName("playlist");
+        } catch (err) { /* ignore error, we have default strings */ }
       }
       catch ( err )
       {
@@ -310,8 +327,8 @@
       <field name="_selection_key_array">""</field>
       <field name="treecols">null</field>
       <field name="restoring_selection">false</field>
-      <field name="_addedtolibrary_count">0</field>
-      <field name="_existedinlibrary_count">0</field>
+      <field name="_addto_added_count">0</field>
+      <field name="_addto_existed_count">0</field>
       <field name="m_dndSourceTracker">null</field>
       <field name="lastClickIndex">0</field>
       <field name="lastClickTimestamp">0</field>
@@ -2451,6 +2468,7 @@
               // add them !
               var playlist = add_to_playlist_data.playlist;
               this.addToPlaylistOrLibrary(playlist);
+              this.reportAddedTracks(true);
             }  
           }
           catch( err )
@@ -2467,24 +2485,31 @@
           try
           {
             this.addToPlaylistOrLibrary();
-            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-            var addedtolibrary = "track(s) added to the library";
-            var alreadyinit = "track(s) already in it";
-            var addtolibrary = "Add To Library";
-            try {
-              addedtolibrary = songbirdStrings.GetStringFromName("library.tracksadded");
-              alreadyinit = songbirdStrings.GetStringFromName("library.tracksalreadyinit");
-              addtolibrary = songbirdStrings.GetStringFromName("library.addtolibrary");
-            } catch (err) { /* ignore error, we have default strings */ }
-            var msg = "" + this._addedtolibrary_count + " " + addedtolibrary; 
-            if (this._existedinlibrary_count > 0) msg += ", " + this._existedinlibrary_count + " " + alreadyinit;
-            this.sbMessageBox(addtolibrary, msg, false);
+            this.reportAddedTracks(false);
           }
           catch( err )
           {
             alert( "playlist.xml - addToPlaylist - " + err );
           }
+        ]]>
+      </body>
+    </method>
+
+    <method name="reportAddedTracks">
+      <parameter name="toplaylist"/>
+      <body>
+        <![CDATA[
+          var msg;
+          if (toplaylist) {
+            var totalcount = this._addto_added_count + this._addto_existed_count;
+            msg = "" + totalcount + " " + ((totalcount > 1) ? this.str_tracksaddedto : this.str_trackaddedto) + " " + this.str_playlist.toLowerCase(); 
+          } else {
+            msg = "" + this._addto_added_count + " " + ((this._addto_added_count > 1) ? this.str_tracksaddedto : this.str_trackaddedto) + " " + this.str_library.toLowerCase(); 
+            if (this._addto_existed_count > 0) msg += " (" + this._addto_existed_count + " " + ((this._addto_existed_count > 1) ? this.str_tracksalreadypresent : this.str_trackalreadypresent) + ")";
+          }
+          SBDataSetStringValue("faceplate.status.override.text", "");
+          SBDataSetStringValue("faceplate.status.override.text", msg);
+          SBDataSetStringValue("faceplate.status.override.style", "font-weight: bold;");
         ]]>
       </body>
     </method>
@@ -2553,8 +2578,8 @@
               }
               queryObj.resetQuery();
               var params = Array(mediaLibrary, thePlaylist, urlcolumn, uuidcolumn, metadataintersection_ids, metadataintersection_cols);
-              this._addedtolibrary_count = 0;
-              this._existedinlibrary_count = 0;
+              this._addto_added_count = 0;
+              this._addto_existed_count = 0;
               if (this.table != "library" && this.tree.view.selection.getRangeCount() == 0)
                 this.processAll(this.processSelection_addToPlaylistOrLibrary, params);
               else
@@ -2650,6 +2675,7 @@
             if (uuidcolumn && metadataintersection_cols.length == 0) 
             {
               guid = _this.tree.view.getCellText( item, uuidcolumn );
+              _this._addto_existed_count++;
             }
             else
             {
@@ -2657,13 +2683,14 @@
               if (metadataintersection_cols.length != 0)
               {
                 var values = new Array();
-                if (mediaLibrary.findByURL(url) != null) 
+                var r = mediaLibrary.findByURL(url);
+                if (r && r != "") 
                 {
-                  _this._existedinlibrary_count++;
+                  _this._addto_existed_count++;
                 }
                 else
                 {
-                  _this._addedtolibrary_count++;
+                  _this._addto_added_count++;
                 }
                 // source playlist has its own library, use the intersection of available metadata in source and 
                 // destination libraries as the metadata for the insertion in the the destination library 
@@ -2678,6 +2705,7 @@
                 // item is already in destination library, but we didnt have a uuid column, 
                 // ask the library for the guid associated with this url
                 guid = mediaLibrary.addMedia( url, 0, null, 0, null, false, true );
+                _this._addto_existed_count++;
               }
             }
             
