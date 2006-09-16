@@ -759,7 +759,9 @@ PlaylistPlayback.prototype = {
       if (!core)
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
+      this._playURL.stringValue = "";
       this._playURL.stringValue = aURL;
+      this._metadataURL.stringValue = "";
       this._metadataURL.stringValue = aURL;
 
       core.stop();
@@ -1490,6 +1492,14 @@ PlaylistPlayback.prototype = {
     var artist = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "artist" );
     var album = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "album" );
     var genre = this._source.getRefRowCellByColumn( aSourceRef, aIndex, "genre" );
+    
+    // Clear the data remotes
+    this._playURL.stringValue = "";
+    this._metadataURL.stringValue = "";
+    this._metadataTitle.stringValue = "";
+    this._metadataArtist.stringValue = "";
+    this._metadataAlbum.stringValue = "";
+    this._metadataGenre.stringValue = "";
     
     // Set the data remotes to indicate what is about to play
     this._playURL.stringValue = url;
