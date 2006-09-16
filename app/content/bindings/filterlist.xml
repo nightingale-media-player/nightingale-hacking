@@ -75,7 +75,8 @@
     <field name="ref_pl"></field>
     <field name="index">0</field>
     <field name="rebuildPending">false</field>
-    <field name="needsSelectionReset">false</field>
+    <field name="savedCurrentIndex">0</field>
+    <field name="savedShiftSelectPivot">-1</field>
 
     <property name="ref">
       <getter>
@@ -97,14 +98,11 @@
 
     <!--
       Concatenate all of the selections into a semicolon delimited filter string
-      Returns value of empty string means ALL, null means nothing selected
     -->
     <property name="filterString">
       <getter>
       <![CDATA[
       var rangeCount = this.tree.view.selection.getRangeCount();
-      if ( rangeCount == 0 )
-        return null;
 
       var filter_string = "";
 
@@ -130,35 +128,73 @@
       </getter>
       <setter>
       <![CDATA[
+      var tvs = this.tree.view.selection;
       try {
-        this.tree.view.selection.selectEventsSuppressed = true;
-        var any_items = false; // Are there any items to find?
-        var any_found = false; // Did we find any?
-        var selection_string = val
-        if (selection_string != null) {
-          var selection = selection_string.split(";");
+        tvs.selectEventsSuppressed = true;
+        tvs.clearSelection();
+
+        if (val != null) {
+          var selection = val.split(";");
           var column = this.tree.columns.getColumnAt(0);
-          while (selection.length > 0) {
-            var value = selection.pop();
-            if (value != "" && value != null) {
-              any_items = true;
-              var vindex = this.findCell(column, value);
-              if (vindex != -1) {
-                any_found = true;
-                this.tree.view.selection.rangedSelect(vindex, vindex, true);
+
+          // Build an array of tree indexes that are going to be selected
+          var indexList = [];
+          selection.forEach(function(value) {
+            var i = this.findCell(column, value);
+            if(i > 0) {
+              indexList.push(i);
+            }
+          }, this);
+
+          if(indexList.length > 0) {
+            tvs.currentIndex = this.savedCurrentIndex;
+
+            // If there is a saved shift select pivot and the selection is
+            // continuous, use rangedSelect() to select the rows, which will
+            // restore the shift select pivot
+            var didRangedSelect = false;
+            if(this.savedShiftSelectPivot >= 0) {
+
+              // You need a sort function to sort numerically
+              indexList.sort(function(a, b) {
+               return a - b
+              });
+              var first = indexList[0];
+              var last  = indexList[indexList.length - 1];
+              if(last - first + 1 == indexList.length) {
+
+                // rangedSelect() sets the shift select pivot to the first row
+                // in the selection.  Reverse the parameters to restore the saved
+                // shift select pivot properly.  If the data has moved away from
+                // the saved shift select pivot, revert to a normal selection.
+                if(this.savedShiftSelectPivot == last) {
+                  tvs.rangedSelect(last, first, true);
+                  didRangedSelect = true;
+                }
+                else if(this.savedShiftSelectPivot == first) {
+                  tvs.rangedSelect(first, last, true);
+                  didRangedSelect = true;
+                }
               }
             }
+
+            // If we didn't do a ranged select, do a normal selection
+            if(!didRangedSelect) {
+              indexList.forEach(function(idx) {
+                tvs.toggleSelect(idx);
+              }, this);
+            }
+
+          }
+          else {
+            // Nothing was selected so select the "All" row
+            tvs.toggleSelect(0);
+            tvs.currentIndex = 0;
           }
         }
-        // If we weren't able to restore any of our previous selection
-        if ( any_items && ! any_found ) { 
-          // Reset the selection to "All" when you're back to a place where
-          // setting the selection would do anything.
-          this.needsSelectionReset = true;
-        } // This can happen when we delete all the tracks of a filter
       }
       finally {
-        this.tree.view.selection.selectEventsSuppressed = false;
+        tvs.selectEventsSuppressed = false;
       }
       ]]>
       </setter>
@@ -276,7 +312,6 @@
           if (this.source == null) { alert("<filterlist/>: source is null"); return; }
           
           var filter_string = this.filterString;
-          var current_filter_string =  this.source.getFilter(this.ref_pl, this.index);
 
           this.source.setFilter( this.ref_pl, this.index, filter_string, this.ref, this.column );
           this.source.executeFeed( this.ref_pl );
@@ -351,12 +386,15 @@
       <body>
         if (this.ref != null) this.loadcolumn();
         this.rebuildPending = true;
+        this.savedCurrentIndex = this.tree.view.selection.currentIndex;
+        this.savedShiftSelectPivot = this.tree.view.selection.shiftSelectPivot;
       </body>
     </method>
 
     <method name="didRebuild">
       <param name="builder"/>
       <body>
+        <![CDATA[
         if (this.tree.view.rowCount > 0) {
           var column = this.tree.columns.getColumnAt(0);
           if (column != null) {
@@ -370,17 +408,17 @@
             column.element.setAttribute("label", label);
           }
         }
-        this.filterString = this.source.getFilter(this.ref_pl, this.index);
+        var requestedFilterString = this.source.getFilter(this.ref_pl, this.index);;
+        this.filterString = requestedFilterString;
         this.rebuildPending = false;
-        
-        // When we set filterString, it might detect that it can't restore any of its
-        // previous selected items, so it will set this variable here to force the
-        // selection to "All" after we are allowed to respond to selection events.
-        if ( this.needsSelectionReset ) {
-          // This'll make us have to rebuild.  Better not loop!
-          this.tree.view.selection.rangedSelect(0, 0, true);
-          this.needsSelectionReset = false;
+
+        // If the filter string is non-empty but "All" is selected, none of the
+        // filter items exist any more.  Call onFilterListSelect() to update
+        // the filter results to "All"
+        if(requestedFilterString != "" && this.tree.view.selection.isSelected(0)) {
+          this.onFilterListSelect();
         }
+        ]]>
       </body>
     </method>
 
