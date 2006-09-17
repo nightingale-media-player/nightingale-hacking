@@ -203,8 +203,8 @@ try
       // Create and bind the data remotes
       MainwinArtistRemote = SB_NewDataRemote( "metadata.title", null ); // changed to title cuz we like to be odd.
       MainwinAlbumRemote = SB_NewDataRemote( "metadata.album", null );
-      MainwinArtistRemote.bindObserver( on_artist_album_changed, true );
-      MainwinAlbumRemote.bindObserver( on_artist_album_changed, true );
+      MainwinArtistRemote.bindObserver( on_artist_album_changed, false );
+      MainwinAlbumRemote.bindObserver( on_artist_album_changed, false );
 
       // add both to the array to be unbound on shutdown
       MainwinAdd( MainwinArtistRemote );
