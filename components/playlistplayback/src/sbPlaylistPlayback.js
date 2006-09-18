@@ -571,11 +571,20 @@ PlaylistPlayback.prototype = {
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
-    if (this._started) {
-      if (core.getPaused())
+    // If we know what to play, just play it
+    if (this._started ||
+               (this._playingRef.stringValue != "" &&
+                this._playlistIndex.stringValue != "")) 
+    {
+      // If paused, then continue where we left off.
+      // Otherwise start the last played song.
+      if (core.getPaused()) {
         core.play()
-      // is there an else case here?
+      } else {
+        this.playRef( this._playingRef.stringValue, this._playlistIndex.intValue );
+      }
     }
+    // Otherwise figure out the default action
     else {
       // play the current track, or the libary from position 0
       this._playDefault();
