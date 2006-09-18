@@ -123,6 +123,8 @@ var bmManager = {
       this.bookmark_nodes = this._getDefaultNodes();    
       this.saveBookmarks();
       SBDataSetBoolValue("bookmarks.prepopulated", true);
+      // HACK to force the Bookmarks tree entry open on first run
+      SBDataSetBoolValue("servicetree_opened_frame_servicetree_Bookmarks", true);
     } 
     else
     {
