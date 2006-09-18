@@ -36,7 +36,7 @@
 <!ENTITY menu.edit.selall  "すべて選択" >
 <!ENTITY menu.edit.selnone  "何も選択しない" >
 
-<!ENTITY menu.controls  "コントロール" >
+<!ENTITY menu.controls  "制御" >
 <!ENTITY menu.control.play  "再生／一時停止" >
 <!ENTITY menu.control.next  "次の曲" >
 <!ENTITY menu.control.prev  "前の曲" >
@@ -76,7 +76,7 @@
 <!ENTITY tooltip.control.play  "再生" >
 <!ENTITY tooltip.control.pause  "停止" >
 <!ENTITY tooltip.control.fwd  "次の曲" >
-<!ENTITY tooltip.control.mute  "ミュート" >
+<!ENTITY tooltip.control.mute  "消音" >
 <!ENTITY tooltip.control.volume  "音量" >
 <!ENTITY tooltip.control.repeat  "リピート" >
 <!ENTITY tooltip.control.shuffle  "シャッフル" >
@@ -96,15 +96,15 @@
 <!ENTITY smart.window  "スマートプレイリストビルダ" >
 <!ENTITY smart.library  "ライブラリの選択 :" >
 <!ENTITY smart.limit  "上限" >
-<!ENTITY smart.match  "一致するのは" >
+<!ENTITY smart.match  "次の" >
 <!ENTITY smart.any  "いずれかの" >
 <!ENTITY smart.all  "すべての" >
-<!ENTITY smart.following  "次のルール :" >
+<!ENTITY smart.following  "ルールに一致 :" >
 <!ENTITY smart.random  "ランダム" >
 <!ENTITY smart.album  "アルバム" >
 <!ENTITY smart.artist  "アーティスト" >
 <!ENTITY smart.genre  "ジャンル" >
-<!ENTITY smart.title  "タイトル" >
+<!ENTITY smart.title  "名前" >
 <!ENTITY smart.high_rating  "最高レート" >
 <!ENTITY smart.low_rating  "最低レート" >
 <!ENTITY smart.most_recent  "最後に再生した項目" >
@@ -118,13 +118,13 @@
 <!ENTITY smart.mb  "MB" >
 <!ENTITY smart.gb  "GB" >
 <!ENTITY smart.songs  "曲" >
-<!ENTITY smart.contains  "含む" >
-<!ENTITY smart.not_contain  "含まない" >
-<!ENTITY smart.is  "である" >
-<!ENTITY smart.is_not  "ではない" >
-<!ENTITY smart.starts  "で始まる" >
-<!ENTITY smart.ends  "で終わる" >
-<!ENTITY smart.selectedby  "Selected by" >
+<!ENTITY smart.contains  "が次の文字を含む" >
+<!ENTITY smart.not_contain  "が次の文字を含まない" >
+<!ENTITY smart.is  "が次の文字と一致する" >
+<!ENTITY smart.is_not  "が次の文字と一致しない" >
+<!ENTITY smart.starts  "が次の文字で始まる" >
+<!ENTITY smart.ends  "が次の文字で終わる" >
+<!ENTITY smart.selectedby  "選択方法" >
 
 <!ENTITY download.window  "ダウンロード" >
 <!ENTITY download.select  "保存するフォルダを選択 :" >
@@ -133,7 +133,7 @@
 <!ENTITY textbox.songbird_open_url  "再生するメディアの URL またはパスを入力 :" >
 
 <!ENTITY open_url.title  "URL を開く" >
-<!ENTITY subscribe.title  "購読" >
+<!ENTITY subscribe.title  "サービスの登録" >
 <!ENTITY subscribe.minutes  "秒" >
 <!ENTITY subscribe.hours  "時間" >
 <!ENTITY subscribe.days  "日" >
@@ -215,7 +215,7 @@
 
 <!ENTITY trackeditor.title  "曲情報の編集" >
 <!ENTITY trackeditor.trackdata  "曲の情報" >
-<!ENTITY trackeditor.exttrackdata  "拡張情報" >
+<!ENTITY trackeditor.exttrackdata  "詳細情報" >
 <!ENTITY trackeditor.tags  "タグ" >
 <!ENTITY trackeditor.addtag.title  "タグの追加" >
 <!ENTITY trackeditor.addtag.tag  "タグ :" >
@@ -223,9 +223,9 @@
 <!ENTITY jumptofile.title  "ジャンプ先" >
 <!ENTITY jumptofile.search  "検索 :" >
 
-<!ENTITY metrics.optout  "Songbird が利用状況を匿名で送信するのを許可 (推奨)" >
+<!ENTITY metrics.optout  "Songbird が匿名の使用統計情報を送信するのを許可する (推奨)" >
 
-<!ENTITY hotkeys.useglobalhotkeys  "Global ホットキーを使用" >
+<!ENTITY hotkeys.useglobalhotkeys  "グローバルホットキーを使用" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey  "U" >
 <!ENTITY hotkeys.action  "アクション" >
 <!ENTITY hotkeys.hotkey  "ホットキー" >
@@ -237,27 +237,23 @@
 <!ENTITY metadata.uuid  "メディア UUID" >
 <!ENTITY metadata.url  "場所" >
 <!ENTITY metadata.artist  "アーティスト" >
-<!ENTITY metadata.title  "タイトル" >
+<!ENTITY metadata.title  "名前" >
 <!ENTITY metadata.album  "アルバム" >
 <!ENTITY metadata.genre  "ジャンル" >
 <!ENTITY metadata.length  "時間" >
 
-<!ENTITY restartbox.restartnow  "ここで再起動" >
-<!ENTITY restartbox.restartonplaybackend  "再生終了後に再起動" >
+<!ENTITY restartbox.restartnow  "今ここで再起動" >
+<!ENTITY restartbox.restartonplaybackend  "再生が終了してから再起動" >
 <!ENTITY restartbox.restartlater  "後で再起動" >
 
 <!ENTITY setupprogress.installingextensions  "拡張機能のインストール中" >
 
-<!ENTITY menu.updateCmd.label  "更新をチェック中..." >
+<!ENTITY menu.updateCmd.label  "更新を確認..." >
 <!ENTITY menu.updateCmd.accessKey  "o" >
 <!ENTITY firstrun.connectionsettings  "接続設定" >
+<!ENTITY trackeditor.disclaimer  "曲情報の編集機能はまだ開発途中のものです。編集した曲情報は Songbird のデータベースのみに保存されます。将来のバージョンでは、ここで編集された曲情報はファイルに対しても保存されます。" >
 
-
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
+<!ENTITY callout.firstwebplaylist  "Songbird でこれらの曲が再生できます :" >
 
 
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
