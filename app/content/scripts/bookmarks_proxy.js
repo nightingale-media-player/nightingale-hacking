@@ -356,14 +356,14 @@ ServicesourceProxy.prototype = {
   },
   
   onBeginUpdateBatch: function(ds) {
-    log("ServicesourceProxy::onBeginUpdateBatch");
+    //log("ServicesourceProxy::onBeginUpdateBatch");
     for (var i = 0; i < this.mObservers.length; i++) {
       this.mObservers[i].onBeginUpdateBatch(this);
     }
   },
 
   onEndUpdateBatch: function(ds) {
-    log("ServicesourceProxy::onEndUpdateBatch");
+    //log("ServicesourceProxy::onEndUpdateBatch");
     for (var i = 0; i < this.mObservers.length; i++) {
       this.mObservers[i].onEndUpdateBatch(this);
     }
