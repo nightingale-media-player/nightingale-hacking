@@ -41,7 +41,7 @@
   class="sb_faceplate, mainwin"
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();"
-  onclose="return false; /*quitApp();*/" 
+  onclose="/*return false;*/ quitApp();" 
   title="&window.dev.title;"
   onkeypress="onMainwinKeypress( event );"
   windowtype="Songbird:Main"
