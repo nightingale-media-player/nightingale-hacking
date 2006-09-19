@@ -565,7 +565,7 @@ var bmManager = {
                   },  
                   { 
                       label: "Calabash Music",
-                      icon: "http://calabashmusic.com/favicon.ico",
+                      icon: "chrome://songbird/skin/serviceicons/default.ico",                      
                       url: "http://calabashmusic.com/",
                       properties: "bookmark",
                       children: []
