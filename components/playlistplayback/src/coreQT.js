@@ -343,15 +343,16 @@ CoreQT.prototype.getPlaying = function ()
 
   if(this._buffering)
     return true;
- 
-  //XXXAus: I remember I did this for a good reason, but I don't remember why exactly.
-  //Just don't change it for now =)
-  if( !this._isremote &&
-      this.getLength() == this.getPosition() )
+
+  // XXXben - getPosition and getLength both return 0 when we're dealing with
+  //          a stream in QT, so don't stop if this is a stream.
+  var length = this.getLength();
+  var position = this.getPosition();
+
+  if ((position > 0) && (length == position))
   {
     this.stop();
   }
-  
   return this._playing;
 };
   
