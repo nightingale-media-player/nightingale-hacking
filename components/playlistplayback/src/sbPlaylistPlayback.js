@@ -1234,11 +1234,11 @@ PlaylistPlayback.prototype = {
       if ( length == "Error" ) {
         return;
       }
-      
+
       // If the current title is part of the url, it is okay to overwrite the title.
       if ( title.length && ( 
           ( this._metadataTitle.stringValue != title ) &&
-          ( this._playURL.stringValue.indexOf( this._metadataTitle.stringValue ) != -1 )
+          ( unescape(this._playURL.stringValue).toLowerCase().indexOf( this._metadataTitle.stringValue.toLowerCase() ) != -1 )
          ) )
         this._set_metadata = true; 
       else
