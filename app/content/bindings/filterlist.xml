@@ -53,7 +53,7 @@
       var stringbundle = stringBundleService.createBundle( src );
       this.oneitem = "item";
       this.manyitems = "items";
-      this.noitem = "no item";
+      this.noitem = "no items";
       try {
         this.oneitem = stringbundle.GetStringFromName( "library.oneitem" );
         this.manyitems = stringbundle.GetStringFromName( "library.manyitems" );

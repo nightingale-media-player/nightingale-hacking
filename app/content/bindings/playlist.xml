@@ -208,6 +208,7 @@
         var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
         this.str_tracksaddedto = "tracks added to"
         this.str_trackaddedto = "track added to"
+        this.str_notracksaddedto = "No tracks added to"
         this.str_library = "Library";
         this.str_playlist = "Playlist";
         this.str_trackalreadypresent = "track already present";
@@ -215,6 +216,7 @@
         try {
           this.str_tracksaddedto = songbirdStrings.GetStringFromName("library.tracksaddedto");
           this.str_trackaddedto = songbirdStrings.GetStringFromName("library.trackaddedto");
+          this.str_notracksaddedto = songbirdStrings.GetStringFromName("library.notracksaddedto");
           this.str_trackalreadypresent = songbirdStrings.GetStringFromName("library.trackalreadypresent");
           this.str_tracksalreadypresent = songbirdStrings.GetStringFromName("library.tracksalreadypresent");
           this.str_library = songbirdStrings.GetStringFromName("library");
@@ -2491,9 +2493,21 @@
           var msg;
           if (toplaylist) {
             var totalcount = this._addto_added_count + this._addto_existed_count;
-            msg = "" + totalcount + " " + ((totalcount > 1) ? this.str_tracksaddedto : this.str_trackaddedto) + " " + this.str_playlist.toLowerCase(); 
+            msg = "" + totalcount + " ";
+            switch (totalcount) {
+              case 0: msg += this.str_notracksaddedto; break;
+              case 1: msg += this.str_trackaddedto; break;
+              default: msg += this.str_tracksaddedto; break;
+            }
+            msg += " " + this.str_playlist.toLowerCase(); 
           } else {
-            msg = "" + this._addto_added_count + " " + ((this._addto_added_count > 1) ? this.str_tracksaddedto : this.str_trackaddedto) + " " + this.str_library.toLowerCase(); 
+            msg = "" + this._addto_added_count + " ";
+            switch (totalcount) {
+              case 0: msg += this.str_notracksaddedto; break;
+              case 1: msg += this.str_trackaddedto; break;
+              default: msg += this.str_tracksaddedto; break;
+            }
+            msg += " " + this.str_library.toLowerCase(); 
             if (this._addto_existed_count > 0) msg += " (" + this._addto_existed_count + " " + ((this._addto_existed_count > 1) ? this.str_tracksalreadypresent : this.str_trackalreadypresent) + ")";
           }
           SBDataSetStringValue("faceplate.status.override.text", "");
