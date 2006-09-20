@@ -149,16 +149,6 @@ try
 
       switch ( command )
       {
-        case "library_cmd_addtoplaylist":
-        {
-          // Always make sure the "Add To Playlist" command is enabled,
-          // regardless of whether there is a selection
-          if ( playlist.table != "library" &&
-               playlist.tree.view.rowCount )
-            return true;
-        }
-        break;
-        
         case "library_cmd_device":
         case "library_cmd_burntocd":
         {
