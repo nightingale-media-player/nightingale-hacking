@@ -2962,7 +2962,7 @@
               var n = this.source.getNumFilters(this.ref);
               ret += ";" + n;
               for (var i=0;i<n;i++)
-                ret += ";" + this.source.getFilter(this.ref, 0);
+                ret += ";" + this.source.getFilter(this.ref, i);
               ret += "|" + this.source.getSearchString(this.ref);
             }
           }
