@@ -652,6 +652,13 @@ menulist[disabled="true"] > dropmarker
   -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
 }
 
+.menu-iconic-text,
+.menulist-label
+{
+  font-size: small !important;
+  font-weight: normal !important;
+}
+
 /** 
 ************************************************************************************************************************************************
 The ABOUT BOX
