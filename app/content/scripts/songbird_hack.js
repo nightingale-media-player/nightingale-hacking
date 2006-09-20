@@ -774,7 +774,7 @@ function onServiceEditChange( evt )
     if ( theServiceTree)
     {
       var theServiceTree_tree = theServiceTree.tree;
-      if ( theServiceTree_tree && theServiceTree_tree.currentIndex > -1 )
+      if ( theServiceTree_tree )
       {
         var theEditBox = document.getElementById( "service_edit" );
 
