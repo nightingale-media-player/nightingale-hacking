@@ -56,7 +56,7 @@
           </hbox>
           <spacer height="8"/>
           <hbox id="window_content" class="sb_faceplate" >
-            <menulist width="200" id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
+            <menulist id="language_list" onmousedown="eatEvent(event);" onmouseup="eatEvent(event);">
               <menupopup>
               </menupopup>
             </menulist>
