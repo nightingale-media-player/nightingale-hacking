@@ -29,8 +29,31 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ICON_TARGET_DIR = $(SONGBIRD_CHROMEDIR)/icons/default
+ICON_SOURCE_NAME = songbird
+ICON_TARGET_NAME = frame_outer
+
+ifeq (win32,$(SB_PLATFORM))
+ICON_EXTENSION = ico
+endif
+ifeq (linux,$(SB_PLATFORM))
+ICON_EXTENSION = xpm
+endif
+ifeq (macosx,($SB_PLATFORM))
+ICON_EXTENSION = icns
+endif
+
+tasks: all install-icons
+
 ifeq (macosx,$(SB_PLATFORM))
 SONGBIRD_DIST = $(srcdir)/songbird.icns
+endif
+
+install-icons:: 
+ifneq (macosx,$(SB_PLATFORM))
+	$(MKDIR) -p $(ICON_TARGET_DIR)
+	$(CP) -f $(srcdir)/songbird.$(ICON_EXTENSION) \
+    $(ICON_TARGET_DIR)/$(ICON_TARGET_NAME).$(ICON_EXTENSION)
 endif
 
 JAR_MANIFEST = jar.mn

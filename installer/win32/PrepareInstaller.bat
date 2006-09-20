@@ -46,8 +46,6 @@ rd /s /q %DEPTH%\_built_installer
 
 copy /y Songbird.nsi %DIST_DIR%\Songbird.nsi
 
-mkdir %DIST_DIR%\chrome\icons\default
-copy /y %DEPTH%\app\branding\songbird.ico %DIST_DIR%chrome\icons\default\frame_outer.ico
 copy /y %DEPTH%\app\branding\songbird*.ico %DIST_DIR%
 
 copy /y LICENSE.txt %DIST_DIR%
