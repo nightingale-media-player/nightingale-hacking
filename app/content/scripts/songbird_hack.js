@@ -2550,16 +2550,10 @@ function SBTrackEditorOpen()
 {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
-  var needToOpen = true;
-  var windows = wm.getEnumerator("track_editor");
-  while (windows.hasMoreElements()) {
-    var theTE = windows.getNext().QueryInterface(Components.interfaces.nsIDOMWindowInternal);
+  var theTE = wm.getMostRecentWindow("track_editor");
+  if (theTE) {
     theTE.focus();
-    needToOpen = false;
-    break;
-  }
-
-  if (needToOpen) {
+  } else {
     const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
     const TEFEATURES = "chrome,dialog=no,resizable=no,titlebar=no";
     window.openDialog(TEURL, "track_editor", TEFEATURES, document);

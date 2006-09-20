@@ -175,7 +175,7 @@
     }
   };
   
-  var focus = {
+  var _focus = {
     value: false,
     setIsFocused : function(val) {
       this.value = val;
@@ -197,15 +197,15 @@
     var _trackeditor = document.getElementById("trackeditor.trackeditor");
     _trackeditor.setBaseDocument(doc);
     _trackeditor.setDirtyObject(dirty);
-    _trackeditor.setMainFocusObject(focus);
+    _trackeditor.setMainFocusObject(_focus);
     var _exttrackeditor = document.getElementById("trackeditor.exttrackeditor");
     _exttrackeditor.setBaseDocument(doc);
     _exttrackeditor.setDirtyObject(dirty);
-    _exttrackeditor.setMainFocusObject(focus);
+    _exttrackeditor.setMainFocusObject(_focus);
     //var _tageditor = document.getElementById("trackeditor.tageditor");
     //_tageditor.setBaseDocument(doc);
     //_tageditor.setDirtyObject(dirty);
-    //_tageditor.setMainFocusObject(focus);
+    //_tageditor.setMainFocusObject(_focus);
     
     disableUndo();
     
@@ -277,11 +277,11 @@
   }
   
   function onFocus() {
-    focus.setIsFocused(true);
+    _focus.setIsFocused(true);
   }
 
   function onBlur() {
-    focus.setIsFocused(false);
+    _focus.setIsFocused(false);
   }
   
   ]]>
