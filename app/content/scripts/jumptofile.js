@@ -486,10 +486,12 @@ try
         if (_hasFilters(filters)) { // test the actual content of each filter entry
           if (cat != "") cat += ", ";
           cat += string_filteredby + ' ';
+          var nactualfilters = 0;
           for (var i=0;i<filtersColumn.length;i++) {
             if (filters[i] != "") {
-              if (i > 0) cat += ", ";
+              if (nactualfilters > 0) cat += ", ";
               cat += _mixedCase(filtersColumn[i]);
+              nactualfilters++;
             }
           }
         }
