@@ -1465,7 +1465,13 @@
             this.restoring_selection = true;
             
             //dump("start restore\n");
-            if (this._saved_selection != null && this._saved_selection.length > 0 && this.tree.columns && this.tree.columns.count > 0 && this.tree.view.rowCount > 0) {
+            if (this._saved_selection != null && 
+                this._saved_selection.ranges && 
+                this._saved_selection.ranges.length > 0 && 
+                this.tree.columns && 
+                this.tree.columns.count > 0 && 
+                this.tree.view.rowCount > 0) {
+
               // use the key we picked in saveSelection
               var column = this.tree.columns.getNamedColumn(this._selection_key); 
               if (column != null) {
