@@ -596,14 +596,6 @@ button
   color: #99A195 !important;  
 }
 
-button:active
-{
-  -moz-border-top-colors: #535751 !important;
-  -moz-border-left-colors: #535751 !important;
-  -moz-border-bottom-colors: #99A195 !important;
-  -moz-border-right-colors: #99A195 !important;
-}
-
 button:hover
 {
   -moz-border-top-colors: #99A195 !important;
@@ -613,6 +605,19 @@ button:hover
   color: #FFF !important;  
 }
 
+button:active
+{
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #99A195 !important;
+  -moz-border-right-colors: #99A195 !important;
+}
+
+menuitem[disabled="true"],
+menuitem[disabled="true"]:hover
+{
+  color: #99A195 !important;
+}
 menuitem
 {
   color: #FFF !important;  
@@ -621,16 +626,6 @@ menuitem:hover
 {
   color: #505154 !important;
 }
-menuitem[disabled="true"],
-menuitem[disabled="true"]:hover
-{
-  color: #99A195 !important;
-}
-
-
-
-
-
 
 /** 
 ************************************************************************************************************************************************

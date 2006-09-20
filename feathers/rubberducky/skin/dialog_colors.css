@@ -379,23 +379,6 @@ FORM ELEMENTS
 BUTTONS for dialogs and forms.
 **************************************************************************************
 */
-.dialog_button 
-{
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  background-color: #111 !important;
-  color: #99A195 !important;
-}
-
-.dialog_button:active
-{
-  -moz-border-top-colors: #535751 !important;
-  -moz-border-left-colors: #535751 !important;
-  -moz-border-bottom-colors: #99A195 !important;
-  -moz-border-right-colors: #99A195 !important;
-}
 
 .dialog_button[disabled="true"],
 .dialog_button:hover[disabled="true"]
@@ -408,11 +391,30 @@ BUTTONS for dialogs and forms.
   color: #535751 !important;
 }
 
+.dialog_button 
+{
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #99A195 !important;
+}
+
 .dialog_button:hover
 {
   color: #FFF !important;
   background-color: #333 !important;
 }
+
+.dialog_button:active
+{
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #99A195 !important;
+  -moz-border-right-colors: #99A195 !important;
+}
+
 
 .backless_button /* Used in Watch Folders **/
 {
