@@ -1,4 +1,4 @@
-﻿/*
+/*
 //
 // BEGIN SONGBIRD GPL
 // 
@@ -237,7 +237,7 @@ var bmManager = {
               var n = this.manager.findBookmark(this.url);
               if (n >= 0) {
                 var children = this.manager.bookmark_nodes.children[0].children;
-                children[n].icon = "chrome://bookmarks/skin/icon_bookmark.ico";
+                children[n].icon = "chrome://songbird/skin/serviceicons/default.ico";
                 this.manager.saveBookmarks();
                 this.manager.rebuildBookmarks();
               }
