@@ -1441,6 +1441,8 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
       // or ( title like "%cc%" ) )
       search_query_str += or_str + op_str + NS_LITERAL_STRING("title") +
         like_str + qu_str + pct_str + *search_values[index] +
+        pct_str + qu_str + or_str + NS_LITERAL_STRING("url") +
+        like_str + qu_str + pct_str + *search_values[index] +
         pct_str + qu_str + cp_str + cp_str;
     }
   } else {
@@ -1465,7 +1467,9 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
         pct_str + *search_values[index] + pct_str + qu_str +
         or_str + NS_LITERAL_STRING("album") + like_str +
         qu_str + pct_str + *search_values[index] + pct_str +
-        qu_str + cp_str;
+        qu_str + or_str + NS_LITERAL_STRING("url") +
+        like_str + qu_str + pct_str + *search_values[index] +
+        pct_str + qu_str+ cp_str;
     }
     if (any_value)
       search_query_str += cp_str;
