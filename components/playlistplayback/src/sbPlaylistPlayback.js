@@ -1142,7 +1142,7 @@ PlaylistPlayback.prototype = {
       if ( pos > len && len > 0 )
         len = pos;
       // When the length changes, always set metadata.
-      if ( this._metadataLen.intValue != len ) 
+      if ( parseInt( this._metadataLen.intValue / 1000 ) != parseInt( len / 1000 ) ) 
         this._set_metadata = true; 
       this._metadataLen.intValue = len;
       this._metadataPos.intValue = pos;
