@@ -830,15 +830,25 @@ PlaylistPlayback.prototype = {
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
+      
+    // Ask the core very nicely to please stop.  Won't happen immediately.
     core.stop();
-/*
-  // Hmm, okay, so, if we stop the loop here, we never actually SEE that we stop,
-  // so we don't get a chance to clean everything up.
     
-    this._stopPlayerLoop(); // oh VERY important!
+    // Wait a second or two to see if we see ourselves stop.
+    var start = new Date().getTime();
+    while ( this.playing && ( new Date().getTime() - start < 2000 ) )
+      ;
     
-*/    
+    // Even if it fails here, it should be okay on the next loop around the block
     this._stopNextLoop = true;
+    if (this.playing)
+      dump("sbPlaylistPlayback::stop() - WHOA.  Playback core didn't actually stop when we asked it!\n");
+    else {
+      // Call the loop immediately, here, so we clean out and shut the loop down.
+      this._onPlayerLoop();
+      this._stopPlayerLoop();
+      this._stopNextLoop = false; // If we make it here, we don't need this
+    }
     return true;
   },
 
