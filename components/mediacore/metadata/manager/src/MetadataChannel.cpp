@@ -46,6 +46,11 @@
 
 #include "MetadataChannel.h"
 
+#include "prlog.h"
+#ifdef PR_LOGGING
+extern PRLogModuleInfo* gMetadataLog;
+#endif
+
 // DEFINES ====================================================================
 
 // FUNCTIONS ==================================================================

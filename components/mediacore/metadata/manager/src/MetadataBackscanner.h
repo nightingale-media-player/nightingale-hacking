@@ -81,7 +81,7 @@ class sbMetadataBackscanner : public sbIMetadataBackscanner
   virtual ~sbMetadataBackscanner();
 
   static sbMetadataBackscanner *GetSingleton();
-  static void PR_CALLBACK BackscannerProcessor(sbMetadataBackscanner* pBackscanner);
+  static nsresult PR_CALLBACK BackscannerProcessor(sbMetadataBackscanner* pBackscanner);
 
   static void BackscannerTimerInterval(nsITimer *aTimer, void *aClosure);
   static void BackscannerTimerWorker(nsITimer *aTimer, void *aClosure);

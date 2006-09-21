@@ -34,7 +34,7 @@
 #include "MetadataManager.h"
 #include "MetadataValues.h"
 #include "MetadataChannel.h"
-
+#include "prlog.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataManager, sbMetadataManager::GetSingleton)
 
@@ -74,8 +74,22 @@ static nsModuleComponentInfo sbMetadataManagerComponent[] =
   }
 };
 
+#ifdef PR_LOGGING
+PRLogModuleInfo *gMetadataLog;
+#endif
+
+PR_STATIC_CALLBACK(nsresult)
+sbMetadataManagerComponentConstructor(nsIModule *self)
+{
+#ifdef PR_LOGGING
+  gMetadataLog = PR_NewLogModule("metadata");
+#endif
+  return NS_OK;
+}
+
 // When everything else shuts down, delete it.
-static void sbMetadataManagerComponentDestructor(nsIModule* module)
+PR_STATIC_CALLBACK(void)
+sbMetadataManagerComponentDestructor(nsIModule* module)
 {
   NS_IF_RELEASE(gMetadataManager);
   gMetadataManager = nsnull;
@@ -84,4 +98,8 @@ static void sbMetadataManagerComponentDestructor(nsIModule* module)
   gBackscanner = nsnull;
 }
 
-NS_IMPL_NSGETMODULE_WITH_DTOR("SongbirdMetadataManagerComponent", sbMetadataManagerComponent, sbMetadataManagerComponentDestructor)
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR("SongbirdMetadataManagerComponent",
+                                   sbMetadataManagerComponent,
+                                   sbMetadataManagerComponentConstructor,
+                                   sbMetadataManagerComponentDestructor)
+

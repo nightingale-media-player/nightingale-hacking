@@ -55,6 +55,11 @@
 #include <string/nsStringAPI.h>
 #include <string/nsString.h>
 
+#include "prlog.h"
+#ifdef PR_LOGGING
+extern PRLogModuleInfo* gMetadataLog;
+#endif
+
 // DEFINES ====================================================================
 
 // FUNCTIONS ==================================================================

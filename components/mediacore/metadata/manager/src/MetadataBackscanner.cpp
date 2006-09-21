@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2006 POTI, Inc.
+// Copyright� 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
+// GNU General Public License Version 2 (the �GPL�).
 // 
 // Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -41,6 +41,11 @@
 
 #include "MetadataBackscanner.h"
 
+#include "prlog.h"
+#ifdef PR_LOGGING
+extern PRLogModuleInfo* gMetadataLog;
+#endif
+
 // DEFINES ====================================================================
 
 // FUNCTIONS ==================================================================
@@ -51,7 +56,7 @@ void PrepareStringForQuery(nsAString &str)
   NS_NAMED_LITERAL_STRING(strQuoteQuote, "\"\"");
 
   nsAString::const_iterator itStart, itS, itE, itEnd;
- 
+  
   str.BeginReading(itStart);
   str.BeginReading(itS);
   str.EndReading(itE);
@@ -203,28 +208,12 @@ sbMetadataBackscanner::sbMetadataBackscanner()
 
   if (pBackscannerProcessorRunner)
   {
-    nsresult rv = NS_NewThread(getter_AddRefs(pThread),
+    nsresult rv = NS_NewThread(getter_AddRefs(m_pThread),
       pBackscannerProcessorRunner,
       0,
       PR_JOINABLE_THREAD);
 
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
-
-    if (NS_SUCCEEDED(rv))
-    {
-      m_pThread = pThread;
-
-      //Windows and MacOSX accept the creation of an event queue on another thread
-      //than the main thread. Linux however only accepts event queue usage from the
-      //main thread.
-#if !defined(XP_UNIX) //|| defined(XP_MACOSX)
-      nsCOMPtr<nsIEventQueueService> pEventQueueService;
-      rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
-      if(NS_SUCCEEDED(rv)) {
-        rv = pEventQueueService->CreateFromIThread(m_pThread, PR_TRUE, getter_AddRefs(m_pEventQueue));
-      }
-#endif
-    }
   }
 }
 
@@ -326,13 +315,14 @@ NS_IMETHODIMP sbMetadataBackscanner::Start()
     m_backscanShouldRun = PR_TRUE;
     mon.Notify();
   }
-
+/*
   m_pIntervalTimer->InitWithFuncCallback(&BackscannerTimerInterval, this, 
     m_scanInterval * 500, nsITimer::TYPE_REPEATING_SLACK);
 
   m_pWorkerTimer->InitWithFuncCallback(&BackscannerTimerWorker, this, 
     99, nsITimer::TYPE_REPEATING_SLACK);
-
+*/
+  PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Backscanner started"));
   return NS_OK;
 }
 
@@ -348,10 +338,12 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   m_pIntervalTimer->Cancel();
   m_pWorkerTimer->Cancel();
 
+  PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Backscanner stopped"));
+
   return NS_OK;
 }
 
-/*static*/ void PR_CALLBACK sbMetadataBackscanner::BackscannerProcessor(sbMetadataBackscanner* pBackscanner)
+/*static*/ nsresult PR_CALLBACK sbMetadataBackscanner::BackscannerProcessor(sbMetadataBackscanner* pBackscanner)
 {
   nsresult rv = 0;
 
@@ -394,6 +386,18 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   columnCache.insert(strColDiscNo);
   columnCache.insert(strColDiscTotal);
 
+  // Create a monitored event queue for this thread.  This is needed for us
+  // to get events posted from the channel.  Note that because this is a
+  // monitored event queue, we must call ProcessPendingEvents() to cause the
+  // events to be processed.
+  nsCOMPtr<nsIEventQueueService> pEventQueueService;
+  rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = pEventQueueService->CreateFromIThread(pBackscanner->m_pThread,
+                                             PR_FALSE,
+                                             getter_AddRefs(pBackscanner->m_pEventQueue));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   while(PR_TRUE)
   {
     { // Enter Monitor
@@ -402,7 +406,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
       // Handle shutdown request
       if (pBackscanner->m_backscanShouldShutdown) {
-        return;
+        break;
       }
 
       if (!pBackscanner->m_backscanShouldRun) {
@@ -453,14 +457,16 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
                 !pBackscanner->m_backscanShouldShutdown &&
                 values != 0)
           {
+            // Process events until the channel has completed reading the
+            // metadata.
+            // XXX: Should we time out here if this takes too long?
+            pBackscanner->m_pEventQueue->ProcessPendingEvents();
             pHandler->GetCompleted(&completed);
-            if(!completed)
-              PR_Sleep(PR_MillisecondsToInterval(33)); //Don't chew up all the cpu time.
 
             if(pBackscanner->m_backscanShouldShutdown)
             {
               pHandler->Close();
-              return;
+              break;
             }
           }
 
@@ -509,6 +515,10 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
             strQuery.AppendLiteral("library SET ");
             pValues->GetNumValues(&values);
+
+            PR_LOG(gMetadataLog, PR_LOG_WARN,
+                   ("Got metadata for url '%s', %d values",
+                    NS_ConvertUTF16toUTF8(strURL).get(), values));
 
             if(values)
             {
@@ -575,7 +585,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
               pBackscanner->m_pQuery->AddQuery(strQuery);
             }
 
-            if(pBackscanner->m_backscanShouldShutdown) return;
+            if(pBackscanner->m_backscanShouldShutdown) break;
 
             pBackscanner->m_pQuery->GetQueryCount(&queryCount);
             if(queryCount >= pBackscanner->m_updateQueueSize ||
@@ -605,12 +615,20 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
             }
           }
         }
+        else {
+          PR_LOG(gMetadataLog, PR_LOG_WARN,
+                 ("Unable to get handler for url '%s'",
+                  NS_ConvertUTF16toUTF8(strURL).get()));
+        }
       }
     }
     
   }
 
-  return;
+  rv = pEventQueueService->DestroyThreadEventQueue();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 /*static*/ void sbMetadataBackscanner::BackscannerTimerInterval(nsITimer *aTimer, void *aClosure)
