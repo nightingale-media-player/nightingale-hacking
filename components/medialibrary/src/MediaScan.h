@@ -111,6 +111,9 @@ protected:
 
   PRLock* m_pFileStackLock;
   filestack_t m_FileStack;
+
+  PRLock* m_pCancelLock;
+  PRBool m_bCancel;
 };
 
 class sbMediaScanThread;

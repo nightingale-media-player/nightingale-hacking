@@ -523,7 +523,7 @@ function ScanBeneathADirectory(aPath) {
  *
  * \sa sbIMediaScanCallback, sbIMediaScan, MediaScan.h
  */
-[scriptable, uuid(32CD5811-77BF-4800-A4A8-FE764B8DDFD1)]
+[scriptable, uuid(62A3F4B6-542D-4bd1-87E2-E00C72B0AACE)]
 interface sbIMediaScanQuery : nsISupports
 {
   /**
@@ -636,6 +636,16 @@ interface sbIMediaScanQuery : nsISupports
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
   void setCurrentScanPath(in AString strScanPath);
+
+  /**
+   * \brief Cancel the current scanning loop
+   */
+  void cancel();
+
+  /**
+   * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
+   */
+  PRBool isCancelled();
 };
 
 /**

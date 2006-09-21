@@ -52,17 +52,20 @@ CMediaScanQuery::CMediaScanQuery()
 , m_bRecurse(PR_FALSE)
 , m_bIsScanning(PR_FALSE)
 , m_pCallback(nsnull)
+, m_bCancel(PR_FALSE)
 , m_pDirectoryLock(PR_NewLock())
 , m_pCurrentPathLock(PR_NewLock())
 , m_pCallbackLock(PR_NewLock())
 , m_pFileStackLock(PR_NewLock())
 , m_pScanningLock(PR_NewLock())
+, m_pCancelLock(PR_NewLock())
 {
   NS_ASSERTION(m_pDirectoryLock, "MediaScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "MediaScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "MediaScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pFileStackLock, "MediaScanQuery.m_pFileStackLock failed");
   NS_ASSERTION(m_pScanningLock, "MediaScanQuery.m_pScanningLock failed");
+  NS_ASSERTION(m_pCancelLock, "MediaScanQuery.m_pCancelLock failed");
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -71,17 +74,20 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
 , m_bRecurse(bRecurse)
 , m_bIsScanning(PR_FALSE)
 , m_pCallback(pCallback)
+, m_bCancel(PR_FALSE)
 , m_pDirectoryLock(PR_NewLock())
 , m_pCurrentPathLock(PR_NewLock())
 , m_pCallbackLock(PR_NewLock())
 , m_pFileStackLock(PR_NewLock())
 , m_pScanningLock(PR_NewLock())
+, m_pCancelLock(PR_NewLock())
 {
   NS_ASSERTION(m_pDirectoryLock, "MediaScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "MediaScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "MediaScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pFileStackLock, "MediaScanQuery.m_pFileStackLock failed");
   NS_ASSERTION(m_pScanningLock, "MediaScanQuery.m_pScanningLock failed");
+  NS_ASSERTION(m_pCancelLock, "MediaScanQuery.m_pCancelLock failed");
   NS_IF_ADDREF(m_pCallback);
 } //ctor
 
@@ -99,6 +105,8 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
     PR_DestroyLock(m_pFileStackLock);
   if (m_pScanningLock)
     PR_DestroyLock(m_pScanningLock);
+  if (m_pCancelLock)
+    PR_DestroyLock(m_pCancelLock);
 } //dtor
 
 //--------------------------------------------------------------------- --------
@@ -246,6 +254,26 @@ NS_IMETHODIMP CMediaScanQuery::SetCurrentScanPath(const nsAString &strScanPath)
   m_strCurrentPath = strScanPath;
   return NS_OK;
 } //SetCurrentScanPath
+
+//-----------------------------------------------------------------------------
+/* void Cancel (); */
+NS_IMETHODIMP CMediaScanQuery::Cancel()
+{
+  nsAutoLock lock(m_pCancelLock);
+  m_bCancel = PR_TRUE;
+  return NS_OK;
+} //Cancel
+
+//-----------------------------------------------------------------------------
+/* PRBool IsCancelled (); */
+NS_IMETHODIMP CMediaScanQuery::IsCancelled(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsAutoLock lock(m_pCancelLock);
+  *_retval = m_bCancel;
+  return NS_OK;
+} //IsCancelled
+
 
 //*****************************************************************************
 //  CMediaScan Class
@@ -525,6 +553,12 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
 
       for(;;)
       {
+        // Allow us to get the hell out of here.
+        PRBool cancel = PR_FALSE;
+        pQuery->IsCancelled(&cancel);
+        if (cancel)
+          break;
+
         pDirEntries->HasMoreElements(&bHasMore);
 
         if(bHasMore)

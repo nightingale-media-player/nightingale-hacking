@@ -266,6 +266,9 @@ function doOK()
 }
 function doCancel()
 {
+  // Run away!!
+  if (aMediaScanQuery)
+    aMediaScanQuery.cancel();
   SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
   document.defaultView.close();
   return true;
