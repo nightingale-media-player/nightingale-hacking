@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright© 2006 POTI, Inc.
+// Copyright(c) 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
