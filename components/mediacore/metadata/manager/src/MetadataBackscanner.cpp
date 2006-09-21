@@ -315,13 +315,13 @@ NS_IMETHODIMP sbMetadataBackscanner::Start()
     m_backscanShouldRun = PR_TRUE;
     mon.Notify();
   }
-/*
+
   m_pIntervalTimer->InitWithFuncCallback(&BackscannerTimerInterval, this, 
     m_scanInterval * 500, nsITimer::TYPE_REPEATING_SLACK);
 
   m_pWorkerTimer->InitWithFuncCallback(&BackscannerTimerWorker, this, 
     99, nsITimer::TYPE_REPEATING_SLACK);
-*/
+
   PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Backscanner started"));
   return NS_OK;
 }
