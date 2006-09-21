@@ -569,6 +569,11 @@ menuitem[checked="true"] > hbox[_moz-menuactive="true"]
   background-repeat: no-repeat !important;
 }
 
+/* sub menu elements should be indented to match other menuitem-iconic items in a menu */
+menu.menuitem-iconic > label  {
+  margin-left: 21px !important;
+}
+
 /* All menuitem icons are 16x16 */
 menuitem .menu-iconic-icon
 {
@@ -652,11 +657,16 @@ menulist[disabled="true"] > dropmarker
   -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
 }
 
-.menu-iconic-text,
-.menulist-label
+
+/** 
+************************************************************************************************************************************************
+MENU HIJINKS
+************************************************************************************************************************************************
+*/
+
+#Wikipedia > label
 {
-  font-size: small !important;
-  font-weight: normal !important;
+  padding: 0px 0px 0px 3px !important;
 }
 
 /** 
