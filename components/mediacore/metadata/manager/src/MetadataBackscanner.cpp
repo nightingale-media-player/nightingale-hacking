@@ -51,7 +51,7 @@ void PrepareStringForQuery(nsAString &str)
   NS_NAMED_LITERAL_STRING(strQuoteQuote, "\"\"");
 
   nsAString::const_iterator itStart, itS, itE, itEnd;
-  
+ 
   str.BeginReading(itStart);
   str.BeginReading(itS);
   str.EndReading(itE);
