@@ -744,7 +744,9 @@ PlaylistPlayback.prototype = {
     this._source.executeFeed( ppRef );
     
     // Synchronous call!  Woo hoo!
-    while( this._source.isQueryExecuting( ppRef ) );
+    var start = new Date().getTime();
+    while ( this._source.isQueryExecuting( ppRef ) && ( new Date().getTime() - start < 5000 ) )
+      this._sleep( 100 );
 
     // After the call is done, force GetTargets (and remember that we'll never see a UI)
     this._source.forceGetTargets( ppRef, true );
@@ -837,7 +839,7 @@ PlaylistPlayback.prototype = {
     // Wait a second or two to see if we see ourselves stop.
     var start = new Date().getTime();
     while ( this.playing && ( new Date().getTime() - start < 2000 ) )
-      ;
+      this._sleep( 100 );
     
     // Even if it fails here, it should be okay on the next loop around the block
     this._stopNextLoop = true;
@@ -1547,6 +1549,13 @@ PlaylistPlayback.prototype = {
   _isFLAC: function() {
     var url = this._playURL.stringValue.toLowerCase();
     return ( url.indexOf( ".flac" ) != -1 );
+  },
+  
+  
+  _sleep: function( ms ) {
+    var thread = Components.classes["@mozilla.org/thread;1"].createInstance();
+      thread = thread.QueryInterface(Components.interfaces.nsIThread);
+      thread.currentThread.sleep(ms);  
   },
   
   /**
