@@ -152,6 +152,7 @@
 <!ENTITY smart.is_not             "不是" >
 <!ENTITY smart.starts             "開頭是" >
 <!ENTITY smart.ends               "結尾是" >
+<!ENTITY smart.selectedby "選擇" >
          
 <!ENTITY download.window          "下載" >
 <!ENTITY download.select          "選擇目的地資料夾：" >
@@ -244,19 +245,14 @@
 
 <!ENTITY tooltip.control.shuf_off "關閉隨機播放" >
 
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
+<!ENTITY html.context.openexternal "以預設瀏覽器開啟" >
+<!ENTITY tooltip.control.shuf_off "關閉隨機播放" >
+<!ENTITY tooltip.browser.refresh "重新整理" >
+<!ENTITY firstrun.connectionsettings "連線設定" >
 
+<!ENTITY trackeditor.disclaimer "音軌編輯器的功能目前尚未完成。被編輯的中繼資料只會儲存在 Songbird 的資料庫內。以後的版本，在此被編輯的中繼資料會一併被存到你的媒體檔案內。" >
 
-
-
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
+<!ENTITY callout.firstwebplaylist "Songbird 找到了下列可播放的音軌:" >
 
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
 
