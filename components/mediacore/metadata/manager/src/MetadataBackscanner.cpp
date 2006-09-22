@@ -38,6 +38,8 @@
 #include <unicharutil/nsUnicharUtils.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsEventQueueUtils.h>
+#include <xpcom/nsIObserverService.h>
+#include <xpcom/nsCRT.h>
 
 #include "MetadataBackscanner.h"
 
@@ -150,7 +152,7 @@ NS_NAMED_LITERAL_STRING(strDatabaseGUID, "*");
 NS_NAMED_LITERAL_STRING(strSongbirdGUID, "songbird");
 
 // CLASSES ====================================================================
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataBackscanner, sbIMetadataBackscanner)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataBackscanner, sbIMetadataBackscanner, nsIObserver)
 NS_IMPL_THREADSAFE_ISUPPORTS1(BackscannerProcessorThread, nsIRunnable)
 
 sbMetadataBackscanner::sbMetadataBackscanner()
@@ -163,6 +165,17 @@ sbMetadataBackscanner::sbMetadataBackscanner()
 , m_pCurrentFileLock(nsnull)
 , m_pBackscannerProcessorMonitor(nsnull)
 {
+  nsresult rv;
+
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  if(NS_SUCCEEDED(rv)) {
+    observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+  }
+  else {
+    NS_ERROR("Unable to register xpcom-shutdown observer");
+  }
+
   //Metadata columns cache.
   m_columnCache.insert(strColURL);
   m_columnCache.insert(strColLength);
@@ -208,7 +221,7 @@ sbMetadataBackscanner::sbMetadataBackscanner()
 
   if (pBackscannerProcessorRunner)
   {
-    nsresult rv = NS_NewThread(getter_AddRefs(m_pThread),
+    rv = NS_NewThread(getter_AddRefs(m_pThread),
       pBackscannerProcessorRunner,
       0,
       PR_JOINABLE_THREAD);
@@ -233,14 +246,7 @@ sbMetadataBackscanner::sbMetadataBackscanner()
 
 sbMetadataBackscanner::~sbMetadataBackscanner()
 {
-  m_backscanShouldShutdown = PR_TRUE;
-  Stop();
-
-  if(m_pThread)
-    m_pThread->Join();
-
-  if(m_pBackscannerProcessorMonitor)
-  {
+  if(m_pBackscannerProcessorMonitor) {
     nsAutoMonitor::DestroyMonitor(m_pBackscannerProcessorMonitor);
     m_pBackscannerProcessorMonitor = nsnull;
   }
@@ -636,6 +642,8 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   rv = pEventQueueService->DestroyThreadEventQueue();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("BackscannerProcessor thread exited"));
+
   return NS_OK;
 }
 
@@ -805,3 +813,34 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   
   return;
 } //BackscannerTimerWorker
+
+// nsIObserver
+NS_IMETHODIMP
+sbMetadataBackscanner::Observe(nsISupports *aSubject, const char *aTopic,
+                               const PRUnichar *aData)
+{
+  if(!nsCRT::strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)) {
+    nsresult rv;
+
+    PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Backscanner shutting down..."));
+
+    {
+      nsAutoMonitor mon(m_pBackscannerProcessorMonitor);
+      m_backscanShouldShutdown = PR_TRUE;
+      mon.Notify();
+    }
+
+    Stop();
+
+    if(m_pThread) {
+      m_pThread->Join();
+    }
+
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+  }
+  return NS_OK;
+}
+

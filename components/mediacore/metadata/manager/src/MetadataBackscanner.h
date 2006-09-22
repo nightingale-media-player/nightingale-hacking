@@ -43,6 +43,7 @@
 #include <nsIThread.h>
 #include <nsIRunnable.h>
 #include <nsCOMPtr.h>
+#include <xpcom/nsIObserver.h>
 
 #include "sbIDatabaseQuery.h"
 #include "sbIDatabaseResult.h"
@@ -70,12 +71,14 @@ void PrepareStringForQuery(nsAString &str);
 void FormatLengthToString(nsAString &str);
 
 // CLASSES ====================================================================
-class sbMetadataBackscanner : public sbIMetadataBackscanner
+class sbMetadataBackscanner : public sbIMetadataBackscanner,
+                              public nsIObserver
 {
   friend class BackscannerProcessorThread;
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMETADATABACKSCANNER
+  NS_DECL_NSIOBSERVER
 
   sbMetadataBackscanner();
   virtual ~sbMetadataBackscanner();
