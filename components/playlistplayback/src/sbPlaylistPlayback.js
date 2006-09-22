@@ -1270,6 +1270,9 @@ PlaylistPlayback.prototype = {
         this._set_metadata = true; 
       else
         genre = "";
+      // Only if we don't have a valid length
+      if ( length == "0:00" && this._metadataLen.intValue > 0 ) 
+        length = "";
 
       if ( this._set_metadata ) {
         // Set the metadata into the database table
