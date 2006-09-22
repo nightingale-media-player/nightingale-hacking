@@ -141,7 +141,7 @@ NS_IMETHODIMP sbMetadataChannel::SetPos(PRUint64 pos)
 
     // See if this is a "resumable" channel.
     nsCOMPtr<nsIResumableChannel> testing_to_see_if_this_exists_but_never_going_to_use( do_QueryInterface(m_Channel, &rv) );
-    NS_ENSURE_SUCCESS( rv, rv );
+    if ( NS_FAILED( rv ) ) return NS_ERROR_INVALID_ARG; // this is totally okay to fail.
   
     // Remember what our target file is.
     nsCOMPtr<nsIURI> pURI;
@@ -375,6 +375,12 @@ sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
     if ( handler.get() )
     {
       handler->OnChannelData( this );
+      PRBool complete = PR_FALSE;
+      nsresult rv = handler->GetCompleted( &complete );
+      if ( NS_FAILED( rv ) || complete )
+      {
+        Close();
+      }
     }
   }
   return NS_OK;
