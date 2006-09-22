@@ -841,6 +841,10 @@ function onServiceEditKeypress( evt )
   }
 }
 
+function onServiceEditHide( evt ) {
+  isServiceEditShowing = false;
+}
+
 var isServiceEditShowing = false;
 function HideServiceEdit( evt )
 {
