@@ -45,14 +45,13 @@ function CoreQT()
   this._buffering = false;
   this._playing = false;
   this._paused  = false;
-  this._availability = 0;
   this._waitForPlayInterval = null;
   this._waitRetryCount = 0;
   this._lastVolume = 0;
   this._muted = false;
   this._starttime = null;
   this._playFromBeginning = true;
-  
+
   // This is used for the bizarre case of loading streams within QT. See the
   // later use in waitForPlayer().
   this._doubleCheckInterval = null;
@@ -64,6 +63,9 @@ function CoreQT()
   this.FILE_NOT_AVAILABLE = 0;
   this.LOCAL_FILE_AVAILABLE = 1;
   this.REMOTE_FILE_AVAILABLE = 2;
+
+  this._availability = this.FILE_NOT_AVAILABLE;
+  this._lastAvailability = this.FILE_NOT_AVAILABLE;
 };
 
 // inherit the prototype from CoreBase
@@ -114,11 +116,18 @@ CoreQT.prototype.waitForPlayer = function ()
   switch(playerStatus)
   {
     case "Waiting":
+      if (this._lastAvailability == this.LOCAL_FILE_AVAILABLE) {
+        // When switching from a playing remote file to a local file QuickTime
+        // likes to say that it's "Waiting". And it does wait. FOREVER. It
+        // needs a little kick in the pants to start playing again.
+        this._lastAvailability = this.FILE_NOT_AVAILABLE;
+        this.cleanupOnError();
+        return;
+      }
       this._buffering = true;
       this._waitRetryCount++;
-      if(this._waitRetryCount > 200) {
+      if(this._waitRetryCount > 200)
         this.cleanupOnError();
-      }
     break;
     
     case "Loading":
@@ -299,6 +308,10 @@ CoreQT.prototype.playURL = function ( aURL )
     default:
       this._isremote = false;
   }
+
+  // Save this value so that we can tell if we're switching from a remote to
+  // a local file later in waitForPlayerLoop.
+  this._lastAvailability = isAvailable;
 
   this._availability = FILE_NOT_AVAILABLE;
   this._starttime = new Date();
