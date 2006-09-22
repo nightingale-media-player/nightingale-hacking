@@ -49,6 +49,8 @@ try
     // initialize player controls for this faceplate  
     window.focus();
     SBInitMouseWheel();
+    
+    window.dockDistance = 10;
 
     var platform;
     try {

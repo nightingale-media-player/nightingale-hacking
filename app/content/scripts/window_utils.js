@@ -129,8 +129,10 @@ function onBkgDown( theEvent, popup )
     var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
     if (windowDragger) {
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
-      if (service)
-        service.beginWindowDrag(0); // automatically ends
+      if (service) {
+        var dockDistance = (window.dockDistance ? window.dockDistance : 0);
+        service.beginWindowDrag(dockDistance); // automatically ends
+      }
     }
     else {
       trackerBkg = true;
