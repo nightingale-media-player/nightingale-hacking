@@ -1462,44 +1462,43 @@ PlaylistPlayback.prototype = {
   
   // Updates the database with metadata changes
   _setURLMetadata: function( aURL, aTitle, aLength, aAlbum, aArtist, aGenre, boolSync, aDBQuery, execute ) {
+    var aLibrary = Components.classes[SONGBIRD_MEDIALIBRARY_CONTRACTID].createInstance(SONGBIRD_MEDIALIBRARY_IID);
+
     if ( aDBQuery == null ) {
       //aDBQuery = new sbIDatabaseQuery();
       aDBQuery = Components.classes[SONGBIRD_DATABASEQUERY_CONTRACTID].createInstance(SONGBIRD_DATABASEQUERY_IID);
       aDBQuery.setAsyncQuery(true);
-      aDBQuery.setDatabaseGUID("songbird");
+      aDBQuery.setDatabaseGUID(this._source.getRefGUID(this._playingRef.stringValue));
     }
+    
+    aLibrary.setQueryObject(aDBQuery);
+    
     if ( execute == null ) {
       execute = true;
     }
-      
-    if ( aTitle && aTitle.length ) {
-      var q = 'update library set title="' + aTitle + '" where url="' + aURL + '"';
-      aDBQuery.addQuery( q );
-    }
-    if ( aLength && aLength.length ) {
-      var q = 'update library set length="' + aLength + '" where url="' + aURL + '"';
-      aDBQuery.addQuery( q );
-    }
-    if ( aAlbum && aAlbum.length ) {
-      var q = 'update library set album="' + aAlbum + '" where url="' + aURL + '"';
-      aDBQuery.addQuery( q );
-    }
-    if ( aArtist && aArtist.length ) {
-      var q = 'update library set artist="' + aArtist + '" where url="' + aURL + '"';
-      aDBQuery.addQuery( q );
-    }
-    if ( aGenre && aGenre.length ) {
-      var q = 'update library set genre="' + aGenre + '" where url="' + aURL + '"';
-      aDBQuery.addQuery( q );
-    }
     
+    if ( aTitle && aTitle.length ) 
+      aLibrary.setValueByURL(aURL, "title", aTitle, false);
+
+    if ( aLength && aLength.length ) 
+      aLibrary.setValueByURL(aURL, "length", aLength, false);
+
+    if ( aAlbum && aAlbum.length ) 
+      aLibrary.setValueByURL(aURL, "album", aAlbum, false);
+
+    if ( aArtist && aArtist.length ) 
+      aLibrary.setValueByURL(aURL, "artist", aArtist, false);
+
+    if ( aGenre && aGenre.length ) 
+      aLibrary.setValueByURL(aURL, "genre", aGenre, false);
+
     if ( execute ) {
       var ret = aDBQuery.execute();
     }
       
     return aDBQuery; // So whomever calls this can keep track if they want.
   },
-  
+ 
   
   _updateCurrentInfo: function(aSourceRef, aIndex)
   {

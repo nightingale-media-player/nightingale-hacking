@@ -53,7 +53,7 @@ interface sbIDatabaseQuery;
  *
  * \sa sbIDatabaseQuery, DatabaseQuery.h, sbIPlaylist, sbIPlaylistManager
  */
-[scriptable, uuid(ca5c9b2c-e061-4c98-8333-9c839efc0d7f)]
+[scriptable, uuid(10a7cb98-49dd-11db-9659-00e08161165f)]
 interface sbIMediaLibrary : nsISupports
 {
   /**
@@ -443,6 +443,67 @@ function GetColumnNames(aLibrary) {
    * \sa getUniqueValuesByColumn, setValueByIndex, setValueByGUID, setValuesByIndex, setValuesByGUID, getValueByIndex, getValueByGUID, getValuesByIndex
    */
   void getValuesByGUID(in AString mediaGUID, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is (metaColumnCount)] in wstring metaColumnNames, 
+    out PRUint32 metaValueCount, 
+    [array, size_is (metaValueCount), retval] out wstring metaValues); /**/
+
+  /**
+   * \brief Set cell a value into the library table
+   *
+   * \param mediaURL The url of the cell to get, where media library row URL equals mediaURL
+   * \param columnName The name of the column for the cell to set
+   * \param columnValue The value of the cell to be set
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return 
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValuesByIndex, setValuesByURL, getValueByIndex, getValueByURL, getValuesByIndex, getValuesByURL
+   */
+  PRBool setValueByURL(in AString mediaURL, 
+    in AString columnName, 
+    in AString columnValue, 
+    in PRBool willRunQueryLater); /**/
+  
+  /**
+   * \brief Set multiple values into a single database row
+   *
+   * \param mediaURL The url of the cell to get, where media library row URL equals mediaURL
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of columns to set
+   * \param metaValueCount The number of items in the array
+   * \param metaValues The array of values to be set
+   * \param willRunQueryLater If false, execute the query before returning
+   * \return
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByURL, setValuesByIndex, getValueByIndex, getValueByURL, getValuesByIndex, getValuesByURL
+   */
+  PRBool setValuesByURL(in AString mediaURL, 
+    in PRUint32 metaColumnCount, 
+    [array, size_is(metaColumnCount)] in wstring metaColumnNames, 
+    in PRUint32 metaValueCount, 
+    [array, size_is(metaValueCount)] in wstring metaValues, 
+    in PRBool willRunQueryLater); /**/
+
+  /**
+   * \brief Get cell a value from the library table
+   *
+   * \param mediaURL The url of the cell to get, where media library row URL equals mediaURL
+   * \param columnName The name of the column for the cell to get
+   * \return The value of the cell
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByURL, setValuesByIndex, setValuesByURL, getValueByIndex, getValuesByIndex, getValuesByURL
+   */
+  AString getValueByURL(in AString mediaURL, 
+    in AString columnName); /**/
+  
+  /**
+   * \brief Get multiple values from a single database row
+   *
+   * \param mediaURL The url of the cell to get, where media library row URL equals mediaURL
+   * \param metaColumnCount The number of items in the array
+   * \param metaColumnNames The array of columns to get
+   * \param metaValueCount The number of items in the array
+   * \param metaValues The array of values retrieved
+   * \sa getUniqueValuesByColumn, setValueByIndex, setValueByURL, setValuesByIndex, setValuesByURL, getValueByIndex, getValueByURL, getValuesByIndex
+   */
+  void getValuesByURL(in AString mediaURL, 
     in PRUint32 metaColumnCount, 
     [array, size_is (metaColumnCount)] in wstring metaColumnNames, 
     out PRUint32 metaValueCount, 

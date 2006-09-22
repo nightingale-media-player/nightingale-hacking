@@ -712,6 +712,115 @@ CMediaLibrary.prototype =
     return aMetadataValues;
   },
 
+  setValueByURL: function(mediaURL, strField, strValue, bWillRunLater)
+  {
+    if(this.m_queryObject != null)
+    {
+      if(!bWillRunLater)
+        this.m_queryObject.resetQuery();
+      
+      strValue = strValue.replace(/"/g, "\"\"");
+      this.m_queryObject.addQuery("UPDATE " + LIBRARY_TABLE_NAME + " SET " + strField + " = \"" + strValue + "\" WHERE url = \"" + mediaURL + "\"");
+      
+      if(!bWillRunLater)
+      {
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
+      }
+    }
+    
+    return;
+  },
+
+  setValuesByURL: function(mediaURL, nMetaKeyCount, aMetaKeys, nMetaValueCount, aMetaValues, bWillRunLater)
+  {
+    if(this.m_queryObject != null ||
+       nMetaKeyCount != nMetaValueCount)
+    {
+      if(!bWillRunLater)
+        this.m_queryObject.resetQuery();
+      
+      var strQuery = "UPDATE " + LIBRARY_TABLE_NAME + " SET ";
+      var i = 0;
+      for(; i < nMetaKeyCount; i++)
+      {
+        aMetaValues[i] = aMetaValues[i].replace(/"/g, "\"\"");
+        strQuery += aMetaKeys[i] + " = \"" + aMetaValues[i] + "\"";
+        if(i < nMetaKeyCount - 1)
+          strQuery += ", ";
+      }
+      
+      strQuery += " WHERE url = \"" + mediaURL + "\"";
+      this.m_queryObject.addQuery(strQuery);
+      
+      if(!bWillRunLater)
+      {
+        this.m_queryObject.execute();
+        this.m_queryObject.waitForCompletion();
+      }
+      
+      return true;
+    }
+    
+    return false;
+  },
+  
+  getValueByURL: function(mediaURL, strField)
+  {
+    if(this.m_queryObject != null)
+    {
+      this.m_queryObject.resetQuery();
+      this.m_queryObject.addQuery("SELECT " + strField + " FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + mediaURL + "\"");
+      
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
+      
+      var resObj = this.m_queryObject.getResultObject();
+      
+      if(resObj.getRowCount())
+        return resObj.getRowCell(0, 0);
+    }
+    
+    return "";
+  },
+  
+  getValuesByURL: function(mediaURL, nMetaKeyCount, aMetaKeys, nMetadataValueCount)
+  {
+    nMetadataValueCount = 0;
+    var aMetadataValues = new Array();
+    
+    if(this.m_queryObject != null)
+    {
+      var strQuery = "SELECT ";
+      this.m_queryObject.resetQuery();
+      
+      var i = 0;
+      for( ; i < nMetaKeyCount; i++)
+      {
+        strQuery += aMetaKeys[i];
+        
+        if(i < nMetaKeyCount - 1)
+          strQuery += ", ";
+      }
+      
+      strQuery += " FROM " + LIBRARY_TABLE_NAME + " WHERE url = \"" + mediaURL + "\"";
+      this.m_queryObject.addQuery(strQuery);
+      
+      this.m_queryObject.execute();
+      this.m_queryObject.waitForCompletion();
+      
+      var resObj = this.m_queryObject.getResultObject();
+      nMetadataValueCount = resObj.getColumnCount();
+      
+      for(var i = 0; i < nMetadataValueCount; i++)
+      {
+        aMetadataValues.push(resObj.getRowCell(0, i));
+      }
+    }
+    
+    return aMetadataValues;
+  },
+
   QueryInterface: function(iid)
   {
       if (!iid.equals(Components.interfaces.nsISupports) &&
