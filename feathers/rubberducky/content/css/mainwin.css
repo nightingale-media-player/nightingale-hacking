@@ -1385,41 +1385,41 @@ DASHBOARD
 
 #dashboard_box
 {
-  height: 45px !important;
+  height: 50px !important;
 }
 
 #dashboard_bkgd
 {
-  height: 45px !important;
+  height: 50px !important;
 }
 
 #dashboard_w
 {
   width: 25px !important;
-  height: 45px !important;
+  height: 50px !important;
   background-repeat: no-repeat !important;
 }
 #dashboard_e
 {
   width: 25px !important;
-  height: 45px !important;
+  height: 50px !important;
   background-repeat: no-repeat !important;
 }
 
 #intro_box
 {
-  height: 45px !important;
+  height: 50px !important;
 }
 
 #intro_box_bkgd
 {
-  height: 45px !important;
+  height: 50px !important;
 }
 
 #intro_box_image
 {
   width: 45px !important;
-  height: 45px !important;
+  height: 50px !important;
   background-repeat: no-repeat !important;
 }
 
