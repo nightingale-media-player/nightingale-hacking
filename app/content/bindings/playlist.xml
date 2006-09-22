@@ -1989,6 +1989,9 @@
         <body>
           <![CDATA[
           try {
+            // If there is no actual commands, do not allow the context menu to pop.
+            if (!this.commands || this.commands.getNumCommands() == 0) return;
+            
             const COLUMN_TITLE = "title";
             const CONTEXT_IDS = ["playlist_context_before",
                                  "playlist.context.search",
