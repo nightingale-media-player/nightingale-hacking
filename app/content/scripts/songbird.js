@@ -38,42 +38,85 @@ var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
 function SBAppStartup()
 {
   dump("SBAppStartup\n");
-  try
+
+  
+  // If we aren't the oldest video window around then self destruct.
+  // This can happen when
+  //  - The user tries to load songbird.xul in the main browser
+  //  - The user launches a second xulrunner while songbird is running 
+  //    but not showing a window of type Songbird:Main
+  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                      .getService(Components.interfaces.nsIWindowMediator);
+  var videoWindowList = wm.getEnumerator("Songbird:Core"); 
+  if (!videoWindowList.hasMoreElements() 
+      || videoWindowList.getNext() != window) 
   {
-    // Gets called from doEULA, if user rejects EULA
-    var doShutdown = function() {
-      try {
-      var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-      var MetricsService = new nsIMetrics();
-      MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
-
-      // get the startup service and tell it to shut us down
-      var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-              .getService(Components.interfaces.nsIAppStartup);
-      if (as) {
-        // do NOT replace '_' with '.', or it will be handled as metrics
-        //    data: it would be posted to the metrics aggregator, then reset
-        //    to 0 automatically
-        // do not count next startup in metrics, since we counted this one, but it was aborted
-        SBDataSetBoolValue("metrics_ignorenextstartup", true);
-        //gPrefs.setBoolPref("songbird.metrics_ignorenextstartup", true);
-        as.quit(as.eAttemptQuit);
-      }
-      } catch (err) {
-        SB_LOG("doShutdown", "" + err);
-      }
-    };
-
-    // Show EULA, then the first run (if accepted) or exit (if rejected)
-    if ( doEULA( doFirstRun, doShutdown ) ) {
-      doMainwinStart();
+    dump("\n\nSBAppStartup: Aborting since there is already a Songbird:Core window\n\n");
+    
+    // Can't close before onLoad has occured.. otherwise things go a bit crazy
+    SBAppInitialize = function() {
+      dump("\n\SBAppInitialize: shutting down.\n\n");
+      document.defaultView.close();
+      return false;
     }
+    
+    SBInterfaceInitialize = null;
+    SBAppDeinitialize = null;
+    SBInterfaceDeinitialize = null;
+    
+    
+    // If there is main window up, try to focus on that.
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                      .getService(Components.interfaces.nsIWindowMediator);
+    var mainWin = wm.getMostRecentWindow("Songbird:Main");
+    if (mainWin)
+      mainWin.focus();
+    
+    return;
   }
-  catch ( err )
-  {
-    SB_LOG( "App Init", "" + err );
+  
+
+  // Show EULA, then the first run (if accepted) or exit (if rejected)
+  if ( doEULA( doFirstRun, doShutdown ) ) {
+    doMainwinStart();
   }
 }
+
+
+
+//
+// Shut down xulrunner
+//
+// - Passed as a param to doEULA
+// - Called if user rejects EULA
+function doShutdown() {
+        
+  var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Components.interfaces.sbIMetrics);
+  if (!metrics) 
+    throw("doShutdown could not get the metrics component");
+    
+  // mark this session as clean, we did not crash
+  metrics.setSessionFlag(false); 
+  
+  
+  // get the startup service and tell it to shut us down
+  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                     .getService(Components.interfaces.nsIAppStartup);
+  if (!as) 
+    throw("doShutdown could not get the app-startup component!");
+
+  // do not count next startup in metrics, since we counted this one, 
+  // but it was aborted.
+  //
+  // Note: do NOT replace '_' with '.', or it will be handled as metrics
+  //    data: it would be posted to the metrics aggregator, then reset
+  //    to 0 automatically
+  SBDataSetBoolValue("metrics_ignorenextstartup", true);
+  
+  as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+}
+
 
 
 
@@ -85,69 +128,43 @@ function SBAppStartup()
 //
 function doMainwinStart() 
 {
-  dump("doMainwinStart\n");
+  dump("doMainwinStart\n");  
 
-  //
-  // Stupid pet tricks for when the user loads this page into his mainwin browser.  Duh.
-  //
-  var watcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                .getService(Components.interfaces.nsIWindowWatcher);
-  var windows = watcher.getWindowEnumerator();
-  var pop = true;
-  while ( windows.hasMoreElements() )
+
+  // Attempt to launch the mainwin
+  try
   {
-    var win = windows.getNext()
-    win = win.QueryInterface(Components.interfaces.nsIDOMWindow);
-    switch (win.name)
-    {
-      case "mainwin":
-        pop = false;
-        document.__dont_hide_rmpdemo_window = true;  // wtf?
-        win.window.focus();
-        break;
+    var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                  .createInstance(Components.interfaces.sbIMetrics);
+    if (metrics.getSessionFlag()) {
+      metrics_inc("player", "crash");
     }
+    metrics.setSessionFlag(true);
+    metrics.checkUploadMetrics();
   }
+  catch ( err )
+  {
+    SB_LOG( "App Init - Metrics - ", "" + err );
+  }
+  // Get mainwin URL
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  var mainwinURL = "";
+  try {
+    // XXXredfive - probably can go ahead and make this a required pref
+    mainwinURL = prefs.getCharPref("songbird.general.bones.selectedMainWinURL", mainwin);  
+  } catch (err) {}
+
+  if (!mainwinURL) {
+    mainwinURL = "chrome://rubberducky/content/xul/mainwin.xul";
+
+    // save it for later restarts and down the road if we want to allow file->new window
+    prefs.setCharPref("songbird.general.bones.selectedMainWinURL", mainwinURL);  
+  }
+
+  mainWin = window.open(mainwinURL, "mainwin",
+                "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
   
-  if ( pop )
-  {
-    try
-    {
-      var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-      var MetricsService = new nsIMetrics();
-      if (MetricsService.getSessionFlag()) {
-        //SB_LOG("previous session did not terminate properly!");
-        metrics_inc("player", "crash");
-      }
-      MetricsService.setSessionFlag(true);
-      MetricsService.checkUploadMetrics();
-    }
-    catch ( err )
-    {
-      SB_LOG( "App Init - Metrics - ", "" + err );
-    }
-    // Get mainwin URL
-    var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-    var mainwin = "";
-    try {
-      // XXXredfive - probably can go ahead and make this a required pref
-      mainwin = prefs.getCharPref("songbird.general.bones.selectedMainWinURL", mainwin);  
-    } catch (err) {}
-
-    if (!mainwin) {
-      mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
-
-      // save it for later restarts and down the road if we want to allow file->new window
-      prefs.setCharPref("songbird.general.bones.selectedMainWinURL", mainwin);  
-    }
-
-    window.open( mainwin,
-                 "mainwin",
-                 "chrome,modal=no,toolbar=no,popup=no,titlebar=no" );
-  }
-  else
-  {
-    document.defaultView.close(); // Nuke this window.  Don't open a mainwin.
-  }
+  mainWin.focus();
 }
 
 
@@ -262,19 +279,26 @@ function onHelp()
 
 function restartApp()
 {
-  var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-  var MetricsService = new nsIMetrics();
-  MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
-  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(Components.interfaces.nsIAppStartup);
-  if (as)
-  {
-    // do NOT replace '_' with '.', or it will be handled as a metrics data: it would be posted to the metrics aggregator, then reset to 0 automatically
-    SBDataSetBoolValue("metrics_ignorenextstartup", true);
-    const V_RESTART = 16;
-    const V_ATTEMPT = 2;
-    as.quit(V_RESTART);
-    as.quit(V_ATTEMPT);
-  }
+  // mark this session as clean, we did not crash
+  var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                .createInstance(Components.interfaces.sbIMetrics);
+  if (!metrics) 
+      throw("restartApp could not get the metrics component");
+  metrics.setSessionFlag(false); 
+  
+  // attempt to restart
+  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                     .getService(Components.interfaces.nsIAppStartup);
+  if (!as) 
+    throw("restartApp could not get the nsIAppStartup component");
+    
+  // do NOT replace '_' with '.', or it will be handled as a metrics data:
+  // it would be posted to the metrics aggregator, then reset to 0 automatically
+  SBDataSetBoolValue("metrics_ignorenextstartup", true);
+
+  as.quit(Components.interfaces.nsIAppStartup.eRestart);
+  as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+
   onExit();
 }
 
@@ -336,6 +360,7 @@ function SBAppDeinitialize()
   onWindowSaveSizeAndPosition();
   SBMetricsAppShutdown();
 }
+
 
 function SBMetricsAppStart() 
 {

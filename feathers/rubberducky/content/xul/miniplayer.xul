@@ -40,6 +40,7 @@
  id="mini"
  title="&window.dev.title;"
  hidechrome="true"
+ windowtype="Songbird:Main"
  onload="{centerWindowOnScreen();SBInitialize();}"
  onunload="SBUninitialize();"
  class="sb_faceplate"

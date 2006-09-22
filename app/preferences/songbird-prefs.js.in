@@ -4,6 +4,9 @@
 pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
 pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
 
+// Prevent xulrunner from launching multiple instances of Songbird.
+pref("toolkit.singletonWindowType", "Songbird:Main");
+
 pref("general.useragent.extra.songbird", "Songbird/0.2(dev)");
 pref("general.skins.selectedSkin", "rubberducky/0.2");
 

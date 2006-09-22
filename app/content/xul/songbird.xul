@@ -41,6 +41,7 @@
   title="Cheezy Video Window"  
   onload="SBAppInitialize();SBInterfaceInitialize();"
   onunload="SBAppDeinitialize();SBInterfaceDeinitialize();"
+  windowtype="Songbird:Core"
   onclose="return false; /*quitApp();*/"
   
   xmlns:html="http://www.w3.org/1999/xhtml"

@@ -239,8 +239,8 @@ function doOK()
       {
         //Both calls are needed as the restart path only sets an internal
         //   variable that gets cached and references during the second call.
-        as.quit(as.eRestart);
-        as.quit(as.eAttemptQuit);
+        as.quit(Components.interfaces.nsIAppStartup.eRestart);
+        as.quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
       }
     }
     return true;
