@@ -359,6 +359,7 @@
                 <hbox id="control_right_box" class="sb_faceplate">
                   <!-- REPEAT/SHUFFLE -->
                   <vbox id="face_left_box" class="sb_faceplate">
+                    <spacer height="2"/>
                     <player_repeat class="sb_faceplate" repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
                     <spacer height="5"/>
                     <player_shuffle class="sb_faceplate" shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
@@ -424,6 +425,7 @@
                   <!-- CURRENT TRACK / NEXT SERVICE -->
                   <spacer width="6"/>
                   <vbox id="face_right_box" class="sb_faceplate">
+                    <spacer height="2"/>
                     <button id="songbird_btn_curr" class="sb_faceplate" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
                     <spacer height="5"/>
                     <button id="songbird_btn_next" class="sb_faceplate" oncommand="onNextService( );" tooltiptext="&tooltip.control.service;"/>
