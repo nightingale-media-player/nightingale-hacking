@@ -1,4 +1,4 @@
-/*
+﻿/*
 //
 // BEGIN SONGBIRD GPL
 // 
@@ -413,7 +413,7 @@ var bmManager = {
                       children: []
                   },                                    
                   { 
-                      label: "La Blogoth�que",
+                      label: "La Blogothèque",
                       icon: "chrome://songbird/skin/serviceicons/default.ico",
                       url: "http://www.blogotheque.net/mp3/",
                       properties: "bookmark",
