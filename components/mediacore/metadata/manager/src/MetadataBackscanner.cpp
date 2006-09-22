@@ -214,6 +214,20 @@ sbMetadataBackscanner::sbMetadataBackscanner()
       PR_JOINABLE_THREAD);
 
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
+
+    // Create a monitored event queue for the new thread. This is needed for us
+    // to get events posted from the channel.  Note that because this is a
+    // monitored event queue, we must call ProcessPendingEvents() to cause the
+    // events to be processed.
+    nsCOMPtr<nsIEventQueueService> pEventQueueService;
+    rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
+    if(NS_SUCCEEDED(rv)) {
+      rv = pEventQueueService->CreateFromIThread(m_pThread,
+                                                 PR_FALSE,
+                                                 getter_AddRefs(m_pEventQueue));
+    }
+
+    NS_ASSERTION(m_pEventQueue, "Unable to create event queue");
   }
 }
 
@@ -386,18 +400,6 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   columnCache.insert(strColDiscNo);
   columnCache.insert(strColDiscTotal);
 
-  // Create a monitored event queue for this thread.  This is needed for us
-  // to get events posted from the channel.  Note that because this is a
-  // monitored event queue, we must call ProcessPendingEvents() to cause the
-  // events to be processed.
-  nsCOMPtr<nsIEventQueueService> pEventQueueService;
-  rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = pEventQueueService->CreateFromIThread(pBackscanner->m_pThread,
-                                             PR_FALSE,
-                                             getter_AddRefs(pBackscanner->m_pEventQueue));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   while(PR_TRUE)
   {
     { // Enter Monitor
@@ -452,6 +454,8 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
           
           rv = pHandler->Read(&values);
           pHandler->GetCompleted(&completed);
+
+          if(pBackscanner->m_backscanShouldShutdown) break;
 
           while(completed == PR_FALSE &&
                 !pBackscanner->m_backscanShouldShutdown &&
@@ -625,6 +629,10 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     
   }
 
+
+  nsCOMPtr<nsIEventQueueService> pEventQueueService;
+  rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = pEventQueueService->DestroyThreadEventQueue();
   NS_ENSURE_SUCCESS(rv, rv);
 
