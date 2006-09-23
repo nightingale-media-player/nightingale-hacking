@@ -602,6 +602,14 @@ MENULIST
 ************************************************************************************************************************************************
 */
 
+menu,
+menuitem,
+menupop
+{
+  font-size: 11px !important;
+  font: inherit !important;
+}
+
 menulist
 { 
   border: 1px solid !important;
