@@ -128,6 +128,8 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/watch_folders.js" />
+  <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/media_scan.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/window_utils.js" />

@@ -261,6 +261,12 @@ function onPollQuery()
 function doOK()
 {
   SBDataSetBoolValue( "media_scan.open", false ); // ?  Don't let this go?
+  if (document.getElementById("watch_check").checked) {
+    var wfManager = new CWatchFolderManager();
+    // XXXredfive - componentize WatchFolderManager
+    wfManager.CreateWatchFolderManager();
+    wfManager.AddWatchFolder(aMediaScanQuery.getDirectory()); 
+  }
   document.defaultView.close();
   return true;
 }
