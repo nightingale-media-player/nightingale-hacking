@@ -1,0 +1,39 @@
+Index: toolkit/xre/nsAppRunner.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
+retrieving revision 1.113.2.15
+diff -u -8 -p -r1.113.2.15 nsAppRunner.cpp
+--- toolkit/xre/nsAppRunner.cpp	27 Jul 2006 20:12:44 -0000	1.113.2.15
++++ toolkit/xre/nsAppRunner.cpp	23 Sep 2006 01:59:47 -0000
+@@ -1950,24 +1950,23 @@ XRE_main(int argc, char* argv[], const n
+     // Calling ReceiveNextEvent without requesting any event is enough to
+     // cause a dock tile for the child process to appear.
+     const EventTypeSpec kFakeEventList[] = { { INT_MAX, INT_MAX } };
+     EventRef event;
+     ::ReceiveNextEvent(GetEventTypeCount(kFakeEventList), kFakeEventList,
+                        kEventDurationNoWait, PR_FALSE, &event);
+   }
+ 
+-  if (CheckArg("foreground")) {
+-    // The original process communicates that it was in the foreground by
+-    // adding this argument.  This new process, which is taking over for
+-    // the old one, should make itself the active application.
+-    ProcessSerialNumber psn;
+-    if (::GetCurrentProcess(&psn) == noErr)
+-      ::SetFrontProcess(&psn);
+-  }
++  // XXXbent It's too bad, but the 'foreground' option isn't being passed at
++  //         the moment. Since there isn't a real case where we'll restart
++  //         without being the foreground app let's just assume that we should
++  //         move ourselves to the top.
++  ProcessSerialNumber psn;
++  if (::GetCurrentProcess(&psn) == noErr)
++    ::SetFrontProcess(&psn);
+ #endif
+ 
+   PR_SetEnv("MOZ_LAUNCHED_CHILD=");
+ 
+   gAppData = aAppData;
+ 
+   gRestartArgc = gArgc;
+   gRestartArgv = (char**) malloc(sizeof(char*) * (gArgc + 1));
