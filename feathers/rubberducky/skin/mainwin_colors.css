@@ -383,11 +383,6 @@ tree treecol
   background-color: transparent !important;
 }
 
-#playlist_tree treecol:hover
-{
-  background-color: #333 !important;
-}
-
 /* column picker **/
 tree .tree-columnpicker-icon
 {
@@ -645,12 +640,6 @@ These let the user resize the frames in your box model.
   border: 1px solid !important;
 }
 
-.vert_splitter:hover,
-#filter_splitter:hover
-{
-  background-color: #444 !important;
-}
-
 .vert_splitter:active,
 #filter_splitter:active
 {
@@ -678,23 +667,18 @@ These let the user resize the frames in your box model.
 
 .horz_splitter,
 #horz_splitter,
-#playlist_web_split > grippy
+#playlist_web_split
 {
   background-color: #333 !important;
   -moz-border-top-colors: #666 !important;
   -moz-border-bottom-colors: #000 !important;
+  -moz-border-left-colors: #333 !important;
   border: 1px solid !important;  
 }
 
-.horz_splitter:hover,
-#horz_splitter:hover,
-#playlist_web_split > grippy:hover
-{
-  background-color: #444 !important;
-}
-
 .horz_splitter:active,
-#horz_splitter:active
+#horz_splitter:active,
+#playlist_web_split:active
 {
   background-color: #333 !important;
   -moz-border-top-colors: #000 !important;
@@ -712,11 +696,7 @@ These let the user resize the frames in your box model.
   background-color: transparent !important;
 }
 
-#horz_splitter[state="collapsed"]
-{
-  background-color: #333 !important;
-}
-
+#horz_splitter[state="collapsed"],
 #playlist_web_split[state="collapsed"]
 {
   background-color: #333 !important;
