@@ -673,6 +673,7 @@ These let the user resize the frames in your box model.
   -moz-border-top-colors: #666 !important;
   -moz-border-bottom-colors: #000 !important;
   -moz-border-left-colors: #333 !important;
+  -moz-border-right-colors: #333 !important;
   border: 1px solid !important;  
 }
 
