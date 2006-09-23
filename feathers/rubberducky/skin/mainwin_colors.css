@@ -637,10 +637,27 @@ These let the user resize the frames in your box model.
 /* Splitters to resize the panes */
 
 .vert_splitter,
-#vert_splitter,
 #filter_splitter
 {
   background-color: #333 !important;
+  -moz-border-left-colors: #666 !important;
+  -moz-border-right-colors: #000 !important;
+  border: 1px solid !important;
+}
+
+.vert_splitter:hover,
+#filter_splitter:hover
+{
+  background-color: #444 !important;
+}
+
+.vert_splitter:active,
+#filter_splitter:active
+{
+  background-color: #333 !important;
+  -moz-border-left-colors: #000 !important;
+  -moz-border-right-colors: #666 !important;
+  border: 1px solid !important;
 }
 
 #vert_splitter
@@ -664,6 +681,25 @@ These let the user resize the frames in your box model.
 #playlist_web_split > grippy
 {
   background-color: #333 !important;
+  -moz-border-top-colors: #666 !important;
+  -moz-border-bottom-colors: #000 !important;
+  border: 1px solid !important;  
+}
+
+.horz_splitter:hover,
+#horz_splitter:hover,
+#playlist_web_split > grippy:hover
+{
+  background-color: #444 !important;
+}
+
+.horz_splitter:active,
+#horz_splitter:active
+{
+  background-color: #333 !important;
+  -moz-border-top-colors: #000 !important;
+  -moz-border-bottom-colors: #666 !important;
+  border: 1px solid !important;  
 }
 
 #control_pane_splitter
