@@ -161,7 +161,7 @@ function doMainwinStart()
     prefs.setCharPref("songbird.general.bones.selectedMainWinURL", mainwinURL);  
   }
 
-  mainWin = window.open(mainwinURL, "mainwin",
+  var mainWin = window.open(mainwinURL, "mainwin",
                 "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
   
   mainWin.focus();
@@ -672,8 +672,25 @@ function setVideoMinMaxCallback()
 }
 
 function createLibraryRef() {
- /* // this is so we can playRef the library even if it has never been shown
-*/
+  // this is so we can playRef the library even if it has never been shown
+
+  // Get a query object to handle the database transactions.
+  var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                           .createInstance(Components.interfaces.sbIDatabaseQuery);
+  aDBQuery.setAsyncQuery(false); // hard and slow.  should only have to happen once.
+  aDBQuery.setDatabaseGUID("songbird");
+
+  // Get the library interface, make sure there is a default library (fast if already exists)
+  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+  var aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+  aMediaLibrary.setQueryObject(aDBQuery);
+  aMediaLibrary.createDefaultLibrary();
+
+  // Make it all go now, please.
+  aDBQuery.execute();
+  aDBQuery.resetQuery();
+
+  // Now convince the playlistsource to load the library
   var source = new sbIPlaylistsource();
   source.feedPlaylist( "NC:songbird_library", "songbird", "library");
   source.executeFeed( "NC:songbird_library" );
