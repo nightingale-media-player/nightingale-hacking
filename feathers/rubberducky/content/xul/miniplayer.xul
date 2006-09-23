@@ -103,8 +103,11 @@
     <button id="mini_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
     <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
   </hbox>
-  
 
+  <keyset>
+    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
+    <key id="mainwin-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="SBMainWindowOpen();"/>
+  </keyset>
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 

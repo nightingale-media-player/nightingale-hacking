@@ -219,12 +219,6 @@ try
     }
     switch ( evt.charCode )
     {
-      case 109: // Ctrl-Alt-M
-        if ( evt.altKey && evt.ctrlKey )
-        {
-          SBMainWindowOpen( );
-        }
-        break;
       case 32: // Space
         if ( gPPS.playing )
           onPause( );

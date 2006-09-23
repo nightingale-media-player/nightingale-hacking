@@ -206,10 +206,15 @@ function setDefaultGlobalHotkeys() {
     SBDataSetStringValue("globalhotkey.10.key.readable",    "stop");
     SBDataSetStringValue("globalhotkey.10.action",          "playback.stop");
 
-    SBDataSetStringValue("globalhotkey.11.key",            "ctrl-$74");
-    SBDataSetStringValue("globalhotkey.11.key.readable",   "CTRL-J");
-    SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
-
+    if (platform == "Darwin") {
+      SBDataSetStringValue("globalhotkey.11.key",            "meta-$74");
+      SBDataSetStringValue("globalhotkey.11.key.readable",   "COMMAND-J");
+      SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
+    } else {
+      SBDataSetStringValue("globalhotkey.11.key",            "ctrl-$74");
+      SBDataSetStringValue("globalhotkey.11.key.readable",   "CTRL-J");
+      SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
+    }
   }
 }
 

@@ -42,13 +42,6 @@ try
       window.openDialog( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizeable=yes", document );
   }
 
-  function onKeyPress(evt) {
-    if (evt.charCode == 106 && evt.ctrlKey && !evt.altKey) {
-      evt.preventBubble();
-      onJumpToFileKey();
-    }
-  }
-
   var SBEmptyPlaylistCommands = 
   {
     m_Playlist: null,
@@ -699,8 +692,6 @@ try
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
       if (hotkeyactionsService) hotkeyactionsService.registerHotkeyActionBundle(jumptoHotkeyActions);
     }
-    // the user may have disabled the hotkey, we still want him to be able to access the jumpto dialog as a non-global hotkey
-    document.addEventListener("keypress", onKeyPress, false);
   }
    
   function resetJumpToFileHotkey()
@@ -710,7 +701,6 @@ try
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
       if (hotkeyactionsService) hotkeyactionsService.unregisterHotkeyActionBundle(jumptoHotkeyActions);
     }
-    document.removeEventListener("keypress", onKeyPress, false);
   }
 
 }

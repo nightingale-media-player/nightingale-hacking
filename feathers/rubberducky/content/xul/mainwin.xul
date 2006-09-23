@@ -43,7 +43,6 @@
   onunload="SBUninitialize();onSBMainwinDataUnload();"
   onclose="/*return false;*/ quitApp();" 
   title="&window.dev.title;"
-  onkeypress="onMainwinKeypress( event );"
   windowtype="Songbird:Main"
 
   ondraggesture="onBkgDown( event, false ); // Handle the window drag at the top level" 
@@ -106,18 +105,18 @@
               <menubar id="songbird_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)">
                 <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
                   <menupopup id="file-popup">
-                    <menuitem id="file.new" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+                    <menuitem id="file.new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
                     <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
                     <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
-                    <menuitem id="file.file" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
-                    <menuitem id="file.url" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
+                    <menuitem id="file.file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
+                    <menuitem id="file.url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
                     <menuitem id="file.playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
                     <menuseparator/>
                     <menuitem id="file.scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
                     <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
                     <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="file.window" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
+                    <menuitem id="file.window" key="miniplayer-key" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
                     <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
                       <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
                     </menu>
@@ -128,7 +127,7 @@
                     <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
                     <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
                     <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
-                    <menuitem id="menu.dominspector" label="DOM Inspector" class="menuitem-iconic"/>
+                    <menuitem id="menu.dominspector" key="dominspector-key" label="DOM Inspector" class="menuitem-iconic"/>
 
                     <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
                     <menuseparator id="menu_FileQuitSeparator"/>
@@ -141,12 +140,12 @@
                   <menupopup id="edit-popup">
                     <menuitem id="edit.undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="edit.cut" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-                    <menuitem id="edit.copy" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-                    <menuitem id="edit.paste" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+                    <menuitem id="edit.cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+                    <menuitem id="edit.copy" key="copy-key" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+                    <menuitem id="edit.paste" key="paste-key" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
                     <menuitem id="edit.clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
                     <menuseparator/>
-                    <menuitem id="edit.selall" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+                    <menuitem id="edit.selall" key="selectall-key" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
                     <menuitem id="edit.selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
                   </menupopup>
                 </menu>
@@ -204,6 +203,7 @@
                     <menuitem id="help.topics"
                               label="&menu.help.topics;"
                               value="&web.url.first;"
+                              key="help-key" 
                               accesskey="&menu.help.help.accesskey;"/>
                     <menuseparator/>
                     <menuitem id="updateCmd"
@@ -583,6 +583,24 @@
     </vbox>
 
   </stack>
+
+  <keyset>
+    <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('file.new');"/>
+    <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('file.file');"/>
+    <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('file.url');"/>
+    <key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/>
+    <key id="dominspector-key" modifiers="accel,shift" key="&menu.file.dominspector;" oncommand="doMenu('menu.dominspector');"/>
+    <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
+    <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
+    <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
+    <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
+    <key id="selectall-key" modifiers="accel" key="A" />
+    <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
+    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey(event);"/>
+    <key id="search-key" modifiers="accel" key="&search.key;" oncommand="focusSearch();"/>
+    <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="focusLocationBar();"/>
+    <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
+  </keyset>
 
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   

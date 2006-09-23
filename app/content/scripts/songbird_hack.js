@@ -485,7 +485,8 @@ var theStatusStyle = SB_NewDataRemote( "faceplate.status.style", null );
 // Help
 function onHelp()
 {
-  alert( "Aieeeeee, ayudame!" );
+  var helpitem = document.getElementById("help.topics");
+  onMenu(helpitem);
 }
 
 var theCurrentTrackInterval = null;
@@ -2078,32 +2079,16 @@ function onPlaylistEditKeypress( evt )
   }
 }
 
-function onMainwinKeypress( evt )
+function focusSearch() 
 {
-  switch ( evt.charCode )
-  {
-    case 102: // Ctrl-F
-      if ( evt.ctrlKey )
-      {
-        var search_widget = document.getElementById( "search_widget" );
-        search_widget.onFirstMousedown(); // Sets focus.  Clears "search" text.
-      }
-      break;
-    case 101:
-      if (evt.ctrlKey) 
-      {
-        // for now only allow editing the main db
-        if (theLibraryPlaylist && theLibraryPlaylist.guid == "songbird") SBTrackEditorOpen();
-      }
-      break;
-    case 108: // Ctrl-L
-      if ( evt.ctrlKey )
-      {
-        var location_bar = document.getElementById( "browser_url" );
-        location_bar.focus();
-      }
-      break;
-  }
+  var search_widget = document.getElementById( "search_widget" );
+  search_widget.onFirstMousedown(); // Sets focus.  Clears "search" text.
+}
+
+function focusLocationBar()
+{
+  var location_bar = document.getElementById( "browser_url" );
+  location_bar.focus();
 }
 
 var isPlaylistEditShowing = false;
@@ -2200,12 +2185,8 @@ function onSearchTerm( target, in_term )
   }
 }
 
-// Menubar handling
-function onMenu( target )
-{
-  var v = target.getAttribute( "id" );
-  
-  switch ( v )
+function doMenu( command ) {
+  switch ( command )
   {
     case "file.new":
       SBNewPlaylist();
@@ -2317,14 +2298,23 @@ function onMenu( target )
       theServiceTree.launchURL( "http://extensions.songbirdnest.com/" );
     break;
     
-    // ==== Default is to launch the value property if one exists, or do nothing.      
     default:
-      if ( target.value )
-      {
-        var theServiceTree = document.getElementById( 'frame_servicetree' );
-        theServiceTree.launchURL( target.value );
-      }
-    break;
+      return false;
+  }
+  return true;
+}
+
+// Menubar handling
+function onMenu( target )
+{
+  var v = target.getAttribute( "id" );
+  if (!doMenu(v)) {
+    // ==== Default is to launch the value property if one exists, or do nothing.      
+    if ( target.value )
+    {
+      var theServiceTree = document.getElementById( 'frame_servicetree' );
+      theServiceTree.launchURL( target.value );
+    }
   }
 }
 
@@ -2552,6 +2542,9 @@ function SBExtensionsManagerOpen()
 
 function SBTrackEditorOpen()
 {
+  // for now only allow editing the main db
+  if (!theLibraryPlaylist || theLibraryPlaylist.guid != "songbird") return;
+  
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
   var theTE = wm.getMostRecentWindow("track_editor");
