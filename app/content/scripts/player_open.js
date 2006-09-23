@@ -132,15 +132,15 @@ try
       if ( fp_status == nsIFilePicker.returnOK )
       {
         SBScanServiceTreeNewEntryEditable(); // Do this right before you add to the servicelist?
-        
+
         // And if we're good, play it.
         var plsFile = "file:///" + fp.file.path;
         var readableName = fp.file.leafName;
-        var success = thePlaylistReader.autoLoad(plsFile, "songbird", readableName, "user", plsFile, "", null);
+        var success = thePlaylistReader.autoLoad(fp.fileURL.spec, "songbird", readableName, "user", plsFile, "", null);
         
         if ( ( success == true ) || ( success == 1 ) )
         {
-          SBScanServiceTreeNewEntryStart(); // Do this right after you know you have added to the servicelist?
+          SBScanServiceTreeNewEntryStart(); // Do this right after you know you have added to the servicelist?  
         }
 
         if (theLibraryPlaylist) theLibraryPlaylist.syncPlaylistIndex(true);

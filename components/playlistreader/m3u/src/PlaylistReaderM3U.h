@@ -36,7 +36,7 @@
 #include "sbIPlaylistReader.h"
 
 #include <string/nsString.h>
-#include <xpcom/nsIFile.h>
+#include <necko/nsIURI.h>
 #include <nspr/prlock.h>
 
 // DEFINES ====================================================================
@@ -62,7 +62,7 @@ public:
   NS_DECL_ISUPPORTS;
   NS_DECL_SBIPLAYLISTREADER;
 
-  PRInt32 ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable);
+  PRInt32 ParseM3UFromBuffer(nsIURI *pBaseURI, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable);
 
 protected:
   PRLock*   m_pNameLock;

@@ -43,14 +43,15 @@
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
 #include <necko/nsIFileStreams.h>
-#include <xpcom/nsILocalFile.h>
 #include <necko/nsIURI.h>
 #include <necko/nsNetUtil.h>
+#include <necko/nsIStandardURL.h>
 #include <webbrowserpersist/nsIWebBrowserPersist.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsAutoLock.h>
+#include <docshell/nsIURIFixup.h>
 
 #include <string/nsString.h>
 #include <string/nsReadableUtils.h>
@@ -110,32 +111,16 @@ NS_IMETHODIMP CPlaylistReaderM3U::Read(const nsAString &strURL, const nsAString 
   *_retval = PR_FALSE;
   *errorCode = 0;
   nsresult rv = NS_ERROR_UNEXPECTED;
-  
-  nsCAutoString cstrURL;
-  
-  nsCOMPtr<nsIFileInputStream> pFileReader = do_GetService("@mozilla.org/network/file-input-stream;1");
-  nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
-  nsCOMPtr<nsIURI> pURI = do_GetService("@mozilla.org/network/simple-uri;1");
 
-  if(!pFile || !pURI || !pFileReader) return rv;
-  rv = pURI->SetSpec(NS_ConvertUTF16toUTF8(strURL));
-  if(NS_FAILED(rv)) return rv;
+  nsCOMPtr<nsIFileInputStream> pFileReader = do_CreateInstance("@mozilla.org/network/file-input-stream;1");
 
-  nsCAutoString cstrScheme;
-  rv = pURI->GetScheme(cstrScheme);
-  if(NS_FAILED(rv)) return rv;
+  nsCOMPtr<nsIFile> pFile;
+  rv = NS_GetFileFromURLSpec(NS_ConvertUTF16toUTF8(strURL), getter_AddRefs(pFile));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCAutoString cstrPathToPLS;
-  if(!cstrScheme.EqualsLiteral("file"))
-    return NS_ERROR_UNEXPECTED;
-  else
-  {
-    pURI->GetPath(cstrPathToPLS);
-    cstrPathToPLS.Cut(0, 3); //remove '///'
-
-    rv = pFile->InitWithNativePath(cstrPathToPLS);
-    if(NS_FAILED(rv)) return rv;
-  }
+  nsCOMPtr<nsIURI> pURI;
+  rv = NS_NewFileURI(getter_AddRefs(pURI), pFile);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool bIsFile = PR_FALSE;
   rv = pFile->IsFile(&bIsFile);
@@ -157,7 +142,6 @@ NS_IMETHODIMP CPlaylistReaderM3U::Read(const nsAString &strURL, const nsAString 
   if(NS_SUCCEEDED(rv))
   {
     nsString strBuffer;
-    NS_ConvertASCIItoUTF16 strPathToPLS(cstrPathToPLS);
 
     if(IsASCII(buffer))
     {
@@ -174,7 +158,7 @@ NS_IMETHODIMP CPlaylistReaderM3U::Read(const nsAString &strURL, const nsAString 
     }
 
     m_Replace = bReplace;
-    *errorCode = ParseM3UFromBuffer(NS_CONST_CAST(PRUnichar *, PromiseFlatString(strPathToPLS).get()), 
+    *errorCode = ParseM3UFromBuffer(pURI,
                                     NS_CONST_CAST(PRUnichar *, PromiseFlatString(strBuffer).get()), 
                                     strBuffer.Length(), 
                                     NS_CONST_CAST(PRUnichar *, PromiseFlatString(strGUID).get()), 
@@ -262,11 +246,11 @@ NS_IMETHODIMP CPlaylistReaderM3U::SupportedFileExtensions(PRUint32 *nExtCount, P
 } //SupportedFileExtensions
 
 //-----------------------------------------------------------------------------
-PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable)
+PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(nsIURI *pBaseURI, PRUnichar *pBuffer, PRInt32 nBufferLen, PRUnichar *strGUID, PRUnichar *strDestTable)
 {
   PRInt32 convError = 0;
-  PRInt32 rv = 0;
- 
+  nsresult rv;
+
   NS_NAMED_LITERAL_STRING(carReturn, "\r");
   NS_NAMED_LITERAL_STRING(lineFeed, "\n");
   NS_NAMED_LITERAL_STRING(tabChar, "\t");
@@ -282,7 +266,7 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
   NS_NAMED_LITERAL_STRING(titleMetadata, "title");
 
   nsAutoString strURL, strTitle;
-  nsAutoString strLength(NS_LITERAL_STRING("-1"));
+  nsAutoString strLength(NS_LITERAL_STRING("0"));
   
   PRInt32 nAvail = 0;
 
@@ -309,6 +293,9 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
   playlistBuffer.EndReading(lineEnd); playlistBuffer.EndReading(fileEnd);
 
   nsAutoString theline;
+
+  nsCOMPtr<nsIURIFixup> fixup = do_GetService("@mozilla.org/docshell/urifixup;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   do
   {
@@ -385,56 +372,44 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
           strURL = Substring(start, end);
           strURL.CompressWhitespace();
 
-          PRBool isRemoteFile = PR_FALSE;
-          nsCOMPtr<nsIURI> mediaURI;
-          if(NS_SUCCEEDED(NS_NewURI(getter_AddRefs(mediaURI), strURL)))
-          {
-            mediaURI->SchemeIs("file", &isRemoteFile);
-            isRemoteFile = !isRemoteFile;
-          }
-          else
-          {
-            isRemoteFile = !StringBeginsWith(strURL, NS_LITERAL_STRING("file:"), nsCaseInsensitiveStringComparator());
-          }
+          nsCAutoString cstrURL;
+          cstrURL.Assign(NS_ConvertUTF16toUTF8(strURL));
 
-          if(!isRemoteFile)
-          {
-            nsDependentString strPathToM3U(pPathToFile);
-            nsCOMPtr<nsILocalFile> m3uFile;
-            nsCOMPtr<nsILocalFile> mediaFile = do_CreateInstance("@mozilla.org/file/local;1");
+          // Convert the playlist item into a URL.  First, check to see if it
+          // is already a URL
+          nsCOMPtr<nsIURI> uri(do_CreateInstance("@mozilla.org/network/simple-uri;1", &rv));
+          NS_ENSURE_SUCCESS(rv, rv);
 
-            if(NS_SUCCEEDED(NS_NewLocalFile(strPathToM3U, PR_FALSE, getter_AddRefs(m3uFile))))
-            {
-              nsAutoString strm3uDir;
-              nsAutoString strMediaFilePath;
-
-              m3uFile->GetPath(strm3uDir);
-              mediaFile->InitWithPath(strURL);
-
-              PRBool mediaFileExists = PR_FALSE;
-              mediaFile->Exists(&mediaFileExists);
-
-              if(!mediaFileExists)
-              {
-                nsAutoString strLeafName;
-                m3uFile->GetLeafName(strLeafName);
-                mediaFile->GetPath(strMediaFilePath);
-                if(strMediaFilePath.Length() == 0)
-                {
-                  strURL.Insert(strm3uDir.get(), 0, strm3uDir.Length() - strLeafName.Length());
-                }
-              }
+          PRBool isURL = PR_FALSE;
+          rv = uri->SetSpec(cstrURL);
+          if(NS_SUCCEEDED(rv)) {
+            // nsSimpleURI is easily fooled by Windows thinking that a drive
+            // letter and its colon is actually a scheme.  This is _not_ a URL
+            // if we have a one letter scheme
+            nsCAutoString scheme;
+            rv = uri->GetScheme(scheme);
+            if(NS_SUCCEEDED(rv) && scheme.Length() > 1) {
+              isURL = PR_TRUE;
             }
-
-#if defined(XP_WIN)
-            if(!strURL.IsEmpty() && strURL.First() == '\\')
-            {
-              nsDependentString strPath(pPathToFile);
-              //Drive letter is missing, append it.
-              strURL = Substring(strPath, 0, 2) + strURL;
-            }
-#endif
           }
+
+          // If this is not a URL, resolve the path against the URL of the m3u
+          // file
+          if(!isURL) {
+            rv = pBaseURI->Resolve(cstrURL, cstrURL);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+
+          // Finally, fixup the URL.  This is useful to turn Window's absolute
+          // paths into actual file:// style URLs.
+          nsCOMPtr<nsIURI> fixedURI;
+          rv = fixup->CreateFixupURI(cstrURL, nsIURIFixup::FIXUP_FLAG_NONE,
+                                     getter_AddRefs(fixedURI));
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = fixedURI->GetSpec(cstrURL);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          strURL.Assign(NS_ConvertUTF8toUTF16(cstrURL));
 
           // Try and load the entry as a playlist
           // If it's not a playlist add it as a playstring
@@ -461,7 +436,6 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
             nsMemory::Free(aMetaValues[1]);
             nsMemory::Free(aMetaValues);
           }
-
           strTitle = EmptyString();
           strURL = EmptyString();
         }
@@ -473,7 +447,8 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(PRUnichar *pPathToFile, PRUnichar
   } 
   while( fileStart != fileEnd );
 
-  pQuery->Execute(&rv);
+  PRInt32 qrv = 0;
+  pQuery->Execute(&qrv);
 
-  return rv;
+  return qrv;
 } //ParseM3UFromBuffer
