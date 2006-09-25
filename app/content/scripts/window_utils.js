@@ -206,9 +206,6 @@ function onExit( skipSave )
   {
     if ( skipSave != true )
       onWindowSaveSizeAndPosition();
-    
-    // Why not stop playback, too?
-    gPPS.stop();
   }
   catch ( err )
   {
@@ -449,6 +446,8 @@ function PopBackscanPause()
 function quitApp()
 {
   onExit();
+  // Why not stop playback, too?
+  gPPS.stop();
   var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
   var MetricsService = new nsIMetrics();
   MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
