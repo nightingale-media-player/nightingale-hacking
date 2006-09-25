@@ -2168,7 +2168,7 @@ function onSearchTerm( target, in_term )
         search_url = "http://www.shoutcast.com/directory/?s=" + term;
       break;
       case "search.popup.radiotime":
-        search_url = "http://radiotime.com/toppicks.aspx?p=0&st=0&t=" + term;
+        search_url = "http://radiotime.com/Search.aspx?query=" + term;
       break;        
       case "search.popup.elbows":
         search_url = "http://elbo.ws/mp3s/" + term;
