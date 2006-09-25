@@ -45,7 +45,6 @@
 #include <necko/nsIFileStreams.h>
 #include <necko/nsIURI.h>
 #include <necko/nsNetUtil.h>
-#include <necko/nsIStandardURL.h>
 #include <webbrowserpersist/nsIWebBrowserPersist.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
