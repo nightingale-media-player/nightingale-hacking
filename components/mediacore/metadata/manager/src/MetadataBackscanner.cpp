@@ -94,6 +94,12 @@ void FormatLengthToString(nsAString &str)
   PRInt32 errCode = 0;
   PRInt32 length = strConvert.ToInteger(&errCode);
 
+  if (length == 0)
+  {
+    str = EmptyString();
+    return;
+  }
+
   PRInt32 hours = 0;
   PRInt32 minutes = (length / 1000) / 60;
   PRInt32 seconds = (length / 1000) % 60;
@@ -545,7 +551,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
                     seenLength = PR_TRUE;
                     if(strValue.EqualsLiteral("0")) 
                     {
-                      strValue.AssignLiteral("0:00");
+                      strValue.AssignLiteral("");
                     }
                     else
                     {
@@ -575,7 +581,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
               if(!seenLength)
               {
-                strQuery.AppendLiteral(", length=\"0:00\" ");
+                strQuery.AppendLiteral(", length=\"\" ");
               }
 
               strQuery.AppendLiteral(" WHERE uuid = \"");
@@ -589,7 +595,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
             }
             else
             {
-              strQuery.AppendLiteral(" length=\"0:00\" WHERE uuid = \"");
+              strQuery.AppendLiteral(" length=\"\" WHERE uuid = \"");
               strQuery += strUUID;
               strQuery.AppendLiteral("\"");
               pBackscanner->m_pQuery->AddQuery(strQuery);
@@ -756,8 +762,9 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
             if(strKey.Equals(strColLength))
             {
               seenLength = PR_TRUE;
-              if(strValue.EqualsLiteral("0")) 
-                strValue.AssignLiteral("0:00");
+              if(strValue.EqualsLiteral("0"))  {
+                strValue.AssignLiteral("");
+              }
               else
                 FormatLengthToString(strValue);
             }
@@ -780,8 +787,9 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
       if(!seenLength)
       {
-        if(strQuery[strQuery.Length() - 1] != ',' && values != 0) strQuery.AppendLiteral(",");
-        strQuery.AppendLiteral(" length=\"0:00\" ");
+        if(strQuery[strQuery.Length() - 1] != ',' && values != 0) 
+          strQuery.AppendLiteral(",");
+        strQuery.AppendLiteral(" length=\"\" ");
       }
 
       if(strQuery[strQuery.Length() - 1] == ',')
