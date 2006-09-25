@@ -2433,10 +2433,17 @@ function SBScanMedia( )
     welcome = theSongbirdStrings.getString("faceplate.welcome");
     scan = theSongbirdStrings.getString("faceplate.scan");
   } catch(e) {}
-  if (getPlatformString() == "Darwin")
+  if (getPlatformString() == "Darwin") {
     fp.init( window, scan, nsIFilePicker.modeGetFolder );
-  else
+    var defaultDirectory =
+    Components.classes["@mozilla.org/file/directory_service;1"]
+              .getService(Components.interfaces.nsIProperties)
+              .get("Home", Components.interfaces.nsIFile);
+    defaultDirectory.append("Music");
+    fp.displayDirectory = defaultDirectory;
+  } else {
     fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );
+  }
   var res = fp.show();
   if ( res == nsIFilePicker.returnOK )
   {
