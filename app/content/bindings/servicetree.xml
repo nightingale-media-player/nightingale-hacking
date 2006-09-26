@@ -163,7 +163,7 @@
           if (lastSelectedURI)
             this.launchServiceURL(lastSelectedURI);
           else
-            this.launchServiceURL("http://songbirdnest.com/player0.2/welcome/");
+            this.launchServiceURL("http://www.songbirdnest.com/birdhouse/");
 
           // needed so willRebuild doesn't clobber collapsed state.
           this.doneInit = true;

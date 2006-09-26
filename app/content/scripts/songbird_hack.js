@@ -1094,7 +1094,7 @@ function onBrowserStop()
 function onBrowserHome()
 {
   var theServiceTree = document.getElementById( 'frame_servicetree' );
-  var defaultHomepage = "http://songbirdnest.com/player0.2/welcome/";
+  var defaultHomepage = "http://www.songbirdnest.com/birdhouse/";
   
   try {
     var homepage;
