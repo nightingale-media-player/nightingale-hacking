@@ -441,9 +441,9 @@ var bmManager = {
                       children: []
                   },
                   { 
-                      label: "The Hype Machine",
-                      icon: "http://hype.non-standard.net/favicon.ico",
-                      url: "http://hype.non-standard.net/list/",
+                      label: "MonkeyFilter Wiki",
+                      icon: "chrome://songbird/skin/serviceicons/default.ico",
+                      url: "http://wiki.monkeyfilter.com/index.php?title=MP3_Blog_Listing",
                       properties: "bookmark",
                       children: []
                   },
@@ -615,16 +615,16 @@ var bmManager = {
                   properties: "bookmark",
                   children: [
                   { 
-                      label: "SHOUTcast",
-                      icon: "chrome://songbird/skin/serviceicons/shoutcast.ico",
-                      url: "http://www.shoutcast.com/",
+                      label: "soma fm",
+                      icon: "http://somafm.com/favicon.ico",
+                      url: "http://somafm.com/",
                       properties: "bookmark",
                       children: []
                   },   
                   { 
-                      label: "MVY Radio",
-                      icon: "http://www.mvyradio.com/favicon.ico",
-                      url: "http://www.mvyradio.com/",
+                      label: "95.7 Max FM",
+                      icon: "chrome://songbird/skin/serviceicons/default.ico",
+                      url: "http://957maxfm.com/stream.cfm",
                       properties: "bookmark",
                       children: []
                   }     
