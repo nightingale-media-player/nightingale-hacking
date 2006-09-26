@@ -330,6 +330,10 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
 
       if ( !m_Completed )
       {
+        // Get the size before you do anything else?
+        PRUint64 file_size = 0;
+        mc->GetSize(&file_size);
+
         size_t nTagSize = 0;
         ID3_Tag  tag;
         ID3_ChannelReader channel_reader( mc );
@@ -359,8 +363,6 @@ NS_IMETHODIMP sbMetadataHandlerID3::OnChannelData( nsISupports *channel )
             if (buffer)
             {
               mc->Read(buffer, size, &read);
-              PRUint64 file_size = 0;
-              mc->GetSize(&file_size);
               CalculateBitrate(buffer, read, file_size);
               nsMemory::Free(buffer);
             }
