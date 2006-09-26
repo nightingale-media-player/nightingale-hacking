@@ -46,9 +46,8 @@
     <content>
       
       <xul:vbox class="drawer_box" sbid="parent" flex="1">
-        <!-- xul:spacer sbid="first" height="3"/ -->
         
-        <xul:hbox>
+        <xul:hbox sbid="header">
           <xul:vbox flex="1">
             <xul:spacer flex="1"/>
             <xul:label class="dialog_box" xbl:inherits="value=title"/>
@@ -69,7 +68,6 @@
      <constructor>
        <![CDATA[
          this.boxid = "growbox."+this.getAttribute("id");
-         this.size = this.getContentSize();
          this.hflex = document.getElementById(this.getAttribute("hflex"));
          if (this.hflex) this.hflex.setAttribute("flex", "0");
        ]]>
@@ -79,8 +77,8 @@
 
       <field name="tracking">false</field>
       <field name="before">document.getAnonymousElementByAttribute(this, 'sbid', 'before');</field>
-      <field name="first">document.getAnonymousElementByAttribute(this, 'sbid', 'first');</field>
       <field name="parent">document.getAnonymousElementByAttribute(this, 'sbid', 'parent');</field>
+      <field name="header">document.getAnonymousElementByAttribute(this, 'sbid', 'header');</field>
       <field name="openclosebutton">document.getAnonymousElementByAttribute(this, 'sbid', 'drawer_openclose');</field>
       <field name="size">0</field>  <!-- height of the added content box -->
       <field name="distance">0</field>
@@ -112,15 +110,19 @@
 
       <method name="openDrawer">
         <parameter name="now"/>
+        <parameter name="replacedheight"/>
         <body>
           <![CDATA[
           try
           {
+            if (this.state == "open") return;
+            if (!replacedheight) replacedheight = 0;
+            this.size = Math.max(this.getContentSize(), replacedheight+5);
             // No animations until we finish
             if ( ! this.tracking )
             {
               this.state = "open";
-              this.openclosebutton.label = "-";
+              if (this.openclosebutton) this.openclosebutton.label = "-";
               
               if (this.hflex) this.hflex.setAttribute("flex", "1");
 
@@ -132,7 +134,7 @@
               
               // Set our animation values
               this.tracking = true;
-              this.distance = this.size;
+              this.distance = this.size - replacedheight;
               this.current = 0;
               this.anim_start = now ? -9999 : new Date().getTime();
               this.anim_time = 0.2;
@@ -154,12 +156,16 @@
 
       <method name="closeDrawer">
         <parameter name="now"/>
+        <parameter name="replacedheight"/>
         <body>
           <![CDATA[
           try
           {
+            if (this.state == "closed") return;
+            if (!replacedheight) replacedheight = 0;
+            this.size = Math.max(this.getContentSize(), replacedheight+5);
             this.state = "closed";
-            this.openclosebutton.label = "+";
+            if (this.openclosebutton) this.openclosebutton.label = "+";
             // No animations until we finish
             if ( ! this.tracking )
             {
@@ -183,7 +189,7 @@
               
               // Set our animation values
               this.tracking = true;
-              this.distance = - this.size; // removing!
+              this.distance = - (this.size-replacedheight); // removing!
               this.current = 0;
               this.anim_start = now ? -9999 : new Date().getTime();
               this.anim_time = 0.2;
@@ -219,8 +225,10 @@
               if ( Math.abs( this.current + size ) > Math.abs( this.distance ) )
                 size = this.distance - this.current;
 
-              window.resizeBy( 0, size );
-              this.current += size;
+              if (size != 0) {
+                window.resizeBy( 0, size );
+                this.current += size;
+              }
               
               // Are we done?
               if ( this.current == this.distance )
@@ -235,11 +243,13 @@
                 this.distance = 0;
                 this.current = 0;
                 clearInterval( this.interval );
+                this.interval = null;
               }
             }
             else
             {
               clearInterval( this.interval );
+              this.interval = null;
             }
           }
           catch ( err )
@@ -317,9 +327,56 @@
           return this.content;
         </body>
       </method>
-            
+
+      <method name="isAnimating">
+        <body>
+          <![CDATA[
+            return this.interval != null;
+          ]]>
+        </body>
+      </method>
 
    </implementation>
+ 
+  </binding>
+
+  <!-- TEXTDRAWER CONTROL -->
+
+  <binding id="textdrawer" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+
+    <implementation>
+
+     <constructor>
+       this.header.setAttribute("hidden", "true");
+       this.parent.setAttribute("class", "");
+     </constructor>
+
+      <method name="insertDrawerContent">
+        <body>
+          <![CDATA[
+          try
+          {
+            // Make the extension droplist
+            var description = document.createElement( "description" );
+            description.textContent = this.getAttribute("value");
+            return description;
+          }
+          catch ( err )
+          {
+            alert( "insertDrawerContent - " + err );
+          }
+          return null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="getContentSize">
+      <body>
+        return this.getAttribute("contentheight");
+      </body>
+      </method>
+
+    </implementation>
  
   </binding>
 

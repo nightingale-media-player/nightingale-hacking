@@ -355,6 +355,15 @@ richlistitem > label
   margin: 2px 0px 0px -3px !important;
 }
 
+.spinner_spin
+{
+  background-image: url(chrome://songbird/skin/default/spinner_spin.gif) !important;
+}
+
+.firstrun_image
+{
+  background-image: url(chrome://songbird/skin/default/firstrun.png) !important;
+}
 
 /** 
 *****************************************************************************************************

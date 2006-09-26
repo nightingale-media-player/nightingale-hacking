@@ -159,8 +159,18 @@
 <!ENTITY menu.feathers            "Feathers" >
 <!ENTITY about.version            "Version" >
 
-<!ENTITY setup.custominstall      "Custom Install" >
 <!ENTITY setup.title              "Songbird Setup Options" >
+<!ENTITY setup.retrievingxpilist  "Retrieving extensions list. Please wait...">
+<!ENTITY setup.networkerror1      "Unable to retrieve extensions list.  Please change your ">
+<!ENTITY setup.networkerror2      "Connection Settings">
+<!ENTITY setup.networkerror3      " or continue Songbird Setup by clicking 'OK'.">
+<!ENTITY setup.metrics.optin1     "Send anonymous ">
+<!ENTITY setup.metrics.optin2     "usage metrics">
+<!ENTITY setup.metrics.optin3     ".">
+<!ENTITY setup.metrics.info       "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected.">
+<!ENTITY setup.optionalextensions "Optional Extensions">
+<!ENTITY setup.defaultlanguage    "Default Language">
+<!ENTITY setup.privacy            "Privacy">
 <!ENTITY setupprogress.pleasewait "Please wait..." >
 
 <!ENTITY menu.file.accesskey          "F" >
@@ -223,8 +233,6 @@
 <!ENTITY jumptofile.title             "Jump to" >
 <!ENTITY jumptofile.search            "Search:" >
 
-<!ENTITY metrics.optout               "Allow Songbird to send anonymous usage metrics (recommended)" >
-
 <!ENTITY hotkeys.useglobalhotkeys     "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action               "Action" >
@@ -250,7 +258,6 @@
 
 <!ENTITY menu.updateCmd.label          "Check for Updates...">
 <!ENTITY menu.updateCmd.accessKey      "o">
-<!ENTITY firstrun.connectionsettings   "Connection Settings">
 <!ENTITY trackeditor.disclaimer        "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well.">
 
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks.">

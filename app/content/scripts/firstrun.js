@@ -53,10 +53,10 @@ function bundleDataReady() {
   }
   if (bundle.getNumExtensions() > 0) {
     loaded_bundle = true;
-    enableCustomInstall(); 
+    setTimeout( "openExtensionsList();", 250 );
   } else {
-    sbMessageBox_strings("setup.networkerrortitle", "setup.networkerrormsg", "Network Error", "Songbird could not retrieve the list of extensions to install from the internet. Please visit http://songbirdnest.com to extend your media player today!", false, false);
-    if (extlist) extlist.closeList();
+    hidePleaseWait();
+    showErrorMessage();
   }
 }
 
@@ -76,15 +76,12 @@ function initFirstRun()
   }
 
   // XXX Matt: Ah crap, this is totally going to leak
+  // XXX lone: how so ?
   bundle.addBundleObserver(FirstRunBundleCB);
   var s = bundle.getStatus();
   if (s != 0) bundleDataReady(bundle);
   if (window.addEventListener) window.addEventListener("keydown", checkAltF4, true);
   fillLanguageBox();
-  if (s != -1) {
-    var extlist = document.getElementById("songbird.extensionlist");
-    if (extlist) extlist.openList();
-  }
 }
 
 function shutdownFirstRun()
@@ -168,28 +165,26 @@ function setWantedLocale(locale)
   wanted_locale = locale;
 }
 
-function enableCustomInstall() 
-{
-  // Once we load the stuff, open the box.
-  setTimeout( "customInstall();", 250 );
-}
-
 function continueStartup() {
   //SB_LOG("continueStartup");
   window.arguments[0].onComplete();
 }
 
-function customInstall()
+function openExtensionsList()
 {
   var extlist = document.getElementById("songbird.extensionlist");
   if (extlist)
   {
     extlist.bundleInterface = bundle;
-    if (extlist.state == "open") {
-      extlist.recreateContent();
-    } else {
-      extlist.openList();
-    }
+
+    var top = document.getElementById("extensions.replacedcontent.top");
+    var bottom = document.getElementById("extensions.replacedcontent.bottom");
+    var replacedheight = bottom.boxObject.y - top.boxObject.y;
+
+    hidePleaseWait();
+    hideErrorMessage();
+
+    extlist.openDrawer(false, replacedheight);
   }
 }
 
@@ -208,20 +203,7 @@ function doOK()
   }
   switchLocale(wanted_locale);
   if (noext) {
-    var remember_firstrun = true;
-    if (!loaded_bundle)
-    {
-      var retval = sbMessageBox_strings("setup.noxpititle",
-                                        "setup.noxpimsg", 
-                                        "No extension",
-                                        "Press Ok to keep a minimal installation, or Cancel to see this dialog again on restart.",
-                                        true);
-                                        
-      remember_firstrun = (retval == "accept");
-    }
-    
-    // If we didn't download a bundle, ask again?
-    gPrefs.setBoolPref("songbird.firstruncheck", remember_firstrun);  
+    gPrefs.setBoolPref("songbird.firstruncheck", true);  
     return true; 
   } else {
     var res = bundle.installSelectedExtensions(window);
@@ -276,26 +258,71 @@ function handleOptOut()
   } catch (e) {}; // Stuff likes to throw.
 };
 
-function openConnectionSettings()
+function openConnectionSettings(evt)
 {
+  if (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+  }
   window.openDialog( "chrome://browser/content/preferences/connection.xul", "Connections", "chrome,modal=yes,centerscreen", document );
   if (!bundle) {
     bundle = new nsIBundle();
     bundle.addBundleObserver(FirstRunBundleCB);
   }
+  hideErrorMessage();
+  showPleaseWait();
   loaded_bundle = false;
   bundle.retrieveBundleFile();
   var s = bundle.getStatus();
   if (s != 0) bundleDataReady(bundle);
-  if (s != -1) {
-    var extlist = document.getElementById("songbird.extensionlist");
-    if (extlist) {
-      if (extlist.state == "open")
-        extlist.pleaseWait();
-      else {
-        extlist.bundleInterface = null;
-        extlist.openList();
-      }
-    }
+}
+
+function showErrorMessage() 
+{
+  document.getElementById("error_message").setAttribute("hidden", "false");
+}
+
+function hideErrorMessage()
+{
+  document.getElementById("error_message").setAttribute("hidden", "true");
+}
+
+function showPleaseWait()
+{
+  document.getElementById("please_wait").setAttribute("hidden", "false");
+}
+
+function hidePleaseWait()
+{
+  document.getElementById("please_wait").setAttribute("hidden", "true");
+}
+
+function onMetricsDrawer(evt) 
+{
+  if (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+  }
+  var drawer = document.getElementById("metrics_drawer");
+  if (drawer.state != "open") 
+  {
+    drawer.openDrawer();
+    document.getElementById("metrics_href").setAttribute("style", "");
+  }
+  else
+  {
+    // if the drawer is already open, clicking on 'usage metrics' should toggle the metrics, just like the rest of the sentence
+    toggleMetrics(evt);
+  }
+}
+
+function toggleMetrics(evt) 
+{
+  var id = evt.target.getAttribute("id");
+  if (id == "metrics_label" || id == "metrics_href") {
+    var checkbox = document.getElementById("metrics_optout");
+    checkbox.focus();
+    var checked = checkbox.getAttribute("checked") == "true";
+    checkbox.setAttribute("checked", checked ? "false" : "true");
   }
 }
