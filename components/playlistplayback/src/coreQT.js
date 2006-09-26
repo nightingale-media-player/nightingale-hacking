@@ -187,11 +187,16 @@ CoreQT.prototype.pokingUrlListener = function ( )
     var status = request.status;
     var channel = request.channel;
     var contentLength = channel.contentLength;
+    var contentType = channel.contentType;
 
     // If contentLength is -1 that means that the size in unknown. This could
     // be the case for streams. Go ahead and take a chance that it's a valid
     // file.
-    if ((status == 200) && (contentLength != 0)) {
+    if ((status == 200) && 
+        (contentLength != 0) && 
+        (contentType.indexOf("audio") == 0 ||
+         contentType.indexOf("video") == 0 ||
+         contentType.indexOf("application") == 0)) {
       gQTCore._availability = gQTCore.REMOTE_FILE_AVAILABLE;
       gQTCore.playURL(gQTCore._url);
     }

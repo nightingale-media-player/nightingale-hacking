@@ -176,7 +176,6 @@ CoreVLC.prototype.getVolume = function()
   * VLC uses a 0-50 scale, so volumes are adjusted accordingly.
   * If you going beyond this 0-50 scale, VLC will amplify the signal.
   * And it does so poorly, without clipping or compressing the signal.
-  * Great. Amateur night...
   */
   var scaledVolume = this._object.get_volume();
   var retVolume = Math.round(scaledVolume / 50 * 255);
@@ -319,7 +318,7 @@ try {
   var gCoreVLC = new CoreVLC();
 }
 catch (err) {
-  dump("ERROR!!! coreFLASH failed to create properly.");
+  dump("ERROR!!! coreVLC failed to create properly.");
 }
 
 /**
