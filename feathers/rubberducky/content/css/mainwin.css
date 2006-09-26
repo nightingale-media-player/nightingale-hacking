@@ -382,17 +382,13 @@ Love the box.
   padding: 0px !important;
 }
 
-
-
 #frame_service_buttonbar button
 {
   -moz-appearance: none !important;
   -moz-border-radius: 3px !important;
   padding: 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
+  margin: 2px 2px 2px 2px !important;
   height: 25px !important;  
-  color: #99A195 !important; 
 }
 
 /** Offset menu a to account for rounded button **/
