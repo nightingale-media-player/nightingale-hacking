@@ -436,7 +436,7 @@
                 <spacer flex="1" height="60"/>
               </hbox>
 
-              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane">
+              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane" orientation="vertical">
                 <grippy/>
               </smartsplitter>
 
@@ -497,9 +497,9 @@
 
                     <browser id="frame_main_pane" x_type="content-primary" type="content" flex="1"/>
 
-                    <splitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" collapse="after" onmouseup="onBrowserPlaylistResize();">
+                    <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after" orientation="vertical" >
                       <grippy/>
-                    </splitter>
+                    </smartsplitter>
                     
                     
                     <vbox

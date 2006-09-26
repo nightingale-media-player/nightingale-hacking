@@ -1468,17 +1468,6 @@ function onBrowserPlaylist()
   }
 }
 
-function onBrowserPlaylistResize()
-{
-  SBDataSetIntValue( "browser.playlist.height", theWebPlaylist.height );
-  var collapsed = theWebPlaylist.previousSibling.getAttribute( "state" ) == "collapsed";
-  // if collapsed state changed, capture it.
-  if (collapsed != SBDataGetBoolValue("browser.playlist.collapsed")) {
-    metrics_inc("player", "collapse.webplaylist", null);
-  }
-  SBDataSetBoolValue( "browser.playlist.collapsed", collapsed );
-}
-
 function onBrowserDownload()
 {
   metrics_inc("player", "downloads", null);
