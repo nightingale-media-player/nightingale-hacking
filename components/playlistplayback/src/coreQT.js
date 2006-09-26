@@ -66,6 +66,19 @@ function CoreQT()
 
   this._availability = this.FILE_NOT_AVAILABLE;
   this._lastAvailability = this.FILE_NOT_AVAILABLE;
+
+  // Has the wma plugin been installed?
+  this._supportsWM = false;
+  try {
+    var wmaPlugin = Components.classes["@mozilla.org/file/local;1"]
+                       .createInstance(Components.interfaces.nsILocalFile);
+    wmaPlugin.initWithPath("/Library/Internet Plug-Ins/Flip4Mac WMV Plugin.plugin");
+    this._supportsWM = wmaPlugin.exists();
+    dump("coreQT: quicktime wma plugin = " + this._supportsWM +  "\n");
+  } catch (e) {
+    dump("coreQT: Could not detect presence of WMA plugin... defaulting to false.\n");
+  }
+
 };
 
 // inherit the prototype from CoreBase
@@ -212,6 +225,79 @@ CoreQT.prototype.pokingUrlListener = function ( )
   }
 }
 
+CoreQT.prototype.isFormatSupported = function ( aURL )
+{
+  // If it's a windows media file, make sure the WM plugin
+  // has been installed.
+  if (/\.(wma|wmv)$/i.test(aURL))
+  {
+    if (!this._supportsWM) {
+     this.showWindowsMediaWarning();
+    } 
+    return this._supportsWM;
+  }
+  // Otherwise if it's a media file assume we can play it.
+  return this.isMediaURL(aURL) || this.isVideoURL(aURL);
+}
+
+
+CoreQT.prototype.showWindowsMediaWarning = function ( )
+{
+  // Do nothing if the user has checked the don't show again box
+  if (SBDataGetBoolValue("coreqt.hide_wm_warning"))
+    return;
+
+  // Otherwise, prompt them to install windows media support.
+
+  var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                   .getService(Components.interfaces.nsIPromptService);
+
+  // Get flags to indicate yes/no option dialog
+  var flags=promptService.BUTTON_TITLE_YES * promptService.BUTTON_POS_0 +
+            promptService.BUTTON_TITLE_NO * promptService.BUTTON_POS_1;
+
+  // If possible we want the alert to pop off of the 
+  // main window and not the cheezy video window
+  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                .getService(Components.interfaces.nsIWindowMediator);
+  var mainWin = wm.getMostRecentWindow("Songbird:Main");
+  var target = (mainWin) ? mainWin : window;
+
+  // Holder for checkbox result
+  var checkResult = {};
+
+  // Get the localized strings
+  var songbirdStrings = document.getElementById("songbird_strings");
+  if (!songbirdStrings)
+    throw("coreqt.showWindowsMediaWarning: could not access localized strings");
+
+  // Ask the user if they would like to learn how to install the WM plug-in
+  var promptResult = promptService.confirmEx(target,
+        songbirdStrings.getString("dialog.pluginrequired.title"),
+        songbirdStrings.getString("dialog.pluginrequired.windowsmedia.label"),
+        flags, null, null, null, 
+        songbirdStrings.getString("dialog.dontshowagain"), checkResult);
+
+  // If the user doesn't want to see this again, then set a pref
+  if (checkResult.value) 
+    SBDataSetBoolValue("coreqt.hide_wm_warning", true);
+
+  // If the user said yes, then launch the instructions page
+  // in a new window.
+  if (promptResult == 0) {
+    const url = "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime#WindowsMediawmaandwmv";
+    var externalLoader = Components
+          .classes["@mozilla.org/uriloader/external-protocol-service;1"]
+          .getService(Components.interfaces.nsIExternalProtocolService);
+    var nsURI = Components
+          .classes["@mozilla.org/network/io-service;1"]
+          .getService(Components.interfaces.nsIIOService)
+          .newURI(url, null, null);
+    externalLoader.loadURI(nsURI, null);
+  }
+}
+
+
 CoreQT.prototype.verifyFileAvailability = function ( aURL )
 {
   if(!aURL)
@@ -294,13 +380,23 @@ CoreQT.prototype.playURL = function ( aURL )
                     this.REMOTE_FILE_AVAILABLE :
                     this.verifyFileAvailability(aURL);
 
+  if(isAvailable == this.FILE_NOT_AVAILABLE) 
+    throw new Error("Local file not available");
+
+  // If we don't think we'll be able to play this track
+  // then do nothing.
+  //
+  // We should be able to throw an exception,
+  // but it works more reliably to just attempt
+  // to play anyway.
+  if (!this.isFormatSupported(aURL)) {
+    dump("coreQT: unsupported format, may not play correctly\n");
+  }
+
   this._url = this.sanitizeURL(aURL);
   this._paused = false;
   this._playing = true;
   this._buffering = true;  
-    
-  if(isAvailable == this.FILE_NOT_AVAILABLE)
-    throw new Error("Local file not available");
 
   switch (isAvailable) {
     case this.NOT_LOCAL_FILE:
@@ -549,16 +645,20 @@ CoreQT.prototype.goFullscreen = function ()
 };
   
 CoreQT.prototype.isMediaURL = function(aURL) {
-  if( ( aURL.indexOf ) && 
+  if( aURL && 
       (
         // Protocols at the beginning
-        ( aURL.indexOf( "rtsp:" ) == 0 ) ||
+        /^rtsp\:/.test(aURL) ||
         // File extensions at the end
-        ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
+        /\.mp3$/i.test(aURL) ||
+        /\.m4a$/i.test(aURL) ||
+        /\.mov$/i.test(aURL) ||
+        /\.wma$/i.test(aURL) ||
+        /\.wmv$/i.test(aURL) ||
+        /\.mpg$/i.test(aURL) ||
+        /\.m3u$/i.test(aURL) ||
+        /\.pls$/i.test(aURL) ||
+        /\.mp4$/i.test(aURL)
       )
     )
   {
@@ -569,13 +669,14 @@ CoreQT.prototype.isMediaURL = function(aURL) {
 
 CoreQT.prototype.isVideoURL = function ( aURL )
 {
-  if ( ( aURL.indexOf ) && 
-        (
-          ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
-        )
-      )
+  if ( aURL && 
+       (
+         /\.mov$/i.test(aURL) ||
+         /\.mpg$/i.test(aURL) ||
+         /\.wmv$/i.test(aURL) ||          
+         /\.mp4$/i.test(aURL)
+       )
+     )
   {
     return true;
   }
