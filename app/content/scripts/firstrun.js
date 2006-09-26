@@ -297,32 +297,3 @@ function hidePleaseWait()
   document.getElementById("please_wait").setAttribute("hidden", "true");
 }
 
-function onMetricsDrawer(evt) 
-{
-  if (evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
-  }
-  var drawer = document.getElementById("metrics_drawer");
-  if (drawer.state != "open") 
-  {
-    drawer.openDrawer();
-    document.getElementById("metrics_href").setAttribute("style", "");
-  }
-  else
-  {
-    // if the drawer is already open, clicking on 'usage metrics' should toggle the metrics, just like the rest of the sentence
-    toggleMetrics(evt);
-  }
-}
-
-function toggleMetrics(evt) 
-{
-  var id = evt.target.getAttribute("id");
-  if (id == "metrics_label" || id == "metrics_href") {
-    var checkbox = document.getElementById("metrics_optout");
-    checkbox.focus();
-    var checked = checkbox.getAttribute("checked") == "true";
-    checkbox.setAttribute("checked", checked ? "false" : "true");
-  }
-}

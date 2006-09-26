@@ -117,7 +117,7 @@
           {
             if (this.state == "open") return;
             if (!replacedheight) replacedheight = 0;
-            this.size = Math.max(this.getContentSize(), replacedheight+5);
+            this.size = Math.max(this.getContentSize(), replacedheight);
             // No animations until we finish
             if ( ! this.tracking )
             {
@@ -163,7 +163,7 @@
           {
             if (this.state == "closed") return;
             if (!replacedheight) replacedheight = 0;
-            this.size = Math.max(this.getContentSize(), replacedheight+5);
+            this.size = Math.max(this.getContentSize(), replacedheight);
             this.state = "closed";
             if (this.openclosebutton) this.openclosebutton.label = "+";
             // No animations until we finish

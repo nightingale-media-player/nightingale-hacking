@@ -76,7 +76,7 @@
             
           <spacer height="5"/> 
 
-          <vbox class="formgrouping" id="extensions.hbox">
+          <vbox class="formgrouping" flex="1">
             <label value="&setup.optionalextensions;" class="dialog_label"/>
             <spacer id="extensions.replacedcontent.top" height="0"/>
             <vbox id="error_message" hidden="true">
@@ -95,7 +95,7 @@
             <spacer id="extensions.replacedcontent.bottom" height="0"/>
             <spacer height="5"/>
             <hbox>
-              <sbextensions flex="1" id="songbird.extensionlist" hflex="extensions.hbox"/>
+              <sbextensions flex="1" id="songbird.extensionlist"/>
             </hbox>
           </vbox>
 
@@ -103,11 +103,8 @@
 
           <vbox id="metrics_vbox" class="formgrouping" width="386">
             <label value="&setup.privacy;" class="dialog_label"/>
-            <hbox>
-              <checkbox id="metrics_optout" class="dialog_checkbox dialog_label" checked="true"/> 
-              <html:body id="metrics_label" class="dialog_label" style="cursor:default;text-indent: -16px;" onclick="toggleMetrics(event);">&setup.metrics.optin1;<html:a id="metrics_href" onclick="onMetricsDrawer(event);" style="text-decoration: underline; cursor:pointer;">&setup.metrics.optin2;</html:a>&setup.metrics.optin3;</html:body>
-            </hbox>
-            <textdrawer id="metrics_drawer" class="dialog_label" hflex="metrics_vbox" contentheight="26" value="&setup.metrics.info;"/>
+            <checkbox id="metrics_optout" class="dialog_checkbox dialog_label" checked="true" label="&setup.metrics.optin;"/>
+            <description class="dialog_label">&setup.metrics.info;</description>
           </vbox>
             
           <spacer height="5"/> 

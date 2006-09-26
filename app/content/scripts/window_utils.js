@@ -464,7 +464,9 @@ function quitApp()
 {
   onExit();
   // Why not stop playback, too?
-  gPPS.stop();
+  try {
+    gPPS.stop();
+  } catch (e) {}
   var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
   var MetricsService = new nsIMetrics();
   MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash

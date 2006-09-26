@@ -276,9 +276,7 @@
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Connection Settings" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin1 "Send anonymous " >
-<!ENTITY setup.metrics.optin2 "usage metrics" >
-<!ENTITY setup.metrics.optin3 "." >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
 <!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
 <!ENTITY setup.optionalextensions "Optional Extensions" >
 <!ENTITY setup.defaultlanguage "Default Language" >
