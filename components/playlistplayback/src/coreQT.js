@@ -492,14 +492,16 @@ CoreQT.prototype.setPosition = function ( pos )
 CoreQT.prototype.getVolume = function ()
 {
   this._verifyObject();
-  var curVol = this._lastVolume;
-  
+
+  var curVol;  
   try {
     curVol = this._object.GetVolume();
   } catch(e) {
     this.LOG(e, "CoreQT");
   }
-  
+  if (!curVol)
+    return this._lastVolume;
+
   return curVol;
 };
   
