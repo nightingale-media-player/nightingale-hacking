@@ -201,10 +201,7 @@ CMediaLibrary.prototype =
       {
         guid = resObj.getRowCell(0, 0);
         if(guid)
-        {
-          //strQuery = "UPDATE " + LIBRARY_TABLE_NAME + " SET url = \"" + strMediaURL + "\" WHERE uuid = \"" + guid + "\"";
           return guid;
-        }
       }
       else
       {
