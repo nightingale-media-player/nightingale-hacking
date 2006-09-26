@@ -215,12 +215,23 @@ Love your boxes.
 #frame_service_buttonbar button
 {
   border: 1px solid !important;
+  -moz-border-top-colors: #808282 !important;
+  -moz-border-left-colors: #808282 !important;
+  -moz-border-bottom-colors: #808282 !important;
+  -moz-border-right-colors: #808282 !important;
+  background-color: #686A6A !important;
+  color: #99A195 !important; 
+}
+
+#frame_service_buttonbar button:hover
+{
+  border: 1px solid !important;
   -moz-border-top-colors: #99A195 !important;
   -moz-border-left-colors: #99A195 !important;
   -moz-border-bottom-colors: #333 !important;
   -moz-border-right-colors: #333 !important;
   background-color: #686A6A !important;
-  color: #99A195 !important; 
+  color: #fff !important; 
 }
 
 #frame_service_buttonbar button:active
@@ -229,11 +240,6 @@ Love your boxes.
   -moz-border-left-colors: #333 !important;
   -moz-border-bottom-colors: #99A195 !important;
   -moz-border-right-colors: #99A195 !important;
-}
-
-#frame_service_buttonbar button:hover
-{
-  color: #FFF !important;
 }
 
 #frame_service_tree > treechildren::-moz-tree-row( selected )
