@@ -49,6 +49,7 @@ CPlaylistReaderListener.prototype =
   playlistType: "",
   description: "",
   appendOrReplace: false,
+  playWhenLoaded: false,
   
   onLocationChange: function(aWebProgress, aRequest, aLocation)
   {
@@ -70,6 +71,9 @@ CPlaylistReaderListener.prototype =
                                       .createInstance(Components.interfaces.sbIPlaylistReaderManager);
       var playlistManager =   Components.classes["@songbirdnest.com/Songbird/PlaylistManager;1"]
                                       .createInstance(Components.interfaces.sbIPlaylistManager);
+      var pps =   Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                                      .getService(Components.interfaces.sbIPlaylistPlayback);
+       
       
       var strContentType = "";
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
@@ -125,6 +129,10 @@ CPlaylistReaderListener.prototype =
           
           dpDownloadContext.stringValue = downloadDevice.getContext('');
           dpDownloadTable.stringValue = downloadTable.value;
+        }
+        if (this.playWhenLoaded)
+        {
+          pps.playTable(this.serviceGuid, this.destinationTable, 0);
         }
       }
     }

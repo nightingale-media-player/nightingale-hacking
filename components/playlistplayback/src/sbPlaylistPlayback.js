@@ -680,7 +680,7 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     // Setup the table to play from
-    var ppRef = this._setupTable;
+    var ppRef = this._setupTable(aDatabaseID, aTable);
 
     // And then use the source to play that ref.
     return this.playRef( ppRef, aIndex );

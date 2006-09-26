@@ -108,6 +108,13 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
    * \sa sbIDatabaseQuery
    */
   attribute PRBool  appendOrReplace;
+
+  /**
+   * \brief Automatically start playing when stream is done loading.
+   *
+   * False by default.
+   */
+  attribute PRBool  playWhenLoaded;
 };
 
 /**
@@ -260,3 +267,4 @@ interface sbIPlaylistReaderManager : nsISupports
   void supportedFileExtensions(out PRUint32 aExtCount, 
     [array, size_is (aExtCount), retval] out wstring aExts);
 };
+

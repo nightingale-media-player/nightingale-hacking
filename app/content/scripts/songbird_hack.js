@@ -1748,7 +1748,7 @@ function onMainPaneUnload()
   }
 }
 
-function GetHrefFromEvent( evt )
+function GetHREFFromEvent( evt )
 {
   var the_href = "";
   try
@@ -1774,7 +1774,7 @@ function GetHrefFromEvent( evt )
 // Catch a contextual on a media url and attempt to play it
 function onLinkOver( evt )
 {
-  var the_url = GetHrefFromEvent( evt )
+  var the_url = GetHREFFromEvent( evt )
   theStatusText.stringValue = the_url;
   if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
   {
@@ -1800,7 +1800,7 @@ function onLinkContext( evt )
   {
     var theMainPane = document.getElementById( "frame_main_pane" );
     var theHTMLPopup = document.getElementById( "html_context_menu" );
-    theHTMLContextURL = GetHrefFromEvent( evt );
+    theHTMLContextURL = GetHREFFromEvent( evt );
     
     // Disable "Add" if the url isn't media or is already there.
     var disabled = "true";
@@ -1828,6 +1828,7 @@ function onLinkContext( evt )
 
 function playExternalUrl(the_url, tryweb) 
 {
+  //SB_LOG("songbird_hack.js", "playExternalUrl: " + the_url);
   var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
   // figure out if the url is in the webplaylist
   if (tryweb && theWebPlaylist && !theWebPlaylist.hidden) 
@@ -1844,23 +1845,51 @@ function playExternalUrl(the_url, tryweb)
   }
 }
 
-// Catch a click on a media url and attempt to play it
-function onMediaClick( evt )
+function handleMediaURL( aURL, aShouldBeginPlayback )
 {
+  var retval = false;
   try
   {
-    var the_url = GetHrefFromEvent( evt );
-    if ( gPPS.isMediaURL( the_url ) || gPPS.isPlaylistURL( the_url ) )
+    // Stick playlists in the service pane (for now).
+    if ( gPPS.isPlaylistURL( aURL ) )
     {
-      playExternalUrl(the_url, true);
-      evt.stopPropagation();
-      evt.preventDefault();
+      SBScanServiceTreeNewEntryEditable();
+      var playlistReader = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                           .createInstance(Components.interfaces.sbIPlaylistReaderManager);
+      var playlistReaderListener = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
+                           .createInstance(Components.interfaces.sbIPlaylistReaderListener);
+
+      playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
+      playlistReader.autoLoad( aURL,
+                               "songbird", 
+                               gPPS.convertURLToDisplayName( aURL ),
+                               "http",
+                               aURL,
+                               "", 
+                               playlistReaderListener );
+      SBScanServiceTreeNewEntryStart();
+      retval = true;
+    }
+    // Everything else gets played directly.
+    else if ( gPPS.isMediaURL( aURL ) )
+    {
+      playExternalUrl(aURL, true);
+      retval = true;
     }
   }
   catch ( err )
   {
-    alert( err );
+    alert("songbird_hack.js: handleMediaURL(" + aURL + "); " + err );
   }
+  return retval;
+}
+
+// Catch a click on a media url and attempt to play it
+function onMediaClick( evt )
+{
+  handleMediaURL( GetHREFFromEvent(evt), true );
+  evt.stopPropagation();
+  evt.preventDefault();
 }
 
 function onPlaylistKeypress( evt )
@@ -2400,11 +2429,9 @@ function onHTMLContextMenu( target )
     switch ( v )
     {
       case "html.context.open":
-        if ( gPPS.isMediaURL( theHTMLContextURL ) )
-        {
-          playExternalUrl(theHTMLContextURL, true);
-        }
-        else
+        // can be track or playlist
+        // try dealing with media, might just be web content.
+        if ( !handleMediaURL(theHTMLContextURL, true) )
         {
           var theServiceTree = document.getElementById( 'frame_servicetree' );
           theServiceTree.launchURL( theHTMLContextURL );
@@ -2419,17 +2446,18 @@ function onHTMLContextMenu( target )
                   .getService(Components.interfaces.nsIIOService)
                   .newURI(theHTMLContextURL, null, null));
           externalLoader.loadURI(nsURI, null);
-      break;      
+      break;
       case "html.context.play":
-        playExternalUrl(theHTMLContextURL, true);
+        // can be track or playlist
+        handleMediaURL(theHTMLContextURL, true);
       break;
       case "html.context.add":
-        var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-        PPS.importURL(theHTMLContextURL);
+        gPPS.importURL(theHTMLContextURL);
       break;
       case "html.context.playlist":
+        // Add playlists to the service pane
         SBScanServiceTreeNewEntryEditable();
-        var success = thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", gPPS.convertURLToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
+        thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", gPPS.convertURLToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
         SBScanServiceTreeNewEntryStart();
       break;
     }
