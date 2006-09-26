@@ -2181,7 +2181,7 @@ function onPlaylistContextMenu( evt )
 function onSearchTerm( target, in_term )
 {
   var search_url = "";
-  if ( in_term && in_term.length )
+  if ( target && in_term && in_term.length )
   {
 //    var term = '"' + in_term + '"';
     var term = in_term;
