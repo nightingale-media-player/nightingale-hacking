@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 ICON_TARGET_DIR = $(SONGBIRD_CHROMEDIR)/icons/default
 ICON_SOURCE_NAME = songbird
-ICON_TARGET_NAME = frame_outer
+ICON_TARGET_NAME = default
 
 ifeq (win32,$(SB_PLATFORM))
 ICON_EXTENSION = ico
