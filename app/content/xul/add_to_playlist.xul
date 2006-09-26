@@ -224,7 +224,8 @@
       if ( new_playlist_data.retval == "ok" )
       {
         var playlistname = new_playlist_data.playlistname;
-        playlistname = playlistname.replace(/ /g, "");
+        while (playlistname.charAt(0) == " ") playlistname = playlistname.substring(1);
+        while (playlistname.charAt(playlistname.length-1) == " ") playlistname = playlistname.substr(0, playlistname.length-1);
         if (playlistname != "") 
         {
           // create it !
