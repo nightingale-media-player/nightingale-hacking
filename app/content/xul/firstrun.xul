@@ -11,6 +11,7 @@
  ondialogaccept="return doOK();"
  ondialogcancel="return doCancel();"
  hidechrome="true"
+ windowtype="Songbird:Firstrun"
  onkeydown="handleKeyDown(event);"
  onload="initFirstRun();"
  onunload="shutdownFirstRun();"

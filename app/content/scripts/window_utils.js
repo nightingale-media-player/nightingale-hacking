@@ -217,20 +217,37 @@ function onExit( skipSave )
 // Hide
 function onHide()
 {
-  try
-  {
-    var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
+  try {
+    var windowCloak =
+      Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
     if (windowCloak) {
       var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
-      if (service) {
-        service.cloak( document ); 
-      }
+      if (service)
+        service.cloak(document); 
     }
   }
-  catch(e)
-  {
+  catch(e) {
     dump(e);
   }
+  // And try to focus another of our windows. We'll try to focus in this order:
+  var windowList = ["Songbird:Main",
+                    "Songbird:TrackEditor",
+                    "Songbird:Firstrun",
+                    "Songbird:EULA"];
+  var windowCount = windowList.length;
+
+  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Components.interfaces.nsIWindowMediator);
+
+  for (var index = 0; index < windowCount; index++) {
+    var windowType = windowList[index];
+    var lastWindow = wm.getMostRecentWindow(windowType);
+    if (lastWindow && (lastWindow != window)) {
+      lastWindow.focus();
+      break;
+    }
+  }
+
 }
 
 function onMinimumWindowSize()

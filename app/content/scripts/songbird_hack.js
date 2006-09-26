@@ -37,6 +37,18 @@
 //                  - mig
 //
 
+// Useful constants
+const CORE_WINDOWTYPE = "Songbird:Core";
+
+const PREF_BONES_SELECTED = "general.bones.selectedMainWinURL";
+const PREF_FEATHERS_SELECTED = "general.skins.selectedSkin";
+
+const BONES_DEFAULT_URL = "chrome://rubberducky/content/xul/mainwin.xul";
+const FEATHERS_DEFAULT_NAME = "rubberducky";
+
+const PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
+const nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
+
 // The global progress filter, set in SBInitialize and released in SBUnitialize
 var gProgressFilter = null;
 
@@ -75,6 +87,24 @@ function getPlatformString()
       return "Linux";
     return "";
   }
+}
+
+/**
+ * Adapted from nsUpdateService.js.in. Need to replace with dataremotes.
+ */
+function getPref(aFunc, aPreference, aDefaultValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  try {
+    return prefs[aFunc](aPreference);
+  }
+  catch (e) { }
+  return aDefaultValue;
+}
+function setPref(aFunc, aPreference, aValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  return prefs[aFunc](aPreference, aValue);
 }
 
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
@@ -426,51 +456,37 @@ function SBUninitialize()
   }
 }
 
-
-/**
- * Closes the current window and launches the selected mainwin url
- */
-function SBMainWindowReopen()
-{
-  // Get mainwin URL
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var mainwin = "chrome://rubberducky/content/xul/mainwin.xul";
-  try {
-    mainwin = prefs.getCharPref("general.bones.selectedMainWinURL", mainwin);  
-  } catch (err) {}
-
-  // Open the window
-  window.open( mainwin, "", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no" );
-  setTimeout( "onExit(true);", 1000 );
-}
-
-
- 
 //
 // XUL Event Methods
 //
 
-function switchFeathers(internalName)
+function switchFeathers(aFeathersName)
 {
+  // Figure out if we're being asked to switch to what we already are
+  var currentFeathers = getPref("getCharPref", PREF_FEATHERS_SELECTED,
+                                FEATHERS_DEFAULT_NAME);
+  if (currentFeathers == aFeathersName)
+    return;
+
+  // Change the feathers (XUL skin) -- this only changes colors on the
+  // currently loaded windows, not images. Hence the magic below.
+  setPref("setCharPref", PREF_FEATHERS_SELECTED, aFeathersName);  
+
+  // Get mainwin URL
+  var mainWinURL = getPref("getCharPref", PREF_BONES_SELECTED,
+                           BONES_DEFAULT_URL);
+  
   // Save our current values before flipping out.
   onWindowSaveSizeAndPosition();
   
-  // Figure out if we're being asked to switch to what we already are
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var curfeathers = "rubberducky";
-  try {
-    curfeathers = prefs.getCharPref("general.skins.selectedSkin", internalName);  
-  } catch (err) {}
-  if (curfeathers == internalName) return;
-  
-  // Minimize (so the user doesn't see the graphical glitch on the next step)
-  onMinimize();
-  
-  // Change the feathers (XUL skin) -- this only changes colors on the currently loaded windows, not images.
-  prefs.setCharPref("general.skins.selectedSkin", internalName);  
-  
-  // Open another copy of the mainwin and close this one once it's mostly done.
-  SBMainWindowReopen();
+  // Open the new window
+  var chromeFeatures =
+    "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no";
+  var newMainWin = window.open(mainWinURL, "", chromeFeatures);
+  newMainWin.focus();
+
+  // Kill this window
+  onExit(true);
 }
 
 var URL = SB_NewDataRemote( "faceplate.play.url", null );

@@ -39,6 +39,7 @@
  onload="return doInit();"
  ondialogaccept="return doClose('accept');"
  ondialogcancel="return doClose('cancel');"
+ windowtype="Songbird:EULA"
 >
 
   <!-- Astounding complexity! -->

@@ -24,13 +24,33 @@
 //
  */
 
+const BONES_DEFAULT_URL = "chrome://rubberducky/content/xul/mainwin.xul";
+const PREF_BONES_SELECTED = "general.bones.selectedMainWinURL";
 
+const PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
+const nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
+
+/**
+ * Adapted from nsUpdateService.js.in. Need to replace with dataremotes.
+ */
+function getPref(aFunc, aPreference, aDefaultValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  try {
+    return prefs[aFunc](aPreference);
+  }
+  catch (e) { }
+  return aDefaultValue;
+}
+function setPref(aFunc, aPreference, aValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  return prefs[aFunc](aPreference, aValue);
+}
 
 // Make this an honest global.
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
               .getService(Components.interfaces.sbIPlaylistPlayback);
-
-
 
 //
 // Called on init of songbird.xul.
@@ -130,39 +150,31 @@ function doMainwinStart()
 {
   dump("doMainwinStart\n");  
 
+  try {
+    var metrics =
+      Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                .createInstance(Components.interfaces.sbIMetrics);
 
-  // Attempt to launch the mainwin
-  try
-  {
-    var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-                  .createInstance(Components.interfaces.sbIMetrics);
-    if (metrics.getSessionFlag()) {
+    if (metrics.getSessionFlag())
       metrics_inc("player", "crash");
-    }
+
     metrics.setSessionFlag(true);
     metrics.checkUploadMetrics();
   }
-  catch ( err )
-  {
-    SB_LOG( "App Init - Metrics - ", "" + err );
+  catch (err) {
+    SB_LOG("App Init - Metrics - ", "" + err);
   }
+
   // Get mainwin URL
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  var mainwinURL = "";
-  try {
-    // XXXredfive - probably can go ahead and make this a required pref
-    mainwinURL = prefs.getCharPref("songbird.general.bones.selectedMainWinURL", mainwin);  
-  } catch (err) {}
+  var mainwinURL = getPref("getCharPref", PREF_BONES_SELECTED,
+                           BONES_DEFAULT_URL);
 
-  if (!mainwinURL) {
-    mainwinURL = "chrome://rubberducky/content/xul/mainwin.xul";
+  // save it for later restarts and down the road if we want to allow
+  // file->new window
+  setPref("setCharPref", PREF_BONES_SELECTED, mainwinURL);
 
-    // save it for later restarts and down the road if we want to allow file->new window
-    prefs.setCharPref("songbird.general.bones.selectedMainWinURL", mainwinURL);  
-  }
-
-  var mainWin = window.open(mainwinURL, "mainwin",
-                "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
+  var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no,titlebar=no";
+  var mainWin = window.open(mainwinURL, "mainwin", chromeFeatures);
   
   mainWin.focus();
 }
@@ -201,10 +213,12 @@ function doEULA(aAcceptAction, aCancelAction)
     } catch (err) { /* prefs throws an exepction if the pref is not there */ }
 
     if ( !eulaCheck ) {
-      window.openDialog( "chrome://songbird/content/xul/eula.xul",
-                         "eula",
-                         "chrome,centerscreen,modal=no,titlebar=yes",
-                         eulaData );
+      var eulaWindow =
+        window.openDialog("chrome://songbird/content/xul/eula.xul",
+                          "eula",
+                          "chrome,centerscreen,modal=no,titlebar=yes",
+                          eulaData );
+      eulaWindow.focus();
 
       // We do not want to open the main window until we know EULA is accepted
       return false;
@@ -589,13 +603,6 @@ function onHideButtonClick()
   gPPS.stop();
   // Hide our video window
   onHide();
-
-  // And focus the main window
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(Components.interfaces.nsIWindowMediator);
-  var mainWin = wm.getMostRecentWindow("Songbird:Main");
-  if (mainWin)
-    mainWin.focus();
 }
 
 var SBVideoMinMaxCB = 
