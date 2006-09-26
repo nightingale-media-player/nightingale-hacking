@@ -1148,7 +1148,9 @@ function onBrowserClick(evt)
     //    + "target " + evt.target.target
     //    + "\n\n\n");  
         
-    if (evt.target.target == "_blank" || evt.target.target == "_new") {
+    var is_media = gPPS.isMediaURL( evt.target.href );
+    var is_playlist = gPPS.isPlaylistURL( evt.target.href );
+    if (!is_media && !is_playlist && (evt.target.target == "_blank" || evt.target.target == "_new")) {
       var externalLoader = (Components
             .classes["@mozilla.org/uriloader/external-protocol-service;1"]
             .getService(Components.interfaces.nsIExternalProtocolService));
