@@ -40,6 +40,9 @@
 #include <xpcom/nsEventQueueUtils.h>
 #include <xpcom/nsIObserverService.h>
 #include <xpcom/nsCRT.h>
+#include <pref/nsIPrefService.h>
+#include <pref/nsIPrefBranch2.h>
+#include <nsISupportsPrimitives.h>
 
 #include "MetadataBackscanner.h"
 
@@ -165,6 +168,7 @@ sbMetadataBackscanner::sbMetadataBackscanner()
 : m_backscanShouldShutdown(PR_FALSE)
 , m_backscanShouldRun(PR_FALSE)
 , m_workerHasResultSet(PR_FALSE)
+, m_activeCount(0)
 , m_workerCurrentRow(0)
 , m_scanInterval(3)
 , m_updateQueueSize(33)
@@ -247,6 +251,14 @@ sbMetadataBackscanner::sbMetadataBackscanner()
     }
 
     NS_ASSERTION(m_pEventQueue, "Unable to create event queue");
+  }
+
+  if ( ! m_StringBundle.get() )
+  {
+    nsIStringBundleService *  StringBundleService = nsnull;
+    rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
+    if ( NS_SUCCEEDED(rv) )
+      rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
   }
 }
 
@@ -448,6 +460,9 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
       PRInt32 resultRows = 0;
       rv = pBackscanner->m_pResultToScan->GetRowCount(&resultRows);
 
+      if(resultRows)
+        pBackscanner->m_activeCount++;
+
       for(; currentRow < resultRows; currentRow++)
       {
         nsCOMPtr<sbIMetadataHandler> pHandler;
@@ -637,10 +652,12 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
                   NS_ConvertUTF16toUTF8(strURL).get()));
         }
       }
+
+      if(resultRows > 0 && pBackscanner->m_activeCount > 0)
+        pBackscanner->m_activeCount--;
     }
     
   }
-
 
   nsCOMPtr<nsIEventQueueService> pEventQueueService;
   rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
@@ -693,8 +710,61 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     nsresult rv = p->m_pIntervalQuery->GetResultObject(getter_AddRefs(p->m_pIntervalResult));
     if(NS_SUCCEEDED(rv))
     {
+      PRInt32 rowCount = 0;
+      
       p->m_workerHasResultSet = PR_TRUE;
+      p->m_pIntervalResult->GetRowCount(&rowCount);
+      
+      if(rowCount)
+        p->m_activeCount++;
     }
+  }
+
+  nsCOMPtr<nsIPrefService> pPref = do_GetService("@mozilla.org/preferences-service;1");
+  if(!pPref)
+    return;
+
+  nsCOMPtr<nsIPrefBranch> pBranch;
+  pPref->GetBranch("songbird.", getter_AddRefs(pBranch));
+  if(!pBranch)
+    return;
+
+  nsresult rv;
+  nsAutoString strValue;
+  nsCOMPtr<nsISupportsString> strCurrentValue;
+
+  pBranch->GetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), getter_AddRefs(strCurrentValue));
+  if (!strCurrentValue)
+  {
+    strCurrentValue = do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
+    if (NS_FAILED(rv))
+      return;
+  }
+  
+  strCurrentValue->GetData(strValue);
+
+  if(p->m_activeCount > 0 &&
+     strValue.IsEmpty())
+  {
+    PRUnichar *value = nsnull;
+    p->m_StringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(), &value );
+    
+    strValue = value;
+    strValue.AppendLiteral(" ...");
+    strCurrentValue->SetData(strValue);
+
+    pBranch->SetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), strCurrentValue);
+
+    nsMemory::Free(value);
+  }
+  else if(p->m_activeCount <= 0 && !strValue.IsEmpty())
+  {
+    strValue = EmptyString();
+    strCurrentValue->SetData(strValue);
+    pBranch->SetComplexValue("backscan.status", NS_GET_IID(nsISupportsString), strCurrentValue);
+    
+    if(p->m_activeCount < 0)
+      p->m_activeCount = 0;
   }
 
   return;
@@ -816,9 +886,12 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     p->m_pIntervalQuery->ResetQuery();
     p->m_workerHasResultSet = PR_FALSE;
     p->m_workerCurrentRow = 0;
+
+    if(p->m_activeCount > 0 &&
+       rowCount)
+      p->m_activeCount--;
   }
 
-  
   return;
 } //BackscannerTimerWorker
 

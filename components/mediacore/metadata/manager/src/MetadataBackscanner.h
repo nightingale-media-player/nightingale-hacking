@@ -44,6 +44,7 @@
 #include <nsIRunnable.h>
 #include <nsCOMPtr.h>
 #include <xpcom/nsIObserver.h>
+#include <nsIStringBundle.h>
 
 #include "sbIDatabaseQuery.h"
 #include "sbIDatabaseResult.h"
@@ -101,6 +102,8 @@ protected:
   nsCOMPtr<sbIDatabaseQuery> m_pWorkerQuery;
   nsCOMPtr<sbIMetadataHandler> m_pWorkerHandler;
 
+  PRInt32 m_activeCount;
+
   PRBool   m_workerHasResultSet;
   PRInt32 m_workerCurrentRow;
 
@@ -114,6 +117,7 @@ protected:
 
   PRLock *m_pCurrentFileLock;
 
+  nsCOMPtr<nsIStringBundle> m_StringBundle;
   nsCOMPtr<nsIEventQueue> m_pEventQueue;
   nsCOMPtr<sbIDatabaseQuery> m_pQuery;
   nsCOMPtr<sbIDatabaseQuery> m_pQueryToScan;
