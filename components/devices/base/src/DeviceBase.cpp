@@ -42,8 +42,12 @@
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsAutoLock.h>
 #include <xpcom/nsMemory.h>
+#include <xpcom/nsServiceManagerUtils.h>
 
 #include <xpcom/nsCRT.h>
+
+#include <necko/nsIURI.h>
+#include <docshell/nsIURIFixup.h>
 
 #include "sbIDatabaseResult.h"
 #include "sbIDatabaseQuery.h"
@@ -1865,6 +1869,29 @@ sbDeviceBase::DownloadDone(PRUnichar* deviceString,
 
     nsString strFile;
     GetFileNameFromURL(deviceString, destURL, strFile);
+
+    // Make sure the destURL is a true URL
+    nsresult rv;
+    PRBool success = PR_FALSE;
+
+    nsCAutoString uriSpec;
+    uriSpec.Assign(NS_ConvertUTF16toUTF8(destURL)); 
+
+    nsCOMPtr<nsIURIFixup> fixup = do_GetService("@mozilla.org/docshell/urifixup;1", &rv);
+    if(NS_SUCCEEDED(rv)) {
+      nsCOMPtr<nsIURI> fixedURI;
+      rv = fixup->CreateFixupURI(uriSpec, nsIURIFixup::FIXUP_FLAG_NONE,
+                                 getter_AddRefs(fixedURI));
+      if(NS_SUCCEEDED(rv)) {
+        rv = fixedURI->GetSpec(uriSpec);
+        if(NS_SUCCEEDED(rv)) {
+          destURL.Assign(NS_ConvertUTF8toUTF16(uriSpec));
+          success = PR_TRUE;
+        }
+      }
+    }
+
+    NS_WARN_IF_FALSE(success, "Unable to fixup destURL");
 
     PRUnichar** aMetaValues = (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
     aMetaValues[0] = (PRUnichar *) nsMemory::Clone(strFile.get(), (strFile.Length() + 1) * sizeof(PRUnichar));
