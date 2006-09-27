@@ -1850,7 +1850,26 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
       var playlistReaderListener = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
                            .createInstance(Components.interfaces.sbIPlaylistReaderListener);
 
+      // Create this closure here to prevent this object from getting garbage
+      // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
+      // component that does _not_ addref this listener :(
+      var playlist_observer = {
+        observe: function ( aSubject, aTopic, aData ) {
+          if (aTopic.indexOf("error") != -1) {
+            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                          .getService(Components.interfaces.nsIPromptService);
+            promptService.alert(null,
+                                "Playlist Error",
+                                "Unable to read playlist file -- please try again later.");
+          }
+          else {
+            SBScanServiceTreeNewEntryStart();
+          }
+        }
+      };
+
       playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
+      playlistReaderListener.observer = playlist_observer;
       playlistReader.autoLoad( aURL,
                                "songbird", 
                                gPPS.convertURLToDisplayName( aURL ),
@@ -1858,7 +1877,6 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
                                aURL,
                                "", 
                                playlistReaderListener );
-      SBScanServiceTreeNewEntryStart();
       retval = true;
     }
     // Everything else gets played directly.

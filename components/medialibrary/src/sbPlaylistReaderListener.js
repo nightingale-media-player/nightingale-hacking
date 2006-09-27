@@ -50,6 +50,7 @@ CPlaylistReaderListener.prototype =
   description: "",
   appendOrReplace: false,
   playWhenLoaded: false,
+  observer: null,
   
   onLocationChange: function(aWebProgress, aRequest, aLocation)
   {
@@ -79,11 +80,17 @@ CPlaylistReaderListener.prototype =
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
       if(aChannel)
       {
-        try {
+        try
+        {
           strContentType = aChannel.contentType;
-//          dump("CPlaylistReaderListener::onStateChange - Playlist Content Type: " + strContentType + "\n");
+          if ( strContentType.indexOf("audio") == -1 && strContentType.indexOf("video") == -1  )
+          {
+            if (this.observer)
+              this.observer.observe(null, "error", "Invalid Playlist MimeType");
+            return;
+          }
         } catch (err) {
-          dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE\n");
+          dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE" + err + "\n");
         } // Grrrr.
       }
       playlistReaderMngr.originalURL = this.originalURL;
@@ -133,6 +140,10 @@ CPlaylistReaderListener.prototype =
         if (this.playWhenLoaded)
         {
           pps.playTable(this.serviceGuid, this.destinationTable, 0);
+        }
+        if (this.observer)
+        {
+          this.observer.observe(null, "success", "");
         }
       }
     }
