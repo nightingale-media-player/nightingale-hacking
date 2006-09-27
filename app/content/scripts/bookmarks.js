@@ -503,7 +503,7 @@ var bmManager = {
                   { 
                       label: "Connect",
                       icon: "chrome://songbird/skin/serviceicons/connect.ico",
-                      url: "http://musicstore.connect.com/promos/dc/take_tour.html",
+                      url: "http://musicstore.connect.com/",
                       properties: "bookmark",
                       children: []
                   },  
