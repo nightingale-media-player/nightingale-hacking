@@ -107,8 +107,6 @@ pref("security.warn_leaving_secure.show_once", true);
 #includesubst songbird-debug-prefs.js
 #endif
 
-pref("browser.dom.window.dump.enabled", true);
-
 #ifdef XP_WIN
 pref("browser.preferences.instantApply", false);
 #else
