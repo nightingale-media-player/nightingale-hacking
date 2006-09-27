@@ -704,6 +704,13 @@ function onServiceEdit( index )
 {
   try
   {
+    // in case onpopuphiding was not called (ie, ctrl-n + ctrl-n)
+    if (isServiceEditShowing) {
+      // validate changes in the previous popup, if any
+      onServiceEditChange();
+      // reset, this is important
+      isServiceEditShowing = false; 
+    }
     var theServiceTree = document.getElementById( "frame_servicetree" );
     if ( theServiceTree)
     {
@@ -783,7 +790,7 @@ function getItemByUrl( tree, url )
   return retval;
 }
 
-function onServiceEditChange( evt )
+function onServiceEditChange( )
 {
   try
   {
@@ -828,7 +835,8 @@ function onServiceEditChange( evt )
           
           if(playlist)
           {
-            var strReadableName = evt.target.value;
+            var theEditBox = document.getElementById( "service_edit" );
+            var strReadableName = theEditBox.value;
             playlist.setReadableName(strReadableName);
           }
         }      
@@ -851,7 +859,7 @@ function onServiceEditKeypress( evt )
       HideServiceEdit( null );
       break;
     case 13: // Return
-      onServiceEditChange( evt );
+      onServiceEditChange();
       break;
     default:
       hasServiceEditBeenModified = true;
@@ -870,7 +878,7 @@ function HideServiceEdit( evt )
     if (hasServiceEditBeenModified && evt)
     {
       hasServiceEditBeenModified = false;
-      onServiceEditChange( evt );
+      onServiceEditChange();
     }
 
     if ( isServiceEditShowing )
