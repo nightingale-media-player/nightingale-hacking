@@ -1844,11 +1844,28 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
     // Stick playlists in the service pane (for now).
     if ( gPPS.isPlaylistURL( aURL ) )
     {
-      SBScanServiceTreeNewEntryEditable();
       var playlistReader = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
                            .createInstance(Components.interfaces.sbIPlaylistReaderManager);
       var playlistReaderListener = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
                            .createInstance(Components.interfaces.sbIPlaylistReaderListener);
+
+      // if we can find it in the service pane already then we shouldn't add it again.
+      var queryObj = new sbIDatabaseQuery();
+      queryObj.setDatabaseGUID("songbird");
+      var playlistManager = new sbIPlaylistManager();
+      playlistManager.getAllPlaylistList( queryObj );
+      var resultset = queryObj.getResultObject();
+      for ( var index = 0; index < resultset.getRowCount(); index++ )
+      {
+        // if we match don't add it, just play it.
+        if ( aURL == resultset.getRowCellByColumn( index, "description" ) )
+        {
+          gPPS.playTable(resultset.getRowCellByColumn(index, "service_uuid"),
+                         resultset.getRowCellByColumn(index, "name"),
+                         0);
+          return;
+        }
+      }
 
       // Create this closure here to prevent this object from getting garbage
       // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
@@ -1867,6 +1884,8 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
           }
         }
       };
+
+      SBScanServiceTreeNewEntryEditable();
 
       playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
       playlistReaderListener.observer = playlist_observer;
@@ -2465,9 +2484,7 @@ function onHTMLContextMenu( target )
       break;
       case "html.context.playlist":
         // Add playlists to the service pane
-        SBScanServiceTreeNewEntryEditable();
-        thePlaylistReader.autoLoad(theHTMLContextURL, "songbird", gPPS.convertURLToDisplayName( theHTMLContextURL ), "http", theHTMLContextURL, "", null);
-        SBScanServiceTreeNewEntryStart();
+        handleMediaURL(theHTMLContextURL, false);
       break;
     }
     theHTMLContextURL = null; // clear it because now we're done.
