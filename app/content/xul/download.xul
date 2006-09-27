@@ -142,7 +142,8 @@
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/window_utils.js" />
-  
+<script type="application/x-javascript" src="chrome://songbird/content/scripts/messagebox.js" />
+
   <script>
   <![CDATA[
     function doLoad()
@@ -164,30 +165,37 @@
       var theTextbox = document.getElementById( "download_folder_path" );
       var theFolder = theTextbox.value;
       
-      // Make sure the folder is valid?
-     	var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-     	try
-     	{
-        aLocalFile.initWithPath( theFolder );
+      // Make sure the folder is valid
+      var validDir;
+      var directory =
+        Components.classes["@mozilla.org/file/local;1"]
+                  .createInstance(Components.interfaces.nsILocalFile);
+      try {
+        directory.initWithPath(theFolder);
+        validDir = directory.isDirectory();
+      }
+      catch (e) {
+        validDir = false;
+      }
+                  
+      if (!validDir) {
+        sbMessageBox_strings("subscribe.selectvalidfolder.title",
+                        "subscribe.selectvalidfolder.msg",
+                        "Invalid folder",
+                        "Please select a valid destination folder for download.");
+
+        return false;
+      }
         
-        // Thou shalt not.
-        if ( aLocalFile.isDirectory() )
-        {
-          SBDataSetStringValue( "download.folder", theFolder );
-          var theCheckbox = document.getElementById( "download_check" );
-          SBDataSetBoolValue( "download.always", theCheckbox.checked );
-          if ( window.arguments && window.arguments[0] )
-          {
-            window.arguments[0].value = theTextbox.value;
-            window.arguments[0].retval = "ok";
-          }
-          return true;
-        }
-      }
-      catch ( err )
+      SBDataSetStringValue( "download.folder", theFolder );
+      var theCheckbox = document.getElementById( "download_check" );
+      SBDataSetBoolValue( "download.always", theCheckbox.checked );
+      if ( window.arguments && window.arguments[0] )
       {
+        window.arguments[0].value = theTextbox.value;
+        window.arguments[0].retval = "ok";
       }
-      return false;
+      return true;
     }
     function doCancel()
     {
