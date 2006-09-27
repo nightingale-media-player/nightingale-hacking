@@ -8,7 +8,7 @@
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
-!define RELEASE_NAME "Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32)"
+!define RELEASE_NAME "Songbird 'Test Flight' 0.2 (Win32)"
 Name "${RELEASE_NAME}"
 Caption "${RELEASE_NAME}"
 
@@ -18,7 +18,7 @@ ComponentText "You may customize the Songbird installation below. Click next whe
 
 CompletedText ""
 
-DirText "The installation will install the Songbird 'not-yet-ready-to-be-called 0.2' 0.2 (Win32) in the folder indicated below. You may change it if you wish to install to a different folder." \
+DirText "The installation will install the Songbird ${RELEASE_NAME} in the folder indicated below. You may change it if you wish to install to a different folder." \
 "Current Destination Folder" \
 "Browse ..." \
 "Choose a folder for Songbird ..."

@@ -12,7 +12,6 @@ rm -rf ../../../compiled/${SONGBIRD_DIR}
 mkdir ../../../compiled/${SONGBIRD_DIR}
 
 cp -RL ../../../compiled/dist/* ../../../compiled/${SONGBIRD_DIR}
-cp ../../../installer/linux/GPL.txt ../../../compiled/${SONGBIRD_DIR}
 cp ../../../installer/linux/LICENSE.txt ../../../compiled/${SONGBIRD_DIR}
 cp ../../../installer/linux/TRADEMARK.txt ../../../compiled/${SONGBIRD_DIR}
 
