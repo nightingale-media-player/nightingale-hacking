@@ -1897,6 +1897,7 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
 
       playlistReaderListener.playWhenLoaded = aShouldBeginPlayback;
       playlistReaderListener.observer = playlist_observer;
+      playlistReaderListener.mediaMimetypesOnly = true;
       playlistReader.autoLoad( aURL,
                                "songbird", 
                                gPPS.convertURLToDisplayName( aURL ),

@@ -50,6 +50,7 @@ CPlaylistReaderListener.prototype =
   description: "",
   appendOrReplace: false,
   playWhenLoaded: false,
+  mediaMimetypesOnly: false,
   observer: null,
   
   onLocationChange: function(aWebProgress, aRequest, aLocation)
@@ -83,10 +84,12 @@ CPlaylistReaderListener.prototype =
         try
         {
           strContentType = aChannel.contentType;
-          if ( strContentType.indexOf("audio") == -1 && strContentType.indexOf("video") == -1  )
+          if ( this.mediaMimetypesOnly &&
+               strContentType.indexOf("audio") == -1 &&
+               strContentType.indexOf("video") == -1  )
           {
             if (this.observer)
-              this.observer.observe(null, "error", "Invalid Playlist MimeType");
+              this.observer.observe(null, "error: non-media mime-type", strContentType);
             return;
           }
         } catch (err) {
@@ -113,7 +116,6 @@ CPlaylistReaderListener.prototype =
         
         if(playlist)
         {
-          //var destFolderRemote = new DataRemote( "download.folder", null );
           var destFolder = (new DataRemote("download.folder", null)).stringValue;
 
           var deviceManager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;1"].

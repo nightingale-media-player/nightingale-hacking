@@ -123,6 +123,11 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
    *
    */
   attribute nsIObserver observer;
+
+  /**
+   * \brief Only create playlists for media mime-types ( audio* or video* ), not text/html
+   */
+  attribute PRBool mediaMimetypesOnly;
 };
 
 /**
