@@ -33,9 +33,11 @@
 #include "DatabaseEngine.h"
 
 #include <xpcom/nsCOMPtr.h>
+#include <xpcom/nsCRT.h>
 #include <xpcom/nsIFile.h>
 #include <xpcom/nsILocalFile.h>
 #include <string/nsStringAPI.h>
+#include <xpcom/nsIObserverService.h>
 #include <xpcom/nsISimpleEnumerator.h>
 #include <xpcom/nsDirectoryServiceDefs.h>
 #include <xpcom/nsAppDirectoryServiceDefs.h>
@@ -348,7 +350,7 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
   return ret;
 } //SQLiteAuthorizer
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseEngine, sbIDatabaseEngine)
+NS_IMPL_THREADSAFE_ISUPPORTS2(CDatabaseEngine, sbIDatabaseEngine, nsIObserver)
 NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
 
 CDatabaseEngine *gEngine = nsnull;
@@ -358,80 +360,22 @@ CDatabaseEngine *gEngine = nsnull;
 CDatabaseEngine::CDatabaseEngine()
 : m_QueryProcessorShouldShutdown(PR_FALSE)
 , m_QueryProcessorQueueHasItem(PR_FALSE)
+, m_pDatabasesLock(nsnull)
+, m_pDatabaseLocksLock(nsnull)
+, m_pQueryProcessorMonitor(nsnull)
+, m_pPersistentQueriesLock(nsnull)
+, m_pDBStorePathLock(nsnull)
+, m_pDatabasesGUIDListLock(nsnull)
+, m_AttemptShutdownOnDestruction(PR_FALSE)
 {
-  nsresult rv;
-
-  m_pDatabasesLock = PR_NewLock();
-  m_pDatabaseLocksLock = PR_NewLock();
-  m_pQueryProcessorMonitor  = nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor");
-  m_pPersistentQueriesLock = PR_NewLock();
-  m_pDBStorePathLock = PR_NewLock();
-  m_pDatabasesGUIDListLock = PR_NewLock();
-
-  NS_ASSERTION(m_pDatabasesLock, "CDatabaseEngine.mpDatabaseLock failed");
-  NS_ASSERTION(m_pDatabaseLocksLock, "CDatabaseEngine.m_pDatabasesLocksLock failed");
-  NS_ASSERTION(m_pQueryProcessorMonitor, "CDatabaseEngine.m_pQueryProcessorMonitor failed");
-  NS_ASSERTION(m_pPersistentQueriesLock, "CDatabaseEngine.m_pPersistentQueriesLock failed");
-  NS_ASSERTION(m_pDBStorePathLock, "CDatabaseEngine.m_pDBStorePathLock failed");
-
-#ifdef DEBUG_locks
-  nsCAutoString log;
-  log += NS_LITERAL_CSTRING("\n\nCDatabaseEngine (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
-  log += NS_LITERAL_CSTRING("m_pDatabasesLock         = ") + nsPrintfCString("%x\n", m_pDatabasesLock);
-  log += NS_LITERAL_CSTRING("m_pDatabaseLocksLock     = ") + nsPrintfCString("%x\n", m_pDatabaseLocksLock);
-  log += NS_LITERAL_CSTRING("m_pQueryProcessorMonitor = ") + nsPrintfCString("%x\n", m_pQueryProcessorMonitor);
-  log += NS_LITERAL_CSTRING("m_pPersistentQueriesLock = ") + nsPrintfCString("%x\n", m_pPersistentQueriesLock);
-  log += NS_LITERAL_CSTRING("m_pCaseConversionLock    = ") + nsPrintfCString("%x\n", m_pCaseConversionLock);
-  log += NS_LITERAL_CSTRING("\n");
-  NS_WARNING(log.get());
-#endif
-
-  for (PRInt32 i = 0; i < QUERY_PROCESSOR_THREAD_COUNT; i++) {
-    nsCOMPtr<nsIThread> pThread;
-    nsCOMPtr<nsIRunnable> pQueryProcessorRunner = new QueryProcessorThread(this);
-    NS_ASSERTION(pQueryProcessorRunner, "Unable to create QueryProcessorRunner");
-    if (!pQueryProcessorRunner)
-      break;        
-    rv = NS_NewThread(getter_AddRefs(pThread),
-                               pQueryProcessorRunner,
-                               0,
-                               PR_JOINABLE_THREAD);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
-    if (NS_SUCCEEDED(rv))
-      m_QueryProcessorThreads.AppendObject(pThread);
-  }
-
-  rv = CreateDBStorePath();
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create db store folder in profile!");
-
-  GenerateDBGUIDList();
 
 } //ctor
 
 //-----------------------------------------------------------------------------
 /*virtual*/ CDatabaseEngine::~CDatabaseEngine()
 {
-  PRInt32 count = m_QueryProcessorThreads.Count();
-  if (count) {
-
-    {
-      nsAutoMonitor mon(m_pQueryProcessorMonitor);
-      m_QueryProcessorShouldShutdown = PR_TRUE;
-      mon.NotifyAll();
-    }
-
-    for (PRInt32 i = 0; i < count; i++)
-      m_QueryProcessorThreads[i]->Join();
-  }
-
-  CloseAllDB();
-  ClearAllDBLocks();
-
-  m_DatabaseLocks.clear();
-  m_Databases.clear();
-
-  ClearPersistentQueries();
-  ClearQueryQueue();
+  if (m_AttemptShutdownOnDestruction)
+    Shutdown();
 
   if (m_pDatabasesLock)
     PR_DestroyLock(m_pDatabasesLock);
@@ -455,12 +399,127 @@ CDatabaseEngine* CDatabaseEngine::GetSingleton()
 
   NS_NEWXPCOM(gEngine, CDatabaseEngine);
   if (!gEngine)
-      return nsnull;
+    return nsnull;
 
-  NS_ADDREF(gEngine);
+  // AddRef once for us (released in nsModule destructor)
   NS_ADDREF(gEngine);
 
+  // Set ourselves up properly
+  if (NS_FAILED(gEngine->Init())) {
+    NS_ERROR("Failed to Init CDatabaseEngine!");
+    NS_RELEASE(gEngine);
+    return nsnull;
+  }
+
+  // And AddRef once for the caller
+  NS_ADDREF(gEngine);
   return gEngine;
+}
+
+NS_IMETHODIMP CDatabaseEngine::Init()
+{
+  m_pDatabasesLock = PR_NewLock();
+  NS_ENSURE_TRUE(m_pDatabasesLock, NS_ERROR_OUT_OF_MEMORY);
+
+  m_pDatabaseLocksLock = PR_NewLock();
+  NS_ENSURE_TRUE(m_pDatabaseLocksLock, NS_ERROR_OUT_OF_MEMORY);
+
+  m_pPersistentQueriesLock = PR_NewLock();
+  NS_ENSURE_TRUE(m_pPersistentQueriesLock, NS_ERROR_OUT_OF_MEMORY);
+
+  m_pDBStorePathLock = PR_NewLock();
+  NS_ENSURE_TRUE(m_pDBStorePathLock, NS_ERROR_OUT_OF_MEMORY);
+
+  m_pDatabasesGUIDListLock = PR_NewLock();
+  NS_ENSURE_TRUE(m_pDatabasesGUIDListLock, NS_ERROR_OUT_OF_MEMORY);
+
+  m_pQueryProcessorMonitor =
+    nsAutoMonitor::NewMonitor("CDatabaseEngine.m_pQueryProcessorMonitor");
+  NS_ENSURE_TRUE(m_pQueryProcessorMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv;
+  for (PRInt32 i = 0; i < QUERY_PROCESSOR_THREAD_COUNT; i++) {
+    nsCOMPtr<nsIThread> pThread;
+    nsCOMPtr<nsIRunnable> pQueryProcessorRunner =
+      new QueryProcessorThread(this);
+    NS_ASSERTION(pQueryProcessorRunner, "Unable to create QueryProcessorRunner");
+    if (!pQueryProcessorRunner)
+      break;        
+    rv = NS_NewThread(getter_AddRefs(pThread),
+                      pQueryProcessorRunner,
+                      0,
+                      PR_JOINABLE_THREAD);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
+    if (NS_SUCCEEDED(rv))
+      m_QueryProcessorThreads.AppendObject(pThread);
+  }
+
+  rv = CreateDBStorePath();
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create db store folder in profile!");
+
+  GenerateDBGUIDList();
+
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  if(NS_SUCCEEDED(rv)) {
+    rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
+                                      PR_FALSE);
+  }
+
+  // This shouldn't be an 'else' case because we want to set this flag if
+  // either of the above calls failed
+  if (NS_FAILED(rv)) {
+    NS_ERROR("Unable to register xpcom-shutdown observer");
+    m_AttemptShutdownOnDestruction = PR_TRUE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseEngine::Shutdown()
+{
+  PRInt32 count = m_QueryProcessorThreads.Count();
+  if (count) {
+    {
+      nsAutoMonitor mon(m_pQueryProcessorMonitor);
+      m_QueryProcessorShouldShutdown = PR_TRUE;
+      mon.NotifyAll();
+    }
+
+    for (PRInt32 i = 0; i < count; i++)
+      m_QueryProcessorThreads[i]->Join();
+  }
+
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(CloseAllDB()), "CloseAllDB Failed!");
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(ClearAllDBLocks()), "ClearAllDBLocks Failed!");
+
+  m_DatabaseLocks.clear();
+  m_Databases.clear();
+
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(ClearPersistentQueries()),
+                   "ClearPersistentQueries Failed!");
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(ClearQueryQueue()), "ClearQueryQueue Failed!");
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
+                                       const char *aTopic,
+                                       const PRUnichar *aData)
+{
+  // Bail if we don't care about the message
+  if (nsCRT::strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
+    return NS_OK;
+  
+  // Shutdown our threads
+  nsresult rv = Shutdown();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
+
+  // And remove ourselves from the observer service
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
 }
 
 //-----------------------------------------------------------------------------

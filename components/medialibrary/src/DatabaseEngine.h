@@ -48,6 +48,7 @@
 #include <nsCOMArray.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
+#include <xpcom/nsIObserver.h>
 
 #include <string/nsString.h>
 
@@ -72,12 +73,14 @@ int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB,
 // CLASSES ====================================================================
 class QueryProcessorThread;
 
-class CDatabaseEngine : public sbIDatabaseEngine
+class CDatabaseEngine : public sbIDatabaseEngine,
+                        public nsIObserver
 {
 public:
   friend class QueryProcessorThread;
 
   NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBIDATABASEENGINE
 
   CDatabaseEngine();
@@ -86,6 +89,9 @@ public:
   static CDatabaseEngine* GetSingleton();
 
 protected:
+  NS_IMETHOD Init();
+  NS_IMETHOD Shutdown();
+
   PRInt32 OpenDB(const nsAString &dbGUID);
   PRInt32 CloseDB(const nsAString &dbGUID);
 
@@ -151,6 +157,8 @@ private:
 
   PRLock* m_pPersistentQueriesLock;
   querypersistmap_t m_PersistentQueries;
+
+  PRBool m_AttemptShutdownOnDestruction;
 };
 
 class QueryProcessorThread : public nsIRunnable
