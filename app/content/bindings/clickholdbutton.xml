@@ -42,7 +42,7 @@
   <binding id="clickholdbutton">
 
     <content>
-        <xul:button id="button" xbl:inherits="label" flex="1" />
+        <xul:button id="button" xbl:inherits="label,class" flex="1" />
         <xul:menupopup id="popup" xbl:inherits="position,popupanchor,popupalign">
           <children/>
         </xul:menupopup>

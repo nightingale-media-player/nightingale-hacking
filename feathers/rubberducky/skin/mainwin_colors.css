@@ -157,6 +157,7 @@ Grey material for the Service Pane.
 }
 
 
+
 /** 
 ************************************************************************************************************************************************
 CHROME - Top Bar
@@ -568,9 +569,9 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-button[disabled="true"],
-button[disabled="true"]:active,
-button[disabled="true"]:hover
+button[class="sb_faceplate"][disabled="true"],
+button[class="sb_faceplate"][disabled="true"]:active,
+button[class="sb_faceplate"][disabled="true"]:hover
 {
   -moz-border-top-colors: #000 !important;
   -moz-border-left-colors: #000 !important;
@@ -580,14 +581,13 @@ button[disabled="true"]:hover
   color: #333 !important;
 }
 
-button[disabled="false"]
-{
-  
+button[class="sb_faceplate"][disabled="false"]
+{  
   background-color: #333 !important;
   color: #99A195 !important;  
 }
 
-button
+button[class="sb_faceplate"]
 {
   -moz-border-top-colors: #333 !important;
   -moz-border-left-colors: #333 !important;
@@ -597,7 +597,7 @@ button
   color: #99A195 !important;  
 }
 
-button:hover
+button[class="sb_faceplate"]:hover
 {
   -moz-border-top-colors: #99A195 !important;
   -moz-border-left-colors: #99A195 !important;
@@ -606,7 +606,7 @@ button:hover
   color: #FFF !important;  
 }
 
-button:active
+button[class="sb_faceplate"]:active
 {
   -moz-border-top-colors: #535751 !important;
   -moz-border-left-colors: #535751 !important;
@@ -627,6 +627,8 @@ menuitem:hover
 {
   color: #505154 !important;
 }
+
+
 
 /** 
 ************************************************************************************************************************************************

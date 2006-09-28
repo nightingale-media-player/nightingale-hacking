@@ -1673,7 +1673,8 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_toolbar button 
 {
   height: 30px !important;
-  width: 30px !important;
+  /* Must have an odd width so that odd width icons can be centered */
+  width: 31px !important;  
   -moz-border-radius: 3px !important;
   padding: 0px 3px 0px 0px !important;
   margin: 2px 0px 2px 2px !important;
@@ -1684,7 +1685,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_toolbar button[disabled="true"]:hover
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1694,7 +1695,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_back[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1704,7 +1705,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_refresh[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1713,7 +1714,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_stop[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1722,7 +1723,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_fwd[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1731,7 +1732,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_home[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1740,7 +1741,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_bookmark[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1748,7 +1749,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_playlist[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1757,7 +1758,7 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 #browser_download[disabled="true"]
 {
   height: 30px !important;
-  width: 30px !important;
+  width: 31px !important;
   -moz-border-radius: 3px !important;
   margin: 2px 0px 2px 2px !important;
   border: 1px solid !important;
@@ -1790,7 +1791,7 @@ SEARCH WIDGET
   border: none !important;
 }
 
-.button-icon
+button[class="sb_faceplate"] .button-icon
 {
   margin: 0px 0px 0px 5px !important; 
 }
