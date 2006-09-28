@@ -267,7 +267,7 @@ playlist.dialog_playlist tree .tree-columnpicker-icon
   -moz-border-bottom-colors: #000 #000 !important;
   -moz-border-left-colors: #000 #000 !important;
   list-style-image: url(chrome://songbird/skin/default/column_picker.png) !important;
-  background-color: #000 !important;
+  background-color: transparent !important;
 }
 playlist.dialog_playlist tree .treecol-image /* puts a little piece to fill in next to the column picker **/
 {
@@ -276,7 +276,7 @@ playlist.dialog_playlist tree .treecol-image /* puts a little piece to fill in n
   -moz-border-bottom-colors: #000 #000 !important;
   -moz-border-left-colors: #000 #000 !important;
   background-image: url(chrome://songbird/skin/default/treecol.png) !important;
-  background-color: #000 !important;
+  background-color: transparent !important;
 }
 
 /** 
