@@ -560,7 +560,7 @@ Poppin' Fresh.
 
 menuitem[checked="true"] > hbox[checked="true"] 
 {  
-  margin: 9px 0px 0px 2px !important;
+  margin: 9px 0px 0px 7px !important;
   height: 7px !important;
   width: 7px !important;
   list-style-image: none !important;
@@ -570,7 +570,7 @@ menuitem[checked="true"] > hbox[checked="true"]
 
 menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
 {  
-  margin: 9px 0px 0px 2px !important;
+  margin: 9px 0px 0px 7px !important;
   height: 7px !important;
   width: 7px !important;
   list-style-image: none !important;
