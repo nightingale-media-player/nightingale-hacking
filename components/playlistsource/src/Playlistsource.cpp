@@ -758,9 +758,12 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
 
   // (sigh) Now linear search the info results object for the matching id value
   // to get the result index
-  PRInt32 i, rowcount;
-  rv = info->m_Resultset->GetRowCount(&rowcount);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 i = 0, rowcount = 0;
+
+  if(info->m_Resultset) {
+    rv = info->m_Resultset->GetRowCount(&rowcount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool found = PR_FALSE;
   nsAutoString newval;
