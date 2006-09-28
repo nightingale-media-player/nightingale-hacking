@@ -309,7 +309,8 @@ checkbox {
 
 /* ..... focused state ..... */
 
-checkbox:focus{
+checkbox:focus,
+checkbox[checked="true"]:focus{
   border: 1px dotted #666 !important;
   margin: 2px 7px 2px 7px !important;
   padding: 0px 0px 0px 0px !important;
