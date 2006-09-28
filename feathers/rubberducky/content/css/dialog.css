@@ -289,8 +289,7 @@ CHECKBOXES, boxes, labels, images, states.
 
 checkbox {
   -moz-box-align: center;
-  -moz-box-align: center;   
-  opacity: 0.7 !important; /* When it's not focused, dim it slightly. */
+  -moz-box-align: center;  
 }
 
 .checkbox-label-box {
@@ -305,12 +304,15 @@ checkbox {
 
 .checkbox-label {
   margin: 0 !important;
+  opacity: 1 !important;
 }
 
 /* ..... focused state ..... */
 
 checkbox:focus{
-  opacity: 1 !important;
+  border: 1px dotted #666 !important;
+  margin: 2px 7px 2px 7px !important;
+  padding: 0px 0px 0px 0px !important;
 }
 
 
@@ -337,17 +339,6 @@ richlistbox
 {
   padding: 10px 10px 10px 10px !important;
   
-}
-
-richlistitem > checkbox,
-richlistitem > checkbox[selected="false"]
-{
-  opacity: .6 !important;
-}
-richlistitem:focus > checkbox,
-richlistitem:focus > checkbox[selected="true"]
-{ 
-  opacity: 1 !important;  
 }
 
 richlistitem > label
