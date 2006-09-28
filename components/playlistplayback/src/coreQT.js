@@ -51,6 +51,7 @@ function CoreQT()
   this._muted = false;
   this._starttime = null;
   this._playFromBeginning = true;
+  this._fakePlayback = false;
 
   // This is used for the bizarre case of loading streams within QT. See the
   // later use in waitForPlayer().
@@ -65,7 +66,8 @@ function CoreQT()
   this.REMOTE_FILE_AVAILABLE = 2;
 
   this._availability = this.FILE_NOT_AVAILABLE;
-  this._lastAvailability = this.FILE_NOT_AVAILABLE;
+  this._lastFileType = this.FILE_NOT_AVAILABLE;
+  this._currentFileType = this.FILE_NOT_AVAILABLE;
 
   // Has the wma plugin been installed?
   this._supportsWM = false;
@@ -129,14 +131,26 @@ CoreQT.prototype.waitForPlayer = function ()
   switch(playerStatus)
   {
     case "Waiting":
-      if (this._lastAvailability == this.LOCAL_FILE_AVAILABLE) {
+      if ((this._lastFileType == this.REMOTE_FILE_AVAILABLE) &&
+          (this._currentFileType == this.LOCAL_FILE_AVAILABLE)) {
         // When switching from a playing remote file to a local file QuickTime
         // likes to say that it's "Waiting". And it does wait. FOREVER. It
         // needs a little kick in the pants to start playing again.
-        this._lastAvailability = this.FILE_NOT_AVAILABLE;
+        
+        // Set a flag to fool sbPlaylistPlayback into thinking that we're still
+        // playing. If we don't do this then it will try to skip to the next
+        // track.
+        this._fakePlayback = true;
+        
+        // Kill the plugin and reload it
         this.cleanupOnError();
+        
+        // Now give the plugin some time to get loaded properly. Someday it
+        // would be nice to have cleanupOnError be a synchronous call...
+        setTimeout("gQTCore.playURL(gQTCore._url);", 0);
         return;
       }
+      
       this._buffering = true;
       this._waitRetryCount++;
       if(this._waitRetryCount > 200)
@@ -396,7 +410,10 @@ CoreQT.prototype.playURL = function ( aURL )
   this._url = this.sanitizeURL(aURL);
   this._paused = false;
   this._playing = true;
-  this._buffering = true;  
+  this._buffering = true;
+  
+  // We're playing for real now, so unset our faker
+  this._fakePlayback = false;
 
   switch (isAvailable) {
     case this.NOT_LOCAL_FILE:
@@ -410,9 +427,10 @@ CoreQT.prototype.playURL = function ( aURL )
       this._isremote = false;
   }
 
-  // Save this value so that we can tell if we're switching from a remote to
+  // Save these values so that we can tell if we're switching from a remote to
   // a local file later in waitForPlayerLoop.
-  this._lastAvailability = isAvailable;
+  this._lastFileType = this._currentFileType;
+  this._currentFileType = isAvailable;
 
   this._availability = FILE_NOT_AVAILABLE;
   this._starttime = new Date();
@@ -501,7 +519,7 @@ CoreQT.prototype.getPlaying = function ()
 {
   this._verifyObject();
 
-  if(this._buffering)
+  if(this._fakePlayback || this._buffering)
     return true;
 
   // XXXben - getLength returns 0 when we're dealing with a stream in QT, so
@@ -525,7 +543,7 @@ CoreQT.prototype.getLength = function ()
   this._verifyObject();
   var playLength = 0;
   
-  if(this._buffering)
+  if(this._fakePlayback || this._buffering)
     return 1;
   
   try {
