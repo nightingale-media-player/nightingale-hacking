@@ -47,6 +47,7 @@ function CoreQT()
   this._paused  = false;
   this._waitForPlayInterval = null;
   this._waitRetryCount = 0;
+  this._playableTryCount = 0;
   this._lastVolume = 0;
   this._muted = false;
   this._starttime = null;
@@ -162,7 +163,13 @@ CoreQT.prototype.waitForPlayer = function ()
     break;
     
     case "Playable":
-      this.play();
+      //This is totally arbitrary value, it ends up being about 10 seconds
+      //This means the user can't pause for the first few seconds of the track.
+	    if(this._playableTryCount < 8) {
+		    this.play();
+        this._playableTryCount++;
+		  } 
+      
       this._buffering = false;
       // We've definitely got something, so clear the doubleCheck
       if (this._doubleCheckInterval) {
@@ -176,6 +183,7 @@ CoreQT.prototype.waitForPlayer = function ()
       this.play();
       clearInterval(this._waitForPlayInterval);
       this._waitForPlayInterval = 0;
+      this._playableTryCount = 0;
       this._waitRetryCount = 0;
       this._buffering = false;
       
@@ -220,7 +228,7 @@ CoreQT.prototype.pokingUrlListener = function ( )
     // be the case for streams. Go ahead and take a chance that it's a valid
     // file.
     if ((status == 200) && 
-        (contentLength != 0) && 
+        (contentLength != 0) &&
         (contentType.indexOf("audio") == 0 ||
          contentType.indexOf("video") == 0 ||
          contentType.indexOf("application") == 0)) {
