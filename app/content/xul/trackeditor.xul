@@ -236,7 +236,7 @@
   }
   
   function enableUndo() {
-    document.getElementById("button_undo").setAttribute("disabled", "false");
+    document.getElementById("button_undo").removeAttribute("disabled");
   }
   
   function disableUndo() {
