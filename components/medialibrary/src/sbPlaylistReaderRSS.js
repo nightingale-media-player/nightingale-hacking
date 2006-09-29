@@ -163,10 +163,8 @@ CPlaylistRSS.prototype =
     
     try
     {
-      retval.push( "text/xml" );
-      retval.push( "text/html" );
       retval.push( "text/rss+xml" );
-      retval.push( "application/xml" );
+      retval.push( "application/rss+xml" );
       
       nMIMECount.value = retval.length;
     }

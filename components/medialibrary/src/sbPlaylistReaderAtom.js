@@ -163,9 +163,8 @@ CPlaylistAtom.prototype =
     
     try
     {
-      retval.push( "text/xml" );
       retval.push( "text/atom+xml" );
-      retval.push( "application/xml" );
+      retval.push( "application/atom+xml" );
       
       nMIMECount.value = retval.length;
     }

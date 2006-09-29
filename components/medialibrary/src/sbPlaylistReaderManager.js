@@ -51,10 +51,10 @@ function CPlaylistReaderManager()
   {
     var nExtensionsCount = new Object;
     var aExts = this.m_Readers[i].supportedFileExtensions(nExtensionsCount);
-    this.m_Extensions.push(aExts);
+    this.m_Extensions = this.m_Extensions.concat(aExts);
     var nMIMETypesCount = new Object;
     var aMIMETypes = this.m_Readers[i].supportedMIMETypes(nMIMETypesCount);
-    this.m_MIMETypes.push(aMIMETypes);
+    this.m_MIMETypes = this.m_MIMETypes.concat(aMIMETypes);
   }
 }
 
@@ -135,21 +135,58 @@ CPlaylistReaderManager.prototype =
     
     if(aLocalURI.scheme == "file")
     {
+      // Open the file and make sure something is in it
+      var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService);
+      var file;
+      try {
+        var uri = ios.newURI(strURL, null, null);
+        file = uri.QueryInterface(Components.interfaces.nsIFileURL).file;
+      }
+      catch(e) {
+        dump(e);
+        return -1;
+      }
+
+      // Can't be a playlist if there is nothing in it
+      if(!file.exists() || file.fileSize == 0) {
+        return -1;
+      }
+
+      // If we are trying to load text/html, try to guess a better mime type
+      if(strContentType == null || strContentType == "" || strContentType == "text/html") {
+        var strContentType = this.guessMimeType(file);
+        if(!strContentType) {
+          return -1;
+        }
+      }
+
+      // Make sure our existing playlist readers can handle this mime type
+      var index;
+      for( index = 0; index < this.m_MIMETypes.length; index++ )
+      {
+        if(this.m_MIMETypes[index] == strContentType)
+          break;
+      }
+      if(index == this.m_MIMETypes.length)
+        return -1;
+
       var aPlaylistManager = new PlaylistManager();
       aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
 
-      var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
+      var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                              .createInstance(Components.interfaces.sbIDatabaseQuery);
       
       aDBQuery.setAsyncQuery(false);
       aDBQuery.setDatabaseGUID(strGUID);
 
       var playlist = aPlaylistManager.getPlaylist(strName, aDBQuery);
-      
+
       if(!playlist)
         aPlaylistManager.createPlaylist(strName, strReadableName, strDescription, strPlaylistType, aDBQuery);
-        
+
       err.value = 0;
-      
+
       var aURL = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURL);
       aURL.spec = strURL;
 
@@ -166,13 +203,16 @@ CPlaylistReaderManager.prototype =
       if(!aBrowser) return false;
       this.m_Browser = aBrowser;      
     	
-    	var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+      var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
       aLocalFile.initWithPath(destFile);
       
-      var aRegisterFileForDelete = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"].createInstance(Components.interfaces.nsPIExternalAppLauncher);
+      var aRegisterFileForDelete = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"]
+                                           .getService(Components.interfaces.nsPIExternalAppLauncher);
       aRegisterFileForDelete.deleteTemporaryFileOnExit(aLocalFile);
       
-      var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(strURL, null, null);
+      var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"]
+                                           .getService(Components.interfaces.nsIIOService)
+                                           .newURI(strURL, null, null);
               
       if(playlistReaderListener)
       {
@@ -231,18 +271,13 @@ CPlaylistReaderManager.prototype =
           if(theExtensions[i] == theExtension)
           {
             var errorCode = new Object;
-            var bRet = false;
             
             // Handoff the original url
             aReader.originalURL = this.originalURL;
             this.originalURL = "";
             
-            bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
-            
-//            dump("CPlaylistReaderManager::read (by extension: " + theExtensions[i] + ") - Last Attempt: " + bRet + "\n");
-            
-            if(bRet)
-              return bRet;
+            aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+            return errorCode.value;
           }
         }
       }
@@ -256,24 +291,21 @@ CPlaylistReaderManager.prototype =
           if(theMIMETypes[i] == strContentType)
           {
             var errorCode = new Object;
-            var bRet = false;
             
             // Handoff the original url
             aReader.originalURL = this.originalURL;
             this.originalURL = "";
             
-            bRet = aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+            aReader.read(strURL, strGUID, strDestTable, bAppendOrReplace, errorCode);
+            return errorCode.value;
             
 //            dump("CPlaylistReaderManager::read (by mime type: " + theMIMETypes[i] + ") - Last Attempt: " + bRet + "\n");
-            
-            if(bRet)     
-              return bRet;
           }
         }
       }
     }
     
-    return false;
+    return -1;
   },
   
   supportedFileExtensions: function(nExtCount)
@@ -288,6 +320,42 @@ CPlaylistReaderManager.prototype =
     return this.m_MIMETypes;   
   },
   
+  guessMimeType: function(file)
+  {
+    // Read a few bytes from the file
+    var fstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
+                            .createInstance(Components.interfaces.nsIFileInputStream);
+    var sstream = Components.classes["@mozilla.org/scriptableinputstream;1"]
+                            .createInstance(Components.interfaces.nsIScriptableInputStream);
+    fstream.init(file, -1, 0, 0);
+    sstream.init(fstream); 
+    var str = sstream.read(1024);
+    sstream.close();
+    fstream.close();
+
+    // This object literal maps mime types to regexps.  If the content matches
+    // the given regexp, it is assigned the given mime type.
+    var regexps = {
+      "application/rss+xml"  : /^<\?xml(.|\n)*<rss/,
+      "application/atom+xml" : /^<\?xml(.|\n)*xmlns="http:\/\/www\.w3\.org\/2005\/Atom"/,
+      "audio/x-scpls"        : /^\[playlist\]/i,
+      "audio/mpegurl"        : /^#EXTM3U/i,
+      "text/html"            : /<html/i,
+      "audio/mpegurl"        : /^(http|mms|rtsp)/im,
+      "audio/mpegurl"        : /.*(mp3|ogg|flac|wav|m4a|wma|wmv|asx|asf|avi|mov|mpg|mp4)$/im
+    };
+
+    for(var mimeType in regexps) {
+      var re = regexps[mimeType];
+      if(re.test(str)) {
+        return mimeType;
+      }
+    }
+
+    // Otherwise, we have no guess
+    return null;
+  },
+
   QueryInterface: function(aIID) {
     if (!aIID.equals(Components.interfaces.sbIPlaylistReaderManager) &&
         !aIID.equals(Components.interfaces.nsISupports)) 

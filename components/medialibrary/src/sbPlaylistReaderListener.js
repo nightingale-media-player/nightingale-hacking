@@ -84,24 +84,16 @@ CPlaylistReaderListener.prototype =
         try
         {
           strContentType = aChannel.contentType;
-          if ( this.mediaMimetypesOnly &&
-               strContentType.indexOf("audio") == -1 &&
-               strContentType.indexOf("video") == -1  )
-          {
-            if (this.observer)
-              this.observer.observe(null, "error: non-media mime-type", strContentType);
-            return;
-          }
         } catch (err) {
           dump("CPlaylistReaderListener::onStateChange - NO CONTENT TYPE AVAILABLE" + err + "\n");
         } // Grrrr.
       }
       playlistReaderMngr.originalURL = this.originalURL;
-      var success = playlistReaderMngr.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
+      var rv = playlistReaderMngr.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
                                                     this.readableName, this.playlistType, this.description, 
                                                     strContentType, this.appendOrReplace, null);
       
-      if(success)
+      if(rv == 0)
       {
         const DataRemote = new Components.Constructor( "@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
         var dbQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
@@ -147,6 +139,11 @@ CPlaylistReaderListener.prototype =
         {
           this.observer.observe(null, "success", "");
         }
+      }
+      else
+      {
+        if (this.observer)
+          this.observer.observe(null, "error: could not create playlist", "");
       }
     }
   },
