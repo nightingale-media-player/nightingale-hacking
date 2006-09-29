@@ -119,6 +119,7 @@ var sbIServiceDropObserver = {
           if (tree_url.indexOf("playlist_test.xul") == -1) return false;
         } else {
           if (properties[4] == "dynamic") return false; // dynamic playlists should only contain items from their dynamic source
+          if (properties[4] == "smart") return false; // smart playlists build their own content, you shouldn't drop on them
         }
         
         var dest_playlist_name;
