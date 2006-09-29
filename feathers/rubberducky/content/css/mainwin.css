@@ -574,6 +574,8 @@ scrollbar > slider
   width: 16px !important;
 } 
 
+
+
 /** 
 ************************************************************************************************************************************************
 THE LISTS, aka. the List Tree.
@@ -1644,24 +1646,12 @@ Browser Toolbar, Address Box, and Url-Slurper Button
   border: none !important;
 }
 
-#browser_url input:focus
-{
-  font-weight: bolder !important;
-}
-
 #browser_url .textbox-input,
 #browser_url .textbox-input:focus
 {
   border: none !important;
   padding: 2px 0px 0px 0px !important;
 }
-
-#browser_url input[selected="true"]
-{
-  font-weight: bolder !important;
-}
-
-
 
 #browser_toolbar
 {
