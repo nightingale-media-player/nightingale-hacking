@@ -28,6 +28,9 @@
 var wanted_locale = "en-US";
 var loaded_bundle = false;
 var bundle = null;
+
+const FIRSTRUN_BUNDLE_TIMEOUT = 15000;
+
 var FirstRunBundleCB = 
 {
   onLoad: function(bundle) { bundleDataReady(); },
@@ -70,7 +73,7 @@ function initFirstRun()
   try {
     var nsIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     bundle = new nsIBundle();
-    bundle.retrieveBundleFile();
+    bundle.retrieveBundleFile(FIRSTRUN_BUNDLE_TIMEOUT);
   } catch ( err ) {
     SB_LOG("initFirstRun", "" + err );
   }
@@ -272,7 +275,7 @@ function openConnectionSettings(evt)
   hideErrorMessage();
   showPleaseWait();
   loaded_bundle = false;
-  bundle.retrieveBundleFile();
+  bundle.retrieveBundleFile(FIRSTRUN_BUNDLE_TIMEOUT);
   var s = bundle.getStatus();
   if (s != 0) bundleDataReady(bundle);
 }

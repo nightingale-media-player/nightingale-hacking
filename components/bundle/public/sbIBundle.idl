@@ -26,9 +26,10 @@ interface sbIBundle : nsISupports
    * \brief Begin downloading the bundle data asynchronously
    * This method begins the asynchronous download of bundle data. Use sbIBundleObserver
    * to monitor progress.
+   * \param timeout Maximum time in milliseconds to wait for the server response.  Specify 0 to use the system socket timeout.
    * \sa addBundleObserver, removeBundleObserver, sbIBundleObserver
    */
-  void retrieveBundleFile();
+  void retrieveBundleFile(in long timeout);
 
   /**
    * \brief Add a bundle observer

@@ -55,14 +55,15 @@ Bundle.prototype = {
   _onload: null,
   _onerror: null,
   _installresult: "",
-  
+  _timer: null,
+
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
                             .getService(Components.interfaces.nsIConsoleService);
     consoleService.logStringMessage(str);
   },
 
-  retrieveBundleFile: function() {
+  retrieveBundleFile: function(timeout) {
   
     if (this._init && this._req) {
       this._req.abort();
@@ -101,12 +102,20 @@ Bundle.prototype = {
     }
 
     //this.LOG(url);
-    
+
     this._req.open('GET', url + this._getRandomParameter(), true); 
     this._req.send(null);
     this._init = true;
+
+    // If specified, set up a callback to enforce request timeout
+    if(timeout > 0) {
+      this._timer = Components.classes["@mozilla.org/timer;1"]
+                              .createInstance(Components.interfaces.nsITimer);
+      this._timer.initWithCallback(this, timeout,
+                                   Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+    }
   },
-        
+
   getBundleDocument: function() {
     return this._req ? this._req.responseXML : null;
   },
@@ -355,6 +364,18 @@ Bundle.prototype = {
     return this._bundleversion;
   },
   
+  // nsITimerCallback
+  notify: function(timer)
+  {
+    if(this._req.readyState != 4) { // 4 = COMPLETED
+      // abort() stops the http request so the normal event listeners are never
+      // called so we need to call onError() manually.
+      this._req.abort();
+      this.onError();
+    }
+    this._timer = null;
+  },
+
   /**
    * See nsISupports.idl
    */
