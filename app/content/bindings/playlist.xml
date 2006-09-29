@@ -2577,7 +2577,7 @@
           try
           {
             var MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-            mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+            var mediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
             
             var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
             queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
