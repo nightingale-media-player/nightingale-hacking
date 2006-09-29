@@ -416,12 +416,6 @@ BUTTONS for dialogs and forms.
 }
 
 
-.backless_button /* Used in Watch Folders **/
-{
-  background-color: transparent !important;
-  color: #99A195 !important;
-}
-
 /** 
 *************************************************************************
 TEXTBOXES for dialogs and forms.
@@ -624,14 +618,39 @@ SMART PLAYLIST BUILDER
   border: 1px solid #99A195 !important;
 }
 
-.smart_condition_plus
+
+.backless_button[disabled="true"]
 {
-  /* if you want an icon */
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #535751 !important;
 }
 
-.smart_condition_minus
+.backless_button
 {
-  /* if you want an icon */
+  -moz-border-top-colors: #99A195 !important;
+  -moz-border-left-colors: #99A195 !important;
+  -moz-border-bottom-colors: #535751 !important;
+  -moz-border-right-colors: #535751 !important;
+  background-color: #111 !important;
+  color: #99A195 !important;
+}
+
+.backless_button:hover
+{
+  color: #FFF !important;
+  background-color: #333 !important;
+}
+
+.backless_button:active
+{
+  -moz-border-top-colors: #535751 !important;
+  -moz-border-left-colors: #535751 !important;
+  -moz-border-bottom-colors: #99A195 !important;
+  -moz-border-right-colors: #99A195 !important;
 }
 
 /** 
