@@ -231,9 +231,12 @@ progressmeter
 
 .backless_button /* Used in Watch Folders **/
 {
-  -moz-border-radius: 0px !important;
+  -moz-border-radius: 3px !important;
   padding: 0px 0px 0px 0px !important;
-  border: 0px solid !important;
+  border: 1px solid !important;
+  min-height: 20px !important;
+  min-width: 20px !important;
+  margin-right: 2px !important;
 }
 
 .dialog_button[disabled="true"],
