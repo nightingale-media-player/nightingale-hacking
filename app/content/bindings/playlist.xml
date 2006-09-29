@@ -247,6 +247,13 @@
         e.initEvent("playlist-destroy", false, true);
         this.dispatchEvent(e);
 
+        for (var s=0;s<this.splitters.length;s++) {
+          this.splitters[s].removeEventListener("mousemove", this.onFilterSplitterMove, true);
+          this.splitters[s].removeEventListener("mousedown", this.onFilterSplitterDown, true);
+          this.splitters[s].removeEventListener("mouseup", this.onFilterSplitterUp, true);
+        }
+        this.splitters = null;
+
         // no more didRebuild/willRebuild messages
         if (this.tree.builder)
           this.tree.builder.removeListener(this);
@@ -303,6 +310,7 @@
       <field name="description">""</field>
       <field name="readable_name">""</field>
       <field name="filters">new Array();</field>
+      <field name="splitters">new Array();</field>
       <field name="commands"></field>
       <field name="toolbarbuttons">new Array();</field>
       <field name="menuitems">new Array();</field>
@@ -843,7 +851,7 @@
         thesplitter.hidden = false;
         var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'filter_parent');
         parent.hidden = false;
-        
+
         // Add a splitter
         if ( this.filters.length > 0 )
         {
@@ -858,6 +866,12 @@
 
           splitter.appendChild( grippy );
           parent.appendChild( splitter );          
+          
+          splitter.addEventListener("mousemove", this.onFilterSplitterMove, true);
+          splitter.addEventListener("mousedown", this.onFilterSplitterDown, true);
+          splitter.addEventListener("mouseup", this.onFilterSplitterUp, true);
+          
+          this.splitters.push( splitter);
         }
         
         // Add a filterlist
@@ -916,6 +930,33 @@
       ]]>
         </body>
       </method>
+
+    <method name="onFilterSplitterMove">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var state = this.getAttribute( "state" );
+          if (state != "collapsed" && this.down && this.lastPos) {
+            if (event.screenX > this.lastPos) { this.setAttribute("collapse", "after"); }
+            if (event.screenX < this.lastPos) { this.setAttribute("collapse", "before"); }
+          }
+          this.lastPos = event.screenX;
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFilterSplitterUp">
+      <body>
+        this.down = 0;
+        this.lastPos = null;
+      </body>
+    </method>
+
+    <method name="onFilterSplitterDown">
+      <body>
+        this.down = 1;
+      </body>
+    </method>
 
       <!-- Dynamic Columns/Template -->
 
