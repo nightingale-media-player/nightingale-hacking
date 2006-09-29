@@ -542,6 +542,10 @@
               if ( type == "transfer" && base_type == "simple" )
                 return;
 
+              // No context menu for the download service
+              if ( guid == "downloadDB" )
+                return;
+
               var theServiceTreePlaylistPopup = this.popup_playlist;
               if ( base_type == "smart" )
                 theServiceTreePlaylistPopup = this.popup_smartplaylist;
