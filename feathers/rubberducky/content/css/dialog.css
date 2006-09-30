@@ -227,6 +227,7 @@ progressmeter
   -moz-border-radius: 3px !important;
   padding: 3px 20px 3px 20px !important;
   border: 1px solid !important;
+  -moz-user-focus: normal !important;
 }
 
 .backless_button /* Used in Watch Folders **/
