@@ -319,6 +319,30 @@
       {
         switch ( evt.keyCode )
         {
+          case 9:  // Tab
+          case 19: // Break
+          case 37: // Arrows
+          case 38:
+          case 39:
+          case 40:
+          case 35: // End
+          case 36: // Home
+          case 45: // Insert
+          case 33: // PgUp
+          case 34: // PgDn
+          case 112: // F1-F12
+          case 113:
+          case 114:
+          case 115:
+          case 116:
+          case 117:
+          case 118:
+          case 119:
+          case 120:
+          case 121:
+          case 122:
+          case 123:
+            break;      
           case 27: // Esc
             this.list.label = ""; // Clear it
             // Fallthru
