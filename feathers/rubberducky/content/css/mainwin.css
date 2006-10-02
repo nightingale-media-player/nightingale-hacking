@@ -1192,6 +1192,7 @@ These let the user resize the frames in your box model.
 /* Spliters to resize the panes */
 
 .vert_splitter,
+#search_splitter,
 #vert_splitter,
 #filter_splitter
 {
@@ -1824,11 +1825,23 @@ SPINNER for the browser to show network activity.
 {
   background-repeat: no-repeat !important;
   margin: 10px 0px 10px 0px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
 }
 .spinner_stopped
 {
   background-repeat: no-repeat !important;
   margin: 10px 0px 10px 0px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
 }
 
 

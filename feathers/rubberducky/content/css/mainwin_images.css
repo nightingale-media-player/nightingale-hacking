@@ -726,6 +726,7 @@ These let the user resize the frames in your box model.
 /* Spliters to resize the panes */
 
 .vert_splitter,
+#search_splitter,
 #vert_splitter,
 #filter_splitter
 {
