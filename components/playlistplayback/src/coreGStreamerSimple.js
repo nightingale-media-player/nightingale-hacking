@@ -310,6 +310,7 @@ CoreGStreamerSimple.prototype.isMediaURL = function(aURL) {
         ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".ogg" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".flac" ) == ( aURL.length - 5 ) ) ||
+        ( aURL.indexOf( ".mpc" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wav" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wma" ) == ( aURL.length - 4 ) ) ||
