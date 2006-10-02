@@ -37,6 +37,7 @@
 #endif
 
 #include "nspr.h"
+#include "nsEscape.h"
 
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsComponentManagerUtils.h>
@@ -1235,6 +1236,13 @@ sbDeviceBase::GetFileNameFromURL(const PRUnichar *DeviceString,
   if((foundPosition != -1) || ((foundPosition = url.RFindChar(backSlash))!=-1))
   {
     fileName = Substring(url, ++foundPosition);
+
+    // Unescape URL
+    nsCAutoString tmp;
+    NS_UnescapeURL(NS_ConvertUTF16toUTF8(fileName),
+                   esc_FileBaseName|esc_AlwaysCopy, tmp);
+    fileName.Assign(NS_ConvertUTF8toUTF16(tmp));
+
     // Now add the extension if the device changes the format
     // of transferred file.
 
