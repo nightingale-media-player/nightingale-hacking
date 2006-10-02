@@ -480,7 +480,9 @@
                           <image id="browser_url_image" class="sb_faceplate" src=""/>
                           <textbox id="browser_url" class="sb_faceplate, mainwin_location" flex="1" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );"/>
                         </hbox>
-                        
+                        <smartsplitter id="search_splitter" state="open">
+                          <grippy/>
+                        </smartsplitter>                        
                         <!-- SEARCH WIDGET -->
                         <search
                           id="search_widget" 
@@ -488,10 +490,10 @@
                           buttonid="search_service_button"
                           flex="1"
                         />
-                        <spacer width="5" height="16"/>
+                        <spacer style="min-width: 5px !important;" width="5" height="16"/>
                         <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
                         <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
-                        <spacer width="8" height="16"/>
+                        <spacer style="min-width: 8px !important;" width="8" height="16"/>
                       </hbox>
                     </vbox>
 
