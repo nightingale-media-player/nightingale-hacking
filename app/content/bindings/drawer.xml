@@ -68,8 +68,15 @@
      <constructor>
        <![CDATA[
          this.boxid = "growbox."+this.getAttribute("id");
-         this.hflex = document.getElementById(this.getAttribute("hflex"));
-         if (this.hflex) this.hflex.setAttribute("flex", "0");
+         // drawers that flex need to set the property of their flex-able hbox parent.
+         // Find that element by using our hflex attribute which contains the id of
+         // the flex-able hbox.
+         var hflexId = this.getAttribute("hflex");
+         if (hflexId) {
+           this.hflex = document.getElementById(hflexId);
+           if (this.hflex)
+             this.hflex.setAttribute("flex", "0");
+         }
        ]]>
      </constructor>
      <destructor>
@@ -91,6 +98,7 @@
       <field name="state">"closed"</field>
       <field name="bundleInterface">null</field>
       <field name="boxid">null</field>
+      <field name="hflex">null</field>
 
       <method name="toggleDrawer">
         <body>
