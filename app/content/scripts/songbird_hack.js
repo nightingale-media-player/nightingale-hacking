@@ -1871,7 +1871,7 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
           gPPS.playTable(resultset.getRowCellByColumn(index, "service_uuid"),
                          resultset.getRowCellByColumn(index, "name"),
                          0);
-          return;
+          return true;
         }
       }
 
