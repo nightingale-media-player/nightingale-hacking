@@ -443,11 +443,11 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
   // Get a new values object.
   m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1", &rv);
-  if(NS_FAILED(rv)) return rv;
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> pURI;
   rv = m_Channel->GetURI(getter_AddRefs(pURI));
-  if(NS_FAILED(rv)) return rv;
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool async = PR_TRUE;
 
@@ -515,11 +515,13 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
 
         // Read the first chunk of the file to get bitrate, etc.
         // Then open a file with it.
-        nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1");
+        nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
         file->InitWithNativePath(NS_UnescapeURL(cstrPath));
 
         // Then open an input stream with it.
-        nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1");
+        nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
         stream->Init( file, PR_RDONLY, 0, nsIFileInputStream::CLOSE_ON_EOF );
 
         // Then read.
@@ -564,7 +566,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     {
       // Get a new channel handler for async operation.
       m_ChannelHandler = do_CreateInstance("@songbirdnest.com/Songbird/MetadataChannel;1", &rv);
-      if(NS_FAILED(rv)) return rv;
+      NS_ENSURE_SUCCESS(rv, rv);
 
       rv = m_ChannelHandler->Open( m_Channel, this );
       if(NS_FAILED(rv)) return NS_OK;
@@ -1141,7 +1143,7 @@ void sbMetadataHandlerID3::CalculateBitrate(const char *buffer, PRUint32 length,
     m_Values->SetValue(NS_LITERAL_STRING("frequency"), str, 0);
 
     m_Values->GetValue(NS_LITERAL_STRING("length"), str);
-    if (!str.Length() && bitrate > 0 && file_size > 0)
+    if (!str.Length() && bitrate > 0 && file_size > 0 && file_size != (PRUint64)-1) // No, ben, there is no PR_UINT64_MAX
     {
       // Okay, so, the id3 didn't specify length.  Calculate that, too.
       PRUint32 length_in_ms = (PRUint32)( ( ( ( file_size * (PRUint64)8 ) ) / (PRUint64)bitrate ) & 0x00000000FFFFFFFF );
