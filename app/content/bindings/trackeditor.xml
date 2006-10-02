@@ -215,7 +215,7 @@
 
     <method name="getContentSize">
      <body>
-       return 100;
+       return 225;
      </body>
     </method>
 
