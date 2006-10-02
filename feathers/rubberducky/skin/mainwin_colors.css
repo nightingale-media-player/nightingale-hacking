@@ -657,7 +657,8 @@ These let the user resize the frames in your box model.
   border: 1px solid !important;
 }
 
-#vert_splitter
+#vert_splitter,
+#search_splitter
 {
   background-color: #000 !important;
 }
