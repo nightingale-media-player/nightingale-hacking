@@ -97,7 +97,8 @@ void FormatLengthToString(nsAString &str)
   PRInt32 errCode = 0;
   PRInt32 length = strConvert.ToInteger(&errCode);
 
-  if (length == 0)
+  //Shorter than a second, return empty string.
+  if (length < 1000)
   {
     str = EmptyString();
     return;
@@ -809,6 +810,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     if(completed)
     {
       PRBool seenLength = PR_FALSE;
+      PRBool hasSetValue = PR_FALSE;
       nsAutoString strQuery;
       nsAutoString strKey;
       nsAutoString strValue;
@@ -829,6 +831,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
           if(p->m_columnCache.find(strKey) != p->m_columnCache.end())
           {
+            hasSetValue = PR_TRUE;
             if(strKey.Equals(strColLength))
             {
               seenLength = PR_TRUE;
@@ -857,7 +860,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
       if(!seenLength)
       {
-        if(strQuery[strQuery.Length() - 1] != ',' && values != 0) 
+        if(strQuery[strQuery.Length() - 1] != ',' && hasSetValue) 
           strQuery.AppendLiteral(",");
         strQuery.AppendLiteral(" length=\"\" ");
       }
