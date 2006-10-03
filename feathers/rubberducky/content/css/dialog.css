@@ -628,6 +628,7 @@ menulist
   min-height:4px !important;
   max-width:6px !important;
   max-height:4px !important;
+  margin: 9px 0px 9px 0px !important;
 }
 .menulist-dropmarker
 {
