@@ -1206,6 +1206,19 @@ These let the user resize the frames in your box model.
   cursor: w-resize;
 }
 
+#search_splitter
+{
+  width: 7px !important;
+  min-width: 7px !important;
+  max-width: 7px !important;
+  height: 50px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  cursor: w-resize;
+  margin: 0px 0px 0px 2px !important;
+}
+
 .vert_splitter[state="collapsed"],
 #vert_splitter[state="collapsed"]
 {
