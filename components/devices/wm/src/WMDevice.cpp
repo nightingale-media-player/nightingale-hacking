@@ -54,6 +54,8 @@
 #include "win32/WMDImplementation.h"
 #endif
 
+#define USE_THREAD 1
+
 /* Implementation file */
 
 #define NAME_WINDOWS_MEDIA_DEVICE_LEN     NS_LITERAL_STRING("Songbird Windows Media Device").Length()
@@ -64,7 +66,11 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
 
 //-----------------------------------------------------------------------------
 sbWMDevice::sbWMDevice()
+#if USE_THREAD
+: sbDeviceBase(PR_TRUE)
+#else // USE_THREAD
 : sbDeviceBase(PR_FALSE)
+#endif // USE_THREAD
 , mpMonitor(nsnull)
 {
   mpMonitor = PR_NewMonitor();
@@ -77,6 +83,11 @@ sbWMDevice::sbWMDevice()
 //-----------------------------------------------------------------------------
 sbWMDevice::~sbWMDevice() 
 {
+  //Specifically because the WM device must maintain a lock
+  //on resources shared between the main thread and it's 
+  //worker thread. Doing this for *your* device is ill advised!
+  sbDeviceBase::RequestThreadShutdown();
+
   PR_EnterMonitor(mpMonitor);
 
   delete mDeviceManager;
@@ -90,7 +101,11 @@ sbWMDevice::~sbWMDevice()
 NS_IMETHODIMP
 sbWMDevice::Initialize(PRBool *_retval)
 {
+#if USE_THREAD
   InitializeAsync();
+#else // USE_THREAD
+  InitializeSync();
+#endif // USE_THREAD
   return NS_OK;
 }
 

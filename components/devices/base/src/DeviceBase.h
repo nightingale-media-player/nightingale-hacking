@@ -312,6 +312,10 @@ protected:
 
   static void PR_CALLBACK DeviceProcess(sbDeviceBase* pData);
 
+protected:
+
+  void RequestThreadShutdown();
+
 private:
 
   std::deque<ThreadMessage*> mDeviceMessageQueue;

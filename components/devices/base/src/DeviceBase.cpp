@@ -1991,6 +1991,11 @@ void
 sbDeviceBase::TransferComplete()
 {
 }
-
-
 /* End of implementation class template. */
+
+void sbDeviceBase::RequestThreadShutdown() {
+  mDeviceThreadShouldShutdown = PR_TRUE;
+  nsAutoMonitor mon(mpDeviceThreadMonitor);
+  mon.NotifyAll();
+  return;
+}
