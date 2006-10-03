@@ -152,6 +152,7 @@ try
     {
       alert( err );
     }
+    document.removeEventListener("search", onSBMainwinSearchEvent, true);
   }
   
   //

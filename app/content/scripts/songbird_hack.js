@@ -335,7 +335,6 @@ function SBInitialize()
       mainpane_listener_set = false;
       if (theMainPane.addEventListener) {
         theMainPane.addEventListener("DOMContentLoaded", onMainPaneLoad, false);
-        theMainPane.addEventListener("unload", onMainPaneUnload, true);
         
         // Initialize the global progress filter
         if (!gProgressFilter) {
@@ -442,6 +441,22 @@ function SBInitialize()
 
 function SBUninitialize()
 {
+  thePlaylistReader = null;
+
+  window.removeEventListener("keydown", checkAltF4, true);
+  
+  var mainPane = document.getElementById("frame_main_pane");
+  mainPane.removeEventListener("DOMContentLoaded", onMainPaneLoad, false);
+  mainPane.removeProgressListener(gProgressFilter);
+
+  var webPlaylist = document.getElementById("playlist_web");
+  webPlaylist.removeEventListener("playlist-play", onPlaylistPlay, true);
+  webPlaylist.removeEventListener("command", onPlaylistContextMenu, false);
+
+  document.__THESERVICETREE__ = null;
+  document.__SEARCHWIDGET__ = null;
+  document.__CURRENTWEBPLAYLIST__ = null;
+
   // Make sure to destroy the global progress filter
   if (gProgressFilter)
     gProgressFilter = null;
@@ -459,6 +474,12 @@ function SBUninitialize()
   catch(err) {
     dump("Error. songbird_hack.js: SBUnitialize() \n" + err + "\n");
   }
+
+  thePollPlaylistService = null;
+  theWebPlaylist = null;
+  theWebPlaylistQuery = null;
+  theNumPlaylistItemsRemote = null;
+
 }
 
 //
