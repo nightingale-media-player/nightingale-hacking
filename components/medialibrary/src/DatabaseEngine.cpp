@@ -689,9 +689,10 @@ void CDatabaseEngine::AddPersistentQueryPrivate(CDatabaseQuery *pQuery, const ns
   }
 
   {
-    nsAutoLock lock(pQuery->m_pPersistentQueryTableLock);
+    PR_Lock(pQuery->m_pPersistentQueryTableLock);
     pQuery->m_PersistentQueryTable = strTableName;
     pQuery->m_IsPersistentQueryRegistered = PR_TRUE;
+    PR_Unlock(pQuery->m_pPersistentQueryTableLock);
   }
 
 } //AddPersistentQuery
@@ -719,8 +720,9 @@ void CDatabaseEngine::RemovePersistentQueryPrivate(CDatabaseQuery *pQuery)
   NS_ConvertUTF16toUTF8 strTheDBGUID(strDBGUID);
 
   {
-    nsAutoLock lock(pQuery->m_pPersistentQueryTableLock);
+    PR_Lock(pQuery->m_pPersistentQueryTableLock);
     tableName = pQuery->m_PersistentQueryTable;
+    PR_Unlock(pQuery->m_pPersistentQueryTableLock);
   }
 
   querypersistmap_t::iterator itPersistentQueries = m_PersistentQueries.find(strTheDBGUID);
@@ -894,8 +896,9 @@ void CDatabaseEngine::GenerateDBGUIDList()
   if(NS_FAILED(rv)) return;
 
   {
-    nsAutoLock lock(m_pDBStorePathLock);
+    PR_Lock(m_pDBStorePathLock);
     rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(pDBDirectory));
+    PR_Unlock(m_pDBStorePathLock);
   }
 
   rv = pDBDirectory->IsDirectory(&bFlag);
@@ -947,8 +950,9 @@ void CDatabaseEngine::GenerateDBGUIDList()
                   strLeaf.Cut((PRUint32)Distance(itStrStart, itStart), (PRUint32)Distance(itStart, itEnd));
 
                   {
-                    nsAutoLock lock(m_pDatabasesGUIDListLock);
+                    PR_Lock(m_pDatabasesGUIDListLock);
                     m_DatabasesGUIDList.push_back(strLeaf);
+                    PR_Unlock(m_pDatabasesGUIDListLock);
                   }
 
                   ++nRet;
@@ -971,8 +975,9 @@ void CDatabaseEngine::GenerateDBGUIDList()
 //-----------------------------------------------------------------------------
 PRInt32 CDatabaseEngine::GetDBGUIDList(std::vector<nsString> &vGUIDList)
 {
-  nsAutoLock lock(m_pDatabasesGUIDListLock);
+  PR_Lock(m_pDatabasesGUIDListLock);
   vGUIDList = m_DatabasesGUIDList;
+  PR_Unlock(m_pDatabasesGUIDListLock);
   return vGUIDList.size();
 } //GetDBGUIDList
 
@@ -981,14 +986,15 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 {
   sqlite3 *pRet = nsnull;
 
+  PR_Lock(m_pDatabasesLock);
+
+  databasemap_t::const_iterator itDatabases = m_Databases.find(PromiseFlatString(dbGUID));
+  if(itDatabases != m_Databases.end())
   {
-    nsAutoLock lock(m_pDatabasesLock);
-    databasemap_t::const_iterator itDatabases = m_Databases.find(PromiseFlatString(dbGUID));
-    if(itDatabases != m_Databases.end())
-    {
-      pRet = itDatabases->second;
-    }
+    pRet = itDatabases->second;
   }
+
+  PR_Unlock(m_pDatabasesLock);
 
   return pRet;
 } //FindDBByGUID
@@ -1478,9 +1484,10 @@ void CDatabaseEngine::UpdatePersistentQueries(CDatabaseQuery *pQuery)
   }
 
   {
-    nsAutoLock lock(pQuery->m_pModifiedDataLock);
+    PR_Lock(pQuery->m_pModifiedDataLock);
     pQuery->m_HasChangedDataOfPersistQuery = PR_FALSE;
     pQuery->m_ModifiedData.clear();
+    PR_Unlock(pQuery->m_pModifiedDataLock);
   }
 
 } //UpdatePersistentQueries
@@ -1555,10 +1562,9 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, nsAString &str
   nsCOMPtr<nsILocalFile> f;
   nsAutoString strDBFile(dbGUID);
 
-  {
-    nsAutoLock lock(m_pDBStorePathLock);
-    rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(f));
-  }
+  PR_Lock(m_pDBStorePathLock);
+  rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(f));
+  PR_Unlock(m_pDBStorePathLock);
 
   if(NS_FAILED(rv)) return rv;
 

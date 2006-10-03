@@ -35,7 +35,7 @@
 
 #include <nspr/prmem.h>
 #include <xpcom/nsMemory.h>
-#include <xpcom/nsAutoLock.h>
+#include <xpcom/nsAutoLock.h>     // for nsAutoMonitor
 #include <necko/nsIIOService.h>
 #include <necko/nsIURI.h>
 
@@ -113,13 +113,15 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
 /* void SetDirectory (in wstring strDirectory); */
 NS_IMETHODIMP CMediaScanQuery::SetDirectory(const nsAString &strDirectory)
 {
-  nsAutoLock dirLock(m_pDirectoryLock);
+  PR_Lock(m_pDirectoryLock);
   {
-    nsAutoLock fileLock(m_pFileStackLock);
+    PR_Lock(m_pFileStackLock);
     m_FileStack.clear();
 
     m_strDirectory = strDirectory;
+    PR_Unlock(m_pFileStackLock);
   }
+  PR_Unlock(m_pDirectoryLock);
   return NS_OK;
 } //SetDirectory
 
@@ -127,8 +129,9 @@ NS_IMETHODIMP CMediaScanQuery::SetDirectory(const nsAString &strDirectory)
 /* wstring GetDirectory (); */
 NS_IMETHODIMP CMediaScanQuery::GetDirectory(nsAString &_retval)
 {
-  nsAutoLock lock(m_pDirectoryLock);
+  PR_Lock(m_pDirectoryLock);
   _retval = m_strDirectory;
+  PR_Unlock(m_pDirectoryLock);
   return NS_OK;
 } //GetDirectory
 
@@ -154,11 +157,16 @@ NS_IMETHODIMP CMediaScanQuery::GetRecurse(PRBool *_retval)
 NS_IMETHODIMP CMediaScanQuery::SetCallback(sbIMediaScanCallback *pCallback)
 {
   NS_ENSURE_ARG_POINTER(pCallback);
-  nsAutoLock lock(m_pCallbackLock);
+
+  PR_Lock(m_pCallbackLock);
+
   if(pCallback != m_pCallback)
     NS_IF_RELEASE(m_pCallback);  
   NS_ADDREF(pCallback);
   m_pCallback = pCallback;
+
+  PR_Unlock(m_pCallbackLock);
+
   return NS_OK;
 } //SetCallback
 
@@ -167,9 +175,10 @@ NS_IMETHODIMP CMediaScanQuery::SetCallback(sbIMediaScanCallback *pCallback)
 NS_IMETHODIMP CMediaScanQuery::GetCallback(sbIMediaScanCallback **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  nsAutoLock lock(m_pCallbackLock);
+  PR_Lock(m_pCallbackLock);
   *_retval = m_pCallback;
   NS_IF_ADDREF(m_pCallback);
+  PR_Unlock(m_pCallbackLock);
   return NS_OK;
 } //GetCallback
 
@@ -187,8 +196,9 @@ NS_IMETHODIMP CMediaScanQuery::GetFileCount(PRUint32 *_retval)
 /* void AddFilePath (in wstring strFilePath); */
 NS_IMETHODIMP CMediaScanQuery::AddFilePath(const nsAString &strFilePath)
 {
-  nsAutoLock lock(m_pFileStackLock);
+  PR_Lock(m_pFileStackLock);
   m_FileStack.push_back(PromiseFlatString(strFilePath));
+  PR_Unlock(m_pFileStackLock);
   return NS_OK;
 } //AddFilePath
 
@@ -199,11 +209,13 @@ NS_IMETHODIMP CMediaScanQuery::GetFilePath(PRUint32 nIndex, nsAString &_retval)
   _retval = EmptyString();
   NS_ENSURE_ARG_MIN(nIndex, 0);
 
-  nsAutoLock lock(m_pFileStackLock);
+  PR_Lock(m_pFileStackLock);
 
   if(nIndex < m_FileStack.size()) {
     _retval = m_FileStack[nIndex];
   }
+
+  PR_Unlock(m_pFileStackLock);
 
   return NS_OK;
 } //GetFilePath
@@ -213,8 +225,9 @@ NS_IMETHODIMP CMediaScanQuery::GetFilePath(PRUint32 nIndex, nsAString &_retval)
 NS_IMETHODIMP CMediaScanQuery::IsScanning(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  nsAutoLock lock(m_pScanningLock);
+  PR_Lock(m_pScanningLock);
   *_retval = m_bIsScanning;
+  PR_Unlock(m_pScanningLock);
   return NS_OK;
 } //IsScanning
 
@@ -222,8 +235,9 @@ NS_IMETHODIMP CMediaScanQuery::IsScanning(PRBool *_retval)
 /* void SetIsScanning (in PRBool bIsScanning); */
 NS_IMETHODIMP CMediaScanQuery::SetIsScanning(PRBool bIsScanning)
 {
-  nsAutoLock lock(m_pScanningLock);
+  PR_Lock(m_pScanningLock);
   m_bIsScanning = bIsScanning;
+  PR_Unlock(m_pScanningLock);
   return NS_OK;
 } //SetIsScanning
 
@@ -231,9 +245,10 @@ NS_IMETHODIMP CMediaScanQuery::SetIsScanning(PRBool bIsScanning)
 /* wstring GetLastFileFound (); */
 NS_IMETHODIMP CMediaScanQuery::GetLastFileFound(nsAString &_retval)
 {
-  nsAutoLock lock(m_pFileStackLock);
+  PR_Lock(m_pFileStackLock);
   PRInt32 nIndex = (PRInt32)m_FileStack.size() - 1;
   _retval = m_FileStack[nIndex];
+  PR_Unlock(m_pFileStackLock);
   return NS_OK;
 } //GetLastFileFound
 
@@ -241,8 +256,9 @@ NS_IMETHODIMP CMediaScanQuery::GetLastFileFound(nsAString &_retval)
 /* wstring GetCurrentScanPath (); */
 NS_IMETHODIMP CMediaScanQuery::GetCurrentScanPath(nsAString &_retval)
 {
-  nsAutoLock lock(m_pCurrentPathLock);
+  PR_Lock(m_pCurrentPathLock);
   _retval = m_strCurrentPath;
+  PR_Unlock(m_pCurrentPathLock);
   return NS_OK;
 } //GetCurrentScanPath
 
@@ -250,8 +266,9 @@ NS_IMETHODIMP CMediaScanQuery::GetCurrentScanPath(nsAString &_retval)
 /* void SetCurrentScanPath (in wstring strScanPath); */
 NS_IMETHODIMP CMediaScanQuery::SetCurrentScanPath(const nsAString &strScanPath)
 {
-  nsAutoLock lock(m_pCurrentPathLock);
+  PR_Lock(m_pCurrentPathLock);
   m_strCurrentPath = strScanPath;
+  PR_Unlock(m_pCurrentPathLock);
   return NS_OK;
 } //SetCurrentScanPath
 
@@ -259,8 +276,9 @@ NS_IMETHODIMP CMediaScanQuery::SetCurrentScanPath(const nsAString &strScanPath)
 /* void Cancel (); */
 NS_IMETHODIMP CMediaScanQuery::Cancel()
 {
-  nsAutoLock lock(m_pCancelLock);
+  PR_Lock(m_pCancelLock);
   m_bCancel = PR_TRUE;
+  PR_Unlock(m_pCancelLock);
   return NS_OK;
 } //Cancel
 
@@ -269,8 +287,9 @@ NS_IMETHODIMP CMediaScanQuery::Cancel()
 NS_IMETHODIMP CMediaScanQuery::IsCancelled(PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  nsAutoLock lock(m_pCancelLock);
+  PR_Lock(m_pCancelLock);
   *_retval = m_bCancel;
+  PR_Unlock(m_pCancelLock);
   return NS_OK;
 } //IsCancelled
 
