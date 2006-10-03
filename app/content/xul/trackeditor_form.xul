@@ -48,7 +48,7 @@
       <spacer height="3"/>
       <hbox align="center">
         <label id="trackeditor.label.url" class="dialog_label" value="&metadata.url;" width="96"/>
-        <dbedit_textbox id="trackeditor.url" column="url" flex="1"/>
+        <dbedit_label id="trackeditor.url" column="url" flex="1"/>
       </hbox>
       <hbox align="center">
         <label id="trackeditor.label.title" class="dialog_label" value="&metadata.title;" width="96"/>
