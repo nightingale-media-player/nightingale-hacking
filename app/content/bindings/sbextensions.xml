@@ -117,7 +117,10 @@
 
       <method name="getContentSize">
       <body>
-        return Math.min(4, this.bundleInterface.getNumExtensions()) * 20;
+        <![CDATA[
+          var n_ext = this.bundleInterface.getNumExtensions();
+          return Math.min(4, n_ext) * 20 + ((n_ext <= 4) ? 4 : 0);
+        ]]>
       </body>
       </method>
       
