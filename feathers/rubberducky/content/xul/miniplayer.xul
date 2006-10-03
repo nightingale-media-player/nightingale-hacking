@@ -92,7 +92,7 @@
       <spacer width="4" height="18" id="mini_dash_e"/>
     </hbox>
     <vbox>
-      <button id="mini_btn_jump" class="sb_faceplate" oncommand="onJumpToFileKey();" tooltiptext="&jumptofile.title;"/>
+      <button id="mini_btn_jump" class="sb_faceplate" oncommand="toggleJumpTo();" tooltiptext="&jumptofile.title;"/>
     </vbox>
     <vbox>
       <button id="mini_btn_max"  class="sb_faceplate" oncommand="SBMainWindowOpen();" />

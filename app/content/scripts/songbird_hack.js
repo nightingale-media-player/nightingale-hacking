@@ -2349,6 +2349,9 @@ function doMenu( command ) {
     case "control.repx":
       SBDataSetIntValue( "playlist.repeat", 0 );
     break;
+    case "control.jumpto":
+      toggleJumpTo();
+    break;
     case "menu.extensions":
       SBExtensionsManagerOpen();
     break;

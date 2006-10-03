@@ -44,6 +44,7 @@
 <!ENTITY menu.control.repa  "Repeat All" >
 <!ENTITY menu.control.rep1  "Repeat One" >
 <!ENTITY menu.control.repx  "Repeat None" >
+<!ENTITY menu.control.jumpto "Jump To..." >
 
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Extensions..." >
@@ -205,6 +206,7 @@
 <!ENTITY menu.control.repa.accesskey  "A" >
 <!ENTITY menu.control.rep1.accesskey  "O" >
 <!ENTITY menu.control.repx.accesskey  "E" >
+<!ENTITY menu.control.jumpto.accesskey "J" >
 
 <!ENTITY menu.services.accesskey      "S" >
 

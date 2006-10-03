@@ -363,3 +363,9 @@
 <!ENTITY setup.privacy "Privacy" >
 
 
+
+
+<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto.accesskey "J" >
+
+

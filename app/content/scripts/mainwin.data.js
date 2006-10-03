@@ -77,6 +77,7 @@ try
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_split", "hidden", true, true ) );
       MainwinAdd( SBDataBindElementProperty ( "browser.playlist.show", "playlist_web_vbox", "hidden", true, true ) );
         
+      MainwinAdd( SBDataBindElementAttribute( "jumpto.visible", "control.jumpto", "checked", true ) );
       
       // Set up the trigger for the webplaylist callout 
       var webplaylistCalloutTrigger = SB_NewDataRemote( "browser.playlist.show", null );

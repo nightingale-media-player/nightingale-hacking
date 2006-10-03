@@ -144,6 +144,10 @@ try
     }
     catch (e) { }
 
+    if (!SBDataGetBoolValue("jumpto.nosavestate")) {
+      SBDataSetIntValue("jumpto.visible", 1)
+    }
+
     onWindowLoadSizeAndPosition();
 
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
@@ -461,6 +465,10 @@ try
     
     playingRef_remote.unbind();
     showWebPlaylist_remote.unbind();
+
+    if (!SBDataGetBoolValue("jumpto.nosavestate")) {
+      SBDataSetIntValue("jumpto.visible", 0)
+    }
   }
   
   function _updateSubSearchItem(search, filters, filtersColumn) {
@@ -692,15 +700,25 @@ try
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
       if (hotkeyactionsService) hotkeyactionsService.registerHotkeyActionBundle(jumptoHotkeyActions);
     }
+    SBDataSetBoolValue("jumpto.nosavestate", false);
+    if (SBDataGetIntValue("jumpto.visible")) {
+      onJumpToFileKey();
+    }
   }
    
   function resetJumpToFileHotkey()
   {
+    SBDataSetBoolValue("jumpto.nosavestate", true);
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
       if (hotkeyactionsService) hotkeyactionsService.unregisterHotkeyActionBundle(jumptoHotkeyActions);
     }
+  }
+  
+  function toggleJumpTo() {
+    if (SBDataGetIntValue("jumpto.visible")) closeJumpTo();
+    else onJumpToFileKey();
   }
 
 }
