@@ -103,7 +103,9 @@
     <hbox class="sb_faceplate">
       <spacer width="9"/>
       <vbox flex="1" class="sb_faceplate">
-        <menubar id="video_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
+        <menubar id="video_menu" hidden="false" class="sb_faceplate">
+          <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();"/>
+        </menubar>
         <hbox id="cheezy_window_top" class="sb_faceplate" flex="1">
           <spacer width="10"/>
           <label id="app_title" value="Cheezy Video Window" class="sb_faceplate"/>
