@@ -59,8 +59,28 @@ pref("browser.sessionhistory.max_entries", 50);
 
 pref("browser.xul.error_pages.enabled", true);
 
-//pref("browser.download.manager.retention", 2);
-//pref("browser.download.useDownloadDir", true);
+// Download manager prefs
+pref("browser.download.useDownloadDir", true);
+     // 0-desktop  1-download  2-pref("browser.download.dir")
+pref("browser.download.folderList", 0);
+pref("browser.download.manager.showAlertOnComplete", false);
+pref("browser.download.manager.showAlertInterval", 2000);
+     // when downloads are removed from list 0-completion 1-shutdown 2-never
+pref("browser.download.manager.retention", 3);
+     // these two control whether the manager shows up, both must be true
+pref("browser.download.manager.showWhenStarting", true);
+pref("browser.download.manager.useWindow", true);
+     // duh
+pref("browser.download.manager.closeWhenDone", false);
+     // how long to wait before showing dm
+pref("browser.download.manager.openDelay", 0);
+pref("browser.download.manager.focusWhenStarting", false);
+     // flashes this many times when opened - in theory
+pref("browser.download.manager.flashCount", 2);
+//pref("privacy.item.downloads",  true);
+//pref("browser.download.show_plugins_in_list", true);
+//pref("browser.download.hide_plugins_without_extensions", true);
+
 
 //pref("browser.link.open_external", 3);
 //pref("browser.link.open_newwindow", 3);
@@ -83,6 +103,11 @@ pref("extensions.ignoreMTimeChanges", false);
 pref("general.autoScroll", false);
 pref("general.smoothScroll", false);
 
+// this will automatically enable inline spellchecking (if it is available) for
+// editable elements in HTML
+// 0 = spellcheck nothing
+// 1 = check multi-line controls [default]
+// 2 = check multi/single line controls
 pref("layout.spellcheckDefault", 1);
 
 pref("network.protocol-handler.external.mailto", true);
