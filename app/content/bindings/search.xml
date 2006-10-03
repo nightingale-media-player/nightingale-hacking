@@ -526,8 +526,10 @@
               this.button.image = this.theCurrentSearchSelection.getAttribute( "image" );
               if (this.theLastWebSearchString)
                 this.list.label = this.theLastWebSearchString;
-              else
-                this.list.label = ""; // make it be the current metadata if playing something ?
+              else {
+                this.list.label = this.getDefaultSearchString();
+                this.first_mousedown = false;                
+              }
             }
           }
         ]]>
@@ -550,6 +552,12 @@
         <![CDATA[
           try {
             var searchstring = this.playlistSource.getSearchString(ref);
+            if (!searchstring || searchstring == "") {
+              searchstring = this.getDefaultSearchString();
+              this.first_mousedown = false;
+            } else {
+              this.first_mousedown = true;
+            }
             this.list.label = searchstring;
           } catch (e) {
             /* playlistsource ref doesnt exist yet ? reset search text */

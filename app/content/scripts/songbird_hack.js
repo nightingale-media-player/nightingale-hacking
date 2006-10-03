@@ -1036,6 +1036,8 @@ var sbWebProgressListener = {
       theStatusText.stringValue = "";
       
       theServiceTree.current_url = cur_uri;
+
+      document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }
     catch ( err )
     {
