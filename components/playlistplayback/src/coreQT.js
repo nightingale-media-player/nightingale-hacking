@@ -70,18 +70,10 @@ function CoreQT()
   this._lastFileType = this.FILE_NOT_AVAILABLE;
   this._currentFileType = this.FILE_NOT_AVAILABLE;
 
-  // Has the wma plugin been installed?
-  this._supportsWM = false;
-  try {
-    var wmaPlugin = Components.classes["@mozilla.org/file/local;1"]
-                       .createInstance(Components.interfaces.nsILocalFile);
-    wmaPlugin.initWithPath("/Library/Internet Plug-Ins/Flip4Mac WMV Plugin.plugin");
-    this._supportsWM = wmaPlugin.exists();
-    dump("coreQT: quicktime wma plugin = " + this._supportsWM +  "\n");
-  } catch (e) {
-    dump("coreQT: Could not detect presence of WMA plugin... defaulting to false.\n");
-  }
-
+  this._hasFlip4Mac = false;
+  this._hasXiph = false;
+  this._hasPerian = false;
+  this._componentCheckCompleted = false;
 };
 
 // inherit the prototype from CoreBase
@@ -165,10 +157,10 @@ CoreQT.prototype.waitForPlayer = function ()
     case "Playable":
       //This is totally arbitrary value, it ends up being about 10 seconds
       //This means the user can't pause for the first few seconds of the track.
-	    if(this._playableTryCount < 8) {
-		    this.play();
+      if(this._playableTryCount < 8) {
+        this.play();
         this._playableTryCount++;
-		  } 
+      } 
       
       this._buffering = false;
       // We've definitely got something, so clear the doubleCheck
@@ -249,24 +241,85 @@ CoreQT.prototype.pokingUrlListener = function ( )
 
 CoreQT.prototype.isFormatSupported = function ( aURL )
 {
+  if (!this._componentCheckCompleted) {
+    this.checkQuicktimePlugins();
+    this._componentCheckCompleted = true;
+  }
+  
   // If it's a windows media file, make sure the WM plugin
   // has been installed.
-  if (/\.(wma|wmv)$/i.test(aURL))
+  if (/\.(wma|wmv|asx|asf)$/i.test(aURL))
   {
-    if (!this._supportsWM) {
-     this.showWindowsMediaWarning();
+    if (!this._hasFlip4Mac) {
+     this.showPluginWarning("dialog.pluginrequired.windowsmedia.label");
     } 
-    return this._supportsWM;
+    return this._hasFlip4Mac;
   }
+
+  // If it's a ogg media file, make sure the Xiph plugin
+  // has been installed.
+  if (/\.(ogg|ogm|flac)$/i.test(aURL))
+  {
+    if (!this._hasXiph) {
+     this.showPluginWarning("dialog.pluginrequired.ogg.label");
+    } 
+    return this._hasXiph;
+  }
+
+  // If it's a video file supported by perian? 
+  // If so, make sure we have perian installed.
+  if (/\.(avi|flv)$/i.test(aURL))
+  {
+    if (!this._hasPerian) {
+     this.showPluginWarning("dialog.pluginrequired.label");
+    } 
+    return this._hasPerian;
+  }
+
   // Otherwise if it's a media file assume we can play it.
   return this.isMediaURL(aURL) || this.isVideoURL(aURL);
 }
 
-
-CoreQT.prototype.showWindowsMediaWarning = function ( )
+CoreQT.prototype.checkQuicktimePlugins = function() 
 {
+  var file = Components.classes["@mozilla.org/file/local;1"]
+                       .createInstance(Components.interfaces.nsILocalFile);
+
+  // Has the wma plugin been installed?
+  try {
+    file.initWithPath("/Library/Internet Plug-Ins/Flip4Mac WMV Plugin.plugin");
+    this._hasFlip4Mac = file.exists();
+    dump("coreQT: quicktime wma plugin = " + this._hasFlip4Mac +  "\n");
+  } catch (e) {
+    dump("coreQT: Could not detect presence of Flip4Mac plugin... defaulting to false.\n");
+  }
+
+  // Has the xiph plugin been installed?
+  try {
+    file.initWithPath("/Library/QuickTime/OggImport.component");
+    this._hasXiph = file.exists();
+    dump("coreQT: quicktime xiph plugin = " + this._hasXiph +  "\n");
+  } catch (e) {
+    dump("coreQT: Could not detect presence of XIPH plugin... defaulting to false.\n");
+  }
+
+  // Has the perian plugin been installed?
+  try {
+    file.initWithPath("/Library/QuickTime/Perian.component");
+    this._hasPerian = file.exists();
+    dump("coreQT: quicktime perian plugin = " + this._hasPerian +  "\n");
+  } catch (e) {
+    dump("coreQT: Could not detect presence of Perian plugin... defaulting to false.\n");
+  }
+}
+
+
+CoreQT.prototype.showPluginWarning = function ( dialogLabelKey )
+{
+  var dialogPrefKey = "coreqt.hide_" + dialogLabelKey;
+
   // Do nothing if the user has checked the don't show again box
-  if (SBDataGetBoolValue("coreqt.hide_wm_warning"))
+  if (SBDataGetBoolValue(dialogPrefKey))
     return;
 
   // Otherwise, prompt them to install windows media support.
@@ -291,23 +344,23 @@ CoreQT.prototype.showWindowsMediaWarning = function ( )
   // Get the localized strings
   var songbirdStrings = document.getElementById("songbird_strings");
   if (!songbirdStrings)
-    throw("coreqt.showWindowsMediaWarning: could not access localized strings");
+    throw("coreqt.showPluginWarning: could not access localized strings");
 
   // Ask the user if they would like to learn how to install the WM plug-in
   var promptResult = promptService.confirmEx(target,
         songbirdStrings.getString("dialog.pluginrequired.title"),
-        songbirdStrings.getString("dialog.pluginrequired.windowsmedia.label"),
+        songbirdStrings.getString(dialogLabelKey),
         flags, null, null, null, 
         songbirdStrings.getString("dialog.dontshowagain"), checkResult);
 
   // If the user doesn't want to see this again, then set a pref
   if (checkResult.value) 
-    SBDataSetBoolValue("coreqt.hide_wm_warning", true);
+    SBDataSetBoolValue(dialogPrefKey, true);
 
   // If the user said yes, then launch the instructions page
   // in a new window.
   if (promptResult == 0) {
-    const url = "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime#WindowsMediawmaandwmv";
+    const url = "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime";
     var externalLoader = Components
           .classes["@mozilla.org/uriloader/external-protocol-service;1"]
           .getService(Components.interfaces.nsIExternalProtocolService);
@@ -676,8 +729,16 @@ CoreQT.prototype.isMediaURL = function(aURL) {
         // Protocols at the beginning
         /^rtsp\:/.test(aURL) ||
         // File extensions at the end
+        /\.aiff$/i.test(aURL) ||
+        /\.wav$/i.test(aURL) ||
+        /\.ogg$/i.test(aURL) ||
+        /\.flac$/i.test(aURL) ||
+        /\.ogm$/i.test(aURL) ||
         /\.mp3$/i.test(aURL) ||
         /\.m4a$/i.test(aURL) ||
+        /\.avi$/i.test(aURL) ||
+        /\.asx$/i.test(aURL) ||
+        /\.asf$/i.test(aURL) ||
         /\.mov$/i.test(aURL) ||
         /\.wma$/i.test(aURL) ||
         /\.wmv$/i.test(aURL) ||
@@ -699,6 +760,10 @@ CoreQT.prototype.isVideoURL = function ( aURL )
        (
          /\.mov$/i.test(aURL) ||
          /\.mpg$/i.test(aURL) ||
+         /\.ogm$/i.test(aURL) ||
+         /\.avi$/i.test(aURL) ||
+         /\.asf$/i.test(aURL) ||
+         /\.asx$/i.test(aURL) ||
          /\.wmv$/i.test(aURL) ||          
          /\.mp4$/i.test(aURL)
        )
