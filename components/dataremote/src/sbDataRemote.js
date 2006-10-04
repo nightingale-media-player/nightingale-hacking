@@ -259,12 +259,15 @@ DataRemote.prototype = {
     // assume we are being called after the init check in another method.
 
     var retval = "";
-    if (this._prefBranch.prefHasUserValue(this._key)) {
-      // need complexValue for unicode strings
+    try {
       var prefValue = this._prefBranch.getComplexValue(this._key, Components.interfaces.nsISupportsString);
       if (prefValue != "") {
         retval = prefValue.data;
       }
+    } catch (err) {
+      // when the pref does not exist in the branch the pref system returns an
+      //   error code which changes to an exception. We do not want to throw
+      //   here but return an empty string.
     }
     return retval;
   },
