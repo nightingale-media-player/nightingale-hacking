@@ -444,11 +444,11 @@ checkbox {
 /* ..... disabled state ..... */
 
 checkbox[disabled="true"] .checkbox-check {
-  background-color: #333 !important;
+  background-color: #CCC !important;
 }
 
-checkbox[disabled="true"] {
-  color: #666 !important;
+checkbox[disabled="true"] .checkbox-label {
+  color: #AAA !important;
 }
 
 /* ::::: checkmark image ::::: */

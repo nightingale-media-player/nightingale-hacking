@@ -517,7 +517,7 @@ checkbox[disabled="true"] .checkbox-check {
   background-image: none !important;
 }
 
-checkbox[disabled="true"] {
+checkbox[disabled="true"] .checkbox-label {
   color: #666 !important;
 }
 
