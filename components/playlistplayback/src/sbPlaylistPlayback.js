@@ -806,9 +806,31 @@ PlaylistPlayback.prototype = {
   
   playAndImportURL: function(aURL) {
     try  {
+      // note 1: eventually we need some error handling here, so we can avoid cancelling the search 
+      // and filters (and also avoid playing the first track of the library) if the import was 
+      // unsuccessful in the first place
+      
+      // note 2: cancelling the search and filters is only needed because there is no 'working playlist',
+      // so we play the 'current' view of the library. that view has to include the file we want to play
+      // for things to work. if we ever make a working playlist system, we will still import the file
+      // in the library but instead of reseting the library filters and search, we will reset the working
+      // playlist's filters and search.
+
+      // import the track in the library if it isn't in it already
       this._importURLInLibrary(aURL);
-      this._source.waitForQueryCompletion("NC:songbird_library");
-      this.playRefByURL("NC:songbird_library", aURL);
+      var ref = "NC:songbird_library";
+      this._source.waitForQueryCompletion(ref);
+
+      // reset the search and filter for the library, we want to be able to play an arbitrary file
+      this._source.setSearchString(ref, "", true);
+      this._source.executeFeed( ref );
+      this._source.waitForQueryCompletion(ref);
+
+      // if we do not forceGetTargets, we end up playing the wrong thing (if we just changed the filtering/search)
+      this._source.forceGetTargets( ref, false );
+
+      // play the track
+      this.playRefByURL(ref, aURL);
     } catch( err ) {
       dump( "playAndImportURL:\n" + err + "\n" );
       return false;
