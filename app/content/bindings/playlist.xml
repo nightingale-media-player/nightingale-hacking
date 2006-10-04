@@ -2988,7 +2988,12 @@
             //
             //  Do something interesting to indicate the drag of a column?
             //
-
+            
+            // Disable dragging from the download playlist
+            if(this.guid == "downloadDB") {
+              return;
+            }
+            
             if( this.pointInTreeRows( this.tree, evt.clientX, evt.clientY ) )
             {
               // Heheh, only drag if you're dragging a cell.  Otherwise, don't screw with the scrollbar
