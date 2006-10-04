@@ -275,7 +275,7 @@ function SBInitialize()
 {
   // Make sure we have a useable media core.  If not, message the user
   if(!SBMediaCoreCheck()) {
-    quitApp();
+    quitApp( true ); // Skip saving the window position.
   }
 
   const BROWSER_FILTER_CONTRACTID =

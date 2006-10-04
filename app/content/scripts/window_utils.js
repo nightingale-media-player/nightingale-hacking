@@ -460,9 +460,9 @@ function PopBackscanPause()
 }
 
 
-function quitApp()
+function quitApp( skipSave )
 {
-  onExit();
+  onExit(skipSave); // Don't always save the window position.
   // Why not stop playback, too?
   try {
     gPPS.stop();
