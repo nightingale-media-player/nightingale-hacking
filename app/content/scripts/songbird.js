@@ -486,6 +486,8 @@ function SBAppInitialize()
       */
     }
     else if (platform == "Darwin") {
+      var quitMenuItem = document.getElementById("menu_FileQuitItem");
+      quitMenuItem.removeAttribute("hidden");
       //MacOSX, prefer QT.
 
       // Initialize with Quicktime

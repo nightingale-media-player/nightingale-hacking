@@ -104,7 +104,7 @@
       <spacer width="9"/>
       <vbox flex="1" class="sb_faceplate">
         <menubar id="video_menu" hidden="false" class="sb_faceplate">
-          <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();"/>
+          <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" hidden="true"/>
         </menubar>
         <hbox id="cheezy_window_top" class="sb_faceplate" flex="1">
           <spacer width="10"/>
