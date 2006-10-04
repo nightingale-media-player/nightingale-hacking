@@ -948,21 +948,11 @@ var sbWebProgressListener = {
     const nsIWebProgressListener =
       Components.interfaces.nsIWebProgressListener;
 
-    const NS_ERROR_UNKNOWN_HOST = 0x804B001E;
-
-    const URI_PAGE_CANNOT_LOAD =
-      "chrome://songbird/content/html/cannot_load.html";
-
     if (aState & nsIWebProgressListener.STATE_START) {
       // Start the spinner if necessary
       thePaneLoadingData.boolValue = true;
     }
     else if (aState & nsIWebProgressListener.STATE_STOP) {
-      // If we have an error then show the "Page Not Found" page
-      if (aStatus == NS_ERROR_UNKNOWN_HOST) {
-        var serviceTree = document.getElementById("frame_servicetree");
-        serviceTree.launchURL(URI_PAGE_CANNOT_LOAD);
-      }
       // Stop the spinner if necessary
       thePaneLoadingData.boolValue = false;
     }
