@@ -471,7 +471,7 @@
                   <vbox class="sb_faceplate" flex="1" id="main_pane_border">
                     <vbox class="sb_faceplate" id="frame_main_pane_html" hidden="false" >
                       <!-- WEB BAR -->
-                      <hbox id="browser_toolbar" class="sb_faceplate" flex="1">
+                      <hbox id="browser_toolbar" align="center" class="sb_faceplate" flex="1">
                         <button class="sb_faceplate" disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
                         <button class="sb_faceplate" disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
                         <button class="sb_faceplate" disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
