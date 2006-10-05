@@ -1150,7 +1150,7 @@
               } 
             }
 
-            if(!isVisible)
+            if(isVisible == "0")
             {
               this_column_node.setAttribute("ignoreincolumnpicker", "true");
             }
@@ -2548,7 +2548,7 @@
             var totalcount = this._addto_added_count + this._addto_existed_count;
             msg = "" + totalcount + " ";
             switch (totalcount) {
-              case 0: msg += this.str_notracksaddedto; break;
+              case 0: msg = this.str_notracksaddedto; break;
               case 1: msg += this.str_trackaddedto; break;
               default: msg += this.str_tracksaddedto; break;
             }
@@ -2556,7 +2556,7 @@
           } else {
             msg = "" + this._addto_added_count + " ";
             switch (totalcount) {
-              case 0: msg += this.str_notracksaddedto; break;
+              case 0: msg = this.str_notracksaddedto; break;
               case 1: msg += this.str_trackaddedto; break;
               default: msg += this.str_tracksaddedto; break;
             }
@@ -2997,7 +2997,13 @@
             if( this.pointInTreeRows( this.tree, evt.clientX, evt.clientY ) )
             {
               // Heheh, only drag if you're dragging a cell.  Otherwise, don't screw with the scrollbar
-              this.nsDragAndDrop.startDrag(evt, this.sbIPlaylistDragObserver);
+
+              // also, if we are dragging from the inside of the tree body, only accept to start the dnd if there is a selection
+              // this will avoid empty dragdrops when dragging from below the last item (if there is a selection, dragging
+              // from bellow the last item does not cancel the selection)
+              if (this.tree.view.selection.getRangeCount() != 0) {
+                this.nsDragAndDrop.startDrag(evt, this.sbIPlaylistDragObserver);
+              }
             }
           }
           catch( err )
@@ -3040,6 +3046,7 @@
           try
           {
             // if this playlist is the currently playing one, set selection to the playing item
+            // lone> should this really be testing this.playingRef ?? why not this.ref ?
             if ( this.playlistRef && this.playlistRef.stringValue == this.playingRef.stringValue )
             {
               var url = this.playUrl.stringValue;
