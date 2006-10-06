@@ -385,6 +385,13 @@ var bmManager = {
                   url: "",
                   children: [   
                   { 
+                      label: "Podbop",
+                      icon: "http://podbop.org/favicon.ico",
+                      url: "http://podbop.org/",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
                       label: "Scissorkick",
                       icon: "chrome://songbird/skin/serviceicons/default.ico",
                       url: "http://www.scissorkick.com/",
