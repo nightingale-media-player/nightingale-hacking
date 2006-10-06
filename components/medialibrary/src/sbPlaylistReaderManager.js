@@ -329,7 +329,7 @@ CPlaylistReaderManager.prototype =
                             .createInstance(Components.interfaces.nsIScriptableInputStream);
     fstream.init(file, -1, 0, 0);
     sstream.init(fstream); 
-    var str = sstream.read(1024);
+    var str = sstream.read(4096);
     sstream.close();
     fstream.close();
 
