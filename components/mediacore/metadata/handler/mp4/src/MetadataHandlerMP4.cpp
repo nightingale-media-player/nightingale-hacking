@@ -304,6 +304,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Read(PRInt32 *_retval)
         value.AppendInt(length_ms);
         m_Values->SetValue(key, value, 0);
       }
+      quicktime_close(file);
     }
 
     // Setup retval with the number of values read
