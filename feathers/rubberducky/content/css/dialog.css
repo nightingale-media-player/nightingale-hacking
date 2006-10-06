@@ -208,10 +208,14 @@ label.dialog_box
 #smart_playlist,
 #open_url,
 #watchfolder,
-#new_playlist,
-#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+#new_playlist
 {
   width:  550px !important; /* makes all the dialog boxes the same size **/
+}
+
+#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+{
+  width:  350px !important;
 }
 
 /* Dialog Form Elements */
