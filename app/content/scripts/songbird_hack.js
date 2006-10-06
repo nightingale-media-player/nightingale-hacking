@@ -334,8 +334,6 @@ function SBInitialize()
     {
       mainpane_listener_set = false;
       if (theMainPane.addEventListener) {
-        theMainPane.addEventListener("DOMContentLoaded", onMainPaneLoad, false);
-        
         // Initialize the global progress filter
         if (!gProgressFilter) {
           gProgressFilter = Components.classes[BROWSER_FILTER_CONTRACTID]
@@ -446,7 +444,6 @@ function SBUninitialize()
   window.removeEventListener("keydown", checkAltF4, true);
   
   var mainPane = document.getElementById("frame_main_pane");
-  mainPane.removeEventListener("DOMContentLoaded", onMainPaneLoad, false);
   mainPane.removeProgressListener(gProgressFilter);
 
   var webPlaylist = document.getElementById("playlist_web");
@@ -955,6 +952,9 @@ var sbWebProgressListener = {
     else if (aState & nsIWebProgressListener.STATE_STOP) {
       // Stop the spinner if necessary
       thePaneLoadingData.boolValue = false;
+
+      // Notfiy that the page is done loading
+      onMainPaneLoad();
     }
   },
   
@@ -1108,7 +1108,6 @@ function onBrowserStop()
     var theMainPane = document.getElementById( "frame_main_pane" );
     theMainPane.stop();
     mainpane_listener_set = false;
-    onMainPaneLoad();
   }
   catch( err )
   {
