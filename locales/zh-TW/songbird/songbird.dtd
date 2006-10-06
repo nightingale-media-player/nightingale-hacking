@@ -1,5 +1,5 @@
-<!ENTITY window.main.title  "Songbird User Preview" >
-<!ENTITY window.main.title  "Songbird User Preview" >
+<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
+<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
@@ -209,7 +209,7 @@
 <!ENTITY window.undo "復原" >
 <!ENTITY window.apply "套用" >
 
-<!ENTITY window.dev.title "Songbird 0.2 alpha" >
+<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
 
 <!ENTITY metrics.optout "允許 Songbird 傳送匿名的使用資料數據 (建議)" >
 

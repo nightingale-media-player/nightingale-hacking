@@ -1,5 +1,5 @@
 ﻿
-<!ENTITY window.main.title  "Songbird Användar-Förhandsgranskning" >
+<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
 <!ENTITY songbird           "Songbird" >
 <!ENTITY web.url.first.old  "" >
 <!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
@@ -243,7 +243,7 @@
 
 
 
-<!ENTITY window.dev.title "Songbird 0.2 alpha" >
+<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
 
 
 
