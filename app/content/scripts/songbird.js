@@ -520,7 +520,10 @@ function SBAppInitialize()
       if (theFLBox) theFLBox.hidden = true;
       */
     }
-    
+
+    // Make sure we actually have a media core
+    SBMediaCoreCheck();
+
     // Reset this on application startup. 
     SBDataSetIntValue("backscan.paused", 0);
     
@@ -733,3 +736,60 @@ function SBInterfaceDeinitialize()
   songbird_restartNow.unbind();
   songbird_restartNow = null;
 }
+
+function SBMediaCoreCheck() {
+
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch);
+  var skipCoreCheck = false;
+  try {
+    skipCoreCheck = prefs.getBoolPref("songbird.skipCoreCheck");
+  }
+  catch(e) {
+    // pref does not exist
+  }
+
+  if(skipCoreCheck || gPPS.core) {
+    return;
+  }
+
+  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                      .getService(Components.interfaces.nsIStringBundleService);
+  var bundle = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+
+  var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                     .getService(Components.interfaces.nsIPromptService);
+  var check = { value: 0 };
+  var rv = ps.confirmEx(null,
+                        bundle.GetStringFromName("mediacorecheck.dialog.title"),
+                        bundle.GetStringFromName("mediacorecheck.dialog.message"),
+                        (ps.BUTTON_POS_0 * ps.BUTTON_TITLE_IS_STRING) +
+                          (ps.BUTTON_POS_1 * ps.BUTTON_TITLE_IS_STRING) +
+                          (ps.BUTTON_POS_2 * ps.BUTTON_TITLE_IS_STRING),
+                        bundle.GetStringFromName("mediacorecheck.dialog.quitButtonLabel"),
+                        bundle.GetStringFromName("mediacorecheck.dialog.continueButtonLabel"),
+                        bundle.GetStringFromName("mediacorecheck.dialog.moreInfoButtonLabel"),
+                        bundle.GetStringFromName("mediacorecheck.dialog.skipCheckboxLabel"),
+                        check);
+
+  if(check.value) {
+    prefs.setBoolPref("songbird.skipCoreCheck", true);
+  }
+
+  if(rv == 2) {
+    var eps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                        .getService(Components.interfaces.nsIExternalProtocolService);
+    var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                        .getService(Components.interfaces.nsIIOService);
+    var uri = ios.newURI(bundle.GetStringFromName("mediacorecheck.moreInfoUrl"),
+                         null, null);
+    eps.loadURI(uri, null);
+  }
+
+  if(rv == 0 || rv == 2) {
+    quitApp( true ); // Skip saving the window position.
+  }
+
+  return;
+}
+
