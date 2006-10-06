@@ -872,6 +872,9 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       {
         ID3_TextEnc enc = pField->GetEncoding();
         PRBool swap = PR_TRUE;
+#ifdef IS_BIG_ENDIAN
+        swap = PR_FALSE;
+#endif
         switch( enc )
         {
           case ID3TE_NONE:
@@ -894,13 +897,43 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
             break;
           }
           case ID3TE_UTF16BE: // ?? what do we do with big endian?  cry?
-            swap = PR_FALSE; // maybe id3lib is just backwards?
+            swap = !swap; // maybe id3lib is just backwards?
           case ID3TE_UTF16:
           {
             size_t size = pField->Size();
             unicode_t *buffer = (unicode_t *)nsMemory::Alloc( (size + 1) * sizeof(unicode_t) );
             size_t read = pField->Get( buffer, size );
             buffer[read] = 0;
+
+            PRBool string_be = PR_TRUE;
+            PRInt32 big_votes = 0, little_votes = 0;
+            // Preflight it, looking for 0's so we can better guess endian for 7bit values.
+            for (size_t i = 0; i < read; i++)  
+            {
+              char *p = (char *)(buffer+i);
+              if (p[0] == 0) 
+                big_votes++;
+              else if (p[1] == 0) 
+                little_votes++;
+            }
+            // Hmmm, this is still stupid.
+            if ( big_votes == read )
+            {
+#ifdef IS_BIG_ENDIAN
+                swap = PR_FALSE;
+#else
+                swap = PR_TRUE;
+#endif
+            }
+            if ( little_votes == read )
+            {
+#ifdef IS_BIG_ENDIAN
+                swap = PR_TRUE;
+#else
+                swap = PR_FALSE;
+#endif
+            }
+
             if (swap)
               // Am I sure this is the rules? I'm always supposed to swap?
               for (size_t i = 0; i < read; i++)  
