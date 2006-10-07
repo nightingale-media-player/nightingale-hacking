@@ -62,6 +62,7 @@
 <!ENTITY html.context.openexternal  "Open with Default Browser" >
 <!ENTITY html.context.play  "Play" >
 <!ENTITY html.context.add   "Add to library" >
+<!ENTITY html.context.playlist   "Open as Playlist" >
 
 <!ENTITY playlist.context.remove  "Remove" >
 <!ENTITY playlist.context.rename  "Rename" >

@@ -1821,6 +1821,8 @@ function onLinkContext( evt )
     }
     document.getElementById( "html.context.add" ).setAttribute( "disabled", disabled );
     
+/*  // Allow the user to try to add any link as a playlist.
+
     // Disable "Add as Playlist" if the url isn't a playlist (NOTE: any HTML url will go as playlist)
     disabled = "true";
     if ( gPPS.isPlaylistURL( theHTMLContextURL ) )
@@ -1828,7 +1830,7 @@ function onLinkContext( evt )
       disabled = "false"
     }
     document.getElementById( "html.context.playlist" ).setAttribute( "disabled", disabled );
-    
+*/    
     theHTMLPopup.showPopup( theMainPane, theMainPane.boxObject.screenX + evt.clientX + 5, theMainPane.boxObject.screenY + evt.clientY, "context", null, null );
   }
   catch ( err )
@@ -1856,13 +1858,13 @@ function playExternalUrl(the_url, tryweb)
   }
 }
 
-function handleMediaURL( aURL, aShouldBeginPlayback )
+function handleMediaURL( aURL, aShouldBeginPlayback, forcePlaylist )
 {
   var retval = false;
   try
   {
     // Stick playlists in the service pane (for now).
-    if ( gPPS.isPlaylistURL( aURL ) )
+    if ( forcePlaylist || gPPS.isPlaylistURL( aURL ) )
     {
       var playlistReader = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
                            .createInstance(Components.interfaces.sbIPlaylistReaderManager);
@@ -1936,7 +1938,7 @@ function handleMediaURL( aURL, aShouldBeginPlayback )
 // Catch a click on a media url and attempt to play it
 function onMediaClick( evt )
 {
-  handleMediaURL( GetHREFFromEvent(evt), true );
+  handleMediaURL( GetHREFFromEvent(evt), true, false );
   evt.stopPropagation();
   evt.preventDefault();
 }
@@ -2483,7 +2485,7 @@ function onHTMLContextMenu( target )
       case "html.context.open":
         // can be track or playlist
         // try dealing with media, might just be web content.
-        if ( !handleMediaURL(theHTMLContextURL, true) )
+        if ( !handleMediaURL(theHTMLContextURL, true, false) )
         {
           var theServiceTree = document.getElementById( 'frame_servicetree' );
           theServiceTree.launchURL( theHTMLContextURL );
@@ -2501,14 +2503,14 @@ function onHTMLContextMenu( target )
       break;
       case "html.context.play":
         // can be track or playlist
-        handleMediaURL(theHTMLContextURL, true);
+        handleMediaURL(theHTMLContextURL, true, false);
       break;
       case "html.context.add":
         gPPS.importURL(theHTMLContextURL);
       break;
       case "html.context.playlist":
-        // Add playlists to the service pane
-        handleMediaURL(theHTMLContextURL, false);
+        // Add playlists to the service pane (force it as a playlist)
+        handleMediaURL(theHTMLContextURL, false, true);
       break;
     }
     theHTMLContextURL = null; // clear it because now we're done.
