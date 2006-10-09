@@ -110,7 +110,9 @@ function DPUpdaterUpdatePlaylist(row)
     var strName = resObj.getRowCellByColumn(row, "name");
     var strReadableName = resObj.getRowCellByColumn(row, "readable_name");
 
-    var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", true, null);
+    // Allow tracks with the same filename to be added to this type of
+    // playlist, see bug 1635
+    var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", false, null);
    
     if(success)
     {
