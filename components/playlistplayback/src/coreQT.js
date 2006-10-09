@@ -116,11 +116,14 @@ CoreQT.prototype.cleanupOnError = function ()
   this.LOG("cleanupOnError!", "CoreQT");
 }
 
+var lastStatus = "";
 CoreQT.prototype.waitForPlayer = function ()
 {
   this._verifyObject();
   var playerStatus = this._object.GetPluginStatus();
-  
+  if(lastStatus != playerStatus)
+    this.LOG(playerStatus, "CoreQT");
+  lastStatus = playerStatus;
   switch(playerStatus)
   {
     case "Waiting":
@@ -157,7 +160,7 @@ CoreQT.prototype.waitForPlayer = function ()
     case "Playable":
       //This is totally arbitrary value, it ends up being about 10 seconds
       //This means the user can't pause for the first few seconds of the track.
-      if(this._playableTryCount < 8) {
+      if(this._playableTryCount < 38) {
         this.play();
         this._playableTryCount++;
       } 
@@ -175,17 +178,20 @@ CoreQT.prototype.waitForPlayer = function ()
       this.play();
       clearInterval(this._waitForPlayInterval);
       this._waitForPlayInterval = 0;
-      this._playableTryCount = 0;
       this._waitRetryCount = 0;
       this._buffering = false;
       
       // XXXben I know this seems dumb, but QT may try loading something else
       // since the url could point to a stream playlist. We want to check again
-      // to catch that case. 500ms seems to be an okay wait value, but who
+      // to catch that case. 2000ms seems to be an okay wait value, but who
       // knows what will happen with crazy network conditions...
-      if (!this._doubleCheckInterval)
-        this._doubleCheckInterval = setInterval("gQTCore.waitForPlayer();", 500);
-      else {
+      if (!this._doubleCheckInterval) 
+      {
+        this._doubleCheckInterval = setInterval("gQTCore.waitForPlayer();", 2000);
+        this._playableTryCount = 0;
+      }
+      else 
+      {
         clearInterval(this._doubleCheckInterval);
         this._doubleCheckInterval = false;
       }
@@ -443,9 +449,6 @@ CoreQT.prototype.verifyFileAvailability = function ( aURL )
 // Set the url and tell it to just play it.  Eventually this talks to the media library object to make a temp playlist.
 CoreQT.prototype.playURL = function ( aURL )
 {
-  if (this._buffering && !this._pokingUrl)
-    this.cleanupOnError();
-
   this._verifyObject();
 
   if (!aURL)
@@ -468,6 +471,14 @@ CoreQT.prototype.playURL = function ( aURL )
     dump("coreQT: unsupported format, may not play correctly\n");
   }
 
+  if (this._buffering &&
+      !this._pokingUrl && 
+      (this._lastFileType == this.REMOTE_FILE_AVAILABLE ||
+	   this._lastFileType == this.NOT_LOCAL_FILE))
+  {
+    this.cleanupOnError();
+  }
+    
   this._url = this.sanitizeURL(aURL);
   this._paused = false;
   this._playing = true;
@@ -493,7 +504,7 @@ CoreQT.prototype.playURL = function ( aURL )
   this._lastFileType = this._currentFileType;
   this._currentFileType = isAvailable;
 
-  this._availability = FILE_NOT_AVAILABLE;
+  this._availability = this.FILE_NOT_AVAILABLE;
   this._starttime = new Date();
   this._object.SetURL(this._url);
   this.setVolume(this._lastVolume);
