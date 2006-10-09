@@ -121,6 +121,7 @@ function onBkgDown( theEvent, popup )
     case "dd":
     case "li":
     case "#text":
+    case "textarea":
       return;
   }
 //  alert(theEvent.target.nodeName);
