@@ -243,7 +243,9 @@ function onHide()
     var windowType = windowList[index];
     var lastWindow = wm.getMostRecentWindow(windowType);
     if (lastWindow && (lastWindow != window)) {
-      lastWindow.focus();
+      try {
+        lastWindow.focus();
+      } catch (e) {}
       break;
     }
   }
@@ -348,6 +350,10 @@ function onWindowLoadSizeAndPosition()
   if ( SBDataGetStringValue( root + ".w" ) == "" ||
        SBDataGetStringValue( root + ".h" ) == "" )
   {
+    // nothing to do to set the default width/height, we already get a default from xul and css definitions
+    
+    // but still try to load position !
+    onWindowLoadPosition();
     return;
   }
 
@@ -357,18 +363,41 @@ function onWindowLoadSizeAndPosition()
 
   if ( rootW && rootH )
   {
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
-    // YAY YAY YAY the windowregion hack actualy fixes this :D
-    window.resizeTo( rootW, rootH );
+    // todo: test if the window is resizable. if it is, and rootW/rootH are below some limit, skip these steps so that we reload the default w/h from xul and css
+    // (waiting on finding a way to retrieve a window's features)
+    if (1) { 
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
+      // YAY YAY YAY the windowregion hack actualy fixes this :D
+      window.resizeTo( rootW, rootH );
 
-    // for some reason, the resulting size isn't what we're asking (window
-    //   currently has a border?) so determine what the difference is and
-    //   add it to the resize
-    var diffW = rootW - document.documentElement.boxObject.width;
-    var diffH = rootH - document.documentElement.boxObject.height;
-    window.resizeTo( rootW + diffW, rootH + diffH);
+      // for some reason, the resulting size isn't what we're asking (window
+      //   currently has a border?) so determine what the difference is and
+      //   add it to the resize
+      var diffW = rootW - document.documentElement.boxObject.width;
+      var diffH = rootH - document.documentElement.boxObject.height;
+      window.resizeTo( rootW + diffW, rootH + diffH);
+    }
   }
   onWindowLoadPosition();
+}
+
+function getXULWindowFromWindow(win) // taken from venkman source
+{
+    var rv;
+    try
+    {
+        var requestor = win.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+        var nav = requestor.getInterface(Components.interfaces.nsIWebNavigation);
+        var dsti = nav.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
+        var owner = dsti.treeOwner;
+        requestor = owner.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+        rv = requestor.getInterface(Components.interfaces.nsIXULWindow);
+    }
+    catch (ex)
+    {
+        rv = null;
+    }
+    return rv;
 }
 
 function onWindowLoadPosition()
@@ -386,9 +415,11 @@ function onWindowLoadPosition()
                                   "\n");
 */
   // If they have not been set they will be ""
-  if ( SBDataGetStringValue( root + ".x" ) == "" || 
+  if ( SBDataGetStringValue( root + ".x" ) == "" ||
        SBDataGetStringValue( root + ".y" ) == "" )
   {
+    var win = getXULWindowFromWindow(window);
+    if (win) win.center(null, true, true);
     return;
   }
 
