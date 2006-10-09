@@ -153,8 +153,10 @@ CPlaylistReaderManager.prototype =
         return -1;
       }
 
-      // If we are trying to load text/html, try to guess a better mime type
-      if(strContentType == null || strContentType == "" || strContentType == "text/html") {
+      // If we are trying to load text/html or application/xml, try to guess a
+      // better mime type
+      if(strContentType == null || strContentType == "" ||
+         strContentType == "text/html" || strContentType == "application/xml") {
         var strContentType = this.guessMimeType(file);
         if(!strContentType) {
           return -1;
@@ -335,20 +337,41 @@ CPlaylistReaderManager.prototype =
 
     // This object literal maps mime types to regexps.  If the content matches
     // the given regexp, it is assigned the given mime type.
-    var regexps = {
-      "application/rss+xml"  : /^<\?xml(.|\n)*<rss/,
-      "application/atom+xml" : /^<\?xml(.|\n)*xmlns="http:\/\/www\.w3\.org\/2005\/Atom"/,
-      "audio/x-scpls"        : /^\[playlist\]/i,
-      "audio/mpegurl"        : /^#EXTM3U/i,
-      "text/html"            : /<html/i,
-      "audio/mpegurl"        : /^(http|mms|rtsp)/im,
-      "audio/mpegurl"        : /.*(mp3|ogg|flac|wav|m4a|wma|wmv|asx|asf|avi|mov|mpg|mp4)$/im
-    };
+    var regexps = [
+      {
+        regexp:    /^<\?xml(.|\n)*<rss/,
+        mimeType: "application/rss+xml"
+      },
+      {
+        regexp:    /^<\?xml(.|\n)*xmlns="http:\/\/www\.w3\.org\/2005\/Atom"/,
+        mimeType: "application/atom+xml"
+      },
+      {
+        regexp:    /^\[playlist\]/i,
+        mimeType: "audio/x-scpls"
+      },
+      {
+        regexp:    /^#EXTM3U/i,
+        mimeType: "audio/mpegurl"
+      },
+      {
+        regexp:    /<html/i,
+        mimeType: "text/html"
+      },
+      {
+        regexp:    /^(http|mms|rtsp)/im,
+        mimeType: "audio/mpegurl"
+      },
+      {
+        regexp:    /.*(mp3|ogg|flac|wav|m4a|wma|wmv|asx|asf|avi|mov|mpg|mp4)$/im,
+        mimeType: "audio/mpegurl"
+      }
+    ];
 
-    for(var mimeType in regexps) {
-      var re = regexps[mimeType];
+    for(var i = 0; i < regexps.length; i++) {
+      var re = regexps[i].regexp;
       if(re.test(str)) {
-        return mimeType;
+        return regexps[i].mimeType;
       }
     }
 

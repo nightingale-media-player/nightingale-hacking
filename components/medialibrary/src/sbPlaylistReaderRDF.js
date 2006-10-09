@@ -163,9 +163,8 @@ CPlaylistRDF.prototype =
     
     try
     {
-      retval.push( "text/xml" );
       retval.push( "text/rdf+xml" );
-      retval.push( "application/xml" );
+      retval.push( "application/rdf+xml" );
       nMIMECount.value = retval.length;
     }
     catch ( err )
