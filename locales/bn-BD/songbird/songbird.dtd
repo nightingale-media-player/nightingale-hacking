@@ -1,0 +1,237 @@
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "সঙ্গবার্ড" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "ঠিক আছে" >
+<!ENTITY window.undo "অকরণ" >
+<!ENTITY window.apply "প্রয়োগ" >
+<!ENTITY window.cancel "বাতিল" >
+<!ENTITY window.browse "পরিক্রমা" >
+<!ENTITY menu.file "ফাইল" >
+<!ENTITY menu.file.new "নতুন সঙ্গীতমালা" >
+<!ENTITY menu.file.smart "নতুন স্মার্ট সঙ্গীতমালা" >
+<!ENTITY menu.file.remote "নতুন গ্রাহকসেবা" >
+<!ENTITY menu.file.open "ফাইল উন্মীলন" >
+<!ENTITY menu.file.url "ইউআরএল থেকে উন্মীলন" >
+<!ENTITY menu.file.playlist "সঙ্গীত তালিকা আমদানি" >
+<!ENTITY menu.file.scan "মিডিয়া খোজ" >
+<!ENTITY menu.file.dlfolder "ডাউনলোড ফোল্ডার নির্ধারণ" >
+<!ENTITY menu.file.watch "নজরাধীন ফোল্ডার নির্ধারণ" >
+<!ENTITY menu.file.htmlbar "সর্বদা উয়েব বার প্রদর্শন" >
+<!ENTITY menu.file.skin "বিকল্প আবরণ" >
+<!ENTITY menu.file.window "মূল উইন্ডো উন্মীলন" >
+<!ENTITY menu.file.mini "ক্ষুদ্রাকৃতির বাদক উন্মীলন" >
+<!ENTITY menu.file.about "সঙ্গবার্ড সম্পর্কে..." >
+<!ENTITY menu.file.exit "প্রস্থান" >
+<!ENTITY menu.edit "সম্পাদনা" >
+<!ENTITY menu.edit.undo "অকরণ" >
+<!ENTITY menu.edit.cut "বিধ্বংসী প্রতিলিপি গঠণ" >
+<!ENTITY menu.edit.copy "প্রতিলিপি গঠণ" >
+<!ENTITY menu.edit.paste "প্রতিলেপন" >
+<!ENTITY menu.edit.clear "পরিষ্কার" >
+<!ENTITY menu.edit.selall "পরিপূর্ণ নির্বাচন" >
+<!ENTITY menu.edit.selnone "নির্বাচন বাতিল" >
+<!ENTITY menu.controls "নিয়ন্ত্রণ" >
+<!ENTITY menu.control.play "পরিবেশন/অবকাশ" >
+<!ENTITY menu.control.next "পরবর্তী গান" >
+<!ENTITY menu.control.prev "পূর্ববর্তী গান" >
+<!ENTITY menu.control.shuf "এলোমেলো পরিবেশনা" >
+<!ENTITY menu.control.repa "সকল গানের পুনরাবৃত্তি" >
+<!ENTITY menu.control.rep1 "একটি গানের পুনরাবৃত্তি" >
+<!ENTITY menu.control.repx "কোন পুনরাবৃত্তি নয়" >
+<!ENTITY menu.services "সেবাসমূহ" >
+<!ENTITY menu.services.browse "সংযোজনা পরিক্রমা" >
+<!ENTITY menu.devices "যন্ত্রসমূহ" >
+<!ENTITY menu.help "সহায়তা" >
+<!ENTITY menu.help.topics "সহায়তার বিষয়সমূহ..." >
+<!ENTITY menu.help.about "সঙ্গবার্ড সম্পর্কে..." >
+<!ENTITY menu.preferences "ব্যক্তিগত অগ্রাধিকারসমূহ..." >
+<!ENTITY menu.extensions "সংযোজনা-সমূহ" >
+<!ENTITY html.context.open "উন্মীলন" >
+<!ENTITY html.context.openexternal "সাধারণ ব্রাউযার দ্বারা উন্মীলন" >
+<!ENTITY html.context.play "চালনা" >
+<!ENTITY html.context.add "লাইব্রেরীতে যোগ" >
+<!ENTITY playlist.context.remove "অপসারণ" >
+<!ENTITY playlist.context.rename "পুনঃ নামকরণ" >
+<!ENTITY playlist.context.search "খোঁজ" >
+<!ENTITY playlist.context.lyrics "গানের কথা" >
+<!ENTITY tooltip.miniplayer "ক্ষুদ্রাকৃতির বাদকে পরিবর্তন" >
+<!ENTITY tooltip.minimize "ক্ষুদ্রায়ন" >
+<!ENTITY tooltip.maximize "বৃহদায়ন/পুনঃস্থাপনা" >
+<!ENTITY tooltip.exit "প্রস্থান" >
+<!ENTITY tooltip.hide "অদৃশ্যকরণ" >
+<!ENTITY tooltip.control.back "পূর্ববর্তী গান" >
+<!ENTITY tooltip.control.play "পরিবেশন" >
+<!ENTITY tooltip.control.pause "অবকাশ" >
+<!ENTITY tooltip.control.fwd "পরবর্তী গান" >
+<!ENTITY tooltip.control.mute "নিঃশব্দকরণ" >
+<!ENTITY tooltip.control.volume "ভলিউম" >
+<!ENTITY tooltip.control.repeat "পুনরাবৃত্তি" >
+<!ENTITY tooltip.control.shuffle "এলোমেলো পরিবেশনা" >
+<!ENTITY tooltip.control.shuf_off "এলোমেলো পরিবেশনা বন্ধ" >
+<!ENTITY tooltip.control.curtrack "বর্তমান গানের খোজ" >
+<!ENTITY tooltip.control.service "ফেসপ্লেট প্রদর্শন পরিবর্তন" >
+<!ENTITY tooltip.search "খোজ" >
+<!ENTITY tooltip.browser.back "পিছনে পরিক্রমা" >
+<!ENTITY tooltip.browser.fwd "সামনে পরিক্রমা" >
+<!ENTITY tooltip.browser.stop "ব্রাউযার বন্ধ" >
+<!ENTITY tooltip.browser.home "হোম" >
+<!ENTITY tooltip.browser.refresh "সতেজকরণ" >
+<!ENTITY tooltip.browser.bookmark "পছন্দের তালিকায় যোগ" >
+<!ENTITY tooltip.browser.playlist "ওয়েব সঙ্গীত তালিকা প্রদর্শন/অদৃশ্যকরণ" >
+<!ENTITY tooltip.browser.download "বর্তমান ডাউনলোড প্রদর্শন" >
+<!ENTITY smart.window "স্মার্ট সঙ্গীত তালিকা নির্মাণকারী" >
+<!ENTITY smart.library "লাইব্রেরী নির্বাচন" >
+<!ENTITY smart.limit "এর মাঝে সীমাবদ্ধকরণ" >
+<!ENTITY smart.match "তুলনা" >
+<!ENTITY smart.any "যেকোন" >
+<!ENTITY smart.all "সব" >
+<!ENTITY smart.following "নিম্নলিখিত শর্তসমূহের:" >
+<!ENTITY smart.random "অগোছানো" >
+<!ENTITY smart.album "অ্যালবাম" >
+<!ENTITY smart.artist "শিল্পী" >
+<!ENTITY smart.genre "গানের ধরণ" >
+<!ENTITY smart.title "শিরেনাম" >
+<!ENTITY smart.high_rating "বেশি পছন্দনীয়" >
+<!ENTITY smart.low_rating "কম পছন্দনীয়" >
+<!ENTITY smart.most_recent "অতি সাম্প্রতিক" >
+<!ENTITY smart.least_recent "অসাম্প্রতিক" >
+<!ENTITY smart.most_often "অত্যন্ত বেশি" >
+<!ENTITY smart.least_often "নিতান্তই কম" >
+<!ENTITY smart.most_added "বেশি যোগ করা হয়েছে এমন" >
+<!ENTITY smart.least_added "স্বল্প যোগ করা হয়েছে এমন" >
+<!ENTITY smart.minutes "মিনিট" >
+<!ENTITY smart.hours "ঘণ্টা" >
+<!ENTITY smart.mb "মেগাবাইট" >
+<!ENTITY smart.gb "গিগাবাইট" >
+<!ENTITY smart.songs "গানসমূহ" >
+<!ENTITY smart.contains "যাতে আছে" >
+<!ENTITY smart.not_contain "যাতে নেই" >
+<!ENTITY smart.is "হয়" >
+<!ENTITY smart.is_not "হয় না" >
+<!ENTITY smart.starts "শুরু হয় এর দ্বারা" >
+<!ENTITY smart.ends "শেষ হয় এর দ্বারা" >
+<!ENTITY smart.selectedby "নির্বাচিত, এর দ্বারা" >
+<!ENTITY download.window "ডাউনলোড" >
+<!ENTITY download.select "গন্তব্য ফোল্ডার নির্বাচন" >
+<!ENTITY download.always "সর্বদা এই ফোল্ডারের ব্যবহার" >
+<!ENTITY textbox.songbird_open_url "যে মিডিয়াটি বাজাতে চাচ্ছেন তার ইউআরএল অথবা পাথ প্রদান করুন:" >
+<!ENTITY open_url.title "ইউআরএল উন্মীলন" >
+<!ENTITY subscribe.title "সেবা গ্রহণ" >
+<!ENTITY subscribe.minutes "মিনিট" >
+<!ENTITY subscribe.hours "ঘণ্টা" >
+<!ENTITY subscribe.days "দিন" >
+<!ENTITY subscribe.autocheck "স্বয়ংক্রিয় আপডেট: প্রতি" >
+<!ENTITY subscribe.destinationfolder "গন্তব্য ফোল্ডার নির্বাচন" >
+<!ENTITY exists.title "সঙ্গীতমালা আছে" >
+<!ENTITY exists.exists "এই নামের সঙ্গীতমালা বিদ্যমান" >
+<!ENTITY media_scan.title "মিডিয়া খোঁজ" >
+<!ENTITY media_scan.watch "নতুন মিডিয়ার জন্য এই ফোল্ডারে নজর রাখা হোক" >
+<!ENTITY new_playlist.title "নতুন সঙ্গীতমালা তৈরি" >
+<!ENTITY new_playlist.name "নতুন সঙ্গীতমালার নাম দিন" >
+<!ENTITY addtoplaylist.title "সঙ্গীতমালায় সংযোগ" >
+<!ENTITY addtoplaylist.create "নতুন সঙ্গীতমালা তৈরি" >
+<!ENTITY watchfolder.title "নজর রাখা ফোল্ডারসমূহ" >
+<!ENTITY watchfolder.folderlist "নতুন মিডিয়ার জন্য এই ফোল্ডারে নজর রাখা হোক" >
+<!ENTITY locale.language "ভাষা" >
+<!ENTITY menu.feathers "পাখনা" >
+<!ENTITY about.version "সংস্করণ" >
+<!ENTITY setup.title "সঙ্গবার্ড সেটআপ" >
+<!ENTITY setup.retrievingxpilist "সংযোজনা তালিকা গ্রহণ চলছে, অপেক্ষা করুণ..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "কানেকশন সেটিংস" >
+<!ENTITY setup.networkerror3 "অথবা 'ঠিক আছে' বাটনে ক্লিক করে সঙ্গবার্ড সেটআপ অগ্রসর করা হোক" >
+<!ENTITY setup.metrics.optin "নাম-পরিচয় প্রদান ব্যতীত ব্যবহার-অভ্যাস প্রেরণ" >
+<!ENTITY setup.metrics.info "আপনার ব্যবহার-অভ্যাস সংক্রান্ত তথ্য পাঠিয়ে সঙ্গবার্ডের উন্নয়নে আমাদের সহায়তা করুণ। এই প্রক্রিয়ায় কোন ব্যক্তিগত তথ্য সংগ্রহ করা হবে না।" >
+<!ENTITY setup.optionalextensions "ঐচ্ছিক সংযোজনা" >
+<!ENTITY setup.defaultlanguage "স্বাভাবিক ভাষা" >
+<!ENTITY setup.privacy "গোপনীয়তা" >
+<!ENTITY setupprogress.pleasewait "অপেক্ষা করুন..." >
+<!ENTITY menu.file.accesskey "এফ" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "C" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY bookmarks.edit.title "পছন্দ পরিবর্তন" >
+<!ENTITY bookmarks.edit.url "ইউআরএল:" >
+<!ENTITY bookmarks.edit.label "নাম:" >
+<!ENTITY bookmarks.edit.icon "আইকন:" >
+<!ENTITY trackeditor.title "সঙ্গীত সম্পাদক" >
+<!ENTITY trackeditor.trackdata "সঙ্গীত সম্পর্কিত তথ্য" >
+<!ENTITY trackeditor.exttrackdata "অতিরিক্ত তথ্য" >
+<!ENTITY trackeditor.tags "ট্যাগসমূহ" >
+<!ENTITY trackeditor.addtag.title "ট্যাগ সংযোগ" >
+<!ENTITY trackeditor.addtag.tag "ট্যাগ:" >
+<!ENTITY jumptofile.title "গমন" >
+<!ENTITY jumptofile.search "খোঁজ" >
+<!ENTITY hotkeys.useglobalhotkeys "গ্লোবাল হটকিই ব্যবহার" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "ক্রিয়া" >
+<!ENTITY hotkeys.hotkey "হটকিই" >
+<!ENTITY hotkeys.add "সংযোগ" >
+<!ENTITY hotkeys.set "নির্ধারণ" >
+<!ENTITY hotkeys.remove "অপসারণ" >
+<!ENTITY hotkeys.prefpane "হটকিই-সমূহ" >
+<!ENTITY metadata.uuid "মিডিয়া ইউইউআইডি" >
+<!ENTITY metadata.url "অবস্থান" >
+<!ENTITY metadata.artist "শিল্পী" >
+<!ENTITY metadata.title "শিরোনাম" >
+<!ENTITY metadata.album "অ্যালবাম" >
+<!ENTITY metadata.genre "গানের ধরণ" >
+<!ENTITY metadata.length "সময়" >
+<!ENTITY restartbox.restartnow "তাৎক্ষণিক পুনঃসূচনা" >
+<!ENTITY restartbox.restartonplaybackend "পরিবেশন শেষে পুনঃসূচনা" >
+<!ENTITY restartbox.restartlater "পরে পুনঃসূচনা" >
+<!ENTITY setupprogress.installingextensions "সংযোজনা অধিষ্ঠাণ চলছে" >
+<!ENTITY menu.updateCmd.label "আপডেট এর উপস্থিতি পরীক্ষা" >
+<!ENTITY menu.updateCmd.accessKey "o" >
+<!ENTITY trackeditor.disclaimer "সঙ্গীত সম্পাদক এখন পরিপূরর্ণভাবে নির্মিত হয় নি। সম্পাদিত মেটাডেটা সঙ্গবার্ডের নিজস্ব ডেটাবেসে সংরক্ষণ করা হয়। ভবিষ্যতে সম্পাদিত মেটাডেটা মিডিয়া ফাইলে সংরক্ষণের সুবিধা থাকবে।" >
+<!ENTITY callout.firstwebplaylist "সঙ্গবার্ড নিম্নোক্ত পরিবেশনযোগ্য গান পেয়েছে:" >
+<!ENTITY menu.file.new.key "N" >
+<!ENTITY menu.file.open.key "O" >
+<!ENTITY menu.file.url.key "U" >
+<!ENTITY menu.file.mini.key "M" >
+<!ENTITY menu.file.dominspector "I" >
+<!ENTITY menu.edit.undo.key "Z" >
+<!ENTITY menu.edit.cut.key "X" >
+<!ENTITY menu.edit.copy.key "C" >
+<!ENTITY menu.edit.paste.key "V" >
+<!ENTITY jumpto.key "J" >
+<!ENTITY search.key "F" >
+<!ENTITY locationbar.key "L" >
+<!ENTITY trackeditor.key "E" >
+<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto.accesskey "J" >
