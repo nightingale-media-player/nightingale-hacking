@@ -272,7 +272,7 @@ PRInt32 CPlaylistReaderM3U::ParseM3UFromBuffer(nsIURI *pBaseURI, PRUnichar *pBuf
   nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
   if(!pQuery) return NS_ERROR_UNEXPECTED;
 
-  pQuery->SetAsyncQuery(PR_TRUE);
+  pQuery->SetAsyncQuery(PR_FALSE);
   pQuery->SetDatabaseGUID(nsAutoString(strGUID));
 
   nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
