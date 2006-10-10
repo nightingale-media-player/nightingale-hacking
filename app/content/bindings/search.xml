@@ -284,7 +284,7 @@
           
           // Keep last 4 search terms for display in popup
           var recentSearches = SB_NewDataRemote( "searchwidget.recentstrings", null ); 
-          searchStrings = recentSearches.stringValue.split("\n");
+          var searchStrings = recentSearches.stringValue.split("\n");
           if (searchStrings.indexOf(search_term) == -1) 
           {
             if (searchStrings.length > 3 || (searchStrings.length == 1 && searchStrings[0] == ""))
@@ -573,7 +573,10 @@
         <![CDATA[
           var qmark = url.indexOf("?")
           if (qmark > -1) url = url.substr(0, qmark);
-          return (url.toLowerCase() == "chrome://songbird/content/xul/playlist_test.xul");
+          url = url.toLowerCase();
+          return (url.substr(0, 9) == "chrome://" &&
+              url.substr(url.length-17) == "playlist_test.xul");
+          //return (url.toLowerCase() == "chrome://songbird/content/xul/playlist_test.xul");
         ]]>
       </body>
     </method>

@@ -77,6 +77,12 @@
            if (this.hflex)
              this.hflex.setAttribute("flex", "0");
          }
+         if (this.getAttribute("header") == "false") {
+           this.header.setAttribute("hidden", "true");
+         }
+         if (this.getAttribute("border") == "false") {
+           this.parent.setAttribute("class", "");
+         }
        ]]>
      </constructor>
      <destructor>
@@ -125,7 +131,13 @@
           {
             if (this.state == "open") return;
             if (!replacedheight) replacedheight = 0;
-            this.size = Math.max(this.getContentSize(), replacedheight);
+            var size=this.getAttribute("contentheight");
+            if (!size) {
+              try {
+                size = this.getContentSize();
+              } catch (e) { }
+            }
+            this.size = Math.max(size, replacedheight);
             // No animations until we finish
             if ( ! this.tracking )
             {
@@ -147,6 +159,7 @@
               this.anim_start = now ? -9999 : new Date().getTime();
               this.anim_time = 0.2;
               this.anim_complete = this.onGrowComplete;
+              this.anim_complete_event = "opendrawer";
               
               // Start our animation loop
               var controller = this;
@@ -171,7 +184,13 @@
           {
             if (this.state == "closed") return;
             if (!replacedheight) replacedheight = 0;
-            this.size = Math.max(this.getContentSize(), replacedheight);
+            var size=this.getAttribute("contentheight");
+            if (!size) {
+              try {
+                size = this.getContentSize();
+              } catch (e) { }
+            }
+            this.size = Math.max(size, replacedheight);
             this.state = "closed";
             if (this.openclosebutton) this.openclosebutton.label = "+";
             // No animations until we finish
@@ -202,6 +221,7 @@
               this.anim_start = now ? -9999 : new Date().getTime();
               this.anim_time = 0.2;
               this.anim_complete = this.onShrinkComplete;
+              this.anim_complete_event = "closedrawer";
               
               // Start our animation loop
               var controller = this;
@@ -245,6 +265,10 @@
                 {
                   this.anim_complete( );
                 }
+
+                var e = document.createEvent("Events");
+                e.initEvent(this.anim_complete_event, false, true);
+                this.dispatchEvent(e);
                 
                 // Set our values back
                 this.tracking = false;
@@ -378,10 +402,41 @@
         </body>
       </method>
 
-      <method name="getContentSize">
-      <body>
-        return this.getAttribute("contentheight");
-      </body>
+    </implementation>
+ 
+  </binding>
+
+
+  <!-- CONTENTDRAWER CONTROL -->
+
+
+  <binding id="contentdrawer" extends="chrome://songbird/content/bindings/drawer.xml#drawer">
+
+    <implementation>
+
+      <method name="insertDrawerContent">
+        <body>
+          <![CDATA[
+          try
+          {
+            var height=this.getAttribute("contentheight");
+            if (!height) {
+              try {
+                height = this.getContentSize();
+              } catch (e) { }
+            }
+            var ret = document.createElement("iframe");
+            ret.setAttribute("src", this.getAttribute("uri"));
+            ret.setAttribute("height", height);
+            return ret;
+          }
+          catch ( err )
+          {
+            alert( "contentdrawer - insertDrawerContent - " + err );
+          }
+          return null;
+          ]]>
+        </body>
       </method>
 
     </implementation>
