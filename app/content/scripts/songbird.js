@@ -337,6 +337,8 @@ function SBUrlChanged( value )
           window.focus(); 
         }
         else {
+          // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
+          onWindowSaveSizeAndPosition();
           service.cloak( document ); 
         }
       }
@@ -371,6 +373,7 @@ function SBAppDeinitialize()
   songbird_playURL = null;
   // Remember where the video window is.
   resetGlobalHotkeys();
+  // Save position before closing, in case the window has been moved, but its position hasnt been saved yet (the window is still up)
   onWindowSaveSizeAndPosition();
   SBMetricsAppShutdown();
 }
@@ -598,6 +601,8 @@ function SBInitializeNamedDatabase( db_name )
 var coreInitialCloakDone = 0;
 function HideCoreWindow() 
 {
+  // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
+  onWindowSaveSizeAndPosition();
   onHide();
   coreInitialCloakDone = 1;
 }
@@ -606,6 +611,8 @@ function onHideButtonClick()
 {
   // Stop video playback
   gPPS.stop();
+  // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
+  onWindowSaveSizeAndPosition();
   // Hide our video window
   onHide();
 }
