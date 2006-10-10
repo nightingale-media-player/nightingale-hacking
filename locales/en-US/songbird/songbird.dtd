@@ -250,6 +250,7 @@
 <!ENTITY metadata.album               "Album" >
 <!ENTITY metadata.genre               "Genre" >
 <!ENTITY metadata.length              "Time" >
+<!ENTITY metadata.bitrate             "Bit Rate" >
 
 <!ENTITY restartbox.restartnow        "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >

@@ -298,3 +298,8 @@ Les Métadonnées sont sauvegardées seulement dans la base de données de Songb
 <!ENTITY web.url.first.old "" >
 
 
+
+
+<!ENTITY metadata.bitrate "Bit Rate" >
+
+
