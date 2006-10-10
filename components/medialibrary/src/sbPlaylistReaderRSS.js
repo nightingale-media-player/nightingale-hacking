@@ -92,7 +92,7 @@ CPlaylistRSS.prototype =
               this.m_append = bAppendOrReplace;
               
               this.m_query = new DatabaseQuery();
-              this.m_query.setAsyncQuery(true);
+              this.m_query.setAsyncQuery(false);
               this.m_query.setDatabaseGUID(strGUID);
 
               this.m_document = document;

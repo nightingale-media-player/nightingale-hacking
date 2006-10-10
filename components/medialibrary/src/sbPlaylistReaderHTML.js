@@ -262,7 +262,7 @@ CPlaylistHTML.prototype =
         var pPlaylistManager = Components.classes["@songbirdnest.com/Songbird/PlaylistManager;1"]
                                .createInstance(Components.interfaces.sbIPlaylistManager);
 
-        pQuery.setAsyncQuery(true);
+        pQuery.setAsyncQuery(false);
         pQuery.setDatabaseGUID(strGUID);
 
         pLibrary.setQueryObject(pQuery);
