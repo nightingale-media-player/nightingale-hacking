@@ -50,7 +50,7 @@ try
     {
       mediafiles = theSongbirdStrings.getString("open.mediafiles");
     } catch(e) {}
-    fp.appendFilter(mediafiles,"*.wav; *.ogg; *.flac; *.m4a; *.mp3; *.mp4; *.wma; *.wmv; *.avi; *.asf; *.asx; *.mov;");
+    fp.appendFilter(mediafiles,"*.wav; *.ogg; *.flac; *.m4a; *.m4v; *.mp3; *.mp4; *.wma; *.wmv; *.avi; *.asf; *.asx; *.mov;");
     // Show it
     var fp_status = fp.show();
     if ( fp_status == nsIFilePicker.returnOK )

@@ -747,6 +747,7 @@ CoreQT.prototype.isMediaURL = function(aURL) {
         /\.ogm$/i.test(aURL) ||
         /\.mp3$/i.test(aURL) ||
         /\.m4a$/i.test(aURL) ||
+        /\.m4v$/i.test(aURL) ||
         /\.avi$/i.test(aURL) ||
         /\.asx$/i.test(aURL) ||
         /\.asf$/i.test(aURL) ||
@@ -776,6 +777,7 @@ CoreQT.prototype.isVideoURL = function ( aURL )
          /\.asf$/i.test(aURL) ||
          /\.asx$/i.test(aURL) ||
          /\.wmv$/i.test(aURL) ||          
+         /\.m4v$/i.test(aURL) ||          
          /\.mp4$/i.test(aURL)
        )
      )

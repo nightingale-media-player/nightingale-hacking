@@ -262,6 +262,7 @@ CoreVLC.prototype.isMediaURL = function(aURL) {
         ( aURL.indexOf( ".mpc" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wav" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
+        ( aURL.indexOf( ".m4v" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wma" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wmv" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".asx" ) == ( aURL.length - 4 ) ) ||
@@ -292,6 +293,7 @@ CoreVLC.prototype.isVideoURL = function ( aURL )
           ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
           ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
           ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
+          ( aURL.indexOf( ".m4v" ) == ( aURL.length - 4 ) ) ||
           ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
         )
       )

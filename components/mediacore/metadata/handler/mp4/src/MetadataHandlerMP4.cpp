@@ -130,6 +130,7 @@ NS_IMETHODIMP sbMetadataHandlerMP4::Vote(const nsAString &url, PRInt32 *_retval 
 
   if ( ( strUrl.Find( ".mp4", PR_TRUE ) != -1 ) || 
        ( strUrl.Find( ".m4a", PR_TRUE ) != -1 ) || 
+       ( strUrl.Find( ".m4v", PR_TRUE ) != -1 ) || 
        ( strUrl.Find( ".mov", PR_TRUE ) != -1 ) )
     *_retval = 1;
   else
