@@ -329,6 +329,8 @@ Love the box.
 {
   width:  974px !important;
   height: 718px !important;
+  min-width: 750px !important;
+  min-height: 400px !important;
 }
 
 .service-pane /* aka The Service Pane, The Left Pane **/

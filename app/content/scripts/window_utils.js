@@ -316,8 +316,10 @@ function onWindowSavePosition()
                                   " root.h:" + SBDataGetIntValue(root+'.y') + 
                                   "\n");
 */
-  SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
-  SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
+  if (!(document.documentElement.boxObject.screenX == -32000 ||document.documentElement.boxObject.screenY == -32000)) { // never record the coordinates of a cloaked window !
+    SBDataSetIntValue( root + ".x", document.documentElement.boxObject.screenX );
+    SBDataSetIntValue( root + ".y", document.documentElement.boxObject.screenY );
+  }
 }
 
 function windowFocus()
@@ -364,9 +366,30 @@ function onWindowLoadSizeAndPosition()
 
   if ( rootW && rootH )
   {
-    // todo: test if the window is resizable. if it is, and rootW/rootH are below some limit, skip these steps so that we reload the default w/h from xul and css
-    // (waiting on finding a way to retrieve a window's features)
-    if (1) { 
+    // test if the window is resizable. if it is, and rootW/rootH are below some limit, skip these steps so that we reload the default w/h from xul and css
+    var resetsize = false;
+    var resizers = document.getElementsByTagName("resizer");
+    var resizable = resizers.length > 0;
+    var minwidth = getStyle(document.documentElement, "min-width");
+    var minheight = getStyle(document.documentElement, "min-height");
+    if (minwidth) minwidth = parseInt(minwidth);
+    if (minheight) minheight = parseInt(minheight);
+/*
+    dump("window = " + document.documentElement.getAttribute("id") + "\n");
+    dump("minwidth = " + minwidth + "\n");
+    dump("rootW = " + rootW + "\n");
+    dump("minheight = " + minheight + "\n");
+    dump("rootH = " + rootH + "\n");
+    dump("resizable = " + resizable + "\n");
+*/
+    if (resizable &&
+        ((minwidth && rootW < minwidth) || 
+         (minheight && rootH < minheight))) resetsize = true;
+/*
+    dump("resetsize = " + resetsize + "\n");
+*/
+    
+    if (!resetsize) { 
       // https://bugzilla.mozilla.org/show_bug.cgi?id=322788
       // YAY YAY YAY the windowregion hack actualy fixes this :D
       window.resizeTo( rootW, rootH );
@@ -380,6 +403,16 @@ function onWindowLoadSizeAndPosition()
     }
   }
   onWindowLoadPosition();
+}
+
+function getStyle(el,styleProp)
+{
+  var v;
+  if (el) {
+    var s = document.defaultView.getComputedStyle(el,null);
+    v = s.getPropertyValue(styleProp);
+  }
+  return v;
 }
 
 function getXULWindowFromWindow(win) // taken from venkman source

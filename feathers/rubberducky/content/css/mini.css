@@ -35,6 +35,7 @@ window#mini
 { 
   background-color: none !important; /* Only transparent on windows. (Bug 1656) */
   width: 800px !important;
+  min-width: 390px ! important;
 }
 
 #frame_mini

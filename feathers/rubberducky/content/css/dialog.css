@@ -213,6 +213,11 @@ label.dialog_box
   width:  550px !important; /* makes all the dialog boxes the same size **/
 }
 
+#track_editor
+{
+  min-width:  550px !important;
+}
+
 #playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
 {
   width:  350px !important;
@@ -434,6 +439,8 @@ ADD TO PLAYLIST
 {
   width: 420px !important;
   height: 500px !important;
+  min-width: 320px !important;
+  min-height: 150px !important;
 }
 
 #songbird_playlistlist > listitem
@@ -706,6 +713,8 @@ VIDEO WINDOW
 {
   height: 600px;
   width: 800px;
+  min-width: 320px;
+  min-height: 240px;
 }
 
 #video_chrome_bkgd
