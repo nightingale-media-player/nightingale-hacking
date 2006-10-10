@@ -53,7 +53,7 @@ CDynamicPlaylist.prototype.setPeriodicity = function(nPeriodicity, bWillRunLater
       this.m_queryObject.resetQuery();
     
     this.m_queryObject.addQuery("UPDATE \"" + this.m_strPlaylistTableName + "\" SET periodicity  = \"" + nPeriodicity + "\" WHERE name = \"" + this.m_strName + "\"");
-    
+
     if(!bWillRunLater)
     {
       this.m_queryObject.execute();
@@ -69,12 +69,12 @@ CDynamicPlaylist.prototype.getPeriodicity = function() {
   {
     this.m_queryObject.resetQuery();
     this.m_queryObject.addQuery("SELECT periodicity FROM \"" + this.m_strPlaylistTableName + "\" WHERE name = \"" + this.m_strName + "\"");
-    
+
     this.m_queryObject.execute();
     this.m_queryObject.waitForCompletion();
     
     var resObj = this.m_queryObject.getResultObject();
-    if(resObj.getRowCount > 0)
+    if(resObj.getRowCount() > 0)
     {
       return resObj.getRowCell(0, 0);
     }
@@ -111,7 +111,7 @@ CDynamicPlaylist.prototype.getURL = function() {
     this.m_queryObject.waitForCompletion();
     
     var resObj = this.m_queryObject.getResultObject();
-    if(resObj.getRowCount > 0)
+    if(resObj.getRowCount() > 0)
     {
       return resObj.getRowCell(0, 0);
     }
@@ -143,7 +143,7 @@ CDynamicPlaylist.prototype.getLastUpdateTime = function() {
     this.m_queryObject.waitForCompletion();
     
     var resObj = this.m_queryObject.getResultObject();
-    if(resObj.getRowCount > 0)
+    if(resObj.getRowCount() > 0)
       return resObj.getRowCell(0, 0);
   }
 

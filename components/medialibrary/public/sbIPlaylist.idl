@@ -229,6 +229,14 @@ interface sbIPlaylist : nsISupports
   void setReadableName(in AString strReadableName);
 
   AString getReadableName();
+
+  void setDescription(in AString strDescription);
+
+  AString getDescription();
+
+  void setType(in AString strType);
+
+  AString getType();
 };
 
 [scriptable, uuid(8A1A3D68-E3A4-484b-B9A5-4088ADEDA5B3)]

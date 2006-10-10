@@ -572,5 +572,73 @@ CPlaylistBase.prototype =
       strReadableName = resObj.getRowCell(0, 0);    
     
     return strReadableName;
+  },
+
+  setDescription: function(strDescription)
+  {
+    this.m_queryObject.resetQuery();
+    
+    strDescription = strDescription.replace(/"/g, "\"\"");
+    this.m_queryObject.addQuery("UPDATE " + this.m_strPlaylistTableName +
+                                " SET description = \"" + strDescription +
+                                "\" WHERE name = \"" + this.m_strName + "\"");
+    
+    this.m_queryObject.execute();
+    this.m_queryObject.waitForCompletion();
+    
+    return;
+  },
+  
+  getDescription: function()
+  {
+    var strDescription = "";
+    
+    this.m_queryObject.resetQuery();
+    this.m_queryObject.addQuery("SELECT description FROM " + this.m_strPlaylistTableName +
+                                " WHERE name = \"" + this.m_strName + "\"");
+    
+    this.m_queryObject.execute();
+    this.m_queryObject.waitForCompletion();
+    
+    var resObj = this.m_queryObject.getResultObject();
+    
+    if(resObj.getRowCount())
+      strDescription = resObj.getRowCell(0, 0);    
+    
+    return strDescription;
+  },
+
+  setType: function(strType)
+  {
+    this.m_queryObject.resetQuery();
+    
+    strType = strType.replace(/"/g, "\"\"");
+    this.m_queryObject.addQuery("UPDATE " + this.m_strPlaylistTableName +
+                                " SET type = \"" + strType +
+                                "\" WHERE name = \"" + this.m_strName + "\"");
+    
+    this.m_queryObject.execute();
+    this.m_queryObject.waitForCompletion();
+    
+    return;
+  },
+  
+  getType: function()
+  {
+    var strType = "";
+    
+    this.m_queryObject.resetQuery();
+    this.m_queryObject.addQuery("SELECT type FROM " + this.m_strPlaylistTableName +
+                                " WHERE name = \"" + this.m_strName + "\"");
+    
+    this.m_queryObject.execute();
+    this.m_queryObject.waitForCompletion();
+    
+    var resObj = this.m_queryObject.getResultObject();
+    
+    if(resObj.getRowCount())
+      strType = resObj.getRowCell(0, 0);    
+    
+    return strType;
   }
 };

@@ -29,7 +29,9 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
 <window
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -37,14 +39,12 @@
  id="subscribe"
  title="&subscribe.title;"
  onload="doLoad();"
- onkeypress="/* dialog key handling */ if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
+ onkeypress="onKeyPress(event);"
  flex="1"
  hidechrome="true"
-
  ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
  onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
-
 
 <windowregion/>
 <stack flex="1">
@@ -97,14 +97,14 @@
             
             <hbox align="center">
               <label class="dialog_label" value="URL:"/>
-              <textbox class="dialog_textbox" id="subscribe_url" value="http://"/>
+              <textbox class="dialog_textbox" id="subscribe_url" />
             </hbox>
             <spacer height="5"/>
             <hbox class="sb_faceplate" align="center">
             <spacer width="40"/>
-            <checkbox class="dialog_checkbox" id="subscribe_autosubscribe_check" label="&subscribe.autocheck;" checked="true"/>
-            <textbox class="dialog_textbox" id="subscribe_interval" value="1"/>
-            <menulist id="subscribe_interval_unit" value="days">
+            <label class="dialog_label" id="auto_subscribe_label" label="&subscribe.autocheck;"/>
+            <textbox class="dialog_textbox" id="subscribe_interval" />
+            <menulist id="subscribe_interval_unit" >
               <menupopup id="subscribe_interval_unit_popup">
                 <menuitem id="subscribe_interval_days" label="&subscribe.days;" value="days"/>
                 <menuitem id="subscribe_interval_hours" label="&subscribe.hours;" value="hours"/>
@@ -116,7 +116,8 @@
             <label class="dialog_label" value="&subscribe.destinationfolder;"/>
             <hbox>
               <textbox class="dialog_textbox" id="subscribe_folder_path" flex="1"/>
-              <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate" oncommand="doBrowse();"/>
+              <button id="button_browse" label="&window.browse;" class="dialog_button sb_faceplate"
+                      oncommand="doBrowse();"/>
             </hbox>        
           </vbox>
           
@@ -124,9 +125,11 @@
           
           <hbox>
             <spacer flex="1"/>           
-            <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate" oncommand="if ( doOK() ) onExit( );"/>
+            <button id="button_ok" label="&window.ok;" class="dialog_button sb_faceplate"
+                    oncommand="if ( doOK() ) onExit( );"/>
             <spacer width="5"/>
-            <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate" oncommand="if ( doCancel() ) onExit( );"/>
+            <button id="button_cancel" label="&window.cancel;" class="dialog_button sb_faceplate"
+                    oncommand="if ( doCancel() ) onExit( );"/>
           </hbox>
                 
         </vbox>
@@ -145,9 +148,6 @@
       <x_resizer id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
     </hbox>
   </vbox>
-
-
-   
 </stack>
  
 <!-- SCRIPTS -->
@@ -159,114 +159,195 @@
 
   <script>
   <![CDATA[
+    function onKeyPress(event)
+    {
+      if ( event.keyCode == 13 ) {          // enter
+        if ( doOK() ) onExit();
+      } else if ( event.keyCode == 27 ) {   // ESC
+          if ( doCancel() ) onExit();
+      }
+    }
+
     function doLoad()
     {
       try {
         fixOSXWindow("window_top", "app_title");
       }
-      catch (e) { }
+      catch (err) { }
 
       const SUBSCRIBE_FOLDER_KEY = "download.folder";
       try
       {
-        var theTextbox = document.getElementById( "subscribe_folder_path" );
-        theTextbox.value = SBDataGetStringValue( SUBSCRIBE_FOLDER_KEY );
+        var data = null;
+        // pull data out of arguments, if present
+        if ( window.arguments && window.arguments[0] )
+          data = window.arguments[0];
+
+        // get handles on the things we want to pre-populate (if we have data)
+        var srcURLTextbox = document.getElementById( "subscribe_url" );
+        var timeTextbox = document.getElementById( "subscribe_interval" );
+        var unitMenulist = document.getElementById( "subscribe_interval_unit" );
+        var destURLTextbox = document.getElementById( "subscribe_folder_path" );
+
+        // pull the destination folder from the subscription url
+        destURLTextbox.value = SBDataGetStringValue( SUBSCRIBE_FOLDER_KEY );
+
+        // populate the entry fields
+        if (data && data.edit) {
+          srcURLTextbox.value = data.url;
+          var time = parseInt(data.time);
+          var units = "minutes";
+          if (time > 59) {
+            if ( time % 60 == 0) {
+              time = time / 60;
+              units = "hours";
+              if (time % 24 == 0) {
+                time = time / 24;
+                units = "days";
+              }
+            }
+          }
+          timeTextbox.value = time;
+          unitMenulist.value = units;
+        }
+        else {
+          // set defaults, sometimes we get an url
+          srcURLTextbox.value = (data && data.url) ? data.url : "http://";
+          timeTextbox.value = "1";
+          unitMenulist.value = "days";
+        }
+
+        // focus the ok button by default
         var ok = document.getElementById( "button_ok" );
         ok.focus();
-        if ( window.arguments && window.arguments[0] )
-        {
-          document.getElementById( "subscribe_url" ).value = window.arguments[0].url;
-        }
       }
       catch(err)
       {
-        alert( "subscribe.xml - doLoad - " + err );
+        alert( "subscribe.xul - doLoad - " + err );
       }
     }
+
     function doOK()
     {
       const SUBSCRIBE_FOLDER_KEY = "download.folder";
-      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-      try
-      {
+      try {
         // Make sure the folder is valid?
-        var theTextbox = document.getElementById( "subscribe_folder_path" );
-        var theFolder = theTextbox.value;
-     	  var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-     	  try
-     	  {
-          aLocalFile.initWithPath( theFolder );
+        var dstURLTextbox = document.getElementById( "subscribe_folder_path" );
+        var folder = dstURLTextbox.value;
+        var localFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
+        try {
+          localFile.initWithPath( folder );
           
           // Thou shalt not.
-          if ( ! aLocalFile.isDirectory() )
-          {
-            sbMessageBox_strings("subscribe.selectvalidfolder.title", "subscribe.selectvalidfolder.msg", "Invalid folder", "Please select a valid destination folder for download.");
+          if ( ! localFile.isDirectory() ) {
+            sbMessageBox_strings("subscribe.selectvalidfolder.title",
+                                 "subscribe.selectvalidfolder.msg",
+                                 "Invalid folder",
+                                 "Please select a valid destination folder for download.");
             return false;
           }
         }
-        catch ( err )
-        {
-          sbMessageBox_strings("subscribe.selectvalidfolder.title", "subscribe.selectvalidfolder.msg", "Invalid folder", "Please select a valid destination folder for download.");
+        catch ( err ) {
+          sbMessageBox_strings("subscribe.selectvalidfolder.title",
+                               "subscribe.selectvalidfolder.msg",
+                               "Invalid folder",
+                               "Please select a valid destination folder for download.");
           return false;
         }
-        SBDataSetStringValue( SUBSCRIBE_FOLDER_KEY, theFolder );
-      
+
+        // XXXredfive - in the near future change this to set the value on the
+        //   dynamic playlist itself instead of forcing all dynamic playlists
+        //   into a single directory. (need db schema changes)
+        SBDataSetStringValue( SUBSCRIBE_FOLDER_KEY, folder );
+
+        // pull the rest of the data from the dialog (and parse it)
         var url = document.getElementById( "subscribe_url" ).value;
         var time = parseInt( document.getElementById( "subscribe_interval" ).value );
         var unit = document.getElementById("subscribe_interval_unit").value;
-        
-        if ( time == 0 )
-        {
+
+        if ( time == 0 ) {
+          sbMessageBox_strings("subscribe.selectvalidtime.title",
+                               "subscribe.selectvalidtime.msg",
+                               "Invalid Update Interval",
+                               "Please select a valid time for automatic update.");
           return false;
         }
         
-        switch(unit)
-        {
+        switch(unit) {
           case "days": time = time * 24 * 60; break;
           case "hours": time = time * 60; break;
         }
-        
-        var aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-        var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
-        aDBQuery.setAsyncQuery( false );
-        aDBQuery.setDatabaseGUID( "songbird" );
-        
-        var readable_name = getServer( url );
-        if ( window.arguments && window.arguments[0] && window.arguments[0].readable_name )
-        {
-          readable_name = window.arguments[0].readable_name + " ";
-        }
-    
-        var aUUIDGenerator = Components.classes["@mozilla.org/uuid-generator;1"].createInstance(Components.interfaces.nsIUUIDGenerator);
-        var guid = aUUIDGenerator.generateUUID();
-        
-        aPlaylistManager.createDynamicPlaylist(guid, readable_name, url, url, url, time, aDBQuery);
 
-        //Run the dynamic playlist updater to download the new playlist.
+        //
+        // We have collected the data from the dialog, now modify an existing
+        // playlist or create a new one.
+        //
+
+        var playlistManager = new sbIPlaylistManager();
+        var dbQuery = new sbIDatabaseQuery();
+        dbQuery.setAsyncQuery(false);
+
+        // pull data out of arguments, if present
+        var data = null;
+        if ( window.arguments && window.arguments[0] )
+          data = window.arguments[0];
+
+        if (data && data.edit && data.guid && data.table) {
+          // we're only editing an existing DynamicPlaylist so get it from the manager
+
+          // set the database guid
+          dbQuery.setDatabaseGUID(data.guid);
+
+          var playlist = playlistManager.getDynamicPlaylist(data.table, dbQuery);
+          if (playlist) {
+            playlist.setPeriodicity(time, false);
+            playlist.setURL(url, false);
+            playlist.setDescription(url);
+            playlist.setType(url);
+          }
+        }
+        else {
+          // we don't have all the info we need to edit an existing playlist so create a new one.
+
+          dbQuery.setDatabaseGUID( "songbird" );
+          var readable_name = "";
+          if ( data.readable_name )
+            readable_name = data.readable_name + " ";
+          else
+            readable_name = getServer( url );
+
+          var guid = Components.classes["@mozilla.org/uuid-generator;1"]
+                     .createInstance(Components.interfaces.nsIUUIDGenerator)
+                     .generateUUID();
+
+          playlistManager.createDynamicPlaylist(guid, readable_name, url, url, url, time, dbQuery);
+        }
+
+        // Run the dynamic playlist updater to download the new playlist.
         SBDataFireEvent( "dynamic.playlist.update" );
       
-        if ( window.arguments && window.arguments[0] )
-        {
-          window.arguments[0].value = theTextbox.value;
-          window.arguments[0].retval = "ok";
+        if ( data ) {
+          data.value = dstURLTextbox.value;
+          data.retval = "ok";
         }
       }
-      catch ( err )
-      {
+      catch ( err ) {
         alert( "subscribe.xul - doOK - " + err );
       }
       return true;
     }
+
     function doCancel() 
     {
       if ( window.arguments && window.arguments[0] )
       {
-        var theTextbox = document.getElementById( "subscribe_folder_path" );
-        window.arguments[0].value = theTextbox.value;
+        var dstURLTextbox = document.getElementById( "subscribe_folder_path" );
+        window.arguments[0].value = dstURLTextbox.value;
         window.arguments[0].retval = "cancel";
       }
       return true;
     }
+
     function getServer( url )
     {
       var retval = "";
@@ -295,8 +376,8 @@
       var res = fp.show();
       if ( res == nsIFilePicker.returnOK )
       {
-        var theTextbox = document.getElementById( "subscribe_folder_path" );
-        theTextbox.value = fp.file.path;
+        var dstURLTextbox = document.getElementById( "subscribe_folder_path" );
+        dstURLTextbox.value = fp.file.path;
       }
     }
   ]]>

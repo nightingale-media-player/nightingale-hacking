@@ -2675,22 +2675,35 @@ function SBSubscribe( url, guid, table, readable_name )
   subscribe_data.retval = "";
   subscribe_data.url = url;
   subscribe_data.readable_name = readable_name;
-  // Open the window
-  SBScanServiceTreeNewEntryEditable();
-  SBOpenModalDialog( "chrome://songbird/content/xul/subscribe.xul", "", "chrome,modal=yes,centerscreen", subscribe_data );
-  if ( subscribe_data.retval == "ok" )
-  {
-    if ( guid && table )
-    {
-      const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-      var aPlaylistManager = new PlaylistManager();
-      aPlaylistManager = aPlaylistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-      var aDBQuery = new sbIDatabaseQuery();
-      aDBQuery.setAsyncQuery(false);
-      aDBQuery.setDatabaseGUID(guid);
-      aPlaylistManager.deletePlaylist( table, aDBQuery );
-    }
 
+  // if we have a table and guid, we're editing an existing playlist
+  // so we need to populate the edit dialog with the existing data.
+  if (table && guid) {
+    var playlistManager = new sbIPlaylistManager();
+    var dbQuery = new sbIDatabaseQuery();
+
+    dbQuery.setAsyncQuery(false);
+    dbQuery.setDatabaseGUID(guid);
+
+    var playlist = playlistManager.getDynamicPlaylist(table, dbQuery);
+    if (playlist) {
+      // if the playlist exists pull the data from it and mark ourself as
+      // editing the existing playlist
+      subscribe_data.time = playlist.getPeriodicity();
+      subscribe_data.table = table;
+      subscribe_data.guid = guid;
+      subscribe_data.edit = true;
+    }
+  }
+
+  // snapshot the service tree so we can find the added playlist
+  SBScanServiceTreeNewEntryEditable();
+
+  // Open the window
+  SBOpenModalDialog( "chrome://songbird/content/xul/subscribe.xul", "", "chrome,modal=yes,centerscreen", subscribe_data );
+  if ( subscribe_data.retval == "ok" && !subscribe_data.edit )
+  {
+    // if we are not editing an existing playlist open the edit box
     SBScanServiceTreeNewEntryStart();
   }
 }
