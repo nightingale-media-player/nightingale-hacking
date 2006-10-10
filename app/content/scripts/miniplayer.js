@@ -81,8 +81,10 @@ try
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
     }
     
-    if (platform == "Darwin") {
+    if ( (platform == "Darwin") || (platform == "Linux") ){
       document.getElementById("frame_mini").setAttribute("style", "-moz-border-radius: 0px !important; border-color: transparent !important;"); // Square the frame and remove the border.
+    } else {
+      document.getElementById("mini").setAttribute("style", "background-color: transparent !important;"); // Only on windows. (Bug 1656)
     }
     
     window.addEventListener( "keydown", checkAltF4, true );

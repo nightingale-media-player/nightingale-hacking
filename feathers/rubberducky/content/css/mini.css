@@ -33,7 +33,7 @@ Anything with #mini refers to the skin of the mini player.
 
 window#mini  
 { 
-  background-color: transparent !important;
+  background-color: none !important; /* Only transparent on windows. (Bug 1656) */
   width: 800px !important;
 }
 
