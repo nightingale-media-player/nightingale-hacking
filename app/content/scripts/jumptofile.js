@@ -458,6 +458,8 @@ try
   }
 
   function onUnloadJumpToFile() {
+    onWindowSaveSizeAndPosition();
+
     var playlist = document.getElementById("jumpto.playlist");
     playlist.removeEventListener("playlist-esc", onExit, false);
     playlist.removeEventListener("playlist-play", onJumpToPlay, false);
