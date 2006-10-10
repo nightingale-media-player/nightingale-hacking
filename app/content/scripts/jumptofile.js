@@ -149,6 +149,7 @@ try
     }
 
     onWindowLoadSizeAndPosition();
+    setMinMaxCallback();
 
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
@@ -722,6 +723,96 @@ try
     if (SBDataGetIntValue("jumpto.visible")) closeJumpTo();
     else onJumpToFileKey();
   }
+
+  function setMinMaxCallback()
+  {
+    try {
+      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      if (windowMinMax) {
+        var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+        if (service)
+          service.setCallback(document, SBWindowMinMaxCB);
+      }
+    }
+    catch (err) {
+      // No component
+      dump("Error. jumptofile.js:setMinMaxCallback() \n " + err + "\n");
+    }
+  }
+
+  var SBWindowMinMaxCB = 
+  {
+    // Shrink until the box doesn't match the window, then stop.
+    _minwidth: -1,
+    _minheight: -1,
+    _cssminwidth: -1,
+    _cssminheight: -1,
+    GetMinWidth: function()
+    {
+      if (this._cssminwidth == -1) {
+        this._cssminwidth = parseInt(getStyle(document.documentElement, "min-width"));
+      }
+      // If min size is not yet known and if the window size is different from the document's box object, 
+      if (this._minwidth == -1 && window.innerWidth != document.getElementById('jumpto_frame').boxObject.width)
+      { 
+        // Then we know we've hit the minimum width, record it. Because you can't query it directly.
+        this._minwidth = document.getElementById('jumpto_frame').boxObject.width + 1;
+      }
+      return Math.max(this._minwidth, this._cssminwidth);
+    },
+
+    GetMinHeight: function()
+    {
+      if (this._cssminheight == -1) {
+        this._cssminheight = parseInt(getStyle(document.documentElement, "min-height"));
+      }
+      // If min size is not yet known and if the window size is different from the document's box object, 
+      if (this._minheight == -1 && window.innerHeight != document.getElementById('jumpto_frame').boxObject.height)
+      { 
+        // Then we know we've hit the minimum width, record it. Because you can't query it directly.
+        this._minheight = document.getElementById('jumpto_frame').boxObject.height + 1;
+      }
+      return Math.max(this._minheight, this._cssminheight);
+    },
+
+    GetMaxWidth: function()
+    {
+      return -1;
+    },
+
+    GetMaxHeight: function()
+    {
+      return -1;
+    },
+
+    OnWindowClose: function()
+    {
+      setTimeout(quitApp, 0);
+    },
+
+    QueryInterface : function(aIID)
+    {
+      if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
+          !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+          !aIID.equals(Components.interfaces.nsISupports)) 
+      {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+      
+      return this;
+    }
+  }
+
+  function getStyle(el,styleProp)
+  {
+    var v;
+    if (el) {
+      var s = document.defaultView.getComputedStyle(el,null);
+      v = s.getPropertyValue(styleProp);
+    }
+    return v;
+  }
+
 
 }
 catch ( err )
