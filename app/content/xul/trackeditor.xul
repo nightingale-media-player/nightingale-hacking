@@ -52,7 +52,7 @@
 
 <stack flex="1">
 
-  <vbox class="sb_faceplate, dialog" flex="1">
+  <vbox class="sb_faceplate, dialog" flex="1" id="trackeditor_frame">
     <hbox class="sb_faceplate">
         <image id="chrome_nw" class="sb_faceplate"/>
         <image id="chrome_n" class="sb_faceplate" flex="1"/>
@@ -217,6 +217,7 @@
 
     onWindowLoadPosition();
     document.getElementById("trackeditor.trackeditor").openDrawer();
+    setMinMaxCallback();
   }
   
   function onDestroyPlaylist() {
@@ -282,6 +283,84 @@
 
   function onBlur() {
     _focus.setIsFocused(false);
+  }
+
+  function setMinMaxCallback()
+  {
+    try {
+      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      if (windowMinMax) {
+        var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+        if (service)
+          service.setCallback(document, SBWindowMinMaxCB);
+      }
+    }
+    catch (err) {
+      // No component
+      dump("Error. trackeditor.xul:setMinMaxCallback() \n " + err + "\n");
+    }
+  }
+
+  var SBWindowMinMaxCB = 
+  {
+    // Shrink until the box doesn't match the window, then stop.
+    _minwidth: -1,
+    _cssminwidth: -1,
+    GetMinWidth: function()
+    {
+      if (this._cssminwidth == -1) {
+        this._cssminwidth = parseInt(getStyle(document.documentElement, "min-width"));
+      }
+      // If min size is not yet known and if the window size is different from the document's box object, 
+      if (this._minwidth == -1 && window.innerWidth != document.getElementById('trackeditor_frame').boxObject.width)
+      { 
+        // Then we know we've hit the minimum width, record it. Because you can't query it directly.
+        this._minwidth = document.getElementById('trackeditor_frame').boxObject.width + 1;
+      }
+      return Math.max(this._minwidth, this._cssminwidth);
+    },
+
+    GetMinHeight: function()
+    {
+      return -1;
+    },
+
+    GetMaxWidth: function()
+    {
+      return -1;
+    },
+
+    GetMaxHeight: function()
+    {
+      return -1;
+    },
+
+    OnWindowClose: function()
+    {
+      setTimeout(quitApp, 0);
+    },
+
+    QueryInterface : function(aIID)
+    {
+      if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
+          !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+          !aIID.equals(Components.interfaces.nsISupports)) 
+      {
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+      
+      return this;
+    }
+  }
+
+  function getStyle(el,styleProp)
+  {
+    var v;
+    if (el) {
+      var s = document.defaultView.getComputedStyle(el,null);
+      v = s.getPropertyValue(styleProp);
+    }
+    return v;
   }
   
   ]]>
