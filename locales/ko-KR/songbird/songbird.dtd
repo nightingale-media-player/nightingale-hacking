@@ -1,180 +1,153 @@
-
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "확인" >
-<!ENTITY window.cancel      "취소" >
-<!ENTITY window.browse      "검색..." >
-
-<!ENTITY menu.file          "파일" >
-<!ENTITY menu.file.new      "새 재생목록..." >
-<!ENTITY menu.file.smart    "새 스마트 재생목록..." >
-<!ENTITY menu.file.remote   "새 원격 재생목록..." >
-<!ENTITY menu.file.open     "파일 열기..." >
-<!ENTITY menu.file.url      "URL 열기..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "확인" >
+<!ENTITY window.undo "실행취소" >
+<!ENTITY window.apply "적용" >
+<!ENTITY window.cancel "취소" >
+<!ENTITY window.browse "검색..." >
+<!ENTITY menu.file "파일" >
+<!ENTITY menu.file.new "새 재생목록..." >
+<!ENTITY menu.file.smart "새 스마트 재생목록..." >
+<!ENTITY menu.file.remote "새 원격 재생목록..." >
+<!ENTITY menu.file.open "파일 열기..." >
+<!ENTITY menu.file.url "URL 열기..." >
 <!ENTITY menu.file.playlist "재생목록 읽어오기..." >
-<!ENTITY menu.file.scan     "미디어 검색..." >
+<!ENTITY menu.file.scan "미디어 검색..." >
 <!ENTITY menu.file.dlfolder "다운로드 폴더 지정..." >
-<!ENTITY menu.file.watch    "조사할 폴더 지정..." >
-<!ENTITY menu.file.htmlbar  "항상 웹 바로 보이기" >
-<!ENTITY menu.file.skin     "스킨" >
-<!ENTITY menu.file.window   "메인 윈도우 열기" >
-<!ENTITY menu.file.mini     "미니 플레이어 열기" >
-<!ENTITY menu.file.about    "Songbird에 대하여..." >
-<!ENTITY menu.file.exit     "종료" >
-
-<!ENTITY menu.edit          "편집" >
-<!ENTITY menu.edit.undo     "실행취소" >
-<!ENTITY menu.edit.cut      "잘라내기" >
-<!ENTITY menu.edit.copy     "복사하기" >
-<!ENTITY menu.edit.paste    "붙여넣기" >
-<!ENTITY menu.edit.clear    "지우기" >
-<!ENTITY menu.edit.selall   "모두 선택" >
-<!ENTITY menu.edit.selnone  "선택하지 않음" >
-
-<!ENTITY menu.controls      "컨트롤" >
-<!ENTITY menu.control.play  "재생/잠시 멈춤" >
-<!ENTITY menu.control.next  "다음 트랙" >
-<!ENTITY menu.control.prev  "이전 트랙" >
-<!ENTITY menu.control.shuf  "무작위" >
-<!ENTITY menu.control.repa  "모두 반복" >
-<!ENTITY menu.control.rep1  "한곡 반복" >
-<!ENTITY menu.control.repx  "반복하지 않음" >
-
-<!ENTITY menu.services        "서비스" >
+<!ENTITY menu.file.watch "검색할 폴더 지정..." >
+<!ENTITY menu.file.htmlbar "항상 웹 바로 보이기" >
+<!ENTITY menu.file.skin "스킨" >
+<!ENTITY menu.file.window "메인 윈도우 열기" >
+<!ENTITY menu.file.mini "미니 플레이어 열기" >
+<!ENTITY menu.file.about "Songbird에 대하여..." >
+<!ENTITY menu.file.exit "종료" >
+<!ENTITY menu.edit "편집" >
+<!ENTITY menu.edit.undo "실행취소" >
+<!ENTITY menu.edit.cut "잘라내기" >
+<!ENTITY menu.edit.copy "복사하기" >
+<!ENTITY menu.edit.paste "붙여넣기" >
+<!ENTITY menu.edit.clear "지우기" >
+<!ENTITY menu.edit.selall "모두 선택" >
+<!ENTITY menu.edit.selnone "선택하지 않음" >
+<!ENTITY menu.controls "컨트롤" >
+<!ENTITY menu.control.play "재생/잠시 멈춤" >
+<!ENTITY menu.control.next "다음 트랙" >
+<!ENTITY menu.control.prev "이전 트랙" >
+<!ENTITY menu.control.shuf "무작위" >
+<!ENTITY menu.control.repa "모두 반복" >
+<!ENTITY menu.control.rep1 "한곡 반복" >
+<!ENTITY menu.control.repx "반복하지 않음" >
+<!ENTITY menu.services "서비스" >
 <!ENTITY menu.services.browse "서비스 검색..." >
-
-<!ENTITY menu.devices       "장치" >
-
-<!ENTITY menu.help          "도움말" >
-<!ENTITY menu.help.topics   "주제별 도움말..." >
-<!ENTITY menu.help.about    "Songbird에 대하여..." >
-
-<!ENTITY html.context.open  "열기" >
-<!ENTITY html.context.play  "재생" >
-<!ENTITY html.context.add   "라이브러리에 추가" >
-
-<!ENTITY playlist.context.remove  "삭제" >
-<!ENTITY playlist.context.rename  "이름 바꾸기" >
-<!ENTITY playlist.context.search  "검색" >
-<!ENTITY playlist.context.lyrics  "가사" >
-
-<!ENTITY tooltip.miniplayer       "미니 플레이어로 전환" >
-<!ENTITY tooltip.minimize         "최소화" >
-<!ENTITY tooltip.maximize         "최대화/복원" >
-<!ENTITY tooltip.exit             "종료합니다" >
-<!ENTITY tooltip.control.back     "이전 트랙" >
-<!ENTITY tooltip.control.play     "재생" >
-<!ENTITY tooltip.control.pause    "잠시 멈춤" >
-<!ENTITY tooltip.control.fwd      "다음 트랙" >
-<!ENTITY tooltip.control.mute     "음소거" >
-<!ENTITY tooltip.control.volume   "볼륨" >
-<!ENTITY tooltip.control.repeat   "반복" >
-<!ENTITY tooltip.control.shuffle  "무작위" >
+<!ENTITY menu.devices "장치" >
+<!ENTITY menu.help "도움말" >
+<!ENTITY menu.help.topics "주제별 도움말..." >
+<!ENTITY menu.help.about "Songbird에 대하여..." >
+<!ENTITY menu.preferences "환경설정..." >
+<!ENTITY menu.extensions "확장기능..." >
+<!ENTITY html.context.open "열기" >
+<!ENTITY html.context.openexternal "기본 브라우저로 열기" >
+<!ENTITY html.context.play "재생" >
+<!ENTITY html.context.add "라이브러리에 추가" >
+<!ENTITY playlist.context.remove "삭제" >
+<!ENTITY playlist.context.rename "이름 바꾸기" >
+<!ENTITY playlist.context.search "검색" >
+<!ENTITY playlist.context.lyrics "가사" >
+<!ENTITY tooltip.miniplayer "미니 플레이어로 전환" >
+<!ENTITY tooltip.minimize "최소화" >
+<!ENTITY tooltip.maximize "최대화/복원" >
+<!ENTITY tooltip.exit "종료합니다" >
+<!ENTITY tooltip.hide "감추기" >
+<!ENTITY tooltip.control.back "이전 트랙" >
+<!ENTITY tooltip.control.play "재생" >
+<!ENTITY tooltip.control.pause "잠시 멈춤" >
+<!ENTITY tooltip.control.fwd "다음 트랙" >
+<!ENTITY tooltip.control.mute "음소거" >
+<!ENTITY tooltip.control.volume "볼륨" >
+<!ENTITY tooltip.control.repeat "반복" >
+<!ENTITY tooltip.control.shuffle "무작위 재생" >
+<!ENTITY tooltip.control.shuf_off "무작위 재생 off" >
 <!ENTITY tooltip.control.curtrack "현재 트랙 찾기" >
-<!ENTITY tooltip.control.service  "Faceplate Display로 전환" >
-<!ENTITY tooltip.search           "검색" >
-<!ENTITY tooltip.browser.back     "뒤로 검색" >
-<!ENTITY tooltip.browser.fwd      "앞으로 검색" >
-<!ENTITY tooltip.browser.stop     "검색 중지" >
-<!ENTITY tooltip.browser.home     "홈" >
+<!ENTITY tooltip.control.service "Faceplate Display로 전환" >
+<!ENTITY tooltip.search "검색" >
+<!ENTITY tooltip.browser.back "뒤로 검색" >
+<!ENTITY tooltip.browser.fwd "앞으로 검색" >
+<!ENTITY tooltip.browser.stop "검색 중지" >
+<!ENTITY tooltip.browser.home "홈" >
+<!ENTITY tooltip.browser.refresh "새로고침" >
+<!ENTITY tooltip.browser.bookmark "즐겨찾기" >
 <!ENTITY tooltip.browser.playlist "이 웹페이지에서 재생가능한 미디어 보기" >
 <!ENTITY tooltip.browser.download "현재 다운로드 보기" >
-
-<!ENTITY smart.window             "스마트 재생목록 빌더" >
-<!ENTITY smart.library            "라이브러리 선택 :" >
-<!ENTITY smart.limit              "Limit to" >
-<!ENTITY smart.match              "Match" >
-<!ENTITY smart.any                "any" >
-<!ENTITY smart.all                "all" >
-<!ENTITY smart.following          "of the following condition(s):" >   
-<!ENTITY smart.random             "무작위" >
-<!ENTITY smart.album              "앨범" >
-<!ENTITY smart.artist             "아티스트" >
-<!ENTITY smart.genre              "장르" >
-<!ENTITY smart.title              "제목" >
-<!ENTITY smart.high_rating        "가장 높은 평점" >
-<!ENTITY smart.low_rating         "가장 낮은 평점" >
-<!ENTITY smart.most_recent        "가장 최근" >
-<!ENTITY smart.least_recent       "가장 오래전" >
-<!ENTITY smart.most_often         "가장 자주" >
-<!ENTITY smart.least_often        "가장 가끔" >
-<!ENTITY smart.most_added         "가장 많이 추가된" >
-<!ENTITY smart.least_added        "가장 적게 추가된" >
-<!ENTITY smart.minutes            "분" >
-<!ENTITY smart.hours              "시간" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "노래" >
-<!ENTITY smart.contains           "contains" >
-<!ENTITY smart.not_contain        "does not contain" >
-<!ENTITY smart.is                 "is" >
-<!ENTITY smart.is_not             "is not" >
-<!ENTITY smart.starts             "다음 단어로 시작 :" >
-<!ENTITY smart.ends               "다음 단어로 끝 :" >
-         
-<!ENTITY download.window          "다운로드" >
-<!ENTITY download.select          "목적지 폴더 선택 :" >
-<!ENTITY download.always          "항상 이 폴더 사용" >
-
-<!ENTITY textbox.songbird_open_url "재생하기 원하는 미디어의 URL 혹은 경로를 입력하세요:">
-
-<!ENTITY open_url.title           "URL 열기">
-<!ENTITY subscribe.title          "구독">
-<!ENTITY subscribe.minutes        "분">
-<!ENTITY subscribe.hours          "시간">
-<!ENTITY subscribe.days           "일">
-<!ENTITY subscribe.autocheck      "매일 자동으로 업데이트">
-<!ENTITY subscribe.destinationfolder      "목적지 폴더 선택:">
-
-<!ENTITY exists.title             "재생목록 존재">
-<!ENTITY exists.exists            "같은 이름의 재생목록가 존재합니다!">
-
-<!ENTITY media_scan.title          "미디어 검색">
-<!ENTITY media_scan.watch          "새 미디어를 찾기 위해 이 폴더를 조사합니다.">
-
-<!ENTITY new_playlist.title       "새 재생목록 작성">
-<!ENTITY new_playlist.name        "새 재생목록의 이름을 입력해 주세요.">
-
-<!ENTITY addtoplaylist.title      "재생목록에 추가">
-<!ENTITY addtoplaylist.create      "새 재생목록 작성">
-
-<!ENTITY watchfolder.title        "조사 폴더">
-<!ENTITY watchfolder.folderlist   "새 미디어를 찾기 위해 이 폴더를 조사합니다.">
-
-<!ENTITY locale.language          "언어" >
-
-
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
-
-
-
-
-<!ENTITY menu.feathers "Feathers" >
-
-
-
-
-<!ENTITY about.version "Version" >
-
-
-
-
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
-
-
-
-
+<!ENTITY smart.window "스마트 재생목록 빌더" >
+<!ENTITY smart.library "라이브러리 선택 :" >
+<!ENTITY smart.limit "상한" >
+<!ENTITY smart.match "다음" >
+<!ENTITY smart.any "어떤" >
+<!ENTITY smart.all "모든" >
+<!ENTITY smart.following "조건에 일치:" >
+<!ENTITY smart.random "랜덤" >
+<!ENTITY smart.album "앨범" >
+<!ENTITY smart.artist "아티스트" >
+<!ENTITY smart.genre "장르" >
+<!ENTITY smart.title "제목" >
+<!ENTITY smart.high_rating "가장 높은 평점" >
+<!ENTITY smart.low_rating "가장 낮은 평점" >
+<!ENTITY smart.most_recent "가장 최근" >
+<!ENTITY smart.least_recent "가장 오래전" >
+<!ENTITY smart.most_often "가장 자주" >
+<!ENTITY smart.least_often "가장 가끔" >
+<!ENTITY smart.most_added "가장 많이 추가된" >
+<!ENTITY smart.least_added "가장 적게 추가된" >
+<!ENTITY smart.minutes "분" >
+<!ENTITY smart.hours "시간" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "노래" >
+<!ENTITY smart.contains "다음 문자열을 포함" >
+<!ENTITY smart.not_contain "다음 문자열을 포함하지 않음" >
+<!ENTITY smart.is "다음 문자열과 일치" >
+<!ENTITY smart.is_not "다음 문자열과 일치하지 않음" >
+<!ENTITY smart.starts "다음 문자열로 시작 :" >
+<!ENTITY smart.ends "다음 문자열로 끝 :" >
+<!ENTITY smart.selectedby "선택방법" >
+<!ENTITY download.window "다운로드" >
+<!ENTITY download.select "저장할 폴더를 선택 :" >
+<!ENTITY download.always "항상 이 폴더 사용" >
+<!ENTITY textbox.songbird_open_url "재생하기 원하는 미디어의 URL 혹은 경로를 입력하세요:" >
+<!ENTITY open_url.title "URL 열기" >
+<!ENTITY subscribe.title "구독" >
+<!ENTITY subscribe.minutes "분" >
+<!ENTITY subscribe.hours "시간" >
+<!ENTITY subscribe.days "일" >
+<!ENTITY subscribe.autocheck "매일 자동으로 업데이트" >
+<!ENTITY subscribe.destinationfolder "목적지 폴더 선택:" >
+<!ENTITY exists.title "재생목록 존재" >
+<!ENTITY exists.exists "같은 이름의 재생목록가 존재합니다!" >
+<!ENTITY media_scan.title "미디어 검색" >
+<!ENTITY media_scan.watch "새 미디어를 찾기 위해 이 폴더를 조사합니다." >
+<!ENTITY new_playlist.title "새 재생목록 작성" >
+<!ENTITY new_playlist.name "새 재생목록의 이름을 입력해 주세요." >
+<!ENTITY addtoplaylist.title "재생목록에 추가" >
+<!ENTITY addtoplaylist.create "새 재생목록 작성" >
+<!ENTITY watchfolder.title "조사 폴더" >
+<!ENTITY watchfolder.folderlist "새 미디어를 찾기 위해 이 폴더를 조사합니다." >
+<!ENTITY locale.language "언어" >
+<!ENTITY menu.feathers "깃털" >
+<!ENTITY about.version "버젼" >
+<!ENTITY setup.title "Songbird 설정 옵션" >
+<!ENTITY setup.retrievingxpilist "확장 기능 목록을 받아오고 있습니다.
+잠시만 기다려주세요..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "연결 설정" >
+<!ENTITY setup.networkerror3 "'확인'을 선택하시면 Songbird 설정을 계속합니다." >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
+<!ENTITY setup.optionalextensions "추가 확장기능" >
+<!ENTITY setup.defaultlanguage "기본 언어" >
+<!ENTITY setup.privacy "개인정보" >
+<!ENTITY setupprogress.pleasewait "잠시만 기다려주세요..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -182,7 +155,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -212,128 +185,41 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.title "즐겨찾기 수정" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
-
-
-
-
-<!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY bookmarks.edit.label "이름:" >
+<!ENTITY bookmarks.edit.icon "아이콘:" >
+<!ENTITY trackeditor.title "트랙 편집기" >
+<!ENTITY trackeditor.trackdata "트랙 정보" >
+<!ENTITY trackeditor.exttrackdata "추가 정보" >
+<!ENTITY trackeditor.tags "태그" >
+<!ENTITY trackeditor.addtag.title "태그 붙이기" >
+<!ENTITY trackeditor.addtag.tag "태그:" >
 <!ENTITY jumptofile.title "Jump to" >
-
-
-
-
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
-
-
-
-
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY jumptofile.search "검색:" >
+<!ENTITY hotkeys.useglobalhotkeys "공통 단축키 사용" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
-<!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
-<!ENTITY metadata.album "Album" >
-<!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Length" >
-
-
-
-
-<!ENTITY restartbox.restartnow "Restart Now" >
+<!ENTITY hotkeys.hotkey "단축키" >
+<!ENTITY hotkeys.add "추가" >
+<!ENTITY hotkeys.set "지정" >
+<!ENTITY hotkeys.remove "지우기" >
+<!ENTITY hotkeys.prefpane "단축키" >
+<!ENTITY metadata.uuid "미디어 UUID" >
+<!ENTITY metadata.url "지역" >
+<!ENTITY metadata.artist "음악가" >
+<!ENTITY metadata.title "제목" >
+<!ENTITY metadata.album "앨범" >
+<!ENTITY metadata.genre "장르" >
+<!ENTITY metadata.length "길이" >
+<!ENTITY restartbox.restartnow "지금 재시작하기" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
-<!ENTITY restartbox.restartlater "Restart Later" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
-
-
-
-
-<!ENTITY tooltip.hide "Hide" >
-
-
-
-
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY restartbox.restartlater "나중에 재시작하기" >
+<!ENTITY setupprogress.installingextensions "확장기능 설치 중" >
+<!ENTITY menu.updateCmd.label "업데이트 검사" >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.search "Search:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-
-
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
-
-
-
-
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -346,33 +232,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

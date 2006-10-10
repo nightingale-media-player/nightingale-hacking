@@ -1,181 +1,152 @@
-﻿
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "Aceptar" >
-<!ENTITY window.cancel      "Cancelar" >
-<!ENTITY window.browse      "Examinar..." >
-
-<!ENTITY menu.file          "Archivo" >
-<!ENTITY menu.file.new      "Nueva Lista de Reproducción..." >
-<!ENTITY menu.file.smart    "Nueva Lista de Reproducción Inteligente..." >
-<!ENTITY menu.file.remote   "Nueva Lista de Reproducción Remota..." >
-<!ENTITY menu.file.open     "Abrir archivo..." >
-<!ENTITY menu.file.url      "Abrir desde URL..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "Aceptar" >
+<!ENTITY window.undo "Deshacer" >
+<!ENTITY window.apply "Aplicar" >
+<!ENTITY window.cancel "Cancelar" >
+<!ENTITY window.browse "Examinar..." >
+<!ENTITY menu.file "Archivo" >
+<!ENTITY menu.file.new "Nueva Lista de Reproducción..." >
+<!ENTITY menu.file.smart "Nueva Lista de Reproducción Inteligente..." >
+<!ENTITY menu.file.remote "Nueva Lista de Reproducción Remota..." >
+<!ENTITY menu.file.open "Abrir archivo..." >
+<!ENTITY menu.file.url "Abrir desde URL..." >
 <!ENTITY menu.file.playlist "Cargar Lista de Reproducción..." >
-<!ENTITY menu.file.scan     "Buscar Medios..." >
+<!ENTITY menu.file.scan "Buscar Medios..." >
 <!ENTITY menu.file.dlfolder "Establecer Carpeta para las Descargas..." >
-<!ENTITY menu.file.watch    "Establecer Carpeta para las Descargas..." >
-<!ENTITY menu.file.htmlbar  "Siempre mostrar la barra Web" >
-<!ENTITY menu.file.skin     "Alternar Skin" >
-<!ENTITY menu.file.window   "Abrir Ventana Principal" >
-<!ENTITY menu.file.mini     "Abrir Mini Reproductor" >
-<!ENTITY menu.file.about    "Acerca de Songbird..." >
-<!ENTITY menu.file.exit     "Salir" >
-
-<!ENTITY menu.edit          "Editar" >
-<!ENTITY menu.edit.undo     "Deshacer" >
-<!ENTITY menu.edit.cut      "Cortar" >
-<!ENTITY menu.edit.copy     "Copiar" >
-<!ENTITY menu.edit.paste    "Pegar" >
-<!ENTITY menu.edit.clear    "Borrar" >
-<!ENTITY menu.edit.selall   "Seleccionar todo" >
-<!ENTITY menu.edit.selnone  "Deseleccionar" >
-
-<!ENTITY menu.controls      "Controles" >
-<!ENTITY menu.control.play  "Reproducir/Pausa" >
-<!ENTITY menu.control.next  "Siguiente" >
-<!ENTITY menu.control.prev  "Anterior" >
-<!ENTITY menu.control.shuf  "Mezclar" >
-<!ENTITY menu.control.repa  "Repetir Todo" >
-<!ENTITY menu.control.rep1  "Repetir Una" >
-<!ENTITY menu.control.repx  "No Repetir" >
-
-<!ENTITY menu.services        "Servicios" >
+<!ENTITY menu.file.watch "Establecer Carpeta para las Descargas..." >
+<!ENTITY menu.file.htmlbar "Siempre mostrar la barra Web" >
+<!ENTITY menu.file.skin "Alternar Skin" >
+<!ENTITY menu.file.window "Abrir Ventana Principal" >
+<!ENTITY menu.file.mini "Abrir Mini Reproductor" >
+<!ENTITY menu.file.about "Acerca de Songbird..." >
+<!ENTITY menu.file.exit "Salir" >
+<!ENTITY menu.edit "Editar" >
+<!ENTITY menu.edit.undo "Deshacer" >
+<!ENTITY menu.edit.cut "Cortar" >
+<!ENTITY menu.edit.copy "Copiar" >
+<!ENTITY menu.edit.paste "Pegar" >
+<!ENTITY menu.edit.clear "Borrar" >
+<!ENTITY menu.edit.selall "Seleccionar todo" >
+<!ENTITY menu.edit.selnone "Deseleccionar" >
+<!ENTITY menu.controls "Controles" >
+<!ENTITY menu.control.play "Reproducir/Pausa" >
+<!ENTITY menu.control.next "Siguiente" >
+<!ENTITY menu.control.prev "Anterior" >
+<!ENTITY menu.control.shuf "Mezclar" >
+<!ENTITY menu.control.repa "Repetir Todo" >
+<!ENTITY menu.control.rep1 "Repetir Una" >
+<!ENTITY menu.control.repx "No Repetir" >
+<!ENTITY menu.services "Servicios" >
 <!ENTITY menu.services.browse "Examinar Servicios..." >
-
-<!ENTITY menu.devices       "Dispositivos" >
-
-<!ENTITY menu.help          "Ayuda" >
-<!ENTITY menu.help.topics   "Temas de Ayuda..." >
-<!ENTITY menu.help.about    "Acerca de Songbird..." >
-
-<!ENTITY html.context.open  "Abrir" >
-<!ENTITY html.context.play  "Reproducir" >
-<!ENTITY html.context.add   "Argegar a la Biblioteca" >
-
-<!ENTITY playlist.context.remove  "Eliminar" >
-<!ENTITY playlist.context.rename  "Cambiar nombre" >
-<!ENTITY playlist.context.search  "Buscar" >
-<!ENTITY playlist.context.lyrics  "Letras" >
-
-<!ENTITY tooltip.miniplayer       "Cambiar a Mini Reproductor" >
-<!ENTITY tooltip.minimize         "Minimizar" >
-<!ENTITY tooltip.maximize         "Maximizar/Restaurar" >
-<!ENTITY tooltip.exit             "Salir" >
-<!ENTITY tooltip.control.back     "Anterior" >
-<!ENTITY tooltip.control.play     "Reproducir" >
-<!ENTITY tooltip.control.pause    "Pausa" >
-<!ENTITY tooltip.control.fwd      "Siguiente" >
-<!ENTITY tooltip.control.mute     "Silencio" >
-<!ENTITY tooltip.control.volume   "Volumen" >
-<!ENTITY tooltip.control.repeat   "Repetir" >
-<!ENTITY tooltip.control.shuffle  "Mezclar" >
-<!ENTITY tooltip.control.curtrack "Buscar Pista actual" >
-<!ENTITY tooltip.control.service  "Switch Faceplate Display" >
-<!ENTITY tooltip.search           "Buscar" >
-<!ENTITY tooltip.browser.back     "Atrás" >
-<!ENTITY tooltip.browser.fwd      "Adelante" >
-<!ENTITY tooltip.browser.stop     "Detener" >
-<!ENTITY tooltip.browser.home     "Inicio" >
-<!ENTITY tooltip.browser.playlist "View Available Media On This Web Page" >
-<!ENTITY tooltip.browser.download "View Current Downloads" >
-
-<!ENTITY smart.window             "Smart Playlist Builder" >
-<!ENTITY smart.library            "Seleccionar Biblioteca:" >
-<!ENTITY smart.limit              "Limitar a" >
-<!ENTITY smart.match              "Match" >
-<!ENTITY smart.any                "any" >
-<!ENTITY smart.all                "all" >
-<!ENTITY smart.following          "of the following condition(s):" >   
-<!ENTITY smart.random             "al azar" >
-<!ENTITY smart.album              "album" >
-<!ENTITY smart.artist             "artista" >
-<!ENTITY smart.genre              "género" >
-<!ENTITY smart.title              "título" >
-<!ENTITY smart.high_rating        "high rating" >
-<!ENTITY smart.low_rating         "low rating" >
-<!ENTITY smart.most_recent        "más reciente" >
-<!ENTITY smart.least_recent       "least recent" >
-<!ENTITY smart.most_often         "most often" >
-<!ENTITY smart.least_often        "least often" >
-<!ENTITY smart.most_added         "most added" >
-<!ENTITY smart.least_added        "least added" >
-<!ENTITY smart.minutes            "minutos" >
-<!ENTITY smart.hours              "horas" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "canciones" >
-<!ENTITY smart.contains           "contiene" >
-<!ENTITY smart.not_contain        "no contiene" >
-<!ENTITY smart.is                 "es" >
-<!ENTITY smart.is_not             "no es" >
-<!ENTITY smart.starts             "empieza con" >
-<!ENTITY smart.ends               "termina con" >
-         
-<!ENTITY download.window          "Descargar" >
-<!ENTITY download.select          "Seleccionar Carpeta de Destino:" >
-<!ENTITY download.always          "Always use this folder" >
-
-<!ENTITY textbox.songbird_open_url "Ingrese el destino o URL de los Medios que desea Reproducir:">
-
-<!ENTITY open_url.title           "Abrir URL">
-<!ENTITY subscribe.title          "Subscribir">
-<!ENTITY subscribe.minutes        "Minuto(s)">
-<!ENTITY subscribe.hours          "Hora(s)">
-<!ENTITY subscribe.days           "Día(s)">
-<!ENTITY subscribe.autocheck      "Actualizar automaticamente cada">
-<!ENTITY subscribe.destinationfolder      "Seleccione carpeta de destino:">
-
-<!ENTITY exists.title             "Listas de reproduccion existentes">
-<!ENTITY exists.exists            "Una lista de reproduccion con ese nombre ya existe!">
-
-<!ENTITY media_scan.title          "Buscar Medios">
-<!ENTITY media_scan.watch          "Explorar esta carpata por nuevos medios">
-
-<!ENTITY new_playlist.title       "Crear nueva Lista de Reproducción">
-<!ENTITY new_playlist.name        "Ingresar el nombre de la nueva Lista de Reproduccion.">
-
-<!ENTITY addtoplaylist.title      "Agregar a la Lista de Reproducción">
-<!ENTITY addtoplaylist.create      "Crear nueva Lista de Reproducción">
-
-<!ENTITY watchfolder.title        "Explorar Carpetas">
-<!ENTITY watchfolder.folderlist   "Explorar estas carpetas por nuevos medios:">
-
-<!ENTITY locale.language          "Idioma" >
-
-
-
+<!ENTITY menu.devices "Dispositivos" >
+<!ENTITY menu.help "Ayuda" >
+<!ENTITY menu.help.topics "Temas de Ayuda..." >
+<!ENTITY menu.help.about "Acerca de Songbird..." >
 <!ENTITY menu.preferences "Preferencias..." >
 <!ENTITY menu.extensions "Extensiones..." >
-
-
-
-
-<!ENTITY menu.feathers "Feathers" >
-
-
-
-
-<!ENTITY about.version "Version" >
-
-
-
-
+<!ENTITY html.context.open "Abrir" >
+<!ENTITY html.context.openexternal "Abrir con el explorador por defecto" >
+<!ENTITY html.context.play "Reproducir" >
+<!ENTITY html.context.add "Argegar a la Biblioteca" >
+<!ENTITY playlist.context.remove "Eliminar" >
+<!ENTITY playlist.context.rename "Cambiar nombre" >
+<!ENTITY playlist.context.search "Buscar" >
+<!ENTITY playlist.context.lyrics "Letras" >
+<!ENTITY tooltip.miniplayer "Cambiar a Mini Reproductor" >
+<!ENTITY tooltip.minimize "Minimizar" >
+<!ENTITY tooltip.maximize "Maximizar/Restaurar" >
+<!ENTITY tooltip.exit "Salir" >
+<!ENTITY tooltip.hide "Ocultar" >
+<!ENTITY tooltip.control.back "Anterior" >
+<!ENTITY tooltip.control.play "Reproducir" >
+<!ENTITY tooltip.control.pause "Pausa" >
+<!ENTITY tooltip.control.fwd "Siguiente" >
+<!ENTITY tooltip.control.mute "Silencio" >
+<!ENTITY tooltip.control.volume "Volumen" >
+<!ENTITY tooltip.control.repeat "Repetir" >
+<!ENTITY tooltip.control.shuffle "Mezclar" >
+<!ENTITY tooltip.control.shuf_off "No Mezclar" >
+<!ENTITY tooltip.control.curtrack "Buscar Pista actual" >
+<!ENTITY tooltip.control.service "Switch Faceplate Display" >
+<!ENTITY tooltip.search "Buscar" >
+<!ENTITY tooltip.browser.back "Atrás" >
+<!ENTITY tooltip.browser.fwd "Adelante" >
+<!ENTITY tooltip.browser.stop "Detener" >
+<!ENTITY tooltip.browser.home "Inicio" >
+<!ENTITY tooltip.browser.refresh "Actualizar" >
 <!ENTITY tooltip.browser.bookmark "Marcadores" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Obteniendo el listado de extensiones. Por favor espere..." >
-<!ENTITY setup.custominstall "Instalacion personalizada" >
+<!ENTITY tooltip.browser.playlist "Mostrar/Esconder la Lista de  Reproduccion Web" >
+<!ENTITY tooltip.browser.download "View Current Downloads" >
+<!ENTITY smart.window "Constructor de Listas de Reproduccion Inteligente" >
+<!ENTITY smart.library "Seleccionar Biblioteca:" >
+<!ENTITY smart.limit "Limitar a" >
+<!ENTITY smart.match "Coincidencia" >
+<!ENTITY smart.any "Cualquier(a)" >
+<!ENTITY smart.all "Todo(a)" >
+<!ENTITY smart.following "de las sgtes condiciones:" >
+<!ENTITY smart.random "al azar" >
+<!ENTITY smart.album "album" >
+<!ENTITY smart.artist "artista" >
+<!ENTITY smart.genre "género" >
+<!ENTITY smart.title "título" >
+<!ENTITY smart.high_rating "Rating Alto" >
+<!ENTITY smart.low_rating "Rating Bajo" >
+<!ENTITY smart.most_recent "más reciente" >
+<!ENTITY smart.least_recent "Menos Reciente" >
+<!ENTITY smart.most_often "Mas a menudo" >
+<!ENTITY smart.least_often "Menos a menudo" >
+<!ENTITY smart.most_added "Mas Añadido(a)s" >
+<!ENTITY smart.least_added "Menos Añadido(a)s" >
+<!ENTITY smart.minutes "minutos" >
+<!ENTITY smart.hours "horas" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "canciones" >
+<!ENTITY smart.contains "contiene" >
+<!ENTITY smart.not_contain "no contiene" >
+<!ENTITY smart.is "es" >
+<!ENTITY smart.is_not "no es" >
+<!ENTITY smart.starts "empieza con" >
+<!ENTITY smart.ends "termina con" >
+<!ENTITY smart.selectedby "Seleccionado por" >
+<!ENTITY download.window "Descargar" >
+<!ENTITY download.select "Seleccionar Carpeta de Destino:" >
+<!ENTITY download.always "Siempre usar esta Carpeta" >
+<!ENTITY textbox.songbird_open_url "Ingrese el destino o URL de los Medios que desea Reproducir:" >
+<!ENTITY open_url.title "Abrir URL" >
+<!ENTITY subscribe.title "Suscribir" >
+<!ENTITY subscribe.minutes "Minuto(s)" >
+<!ENTITY subscribe.hours "Hora(s)" >
+<!ENTITY subscribe.days "Día(s)" >
+<!ENTITY subscribe.autocheck "Actualizar automaticamente cada" >
+<!ENTITY subscribe.destinationfolder "Seleccione carpeta de destino:" >
+<!ENTITY exists.title "Listas de reproduccion existentes" >
+<!ENTITY exists.exists "Una lista de reproduccion con ese nombre ya existe!" >
+<!ENTITY media_scan.title "Buscar Medios" >
+<!ENTITY media_scan.watch "Explorar esta carpata por nuevos medios" >
+<!ENTITY new_playlist.title "Crear nueva Lista de Reproducción" >
+<!ENTITY new_playlist.name "Ingresar el nombre de la nueva Lista de Reproduccion." >
+<!ENTITY addtoplaylist.title "Agregar a la Lista de Reproducción" >
+<!ENTITY addtoplaylist.create "Crear nueva Lista de Reproducción" >
+<!ENTITY watchfolder.title "Explorar Carpetas" >
+<!ENTITY watchfolder.folderlist "Explorar estas carpetas por nuevos medios:" >
+<!ENTITY locale.language "Idioma" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "Version" >
 <!ENTITY setup.title "Opciones de instalacion de Songbird" >
+<!ENTITY setup.retrievingxpilist "Obteniendo el listado de extensiones. Por favor espere..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "Ajustes de Conexion" >
+<!ENTITY setup.networkerror3 "o continue la instalacion de Songbird presionando 'Aceptar'" >
+<!ENTITY setup.metrics.optin "Mandando metricas de uso anonimas." >
+<!ENTITY setup.metrics.info "Ayudenos a hacer Songbird mejor usando metricas de como lo utiliza. Las metricas son completamente anonimas y ninguna informacion personal es almacenada." >
+<!ENTITY setup.optionalextensions "Extensiones Opcionales" >
+<!ENTITY setup.defaultlanguage "Lenguaje Defecto" >
+<!ENTITY setup.privacy "Privacidad" >
 <!ENTITY setupprogress.pleasewait "Por favor espere..." >
-
-
-
-
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -183,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -213,45 +184,18 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
 <!ENTITY bookmarks.edit.title "Editar Marcadores" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Nombre:" >
 <!ENTITY bookmarks.edit.icon "Icono:" >
-
-
-
-
 <!ENTITY trackeditor.title "Editor de Pista" >
 <!ENTITY trackeditor.trackdata "Dato de Pista" >
 <!ENTITY trackeditor.exttrackdata "Datos extendidos" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Agregar Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY trackeditor.tags "Etiquetas" >
+<!ENTITY trackeditor.addtag.title "Agregar Etiqueta" >
+<!ENTITY trackeditor.addtag.tag "Etiqueta:" >
 <!ENTITY jumptofile.title "Ir a" >
-
-
-
-
-<!ENTITY window.undo "Deshacer" >
-<!ENTITY window.apply "Aplicar" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Permitir a Songbird enviar estadisticas anonimas del uso (recomendado)" >
-
-
-
-
+<!ENTITY jumptofile.search "Buscar:" >
 <!ENTITY hotkeys.useglobalhotkeys "Usar accesos rapidos Globales" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Accion" >
@@ -260,75 +204,21 @@
 <!ENTITY hotkeys.set "Establecer" >
 <!ENTITY hotkeys.remove "Eliminar" >
 <!ENTITY hotkeys.prefpane "Acceso Rapido" >
-
-
-
-
 <!ENTITY metadata.uuid "UUID del Medio" >
-<!ENTITY metadata.url "Hubicacion" >
+<!ENTITY metadata.url "Ubicacion" >
 <!ENTITY metadata.artist "Artista" >
 <!ENTITY metadata.title "Titulo" >
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genero" >
 <!ENTITY metadata.length "Tiempo" >
-
-
-
-
 <!ENTITY restartbox.restartnow "Reiniciar Ahora" >
 <!ENTITY restartbox.restartonplaybackend "Reiniciar cuando termine la lista de reproduccion" >
 <!ENTITY restartbox.restartlater "Reiniciar luego" >
 <!ENTITY setupprogress.installingextensions "Instalando Extensiones" >
-
-
-
-
-<!ENTITY tooltip.hide "Ocultar" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "Buscar actualizaciones..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.search "Buscar:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "No Mezclar" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Actualizar" >
-<!ENTITY smart.selectedby "Seleccionado por" >
-
-
-
-
-<!ENTITY html.context.openexternal "Abrir con el explorador por defecto" >
-
-
-
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
+<!ENTITY trackeditor.disclaimer "La funcionalidad de Edicion de Pistas no esta completa. La Metadata se salva solo en la base de datos de Songbird. En Versiones Futuras, la metadata editada se salvara en el medio tambien." >
+<!ENTITY callout.firstwebplaylist "Songbird encontro las siguientes pistas." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -341,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

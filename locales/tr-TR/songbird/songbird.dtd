@@ -1,131 +1,123 @@
-﻿
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "Tamam" >
-<!ENTITY window.cancel      "Vazgeç" >
-<!ENTITY window.browse      "Tara..." >
-
-<!ENTITY menu.file          "Dosya" >
-<!ENTITY menu.file.new      "Yeni Çalma listesi..." >
-<!ENTITY menu.file.smart    "New Smart Playlist..." >
-<!ENTITY menu.file.remote   "New Remote Playlist..." >
-<!ENTITY menu.file.open     "Dosya aç..." >
-<!ENTITY menu.file.url      "URL'den Aç..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "Tamam" >
+<!ENTITY window.undo "Geri Al" >
+<!ENTITY window.apply "Uygula" >
+<!ENTITY window.cancel "Vazgeç" >
+<!ENTITY window.browse "Tara..." >
+<!ENTITY menu.file "Dosya" >
+<!ENTITY menu.file.new "Yeni Çalma listesi..." >
+<!ENTITY menu.file.smart "Yeni Akıllı Çalma Listesi..." >
+<!ENTITY menu.file.remote "New Remote Playlist..." >
+<!ENTITY menu.file.open "Dosya aç..." >
+<!ENTITY menu.file.url "URL'den Aç..." >
 <!ENTITY menu.file.playlist "Çalma listesi yükle..." >
-<!ENTITY menu.file.scan     "Medya için tara..." >
-<!ENTITY menu.file.htmlbar  "Web çubuðunu daima göster" >
-<!ENTITY menu.file.skin     "Alternatif Skin" >
-<!ENTITY menu.file.window   "Ana pencereyi aç" >
-<!ENTITY menu.file.mini     "Mini Oynatýcýyý aç" >
-<!ENTITY menu.file.about    "Songbird Hakkýnda..." >
-<!ENTITY menu.file.exit     "Çýkýþ" >
-
-<!ENTITY menu.edit          "Düzenle" >
-<!ENTITY menu.edit.undo     "Geri Al" >
-<!ENTITY menu.edit.cut      "Kes" >
-<!ENTITY menu.edit.copy     "Kopyala" >
-<!ENTITY menu.edit.paste    "Yapýþtýr" >
-<!ENTITY menu.edit.clear    "Temizle" >
-<!ENTITY menu.edit.selall   "Hepsini seç" >
-<!ENTITY menu.edit.selnone  "Hepsini Kaldýr" >
-
-<!ENTITY menu.controls      "Kontroller" >
-<!ENTITY menu.control.play  "Çal/Durdur" >
-<!ENTITY menu.control.next  "Sonraki Parça" >
-<!ENTITY menu.control.prev  "Önceki Parça" >
-<!ENTITY menu.control.shuf  "Karýþtýr" >
-<!ENTITY menu.control.repa  "Hepsini tekrar et" >
-<!ENTITY menu.control.rep1  "Birini tekrar et" >
-<!ENTITY menu.control.repx  "Hiçbirini tekrar etme" >
-
-<!ENTITY menu.services        "Servisler" >
-<!ENTITY menu.services.browse "Servisleri tara..." >
-
-<!ENTITY menu.devices       "Aygýtlar" >
-
-<!ENTITY menu.help          "Yardým" >
-<!ENTITY menu.help.topics   "Yardým Konularý..." >
-<!ENTITY menu.help.about    "Songbird Hakkýnda..." >
-
-<!ENTITY html.context.open  "Aç" >
-<!ENTITY html.context.play  "Çal" >
-<!ENTITY html.context.add   "Kütüphaneye ekle" >
-
-<!ENTITY playlist.context.remove  "Sil" >
-<!ENTITY playlist.context.rename  "Yeniden adlandýr" >
-<!ENTITY playlist.context.search  "Ara" >
-<!ENTITY playlist.context.lyrics  "Sözler" >
-
-<!ENTITY tooltip.miniplayer       "Mini Oynatýcýya geç" >
-<!ENTITY tooltip.minimize         "Simge Durumuna Küçült" >
-<!ENTITY tooltip.maximize         "Ekraný Kapla" >
-<!ENTITY tooltip.exit             "Çýkýþ" >
-<!ENTITY tooltip.control.back     "Önceki Parça" >
-<!ENTITY tooltip.control.play     "Çal" >
-<!ENTITY tooltip.control.pause    "Durdur" >
-<!ENTITY tooltip.control.fwd      "Sonraki Parça" >
-<!ENTITY tooltip.control.mute     "Sessiz" >
-<!ENTITY tooltip.control.volume   "Ses" >
-<!ENTITY tooltip.control.repeat   "Tekrarla" >
-<!ENTITY tooltip.control.shuffle  "Karýþtýr" >
-<!ENTITY tooltip.control.curtrack "Þimdiki Parçayý Bul" >
-<!ENTITY tooltip.control.service  "FacePlate Görüntüsüne geç" >
-<!ENTITY tooltip.search           "Ara" >
-<!ENTITY tooltip.browser.back     "Geri" >
-<!ENTITY tooltip.browser.fwd      "Ýleri" >
-<!ENTITY tooltip.browser.stop     "Tarayýcýyý Durdur" >
-<!ENTITY tooltip.browser.home     "Giriþ" >
-<!ENTITY tooltip.browser.playlist "Sayfada Bulunan medyalarý göster" >
-<!ENTITY tooltip.browser.download "Ýndirilenleri Göster" >
-
-<!ENTITY smart.window             "Akýllý çalma listesi oluþturucu" >
-<!ENTITY smart.library            "Kütüphane Seçimi:" >
-<!ENTITY smart.limit              "Sýnýrla" >
-<!ENTITY smart.match              "Eþleþtir" >
-<!ENTITY smart.any                "herhangi" >
-<!ENTITY smart.all                "hepsi" >
-<!ENTITY smart.following          "of the following condition(s):" >   
-<!ENTITY smart.random             "rastgele" >
-<!ENTITY smart.album              "albüm" >
-<!ENTITY smart.artist             "sanatçý" >
-<!ENTITY smart.genre              "tür" >
-<!ENTITY smart.title              "baþlýk" >
-<!ENTITY smart.high_rating        "yüksek oran" >
-<!ENTITY smart.low_rating         "düþük oran" >
-<!ENTITY smart.most_recent        "en yeni" >
-<!ENTITY smart.least_recent       "en eski" >
-<!ENTITY smart.most_often         "en çok sýklýkta" >
-<!ENTITY smart.least_often        "en az sýklýkta" >
-<!ENTITY smart.most_added         "en çok eklenen" >
-<!ENTITY smart.least_added        "son eklenen" >
-<!ENTITY smart.minutes            "dakika" >
-<!ENTITY smart.hours              "saat" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "þarkýlar" >
-<!ENTITY smart.contains           "içerir" >
-<!ENTITY smart.not_contain        "içermez" >
-<!ENTITY smart.is                 "is" >
-<!ENTITY smart.is_not             "deðil" >
-<!ENTITY smart.starts             "Baþlar" >
-<!ENTITY smart.ends               "Biter" >
-         
-<!ENTITY download.window          "Ýndir" >
-<!ENTITY download.select          "Hedef dizini seç:" >
-<!ENTITY download.always          "Daima bu dizini kullan" >
-
-
-
-<!ENTITY locale.language          "Dil" >
-
-
-<!ENTITY menu.file.dlfolder "Set Download Folder..." >
-<!ENTITY menu.file.watch "Set Watched Folders..." >
-<!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
-<!ENTITY open_url.title "Open URL" >
-<!ENTITY subscribe.title "Subscribe" >
+<!ENTITY menu.file.scan "Medya için tara..." >
+<!ENTITY menu.file.dlfolder "İndirme klasörünü ayarla..." >
+<!ENTITY menu.file.watch "İzlenen Klasörleri Ayarla..." >
+<!ENTITY menu.file.htmlbar "Web Çubuğunu Daima Göster" >
+<!ENTITY menu.file.skin "Alternatif Arayüz" >
+<!ENTITY menu.file.window "Ana Pencereyi Aç" >
+<!ENTITY menu.file.mini "Mini Oynatıcıyı aç" >
+<!ENTITY menu.file.about "Songbird Hakkında..." >
+<!ENTITY menu.file.exit "Çıkış" >
+<!ENTITY menu.edit "Düzenle" >
+<!ENTITY menu.edit.undo "Geri Al" >
+<!ENTITY menu.edit.cut "Kes" >
+<!ENTITY menu.edit.copy "Kopyala" >
+<!ENTITY menu.edit.paste "Yapıştır" >
+<!ENTITY menu.edit.clear "Temizle" >
+<!ENTITY menu.edit.selall "Hepsini Seç" >
+<!ENTITY menu.edit.selnone "Hepsini Kaldır" >
+<!ENTITY menu.controls "Kontroller" >
+<!ENTITY menu.control.play "Çal/Durdur" >
+<!ENTITY menu.control.next "Sonraki Parça" >
+<!ENTITY menu.control.prev "Önceki Parça" >
+<!ENTITY menu.control.shuf "Karışık" >
+<!ENTITY menu.control.repa "Hepsini Tekrar Et" >
+<!ENTITY menu.control.rep1 "Birini Tekrar Et" >
+<!ENTITY menu.control.repx "Hiçbirini Tekrar Etme" >
+<!ENTITY menu.services "Servisler" >
+<!ENTITY menu.services.browse "Servisleri Tara..." >
+<!ENTITY menu.devices "Aygıtlar" >
+<!ENTITY menu.help "Yardım" >
+<!ENTITY menu.help.topics "Yardım Konuları..." >
+<!ENTITY menu.help.about "Songbird Hakkında..." >
+<!ENTITY menu.preferences "Ayarlar..." >
+<!ENTITY menu.extensions "Eklentiler..." >
+<!ENTITY html.context.open "Aç" >
+<!ENTITY html.context.openexternal "Öntanımlı Tarayıcıyla Aç" >
+<!ENTITY html.context.play "Çal" >
+<!ENTITY html.context.add "Kütüphaneye Ekle" >
+<!ENTITY playlist.context.remove "Sil" >
+<!ENTITY playlist.context.rename "Yeniden Adlandır" >
+<!ENTITY playlist.context.search "Ara" >
+<!ENTITY playlist.context.lyrics "Sözler" >
+<!ENTITY tooltip.miniplayer "Mini Oynatıcıya geç" >
+<!ENTITY tooltip.minimize "Simge Durumuna Küçült" >
+<!ENTITY tooltip.maximize "Ekranı Kapla" >
+<!ENTITY tooltip.exit "Çıkış" >
+<!ENTITY tooltip.hide "Gizle" >
+<!ENTITY tooltip.control.back "Önceki Parça" >
+<!ENTITY tooltip.control.play "Çal" >
+<!ENTITY tooltip.control.pause "Duraklat" >
+<!ENTITY tooltip.control.fwd "Sonraki Parça" >
+<!ENTITY tooltip.control.mute "Sessiz" >
+<!ENTITY tooltip.control.volume "Ses" >
+<!ENTITY tooltip.control.repeat "Tekrarla" >
+<!ENTITY tooltip.control.shuffle "Karıştır" >
+<!ENTITY tooltip.control.shuf_off "Karıştırmayı Kapat" >
+<!ENTITY tooltip.control.curtrack "Şimdiki Parçayı Bul" >
+<!ENTITY tooltip.control.service "FacePlate Görüntüsüne geç" >
+<!ENTITY tooltip.search "Ara" >
+<!ENTITY tooltip.browser.back "Geri" >
+<!ENTITY tooltip.browser.fwd "İleri" >
+<!ENTITY tooltip.browser.stop "Tarayıcıyı Durdur" >
+<!ENTITY tooltip.browser.home "Giriş" >
+<!ENTITY tooltip.browser.refresh "Yenile" >
+<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY tooltip.browser.playlist "Sayfada Bulunan Medyaları Göster/Sakla" >
+<!ENTITY tooltip.browser.download "İndirilenleri Göster" >
+<!ENTITY smart.window "Akıllı Çalma Listesi Oluşturucu" >
+<!ENTITY smart.library "Kütüphane Seçimi:" >
+<!ENTITY smart.limit "Sınırla" >
+<!ENTITY smart.match "Eşleştir" >
+<!ENTITY smart.any "herhangi" >
+<!ENTITY smart.all "hepsi" >
+<!ENTITY smart.following "takip eden kural(lar) içersinde" >
+<!ENTITY smart.random "rastgele" >
+<!ENTITY smart.album "albüm" >
+<!ENTITY smart.artist "sanatçı" >
+<!ENTITY smart.genre "tür" >
+<!ENTITY smart.title "başlık" >
+<!ENTITY smart.high_rating "yüksek oran" >
+<!ENTITY smart.low_rating "düşük oran" >
+<!ENTITY smart.most_recent "en yeni" >
+<!ENTITY smart.least_recent "en eski" >
+<!ENTITY smart.most_often "en çok sıklıkta" >
+<!ENTITY smart.least_often "en az sıklıkta" >
+<!ENTITY smart.most_added "en çok eklenen" >
+<!ENTITY smart.least_added "son eklenen" >
+<!ENTITY smart.minutes "dakika" >
+<!ENTITY smart.hours "saat" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "şarkılar" >
+<!ENTITY smart.contains "içerir" >
+<!ENTITY smart.not_contain "içermez" >
+<!ENTITY smart.is "is" >
+<!ENTITY smart.is_not "değil" >
+<!ENTITY smart.starts "Başlar" >
+<!ENTITY smart.ends "Biter" >
+<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY download.window "İndir" >
+<!ENTITY download.select "Hedef dizini seç:" >
+<!ENTITY download.always "Daima bu dizini kullan" >
+<!ENTITY textbox.songbird_open_url "Çalmak istediğin URL'yi yada dosya yolunu gir" >
+<!ENTITY open_url.title "URL'yi Aç" >
+<!ENTITY subscribe.title "Üye Ol" >
 <!ENTITY subscribe.minutes "Minute(s)" >
 <!ENTITY subscribe.hours "Hour(s)" >
 <!ENTITY subscribe.days "Day(s)" >
@@ -141,39 +133,20 @@
 <!ENTITY addtoplaylist.create "Create new playlist" >
 <!ENTITY watchfolder.title "Watch Folders" >
 <!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
-
-
-
-
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
-
-
-
-
+<!ENTITY locale.language "Dil" >
 <!ENTITY menu.feathers "Feathers" >
-
-
-
-
 <!ENTITY about.version "Version" >
-
-
-
-
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
 <!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
+<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.defaultlanguage "Default Language" >
+<!ENTITY setup.privacy "Privacy" >
 <!ENTITY setupprogress.pleasewait "Please wait..." >
-
-
-
-
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -181,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -211,18 +184,10 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
 <!ENTITY bookmarks.edit.title "Edit Bookmark" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Name:" >
 <!ENTITY bookmarks.edit.icon "Icon:" >
-
-
-
-
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
 <!ENTITY trackeditor.exttrackdata "Extended Data" >
@@ -230,26 +195,7 @@
 <!ENTITY trackeditor.addtag.title "Add Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
 <!ENTITY jumptofile.title "Jump to" >
-
-
-
-
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
-
-
-
-
+<!ENTITY jumptofile.search "Search:" >
 <!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
@@ -258,10 +204,6 @@
 <!ENTITY hotkeys.set "Set" >
 <!ENTITY hotkeys.remove "Remove" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
 <!ENTITY metadata.uuid "Media UUID" >
 <!ENTITY metadata.url "Location" >
 <!ENTITY metadata.artist "Artist" >
@@ -269,70 +211,14 @@
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genre" >
 <!ENTITY metadata.length "Length" >
-
-
-
-
 <!ENTITY restartbox.restartnow "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
 <!ENTITY restartbox.restartlater "Restart Later" >
 <!ENTITY setupprogress.installingextensions "Installing Extensions" >
-
-
-
-
-<!ENTITY tooltip.hide "Hide" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "Check for Updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.search "Search:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-
-
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
-
-
-
-
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -345,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

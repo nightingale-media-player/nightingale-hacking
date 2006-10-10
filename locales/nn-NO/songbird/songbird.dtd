@@ -1,185 +1,152 @@
-﻿
-
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/spp" >
-<!ENTITY window.ok          "OK" >
-<!ENTITY window.cancel      "Avbryt" >
-<!ENTITY window.browse      "Finn ..." >
-
-<!ENTITY menu.file          "Fil" >
-<!ENTITY menu.file.new      "Ny speleliste ..." >
-<!ENTITY menu.file.smart    "Ny smartspeleliste ..." >
-<!ENTITY menu.file.remote   "Ny fjernspeleliste ..." >
-<!ENTITY menu.file.open     "Opna ei fil ..." >
-<!ENTITY menu.file.url      "Opna frå adresse ..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "OK" >
+<!ENTITY window.undo "Undo" >
+<!ENTITY window.apply "Apply" >
+<!ENTITY window.cancel "Avbryt" >
+<!ENTITY window.browse "Finn ..." >
+<!ENTITY menu.file "Fil" >
+<!ENTITY menu.file.new "Ny speleliste ..." >
+<!ENTITY menu.file.smart "Ny smartspeleliste ..." >
+<!ENTITY menu.file.remote "Ny fjernspeleliste ..." >
+<!ENTITY menu.file.open "Opna ei fil ..." >
+<!ENTITY menu.file.url "Opna frå adresse ..." >
 <!ENTITY menu.file.playlist "Last ei speleliste ..." >
-<!ENTITY menu.file.scan     "Søk etter media ..." >
+<!ENTITY menu.file.scan "Søk etter media ..." >
 <!ENTITY menu.file.dlfolder "Bruk nedlastingsmappe ..." >
-<!ENTITY menu.file.watch    "Bruk overvaka mapper ..." >
-<!ENTITY menu.file.htmlbar  "Bruk alltid nettverktøylinje" >
-<!ENTITY menu.file.skin     "Anna drakt" >
-<!ENTITY menu.file.window   "Opna hovudvindauget" >
-<!ENTITY menu.file.mini     "Opna Mini-spelar" >
-<!ENTITY menu.file.about    "Om Songbird ..." >
-<!ENTITY menu.file.exit     "Avslutt" >
-
-<!ENTITY menu.edit          "Rediger" >
-<!ENTITY menu.edit.undo     "Gjer om" >
-<!ENTITY menu.edit.cut      "Klipp" >
-<!ENTITY menu.edit.copy     "Kopier" >
-<!ENTITY menu.edit.paste    "Lim inn" >
-<!ENTITY menu.edit.clear    "Tøm" >
-<!ENTITY menu.edit.selall   "Vel alle" >
-<!ENTITY menu.edit.selnone  "Vel ingen" >
-
-<!ENTITY menu.controls      "Kontrollar" >
-<!ENTITY menu.control.play  "Spel/pause" >
-<!ENTITY menu.control.next  "Neste spor" >
-<!ENTITY menu.control.prev  "Førre spor" >
-<!ENTITY menu.control.shuf  "Stokka" >
-<!ENTITY menu.control.repa  "Repeter alle" >
-<!ENTITY menu.control.rep1  "Repeter ein" >
-<!ENTITY menu.control.repx  "Repeter ingen" >
-
-<!ENTITY menu.services        "Tenester" >
+<!ENTITY menu.file.watch "Bruk overvaka mapper ..." >
+<!ENTITY menu.file.htmlbar "Bruk alltid nettverktøylinje" >
+<!ENTITY menu.file.skin "Anna drakt" >
+<!ENTITY menu.file.window "Opna hovudvindauget" >
+<!ENTITY menu.file.mini "Opna Mini-spelar" >
+<!ENTITY menu.file.about "Om Songbird ..." >
+<!ENTITY menu.file.exit "Avslutt" >
+<!ENTITY menu.edit "Rediger" >
+<!ENTITY menu.edit.undo "Gjer om" >
+<!ENTITY menu.edit.cut "Klipp" >
+<!ENTITY menu.edit.copy "Kopier" >
+<!ENTITY menu.edit.paste "Lim inn" >
+<!ENTITY menu.edit.clear "Tøm" >
+<!ENTITY menu.edit.selall "Vel alle" >
+<!ENTITY menu.edit.selnone "Vel ingen" >
+<!ENTITY menu.controls "Kontrollar" >
+<!ENTITY menu.control.play "Spel/pause" >
+<!ENTITY menu.control.next "Neste spor" >
+<!ENTITY menu.control.prev "Førre spor" >
+<!ENTITY menu.control.shuf "Stokka" >
+<!ENTITY menu.control.repa "Repeter alle" >
+<!ENTITY menu.control.rep1 "Repeter ein" >
+<!ENTITY menu.control.repx "Repeter ingen" >
+<!ENTITY menu.services "Tenester" >
 <!ENTITY menu.services.browse "Søk i tenester ..." >
-
-<!ENTITY menu.devices       "Einingar" >
-
-<!ENTITY menu.help          "Hjelp" >
-<!ENTITY menu.help.topics   "Hjelpeemne ..." >
-<!ENTITY menu.help.about    "Om Songbird..." >
-
-<!ENTITY html.context.open  "Opna" >
-<!ENTITY html.context.play  "Spel" >
-<!ENTITY html.context.add   "Legg til biblioteket" >
-
-<!ENTITY playlist.context.remove  "Fjern" >
-<!ENTITY playlist.context.rename  "Nytta namn" >
-<!ENTITY playlist.context.search  "Søk" >
-<!ENTITY playlist.context.lyrics  "Tekstar" >
-
-<!ENTITY tooltip.miniplayer       "Start Miniplayer" >
-<!ENTITY tooltip.minimize         "Minimer" >
-<!ENTITY tooltip.maximize         "Maksimer/Tilbakefør" >
-<!ENTITY tooltip.exit             "Avslutt" >
-<!ENTITY tooltip.control.back     "Førre spor" >
-<!ENTITY tooltip.control.play     "Spel" >
-<!ENTITY tooltip.control.pause    "Pause" >
-<!ENTITY tooltip.control.fwd      "Neste spor" >
-<!ENTITY tooltip.control.mute     "Demp" >
-<!ENTITY tooltip.control.volume   "Volum" >
-<!ENTITY tooltip.control.repeat   "Repeter" >
-<!ENTITY tooltip.control.shuffle  "Stokka" >
-<!ENTITY tooltip.control.curtrack "Finn dette sporet" >
-<!ENTITY tooltip.control.service  "Byt dekselvising" >
-<!ENTITY tooltip.search           "Søk" >
-<!ENTITY tooltip.browser.back     "Gå tilbake" >
-<!ENTITY tooltip.browser.fwd      "Gå framover" >
-<!ENTITY tooltip.browser.stop     "Stopp søking" >
-<!ENTITY tooltip.browser.home     "Heim" >
-<!ENTITY tooltip.browser.playlist "Sjå tilgjengelege media på denne nettsida" >
-<!ENTITY tooltip.browser.download "Sjå noverande nedlastingar" >
-
-<!ENTITY smart.window             "Smartspeleliste-byggjar" >
-<!ENTITY smart.library            "Vel bibliotek:" >
-<!ENTITY smart.limit              "Avgrens til" >
-<!ENTITY smart.match              "Samsvar med" >
-<!ENTITY smart.any                "kva som helst" >
-<!ENTITY smart.all                "alle" >
-<!ENTITY smart.following          "desse vilkåra:" >
-<!ENTITY smart.random             "tilfeldig" >
-<!ENTITY smart.album              "album" >
-<!ENTITY smart.artist             "utøvar" >
-<!ENTITY smart.genre              "sjanger" >
-<!ENTITY smart.title              "tittel" >
-<!ENTITY smart.high_rating        "høg vurdering" >
-<!ENTITY smart.low_rating         "låg vurdering" >
-<!ENTITY smart.most_recent        "nyaste" >
-<!ENTITY smart.least_recent       "eldste" >
-<!ENTITY smart.most_often         "oftast" >
-<!ENTITY smart.least_often        "sjeldnast" >
-<!ENTITY smart.most_added         "oftast lagt til" >
-<!ENTITY smart.least_added        "sjeldnast lagt til" >
-<!ENTITY smart.minutes            "minutt" >
-<!ENTITY smart.hours              "timar" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "songar" >
-<!ENTITY smart.contains           "inneheld" >
-<!ENTITY smart.not_contain        "inneheld ikkje" >
-<!ENTITY smart.is                 "er" >
-<!ENTITY smart.is_not             "er ikkje" >
-<!ENTITY smart.starts             "begynner med" >
-<!ENTITY smart.ends               "sluttar med" >
-         
-<!ENTITY download.window          "Last ned" >
-<!ENTITY download.select          "Vel målmappe:" >
-<!ENTITY download.always          "Bruk alltid denne mappa" >
-
-<!ENTITY textbox.songbird_open_url "Skriv inn adressa eller filbana til mediet du ønskjer å spela:">
-
-<!ENTITY open_url.title           "Opna adresse">
-<!ENTITY subscribe.title          "Abonner">
-<!ENTITY subscribe.minutes        "Minutt">
-<!ENTITY subscribe.hours          "Time(-ar)">
-<!ENTITY subscribe.days           "Dag(-ar)">
-<!ENTITY subscribe.autocheck      "Oppdater automatisk kvar">
-<!ENTITY subscribe.destinationfolder      "Vel målmappe:">
-
-<!ENTITY exists.title             "Speleliste finst">
-<!ENTITY exists.exists            "Det finst allereie ei speleiste med det namnet">
-
-<!ENTITY media_scan.title          "Søk etter media">
-<!ENTITY media_scan.watch          "Sjå etter nye media i denne mappa">
-
-<!ENTITY new_playlist.title       "Lag ny speleliste">
-<!ENTITY new_playlist.name        "Skriv namnet til den nye spelelista.">
-
-<!ENTITY addtoplaylist.title      "Legg til speleliste">
-<!ENTITY addtoplaylist.create     "Lag ny speleliste">
-
-<!ENTITY watchfolder.title        "Overvak mapper">
-<!ENTITY watchfolder.folderlist   "Sjå etter nye media i desse mappene:">
-
-<!ENTITY locale.language          "Språk" >
-
-
-
-
-
-
+<!ENTITY menu.devices "Einingar" >
+<!ENTITY menu.help "Hjelp" >
+<!ENTITY menu.help.topics "Hjelpeemne ..." >
+<!ENTITY menu.help.about "Om Songbird..." >
 <!ENTITY menu.preferences "Preferences..." >
 <!ENTITY menu.extensions "Extensions..." >
-
-
-
-
-<!ENTITY menu.feathers "Feathers" >
-
-
-
-
-<!ENTITY about.version "Version" >
-
-
-
-
+<!ENTITY html.context.open "Opna" >
+<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY html.context.play "Spel" >
+<!ENTITY html.context.add "Legg til biblioteket" >
+<!ENTITY playlist.context.remove "Fjern" >
+<!ENTITY playlist.context.rename "Nytta namn" >
+<!ENTITY playlist.context.search "Søk" >
+<!ENTITY playlist.context.lyrics "Tekstar" >
+<!ENTITY tooltip.miniplayer "Start Miniplayer" >
+<!ENTITY tooltip.minimize "Minimer" >
+<!ENTITY tooltip.maximize "Maksimer/Tilbakefør" >
+<!ENTITY tooltip.exit "Avslutt" >
+<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.control.back "Førre spor" >
+<!ENTITY tooltip.control.play "Spel" >
+<!ENTITY tooltip.control.pause "Pause" >
+<!ENTITY tooltip.control.fwd "Neste spor" >
+<!ENTITY tooltip.control.mute "Demp" >
+<!ENTITY tooltip.control.volume "Volum" >
+<!ENTITY tooltip.control.repeat "Repeter" >
+<!ENTITY tooltip.control.shuffle "Stokka" >
+<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+<!ENTITY tooltip.control.curtrack "Finn dette sporet" >
+<!ENTITY tooltip.control.service "Byt dekselvising" >
+<!ENTITY tooltip.search "Søk" >
+<!ENTITY tooltip.browser.back "Gå tilbake" >
+<!ENTITY tooltip.browser.fwd "Gå framover" >
+<!ENTITY tooltip.browser.stop "Stopp søking" >
+<!ENTITY tooltip.browser.home "Heim" >
+<!ENTITY tooltip.browser.refresh "Refresh" >
 <!ENTITY tooltip.browser.bookmark "Bookmark" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
+<!ENTITY tooltip.browser.playlist "Sjå tilgjengelege media på denne nettsida" >
+<!ENTITY tooltip.browser.download "Sjå noverande nedlastingar" >
+<!ENTITY smart.window "Smartspeleliste-byggjar" >
+<!ENTITY smart.library "Vel bibliotek:" >
+<!ENTITY smart.limit "Avgrens til" >
+<!ENTITY smart.match "Samsvar med" >
+<!ENTITY smart.any "kva som helst" >
+<!ENTITY smart.all "alle" >
+<!ENTITY smart.following "desse vilkåra:" >
+<!ENTITY smart.random "tilfeldig" >
+<!ENTITY smart.album "album" >
+<!ENTITY smart.artist "utøvar" >
+<!ENTITY smart.genre "sjanger" >
+<!ENTITY smart.title "tittel" >
+<!ENTITY smart.high_rating "høg vurdering" >
+<!ENTITY smart.low_rating "låg vurdering" >
+<!ENTITY smart.most_recent "nyaste" >
+<!ENTITY smart.least_recent "eldste" >
+<!ENTITY smart.most_often "oftast" >
+<!ENTITY smart.least_often "sjeldnast" >
+<!ENTITY smart.most_added "oftast lagt til" >
+<!ENTITY smart.least_added "sjeldnast lagt til" >
+<!ENTITY smart.minutes "minutt" >
+<!ENTITY smart.hours "timar" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "songar" >
+<!ENTITY smart.contains "inneheld" >
+<!ENTITY smart.not_contain "inneheld ikkje" >
+<!ENTITY smart.is "er" >
+<!ENTITY smart.is_not "er ikkje" >
+<!ENTITY smart.starts "begynner med" >
+<!ENTITY smart.ends "sluttar med" >
+<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY download.window "Last ned" >
+<!ENTITY download.select "Vel målmappe:" >
+<!ENTITY download.always "Bruk alltid denne mappa" >
+<!ENTITY textbox.songbird_open_url "Skriv inn adressa eller filbana til mediet du ønskjer å spela:" >
+<!ENTITY open_url.title "Opna adresse" >
+<!ENTITY subscribe.title "Abonner" >
+<!ENTITY subscribe.minutes "Minutt" >
+<!ENTITY subscribe.hours "Time(-ar)" >
+<!ENTITY subscribe.days "Dag(-ar)" >
+<!ENTITY subscribe.autocheck "Oppdater automatisk kvar" >
+<!ENTITY subscribe.destinationfolder "Vel målmappe:" >
+<!ENTITY exists.title "Speleliste finst" >
+<!ENTITY exists.exists "Det finst allereie ei speleiste med det namnet" >
+<!ENTITY media_scan.title "Søk etter media" >
+<!ENTITY media_scan.watch "Sjå etter nye media i denne mappa" >
+<!ENTITY new_playlist.title "Lag ny speleliste" >
+<!ENTITY new_playlist.name "Skriv namnet til den nye spelelista." >
+<!ENTITY addtoplaylist.title "Legg til speleliste" >
+<!ENTITY addtoplaylist.create "Lag ny speleliste" >
+<!ENTITY watchfolder.title "Overvak mapper" >
+<!ENTITY watchfolder.folderlist "Sjå etter nye media i desse mappene:" >
+<!ENTITY locale.language "Språk" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
+<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.defaultlanguage "Default Language" >
+<!ENTITY setup.privacy "Privacy" >
 <!ENTITY setupprogress.pleasewait "Please wait..." >
-
-
-
-
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -187,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -217,18 +184,10 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
 <!ENTITY bookmarks.edit.title "Edit Bookmark" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Name:" >
 <!ENTITY bookmarks.edit.icon "Icon:" >
-
-
-
-
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
 <!ENTITY trackeditor.exttrackdata "Extended Data" >
@@ -236,26 +195,7 @@
 <!ENTITY trackeditor.addtag.title "Add Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
 <!ENTITY jumptofile.title "Jump to" >
-
-
-
-
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
-
-
-
-
+<!ENTITY jumptofile.search "Search:" >
 <!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
@@ -264,10 +204,6 @@
 <!ENTITY hotkeys.set "Set" >
 <!ENTITY hotkeys.remove "Remove" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
 <!ENTITY metadata.uuid "Media UUID" >
 <!ENTITY metadata.url "Location" >
 <!ENTITY metadata.artist "Artist" >
@@ -275,70 +211,14 @@
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genre" >
 <!ENTITY metadata.length "Length" >
-
-
-
-
 <!ENTITY restartbox.restartnow "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
 <!ENTITY restartbox.restartlater "Restart Later" >
 <!ENTITY setupprogress.installingextensions "Installing Extensions" >
-
-
-
-
-<!ENTITY tooltip.hide "Hide" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "Check for Updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.search "Search:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-
-
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
-
-
-
-
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -351,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

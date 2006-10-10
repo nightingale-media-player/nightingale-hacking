@@ -1,169 +1,152 @@
-﻿
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome/" >
-<!ENTITY window.ok          "ОК" >
-<!ENTITY window.cancel      "Откажи" >
-<!ENTITY window.browse      "Покажи..." >
-
-<!ENTITY menu.file          "Файл" >
-<!ENTITY menu.file.new      "Нов плейлист..." >
-<!ENTITY menu.file.smart    "Нов умен плейлист..." >
-<!ENTITY menu.file.remote   "Нов отдалечен плейлист..." >
-<!ENTITY menu.file.open     "Отвори файл..." >
-<!ENTITY menu.file.url      "Отвори от URL..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "ОК" >
+<!ENTITY window.undo "Върни" >
+<!ENTITY window.apply "Нагласи" >
+<!ENTITY window.cancel "Откажи" >
+<!ENTITY window.browse "Покажи..." >
+<!ENTITY menu.file "Файл" >
+<!ENTITY menu.file.new "Нов плейлист..." >
+<!ENTITY menu.file.smart "Нов умен плейлист..." >
+<!ENTITY menu.file.remote "Нов отдалечен плейлист..." >
+<!ENTITY menu.file.open "Отвори файл..." >
+<!ENTITY menu.file.url "Отвори от URL..." >
 <!ENTITY menu.file.playlist "Вкарай плейлист..." >
-<!ENTITY menu.file.scan     "Сканирай за медия..." >
+<!ENTITY menu.file.scan "Сканирай за медия..." >
 <!ENTITY menu.file.dlfolder "Задай папка за сваляне..." >
-<!ENTITY menu.file.watch    "Задай следени папки..." >
-<!ENTITY menu.file.htmlbar  "Винаги показвай мрежова лента" >
-<!ENTITY menu.file.skin     "Алтернативен скин" >
-<!ENTITY menu.file.window   "Отвори главен прозорец" >
-<!ENTITY menu.file.mini     "Отвори мини плеър" >
-<!ENTITY menu.file.about    "Относно Songbird..." >
-<!ENTITY menu.file.exit     "Изход" >
-
-<!ENTITY menu.edit          "Редактиране" >
-<!ENTITY menu.edit.undo     "Върни" >
-<!ENTITY menu.edit.cut      "Отрежи" >
-<!ENTITY menu.edit.copy     "Копирай" >
-<!ENTITY menu.edit.paste    "Вмъкни" >
-<!ENTITY menu.edit.clear    "Изчисти" >
-<!ENTITY menu.edit.selall   "Избери всичко" >
-<!ENTITY menu.edit.selnone  "Избери нищо" >
-
-<!ENTITY menu.controls      "Управление" >
-<!ENTITY menu.control.play  "Свири/Паузирай" >
-<!ENTITY menu.control.next  "Следваща песен" >
-<!ENTITY menu.control.prev  "Предишна песен" >
-<!ENTITY menu.control.shuf  "Разбъркай" >
-<!ENTITY menu.control.repa  "Повтори всички" >
-<!ENTITY menu.control.rep1  "Повтори една" >
-<!ENTITY menu.control.repx  "Не повтаряй" >
-
-<!ENTITY menu.services        "Услуги" >
+<!ENTITY menu.file.watch "Задай следени папки..." >
+<!ENTITY menu.file.htmlbar "Винаги показвай мрежова лента" >
+<!ENTITY menu.file.skin "Алтернативен скин" >
+<!ENTITY menu.file.window "Отвори главен прозорец" >
+<!ENTITY menu.file.mini "Отвори мини плеър" >
+<!ENTITY menu.file.about "Относно Songbird..." >
+<!ENTITY menu.file.exit "Изход" >
+<!ENTITY menu.edit "Редактиране" >
+<!ENTITY menu.edit.undo "Върни" >
+<!ENTITY menu.edit.cut "Отрежи" >
+<!ENTITY menu.edit.copy "Копирай" >
+<!ENTITY menu.edit.paste "Вмъкни" >
+<!ENTITY menu.edit.clear "Изчисти" >
+<!ENTITY menu.edit.selall "Избери всичко" >
+<!ENTITY menu.edit.selnone "Избери нищо" >
+<!ENTITY menu.controls "Управление" >
+<!ENTITY menu.control.play "Свири/Паузирай" >
+<!ENTITY menu.control.next "Следваща песен" >
+<!ENTITY menu.control.prev "Предишна песен" >
+<!ENTITY menu.control.shuf "Разбъркай" >
+<!ENTITY menu.control.repa "Повтори всички" >
+<!ENTITY menu.control.rep1 "Повтори една" >
+<!ENTITY menu.control.repx "Не повтаряй" >
+<!ENTITY menu.services "Услуги" >
 <!ENTITY menu.services.browse "Разгледай услуги..." >
-
-<!ENTITY menu.devices       "Устройства" >
-
-<!ENTITY menu.help          "Помощ" >
-<!ENTITY menu.help.topics   "По теми..." >
-<!ENTITY menu.help.about    "Относно Songbird..." >
-<!ENTITY menu.preferences   "Настройки..." >
-<!ENTITY menu.extensions    "Разширения..." >
-
-<!ENTITY html.context.open  "Отвори" >
-<!ENTITY html.context.play  "Свири" >
-<!ENTITY html.context.add   "Добави към библиотека" >
-
-<!ENTITY playlist.context.remove  "Премахни" >
-<!ENTITY playlist.context.rename  "Преименувай" >
-<!ENTITY playlist.context.search  "Търси" >
-<!ENTITY playlist.context.lyrics  "Текст" >
-
-<!ENTITY tooltip.miniplayer       "Смени на миниплейър" >
-<!ENTITY tooltip.minimize         "Смали" >
-<!ENTITY tooltip.maximize         "Уголеми/Възстанови" >
-<!ENTITY tooltip.exit             "Изход" >
-<!ENTITY tooltip.control.back     "Предишна песен" >
-<!ENTITY tooltip.control.play     "Свири" >
-<!ENTITY tooltip.control.pause    "Паузирай" >
-<!ENTITY tooltip.control.fwd      "Следваща песен" >
-<!ENTITY tooltip.control.mute     "Без звук" >
-<!ENTITY tooltip.control.volume   "Сила на звука" >
-<!ENTITY tooltip.control.repeat   "Повтори" >
-<!ENTITY tooltip.control.shuffle  "Разбъркай" >
+<!ENTITY menu.devices "Устройства" >
+<!ENTITY menu.help "Помощ" >
+<!ENTITY menu.help.topics "По теми..." >
+<!ENTITY menu.help.about "Относно Songbird..." >
+<!ENTITY menu.preferences "Настройки..." >
+<!ENTITY menu.extensions "Разширения..." >
+<!ENTITY html.context.open "Отвори" >
+<!ENTITY html.context.openexternal "Отвори в браузър" >
+<!ENTITY html.context.play "Свири" >
+<!ENTITY html.context.add "Добави към библиотека" >
+<!ENTITY playlist.context.remove "Премахни" >
+<!ENTITY playlist.context.rename "Преименувай" >
+<!ENTITY playlist.context.search "Търси" >
+<!ENTITY playlist.context.lyrics "Текст" >
+<!ENTITY tooltip.miniplayer "Смени на миниплейър" >
+<!ENTITY tooltip.minimize "Смали" >
+<!ENTITY tooltip.maximize "Уголеми/Възстанови" >
+<!ENTITY tooltip.exit "Изход" >
+<!ENTITY tooltip.hide "Скрий" >
+<!ENTITY tooltip.control.back "Предишна песен" >
+<!ENTITY tooltip.control.play "Свири" >
+<!ENTITY tooltip.control.pause "Паузирай" >
+<!ENTITY tooltip.control.fwd "Следваща песен" >
+<!ENTITY tooltip.control.mute "Без звук" >
+<!ENTITY tooltip.control.volume "Сила на звука" >
+<!ENTITY tooltip.control.repeat "Повтори" >
+<!ENTITY tooltip.control.shuffle "Разбъркай" >
+<!ENTITY tooltip.control.shuf_off "Разбъркване изключено" >
 <!ENTITY tooltip.control.curtrack "Намери настоящата песен" >
-<!ENTITY tooltip.control.service  "Смени дисплей" >
-<!ENTITY tooltip.search           "Търси" >
-<!ENTITY tooltip.browser.back     "Назад" >
-<!ENTITY tooltip.browser.fwd      "Напред" >
-<!ENTITY tooltip.browser.stop     "Спри браузър" >
-<!ENTITY tooltip.browser.home     "Начало" >
+<!ENTITY tooltip.control.service "Смени дисплей" >
+<!ENTITY tooltip.search "Търси" >
+<!ENTITY tooltip.browser.back "Назад" >
+<!ENTITY tooltip.browser.fwd "Напред" >
+<!ENTITY tooltip.browser.stop "Спри браузър" >
+<!ENTITY tooltip.browser.home "Начало" >
+<!ENTITY tooltip.browser.refresh "Опресни" >
+<!ENTITY tooltip.browser.bookmark "Отметка" >
 <!ENTITY tooltip.browser.playlist "Скрий/Покажи мрежовия плейлист" >
 <!ENTITY tooltip.browser.download "Виж настоящите сваляния" >
-
-<!ENTITY smart.window             "Създаване на умен плейлист" >
-<!ENTITY smart.library            "Избери библиотека:" >
-<!ENTITY smart.limit              "Ограничи до" >
-<!ENTITY smart.match              "Съвпада с" >
-<!ENTITY smart.any                "което и да е" >
-<!ENTITY smart.all                "всяко" >
-<!ENTITY smart.following          "от следните условия:" >   
-<!ENTITY smart.random             "произволно" >
-<!ENTITY smart.album              "албум" >
-<!ENTITY smart.artist             "артист" >
-<!ENTITY smart.genre              "жанр" >
-<!ENTITY smart.title              "име" >
-<!ENTITY smart.high_rating        "висока оценка" >
-<!ENTITY smart.low_rating         "ниска оценка" >
-<!ENTITY smart.most_recent        "най-нова" >
-<!ENTITY smart.least_recent       "най-стара" >
-<!ENTITY smart.most_often         "най-често" >
-<!ENTITY smart.least_often        "най-рядко" >
-<!ENTITY smart.most_added         "най-често добавяна" >
-<!ENTITY smart.least_added        "най-рядко добавяна" >
-<!ENTITY smart.minutes            "минути" >
-<!ENTITY smart.hours              "часове" >
-<!ENTITY smart.mb                 "МБ" >
-<!ENTITY smart.gb                 "ГБ" >
-<!ENTITY smart.songs              "песни" >
-<!ENTITY smart.contains           "съдържа" >
-<!ENTITY smart.not_contain        "не съдържа" >
-<!ENTITY smart.is                 "е" >
-<!ENTITY smart.is_not             "не е" >
-<!ENTITY smart.starts             "започа с" >
-<!ENTITY smart.ends               "завършва с" >
-         
-<!ENTITY download.window          "Сваляне" >
-<!ENTITY download.select          "Избери папката:" >
-<!ENTITY download.always          "Винаги използвай тази папка" >
-
-<!ENTITY textbox.songbird_open_url "Въведете URL или пътя към медията която искате да прослушате:">
-
-<!ENTITY open_url.title           "Отвори URL">
-<!ENTITY subscribe.title          "Абонирай се">
-<!ENTITY subscribe.minutes        "Минута(и)">
-<!ENTITY subscribe.hours          "Час(ове)">
-<!ENTITY subscribe.days           "Ден(дни)">
-<!ENTITY subscribe.autocheck      "Автоматично обновявай всеки">
-<!ENTITY subscribe.destinationfolder      "Избери папката:">
-
-<!ENTITY exists.title             "Плейлистът съществува">
-<!ENTITY exists.exists            "Плейлист със същото име вече съществува!">
-
-<!ENTITY media_scan.title          "Сканирай за медия">
-<!ENTITY media_scan.watch          "Следи тази папка за нова медия">
-
-<!ENTITY new_playlist.title       "Създай нов плейлист">
-<!ENTITY new_playlist.name        "Въведете името на новия плейлист.">
-
-<!ENTITY addtoplaylist.title      "Добави към плейлист">
-<!ENTITY addtoplaylist.create      "Създай нов плейлист">
-
-<!ENTITY watchfolder.title        "Следи папки">
-<!ENTITY watchfolder.folderlist   "Следи тези папки за нова медия:">
-
-<!ENTITY locale.language          "Език" >
-
-
-
-<!ENTITY tooltip.browser.bookmark "Отметка" >
+<!ENTITY smart.window "Създаване на умен плейлист" >
+<!ENTITY smart.library "Избери библиотека:" >
+<!ENTITY smart.limit "Ограничи до" >
+<!ENTITY smart.match "Съвпада с" >
+<!ENTITY smart.any "което и да е" >
+<!ENTITY smart.all "всяко" >
+<!ENTITY smart.following "от следните условия:" >
+<!ENTITY smart.random "произволно" >
+<!ENTITY smart.album "албум" >
+<!ENTITY smart.artist "артист" >
+<!ENTITY smart.genre "жанр" >
+<!ENTITY smart.title "име" >
+<!ENTITY smart.high_rating "висока оценка" >
+<!ENTITY smart.low_rating "ниска оценка" >
+<!ENTITY smart.most_recent "най-нова" >
+<!ENTITY smart.least_recent "най-стара" >
+<!ENTITY smart.most_often "най-често" >
+<!ENTITY smart.least_often "най-рядко" >
+<!ENTITY smart.most_added "най-често добавяна" >
+<!ENTITY smart.least_added "най-рядко добавяна" >
+<!ENTITY smart.minutes "минути" >
+<!ENTITY smart.hours "часове" >
+<!ENTITY smart.mb "МБ" >
+<!ENTITY smart.gb "ГБ" >
+<!ENTITY smart.songs "песни" >
+<!ENTITY smart.contains "съдържа" >
+<!ENTITY smart.not_contain "не съдържа" >
+<!ENTITY smart.is "е" >
+<!ENTITY smart.is_not "не е" >
+<!ENTITY smart.starts "започа с" >
+<!ENTITY smart.ends "завършва с" >
+<!ENTITY smart.selectedby "Избрани според" >
+<!ENTITY download.window "Сваляне" >
+<!ENTITY download.select "Избери папката:" >
+<!ENTITY download.always "Винаги използвай тази папка" >
+<!ENTITY textbox.songbird_open_url "Въведете URL или пътя към медията която искате да прослушате:" >
+<!ENTITY open_url.title "Отвори URL" >
+<!ENTITY subscribe.title "Абонирай се" >
+<!ENTITY subscribe.minutes "Минута(и)" >
+<!ENTITY subscribe.hours "Час(ове)" >
+<!ENTITY subscribe.days "Ден(дни)" >
+<!ENTITY subscribe.autocheck "Автоматично обновявай всеки" >
+<!ENTITY subscribe.destinationfolder "Избери папката:" >
+<!ENTITY exists.title "Плейлистът съществува" >
+<!ENTITY exists.exists "Плейлист със същото име вече съществува!" >
+<!ENTITY media_scan.title "Сканирай за медия" >
+<!ENTITY media_scan.watch "Следи тази папка за нова медия" >
+<!ENTITY new_playlist.title "Създай нов плейлист" >
+<!ENTITY new_playlist.name "Въведете името на новия плейлист." >
+<!ENTITY addtoplaylist.title "Добави към плейлист" >
+<!ENTITY addtoplaylist.create "Създай нов плейлист" >
+<!ENTITY watchfolder.title "Следи папки" >
+<!ENTITY watchfolder.folderlist "Следи тези папки за нова медия:" >
+<!ENTITY locale.language "Език" >
 <!ENTITY menu.feathers "Пера" >
 <!ENTITY about.version "Версия" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Взимане на списък с разширения. Моля изчакайте..." >
-<!ENTITY setup.custominstall "Специална инсталация" >
 <!ENTITY setup.title "Настройки на инсталацията на Songbird" >
+<!ENTITY setup.retrievingxpilist "Взимане на списък с разширения. Моля изчакайте..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
+<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.defaultlanguage "Default Language" >
+<!ENTITY setup.privacy "Privacy" >
 <!ENTITY setupprogress.pleasewait "Моля изчакайте..." >
-
-
-
-
 <!ENTITY menu.file.accesskey "Ф" >
 <!ENTITY menu.file.new.accesskey "Н" >
 <!ENTITY menu.file.smart.accesskey "У" >
@@ -171,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "Л" >
 <!ENTITY menu.file.url.accesskey "Р" >
 <!ENTITY menu.file.playlist.accesskey "В" >
-<!ENTITY menu.file.scan.accesskey "С" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "З" >
 <!ENTITY menu.file.watch.accesskey "Д" >
 <!ENTITY menu.file.mini.accesskey "М" >
@@ -201,18 +184,10 @@
 <!ENTITY menu.help.accesskey "П" >
 <!ENTITY menu.help.help.accesskey "Т" >
 <!ENTITY menu.help.about.accesskey "О" >
-
-
-
-
 <!ENTITY bookmarks.edit.title "Редактирай отметка" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Име:" >
 <!ENTITY bookmarks.edit.icon "Икона:" >
-
-
-
-
 <!ENTITY trackeditor.title "Редактор на песни" >
 <!ENTITY trackeditor.trackdata "Информация за песен" >
 <!ENTITY trackeditor.exttrackdata "Разширена информация" >
@@ -220,26 +195,7 @@
 <!ENTITY trackeditor.addtag.title "Добави маркер" >
 <!ENTITY trackeditor.addtag.tag "Маркер:" >
 <!ENTITY jumptofile.title "Отиди на песен" >
-
-
-
-
-<!ENTITY window.undo "Върни" >
-<!ENTITY window.apply "Нагласи" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Позволи на Songbird да изпраща анонимна информация за употребата му (препоръчително)" >
-
-
-
-
+<!ENTITY jumptofile.search "Търсене:" >
 <!ENTITY hotkeys.useglobalhotkeys "Използвай глобални бързи клавиши" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "И" >
 <!ENTITY hotkeys.action "Действие" >
@@ -248,10 +204,6 @@
 <!ENTITY hotkeys.set "Нагласи" >
 <!ENTITY hotkeys.remove "Премахни" >
 <!ENTITY hotkeys.prefpane "Бързи клавиши" >
-
-
-
-
 <!ENTITY metadata.uuid "UUID на медия" >
 <!ENTITY metadata.url "Място" >
 <!ENTITY metadata.artist "Артист" >
@@ -259,70 +211,14 @@
 <!ENTITY metadata.album "Албум" >
 <!ENTITY metadata.genre "Жанр" >
 <!ENTITY metadata.length "Дължина" >
-
-
-
-
 <!ENTITY restartbox.restartnow "Рестартирай сега" >
 <!ENTITY restartbox.restartonplaybackend "Рестартирай след края на просвирването" >
 <!ENTITY restartbox.restartlater "Рестартирай по-късно" >
 <!ENTITY setupprogress.installingextensions "Инсталиране на разширения" >
-
-
-
-
-<!ENTITY tooltip.hide "Скрий" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "Провери за обновления..." >
 <!ENTITY menu.updateCmd.accessKey "н" >
-
-
-
-
-<!ENTITY jumptofile.search "Търсене:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Разбъркване изключено" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Опресни" >
-<!ENTITY smart.selectedby "Избрани според" >
-
-
-
-
-<!ENTITY html.context.openexternal "Отвори в браузър" >
-
-
-
-
-<!ENTITY firstrun.connectionsettings "Настройки на конекцията" >
-
-
-
-
-
-
-
-
-
 <!ENTITY trackeditor.disclaimer "Функцията за редактиране на песни още не е готова. Редактираната мета информация се запазва само в базата данни на Songbird. В бъдеща версия тя ще бъде запазена и във вашите медийни файлове." >
-
-
-
-
 <!ENTITY callout.firstwebplaylist "Songbird намери следните песни които може да просвири." >
-
-
-
-
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -335,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

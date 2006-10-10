@@ -1,132 +1,120 @@
-﻿
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/spp" >
-<!ENTITY window.ok          "确定" >
-<!ENTITY window.cancel      "取消" >
-<!ENTITY window.browse      "浏览..." >
-
-<!ENTITY menu.file          "文件" >
-<!ENTITY menu.file.new      "新建播放列表..." >
-<!ENTITY menu.file.smart    "新建智能播放列表..." >
-<!ENTITY menu.file.remote   "新建远程播放列表..." >
-<!ENTITY menu.file.open     "打开文件..." >
-<!ENTITY menu.file.url      "从URL打开..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "确定" >
+<!ENTITY window.undo "撤消" >
+<!ENTITY window.apply "应用" >
+<!ENTITY window.cancel "取消" >
+<!ENTITY window.browse "浏览..." >
+<!ENTITY menu.file "文件" >
+<!ENTITY menu.file.new "新建播放列表..." >
+<!ENTITY menu.file.smart "新建智能播放列表..." >
+<!ENTITY menu.file.remote "新建远程播放列表..." >
+<!ENTITY menu.file.open "打开文件..." >
+<!ENTITY menu.file.url "从URL打开..." >
 <!ENTITY menu.file.playlist "打开播放列表..." >
-<!ENTITY menu.file.scan     "扫描媒体文件..." >
-<!ENTITY menu.file.htmlbar  "总是显示网页工具条" >
-<!ENTITY menu.file.skin     "其它皮肤" >
-<!ENTITY menu.file.window   "打开主窗口" >
-<!ENTITY menu.file.mini     "切换到迷你模式" >
-<!ENTITY menu.file.about    "关于Songbird..." >
-<!ENTITY menu.file.dlfolder	"下载文件夹" >
-<!ENTITY menu.file.watch	"监视" >
-<!ENTITY menu.file.exit     "退出" >
-
-<!ENTITY menu.edit          "编辑" >
-<!ENTITY menu.edit.undo     "撤销" >
-<!ENTITY menu.edit.cut      "剪切" >
-<!ENTITY menu.edit.copy     "复制" >
-<!ENTITY menu.edit.paste    "粘贴" >
-<!ENTITY menu.edit.clear    "删除" >
-<!ENTITY menu.edit.selall   "全部选择" >
-<!ENTITY menu.edit.selnone  "取消选择" >
-
-<!ENTITY menu.controls      "播放" >
-<!ENTITY menu.control.play  "播放/暂停" >
-<!ENTITY menu.control.next  "下一文件" >
-<!ENTITY menu.control.prev  "前一文件" >
-<!ENTITY menu.control.shuf  "随机" >
-<!ENTITY menu.control.repa  "循环全部" >
-<!ENTITY menu.control.rep1  "循环单曲" >
-<!ENTITY menu.control.repx  "不循环" >
-
-<!ENTITY menu.services        "服务" >
-<!ENTITY menu.services.browse "浏览服务..." >
-
-<!ENTITY menu.devices       "设备" >
-
-<!ENTITY menu.help          "帮助" >
-<!ENTITY menu.help.topics   "帮助内容..." >
-<!ENTITY menu.help.about    "关于Songbird..." >
-
-<!ENTITY html.context.open  "打开" >
-<!ENTITY html.context.play  "播放" >
-<!ENTITY html.context.add   "添加到媒体库" >
-
-<!ENTITY playlist.context.remove  "删除" >
-<!ENTITY playlist.context.rename  "重命名" >
-<!ENTITY playlist.context.search  "搜索" >
-<!ENTITY playlist.context.lyrics  "歌词" >
-
-<!ENTITY tooltip.miniplayer       "切换到迷你模式" >
-<!ENTITY tooltip.minimize         "最小化" >
-<!ENTITY tooltip.maximize         "最大化/还原" >
-<!ENTITY tooltip.exit             "退出" >
-<!ENTITY tooltip.control.back     "前一音轨" >
-<!ENTITY tooltip.control.play     "播放" >
-<!ENTITY tooltip.control.pause    "暂停" >
-<!ENTITY tooltip.control.fwd      "下一音轨" >
-<!ENTITY tooltip.control.mute     "静音" >
-<!ENTITY tooltip.control.volume   "音量" >
-<!ENTITY tooltip.control.repeat   "重复" >
-<!ENTITY tooltip.control.shuffle  "随机" >
-<!ENTITY tooltip.control.curtrack "查找当前音轨" >
-<!ENTITY tooltip.control.service  "切换面板" >
-<!ENTITY tooltip.search           "查找" >
-<!ENTITY tooltip.browser.back     "后退" >
-<!ENTITY tooltip.browser.fwd      "前近" >
-<!ENTITY tooltip.browser.stop     "停止" >
-<!ENTITY tooltip.browser.home     "主页" >
-<!ENTITY tooltip.browser.playlist "在本网页上查看可用的媒体文件" >
-<!ENTITY tooltip.browser.download "查看下载的内容" >
-
-<!ENTITY smart.window             "建立智能播放列表" >
-<!ENTITY smart.library            "选择媒体库" >
-<!ENTITY smart.limit              "限制在" >
-<!ENTITY smart.match              "符合" >
-<!ENTITY smart.any                "任意" >
-<!ENTITY smart.all                "所有" >
-<!ENTITY smart.following          "下述条件:" >   
-<!ENTITY smart.random             "随机" >
-<!ENTITY smart.album              "专集" >
-<!ENTITY smart.artist             "艺术家" >
-<!ENTITY smart.genre              "类型" >
-<!ENTITY smart.title              "曲目" >
-<!ENTITY smart.high_rating        "高评级" >
-<!ENTITY smart.low_rating         "低评级" >
-<!ENTITY smart.most_recent        "新近" >
-<!ENTITY smart.least_recent       "最近很少" >
-<!ENTITY smart.most_often         "最经常" >
-<!ENTITY smart.least_often        "不经常" >
-<!ENTITY smart.most_added         "经常添加的" >
-<!ENTITY smart.least_added        "很少添加的" >
-<!ENTITY smart.minutes            "分钟" >
-<!ENTITY smart.hours              "小时" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "歌曲" >
-<!ENTITY smart.contains           "包含" >
-<!ENTITY smart.not_contain        "不包含" >
-<!ENTITY smart.is                 "是" >
-<!ENTITY smart.is_not             "不是" >
-<!ENTITY smart.starts             "开始于" >
-<!ENTITY smart.ends               "结束于" >
-         
-<!ENTITY download.window          "下载" >
-<!ENTITY download.select          "选择目标文件夹：" >
-<!ENTITY download.always          "总是使用这个文件夹" >
-
-
-
-<!ENTITY locale.language          "语言" >
-
-
+<!ENTITY menu.file.scan "扫描媒体文件..." >
 <!ENTITY menu.file.dlfolder "设置下载目录" >
 <!ENTITY menu.file.watch "设置监视目录" >
-<!ENTITY menu.preferences "选项..." >
+<!ENTITY menu.file.htmlbar "总是显示网页工具条" >
+<!ENTITY menu.file.skin "其它皮肤" >
+<!ENTITY menu.file.window "打开主窗口" >
+<!ENTITY menu.file.mini "切换到迷你模式" >
+<!ENTITY menu.file.about "关于Songbird..." >
+<!ENTITY menu.file.exit "退出" >
+<!ENTITY menu.edit "编辑" >
+<!ENTITY menu.edit.undo "撤销" >
+<!ENTITY menu.edit.cut "剪切" >
+<!ENTITY menu.edit.copy "复制" >
+<!ENTITY menu.edit.paste "粘贴" >
+<!ENTITY menu.edit.clear "清除" >
+<!ENTITY menu.edit.selall "全部选择" >
+<!ENTITY menu.edit.selnone "取消选择" >
+<!ENTITY menu.controls "播放" >
+<!ENTITY menu.control.play "播放/暂停" >
+<!ENTITY menu.control.next "下一首音乐" >
+<!ENTITY menu.control.prev "前一首音乐" >
+<!ENTITY menu.control.shuf "随机" >
+<!ENTITY menu.control.repa "循环全部" >
+<!ENTITY menu.control.rep1 "循环单曲" >
+<!ENTITY menu.control.repx "不循环" >
+<!ENTITY menu.services "服务" >
+<!ENTITY menu.services.browse "浏览扩展..." >
+<!ENTITY menu.devices "设备" >
+<!ENTITY menu.help "帮助" >
+<!ENTITY menu.help.topics "帮助内容..." >
+<!ENTITY menu.help.about "关于Songbird..." >
+<!ENTITY menu.preferences "使用偏好..." >
 <!ENTITY menu.extensions "扩展..." >
+<!ENTITY html.context.open "打开" >
+<!ENTITY html.context.openexternal "用默认浏览器打开" >
+<!ENTITY html.context.play "播放" >
+<!ENTITY html.context.add "添加到媒体库" >
+<!ENTITY playlist.context.remove "删除" >
+<!ENTITY playlist.context.rename "重命名" >
+<!ENTITY playlist.context.search "搜索" >
+<!ENTITY playlist.context.lyrics "歌词" >
+<!ENTITY tooltip.miniplayer "切换到迷你模式" >
+<!ENTITY tooltip.minimize "最小化" >
+<!ENTITY tooltip.maximize "最大化/还原" >
+<!ENTITY tooltip.exit "退出" >
+<!ENTITY tooltip.hide "隐藏" >
+<!ENTITY tooltip.control.back "前一首音乐" >
+<!ENTITY tooltip.control.play "播放" >
+<!ENTITY tooltip.control.pause "暂停" >
+<!ENTITY tooltip.control.fwd "下一首音乐" >
+<!ENTITY tooltip.control.mute "静音" >
+<!ENTITY tooltip.control.volume "音量" >
+<!ENTITY tooltip.control.repeat "重复" >
+<!ENTITY tooltip.control.shuffle "随机" >
+<!ENTITY tooltip.control.shuf_off "停止随机播放" >
+<!ENTITY tooltip.control.curtrack "查找当前音乐" >
+<!ENTITY tooltip.control.service "切换面板" >
+<!ENTITY tooltip.search "查找" >
+<!ENTITY tooltip.browser.back "后退" >
+<!ENTITY tooltip.browser.fwd "前近" >
+<!ENTITY tooltip.browser.stop "停止" >
+<!ENTITY tooltip.browser.home "主页" >
+<!ENTITY tooltip.browser.refresh "刷新" >
+<!ENTITY tooltip.browser.bookmark "书签" >
+<!ENTITY tooltip.browser.playlist "在本网页上查看可用的媒体文件" >
+<!ENTITY tooltip.browser.download "查看正在下载的内容" >
+<!ENTITY smart.window "建立智能播放列表" >
+<!ENTITY smart.library "选择媒体库" >
+<!ENTITY smart.limit "限制在" >
+<!ENTITY smart.match "符合" >
+<!ENTITY smart.any "任意" >
+<!ENTITY smart.all "所有" >
+<!ENTITY smart.following "下述条件:" >
+<!ENTITY smart.random "随机" >
+<!ENTITY smart.album "专集" >
+<!ENTITY smart.artist "艺术家" >
+<!ENTITY smart.genre "类型" >
+<!ENTITY smart.title "曲目" >
+<!ENTITY smart.high_rating "高评级" >
+<!ENTITY smart.low_rating "低评级" >
+<!ENTITY smart.most_recent "最近" >
+<!ENTITY smart.least_recent "最老" >
+<!ENTITY smart.most_often "最经常" >
+<!ENTITY smart.least_often "不经常" >
+<!ENTITY smart.most_added "经常添加的" >
+<!ENTITY smart.least_added "很少添加的" >
+<!ENTITY smart.minutes "分钟" >
+<!ENTITY smart.hours "小时" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "歌曲" >
+<!ENTITY smart.contains "包含" >
+<!ENTITY smart.not_contain "不包含" >
+<!ENTITY smart.is "是" >
+<!ENTITY smart.is_not "不是" >
+<!ENTITY smart.starts "开始于" >
+<!ENTITY smart.ends "结束于" >
+<!ENTITY smart.selectedby "选择" >
+<!ENTITY download.window "下载" >
+<!ENTITY download.select "选择目标文件夹：" >
+<!ENTITY download.always "总是使用这个文件夹" >
 <!ENTITY textbox.songbird_open_url "输入要重放媒体的URL或路径:" >
 <!ENTITY open_url.title "打开 URL" >
 <!ENTITY subscribe.title "订阅" >
@@ -137,41 +125,28 @@
 <!ENTITY subscribe.destinationfolder "选择目标文件夹:" >
 <!ENTITY exists.title "存在的播放列表" >
 <!ENTITY exists.exists "同名播放列表已经存在!" >
-<!ENTITY media_scan.title "扫描以获得媒体" >
+<!ENTITY media_scan.title "扫描音乐" >
 <!ENTITY media_scan.watch "监视此文件价" >
 <!ENTITY new_playlist.title "新建播放列表" >
-<!ENTITY new_playlist.name "输入新建播放列表的名字." >
+<!ENTITY new_playlist.name "输入新建播放列表名称." >
 <!ENTITY addtoplaylist.title "添加到播放列表" >
 <!ENTITY addtoplaylist.create "新建播放列表" >
 <!ENTITY watchfolder.title "监视文件夹" >
 <!ENTITY watchfolder.folderlist "监视以下文件夹:" >
-
-
-
-
+<!ENTITY locale.language "语言" >
 <!ENTITY menu.feathers "羽毛" >
-
-
-
-
 <!ENTITY about.version "版本" >
-
-
-
-
-<!ENTITY tooltip.browser.bookmark "书签" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "获取扩展列表，请等待..." >
-<!ENTITY setup.custominstall "自定义安装" >
 <!ENTITY setup.title "Songbird 设置选项" >
+<!ENTITY setup.retrievingxpilist "获取扩展列表，请等待..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "连接设置" >
+<!ENTITY setup.networkerror3 "或者单击'OK'继续 Songbird 的安装." >
+<!ENTITY setup.metrics.optin "发送匿名使用数据." >
+<!ENTITY setup.metrics.info "通过发送您的使用数据可以帮助我们改进Songbird.  这些信息完全匿名而且不包含任何个人信息." >
+<!ENTITY setup.optionalextensions "可选扩展" >
+<!ENTITY setup.defaultlanguage "默认语言" >
+<!ENTITY setup.privacy "隐私" >
 <!ENTITY setupprogress.pleasewait "请等待..." >
-
-
-
-
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -179,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -209,18 +184,10 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
 <!ENTITY bookmarks.edit.title "编辑书签" >
-<!ENTITY bookmarks.edit.url "URL:" >
+<!ENTITY bookmarks.edit.url "URL：" >
 <!ENTITY bookmarks.edit.label "名称:" >
 <!ENTITY bookmarks.edit.icon "图标:" >
-
-
-
-
 <!ENTITY trackeditor.title "音轨编辑器" >
 <!ENTITY trackeditor.trackdata "音轨数据" >
 <!ENTITY trackeditor.exttrackdata "扩展数据" >
@@ -228,110 +195,30 @@
 <!ENTITY trackeditor.addtag.title "添加标签" >
 <!ENTITY trackeditor.addtag.tag "标签:" >
 <!ENTITY jumptofile.title "跳转到" >
-
-
-
-
-<!ENTITY window.undo "撤销" >
-<!ENTITY window.apply "应用" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "允许 Songbird 发送匿名使用数据 (推荐)" >
-
-
-
-
+<!ENTITY jumptofile.search "搜索:" >
 <!ENTITY hotkeys.useglobalhotkeys "使用全局快捷键" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "动作" >
 <!ENTITY hotkeys.hotkey "快捷键" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
-<!ENTITY metadata.uuid "媒体 UUID" >
+<!ENTITY hotkeys.add "添加" >
+<!ENTITY hotkeys.set "设置" >
+<!ENTITY hotkeys.remove "删除" >
+<!ENTITY hotkeys.prefpane "快捷键" >
+<!ENTITY metadata.uuid "媒体标识" >
 <!ENTITY metadata.url "位置" >
 <!ENTITY metadata.artist "艺术家" >
 <!ENTITY metadata.title "曲目" >
 <!ENTITY metadata.album "专集" >
 <!ENTITY metadata.genre "类型" >
 <!ENTITY metadata.length "持续时间" >
-
-
-
-
 <!ENTITY restartbox.restartnow "立即重起" >
 <!ENTITY restartbox.restartonplaybackend "播放结束时重起" >
 <!ENTITY restartbox.restartlater "稍后重起" >
 <!ENTITY setupprogress.installingextensions "正在安装的扩展" >
-
-
-
-
-<!ENTITY tooltip.hide "隐藏" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "检查更新..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.playlist "播放列表:" >
-<!ENTITY jumptofile.search "搜索:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "停止随机播放" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "刷新" >
-<!ENTITY smart.selectedby "选择" >
-
-
-
-
-<!ENTITY html.context.openexternal "用默认浏览器打开" >
-
-
-
-
-<!ENTITY firstrun.connectionsettings "连接设置" >
-
-
-
-
-
-
-
-
-
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
+<!ENTITY trackeditor.disclaimer "音轨编辑器尚未完成. 编辑的信息仅存储在Songbird 的数据库中.在未来的版本中, 编辑的数据将存储在媒体文件上." >
+<!ENTITY callout.firstwebplaylist "Songbird 发现了如下可播放音乐文件" >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -344,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

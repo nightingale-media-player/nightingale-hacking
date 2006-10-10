@@ -1,181 +1,152 @@
-
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "Oké" >
-<!ENTITY window.cancel      "Mégse" >
-<!ENTITY window.browse      "Tallózás..." >
-
-<!ENTITY menu.file          "Fájl" >
-<!ENTITY menu.file.new      "Új lejátszólista..." >
-<!ENTITY menu.file.smart    "Új okos lejátszólista..." >
-<!ENTITY menu.file.remote   "Új távoli lejátszólista..." >
-<!ENTITY menu.file.open     "Fájl megnyitása..." >
-<!ENTITY menu.file.url      "URL megnyitása..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "Oké" >
+<!ENTITY window.undo "Mégse" >
+<!ENTITY window.apply "Alkalmaz" >
+<!ENTITY window.cancel "Mégse" >
+<!ENTITY window.browse "Tallózás..." >
+<!ENTITY menu.file "Fájl" >
+<!ENTITY menu.file.new "Új lejátszólista..." >
+<!ENTITY menu.file.smart "Új okos lejátszólista..." >
+<!ENTITY menu.file.remote "Új távoli lejátszólista..." >
+<!ENTITY menu.file.open "Fájl megnyitása..." >
+<!ENTITY menu.file.url "URL megnyitása..." >
 <!ENTITY menu.file.playlist "Lejátszólista megnyitása..." >
-<!ENTITY menu.file.scan     "Média keresés..." >
+<!ENTITY menu.file.scan "Média keresés..." >
 <!ENTITY menu.file.dlfolder "Letöltési könyvtár beállítása..." >
-<!ENTITY menu.file.watch    "Figyelt könyvtárak beállítása..." >
-<!ENTITY menu.file.htmlbar  "Mindig mutasd a Web eszköztárat" >
-<!ENTITY menu.file.skin     "Sminkváltás" >
-<!ENTITY menu.file.window   "Főablak megnyitása" >
-<!ENTITY menu.file.mini     "Mini Player megnyitása" >
-<!ENTITY menu.file.about    "A Songbird névjegye..." >
-<!ENTITY menu.file.exit     "Kilépés" >
-
-<!ENTITY menu.edit          "Szerkesztés" >
-<!ENTITY menu.edit.undo     "Visszavonás" >
-<!ENTITY menu.edit.cut      "Kivágás" >
-<!ENTITY menu.edit.copy     "Másolás" >
-<!ENTITY menu.edit.paste    "Beillesztés" >
-<!ENTITY menu.edit.clear    "Tisztán" >
-<!ENTITY menu.edit.selall   "Az összes kijelölése" >
-<!ENTITY menu.edit.selnone  "Kijelölés megszüntetése" >
-
-<!ENTITY menu.controls      "Vezérlők" >
-<!ENTITY menu.control.play  "Lejátszás/Szünet" >
-<!ENTITY menu.control.next  "Következő sáv" >
-<!ENTITY menu.control.prev  "Előző sáv" >
-<!ENTITY menu.control.shuf  "Keverés" >
-<!ENTITY menu.control.repa  "Mindent ismétel" >
-<!ENTITY menu.control.rep1  "Egyet ismétel" >
-<!ENTITY menu.control.repx  "Nincs ismétlés" >
-
-<!ENTITY menu.services        "Szolgáltatások" >
+<!ENTITY menu.file.watch "Figyelt könyvtárak beállítása..." >
+<!ENTITY menu.file.htmlbar "Mindig mutasd a Web eszköztárat" >
+<!ENTITY menu.file.skin "Sminkváltás" >
+<!ENTITY menu.file.window "Főablak megnyitása" >
+<!ENTITY menu.file.mini "Mini Player megnyitása" >
+<!ENTITY menu.file.about "A Songbird névjegye..." >
+<!ENTITY menu.file.exit "Kilépés" >
+<!ENTITY menu.edit "Szerkesztés" >
+<!ENTITY menu.edit.undo "Visszavonás" >
+<!ENTITY menu.edit.cut "Kivágás" >
+<!ENTITY menu.edit.copy "Másolás" >
+<!ENTITY menu.edit.paste "Beillesztés" >
+<!ENTITY menu.edit.clear "Tisztán" >
+<!ENTITY menu.edit.selall "Az összes kijelölése" >
+<!ENTITY menu.edit.selnone "Kijelölés megszüntetése" >
+<!ENTITY menu.controls "Vezérlők" >
+<!ENTITY menu.control.play "Lejátszás/Szünet" >
+<!ENTITY menu.control.next "Következő sáv" >
+<!ENTITY menu.control.prev "Előző sáv" >
+<!ENTITY menu.control.shuf "Keverés" >
+<!ENTITY menu.control.repa "Mindent ismétel" >
+<!ENTITY menu.control.rep1 "Egyet ismétel" >
+<!ENTITY menu.control.repx "Nincs ismétlés" >
+<!ENTITY menu.services "Szolgáltatások" >
 <!ENTITY menu.services.browse "Szolgáltatások tallózása..." >
-
-<!ENTITY menu.devices       "Eszközök" >
-
-<!ENTITY menu.help          "Súgó" >
-<!ENTITY menu.help.topics   "Súgó témakörei..." >
-<!ENTITY menu.help.about    "A Songbird névjegye..." >
-
-<!ENTITY html.context.open  "Megnyitás" >
-<!ENTITY html.context.play  "Lejátszás" >
-<!ENTITY html.context.add   "Hozzáad a könyvtárhoz" >
-
-<!ENTITY playlist.context.remove  "Eltávolítás" >
-<!ENTITY playlist.context.rename  "Átnevezés" >
-<!ENTITY playlist.context.search  "Keresés" >
-<!ENTITY playlist.context.lyrics  "Dalszöveg" >
-
-<!ENTITY tooltip.miniplayer       "Válátás Miniplayer-re" >
-<!ENTITY tooltip.minimize         "Kis méret" >
-<!ENTITY tooltip.maximize         "Teljes méret/Előző méret" >
-<!ENTITY tooltip.exit             "Kilépés" >
-<!ENTITY tooltip.control.back     "Előző sáv" >
-<!ENTITY tooltip.control.play     "Lejátszás" >
-<!ENTITY tooltip.control.pause    "Szünet" >
-<!ENTITY tooltip.control.fwd      "Következő sáv" >
-<!ENTITY tooltip.control.mute     "Némít" >
-<!ENTITY tooltip.control.volume   "Hangerő" >
-<!ENTITY tooltip.control.repeat   "Ismétlés" >
-<!ENTITY tooltip.control.shuffle  "Keverő" >
+<!ENTITY menu.devices "Eszközök" >
+<!ENTITY menu.help "Súgó" >
+<!ENTITY menu.help.topics "Súgó témakörei..." >
+<!ENTITY menu.help.about "A Songbird névjegye..." >
+<!ENTITY menu.preferences "Beállítások..." >
+<!ENTITY menu.extensions "Kiegészítők..." >
+<!ENTITY html.context.open "Megnyitás" >
+<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY html.context.play "Lejátszás" >
+<!ENTITY html.context.add "Hozzáad a könyvtárhoz" >
+<!ENTITY playlist.context.remove "Eltávolítás" >
+<!ENTITY playlist.context.rename "Átnevezés" >
+<!ENTITY playlist.context.search "Keresés" >
+<!ENTITY playlist.context.lyrics "Dalszöveg" >
+<!ENTITY tooltip.miniplayer "Válátás Miniplayer-re" >
+<!ENTITY tooltip.minimize "Kis méret" >
+<!ENTITY tooltip.maximize "Teljes méret/Előző méret" >
+<!ENTITY tooltip.exit "Kilépés" >
+<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.control.back "Előző sáv" >
+<!ENTITY tooltip.control.play "Lejátszás" >
+<!ENTITY tooltip.control.pause "Szünet" >
+<!ENTITY tooltip.control.fwd "Következő sáv" >
+<!ENTITY tooltip.control.mute "Némít" >
+<!ENTITY tooltip.control.volume "Hangerő" >
+<!ENTITY tooltip.control.repeat "Ismétlés" >
+<!ENTITY tooltip.control.shuffle "Keverő" >
+<!ENTITY tooltip.control.shuf_off "Keverőt Ki" >
 <!ENTITY tooltip.control.curtrack "A jelenlegi sáv keresése" >
-<!ENTITY tooltip.control.service  "Váltás védőborítós megjelenítésre" >
-<!ENTITY tooltip.search           "Keresés" >
-<!ENTITY tooltip.browser.back     "Tallózon vissza" >
-<!ENTITY tooltip.browser.fwd      "Tallózon előre" >
-<!ENTITY tooltip.browser.stop     "Tallózó leállítása" >
-<!ENTITY tooltip.browser.home     "Főoldal" >
+<!ENTITY tooltip.control.service "Váltás védőborítós megjelenítésre" >
+<!ENTITY tooltip.search "Keresés" >
+<!ENTITY tooltip.browser.back "Tallózon vissza" >
+<!ENTITY tooltip.browser.fwd "Tallózon előre" >
+<!ENTITY tooltip.browser.stop "Tallózó leállítása" >
+<!ENTITY tooltip.browser.home "Főoldal" >
+<!ENTITY tooltip.browser.refresh "Újratöltés" >
+<!ENTITY tooltip.browser.bookmark "Könyvjelző" >
 <!ENTITY tooltip.browser.playlist "A jelenlegi web oldalon rendelkezésre álló média megtekinése" >
 <!ENTITY tooltip.browser.download "A jelenlegi letöltések megtekintése" >
-
-<!ENTITY smart.window             "Okos lejátszólista készítő" >
-<!ENTITY smart.library            "Válassz könyvtárat:" >
-<!ENTITY smart.limit              "Limitáld" >
-<!ENTITY smart.match              "Találat" >
-<!ENTITY smart.any                "bármi" >
-<!ENTITY smart.all                "minden" >
-<!ENTITY smart.following          "a következő feltételre(ekre):" >   
-<!ENTITY smart.random             "véletlen" >
-<!ENTITY smart.album              "album" >
-<!ENTITY smart.artist             "előadó" >
-<!ENTITY smart.genre              "műfaj" >
-<!ENTITY smart.title              "cím" >
-<!ENTITY smart.high_rating        "magas ráta" >
-<!ENTITY smart.low_rating         "alacsony ráta" >
-<!ENTITY smart.most_recent        "mostanában" >
-<!ENTITY smart.least_recent       "régebben" >
-<!ENTITY smart.most_often         "leggyakrabban" >
-<!ENTITY smart.least_often        "legritkábban" >
-<!ENTITY smart.most_added         "mostanában hozzáadott" >
-<!ENTITY smart.least_added        "régebben hozzáadott" >
-<!ENTITY smart.minutes            "percek" >
-<!ENTITY smart.hours              "órák" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "dalok" >
-<!ENTITY smart.contains           "tartalmaz" >
-<!ENTITY smart.not_contain        "nem tartalmaz" >
-<!ENTITY smart.is                 "van" >
-<!ENTITY smart.is_not             "nincs" >
-<!ENTITY smart.starts             "azzal kezdődik" >
-<!ENTITY smart.ends               "végződés" >
-         
-<!ENTITY download.window          "Letöltés" >
-<!ENTITY download.select          "Válassz célkönyvtárat:" >
-<!ENTITY download.always          "Mindig ezt a könyvtárat használd" >
-
-<!ENTITY textbox.songbird_open_url "Írd be a lejátszandó média URL-jét vagy elérési útját:">
-
-<!ENTITY open_url.title           "URL megnyitása">
-<!ENTITY subscribe.title          "Feliratkozás">
-<!ENTITY subscribe.minutes        "percben(ekben)">
-<!ENTITY subscribe.hours          "órában(ákban)">
-<!ENTITY subscribe.days           "napon(okban)">
-<!ENTITY subscribe.autocheck      "Automatikusan frissítsd minden">
-<!ENTITY subscribe.destinationfolder      "Válassz célkönyvtárat:">
-
-<!ENTITY exists.title             "Lejátszólista létezik">
-<!ENTITY exists.exists            "Ezzel a névvel már létezik lejátszólista!">
-
-<!ENTITY media_scan.title          "Média vizsgálat">
-<!ENTITY media_scan.watch          "Figyeld az új médiákat a könyvtárban:">
-
-<!ENTITY new_playlist.title       "Új lejátszólista létrerhozása">
-<!ENTITY new_playlist.name        "Írd be az új lejátszólista nevét.">
-
-<!ENTITY addtoplaylist.title      "Add hozzá a lejátszólistához">
-<!ENTITY addtoplaylist.create      "Új lejátszólista létrehozása">
-
-<!ENTITY watchfolder.title        "Figyelt könyvtárak">
-<!ENTITY watchfolder.folderlist   "Figyeld az új médiákat a könyvtárban:">
-
-<!ENTITY locale.language          "Nyelv" >
-
-
-
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
-
-
-
-
+<!ENTITY smart.window "Okos lejátszólista készítő" >
+<!ENTITY smart.library "Válassz könyvtárat:" >
+<!ENTITY smart.limit "Limitáld" >
+<!ENTITY smart.match "Találat" >
+<!ENTITY smart.any "bármi" >
+<!ENTITY smart.all "minden" >
+<!ENTITY smart.following "a következő feltételre(ekre):" >
+<!ENTITY smart.random "véletlen" >
+<!ENTITY smart.album "album" >
+<!ENTITY smart.artist "előadó" >
+<!ENTITY smart.genre "műfaj" >
+<!ENTITY smart.title "cím" >
+<!ENTITY smart.high_rating "magas ráta" >
+<!ENTITY smart.low_rating "alacsony ráta" >
+<!ENTITY smart.most_recent "mostanában" >
+<!ENTITY smart.least_recent "régebben" >
+<!ENTITY smart.most_often "leggyakrabban" >
+<!ENTITY smart.least_often "legritkábban" >
+<!ENTITY smart.most_added "mostanában hozzáadott" >
+<!ENTITY smart.least_added "régebben hozzáadott" >
+<!ENTITY smart.minutes "percek" >
+<!ENTITY smart.hours "órák" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "dalok" >
+<!ENTITY smart.contains "tartalmaz" >
+<!ENTITY smart.not_contain "nem tartalmaz" >
+<!ENTITY smart.is "van" >
+<!ENTITY smart.is_not "nincs" >
+<!ENTITY smart.starts "azzal kezdődik" >
+<!ENTITY smart.ends "végződés" >
+<!ENTITY smart.selectedby "Választotta" >
+<!ENTITY download.window "Letöltés" >
+<!ENTITY download.select "Válassz célkönyvtárat:" >
+<!ENTITY download.always "Mindig ezt a könyvtárat használd" >
+<!ENTITY textbox.songbird_open_url "Írd be a lejátszandó média URL-jét vagy elérési útját:" >
+<!ENTITY open_url.title "URL megnyitása" >
+<!ENTITY subscribe.title "Feliratkozás" >
+<!ENTITY subscribe.minutes "percben(ekben)" >
+<!ENTITY subscribe.hours "órában(ákban)" >
+<!ENTITY subscribe.days "napon(okban)" >
+<!ENTITY subscribe.autocheck "Automatikusan frissítsd minden" >
+<!ENTITY subscribe.destinationfolder "Válassz célkönyvtárat:" >
+<!ENTITY exists.title "Lejátszólista létezik" >
+<!ENTITY exists.exists "Ezzel a névvel már létezik lejátszólista!" >
+<!ENTITY media_scan.title "Média vizsgálat" >
+<!ENTITY media_scan.watch "Figyeld az új médiákat a könyvtárban:" >
+<!ENTITY new_playlist.title "Új lejátszólista létrerhozása" >
+<!ENTITY new_playlist.name "Írd be az új lejátszólista nevét." >
+<!ENTITY addtoplaylist.title "Add hozzá a lejátszólistához" >
+<!ENTITY addtoplaylist.create "Új lejátszólista létrehozása" >
+<!ENTITY watchfolder.title "Figyelt könyvtárak" >
+<!ENTITY watchfolder.folderlist "Figyeld az új médiákat a könyvtárban:" >
+<!ENTITY locale.language "Nyelv" >
 <!ENTITY menu.feathers "Feathers" >
-
-
-
-
 <!ENTITY about.version "Version" >
-
-
-
-
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.custominstall "Custom Install" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
-
-
-
-
+<!ENTITY setup.title "Songbird beállítások" >
+<!ENTITY setup.retrievingxpilist "Kiterjesztések listájának beszerzése. Kis türelmet..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "kapcsolatod beállításait" >
+<!ENTITY setup.networkerror3 "vagy térj vissza a Songbird beállításokhoz az 'OK'-ra kattintva." >
+<!ENTITY setup.metrics.optin "Anonymous adatok küldése." >
+<!ENTITY setup.metrics.info "Segítsd a Songbird javítását anonymous adatok küldésével arról, hogy hogyan használod.  Az adatok teljesen névtelenek és semmilyen személyes információt nem gyüjtünk." >
+<!ENTITY setup.optionalextensions "Opcionális kiegészítők" >
+<!ENTITY setup.defaultlanguage "Aalapértelmezett nyelv" >
+<!ENTITY setup.privacy "Privát" >
+<!ENTITY setupprogress.pleasewait "Kérem várjon..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -183,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -213,128 +184,41 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-
-
-
-
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.title "Könyvjelző szerkesztése" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
-
-
-
-
+<!ENTITY bookmarks.edit.label "Név:" >
+<!ENTITY bookmarks.edit.icon "Ikon:" >
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
 <!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
-
-
-
-
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Allow Songbird to send anonymous usage metrics (recommended)" >
-
-
-
-
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY trackeditor.tags "Cimkék" >
+<!ENTITY trackeditor.addtag.title "Cimke hozzáadása" >
+<!ENTITY trackeditor.addtag.tag "Cimke:" >
+<!ENTITY jumptofile.title "Ugrás" >
+<!ENTITY jumptofile.search "Keresés:" >
+<!ENTITY hotkeys.useglobalhotkeys "Globális billentyűkódok használata" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
+<!ENTITY hotkeys.hotkey "Billentyűkód" >
+<!ENTITY hotkeys.add "Hozzáad" >
+<!ENTITY hotkeys.set "Beállít" >
+<!ENTITY hotkeys.remove "Eltávolít" >
+<!ENTITY hotkeys.prefpane "Billentyűkódok" >
 <!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.url "Hely" >
+<!ENTITY metadata.artist "Előadó" >
+<!ENTITY metadata.title "Cím" >
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genre" >
 <!ENTITY metadata.length "Length" >
-
-
-
-
 <!ENTITY restartbox.restartnow "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
 <!ENTITY restartbox.restartlater "Restart Later" >
 <!ENTITY setupprogress.installingextensions "Installing Extensions" >
-
-
-
-
-<!ENTITY tooltip.hide "Hide" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "Check for Updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.search "Search:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-
-
-
-
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-
-
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-
-
-
-
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
-
-
-
-
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -347,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

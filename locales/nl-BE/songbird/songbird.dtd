@@ -1,181 +1,152 @@
-﻿
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "OK" >
-<!ENTITY window.cancel      "Annuleer" >
-<!ENTITY window.browse      "Zoek..." >
-
-<!ENTITY menu.file          "Bestand" >
-<!ENTITY menu.file.new      "Nieuwe afspeellijst..." >
-<!ENTITY menu.file.smart    "Nieuwe slimme afspeellijst..." >
-<!ENTITY menu.file.remote   "Nieuwe netwerk afspeellijst..." >
-<!ENTITY menu.file.open     "Bestand openen..." >
-<!ENTITY menu.file.url      "Locatie openen..." >
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://songbirdnest.com/player0.2/welcome" >
+<!ENTITY window.ok "OK" >
+<!ENTITY window.undo "Ongedaan maken" >
+<!ENTITY window.apply "Toepassen" >
+<!ENTITY window.cancel "Annuleer" >
+<!ENTITY window.browse "Zoek..." >
+<!ENTITY menu.file "Bestand" >
+<!ENTITY menu.file.new "Nieuwe afspeellijst..." >
+<!ENTITY menu.file.smart "Nieuwe slimme afspeellijst..." >
+<!ENTITY menu.file.remote "Nieuwe netwerk afspeellijst..." >
+<!ENTITY menu.file.open "Bestand openen..." >
+<!ENTITY menu.file.url "Locatie openen..." >
 <!ENTITY menu.file.playlist "Afspeellijst laden..." >
-<!ENTITY menu.file.scan     "Media doorzoeken..." >
+<!ENTITY menu.file.scan "Media doorzoeken..." >
 <!ENTITY menu.file.dlfolder "Downloadmap instellen..." >
-<!ENTITY menu.file.watch    "Bekeken map instellen..." >
-<!ENTITY menu.file.htmlbar  "Webbalk altijd tonen" >
-<!ENTITY menu.file.skin     "Alternatieve skin" >
-<!ENTITY menu.file.window   "Open hoofdvenster" >
-<!ENTITY menu.file.mini     "Open minispeler" >
-<!ENTITY menu.file.about    "Over Songbird..." >
-<!ENTITY menu.file.exit     "Afsluiten" >
-
-<!ENTITY menu.edit          "Bewerken" >
-<!ENTITY menu.edit.undo     "Annuleren" >
-<!ENTITY menu.edit.cut      "Knippen" >
-<!ENTITY menu.edit.copy     "Kopieren" >
-<!ENTITY menu.edit.paste    "Plakken" >
-<!ENTITY menu.edit.clear    "Verwijderen" >
-<!ENTITY menu.edit.selall   "Alles selecteren" >
-<!ENTITY menu.edit.selnone  "Niets selecteren" >
-
-<!ENTITY menu.controls      "Controls" >
-<!ENTITY menu.control.play  "Spelen/Pauze" >
-<!ENTITY menu.control.next  "Volgende titel" >
-<!ENTITY menu.control.prev  "Vorige titel" >
-<!ENTITY menu.control.shuf  "Shuffle" >
-<!ENTITY menu.control.repa  "Alles herhalen" >
-<!ENTITY menu.control.rep1  "Eén herhalen" >
-<!ENTITY menu.control.repx  "Niets herhalen" >
-
-<!ENTITY menu.services        "Services" >
+<!ENTITY menu.file.watch "Bekeken map instellen..." >
+<!ENTITY menu.file.htmlbar "Webbalk altijd tonen" >
+<!ENTITY menu.file.skin "Alternatieve skin" >
+<!ENTITY menu.file.window "Open hoofdvenster" >
+<!ENTITY menu.file.mini "Open minispeler" >
+<!ENTITY menu.file.about "Over Songbird..." >
+<!ENTITY menu.file.exit "Afsluiten" >
+<!ENTITY menu.edit "Bewerken" >
+<!ENTITY menu.edit.undo "Annuleren" >
+<!ENTITY menu.edit.cut "Knippen" >
+<!ENTITY menu.edit.copy "Kopieren" >
+<!ENTITY menu.edit.paste "Plakken" >
+<!ENTITY menu.edit.clear "Verwijderen" >
+<!ENTITY menu.edit.selall "Alles selecteren" >
+<!ENTITY menu.edit.selnone "Niets selecteren" >
+<!ENTITY menu.controls "Controls" >
+<!ENTITY menu.control.play "Spelen/Pauze" >
+<!ENTITY menu.control.next "Volgende titel" >
+<!ENTITY menu.control.prev "Vorige titel" >
+<!ENTITY menu.control.shuf "Shuffle" >
+<!ENTITY menu.control.repa "Alles herhalen" >
+<!ENTITY menu.control.rep1 "Eén herhalen" >
+<!ENTITY menu.control.repx "Niets herhalen" >
+<!ENTITY menu.services "Services" >
 <!ENTITY menu.services.browse "Doorblader services..." >
-
-<!ENTITY menu.devices       "Apparaten" >
-
-<!ENTITY menu.help          "Help" >
-<!ENTITY menu.help.topics   "Help onderwerpen..." >
-<!ENTITY menu.help.about    "Over Songbird..." >
-
-<!ENTITY html.context.open  "Openen" >
-<!ENTITY html.context.play  "Afspelen" >
-<!ENTITY html.context.add   "Toevoegen aan bibliotheek" >
-
-<!ENTITY playlist.context.remove  "Verwijder" >
-<!ENTITY playlist.context.rename  "Hernoem" >
-<!ENTITY playlist.context.search  "Zoek" >
-<!ENTITY playlist.context.lyrics  "Liedtekst" >
-
-<!ENTITY tooltip.miniplayer       "Schakel om naar minipspeler" >
-<!ENTITY tooltip.minimize         "Minimaliseren" >
-<!ENTITY tooltip.maximize         "Maximaliseren/Herstellen" >
-<!ENTITY tooltip.exit             "Afsluiten" >
-<!ENTITY tooltip.control.back     "Vorige titel" >
-<!ENTITY tooltip.control.play     "Afspelen" >
-<!ENTITY tooltip.control.pause    "Pauzeren" >
-<!ENTITY tooltip.control.fwd      "Volgende titel" >
-<!ENTITY tooltip.control.mute     "Mute" >
-<!ENTITY tooltip.control.volume   "Volume" >
-<!ENTITY tooltip.control.repeat   "Herhalen" >
-<!ENTITY tooltip.control.shuffle  "Shuffle" >
-<!ENTITY tooltip.control.curtrack "Zoek huidige titel" >
-<!ENTITY tooltip.control.service  "Schakel Faceplate Display in" >
-<!ENTITY tooltip.search           "Zoek" >
-<!ENTITY tooltip.browser.back     "Blader terug" >
-<!ENTITY tooltip.browser.fwd      "Blader vooruit" >
-<!ENTITY tooltip.browser.stop     "Browser stoppen" >
-<!ENTITY tooltip.browser.home     "Welkom" >
-<!ENTITY tooltip.browser.playlist "Toon beschikbare media op deze website" >
-<!ENTITY tooltip.browser.download "Toon huidige downloads" >
-
-<!ENTITY smart.window             "Bouw slimme afspeellijst" >
-<!ENTITY smart.library            "Selecteer bibliotheek:" >
-<!ENTITY smart.limit              "Beperk tot" >
-<!ENTITY smart.match              "Overeenkomst" >
-<!ENTITY smart.any                "één" >
-<!ENTITY smart.all                "alle" >
-<!ENTITY smart.following          "van de volgende voorwaarde(n):" >   
-<!ENTITY smart.random             "random" >
-<!ENTITY smart.album              "album" >
-<!ENTITY smart.artist             "artiest" >
-<!ENTITY smart.genre              "genre" >
-<!ENTITY smart.title              "titel" >
-<!ENTITY smart.high_rating        "hoge rating" >
-<!ENTITY smart.low_rating         "lage rating" >
-<!ENTITY smart.most_recent        "meest recent" >
-<!ENTITY smart.least_recent       "minst recent" >
-<!ENTITY smart.most_often         "vaakst" >
-<!ENTITY smart.least_often        "minst" >
-<!ENTITY smart.most_added         "meest toegevoegd" >
-<!ENTITY smart.least_added        "laatst toegevoegd" >
-<!ENTITY smart.minutes            "minuten" >
-<!ENTITY smart.hours              "uur" >
-<!ENTITY smart.mb                 "MB" >
-<!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "songs" >
-<!ENTITY smart.contains           "bevat" >
-<!ENTITY smart.not_contain        "bevat niet" >
-<!ENTITY smart.is                 "is" >
-<!ENTITY smart.is_not             "is niet" >
-<!ENTITY smart.starts             "start met" >
-<!ENTITY smart.ends               "eindigt op" >
-         
-<!ENTITY download.window          "Download" >
-<!ENTITY download.select          "Selecteer doelmap:" >
-<!ENTITY download.always          "Altijd deze map gebruiken" >
-
-<!ENTITY textbox.songbird_open_url "Geef de URL of het pad van de media die u wil afspelen:">
-
-<!ENTITY open_url.title           "Open URL">
-<!ENTITY subscribe.title          "Abboneer">
-<!ENTITY subscribe.minutes        "Minute(n)">
-<!ENTITY subscribe.hours          "Uur">
-<!ENTITY subscribe.days           "Dag(en)">
-<!ENTITY subscribe.autocheck      "Werk automatisch bij om de:">
-<!ENTITY subscribe.destinationfolder      "Selecteer doelmap:">
-
-<!ENTITY exists.title             "Afspeellijst bestaat">
-<!ENTITY exists.exists            "Er bestaat al een afspeellijst met die naam!">
-
-<!ENTITY media_scan.title          "Media Zoeken">
-<!ENTITY media_scan.watch          "Houd deze map in het oog voor nieuwe media">
-
-<!ENTITY new_playlist.title       "Nieuwe Afspeellijst maken">
-<!ENTITY new_playlist.name        "Geef de naam voor de nieuwe afspeellijst.">
-
-<!ENTITY addtoplaylist.title      "Toevoegen aan Afspeellijst">
-<!ENTITY addtoplaylist.create      "Nieuwe Afspeellijst maken">
-
-<!ENTITY watchfolder.title        "Media Zoeken">
-<!ENTITY watchfolder.folderlist   "Houd deze mappen in het oog voor nieuwe media:">
-
-<!ENTITY locale.language          "Taal" >
-
-
-
+<!ENTITY menu.devices "Apparaten" >
+<!ENTITY menu.help "Help" >
+<!ENTITY menu.help.topics "Help onderwerpen..." >
+<!ENTITY menu.help.about "Over Songbird..." >
 <!ENTITY menu.preferences "Voorkeuren..." >
 <!ENTITY menu.extensions "Extensies..." >
-
-
-
-
-<!ENTITY menu.feathers "Feathers" >
-
-
-
-
-<!ENTITY about.version "Versie" >
-
-
-
-
+<!ENTITY html.context.open "Openen" >
+<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY html.context.play "Afspelen" >
+<!ENTITY html.context.add "Toevoegen aan bibliotheek" >
+<!ENTITY playlist.context.remove "Verwijder" >
+<!ENTITY playlist.context.rename "Hernoem" >
+<!ENTITY playlist.context.search "Zoek" >
+<!ENTITY playlist.context.lyrics "Liedtekst" >
+<!ENTITY tooltip.miniplayer "Schakel om naar minipspeler" >
+<!ENTITY tooltip.minimize "Minimaliseren" >
+<!ENTITY tooltip.maximize "Maximaliseren/Herstellen" >
+<!ENTITY tooltip.exit "Afsluiten" >
+<!ENTITY tooltip.hide "Verbergen" >
+<!ENTITY tooltip.control.back "Vorige titel" >
+<!ENTITY tooltip.control.play "Afspelen" >
+<!ENTITY tooltip.control.pause "Pauzeren" >
+<!ENTITY tooltip.control.fwd "Volgende titel" >
+<!ENTITY tooltip.control.mute "Mute" >
+<!ENTITY tooltip.control.volume "Volume" >
+<!ENTITY tooltip.control.repeat "Herhalen" >
+<!ENTITY tooltip.control.shuffle "Shuffle" >
+<!ENTITY tooltip.control.shuf_off "Shuffle uit" >
+<!ENTITY tooltip.control.curtrack "Zoek huidige titel" >
+<!ENTITY tooltip.control.service "Schakel Faceplate Display in" >
+<!ENTITY tooltip.search "Zoek" >
+<!ENTITY tooltip.browser.back "Blader terug" >
+<!ENTITY tooltip.browser.fwd "Blader vooruit" >
+<!ENTITY tooltip.browser.stop "Browser stoppen" >
+<!ENTITY tooltip.browser.home "Welkom" >
+<!ENTITY tooltip.browser.refresh "Refresh" >
 <!ENTITY tooltip.browser.bookmark "Bladwijzer" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Bezig met het ontvangen van de extensieslijst. Even geduld..." >
-<!ENTITY setup.custominstall "Aangepaste Installatie" >
+<!ENTITY tooltip.browser.playlist "Toon beschikbare media op deze website" >
+<!ENTITY tooltip.browser.download "Toon huidige downloads" >
+<!ENTITY smart.window "Bouw slimme afspeellijst" >
+<!ENTITY smart.library "Selecteer bibliotheek:" >
+<!ENTITY smart.limit "Beperk tot" >
+<!ENTITY smart.match "Overeenkomst" >
+<!ENTITY smart.any "één" >
+<!ENTITY smart.all "alle" >
+<!ENTITY smart.following "van de volgende voorwaarde(n):" >
+<!ENTITY smart.random "random" >
+<!ENTITY smart.album "album" >
+<!ENTITY smart.artist "artiest" >
+<!ENTITY smart.genre "genre" >
+<!ENTITY smart.title "titel" >
+<!ENTITY smart.high_rating "hoge rating" >
+<!ENTITY smart.low_rating "lage rating" >
+<!ENTITY smart.most_recent "meest recent" >
+<!ENTITY smart.least_recent "minst recent" >
+<!ENTITY smart.most_often "vaakst" >
+<!ENTITY smart.least_often "minst" >
+<!ENTITY smart.most_added "meest toegevoegd" >
+<!ENTITY smart.least_added "laatst toegevoegd" >
+<!ENTITY smart.minutes "minuten" >
+<!ENTITY smart.hours "uur" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "songs" >
+<!ENTITY smart.contains "bevat" >
+<!ENTITY smart.not_contain "bevat niet" >
+<!ENTITY smart.is "is" >
+<!ENTITY smart.is_not "is niet" >
+<!ENTITY smart.starts "start met" >
+<!ENTITY smart.ends "eindigt op" >
+<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY download.window "Download" >
+<!ENTITY download.select "Selecteer doelmap:" >
+<!ENTITY download.always "Altijd deze map gebruiken" >
+<!ENTITY textbox.songbird_open_url "Geef de URL of het pad van de media die u wil afspelen:" >
+<!ENTITY open_url.title "Open URL" >
+<!ENTITY subscribe.title "Abboneer" >
+<!ENTITY subscribe.minutes "Minute(n)" >
+<!ENTITY subscribe.hours "Uur" >
+<!ENTITY subscribe.days "Dag(en)" >
+<!ENTITY subscribe.autocheck "Werk automatisch bij om de:" >
+<!ENTITY subscribe.destinationfolder "Selecteer doelmap:" >
+<!ENTITY exists.title "Afspeellijst bestaat" >
+<!ENTITY exists.exists "Er bestaat al een afspeellijst met die naam!" >
+<!ENTITY media_scan.title "Media Zoeken" >
+<!ENTITY media_scan.watch "Houd deze map in het oog voor nieuwe media" >
+<!ENTITY new_playlist.title "Nieuwe Afspeellijst maken" >
+<!ENTITY new_playlist.name "Geef de naam voor de nieuwe afspeellijst." >
+<!ENTITY addtoplaylist.title "Toevoegen aan Afspeellijst" >
+<!ENTITY addtoplaylist.create "Nieuwe Afspeellijst maken" >
+<!ENTITY watchfolder.title "Media Zoeken" >
+<!ENTITY watchfolder.folderlist "Houd deze mappen in het oog voor nieuwe media:" >
+<!ENTITY locale.language "Taal" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "Versie" >
 <!ENTITY setup.title "Songbird Installatie Opties" >
+<!ENTITY setup.retrievingxpilist "Bezig met het ontvangen van de extensieslijst. Even geduld..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror3 "of ga verder met de setup van Songbird door op 'OK' te klikken." >
+<!ENTITY setup.metrics.optin "Stuur anonieme gebruiksstatistieken." >
+<!ENTITY setup.metrics.info "Help ons om Songbird te verbeteren door ons gebruiksstatistieken toe te sturen. Deze statistieken zijn volledig anoniem, geen enkele persoonlijke informatie wordt verzameld." >
+<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.defaultlanguage "Default Language" >
+<!ENTITY setup.privacy "Privacy" >
 <!ENTITY setupprogress.pleasewait "Even geduld..." >
-
-
-
-
 <!ENTITY menu.file.accesskey "B" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -183,7 +154,7 @@
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "L" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.scan.accesskey "C" >
 <!ENTITY menu.file.dlfolder.accesskey "D" >
 <!ENTITY menu.file.watch.accesskey "E" >
 <!ENTITY menu.file.mini.accesskey "M" >
@@ -213,18 +184,10 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "O" >
-
-
-
-
 <!ENTITY bookmarks.edit.title "Bladwijzer aanpassen" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Naam:" >
 <!ENTITY bookmarks.edit.icon "Icoon:" >
-
-
-
-
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
 <!ENTITY trackeditor.exttrackdata "Uitgebreide Data" >
@@ -232,26 +195,7 @@
 <!ENTITY trackeditor.addtag.title "Tag toevoegen" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
 <!ENTITY jumptofile.title "Spring naar" >
-
-
-
-
-<!ENTITY window.undo "Ongedaan maken" >
-<!ENTITY window.apply "Toepassen" >
-
-
-
-
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-
-
-
-
-<!ENTITY metrics.optout "Laat Songbird toe om anonieme gebruikersdata door te sturen (aangewezen)" >
-
-
-
-
+<!ENTITY jumptofile.search "Zoeken:" >
 <!ENTITY hotkeys.useglobalhotkeys "Gebruik Globale Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Actie" >
@@ -260,10 +204,6 @@
 <!ENTITY hotkeys.set "Instellen" >
 <!ENTITY hotkeys.remove "Verwijderen" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
-
-
-
-
 <!ENTITY metadata.uuid "Media UUID" >
 <!ENTITY metadata.url "Locatie" >
 <!ENTITY metadata.artist "Artiest" >
@@ -271,62 +211,14 @@
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genre" >
 <!ENTITY metadata.length "Duur" >
-
-
-
-
 <!ENTITY restartbox.restartnow "Nu opnieuw starten" >
 <!ENTITY restartbox.restartonplaybackend "Herstart na afspelen" >
 <!ENTITY restartbox.restartlater "Later opnieuw starten" >
 <!ENTITY setupprogress.installingextensions "Bezig met installeren extensies" >
-
-
-
-
-<!ENTITY tooltip.hide "Verbergen" >
-
-
-
-
 <!ENTITY menu.updateCmd.label "Controleren op updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-
-
-
-
-<!ENTITY jumptofile.search "Zoeken:" >
-
-
-
-
-<!ENTITY tooltip.control.shuf_off "Shuffle uit" >
-
-
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
-
-
-
-
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
+<!ENTITY trackeditor.disclaimer "De "Track Editor" mogelijkheid is nog niet volledig af. Wijzigingen in metadata worden enkel in Songbird's database bewaard. In een volgende versie, zal de metadata eveneens in jou media bestanden bewaard worden." >
+<!ENTITY callout.firstwebplaylist "Songbird heeft de volgende afspeelbare tracks gevonden." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -339,33 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

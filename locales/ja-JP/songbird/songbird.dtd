@@ -1,266 +1,224 @@
-
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-<!ENTITY songbird  "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first  "http://songbirdnest.com/player0.2/welcome/" >
-<!ENTITY window.ok  "OK" >
-<!ENTITY window.undo  "取り消し" >
-<!ENTITY window.apply  "適用" >
-<!ENTITY window.cancel  "キャンセル" >
-<!ENTITY window.browse  "参照..." >
-
-<!ENTITY menu.file  "ファイル" >
-<!ENTITY menu.file.new  "新規プレイリスト..." >
-<!ENTITY menu.file.smart  "新規スマートプレイリスト..." >
-<!ENTITY menu.file.remote  "新規ネットサービスの登録..." >
-<!ENTITY menu.file.open  "ファイルを開く..." >
-<!ENTITY menu.file.url  "URL を開く..." >
-<!ENTITY menu.file.playlist  "プレイリストを取り込む..." >
-<!ENTITY menu.file.scan  "メディアを自動検索..." >
-<!ENTITY menu.file.dlfolder  "ダウンロードフォルダを設定..." >
-<!ENTITY menu.file.watch  "ウォッチフォルダを設定..." >
-<!ENTITY menu.file.htmlbar  "常に Web バーを表示" >
-<!ENTITY menu.file.skin  "Skin の変更" >
-<!ENTITY menu.file.window  "メインウィンドウを開く" >
-<!ENTITY menu.file.mini  "ミニプレーヤーを開く" >
-<!ENTITY menu.file.about  "Songbird について..." >
-<!ENTITY menu.file.exit  "閉じる" >
-
-<!ENTITY menu.edit  "編集" >
-<!ENTITY menu.edit.undo  "取り消し" >
-<!ENTITY menu.edit.cut  "切り取り" >
-<!ENTITY menu.edit.copy  "コピー" >
-<!ENTITY menu.edit.paste  "貼り付け" >
-<!ENTITY menu.edit.clear  "クリア" >
-<!ENTITY menu.edit.selall  "すべて選択" >
-<!ENTITY menu.edit.selnone  "何も選択しない" >
-
-<!ENTITY menu.controls  "制御" >
-<!ENTITY menu.control.play  "再生／一時停止" >
-<!ENTITY menu.control.next  "次の曲" >
-<!ENTITY menu.control.prev  "前の曲" >
-<!ENTITY menu.control.shuf  "シャッフル" >
-<!ENTITY menu.control.repa  "全項目リピートする" >
-<!ENTITY menu.control.rep1  "1 項目リピートする" >
-<!ENTITY menu.control.repx  "リピートしない" >
-
-<!ENTITY menu.services  "サービス" >
-<!ENTITY menu.services.browse  "拡張機能を参照..." >
-
-<!ENTITY menu.devices  "デバイス" >
-
-<!ENTITY menu.help  "ヘルプ" >
-<!ENTITY menu.help.topics  "ヘルプのトピックス..." >
-<!ENTITY menu.help.about  "Songbird について..." >
-
-<!ENTITY menu.preferences  "設定..." >
-<!ENTITY menu.extensions  "拡張機能..." >
-
-<!ENTITY html.context.open  "開く" >
-<!ENTITY html.context.openexternal  "デフォルトのブラウザで開く" >
-<!ENTITY html.context.play  "再生" >
-<!ENTITY html.context.add  "ライブラリに追加" >
-
-<!ENTITY playlist.context.remove  "削除" >
-<!ENTITY playlist.context.rename  "名前を変更" >
-<!ENTITY playlist.context.search  "検索" >
-<!ENTITY playlist.context.lyrics  "歌詞" >
-
-<!ENTITY tooltip.miniplayer  "ミニプレーヤーに切り替え" >
-<!ENTITY tooltip.minimize  "最小化" >
-<!ENTITY tooltip.maximize  "最大化／元のサイズに戻す" >
-<!ENTITY tooltip.exit  "閉じる" >
-<!ENTITY tooltip.hide  "しまう" >
-<!ENTITY tooltip.control.back  "前の曲" >
-<!ENTITY tooltip.control.play  "再生" >
-<!ENTITY tooltip.control.pause  "停止" >
-<!ENTITY tooltip.control.fwd  "次の曲" >
-<!ENTITY tooltip.control.mute  "消音" >
-<!ENTITY tooltip.control.volume  "音量" >
-<!ENTITY tooltip.control.repeat  "リピート" >
-<!ENTITY tooltip.control.shuffle  "シャッフル" >
-<!ENTITY tooltip.control.shuf_off  "シャッフルを解除" >
-<!ENTITY tooltip.control.curtrack  "現在の曲を検索" >
-<!ENTITY tooltip.control.service  "フェイスプレート表示に切り替え" >
-<!ENTITY tooltip.search  "検索" >
-<!ENTITY tooltip.browser.back  "戻る" >
-<!ENTITY tooltip.browser.fwd  "進む" >
-<!ENTITY tooltip.browser.stop  "停止" >
-<!ENTITY tooltip.browser.home  "ホームページ" >
-<!ENTITY tooltip.browser.refresh  "更新" >
-<!ENTITY tooltip.browser.bookmark  "ブックマーク" >
-<!ENTITY tooltip.browser.playlist  "Web プレイリストを表示／非表示" >
-<!ENTITY tooltip.browser.download  "現在ダウンロードしたものを表示" >
-
-<!ENTITY smart.window  "スマートプレイリストビルダ" >
-<!ENTITY smart.library  "ライブラリの選択 :" >
-<!ENTITY smart.limit  "上限" >
-<!ENTITY smart.match  "次の" >
-<!ENTITY smart.any  "いずれかの" >
-<!ENTITY smart.all  "すべての" >
-<!ENTITY smart.following  "ルールに一致 :" >
-<!ENTITY smart.random  "ランダム" >
-<!ENTITY smart.album  "アルバム" >
-<!ENTITY smart.artist  "アーティスト" >
-<!ENTITY smart.genre  "ジャンル" >
-<!ENTITY smart.title  "名前" >
-<!ENTITY smart.high_rating  "最高レート" >
-<!ENTITY smart.low_rating  "最低レート" >
-<!ENTITY smart.most_recent  "最後に再生した項目" >
-<!ENTITY smart.least_recent  "最も以前に再生した項目" >
-<!ENTITY smart.most_often  "再生頻度の最も高い項目" >
-<!ENTITY smart.least_often  "再生頻度の最も低い項目" >
-<!ENTITY smart.most_added  "最後に追加した項目" >
-<!ENTITY smart.least_added  "最も以前に追加した項目" >
-<!ENTITY smart.minutes  "秒" >
-<!ENTITY smart.hours  "時間" >
-<!ENTITY smart.mb  "MB" >
-<!ENTITY smart.gb  "GB" >
-<!ENTITY smart.songs  "曲" >
-<!ENTITY smart.contains  "が次の文字を含む" >
-<!ENTITY smart.not_contain  "が次の文字を含まない" >
-<!ENTITY smart.is  "が次の文字と一致する" >
-<!ENTITY smart.is_not  "が次の文字と一致しない" >
-<!ENTITY smart.starts  "が次の文字で始まる" >
-<!ENTITY smart.ends  "が次の文字で終わる" >
-<!ENTITY smart.selectedby  "選択方法" >
-
-<!ENTITY download.window  "ダウンロード" >
-<!ENTITY download.select  "保存するフォルダを選択 :" >
-<!ENTITY download.always  "常にこのフォルダを使用" >
-
-<!ENTITY textbox.songbird_open_url  "再生するメディアの URL またはパスを入力 :" >
-
-<!ENTITY open_url.title  "URL を開く" >
-<!ENTITY subscribe.title  "サービスの登録" >
-<!ENTITY subscribe.minutes  "秒" >
-<!ENTITY subscribe.hours  "時間" >
-<!ENTITY subscribe.days  "日" >
-<!ENTITY subscribe.autocheck  "自動更新間隔" >
-<!ENTITY subscribe.destinationfolder  "保存するフォルダを選択 :" >
-
-<!ENTITY exists.title  "プレイリストの重複" >
-<!ENTITY exists.exists  "その名前のプレイリストは既に存在しています．" >
-
-<!ENTITY media_scan.title  "メディアの検索" >
-<!ENTITY media_scan.watch  "このフォルダの新しいメディアをウォッチ" >
-
-<!ENTITY new_playlist.title  "新規プレイリストの作成" >
-<!ENTITY new_playlist.name  "新規プレイリストの名前を入力" >
-
-<!ENTITY addtoplaylist.title  "プレイリストに追加" >
-<!ENTITY addtoplaylist.create  "新規プレイリストの作成" >
-
-<!ENTITY watchfolder.title  "ウォッチフォルダ" >
-<!ENTITY watchfolder.folderlist  "これらのフォルダの新しいメディアをウォッチ" >
-
-<!ENTITY locale.language  "言語" >
-<!ENTITY menu.feathers  "Feathers" >
-<!ENTITY about.version  "バージョン" >
-
-<!ENTITY setup.custominstall  "カスタムインストール" >
-<!ENTITY setup.title  "Songbird セットアップオプション" >
-<!ENTITY setupprogress.pleasewait  "お待ちください..." >
-
-<!ENTITY menu.file.accesskey  "F" >
-<!ENTITY menu.file.new.accesskey  "N" >
-<!ENTITY menu.file.smart.accesskey  "S" >
-<!ENTITY menu.file.remote.accesskey  "R" >
-<!ENTITY menu.file.open.accesskey  "O" >
-<!ENTITY menu.file.url.accesskey  "U" >
-<!ENTITY menu.file.playlist.accesskey  "I" >
-<!ENTITY menu.file.scan.accesskey  "M" >
-<!ENTITY menu.file.dlfolder.accesskey  "D" >
-<!ENTITY menu.file.watch.accesskey  "W" >
-<!ENTITY menu.file.mini.accesskey  "M" >
-<!ENTITY locale.language.accesskey  "L" >
-<!ENTITY menu.feathers.accesskey  "F" >
-<!ENTITY menu.preferences.accesskey  "P" >
-<!ENTITY menu.extensions.accesskey  "E" >
-<!ENTITY menu.file.exit.accesskey  "X" >
-
-<!ENTITY menu.edit.accesskey  "E" >
-<!ENTITY menu.edit.undo.accesskey  "U" >
-<!ENTITY menu.edit.cut.accesskey  "T" >
-<!ENTITY menu.edit.copy.accesskey  "C" >
-<!ENTITY menu.edit.paste.accesskey  "P" >
-<!ENTITY menu.edit.clear.accesskey  "L" >
-<!ENTITY menu.edit.selall.accesskey  "A" >
-<!ENTITY menu.edit.selnone.accesskey  "N" >
-
-<!ENTITY menu.controls.accesskey  "C" >
-<!ENTITY menu.control.play.accesskey  "P" >
-<!ENTITY menu.control.next.accesskey  "N" >
-<!ENTITY menu.control.prev.accesskey  "R" >
-<!ENTITY menu.control.shuf.accesskey  "S" >
-<!ENTITY menu.control.repa.accesskey  "A" >
-<!ENTITY menu.control.rep1.accesskey  "O" >
-<!ENTITY menu.control.repx.accesskey  "E" >
-
-<!ENTITY menu.services.accesskey  "S" >
-
-<!ENTITY menu.devices.accesskey  "D" >
-
-<!ENTITY menu.help.accesskey  "H" >
-<!ENTITY menu.help.help.accesskey  "H" >
-<!ENTITY menu.help.about.accesskey  "A" >
-
-
-<!ENTITY bookmarks.edit.title  "ブックマークの編集" >
-<!ENTITY bookmarks.edit.url  "URL:" >
-<!ENTITY bookmarks.edit.label  "名前 :" >
-<!ENTITY bookmarks.edit.icon  "アイコン :" >
-
-
-<!ENTITY trackeditor.title  "曲情報の編集" >
-<!ENTITY trackeditor.trackdata  "曲の情報" >
-<!ENTITY trackeditor.exttrackdata  "詳細情報" >
-<!ENTITY trackeditor.tags  "タグ" >
-<!ENTITY trackeditor.addtag.title  "タグの追加" >
-<!ENTITY trackeditor.addtag.tag  "タグ :" >
-
-<!ENTITY jumptofile.title  "ジャンプ先" >
-<!ENTITY jumptofile.search  "検索 :" >
-
-<!ENTITY metrics.optout  "Songbird が匿名の使用統計情報を送信するのを許可する (推奨)" >
-
-<!ENTITY hotkeys.useglobalhotkeys  "グローバルホットキーを使用" >
-<!ENTITY hotkeys.useglobalhotkeys.accesskey  "U" >
-<!ENTITY hotkeys.action  "アクション" >
-<!ENTITY hotkeys.hotkey  "ホットキー" >
-<!ENTITY hotkeys.add  "追加" >
-<!ENTITY hotkeys.set  "設定" >
-<!ENTITY hotkeys.remove  "削除" >
-<!ENTITY hotkeys.prefpane  "ホットキー" >
-
-<!ENTITY metadata.uuid  "メディア UUID" >
-<!ENTITY metadata.url  "場所" >
-<!ENTITY metadata.artist  "アーティスト" >
-<!ENTITY metadata.title  "名前" >
-<!ENTITY metadata.album  "アルバム" >
-<!ENTITY metadata.genre  "ジャンル" >
-<!ENTITY metadata.length  "時間" >
-
-<!ENTITY restartbox.restartnow  "今ここで再起動" >
-<!ENTITY restartbox.restartonplaybackend  "再生が終了してから再起動" >
-<!ENTITY restartbox.restartlater  "後で再起動" >
-
-<!ENTITY setupprogress.installingextensions  "拡張機能のインストール中" >
-
-<!ENTITY menu.updateCmd.label  "更新を確認..." >
-<!ENTITY menu.updateCmd.accessKey  "o" >
-<!ENTITY firstrun.connectionsettings  "接続設定" >
-<!ENTITY trackeditor.disclaimer  "曲情報の編集機能はまだ開発途中のものです。編集した曲情報は Songbird のデータベースのみに保存されます。将来のバージョンでは、ここで編集された曲情報はファイルに対しても保存されます。" >
-
-<!ENTITY callout.firstwebplaylist  "Songbird でこれらの曲が再生できます :" >
-
-
+<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY songbird "Songbird" >
+<!ENTITY web.url.first "http://songbirdnest.com/player0.2/welcome/" >
+<!ENTITY window.ok "OK" >
+<!ENTITY window.undo "取り消し" >
+<!ENTITY window.apply "適用" >
+<!ENTITY window.cancel "キャンセル" >
+<!ENTITY window.browse "参照..." >
+<!ENTITY menu.file "ファイル" >
+<!ENTITY menu.file.new "新規プレイリスト..." >
+<!ENTITY menu.file.smart "新規スマートプレイリスト..." >
+<!ENTITY menu.file.remote "新規ネットサービスの登録..." >
+<!ENTITY menu.file.open "ファイルを開く..." >
+<!ENTITY menu.file.url "URL を開く..." >
+<!ENTITY menu.file.playlist "プレイリストを取り込む..." >
+<!ENTITY menu.file.scan "メディアを自動検索..." >
+<!ENTITY menu.file.dlfolder "ダウンロードフォルダを設定..." >
+<!ENTITY menu.file.watch "ウォッチフォルダを設定..." >
+<!ENTITY menu.file.htmlbar "常に Web バーを表示" >
+<!ENTITY menu.file.skin "Skin の変更" >
+<!ENTITY menu.file.window "メインウィンドウを開く" >
+<!ENTITY menu.file.mini "ミニプレーヤーを開く" >
+<!ENTITY menu.file.about "Songbird について..." >
+<!ENTITY menu.file.exit "閉じる" >
+<!ENTITY menu.edit "編集" >
+<!ENTITY menu.edit.undo "取り消し" >
+<!ENTITY menu.edit.cut "切り取り" >
+<!ENTITY menu.edit.copy "コピー" >
+<!ENTITY menu.edit.paste "貼り付け" >
+<!ENTITY menu.edit.clear "クリア" >
+<!ENTITY menu.edit.selall "すべて選択" >
+<!ENTITY menu.edit.selnone "何も選択しない" >
+<!ENTITY menu.controls "制御" >
+<!ENTITY menu.control.play "再生／一時停止" >
+<!ENTITY menu.control.next "次の曲" >
+<!ENTITY menu.control.prev "前の曲" >
+<!ENTITY menu.control.shuf "シャッフル" >
+<!ENTITY menu.control.repa "全項目リピートする" >
+<!ENTITY menu.control.rep1 "1 項目リピートする" >
+<!ENTITY menu.control.repx "リピートしない" >
+<!ENTITY menu.services "サービス" >
+<!ENTITY menu.services.browse "拡張機能を参照..." >
+<!ENTITY menu.devices "デバイス" >
+<!ENTITY menu.help "ヘルプ" >
+<!ENTITY menu.help.topics "ヘルプのトピックス..." >
+<!ENTITY menu.help.about "Songbird について..." >
+<!ENTITY menu.preferences "設定..." >
+<!ENTITY menu.extensions "拡張機能..." >
+<!ENTITY html.context.open "開く" >
+<!ENTITY html.context.openexternal "デフォルトのブラウザで開く" >
+<!ENTITY html.context.play "再生" >
+<!ENTITY html.context.add "ライブラリに追加" >
+<!ENTITY playlist.context.remove "削除" >
+<!ENTITY playlist.context.rename "名前を変更" >
+<!ENTITY playlist.context.search "検索" >
+<!ENTITY playlist.context.lyrics "歌詞" >
+<!ENTITY tooltip.miniplayer "ミニプレーヤーに切り替え" >
+<!ENTITY tooltip.minimize "最小化" >
+<!ENTITY tooltip.maximize "最大化／元のサイズに戻す" >
+<!ENTITY tooltip.exit "閉じる" >
+<!ENTITY tooltip.hide "しまう" >
+<!ENTITY tooltip.control.back "前の曲" >
+<!ENTITY tooltip.control.play "再生" >
+<!ENTITY tooltip.control.pause "停止" >
+<!ENTITY tooltip.control.fwd "次の曲" >
+<!ENTITY tooltip.control.mute "消音" >
+<!ENTITY tooltip.control.volume "音量" >
+<!ENTITY tooltip.control.repeat "リピート" >
+<!ENTITY tooltip.control.shuffle "シャッフル" >
+<!ENTITY tooltip.control.shuf_off "シャッフルを解除" >
+<!ENTITY tooltip.control.curtrack "現在の曲を検索" >
+<!ENTITY tooltip.control.service "フェイスプレート表示に切り替え" >
+<!ENTITY tooltip.search "検索" >
+<!ENTITY tooltip.browser.back "戻る" >
+<!ENTITY tooltip.browser.fwd "進む" >
+<!ENTITY tooltip.browser.stop "停止" >
+<!ENTITY tooltip.browser.home "ホームページ" >
+<!ENTITY tooltip.browser.refresh "更新" >
+<!ENTITY tooltip.browser.bookmark "ブックマーク" >
+<!ENTITY tooltip.browser.playlist "Web プレイリストを表示／非表示" >
+<!ENTITY tooltip.browser.download "現在ダウンロードしたものを表示" >
+<!ENTITY smart.window "スマートプレイリストビルダ" >
+<!ENTITY smart.library "ライブラリの選択 :" >
+<!ENTITY smart.limit "上限" >
+<!ENTITY smart.match "次の" >
+<!ENTITY smart.any "いずれかの" >
+<!ENTITY smart.all "すべての" >
+<!ENTITY smart.following "ルールに一致 :" >
+<!ENTITY smart.random "ランダム" >
+<!ENTITY smart.album "アルバム" >
+<!ENTITY smart.artist "アーティスト" >
+<!ENTITY smart.genre "ジャンル" >
+<!ENTITY smart.title "名前" >
+<!ENTITY smart.high_rating "最高レート" >
+<!ENTITY smart.low_rating "最低レート" >
+<!ENTITY smart.most_recent "最後に再生した項目" >
+<!ENTITY smart.least_recent "最も以前に再生した項目" >
+<!ENTITY smart.most_often "再生頻度の最も高い項目" >
+<!ENTITY smart.least_often "再生頻度の最も低い項目" >
+<!ENTITY smart.most_added "最後に追加した項目" >
+<!ENTITY smart.least_added "最も以前に追加した項目" >
+<!ENTITY smart.minutes "秒" >
+<!ENTITY smart.hours "時間" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "曲" >
+<!ENTITY smart.contains "が次の文字を含む" >
+<!ENTITY smart.not_contain "が次の文字を含まない" >
+<!ENTITY smart.is "が次の文字と一致する" >
+<!ENTITY smart.is_not "が次の文字と一致しない" >
+<!ENTITY smart.starts "が次の文字で始まる" >
+<!ENTITY smart.ends "が次の文字で終わる" >
+<!ENTITY smart.selectedby "選択方法" >
+<!ENTITY download.window "ダウンロード" >
+<!ENTITY download.select "保存するフォルダを選択 :" >
+<!ENTITY download.always "常にこのフォルダを使用" >
+<!ENTITY textbox.songbird_open_url "再生するメディアの URL またはパスを入力 :" >
+<!ENTITY open_url.title "URL を開く" >
+<!ENTITY subscribe.title "サービスの登録" >
+<!ENTITY subscribe.minutes "秒" >
+<!ENTITY subscribe.hours "時間" >
+<!ENTITY subscribe.days "日" >
+<!ENTITY subscribe.autocheck "自動更新間隔" >
+<!ENTITY subscribe.destinationfolder "保存するフォルダを選択 :" >
+<!ENTITY exists.title "プレイリストの重複" >
+<!ENTITY exists.exists "その名前のプレイリストは既に存在しています．" >
+<!ENTITY media_scan.title "メディアの検索" >
+<!ENTITY media_scan.watch "このフォルダの新しいメディアをウォッチ" >
+<!ENTITY new_playlist.title "新規プレイリストの作成" >
+<!ENTITY new_playlist.name "新規プレイリストの名前を入力" >
+<!ENTITY addtoplaylist.title "プレイリストに追加" >
+<!ENTITY addtoplaylist.create "新規プレイリストの作成" >
+<!ENTITY watchfolder.title "ウォッチフォルダ" >
+<!ENTITY watchfolder.folderlist "これらのフォルダの新しいメディアをウォッチ" >
+<!ENTITY locale.language "言語" >
+<!ENTITY menu.feathers "Feathers" >
+<!ENTITY about.version "バージョン" >
+<!ENTITY setup.title "Songbird セットアップオプション" >
+<!ENTITY setup.retrievingxpilist "拡張機能のリストを取得しています。お待ちください..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "接続設定を変更してください。" >
+<!ENTITY setup.networkerror3 "'OK'をクリックするとSongbirdのセットアップを続けます。" >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
+<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.defaultlanguage "Default Language" >
+<!ENTITY setup.privacy "Privacy" >
+<!ENTITY setupprogress.pleasewait "お待ちください..." >
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "C" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY bookmarks.edit.title "ブックマークの編集" >
+<!ENTITY bookmarks.edit.url "URL:" >
+<!ENTITY bookmarks.edit.label "名前 :" >
+<!ENTITY bookmarks.edit.icon "アイコン :" >
+<!ENTITY trackeditor.title "曲情報の編集" >
+<!ENTITY trackeditor.trackdata "曲の情報" >
+<!ENTITY trackeditor.exttrackdata "詳細情報" >
+<!ENTITY trackeditor.tags "タグ" >
+<!ENTITY trackeditor.addtag.title "タグの追加" >
+<!ENTITY trackeditor.addtag.tag "タグ :" >
+<!ENTITY jumptofile.title "ジャンプ先" >
+<!ENTITY jumptofile.search "検索 :" >
+<!ENTITY hotkeys.useglobalhotkeys "グローバルホットキーを使用" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "アクション" >
+<!ENTITY hotkeys.hotkey "ホットキー" >
+<!ENTITY hotkeys.add "追加" >
+<!ENTITY hotkeys.set "設定" >
+<!ENTITY hotkeys.remove "削除" >
+<!ENTITY hotkeys.prefpane "ホットキー" >
+<!ENTITY metadata.uuid "メディア UUID" >
+<!ENTITY metadata.url "場所" >
+<!ENTITY metadata.artist "アーティスト" >
+<!ENTITY metadata.title "名前" >
+<!ENTITY metadata.album "アルバム" >
+<!ENTITY metadata.genre "ジャンル" >
+<!ENTITY metadata.length "時間" >
+<!ENTITY restartbox.restartnow "今ここで再起動" >
+<!ENTITY restartbox.restartonplaybackend "再生が終了してから再起動" >
+<!ENTITY restartbox.restartlater "後で再起動" >
+<!ENTITY setupprogress.installingextensions "拡張機能のインストール中" >
+<!ENTITY menu.updateCmd.label "更新を確認..." >
+<!ENTITY menu.updateCmd.accessKey "o" >
+<!ENTITY trackeditor.disclaimer "曲情報の編集機能はまだ開発途中のものです。編集した曲情報は Songbird のデータベースのみに保存されます。将来のバージョンでは、ここで編集された曲情報はファイルに対しても保存されます。" >
 <!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -273,34 +231,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
 <!ENTITY html.context.playlist "Open as Playlist" >
-
-
+<!ENTITY menu.control.jumpto.accesskey "J" >

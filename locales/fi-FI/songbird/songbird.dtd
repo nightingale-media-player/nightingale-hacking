@@ -1,279 +1,226 @@
-﻿
-<!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
-<!ENTITY songbird           "Songbird" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://songbirdnest.com/player0.2/welcome" >
-<!ENTITY window.ok          "Ok" >
-<!ENTITY window.undo        "Kumoa" >
-<!ENTITY window.apply       "Hyväksy" >
-<!ENTITY window.cancel      "Peruuta" >
-<!ENTITY window.browse      "Selaa..." >
-
-<!ENTITY menu.file          "Tiedosto" >
-<!ENTITY menu.file.new      "Uusi soittolista..." >
-<!ENTITY menu.file.smart    "Uusi älykäs soittolista..." >
-<!ENTITY menu.file.remote   "Uusi etäsoittolista..." >
-<!ENTITY menu.file.open     "Avaa tiedosto..." >
-<!ENTITY menu.file.url      "Avaa URL..." >
+<!ENTITY window.main.title "Songbird 0.2" >
+<!ENTITY window.dev.title "Songbird 0.2 Test Flight" >
+<!ENTITY songbird "Songbird
+" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "Ok" >
+<!ENTITY window.undo "Kumoa" >
+<!ENTITY window.apply "Hyväksy" >
+<!ENTITY window.cancel "Peruuta" >
+<!ENTITY window.browse "Selaa..." >
+<!ENTITY menu.file "Tiedosto" >
+<!ENTITY menu.file.new "Uusi soittolista..." >
+<!ENTITY menu.file.smart "Uusi älykäs soittolista..." >
+<!ENTITY menu.file.remote "Uusi etäsoittolista..." >
+<!ENTITY menu.file.open "Avaa tiedosto..." >
+<!ENTITY menu.file.url "Avaa URL..." >
 <!ENTITY menu.file.playlist "Lataa soittolista..." >
-<!ENTITY menu.file.scan     "Etsi mediatiedostoja..." >
+<!ENTITY menu.file.scan "Etsi mediatiedostoja..." >
 <!ENTITY menu.file.dlfolder "Aseta lataus kansio..." >
-<!ENTITY menu.file.watch    "Aseta tarkkailtava kansio..." >
-<!ENTITY menu.file.htmlbar  "Näytä web-palkki aina" >
-<!ENTITY menu.file.skin     "Vaihtoehtoinen ulkoasu" >
-<!ENTITY menu.file.window   "Avaa pääikkuna" >
-<!ENTITY menu.file.mini     "Avaa minisoitin" >
-<!ENTITY menu.file.about    "Tietoja Songbirdista..." >
-<!ENTITY menu.file.exit     "Sulje" >
-
-<!ENTITY menu.edit          "Muokkaa" >
-<!ENTITY menu.edit.undo     "Kumoa" >
-<!ENTITY menu.edit.cut      "Leikkaa" >
-<!ENTITY menu.edit.copy     "Kopioi" >
-<!ENTITY menu.edit.paste    "Liitä" >
-<!ENTITY menu.edit.clear    "Tyhjennä" >
-<!ENTITY menu.edit.selall   "Valitse kaikki" >
-<!ENTITY menu.edit.selnone  "Poista valinnat" >
-
-<!ENTITY menu.controls      "Toiminnot" >
-<!ENTITY menu.control.play  "Toista/Tauko" >
-<!ENTITY menu.control.next  "Seuraava kappale" >
-<!ENTITY menu.control.prev  "Edellinen kappale" >
-<!ENTITY menu.control.shuf  "Satunnaissoitto" >
-<!ENTITY menu.control.repa  "Jatkuva toisto (Kaikki)" >
-<!ENTITY menu.control.rep1  "Jatkuva toisto (Yksittäinen)" >
-<!ENTITY menu.control.repx  "Ei jatkuvaa toistoa" >
-
-<!ENTITY menu.services        "Palvelut" >
+<!ENTITY menu.file.watch "Aseta tarkkailtava kansio..." >
+<!ENTITY menu.file.htmlbar "Näytä web-palkki aina" >
+<!ENTITY menu.file.skin "Vaihtoehtoinen ulkoasu" >
+<!ENTITY menu.file.window "Avaa pääikkuna" >
+<!ENTITY menu.file.mini "Avaa minisoitin" >
+<!ENTITY menu.file.about "Tietoja Songbirdista..." >
+<!ENTITY menu.file.exit "Sulje" >
+<!ENTITY menu.edit "Muokkaa" >
+<!ENTITY menu.edit.undo "Kumoa" >
+<!ENTITY menu.edit.cut "Leikkaa" >
+<!ENTITY menu.edit.copy "Kopioi" >
+<!ENTITY menu.edit.paste "Liitä" >
+<!ENTITY menu.edit.clear "Tyhjennä" >
+<!ENTITY menu.edit.selall "Valitse kaikki" >
+<!ENTITY menu.edit.selnone "Poista valinnat" >
+<!ENTITY menu.controls "Toiminnot" >
+<!ENTITY menu.control.play "Toista/Tauko" >
+<!ENTITY menu.control.next "Seuraava kappale" >
+<!ENTITY menu.control.prev "Edellinen kappale" >
+<!ENTITY menu.control.shuf "Satunnaissoitto" >
+<!ENTITY menu.control.repa "Jatkuva toisto (Kaikki)" >
+<!ENTITY menu.control.rep1 "Jatkuva toisto (Yksittäinen)" >
+<!ENTITY menu.control.repx "Ei jatkuvaa toistoa" >
+<!ENTITY menu.services "Palvelut" >
 <!ENTITY menu.services.browse "Selaa palveluita..." >
-
-<!ENTITY menu.devices       "Laitteet" >
-
-<!ENTITY menu.help          "Ohje" >
-<!ENTITY menu.help.topics   "Ohjeen aiheet..." >
-<!ENTITY menu.help.about    "Tietoja Songbirdstä..." >
-
-<!ENTITY menu.preferences   "Asetukset..." >
-<!ENTITY menu.extensions    "Laajennukset..." >
-
-<!ENTITY html.context.open  "Avaa" >
-<!ENTITY html.context.play  "Toista" >
-<!ENTITY html.context.add   "Lisää kirjastoon" >
-
-<!ENTITY playlist.context.remove  "Poista" >
-<!ENTITY playlist.context.rename  "Nimeä uudelleen" >
-<!ENTITY playlist.context.search  "Etsi" >
-<!ENTITY playlist.context.lyrics  "Sanoitukset" >
-
-<!ENTITY tooltip.miniplayer       "Vaihda minisoittimeen" >
-<!ENTITY tooltip.minimize         "Pienennä" >
-<!ENTITY tooltip.maximize         "Suurenna/Palauta" >
-<!ENTITY tooltip.exit             "Sulje" >
-<!ENTITY tooltip.hide             "Piilota" >
-<!ENTITY tooltip.control.back     "Edellinen kappale" >
-<!ENTITY tooltip.control.play     "Toista" >
-<!ENTITY tooltip.control.pause    "Tauko" >
-<!ENTITY tooltip.control.fwd      "Seuraava kappale" >
-<!ENTITY tooltip.control.mute     "Mykistä" >
-<!ENTITY tooltip.control.volume   "Äänenvoimakkuus" >
-<!ENTITY tooltip.control.repeat   "Jatkuva toisto" >
-<!ENTITY tooltip.control.shuffle  "Satunnaissoitto" >
+<!ENTITY menu.devices "Laitteet" >
+<!ENTITY menu.help "Ohje" >
+<!ENTITY menu.help.topics "Ohjeen aiheet..." >
+<!ENTITY menu.help.about "Tietoja Songbirdstä..." >
+<!ENTITY menu.preferences "Asetukset..." >
+<!ENTITY menu.extensions "Laajennukset..." >
+<!ENTITY html.context.open "Avaa" >
+<!ENTITY html.context.openexternal "Avaa järjestelmän oletusselaimella" >
+<!ENTITY html.context.play "Toista" >
+<!ENTITY html.context.add "Lisää kirjastoon" >
+<!ENTITY playlist.context.remove "Poista" >
+<!ENTITY playlist.context.rename "Nimeä uudelleen" >
+<!ENTITY playlist.context.search "Etsi" >
+<!ENTITY playlist.context.lyrics "Sanoitukset" >
+<!ENTITY tooltip.miniplayer "Vaihda minisoittimeen" >
+<!ENTITY tooltip.minimize "Pienennä" >
+<!ENTITY tooltip.maximize "Suurenna/Palauta" >
+<!ENTITY tooltip.exit "Sulje" >
+<!ENTITY tooltip.hide "Piilota" >
+<!ENTITY tooltip.control.back "Edellinen kappale" >
+<!ENTITY tooltip.control.play "Toista" >
+<!ENTITY tooltip.control.pause "Tauko" >
+<!ENTITY tooltip.control.fwd "Seuraava kappale" >
+<!ENTITY tooltip.control.mute "Mykistä" >
+<!ENTITY tooltip.control.volume "Äänenvoimakkuus" >
+<!ENTITY tooltip.control.repeat "Jatkuva toisto" >
+<!ENTITY tooltip.control.shuffle "Satunnaissoitto" >
 <!ENTITY tooltip.control.shuf_off "Satunnaissoitto pois" >
 <!ENTITY tooltip.control.curtrack "Etsi soiva kappale" >
-<!ENTITY tooltip.control.service  "Vaihda otsikkopaneelin esitystapaa" >
-<!ENTITY tooltip.search           "Etsi" >
-<!ENTITY tooltip.browser.back     "Selaa taakse" >
-<!ENTITY tooltip.browser.fwd      "Selaa eteen" >
-<!ENTITY tooltip.browser.stop     "Pysäytä selain" >
-<!ENTITY tooltip.browser.home     "Kotisivu" >
+<!ENTITY tooltip.control.service "Vaihda otsikkopaneelin esitystapaa" >
+<!ENTITY tooltip.search "Etsi" >
+<!ENTITY tooltip.browser.back "Selaa taakse" >
+<!ENTITY tooltip.browser.fwd "Selaa eteen" >
+<!ENTITY tooltip.browser.stop "Pysäytä selain" >
+<!ENTITY tooltip.browser.home "Kotisivu" >
+<!ENTITY tooltip.browser.refresh "Päivitä" >
 <!ENTITY tooltip.browser.bookmark "Kirjanmerkki" >
 <!ENTITY tooltip.browser.playlist "Näytä web-sivulta saatavilla oleva media" >
 <!ENTITY tooltip.browser.download "Näytä tämän hetkiset lataukset" >
-
-<!ENTITY smart.window             "Muokkaa älykkäitä soittolistoja" >
-<!ENTITY smart.library            "Valitse kokoelma:" >
-<!ENTITY smart.limit              "Rajoita" >
-<!ENTITY smart.match              "Vertaa" >
-<!ENTITY smart.any                "mikä tahansa" >
-<!ENTITY smart.all                "kaikki" >
-<!ENTITY smart.following          "seuraavilla ehdoilla:" >   
-<!ENTITY smart.random             "satunnainen" >
-<!ENTITY smart.album              "levy" >
-<!ENTITY smart.artist             "esittäjä" >
-<!ENTITY smart.genre              "tyylilaji" >
-<!ENTITY smart.title              "nimi" >
-<!ENTITY smart.high_rating        "korkea arvosana" >
-<!ENTITY smart.low_rating         "matala arvosana" >
-<!ENTITY smart.most_recent        "viimeksi soitettu" >
-<!ENTITY smart.least_recent       "vähiten viimeksi soitettu" >
-<!ENTITY smart.most_often         "useiten soitettu" >
-<!ENTITY smart.least_often        "vähiten soitettu" >
-<!ENTITY smart.most_added         "lisätyin" >
-<!ENTITY smart.least_added        "vähiten lisätty" >
-<!ENTITY smart.minutes            "minuutit" >
-<!ENTITY smart.hours              "tunnit" >
-<!ENTITY smart.mb                 "Mt" >
-<!ENTITY smart.gb                 "Gt" >
-<!ENTITY smart.songs              "kappaleet" >
-<!ENTITY smart.contains           "sisältää" >
-<!ENTITY smart.not_contain        "ei sisällä" >
-<!ENTITY smart.is                 "on" >
-<!ENTITY smart.is_not             "ei ole" >
-<!ENTITY smart.starts             "alkaa" >
-<!ENTITY smart.ends               "päättyy" >
-         
-<!ENTITY download.window          "Lataukset" >
-<!ENTITY download.select          "Valitse kohdekansio:" >
-<!ENTITY download.always          "Käytä aina tätä kansiota" >
-
-<!ENTITY textbox.songbird_open_url "Kirjoita toistettavan median osoite:">
-
-<!ENTITY open_url.title           "Avaa URL">
-<!ENTITY subscribe.title          "Tilaa">
-<!ENTITY subscribe.minutes        "Minuutit">
-<!ENTITY subscribe.hours          "Tunnit">
-<!ENTITY subscribe.days           "Päivät">
-<!ENTITY subscribe.autocheck      "Automaattisesti päivitä joka">
-<!ENTITY subscribe.destinationfolder      "Valitse kohdekansio:">
-
-<!ENTITY exists.title             "Soittolista on jo olemassa">
-<!ENTITY exists.exists            "Tämän niminen soittolista on jo olemassa!">
-
-<!ENTITY media_scan.title          "Etsi mediatiedostoja">
-<!ENTITY media_scan.watch          "Tarkkaile kansion uusia mediatiedostoja">
-
-<!ENTITY new_playlist.title       "Luo uusi soittolista">
-<!ENTITY new_playlist.name        "Nimeä uusi soittolista.">
-
-<!ENTITY addtoplaylist.title      "Lisää soittolistaan">
-<!ENTITY addtoplaylist.create     "Luo uusi soittolista">
-
-<!ENTITY watchfolder.title        "Tarkkaile kansioita">
-<!ENTITY watchfolder.folderlist   "Tarkkaile näiden kansioiden uusia mediatiedostoja:">
-
-<!ENTITY locale.language          "Kieli" >
-<!ENTITY menu.feathers            "Feathers (Ulkonäkö)" >
-<!ENTITY about.version            "Versio" >
-
-<!ENTITY setup.retrievingxpilist  "Haetaan laajennuksia. Ole hyvä ja odota..." >
-<!ENTITY setup.custominstall      "Mukautettu asennus" >
-<!ENTITY setup.title              "Songbird asennuksen asetukset" >
-<!ENTITY setupprogress.pleasewait "Ole hyvä ja odota" >
-
-<!ENTITY menu.file.accesskey           "F" >
-<!ENTITY menu.file.new.accesskey       "N" >
-<!ENTITY menu.file.smart.accesskey     "S" >
-<!ENTITY menu.file.remote.accesskey    "R" >
-<!ENTITY menu.file.open.accesskey      "O" >
-<!ENTITY menu.file.url.accesskey       "U" >
-<!ENTITY menu.file.playlist.accesskey  "I" >
-<!ENTITY menu.file.scan.accesskey      "M" >
-<!ENTITY menu.file.dlfolder.accesskey  "D" >
-<!ENTITY menu.file.watch.accesskey     "W" >
-<!ENTITY menu.file.mini.accesskey      "M" >
-<!ENTITY locale.language.accesskey     "L" >
-<!ENTITY menu.feathers.accesskey       "F" >
-<!ENTITY menu.preferences.accesskey    "P" >
-<!ENTITY menu.extensions.accesskey     "E" >
-<!ENTITY menu.file.exit.accesskey      "X" >
-
-<!ENTITY menu.edit.accesskey           "E" >
-<!ENTITY menu.edit.undo.accesskey      "U" >
-<!ENTITY menu.edit.cut.accesskey       "T" >
-<!ENTITY menu.edit.copy.accesskey      "C" >
-<!ENTITY menu.edit.paste.accesskey     "P" >
-<!ENTITY menu.edit.clear.accesskey     "L" >
-<!ENTITY menu.edit.selall.accesskey    "A" >
-<!ENTITY menu.edit.selnone.accesskey   "N" >
-
-<!ENTITY menu.controls.accesskey       "C" >
-<!ENTITY menu.control.play.accesskey   "P" >
-<!ENTITY menu.control.next.accesskey   "N" >
-<!ENTITY menu.control.prev.accesskey   "R" >
-<!ENTITY menu.control.shuf.accesskey   "S" >
-<!ENTITY menu.control.repa.accesskey   "A" >
-<!ENTITY menu.control.rep1.accesskey   "O" >
-<!ENTITY menu.control.repx.accesskey   "E" >
-
-<!ENTITY menu.services.accesskey       "S" >
-
-<!ENTITY menu.devices.accesskey        "D" >
-
-<!ENTITY menu.help.accesskey           "H" >
-<!ENTITY menu.help.help.accesskey      "H" >
-<!ENTITY menu.help.about.accesskey     "A" >
-
-
-<!ENTITY bookmarks.edit.title   "Muokkaa kirjanmerkkiä" >
-<!ENTITY bookmarks.edit.url     "Osoite:" >
-<!ENTITY bookmarks.edit.label   "Nimi:" >
-<!ENTITY bookmarks.edit.icon    "Ikoni:" >
-
-
-<!ENTITY trackeditor.title            "Kappale-editori" >
-<!ENTITY trackeditor.trackdata        "Kappaleen tiedot" >
-<!ENTITY trackeditor.exttrackdata     "Lisätiedot" >
-<!ENTITY trackeditor.tags             "Tagit" >
-<!ENTITY trackeditor.addtag.title     "Lisää tagi" >
-<!ENTITY trackeditor.addtag.tag       "Tagi:" >
-
-<!ENTITY jumptofile.title             "Siirry" >
-<!ENTITY jumptofile.search            "Etsi:" >
-
-<!ENTITY metrics.optout               "Anna Songbirdin lähettää tietoja käyttötavoistasi (suositus)" >
-
-<!ENTITY hotkeys.useglobalhotkeys     "Käytä globaaleja pikanäppäimiä" >
+<!ENTITY smart.window "Muokkaa älykkäitä soittolistoja" >
+<!ENTITY smart.library "Valitse kirjasto:" >
+<!ENTITY smart.limit "Rajoita" >
+<!ENTITY smart.match "Vertaa" >
+<!ENTITY smart.any "mikä tahansa" >
+<!ENTITY smart.all "kaikki" >
+<!ENTITY smart.following "seuraavilla ehdoilla:" >
+<!ENTITY smart.random "satunnainen" >
+<!ENTITY smart.album "levy" >
+<!ENTITY smart.artist "esittäjä" >
+<!ENTITY smart.genre "tyylilaji" >
+<!ENTITY smart.title "nimi" >
+<!ENTITY smart.high_rating "korkea arvosana" >
+<!ENTITY smart.low_rating "matala arvosana" >
+<!ENTITY smart.most_recent "viimeksi soitettu" >
+<!ENTITY smart.least_recent "vähiten viimeksi soitettu" >
+<!ENTITY smart.most_often "useiten soitettu" >
+<!ENTITY smart.least_often "vähiten soitettu" >
+<!ENTITY smart.most_added "lisätyin" >
+<!ENTITY smart.least_added "vähiten lisätty" >
+<!ENTITY smart.minutes "minuutit" >
+<!ENTITY smart.hours "tunnit" >
+<!ENTITY smart.mb "Mt" >
+<!ENTITY smart.gb "Gt" >
+<!ENTITY smart.songs "kappaleet" >
+<!ENTITY smart.contains "sisältää" >
+<!ENTITY smart.not_contain "ei sisällä" >
+<!ENTITY smart.is "on" >
+<!ENTITY smart.is_not "ei ole" >
+<!ENTITY smart.starts "alkaa" >
+<!ENTITY smart.ends "päättyy" >
+<!ENTITY smart.selectedby "Valittu" >
+<!ENTITY download.window "Lataukset" >
+<!ENTITY download.select "Valitse kohdekansio:" >
+<!ENTITY download.always "Käytä aina tätä kansiota" >
+<!ENTITY textbox.songbird_open_url "Kirjoita toistettavan median osoite:" >
+<!ENTITY open_url.title "Avaa URL" >
+<!ENTITY subscribe.title "Tilaa" >
+<!ENTITY subscribe.minutes "Minuutit" >
+<!ENTITY subscribe.hours "Tunnit" >
+<!ENTITY subscribe.days "Päivät" >
+<!ENTITY subscribe.autocheck "Automaattisesti päivitä joka" >
+<!ENTITY subscribe.destinationfolder "Valitse kohdekansio:" >
+<!ENTITY exists.title "Soittolista on jo olemassa" >
+<!ENTITY exists.exists "Tämän niminen soittolista on jo olemassa!" >
+<!ENTITY media_scan.title "Etsi mediatiedostoja" >
+<!ENTITY media_scan.watch "Tarkkaile kansion uusia mediatiedostoja" >
+<!ENTITY new_playlist.title "Luo uusi soittolista" >
+<!ENTITY new_playlist.name "Nimeä uusi soittolista." >
+<!ENTITY addtoplaylist.title "Lisää soittolistaan" >
+<!ENTITY addtoplaylist.create "Luo uusi soittolista" >
+<!ENTITY watchfolder.title "Tarkkaile kansioita" >
+<!ENTITY watchfolder.folderlist "Tarkkaile näiden kansioiden uusia mediatiedostoja:" >
+<!ENTITY locale.language "Kieli" >
+<!ENTITY menu.feathers "Feathers (Ulkonäkö)" >
+<!ENTITY about.version "Versio" >
+<!ENTITY setup.title "Songbird asennuksen asetukset" >
+<!ENTITY setup.retrievingxpilist "Haetaan laajennuksia. Ole hyvä ja odota..." >
+<!ENTITY setup.networkerror1 "Laajennuslistaa ei voitu noutaa. Ole hyvä ja vaihda" >
+<!ENTITY setup.networkerror2 "Yhteysasetukset" >
+<!ENTITY setup.networkerror3 " tai jatka Songbirdin asennusta painamalla 'OK'." >
+<!ENTITY setup.metrics.optin "Salli anonyymin tiedon lähettäminen tavoistasi käyttää ohjelmaa." >
+<!ENTITY setup.metrics.info "Auta meitä tekemään Songbirdistä parempi sallimalla tietojen lähettäminen tavoistasi käyttää sitä.
+Tiedot ovat täysin yksilöimättömiä eikä henkilökohtaista tietoa kerätä lainkaan." >
+<!ENTITY setup.optionalextensions "Valinnaiset laajennukset" >
+<!ENTITY setup.defaultlanguage "Oletuskieli" >
+<!ENTITY setup.privacy "Yksityisyys" >
+<!ENTITY setupprogress.pleasewait "Ole hyvä ja odota..." >
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "C" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY bookmarks.edit.title "Muokkaa kirjanmerkkiä" >
+<!ENTITY bookmarks.edit.url "Osoite:" >
+<!ENTITY bookmarks.edit.label "Nimi:" >
+<!ENTITY bookmarks.edit.icon "Ikoni:" >
+<!ENTITY trackeditor.title "Kappale-editori" >
+<!ENTITY trackeditor.trackdata "Kappaleen tiedot" >
+<!ENTITY trackeditor.exttrackdata "Lisätiedot" >
+<!ENTITY trackeditor.tags "Tagit" >
+<!ENTITY trackeditor.addtag.title "Lisää tagi" >
+<!ENTITY trackeditor.addtag.tag "Tagi:" >
+<!ENTITY jumptofile.title "Siirry" >
+<!ENTITY jumptofile.search "Etsi:" >
+<!ENTITY hotkeys.useglobalhotkeys "Käytä globaaleja pikanäppäimiä" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action               "Toiminto" >
-<!ENTITY hotkeys.hotkey               "Pikanäppäin" >
-<!ENTITY hotkeys.add                  "Lisää" >
-<!ENTITY hotkeys.set                  "Aseta" >
-<!ENTITY hotkeys.remove               "Poista" >
-<!ENTITY hotkeys.prefpane             "Pikanäppäimet" >
-
-<!ENTITY metadata.uuid                 "Median UUID" >
-<!ENTITY metadata.url                  "Sijainti" >
-<!ENTITY metadata.artist               "Artisti" >
-<!ENTITY metadata.title                "Nimi" >
-<!ENTITY metadata.album                "Albumi" >
-<!ENTITY metadata.genre                "Genre" >
-<!ENTITY metadata.length               "Pituus" >
-
-<!ENTITY restartbox.restartnow         "Käynnistä uudelleen nyt" >
+<!ENTITY hotkeys.action "Toiminto" >
+<!ENTITY hotkeys.hotkey "Pikanäppäin" >
+<!ENTITY hotkeys.add "Lisää" >
+<!ENTITY hotkeys.set "Aseta" >
+<!ENTITY hotkeys.remove "Poista" >
+<!ENTITY hotkeys.prefpane "Pikanäppäimet" >
+<!ENTITY metadata.uuid "Median UUID" >
+<!ENTITY metadata.url "Sijainti" >
+<!ENTITY metadata.artist "Artisti" >
+<!ENTITY metadata.title "Nimi" >
+<!ENTITY metadata.album "Albumi" >
+<!ENTITY metadata.genre "Genre" >
+<!ENTITY metadata.length "Pituus" >
+<!ENTITY restartbox.restartnow "Käynnistä uudelleen nyt" >
 <!ENTITY restartbox.restartonplaybackend "Käynnistä uudelleen soiton loputtua" >
-<!ENTITY restartbox.restartlater       "Käynnistä uudelleen myöhemmin" >
-
+<!ENTITY restartbox.restartlater "Käynnistä uudelleen myöhemmin" >
 <!ENTITY setupprogress.installingextensions "Asennetaan laajennuksia" >
-
-<!ENTITY menu.updateCmd.label      "Tarkista päivitykset..." >
-<!ENTITY menu.updateCmd.accessKey  "o" >
-
-
-<!ENTITY html.context.openexternal "Open with Default Browser" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY menu.updateCmd.label "Tarkista päivitykset..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY firstrun.connectionsettings "Connection Settings" >
-
-
-
-
-
-
-
-
-
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-
-
-
-
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
-
-
-
-
+<!ENTITY trackeditor.disclaimer "Kappale-editori ei ole vielä valmis. Muokkaamasi metadata tallennetaan tällä hetkellä ainoastaan Songbirdin tietokantaan. Tulevaisuudessa täällä muokatut tiedot tallennetaan myös mediatiedostoihisi." >
+<!ENTITY callout.firstwebplaylist "Songbird löysi seuraavan soitettavaksi kelpaavat tiedostot." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -286,33 +233,7 @@
 <!ENTITY jumpto.key "J" >
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
-
-
-
-
 <!ENTITY trackeditor.key "E" >
-
-
-
-
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-
-
-
-
-<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto "Hyppää..." >
+<!ENTITY html.context.playlist "Avaa soittolistana" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
-<!ENTITY html.context.playlist "Open as Playlist" >
-
-
