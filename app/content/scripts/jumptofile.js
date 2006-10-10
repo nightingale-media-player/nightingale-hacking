@@ -149,7 +149,7 @@ try
     }
 
     onWindowLoadSizeAndPosition();
-    setMinMaxCallback();
+    setJumptoMinMaxCallback();
 
     var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
     var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
@@ -724,14 +724,14 @@ try
     else onJumpToFileKey();
   }
 
-  function setMinMaxCallback()
+  function setJumptoMinMaxCallback()
   {
     try {
       var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
       if (windowMinMax) {
         var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
         if (service)
-          service.setCallback(document, SBWindowMinMaxCB);
+          service.setCallback(document, SBJumptoWindowMinMaxCB);
       }
     }
     catch (err) {
@@ -740,7 +740,7 @@ try
     }
   }
 
-  var SBWindowMinMaxCB = 
+  var SBJumptoWindowMinMaxCB = 
   {
     // Shrink until the box doesn't match the window, then stop.
     _minwidth: -1,

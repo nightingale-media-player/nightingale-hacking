@@ -217,7 +217,7 @@
 
     onWindowLoadPosition();
     document.getElementById("trackeditor.trackeditor").openDrawer();
-    setMinMaxCallback();
+    setTrackeditorMinMaxCallback();
   }
   
   function onDestroyPlaylist() {
@@ -285,14 +285,14 @@
     _focus.setIsFocused(false);
   }
 
-  function setMinMaxCallback()
+  function setTrackeditorMinMaxCallback()
   {
     try {
       var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
       if (windowMinMax) {
         var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
         if (service)
-          service.setCallback(document, SBWindowMinMaxCB);
+          service.setCallback(document, SBTrackeditorWindowMinMaxCB);
       }
     }
     catch (err) {
@@ -301,7 +301,7 @@
     }
   }
 
-  var SBWindowMinMaxCB = 
+  var SBTrackeditorWindowMinMaxCB = 
   {
     // Shrink until the box doesn't match the window, then stop.
     _minwidth: -1,
