@@ -12,8 +12,6 @@ locales.jar:
 % locale  browser   bs-BA  @LOCALE_LOCATION@/locale/bs-BA/browser/
 % locale  songbird  ca-AD  @LOCALE_LOCATION@/locale/ca-AD/songbird/
 % locale  browser   ca-AD  @LOCALE_LOCATION@/locale/ca-AD/browser/
-% locale  songbird  ca-ES  @LOCALE_LOCATION@/locale/ca-ES/songbird/
-% locale  browser   ca-ES  @LOCALE_LOCATION@/locale/ca-ES/browser/
 % locale  songbird  cs-CZ  @LOCALE_LOCATION@/locale/cs-CZ/songbird/
 % locale  browser   cs-CZ  @LOCALE_LOCATION@/locale/cs-CZ/browser/
 % locale  songbird  da-DK  @LOCALE_LOCATION@/locale/da-DK/songbird/
@@ -170,26 +168,6 @@ locales.jar:
   locale/ca-AD/browser/preferences/privacy.dtd            (ca-AD/browser/preferences/privacy.dtd)
   locale/ca-AD/browser/preferences/sanitize.dtd           (ca-AD/browser/preferences/sanitize.dtd)
   locale/ca-AD/browser/preferences/tabs.dtd               (ca-AD/browser/preferences/tabs.dtd)
-  locale/ca-ES/songbird/songbird.dtd            (ca-ES/songbird/songbird.dtd)
-  locale/ca-ES/songbird/songbird.properties     (ca-ES/songbird/songbird.properties)
-  locale/ca-ES/browser/preferences/advanced.dtd           (ca-ES/browser/preferences/advanced.dtd)
-  locale/ca-ES/browser/preferences/advanced-scripts.dtd   (ca-ES/browser/preferences/advanced-scripts.dtd)
-  locale/ca-ES/browser/preferences/changeaction.dtd       (ca-ES/browser/preferences/changeaction.dtd)
-  locale/ca-ES/browser/preferences/colors.dtd             (ca-ES/browser/preferences/colors.dtd)
-  locale/ca-ES/browser/preferences/connection.dtd         (ca-ES/browser/preferences/connection.dtd)
-  locale/ca-ES/browser/preferences/content.dtd            (ca-ES/browser/preferences/content.dtd)
-  locale/ca-ES/browser/preferences/cookies.dtd            (ca-ES/browser/preferences/cookies.dtd)
-  locale/ca-ES/browser/preferences/downloadactions.dtd    (ca-ES/browser/preferences/downloadactions.dtd)
-  locale/ca-ES/browser/preferences/downloads.dtd          (ca-ES/browser/preferences/downloads.dtd)
-  locale/ca-ES/browser/preferences/fonts.dtd              (ca-ES/browser/preferences/fonts.dtd)
-  locale/ca-ES/browser/preferences/general.dtd            (ca-ES/browser/preferences/general.dtd)
-  locale/ca-ES/browser/preferences/languages.dtd          (ca-ES/browser/preferences/languages.dtd)
-  locale/ca-ES/browser/preferences/permissions.dtd        (ca-ES/browser/preferences/permissions.dtd)
-  locale/ca-ES/browser/preferences/preferences.dtd        (ca-ES/browser/preferences/preferences.dtd)
-  locale/ca-ES/browser/preferences/preferences.properties (ca-ES/browser/preferences/preferences.properties)
-  locale/ca-ES/browser/preferences/privacy.dtd            (ca-ES/browser/preferences/privacy.dtd)
-  locale/ca-ES/browser/preferences/sanitize.dtd           (ca-ES/browser/preferences/sanitize.dtd)
-  locale/ca-ES/browser/preferences/tabs.dtd               (ca-ES/browser/preferences/tabs.dtd)
   locale/cs-CZ/songbird/songbird.dtd            (cs-CZ/songbird/songbird.dtd)
   locale/cs-CZ/songbird/songbird.properties     (cs-CZ/songbird/songbird.properties)
   locale/cs-CZ/browser/preferences/advanced.dtd           (cs-CZ/browser/preferences/advanced.dtd)
