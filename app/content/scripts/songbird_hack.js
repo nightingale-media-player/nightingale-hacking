@@ -300,29 +300,18 @@ function SBInitialize()
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
-
-    // Make sure we have a fake database in which to play
-    var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"];
-    if (aDBQuery)
+      
+    // On firstrun, popup the scan for media dialog.
+    // So, now you can't force the dialog by deleting all your databasey files.  Oh well.
+    var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
+    if (dataScan != true)
     {
-      aDBQuery = aDBQuery.createInstance();
-      aDBQuery = aDBQuery.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-      aDBQuery.setAsyncQuery(false);
-      aDBQuery.setDatabaseGUID("testdb-0000");
-      aDBQuery.addQuery("create table test (idx integer primary key autoincrement, url text, name text, tim text, artist text, album text, genre text)");
-      aDBQuery.addQuery("create index testindex on test(idx, url, name, tim, artist, album, genre)");
-      
-      var ret = aDBQuery.execute();
-      
-      // If it actually worked, that means we created the database
-      // ask the user if they would like to fill their empty bucket.
-      if ( ret == 0 )
-      {
-        theMediaScanIsOpen.boolValue = true;
-        setTimeout( SBScanMedia, 1000 );
-      }
+      theMediaScanIsOpen.boolValue = true;  // We don't use this anymore, I should pull it.
+                                            // But it's everywhere, so after 0.2 release.
+      setTimeout( SBScanMedia, 1000 );
+      SBDataSetBoolValue("firstrun.scancomplete", true);
     }
-    
+
     // Install listeners on the main pane. - This is the browser xul element from mainwin.xul
     var theMainPane = document.getElementById("frame_main_pane");
     if (!mainpane_listener_set)
