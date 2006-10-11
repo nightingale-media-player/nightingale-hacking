@@ -39,14 +39,14 @@
 <!ENTITY menu.control.repa "Lặp lại tất cả" >
 <!ENTITY menu.control.rep1 "Lặp lại một bài" >
 <!ENTITY menu.control.repx "Không lặp lại" >
-<!ENTITY menu.services "Services" >
+<!ENTITY menu.services "Dịch vụ" >
 <!ENTITY menu.services.browse "Browse Extensions..." >
-<!ENTITY menu.devices "Devices" >
+<!ENTITY menu.devices "Thiết bị" >
 <!ENTITY menu.help "Trợ giúp" >
 <!ENTITY menu.help.topics "Help Topics..." >
-<!ENTITY menu.help.about "About Songbird..." >
+<!ENTITY menu.help.about "Về Songbird..." >
 <!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
+<!ENTITY menu.extensions "Phần mở rộng..." >
 <!ENTITY html.context.open "Mở" >
 <!ENTITY html.context.openexternal "Mở với Trình duyệt mặc định" >
 <!ENTITY html.context.play "Phát" >
@@ -111,7 +111,7 @@
 <!ENTITY smart.is_not "is not" >
 <!ENTITY smart.starts "starts with" >
 <!ENTITY smart.ends "ends with" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY smart.selectedby "Chọn bởi" >
 <!ENTITY download.window "Tải về" >
 <!ENTITY download.select "Select destination folder:" >
 <!ENTITY download.always "Luôn dùng thư mục này" >
@@ -121,7 +121,7 @@
 <!ENTITY subscribe.minutes "Minute(s)" >
 <!ENTITY subscribe.hours "Hour(s)" >
 <!ENTITY subscribe.days "Day(s)" >
-<!ENTITY subscribe.autocheck "Automatically update every" >
+<!ENTITY subscribe.autocheck "Tự động cập nhật mỗi" >
 <!ENTITY subscribe.destinationfolder "Select destination folder:" >
 <!ENTITY exists.title "Playlist Exists" >
 <!ENTITY exists.exists "A playlist with that name already exists!" >
@@ -214,7 +214,7 @@
 <!ENTITY restartbox.restartnow "Khởi động lại ngay" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
 <!ENTITY restartbox.restartlater "Khởi động lại sau" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+<!ENTITY setupprogress.installingextensions "Đang cài đặt phần mở rộng" >
 <!ENTITY menu.updateCmd.label "Cập nhật..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
@@ -235,5 +235,7 @@
 <!ENTITY menu.control.jumpto "Jump To..." >
 <!ENTITY html.context.playlist "Open as Playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
+<!ENTITY metadata.bitrate "Bit Rate" >
+<!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

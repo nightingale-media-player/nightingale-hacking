@@ -154,7 +154,7 @@
 " >
 <!ENTITY setup.title "Options de Configuration de Songbird" >
 <!ENTITY setup.retrievingxpilist "Obtention de la liste des extensions. S'il vous plait patientez..." >
-<!ENTITY setup.networkerror1 "Impossible d'obtenir la liste des extensions. Merci de changer   vos" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "Paramètres de Connection" >
 <!ENTITY setup.networkerror3 " ou continuer l'installation de Songbird en cliquant 'OK'." >
 <!ENTITY setup.metrics.optin "Envoyer des mesures d'utilisations anonymes." >
@@ -291,20 +291,7 @@ Les Métadonnées sont sauvegardées seulement dans la base de données de Songb
 <!ENTITY html.context.playlist "Ouvrir en tant que Liste de Lecture" >
 <!ENTITY menu.control.jumpto.accesskey "J
 " >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

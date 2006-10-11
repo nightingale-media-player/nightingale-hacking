@@ -235,20 +235,7 @@
 <!ENTITY menu.control.jumpto "Przejdź do..." >
 <!ENTITY html.context.playlist "Otwórz jako listę utworów" >
 <!ENTITY menu.control.jumpto.accesskey "P" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

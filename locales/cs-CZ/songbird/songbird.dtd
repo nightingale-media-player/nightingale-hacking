@@ -235,20 +235,7 @@
 <!ENTITY menu.control.jumpto "Přeskočit na..." >
 <!ENTITY html.context.playlist "Otevřít jako seznam stop" >
 <!ENTITY menu.control.jumpto.accesskey "K" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

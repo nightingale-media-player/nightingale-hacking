@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 PréVersion" >
-<!ENTITY window.dev.title "Songbird 0.2 Test en vol de la Préversion" >
+<!ENTITY window.main.title "Songbird 0.2" >
+<!ENTITY window.dev.title "Songbird 0.2 vol d'essai" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
@@ -140,7 +140,7 @@
 <!ENTITY setup.retrievingxpilist "Extraction de la liste des extensions. Merci de patienter..." >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "Paramètres de connexion" >
-<!ENTITY setup.networkerror3 " ou poursuivez l'installation de Songbird en cliquant sur "OK"." >
+<!ENTITY setup.networkerror3 " ou poursuivez l'installation de Songbird en cliquant sur 'OK'." >
 <!ENTITY setup.metrics.optin "Envoyer des données d'utilisation anonymes." >
 <!ENTITY setup.metrics.info "Aidez-nous à améliorer Songbird en nous faisant parvenir des données concernant l'utilisation que vous en faites. Les données sont totalement anonymes et aucune information personnelle n'est collectée." >
 <!ENTITY setup.optionalextensions "Extensions facultatives" >
@@ -234,22 +234,9 @@
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
 <!ENTITY menu.control.jumpto "Aller à ..." >
-<!ENTITY html.context.playlist "Ouvrir en tant que Playlist" >
-<!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
+<!ENTITY html.context.playlist "Ouvrir en tant que sélection" >
+<!ENTITY menu.control.jumpto.accesskey "A" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versió" >
 <!ENTITY setup.title "Configuració inicial del Songbird" >
 <!ENTITY setup.retrievingxpilist "S'està carregant la llista d'extensions. Espereu..." >
-<!ENTITY setup.networkerror1 "Ha estat impossible carregar el llistat d'extensions. Si us plau, canvieu la vostra" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "la configuració de la vostra connexió" >
 <!ENTITY setup.networkerror3 " o premeu "D'acord" per continuar configurant el Songbird." >
 <!ENTITY setup.metrics.optin "Permet l'enviament de dades anònimes sobre l'us del Songbird." >
@@ -235,20 +235,7 @@
 <!ENTITY menu.control.jumpto "Salta a..." >
 <!ENTITY html.context.playlist "Obre com a llista de reproducció" >
 <!ENTITY menu.control.jumpto.accesskey "S" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

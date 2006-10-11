@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versione" >
 <!ENTITY setup.title "Songbird Setup Options" >
 <!ENTITY setup.retrievingxpilist "Recupero lista estensioni..." >
-<!ENTITY setup.networkerror1 "Impossibile recuperare lista estensioni. Cambiare le" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "impostazioni di connessione" >
 <!ENTITY setup.networkerror3 " o continuare l'installazione premendo OK." >
 <!ENTITY setup.metrics.optin "Manda statistiche di utilizzo anonime." >
@@ -235,20 +235,7 @@
 <!ENTITY menu.control.jumpto "Jump To..." >
 <!ENTITY html.context.playlist "Apri come playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

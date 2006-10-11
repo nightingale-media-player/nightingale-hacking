@@ -138,7 +138,7 @@
 <!ENTITY about.version "Verzia" >
 <!ENTITY setup.title "Možnosti inštalácie Songbirdu" >
 <!ENTITY setup.retrievingxpilist "Získava sa zoznam rozšírení. Počkajte prosím..." >
-<!ENTITY setup.networkerror1 "Nie je možné získať zoznam rozšírení. Zmeňte svoje" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "nastavenie pripojenia" >
 <!ENTITY setup.networkerror3 " alebo pokračujte v inštalácii Songbirdu kliknutím na tlačidlo 'OK'." >
 <!ENTITY setup.metrics.optin "Odosielať anonymné štatistiky" >
@@ -235,20 +235,7 @@
 <!ENTITY menu.control.jumpto "Prejsť na..." >
 <!ENTITY html.context.playlist "Otvoriť ako zoznam skladieb" >
 <!ENTITY menu.control.jumpto.accesskey "P" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

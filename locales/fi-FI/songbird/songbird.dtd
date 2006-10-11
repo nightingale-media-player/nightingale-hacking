@@ -139,7 +139,7 @@
 <!ENTITY about.version "Versio" >
 <!ENTITY setup.title "Songbird asennuksen asetukset" >
 <!ENTITY setup.retrievingxpilist "Haetaan laajennuksia. Ole hyvä ja odota..." >
-<!ENTITY setup.networkerror1 "Laajennuslistaa ei voitu noutaa. Ole hyvä ja vaihda" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "Yhteysasetukset" >
 <!ENTITY setup.networkerror3 " tai jatka Songbirdin asennusta painamalla 'OK'." >
 <!ENTITY setup.metrics.optin "Salli anonyymin tiedon lähettäminen tavoistasi käyttää ohjelmaa." >
@@ -237,20 +237,7 @@ Tiedot ovat täysin yksilöimättömiä eikä henkilökohtaista tietoa kerätä 
 <!ENTITY menu.control.jumpto "Hyppää..." >
 <!ENTITY html.context.playlist "Avaa soittolistana" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 

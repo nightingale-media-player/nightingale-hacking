@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2" >
+<!ENTITY window.dev.title "Songbird 0.2 vista previa" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
@@ -134,7 +134,7 @@
 <!ENTITY watchfolder.title "Explorar carpetas" >
 <!ENTITY watchfolder.folderlist "Explorar estas carpetas para encontrar nuevos archivos multimedia" >
 <!ENTITY locale.language "Idioma" >
-<!ENTITY menu.feathers "Feathers" >
+<!ENTITY menu.feathers "Temas" >
 <!ENTITY about.version "Versión" >
 <!ENTITY setup.title "Opciones de Songbird" >
 <!ENTITY setup.retrievingxpilist "Obteniendo lista de extensiones, por favor espere..." >
@@ -235,20 +235,7 @@
 <!ENTITY menu.control.jumpto "Saltar a..." >
 <!ENTITY html.context.playlist "Abrir como lista de reproducción" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-
-
-
-
 <!ENTITY metadata.bitrate "Bit Rate" >
-
-
-
-
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 
