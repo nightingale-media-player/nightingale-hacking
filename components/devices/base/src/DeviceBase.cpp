@@ -929,6 +929,21 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
   // XXXben Remove me
   nsAutoString strDevice(aDeviceString), deviceContext;
 
+#ifdef DEBUG_devices
+  nsAutoString autoDeviceString(aDeviceString);
+  nsAutoString autoContextInput(aContextInput);
+  nsAutoString autoTableName(aTableName);
+  nsAutoString autoSourcePath(aSourcePath);
+  nsAutoString autoDestPath(aDestPath);
+
+  printf("sbDeviceBase::CreateTransferTable()\n");
+  printf("      aDeviceString: %s\n", NS_ConvertUTF16toUTF8(autoDeviceString).get() );
+  printf("      aContextInput: %s\n", NS_ConvertUTF16toUTF8(autoContextInput).get() );
+  printf("         aTableName: %s\n", NS_ConvertUTF16toUTF8(autoTableName).get() );
+  printf("        aSourcePath: %s\n", NS_ConvertUTF16toUTF8(autoSourcePath).get() );
+  printf("          aDestPath: %s\n", NS_ConvertUTF16toUTF8(autoDestPath).get() );
+#endif
+
   GetContext(strDevice, deviceContext);
 
   // Obtain the schema for the passed table
@@ -993,10 +1008,9 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
 
   query->SetDatabaseGUID(aContextInput);
 
-  sbISimplePlaylist* dummyPlaylist;
-  pPlaylistManager->GetSimplePlaylist(aTableName, query, &dummyPlaylist);
-
-
+  // Create a simple playlist with the contents of aTableName joined with
+  //   the contents of destTable, ignoring items of aTableName that already
+  //   exist in destTable, by source URL.
   nsCOMPtr<sbISimplePlaylist> pPlaylistDest;
   rv = pPlaylistManager->CopySimplePlaylist(aContextInput, aTableName,
                                             aFilterColumn, aFilterCount,
@@ -1006,7 +1020,6 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
                                             transferTableReadable,
                                             transferTableType, query,
                                             getter_AddRefs(pPlaylistDest));
-
   NS_ENSURE_TRUE(pPlaylistDest, PR_FALSE);
 
   // We need to add the extra columns and set the info for those columns only
@@ -1050,21 +1063,24 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
                                    PR_FALSE);
   }
 
-  PRInt32 dummy;
-  rv = pPlaylistDest->GetAllEntries(&dummy);
+  // reset the query object in the download playlist and get the rowcount
+  PRInt32 rowcount;
+  rv = pPlaylistDest->GetAllEntries(&rowcount);
 
+  // This query object is the one in pPlaylistDest, get the resultset for later
   nsCOMPtr<sbIDatabaseResult> resultset;
   rv = query->GetResultObjectOrphan(getter_AddRefs(resultset));
+
+  // Clean it up since we'll reuse it.
+  rv = query->ResetQuery();
 
   PRBool isSourceGiven = !aSourcePath.IsEmpty();
   PRBool isDestinationGiven = !aDestPath.IsEmpty();
 
-  // Now copy the transfer data
-  PRInt32 rowcount;
-  rv = resultset->GetRowCount(&rowcount);
-
-  // Clean it up since we'll reuse it.
-  rv = query->ResetQuery();
+  // If subscription playlists have no new tracks our rows will be the same,
+  // nothing new to add, short circuit here.
+  if (numExistingRows == rowcount)
+    return PR_FALSE;
 
   // Set the destination and source info by correctly forming a 
   // fully qualified path for source and destination, but
@@ -1161,7 +1177,7 @@ void
 sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceString,
                                                  PRBool isDownloadTable,
                                                  PRBool dropTable)
-{	
+{
   // XXXben Remove me
   nsAutoString strDevice, deviceContext;
   if (DeviceString)
@@ -1180,23 +1196,22 @@ sbDeviceBase::RemoveExistingTransferTableEntries(const PRUnichar* DeviceString,
   query->SetAsyncQuery(PR_FALSE); 
   query->SetDatabaseGUID(deviceContext);
 
-
   nsString deleteEntriesSQL;
   nsAutoString transferTable;
   GetTransferTable(strDevice, isDownloadTable, transferTable);
   if (!dropTable)
   {
-    // If DeviceString is not provided then delete everything
-    if (DeviceString) 
-    {
-      deleteEntriesSQL = NS_LITERAL_STRING("delete from ");
+    if ( ! IsDownloadInProgress(strDevice.get()) ) {
+      deleteEntriesSQL = NS_LITERAL_STRING("DELETE FROM ");
       deleteEntriesSQL += transferTable;
-    }
-    query->AddQuery(deleteEntriesSQL); 
+      deleteEntriesSQL += NS_LITERAL_STRING(" WHERE progress = 100 ");
 
-    PRInt32 ret;
-    query->Execute(&ret);
-    query->ResetQuery();
+      query->AddQuery(deleteEntriesSQL); 
+
+      PRInt32 ret;
+      query->Execute(&ret);
+      query->ResetQuery();
+    }
   }
   else
   {
@@ -1653,8 +1668,8 @@ sbDeviceBase::AutoDownloadTable(const nsAString& aDeviceString,
 
   *_retval = PR_FALSE;
   if (IsDeviceIdle(strDevice.get()) || 
-    IsDownloadInProgress(strDevice.get()) ||
-    IsDownloadPaused(strDevice.get()))
+      IsDownloadInProgress(strDevice.get()) ||
+      IsDownloadPaused(strDevice.get()))
   {
     if (CreateTransferTable(aDeviceString, aContextInput, aTableName,
                             aFilterColumn, aFilterCount, aFilterValues,
@@ -1912,7 +1927,7 @@ sbDeviceBase::DownloadDone(PRUnichar* deviceString,
 
     //Make sure the filename is unique when download an item from a remote source.
     nsAutoString guid;
-    pLibrary->AddMedia(destURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, guid);
+    pLibrary->AddMedia(sourceURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, guid);
 
     PRBool bRet = PR_FALSE;
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("url"), destURL, PR_FALSE, &bRet);

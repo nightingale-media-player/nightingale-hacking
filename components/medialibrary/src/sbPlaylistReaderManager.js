@@ -215,17 +215,16 @@ CPlaylistReaderManager.prototype =
       var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"]
                                            .getService(Components.interfaces.nsIIOService)
                                            .newURI(strURL, null, null);
-              
+
       if(playlistReaderListener)
-      {
+      { 
         this.m_Listener = playlistReaderListener;
       }
       else
       {
-        var aListener = (new PlaylistReaderListener()).QueryInterface(Components.interfaces.sbIPlaylistReaderListener);
-        this.m_Listener = aListener;
+        this.m_Listener = (new PlaylistReaderListener()).QueryInterface(Components.interfaces.sbIPlaylistReaderListener);
       }
-      
+
       this.m_Listener.originalURL = this.originalURL;
       this.m_Listener.serviceGuid = strGUID;
       this.m_Listener.destinationURL = "file:///" + destFile;
@@ -234,7 +233,7 @@ CPlaylistReaderManager.prototype =
       this.m_Listener.playlistType = strPlaylistType;
       this.m_Listener.description = strDescription;
       this.m_Listener.appendOrReplace = bAppendOrReplace;
-      
+
 //      this.m_Browser.persistFlags |= 2; // PERSIST_FLAGS_BYPASS_CACHE;
       this.m_Browser.progressListener = this.m_Listener;
       

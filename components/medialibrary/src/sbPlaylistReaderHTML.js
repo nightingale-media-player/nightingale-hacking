@@ -292,8 +292,7 @@ CPlaylistHTML.prototype =
             var aMetaValues = new Array( this.gPPS.convertURLToDisplayName( url ) );
 
             var guid = pLibrary.addMedia( url, aMetaKeys.length, aMetaKeys, aMetaValues.length, aMetaValues, replace, true );
-            // Always replace tracks added to this playlist, see bug 1635
-            pPlaylist.addByGUID( guid, strGUID, -1, true, true );
+            pPlaylist.addByGUID( guid, strGUID, -1, replace, true );
             
             inserted.push( url );
           }

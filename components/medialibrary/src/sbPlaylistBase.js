@@ -65,13 +65,14 @@ CPlaylistBase.prototype =
       if(bReplace)
       {
         var index = this.findByGUID(mediaGUID);
-        if(index != -1)
+        if(index != -1) {
           return true;
+        }
       }
       
       var query_str = "INSERT INTO \"" + this.m_strName + "\" (playlist_uuid, playlist_service_uuid) VALUES (\"" + mediaGUID + "\", \"" + serviceGUID + "\")"
       this.m_queryObject.addQuery(query_str);
-      
+
       if(!bWillRunLater)
       {
         this.m_queryObject.execute();

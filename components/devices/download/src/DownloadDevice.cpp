@@ -78,32 +78,24 @@ sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
   if (mShutDown)
   {
     aRequest->Cancel(0);
+    return NS_OK;
   }
 
   // If download done for this file then, initiate the next download
   if (aStateFlags & STATE_STOP)
   {
-    if (mShutDown)
-    {
-      // We are asked to shutdown so release the object
-      Release();
-    }
-    else
-    {
-      // Copy the data so you're not sending stale pointers
-      // ("DownloadDone" deletes this item and frees the strings)
-      nsString deviceString = mDeviceString;
-      nsString table = mTable;
-      nsString index = mIndex;
+    // Copy the data so you're not sending stale pointers
+    // ("DownloadDone" deletes this item and frees the strings)
+    nsString deviceString = mDeviceString;
+    nsString table = mTable;
+    nsString index = mIndex;
 
-      // OK Download complete
-      if (mDownlodingDeviceObject)
-      {
-        mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
-        mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get());
-      }
+    // OK Download complete
+    if (mDownlodingDeviceObject)
+    {
+      mDownlodingDeviceObject->UpdateIOProgress((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get(), 100 /* Complete */);
+      mDownlodingDeviceObject->DownloadDone((PRUnichar *)deviceString.get(), (PRUnichar *)table.get(), (PRUnichar *)index.get());
     }
-
   }
 
   return NS_OK;
@@ -508,11 +500,23 @@ sbDownloadDevice::AutoDownloadTable(const nsAString& aDeviceString,
   // XXXben Remove me
   nsAutoString str(aDeviceString);
 
-  if (!IsDownloadInProgress(str.get()))
-  {
-    // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
-  }
+#ifdef DEBUG_downloads
+  nsAutoString autoDeviceString(aDeviceString);
+  nsAutoString autoContextInput(aContextInput);
+  nsAutoString autoTableName(aTableName);
+  nsAutoString autoSourcePath(aSourcePath);
+  nsAutoString autoDestPath(aDestPath);
+
+  printf("sbDownloadDevice::AutoDownloadTable()\n");
+  printf("      aDeviceString: %s\n", NS_ConvertUTF16toUTF8(autoDeviceString).get() );
+  printf("      aContextInput: %s\n", NS_ConvertUTF16toUTF8(autoContextInput).get() );
+  printf("         aTableName: %s\n", NS_ConvertUTF16toUTF8(autoTableName).get() );
+  printf("        aSourcePath: %s\n", NS_ConvertUTF16toUTF8(autoSourcePath).get() );
+  printf("          aDestPath: %s\n", NS_ConvertUTF16toUTF8(autoDestPath).get() );
+#endif
+
+  // Get rid of finished downloads
+  RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
 
   return sbDeviceBase::AutoDownloadTable(aDeviceString, aContextInput,
                                          aTableName, aFilterColumn,
@@ -536,11 +540,8 @@ sbDownloadDevice::AutoUploadTable(const nsAString& aDeviceString,
   // XXXben Remove me
   nsAutoString strDevice(aDeviceString);
 
-  if (!IsUploadInProgress(strDevice.get()))
-  {
-    // Get rid of previous download entries
-    RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
-  }
+  // Get rid of finished uploads
+  RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
 
   return sbDeviceBase::AutoUploadTable(aDeviceString, aContextInput,
                                        aTableName, aFilterColumn,

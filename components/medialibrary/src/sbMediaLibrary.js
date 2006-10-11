@@ -43,7 +43,7 @@ is_metadata INTEGER(0, 1) DEFAULT 0, sort_weight INTEGER DEFAULT 0, width INTEGE
 type TEXT DEFAULT 'text', readonly INTEGER(0,1) DEFAULT 0)";
 
 const LIBRARY_TABLE_CREATE = "CREATE TABLE library (id INTEGER PRIMARY KEY, uuid BLOB UNIQUE NOT NULL, \
-service_uuid BLOB NOT NULL, url TEXT UNIQUE DEFAULT '', content_type TEXT DEFAULT '', \
+service_uuid BLOB NOT NULL, url TEXT UNIQUE DEFAULT '', origin_url TEXT UNIQUE DEFAULT '', content_type TEXT DEFAULT '', \
 length TEXT DEFAULT '0', artist TEXT DEFAULT '', title TEXT DEFAULT '', album TEXT DEFAULT '', \
 genre TEXT DEFAULT '', composer TEXT DEFAULT '', producer TEXT DEFAULT '', rating INTEGER DEFAULT 0, \
 track_no INTEGER DEFAULT 0, track_total INTEGER DEFAULT 0, disc_no INTEGER DEFAULT 0, \
@@ -98,6 +98,10 @@ CMediaLibrary.prototype =
       var uuid = ( "&metadata.uuid" );
       var service_uuid = ( "&metadata.service_uuid" );
       var url = ( "&metadata.url" );
+      
+      //XXXAus: This will eventually be translated.
+      //var origin_url = ( "&metadata.origin_url" );
+      var origin_url = "Origin URL";
       var content_type = ( "&metadata.content_type" );
       var length = ( "&metadata.length" );
       var artist = ( "&metadata.artist" );
@@ -137,7 +141,8 @@ CMediaLibrary.prototype =
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"uuid\", \"" + uuid + "\", 1, 0, 0, 0, -1, 'text', 1)");
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"service_uuid\", \"" + service_uuid + "\", 1, 0, 0, 0, -1, 'text', 1)");
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"url\", \"" + url + "\", 1, 0, 1, 0, -1, 'text', 0)");
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"content_type\", \"" + content_type + "\", 1, 0, 1, 0, -1, 'text', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"origin_url\", \"" + origin_url + "\", 1, 0, 1, 0, -1, 'text', 1)");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"content_type\", \"" + content_type + "\", 0, 0, 1, 0, -1, 'text', 1)");
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"length\", \"" + length + "\", 1, 1, 1, -8000, 4, 'numeric', 1)");
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"artist\", \"" + artist + "\", 1, 1, 1, -7000, 25, 'text', 0)");
       this.m_queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"title\", \"" + title + "\", 1, 1, 1, -9000, 60, 'text', 0)");
@@ -159,7 +164,7 @@ CMediaLibrary.prototype =
     return;
   },
 
-  addMedia: function(strMediaURL, nMetaKeyCount, aMetaKeys, nMetadataValueCount, aMetadataValues, bCheckForUniqueFileName, bWillRunLater)
+  addMedia: function(strMediaURL, nMetaKeyCount, aMetaKeys, nMetadataValueCount, aMetadataValues, bCheckOriginURL, bWillRunLater)
   {
     if(this.m_queryObject != null)
     {
@@ -170,17 +175,9 @@ CMediaLibrary.prototype =
       var aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance(Components.interfaces.sbIDatabaseQuery);
       var strQuery = "SELECT uuid FROM library WHERE ";
       
-      if(bCheckForUniqueFileName)
+      if(bCheckOriginURL)
       {
-        var filenamePos = strMediaURL.lastIndexOf("/");
-        if(!filenamePos) filenamePos = strMediaURL.lastIndexOf("\\");
-        
-        if(filenamePos)        
-        {
-          var filename = strMediaURL.substring(filenamePos);
-          if(filename != "")
-            strQuery += "url LIKE \"%" + filename + "\"";
-        }
+        strQuery += "origin_url = \"" + strMediaURL + "\"";
       }
       else
       {
@@ -206,14 +203,14 @@ CMediaLibrary.prototype =
       else
       {
         var i = 0;
-        strQuery = "INSERT OR REPLACE INTO " + LIBRARY_TABLE_NAME + " (uuid, service_uuid, url";
+        strQuery = "INSERT OR REPLACE INTO " + LIBRARY_TABLE_NAME + " (uuid, service_uuid, url, origin_url";
         for(; i < nMetaKeyCount; i++)
         {
           strQuery += ", ";
           strQuery += aMetaKeys[i];
         }
         
-        strQuery += ") VALUES (\"" + guid + "\", \"" + dbguid + "\", \"" + strMediaURL + "\"";
+        strQuery += ") VALUES (\"" + guid + "\", \"" + dbguid + "\", \"" + strMediaURL + "\", \"" + strMediaURL + "\"";
         
         for(i = 0; i < nMetadataValueCount; i++)
         {

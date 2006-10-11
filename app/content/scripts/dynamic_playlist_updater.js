@@ -28,7 +28,7 @@ const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/P
 const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
 
 var dpPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-var dpPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+var dpPlaylistReaderManager = null; 
 
 var dpCurrentTime = new Date();
 var dpUpdaterCurrentRow = 0;
@@ -49,9 +49,6 @@ function DPUpdaterInit(interval)
       dpUpdaterPeriod = interval;
 
     setTimeout( DPUpdaterStart, 30 * 1000 ); // Don't do nothing for 30 seconds
-    
-    if(dpUpdaterQuery.isExecuting())
-      return;
   }
   catch(err)
   {
@@ -61,11 +58,14 @@ function DPUpdaterInit(interval)
 
 function DPUpdaterDeinit()
 {
+  if (dpUpdaterInterval)
+    clearInterval(dpUpdaterInterval);
 }
 
 function DPUpdaterStart()
 {
-  dpUpdaterInterval = setInterval( DPUpdaterRun, dpUpdaterPeriod * 100 * 60 ); // Then wake up every 6.
+  // Then wake up every 30 seconds times the period.
+  dpUpdaterInterval = setInterval( DPUpdaterRun, dpUpdaterPeriod * 30 * 1000 );
 }
 
 function DPUpdaterRun()
@@ -77,12 +77,14 @@ function DPUpdaterRun()
       return;
     if(dpUpdaterQuery.isExecuting())
       return;
-    
+   
+    // if there is more stuff to process in the query, do that 
     if(dpUpdaterCurrentRow > 0 && dpUpdaterCurrentRow < dpUpdaterQuery.getResultObject().getRowCount())
     {
       //Next Row
       DPUpdaterUpdatePlaylist(dpUpdaterCurrentRow);
     }
+    // otherwise run another query
     else
     {
       //Check to see if any dynamic playlists need to be updated.
@@ -110,9 +112,9 @@ function DPUpdaterUpdatePlaylist(row)
     var strName = resObj.getRowCellByColumn(row, "name");
     var strReadableName = resObj.getRowCellByColumn(row, "readable_name");
 
-    // Allow tracks with the same filename to be added to this type of
-    // playlist, see bug 1635
-    var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", false, null);
+    // true causes strURL to be compared to the origin_url before being added to library and playlist
+    dpPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+    var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", true, null);
    
     if(success)
     {
@@ -139,3 +141,4 @@ function DPUpdaterManualRun()
   if(nCount)
     DPUpdaterUpdatePlaylist(0);
 }
+

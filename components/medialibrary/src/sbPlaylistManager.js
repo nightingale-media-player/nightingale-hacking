@@ -310,7 +310,7 @@ CPlaylistManager.prototype =
 
           if(pDestPlaylist)
           {
-            for(i = 0; i < rowCount; i++)
+            for(i = 0; i < aCols.length; i++)
             {
               pDestPlaylist.addColumn(aCols[i], aColType[i]);
             }
@@ -324,20 +324,25 @@ CPlaylistManager.prototype =
         var dbQualifier = "";
         if (strSourceDB != strDestDB)
         {
-	        queryObj.addQuery("ATTACH DATABASE \"" + strDestDB + ".db\" AS \"" + strDestDB + "\"");
-	        dbQualifier = strDestDB + "\".\"";
-	    }
+          queryObj.addQuery("ATTACH DATABASE \"" + strDestDB + ".db\" AS \"" + strDestDB + "\"");
+          dbQualifier = strDestDB + "\".\"";
+        }
 
-        var strSimpleQuery = "INSERT INTO \""  + dbQualifier + strDestName + "\" (" + columnList + ") SELECT ";
+        var strSimpleQuery = "INSERT OR IGNORE INTO \""  + dbQualifier + strDestName + "\" (" + columnList + ") SELECT ";
         strSimpleQuery += columnList + " FROM \"" + strSourceName + "\"";
         
-        var strQuery = "INSERT INTO \"" + dbQualifier + strDestName + "\" (url ";
-        if(rowCount) strQuery += ", ";
+        var strQuery = "INSERT OR IGNORE INTO \"" + dbQualifier + strDestName + "\" (url ";
+        if(rowCount)
+          strQuery += ", ";
+
         strQuery += columnList + ") SELECT url ";
-        if(rowCount) strQuery += ", ";
+
+        if(rowCount)
+          strQuery += ", ";
+
         strQuery += columnList + " FROM \"" + strSourceName + "\" LEFT JOIN library ON \"" + strSourceName + "\".playlist_uuid = library.uuid";
         
-        var strFilterQuery = " WHERE ";
+        var strFilterQuery = " WHERE \"" + strSourceName + "\".url NOT IN " + dbQualifier + strDestName + "\".url AND ";
         
         if(strSourceFilterColumn != "" && nSourceFilterValueCount && aSourceFilterValues)
         {
@@ -367,7 +372,7 @@ CPlaylistManager.prototype =
         }
 
         queryObj.addQuery("DETACH DATABASE \"" + strDestDB + "\"");
-          
+
         var success = queryObj.execute();
         queryObj.waitForCompletion();
         
