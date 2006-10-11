@@ -50,6 +50,7 @@
 <!ENTITY menu.services.browse "Browse Extensions..." >
 
 <!ENTITY menu.devices       "Devices" >
+<!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.topics   "Help Topics..." >

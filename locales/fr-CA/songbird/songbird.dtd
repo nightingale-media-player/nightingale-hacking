@@ -303,3 +303,8 @@ Les Métadonnées sont sauvegardées seulement dans la base de données de Songb
 <!ENTITY metadata.bitrate "Bit Rate" >
 
 
+
+
+<!ENTITY menu.devices.nodevices "No Devices Yet" >
+
+

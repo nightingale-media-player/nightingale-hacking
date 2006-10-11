@@ -192,7 +192,7 @@
                 <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
                 <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate" accesskey="&menu.devices.accesskey;">
                   <menupopup id="devices-popup">
-                    <menuitem label="No Devices Yet"/>
+                    <menuitem label="&menu.devices.nodevices;"/>
                   </menupopup>
                 </menu>
                 <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
