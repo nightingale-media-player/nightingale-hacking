@@ -981,7 +981,7 @@ PlaylistPlayback.prototype = {
   },
 
   isPlaylistURL: function(aURL) {
-  
+    aURL = aURL.toLowerCase();
     if( ( aURL.indexOf ) && 
         (
           // For now, still hardcode the playlist types.
