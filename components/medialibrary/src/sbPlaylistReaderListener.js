@@ -52,6 +52,7 @@ CPlaylistReaderListener.prototype =
   playWhenLoaded: false,
   mediaMimetypesOnly: false,
   observer: null,
+  state: "",
   
   onLocationChange: function(aWebProgress, aRequest, aLocation)
   {
@@ -69,14 +70,16 @@ CPlaylistReaderListener.prototype =
   {
     if (aStateFlags & 16 /*this.STATE_STOP*/)
     {
+      // mark ourself as finished so the PlaylistReaderManager can remove us.
+      this.state = "STATE_STOP";
+
       var playlistReaderMngr = Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
                                       .createInstance(Components.interfaces.sbIPlaylistReaderManager);
       var playlistManager =   Components.classes["@songbirdnest.com/Songbird/PlaylistManager;1"]
                                       .createInstance(Components.interfaces.sbIPlaylistManager);
       var pps =   Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                                       .getService(Components.interfaces.sbIPlaylistPlayback);
-       
-      
+
       var strContentType = "";
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
       if(aChannel)
@@ -92,7 +95,7 @@ CPlaylistReaderListener.prototype =
       var rv = playlistReaderMngr.loadPlaylist(this.destinationURL, this.serviceGuid, this.destinationTable, 
                                                     this.readableName, this.playlistType, this.description, 
                                                     strContentType, this.appendOrReplace, null);
-      
+
       if(rv == 0)
       {
         const DataRemote = new Components.Constructor( "@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");

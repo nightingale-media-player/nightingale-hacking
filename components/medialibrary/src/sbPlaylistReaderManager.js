@@ -67,7 +67,7 @@ CPlaylistReaderManager.prototype =
   m_rootContractID: "@songbirdnest.com/Songbird/Playlist/Reader/",
   m_interfaceID: Components.interfaces.sbIPlaylistReader,
   m_Browser: null,
-  m_Listener: null,
+  m_Listeners: new Array(),
   m_Readers: new Array(),
   m_Extensions: new Array(),
   m_MIMETypes: new Array(),
@@ -216,26 +216,38 @@ CPlaylistReaderManager.prototype =
                                            .getService(Components.interfaces.nsIIOService)
                                            .newURI(strURL, null, null);
 
+      // cycle through the listener array and remove any that are done
+      for ( var index = 0; index < this.m_Listeners.length; index++) {
+        var foo = this.m_Listeners[index];
+        if (foo.state.indexOf("STOP") != -1) {
+          this.m_Listeners.splice(index, 1);
+          delete foo;
+        }
+      }
+
+      var prListener = null;
       if(playlistReaderListener)
       { 
-        this.m_Listener = playlistReaderListener;
+        prListener = playlistReaderListener;
       }
       else
       {
-        this.m_Listener = (new PlaylistReaderListener()).QueryInterface(Components.interfaces.sbIPlaylistReaderListener);
+        prListener = (new PlaylistReaderListener()).QueryInterface(Components.interfaces.sbIPlaylistReaderListener);
       }
 
-      this.m_Listener.originalURL = this.originalURL;
-      this.m_Listener.serviceGuid = strGUID;
-      this.m_Listener.destinationURL = "file:///" + destFile;
-      this.m_Listener.destinationTable = strName;
-      this.m_Listener.readableName = strReadableName;
-      this.m_Listener.playlistType = strPlaylistType;
-      this.m_Listener.description = strDescription;
-      this.m_Listener.appendOrReplace = bAppendOrReplace;
+      prListener.originalURL = this.originalURL;
+      prListener.serviceGuid = strGUID;
+      prListener.destinationURL = "file:///" + destFile;
+      prListener.destinationTable = strName;
+      prListener.readableName = strReadableName;
+      prListener.playlistType = strPlaylistType;
+      prListener.description = strDescription;
+      prListener.appendOrReplace = bAppendOrReplace;
 
 //      this.m_Browser.persistFlags |= 2; // PERSIST_FLAGS_BYPASS_CACHE;
-      this.m_Browser.progressListener = this.m_Listener;
+
+      this.m_Browser.progressListener = prListener;
+      this.m_Listeners.push(prListener);
       
       this.m_Browser.saveURI(aLocalURI, null, null, null, "", aLocalFile);
 

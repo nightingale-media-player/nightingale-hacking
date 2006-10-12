@@ -28,7 +28,7 @@ const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/P
 const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
 
 var dpPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
-var dpPlaylistReaderManager = null; 
+var dpPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
 
 var dpCurrentTime = new Date();
 var dpUpdaterCurrentRow = 0;
@@ -48,6 +48,13 @@ function DPUpdaterInit(interval)
     if(interval != 0)
       dpUpdaterPeriod = interval;
 
+    // create a closure to keep the manager around (and its web progress listener)
+    var DPUpdaterStart = function ()
+    {
+      // Wake up every 30 seconds times the period.
+      dpUpdaterInterval = setInterval( DPUpdaterRun, dpUpdaterPeriod * 30 * 1000 );
+    }
+
     setTimeout( DPUpdaterStart, 30 * 1000 ); // Don't do nothing for 30 seconds
   }
   catch(err)
@@ -62,11 +69,6 @@ function DPUpdaterDeinit()
     clearInterval(dpUpdaterInterval);
 }
 
-function DPUpdaterStart()
-{
-  // Then wake up every 30 seconds times the period.
-  dpUpdaterInterval = setInterval( DPUpdaterRun, dpUpdaterPeriod * 30 * 1000 );
-}
 
 function DPUpdaterRun()
 {
@@ -113,7 +115,6 @@ function DPUpdaterUpdatePlaylist(row)
     var strReadableName = resObj.getRowCellByColumn(row, "readable_name");
 
     // true causes strURL to be compared to the origin_url before being added to library and playlist
-    dpPlaylistReaderManager = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
     var success = dpPlaylistReaderManager.loadPlaylist(strURL, strGUID, strName, strReadableName, "user", strURL, "", true, null);
    
     if(success)
