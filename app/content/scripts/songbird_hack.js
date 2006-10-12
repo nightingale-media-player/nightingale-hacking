@@ -271,7 +271,7 @@ function SBMigrateDatabase()
   
   queryObject.setDatabaseGUID("songbird");
   queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
-  queryObject.addQuery("INSERT OR REPLACE INTO " + LIBRARY_DESC_TABLE_NAME + " VALUES (\"origin_url\", \"" + origin_url + "\", 1, 0, 1, 0, -1, 'text', 1)");
+  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"\", 1, 0, 1, 0, -1, 'text', 1)");
   queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
   
   queryObject.execute();
@@ -287,6 +287,13 @@ var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
 
 function SBInitialize()
 {
+  try
+  {
+    //Whatever migration is required between version, this function takes care of it.
+    SBMigrateDatabase();
+  }
+  catch(e) { }
+
   const BROWSER_FILTER_CONTRACTID =
     "@mozilla.org/appshell/component/browser-status-filter;1";
   const nsIWebProgress = Components.interfaces.nsIWebProgress;
@@ -385,7 +392,7 @@ function SBInitialize()
     theNumPlaylistItemsRemote.stringValue = "";
     setInterval( NumItemsPoll, 500 );
     
-//    
+//
 // Let's test loading all sorts of random urls as if they were playlists!    
 //    var the_url = "ftp://ftp.openbsd.org/pub/OpenBSD/songs";
 //    var the_url = "http://www.blogotheque.net/mp3/";
