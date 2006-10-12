@@ -219,9 +219,10 @@ CPlaylistReaderManager.prototype =
       // cycle through the listener array and remove any that are done
       for ( var index = 0; index < this.m_Listeners.length; index++) {
         var foo = this.m_Listeners[index];
-        if (foo.state.indexOf("STOP") != -1) {
+        if (foo.state && foo.state.indexOf("STOP") != -1) {
           this.m_Listeners.splice(index, 1);
           delete foo;
+          index = 0;
         }
       }
 
