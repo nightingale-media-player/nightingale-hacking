@@ -600,7 +600,7 @@
     <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
     <key id="selectall-key" modifiers="accel" key="A" />
     <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
-    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="doMenu('control.jumpto');"/>
+    <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
     <key id="search-key" modifiers="accel" key="&search.key;" oncommand="focusSearch();"/>
     <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="focusLocationBar();"/>
     <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>

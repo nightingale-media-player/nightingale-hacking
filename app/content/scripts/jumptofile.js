@@ -40,6 +40,8 @@ try
     // "popup=yes" causes nasty issues on the mac with the resizers?
     if (!document.__JUMPTO__)
       window.openDialog( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizeable=yes", document );
+    else
+      document.__JUMPTO__.defaultView.focus();
   }
 
   var SBEmptyPlaylistCommands = 
