@@ -341,9 +341,8 @@ CPlaylistManager.prototype =
           strQuery += ", ";
 
         strQuery += columnList + " FROM \"" + strSourceName + "\" LEFT JOIN library ON \"" + strSourceName + "\".playlist_uuid = library.uuid";
-        
-        var strFilterQuery = " WHERE \"" + strSourceName + "\".url NOT IN " + dbQualifier + strDestName + "\".url AND ";
-        
+
+        var strFilterQuery = " WHERE ";
         if(strSourceFilterColumn != "" && nSourceFilterValueCount && aSourceFilterValues)
         {
           if(strSourceName != "library")

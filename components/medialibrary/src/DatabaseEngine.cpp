@@ -65,7 +65,7 @@
 #define SQLITE_MAX_RETRIES            666
 #define QUERY_PROCESSOR_THREAD_COUNT  4
 
-#if defined(DEBUG)
+#if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
     #include <windows.h>
   #endif

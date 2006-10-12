@@ -77,7 +77,7 @@ sbDownloadListener::OnStateChange(nsIWebProgress *aWebProgress,
 {
   if (mShutDown)
   {
-    aRequest->Cancel(0);
+    aRequest->Cancel(NS_ERROR_ABORT);
     return NS_OK;
   }
 
@@ -518,11 +518,32 @@ sbDownloadDevice::AutoDownloadTable(const nsAString& aDeviceString,
   // Get rid of finished downloads
   RemoveExistingTransferTableEntries(nsnull, PR_TRUE);
 
-  return sbDeviceBase::AutoDownloadTable(aDeviceString, aContextInput,
+  nsresult rv = sbDeviceBase::AutoDownloadTable(aDeviceString, aContextInput,
                                          aTableName, aFilterColumn,
                                          aFilterCount, aFilterValues,
                                          aSourcePath, aDestPath,
                                          aTransferTable, _retval);
+
+  nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
+  query->SetDatabaseGUID(nsAutoString(CONTEXT_DOWNLOAD_DEVICE));
+  query->SetAsyncQuery(PR_FALSE);
+
+  nsAutoString strQuery;
+  strQuery.AssignLiteral("ATTACH DATABASE \"songbird.db\" AS \"songbird\"");
+  query->AddQuery(strQuery);
+
+  strQuery.AssignLiteral("DELETE FROM ");
+  strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
+  strQuery.AppendLiteral(" WHERE url IN ( SELECT url FROM library WHERE url LIKE \"file:%\")");
+  query->AddQuery(strQuery);
+
+  strQuery.AssignLiteral("DETACH DATABASE songbird");
+  query->AddQuery(strQuery);
+
+  PRInt32 queryError = 0;
+  query->Execute(&queryError);
+
+  return rv;
 }
 
 NS_IMETHODIMP

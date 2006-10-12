@@ -49,7 +49,7 @@ genre TEXT DEFAULT '', composer TEXT DEFAULT '', producer TEXT DEFAULT '', ratin
 track_no INTEGER DEFAULT 0, track_total INTEGER DEFAULT 0, disc_no INTEGER DEFAULT 0, \
 disc_total INTEGER DEFAULT 0, year INTEGER DEFAULT 0)";
 
-const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uuid, url, content_type, length, artist, album, genre, rating)";
+const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uuid, url, origin_url, content_type, length, artist, album, genre, rating)";
 
 //const LIBRARY_TAGS_TABLE_CREATE = "CREATE TABLE tags (
 
@@ -66,6 +66,28 @@ CMediaLibrary.prototype =
   m_queryObject: null,
 
   m_UUIDGenerator: null,
+
+  getPlatformString: function()
+  {
+    try {
+      var sysInfo =
+        Components.classes["@mozilla.org/system-info;1"]
+                  .getService(Components.interfaces.nsIPropertyBag2);
+      return sysInfo.getProperty("name");                                          
+    }
+    catch (e) {
+      dump("System-info not available, trying the user agent string.\n");
+      var user_agent = navigator.userAgent;
+      if (user_agent.indexOf("Windows") != -1)
+        return "Windows_NT";
+      else if (user_agent.indexOf("Mac OS X") != -1)
+        return "Darwin";
+      else if (user_agent.indexOf("Linux") != -1)
+        return "Linux";
+      return "";
+    }
+  },
+
 
   setQueryObject: function(queryObj)
   {
@@ -177,12 +199,13 @@ CMediaLibrary.prototype =
       
       if(bCheckOriginURL)
       {
-        strQuery += "origin_url = \"" + strMediaURL + "\"";
+        strQuery += "origin_url = \"" + strMediaURL + "\" OR ";
       }
+
+      if(this.getPlatformString() == "Windows_NT")
+        strQuery += "url LIKE \"" + strMediaURL + "\"";
       else
-      {
         strQuery += "url = \"" + strMediaURL + "\"";
-      }
       
       aDBQuery.setAsyncQuery(true);
       aDBQuery.setDatabaseGUID(dbguid);

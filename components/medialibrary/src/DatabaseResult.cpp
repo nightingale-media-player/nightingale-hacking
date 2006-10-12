@@ -48,10 +48,11 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseResult, sbIDatabaseResult)
 
 //-----------------------------------------------------------------------------
 CDatabaseResult::CDatabaseResult()
-: m_pColumnNamesLock(PR_NewLock())
-, m_pRowCellsLock(PR_NewLock())
-, m_pColumnResolveMap(PR_NewLock())
 {
+  m_pColumnNamesLock = PR_NewLock();
+  m_pRowCellsLock = PR_NewLock();
+  m_pColumnResolveMap = PR_NewLock();
+
   NS_ASSERTION(m_pColumnNamesLock, "CDatabaseResult.m_pColumnNamesLock failed");
   NS_ASSERTION(m_pRowCellsLock, "CDatabaseResult.m_pRowCellsLock failed");
 #ifdef DEBUG_locks
