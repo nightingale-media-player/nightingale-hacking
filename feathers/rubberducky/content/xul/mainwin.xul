@@ -318,7 +318,7 @@
             </hbox>
 
             <!-- inner_frame -->
-            <vbox class="sb_faceplate" flex="1">
+            <vbox id="frame_inner_pane" class="sb_faceplate" flex="1">
               
               <!-- CONTROL PANE -->
               <hbox id="frame_control_pane" pack="center" align="center" class="sb_faceplate" src="control_pane/control_pane.xul">
@@ -356,7 +356,7 @@
                 </vbox>
 
                 <!-- SPACER -->
-                <spacer flex="1" height="60"/>
+                <spacer id="control_middle_spacer" flex="1" height="60"/>
 
                 <hbox id="control_right_box" class="sb_faceplate">
                   <!-- REPEAT/SHUFFLE -->
