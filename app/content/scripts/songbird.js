@@ -713,9 +713,9 @@ function createLibraryRef() {
   var source = new sbIPlaylistsource();
   source.feedPlaylist( "NC:songbird_library", "songbird", "library");
   source.executeFeed( "NC:songbird_library" );
-  // Synchronous call!  Woo hoo!
-  while( source.isQueryExecuting( "NC:songbird_library" ) )
-    ;
+  
+  source.waitForQueryCompletion( "NC:songbird_library" );  
+  
   // After the call is done, force GetTargets
   source.forceGetTargets( "NC:songbird_library", false );
 }
