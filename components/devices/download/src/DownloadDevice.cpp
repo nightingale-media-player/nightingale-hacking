@@ -412,9 +412,77 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
   nsCOMPtr<nsIURI> linkURI;
   nsresult rv = NS_NewURI(getter_AddRefs(linkURI), nsAutoString(source));
 
+  nsAutoString lOrigUrl(destination);
   nsAutoString lUrl(destination);
+
   nsCOMPtr<nsILocalFile> linkFile;
   rv = NS_NewLocalFile(lUrl, PR_FALSE, getter_AddRefs(linkFile));
+
+  PRInt32 fileNum = 1;
+  PRBool fileExists = PR_TRUE;  
+  linkFile->Exists(&fileExists);  
+
+  while(fileExists)
+  {
+    nsAutoString strNum;
+    lUrl = lOrigUrl;
+
+    PRInt32 extPos = lUrl.RFindChar('.');
+
+    strNum.AssignLiteral("_");
+    strNum.AppendInt(fileNum);
+    strNum.AppendLiteral("_");
+
+    lUrl.Insert(strNum, extPos);
+    linkFile->InitWithPath(lUrl);
+    
+    linkFile->Exists(&fileExists);
+    fileNum++;
+  }
+
+  if(!lOrigUrl.Equals(lUrl))
+  {
+    nsAutoString strQuery;
+    nsAutoString strProgress;
+    nsCOMPtr<sbIDatabaseResult> result;
+    nsCOMPtr<sbIDatabaseQuery> query = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
+    PRInt32 queryError = 0;
+
+    query->SetDatabaseGUID(nsAutoString(CONTEXT_DOWNLOAD_DEVICE));
+    query->SetAsyncQuery(PR_FALSE);
+
+    strQuery.AssignLiteral("SELECT progress FROM ");
+    strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
+    strQuery.AppendLiteral(" WHERE destination = \"");
+    strQuery += lOrigUrl;
+    strQuery.AppendLiteral("\"");
+
+    query->AddQuery(strQuery);
+    query->Execute(&queryError);
+    query->GetResultObject(getter_AddRefs(result));
+    result->GetRowCell(0, 0, strProgress);
+
+    if(strProgress.IsEmpty())
+    {
+      query->ResetQuery();
+
+      strQuery.AssignLiteral("UPDATE ");
+      strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
+      strQuery.AppendLiteral(" SET destination = \"");
+      strQuery += lUrl;
+      strQuery.AppendLiteral("\" WHERE destination = \"");
+      strQuery += lOrigUrl;
+      strQuery.AppendLiteral("\" AND id = ");
+      strQuery.Append(index);
+
+      query->AddQuery(strQuery);
+      query->Execute(&queryError);
+    }
+    else
+    {
+      linkFile->InitWithPath(lOrigUrl);
+    }
+  }
 
   mListener = new sbDownloadListener(this, deviceString, table, index);
   mListener->AddRef();
@@ -536,6 +604,11 @@ sbDownloadDevice::AutoDownloadTable(const nsAString& aDeviceString,
   strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
   strQuery.AppendLiteral(" WHERE url IN ( SELECT url FROM library WHERE url LIKE \"file:%\")");
   query->AddQuery(strQuery);
+
+  strQuery.AssignLiteral("UPDATE "); 
+  strQuery += DOWNLOAD_DEVICE_TABLE_NAME;
+  strQuery += NS_LITERAL_STRING(" SET id = rowid");
+  rv = query->AddQuery(strQuery);
 
   strQuery.AssignLiteral("DETACH DATABASE songbird");
   query->AddQuery(strQuery);

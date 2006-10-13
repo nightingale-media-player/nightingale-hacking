@@ -1931,6 +1931,18 @@ sbDeviceBase::DownloadDone(PRUnichar* deviceString,
 
     PRBool bRet = PR_FALSE;
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("url"), destURL, PR_FALSE, &bRet);
+    if(!bRet)
+    {
+      nsAutoString foundguid;
+      pLibrary->GetValueByURL(destURL, NS_LITERAL_STRING("uuid"), foundguid);
+      if(!foundguid.IsEmpty())
+      {
+        guid = foundguid;
+        pLibrary->RemoveMediaByGUID(guid, PR_FALSE, &bRet);
+        pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("url"), destURL, PR_FALSE, &bRet);
+      }
+    }
+
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("title"), strFile, PR_FALSE, &bRet);
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("length"), NS_LITERAL_STRING("0"), PR_FALSE, &bRet);
 

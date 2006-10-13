@@ -632,12 +632,14 @@ CMediaLibrary.prototype =
       
       if(!bWillRunLater)
       {
-        this.m_queryObject.execute();
+        var success = this.m_queryObject.execute();
         this.m_queryObject.waitForCompletion();
+        
+        return success > 0 ? false : true;
       }
     }
     
-    return;
+    return true;
   },
 
   setValuesByGUID: function(mediaGUID, nMetaKeyCount, aMetaKeys, nMetaValueCount, aMetaValues, bWillRunLater)
