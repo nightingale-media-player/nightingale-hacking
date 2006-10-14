@@ -10,5 +10,6 @@ mkdir ${DEPTH}/_built_installer
 
 cp ${DEPTH}/installer/macosx/LICENSE.txt ${DEPTH}/compiled/dist/Songbird.app/
 cp ${DEPTH}/installer/macosx/TRADEMARK.txt ${DEPTH}/compiled/dist/Songbird.app/
+ln -s /Applications/ ${DEPTH}/compiled/dist/Applications
 
-${DEPTH}/installer/macosx/make-diskimage ${DEPTH}/_built_installer/Songbird_${CURRENT_DATE}_${ARCH}.dmg ${DEPTH}/compiled/dist Songbird -null- ${DEPTH}/installer/macosx/songbird.dsstore
+${DEPTH}/installer/macosx/make-diskimage ${DEPTH}/_built_installer/Songbird_${CURRENT_DATE}_${ARCH}.dmg ${DEPTH}/compiled/dist Songbird -null- ${DEPTH}/installer/macosx/songbird.dsstore ${DEPTH}/installer/macosx/background.tiff
