@@ -405,11 +405,9 @@ try
     // Feed the new search into the list.
     var source = new sbIPlaylistsource();
     // Wait until it is done executing
-    if ( ! source.isQueryExecuting( jumpto_ref ) )
-    {
-      // ...before attempting to override.
-      source.setSearchString( jumpto_ref, search, false /* don't reset the filters */ );
-    }
+    waitForQueryCompletionTimeout(source, jumpto_ref, 5000);
+    // ...before attempting to override.
+    source.setSearchString( jumpto_ref, search, false /* don't reset the filters */ );
   }
   
   function onJumpToPlay(event) {
@@ -448,8 +446,7 @@ try
       if (search_widget) search_widget.loadPlaylistSearchString();
     }
     var source = new sbIPlaylistsource();
-    while( source.isQueryExecuting( source_ref ) )
-      ;
+    waitForQueryCompletionTimeout(source, source_ref, 5000);
     source.forceGetTargets( source_ref, true );
     setTimeout("playSourceRefAndClose("+rowid+");", 0);
   }
@@ -572,9 +569,7 @@ try
     if (!exists) {
       source.feedPlaylist( ref, guid, table );
       source.executeFeed( ref );
-      // Synchronous call!  Woo hoo!
-      while( source.isQueryExecuting( ref ) )
-        ;
+      waitForQueryCompletionTimeout(source, ref, 5000);
       // After the call is done, force GetTargets
       source.forceGetTargets( ref, false );
     }
@@ -740,6 +735,19 @@ try
       // No component
       dump("Error. jumptofile.js:setMinMaxCallback() \n " + err + "\n");
     }
+  }
+  
+  function waitForQueryCompletionTimeout( source, ref, timeout ) {
+    var start = new Date().getTime();
+    while ( source.isQueryExecuting( ref ) && ( new Date().getTime() - start < timeout ) ) {
+      _sleep( 100 );
+    }
+  }
+
+  function _sleep( ms ) {
+    var thread = Components.classes["@mozilla.org/thread;1"].createInstance();
+    thread = thread.QueryInterface(Components.interfaces.nsIThread);
+    thread.currentThread.sleep(ms);
   }
 
   var SBJumptoWindowMinMaxCB = 
