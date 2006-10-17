@@ -55,6 +55,10 @@
 #include <xpcom/nsMemory.h>
 #include <unicharutil/nsUnicharUtils.h>
 
+#define WM_USER_WMD_ADDED (WM_USER+1)
+
+#define SONGBIRD_WMD_SYNC_WINDOW NS_L("sbWmdSyncWindow")
+
 EXTERN_GUID(CLSID_WMDRMDeviceApp, 0x5C140836,0x43DE,0x11d3,0x84,0x7D,0x00,0xC0,0x4F,0x79,0xDB,0xC0);
 EXTERN_GUID(IID_IWMDRMDeviceApp, 0x93AFDB44,0xB1E1,0x411d,0xb8,0x9b,0x75,0xad,0x4f,0x97,0x88,0x2b);
 EXTERN_GUID(IID_IWMDRMDeviceApp2, 0x600D6E55,0xDEA5,0x4e4c,0x9c,0x3a,0x6b,0xd6,0x42,0xa4,0x5b,0x9d);
@@ -683,13 +687,13 @@ PRBool WMDevice::Initialize()
     mDeviceString += mDeviceName;
     mDeviceString += DEVICE_STRING_SUFFIX;
 
-    mDeviceNum = mParentWMDManager->GetNextAvailableDBNumber();
+    mDeviceNumber = mParentWMDManager->GetNextAvailableDBNumber();
 
     mDeviceContext = CONTEXT_WINDOWS_MEDIA_DEVICE;
-    mDeviceContext.AppendInt(mDeviceNum);
+    mDeviceContext.AppendInt(mDeviceNumber);
 
     EnumTracks();
-    UpdateDeviceLibraryData();
+    //UpdateDeviceLibraryData();
   }
 
   return retVal;
@@ -1107,8 +1111,24 @@ ULONG STDMETHODCALLTYPE CWMDProgress::Release()
   return dwRetVal;
 }
 
-// WMDManager class definitions
+// WMDManager class related definitions
 //
+static LRESULT CALLBACK CreatorThreadWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  WMDManager *wmdmObject = reinterpret_cast<WMDManager*>(GetWindowLong(hWnd, GWL_USERDATA));
+
+  if (uMsg == WM_USER_WMD_ADDED)
+  {
+    // Assuming lParam has the device id
+    nsString deviceString;
+    wmdmObject->GetDeviceStringByIndex((PRUint32) lParam, deviceString);
+    wmdmObject->UpdateDatabase(deviceString);
+    // Notify listeners of the event
+    wmdmObject->mParentDevice->DoDeviceConnectCallback(deviceString);
+  }
+
+  return DefWindowProc(hWnd, uMsg, wParam, lParam);
+} 
 
 WMDManager::WMDManager(class sbWMDevice* parent):
   mParentDevice(parent),
@@ -1119,6 +1139,17 @@ WMDManager::WMDManager(class sbWMDevice* parent):
   {
     mDBAvaliable[index] = PR_TRUE;
   }
+  // Create an invisible window to send and receive messages for main thread
+  // assuming this object is being created in the main thread's context.
+  WNDCLASS wndClass;
+  memset(&wndClass, 0, sizeof(wndClass));
+  wndClass.hInstance = GetModuleHandle(NULL);
+  wndClass.lpfnWndProc = CreatorThreadWindowProc;
+  wndClass.lpszClassName = SONGBIRD_WMD_SYNC_WINDOW;
+  RegisterClass(&wndClass);
+
+  mCreatorThreadWindow = CreateWindow(SONGBIRD_WMD_SYNC_WINDOW, NULL, WS_POPUP, 0, 0, 1, 1, NULL, NULL, GetModuleHandle(NULL), NULL);
+  SetWindowLong(mCreatorThreadWindow, GWL_USERDATA, (LPARAM)this);
 }
 
 WMDManager::~WMDManager()
@@ -1129,6 +1160,10 @@ WMDManager::~WMDManager()
     delete wmObject;
   } 
 
+  // Clean up sync window stuff here.
+  DestroyWindow(mCreatorThreadWindow);
+  UnregisterClass(SONGBIRD_WMD_SYNC_WINDOW, GetModuleHandle(NULL));
+  
   SAFE_DELETE(mSAC);
   SAFE_RELEASE(mWMDevMgr);
 
@@ -1197,10 +1232,9 @@ void WMDManager::GetContext(const nsAString& deviceString, nsAString& _retval)
 
 void WMDManager::GetDeviceStringByIndex(PRUint32 aIndex, nsAString& _retval)
 { 
-  PRUint32 currentIndex = 0;
   for (std::list<WMDevice *>::iterator iteratorWMObjectects = mDevices.begin(); iteratorWMObjectects != mDevices.end(); iteratorWMObjectects ++)
   {
-    if (currentIndex ++ == aIndex)
+    if ((*iteratorWMObjectects)->GetDeviceNumber() == aIndex)
     {
       _retval.Assign((*iteratorWMObjectects)->GetDeviceString());
     }
@@ -1271,6 +1305,7 @@ PRBool WMDManager::GetTrackTable(const nsAString&  deviceString, nsAString& dbCo
 
   if (wmObject)
   {
+    dbContext = wmObject->GetDeviceContext();
     tableName = wmObject->GetDeviceTracksTable();
   }
 
@@ -1612,8 +1647,9 @@ PRBool WMDManager::AddDevice(IWMDMDevice* pIDevice)
   if (wmdevice->Initialize())
   {
     mDevices.push_back(wmdevice);
-    // Notify listeners of the event
-    mParentDevice->DoDeviceConnectCallback(wmdevice->GetDeviceString());
+    // Post a message to our invisible window to update the database
+    // can call device add notification.
+    PostMessage(mCreatorThreadWindow, WM_USER_WMD_ADDED, 0, wmdevice->GetDeviceNumber());
   }
   else
   {
@@ -1697,6 +1733,16 @@ void WMDManager::MediaInsert(LPCWSTR pwszCanonicalName)
 
 void WMDManager::MediaRemove(LPCWSTR pwszCanonicalName)
 {
+}
+
+void WMDManager::UpdateDatabase(const nsAString& deviceString)
+{
+  WMDevice* wmObject = GetDeviceMatchingString(deviceString);
+
+  if (wmObject)
+  {
+    wmObject->UpdateDeviceLibraryData();
+  }
 }
 
 HRESULT CNotificationHandler::WMDMMessage (/*[in]*/ DWORD dwMessageType, /*[in]*/ LPCWSTR pwszCanonicalName)

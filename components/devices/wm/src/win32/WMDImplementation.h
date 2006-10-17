@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2006 POTI, Inc.
+// Copyright© 2006 Pioneers of the Inevitable LLC
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
+// GNU General Public License Version 2 (the “GPL”).
 // 
 // Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -202,14 +202,13 @@ public:
   PRBool      IsEjectSupported(){return PR_FALSE;}
   PRBool      EjectDevice(){return PR_FALSE;}
   PRBool      IsUpdateSupported(){return PR_FALSE;}
-  PRUint32    GetDeviceNumber() { return mDeviceNum; }
+  PRUint32    GetDeviceNumber() { return mDeviceNumber; }
+  PRBool      UpdateDeviceLibraryData();
 
 private:
   WMDevice() {}
 
   static void MyTimerCallbackFunc(nsITimer *aTimer, void *aClosure);
-
-  static PRUint32 mDeviceNumber;
 
   DWORD mNumTracks;
   DWORD mUsedSpace;
@@ -244,7 +243,6 @@ private:
   PRBool  ReadDeviceAttributes(void);
   PRBool  IsFileFormatAcceptable(const char* fileFormat);
   void    EnumTracks();
-  PRBool  UpdateDeviceLibraryData();
   void    ClearLibraryData();
 
   _WAVEFORMATEX   mFormat;
@@ -261,7 +259,7 @@ private:
   WMDMID          mSerialNumber;
   DWORD           mType;
   WMDeviceFolder  mRootFolder;
-  PRUint32        mDeviceNum;
+  PRUint32        mDeviceNumber;
 };
 
 class CNotificationHandler : public IWMDMNotification
@@ -326,8 +324,11 @@ public:
   virtual PRBool      IsUploadPaused(const nsAString& deviceString);
   virtual PRBool      IsTransferPaused(const nsAString& deviceString);
   virtual void        TransferComplete(const nsAString& deviceString);
+  virtual void        UpdateDatabase(const nsAString& deviceString);
 
   PRUint32 GetNextAvailableDBNumber();
+
+  friend LRESULT CALLBACK CreatorThreadWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
   WMDevice* GetDeviceMatchingString(const nsAString& deviceString);
@@ -355,4 +356,5 @@ private:
   DWORD mdwNotificationCookie;
   CSecureChannelClient* mSAC;
   PRUint32  mDBAvaliable[MAX_WMD_SUPPORTED];
+  HWND mCreatorThreadWindow;
 };

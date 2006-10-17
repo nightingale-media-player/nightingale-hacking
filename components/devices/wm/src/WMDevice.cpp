@@ -4,14 +4,14 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2006 POTI, Inc.
+// Copyright© 2006 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
+// GNU General Public License Version 2 (the “GPL”).
 // 
 // Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
 // express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
@@ -54,28 +54,21 @@
 #include "win32/WMDImplementation.h"
 #endif
 
-#define USE_THREAD 1
-
 /* Implementation file */
 
 #define NAME_WINDOWS_MEDIA_DEVICE_LEN     NS_LITERAL_STRING("Songbird Windows Media Device").Length()
-#define NAME_WINDOWS_MEDIA_DEVICE         NS_LITERAL_STRING("Songbird Windows Media Device").get()
+#define NAME_WINDOWS_MEDIA_DEVICE         NS_LITERAL_STRING("Songbird WM Device").get()
 
 // CLASSES ====================================================================
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbWMDevice, sbIDeviceBase, sbIWMDevice)
 
 //-----------------------------------------------------------------------------
 sbWMDevice::sbWMDevice()
-#if USE_THREAD
 : sbDeviceBase(PR_TRUE)
-#else // USE_THREAD
-: sbDeviceBase(PR_FALSE)
-#endif // USE_THREAD
 , mpMonitor(nsnull)
 {
   mpMonitor = PR_NewMonitor();
-  NS_ASSERTION(mpMonitor, "sbWMDevice::mpMonitor failed to be created.");
-
+  NS_ASSERTION(mpMonitor, "sbWMDevice::mpMonitor failed to be created.");  
   mDeviceManager = new WMDManager(this);
   NS_ASSERTION(mDeviceManager, "sbWMDevice::mDeviceManager failed to be created.");
 } //ctor
@@ -101,11 +94,7 @@ sbWMDevice::~sbWMDevice()
 NS_IMETHODIMP
 sbWMDevice::Initialize(PRBool *_retval)
 {
-#if USE_THREAD
   InitializeAsync();
-#else // USE_THREAD
-  InitializeSync();
-#endif // USE_THREAD
   return NS_OK;
 }
 
@@ -149,7 +138,9 @@ NS_IMETHODIMP
 sbWMDevice::GetDeviceStringByIndex(PRUint32 aIndex,
                                    nsAString& _retval)
 {
-  return sbDeviceBase::GetDeviceStringByIndex(aIndex, _retval);
+  mDeviceManager->GetDeviceStringByIndex(aIndex, _retval);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -224,8 +215,12 @@ sbWMDevice::GetTrackTable(const nsAString& aDeviceString,
                           nsAString& aTableName,
                           PRBool *_retval)
 {
-  return sbDeviceBase::GetTrackTable(aDeviceString, aDBContext, aTableName,
-    _retval);
+  if(mDeviceManager)
+  {
+    *_retval = mDeviceManager->GetTrackTable(aDeviceString, aDBContext, aTableName);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -342,7 +337,12 @@ sbWMDevice::IsEjectSupported(const nsAString& aDeviceString,
 NS_IMETHODIMP
 sbWMDevice::GetDeviceCount(PRUint32* aDeviceCount)
 {
-  return sbDeviceBase::GetDeviceCount(aDeviceCount);
+  if(mDeviceManager)
+  {
+    *aDeviceCount = mDeviceManager->GetNumDevices();
+  }
+
+  return S_OK;
 }
 
 NS_IMETHODIMP
@@ -529,4 +529,5 @@ void sbWMDevice::ClearLibraryData(nsAString& dbContext)
     }
   }
 }
+
 
