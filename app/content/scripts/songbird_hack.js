@@ -4168,10 +4168,270 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
     var theServiceTree = document.getElementById( 'frame_servicetree' );
     theServiceTree.launchURL( "chrome://songbird/content/xul/playlist_test.xul?" + table + "," + guid );
   }
+}
+
+// WMD 
+var theSBWMDCommands = 
+{
+  DEVICE_IDLE :               0,
+  DEVICE_BUSY :               1,
+  DEVICE_DOWNLOADING :        2,
+  DEVICE_UPLOADING :          3,
+  DEVICE_DOWNLOAD_PAUSED :    4,
+  DEVICE_UPLOAD_PAUSED :      5,
+  DEVICE_DELETING :           6,
+  
+  m_Playlist: null,
+  m_Device: null,
+  m_Context: null, 
+  m_Table: null,
+  m_DeviceName: null,
+
+  m_Ids: new Array
+  (
+    "library_cmd_edit"
+  ),
+  
+  m_Names: new Array
+  (
+    "&command.edit"
+  ),
+  
+  m_Tooltips: new Array
+  (
+    "&command.tooltip.edit"
+  ),
+
+  getNumCommands: function()
+  {
+    if ( 
+        ( this.m_Tooltips.length != this.m_Ids.length ) ||
+        ( this.m_Names.length != this.m_Ids.length ) ||
+        ( this.m_Tooltips.length != this.m_Names.length )
+       )
+    {
+      alert( "PlaylistCommands - Array lengths do not match!" );
+      return 0;
+    }
+    return this.m_Ids.length;
+  },
+
+  getCommandId: function( index )
+  {
+    if ( index >= this.m_Ids.length )
+    {
+      return "";
+    }
+    return this.m_Ids[ index ];
+  },
+
+  getCommandText: function( index )
+  {
+    if ( index >= this.m_Names.length )
+    {
+      return "";
+    }
+    return this.m_Names[ index ];
+  },
+
+  getCommandFlex: function( index )
+  {
+    if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+    return 0;
+  },
+
+
+  getCommandToolTipText: function( index )
+  {
+    if ( index >= this.m_Tooltips.length )
+    {
+      return "";
+    }
+    return this.m_Tooltips[ index ];
+  },
+
+  getCommandEnabled: function( index )
+  {
+    var retval = false;
+    if ( this.m_Device )
+    {
+      switch( index )
+      {
+        case 0:
+        case 1:
+        case 2:
+          retval = true;
+        break;
+      }
+    }
+    return retval;
+  },
+
+  onCommand: function( event )
+  {
+    if ( this.m_Device && event.target && event.target.id )
+    {
+      // Was it from the toolbarbutton?
+      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
+      switch( event.target.id )
+      {
+        case "library_cmd_edit":
+        break;
+      }
+      event.stopPropagation();
+    }
+  },
+  
+  // The object registered with the sbIPlaylistSource interface acts 
+  // as a template for instances bound to specific playlist elements
+  duplicate: function()
+  {
+    var obj = {};
+    for ( var i in this )
+    {
+      obj[ i ] = this[ i ];
+    }
+    return obj;
+  },
+  
+  setPlaylist: function( playlist )
+  {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
+    this.m_Playlist = playlist;
+  },
+  
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+
+}; // SBWMDCommands definition
+
+var theWMDListener = 
+{
+  m_queryObj: null,
+  m_libraryObj: null,
+  
+  CreateQueryObj: function()
+  {
+    this.m_queryObj = new sbIDatabaseQuery();
+    this.m_queryObj.setAsyncQuery(true);
+    this.m_queryObj.setDatabaseGUID("songbird");
+  },
+
+  CreateLibraryObj: function()
+  {
+    if(this.m_libraryObj == null)
+    {
+      const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
+      this.m_libraryObj = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);
+    
+      if(this.m_queryObj == null)
+          this.CreateQueryObj();
+        
+      this.m_libraryObj.setQueryObject(this.m_queryObj);
+    }
+  },
+  
+  QueryInterface : function(aIID) 
+  {
+    if (!aIID.equals(Components.interfaces.sbIDeviceBaseCallback) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    return this;
+  },
+  
+  onTransferStart: function(sourceURL, destinationURL)
+  {
+  },
+  
+  onTransferComplete: function(sourceURL, destinationURL, transferStatus)
+  {
+  },
+  
+  onDeviceConnect: function(deviceName)
+  {
+    OnWMDConnect(deviceName);
+  },
+  
+  onDeviceDisconnect: function(deviceName)
+  {
+  }
+};
+
+function OnWMDConnect(deviceName)
+{
+  if (deviceManager)
+  {
+    var WMDCategory = 'Songbird WM Device';
+    if (deviceManager.hasDeviceForCategory(WMDCategory))
+    {
+      var aWMDDevice =
+        deviceManager.getDeviceByCategory(WMDCategory);
+      if (aWMDDevice)
+	  {
+		theSBWMDCommands.m_DeviceName = deviceName;
+		theSBWMDCommands.m_Device = aWMDDevice;
+		var wmdTable = {};
+		var wmdContext = {};
+		aWMDDevice.getTrackTable(theSBWMDCommands.m_DeviceName, wmdContext, wmdTable);
+		wmdContext = wmdContext.value;
+		wmdTable = wmdTable.value;
+		theSBWMDCommands.m_Context = wmdContext;
+		theSBWMDCommands.m_Table = wmdTable;
+		var source = new sbIPlaylistsource();
+		if ( wmdContext && wmdTable )
+		{
+			try
+			{
+			source.registerPlaylistCommands( wmdContext, wmdTable, wmdTable, theSBWMDCommands );
+			}
+			catch ( err )
+			{
+			alert( "source.registerPlaylistCommands( " + theSBWMDCommands.m_Context + ", " + theSBWMDCommands.m_Table+ " );\r\n" + err )
+			}
+		}
+	  }
+    }
+  }
+}
+
+// Register for WMD notifications
+if (deviceManager)
+{
+    var WMDCategory = 'Songbird WM Device';
+    if (deviceManager.hasDeviceForCategory(WMDCategory))
+    {
+        var aWMDDevice = deviceManager.getDeviceByCategory(WMDCategory);
+        try
+        {
+            aWMDDevice.addCallback(theWMDListener);
+            if (aWMDDevice.deviceCount > 0)
+            {
+			  // Currently handling just the first device
+			  OnWMDConnect(aWMDDevice.getDeviceStringByIndex(0));
+            }
+        }
+        catch ( err )
+        {
+            alert( "aWMDevice.addCallback(theWMListener);\r\n" + err );
+        }
+    }
+}
 
 }// END
 
-}
 catch ( err )
 {
   alert( err );
