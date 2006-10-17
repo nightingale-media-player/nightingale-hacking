@@ -116,8 +116,8 @@ SONGBIRD_MACOS          = @top_srcdir@/@OBJDIRNAME@/@DISTDIRNAME@@MACOSX_CONTENT
 # Tools
 #
 
-CC        = @CC@@BIN_SUFFIX@
-CXX       = @CXX@@BIN_SUFFIX@
+CC        = @CC@
+CXX       = @CXX@
 LD        = @LD@@BIN_SUFFIX@
 AR        = @AR@@BIN_SUFFIX@
 RC        = @RC@@BIN_SUFFIX@
