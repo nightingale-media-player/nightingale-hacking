@@ -153,10 +153,16 @@ CPlaylistReaderManager.prototype =
         return -1;
       }
 
-      // If we are trying to load text/html or application/xml, try to guess a
-      // better mime type
-      if(strContentType == null || strContentType == "" ||
-         strContentType == "text/html" || strContentType == "application/xml") {
+      // If we are trying to load highly generic 
+      // content types, try to guess better ones
+      if( strContentType == null || 
+          strContentType == "" ||
+          strContentType == "text/html" || 
+          strContentType == "text/xml" || 
+          strContentType == "text/plain" || 
+          strContentType == "application/xhtml" || 
+          strContentType == "application/xhtml+xml" || 
+          strContentType == "application/xml" ) {
         var strContentType = this.guessMimeType(file);
         if(!strContentType) {
           return -1;
