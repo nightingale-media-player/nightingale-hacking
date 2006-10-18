@@ -49,6 +49,7 @@
 
 #include <necko/nsIURI.h>
 #include <docshell/nsIURIFixup.h>
+#include <unicharutil/nsUnicharUtils.h>
 
 #include "sbIDatabaseResult.h"
 #include "sbIDatabaseQuery.h"
@@ -1926,10 +1927,16 @@ sbDeviceBase::DownloadDone(PRUnichar* deviceString,
     pLibrary->SetQueryObject(pQuery.get());
 
     //Make sure the filename is unique when download an item from a remote source.
-    nsAutoString guid;
-    pLibrary->AddMedia(sourceURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, guid);
-
     PRBool bRet = PR_FALSE;
+    nsAutoString guid;
+    rv = pLibrary->AddMedia(sourceURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, guid);
+    if(NS_FAILED(rv))
+      rv = pLibrary->AddMedia(sourceURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount, const_cast<const PRUnichar **>(aMetaValues), PR_TRUE, PR_FALSE, guid);
+
+#if defined(XP_WIN)
+    ToLowerCase(destURL);
+#endif
+    
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("url"), destURL, PR_FALSE, &bRet);
     if(!bRet)
     {

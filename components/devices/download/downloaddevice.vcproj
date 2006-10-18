@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib unicharutil_s.lib xpcom.lib xul.lib"
 				OutputFile="$(OutDir)/sbDownloadDevice_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\$(OutDir)&quot;"
@@ -92,7 +92,7 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib xpcom.lib xul.lib"
+				AdditionalDependencies="nspr4.lib plds4.lib plc4.lib unicharutil_s.lib xpcom.lib xul.lib"
 				OutputFile="$(OutDir)/sbDownloadDevice.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\lib&quot;;&quot;$(SolutionDir)components\devices\base\$(OutDir)&quot;"

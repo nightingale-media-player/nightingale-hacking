@@ -44,6 +44,7 @@
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <string/nsStringAPI.h>
+#include <unicharutil/nsUnicharUtils.h>
 #include "nsString.h"
 
 #include "DownloadDevice.h"
@@ -412,8 +413,15 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
   nsCOMPtr<nsIURI> linkURI;
   nsresult rv = NS_NewURI(getter_AddRefs(linkURI), nsAutoString(source));
 
-  nsAutoString lOrigUrl(destination);
-  nsAutoString lUrl(destination);
+  //XXXAus: nsAutoString cannot be used in conjunction with ToLowerCase.
+  nsString lOrigUrl(destination);
+  nsString lUrl(destination);
+
+  //XXXAus: Windows filesystem is not case sensitive.
+#if defined(XP_WIN)
+  ToLowerCase(lOrigUrl);
+  ToLowerCase(lUrl);
+#endif
 
   nsCOMPtr<nsILocalFile> linkFile;
   rv = NS_NewLocalFile(lUrl, PR_FALSE, getter_AddRefs(linkFile));

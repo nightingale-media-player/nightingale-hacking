@@ -38,6 +38,7 @@
 #include <xpcom/nsAutoLock.h>     // for nsAutoMonitor
 #include <necko/nsIIOService.h>
 #include <necko/nsIURI.h>
+#include <unicharutil/nsUnicharUtils.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -57,6 +58,7 @@ CMediaScanQuery::CMediaScanQuery()
 , m_pCurrentPathLock(PR_NewLock())
 , m_pCallbackLock(PR_NewLock())
 , m_pFileStackLock(PR_NewLock())
+, m_pExtensionsLock(PR_NewLock())
 , m_pScanningLock(PR_NewLock())
 , m_pCancelLock(PR_NewLock())
 {
@@ -64,6 +66,7 @@ CMediaScanQuery::CMediaScanQuery()
   NS_ASSERTION(m_pCurrentPathLock, "MediaScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "MediaScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pFileStackLock, "MediaScanQuery.m_pFileStackLock failed");
+  NS_ASSERTION(m_pExtensionsLock, "MediaScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "MediaScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "MediaScanQuery.m_pCancelLock failed");
 } //ctor
@@ -79,6 +82,7 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
 , m_pCurrentPathLock(PR_NewLock())
 , m_pCallbackLock(PR_NewLock())
 , m_pFileStackLock(PR_NewLock())
+, m_pExtensionsLock(PR_NewLock())
 , m_pScanningLock(PR_NewLock())
 , m_pCancelLock(PR_NewLock())
 {
@@ -86,6 +90,7 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
   NS_ASSERTION(m_pCurrentPathLock, "MediaScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "MediaScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pFileStackLock, "MediaScanQuery.m_pFileStackLock failed");
+  NS_ASSERTION(m_pExtensionsLock, "MediaScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "MediaScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "MediaScanQuery.m_pCancelLock failed");
   NS_IF_ADDREF(m_pCallback);
@@ -103,6 +108,8 @@ CMediaScanQuery::CMediaScanQuery(const nsString &strDirectory, const PRBool &bRe
     PR_DestroyLock(m_pCallbackLock);
   if (m_pFileStackLock)
     PR_DestroyLock(m_pFileStackLock);
+  if (m_pExtensionsLock)
+    PR_DestroyLock(m_pExtensionsLock);
   if (m_pScanningLock)
     PR_DestroyLock(m_pScanningLock);
   if (m_pCancelLock)
@@ -153,6 +160,15 @@ NS_IMETHODIMP CMediaScanQuery::GetRecurse(PRBool *_retval)
 } //GetRecurse
 
 //-----------------------------------------------------------------------------
+NS_IMETHODIMP CMediaScanQuery::AddFileExtension(const nsAString &strExtension)
+{
+  PR_Lock(m_pExtensionsLock);
+  m_Extensions.push_back(PromiseFlatString(strExtension));
+  PR_Unlock(m_pExtensionsLock);
+  return NS_OK;
+} //AddFileExtension
+
+//-----------------------------------------------------------------------------
 /* void SetCallback (in sbIMediaScanCallback pCallback); */
 NS_IMETHODIMP CMediaScanQuery::SetCallback(sbIMediaScanCallback *pCallback)
 {
@@ -196,9 +212,12 @@ NS_IMETHODIMP CMediaScanQuery::GetFileCount(PRUint32 *_retval)
 /* void AddFilePath (in wstring strFilePath); */
 NS_IMETHODIMP CMediaScanQuery::AddFilePath(const nsAString &strFilePath)
 {
-  PR_Lock(m_pFileStackLock);
-  m_FileStack.push_back(PromiseFlatString(strFilePath));
-  PR_Unlock(m_pFileStackLock);
+  nsString strExtension = GetExtensionFromFilename(strFilePath);
+  if(VerifyFileExtension(strExtension)) {
+    PR_Lock(m_pFileStackLock);
+    m_FileStack.push_back(PromiseFlatString(strFilePath));
+    PR_Unlock(m_pFileStackLock);
+  }
   return NS_OK;
 } //AddFilePath
 
@@ -293,6 +312,49 @@ NS_IMETHODIMP CMediaScanQuery::IsCancelled(PRBool *_retval)
   return NS_OK;
 } //IsCancelled
 
+//-----------------------------------------------------------------------------
+nsString CMediaScanQuery::GetExtensionFromFilename(const nsAString &strFilename)
+{
+  nsAutoString str(strFilename);
+  nsAutoString::const_iterator strStart, start, strEnd, end;
+  str.BeginReading(start);
+  str.BeginReading(strStart);
+  str.EndReading(end);
+  str.EndReading(strEnd);
+
+  if(RFindInReadable(NS_LITERAL_STRING("."), start, end))
+  {
+    ++start;
+    size_t index = Distance(strStart, start);
+    size_t cutLen = Distance(start, strEnd);
+    return nsString(Substring(str, index, cutLen));
+  }
+
+  return EmptyString();
+} //GetExtensionFromFilename
+
+//-----------------------------------------------------------------------------
+PRBool CMediaScanQuery::VerifyFileExtension(const nsAString &strExtension)
+{
+  PRBool isValid = PR_FALSE;
+
+  PR_Lock(m_pExtensionsLock);
+  filestack_t::size_type extCount =  m_Extensions.size();
+  for(filestack_t::size_type extCur = 0; extCur < extCount; ++extCur)
+  {
+    if(m_Extensions[extCur].Equals(strExtension))
+    {
+      isValid = PR_TRUE;
+      break;
+    }
+  }
+  
+  if(extCount == 0)
+    isValid = PR_TRUE;
+  PR_Unlock(m_pExtensionsLock);
+
+  return isValid;
+} //VerifyFileExtension
 
 //*****************************************************************************
 //  CMediaScan Class
@@ -610,6 +672,9 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
                   pURI->GetSpec(u8spec);
                   strPath = NS_ConvertUTF8toUTF16(u8spec);
 
+#if defined(XP_WIN)
+                  ToLowerCase(strPath);
+#endif
                   pQuery->AddFilePath(strPath);
                   nFoundCount += 1;
 
@@ -658,6 +723,8 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
             return NS_OK;
           }
         }
+        
+        PR_Sleep(PR_MillisecondsToInterval(1));
       }
     }
   }

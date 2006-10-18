@@ -55,22 +55,23 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseQuery, sbIDatabaseQuery)
 CDatabaseQuery::CDatabaseQuery()
 : m_IsPersistentQueryRegistered(PR_FALSE)
 , m_HasChangedDataOfPersistQuery(PR_FALSE)
-, m_pPersistentQueryTableLock(PR_NewLock())
 , m_IsAborting(PR_FALSE)
 , m_IsExecuting(PR_FALSE)
 , m_AsyncQuery(PR_FALSE)
 , m_PersistentQuery(PR_FALSE)
 , m_LastError(0)
-, m_pQueryResultLock(PR_NewLock())
-, m_pDatabaseGUIDLock(PR_NewLock())
 , m_DatabaseGUID(NS_LITERAL_STRING("").get())
-, m_pDatabaseQueryListLock(PR_NewLock())
 , m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
 , m_QueryHasCompleted(PR_FALSE)
-, m_pCallbackListLock(PR_NewLock())
-, m_pPersistentCallbackListLock(PR_NewLock())
-, m_pModifiedDataLock(PR_NewLock())
 {
+  m_pPersistentQueryTableLock = PR_NewLock();
+  m_pQueryResultLock = PR_NewLock();
+  m_pDatabaseGUIDLock = PR_NewLock();
+  m_pDatabaseQueryListLock = PR_NewLock();
+  m_pCallbackListLock = PR_NewLock();
+  m_pPersistentCallbackListLock = PR_NewLock();
+  m_pModifiedDataLock = PR_NewLock();
+
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
   NS_ASSERTION(m_pDatabaseGUIDLock, "CDatabaseQuery.m_pDatabaseGUIDLock failed");

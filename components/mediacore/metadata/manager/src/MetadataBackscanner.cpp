@@ -403,7 +403,7 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
   NS_NAMED_LITERAL_STRING(strColDiscTotal, "disc_total");
   
   //DB UUID.
-  NS_NAMED_LITERAL_STRING(strDatabaseGUID, "songbird");
+  NS_NAMED_LITERAL_STRING(strDatabaseGUID, "*");
   NS_NAMED_LITERAL_STRING(strSongbirdGUID, "songbird");
   
   //The query to find stuff that needs to be scanned.
@@ -657,7 +657,8 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
       if(resultRows > 0 && pBackscanner->m_activeCount > 0)
         pBackscanner->m_activeCount--;
     }
-    
+   
+    PR_Sleep(PR_MillisecondsToInterval(33));
   }
 
   nsCOMPtr<nsIEventQueueService> pEventQueueService;

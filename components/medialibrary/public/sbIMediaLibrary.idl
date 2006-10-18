@@ -619,6 +619,8 @@ interface sbIMediaScanQuery : nsISupports
    */
   PRBool getRecurse(); /**/
 
+  void addFileExtension(in AString strExtension);
+
   /**
    * \brief Set the callback object for the scan
    *

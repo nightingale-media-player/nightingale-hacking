@@ -95,6 +95,9 @@ public:
 protected:
   typedef std::vector<nsString> filestack_t;
 
+  nsString GetExtensionFromFilename(const nsAString &strFilename);
+  PRBool VerifyFileExtension(const nsAString &strExtension);
+
   PRLock* m_pDirectoryLock;
   nsString m_strDirectory;
 
@@ -111,6 +114,9 @@ protected:
 
   PRLock* m_pFileStackLock;
   filestack_t m_FileStack;
+
+  PRLock *m_pExtensionsLock;
+  filestack_t m_Extensions;
 
   PRLock* m_pCancelLock;
   PRBool m_bCancel;

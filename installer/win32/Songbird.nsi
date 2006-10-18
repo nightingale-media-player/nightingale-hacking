@@ -53,7 +53,6 @@ ShowUninstDetails show
 
 Function .onInstSuccess
   WriteINIStr $APPDATA\Songbird_vlc\vlcrc main plugin-path $INSTDIR\vlcplugins
-  WriteINIStr $APPDATA\Songbird_vlc\vlcrc main high-priority 1
 FunctionEnd
 
 var LinkIconFile

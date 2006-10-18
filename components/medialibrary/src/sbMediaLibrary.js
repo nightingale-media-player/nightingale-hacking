@@ -51,8 +51,6 @@ disc_total INTEGER DEFAULT 0, year INTEGER DEFAULT 0)";
 
 const LIBRARY_TABLE_CREATE_INDEX = "CREATE index library_index ON library(id, uuid, url, origin_url, content_type, length, artist, album, genre, rating)";
 
-//const LIBRARY_TAGS_TABLE_CREATE = "CREATE TABLE tags (
-
 function CMediaLibrary()
 {
 }
@@ -111,8 +109,17 @@ CMediaLibrary.prototype =
       
       //Create the Library Table.
       this.m_queryObject.addQuery(LIBRARY_TABLE_CREATE);
+      
       //Create the Library Index.
-      this.m_queryObject.addQuery(LIBRARY_TABLE_CREATE_INDEX);
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_uuid ON library(uuid)");
+      this.m_queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_url ON library(url)");
+      this.m_queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_service_uuid ON library(service_uuid)");
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_length ON library(length)");
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_artist ON library(artist)");
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_album ON library(album)");
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_genre ON library(genre)");
+      this.m_queryObject.addQuery("CREATE INDEX IF NOT EXISTS library_index_rating ON library(rating)");
 
       // Strings beginning with & are translated in the UI.
       var id = ( "&metadata.id" );
@@ -203,10 +210,15 @@ CMediaLibrary.prototype =
       }
 
       if(this.getPlatformString() == "Windows_NT")
-        strQuery += "url LIKE \"" + strMediaURL + "\"";
-      else
-        strQuery += "url = \"" + strMediaURL + "\"";
-      
+      {
+        var strScheme = strMediaURL.substr(0, 4);
+        strScheme = strScheme.toLowerCase();
+        if(strScheme == "file")
+          strMediaURL = strMediaURL.toLocaleLowerCase();
+      } 
+
+      strQuery += "url = \"" + strMediaURL + "\"";
+
       aDBQuery.setAsyncQuery(true);
       aDBQuery.setDatabaseGUID(dbguid);
       
