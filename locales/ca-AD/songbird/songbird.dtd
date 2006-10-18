@@ -140,7 +140,7 @@
 <!ENTITY setup.retrievingxpilist "S'està carregant la llista d'extensions. Espereu..." >
 <!ENTITY setup.networkerror1 "No s'ha pogut obtenir la llista d'extensions." >
 <!ENTITY setup.networkerror2 "la configuració de la vostra connexió" >
-<!ENTITY setup.networkerror3 " o premeu "D'acord" per continuar configurant el Songbird." >
+<!ENTITY setup.networkerror3 " o premeu D'acord per continuar configurant el Songbird." >
 <!ENTITY setup.metrics.optin "Permet l'enviament de dades anònimes sobre l'us del Songbird." >
 <!ENTITY setup.metrics.info "Ajudeu-nos a millorar el Songbird enviant-nos dades sobre com l'utilitzeu. Les dades són completament anònimes i no s'emmagatzema informació personal." >
 <!ENTITY setup.optionalextensions "Extensions opcionals" >
