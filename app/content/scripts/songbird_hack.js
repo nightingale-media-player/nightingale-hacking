@@ -4431,9 +4431,10 @@ if (deviceManager)
         }
     }
 }
+*/
 
 }// END
-*/
+
 catch ( err )
 {
   alert( err );
