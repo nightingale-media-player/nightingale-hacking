@@ -217,7 +217,7 @@
 <!ENTITY setupprogress.installingextensions "Bezig met installeren extensies" >
 <!ENTITY menu.updateCmd.label "Controleren op updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY trackeditor.disclaimer "De "Track Editor" mogelijkheid is nog niet volledig af. Wijzigingen in metadata worden enkel in Songbird's database bewaard. In een volgende versie, zal de metadata eveneens in jou media bestanden bewaard worden." >
+<!ENTITY trackeditor.disclaimer "De Track Editor mogelijkheid is nog niet volledig af. Wijzigingen in metadata worden enkel in Songbird's database bewaard. In een volgende versie, zal de metadata eveneens in jou media bestanden bewaard worden." >
 <!ENTITY callout.firstwebplaylist "Songbird heeft de volgende afspeelbare tracks gevonden." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
