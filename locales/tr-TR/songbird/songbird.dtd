@@ -140,7 +140,7 @@
 <!ENTITY setup.retrievingxpilist "Ekelntiler listesi alınıyor. Lütfen bekleyin..." >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "Bağlantı Ayarları" >
-<!ENTITY setup.networkerror3 "ya da "OK" tuşuna basarak Sonbird kurulumuna devam edin." >
+<!ENTITY setup.networkerror3 "ya da OK tuşuna basarak Sonbird kurulumuna devam edin." >
 <!ENTITY setup.metrics.optin "Anonim kullanıcı bilgilerini gönder." >
 <!ENTITY setup.metrics.info "Kullanım parametrelerini göndererek Songbird'ü geliştirmemize yardım edin. Parametreler tamamen anonimdir ve hiçbir özel kullanıcı bilgisi içermez." >
 <!ENTITY setup.optionalextensions "Seçimlik Eklentiler" >
