@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 "Przegląd Developerów"" >
-<!ENTITY window.dev.title "Songbird 0.2 "Przegląd Developerów - Lot Testowy"" >
+<!ENTITY window.main.title "Songbird 0.2 Przegląd Developerów" >
+<!ENTITY window.dev.title "Songbird 0.2 Przegląd Developerów - Lot Testowy" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
