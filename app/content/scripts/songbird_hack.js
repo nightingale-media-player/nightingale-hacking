@@ -4170,6 +4170,8 @@ function onBrowserCDTransfer(cdDevice, deviceString, ripping)
   }
 }
 
+/*
+
 // WMD 
 var theSBWMDCommands = 
 {
@@ -4431,7 +4433,7 @@ if (deviceManager)
 }
 
 }// END
-
+*/
 catch ( err )
 {
   alert( err );
