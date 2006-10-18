@@ -70,7 +70,7 @@
 <!ENTITY tooltip.control.shuffle "Orden Aleatorio" >
 <!ENTITY tooltip.control.shuf_off "Desactivar Aleatorio" >
 <!ENTITY tooltip.control.curtrack "Buscar Pista Actual" >
-<!ENTITY tooltip.control.service "Alternar &quot;carita&quot;" >
+<!ENTITY tooltip.control.service "Alternar "carita"" >
 <!ENTITY tooltip.search "Buscar" >
 <!ENTITY tooltip.browser.back "Navegar Atras" >
 <!ENTITY tooltip.browser.fwd "Navegar Adelante" >

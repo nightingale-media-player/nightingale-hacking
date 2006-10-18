@@ -70,7 +70,7 @@
 <!ENTITY tooltip.control.shuffle "Mezclar" >
 <!ENTITY tooltip.control.shuf_off "No Mezclar" >
 <!ENTITY tooltip.control.curtrack "Buscar Pista actual" >
-<!ENTITY tooltip.control.service "Switch Faceplate Display" >
+<!ENTITY tooltip.control.service "Cambiar visualizacion del Display" >
 <!ENTITY tooltip.search "Buscar" >
 <!ENTITY tooltip.browser.back "Atrás" >
 <!ENTITY tooltip.browser.fwd "Adelante" >
@@ -79,7 +79,7 @@
 <!ENTITY tooltip.browser.refresh "Actualizar" >
 <!ENTITY tooltip.browser.bookmark "Marcadores" >
 <!ENTITY tooltip.browser.playlist "Mostrar/Esconder la Lista de  Reproduccion Web" >
-<!ENTITY tooltip.browser.download "View Current Downloads" >
+<!ENTITY tooltip.browser.download "Ver Descargas Actuales" >
 <!ENTITY smart.window "Constructor de Listas de Reproduccion Inteligente" >
 <!ENTITY smart.library "Seleccionar Biblioteca:" >
 <!ENTITY smart.limit "Limitar a" >
@@ -138,8 +138,8 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Opciones de instalacion de Songbird" >
 <!ENTITY setup.retrievingxpilist "Obteniendo el listado de extensiones. Por favor espere..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
-<!ENTITY setup.networkerror2 "Ajustes de Conexion" >
+<!ENTITY setup.networkerror1 "No fue posible obtener la lista de extensiones. Por favor cambie sus" >
+<!ENTITY setup.networkerror2 "Parametros de Conexion" >
 <!ENTITY setup.networkerror3 "o continue la instalacion de Songbird presionando 'Aceptar'" >
 <!ENTITY setup.metrics.optin "Mandando metricas de uso anonimas." >
 <!ENTITY setup.metrics.info "Ayudenos a hacer Songbird mejor usando metricas de como lo utiliza. Las metricas son completamente anonimas y ninguna informacion personal es almacenada." >
@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "Ir a..." >
+<!ENTITY html.context.playlist "Abrir como lista de reproduccion" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "Sin dispositivos aun" >
 
 

@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2" >
+<!ENTITY window.dev.title "Songbird 0.2 - Test Flight" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://songbirdnest.com/player0.2/welcome" >
 <!ENTITY window.ok "Ok" >
@@ -67,8 +67,8 @@
 <!ENTITY tooltip.control.mute "Mudo" >
 <!ENTITY tooltip.control.volume "Volume" >
 <!ENTITY tooltip.control.repeat "Repetir" >
-<!ENTITY tooltip.control.shuffle "Aleatório On" >
-<!ENTITY tooltip.control.shuf_off "Aleatório Off" >
+<!ENTITY tooltip.control.shuffle "Aleatório Ligado" >
+<!ENTITY tooltip.control.shuf_off "Aleatório Desligado" >
 <!ENTITY tooltip.control.curtrack "Vai para faixa atual" >
 <!ENTITY tooltip.control.service "Alternar visor de capa" >
 <!ENTITY tooltip.search "Procurar" >
@@ -83,7 +83,7 @@
 <!ENTITY smart.window "Construtor de lista de reprodução inteligente" >
 <!ENTITY smart.library "Selecione biblioteca:" >
 <!ENTITY smart.limit "Limitar a" >
-<!ENTITY smart.match "Casar" >
+<!ENTITY smart.match "Combinar" >
 <!ENTITY smart.any "qualquer" >
 <!ENTITY smart.all "todas" >
 <!ENTITY smart.following "da(s) seguinte(s) condição(ões):" >
@@ -118,7 +118,7 @@
 <!ENTITY textbox.songbird_open_url "Selecione a URL ou o caminho do arquivo que você deseja tocar:
 " >
 <!ENTITY open_url.title "Abrir URL" >
-<!ENTITY subscribe.title "Subescrever" >
+<!ENTITY subscribe.title "Subscrever" >
 <!ENTITY subscribe.minutes "Minuto(s)" >
 <!ENTITY subscribe.hours "Hora(s)" >
 <!ENTITY subscribe.days "Dia(s)" >
@@ -139,11 +139,11 @@
 <!ENTITY about.version "Versão" >
 <!ENTITY setup.title "Opções de instalação do Songbird" >
 <!ENTITY setup.retrievingxpilist "Recebendo lista de extensões. Por favor, aguarde..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Incapaz de obter a lista de extensões.  Por favor modifique o seu" >
 <!ENTITY setup.networkerror2 "Configurações da conexão" >
 <!ENTITY setup.networkerror3 " ou continue a instalação do Singbird clicando em 'OK'." >
 <!ENTITY setup.metrics.optin "Enviar anonimamente o desempenho de uso." >
-<!ENTITY setup.metrics.info "Ajude-nos a fazer o Songbird melhor enviando-nos informações sobre como você usá-o. As informações são totalmente anônimas e nenhuma informação pessoal é coletada." >
+<!ENTITY setup.metrics.info "Ajude-nos a fazer o Songbird melhor enviando-nos informações sobre como você o utiliza. As informações são totalmente anônimas e nenhuma informação pessoal é coletada." >
 <!ENTITY setup.optionalextensions "Extensões Opcionais" >
 <!ENTITY setup.defaultlanguage "Linguagem Padrão" >
 <!ENTITY setup.privacy "Privacidade" >
@@ -210,7 +210,7 @@
 <!ENTITY metadata.artist "Artista" >
 <!ENTITY metadata.title "Título" >
 <!ENTITY metadata.album "Álbum" >
-<!ENTITY metadata.genre "Gênro" >
+<!ENTITY metadata.genre "Gênero" >
 <!ENTITY metadata.length "Duração" >
 <!ENTITY restartbox.restartnow "Reiniciar agora" >
 <!ENTITY restartbox.restartonplaybackend "Reiniciar ao fim da lista" >
@@ -237,6 +237,6 @@
 <!ENTITY html.context.playlist "Open as Playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "Sem suporte a dispositivos NESTE momento" >
 
 

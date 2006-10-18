@@ -137,8 +137,8 @@
 <!ENTITY menu.feathers "Fjädrar" >
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird installationsinställningar" >
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.retrievingxpilist "Tar emot tilläggslista. Vänta..." >
+<!ENTITY setup.networkerror1 "Kunde inte ta emot tilläggslista. Ändra din" >
 <!ENTITY setup.networkerror2 "Anslutningsinställningar" >
 <!ENTITY setup.networkerror3 "Eller fortsätt Songbirdinstallationen genom att klicka 'OK'." >
 <!ENTITY setup.metrics.optin "Sänd anonym användarstatistik." >
@@ -232,10 +232,11 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "Hoppa till..." >
+<!ENTITY html.context.playlist "Öppna som Spellista
+" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "Inga Enheter Än." >
 
 

@@ -15,8 +15,8 @@
 <!ENTITY menu.file.url "Apri da URL..." >
 <!ENTITY menu.file.playlist "Carica un elenco di riproduzione..." >
 <!ENTITY menu.file.scan "Cerca un Media..." >
-<!ENTITY menu.file.dlfolder "Setta la Cartella dei Download..." >
-<!ENTITY menu.file.watch "Setta la Cartella dei controllati..." >
+<!ENTITY menu.file.dlfolder "Imposta la Cartella dei Download..." >
+<!ENTITY menu.file.watch "Imposta la Cartella dei controllati..." >
 <!ENTITY menu.file.htmlbar "Mostra Sempre la Web Bar" >
 <!ENTITY menu.file.skin "Skin aggiuntiva" >
 <!ENTITY menu.file.window "Apri la finestra principale" >
@@ -111,7 +111,7 @@
 <!ENTITY smart.is_not "non è" >
 <!ENTITY smart.starts "comincia con" >
 <!ENTITY smart.ends "finisce con" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY smart.selectedby "Selezionato da" >
 <!ENTITY download.window "Scarica" >
 <!ENTITY download.select "Scegli la cartella di destinazione:" >
 <!ENTITY download.always "Usa sempre questa cartella" >
@@ -136,14 +136,14 @@
 <!ENTITY locale.language "Lingua" >
 <!ENTITY menu.feathers "Feathers" >
 <!ENTITY about.version "Versione" >
-<!ENTITY setup.title "Songbird Setup Options" >
+<!ENTITY setup.title "Opzioni di Songbird" >
 <!ENTITY setup.retrievingxpilist "Recupero lista estensioni..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Impossibile scaricare la lista delle estensioni. Prova a cambiare" >
 <!ENTITY setup.networkerror2 "impostazioni di connessione" >
 <!ENTITY setup.networkerror3 " o continuare l'installazione premendo OK." >
 <!ENTITY setup.metrics.optin "Manda statistiche di utilizzo anonime." >
 <!ENTITY setup.metrics.info "Aiutaci a migliorare Songbird mandandoci statistiche su come lo utilizzi. Queste statistiche sono completamente anonime e non viene raccolta alcuna informazione personale." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.optionalextensions "Estensioni opzionali" >
 <!ENTITY setup.defaultlanguage "Lingua preferita" >
 <!ENTITY setup.privacy "Privacy" >
 <!ENTITY setupprogress.pleasewait "Prego attendere..." >
@@ -188,15 +188,15 @@
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Nome:" >
 <!ENTITY bookmarks.edit.icon "Icona:" >
-<!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.title "Editor di traccia" >
+<!ENTITY trackeditor.trackdata "Informazioni della traccia" >
+<!ENTITY trackeditor.exttrackdata "Informazioni aggiuntive" >
 <!ENTITY trackeditor.tags "Tags" >
 <!ENTITY trackeditor.addtag.title "Aggiungi Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
 <!ENTITY jumptofile.title "Jump to" >
 <!ENTITY jumptofile.search "Cerca:" >
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys "Usa Hotkeys generali" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Azione" >
 <!ENTITY hotkeys.hotkey "Hotkey" >
@@ -205,19 +205,19 @@
 <!ENTITY hotkeys.remove "Rimuovi" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
 <!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
+<!ENTITY metadata.url "Indirizzo" >
 <!ENTITY metadata.artist "Artista" >
 <!ENTITY metadata.title "Titolo" >
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genere" >
-<!ENTITY metadata.length "Length" >
+<!ENTITY metadata.length "Durata" >
 <!ENTITY restartbox.restartnow "Riavvia Ora" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
+<!ENTITY restartbox.restartonplaybackend "Riavvia alla fine dell'esecuzione" >
 <!ENTITY restartbox.restartlater "Riavvia più tardi" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
+<!ENTITY setupprogress.installingextensions "Installazione Estensioni in corso" >
 <!ENTITY menu.updateCmd.label "Controlla gli aggiornamenti..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
+<!ENTITY trackeditor.disclaimer "La funzione di modifica della traccia non è ancora completa. I dati modificati sono stati salvati solo sul database di Songbird. Nelle prossime versioni i dati verranno salvati anche sul file stesso." >
 <!ENTITY callout.firstwebplaylist "Songbird ha trovato le seguenti tracce." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto "Salta a..." >
 <!ENTITY html.context.playlist "Apri come playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "Nessun Device al momento" >
 
 

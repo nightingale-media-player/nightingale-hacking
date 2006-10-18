@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2 开发者预览" >
+<!ENTITY window.dev.title "Songbird 0.2 开发者预览测试之旅" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "确定" >
@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "跳转到..." >
+<!ENTITY html.context.playlist "作为播放列表打开" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "比特率" >
+<!ENTITY menu.devices.nodevices "尚无设备" >
 
 

@@ -77,7 +77,7 @@
 <!ENTITY tooltip.browser.stop "Tarayıcıyı Durdur" >
 <!ENTITY tooltip.browser.home "Giriş" >
 <!ENTITY tooltip.browser.refresh "Yenile" >
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY tooltip.browser.bookmark "Yerimi" >
 <!ENTITY tooltip.browser.playlist "Sayfada Bulunan Medyaları Göster/Sakla" >
 <!ENTITY tooltip.browser.download "İndirilenleri Göster" >
 <!ENTITY smart.window "Akıllı Çalma Listesi Oluşturucu" >
@@ -99,7 +99,7 @@
 <!ENTITY smart.most_often "en çok sıklıkta" >
 <!ENTITY smart.least_often "en az sıklıkta" >
 <!ENTITY smart.most_added "en çok eklenen" >
-<!ENTITY smart.least_added "son eklenen" >
+<!ENTITY smart.least_added "en az eklenen" >
 <!ENTITY smart.minutes "dakika" >
 <!ENTITY smart.hours "saat" >
 <!ENTITY smart.mb "MB" >
@@ -111,42 +111,42 @@
 <!ENTITY smart.is_not "değil" >
 <!ENTITY smart.starts "Başlar" >
 <!ENTITY smart.ends "Biter" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY smart.selectedby "Tarafından seçilmiş" >
 <!ENTITY download.window "İndir" >
 <!ENTITY download.select "Hedef dizini seç:" >
 <!ENTITY download.always "Daima bu dizini kullan" >
 <!ENTITY textbox.songbird_open_url "Çalmak istediğin URL'yi yada dosya yolunu gir" >
 <!ENTITY open_url.title "URL'yi Aç" >
 <!ENTITY subscribe.title "Üye Ol" >
-<!ENTITY subscribe.minutes "Minute(s)" >
-<!ENTITY subscribe.hours "Hour(s)" >
-<!ENTITY subscribe.days "Day(s)" >
-<!ENTITY subscribe.autocheck "Automatically update every" >
-<!ENTITY subscribe.destinationfolder "Select destination folder:" >
-<!ENTITY exists.title "Playlist Exists" >
-<!ENTITY exists.exists "A playlist with that name already exists!" >
-<!ENTITY media_scan.title "Scan for Media" >
-<!ENTITY media_scan.watch "Watch this folder for new media" >
-<!ENTITY new_playlist.title "Create New Playlist" >
-<!ENTITY new_playlist.name "Enter the name of the new playlist." >
-<!ENTITY addtoplaylist.title "Add To Playlist" >
-<!ENTITY addtoplaylist.create "Create new playlist" >
-<!ENTITY watchfolder.title "Watch Folders" >
-<!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
+<!ENTITY subscribe.minutes "Dakika(lar)" >
+<!ENTITY subscribe.hours "Saat(ler)" >
+<!ENTITY subscribe.days "Gün(ler)" >
+<!ENTITY subscribe.autocheck "Otomatik olarak güncelle" >
+<!ENTITY subscribe.destinationfolder "Hedef klasörü seç:" >
+<!ENTITY exists.title "Çalma Listesi Mevcut" >
+<!ENTITY exists.exists "Bu isimde bir çalma listesi mevcut!" >
+<!ENTITY media_scan.title "Medya tara" >
+<!ENTITY media_scan.watch "Yeni medya için bu klasörleri izle" >
+<!ENTITY new_playlist.title "Yeni Çalma Listesi Oluştur" >
+<!ENTITY new_playlist.name "Yeni çalma listesinin adını girin." >
+<!ENTITY addtoplaylist.title "Çalma Listesine Ekle" >
+<!ENTITY addtoplaylist.create "Yeni çalma listesi oluştur" >
+<!ENTITY watchfolder.title "Klasörleri İzle" >
+<!ENTITY watchfolder.folderlist "Yeni medya için bu klasörleri izle:" >
 <!ENTITY locale.language "Dil" >
-<!ENTITY menu.feathers "Feathers" >
-<!ENTITY about.version "Version" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY menu.feathers "Görünümler" >
+<!ENTITY about.version "Versiyon" >
+<!ENTITY setup.title "Songbird Durum Ayarları" >
+<!ENTITY setup.retrievingxpilist "Ekelntiler listesi alınıyor. Lütfen bekleyin..." >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setup.networkerror2 "Bağlantı Ayarları" >
+<!ENTITY setup.networkerror3 "ya da "OK" tuşuna basarak Sonbird kurulumuna devam edin." >
+<!ENTITY setup.metrics.optin "Anonim kullanıcı bilgilerini gönder." >
+<!ENTITY setup.metrics.info "Kullanım parametrelerini göndererek Songbird'ü geliştirmemize yardım edin. Parametreler tamamen anonimdir ve hiçbir özel kullanıcı bilgisi içermez." >
+<!ENTITY setup.optionalextensions "Seçimlik Eklentiler" >
+<!ENTITY setup.defaultlanguage "Varsayılan Dil" >
+<!ENTITY setup.privacy "Gizlilik" >
+<!ENTITY setupprogress.pleasewait "Lütfen bekleyin..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -184,9 +184,9 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.title "Yerimini Düzenle" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
+<!ENTITY bookmarks.edit.label "İsim:" >
 <!ENTITY bookmarks.edit.icon "Icon:" >
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >

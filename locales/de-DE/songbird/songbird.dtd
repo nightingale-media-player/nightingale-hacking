@@ -13,7 +13,7 @@
 <!ENTITY menu.file.remote "Web-Wiedergabeliste erstellen..." >
 <!ENTITY menu.file.open "Datei öffnen..." >
 <!ENTITY menu.file.url "Internetadresse öffnen..." >
-<!ENTITY menu.file.playlist "Wiedergabeliste laden..." >
+<!ENTITY menu.file.playlist "Wiedergabeliste importieren..." >
 <!ENTITY menu.file.scan "Nach Mediendateien durchsuchen..." >
 <!ENTITY menu.file.dlfolder "Download-Ordner wählen..." >
 <!ENTITY menu.file.watch "Zu überwachende Ordner wählen..." >
@@ -50,11 +50,11 @@
 <!ENTITY html.context.open "Öffnen" >
 <!ENTITY html.context.openexternal "Mit dem Standard-Browser öffnen" >
 <!ENTITY html.context.play "Wiedergabe" >
-<!ENTITY html.context.add "Zur Bibliothek hinzufügen" >
+<!ENTITY html.context.add "Zu Bibliothek hinzufügen" >
 <!ENTITY playlist.context.remove "Entfernen" >
 <!ENTITY playlist.context.rename "Umbenennen" >
 <!ENTITY playlist.context.search "Suchen" >
-<!ENTITY playlist.context.lyrics "Texte" >
+<!ENTITY playlist.context.lyrics "Liedtext" >
 <!ENTITY tooltip.miniplayer "Zum Miniplayer wechseln" >
 <!ENTITY tooltip.minimize "Minimieren" >
 <!ENTITY tooltip.maximize "Maximieren/Wiederherstellen" >
@@ -70,7 +70,7 @@
 <!ENTITY tooltip.control.shuffle "Zufällige Wiedergabe" >
 <!ENTITY tooltip.control.shuf_off "Zufällige Wiedergabe aus" >
 <!ENTITY tooltip.control.curtrack "Aktuellen Titel finden" >
-<!ENTITY tooltip.control.service "Bildschirm wechseln" >
+<!ENTITY tooltip.control.service "Anzeige wechseln" >
 <!ENTITY tooltip.search "Suchen" >
 <!ENTITY tooltip.browser.back "Eine Seite zurück" >
 <!ENTITY tooltip.browser.fwd "Eine Seite vorwärts" >
@@ -79,8 +79,8 @@
 <!ENTITY tooltip.browser.refresh "Aktualisieren" >
 <!ENTITY tooltip.browser.bookmark "Lesezeichen" >
 <!ENTITY tooltip.browser.playlist "Verfügbare Medien auf dieser Website anzeigen/verstecken" >
-<!ENTITY tooltip.browser.download "Momentane Downloads ansehen" >
-<!ENTITY smart.window "Intelligente Wiedergabelistenerstellung" >
+<!ENTITY tooltip.browser.download "Gegenwärtige Downloads ansehen" >
+<!ENTITY smart.window "Intelligente Wiedergabeliste bearbeiten" >
 <!ENTITY smart.library "Bibliothek auswählen:" >
 <!ENTITY smart.limit "Beschränke auf" >
 <!ENTITY smart.match "Erfülle" >
@@ -89,7 +89,7 @@
 <!ENTITY smart.following "der folgenden Bedingungen:" >
 <!ENTITY smart.random "Zufällig" >
 <!ENTITY smart.album "Album" >
-<!ENTITY smart.artist "Künstler" >
+<!ENTITY smart.artist "Interpret" >
 <!ENTITY smart.genre "Genre" >
 <!ENTITY smart.title "Titel" >
 <!ENTITY smart.high_rating "hohe Wertung" >
@@ -104,7 +104,7 @@
 <!ENTITY smart.hours "Stunden" >
 <!ENTITY smart.mb "MB" >
 <!ENTITY smart.gb "GB" >
-<!ENTITY smart.songs "Lieder" >
+<!ENTITY smart.songs "Titel" >
 <!ENTITY smart.contains "enthält" >
 <!ENTITY smart.not_contain "enthält nicht" >
 <!ENTITY smart.is "ist" >
@@ -114,14 +114,14 @@
 <!ENTITY smart.selectedby "Auswahlkriterium:" >
 <!ENTITY download.window "Download" >
 <!ENTITY download.select "Zielordner wählen:" >
-<!ENTITY download.always "Immer diesen Ordner wählen" >
+<!ENTITY download.always "Immer diesen Ordner benutzen" >
 <!ENTITY textbox.songbird_open_url "Adresse oder Pfad zur Mediendatei die du wiedergeben möchtest:" >
 <!ENTITY open_url.title "Öffne URL" >
 <!ENTITY subscribe.title "Abonnieren" >
 <!ENTITY subscribe.minutes "Minute(n)" >
 <!ENTITY subscribe.hours "Stunde(n)" >
 <!ENTITY subscribe.days "Tag(e)" >
-<!ENTITY subscribe.autocheck "Automatische Aktualisierung alle" >
+<!ENTITY subscribe.autocheck "Automatische Updates alle" >
 <!ENTITY subscribe.destinationfolder "Zielordner wählen:" >
 <!ENTITY exists.title "Wiedergabeliste bereits vorhanden" >
 <!ENTITY exists.exists "Eine Wiedergabeliste mit diesem Namen existiert bereits!" >
@@ -138,15 +138,15 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird Einstellungen" >
 <!ENTITY setup.retrievingxpilist "Lade Liste der Erweiterungen. Bitte warten..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Konnte Liste der Erweiterungen nicht laden. Bitte ändere deine" >
 <!ENTITY setup.networkerror2 "Verbindungseinstellungen" >
 <!ENTITY setup.networkerror3 " oder mit der Installation von Songbird fortfahren durch Klick auf  'OK'." >
 <!ENTITY setup.metrics.optin "Anonyme Statistiken senden" >
-<!ENTITY setup.metrics.info "Hilf uns Songbird zu verbessern, indem du erlaubst, anonyme Nutzungsstatistiken zu senden. Die Statistiken sind komplett anonym und es werden keine persönlichen Daten gesammelt." >
+<!ENTITY setup.metrics.info "Hilf uns Songbird zu verbessern, indem du erlaubst, anonyme Nutzungsstatistiken zu senden. Die Statistiken sind vollkommen anonym und es werden keine persönlichen Daten gesammelt." >
 <!ENTITY setup.optionalextensions "Optionale Erweiterungen" >
 <!ENTITY setup.defaultlanguage "Standard-Sprache" >
 <!ENTITY setup.privacy "Privatsphäre" >
-<!ENTITY setupprogress.pleasewait "Bitte Warten..." >
+<!ENTITY setupprogress.pleasewait "Bitte warten..." >
 <!ENTITY menu.file.accesskey "D" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "I" >
@@ -164,10 +164,10 @@
 <!ENTITY menu.extensions.accesskey "E" >
 <!ENTITY menu.file.exit.accesskey "X" >
 <!ENTITY menu.edit.accesskey "B" >
-<!ENTITY menu.edit.undo.accesskey "U" >
-<!ENTITY menu.edit.cut.accesskey "T" >
-<!ENTITY menu.edit.copy.accesskey "C" >
-<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.undo.accesskey "R" >
+<!ENTITY menu.edit.cut.accesskey "S" >
+<!ENTITY menu.edit.copy.accesskey "K" >
+<!ENTITY menu.edit.paste.accesskey "E" >
 <!ENTITY menu.edit.clear.accesskey "L" >
 <!ENTITY menu.edit.selall.accesskey "A" >
 <!ENTITY menu.edit.selnone.accesskey "N" >
@@ -180,23 +180,23 @@
 <!ENTITY menu.control.rep1.accesskey "O" >
 <!ENTITY menu.control.repx.accesskey "E" >
 <!ENTITY menu.services.accesskey "S" >
-<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.devices.accesskey "G" >
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
-<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY menu.help.about.accesskey "Ü" >
 <!ENTITY bookmarks.edit.title "Lesezeichen bearbeiten" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "Name:" >
 <!ENTITY bookmarks.edit.icon "Icon:" >
-<!ENTITY trackeditor.title "Titel Editor" >
-<!ENTITY trackeditor.trackdata "Titel Daten" >
+<!ENTITY trackeditor.title "Titel-Editor" >
+<!ENTITY trackeditor.trackdata "Titel-Daten" >
 <!ENTITY trackeditor.exttrackdata "Erweiterte Daten" >
 <!ENTITY trackeditor.tags "Tags" >
 <!ENTITY trackeditor.addtag.title "Tag hinzufügen" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Springen zu" >
+<!ENTITY jumptofile.title "Springe zu" >
 <!ENTITY jumptofile.search "Suche:" >
-<!ENTITY hotkeys.useglobalhotkeys "Globale Tastaturkürzel benutzen" >
+<!ENTITY hotkeys.useglobalhotkeys "Globale Tastaturkürzel verwenden" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Aktion" >
 <!ENTITY hotkeys.hotkey "Tastaturkürzel" >
@@ -204,9 +204,9 @@
 <!ENTITY hotkeys.set "Setzen" >
 <!ENTITY hotkeys.remove "Entfernen" >
 <!ENTITY hotkeys.prefpane "Tastaturkürzel" >
-<!ENTITY metadata.uuid "Medien UUID" >
+<!ENTITY metadata.uuid "Medien-UUID" >
 <!ENTITY metadata.url "Adresse" >
-<!ENTITY metadata.artist "Künstler" >
+<!ENTITY metadata.artist "Interpret" >
 <!ENTITY metadata.title "Titel" >
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Genre" >
@@ -217,7 +217,7 @@
 <!ENTITY setupprogress.installingextensions "Installiere Erweiterungen" >
 <!ENTITY menu.updateCmd.label "Nach Updates suchen..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY trackeditor.disclaimer "Der Song-Editor ist noch nicht vollständig.  Veränderte Angaben werden nur in Songbirds Datenbank gespeichert.  In einer künftigen Version werden die Informationen auch in den Mediendateien selbst gespeichert" >
+<!ENTITY trackeditor.disclaimer "Der Titel-Editor ist noch nicht vollständig.  Veränderte Angaben werden nur in Songbirds Datenbank gespeichert.  In einer künftigen Version werden die Informationen auch in den Mediendateien selbst gespeichert" >
 <!ENTITY callout.firstwebplaylist "Songbird hat folgende abspielbare Titel gefunden." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Springen zu..." >
+<!ENTITY menu.control.jumpto "Springe zu..." >
 <!ENTITY html.context.playlist "Als Wiedergabeliste öffnen" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "Bitrate" >
+<!ENTITY menu.devices.nodevices "Noch keine Geräte" >
 
 

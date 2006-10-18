@@ -237,7 +237,7 @@ Tiedot ovat täysin yksilöimättömiä eikä henkilökohtaista tietoa kerätä 
 <!ENTITY menu.control.jumpto "Hyppää..." >
 <!ENTITY html.context.playlist "Avaa soittolistana" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "Datavirta" >
+<!ENTITY menu.devices.nodevices "Ei laitteita" >
 
 

@@ -199,7 +199,7 @@
 <!ENTITY jumptofile.search "검색:" >
 <!ENTITY hotkeys.useglobalhotkeys "공통 단축키 사용" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.action "동작" >
 <!ENTITY hotkeys.hotkey "단축키" >
 <!ENTITY hotkeys.add "추가" >
 <!ENTITY hotkeys.set "지정" >
@@ -219,7 +219,7 @@
 <!ENTITY menu.updateCmd.label "업데이트 검사" >
 <!ENTITY menu.updateCmd.accessKey "o" >
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
+<!ENTITY callout.firstwebplaylist "Songbird가 다음의 재생가능한 트랙들을 발견했습니다." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -234,9 +234,9 @@
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
 <!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY html.context.playlist "재생목록으로 열기" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "비트 레이트" >
+<!ENTITY menu.devices.nodevices "장치가 없습니다." >
 
 

@@ -1,0 +1,239 @@
+<!ENTITY window.main.title "Söngfuglinn 0.2 Þróunarútgáfa" >
+<!ENTITY window.dev.title "Söngfuglinn 0.2 Þróunarútgáfa" >
+<!ENTITY songbird "Söngfuglinn" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "Í lagi" >
+<!ENTITY window.undo "Afturkalla" >
+<!ENTITY window.apply "Nota" >
+<!ENTITY window.cancel "Hætta við" >
+<!ENTITY window.browse "Fletta..." >
+<!ENTITY menu.file "Skrá" >
+<!ENTITY menu.file.new "Nýr listi..." >
+<!ENTITY menu.file.smart "Nýr snjall listi..." >
+<!ENTITY menu.file.remote "Ný áskrift..." >
+<!ENTITY menu.file.open "Opna skjal..." >
+<!ENTITY menu.file.url "Opna slóð..." >
+<!ENTITY menu.file.playlist "Flytja inn lista..." >
+<!ENTITY menu.file.scan "Skanna eftir gögnum..." >
+<!ENTITY menu.file.dlfolder "Stilla niðurhalsmöppu..." >
+<!ENTITY menu.file.watch "Stilla möppu til að fylgjast með" >
+<!ENTITY menu.file.htmlbar "Alltaf sýna vefslá" >
+<!ENTITY menu.file.skin "Annað útlit" >
+<!ENTITY menu.file.window "Opna aðal glugga" >
+<!ENTITY menu.file.mini "Opna smáspilara" >
+<!ENTITY menu.file.about "Um Söngfuglinn..." >
+<!ENTITY menu.file.exit "Hætta" >
+<!ENTITY menu.edit "Breyta" >
+<!ENTITY menu.edit.undo "Afturkalla" >
+<!ENTITY menu.edit.cut "Klippa" >
+<!ENTITY menu.edit.copy "Afrita" >
+<!ENTITY menu.edit.paste "Líma" >
+<!ENTITY menu.edit.clear "Hreinsa" >
+<!ENTITY menu.edit.selall "Velja allt" >
+<!ENTITY menu.edit.selnone "Velja ekkert" >
+<!ENTITY menu.controls "Stýringar" >
+<!ENTITY menu.control.play "Spila/Hlé" >
+<!ENTITY menu.control.next "Næsta lag" >
+<!ENTITY menu.control.prev "Fyrra lag" >
+<!ENTITY menu.control.shuf "Stokka" >
+<!ENTITY menu.control.repa "Endurtaka allt" >
+<!ENTITY menu.control.rep1 "Endurtaka eitt" >
+<!ENTITY menu.control.repx "Ekki endurtaka" >
+<!ENTITY menu.services "Þjónustur" >
+<!ENTITY menu.services.browse "Skoða í viðbótum..." >
+<!ENTITY menu.devices "Tæki" >
+<!ENTITY menu.help "Hjálp" >
+<!ENTITY menu.help.topics "Efnisatriði hjálpar..." >
+<!ENTITY menu.help.about "Um Söngfuglinn" >
+<!ENTITY menu.preferences "Stillingar..." >
+<!ENTITY menu.extensions "Viðbætur..." >
+<!ENTITY html.context.open "Opna" >
+<!ENTITY html.context.openexternal "Opna í sjálfgefnu forriti" >
+<!ENTITY html.context.play "Spila" >
+<!ENTITY html.context.add "Bæta í safnið" >
+<!ENTITY playlist.context.remove "Fjarlægja" >
+<!ENTITY playlist.context.rename "Endurskíra" >
+<!ENTITY playlist.context.search "Leita" >
+<!ENTITY playlist.context.lyrics "Texti" >
+<!ENTITY tooltip.miniplayer "Skipta í smáspilara" >
+<!ENTITY tooltip.minimize "Minnka" >
+<!ENTITY tooltip.maximize "Stækka/Endurstilla" >
+<!ENTITY tooltip.exit "Hætta" >
+<!ENTITY tooltip.hide "Fela" >
+<!ENTITY tooltip.control.back "Fyrra lag" >
+<!ENTITY tooltip.control.play "Spila" >
+<!ENTITY tooltip.control.pause "Hlé" >
+<!ENTITY tooltip.control.fwd "Næsta lag" >
+<!ENTITY tooltip.control.mute "Hljóðlaust" >
+<!ENTITY tooltip.control.volume "Hljóðstyrkur" >
+<!ENTITY tooltip.control.repeat "Endurtaka" >
+<!ENTITY tooltip.control.shuffle "Stokka" >
+<!ENTITY tooltip.control.shuf_off "Stokka af" >
+<!ENTITY tooltip.control.curtrack "Finna núverandi lag" >
+<!ENTITY tooltip.control.service "Switch Faceplate Display" >
+<!ENTITY tooltip.search "Leita" >
+<!ENTITY tooltip.browser.back "Til baka" >
+<!ENTITY tooltip.browser.fwd "Áfram" >
+<!ENTITY tooltip.browser.stop "Stopp" >
+<!ENTITY tooltip.browser.home "Heim" >
+<!ENTITY tooltip.browser.refresh "Endurhlaða" >
+<!ENTITY tooltip.browser.bookmark "Bókamerki" >
+<!ENTITY tooltip.browser.playlist "Sýna/Fela veflista" >
+<!ENTITY tooltip.browser.download "Skoða skjöl í niðurhleðslu" >
+<!ENTITY smart.window "Snjalllista smiður" >
+<!ENTITY smart.library "Velja safn:" >
+<!ENTITY smart.limit "Takmarka við" >
+<!ENTITY smart.match "Passar við" >
+<!ENTITY smart.any "eitthvað" >
+<!ENTITY smart.all "allt" >
+<!ENTITY smart.following "eftirfarandi skilyrði:" >
+<!ENTITY smart.random "handahófi" >
+<!ENTITY smart.album "albúm" >
+<!ENTITY smart.artist "listamaður" >
+<!ENTITY smart.genre "tegund" >
+<!ENTITY smart.title "titill" >
+<!ENTITY smart.high_rating "há stigagjöf" >
+<!ENTITY smart.low_rating "lág stigagjöf" >
+<!ENTITY smart.most_recent "nýlegast" >
+<!ENTITY smart.least_recent "elst" >
+<!ENTITY smart.most_often "oftast" >
+<!ENTITY smart.least_often "síst" >
+<!ENTITY smart.most_added "mest bætt við" >
+<!ENTITY smart.least_added "síst bætt við" >
+<!ENTITY smart.minutes "mínútur" >
+<!ENTITY smart.hours "klukktímar" >
+<!ENTITY smart.mb "MB" >
+<!ENTITY smart.gb "GB" >
+<!ENTITY smart.songs "lög" >
+<!ENTITY smart.contains "inniheldur" >
+<!ENTITY smart.not_contain "inniheldur ekki" >
+<!ENTITY smart.is "er" >
+<!ENTITY smart.is_not "er ekki" >
+<!ENTITY smart.starts "byrjar á" >
+<!ENTITY smart.ends "endar á" >
+<!ENTITY smart.selectedby "Valið af" >
+<!ENTITY download.window "Hlaða niður" >
+<!ENTITY download.select "Veldu áfangastað:" >
+<!ENTITY download.always "Alltaf nota þessa möppu" >
+<!ENTITY textbox.songbird_open_url "Sláðu inn URL eða slóð að skjalinu sem þú vilt spila:" >
+<!ENTITY open_url.title "Opna slóð" >
+<!ENTITY subscribe.title "Gerast áskrifandi" >
+<!ENTITY subscribe.minutes "Mínúta/Mínútur" >
+<!ENTITY subscribe.hours "Tími/Tímar" >
+<!ENTITY subscribe.days "Dagur/Dagar" >
+<!ENTITY subscribe.autocheck "Uppfæra skjálkrafa" >
+<!ENTITY subscribe.destinationfolder "Veldu áfangastað:" >
+<!ENTITY exists.title "Listi er til" >
+<!ENTITY exists.exists "Listi með þessu nafni er þegar til" >
+<!ENTITY media_scan.title "Skanna eftir gögnum" >
+<!ENTITY media_scan.watch "Fylgjast með nýjum gögnum í þessari möppu" >
+<!ENTITY new_playlist.title "Búa til nýjan lista" >
+<!ENTITY new_playlist.name "Sláðu inn nafnið á nýja listnum." >
+<!ENTITY addtoplaylist.title "Bæta við lista" >
+<!ENTITY addtoplaylist.create "Búa til nýjan lista" >
+<!ENTITY watchfolder.title "Fylgjast með möppun" >
+<!ENTITY watchfolder.folderlist "Fylgjast með nýjum gögnum í þessaum möppum:" >
+<!ENTITY locale.language "Tungumál" >
+<!ENTITY menu.feathers "Fjaðrir" >
+<!ENTITY about.version "Útgáfa" >
+<!ENTITY setup.title "Uppsetning Söngfuglsins" >
+<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
+<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
+<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.defaultlanguage "Sjálfgefið tungumál" >
+<!ENTITY setup.privacy "Privacy" >
+<!ENTITY setupprogress.pleasewait "Vinsamlegast hinkraðu..." >
+<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.new.accesskey "N" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
+<!ENTITY menu.file.open.accesskey "O" >
+<!ENTITY menu.file.url.accesskey "U" >
+<!ENTITY menu.file.playlist.accesskey "I" >
+<!ENTITY menu.file.scan.accesskey "C" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
+<!ENTITY menu.file.mini.accesskey "M" >
+<!ENTITY locale.language.accesskey "L" >
+<!ENTITY menu.feathers.accesskey "F" >
+<!ENTITY menu.preferences.accesskey "P" >
+<!ENTITY menu.extensions.accesskey "E" >
+<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.edit.accesskey "E" >
+<!ENTITY menu.edit.undo.accesskey "U" >
+<!ENTITY menu.edit.cut.accesskey "T" >
+<!ENTITY menu.edit.copy.accesskey "C" >
+<!ENTITY menu.edit.paste.accesskey "P" >
+<!ENTITY menu.edit.clear.accesskey "L" >
+<!ENTITY menu.edit.selall.accesskey "A" >
+<!ENTITY menu.edit.selnone.accesskey "N" >
+<!ENTITY menu.controls.accesskey "C" >
+<!ENTITY menu.control.play.accesskey "P" >
+<!ENTITY menu.control.next.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.services.accesskey "S" >
+<!ENTITY menu.devices.accesskey "D" >
+<!ENTITY menu.help.accesskey "H" >
+<!ENTITY menu.help.help.accesskey "H" >
+<!ENTITY menu.help.about.accesskey "A" >
+<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.url "URL:" >
+<!ENTITY bookmarks.edit.label "Nafn:" >
+<!ENTITY bookmarks.edit.icon "Tákn:" >
+<!ENTITY trackeditor.title "Track Editor" >
+<!ENTITY trackeditor.trackdata "Track Data" >
+<!ENTITY trackeditor.exttrackdata "Extended Data" >
+<!ENTITY trackeditor.tags "Tags" >
+<!ENTITY trackeditor.addtag.title "Add Tag" >
+<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY jumptofile.title "Jump to" >
+<!ENTITY jumptofile.search "Search:" >
+<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
+<!ENTITY hotkeys.action "Action" >
+<!ENTITY hotkeys.hotkey "Hotkey" >
+<!ENTITY hotkeys.add "Add" >
+<!ENTITY hotkeys.set "Set" >
+<!ENTITY hotkeys.remove "Fjarlægja" >
+<!ENTITY hotkeys.prefpane "Hotkeys" >
+<!ENTITY metadata.uuid "Media UUID" >
+<!ENTITY metadata.url "Staðsetning" >
+<!ENTITY metadata.artist "Listamaður" >
+<!ENTITY metadata.title "Titill" >
+<!ENTITY metadata.album "Albúm" >
+<!ENTITY metadata.genre "Tegung" >
+<!ENTITY metadata.length "Tími" >
+<!ENTITY restartbox.restartnow "Endurræsa núna" >
+<!ENTITY restartbox.restartonplaybackend "Endurræsa þegar afspilun er lokið" >
+<!ENTITY restartbox.restartlater "Endurræsa síðar" >
+<!ENTITY setupprogress.installingextensions "Set inn viðbætur" >
+<!ENTITY menu.updateCmd.label "Leita eftir uppfærslum..." >
+<!ENTITY menu.updateCmd.accessKey "o" >
+<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
+<!ENTITY callout.firstwebplaylist "Söngfuglinn hefur fundið eftirfarandi spilanleg lög." >
+<!ENTITY menu.file.new.key "N" >
+<!ENTITY menu.file.open.key "O" >
+<!ENTITY menu.file.url.key "U" >
+<!ENTITY menu.file.mini.key "M" >
+<!ENTITY menu.file.dominspector "I" >
+<!ENTITY menu.edit.undo.key "Z" >
+<!ENTITY menu.edit.cut.key "X" >
+<!ENTITY menu.edit.copy.key "C" >
+<!ENTITY menu.edit.paste.key "V" >
+<!ENTITY jumpto.key "J" >
+<!ENTITY search.key "F" >
+<!ENTITY locationbar.key "L" >
+<!ENTITY trackeditor.key "E" >
+<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto.accesskey "J" >
+<!ENTITY metadata.bitrate "Bit Rate" >
+<!ENTITY menu.devices.nodevices "No Devices Yet" >

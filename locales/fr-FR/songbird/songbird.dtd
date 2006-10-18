@@ -138,7 +138,7 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Options de configuration de Songbird" >
 <!ENTITY setup.retrievingxpilist "Extraction de la liste des extensions. Merci de patienter..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Impossible de récupérer la liste des extensions. Modifiez vos" >
 <!ENTITY setup.networkerror2 "Paramètres de connexion" >
 <!ENTITY setup.networkerror3 " ou poursuivez l'installation de Songbird en cliquant sur 'OK'." >
 <!ENTITY setup.metrics.optin "Envoyer des données d'utilisation anonymes." >
@@ -236,7 +236,7 @@
 <!ENTITY menu.control.jumpto "Aller à ..." >
 <!ENTITY html.context.playlist "Ouvrir en tant que sélection" >
 <!ENTITY menu.control.jumpto.accesskey "A" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "Débit" >
+<!ENTITY menu.devices.nodevices "Aucun périphérique pour le moment" >
 
 

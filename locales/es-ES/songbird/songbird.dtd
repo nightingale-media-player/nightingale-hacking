@@ -124,7 +124,7 @@
 <!ENTITY subscribe.autocheck "Actualizar automaticamente cada" >
 <!ENTITY subscribe.destinationfolder "Seleccione el directorio de destino:" >
 <!ENTITY exists.title "La lista ya existe" >
-<!ENTITY exists.exists "Ya existe una lista de reproducción con ese nombre!" >
+<!ENTITY exists.exists "¡Ya existe una lista de reproducción con ese nombre!" >
 <!ENTITY media_scan.title "Escanear medios" >
 <!ENTITY media_scan.watch "Examinar esta carpeta en busca de medios." >
 <!ENTITY new_playlist.title "Crear una nueva lista" >
@@ -208,7 +208,7 @@
 <!ENTITY metadata.url "Localización" >
 <!ENTITY metadata.artist "Artista" >
 <!ENTITY metadata.title "Título" >
-<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.album "Álbum" >
 <!ENTITY metadata.genre "Género" >
 <!ENTITY metadata.length "Duración" >
 <!ENTITY restartbox.restartnow "Reiniciar ahora" >
@@ -236,6 +236,6 @@
 <!ENTITY html.context.playlist "Abrir como lista de reproducción" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "No se ha encontrado ningún dispositivo aún." >
 
 

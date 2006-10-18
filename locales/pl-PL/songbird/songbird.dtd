@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 &quot;Przegląd Developerów&quot;" >
-<!ENTITY window.dev.title "Songbird 0.2 &quot;Przegląd Developerów - Lot Testowy&quot;" >
+<!ENTITY window.main.title "Songbird 0.2 "Przegląd Developerów"" >
+<!ENTITY window.dev.title "Songbird 0.2 "Przegląd Developerów - Lot Testowy"" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Wersja" >
 <!ENTITY setup.title "Opcje instalacyjne Songbirda" >
 <!ENTITY setup.retrievingxpilist "Pobieranie listy rozszerzeń. Proszę czekać..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Nie można pobrać listy rozszerzeń. Sprawdź swoje" >
 <!ENTITY setup.networkerror2 "ustawienia połączenia" >
 <!ENTITY setup.networkerror3 " lub kontynuuj instalację Songbirda klikając 'OK'." >
 <!ENTITY setup.metrics.optin "Wysyłaj anonimowe raporty użytkowania." >
@@ -147,18 +147,18 @@
 <!ENTITY setup.defaultlanguage "Domyślny język" >
 <!ENTITY setup.privacy "Prywatność" >
 <!ENTITY setupprogress.pleasewait "Prosze czekać..." >
-<!ENTITY menu.file.accesskey "P" >
+<!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
-<!ENTITY menu.file.smart.accesskey "I" >
-<!ENTITY menu.file.remote.accesskey "Z" >
+<!ENTITY menu.file.smart.accesskey "S" >
+<!ENTITY menu.file.remote.accesskey "R" >
 <!ENTITY menu.file.open.accesskey "O" >
 <!ENTITY menu.file.url.accesskey "U" >
 <!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.scan.accesskey "S" >
-<!ENTITY menu.file.dlfolder.accesskey "F" >
-<!ENTITY menu.file.watch.accesskey "B" >
+<!ENTITY menu.file.scan.accesskey "M" >
+<!ENTITY menu.file.dlfolder.accesskey "D" >
+<!ENTITY menu.file.watch.accesskey "W" >
 <!ENTITY menu.file.mini.accesskey "M" >
-<!ENTITY locale.language.accesskey "J" >
+<!ENTITY locale.language.accesskey "L" >
 <!ENTITY menu.feathers.accesskey "S" >
 <!ENTITY menu.preferences.accesskey "U" >
 <!ENTITY menu.extensions.accesskey "R" >
@@ -172,13 +172,13 @@
 <!ENTITY menu.edit.selall.accesskey "Z" >
 <!ENTITY menu.edit.selnone.accesskey "O" >
 <!ENTITY menu.controls.accesskey "K" >
-<!ENTITY menu.control.play.accesskey "O" >
+<!ENTITY menu.control.play.accesskey "P" >
 <!ENTITY menu.control.next.accesskey "N" >
-<!ENTITY menu.control.prev.accesskey "P" >
-<!ENTITY menu.control.shuf.accesskey "L" >
-<!ENTITY menu.control.repa.accesskey "W" >
-<!ENTITY menu.control.rep1.accesskey "J" >
-<!ENTITY menu.control.repx.accesskey "N" >
+<!ENTITY menu.control.prev.accesskey "R" >
+<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.repa.accesskey "A" >
+<!ENTITY menu.control.rep1.accesskey "O" >
+<!ENTITY menu.control.repx.accesskey "E" >
 <!ENTITY menu.services.accesskey "S" >
 <!ENTITY menu.devices.accesskey "U" >
 <!ENTITY menu.help.accesskey "P" >
@@ -235,7 +235,7 @@
 <!ENTITY menu.control.jumpto "Przejdź do..." >
 <!ENTITY html.context.playlist "Otwórz jako listę utworów" >
 <!ENTITY menu.control.jumpto.accesskey "P" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "BitRate" >
+<!ENTITY menu.devices.nodevices "Nie wykryto urządzeń" >
 
 

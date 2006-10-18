@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 – vývojárska ukážka" >
-<!ENTITY window.dev.title "Songbird 0.2 – vývojárska ukážka Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2" >
+<!ENTITY window.dev.title "Songbird 0.2 – Test Flight" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Verzia" >
 <!ENTITY setup.title "Možnosti inštalácie Songbirdu" >
 <!ENTITY setup.retrievingxpilist "Získava sa zoznam rozšírení. Počkajte prosím..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Nie je možné získať zoznam rozšírení. Zmeňte svoje" >
 <!ENTITY setup.networkerror2 "nastavenie pripojenia" >
 <!ENTITY setup.networkerror3 " alebo pokračujte v inštalácii Songbirdu kliknutím na tlačidlo 'OK'." >
 <!ENTITY setup.metrics.optin "Odosielať anonymné štatistiky" >
@@ -235,7 +235,7 @@
 <!ENTITY menu.control.jumpto "Prejsť na..." >
 <!ENTITY html.context.playlist "Otvoriť ako zoznam skladieb" >
 <!ENTITY menu.control.jumpto.accesskey "P" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "Bitová rýchlosť" >
+<!ENTITY menu.devices.nodevices "Zatiaľ žiadne zariadenia" >
 
 

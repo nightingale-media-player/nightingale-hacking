@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "Spring naar..." >
+<!ENTITY html.context.playlist "Open als afspeellijst" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "Nog geen apparaten" >
 
 

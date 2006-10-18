@@ -118,9 +118,9 @@
 <!ENTITY textbox.songbird_open_url "Escribiu la URL o ruta del mitjà que voleu reproduir:" >
 <!ENTITY open_url.title "Obre una URL" >
 <!ENTITY subscribe.title "Subscripció" >
-<!ENTITY subscribe.minutes "Minut/s" >
-<!ENTITY subscribe.hours "Hora/es" >
-<!ENTITY subscribe.days "Dia/es" >
+<!ENTITY subscribe.minutes "Minut(s)" >
+<!ENTITY subscribe.hours "Hora(es)" >
+<!ENTITY subscribe.days "Dia(es)" >
 <!ENTITY subscribe.autocheck "Actualitza automaticament cada" >
 <!ENTITY subscribe.destinationfolder "Seleccioneu el directori de destí:" >
 <!ENTITY exists.title "La llista de reproducció ja existeix" >
@@ -138,9 +138,9 @@
 <!ENTITY about.version "Versió" >
 <!ENTITY setup.title "Configuració inicial del Songbird" >
 <!ENTITY setup.retrievingxpilist "S'està carregant la llista d'extensions. Espereu..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "No s'ha pogut obtenir la llista d'extensions." >
 <!ENTITY setup.networkerror2 "la configuració de la vostra connexió" >
-<!ENTITY setup.networkerror3 " o premeu &quot;D'acord&quot; per continuar configurant el Songbird." >
+<!ENTITY setup.networkerror3 " o premeu "D'acord" per continuar configurant el Songbird." >
 <!ENTITY setup.metrics.optin "Permet l'enviament de dades anònimes sobre l'us del Songbird." >
 <!ENTITY setup.metrics.info "Ajudeu-nos a millorar el Songbird enviant-nos dades sobre com l'utilitzeu. Les dades són completament anònimes i no s'emmagatzema informació personal." >
 <!ENTITY setup.optionalextensions "Extensions opcionals" >
@@ -235,7 +235,7 @@
 <!ENTITY menu.control.jumpto "Salta a..." >
 <!ENTITY html.context.playlist "Obre com a llista de reproducció" >
 <!ENTITY menu.control.jumpto.accesskey "S" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "Flux del bit" >
+<!ENTITY menu.devices.nodevices "Encara no hi han dispositius" >
 
 

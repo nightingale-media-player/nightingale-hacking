@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2 開發者預覽" >
+<!ENTITY window.dev.title "Songbird 0.2 開發者預覽試飛" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://songbirdnest.com/player0.2/welcome" >
 <!ENTITY window.ok "確定" >
@@ -40,12 +40,12 @@
 <!ENTITY menu.control.rep1 "重複單曲" >
 <!ENTITY menu.control.repx "不要重複" >
 <!ENTITY menu.services "服務" >
-<!ENTITY menu.services.browse "瀏覽服務..." >
+<!ENTITY menu.services.browse "瀏覽擴充套件..." >
 <!ENTITY menu.devices "裝置" >
 <!ENTITY menu.help "說明" >
 <!ENTITY menu.help.topics "說明主題..." >
 <!ENTITY menu.help.about "關於 Songbird ..." >
-<!ENTITY menu.preferences "偏好設定..." >
+<!ENTITY menu.preferences "喜好設定..." >
 <!ENTITY menu.extensions "擴充套件..." >
 <!ENTITY html.context.open "開啟" >
 <!ENTITY html.context.openexternal "以預設瀏覽器開啟" >
@@ -78,7 +78,7 @@
 <!ENTITY tooltip.browser.home "首頁" >
 <!ENTITY tooltip.browser.refresh "重新整理" >
 <!ENTITY tooltip.browser.bookmark "書籤" >
-<!ENTITY tooltip.browser.playlist "檢視本網頁的可用媒體" >
+<!ENTITY tooltip.browser.playlist "顯示/隱藏網路播放清單" >
 <!ENTITY tooltip.browser.download "檢視目前下載" >
 <!ENTITY smart.window "智慧型播放清單建構器" >
 <!ENTITY smart.library "選擇媒體庫:" >
@@ -111,7 +111,7 @@
 <!ENTITY smart.is_not "不是" >
 <!ENTITY smart.starts "開頭是" >
 <!ENTITY smart.ends "結尾是" >
-<!ENTITY smart.selectedby "選擇" >
+<!ENTITY smart.selectedby "選擇方式" >
 <!ENTITY download.window "下載" >
 <!ENTITY download.select "選擇目的地資料夾：" >
 <!ENTITY download.always "總是使用此資料夾" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "版本" >
 <!ENTITY setup.title "Songbird 安裝選項" >
 <!ENTITY setup.retrievingxpilist "擷取擴充套件清單中。請稍待..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "無法擷取擴充套件清單。請變更你的" >
 <!ENTITY setup.networkerror2 "連線設定" >
 <!ENTITY setup.networkerror3 "或按 [確定] 繼續 Songbird 安裝程式。" >
 <!ENTITY setup.metrics.optin "傳送匿名使用數據。" >
@@ -209,7 +209,7 @@
 <!ENTITY metadata.artist "演出者" >
 <!ENTITY metadata.title "標題" >
 <!ENTITY metadata.album "專輯" >
-<!ENTITY metadata.genre "分類" >
+<!ENTITY metadata.genre "類型" >
 <!ENTITY metadata.length "長度" >
 <!ENTITY restartbox.restartnow "馬上重新啟動" >
 <!ENTITY restartbox.restartonplaybackend "播放完後重新啟動" >
@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "跳至..." >
+<!ENTITY html.context.playlist "以播放清單開啟" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "位元率" >
+<!ENTITY menu.devices.nodevices "目前無裝置" >
 
 

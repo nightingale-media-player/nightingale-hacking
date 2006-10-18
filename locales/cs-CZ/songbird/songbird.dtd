@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2 - Developer Preview" >
+<!ENTITY window.dev.title "Songbird 0.2 - Developer Preview Test Flight" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://songbirdnest.com/player0.2/welcome/" >
 <!ENTITY window.ok "OK" >
@@ -10,7 +10,7 @@
 <!ENTITY menu.file "Soubor" >
 <!ENTITY menu.file.new "Nový seznam stop..." >
 <!ENTITY menu.file.smart "Nový chytrý seznam stop..." >
-<!ENTITY menu.file.remote "Přihlásit k odebírání..." >
+<!ENTITY menu.file.remote "Přihlásit se k odebírání..." >
 <!ENTITY menu.file.open "Otevřít soubor..." >
 <!ENTITY menu.file.url "Otevřít adresu URL..." >
 <!ENTITY menu.file.playlist "Načíst seznam stop..." >
@@ -114,7 +114,7 @@
 <!ENTITY smart.selectedby "Selected by" >
 <!ENTITY download.window "Stáhnout" >
 <!ENTITY download.select "Zvolit cílovou složku:" >
-<!ENTITY download.always "Vždy používat tuto složku" >
+<!ENTITY download.always "Vždy použít tuto složku" >
 <!ENTITY textbox.songbird_open_url "Zadejte adresu URL nebo cestu k souboru který chcete přehrát:" >
 <!ENTITY open_url.title "Otevřít adresu URL" >
 <!ENTITY subscribe.title "Odebírat" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Verze" >
 <!ENTITY setup.title "Nastavení instalace aplikace Songbird" >
 <!ENTITY setup.retrievingxpilist "Získávání seznamu rozšíření. Prosím čekejte..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Nelze získat seznam rozšíření.  Prosím upravte" >
 <!ENTITY setup.networkerror2 "nastavení Vašeho připojení" >
 <!ENTITY setup.networkerror3 "nebo pokračujte klepnutím na OK." >
 <!ENTITY setup.metrics.optin "Odeslat anonymní uživatelské statistiky." >
@@ -235,7 +235,7 @@
 <!ENTITY menu.control.jumpto "Přeskočit na..." >
 <!ENTITY html.context.playlist "Otevřít jako seznam stop" >
 <!ENTITY menu.control.jumpto.accesskey "K" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY metadata.bitrate "Datový tok" >
+<!ENTITY menu.devices.nodevices "Nenalezeno žádné zařízení" >
 
 

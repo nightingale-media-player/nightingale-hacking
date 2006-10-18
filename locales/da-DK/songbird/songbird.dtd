@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2 Udvikler Forsmag" >
+<!ENTITY window.dev.title "Songbird 0.2 Udvikler Forsmag Test Flyvning" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
@@ -48,7 +48,7 @@
 <!ENTITY menu.preferences "Indstillinger..." >
 <!ENTITY menu.extensions "Udvidelser..." >
 <!ENTITY html.context.open "Åbn" >
-<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY html.context.openexternal "Åben med Standart Browser" >
 <!ENTITY html.context.play "Afspil" >
 <!ENTITY html.context.add "Føj til bibliotek" >
 <!ENTITY playlist.context.remove "Fjern" >
@@ -76,7 +76,7 @@
 <!ENTITY tooltip.browser.fwd "Gå frem" >
 <!ENTITY tooltip.browser.stop "Stop browser" >
 <!ENTITY tooltip.browser.home "Hjem" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY tooltip.browser.refresh "Opdater" >
 <!ENTITY tooltip.browser.bookmark "Bogmærke" >
 <!ENTITY tooltip.browser.playlist "Vis tilgængelige mediefiler på denne netside" >
 <!ENTITY tooltip.browser.download "Vis aktuelle downloads" >
@@ -111,7 +111,7 @@
 <!ENTITY smart.is_not "ikke er" >
 <!ENTITY smart.starts "begynder med" >
 <!ENTITY smart.ends "slutter med" >
-<!ENTITY smart.selectedby "Selected by" >
+<!ENTITY smart.selectedby "Valgt af" >
 <!ENTITY download.window "Download" >
 <!ENTITY download.select "Vælg destinationsmappe:" >
 <!ENTITY download.always "Brug altid denne mappe" >
@@ -138,14 +138,14 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird installations muligheder" >
 <!ENTITY setup.retrievingxpilist "Modtager udvidelsesliste. Vent venligst..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
-<!ENTITY setup.networkerror2 "Connection Settings" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
+<!ENTITY setup.networkerror1 "Kunne ikke hente extension listen. Skift venligst din" >
+<!ENTITY setup.networkerror2 "Forbindelses Indstillinger" >
+<!ENTITY setup.networkerror3 "eller fortsæt Songbird installationen ved at klikke 'OK'." >
+<!ENTITY setup.metrics.optin "Send anonyme brugs-mønstre" >
+<!ENTITY setup.metrics.info "Hjælp os med at gøre Songbird bedre ved at sende os brugs-mønstre. Mønstrene er anonyme og ingen personlig information bliver indsamlet." >
+<!ENTITY setup.optionalextensions "Valgfrie Extensions" >
+<!ENTITY setup.defaultlanguage "Standart Sprog" >
+<!ENTITY setup.privacy "Privat" >
 <!ENTITY setupprogress.pleasewait "Vent venligst..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
@@ -201,7 +201,7 @@
 <!ENTITY hotkeys.action "Action" >
 <!ENTITY hotkeys.hotkey "Genvejstast" >
 <!ENTITY hotkeys.add "Tilføj" >
-<!ENTITY hotkeys.set "Set" >
+<!ENTITY hotkeys.set "Brug" >
 <!ENTITY hotkeys.remove "Fjern" >
 <!ENTITY hotkeys.prefpane "Genvejstaster" >
 <!ENTITY metadata.uuid "Media UUID" >
@@ -217,8 +217,8 @@
 <!ENTITY setupprogress.installingextensions "Installerer Udvidelser" >
 <!ENTITY menu.updateCmd.label "Check for Updateringer..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
+<!ENTITY trackeditor.disclaimer "Track Editor funktionen er ikke fuldt udvilket. Ændrede metadata bliver kun gemt i Sonbirds database.  I en fremtidig version, vil metadata der er ændret her også blive ændret i dine medie-filer." >
+<!ENTITY callout.firstwebplaylist "Songbird har fundet følgene afspillingsbare tracks." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -232,10 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "Hop Til..." >
+<!ENTITY html.context.playlist "Åben som Playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.devices.nodevices "Ingen Udstyr Endnu" >
 
 

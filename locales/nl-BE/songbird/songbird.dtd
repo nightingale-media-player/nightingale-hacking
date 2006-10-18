@@ -76,7 +76,7 @@
 <!ENTITY tooltip.browser.fwd "Blader vooruit" >
 <!ENTITY tooltip.browser.stop "Browser stoppen" >
 <!ENTITY tooltip.browser.home "Welkom" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY tooltip.browser.refresh "Vernieuwen" >
 <!ENTITY tooltip.browser.bookmark "Bladwijzer" >
 <!ENTITY tooltip.browser.playlist "Toon beschikbare media op deze website" >
 <!ENTITY tooltip.browser.download "Toon huidige downloads" >
@@ -87,7 +87,7 @@
 <!ENTITY smart.any "één" >
 <!ENTITY smart.all "alle" >
 <!ENTITY smart.following "van de volgende voorwaarde(n):" >
-<!ENTITY smart.random "random" >
+<!ENTITY smart.random "willekeurig" >
 <!ENTITY smart.album "album" >
 <!ENTITY smart.artist "artiest" >
 <!ENTITY smart.genre "genre" >
@@ -104,7 +104,7 @@
 <!ENTITY smart.hours "uur" >
 <!ENTITY smart.mb "MB" >
 <!ENTITY smart.gb "GB" >
-<!ENTITY smart.songs "songs" >
+<!ENTITY smart.songs "liedjes" >
 <!ENTITY smart.contains "bevat" >
 <!ENTITY smart.not_contain "bevat niet" >
 <!ENTITY smart.is "is" >
@@ -139,7 +139,7 @@
 <!ENTITY setup.title "Songbird Installatie Opties" >
 <!ENTITY setup.retrievingxpilist "Bezig met het ontvangen van de extensieslijst. Even geduld..." >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
-<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror2 "Instellingen Verbinding" >
 <!ENTITY setup.networkerror3 "of ga verder met de setup van Songbird door op 'OK' te klikken." >
 <!ENTITY setup.metrics.optin "Stuur anonieme gebruiksstatistieken." >
 <!ENTITY setup.metrics.info "Help ons om Songbird te verbeteren door ons gebruiksstatistieken toe te sturen. Deze statistieken zijn volledig anoniem, geen enkele persoonlijke informatie wordt verzameld." >
@@ -199,11 +199,11 @@
 <!ENTITY hotkeys.useglobalhotkeys "Gebruik Globale Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Actie" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
+<!ENTITY hotkeys.hotkey "Sneltoets" >
 <!ENTITY hotkeys.add "Toevoegen" >
 <!ENTITY hotkeys.set "Instellen" >
 <!ENTITY hotkeys.remove "Verwijderen" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
+<!ENTITY hotkeys.prefpane "Sneltoetsen" >
 <!ENTITY metadata.uuid "Media UUID" >
 <!ENTITY metadata.url "Locatie" >
 <!ENTITY metadata.artist "Artiest" >
@@ -217,7 +217,7 @@
 <!ENTITY setupprogress.installingextensions "Bezig met installeren extensies" >
 <!ENTITY menu.updateCmd.label "Controleren op updates..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY trackeditor.disclaimer "De &quot;Track Editor&quot; mogelijkheid is nog niet volledig af. Wijzigingen in metadata worden enkel in Songbird's database bewaard. In een volgende versie, zal de metadata eveneens in jou media bestanden bewaard worden." >
+<!ENTITY trackeditor.disclaimer "De "Track Editor" mogelijkheid is nog niet volledig af. Wijzigingen in metadata worden enkel in Songbird's database bewaard. In een volgende versie, zal de metadata eveneens in jou media bestanden bewaard worden." >
 <!ENTITY callout.firstwebplaylist "Songbird heeft de volgende afspeelbare tracks gevonden." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
@@ -232,7 +232,7 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto "Spring Naar..." >
 <!ENTITY html.context.playlist "Open as Playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
