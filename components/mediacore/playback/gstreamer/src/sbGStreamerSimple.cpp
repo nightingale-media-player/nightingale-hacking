@@ -54,6 +54,8 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mBus(NULL),
   mPixelAspectRatioN(1),
   mPixelAspectRatioD(1),
+  mVideoWidth(0),
+  mVideoHeight(0),
   mVideoSink(NULL),
   mGdkWin(NULL),
   mIsAtEndOfStream(PR_TRUE),
