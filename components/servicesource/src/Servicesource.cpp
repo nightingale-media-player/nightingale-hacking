@@ -61,8 +61,7 @@
 
 #include "nsCRT.h"
 #include "nsRDFCID.h"
-#include "nsLiteralString.h"
-#include "nsStringAPI.h"
+#include "nsStringGlue.h"
 
 #include "Servicesource.h"
 
