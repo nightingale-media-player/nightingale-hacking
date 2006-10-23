@@ -8,7 +8,7 @@ DEPTH=../..
 CURRENT_DIR=`pwd`
 
 export SONGBIRD_OFFICIAL=1
-export UPDATE_CHANNEL="release"
+export SB_UPDATE_CHANNEL="release"
 export SB_ENABLE_JARS=1
 export SB_ENABLE_INSTALLER=1
 
@@ -18,7 +18,7 @@ make -f songbird.mk
 make -C compiled/update complete
 
 unset SONGBIRD_OFFICIAL
-unset UPDATE_CHANNEL
+unset SB_UPDATE_CHANNEL
 unset SB_ENABLE_JARS
 unset SB_ENABLE_INSTALLER
 

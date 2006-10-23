@@ -37,11 +37,7 @@ ifndef STAGE_DIR
 STAGE_DIR	= $(DEPTH)/update
 endif
 
-ifndef UPDATE_CHANNEL
-UPDATE_CHANNEL = nightly
-endif
-
-SERVER_BASE = http://download.songbirdnest.com/songbird/$(UPDATE_CHANNEL)
+SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
 SERVER_PATH = $(SERVER_BASE)/$(SB_BUILD_ID)-$(SB_BRANCHNAME)
 
 ifdef DEBUG

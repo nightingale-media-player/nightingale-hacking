@@ -69,8 +69,8 @@ ifdef SONGBIRD_OFFICIAL
 CONFIGURE_ARGS += --enable-official
 endif
 
-ifdef UPDATE_CHANNEL
-CONFIGURE_ARGS += --enable-update-channel=$(UPDATE_CHANNEL)
+ifdef SB_UPDATE_CHANNEL
+CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
 endif
 
 # debug build options
