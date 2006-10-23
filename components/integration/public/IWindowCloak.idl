@@ -23,38 +23,48 @@
 // END SONGBIRD GPL
 //
  */
-#include "nsISupports.idl"
 
 /**       
  * \file IWindowCloak.idl
  * \brief Window cloaking service interface file
- * This file contains the interface to the window cloaking service, used to hide a xul
- * window without closing it, and to unhide it at a later time.
+ * This file contains the interface to the window cloaking service, used to
+ * hide a xul window without closing it, and to unhide it at a later time.
  */
 
+#include "nsISupports.idl"
+
+interface nsIDOMWindow;
 
 /**
  * \interface sbIWindowCloak IWindowCloak.h
  * \brief Window cloaking service interface
- * This is an interface to the window cloaking service, used to hide a xul window without 
- * closing it, and to unhide it at a later time.
+ * This is an interface to the window cloaking service, used to hide a xul
+ * window without closing it, and to unhide it at a later time.
  */
-[scriptable, uuid(F1387DC0-4F82-4d8d-8671-C8EB03D27271)]
+[scriptable, uuid(749e0809-e4a7-4c88-abb2-39c1440f1a2d)]
 interface sbIWindowCloak : nsISupports
 {
   /**
    * \brief Cloak a window
    * This method cloaks a xul window without closing it
-   * \param window The document associated with the xul window to cloak
+   * \param aDOMWindow The xul window to cloak
    * \sa uncloak
    */
-  void cloak( in nsISupports window );
+  void cloak(in nsIDOMWindow aDOMWindow);
 
   /**
    * \brief Uncloak a window
-   * This method uncloaks a xul window previous cloaked via a call to cloak()
-   * \param window The document associated with the xul window to uncloak
+   * This method uncloaks a xul window
+   * \param aDOMWindow The xul window to uncloak
    * \sa cloak
    */
-  void uncloak( in nsISupports window );
+  void uncloak(in nsIDOMWindow aDOMWindow);
+
+  /**
+   * \brief Determines whether a window is cloaked
+   * This method is used to figure out if a given window is cloaked
+   * \param aDOMWindow The xul window to test
+   * \sa cloak
+   */
+  PRBool isCloaked(in nsIDOMWindow aDOMWindow);
 };

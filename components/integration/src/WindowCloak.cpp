@@ -28,109 +28,170 @@
  * \file WindowCloak.cpp
  * \brief Songbird Window Cloaker Object Implementation.
  */
- 
-  // ... <sigh>
 
 #include "WindowCloak.h"
 
-// CLASSES ====================================================================
-//=============================================================================
-// CWindowCloak Class
-//=============================================================================
-
-//-----------------------------------------------------------------------------
-/* Implementation file */
-NS_IMPL_ISUPPORTS1(CWindowCloak, sbIWindowCloak)
-
-//-----------------------------------------------------------------------------
-CWindowCloak::CWindowCloak()
-{
-} // ctor
-
-//-----------------------------------------------------------------------------
-CWindowCloak::~CWindowCloak()
-{
-} // dtor
-
-//-----------------------------------------------------------------------------
-NS_IMETHODIMP CWindowCloak::Cloak( nsISupports *window )
-{
-  NATIVEWINDOW wnd = NativeWindowFromNode::get(window);
-  if (!wnd) return NS_OK;  // Fail silent
-  if (findItem(wnd)) return NS_OK; // Fail silently.  Multiple cloaks are ok, no refcount.
-  
-  
-#ifdef XP_WIN
-  RECT bounds;
-  GetWindowRect(wnd, &bounds);
-  
-  // Can't just use hide the window because mozilla may decide to make it visible again without telling us,
-  // so move it outside the screen area and change its flags so it doesn't show up in the task bar (this last
-  // bit requires hiding the window first)
-  ShowWindow(wnd, SW_HIDE);
-  SetWindowLong(wnd, GWL_EXSTYLE, GetWindowLong(wnd, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
-  SetWindowPos(wnd, NULL, -32000, -32000, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
-  ShowWindow(wnd, SW_NORMAL);
-#endif
+#include <dom/nsIDOMWindow.h>
+#include <xpcom/nsCOMPtr.h>
 
 #ifdef XP_MACOSX
 
-  // Can't just use HideWindow as the playback plugins don't properly instantiate unless visible
-  // ::HideWindow(wnd);
-  
-  // Can use transitions in debug mode, but for some reason not in release 
-  // ::TransitionWindow(wnd, kWindowFadeTransitionEffect, kWindowHideTransitionAction,  NULL);
+#include <dom/nsIDOMWindowInternal.h>
+#define OUTER_SPACE_X -32000
+#define OUTER_SPACE_Y -32000
 
-  // So instead, just throw it off screen
-  Rect bounds;
-  ::GetWindowBounds(wnd, kWindowGlobalPortRgn, &bounds);
-  ::MoveWindow(wnd, -32000, -32000, false);
-#endif
+#else /* XP_MACOSX */
 
-  // Remember it
-  WindowCloakEntry *wce = new WindowCloakEntry();
-  wce->m_hwnd = wnd;
-  wce->m_oldX = bounds.left;
-  wce->m_oldY = bounds.top;
-  m_items.push_back(wce);
+#include <docshell/nsIDocShell.h>
+#include <dom/nsIScriptGlobalObject.h>
+#include <widget/nsIBaseWindow.h>
+#include <widget/nsIWidget.h>
 
-  return NS_OK;
-} // Cloak
+#endif /* XP_MACOSX */
 
-std::list<WindowCloakEntry *> CWindowCloak::m_items;
-
-//-----------------------------------------------------------------------------
-WindowCloakEntry *CWindowCloak::findItem(NATIVEWINDOW wnd)
+sbWindowCloak::~sbWindowCloak()
 {
-  std::list<WindowCloakEntry*>::iterator iter;
-  for (iter = m_items.begin(); iter != m_items.end(); iter++)
-  {
-    WindowCloakEntry *wce = *iter;
-    if (wce->m_hwnd == wnd) return wce;
+  // This will delete all of the sbCloakInfo objects that are still laying
+  // around.
+  if (mCloakedWindows.IsInitialized())
+    mCloakedWindows.Clear();
+}
+
+NS_IMPL_ISUPPORTS1(sbWindowCloak, sbIWindowCloak)
+
+NS_IMETHODIMP
+sbWindowCloak::Cloak(nsIDOMWindow* aDOMWindow)
+{
+  NS_ENSURE_ARG_POINTER(aDOMWindow);
+  return SetVisibility(aDOMWindow, PR_FALSE);
+}
+
+NS_IMETHODIMP
+sbWindowCloak::Uncloak(nsIDOMWindow* aDOMWindow)
+{
+  NS_ENSURE_ARG_POINTER(aDOMWindow);
+  return SetVisibility(aDOMWindow, PR_TRUE);
+}
+
+NS_IMETHODIMP
+sbWindowCloak::IsCloaked(nsIDOMWindow* aDOMWindow,
+                         PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aDOMWindow);
+
+  // Return early if nothing has been added to our hashtable.
+  if (!mCloakedWindows.IsInitialized()) {
+    *_retval = PR_FALSE;
+    return NS_OK;
   }
-  return NULL;
-} // findItem
 
-//-----------------------------------------------------------------------------
-NS_IMETHODIMP CWindowCloak::Uncloak(nsISupports *window )
-{
-  NATIVEWINDOW wnd = NativeWindowFromNode::get(window);
-  if (!wnd) return NS_OK; // Fail silent
+  sbCloakInfo* cloakInfo = nsnull;
+  mCloakedWindows.Get(aDOMWindow, &cloakInfo);
 
-  WindowCloakEntry *wce = findItem(wnd);
-  if (!wce) return NS_OK; // Fail silent
-  
-#ifdef XP_WIN
-  ShowWindow(wnd, SW_HIDE);
-  SetWindowLong(wnd, GWL_EXSTYLE, GetWindowLong(wnd, GWL_EXSTYLE) & ~WS_EX_TOOLWINDOW);
-  SetWindowPos(wnd, NULL, wce->m_oldX, wce->m_oldY, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
-  ShowWindow(wnd, SW_NORMAL);
-#endif
-#ifdef XP_MACOSX
-  ::MoveWindow(wce->m_hwnd, wce->m_oldX, wce->m_oldY, true);
-#endif
-  
-  m_items.remove(wce);
-  delete wce;
+  *_retval = cloakInfo && !cloakInfo->mVisible ? PR_TRUE : PR_FALSE;
   return NS_OK;
-} // Uncloak
+}
+
+NS_IMETHODIMP
+sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
+                             PRBool aVisible)
+{
+  // XXXben Someday we could just ask the window if it is visible rather than
+  //        trying to maintain a list ourselves. Sadly the sbCloakInfo structs
+  //        are necessary until we rid ourselves of QuickTime (see below).
+  //        After that, though, we should remove all this mess.
+
+  // Make sure the hashtable is initialized.
+  if (!mCloakedWindows.IsInitialized())
+    NS_ENSURE_TRUE(mCloakedWindows.Init(), NS_ERROR_FAILURE);
+
+  // See if we have previously cloaked this window.
+  sbCloakInfo* cloakInfo = nsnull;
+  PRBool alreadyHashedWindow = mCloakedWindows.Get(aDOMWindow, &cloakInfo);
+
+  if (!cloakInfo) {
+    // This is the first time we have seen this window so assume it is already
+    // visible. Return early if there is nothing to do.
+    if (aVisible)
+      return NS_OK;
+
+    // Otherwise make a new sbCloakInfo structure to hold state info.
+    NS_NEWXPCOM(cloakInfo, sbCloakInfo);
+    NS_ENSURE_TRUE(cloakInfo, NS_ERROR_OUT_OF_MEMORY);
+
+    // Add it to our hashtable here so that the memory will be freed on
+    // shutdown.
+    if (!mCloakedWindows.Put(aDOMWindow, cloakInfo))
+      return NS_ERROR_FAILURE;
+
+    // Set the defaults.
+    cloakInfo->mVisible = PR_TRUE;
+#ifdef XP_MACOSX
+    cloakInfo->mLastX = -1;
+    cloakInfo->mLastY = -1;
+#endif
+  }
+
+  // Return early if there's nothing to do.
+  if (cloakInfo->mVisible == aVisible)
+    return NS_OK;
+
+  nsresult rv;
+
+#ifdef XP_MACOSX
+  // Currently the QuickTime plugin refuses to play anything if the parent
+  // window is hidden, so we're just going to kick the window out by the
+  // XULRunner hidden window. Remove this as soon as QuickTime is gone!
+  nsCOMPtr<nsIDOMWindowInternal> window = do_QueryInterface(aDOMWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (aVisible) {
+    NS_ASSERTION(cloakInfo->mLastX >= 0 && cloakInfo->mLastY >= 0,
+                 "Trying to uncloak a window without previous position!");
+
+    rv = window->MoveTo(cloakInfo->mLastX, cloakInfo->mLastY);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    PRInt32 currentX;
+    rv = window->GetScreenX(&currentX);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    PRInt32 currentY;
+    rv = window->GetScreenY(&currentY);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = window->MoveTo(OUTER_SPACE_X, OUTER_SPACE_Y);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    cloakInfo->mLastX = currentX;
+    cloakInfo->mLastY = currentY;
+  }
+#else /* XP_MACOSX */
+  nsCOMPtr<nsIScriptGlobalObject> scriptGlobalObj =
+    do_QueryInterface(aDOMWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIBaseWindow> baseWindow =
+    do_QueryInterface(scriptGlobalObj->GetDocShell(), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIWidget> mainWidget;
+  rv = baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make sure this is a toplevel window.
+  nsCOMPtr<nsIWidget> tempWidget = mainWidget->GetParent();
+  while (tempWidget) {
+    mainWidget = tempWidget;
+    tempWidget = tempWidget->GetParent();
+  }
+  rv = mainWidget->Show(aVisible);
+  NS_ENSURE_SUCCESS(rv, rv);
+#endif /* XP_MACOSX */
+
+  // Everything has succeeded so update the sbCloakInfo with the new state.
+  cloakInfo->mVisible = aVisible;
+
+  return NS_OK;
+}

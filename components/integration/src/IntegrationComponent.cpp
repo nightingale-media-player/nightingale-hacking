@@ -42,8 +42,11 @@
 #endif
 
 
+#if !defined(XP_UNIX) || defined(XP_MACOSX)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
-NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowCloak)
+#endif
+
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
 
 #ifdef XP_WIN
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
@@ -54,18 +57,20 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
 
 static nsModuleComponentInfo sbIntegration[] =
 {
+#if !defined(XP_UNIX) || defined(XP_MACOSX)
   {
     SONGBIRD_WINDOWDRAGGER_CLASSNAME,
     SONGBIRD_WINDOWDRAGGER_CID,
     SONGBIRD_WINDOWDRAGGER_CONTRACTID,
     CWindowDraggerConstructor
   },
+#endif
 
   {
     SONGBIRD_WINDOWCLOAK_CLASSNAME,
     SONGBIRD_WINDOWCLOAK_CID,
     SONGBIRD_WINDOWCLOAK_CONTRACTID,
-    CWindowCloakConstructor
+    sbWindowCloakConstructor
   },
 
 #ifdef XP_WIN

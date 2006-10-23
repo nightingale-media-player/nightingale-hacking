@@ -32,23 +32,11 @@
 #ifndef __WINDOW_CLOAK_H__
 #define __WINDOW_CLOAK_H__
 
-
 // INCLUDES ===================================================================
 
-// XXX Remove Me !!!
-#ifndef PRUSTRING_DEFINED
-#define PRUSTRING_DEFINED
-#include <string>
-#include "nscore.h"
-namespace std
-{
-  typedef basic_string< PRUnichar > prustring;
-};
-#endif
-
 #include "IWindowCloak.h"
-#include <list>
-#include "NativeWindowFromNode.h"
+
+#include <xpcom/nsClassHashtable.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWCLOAK_CONTRACTID                   \
@@ -63,28 +51,29 @@ namespace std
   {0xb1, 0x36, 0xc1, 0x86, 0x1c, 0x41, 0xe, 0xe5}         \
 }
 // CLASSES ====================================================================
-class WindowCloakEntry 
+class nsIDOMWindow;
+
+struct sbCloakInfo
 {
-public:
-  NATIVEWINDOW m_hwnd;
-  short m_oldX;
-  short m_oldY;
+  PRBool mVisible;
+#ifdef XP_MACOSX
+  PRInt32 mLastX;
+  PRInt32 mLastY;
+#endif
 };
 
-class CWindowCloak : public sbIWindowCloak
+class sbWindowCloak : public sbIWindowCloak
 {
 public:
-  CWindowCloak();
-  virtual ~CWindowCloak();
-
   NS_DECL_ISUPPORTS
   NS_DECL_SBIWINDOWCLOAK
-  
-  WindowCloakEntry *findItem(NATIVEWINDOW wnd);
+
+  ~sbWindowCloak();
   
 protected:
-  static std::list<WindowCloakEntry*> m_items;
+  NS_IMETHOD SetVisibility(nsIDOMWindow* aDOMWindow, PRBool aVisible);
+
+  nsClassHashtable<nsISupportsHashKey, sbCloakInfo> mCloakedWindows;
 };
 
-#endif // __WINDOW_CLOAK_H__
-
+#endif /* __WINDOW_CLOAK_H__ */

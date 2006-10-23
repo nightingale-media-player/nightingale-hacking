@@ -316,37 +316,34 @@ function restartApp()
   onExit();
 }
 
-
-
-
 var songbird_playURL;
-function SBUrlChanged( value )
+function SBUrlChanged(value)
 {
-  if (!coreInitialCloakDone) return;
-  try
-  {
-    var windowCloak = Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"];
-    if (windowCloak) {
-      var service = windowCloak.getService(Components.interfaces.sbIWindowCloak);
-      if (service) {
-        // value _should_ be set correctly now.
-        if (value == null)
-          value = SBDataGetStringValue("faceplate.play.url");
-        if ( gPPS.isVideoURL( value ) ) {
-          service.uncloak( document );
-          window.focus(); 
-        }
-        else {
-          // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
-          onWindowSaveSizeAndPosition();
-          service.cloak( document ); 
-        }
-      }
-    }
+  if (!coreInitialCloakDone)
+    return;
+
+  var windowCloak =
+    Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+              .getService(Components.interfaces.sbIWindowCloak);
+              
+  // value _should_ be set correctly now.
+  if (!value)
+    value = SBDataGetStringValue("faceplate.play.url");
+    
+  // Not sure how, but sometimes this is still null... Return early
+  // rather than doing another cloak/uncloak pair.
+  if (!value)
+    return;
+
+  if (gPPS.isVideoURL(value)) {
+    windowCloak.uncloak(window);
+    window.focus(); 
   }
-  catch(e)
-  {
-    dump(e);
+  else {
+    // Save position before cloaking, because if we close the app after
+    // the window has been cloaked, we can't record its position.
+    onWindowSaveSizeAndPosition();
+    windowCloak.cloak(window); 
   }
 }
 

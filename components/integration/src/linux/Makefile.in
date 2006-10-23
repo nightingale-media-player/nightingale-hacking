@@ -29,6 +29,48 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbWindowCloak.js
+ifdef DEBUG
+target_name = sbIntegration_d$(DLL_SUFFIX)
+else
+target_name = sbIntegration$(DLL_SUFFIX)
+endif
+
+CPP_INCLUDES = $(DEPTH)/components/integration/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/gfx \
+               $(MOZSDK_INCLUDE_DIR)/accessibility \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/xultmpl \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
+               $(MOZSDK_INCLUDE_DIR)/layout \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+DYNAMIC_LIB = $(target_name)
+
+DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4  \
+                            plc4  \
+                            xpcom \
+                            xul \
+                            $(NULL)
+
+CPP_SRCS = ../WindowCloak.cpp \
+           ../IntegrationComponent.cpp \
+           $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(target_name)
 
 include $(topsrcdir)/build/rules.mk
