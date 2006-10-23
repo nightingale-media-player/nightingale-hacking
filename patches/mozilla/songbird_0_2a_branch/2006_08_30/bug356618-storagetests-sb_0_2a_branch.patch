@@ -1,0 +1,17 @@
+? storage/sanity.diff
+Index: storage/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/storage/Makefile.in,v
+retrieving revision 1.4
+diff -u -r1.4 Makefile.in
+--- storage/Makefile.in	22 Mar 2005 17:33:00 -0000	1.4
++++ storage/Makefile.in	14 Oct 2006 00:12:39 -0000
+@@ -51,7 +51,7 @@
+ 		  $(NULL)
+ 
+ ifdef ENABLE_TESTS
+-DIRS		+= test
++TOOL_DIRS      += test
+ endif
+ 
+ include $(topsrcdir)/config/rules.mk

@@ -147,6 +147,10 @@ ifdef SONGBIRD_SCRIPTS
 targets += copy_sb_scripts
 endif
 
+ifdef SONGBIRD_TESTS
+targets += copy_sb_tests
+endif
+
 ifdef SONGBIRD_VLCPLUGINS
 targets += copy_sb_vlcplugins
 endif
@@ -659,6 +663,14 @@ ifdef SONGBIRD_SCRIPTS
 copy_sb_scripts:
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_SCRIPTS) $(SONGBIRD_SCRIPTSDIR)
 .PHONY : copy_sb_scripts
+endif #SONGBIRD_SCRIPTS
+
+#-----------------------
+
+ifdef SONGBIRD_TESTS
+copy_sb_tests:
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_TESTS) $(SONGBIRD_TESTSDIR)
+.PHONY : copy_sb_tests
 endif #SONGBIRD_SCRIPTS
 
 #-----------------------

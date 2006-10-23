@@ -5,7 +5,7 @@ mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/compiled/xulrunner-debug
 mk_add_options MOZ_MAKE_FLAGS=-j4
 ac_add_options --enable-application=xulrunner
 ac_add_options --enable-debug --disable-optimize
-ac_add_options --disable-tests
+ac_add_options --enable-tests
 ac_add_options --disable-javaxpcom
 ac_add_options --enable-svg --enable-canvas
 ac_add_options --enable-update-packaging
