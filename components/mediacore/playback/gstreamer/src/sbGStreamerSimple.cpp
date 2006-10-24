@@ -716,8 +716,6 @@ sbGStreamerSimple::CapsSet(GObject* obj, GParamSpec* pspec)
     const GValue* par = gst_structure_get_value(s, "pixel-aspect-ratio");
     mPixelAspectRatioN = gst_value_get_fraction_numerator(par);
     mPixelAspectRatioD = gst_value_get_fraction_denominator(par);
-
-    Resize();
   }
 
   gst_caps_unref(caps);
