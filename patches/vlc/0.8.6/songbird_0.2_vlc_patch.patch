@@ -1,0 +1,456 @@
+Index: src/libvlc.c
+===================================================================
+--- src/libvlc.c	(revision 17317)
++++ src/libvlc.c	(working copy)
+@@ -25,6 +25,11 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * Last modified: 2/6/2006
++ */
++
+ /*****************************************************************************
+  * Pretend we are a builtin module
+  *****************************************************************************/
+@@ -1174,6 +1179,18 @@
+ }
+ 
+ /*****************************************************************************
++ * MyItemChange: .
++ *****************************************************************************/
++int g_ItemUpdated = -1;
++
++static int MyItemChange( vlc_object_t *p_obj, const char *psz_var,
++                       vlc_value_t oldval, vlc_value_t newval, void *param )
++{
++    g_ItemUpdated = newval.i_int;
++    return VLC_SUCCESS;
++}
++
++/*****************************************************************************
+  * VLC_AddTarget: adds a target for playing.
+  *****************************************************************************
+  * This function adds psz_target to the current playlist. If a playlist does
+@@ -1211,6 +1228,35 @@
+     i_err = playlist_AddExt( p_playlist, psz_target, psz_target,
+                              i_mode, i_pos, -1, ppsz_options, i_options);
+ 
++//SONGBIRD Custom BUILD Changes --- aus
++
++    //vlc_mutex_lock( &p_playlist->object_lock );
++
++    playlist_item_t *p_item = NULL;
++    p_item = playlist_ItemGetById( p_playlist, i_err);
++
++    //vlc_mutex_unlock( &p_playlist->object_lock );
++
++    //vlc_mutex_lock( &p_item->input.lock );
++    //var_AddCallback( p_playlist, "item-change", MyItemChange, p_playlist );
++
++    //playlist_PreparseEnqueueItem( p_playlist, p_item );
++    input_Preparse( p_playlist, &p_item->input );
++
++    //msleep( 3000L );
++    
++    /*while( g_ItemUpdated != i_err )
++    {
++      msleep( 250 );
++    }*/
++
++    //g_ItemUpdated = -1;
++
++    //var_DelCallback( p_playlist, "item-change", MyItemChange, p_playlist );
++    //vlc_mutex_unlock( &p_item->input.lock );
++
++//END
++    
+     vlc_object_release( p_playlist );
+ 
+     if( i_object ) vlc_object_release( p_vlc );
+@@ -2641,3 +2687,139 @@
+     }
+ #endif
+ }
++
++//=======================================================================================
++//CUSTOM SONGBIRD ADDITIONS
++//=======================================================================================
++
++//SONGBIRD Custom BUILD Changes -- aus@songbirdnest.com
++//Last modified -- 2/6/2006
++
++/** 
++ * Get Item Metadata. 
++ * 
++ * \param i_object
++ * \param i_index
++ * \param pp_meta
++ * \return 
++ */
++int            VLC_PlaylistGetItemMetadata( int i_object, int i_index, vlc_meta_t ** pp_meta)
++{
++  playlist_t *p_playlist = NULL;
++  vlc_t *p_vlc = vlc_current_object( i_object );
++
++  /* Check that the handle is valid */
++  if( !p_vlc )
++  {
++    return VLC_ENOOBJ;
++  }
++  
++  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
++  
++  if( !p_playlist )
++  {
++    if( i_object ) vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++
++  //vlc_mutex_lock( &p_playlist->object_lock );
++  
++  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
++  
++  if( !p_item )
++  {
++    vlc_object_release( p_playlist );
++    if( i_object ) vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++  
++  vlc_mutex_lock( &p_item->input.lock );
++  
++  *pp_meta = vlc_meta_New();
++  vlc_meta_t *p_meta = *pp_meta;
++  
++  vlc_meta_Add(p_meta, "Root", "Root Metadata Node");
++  
++  int i = 0;
++  for( ; i < p_item->input.i_categories; i++ )
++  {
++    p_meta->track = (vlc_meta_t**)realloc( p_meta->track, sizeof( vlc_meta_t* ) * (p_meta->i_track+1) );
++    p_meta->track[p_meta->i_track] = vlc_meta_New();
++    vlc_meta_Add(p_meta->track[p_meta->i_track], "Category", p_item->input.pp_categories[i]->psz_name);
++
++    p_meta->track[i]->track = (vlc_meta_t**)realloc( p_meta->track[i]->track, sizeof( vlc_meta_t* ) * (p_meta->track[i]->i_track+1) );
++    p_meta->track[i]->track[p_meta->track[i]->i_track] = vlc_meta_New();    
++       
++    int j = 0;
++    for( ; j < p_item->input.pp_categories[i]->i_infos; j++ )
++    {
++      if( p_item->input.pp_categories[i]->pp_infos[j]->psz_name[0] != 0 &&
++          p_item->input.pp_categories[i]->pp_infos[j]->psz_value[0] != 0 )
++      {
++        vlc_meta_Add(p_meta->track[i]->track[p_meta->track[i]->i_track], 
++                     p_item->input.pp_categories[i]->pp_infos[j]->psz_name,
++                     p_item->input.pp_categories[i]->pp_infos[j]->psz_value);
++        
++      }
++    }
++    
++    p_meta->track[i]->i_track++;    
++    p_meta->i_track++;
++  }
++  
++  vlc_mutex_unlock( &p_item->input.lock );
++  //vlc_mutex_unlock( &p_playlist->object_lock );
++  
++  vlc_object_release( p_playlist );
++  
++  if( i_object ) vlc_object_release( p_vlc );
++  
++  return VLC_SUCCESS;
++}
++
++/*****************************************************************************
++ * VLC_PlaylistDeleteItem: Delete an item from the playlist
++ *****************************************************************************/
++int VLC_PlaylistDeleteItem( int i_object, int i_index)
++{
++  playlist_t *p_playlist = NULL;
++  vlc_t *p_vlc = vlc_current_object( i_object );
++
++  /* Check that the handle is valid */
++  if( !p_vlc )
++  {
++    return VLC_ENOOBJ;
++  }
++  
++  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
++  
++  if( !p_playlist )
++  {
++    vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++
++  vlc_mutex_lock( &p_playlist->object_lock );
++  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
++  
++  if( !p_item )
++  {
++    vlc_object_release( p_playlist );
++    vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++  
++  int ret = VLC_SUCCESS;
++  ret = playlist_ItemDelete( p_item );
++
++  vlc_mutex_unlock( &p_playlist->object_lock );
++
++  vlc_object_release( p_playlist );
++  vlc_object_release( p_vlc );
++  
++  return ret;
++}
++
++//=======================================================================================
++//END
++//=======================================================================================
+Index: modules/demux/mp4/drms.c
+===================================================================
+--- modules/demux/mp4/drms.c	(revision 17317)
++++ modules/demux/mp4/drms.c	(working copy)
+@@ -24,6 +24,8 @@
+ 
+ #include <stdlib.h>                                      /* malloc(), free() */
+ 
++#define DISABLE_DRMS_PLAYBACK 1
++
+ #ifdef WIN32
+ #   include <io.h>
+ #else
+@@ -298,6 +300,11 @@
+ int drms_init( void *_p_drms, uint32_t i_type,
+                uint8_t *p_info, uint32_t i_len )
+ {
++
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     int i_ret = 0;
+ 
+@@ -396,6 +403,9 @@
+     }
+ 
+     return i_ret;
++
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /* The following functions are local */
+@@ -1560,6 +1570,11 @@
+  *****************************************************************************/
+ static int WriteUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else
++  
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     FILE *file;
+     int i_ret = -1;
+@@ -1591,6 +1606,9 @@
+     }
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1600,6 +1618,11 @@
+  *****************************************************************************/
+ static int ReadUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++  
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else
++      
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     FILE *file;
+     int i_ret = -1;
+@@ -1618,6 +1641,9 @@
+     }
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1629,6 +1655,11 @@
+  *****************************************************************************/
+ static int GetUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else
++
+     static char const p_secret7[] = "mUfnpognadfgf873";
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     struct aes_s aes;
+@@ -1761,6 +1792,9 @@
+     free( p_sci_data );
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1771,6 +1805,11 @@
+ static int GetSCIData( char *psz_ipod, uint32_t **pp_sci,
+                        uint32_t *pi_sci_size )
+ {
++  
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else    
++      
+     FILE *file;
+     char *psz_path = NULL;
+     char p_tmp[ 4 * PATH_MAX ];
+@@ -1860,6 +1899,9 @@
+     }
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK
++
+ }
+ 
+ /*****************************************************************************
+@@ -1957,6 +1999,11 @@
+  *****************************************************************************/
+ static int GetiPodID( int64_t *p_ipod_id )
+ {
++  
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else    
++  
+     int i_ret = -1;
+ 
+ #define PROD_NAME   "iPod"
+@@ -2073,6 +2120,9 @@
+ #endif
+ 
+     return i_ret;
++    
++#endif //DISABLE_DRMS_PLAYBACK    
++    
+ }
+ 
+ #else /* !defined( UNDER_CE ) */
+Index: include/vlc/vlc.h
+===================================================================
+--- include/vlc/vlc.h	(revision 17317)
++++ include/vlc/vlc.h	(working copy)
+@@ -54,6 +54,11 @@
+ #endif
+ 
+ /**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * 2/6/2006 9:10PM
++ */
++
++/**
+  * \defgroup var_type Variable types
+  * These are the different types a vlc variable can have.
+  * @{
+@@ -157,6 +162,12 @@
+  * Exported libvlc API
+  *****************************************************************************/
+ #if !defined( __VLC__ )
++
++//XXXMATT: Crap, shouldnt have to do this.
++
++#   include "vlc_common.h"
++#include "vlc_meta.h"
++
+ /* Otherwise they are declared and exported in vlc_common.h */
+ /**
+  * Retrieve libvlc version
+@@ -570,6 +581,26 @@
+ int             VLC_FullScreen( int );
+ 
+ 
++/**
++ * Get Playlist Item MetaData.
++ *
++ * \param i_object a vlc object id.
++ * \param i_item an item index.
++ * \return VLC_SUCCESS on success
++ */
++int             VLC_PlaylistGetItemMetadata( int, int, vlc_meta_t ** );
++
++/**
++ * Remove an item from the playlist
++ *
++ * Remove a single item from the playlist by index.
++ *
++ * \param i_object a vlc object id
++ * \param i_index the index number of the item to delete from the playlist.
++ * \return VLC_SUCCESS on success
++ */
++int             VLC_PlaylistDeleteItem( int, int );
++
+ # ifdef __cplusplus
+ }
+ # endif
+Index: include/vlc_config.h
+===================================================================
+--- include/vlc_config.h	(revision 17317)
++++ include/vlc_config.h	(working copy)
+@@ -22,6 +22,11 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+  *****************************************************************************/
+ 
++/**
++ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
++ * 2/6/2006 9:10PM
++ */
++
+ /* Conventions regarding names of symbols and variables
+  * ----------------------------------------------------
+  *
+@@ -50,7 +55,11 @@
+ #elif __APPLE__
+ #  define CONFIG_DIR                    "Library/Preferences/VLC"
+ #elif defined( WIN32 ) || defined( UNDER_CE )
+-#  define CONFIG_DIR                    "vlc"
++
++//SONGBIRD Custom BUILD Changes --- aus@songbirdnest.com
++//These changes were last modified -- 2/6/2006 9:09PM
++#  define CONFIG_DIR                    "Songbird_vlc"
++
+ #else
+ #  define CONFIG_DIR                    ".vlc"
+ #endif
+Index: mozilla/vlcplugin.cpp
+===================================================================
+--- mozilla/vlcplugin.cpp	(revision 17317)
++++ mozilla/vlcplugin.cpp	(working copy)
+@@ -73,7 +73,9 @@
+     /* locate VLC module path */
+ #ifdef XP_MACOSX
+     ppsz_argv[ppsz_argc++] = "--plugin-path";
+-    ppsz_argv[ppsz_argc++] = "/Library/Internet Plug-Ins/VLC Plugin.plugin/"
++    //ppsz_argv[ppsz_argc++] = "/Library/Internet Plug-Ins/VLC Plugin.plugin/"
++    //                         "Contents/MacOS/modules";
++    ppsz_argv[ppsz_argc++] = "/Users/Matt/Projects/songbird/trunk/compiled/dist/Songbird.app/Contents/Frameworks/XUL.framework/plugins/VLC Plugin.plugin/"
+                              "Contents/MacOS/modules";
+ #elif defined(XP_WIN)
+     HKEY h_key;
