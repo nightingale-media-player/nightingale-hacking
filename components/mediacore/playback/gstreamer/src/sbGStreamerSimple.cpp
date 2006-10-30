@@ -159,8 +159,11 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   GstElement *audioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
   g_object_set(mPlay, "audio-sink", audioSink, NULL);
 
-  // TODO: use gconf video config here?
-  mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
+  mVideoSink = gst_element_factory_make("xvimagesink", "video-sink");
+  if (mVideoSink == NULL) {
+      mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
+  }
+
   g_object_set(mPlay, "video-sink", mVideoSink, NULL);
 
   mBus = gst_element_get_bus(mPlay);
@@ -502,24 +505,31 @@ sbGStreamerSimple::Resize()
 
   PRInt32 newX, newY, newWidth, newHeight;
 
-  if(mVideoWidth > 0 && mVideoHeight > 0) {
+  // If we have not received a video size yet, size the video window to the
+  // size of the video output element
+  if(mVideoWidth == 0 && mVideoHeight == 0) {
+    gdk_window_move_resize(mGdkWin, x, y, width, height);
+  }
+  else {
+    if(mVideoWidth > 0 && mVideoHeight > 0) {
 
-    float ratioWidth  = (float) width  / (float) mVideoWidth;
-    float ratioHeight = (float) height / (float) mVideoHeight;
-    if(ratioWidth < ratioHeight) {
-      newWidth  = PRInt32(mVideoWidth  * ratioWidth);
-      newHeight = PRInt32(mVideoHeight * ratioWidth);
-      newX = x;
-      newY = ((height - newHeight) / 2) + y;
-    }
-    else {
-      newWidth  = PRInt32(mVideoWidth  * ratioHeight);
-      newHeight = PRInt32(mVideoHeight * ratioHeight);
-      newX = ((width - newWidth) / 2) + x;
-      newY = y;
-    }
+      float ratioWidth  = (float) width  / (float) mVideoWidth;
+      float ratioHeight = (float) height / (float) mVideoHeight;
+      if(ratioWidth < ratioHeight) {
+        newWidth  = PRInt32(mVideoWidth  * ratioWidth);
+        newHeight = PRInt32(mVideoHeight * ratioWidth);
+        newX = x;
+        newY = ((height - newHeight) / 2) + y;
+      }
+      else {
+        newWidth  = PRInt32(mVideoWidth  * ratioHeight);
+        newHeight = PRInt32(mVideoHeight * ratioHeight);
+        newX = ((width - newWidth) / 2) + x;
+        newY = y;
+      }
 
-    gdk_window_move_resize(mGdkWin, newX, newY, newWidth, newHeight);
+      gdk_window_move_resize(mGdkWin, newX, newY, newWidth, newHeight);
+    }
   }
 
   return NS_OK;
