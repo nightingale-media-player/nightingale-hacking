@@ -375,7 +375,7 @@ CMediaLibrary.prototype =
     {
       this.m_queryObject.resetQuery();
       this.m_queryObject.addQuery("ALTER TABLE \"" + LIBRARY_TABLE_NAME + "\" ADD COLUMN \"" + strColumn + "\" " + strDataType);
-      this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "_desc\" (column_name) VALUES (\"" + strColumn + "\")");
+      this.m_queryObject.addQuery("INSERT OR REPLACE INTO \"" + LIBRARY_DESC_TABLE_NAME + "\" (column_name) VALUES (\"" + strColumn + "\")");
       
       this.m_queryObject.execute();
       this.m_queryObject.waitForCompletion();
