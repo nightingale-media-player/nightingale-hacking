@@ -443,14 +443,60 @@ Index: mozilla/vlcplugin.cpp
 ===================================================================
 --- mozilla/vlcplugin.cpp	(revision 17317)
 +++ mozilla/vlcplugin.cpp	(working copy)
-@@ -73,7 +73,9 @@
+@@ -73,8 +73,41 @@
      /* locate VLC module path */
  #ifdef XP_MACOSX
      ppsz_argv[ppsz_argc++] = "--plugin-path";
 -    ppsz_argv[ppsz_argc++] = "/Library/Internet Plug-Ins/VLC Plugin.plugin/"
+-                             "Contents/MacOS/modules";
++    printf("\n\nabout to load bundle path\n\n");
++
++    // Dig through the os x bundle API to figure out the module path
++    CFBundleRef appBundle = CFBundleGetMainBundle();
++    if (appBundle == NULL) { 
++      printf("\nVlcPlugin::init - Could not get bundle ref\n");
++      return NPERR_GENERIC_ERROR;
++    }
++    CFURLRef bundleURL = CFBundleCopyBundleURL(appBundle);
++    if (bundleURL == NULL) {
++      printf("\nVlcPlugin::init - Could not get bundle URL\n");
++      return NPERR_GENERIC_ERROR;
++    }
++    CFStringRef myString = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
++
++    // ppsz_argv needs a CString path, so convert down.
++    // What happens if the user runs the app from some unicode URL?
++    const CFIndex PATH_BUFFER = PATH_MAX + 1;
++    char bundlePath[PATH_BUFFER];
++    CFStringGetCString(myString, bundlePath, PATH_BUFFER, kCFStringEncodingASCII);
++    if (bundlePath == NULL) {
++        printf("\nVlcPlugin::init - Could not get path string\n");
++        CFRelease(bundleURL);
++        return NPERR_GENERIC_ERROR;
++    }
++
++    // Add the known plugin path to the bundle path
++    strcat(bundlePath, "/Contents/Frameworks/XUL.framework/plugins/VLC Plugin.plugin/Contents/MacOS/modules" );
++    printf("\nVlcPlugin::init - Using path %s\n", bundlePath);
++    ppsz_argv[ppsz_argc++] = bundlePath;
++
++    CFRelease(bundleURL);
++
 +    //ppsz_argv[ppsz_argc++] = "/Library/Internet Plug-Ins/VLC Plugin.plugin/"
 +    //                         "Contents/MacOS/modules";
-+    ppsz_argv[ppsz_argc++] = "/Users/Matt/Projects/songbird/trunk/compiled/dist/Songbird.app/Contents/Frameworks/XUL.framework/plugins/VLC Plugin.plugin/"
-                              "Contents/MacOS/modules";
  #elif defined(XP_WIN)
      HKEY h_key;
+     DWORD i_type, i_data = MAX_PATH + 1;
+Index: mozilla/Makefile.am
+===================================================================
+--- mozilla/Makefile.am	(revision 17317)
++++ mozilla/Makefile.am	(working copy)
+@@ -90,7 +90,7 @@
+ 	awk -v libdylib="$$dylib" ' \
+ 	/@executable_path/ { \
+ 	    newpath=$$1 ; \
+-	    sub("@executable_path","/Library/Internet Plug-Ins/VLC Plugin.plugin/Contents/MacOS",newpath) ; \
++	    sub("@executable_path","@executable_path/plugins/VLC Plugin.plugin/Contents/MacOS",newpath) ; \
+ 	    print "install_name_tool -change \""$$1"\" \""newpath"\" \""libdylib"\"" ; \
+ 	}' | sh -x
+ endef
