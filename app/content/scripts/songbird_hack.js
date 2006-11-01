@@ -2762,12 +2762,10 @@ var SBDropObserver =
 {
   getSupportedFlavours : function () 
   {
-    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage("get flavours");
     var flavours = new FlavourSet();
     flavours.appendFlavour("application/x-moz-file","nsIFile");
-//    flavours.appendFlavour("application/x-moz-url");
+    flavours.appendFlavour("text/x-moz-url");
+    flavours.appendFlavour("text/unicode");
     return flavours;
   },
   onDragOver: function ( evt, flavour, session )
@@ -2777,11 +2775,26 @@ var SBDropObserver =
   {
     if ( dropdata.data != "" )
     {
-      // if it has a path property
-      if ( dropdata.data.path )
-      {
-        theDropPath = dropdata.data.path;
-        theDropIsDir = dropdata.data.isDirectory();
+      // Get the URL of the dropped item.  Note that for some reason this
+      // url is returned with a newline on the end (on linux at least) so
+      // I get the true url from the uri below
+      var url = transferUtils.retrieveURLFromData(dropdata.data,
+                                                  dropdata.flavour.contentType);
+      if(url != "") {
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                            .getService(Components.interfaces.nsIIOService);
+        var uri = ios.newURI(url, null, null);
+        theDropPath = uri.spec;
+        var fileUrl = uri.QueryInterface(Components.interfaces.nsIFileURL);
+        if(fileUrl) {
+          theDropIsDir = fileUrl.file.isDirectory();
+          if(theDropIsDir) {
+            theDropPath = fileUrl.file.path;
+          }
+        }
+        else {
+          theDropIsDir = false;
+        }
         setTimeout( SBDropped, 10 ); // Next frame
         
       }
