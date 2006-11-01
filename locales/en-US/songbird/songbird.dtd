@@ -53,7 +53,10 @@
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
 
 <!ENTITY menu.help          "Help" >
-<!ENTITY menu.help.topics   "Help Topics..." >
+<!ENTITY menu.help.bugz     "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics   "Help Topics" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
 <!ENTITY menu.help.about    "About Songbird..." >
 
 <!ENTITY menu.preferences   "Preferences..." >
@@ -215,6 +218,7 @@
 <!ENTITY menu.devices.accesskey       "D" >
 
 <!ENTITY menu.help.accesskey          "H" >
+<!ENTITY menu.help.bugz.accesskey     "B" >
 <!ENTITY menu.help.help.accesskey     "H" >
 <!ENTITY menu.help.about.accesskey    "A" >
 

@@ -202,9 +202,13 @@
                       accesskey="&menu.help.accesskey;"
                       onpopupshowing="buildHelpMenu();">
                   <menupopup id="help-popup">
+                    <menuitem id="help.bugz"
+                              label="&menu.help.bugz;"
+                              value="&menu.help.bugz.url;"
+                              accesskey="&menu.help.bugz.accesskey;"/>
                     <menuitem id="help.topics"
                               label="&menu.help.topics;"
-                              value="&web.url.first;"
+                              value="&menu.help.topics.url;"
                               key="help-key" 
                               accesskey="&menu.help.help.accesskey;"/>
                     <menuseparator/>
