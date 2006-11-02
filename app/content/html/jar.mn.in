@@ -13,6 +13,5 @@ songbird.jar:
   content/songbird/html/mplayer.html				(mplayer.html)
   content/songbird/html/not_connected.html  (not_connected.html)
   content/songbird/html/qt.html             (qt.html)
-  content/songbird/html/vlc.html						(vlc.html)
   content/songbird/html/wm.html							(wm.html)
 
