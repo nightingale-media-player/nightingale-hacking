@@ -1,6 +1,6 @@
 Index: mozilla/control/npolibvlc.cpp
 ===================================================================
---- mozilla/control/npolibvlc.cpp	(revision 17418)
+--- mozilla/control/npolibvlc.cpp	(revision 17424)
 +++ mozilla/control/npolibvlc.cpp	(working copy)
 @@ -46,6 +46,7 @@
      logObj = NPN_CreateObject(instance, RuntimeNPClass<LibvlcLogNPObject>::getClass());
@@ -44,7 +44,7 @@ Index: mozilla/control/npolibvlc.cpp
          case ID_VersionInfo:
              NPUTF8 *versionStr = NULL;
  
-@@ -1687,3 +1694,136 @@
+@@ -1687,3 +1694,189 @@
      return INVOKERESULT_GENERIC_ERROR;
  }
  
@@ -54,8 +54,9 @@ Index: mozilla/control/npolibvlc.cpp
 +** implementation of libvlc metadata object
 +*
 +*  Current usage:
-+*   ["artist", "album"] = vlc.metadata.categories 
-+*   "Album" = vlc.metadata.getCategory("album")
++*   ["meta-information", "general"] = vlc.metadata.categories 
++*   ["artist", "album"] = vlc.metadata.getCategoryKeys("meta-information") 
++*   "metadata" = vlc.metadata.get("meta-information","album")
 +*/
 +
 +const NPUTF8 * const LibvlcMetadataNPObject::propertyNames[] = 
@@ -91,7 +92,7 @@ Index: mozilla/control/npolibvlc.cpp
 +                    // TODO call request all available metadata categories form libvlc
 +                    // and then build a javascript array
 +
-+                    static const char rawScript[] = "['artist','album']";
++                    static const char rawScript[] = "['meta-information','general']";
 +                    NPString script;
 +                    script.utf8characters = rawScript;
 +                    script.utf8length = sizeof(rawScript)-1;
@@ -136,12 +137,14 @@ Index: mozilla/control/npolibvlc.cpp
 +
 +const NPUTF8 * const LibvlcMetadataNPObject::methodNames[] =
 +{
-+    "getCategory",
++    "getCategoryKeys",
++    "get",
 +};
 +
 +enum LibvlcMetadataNPObjectMethodIds
 +{
-+    ID_getcategory,
++    ID_getcategorykeys,
++    ID_get,
 +};
 +
 +const int LibvlcMetadataNPObject::methodCount = sizeof(LibvlcMetadataNPObject::methodNames)/sizeof(NPUTF8 *);
@@ -156,17 +159,67 @@ Index: mozilla/control/npolibvlc.cpp
 +
 +        switch( index )
 +        {
-+            case ID_getcategory:
++            case ID_getcategorykeys:
 +                if( argCount == 1 )
 +                {
 +                    if( NPVARIANT_IS_STRING(args[0]) )
 +                    {
 +                        char *s = stringValue(NPVARIANT_TO_STRING(args[0]));
-+                        printf("\nvlc.metadata.getCategory(%s)\n", s);
++                        printf("\nvlc.metadata.getCategoryKeys(%s)\n", s);
 +                       
 +                        // TODO get the metadata corresponding to s from libvlc
 +
-+                        STRINGZ_TO_NPVARIANT("metadata", result);
++                        NPP browser = p_plugin->getBrowser();
++                        NPObject *plugin;
++
++                        if( NPERR_NO_ERROR == NPN_GetValue(browser, NPNVWindowNPObject, &plugin) )
++                        {
++
++                            // TODO call request all available metadata category keys form libvlc
++                            // and then build a javascript array
++
++                            static const char rawScript[] = "['artist','album']";
++                            NPString script;
++                            script.utf8characters = rawScript;
++                            script.utf8length = sizeof(rawScript)-1;
++
++                            if( NPN_Evaluate(browser, plugin, &script, &result) )
++                            {
++                                if( !NPVARIANT_IS_OBJECT(result) )
++                                {
++                                    NPN_ReleaseObject(plugin);
++                                    return INVOKERESULT_GENERIC_ERROR;
++                                }
++                                // NPN_RetainObject(NPVARIANT_TO_OBJECT(result));
++                                // NPN_ReleaseVariantValue(&result);
++                            } else {
++                               NPN_ReleaseObject(plugin);
++                               return INVOKERESULT_GENERIC_ERROR;
++                            }
++                            NPN_ReleaseObject(plugin);
++                        }
++
++                        printf("\nvlc.metadata.categories = ['artist','album']\n");
++                    }
++                    else
++                        return INVOKERESULT_NO_SUCH_METHOD;                    
++
++                    return INVOKERESULT_NO_ERROR;
++                }
++                return INVOKERESULT_NO_SUCH_METHOD;
++
++            case ID_get:
++                if( argCount == 2 )
++                {
++                    if( NPVARIANT_IS_STRING(args[0]) && NPVARIANT_IS_STRING(args[1]))
++                    {
++                        char *category = stringValue(NPVARIANT_TO_STRING(args[0]));
++                        char *key = stringValue(NPVARIANT_TO_STRING(args[1]));
++                        printf("\nvlc.metadata.get(%s, %s)\n", category, key);
++
++                        // TODO get the metadata corresponding to s from libvlc
++
++                        STRINGZ_TO_NPVARIANT(strdup("metadata"), result);
 +                    }
 +                    else
 +                        return INVOKERESULT_NO_SUCH_METHOD;                    
@@ -183,7 +236,7 @@ Index: mozilla/control/npolibvlc.cpp
 +
 Index: mozilla/control/npolibvlc.h
 ===================================================================
---- mozilla/control/npolibvlc.h	(revision 17418)
+--- mozilla/control/npolibvlc.h	(revision 17424)
 +++ mozilla/control/npolibvlc.h	(working copy)
 @@ -50,6 +50,7 @@
      NPObject *logObj;
@@ -221,7 +274,7 @@ Index: mozilla/control/npolibvlc.h
 +};
 Index: mozilla/vlcplugin.cpp
 ===================================================================
---- mozilla/vlcplugin.cpp	(revision 17418)
+--- mozilla/vlcplugin.cpp	(revision 17424)
 +++ mozilla/vlcplugin.cpp	(working copy)
 @@ -73,8 +73,40 @@
      /* locate VLC module path */
@@ -268,7 +321,7 @@ Index: mozilla/vlcplugin.cpp
      DWORD i_type, i_data = MAX_PATH + 1;
 Index: mozilla/Makefile.am
 ===================================================================
---- mozilla/Makefile.am	(revision 17418)
+--- mozilla/Makefile.am	(revision 17424)
 +++ mozilla/Makefile.am	(working copy)
 @@ -90,7 +90,7 @@
  	awk -v libdylib="$$dylib" ' \
