@@ -1,0 +1,478 @@
+Index: include/vlc/libvlc.h
+===================================================================
+--- include/vlc/libvlc.h	(revision 13)
++++ include/vlc/libvlc.h	(working copy)
+@@ -34,6 +34,10 @@
+ 
+ #include <vlc/vlc.h>
+ 
++/* BEGIN SONGBIRD EDIT */
++#include <vlc_meta.h>
++/* END SONGBIRD EDIT */
++
+ # ifdef __cplusplus
+ extern "C" {
+ # endif
+@@ -247,6 +251,20 @@
+ libvlc_input_t *libvlc_playlist_get_input( libvlc_instance_t *,
+                                            libvlc_exception_t * );
+ 
++
++/* BEGIN SONGBIRD EDIT */
++
++/** 
++ * Get metadata for currently playing input.
++ * 
++ * \param p_instance the instance
++ * \param pp_meta a pointer to the metadata container.
++ * \param p_exception an initialized exception.
++ */
++void libvlc_playlist_get_metadata( libvlc_instance_t *, vlc_meta_t **, libvlc_exception_t * );
++
++/* END SONGBIRD EDIT */
++
+ /** @}*/
+ 
+ /*****************************************************************************
+Index: include/vlc/vlc.h
+===================================================================
+--- include/vlc/vlc.h	(revision 13)
++++ include/vlc/vlc.h	(working copy)
+@@ -153,6 +153,10 @@
+ #   include "vlc_common.h"
+ #endif
+ 
++/* BEGIN SONGBIRD EDIT */
++#include "vlc_meta.h"
++/* END SONGBIRD EDIT */
++
+ /*****************************************************************************
+  * Exported libvlc API
+  *****************************************************************************/
+@@ -569,7 +573,19 @@
+  */
+ int             VLC_FullScreen( int );
+ 
++/* BEGIN SONGBIRD EDIT */
+ 
++/**
++ * Get Playlist Item MetaData.
++ *
++ * \param i_object a vlc object id.
++ * \param i_item an item index.
++ * \return VLC_SUCCESS on success
++ */
++int             VLC_PlaylistGetItemMetadata( int, int, vlc_meta_t ** );
++
++/* END SONGBIRD EDIT */
++
+ # ifdef __cplusplus
+ }
+ # endif
+Index: include/vlc_config.h
+===================================================================
+--- include/vlc_config.h	(revision 13)
++++ include/vlc_config.h	(working copy)
+@@ -44,7 +44,11 @@
+  * outputting an error message (in second) */
+ #define THREAD_COND_TIMEOUT             1
+ 
+-/* The configuration file and directory */
++/*BEGIN SONGBIRD EDIT*/
++
++/* Unmodified code block below */
++/*
++// The configuration file and directory 
+ #ifdef SYS_BEOS
+ #  define CONFIG_DIR                    "config/settings/VideoLAN Client"
+ #elif __APPLE__
+@@ -56,7 +60,23 @@
+ #endif
+ #define CONFIG_FILE                     "vlcrc"
+ #define PLUGINSCACHE_DIR                "cache"
++*/
+ 
++/* The configuration file and directory */
++#ifdef SYS_BEOS
++#  define CONFIG_DIR                    "config/settings/Songbird VLC"
++#elif __APPLE__
++#  define CONFIG_DIR                    "Library/Preferences/SongbirdVLC"
++#elif defined( WIN32 ) || defined( UNDER_CE )
++#  define CONFIG_DIR                    "SongbirdVLC"
++#else
++#  define CONFIG_DIR                    ".songbird_vlc"
++#endif
++#define CONFIG_FILE                     "songbirdvlcrc"
++#define PLUGINSCACHE_DIR                "cache"
++
++/*END SONGBIRD EDIT*/
++
+ /*****************************************************************************
+  * Interface configuration
+  *****************************************************************************/
+Index: include/vlc_meta.h
+===================================================================
+--- include/vlc_meta.h	(revision 13)
++++ include/vlc_meta.h	(working copy)
+@@ -68,6 +68,11 @@
+ #define VLC_META_CODEC_NAME         N_("Codec Name")
+ #define VLC_META_CODEC_DESCRIPTION  N_("Codec Description")
+ 
++/* BEGIN SONGBIRD CHANGES */
++#include <stdlib.h>
++#include <string.h>
++/* END SONGBIRD CHANGES */
++
+ struct vlc_meta_t
+ {
+     /* meta name/value pairs */
+Index: modules/demux/mp4/drms.c
+===================================================================
+--- modules/demux/mp4/drms.c	(revision 13)
++++ modules/demux/mp4/drms.c	(working copy)
+@@ -24,6 +24,12 @@
+ 
+ #include <stdlib.h>                                      /* malloc(), free() */
+ 
++/* BEGIN SONGBIRD EDIT */
++
++#define DISABLE_DRMS_PLAYBACK
++
++/* END SONGBIRD EDIT */
++
+ #ifdef WIN32
+ #   include <io.h>
+ #else
+@@ -252,6 +258,11 @@
+  *****************************************************************************/
+ void drms_decrypt( void *_p_drms, uint32_t *p_buffer, uint32_t i_bytes )
+ {
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return;
++#else  
++  
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     uint32_t p_key[ 4 ];
+     unsigned int i_blocks;
+@@ -281,6 +292,9 @@
+ 
+         p_buffer += 4;
+     }
++    
++#endif
++/* END SONGBIRD EDIT */    
+ }
+ 
+ /*****************************************************************************
+@@ -298,6 +312,12 @@
+ int drms_init( void *_p_drms, uint32_t i_type,
+                uint8_t *p_info, uint32_t i_len )
+ {
++  
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     int i_ret = 0;
+ 
+@@ -396,6 +416,9 @@
+     }
+ 
+     return i_ret;
++
++#endif
++/* END SONGBIRD EDIT */    
+ }
+ 
+ /* The following functions are local */
+@@ -1506,6 +1529,12 @@
+  *****************************************************************************/
+ static int GetSystemKey( uint32_t *p_sys_key, vlc_bool_t b_ipod )
+ {
++
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     static char const p_secret5[ 8 ] = "YuaFlafu";
+     static char const p_secret6[ 8 ] = "zPif98ga";
+     struct md5_s md5;
+@@ -1544,6 +1573,9 @@
+     memcpy( p_sys_key, md5.p_digest, 16 );
+ 
+     return 0;
++    
++#endif
++/* END SONGBIRD EDIT */    
+ }
+ 
+ #ifdef WIN32
+@@ -1560,6 +1592,13 @@
+  *****************************************************************************/
+ static int WriteUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++/* BEGIN SONGBIRD EDIT */
++
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     FILE *file;
+     int i_ret = -1;
+@@ -1591,6 +1630,9 @@
+     }
+ 
+     return i_ret;
++
++#endif
++/* END SONGBIRD EDIT */
+ }
+ 
+ /*****************************************************************************
+@@ -1600,6 +1642,13 @@
+  *****************************************************************************/
+ static int ReadUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++/* BEGIN SONGBIRD EDIT */
++
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     FILE *file;
+     int i_ret = -1;
+@@ -1618,6 +1667,9 @@
+     }
+ 
+     return i_ret;
++
++#endif
++/* END SONGBIRD EDIT */
+ }
+ 
+ /*****************************************************************************
+@@ -1629,6 +1681,12 @@
+  *****************************************************************************/
+ static int GetUserKey( void *_p_drms, uint32_t *p_user_key )
+ {
++
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     static char const p_secret7[] = "mUfnpognadfgf873";
+     struct drms_s *p_drms = (struct drms_s *)_p_drms;
+     struct aes_s aes;
+@@ -1761,6 +1819,10 @@
+     free( p_sci_data );
+ 
+     return i_ret;
++
++#endif
++/* END SONGBIRD EDIT */
++
+ }
+ 
+ /*****************************************************************************
+@@ -1771,6 +1833,12 @@
+ static int GetSCIData( char *psz_ipod, uint32_t **pp_sci,
+                        uint32_t *pi_sci_size )
+ {
++
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     FILE *file;
+     char *psz_path = NULL;
+     char p_tmp[ 4 * PATH_MAX ];
+@@ -1860,6 +1928,10 @@
+     }
+ 
+     return i_ret;
++
++#endif
++/* END SONGBIRD EDIT */
++
+ }
+ 
+ /*****************************************************************************
+@@ -1957,6 +2029,12 @@
+  *****************************************************************************/
+ static int GetiPodID( int64_t *p_ipod_id )
+ {
++
++/* BEGIN SONGBIRD EDIT */
++#if defined(DISABLE_DRMS_PLAYBACK)
++    return -1;
++#else  
++
+     int i_ret = -1;
+ 
+ #define PROD_NAME   "iPod"
+@@ -2073,6 +2151,9 @@
+ #endif
+ 
+     return i_ret;
++
++#endif
++/* END SONGBIRD EDIT */    
+ }
+ 
+ #else /* !defined( UNDER_CE ) */
+Index: src/libvlc.c
+===================================================================
+--- src/libvlc.c	(revision 13)
++++ src/libvlc.c	(working copy)
+@@ -1211,6 +1211,12 @@
+     i_err = playlist_AddExt( p_playlist, psz_target, psz_target,
+                              i_mode, i_pos, -1, ppsz_options, i_options);
+ 
++/* BEGIN SONGBIRD EDIT */
++    playlist_item_t *p_item = NULL;
++    p_item = playlist_ItemGetById( p_playlist, i_err);
++    input_Preparse( p_playlist, &p_item->input );
++/*END SONGBIRD EDIT */
++
+     vlc_object_release( p_playlist );
+ 
+     if( i_object ) vlc_object_release( p_vlc );
+@@ -1788,6 +1794,85 @@
+     return i_err;
+ }
+ 
++/* BEGIN SONGBIRD EDIT */
++/** 
++ * Get Item Metadata. 
++ * 
++ * \param i_object
++ * \param i_index
++ * \param pp_meta
++ * \return 
++ */
++int VLC_PlaylistGetItemMetadata( int i_object, int i_index, vlc_meta_t ** pp_meta)
++{
++  playlist_t *p_playlist = NULL;
++  vlc_t *p_vlc = vlc_current_object( i_object );
++
++  /* Check that the handle is valid */
++  if( !p_vlc )
++  {
++    return VLC_ENOOBJ;
++  }
++  
++  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
++  
++  if( !p_playlist )
++  {
++    if( i_object ) vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++ 
++  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
++  
++  if( !p_item )
++  {
++    vlc_object_release( p_playlist );
++    if( i_object ) vlc_object_release( p_vlc );
++    return VLC_ENOOBJ;
++  }
++  
++  vlc_mutex_lock( &p_item->input.lock );
++  
++  *pp_meta = vlc_meta_New();
++  vlc_meta_t *p_meta = *pp_meta;
++  
++  vlc_meta_Add(p_meta, "Root", "Root Metadata Node");
++  
++  int i = 0;
++  for( ; i < p_item->input.i_categories; i++ )
++  {
++    p_meta->track = (vlc_meta_t**)realloc( p_meta->track, sizeof( vlc_meta_t* ) * (p_meta->i_track+1) );
++    p_meta->track[p_meta->i_track] = vlc_meta_New();
++    vlc_meta_Add(p_meta->track[p_meta->i_track], "Category", p_item->input.pp_categories[i]->psz_name);
++
++    p_meta->track[i]->track = (vlc_meta_t**)realloc( p_meta->track[i]->track, sizeof( vlc_meta_t* ) * (p_meta->track[i]->i_track+1) );
++    p_meta->track[i]->track[p_meta->track[i]->i_track] = vlc_meta_New();    
++       
++    int j = 0;
++    for( ; j < p_item->input.pp_categories[i]->i_infos; j++ )
++    {
++      if( p_item->input.pp_categories[i]->pp_infos[j]->psz_name[0] != 0 &&
++          p_item->input.pp_categories[i]->pp_infos[j]->psz_value[0] != 0 )
++      {
++        vlc_meta_Add(p_meta->track[i]->track[p_meta->track[i]->i_track], 
++                     p_item->input.pp_categories[i]->pp_infos[j]->psz_name,
++                     p_item->input.pp_categories[i]->pp_infos[j]->psz_value);
++        
++      }
++    }
++    
++    p_meta->track[i]->i_track++;    
++    p_meta->i_track++;
++  }
++  
++  vlc_mutex_unlock( &p_item->input.lock );
++  vlc_object_release( p_playlist );
++  
++  if( i_object ) vlc_object_release( p_vlc );
++  
++  return VLC_SUCCESS;
++}
++
+ /**
+  * Change the volume
+  *
+Index: src/misc/configuration.c
+===================================================================
+--- src/misc/configuration.c	(revision 13)
++++ src/misc/configuration.c	(working copy)
+@@ -60,6 +60,11 @@
+ #   if !defined( UNDER_CE )
+ #       include <direct.h>
+ #   endif
++/* BEGIN SONGBIRD EDIT */
++#   if !defined(CSIDL_COMMON_APPDATA)
++#      define CSIDL_COMMON_APPDATA (0x0023)
++#   endif
++/* END SONGBIRD EDIT */
+ #include <tchar.h>
+ #endif
+ 
+@@ -1753,13 +1758,25 @@
+         {
+             char psz_ACPhome[MAX_PATH];
+ 
+-            /* get the "Application Data" folder for the current user */
++/*BEGIN SONGBIRD EDIT*/
++/* Original unmodified code block */
++/*
++            // get the "Application Data" folder for the current user
+             if( S_OK == SHGetFolderPath( NULL,
+                                          (b_appdata ? CSIDL_APPDATA :
+                                            CSIDL_PROFILE) | CSIDL_FLAG_CREATE,
+                                          NULL, SHGFP_TYPE_CURRENT,
+                                          psz_ACPhome ) )
+             {
++*/
++            /* get the "Application Data" folder for the all users */
++            if( S_OK == SHGetFolderPath( NULL,
++                                         (b_appdata ? CSIDL_COMMON_APPDATA :
++                                           CSIDL_PROFILE) | CSIDL_FLAG_CREATE,
++                                         NULL, SHGFP_TYPE_CURRENT,
++                                         psz_ACPhome ) )
++            {
++/*END SONGBIRD EDIT*/
+                 FreeLibrary( shfolder_dll );
+                 return FromLocaleDup( psz_ACPhome );
+             }
