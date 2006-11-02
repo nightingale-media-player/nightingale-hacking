@@ -1,455 +1,234 @@
-Index: src/libvlc.c
+Index: mozilla/control/npolibvlc.cpp
 ===================================================================
---- src/libvlc.c	(revision 17317)
-+++ src/libvlc.c	(working copy)
-@@ -25,6 +25,11 @@
-  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
-  *****************************************************************************/
- 
-+/**
-+ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
-+ * Last modified: 2/6/2006
-+ */
-+
- /*****************************************************************************
-  * Pretend we are a builtin module
-  *****************************************************************************/
-@@ -1174,6 +1179,18 @@
+--- mozilla/control/npolibvlc.cpp	(revision 17418)
++++ mozilla/control/npolibvlc.cpp	(working copy)
+@@ -46,6 +46,7 @@
+     logObj = NPN_CreateObject(instance, RuntimeNPClass<LibvlcLogNPObject>::getClass());
+     playlistObj = NPN_CreateObject(instance, RuntimeNPClass<LibvlcPlaylistNPObject>::getClass());
+     videoObj = NPN_CreateObject(instance,RuntimeNPClass<LibvlcVideoNPObject>::getClass());
++    metadataObj = NPN_CreateObject(instance, RuntimeNPClass<LibvlcMetadataNPObject>::getClass());
  }
  
- /*****************************************************************************
-+ * MyItemChange: .
-+ *****************************************************************************/
-+int g_ItemUpdated = -1;
-+
-+static int MyItemChange( vlc_object_t *p_obj, const char *psz_var,
-+                       vlc_value_t oldval, vlc_value_t newval, void *param )
-+{
-+    g_ItemUpdated = newval.i_int;
-+    return VLC_SUCCESS;
-+}
-+
-+/*****************************************************************************
-  * VLC_AddTarget: adds a target for playing.
-  *****************************************************************************
-  * This function adds psz_target to the current playlist. If a playlist does
-@@ -1211,6 +1228,35 @@
-     i_err = playlist_AddExt( p_playlist, psz_target, psz_target,
-                              i_mode, i_pos, -1, ppsz_options, i_options);
- 
-+//SONGBIRD Custom BUILD Changes --- aus
-+
-+    //vlc_mutex_lock( &p_playlist->object_lock );
-+
-+    playlist_item_t *p_item = NULL;
-+    p_item = playlist_ItemGetById( p_playlist, i_err);
-+
-+    //vlc_mutex_unlock( &p_playlist->object_lock );
-+
-+    //vlc_mutex_lock( &p_item->input.lock );
-+    //var_AddCallback( p_playlist, "item-change", MyItemChange, p_playlist );
-+
-+    //playlist_PreparseEnqueueItem( p_playlist, p_item );
-+    input_Preparse( p_playlist, &p_item->input );
-+
-+    //msleep( 3000L );
-+    
-+    /*while( g_ItemUpdated != i_err )
-+    {
-+      msleep( 250 );
-+    }*/
-+
-+    //g_ItemUpdated = -1;
-+
-+    //var_DelCallback( p_playlist, "item-change", MyItemChange, p_playlist );
-+    //vlc_mutex_unlock( &p_item->input.lock );
-+
-+//END
-+    
-     vlc_object_release( p_playlist );
- 
-     if( i_object ) vlc_object_release( p_vlc );
-@@ -2641,3 +2687,139 @@
-     }
- #endif
+ LibvlcRootNPObject::~LibvlcRootNPObject()
+@@ -55,6 +56,7 @@
+     NPN_ReleaseObject(logObj);
+     NPN_ReleaseObject(playlistObj);
+     NPN_ReleaseObject(videoObj);
++    NPN_ReleaseObject(metadataObj);
  }
+ 
+ const NPUTF8 * const LibvlcRootNPObject::propertyNames[] = 
+@@ -63,6 +65,7 @@
+     "input",
+     "playlist",
+     "video",
++    "metadata",
+     "VersionInfo",
+ };
+ 
+@@ -74,6 +77,7 @@
+     ID_input,
+     ID_playlist,
+     ID_video,
++    ID_metadata,
+     ID_VersionInfo,
+ };
+ 
+@@ -93,6 +97,9 @@
+         case ID_video:
+             OBJECT_TO_NPVARIANT(NPN_RetainObject(videoObj), result);
+             return INVOKERESULT_NO_ERROR;
++        case ID_metadata:
++            OBJECT_TO_NPVARIANT(NPN_RetainObject(metadataObj), result);
++            return INVOKERESULT_NO_ERROR;
+         case ID_VersionInfo:
+             NPUTF8 *versionStr = NULL;
+ 
+@@ -1687,3 +1694,136 @@
+     return INVOKERESULT_GENERIC_ERROR;
+ }
+ 
 +
-+//=======================================================================================
-+//CUSTOM SONGBIRD ADDITIONS
-+//=======================================================================================
 +
-+//SONGBIRD Custom BUILD Changes -- aus@songbirdnest.com
-+//Last modified -- 2/6/2006
++/*
++** implementation of libvlc metadata object
++*
++*  Current usage:
++*   ["artist", "album"] = vlc.metadata.categories 
++*   "Album" = vlc.metadata.getCategory("album")
++*/
 +
-+/** 
-+ * Get Item Metadata. 
-+ * 
-+ * \param i_object
-+ * \param i_index
-+ * \param pp_meta
-+ * \return 
-+ */
-+int            VLC_PlaylistGetItemMetadata( int i_object, int i_index, vlc_meta_t ** pp_meta)
++const NPUTF8 * const LibvlcMetadataNPObject::propertyNames[] = 
 +{
-+  playlist_t *p_playlist = NULL;
-+  vlc_t *p_vlc = vlc_current_object( i_object );
++    "categories",
++};
 +
-+  /* Check that the handle is valid */
-+  if( !p_vlc )
-+  {
-+    return VLC_ENOOBJ;
-+  }
-+  
-+  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
-+  
-+  if( !p_playlist )
-+  {
-+    if( i_object ) vlc_object_release( p_vlc );
-+    return VLC_ENOOBJ;
-+  }
++const int LibvlcMetadataNPObject::propertyCount = sizeof(LibvlcMetadataNPObject::propertyNames)/sizeof(NPUTF8 *);
 +
-+  //vlc_mutex_lock( &p_playlist->object_lock );
-+  
-+  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
-+  
-+  if( !p_item )
-+  {
-+    vlc_object_release( p_playlist );
-+    if( i_object ) vlc_object_release( p_vlc );
-+    return VLC_ENOOBJ;
-+  }
-+  
-+  vlc_mutex_lock( &p_item->input.lock );
-+  
-+  *pp_meta = vlc_meta_New();
-+  vlc_meta_t *p_meta = *pp_meta;
-+  
-+  vlc_meta_Add(p_meta, "Root", "Root Metadata Node");
-+  
-+  int i = 0;
-+  for( ; i < p_item->input.i_categories; i++ )
-+  {
-+    p_meta->track = (vlc_meta_t**)realloc( p_meta->track, sizeof( vlc_meta_t* ) * (p_meta->i_track+1) );
-+    p_meta->track[p_meta->i_track] = vlc_meta_New();
-+    vlc_meta_Add(p_meta->track[p_meta->i_track], "Category", p_item->input.pp_categories[i]->psz_name);
++enum LibvlcMetadataNPObjectPropertyIds
++{
++    ID_categories,
++};
 +
-+    p_meta->track[i]->track = (vlc_meta_t**)realloc( p_meta->track[i]->track, sizeof( vlc_meta_t* ) * (p_meta->track[i]->i_track+1) );
-+    p_meta->track[i]->track[p_meta->track[i]->i_track] = vlc_meta_New();    
-+       
-+    int j = 0;
-+    for( ; j < p_item->input.pp_categories[i]->i_infos; j++ )
++RuntimeNPObject::InvokeResult LibvlcMetadataNPObject::getProperty(int index, NPVariant &result)
++{
++    VlcPlugin *p_plugin = reinterpret_cast<VlcPlugin *>(_instance->pdata);
++    if( p_plugin )
 +    {
-+      if( p_item->input.pp_categories[i]->pp_infos[j]->psz_name[0] != 0 &&
-+          p_item->input.pp_categories[i]->pp_infos[j]->psz_value[0] != 0 )
-+      {
-+        vlc_meta_Add(p_meta->track[i]->track[p_meta->track[i]->i_track], 
-+                     p_item->input.pp_categories[i]->pp_infos[j]->psz_name,
-+                     p_item->input.pp_categories[i]->pp_infos[j]->psz_value);
-+        
-+      }
++        libvlc_exception_t ex;
++        libvlc_exception_init(&ex);
++
++        switch( index )
++        {
++            case ID_categories:
++            {
++                NPP browser = p_plugin->getBrowser();
++                NPObject *plugin;
++
++                if( NPERR_NO_ERROR == NPN_GetValue(browser, NPNVWindowNPObject, &plugin) )
++                {
++
++                    // TODO call request all available metadata categories form libvlc
++                    // and then build a javascript array
++
++                    static const char rawScript[] = "['artist','album']";
++                    NPString script;
++                    script.utf8characters = rawScript;
++                    script.utf8length = sizeof(rawScript)-1;
++
++                    if( NPN_Evaluate(browser, plugin, &script, &result) )
++                    {
++                        if( !NPVARIANT_IS_OBJECT(result) )
++                        {
++                            NPN_ReleaseObject(plugin);
++                            return INVOKERESULT_GENERIC_ERROR;
++                        }
++                        // NPN_RetainObject(NPVARIANT_TO_OBJECT(result));
++                        // NPN_ReleaseVariantValue(&result);
++                    } else {
++                       NPN_ReleaseObject(plugin);
++                       return INVOKERESULT_GENERIC_ERROR;
++                    }
++                    NPN_ReleaseObject(plugin);
++                }
++
++                printf("\nvlc.metadata.categories = ['artist','album']\n");
++                return INVOKERESULT_NO_ERROR;
++            }
++        }
 +    }
-+    
-+    p_meta->track[i]->i_track++;    
-+    p_meta->i_track++;
-+  }
-+  
-+  vlc_mutex_unlock( &p_item->input.lock );
-+  //vlc_mutex_unlock( &p_playlist->object_lock );
-+  
-+  vlc_object_release( p_playlist );
-+  
-+  if( i_object ) vlc_object_release( p_vlc );
-+  
-+  return VLC_SUCCESS;
++    return INVOKERESULT_GENERIC_ERROR;
 +}
 +
-+/*****************************************************************************
-+ * VLC_PlaylistDeleteItem: Delete an item from the playlist
-+ *****************************************************************************/
-+int VLC_PlaylistDeleteItem( int i_object, int i_index)
++RuntimeNPObject::InvokeResult LibvlcMetadataNPObject::setProperty(int index, const NPVariant &value)
 +{
-+  playlist_t *p_playlist = NULL;
-+  vlc_t *p_vlc = vlc_current_object( i_object );
++    VlcPlugin *p_plugin = reinterpret_cast<VlcPlugin *>(_instance->pdata);
++    if( p_plugin )
++    {
++        libvlc_exception_t ex;
++        libvlc_exception_init(&ex);
 +
-+  /* Check that the handle is valid */
-+  if( !p_vlc )
-+  {
-+    return VLC_ENOOBJ;
-+  }
-+  
-+  p_playlist = vlc_object_find( p_vlc, VLC_OBJECT_PLAYLIST, FIND_CHILD );
-+  
-+  if( !p_playlist )
-+  {
-+    vlc_object_release( p_vlc );
-+    return VLC_ENOOBJ;
-+  }
-+
-+  vlc_mutex_lock( &p_playlist->object_lock );
-+  playlist_item_t *p_item = playlist_ItemGetByPos( p_playlist, i_index );
-+  
-+  if( !p_item )
-+  {
-+    vlc_object_release( p_playlist );
-+    vlc_object_release( p_vlc );
-+    return VLC_ENOOBJ;
-+  }
-+  
-+  int ret = VLC_SUCCESS;
-+  ret = playlist_ItemDelete( p_item );
-+
-+  vlc_mutex_unlock( &p_playlist->object_lock );
-+
-+  vlc_object_release( p_playlist );
-+  vlc_object_release( p_vlc );
-+  
-+  return ret;
++       // TODO Should anything be writeable? 
++    }
++    return INVOKERESULT_GENERIC_ERROR;
 +}
 +
-+//=======================================================================================
-+//END
-+//=======================================================================================
-Index: modules/demux/mp4/drms.c
++
++const NPUTF8 * const LibvlcMetadataNPObject::methodNames[] =
++{
++    "getCategory",
++};
++
++enum LibvlcMetadataNPObjectMethodIds
++{
++    ID_getcategory,
++};
++
++const int LibvlcMetadataNPObject::methodCount = sizeof(LibvlcMetadataNPObject::methodNames)/sizeof(NPUTF8 *);
++
++RuntimeNPObject::InvokeResult LibvlcMetadataNPObject::invoke(int index, const NPVariant *args, uint32_t argCount, NPVariant &result)
++{
++    VlcPlugin *p_plugin = reinterpret_cast<VlcPlugin *>(_instance->pdata);
++    if( p_plugin )
++    {
++        libvlc_exception_t ex;
++        libvlc_exception_init(&ex);
++
++        switch( index )
++        {
++            case ID_getcategory:
++                if( argCount == 1 )
++                {
++                    if( NPVARIANT_IS_STRING(args[0]) )
++                    {
++                        char *s = stringValue(NPVARIANT_TO_STRING(args[0]));
++                        printf("\nvlc.metadata.getCategory(%s)\n", s);
++                       
++                        // TODO get the metadata corresponding to s from libvlc
++
++                        STRINGZ_TO_NPVARIANT("metadata", result);
++                    }
++                    else
++                        return INVOKERESULT_NO_SUCH_METHOD;                    
++
++                    return INVOKERESULT_NO_ERROR;
++                }
++                return INVOKERESULT_NO_SUCH_METHOD;
++            default:
++                return INVOKERESULT_NO_SUCH_METHOD;
++        }
++    }
++    return INVOKERESULT_GENERIC_ERROR;
++}
++
+Index: mozilla/control/npolibvlc.h
 ===================================================================
---- modules/demux/mp4/drms.c	(revision 17317)
-+++ modules/demux/mp4/drms.c	(working copy)
-@@ -24,6 +24,8 @@
+--- mozilla/control/npolibvlc.h	(revision 17418)
++++ mozilla/control/npolibvlc.h	(working copy)
+@@ -50,6 +50,7 @@
+     NPObject *logObj;
+     NPObject *playlistObj;
+     NPObject *videoObj;
++    NPObject *metadataObj;
+ };
  
- #include <stdlib.h>                                      /* malloc(), free() */
+ class LibvlcAudioNPObject: public RuntimeNPObject
+@@ -261,3 +262,25 @@
+     InvokeResult invoke(int index, const NPVariant *args, uint32_t argCount, NPVariant &result);
+ };
  
-+#define DISABLE_DRMS_PLAYBACK 1
 +
- #ifdef WIN32
- #   include <io.h>
- #else
-@@ -298,6 +300,11 @@
- int drms_init( void *_p_drms, uint32_t i_type,
-                uint8_t *p_info, uint32_t i_len )
- {
++class LibvlcMetadataNPObject: public RuntimeNPObject
++{
++protected:
++    friend class RuntimeNPClass<LibvlcMetadataNPObject>;
 +
-+#if defined(DISABLE_DRMS_PLAYBACK)
-+    return -1;
-+#else  
++    LibvlcMetadataNPObject(NPP instance, const NPClass *aClass) :
++        RuntimeNPObject(instance, aClass) {};
 +
-     struct drms_s *p_drms = (struct drms_s *)_p_drms;
-     int i_ret = 0;
- 
-@@ -396,6 +403,9 @@
-     }
- 
-     return i_ret;
++    virtual ~LibvlcMetadataNPObject() {};
 +
-+#endif //DISABLE_DRMS_PLAYBACK
++    static const int propertyCount;
++    static const NPUTF8 * const propertyNames[];
 +
- }
- 
- /* The following functions are local */
-@@ -1560,6 +1570,11 @@
-  *****************************************************************************/
- static int WriteUserKey( void *_p_drms, uint32_t *p_user_key )
- {
++    InvokeResult getProperty(int index, NPVariant &result);
++    InvokeResult setProperty(int index, const NPVariant &value);
 +
-+#if defined(DISABLE_DRMS_PLAYBACK)
-+    return -1;
-+#else
-+  
-     struct drms_s *p_drms = (struct drms_s *)_p_drms;
-     FILE *file;
-     int i_ret = -1;
-@@ -1591,6 +1606,9 @@
-     }
- 
-     return i_ret;
-+    
-+#endif //DISABLE_DRMS_PLAYBACK
++    static const int methodCount;
++    static const NPUTF8 * const methodNames[];
 +
- }
- 
- /*****************************************************************************
-@@ -1600,6 +1618,11 @@
-  *****************************************************************************/
- static int ReadUserKey( void *_p_drms, uint32_t *p_user_key )
- {
-+  
-+#if defined(DISABLE_DRMS_PLAYBACK)
-+    return -1;
-+#else
-+      
-     struct drms_s *p_drms = (struct drms_s *)_p_drms;
-     FILE *file;
-     int i_ret = -1;
-@@ -1618,6 +1641,9 @@
-     }
- 
-     return i_ret;
-+    
-+#endif //DISABLE_DRMS_PLAYBACK
-+
- }
- 
- /*****************************************************************************
-@@ -1629,6 +1655,11 @@
-  *****************************************************************************/
- static int GetUserKey( void *_p_drms, uint32_t *p_user_key )
- {
-+
-+#if defined(DISABLE_DRMS_PLAYBACK)
-+    return -1;
-+#else
-+
-     static char const p_secret7[] = "mUfnpognadfgf873";
-     struct drms_s *p_drms = (struct drms_s *)_p_drms;
-     struct aes_s aes;
-@@ -1761,6 +1792,9 @@
-     free( p_sci_data );
- 
-     return i_ret;
-+    
-+#endif //DISABLE_DRMS_PLAYBACK
-+
- }
- 
- /*****************************************************************************
-@@ -1771,6 +1805,11 @@
- static int GetSCIData( char *psz_ipod, uint32_t **pp_sci,
-                        uint32_t *pi_sci_size )
- {
-+  
-+#if defined(DISABLE_DRMS_PLAYBACK)
-+    return -1;
-+#else    
-+      
-     FILE *file;
-     char *psz_path = NULL;
-     char p_tmp[ 4 * PATH_MAX ];
-@@ -1860,6 +1899,9 @@
-     }
- 
-     return i_ret;
-+    
-+#endif //DISABLE_DRMS_PLAYBACK
-+
- }
- 
- /*****************************************************************************
-@@ -1957,6 +1999,11 @@
-  *****************************************************************************/
- static int GetiPodID( int64_t *p_ipod_id )
- {
-+  
-+#if defined(DISABLE_DRMS_PLAYBACK)
-+    return -1;
-+#else    
-+  
-     int i_ret = -1;
- 
- #define PROD_NAME   "iPod"
-@@ -2073,6 +2120,9 @@
- #endif
- 
-     return i_ret;
-+    
-+#endif //DISABLE_DRMS_PLAYBACK    
-+    
- }
- 
- #else /* !defined( UNDER_CE ) */
-Index: include/vlc/vlc.h
-===================================================================
---- include/vlc/vlc.h	(revision 17317)
-+++ include/vlc/vlc.h	(working copy)
-@@ -54,6 +54,11 @@
- #endif
- 
- /**
-+ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
-+ * 2/6/2006 9:10PM
-+ */
-+
-+/**
-  * \defgroup var_type Variable types
-  * These are the different types a vlc variable can have.
-  * @{
-@@ -157,6 +162,12 @@
-  * Exported libvlc API
-  *****************************************************************************/
- #if !defined( __VLC__ )
-+
-+//XXXMATT: Crap, shouldnt have to do this.
-+
-+#   include "vlc_common.h"
-+#include "vlc_meta.h"
-+
- /* Otherwise they are declared and exported in vlc_common.h */
- /**
-  * Retrieve libvlc version
-@@ -570,6 +581,26 @@
- int             VLC_FullScreen( int );
- 
- 
-+/**
-+ * Get Playlist Item MetaData.
-+ *
-+ * \param i_object a vlc object id.
-+ * \param i_item an item index.
-+ * \return VLC_SUCCESS on success
-+ */
-+int             VLC_PlaylistGetItemMetadata( int, int, vlc_meta_t ** );
-+
-+/**
-+ * Remove an item from the playlist
-+ *
-+ * Remove a single item from the playlist by index.
-+ *
-+ * \param i_object a vlc object id
-+ * \param i_index the index number of the item to delete from the playlist.
-+ * \return VLC_SUCCESS on success
-+ */
-+int             VLC_PlaylistDeleteItem( int, int );
-+
- # ifdef __cplusplus
- }
- # endif
-Index: include/vlc_config.h
-===================================================================
---- include/vlc_config.h	(revision 17317)
-+++ include/vlc_config.h	(working copy)
-@@ -22,6 +22,11 @@
-  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
-  *****************************************************************************/
- 
-+/**
-+ * This file has additional edits by Ghislain 'Aus' Lacroix - POTI - aus@songbirdnest.com
-+ * 2/6/2006 9:10PM
-+ */
-+
- /* Conventions regarding names of symbols and variables
-  * ----------------------------------------------------
-  *
-@@ -50,7 +55,11 @@
- #elif __APPLE__
- #  define CONFIG_DIR                    "Library/Preferences/VLC"
- #elif defined( WIN32 ) || defined( UNDER_CE )
--#  define CONFIG_DIR                    "vlc"
-+
-+//SONGBIRD Custom BUILD Changes --- aus@songbirdnest.com
-+//These changes were last modified -- 2/6/2006 9:09PM
-+#  define CONFIG_DIR                    "Songbird_vlc"
-+
- #else
- #  define CONFIG_DIR                    ".vlc"
- #endif
++    InvokeResult invoke(int index, const NPVariant *args, uint32_t argCount, NPVariant &result);
++};
 Index: mozilla/vlcplugin.cpp
 ===================================================================
---- mozilla/vlcplugin.cpp	(revision 17317)
+--- mozilla/vlcplugin.cpp	(revision 17418)
 +++ mozilla/vlcplugin.cpp	(working copy)
-@@ -73,8 +73,41 @@
+@@ -73,8 +73,40 @@
      /* locate VLC module path */
  #ifdef XP_MACOSX
      ppsz_argv[ppsz_argc++] = "--plugin-path";
 -    ppsz_argv[ppsz_argc++] = "/Library/Internet Plug-Ins/VLC Plugin.plugin/"
 -                             "Contents/MacOS/modules";
-+    printf("\n\nabout to load bundle path\n\n");
 +
 +    // Dig through the os x bundle API to figure out the module path
 +    CFBundleRef appBundle = CFBundleGetMainBundle();
@@ -489,7 +268,7 @@ Index: mozilla/vlcplugin.cpp
      DWORD i_type, i_data = MAX_PATH + 1;
 Index: mozilla/Makefile.am
 ===================================================================
---- mozilla/Makefile.am	(revision 17317)
+--- mozilla/Makefile.am	(revision 17418)
 +++ mozilla/Makefile.am	(working copy)
 @@ -90,7 +90,7 @@
  	awk -v libdylib="$$dylib" ' \
