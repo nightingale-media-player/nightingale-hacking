@@ -1,0 +1,235 @@
+Index: app/content/scripts/songbird.js
+===================================================================
+--- app/content/scripts/songbird.js	(revision 2742)
++++ app/content/scripts/songbird.js	(working copy)
+@@ -473,6 +473,7 @@
+ 
+       // Initialize with VLC
+       CoreVLCDocumentInit( "core_vlc" );
++
+       //InitPlaybackCoreFlash( "core_flash_frame" );
+       // Hide Quicktime
+       if (theQTBox) theQTBox.hidden = true;
+@@ -488,12 +489,18 @@
+     else if (platform == "Darwin") {
+       var quitMenuItem = document.getElementById("menu_FileQuitItem");
+       quitMenuItem.removeAttribute("hidden");
++
++      // Initialize with VLC
++      CoreVLCDocumentInit( "core_vlc" );
++
+       //MacOSX, prefer QT.
+ 
+       // Initialize with Quicktime
+-      CoreQTDocumentInit( "core_qt_document" );
++      //CoreQTDocumentInit( "core_qt_document" );
+       // Hide VLC
+-      if (theVLCBox) theVLCBox.hidden = true;
++      //if (theVLCBox) theVLCBox.hidden = true;
++      // Hide Quicktime
++      if (theQTBox) theQTBox.hidden = true;
+       // Hide GStreamer
+       if (theGSTBox) theGSTBox.hidden = true;
+       /*
+Index: app/content/xul/songbird.xul
+===================================================================
+--- app/content/xul/songbird.xul	(revision 2742)
++++ app/content/xul/songbird.xul	(working copy)
+@@ -136,7 +136,7 @@
+               <!-- HEY!  If you add new objects or iframes to this list,
+                    you need to make sure you hide them per platform in Songbird.js -->
+               <hbox id="box_vlc" flex="1">
+-                <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
++                <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin" version ="VideoLAN.VLCPlugin.2"/>
+               </hbox>
+               <hbox id="box_qt" flex="1">
+                 <html:iframe id="core_qt_document" style="border: 0px none;" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
+Index: components/playlistplayback/src/coreVLC.js
+===================================================================
+--- components/playlistplayback/src/coreVLC.js	(revision 2742)
++++ components/playlistplayback/src/coreVLC.js	(working copy)
+@@ -93,10 +93,13 @@
+       this._url = this._url.replace(/\//g, '\\');
+     }
+   }
++  // XXXMATT haven't implemented playmrl for vlc-0.8.6
++  this._object.playlist.clear();
++  this._object.playlist.add(this._url);
++  this._object.playlist.play();
++  //this._object.playmrl(this._url);
+   
+-  this._object.playmrl(this._url);
+-  
+-  if (this._object.isplaying()) 
++  if (this._object.playlist.isPlaying) 
+   {
+     this._paused = false;
+     this._lastPosition = 0;
+@@ -109,7 +112,11 @@
+ CoreVLC.prototype.play = function() 
+ {
+   this._verifyObject();
+-  this._object.play();
++
++  if (this._object.playlist.itemCount <= 0) 
++    return false;
++
++  this._object.playlist.play();
+   this._paused = false;
+ 
+   return true;
+@@ -118,9 +125,16 @@
+ CoreVLC.prototype.stop = function() 
+ {
+   this._verifyObject();
+-  this._object.stop();
++
++  // vlc0.8.6 seems to die if you try to stop with no items in the playlist
++
++  if (this._object.playlist.itemCount <= 0) 
++    return false;
++
++  this._object.playlist.stop();
++
+   this._paused = false;
+-  return this._object.isplaying() == false;
++  return this._object.playlist.isPlaying == false;
+ };
+   
+ CoreVLC.prototype.pause = function()
+@@ -129,9 +143,9 @@
+     return false;
+     
+   this._verifyObject();
+-  this._object.pause();
++  this._object.playlist.togglePause();
+   
+-  if (this._object.isplaying())
++  if (this._object.playlist.isPlaying)
+     return false;
+     
+   this._paused = true;
+@@ -148,7 +162,7 @@
+ CoreVLC.prototype.getPlaying = function() 
+ {
+   this._verifyObject();
+-  return this._object.isplaying() || this._paused;
++  return this._object.playlist.isPlaying || this._paused;
+ };
+ 
+ CoreVLC.prototype.getMute = function() 
+@@ -163,7 +177,7 @@
+   if (this._muted != mute) 
+   {
+     this._muted = mute;
+-    this._object.mute();
++    this._object.audio.mute = mute;
+   }
+ };
+ 
+@@ -177,7 +191,7 @@
+   * If you going beyond this 0-50 scale, VLC will amplify the signal.
+   * And it does so poorly, without clipping or compressing the signal.
+   */
+-  var scaledVolume = this._object.get_volume();
++  var scaledVolume = this._object.audio.volume;
+   var retVolume = Math.round(scaledVolume / 50 * 255);
+   
+   return retVolume;
+@@ -191,59 +205,77 @@
+     
+   var scaledVolume = Math.round(volume / 255 * 50);
+   
+-  this._object.set_volume(scaledVolume);
++  this._object.audio.volume = scaledVolume;
+ };
+   
+ CoreVLC.prototype.getLength = function() 
+ {
+   this._verifyObject();
+-  return this._object.get_length() * 1000;
++
++  if (this._object.playlist.itemCount <= 0 || this._object.input.state == 0)
++    return null;
++
++  return this._object.input.length;
+ };
+ 
+ CoreVLC.prototype.getPosition = function() 
+ {
+   this._verifyObject();
+-  return this._object.get_time() * 1000;
++
++  if (this._object.playlist.itemCount <= 0 || this._object.input.state == 0)
++    return null;
++
++  return this._object.input.time;
+ };
+ 
+ CoreVLC.prototype.setPosition = function(position) 
+ {
+   this._verifyObject();
+-  this._object.seek(position / 1000, false);
++
++  if (this._object.playlist.itemCount <= 0 || this._object.input.state == 0)
++    return null;
++
++  dump("\nSeeking to " + position  + "\n")
++  if (this._object.playlist.itemCount > 0)
++    this._object.input.time = position; 
+ };
+ 
+ CoreVLC.prototype.goFullscreen = function() 
+ {
+   this._verifyObject();
+-  return this._object.fullscreen();
++  return this._object.video.fullscreen = true;
+ };
+ 
+ CoreVLC.prototype.getMetadata = function(key) 
+ {
+   var retval = "";
++
++  if (this._object.playlist.itemCount <= 0) 
++    return retval;
++ 
+   switch ( key ) {
+     case "album":
+-      retval += this._object.get_metadata_str( "Meta-information", "Album/movie/show title" );
++      retval += this._object.metadata.get( "Meta-information", "Album/movie/show title" );
+     break;
+     
+     case "artist":
+-      retval += this._object.get_metadata_str( "Meta-information", "Artist" );
++      retval += this._object.metadata.get( "Meta-information", "Artist" );
+     break;
+ 
+     case "genre":
+-      retval += this._object.get_metadata_str( "Meta-information", "Genre" );
++      retval += this._object.metadata.get( "Meta-information", "Genre" );
+     break;
+     
+     case "length":
+-      retval += this._object.get_metadata_str( "General", "Duration" );
++      retval += this._object.metadata.get( "General", "Duration" );
+     break;
+     
+     case "title":
+-      retval += this._object.get_metadata_str( "Meta-information", "Title" );
++      retval += this._object.metadata.get( "Meta-information", "Title" );
+     break;
+     
+     case "url":
+-      retval += this._object.get_metadata_str( "Meta-information", "URL" );
++      retval += this._object.metadata.get( "Meta-information", "URL" );
+     break;
+   }
+   return retval;
+@@ -335,7 +367,6 @@
+     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                          .getService(Components.interfaces.sbIPlaylistPlayback);
+     var theVLCInstance = document.getElementById( id );
+-
+     gCoreVLC.setId("VLC1");
+     gCoreVLC.setObject(theVLCInstance);
+     gPPS.addCore(gCoreVLC, true);
