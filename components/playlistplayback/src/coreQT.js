@@ -603,7 +603,12 @@ CoreQT.prototype.getPlaying = function ()
 
   return this._playing;
 };
-  
+
+CoreQT.prototype.getPlayingVideo = function ()
+{
+  throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+};
+
 CoreQT.prototype.getPaused = function ()
 {
   this._verifyObject();

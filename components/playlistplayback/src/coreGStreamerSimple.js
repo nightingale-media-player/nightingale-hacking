@@ -146,6 +146,12 @@ CoreGStreamerSimple.prototype.getPlaying = function ()
   return playing;
 };
 
+CoreGStreamerSimple.prototype.getPlayingVideo = function ()
+{
+  this._verifyObject();
+  return this._object.isPlayingVideo;
+};
+
 CoreGStreamerSimple.prototype.getPaused = function ()
 {
   this._verifyObject();

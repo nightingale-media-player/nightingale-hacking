@@ -316,26 +316,14 @@ function restartApp()
   onExit();
 }
 
-var songbird_playURL;
-function SBUrlChanged(value)
+var songbird_playingVideo;
+function SBPlayingVideoChanged(value)
 {
-  if (!coreInitialCloakDone)
-    return;
-
   var windowCloak =
     Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);
-              
-  // value _should_ be set correctly now.
-  if (!value)
-    value = SBDataGetStringValue("faceplate.play.url");
-    
-  // Not sure how, but sometimes this is still null... Return early
-  // rather than doing another cloak/uncloak pair.
-  if (!value)
-    return;
 
-  if (gPPS.isVideoURL(value)) {
+  if (value == 1) {
     windowCloak.uncloak(window);
     window.focus(); 
   }
@@ -365,9 +353,9 @@ function SBAppDeinitialize()
 
   // Unattach the player repeater. (please deprecate me, soon!)
   //thePlayerRepeater.unbind();
-  // Unbind the playback url viewer. (used by the code that uncloaks the video window)
-  songbird_playURL.unbind();
-  songbird_playURL = null;
+  // Unbind the playing video watcher. (used by the code that uncloaks the video window)
+  songbird_playingVideo.unbind();
+  songbird_playingVideo = null;
   // Remember where the video window is.
   resetGlobalHotkeys();
   // Save position before closing, in case the window has been moved, but its position hasnt been saved yet (the window is still up)
@@ -392,8 +380,8 @@ function SBMetricsAppStart()
 
 
 // observer for DataRemote
-const sb_url_changed = {
-  observe: function ( aSubject, aTopic, aData ) { SBUrlChanged(aData); }
+const sb_playing_video_changed = {
+  observe: function ( aSubject, aTopic, aData ) { SBPlayingVideoChanged(aData); }
 }
 
 function SBAppInitialize()
@@ -414,8 +402,8 @@ function SBAppInitialize()
     initGlobalHotkeys();
 
     // Create and bind DataRemote
-    songbird_playURL = SB_NewDataRemote( "faceplate.play.url", null );
-    songbird_playURL.bindObserver( sb_url_changed, true );
+    songbird_playingVideo = SB_NewDataRemote( "faceplate.playingvideo", null );
+    songbird_playingVideo.bindObserver( sb_playing_video_changed, true );
 
     /*
     */

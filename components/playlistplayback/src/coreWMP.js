@@ -128,6 +128,13 @@ function CoreWMP() {
   /**
    *
    */
+  this.getPlayingVideo = function() {
+    throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  /**
+   *
+   */
   this.getMute = function() {
     return this._muted;
   }

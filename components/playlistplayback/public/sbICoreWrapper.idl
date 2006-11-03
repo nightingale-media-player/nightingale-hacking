@@ -61,6 +61,15 @@ interface sbICoreWrapper : nsISupports
   boolean getPlaying();
 
   /**
+   * \brief Get the playing video state
+   * Returns TRUE if the core has a video stream and it either playing or
+   *   paused
+   * \return TRUE if current stream has video
+   * \return FALSE if current stream is audio only
+   */
+  boolean getPlayingVideo();
+
+  /**
    * \brief Get the mute state
    * \return TRUE if muted
    * \return FALSE if not muted

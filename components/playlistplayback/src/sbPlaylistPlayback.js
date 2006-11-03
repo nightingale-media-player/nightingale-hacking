@@ -206,6 +206,7 @@ PlaylistPlayback.prototype = {
   _playButton:         null,
   _playURL:            null,
   _seenPlaying:        null,
+  _playingVideo:       null,
   _lastVolume:         null,
   _volume:             null,
   _muteData:           null,
@@ -276,6 +277,7 @@ PlaylistPlayback.prototype = {
     this._playURL               = createDataRemote("faceplate.play.url", null);
     //actually playing         
     this._seenPlaying           = createDataRemote("faceplate.seenplaying", null);
+    this._playingVideo          = createDataRemote("faceplate.playingvideo", null);
     this._volume                = createDataRemote("faceplate.volume", null);
     //t/f                      
     this._muteData              = createDataRemote("faceplate.mute", null);
@@ -307,6 +309,7 @@ PlaylistPlayback.prototype = {
     this._metadataPos.intValue = 0;
     this._metadataLen.intValue = 0;
     this._seenPlaying.boolValue = false;
+    this._playingVideo.boolValue = false;
     this._metadataPosText.stringValue = "0:00";
     this._metadataLenText.stringValue = "0:00";
     this._showRemaining.boolValue = false;
@@ -342,6 +345,7 @@ PlaylistPlayback.prototype = {
     this._playButton.unbind();
     this._playURL.unbind();
     this._seenPlaying.unbind();
+    this._playingVideo.unbind();
     this._volume.unbind();
     this._muteData.unbind();
     this._playingRef.unbind();
@@ -1192,6 +1196,7 @@ PlaylistPlayback.prototype = {
       this._onPollTimeText( len, pos );
       this._onPollButtons( len, pos, core );
       this._onPollCompleted( len, pos, core );
+      this._onPollVideo( core );
     }       
     catch ( err )  
     {
@@ -1344,7 +1349,23 @@ PlaylistPlayback.prototype = {
         this.next();
     }
   },
-  
+
+  // If the stream has video, show the video window
+  _onPollVideo: function ( core ) {
+    try {
+      this._playingVideo.boolValue = core.getPlayingVideo();
+    }
+    catch(e) {
+      // Not all cores support this method.  Fall back to isVideoURL
+      if(e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+        this._playingVideo.boolValue = core.isVideoURL(this._playURL.stringValue);
+      }
+      else {
+        throw(e);
+      }
+    }
+  },
+
   _playNextPrev: function ( incr ) {
     // "FIXME" -- mig sez: I think the reason it was broke is because you
     // basically made it restart on playLIST end.  And that would get confusing,
@@ -1578,8 +1599,8 @@ PlaylistPlayback.prototype = {
   
   _sleep: function( ms ) {
     var thread = Components.classes["@mozilla.org/thread;1"].createInstance();
-      thread = thread.QueryInterface(Components.interfaces.nsIThread);
-      thread.currentThread.sleep(ms);  
+   thread = thread.QueryInterface(Components.interfaces.nsIThread);
+   thread.currentThread.sleep(ms);  
   },
   
   /**

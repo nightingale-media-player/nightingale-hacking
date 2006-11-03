@@ -52,6 +52,7 @@ private:
   GdkWindow*  mGdkWin;
 
   PRBool mIsAtEndOfStream;
+  PRBool mIsPlayingVideo;
   PRInt32 mLastErrorCode;
 
   nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;

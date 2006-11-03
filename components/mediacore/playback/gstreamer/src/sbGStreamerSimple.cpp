@@ -59,6 +59,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mVideoSink(NULL),
   mGdkWin(NULL),
   mIsAtEndOfStream(PR_TRUE),
+  mIsPlayingVideo(PR_FALSE),
   mLastErrorCode(0),
   mVideoOutputElement(nsnull),
   mDomWindow(nsnull)
@@ -290,6 +291,18 @@ sbGStreamerSimple::GetIsPlaying(PRBool* aIsPlaying)
 }
 
 NS_IMETHODIMP
+sbGStreamerSimple::GetIsPlayingVideo(PRBool* aIsPlayingVideo)
+{
+  if(!mInitialized) {
+    return NS_ERROR_NOT_INITIALIZED;
+  }
+
+  *aIsPlayingVideo = mIsPlayingVideo;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerSimple::GetIsPaused(PRBool* aIsPaused)
 {
   if(!mInitialized) {
@@ -419,6 +432,7 @@ sbGStreamerSimple::Play()
 
   gst_element_set_state(mPlay, GST_STATE_PLAYING);
   mIsAtEndOfStream = PR_FALSE;
+  mIsPlayingVideo = PR_FALSE;
   mLastErrorCode = 0;
 
   return NS_OK;
@@ -555,6 +569,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
+      mIsPlayingVideo = PR_FALSE;
 
       break;
     }
@@ -575,6 +590,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
     case GST_MESSAGE_EOS: {
       mIsAtEndOfStream = PR_TRUE;
+      mIsPlayingVideo = PR_FALSE;
       break;
     }
 
@@ -615,6 +631,8 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
         XID window = GDK_WINDOW_XWINDOW(mGdkWin);
         gst_x_overlay_set_xwindow_id(xoverlay, window);
         LOG(("Set xoverlay %d to windowid %d\n", xoverlay, window));
+
+        mIsPlayingVideo = PR_TRUE;
       }
       break;
     }

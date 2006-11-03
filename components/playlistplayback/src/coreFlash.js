@@ -161,6 +161,11 @@ CoreFlash.prototype.getPlaying = function ()
   return this._playing;
 };
 
+CoreFlash.prototype.getPlayingVideo = function ()
+{
+  throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+};
+
 CoreFlash.prototype.getMute = function ()
 {
   return this._object.GetVariable("volume") == "0";

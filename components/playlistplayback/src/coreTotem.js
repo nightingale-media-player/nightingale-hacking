@@ -145,6 +145,11 @@ CoreTotem.prototype.getPlaying = function ()
   return this._object.IsPlaying || this._paused;
 };
 
+CoreTotem.prototype.getPlayingVideo = function ()
+{
+  throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+};
+
 CoreTotem.prototype.getPaused = function ()
 {
   this._verifyObject();

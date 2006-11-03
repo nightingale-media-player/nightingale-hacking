@@ -149,7 +149,12 @@ CoreMPlayer.prototype.getPlaying   = function ()
     
   return this._object.isplaying();
 }
- 
+
+CoreMPlayer.prototype.getPlayingVideo = function ()
+{
+  throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+};
+
 CoreMPlayer.prototype.getPaused    = function ()
 {
   this._verifyObject();

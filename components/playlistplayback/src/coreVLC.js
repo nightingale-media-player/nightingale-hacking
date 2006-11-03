@@ -151,6 +151,11 @@ CoreVLC.prototype.getPlaying = function()
   return this._object.isplaying() || this._paused;
 };
 
+CoreVLC.prototype.getPlayingVideo = function ()
+{
+  throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+};
+
 CoreVLC.prototype.getMute = function() 
 {
   return this._muted;
