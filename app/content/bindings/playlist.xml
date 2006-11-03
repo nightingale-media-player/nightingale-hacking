@@ -2783,6 +2783,11 @@
         <![CDATA[
           try
           {
+            // Prevent the user from removing tracks from the webplaylist
+            // database.  This is a hack until we fix bug 1921
+            if(this.guid == "webplaylist") {
+              return;
+            }
             const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
             if (this.table == "library")
             {
