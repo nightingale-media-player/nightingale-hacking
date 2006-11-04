@@ -379,7 +379,7 @@ try {
   var gGStreamerSimpleCore = new CoreGStreamerSimple();
 }
 catch(err) {
-  dump("ERROR!!! coreFLASH failed to create properly.");
+  dump("ERROR!!! coreGStreamerSimple failed to create properly.");
 }
 
 /**

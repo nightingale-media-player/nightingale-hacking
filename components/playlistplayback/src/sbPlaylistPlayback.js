@@ -1357,12 +1357,7 @@ PlaylistPlayback.prototype = {
     }
     catch(e) {
       // Not all cores support this method.  Fall back to isVideoURL
-      if(e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
-        this._playingVideo.boolValue = core.isVideoURL(this._playURL.stringValue);
-      }
-      else {
-        throw(e);
-      }
+      this._playingVideo.boolValue = core.isVideoURL(this._playURL.stringValue);
     }
   },
 
