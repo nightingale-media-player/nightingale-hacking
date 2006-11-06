@@ -411,10 +411,14 @@ function SBAppInitialize()
     var theWMPBox = document.getElementById( "box_wm" );
 
     /*
+      // XXXben Swap this block with the next for the new QuickTime core.
+      var theQTBox = document.getElementById( "box_qt" );
     */
+    /**/
     var theQTInstance = document.getElementById( "core_qt_document" );
     var theQTBox = document.getElementById( "box_qt" );
-
+    /**/
+    
     /*
     */
     var theVLCInstance = document.getElementById( "core_vlc" );
@@ -478,8 +482,15 @@ function SBAppInitialize()
       quitMenuItem.removeAttribute("hidden");
       //MacOSX, prefer QT.
 
+      /*
+        // XXXben Swap this block with the next for the new QuickTime core.
+        QuickTimeCoreInit("box_qt");
+      */
+      /**/
       // Initialize with Quicktime
       CoreQTDocumentInit( "core_qt_document" );
+      /**/
+      
       // Hide VLC
       if (theVLCBox) theVLCBox.hidden = true;
       // Hide GStreamer

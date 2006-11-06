@@ -195,6 +195,9 @@ components/mediacore/playback/Makefile
 components/mediacore/playback/gstreamer/Makefile
 components/mediacore/playback/gstreamer/public/Makefile
 components/mediacore/playback/gstreamer/src/Makefile
+components/mediacore/playback/quicktime/Makefile
+components/mediacore/playback/quicktime/public/Makefile
+components/mediacore/playback/quicktime/src/Makefile
 "
 
 MAKEFILES_medialibrary="

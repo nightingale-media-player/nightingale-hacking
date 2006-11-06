@@ -138,6 +138,9 @@
               <hbox id="box_vlc" flex="1">
                 <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
               </hbox>
+              <!-- XXXben Swap this block with the next for the new QuickTime core.
+                <hbox id="box_qt" flex="1"/>
+              -->
               <hbox id="box_qt" flex="1">
                 <html:iframe id="core_qt_document" style="border: 0px none;" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
               </hbox>
@@ -219,7 +222,11 @@
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/coreGStreamerSimple.js"/>
 
-   <!-- mac likes quicktime -->
+  <!-- mac likes quicktime -->
+  <!-- XXXben Swap this block with the next for the new QuickTime core.
+    <script type="application/x-javascript"
+            src="chrome://songbird/content/scripts/coreQuickTime.js"/>
+  -->
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/coreQT.js"/>
 
