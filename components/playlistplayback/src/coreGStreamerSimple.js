@@ -322,7 +322,6 @@ CoreGStreamerSimple.prototype.isMediaURL = function(aURL) {
         ( aURL.indexOf( ".m4v" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wma" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".wmv" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".asx" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".asf" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
         ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
