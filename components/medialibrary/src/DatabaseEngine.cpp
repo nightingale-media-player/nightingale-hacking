@@ -73,6 +73,10 @@
   #define HARD_SANITY_CHECK             1
 #endif
 
+#ifdef PR_LOGGING
+PRLogModuleInfo *gDatabaseEngineLog;
+#endif
+
 int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger)
 {
   int ret = SQLITE_OK;
@@ -368,7 +372,9 @@ CDatabaseEngine::CDatabaseEngine()
 , m_pDatabasesGUIDListLock(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 {
-
+#ifdef PR_LOGGING
+  gDatabaseEngineLog = PR_NewLogModule("DatabaseEngine");
+#endif
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -605,6 +611,14 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *dbQuery)
   PRInt32 ret = 0;
 
   if(!dbQuery) return 1;
+
+  // If the query is already executing, do not add it.  This is to prevent
+  // the same query from getting executed simultaneously
+  PRBool isExecuting;
+  dbQuery->IsExecuting(&isExecuting);
+  if(isExecuting) {
+    return 0;
+  }
 
   {
     nsAutoMonitor mon(m_pQueryProcessorMonitor);
@@ -1041,7 +1055,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
     sqlite3 *pSecondDB = nsnull;
     nsAutoString dbGUID;
     pQuery->GetDatabaseGUID(dbGUID);
-    
+
+    PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
+           ("DBE: Process Start, thread 0x%x query 0x%x",
+           PR_GetCurrentThread(), pQuery));
+
     nsAutoString lowercaseGUID(dbGUID);
     {
       ToLowerCase(lowercaseGUID);
@@ -1127,8 +1145,10 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
         for(PRInt32 j = 0; j < nNumDB; j++)
         {
+          nsAutoString dbName;
           if(!bAllDB)
           {
+            pQuery->GetDatabaseGUID(dbName);
             pEngine->LockDatabase(pDB);
             retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
 
@@ -1145,6 +1165,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           }
           else
           {
+            dbName.Assign(vDBList[j]);
             pDB = pEngine->GetDBByGUID(vDBList[j], PR_TRUE);
             
             //Just in case there was some kind of bad error while attempting to get the database or create it.
@@ -1167,6 +1188,10 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           }
 
           retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
+          PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
+                 ("DBE: '%s' on '%s'\n",
+                 NS_ConvertUTF16toUTF8(dbName).get(),
+                 NS_ConvertUTF16toUTF8(strQuery).get()));
           pQuery->m_CurrentQuery = i;
 
           if(retDB != SQLITE_OK)
@@ -1188,6 +1213,7 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           else
           {
             PRInt32 nRetryCount = 0;
+            PRInt32 totalRows = 0;
 
             do
             {
@@ -1230,6 +1256,10 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                   std::vector<nsString> vCellValues;
                   vCellValues.reserve(nCount);
 
+                  PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
+                         ("DBE: Result row %d:",
+                         totalRows));
+
                   for(int i = 0; i < nCount; i++)
                   {
                     PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, i);
@@ -1239,16 +1269,22 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                       strCellValue = p;
 
                     vCellValues.push_back(strCellValue);
+                    PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
+                           ("Column %d: '%s' ", i,
+                           NS_ConvertUTF16toUTF8(strCellValue).get()));
                   }
 
                   pRes->AddRow(vCellValues);
                   PR_Unlock(pQuery->m_pQueryResultLock);
                 }
+                totalRows++;
                 break;
 
                 case SQLITE_DONE:
                 {
                   pQuery->SetLastError(SQLITE_OK);
+                  PR_LOG(gDatabaseEngineLog, PR_LOG_DEBUG,
+                         ("Query complete, %d rows", totalRows));
                 }
                 break;
 
@@ -1409,6 +1445,9 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
 
     pQuery->m_IsExecuting = PR_FALSE;
     pQuery->m_IsAborting = PR_FALSE;
+
+    PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
+           ("DBE: Process End"));
 
     //Whatever happened, the query is done running now.
     {
