@@ -396,16 +396,16 @@ treecol[dragging="true"]
   color: #999 !important;
 }
 
-treecol[insertbefore="true"] 
-{
-  border-left: 10px solid !important;
-  -moz-border-left-colors: #333 !important;
-}
-
 treecol[insertafter="true"] 
 {
   border-right: 1px solid !important;
   -moz-border-right-colors: #505154 !important;
+}
+
+treecol[insertbefore="true"] 
+{
+  border-left: 9px solid !important;
+  -moz-border-left-colors: #333 !important;
 }
 
 /* column picker **/
@@ -511,14 +511,14 @@ playlist > stack > vbox > hbox
   background-color: #000 !important;
 }
 
-treechildren::-moz-tree-column(insertbefore)
-{
-  border-left: 10px solid #333 !important;
-}
-
 treechildren::-moz-tree-column(insertafter)
 {
   border-right: 1px solid #505154 !important;
+}
+
+treechildren::-moz-tree-column(insertbefore)
+{
+  border-left: 9px solid #333 !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row
@@ -541,9 +541,14 @@ treechildren::-moz-tree-column(insertafter)
   border-right: 1px solid #505154 !important;
 }
 
+#playlist_tree > treechildren::-moz-tree-cell(insertafter)
+{
+  border-right: 1px solid #505154 !important;
+}
+
 #playlist_tree > treechildren::-moz-tree-cell(insertbefore)
 {
-  border-left: 10px solid #333 !important;
+  border-left: 9px solid #333 !important;
 }
 
 #playlist_tree > treechildren::-moz-tree-row( selected )
