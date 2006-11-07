@@ -802,9 +802,29 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
     if(!p->m_pWorkerHandler)
     {
       nsresult rv = p->m_pManager->GetHandlerForMediaURL(strURL, getter_AddRefs(p->m_pWorkerHandler));
-      if(NS_FAILED(rv) || !p->m_pWorkerHandler) return;
-      rv = p->m_pWorkerHandler->Read(&values);
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initiate read of metadata!");
+      if(NS_SUCCEEDED(rv) && p->m_pWorkerHandler) {
+        rv = p->m_pWorkerHandler->Read(&values);
+      }
+      else {
+        // Could not find a handler for this URL.  Prevent the backscanner
+        // from trying forever by upading the length of the track to blank
+        nsAutoString strQuery;
+        strQuery.AppendLiteral("UPDATE library SET length = \"\" ");
+        strQuery.AppendLiteral("WHERE uuid = \"");
+        strQuery += strUUID;
+        strQuery.AppendLiteral("\"");
+
+        PRInt32 errQuery = 0;
+        p->m_pWorkerQuery->ResetQuery();
+        p->m_pWorkerQuery->SetDatabaseGUID(strSUUID);
+        p->m_pWorkerQuery->AddQuery(strQuery);
+        p->m_pWorkerQuery->SetAsyncQuery(PR_TRUE);
+        p->m_pWorkerQuery->Execute(&errQuery);
+
+        p->m_workerCurrentRow++;
+
+        return;
+      }
     }
 
     p->m_pWorkerHandler->GetCompleted(&completed);
