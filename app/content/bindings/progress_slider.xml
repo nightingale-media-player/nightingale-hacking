@@ -93,6 +93,13 @@
       <setter>
         this.slider.setAttribute('maxpos', val);
         this.progress_value = this.value;
+        // hide the slider if the length of track is zero (stream)
+        if (val == 0) {
+          this.slider.setAttribute('hidden', true);
+        }
+        else {
+          this.slider.setAttribute('hidden', false);
+        }
         return this.maxpos;
       </setter>
     </property>

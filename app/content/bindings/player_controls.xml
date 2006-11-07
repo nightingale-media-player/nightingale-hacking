@@ -600,7 +600,7 @@
         // Create and bind data remotes
         this.remote_position = SB_NewDataRemote( "metadata.position", null );
         this.remote_position.bindObserver(on_remote_position_change, true);
-        this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
+        this.remote_length = SBDataBindElementProperty( "metadata.length", this, "maxpos" );
        
         this.trackingPosition = 0;
       ]]>
@@ -618,7 +618,7 @@
         }
       ]]>
     </destructor>
-    
+
     <method name="onTrackSeekbar">
       <body>
         <![CDATA[
