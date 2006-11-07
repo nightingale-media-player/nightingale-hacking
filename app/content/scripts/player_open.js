@@ -62,6 +62,7 @@ try
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportURL(fp.file.path);
+      if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }
   }
 
@@ -81,6 +82,7 @@ try
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
       PPS.playAndImportURL(url_open_data.URL);
+      if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }  
   }
 
@@ -218,5 +220,6 @@ catch (e)
 {
   alert(e);
 }
+
 
 

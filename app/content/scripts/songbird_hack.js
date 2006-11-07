@@ -1875,6 +1875,7 @@ function playExternalUrl(the_url, tryweb)
   } else {
     // otherwise, play the url as external (added to the db, plays the library from that point on)
     PPS.playAndImportURL(the_url); // if the url is already in the lib, it is not added twice
+    if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
   }
 }
 
@@ -4524,4 +4525,5 @@ function buildHelpMenu()
   }
   checkForUpdates.label = getStringWithUpdateName("updateCmd_" + key);
 }
+
 
