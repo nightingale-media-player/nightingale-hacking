@@ -92,10 +92,10 @@ try
       var nsIFilePicker = Components.interfaces.nsIFilePicker;
       var fp = Components.classes["@mozilla.org/filepicker;1"]
               .createInstance(nsIFilePicker);
-      var sel = "Select";
+      var sel = "Open Playlist";
       try
       {
-        sel = theSongbirdStrings.getString("faceplate.select");
+        sel = theSongbirdStrings.getString("faceplate.open.playlist");
       } catch(e) {}
       fp.init(window, sel, nsIFilePicker.modeOpen);
       
