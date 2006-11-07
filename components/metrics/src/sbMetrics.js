@@ -123,11 +123,10 @@ Metrics.prototype = {
     for (var i = 0; i < metrics.length; i++) 
     {
       var val = branch.getCharPref(metrics[i]);
-      xml += '<item key="' + metrics[i] + '" value="' + val + '"/>';
+      xml += '<item key="' + encodeURIComponent(metrics[i]) + '" value="' + val + '"/>';
     }
     xml += '</metrics>';
-    
-    
+
     // upload xml
 
     var domparser = Components.classes["@mozilla.org/xmlextras/domparser;1"]
