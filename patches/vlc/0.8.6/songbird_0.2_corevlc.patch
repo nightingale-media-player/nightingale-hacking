@@ -46,17 +46,17 @@ Index: app/content/xul/songbird.xul
                  <html:iframe id="core_qt_document" style="border: 0px none;" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
 Index: components/playlistplayback/src/coreVLC.js
 ===================================================================
---- components/playlistplayback/src/coreVLC.js	(revision 2742)
+--- components/playlistplayback/src/coreVLC.js	(revision 2800)
 +++ components/playlistplayback/src/coreVLC.js	(working copy)
 @@ -93,10 +93,13 @@
        this._url = this._url.replace(/\//g, '\\');
      }
    }
-+  // XXXMATT haven't implemented playmrl for vlc-0.8.6
++
 +  this._object.playlist.clear();
-+  this._object.playlist.add(this._url);
-+  this._object.playlist.play();
-+  //this._object.playmrl(this._url);
++  var item = this._object.playlist.add(this._url);
++  this._object.playlist.playItem(item);
++  dump("\ncoreVLC playing " + this._url + " as item " + item + "\n");
    
 -  this._object.playmrl(this._url);
 -  
@@ -109,7 +109,7 @@ Index: components/playlistplayback/src/coreVLC.js
      return false;
      
    this._paused = true;
-@@ -148,7 +162,7 @@
+@@ -148,12 +162,19 @@
  CoreVLC.prototype.getPlaying = function() 
  {
    this._verifyObject();
@@ -117,8 +117,21 @@ Index: components/playlistplayback/src/coreVLC.js
 +  return this._object.playlist.isPlaying || this._paused;
  };
  
+ CoreVLC.prototype.getPlayingVideo = function ()
+ {
+-  return this.isVideoURL(this._url); // Hack until we can ask vlc
++  this._verifyObject();
++  var hasVout = false;
++
++  try {
++    hasVout = this._object.input.hasVout;
++  } catch(err) {}
++
++  return hasVout;
+ };
+ 
  CoreVLC.prototype.getMute = function() 
-@@ -163,7 +177,7 @@
+@@ -168,7 +189,7 @@
    if (this._muted != mute) 
    {
      this._muted = mute;
@@ -127,7 +140,7 @@ Index: components/playlistplayback/src/coreVLC.js
    }
  };
  
-@@ -177,7 +191,7 @@
+@@ -182,7 +203,7 @@
    * If you going beyond this 0-50 scale, VLC will amplify the signal.
    * And it does so poorly, without clipping or compressing the signal.
    */
@@ -136,7 +149,7 @@ Index: components/playlistplayback/src/coreVLC.js
    var retVolume = Math.round(scaledVolume / 50 * 255);
    
    return retVolume;
-@@ -191,59 +205,77 @@
+@@ -196,60 +217,89 @@
      
    var scaledVolume = Math.round(volume / 255 * 50);
    
@@ -189,43 +202,68 @@ Index: components/playlistplayback/src/coreVLC.js
  CoreVLC.prototype.getMetadata = function(key) 
  {
    var retval = "";
-+
-+  if (this._object.playlist.itemCount <= 0) 
-+    return retval;
-+ 
-   switch ( key ) {
-     case "album":
+-  switch ( key ) {
+-    case "album":
 -      retval += this._object.get_metadata_str( "Meta-information", "Album/movie/show title" );
-+      retval += this._object.metadata.get( "Meta-information", "Album/movie/show title" );
-     break;
+-    break;
++
++  // Make sure that the there are items in the playlist, 
++  // and the player is either playing or paused
++  if (this._object.playlist.itemCount <= 0 || 
++        ((this._object.input.state != 3) && (this._object.input.state != 4)))
++    return retval;
++  
++  try {
++    switch ( key ) {
++      case "album":
++        retval += this._object.metadata.get( "Meta-information", "Album/movie/show title" );
++      break;
      
-     case "artist":
+-    case "artist":
 -      retval += this._object.get_metadata_str( "Meta-information", "Artist" );
-+      retval += this._object.metadata.get( "Meta-information", "Artist" );
-     break;
+-    break;
++      case "artist":
++        var nowPlaying = this._object.metadata.get( "Meta-information", "Now Playing" );
++        if( nowPlaying.length )
++          retval += nowPlaying;
++        else
++          retval += this._object.metadata.get( "Meta-information", "Artist" );
++      break;
  
-     case "genre":
+-    case "genre":
 -      retval += this._object.get_metadata_str( "Meta-information", "Genre" );
-+      retval += this._object.metadata.get( "Meta-information", "Genre" );
-     break;
+-    break;
++      case "genre":
++        retval += this._object.metadata.get( "Meta-information", "Genre" );
++      break;
      
-     case "length":
+-    case "length":
 -      retval += this._object.get_metadata_str( "General", "Duration" );
-+      retval += this._object.metadata.get( "General", "Duration" );
-     break;
+-    break;
++      case "length":
++        retval += this._object.metadata.get( "General", "Duration" );
++      break;
      
-     case "title":
+-    case "title":
 -      retval += this._object.get_metadata_str( "Meta-information", "Title" );
-+      retval += this._object.metadata.get( "Meta-information", "Title" );
-     break;
+-    break;
++      case "title":
++        retval += this._object.metadata.get( "Meta-information", "Title" );
++      break;
      
-     case "url":
+-    case "url":
 -      retval += this._object.get_metadata_str( "Meta-information", "URL" );
-+      retval += this._object.metadata.get( "Meta-information", "URL" );
-     break;
+-    break;
++      case "url":
++        retval += this._object.metadata.get( "Meta-information", "URL" );
++      break;
++    }
++  } catch (e) {
++    dump("\ncoreVLC.getMetadata Error: " + e + "\n");
    }
    return retval;
-@@ -335,7 +367,6 @@
+ };
+@@ -340,7 +390,6 @@
      var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                           .getService(Components.interfaces.sbIPlaylistPlayback);
      var theVLCInstance = document.getElementById( id );
@@ -233,3 +271,172 @@ Index: components/playlistplayback/src/coreVLC.js
      gCoreVLC.setId("VLC1");
      gCoreVLC.setObject(theVLCInstance);
      gPPS.addCore(gCoreVLC, true);
+Index: patches/vlc/0.8.6/songbird_0.2_corevlc.patch
+===================================================================
+--- patches/vlc/0.8.6/songbird_0.2_corevlc.patch	(revision 2767)
++++ patches/vlc/0.8.6/songbird_0.2_corevlc.patch	(working copy)
+@@ -46,17 +46,17 @@
+                  <html:iframe id="core_qt_document" style="border: 0px none;" src="chrome://songbird/content/html/qt.html" type="content" flex="1" />
+ Index: components/playlistplayback/src/coreVLC.js
+ ===================================================================
+---- components/playlistplayback/src/coreVLC.js	(revision 2742)
++--- components/playlistplayback/src/coreVLC.js	(revision 2800)
+ +++ components/playlistplayback/src/coreVLC.js	(working copy)
+ @@ -93,10 +93,13 @@
+        this._url = this._url.replace(/\//g, '\\');
+      }
+    }
+-+  // XXXMATT haven't implemented playmrl for vlc-0.8.6
+++
+ +  this._object.playlist.clear();
+-+  this._object.playlist.add(this._url);
+-+  this._object.playlist.play();
+-+  //this._object.playmrl(this._url);
+++  var item = this._object.playlist.add(this._url);
+++  this._object.playlist.playItem(item);
+++  dump("\ncoreVLC playing " + this._url + " as item " + item + "\n");
+    
+ -  this._object.playmrl(this._url);
+ -  
+@@ -109,7 +109,7 @@
+      return false;
+      
+    this._paused = true;
+-@@ -148,7 +162,7 @@
++@@ -148,12 +162,19 @@
+  CoreVLC.prototype.getPlaying = function() 
+  {
+    this._verifyObject();
+@@ -117,8 +117,21 @@
+ +  return this._object.playlist.isPlaying || this._paused;
+  };
+  
++ CoreVLC.prototype.getPlayingVideo = function ()
++ {
++-  return this.isVideoURL(this._url); // Hack until we can ask vlc
+++  this._verifyObject();
+++  var hasVout = false;
+++
+++  try {
+++    hasVout = this._object.input.hasVout;
+++  } catch(err) {}
+++
+++  return hasVout;
++ };
++ 
+  CoreVLC.prototype.getMute = function() 
+-@@ -163,7 +177,7 @@
++@@ -168,7 +189,7 @@
+    if (this._muted != mute) 
+    {
+      this._muted = mute;
+@@ -127,7 +140,7 @@
+    }
+  };
+  
+-@@ -177,7 +191,7 @@
++@@ -182,7 +203,7 @@
+    * If you going beyond this 0-50 scale, VLC will amplify the signal.
+    * And it does so poorly, without clipping or compressing the signal.
+    */
+@@ -136,7 +149,7 @@
+    var retVolume = Math.round(scaledVolume / 50 * 255);
+    
+    return retVolume;
+-@@ -191,59 +205,77 @@
++@@ -196,60 +217,89 @@
+      
+    var scaledVolume = Math.round(volume / 255 * 50);
+    
+@@ -189,43 +202,68 @@
+  CoreVLC.prototype.getMetadata = function(key) 
+  {
+    var retval = "";
++-  switch ( key ) {
++-    case "album":
++-      retval += this._object.get_metadata_str( "Meta-information", "Album/movie/show title" );
++-    break;
+ +
+-+  if (this._object.playlist.itemCount <= 0) 
+++  // Make sure that the there are items in the playlist, 
+++  // and the player is either playing or paused
+++  if (this._object.playlist.itemCount <= 0 || 
+++        ((this._object.input.state != 3) && (this._object.input.state != 4)))
+ +    return retval;
+-+ 
+-   switch ( key ) {
+-     case "album":
+--      retval += this._object.get_metadata_str( "Meta-information", "Album/movie/show title" );
+-+      retval += this._object.metadata.get( "Meta-information", "Album/movie/show title" );
+-     break;
+++  
+++  try {
+++    switch ( key ) {
+++      case "album":
+++        retval += this._object.metadata.get( "Meta-information", "Album/movie/show title" );
+++      break;
+      
+-     case "artist":
++-    case "artist":
+ -      retval += this._object.get_metadata_str( "Meta-information", "Artist" );
+-+      retval += this._object.metadata.get( "Meta-information", "Artist" );
+-     break;
++-    break;
+++      case "artist":
+++        var nowPlaying = this._object.metadata.get( "Meta-information", "Now Playing" );
+++        if( nowPlaying.length )
+++          retval += nowPlaying;
+++        else
+++          retval += this._object.metadata.get( "Meta-information", "Artist" );
+++      break;
+  
+-     case "genre":
++-    case "genre":
+ -      retval += this._object.get_metadata_str( "Meta-information", "Genre" );
+-+      retval += this._object.metadata.get( "Meta-information", "Genre" );
+-     break;
++-    break;
+++      case "genre":
+++        retval += this._object.metadata.get( "Meta-information", "Genre" );
+++      break;
+      
+-     case "length":
++-    case "length":
+ -      retval += this._object.get_metadata_str( "General", "Duration" );
+-+      retval += this._object.metadata.get( "General", "Duration" );
+-     break;
++-    break;
+++      case "length":
+++        retval += this._object.metadata.get( "General", "Duration" );
+++      break;
+      
+-     case "title":
++-    case "title":
+ -      retval += this._object.get_metadata_str( "Meta-information", "Title" );
+-+      retval += this._object.metadata.get( "Meta-information", "Title" );
+-     break;
++-    break;
+++      case "title":
+++        retval += this._object.metadata.get( "Meta-information", "Title" );
+++      break;
+      
+-     case "url":
++-    case "url":
+ -      retval += this._object.get_metadata_str( "Meta-information", "URL" );
+-+      retval += this._object.metadata.get( "Meta-information", "URL" );
+-     break;
++-    break;
+++      case "url":
+++        retval += this._object.metadata.get( "Meta-information", "URL" );
+++      break;
+++    }
+++  } catch (e) {
+++    dump("\ncoreVLC.getMetadata Error: " + e + "\n");
+    }
+    return retval;
+-@@ -335,7 +367,6 @@
++ };
++@@ -340,7 +390,6 @@
+      var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                           .getService(Components.interfaces.sbIPlaylistPlayback);
+      var theVLCInstance = document.getElementById( id );
