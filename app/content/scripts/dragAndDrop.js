@@ -45,10 +45,12 @@ var sbIServiceDropObserver = {
   m_serviceTree: null,
   m_curSelectedTarget: -1,
   m_curRealSelection: -1,
+  canHandleMultipleItems: true,
   
   getSupportedFlavours : function () {
     var flavours = new FlavourSet();
     flavours.appendFlavour("songbird/playlist_selection");
+    flavours.appendFlavour("application/x-moz-file","nsIFile");
     return flavours;
   },
   
@@ -58,11 +60,6 @@ var sbIServiceDropObserver = {
   },
   
   onDrop: function (evt,dropdata,session){
-    /*var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage("drop");*/
-    //var urlcolumn = this.m_serviceTree.columns ? this.m_serviceTree.columns["url"] : "url";
-    //var tree_url = this.m_serviceTree.view.getCellText( this.m_curSelectedTarget, urlcolumn );
 
     var element = this.m_serviceTree.contentView.getItemAtIndex( this.m_curSelectedTarget );
     var properties = element.getAttribute( "properties" ).split(" ");
@@ -81,18 +78,34 @@ var sbIServiceDropObserver = {
       dest_playlist_service = "songbird";
     }
 
-    switch (dropdata.flavour.contentType)
+    var dataList = dropdata.dataList;
+    var dataListLength = dataList.length;
+
+    for (var i = 0; i < dataListLength; i++) 
     {
-      case "songbird/playlist_selection":
+      var item = dataList[i].first;
+      var prettyName;
+      var rawData = item.data;
+      
+      switch (item.flavour.contentType)
       {
-        var source_playlist = sbDnDSourceTracker.getDnDSource(dropdata.data);
-        if (source_playlist != null) 
+        case "application/x-moz-file":
         {
-          source_playlist.addToPlaylistOrLibrary(dest_playlist_name);
-          source_playlist.reportAddedTracks(true);
+          dropFiles(evt, dropdata, session, dest_playlist_service, dest_playlist_name); // implemented in songbird_hacks.js
+          return;
         }
+        break;
+        case "songbird/playlist_selection":
+        {
+          var source_playlist = sbDnDSourceTracker.getDnDSource(rawData);
+          if (source_playlist != null) 
+          {
+            source_playlist.addToPlaylistOrLibrary(dest_playlist_name);
+            source_playlist.reportAddedTracks(true);
+          }
+        }
+        break;
       }
-      break;
     }
   },
   
@@ -105,6 +118,21 @@ var sbIServiceDropObserver = {
     var dropdata = transferData.first.first;
     switch (dropdata.flavour.contentType)
     {
+      case "application/x-moz-file":
+      {
+        var element = this.m_serviceTree.contentView.getItemAtIndex( this.m_curSelectedTarget );
+        var properties = element.getAttribute( "properties" ).split(" ");
+        if (properties.length < 5) {
+          // hack for library, fix
+          var urlcolumn = this.m_serviceTree.columns ? this.m_serviceTree.columns["url"] : "url";
+          var tree_url = this.m_serviceTree.view.getCellText( this.m_curSelectedTarget, urlcolumn );
+          if (tree_url.indexOf("playlist_test.xul") == -1) return false;
+        } else {
+          if (properties[4] == "dynamic") return false; // dynamic playlists should only contain items from their dynamic source
+          if (properties[4] == "smart") return false; // smart playlists build their own content, you shouldn't drop on them
+        }
+        return true;
+      }
       case "songbird/playlist_selection":
       {
         var source_playlist = sbDnDSourceTracker.getDnDSource(dropdata.data);

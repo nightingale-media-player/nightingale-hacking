@@ -61,7 +61,10 @@ try
       theArtistText.stringValue = "";
       theAlbumText.stringValue = "";
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playAndImportURL(fp.file.path);
+      var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService);
+      var uri = ios.newFileURI(fp.file.path, null, null);
+      PPS.playAndImportURL(uri.spec);
       if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }
   }
@@ -220,6 +223,7 @@ catch (e)
 {
   alert(e);
 }
+
 
 
 

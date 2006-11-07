@@ -51,6 +51,10 @@ var theProgressText = "";
 var aMediaScan = null;
 var aMediaScanQuery = null;
 
+var theTargetDatabase = null;
+var theTargetPlaylist = null;
+var theAddedGuids = null;
+
 // Init the text box to the last url played (shrug).
 var polling_interval;
 
@@ -67,6 +71,11 @@ function onLoad()
     {
       aMediaScan = new sbIMediaScan();
       aMediaScanQuery = new sbIMediaScanQuery();
+      
+      theTargetDatabase = window.arguments[0].target_db;
+      if (!theTargetDatabase || theTargetDatabase == "") theTargetDatabase = "songbird";
+      theTargetPlaylist = window.arguments[0].target_pl;
+      theAddedGuids = Array();
       
       if (aMediaScan && aMediaScanQuery)
       {
@@ -141,7 +150,7 @@ function onScanComplete( mediaScanQuery )
     {
       aMediaLibrary = new MediaLibrary();
       aMediaLibrary = aMediaLibrary.QueryInterface( Components.interfaces.sbIMediaLibrary );
-            
+
       if ( ! msDBQuery || ! aMediaLibrary )
       {
         return -1;
@@ -149,8 +158,8 @@ function onScanComplete( mediaScanQuery )
       
       msDBQuery.resetQuery();
       msDBQuery.setAsyncQuery( true );
-      msDBQuery.setDatabaseGUID( "songbird" );
-      
+      msDBQuery.setDatabaseGUID( theTargetDatabase );
+
       aMediaLibrary.setQueryObject( msDBQuery );
 
       // Take the file array and for everything that seems to be a media url, add it to the database.
@@ -169,8 +178,9 @@ function onScanComplete( mediaScanQuery )
           var keys = new Array( "title" );
           var values = new Array();
           values.push( gPPS.convertURLToDisplayName( the_url ) );
-          aMediaLibrary.addMedia( the_url, keys.length, keys, values.length, values, false, true );
+          var guid = aMediaLibrary.addMedia( the_url, keys.length, keys, values.length, values, false, true );
           aQueryFileArray.push( values[0] );
+          theAddedGuids.push( guid );
         }
       }
       
@@ -195,6 +205,7 @@ function onScanComplete( mediaScanQuery )
           none = theSongbirdStrings.getString("media_scan.none");
         } catch(e) {}
         theTitle.value = none;
+        onPollComplete();
       }
     }
     catch(err)
@@ -210,6 +221,25 @@ function onScanComplete( mediaScanQuery )
       none = theSongbirdStrings.getString("media_scan.none");
     } catch(e) {}
     theTitle.value = none;
+  }
+}
+
+function onPollComplete() {
+  if (theTargetPlaylist && theAddedGuids && theAddedGuids.length > 0) {
+    var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+    var playlistManager = new PlaylistManager();
+    playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+    msDBQuery.resetQuery();
+    var thePlaylist;
+    if (theTargetPlaylist != null) thePlaylist = playlistManager.getPlaylist(theTargetPlaylist, msDBQuery);
+    if (thePlaylist) {
+      for (var i=0;i<theAddedGuids.length;i++) {
+        var guid = theAddedGuids[i];
+        thePlaylist.addByGUID(guid, theTargetDatabase, -1, false, true);
+      }
+    }
+    msDBQuery.execute();
+    theAddedGuids = null;
   }
 }
 
@@ -238,6 +268,7 @@ function onPollQuery()
         theLabel.value = complete;
         theProgress.value = 100.0;
         clearInterval( polling_interval );
+        onPollComplete();
       }   
       else
       {
@@ -279,4 +310,5 @@ function doCancel()
   document.defaultView.close();
   return true;
 }
+
 
