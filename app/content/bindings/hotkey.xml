@@ -43,7 +43,7 @@
   <binding id="hotkey">
 
   <content>
-    <xul:textbox flex="1" sid="hotkey.textbox" xbl:inherits="class=class" />
+    <xul:textbox flex="1" sid="hotkey.textbox" xbl:inherits="class=class,disabled=disabled,hidden=hidden" />
   </content>
 
   <implementation>
@@ -508,4 +508,5 @@
   </binding>
 
 </bindings>
+
 

@@ -5,12 +5,15 @@ var gHotkeysPane = {
   _list: null,
   _remove: null,
   _set: null,
+  _add: null,
   _actionlist: null,
   _hotkey: null,
   _tool: null,
   _binding_enabled: null,
   _enabled: null,
   _actions: null,
+  _hotkeylabel: null,
+  _actionlabel: null,
 
   init: function ()
   {
@@ -22,15 +25,19 @@ var gHotkeysPane = {
     this._binding_enabled = SBDataBindElementAttribute("globalhotkeys.enabled", "hotkeys.enabled", "checked", true);
 
     this._list = document.getElementById("hotkey.list");
+    this._add = document.getElementById("hotkey.add");
     this._set = document.getElementById("hotkey.set");
     this._remove = document.getElementById("hotkey.remove");
     this._actionlist = document.getElementById("hotkey.actions");
     this._hotkey = document.getElementById("hotkey.hotkey");
     this._tool = document.getElementById("hotkey.hotkeytool");
+    this._hotkeylabel = document.getElementById("hotkey.hotkeylabel");
+    this._actionlabel = document.getElementById("hotkey.actionlabel");
     this._enabled = document.getElementById("hotkeys.enabled");
 
     this.loadActions();
     this.loadHotkeys();
+    this.enableDisableElements();
   },
   
   onUnload: function()
@@ -165,8 +172,10 @@ var gHotkeysPane = {
   {
     // disable set & remove when no item is selected
     var disabled = (this._list.selectedIndex== -1);
-    this._remove.setAttribute("disabled", disabled);
-    this._set.setAttribute("disabled", disabled);
+    var alldisabled = !SBDataGetBoolValue("globalhotkeys.enabled");
+    this._remove.setAttribute("disabled", (disabled||alldisabled));
+    this._set.setAttribute("disabled", (disabled||alldisabled));
+    this._add.setAttribute("disabled", alldisabled);
   },
   
   addHotkey: function()
@@ -230,6 +239,30 @@ var gHotkeysPane = {
   onEnableDisable: function()
   {
     SBDataSetBoolValue("globalhotkeys.enabled", (this._enabled.getAttribute("checked") == "true"));
+    this.enableDisableElements();
+  },
+  
+  enableDisableElements: function() {
+    var enabled = SBDataGetBoolValue("globalhotkeys.enabled");
+    if (enabled) {
+      this._actionlist.removeAttribute("disabled");
+      this._list.removeAttribute("disabled");
+      this._hotkey.removeAttribute("disabled");
+      this._hotkeylabel.removeAttribute("disabled");
+      this._actionlabel.removeAttribute("disabled");
+      this._list.setAttribute("style", "opacity: 1 !important;");
+      this._hotkey.setAttribute("style", "opacity: 1 !important;");
+    } else {
+      this._actionlist.setAttribute("disabled", "true");
+      this._list.setAttribute("disabled", "true");
+      this._list.setAttribute("disabled", "true");
+      this._hotkey.setAttribute("disabled", "true");
+      this._hotkeylabel.setAttribute("disabled", "true");
+      this._actionlabel.setAttribute("disabled", "true");
+      this._list.setAttribute("style", "opacity: 0.5 !important;");
+      this._hotkey.setAttribute("style", "opacity: 0.5 !important;");
+    }
+    this.updateButtons();
   }
   
 };
@@ -238,4 +271,5 @@ function onHotkeysUnload()
 {
   gHotkeysPane.onUnload();
 }
+
 

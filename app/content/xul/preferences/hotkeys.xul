@@ -25,7 +25,7 @@
         </listcols>
       </listbox>
       <hbox align="center">
-        <label value="&hotkeys.action;"/>
+        <label value="&hotkeys.action;" id="hotkey.actionlabel"/>
         <menulist id="hotkey.actions" flex="1">
           <menupopup>
             <!-- The list of actions is loaded from the hotkeyactions service -->
@@ -33,7 +33,7 @@
         </menulist>
       </hbox>
       <hbox align="center">
-        <label value="&hotkeys.hotkey;"/>
+        <label value="&hotkeys.hotkey;" id="hotkey.hotkeylabel"/>
         <hotkey id="hotkey.hotkey" flex="1"/>
         <button id="hotkey.add" label="&hotkeys.add;" oncommand="gHotkeysPane.addHotkey();"/>
         <button id="hotkey.set" label="&hotkeys.set;" oncommand="gHotkeysPane.setHotkey();"/>
@@ -42,7 +42,7 @@
     </groupbox>
 
     <!-- this one is hidden, we use it to translate hotkey ids into localized hotkey keystroke -->
-    <hotkey id="hotkey.hotkeytool" hidden="1"/>
+    <hotkey id="hotkey.hotkeytool" hidden="true"/>
 
   </prefpane>
 
