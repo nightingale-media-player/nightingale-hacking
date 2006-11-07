@@ -206,15 +206,9 @@ function setDefaultGlobalHotkeys() {
     SBDataSetStringValue("globalhotkey.10.key.readable",    "stop");
     SBDataSetStringValue("globalhotkey.10.action",          "playback.stop");
 
-    if (platform == "Darwin") {
-      SBDataSetStringValue("globalhotkey.11.key",            "meta-$74");
-      SBDataSetStringValue("globalhotkey.11.key.readable",   "COMMAND-J");
-      SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
-    } else {
-      SBDataSetStringValue("globalhotkey.11.key",            "ctrl-$74");
-      SBDataSetStringValue("globalhotkey.11.key.readable",   "CTRL-J");
-      SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
-    }
+    SBDataSetStringValue("globalhotkey.11.key",            "meta-$74");
+    SBDataSetStringValue("globalhotkey.11.key.readable",   meta_key_str + "-J");
+    SBDataSetStringValue("globalhotkey.11.action",         "jumpto.open");
   }
 }
 
@@ -402,4 +396,5 @@ if (hotkeyActionsComponent) {
   var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
   if (hotkeyactionsService) hotkeyactionsService.registerHotkeyActionBundle(playbackHotkeyActions);
 }
+
 
