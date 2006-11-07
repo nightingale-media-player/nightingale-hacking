@@ -51,40 +51,30 @@
 extern PRLogModuleInfo* gMetadataLog;
 #endif
 
+#define QUOTE_CHAR '"'
+
 // DEFINES ====================================================================
 
 // FUNCTIONS ==================================================================
 //-----------------------------------------------------------------------------
 void PrepareStringForQuery(nsAString &str)
 {
-  NS_NAMED_LITERAL_STRING(strQuote, "\"");
-  NS_NAMED_LITERAL_STRING(strQuoteQuote, "\"\"");
+  nsAutoString dest;
 
-  nsAString::const_iterator itStart, itS, itE, itEnd;
-  
-  str.BeginReading(itStart);
-  str.BeginReading(itS);
-  str.EndReading(itE);
-  str.EndReading(itEnd);
-  
-  PRInt32 pos = 0;
-  while(FindInReadable(strQuote, itS, itE))
-  {
-    itS--;
-    if(*itS != '\\')
-    {
-      itS++;
-      pos = Distance(itStart, itS);
-      str.Replace(pos, 1, strQuoteQuote);
-      pos += 2;
-    }
+  PRInt32 pos = str.FindChar(QUOTE_CHAR, 0);
+  PRInt32 lastPos = 0;
+  PRBool hasQuote = PR_FALSE;
+  while(pos >= 0) {
+    dest.Append(Substring(str, lastPos, pos - lastPos + 1));
+    dest.Append(QUOTE_CHAR);
+    lastPos = pos + 1;
+    pos = str.FindChar(QUOTE_CHAR, lastPos);
+    hasQuote = PR_TRUE;
+  }
 
-    str.BeginReading(itStart);
-    str.BeginReading(itS);
-    str.EndReading(itE);
-    str.EndReading(itEnd);
-
-    itS.advance(pos);
+  if(hasQuote) {
+    dest.Append(Substring(str, lastPos, str.Length() - lastPos));
+    str.Assign(dest);
   }
 
   return;
@@ -559,6 +549,11 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
               {
                 pValues->GetKey(curValue, strKey);
                 pValues->GetValue(strKey, strValue);
+
+                PR_LOG(gMetadataLog, PR_LOG_DEBUG,
+                       ("Read key '%s' value '%s'",
+                       NS_ConvertUTF16toUTF8(strKey).get(),
+                       NS_ConvertUTF16toUTF8(strValue).get()));
 
                 if(columnCache.find(strKey) != columnCache.end())
                 {
