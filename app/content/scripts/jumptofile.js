@@ -40,8 +40,11 @@ try
     // "popup=yes" causes nasty issues on the mac with the resizers?
     if (!document.__JUMPTO__)
       window.openDialog( "chrome://songbird/content/xul/jumptofile.xul", "jump_to_file", "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizeable=yes", document );
-    else
+    else {
       document.__JUMPTO__.defaultView.focus();
+      var textbox = document.__JUMPTO__.getElementById("jumpto.textbox");
+      textbox.focus();
+    }
   }
 
   var SBEmptyPlaylistCommands = 
@@ -135,9 +138,9 @@ try
   var playingRef_remote;
   var showWebPlaylist_remote;
   
-  function syncJumpTo() {
+  function syncJumpTo(focus) {
     // because the change to the playlist.ref property may happen after this function has been triggered by an event or a remote observer, introduce a timeout
-    setTimeout("doSyncJumpTo(true);", 0);
+    setTimeout("doSyncJumpTo(" + !focus + ");", 0);
   }
   
   function onLoadJumpToFile() {
@@ -174,7 +177,7 @@ try
     playingRef_remote.bindObserver(on_playingRef_change, true);
     showWebPlaylist_remote.bindObserver(on_showWebPlaylist_change, true);
 
-    syncJumpTo();
+    syncJumpTo(true);
   }
   
   function doSyncJumpTo(nofocus) {
