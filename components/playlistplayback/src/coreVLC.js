@@ -153,7 +153,7 @@ CoreVLC.prototype.getPlaying = function()
 
 CoreVLC.prototype.getPlayingVideo = function ()
 {
-  throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+  return this.isVideoURL(this._url); // Hack until we can ask vlc
 };
 
 CoreVLC.prototype.getMute = function() 
