@@ -34,24 +34,40 @@ try
 
   function SBFileOpen( )
   {
+    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                           .getService(Components.interfaces.sbIPlaylistPlayback);
     // Make a filepicker thingie
-    var nsIFilePicker = Components.interfaces.nsIFilePicker;
     var fp = Components.classes["@mozilla.org/filepicker;1"]
-            .createInstance(nsIFilePicker);
+            .createInstance(Components.interfaces.nsIFilePicker);
+
+    // get some text for the filepicker window
     var sel = "Select";
     try
     {
       sel = theSongbirdStrings.getString("faceplate.select");
     } catch(e) {}
+
+    // initialize the filepicker with our text, a parent and the mode
     fp.init(window, sel, nsIFilePicker.modeOpen);
+
     // Tell it what filters to be using
     var mediafiles = "Media Files";
     try
     {
       mediafiles = theSongbirdStrings.getString("open.mediafiles");
     } catch(e) {}
-    fp.appendFilter(mediafiles,"*.wav; *.ogg; *.flac; *.m4a; *.m4v; *.mp3; *.mp4; *.wma; *.wmv; *.avi; *.asf; *.asx; *.mov;");
-    // Show it
+
+    // ask the playback core for supported extensions
+    var files = "";
+    var eExtensions = PPS.getSupportedFileExtensions(); 
+    while (eExtensions.hasMore()) {
+      files += ( "*." + eExtensions.getNext() + "; ");
+    }
+
+    // add a filter to show only supported media files
+    fp.appendFilter(mediafiles, files);
+
+    // Show the filepicker
     var fp_status = fp.show();
     if ( fp_status == nsIFilePicker.returnOK )
     {
@@ -60,11 +76,14 @@ try
       theTitleText.stringValue = fp.file.leafName;
       theArtistText.stringValue = "";
       theAlbumText.stringValue = "";
-      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+
+      // Use a nsIURI because it is safer and contains the scheme etc...
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
-      var uri = ios.newFileURI(fp.file.path, null, null);
+      var uri = ios.newFileURI(fp.file, null, null);
       PPS.playAndImportURL(uri.spec);
+
+      // put the url into the search widget history???
       if (document.__SEARCHWIDGET__) document.__SEARCHWIDGET__.loadSearchStringForCurrentUrl();
     }
   }

@@ -52,11 +52,11 @@ function CoreVLC()
 
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "m4a", "m4v",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
-                              "mp4"];
+                              "mp4", "mp2", "mpeg", "mkv", "mka", "ogm"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
   this._videoUrlExtensions = ["wmv", "asx", "asf", "avi", "mov", "mpg", "m4v",
-                              "mp4"];
+                              "mp4", "mp2", "mpeg", "mkv", "ogm"];
 
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);

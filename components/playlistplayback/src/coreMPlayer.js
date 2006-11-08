@@ -24,6 +24,15 @@
 //
  */
 
+//
+//
+//
+//    NOT ACTIVELY UNDER DEVELOPMENT
+//
+//
+//
+
+
 // The MPLAYER Plugin Wrapper
 function CoreMPlayer()
 {

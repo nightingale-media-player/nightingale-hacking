@@ -44,11 +44,13 @@ function CoreTotem()
   this._oldVolume = 0;
   this._muted = false;
 
-  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "wav", "m4a", "avi", 
-                              "mov", "mpg", "mp4"];
+  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "m4a", "m4v",
+                              "wmv", "asf", "avi",  "mov", "mpg", "mp4", "ogm",
+                              "mp2", "mka", "mkv"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
-  this._videoUrlExtensions = ["avi", "mpg", "mp4"];
+  this._videoUrlExtensions = ["wmv", "asf", "avi", "mov", "mpg", "m4v", "mp4",
+                              "mp2", "mpeg", "mkv", "ogm"];
 
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);

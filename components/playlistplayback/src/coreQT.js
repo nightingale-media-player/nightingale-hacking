@@ -77,12 +77,12 @@ function CoreQT()
 
   this._mediaUrlExtensions = ["aiff", "wav", "ogg", "flac", "ogm", "mp3",
                               "m4a", "m4v", "avi", "asx", "asf", "mov", "wma",
-                              "wmv", "mpg", "m3u", "pls", "mp4"];
+                              "wmv", "mpg", "m3u", "pls", "mp4", "mpeg", "mp2"];
 
   this._mediaUrlSchemes = ["rstp"];
 
   this._videoUrlExtensions = ["mov", "mpg", "ogm", "avi", "asf", "asx", "wmv",
-                              "m4v", "mp4"];
+                              "m4v", "mp4", "mp2", "mpeg"];
 
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);
