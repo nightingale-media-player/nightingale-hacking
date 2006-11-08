@@ -193,3 +193,23 @@ ExtensionSchemeMatcher.prototype.match = function(aStr) {
   return false;
 }
 
+function StringArrayEnumerator(aArray) {
+  this._array = aArray;
+  this._current = 0;
+}
+
+StringArrayEnumerator.prototype.hasMore = function() {
+  return this._current < this._array.length;
+}
+
+StringArrayEnumerator.prototype.getNext = function() {
+  return this._array[this._current++];
+}
+  
+StringArrayEnumerator.prototype.QueryInterface = function(iid) {
+  if (!iid.equals(Components.interfaces.nsIStringEnumerator) &&
+      !iid.equals(Components.interfaces.nsISupports))
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+  return this;
+};
+

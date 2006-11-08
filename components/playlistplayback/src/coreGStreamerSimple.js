@@ -327,6 +327,11 @@ CoreGStreamerSimple.prototype.isVideoURL = function ( aURL )
   return this._videoUrlMatcher.match(aURL);
 }
 
+CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
+{
+  return new StringArrayEnumerator(this._mediaUrlExtensions);
+}
+
 /**
   * See nsISupports.idl
   */

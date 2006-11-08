@@ -260,6 +260,11 @@ CoreMPlayer.prototype.isVideoURL = function ( aURL )
   return this._videoUrlMatcher.match(aURL);
 }
 
+CoreMPlayer.prototype.getSupportedFileExtensions = function ()
+{
+  return new StringArrayEnumerator(this._mediaUrlExtensions);
+}
+
 /**
  * See nsISupports.idl
  */

@@ -35,6 +35,7 @@
 
 #include "nsISupports.idl"
 #include "nsIObserver.idl"
+#include "nsIStringEnumerator.idl"
 
 interface sbIPlaylist;
 interface sbICoreWrapper;
@@ -527,7 +528,14 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   boolean isPlaylistURL(in AString aURL);
 
- 
+  /**
+   * \brief Return an enumeration of the file extensions that are supported
+   *        for playback
+   *
+   * \return an nsIStringEnumerator containting the list of extensions
+   */
+  nsIStringEnumerator getSupportedFileExtensions();
+
   // --------------------------------------------------------------------------
   // String twiddling
   // --------------------------------------------------------------------------

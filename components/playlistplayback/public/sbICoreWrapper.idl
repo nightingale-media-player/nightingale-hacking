@@ -33,6 +33,7 @@
  */
 #include "nsISupports.idl"
 #include "nsIDOMHTMLObjectElement.idl"
+#include "nsIStringEnumerator.idl"
 
 /**
  * \interface sbICoreWrapper
@@ -223,6 +224,13 @@ interface sbICoreWrapper : nsISupports
    * \return false if the URL does not point to video content
    */
   boolean isVideoURL(in AString aURL);
+
+  /**
+   * \brief Return an enumeration of the file extensions this core supports
+   *
+   * \return an nsIStringEnumerator containting the list of extensions
+   */
+  nsIStringEnumerator getSupportedFileExtensions();
 
 };
 

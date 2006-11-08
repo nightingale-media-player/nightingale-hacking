@@ -1030,7 +1030,14 @@ PlaylistPlayback.prototype = {
     return false;
 */    
   },
-  
+
+  getSupportedFileExtensions: function () {
+    var core = this.core;
+    if (!core)
+      throw Components.results.NS_ERROR_NOT_INITIALIZED;
+    return core.getSupportedFileExtensions();
+  },
+
   stripHoursFromTimeString: function ( aTimeString )
   {
     if ( aTimeString == null )

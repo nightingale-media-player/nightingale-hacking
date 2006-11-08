@@ -300,7 +300,11 @@ function CoreWMP() {
    */
   this.onSwapCore = function() {
     this.stop();
-  }
+  },
+
+  this.getSupportedFileExtensions = function() {
+    throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+  },
   
   /**
    * See nsISupports.idl

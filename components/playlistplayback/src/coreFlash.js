@@ -239,6 +239,11 @@ CoreFlash.prototype.isVideoURL = function ( aURL )
   return this._videoUrlMatcher.match(aURL);
 }
 
+CoreFlash.prototype.getSupportedFileExtensions = function ()
+{
+  return new StringArrayEnumerator(this._mediaUrlExtensions);
+}
+
 /**
  * See nsISupports.idl
  */

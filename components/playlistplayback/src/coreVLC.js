@@ -284,6 +284,11 @@ CoreVLC.prototype.isVideoURL = function ( aURL )
   return isVideoURL;
 }
 
+CoreVLC.prototype.getSupportedFileExtensions = function ()
+{
+  return new StringArrayEnumerator(this._mediaUrlExtensions);
+}
+
 CoreVLC.prototype.QueryInterface = function(iid) 
 {
   if (!iid.equals(Components.interfaces.sbICoreWrapper) &&

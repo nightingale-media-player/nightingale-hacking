@@ -763,6 +763,11 @@ CoreQT.prototype.isVideoURL = function ( aURL )
   return this._videoUrlMatcher.match(aURL);
 }
 
+CoreQT.prototype.getSupportedFileExtensions = function ()
+{
+  return new StringArrayEnumerator(this._mediaUrlExtensions);
+}
+
 /**
   * See nsISupports.idl
   */

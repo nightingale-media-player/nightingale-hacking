@@ -275,6 +275,11 @@ CoreTotem.prototype.isVideoURL = function ( aURL )
   return this._videoUrlMatcher.match(aURL);
 }
 
+CoreTotem.prototype.getSupportedFileExtensions = function ()
+{
+  return new StringArrayEnumerator(this._mediaUrlExtensions);
+}
+
 /**
   * See nsISupports.idl
   */
