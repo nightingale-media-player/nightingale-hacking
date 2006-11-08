@@ -34,13 +34,29 @@
  */
 
 /**
+ * \interface sbIWindowDraggerCallback IWindowDragger.h
+ * \brief Window dragging callback interface
+ * This is an interface to a callback method used to detect the end of a window drag operation
+ */
+[scriptable, uuid(55bc09ea-6ded-11db-968c-00e08161165f)]
+interface sbIWindowDraggerCallback : nsISupports
+{
+  /**
+   * \brief Window Dragger callback
+   * This callback method is triggered when the mouse button is released at the end of a drag operation
+   */
+  void onWindowDragComplete();
+};
+
+
+/**
  * \interface sbIWindowDragger IWindowDragger.h
  * \brief Window dragging service interface
  * This is an interface to the window dragging service, used to drag a window without 
  * losing mousemove messages when the mouse moves outside the rect of the window being 
  * dragged
  */
-[scriptable, uuid(880147D8-8DE1-44ae-AB4E-FC3D52C048BE)]
+[scriptable, uuid(47fcfb00-6ded-11db-968c-00e08161165f)]
 interface sbIWindowDragger : nsISupports
 {
   /**
@@ -50,6 +66,9 @@ interface sbIWindowDragger : nsISupports
    * \param dockDistance The minimum distance between the edge of the window and the 
    * edge of the desktop area before automatic docking is triggered (use 0 to disable
    * docking)
+   * \param cb The callback object to use
+   * \sa sbIWindowDraggerCallback
    */
-  void beginWindowDrag( in PRInt32 dockDistance );
+  void beginWindowDrag( in PRInt32 dockDistance, in sbIWindowDraggerCallback cb );
 };
+

@@ -163,6 +163,7 @@ void CWindowDragger::EndWindowDrag(UINT msg, WPARAM flags)
     PostMessage(m_oldCapture, msg, flags, (((short)y)<<16)|((short)x));
     m_oldCapture = NULL;
   }
+  FireCallback();
   DecPause();
 } // EndWindowDrag
 
@@ -173,11 +174,12 @@ void CWindowDragger::OnCaptureLost()
   m_captureWindow = NULL;
   m_draggedWindow = NULL;
   m_oldCapture = NULL;
+  FireCallback();
   DecPause();
 } // OnCaptureLost
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance)
+NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDraggerCallback *cb)
 {
   // If we're already in a dragging session, cancel it and start a new one
   // this is better than aborting, because if we ever end up not detecting
@@ -188,9 +190,13 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance)
     m_captureWindow = NULL;
     if (m_oldCapture != NULL) SetCapture(m_oldCapture);
     m_oldCapture = NULL;
+    FireCallback();
     DecPause();
   }
-  
+
+  m_callback = cb;
+  if (m_callback) NS_ADDREF(m_callback);
+
   m_oldCapture = GetCapture();
   
   POINT mousePos;
@@ -214,6 +220,8 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance)
   {
     m_draggedWindow = NULL;
   }
+
+  
 
   return NS_OK;
 } // BeginWindowDrag
@@ -312,10 +320,15 @@ CWindowDragger::~CWindowDragger()
 // Notes:
 //      - Ends automatically on mouseup
 //      - dockdistance is ignored for now
-NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance)
+// Todo:
+//      - detect end of drag operation and call FireCallback();
+NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance, sbIWindowDraggerCallback *cb)
 {
   Point click;
   WindowPtr     whichWindow;
+
+  m_callback = cb;
+  if (m_callback) NS_ADDREF(m_callback); // it should be safe to pass NULL for no callback
 
   // Find selected window using the current mouse location (better way?)
   GetMouse(&click);
@@ -330,3 +343,14 @@ NS_IMETHODIMP CWindowDragger::BeginWindowDrag(int dockdistance)
   return NS_OK;
 } // BeginWindowDrag
 #endif  // END OS X VERSION
+
+//-----------------------------------------------------------------------------
+void CWindowDragger::FireCallback() 
+{
+  if (m_callback)
+  {
+    m_callback->OnWindowDragComplete();
+    NS_RELEASE(m_callback);
+    m_callback = NULL;
+  }
+}

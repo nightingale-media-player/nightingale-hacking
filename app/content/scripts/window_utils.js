@@ -53,6 +53,25 @@ var trackerBkg = false;
 var offsetScrX = 0;
 var offsetScrY = 0;
 
+var windowDragCallback = {
+  onWindowDragComplete: function () {
+    onWindowDragComplete();
+  },
+
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIWindowDraggerCallback) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+  
+};
+
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent, popup ) 
 {
@@ -132,7 +151,7 @@ function onBkgDown( theEvent, popup )
       var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
       if (service) {
         var dockDistance = (window.dockDistance ? window.dockDistance : 0);
-        service.beginWindowDrag(dockDistance); // automatically ends
+        service.beginWindowDrag(dockDistance, windowDragCallback); // automatically ends
       }
     }
     else {
@@ -166,6 +185,7 @@ function onBkgUp( )
   if ( trackerBkg )
   {
     trackerBkg = false;
+    onWindowDragComplete();
     document.removeEventListener( "mousemove", onBkgMove, true );
   }
 }
@@ -282,6 +302,15 @@ function onMinimumWindowSize()
     }
   }
 */  
+}
+
+function onWindowResizeComplete() {
+  onMinimumWindowSize();
+  onWindowSaveSizeAndPosition();
+}
+
+function onWindowDragComplete() {
+  onWindowSavePosition();
 }
 
 // No forseen need to save _just_ size without position

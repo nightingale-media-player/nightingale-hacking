@@ -72,18 +72,18 @@
   
   <vbox class="sb_faceplate" flex="1">
     <hbox class="sb_faceplate" id="frame_top_resizers">
-      <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topleft" x_style="cursor: nw-resize;"/>
-      <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
-      <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="topright" x_style="cursor: ne-resize;"/>
+      <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topleft" x_style="cursor: nw-resize;"/>
+      <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
+      <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topright" x_style="cursor: ne-resize;"/>
     </hbox>
     <hbox class="sb_faceplate" flex="1">
     
     <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
       
         <vbox class="sb_faceplate">
-          <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topleft" x_style="cursor: nw-resize;"/>
-          <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
-          <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomleft" x_style="cursor: sw-resize;"/>
+          <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topleft" x_style="cursor: nw-resize;"/>
+          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
+          <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" x_style="cursor: sw-resize;"/>
         </vbox>
         
         <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
@@ -130,17 +130,17 @@
          </vbox>      
 
         <vbox class="sb_faceplate">
-          <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="topright" x_style="cursor: ne-resize;"/>
-          <resizer oncommand="onMinimumWindowSize()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
-          <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_mo" dir="bottomright" x_style="cursor: se-resize;"/>
+          <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topright" x_style="cursor: ne-resize;"/>
+          <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
+          <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomright" x_style="cursor: se-resize;"/>
         </vbox>
         
       </hbox> <!-- frame_middle_resizers -->
     </hbox>
     <hbox class="sb_faceplate" id="frame_bottom_resizers">
-      <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
-      <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
-      <x_resizer oncommand="onMinimumWindowSize()" id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
+      <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomleft" x_style="cursor: sw-resize;"/>
+      <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="bottom" x_style="cursor: s-resize;" flex="1"/>
+      <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomright" x_style="cursor: se-resize;"/>
     </hbox>
   </vbox>
 

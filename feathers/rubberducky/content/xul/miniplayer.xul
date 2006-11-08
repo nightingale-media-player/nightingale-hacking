@@ -56,7 +56,7 @@
    src="chrome://global/content/dialogOverlay.js" />
 
   <hbox id="frame_mini" flex="1">
-    <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
+    <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="left" style="cursor: w-resize;"/>
     <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
     <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
     <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
@@ -101,7 +101,7 @@
       <button id="mini_btn_fullscreen"  class="sb_faceplate" oncommand="SBFullscreen();" />
     </vbox>
     <button id="mini_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
-    <resizer oncommand="onMinimumWindowSize()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
+    <resizer oncommand="onWindowResizeComplete()" id="mini_resize_w" dir="right" style="cursor: w-resize;"/>
   </hbox>
 
   <keyset>

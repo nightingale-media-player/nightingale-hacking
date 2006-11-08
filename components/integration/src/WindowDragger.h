@@ -78,12 +78,10 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIWINDOWDRAGGER
   
-
 #ifdef XP_WIN
   LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   
 protected:
-
   void OnDrag();
   void EndWindowDrag(UINT msg, WPARAM flags);
   void OnCaptureLost();
@@ -104,8 +102,14 @@ protected:
   POINT m_relativeClickPos;
 #endif // XP_WIN
 
+protected:
+  void FireCallback();
+
+  sbIWindowDraggerCallback *m_callback;
+
 };
 
 
 #endif // __WINDOW_DRAGGER_H__
+
 
