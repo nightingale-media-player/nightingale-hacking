@@ -150,3 +150,46 @@ CoreBase.prototype =
   }
 };
 
+/**
+ * \class ExtensionSchemeMatcher
+ * \brief Utility class to easily test a list of extensions and schemes
+ *        against a string
+ */
+function ExtensionSchemeMatcher(aExtensions, aSchemes) {
+  this._extensions = aExtensions;
+  this._schemes    = aSchemes;
+}
+
+ExtensionSchemeMatcher.prototype.match = function(aStr) {
+
+  // Short circuit for the most common case
+  if(aStr.lastIndexOf("." + this._extensions[0]) ==
+     aStr.length - this._extensions[0].length + 1) {
+    return true;
+  }
+
+  var extensionSep = aStr.lastIndexOf(".");
+  if(extensionSep >= 0) {
+    var extension = aStr.substring(extensionSep + 1);
+    var rv = this._extensions.some(function(ext) {
+      return extension == ext;
+    });
+    if(rv) {
+      return true;
+    }
+  }
+
+  var schemeSep = aStr.indexOf("://");
+  if(schemeSep >= 0) {
+    var scheme = aStr.substring(0, schemeSep);
+    var rv = this._schemes.some(function(sch) {
+      return scheme == sch;
+    });
+    if(rv) {
+      return true;
+    }
+  }
+
+  return false;
+}
+

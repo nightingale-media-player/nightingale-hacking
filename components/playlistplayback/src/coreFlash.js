@@ -43,6 +43,15 @@ function CoreFlash()
   this._id = "";
   this._playing = false;
   this._paused  = false;
+
+  this._mediaUrlExtensions = ["mp3", "swf", "flv"];
+  this._videoUrlExtensions = ["swf", "flv"];
+
+  this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
+                                                     this._mediaUrlSchemes);
+  this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
+                                                     []);
+
 }
 
 // inherit the prototype from CoreBase
@@ -220,32 +229,14 @@ CoreFlash.prototype.getMetadata = function (aKey)
   return null;
 };
 
-CoreFlash.prototype.isMediaURL = function(aURL) {
-  if( ( aURL.indexOf ) && 
-      (
-        ( aURL.indexOf( ".swf" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".flv" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) )
-      )
-    )
-  {
-    return true;
-  }
-  return false;
+CoreFlash.prototype.isMediaURL = function ( aURL )
+{
+  return this._mediaUrlMatcher.match(aURL);
 }
 
 CoreFlash.prototype.isVideoURL = function ( aURL )
 {
-  if ( ( aURL.indexOf ) && 
-        (
-          ( aURL.indexOf( ".flv" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".swf" ) == ( aURL.length - 4 ) )
-        )
-      )
-  {
-    return true;
-  }
-  return false;
+  return this._videoUrlMatcher.match(aURL);
 }
 
 /**

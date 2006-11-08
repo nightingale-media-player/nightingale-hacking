@@ -43,6 +43,17 @@ function CoreGStreamerSimple()
   this._paused  = false;
   this._oldVolume = 0;
   this._muted = false;
+
+  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "m4a", "m4v",
+                              "wmv", "asf", "avi",  "mov", "mpg", "mp4"];
+  this._mediaUrlSchemes = ["mms", "rstp"];
+
+  this._videoUrlExtensions = ["wmv", "asf", "avi", "mov", "mpg", "m4v", "mp4"];
+
+  this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
+                                                     this._mediaUrlSchemes);
+  this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
+                                                     []);
 };
 
 // inherit the prototype from CoreBase
@@ -306,57 +317,14 @@ CoreGStreamerSimple.prototype.goFullscreen = function ()
 };
 
   
-CoreGStreamerSimple.prototype.isMediaURL = function(aURL) {
-  if( ( aURL.indexOf ) && 
-      (
-        // Protocols at the beginning
-        ( aURL.indexOf( "mms:" ) == 0 ) || 
-        ( aURL.indexOf( "rtsp:" ) == 0 ) ||
-        // File extensions at the end
-        ( aURL.indexOf( ".mp3" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".ogg" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".flac" ) == ( aURL.length - 5 ) ) ||
-        ( aURL.indexOf( ".mpc" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".wav" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".m4a" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".m4v" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".wma" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".wmv" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".asf" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
-        ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
-      )
-    )
-  {
-    return true;
-  }
-  return false;
+CoreGStreamerSimple.prototype.isMediaURL = function ( aURL )
+{
+  return this._mediaUrlMatcher.match(aURL);
 }
 
 CoreGStreamerSimple.prototype.isVideoURL = function ( aURL )
 {
-  if ( ( aURL.indexOf ) && 
-        (
-          ( aURL.indexOf( ".wmv" ) == ( aURL.length - 4 ) ) ||
-          
-          // A better solution is needed, as asx files are not always video..
-          // The following hack brought to you by Nivi:
-          ( aURL.indexOf( ".asx" ) == ( aURL.length - 4 ) && aURL.indexOf( "allmusic.com" ) == -1 ) ||
-          
-          ( aURL.indexOf( ".asf" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".avi" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".mov" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".mpg" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".m4v" ) == ( aURL.length - 4 ) ) ||
-          ( aURL.indexOf( ".mp4" ) == ( aURL.length - 4 ) )
-        )
-      )
-  {
-    return true;
-  }
-  return false;
+  return this._videoUrlMatcher.match(aURL);
 }
 
 /**

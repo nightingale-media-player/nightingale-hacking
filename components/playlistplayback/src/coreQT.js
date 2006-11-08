@@ -74,6 +74,20 @@ function CoreQT()
   this._hasXiph = false;
   this._hasPerian = false;
   this._componentCheckCompleted = false;
+
+  this._mediaUrlExtensions = ["aiff", "wav", "ogg", "flac", "ogm", "mp3",
+                              "m4a", "m4v", "avi", "asx", "asf", "mov", "wma",
+                              "wmv", "mpg", "m3u", "pls", "mp4"];
+
+  this._mediaUrlSchemes = ["rstp"];
+
+  this._videoUrlExtensions = ["mov", "mpg", "ogm", "avi", "asf", "asx", "wmv",
+                              "m4v", "mp4"];
+
+  this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
+                                                     this._mediaUrlSchemes);
+  this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
+                                                     []);
 };
 
 // inherit the prototype from CoreBase
@@ -739,57 +753,14 @@ CoreQT.prototype.goFullscreen = function ()
   return true;
 };
   
-CoreQT.prototype.isMediaURL = function(aURL) {
-  if( aURL && 
-      (
-        // Protocols at the beginning
-        /^rtsp\:/.test(aURL) ||
-        // File extensions at the end
-        /\.aiff$/i.test(aURL) ||
-        /\.wav$/i.test(aURL) ||
-        /\.ogg$/i.test(aURL) ||
-        /\.flac$/i.test(aURL) ||
-        /\.ogm$/i.test(aURL) ||
-        /\.mp3$/i.test(aURL) ||
-        /\.m4a$/i.test(aURL) ||
-        /\.m4v$/i.test(aURL) ||
-        /\.avi$/i.test(aURL) ||
-        /\.asx$/i.test(aURL) ||
-        /\.asf$/i.test(aURL) ||
-        /\.mov$/i.test(aURL) ||
-        /\.wma$/i.test(aURL) ||
-        /\.wmv$/i.test(aURL) ||
-        /\.mpg$/i.test(aURL) ||
-        /\.m3u$/i.test(aURL) ||
-        /\.pls$/i.test(aURL) ||
-        /\.mp4$/i.test(aURL)
-      )
-    )
-  {
-    return true;
-  }
-  return false;
+CoreQT.prototype.isMediaURL = function ( aURL )
+{
+  return this._mediaUrlMatcher.match(aURL);
 }
 
 CoreQT.prototype.isVideoURL = function ( aURL )
 {
-  if ( aURL && 
-       (
-         /\.mov$/i.test(aURL) ||
-         /\.mpg$/i.test(aURL) ||
-         /\.ogm$/i.test(aURL) ||
-         /\.avi$/i.test(aURL) ||
-         /\.asf$/i.test(aURL) ||
-         /\.asx$/i.test(aURL) ||
-         /\.wmv$/i.test(aURL) ||          
-         /\.m4v$/i.test(aURL) ||          
-         /\.mp4$/i.test(aURL)
-       )
-     )
-  {
-    return true;
-  }
-  return false;
+  return this._videoUrlMatcher.match(aURL);
 }
 
 /**
