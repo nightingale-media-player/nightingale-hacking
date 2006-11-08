@@ -82,6 +82,11 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerWMA, sbIMetadataHandler)
 //-----------------------------------------------------------------------------
 sbMetadataHandlerWMA::sbMetadataHandlerWMA()
 {
+  static int once = 0;
+  if (!once) {
+    CoInitializeEx(0, COINIT_MULTITHREADED);
+    once = 1;
+  }
   m_Completed = false;
 } //ctor
 
