@@ -75,6 +75,7 @@ var windowDragCallback = {
 // The background image allows us to move the window around the screen
 function onBkgDown( theEvent, popup ) 
 {
+  if (maximized) return;
   // Don't allow dragging on nodes that want their own click handling.
   // This is kinda dumb.  :(
   switch (theEvent.target.nodeName.toLowerCase())
@@ -218,11 +219,41 @@ function onMaximize()
     document.defaultView.maximize();
     maximized = true;
   }
+  syncMaxButton();
+  syncResizers();
+}
+
+function syncMaxButton() 
+{
+  var maxButton = document.getElementById("sysbtn_maximize");
+  if (maxButton) 
+  {
+    if (maximized) maxButton.setAttribute("checked", "true");
+    else maxButton.removeAttribute("checked");
+  }
+}
+
+function syncResizers() 
+{
+  if (maximized) disableResizers();
+  else enableResizers();
+}
+	
+function restoreWindow()
+{
+  if ( maximized )
+  {
+    document.defaultView.restore();
+    maximized = false;
+  }
+  syncMaxButton();
+  syncResizers();
 }
 
 // Exit
 function onExit( skipSave )
 {
+  restoreWindow();
   try
   {
     if ( skipSave != true )
@@ -867,4 +898,32 @@ function fixOSXWindow(aBoxId, aLabelId)
     box.insertBefore(newSpacer, box.firstChild);
   }
   
+}
+
+function disableResizers() {
+  var resizers = document.getElementsByTagName("resizer");
+  var xresizers = document.getElementsByTagName("x_resizer");
+  // only perform the swap if we have both types of objects
+  if (resizers.length > 0 && xresizers.length > 0) {
+    for (var i=0;i<resizers.length;i++) {
+      resizers[i].setAttribute("hidden", "true");
+    }
+    for (var i=0;i<resizers.length;i++) {
+      xresizers[i].removeAttribute("hidden");
+    }
+  }
+}
+	
+function enableResizers() {
+  var resizers = document.getElementsByTagName("resizer");
+  var xresizers = document.getElementsByTagName("x_resizer");
+  // only perform the swap if we have both types of objects
+  if (resizers.length > 0 && xresizers.length > 0) {
+    for (var i=0;i<xresizers.length;i++) {
+      xresizers[i].setAttribute("hidden", "true");
+    }
+    for (var i=0;i<xresizers.length;i++) {
+      resizers[i].removeAttribute("hidden");
+    }
+  }
 }
