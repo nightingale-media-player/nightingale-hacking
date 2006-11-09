@@ -2664,12 +2664,16 @@
         <![CDATA[
           try
           {
+            var first = -1;
+            this.processSelection_rowcount = 0;
             var rangeCount = this.tree.view.selection.getRangeCount();
             for (var i=0; i < rangeCount; i++) 
             {
               var start = {};
               var end = {};
               this.tree.view.selection.getRangeAt( i, start, end );
+              if (end.value != -1 && start.value != -1) this.processSelection_rowcount += (end.value-start.value)+1;
+              if (first == -1 || start.value < first) first = start.value;
               for( var c = start.value; c <= end.value; c++ )
               {
                 if (c > this.tree.view.rowCount) 
@@ -2680,6 +2684,7 @@
               }
             }
             this.tree.view.selection.clearSelection();
+            return first;
           }
           catch( err )
           {
@@ -2800,11 +2805,15 @@
                 library.setQueryObject(this.m_queryObj);
 
                 var params = Array(library, column);
-                this.processSelection(this.processSelection_removeTracksFromLibrary, params);
+                var first = this.processSelection(this.processSelection_removeTracksFromLibrary, params);
                 this.m_queryObj.execute();
                 // problem: playlists containing the tracks we just removed now show these items as blank, we could prompt the user to tell him that these tracks
                 //          are in existing playlists and ask for confirmation, then remove the items from the playlists as well, but it might get very slow for 
                 //          lots of selected items/lots of playlists (even just the check may be real slow)
+                
+                // select the next track
+                while (first >= 0 && first >= (this.tree.view.rowCount-this.processSelection_rowcount)) first--;
+                if (first >= 0) this.tree.view.selection.select(first);
               }
               else
               {
@@ -2825,8 +2834,10 @@
                 if (column)
                 {
                   var params = Array(playlist, column);
-                  this.processSelection(this.processSelection_removeTracksFromPlaylist, params);
+                  var first = this.processSelection(this.processSelection_removeTracksFromPlaylist, params);
                   this.m_queryObj.execute();
+                  while (first >= 0 && first >= (this.tree.view.rowCount-this.processSelection_rowcount)) first--;
+                  if (first >= 0) this.tree.view.selection.select(first);
                 }
                 else
                 {
@@ -2853,8 +2864,10 @@
                   if (playlist)
                   {
                     var params = Array(playlist, column);
-                    this.processSelection(this.processSelection_removeTracksFromSimplePlaylist, params);
+                    var first = this.processSelection(this.processSelection_removeTracksFromSimplePlaylist, params);
                     this.m_queryObj.execute();
+                    while (first >= 0 && first >= (this.tree.view.rowCount-this.processSelection_rowcount)) first--;
+                    if (first >= 0) this.tree.view.selection.select(first);
                   }
                   else
                   {
@@ -2891,10 +2904,12 @@
         <![CDATA[
           try
           {
-            var mediaLibrary = params[0];
-            var column = params[1];
-            var guid = _this.tree.view.getCellText( item, column );
-            mediaLibrary.removeMediaByGUID(guid, true);
+            try {
+              var mediaLibrary = params[0];
+              var column = params[1];
+              var guid = _this.tree.view.getCellText( item, column );
+              mediaLibrary.removeMediaByGUID(guid, true);
+            } catch (e) { }
           }
           catch( err )
           {
