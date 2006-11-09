@@ -908,7 +908,7 @@ function disableResizers() {
     for (var i=0;i<resizers.length;i++) {
       resizers[i].setAttribute("hidden", "true");
     }
-    for (var i=0;i<resizers.length;i++) {
+    for (var i=0;i<xresizers.length;i++) {
       xresizers[i].removeAttribute("hidden");
     }
   }
@@ -922,7 +922,7 @@ function enableResizers() {
     for (var i=0;i<xresizers.length;i++) {
       xresizers[i].setAttribute("hidden", "true");
     }
-    for (var i=0;i<xresizers.length;i++) {
+    for (var i=0;i<resizers.length;i++) {
       resizers[i].removeAttribute("hidden");
     }
   }
