@@ -458,6 +458,9 @@ sbGStreamerSimple::Stop()
   }
 
   gst_element_set_state(mPlay, GST_STATE_NULL);
+  mIsAtEndOfStream = PR_TRUE;
+  mIsPlayingVideo = PR_FALSE;
+  mLastErrorCode = 0;
 
   return NS_OK;
 }
