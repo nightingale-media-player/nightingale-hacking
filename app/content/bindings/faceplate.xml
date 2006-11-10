@@ -1,0 +1,405 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- FACEPLATE CONTROL -->
+
+  <!-- Externally driven by "faceplate.state" dataremote, an int describing which page to show -->
+  
+  <binding id="faceplate">
+
+    <content>
+    
+      <children/>
+
+      <!-- INTRO FACEPLATE -->
+      <xul:hbox id="intro_box" paneid="sbintro" panename="Intro">
+        <xul:hbox id="intro_box_bkgd" hidden="false" class="sb_faceplate" flex="1">
+
+          <xul:spacer flex="1"/>
+          <xul:vbox>
+            <xul:image id="intro_box_image"/>
+          </xul:vbox>
+          <xul:spacer flex="1"/>
+        </xul:hbox>
+      </xul:hbox>
+
+      <!-- FACEPLATE -->
+      <xul:vbox id="dashboard_box" hidden="true" class="sb_faceplate" paneid="sbdashboard" panename="Dashboard">
+        <xul:hbox flex="1" class="sb_faceplate">
+          <xul:vbox flex="1" class="sb_faceplate" id="dashboard_bkgd">
+            <xul:spacer flex="1"/>
+            <!-- SONG ARTIST/SONGTITLE DISPLAY -->
+            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate">
+              <xul:player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" />
+            </xul:hbox>
+            <!-- SONG ALBUM DISPLAY -->
+            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate">
+              <xul:player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end"/>
+              <xul:label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end"/>
+              <xul:player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end"/>
+            </xul:hbox>
+            <!-- SEEK BAR -->
+            <xul:hbox class="sb_faceplate">
+              <xul:spacer width="10"/>
+              <xul:player_timeelapsed id="songbird_text_time_elapsed" class="sb_faceplate"/>
+              <xul:spacer width="2"/>
+              <xul:vbox flex="1">
+                <xul:spacer flex="1"/>
+                <xul:player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+                <xul:spacer flex="1"/>
+              </xul:vbox>
+              <xul:spacer width="2"/>
+              <xul:player_totaltime id="songbird_text_time_total" class="sb_faceplate" />
+              <xul:spacer width="10"/>
+            </xul:hbox>
+
+            <xul:spacer flex="1"/>
+
+            <xul:label id="songbird_text_rep"   value="" class="sb_faceplate" hidden="true"/>
+            <xul:label id="songbird_text_shuf"  value="Shuffle" class="sb_faceplate" hidden="true"/>
+          </xul:vbox>
+        </xul:hbox>
+      </xul:vbox>
+
+
+      <xul:hbox id="template_box" hidden="true">
+        <xul:hbox id="dashboard_bkgd" hidden="false" class="sb_faceplate" flex="1" align="center">
+          <xul:spacer flex="1"/>
+          <xul:vbox align="center">
+            <xul:label id="template_box_label1" class="faceplate_pane_label" />
+            <xul:label id="template_box_label2" class="faceplate_pane_label" />
+            <xul:progressmeter id="template_box_progressmeter" class="faceplate_pane_progressmeter" />
+          </xul:vbox>
+          <xul:spacer flex="1"/>
+        </xul:hbox>
+      </xul:hbox> 
+
+    </content>
+
+   <implementation type="application/x-javascript">
+
+     <constructor>
+       <![CDATA[
+        this.panedata = Array();
+        this.intro_box = document.getAnonymousElementByAttribute(this, "id", "intro_box");
+        this.dashboard_box = document.getAnonymousElementByAttribute(this, "id", "dashboard_box");
+        this.template_box = document.getAnonymousElementByAttribute(this, "id", "template_box");
+
+        var component = Components.classes["@songbirdnest.com/Songbird/FaceplateRegistration;1"];
+        this.manager = component.getService(Components.interfaces.sbIFaceplateRegistration);
+
+        this.remotes = Array();
+
+        this.on_remote_state_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that._onRemoteStateChange(); } 
+        };
+        this.on_remote_state_change._that = this;
+
+        // Create and bind data remotes
+        this.remote_state = SB_NewDataRemote( "faceplate.state", null );
+        this.remote_state.bindObserver(on_remote_state_change, true);
+        
+        this.remotes.push(this.remote_state);
+
+        this.on_remote_npanes_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that._onRemoteNPanesChange(); } 
+        };
+        this.on_remote_npanes_change._that = this;
+
+        // Create and bind data remotes
+        this.remote_npanes = SB_NewDataRemote( "faceplate.panes", null );
+        this.remote_npanes.bindObserver(on_remote_npanes_change, true);
+        
+        this.remotes.push(this.remote_npanes);
+
+        // Title/<slash>/Album Box Complex -- two data items for one callback.
+
+        this.on_artistalbum_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that._onRemoteArtistAlbumChange(); } 
+        };
+        this.on_artistalbum_change._that = this;
+
+        this.remote_title = SB_NewDataRemote( "metadata.title", null ); // changed to title cuz we like to be odd.
+        this.remote_title.bindObserver( on_artistalbum_change, false );
+        this.remotes.push(this.remote_title);
+
+        this.remote_album = SB_NewDataRemote( "metadata.album", null ); 
+        this.remote_album.bindObserver( on_artistalbum_change, false );
+        this.remotes.push(this.remote_album);
+        
+        this._reconstructPanes();
+        this._updatePage();
+       ]]>
+     </constructor>
+     <destructor>
+       <![CDATA[
+        this._resetPanes();
+        for (var i=0;i<this.remotes.length;i++) {
+          this.remotes[i].unbind();
+        }
+        this.on_remote_state_change.that = null; this.on_remote_state_change = null;
+        this.on_remote_npages_change.that = null; this.on_remote_npages_change = null;
+        this.on_artistalbum_change.that = null; this.on_artistalbum_change = null;
+       ]]>
+     </destructor>
+
+      <field name="page">0</field>
+      <field name="panes">null</field>
+      <field name="panedata">null</field>
+      
+      <method name="switchToPane">
+        <parameter name="pane"/>
+        <body>
+         <![CDATA[
+          if (pane < 0) return;
+          this.remote_state.intValue = pane;
+         ]]>
+        </body>
+      </method>
+      
+      <method name="switchToNextPane">
+        <body>
+         <![CDATA[
+          var npanes = this.getNumPanes();
+          var curpane = this.getCurPane();
+          curpane++;
+          if (curpane >= npanes) curpane = 0;
+          this.switchToPane(curpane);
+         ]]>
+        </body>
+      </method>
+      
+      <method name="getNumPanes">
+        <body>
+          return this.remote_npanes.intValue + 2;
+        </body>
+      </method>
+      
+      <method name="_onRemoteStateChange">
+        <body>
+          this._updatePage();
+        </body>
+      </method>
+      
+      <method name="_onRemoteArtistAlbumChange">
+        <body>
+         <![CDATA[
+          // (we get called before they are fully bound)
+          if ( this.remote_album && this.remote_title )
+          {
+            var artist = this.remote_title.stringValue;
+            var album = this.remote_album.stringValue;
+            var theAASlash = document.getAnonymousElementByAttribute( this, "id", "songbird_text_slash" );
+            var theAABox = document.getAnonymousElementByAttribute( this, "id", "songbird_text_artistalbum" );
+            if ( album.length || artist.length )
+            {
+              if ( album.length && artist.length )
+              {
+                theAASlash.setAttribute( "hidden", "false" );    
+              }
+              else
+              {
+                theAASlash.setAttribute( "hidden", "true" );    
+              }
+              theAABox.setAttribute( "hidden", "false" );
+            }
+            else
+            {
+              theAASlash.setAttribute( "hidden", "true" );
+              // theAABox.setAttribute( "hidden", "true" ); // use this to center the seekbar & title
+              theAABox.setAttribute( "hidden", "false" ); // use this to keep the seekbar in the same place
+            }
+          }
+         ]]>
+        </body>
+      </method>
+      
+      <method name="_updatePage">
+        <body>
+         <![CDATA[
+          var page = this.getCurPane();
+          this._switchTo(this.panes[page]);
+         ]]>
+        </body>
+      </method>
+      
+      <method name="_switchTo">
+        <parameter name="element"/>
+        <body>
+         <![CDATA[
+          for (var i=0;i<this.panes.length;i++) {
+            var e = this.panes[i];
+            if (e && element == e) e.removeAttribute("hidden"); else e.setAttribute("hidden", "true");
+          }
+         ]]>
+        </body>
+      </method>
+      
+      <method name="getPaneIndex">
+        <parameter name="id"/>
+        <body>
+         <![CDATA[
+          if (this.panes) {
+            for (var i=0;i<this.panes.length;i++) {
+              var e = this.panes[i];
+              if (e && e.getAttribute("paneid") == id) return i;
+            }
+          }
+          return -1;
+         ]]>
+        </body>
+      </method>
+      
+      <method name="_onRemoteNPanesChange">
+        <body>
+         <![CDATA[
+          var n = 0;
+          var newn = 0;
+          var curpage = this.getCurPane();
+          if (this.panes) n = this.panes.length;
+          this._reconstructPanes();
+          if (this.panes) newn = this.panes.length;
+          if (newn < n) this.remote_state.intValue = 0;
+          else if (newn > n) this.remote_state.intValue = this.getNumPanes()-1;
+          this._updatePage();
+         ]]>
+        </body>
+      </method>
+      
+      <method name="_reconstructPanes">
+        <body>
+         <![CDATA[
+          this._resetPanes();
+          for (var i=0;i<this.manager.getNumPanes();i++) {
+            var pane = this._newPane(this.manager.enumPane(i));
+            this.panes.push(pane);
+          }
+         ]]>
+        </body>
+      </method>
+      
+      <method name="_resetPanes">
+        <body>
+         <![CDATA[
+          if (this.panes) {
+            // remove all created panes
+            for (var i=2;i<this.panes.length;i++) {
+              this.removeChild(this.panes[i]);
+            }
+          }
+          if (this.panedata) {
+            // remove all metadata bindings for extra panes
+            for (var i=0;i<this.panedata.length;i++) {
+              this.panedata[i].unbind();
+            }
+          }
+          // panedata reset
+          this.panedata = Array();
+          // panes reset
+          this.panes = Array(this.intro_box, this.dashboard_box);
+         ]]>
+        </body>
+      </method>
+      
+      <method name="_newPane">
+        <parameter name="pane"/>
+        <body>
+         <![CDATA[
+          var paneid = pane.getPaneId();
+          var clone = this.template_box.cloneNode(true);
+          clone.removeAttribute("hidden");
+          this.appendChild(clone);
+          clone.setAttribute("paneid", pane.getPaneId());
+          clone.setAttribute("panename", pane.getPaneId());
+          
+          var label1 = document.getAnonymousElementByAttribute(this, "id", "template_box_label1");
+          var label2 = document.getAnonymousElementByAttribute(this, "id", "template_box_label2");
+          var progressmeter = document.getAnonymousElementByAttribute(this, "id", "template_box_progressmeter");
+          
+          label1.setAttribute("id", "faceplate." + paneid + ".label1");
+          label2.setAttribute("id", "faceplate." + paneid + ".label2");
+          progressmeter.setAttribute("id", "faceplate." + paneid + ".progressmeter");
+          
+          var label1remote = SBDataBindElementProperty( "faceplate." + paneid + ".label1", label1, "value" );
+          var label1remote2 = SBDataBindElementProperty( "faceplate." + paneid + ".label1.hidden", label1, "hidden", true );
+          var label2remote = SBDataBindElementProperty( "faceplate." + paneid + ".label2", label2, "value" );
+          var label2remote2 = SBDataBindElementProperty( "faceplate." + paneid + ".label2.hidden", label2, "hidden", true );
+          var progressmeterremote = SBDataBindElementProperty( "faceplate." + paneid + ".progressmeter", progressmeter, "value" );
+          var progressmeterremote2 = SBDataBindElementProperty( "faceplate." + paneid + ".progressmeter.hidden", progressmeter, "hidden", true);
+          
+          this.panedata.push(label1remote);
+          this.panedata.push(label1remote2);
+          this.panedata.push(label2remote);
+          this.panedata.push(label2remote2);
+          this.panedata.push(progressmeterremote);
+          this.panedata.push(progressmeterremote2);
+
+          return clone;
+         ]]>
+        </body>
+      </method>
+      
+      <method name="getPaneName">
+        <parameter name="idx"/>
+        <body>
+          return this.panes[idx].getAttribute("panename");
+        </body>
+      </method>
+
+      <method name="getPaneId">
+        <parameter name="idx"/>
+        <body>
+          return this.panes[idx].getAttribute("paneid");
+        </body>
+      </method>
+
+      <method name="getCurPane">
+        <body>
+          return this.remote_state.intValue;
+        </body>
+      </method>
+
+    </implementation>
+ 
+  </binding>
+
+</bindings>
+
