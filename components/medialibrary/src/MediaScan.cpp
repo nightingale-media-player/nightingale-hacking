@@ -448,8 +448,8 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
 
   if(bFlag)
   {
-    nsISimpleEnumerator *pDirEntries = nsnull;
-    pFile->GetDirectoryEntries(&pDirEntries);
+    nsCOMPtr<nsISimpleEnumerator> pDirEntries;
+    pFile->GetDirectoryEntries(getter_AddRefs(pDirEntries));
 
     if(pDirEntries)
     {

@@ -920,8 +920,8 @@ void CDatabaseEngine::GenerateDBGUIDList()
 
   if(bFlag)
   {
-    nsISimpleEnumerator *pDirEntries = nsnull;
-    pDBDirectory->GetDirectoryEntries(&pDirEntries);
+    nsCOMPtr<nsISimpleEnumerator> pDirEntries;
+    pDBDirectory->GetDirectoryEntries(getter_AddRefs(pDirEntries));
 
     if(pDirEntries)
     {
