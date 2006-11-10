@@ -66,6 +66,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 
 ifeq (win32,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += WMVCORE \
+                               ole32 \
                                xul \
                                unicharutil_s \
                                $(NULL)
