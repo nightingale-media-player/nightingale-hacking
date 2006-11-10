@@ -90,6 +90,9 @@ SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
+
+tasks: all vlcplugin
+
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
@@ -98,6 +101,18 @@ SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                      $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                      $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                      $(NULL)
+
+# Plugins on OS X are not files but rather directories! Doing it this way
+# keeps us from having to remove a bunch of '.svn' folders after a recursive
+# directory copy.
+
+VLC_TAR_FILENAME = VLC\ Plugin.tar.gz
+
+vlcplugin::
+	$(MKDIR) -p $(SONGBIRD_PLUGINSDIR)
+	$(TAR) -z -x -f $(DEPS_DIR)/plugins/vlc/$(SB_CONFIGURATION)/$(VLC_TAR_FILENAME) \
+    -C $(SONGBIRD_PLUGINSDIR)
+
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
