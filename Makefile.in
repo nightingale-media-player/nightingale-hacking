@@ -34,10 +34,13 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_DEFAULTSDIR) \
              $(SONGBIRD_PREFERENCESDIR) \
              $(SONGBIRD_PLUGINSDIR) \
-             $(SONGBIRD_VLCPLUGINSDIR) \
              $(SONGBIRD_SCRIPTSDIR) \
              $(SONGBIRD_XULRUNNERDIR) \
              $(NULL)
+
+ifeq (win32,$(SB_PLATFORM))
+CREATEDIRS += $(SONGBIRD_VLCPLUGINSDIR)
+endif
 
 ifeq (macosx,$(SB_PLATFORM))
 CREATEDIRS += $(SONGBIRD_MACOS)
