@@ -142,7 +142,7 @@
               <!-- HEY!  If you add new objects or iframes to this list,
                    you need to make sure you hide them per platform in Songbird.js -->
               <hbox id="box_vlc" flex="1">
-                <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-vlc-plugin"/>
+                <html:object id="core_vlc" flex="1" autoplay="0" loop="0" repeat="0" type="application/x-songbird-vlc-plugin" version ="VideoLAN.VLCPlugin.2"/>
               </hbox>
               <!-- XXXben Swap this block with the next for the new QuickTime core.
                 <hbox id="box_qt" flex="1"/>

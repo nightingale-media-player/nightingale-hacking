@@ -52,16 +52,27 @@ function CoreVLC()
 
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "m4a", "m4v",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
-                              "mp4", "mp2", "mpeg", "mkv", "mka", "ogm"];
+                              "mp4", "mp2", "mpeg", "mpga", "mpega", "mkv",
+                              "mka", "ogm", "mpe", "qt"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
-  this._videoUrlExtensions = ["wmv", "asx", "asf", "avi", "mov", "mpg", "m4v",
-                              "mp4", "mp2", "mpeg", "mkv", "ogm"];
+  this._videoUrlExtensions = ["wmv", "asx", "asf", "avi", "mov", "qt", "mpg",
+                              "m4v", "mp4", "mp2", "mpeg", "mpe", "mkv", "ogm"];
 
   this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
                                                      this._mediaUrlSchemes);
   this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
                                                      []);
+};
+
+// Enumerate vlc.input.state options
+CoreVLC.INPUT_STATES = {
+  IDLE:       0,
+  OPENING:    1,
+  BUFFERING:  2,
+  PLAYING:    3,
+  PAUSED:     4,
+  STOPPING:   5
 };
 
 // inherit the prototype from CoreBase
@@ -105,10 +116,13 @@ CoreVLC.prototype.playURL = function (aURL)
       this._url = this._url.replace(/\//g, '\\');
     }
   }
+
+  this._object.playlist.clear();
+  var item = this._object.playlist.add(this._url);
+  this._object.playlist.playItem(item);
+  dump("\ncoreVLC playing " + this._url + " as item " + item + "\n");
   
-  this._object.playmrl(this._url);
-  
-  if (this._object.isplaying()) 
+  if (this._object.playlist.isPlaying) 
   {
     this._paused = false;
     this._lastPosition = 0;
@@ -121,7 +135,11 @@ CoreVLC.prototype.playURL = function (aURL)
 CoreVLC.prototype.play = function() 
 {
   this._verifyObject();
-  this._object.play();
+
+  if (this._object.playlist.itemCount <= 0) 
+    return false;
+
+  this._object.playlist.play();
   this._paused = false;
 
   return true;
@@ -130,9 +148,12 @@ CoreVLC.prototype.play = function()
 CoreVLC.prototype.stop = function() 
 {
   this._verifyObject();
-  this._object.stop();
+
+  if (this._object.playlist.itemCount > 0) 
+    this._object.playlist.stop();
+
   this._paused = false;
-  return this._object.isplaying() == false;
+  return this._object.playlist.isPlaying == false;
 };
   
 CoreVLC.prototype.pause = function()
@@ -141,9 +162,9 @@ CoreVLC.prototype.pause = function()
     return false;
     
   this._verifyObject();
-  this._object.pause();
+  this._object.playlist.togglePause();
   
-  if (this._object.isplaying())
+  if (this._object.playlist.isPlaying)
     return false;
     
   this._paused = true;
@@ -160,12 +181,19 @@ CoreVLC.prototype.getPaused = function()
 CoreVLC.prototype.getPlaying = function() 
 {
   this._verifyObject();
-  return this._object.isplaying() || this._paused;
+  return this._object.playlist.isPlaying || this._paused;
 };
 
 CoreVLC.prototype.getPlayingVideo = function ()
 {
-  return this.isVideoURL(this._url); // Hack until we can ask vlc
+  this._verifyObject();
+  var hasVout = false;
+
+  try {
+    hasVout = this._object.input.hasVout;
+  } catch(err) {}
+
+  return hasVout;
 };
 
 CoreVLC.prototype.getMute = function() 
@@ -180,7 +208,7 @@ CoreVLC.prototype.setMute = function(mute)
   if (this._muted != mute) 
   {
     this._muted = mute;
-    this._object.mute();
+    this._object.audio.mute = mute;
   }
 };
 
@@ -190,12 +218,12 @@ CoreVLC.prototype.getVolume = function()
 
   /**
   * Valid volumes are from 0 to 255.
-  * VLC uses a 0-50 scale, so volumes are adjusted accordingly.
-  * If you going beyond this 0-50 scale, VLC will amplify the signal.
+  * VLC uses a 0-200 scale, so volumes are adjusted accordingly.
+  * If you going beyond 100 VLC will amplify the signal.
   * And it does so poorly, without clipping or compressing the signal.
   */
-  var scaledVolume = this._object.get_volume();
-  var retVolume = Math.round(scaledVolume / 50 * 255);
+  var scaledVolume = this._object.audio.volume;
+  var retVolume = Math.round(scaledVolume / 100 * 255);
   
   return retVolume;
 };
@@ -206,64 +234,138 @@ CoreVLC.prototype.setVolume = function(volume)
   if ( (volume < 0) || (volume > 255) )
     throw Components.results.NS_ERROR_INVALID_ARG;
     
-  var scaledVolume = Math.round(volume / 255 * 50);
+  var scaledVolume = Math.round(volume / 255 * 100);
   
-  this._object.set_volume(scaledVolume);
+  this._object.audio.volume = scaledVolume;
 };
   
 CoreVLC.prototype.getLength = function() 
 {
   this._verifyObject();
-  return this._object.get_length() * 1000;
+
+  if (this._object.playlist.itemCount <= 0 
+	  || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
+    return null;
+
+  return this._object.input.length;
 };
 
 CoreVLC.prototype.getPosition = function() 
 {
   this._verifyObject();
-  return this._object.get_time() * 1000;
+
+  if (this._object.playlist.itemCount <= 0 
+	  || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
+    return null;
+
+  return this._object.input.time;
 };
 
 CoreVLC.prototype.setPosition = function(position) 
 {
   this._verifyObject();
-  this._object.seek(position / 1000, false);
+
+  if (this._object.playlist.itemCount <= 0 
+      || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
+    return null;
+
+  if (this._object.playlist.itemCount > 0)
+    this._object.input.time = position; 
 };
 
 CoreVLC.prototype.goFullscreen = function() 
 {
   this._verifyObject();
-  return this._object.fullscreen();
+  return this._object.video.fullscreen = true;
 };
 
-CoreVLC.prototype.getMetadata = function(key) 
+CoreVLC.prototype.getMetadata = function(key)
 {
   var retval = "";
-  switch ( key ) {
-    case "album":
-      retval += this._object.get_metadata_str( "Meta-information", "Album/movie/show title" );
-    break;
-    
-    case "artist":
-      retval += this._object.get_metadata_str( "Meta-information", "Artist" );
-    break;
 
-    case "genre":
-      retval += this._object.get_metadata_str( "Meta-information", "Genre" );
-    break;
-    
-    case "length":
-      retval += this._object.get_metadata_str( "General", "Duration" );
-    break;
-    
-    case "title":
-      retval += this._object.get_metadata_str( "Meta-information", "Title" );
-    break;
-    
-    case "url":
-      retval += this._object.get_metadata_str( "Meta-information", "URL" );
-    break;
+  var metaInfoCat = "Meta-information";
+  var genInfoCat = "General";
+
+  // Make sure that the there are items in the playlist,
+  // and the player is either playing or paused
+  if (this._object.playlist.itemCount <= 0  
+      ||  ((this._object.input.state != CoreVLC.INPUT_STATES.PLAYING) 
+           && (this._object.input.state != CoreVLC.INPUT_STATES.PAUSED)))
+    return retval;
+
+  try {
+    switch ( key ) {
+      case "album":
+        if(this._verifyCategoryKey(metaInfoCat, "Album/movie/show title"))
+          retval += this._object.metadata.get( metaInfoCat,
+                           "Album/movie/show title" );
+      break;
+
+      case "artist":
+        if(this._verifyCategoryKey(metaInfoCat, "Now Playing"))
+        {
+          retval += this._object.metadata.get( metaInfoCat, "Now Playing" );
+        }
+        else if(this._verifyCategoryKey(metaInfoCat, "Artist"))
+        {
+          retval += this._object.metadata.get( metaInfoCat, "Artist" );
+        }
+      break;
+
+      case "genre":
+        if(this._verifyCategoryKey(metaInfoCat, "Genre"))
+          retval += this._object.metadata.get( metaInfoCat, "Genre" );
+      break;
+
+      case "length":
+        if(this._verifyCategoryKey(genInfoCat, "Duration"))
+          retval += this._object.metadata.get( genInfoCat, "Duration" );
+      break;
+
+      case "title":
+        if(this._verifyCategoryKey(metaInfoCat, "Title"))
+          retval += this._object.metadata.get( metaInfoCat, "Title" );
+      break;
+
+      case "url":
+        if(this._verifyCategoryKey(metaInfoCat, "URL"))
+          retval += this._object.metadata.get( metaInfoCat, "URL" );
+      break;
+    } 
+  } catch (e) {
+    dump("\ncoreVLC.getMetadata Error: " + e + "\n");
   }
   return retval;
+};
+
+CoreVLC.prototype._verifyCategoryKey = function (cat, key)
+{
+  var validKey = false;
+
+  var categories = this._object.metadata.categories;
+  var categoryCount = categories.length;
+  var curCat = 0;
+
+  for(; curCat < categoryCount; curCat++)
+  {
+    if(categories[curCat] == cat)
+    {
+      var categoryKeys = this._object.metadata.getCategoryKeys(cat);
+      var catKeyCount = categoryKeys.length;
+      var curKey = 0;
+
+      for(; curKey < catKeyCount; curKey++)
+      {
+        if(categoryKeys[curKey] == key)
+        {
+          validKey = true;
+          break;
+        }
+      }
+    }
+  }
+
+  return validKey;
 };
 
 CoreVLC.prototype.isMediaURL = function( aURL )
@@ -273,15 +375,7 @@ CoreVLC.prototype.isMediaURL = function( aURL )
 
 CoreVLC.prototype.isVideoURL = function ( aURL )
 {
-  var isVideoURL = this._videoUrlMatcher.match(aURL);
-
-  // HACK: Don't try to play .asx files on allmusic
-  if(isVideoURL &&
-     aURL.indexOf( ".asx" ) == aURL.length - 4 &&
-     aURL.indexOf( "allmusic.com" ) != -1) {
-    return false;
-  }
-  return isVideoURL;
+  return this._videoUrlMatcher.match(aURL);
 }
 
 CoreVLC.prototype.getSupportedFileExtensions = function ()

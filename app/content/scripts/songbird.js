@@ -467,6 +467,7 @@ function SBAppInitialize()
 
       // Initialize with VLC
       CoreVLCDocumentInit( "core_vlc" );
+
       //InitPlaybackCoreFlash( "core_flash_frame" );
       // Hide Quicktime
       if (theQTBox) theQTBox.hidden = true;
@@ -482,7 +483,11 @@ function SBAppInitialize()
     else if (platform == "Darwin") {
       var quitMenuItem = document.getElementById("menu_FileQuitItem");
       quitMenuItem.removeAttribute("hidden");
-      //MacOSX, prefer QT.
+
+      //MacOSX, prefer VLC.
+
+      // Initialize with VLC
+      CoreVLCDocumentInit( "core_vlc" );
 
       /*
         // XXXben Swap this block with the next for the new QuickTime core.
@@ -490,11 +495,11 @@ function SBAppInitialize()
       */
       /**/
       // Initialize with Quicktime
-      CoreQTDocumentInit( "core_qt_document" );
+      //CoreQTDocumentInit( "core_qt_document" );
       /**/
       
-      // Hide VLC
-      if (theVLCBox) theVLCBox.hidden = true;
+      // Hide Quicktime
+      if (theQTBox) theQTBox.hidden = true;
       // Hide GStreamer
       if (theGSTBox) theGSTBox.hidden = true;
       /*
