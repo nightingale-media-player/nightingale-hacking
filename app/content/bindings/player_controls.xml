@@ -193,6 +193,7 @@
             this.gPPS.volume = this.remote_lastVolume.intValue;
           } 
           else {
+            this.remote_lastVolume.intValue = this.remote_volume.intValue;
             this.gPPS.volume = 0;
           }
         ]]>
@@ -1038,4 +1039,5 @@
   </binding>
 
 </bindings>
+
 
