@@ -1290,7 +1290,8 @@ PlaylistPlayback.prototype = {
       else
         title = "";
       // Only if we have no known artist.
-      if ( artist.length && ( this._metadataArtist.stringValue != artist ) )
+      if ( artist.length && ( this._metadataArtist.stringValue != artist ) &&
+           (this._playURL.stringValue.toLowerCase().indexOf( "http:" ) == 0 ) )
         this._set_metadata = true; 
       else
         artist = "";
