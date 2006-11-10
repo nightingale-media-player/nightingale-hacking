@@ -118,7 +118,7 @@ function onPollScan()
         complete = theSongbirdStrings.getString("media_scan.complete");
       } catch(e) {}
       theLabel.value = complete;
-      onScanComplete( aMediaScanQuery );
+      onScanComplete();
       document.getElementById("button_ok").removeAttribute( "disabled" );
       document.getElementById("button_ok").focus();
       document.getElementById("button_cancel").setAttribute( "disabled", "true" );
@@ -139,12 +139,11 @@ function onPollScan()
   }
 }
 
-function onScanComplete( mediaScanQuery )
+function onScanComplete( )
 {
-  mediaScanQuery = aMediaScanQuery;
   theProgress.removeAttribute( "mode" );
 
-  if ( mediaScanQuery.getFileCount() )
+  if ( aMediaScanQuery.getFileCount() )
   {
     try
     {

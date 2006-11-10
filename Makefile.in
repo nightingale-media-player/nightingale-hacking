@@ -34,8 +34,8 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_DEFAULTSDIR) \
              $(SONGBIRD_PREFERENCESDIR) \
              $(SONGBIRD_PLUGINSDIR) \
-             $(SONGBIRD_SCRIPTSDIR) \
              $(SONGBIRD_VLCPLUGINSDIR) \
+             $(SONGBIRD_SCRIPTSDIR) \
              $(SONGBIRD_XULRUNNERDIR) \
              $(NULL)
 

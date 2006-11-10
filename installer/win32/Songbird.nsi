@@ -100,6 +100,8 @@ Function .onInit
 FunctionEnd
 
 Section "Songbird Base (Required)"
+  SetShellVarContext all
+  
   SectionIn RO
   SetOutPath $INSTDIR
 
@@ -115,8 +117,10 @@ NoUninstall:
   ;; Force creation of new profile / cache for Songbird
   ;; for nightly / developer builds.
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;SetShellVarContext current
   ;;RMDir /r "$APPDATA\Pioneers of the Inevitable\"
   ;;RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\"
+  ;;SetShellVarContext all
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
   File *.ini
@@ -132,7 +136,6 @@ NoUninstall:
   File /r defaults
   File /r plugins
   File /r scripts
-  File /r vlcplugins
   File /r xulrunner
   
   FindFirst $0 $1 $SYSDIR\msvcp71.dll
@@ -147,8 +150,8 @@ NoRequireMSVCP71:
   FindClose $0
   
   ;VLC Configuration File.
-  SetOutPath $APPDATA\Songbird_vlc
-  File vlcrc
+  SetOutPath $APPDATA\SongbirdVLC
+  File songbirdvlcrc
   
   ;Back to normal install directory.
   SetOutPath $INSTDIR
@@ -180,6 +183,7 @@ Section "QuickLaunch Icon"
 SectionEnd
 
 Section "Uninstall"
+  SetShellVarContext all
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird"
@@ -204,14 +208,16 @@ Section "Uninstall"
   Delete $INSTDIR\*.exe
   Delete $INSTDIR\*.ico
 
-  Delete $APPDATA\Songbird_vlc\vlcrc
+  Delete $APPDATA\SongbirdVLC\songbirdvlcrc
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; I commented this out, because I don't think we *truly* want to do this. 
   ;; But we might have to later.
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;RMDir /r "$APPDATA\Pioneers of the Inevitable\Songbird"
-  ;RMDir /r "$LOCALAPPDATA\Pioneers of the Inevitable\Songbird"
+  ;SetShellVarContext current
+  ;RMDir /r "$APPDATA\Songbird"
+  ;RMDir /r "$LOCALAPPDATA\Songbird"
+  ;SetShellVarContext all
 
   
   RMDir /r $INSTDIR\chrome
@@ -219,7 +225,6 @@ Section "Uninstall"
   RMDir /r $INSTDIR\defaults
   RMDir /r $INSTDIR\plugins
   RMDir /r $INSTDIR\scripts
-  RMDir /r $INSTDIR\vlcplugins
   RMDir /r $INSTDIR\xulrunner
 
   RMDir "$SMPROGRAMS\Songbird"
