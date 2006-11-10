@@ -423,93 +423,91 @@ NS_IMETHODIMP CMediaScan::SubmitQuery(sbIMediaScanQuery *pQuery)
 /* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
 NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bRecurse, sbIMediaScanCallback *pCallback, PRInt32 *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
   dirstack_t dirStack;
   fileentrystack_t fileEntryStack;
 
   *_retval = 0;
 
-  nsresult ret = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
-  nsCOMPtr<nsIIOService> pIOService = do_GetService("@mozilla.org/network/io-service;1");
-  if(!pFile || !pIOService) return ret;
+  nsresult rv;
+  nsCOMPtr<nsILocalFile> pFile =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString strTheDirectory(strDirectory);
+  nsCOMPtr<nsIIOService> pIOService =
+    do_GetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  ret = pFile->InitWithPath(strTheDirectory);
-  if(NS_FAILED(ret)) return ret;
+  rv = pFile->InitWithPath(strDirectory);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool bFlag = PR_FALSE;
-  pFile->IsDirectory(&bFlag);
+  PRBool bFlag;
+  rv = pFile->IsDirectory(&bFlag);
 
   if(pCallback)
-  {
     pCallback->OnMediaScanStart();
-  }
 
-  if(bFlag)
+  if(NS_SUCCEEDED(rv) && bFlag)
   {
-    nsISimpleEnumerator *pDirEntries = nsnull;
-    pFile->GetDirectoryEntries(&pDirEntries);
+    nsISimpleEnumerator* pDirEntries;
+    rv = pFile->GetDirectoryEntries(&pDirEntries);
 
-    if(pDirEntries)
+    if(NS_SUCCEEDED(rv))
     {
-      PRBool bHasMore = PR_FALSE;
+      PRBool bHasMore;
 
       for(;;)
       {
-        if(pDirEntries)
-          pDirEntries->HasMoreElements(&bHasMore);
-        else
-          bHasMore = PR_FALSE;
-
-        if(bHasMore)
+        // Must null-check pDirEntries here because we're inside a loop
+        if(pDirEntries &&
+           NS_SUCCEEDED(pDirEntries->HasMoreElements(&bHasMore)) && bHasMore)
         {
 
           nsCOMPtr<nsISupports> pDirEntry;
-          pDirEntries->GetNext(getter_AddRefs(pDirEntry));
+          rv = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
 
-          if(pDirEntry)
+          if(NS_SUCCEEDED(rv))
           {
-            nsIID nsIFileIID = NS_IFILE_IID;
-            nsCOMPtr<nsIFile> pEntry;
-            pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
+            nsCOMPtr<nsIFile> pEntry = do_QueryInterface(pDirEntry, &rv);
             
-            if(pEntry)
+            if(NS_SUCCEEDED(rv))
             {
-              PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
-              pEntry->IsFile(&bIsFile);
-              pEntry->IsDirectory(&bIsDirectory);
-              pEntry->IsHidden(&bIsHidden);
+              PRBool bIsFile, bIsDirectory, bIsHidden;
 
               // Don't scan hidden things.  
               // Otherwise we wind up in places that can crash the app?
-              if (!bIsHidden)
+              if (NS_SUCCEEDED(pEntry->IsHidden(&bIsHidden)) && !bIsHidden)
               {
-                if(bIsFile)
+                if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
                 {
-                  nsString strPath;
-
                   // Get the file:// uri from the file object.
                   nsCOMPtr<nsIURI> pURI;
-                  pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
-                  nsCString u8spec;
-                  pURI->GetSpec(u8spec);
-                  strPath = NS_ConvertUTF8toUTF16(u8spec);
-
-                  *_retval += 1;
-
-                  if(pCallback)
+                  rv = pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
+                  if (NS_SUCCEEDED(rv))
                   {
-                    PRInt32 nCount = *_retval;
-                    pCallback->OnMediaScanFile(strPath, nCount);
+                    nsCAutoString u8spec;
+                    rv = pURI->GetSpec(u8spec);
+                    if (NS_SUCCEEDED(rv))
+                    {
+                      *_retval += 1;
+
+                      if(pCallback)
+                        pCallback->OnMediaScanFile(NS_ConvertUTF8toUTF16(u8spec),
+                                                   *_retval);
+                    }
                   }
                 }
-                else if(bIsDirectory && bRecurse)
+                else if(bRecurse &&
+                        NS_SUCCEEDED(pEntry->IsDirectory(&bIsDirectory)) &&
+                        bIsDirectory)
                 {
                   dirStack.push_back(pDirEntries);
                   fileEntryStack.push_back(pEntry);
 
-                  pEntry->GetDirectoryEntries(&pDirEntries);
+                  rv = pEntry->GetDirectoryEntries(&pDirEntries);
+                  if (NS_FAILED(rv))
+                    pDirEntries = nsnull;
                 }
               }
             }
@@ -517,10 +515,9 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
         }
         else
         {
+          NS_IF_RELEASE(pDirEntries);
           if(dirStack.size())
           {
-            NS_IF_RELEASE(pDirEntries);
-
             pDirEntries = dirStack.back();
             dirStack.pop_back();
           }
@@ -542,15 +539,12 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
     if(pCallback)
     {
       *_retval = 1;
-      PRInt32 nCount = *_retval;
-      pCallback->OnMediaScanFile(strTheDirectory, nCount);
+      pCallback->OnMediaScanFile(strDirectory, *_retval);
     }
   }
 
   if(pCallback)
-  {
     pCallback->OnMediaScanEnd();
-  }
 
   return NS_OK;
 } //ScanDirectory

@@ -909,67 +909,63 @@ void CDatabaseEngine::GenerateDBGUIDList()
 
   if(NS_FAILED(rv)) return;
 
-  {
-    PR_Lock(m_pDBStorePathLock);
-    rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(pDBDirectory));
-    PR_Unlock(m_pDBStorePathLock);
-  }
+  PR_Lock(m_pDBStorePathLock);
+  rv = NS_NewLocalFile(m_DBStorePath, PR_FALSE, getter_AddRefs(pDBDirectory));
+  PR_Unlock(m_pDBStorePathLock);
+
+  if (NS_FAILED(rv)) return;
 
   rv = pDBDirectory->IsDirectory(&bFlag);
   if(NS_FAILED(rv)) return;
 
   if(bFlag)
   {
-    nsISimpleEnumerator *pDirEntries = nsnull;
-    pDBDirectory->GetDirectoryEntries(&pDirEntries);
+    nsCOMPtr<nsISimpleEnumerator> pDirEntries;
+    rv = pDBDirectory->GetDirectoryEntries(getter_AddRefs(pDirEntries));
 
-    if(pDirEntries)
+    if(NS_SUCCEEDED(rv))
     {
-      PRBool bHasMore = PR_FALSE;
+      PRBool bHasMore;
 
       for(;;)
       {
-        if(pDirEntries)
-          pDirEntries->HasMoreElements(&bHasMore);
-
-        if(bHasMore)
+        if(pDirEntries &&
+           NS_SUCCEEDED(pDirEntries->HasMoreElements(&bHasMore)) &&
+           bHasMore)
         {
 
           nsCOMPtr<nsISupports> pDirEntry;
-          pDirEntries->GetNext(getter_AddRefs(pDirEntry));
+          rv = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
 
-          if(pDirEntry)
+          if(NS_SUCCEEDED(rv))
           {
-            nsIID nsIFileIID = NS_IFILE_IID;
-            nsCOMPtr<nsIFile> pEntry;
-            pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
-
-            if(pEntry)
+            nsCOMPtr<nsIFile> pEntry = do_QueryInterface(pDirEntry, &rv);
+            if(NS_SUCCEEDED(rv))
             {
-              PRBool bIsFile = PR_FALSE;
-              pEntry->IsFile(&bIsFile);
+              PRBool bIsFile;
 
-              if(bIsFile)
+              if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
               {
                 nsAutoString strLeaf;
-                pEntry->GetLeafName(strLeaf);
-
-                nsAutoString::const_iterator itStrStart, itStart, itEnd;
-                strLeaf.BeginReading(itStrStart);
-                strLeaf.BeginReading(itStart);
-                strLeaf.EndReading(itEnd);
-
-                if(FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd))
+                rv = pEntry->GetLeafName(strLeaf);
+                if (NS_SUCCEEDED(rv))
                 {
-                  strLeaf.Cut((PRUint32)Distance(itStrStart, itStart), (PRUint32)Distance(itStart, itEnd));
+                  nsAutoString::const_iterator itStrStart, itStart, itEnd;
+                  strLeaf.BeginReading(itStrStart);
+                  strLeaf.BeginReading(itStart);
+                  strLeaf.EndReading(itEnd);
 
+                  if(FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd))
                   {
+                    strLeaf.Cut((PRUint32)Distance(itStrStart, itStart),
+                                (PRUint32)Distance(itStart, itEnd));
+
                     PR_Lock(m_pDatabasesGUIDListLock);
                     m_DatabasesGUIDList.push_back(strLeaf);
                     PR_Unlock(m_pDatabasesGUIDListLock);
-                  }
 
-                  ++nRet;
+                    ++nRet;
+                  }
                 }
               }
             }
