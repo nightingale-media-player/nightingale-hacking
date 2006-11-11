@@ -430,9 +430,15 @@ sbGStreamerSimple::Play()
     return NS_ERROR_NOT_INITIALIZED;
   }
 
+  // If we were paused, don't reset the is playing video state
+  PRBool isPaused = PR_FALSE;
+  GetIsPaused(&isPaused);
+  if(!isPaused) {
+    mIsPlayingVideo = PR_FALSE;
+  }
+
   gst_element_set_state(mPlay, GST_STATE_PLAYING);
   mIsAtEndOfStream = PR_FALSE;
-  mIsPlayingVideo = PR_FALSE;
   mLastErrorCode = 0;
 
   return NS_OK;
@@ -744,9 +750,11 @@ sbGStreamerSimple::CapsSet(GObject* obj, GParamSpec* pspec)
     gst_structure_get_int(s, "width", &mVideoWidth);
     gst_structure_get_int(s, "height", &mVideoHeight);
 
+/* This is unused, and causing asserts
     const GValue* par = gst_structure_get_value(s, "pixel-aspect-ratio");
     mPixelAspectRatioN = gst_value_get_fraction_numerator(par);
     mPixelAspectRatioD = gst_value_get_fraction_denominator(par);
+*/
   }
 
   gst_caps_unref(caps);
