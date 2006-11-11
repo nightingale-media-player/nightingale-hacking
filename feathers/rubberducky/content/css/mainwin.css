@@ -1521,6 +1521,13 @@ DASHBOARD
   height: 10px !important;
 }
 
+/* the faceplate progressmeter */
+.faceplate_progressmeter
+{
+  border: 1px solid !important;
+  height: 10px !important;
+  min-height: 10px !important;
+}
 
 /** 
 ************************************************************************************************************************************************
@@ -1970,4 +1977,5 @@ callout label, callout-once label
 
                         
                         
+
 

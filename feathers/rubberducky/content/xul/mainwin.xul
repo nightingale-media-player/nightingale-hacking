@@ -378,61 +378,11 @@
                   </vbox>
                   <spacer width="6"/>
 
+                  <spacer width="10" id="dashboard_w"/>
                   <vbox id="face_middle_box" flex="1" class="sb_faceplate">
-                    <!-- INTRO FACEPLATE -->
-                    <hbox id="intro_box">
-                      <spacer width="10" id="dashboard_w"/>
-                      <hbox id="intro_box_bkgd" hidden="false" class="sb_faceplate" flex="1">
-
-                        <spacer flex="1"/>
-                        <vbox>
-                          <image id="intro_box_image"/>
-                        </vbox>
-                        <spacer flex="1"/>
-                      </hbox>
-                      <spacer width="10" id="dashboard_e"/>
-                    </hbox>
-
-                    <!-- FACEPLATE -->
-                    <vbox id="dashboard_box" hidden="true" class="sb_faceplate">
-                      <hbox flex="1" class="sb_faceplate">
-                        <spacer width="10" id="dashboard_w"/>
-                        <vbox flex="1" class="sb_faceplate" id="dashboard_bkgd">
-                          <spacer flex="1"/>
-                          <!-- SONG ARTIST/SONGTITLE DISPLAY -->
-                          <hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate">
-                            <player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" />
-                          </hbox>
-                          <!-- SONG ALBUM DISPLAY -->
-                          <hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate">
-                            <player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end"/>
-                            <label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end"/>
-                            <player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end"/>
-                          </hbox>
-                          <!-- SEEK BAR -->
-                          <hbox class="sb_faceplate">
-                            <spacer width="10"/>
-                            <player_timeelapsed id="songbird_text_time_elapsed" class="sb_faceplate"/>
-                            <spacer width="2"/>
-                            <vbox flex="1">
-                              <spacer flex="1"/>
-                              <player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100"/>
-                              <spacer flex="1"/>
-                            </vbox>
-                            <spacer width="2"/>
-                            <player_totaltime id="songbird_text_time_total" class="sb_faceplate" />
-                            <spacer width="10"/>
-                          </hbox>
-
-                          <spacer flex="1"/>
-
-                          <label id="songbird_text_rep"   value="" class="sb_faceplate" hidden="true"/>
-                          <label id="songbird_text_shuf"  value="Shuffle" class="sb_faceplate" hidden="true"/>
-                        </vbox>
-                        <spacer width="10" id="dashboard_e"/>
-                      </hbox>
-                    </vbox>
+                    <faceplate id="main_faceplate" style="-moz-box-orient: vertical"/>
                   </vbox>
+                  <spacer width="10" id="dashboard_e"/>
 
                   <!-- CURRENT TRACK / NEXT SERVICE -->
                   <spacer width="6"/>
@@ -440,7 +390,8 @@
                     <spacer height="2"/>
                     <button id="songbird_btn_curr" class="sb_faceplate" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
                     <spacer height="5"/>
-                    <button id="songbird_btn_next" class="sb_faceplate" oncommand="onNextService( );" tooltiptext="&tooltip.control.service;"/>
+                    <!-- button id="songbird_btn_next" class="sb_faceplate" oncommand="onNextService( );" tooltiptext="&tooltip.control.service;"/ -->
+                    <clickholdbutton id="songbird_btn_next" class="sb_faceplate" popupanchor="topleft" popupalign="bottomleft" oncommand="onFaceplateMenu(event.target)"/>
                   </vbox>
                 </hbox>
 
@@ -688,5 +639,7 @@
    src="chrome://songbird/content/scripts/bookmarks_proxy.js" />
 
 </window>
+
+
 
 

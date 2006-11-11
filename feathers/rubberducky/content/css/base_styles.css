@@ -390,7 +390,8 @@ DASHBOARD
 #songbird_seekbar_progress,
 #songbird_seekbar_progress > .progress-bar,
 #songbird_seekbar_progress > .progress-remainder,
-#songbird_seekbar
+#songbird_seekbar,
+.faceplate_progressmeter
 {
   -moz-appearance: none !important;
 }
@@ -715,5 +716,6 @@ MISCELLANEOUS
 windowregion {
   -moz-binding: url("chrome://rubberducky/content/bindings/bindings.xml#windowregion") !important;
 }
+
 
 

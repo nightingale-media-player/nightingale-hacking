@@ -101,9 +101,9 @@
         <xul:hbox id="dashboard_bkgd" hidden="false" class="sb_faceplate" flex="1" align="center">
           <xul:spacer flex="1"/>
           <xul:vbox align="center">
-            <xul:label id="template_box_label1" class="faceplate_pane_label" />
-            <xul:label id="template_box_label2" class="faceplate_pane_label" />
-            <xul:progressmeter id="template_box_progressmeter" class="faceplate_pane_progressmeter" />
+            <xul:label id="template_box_label1" class="faceplate_text" />
+            <xul:label id="template_box_label2" class="faceplate_text" />
+            <xul:progressmeter id="template_box_progressmeter" class="faceplate_progressmeter" />
           </xul:vbox>
           <xul:spacer flex="1"/>
         </xul:hbox>
@@ -184,6 +184,7 @@
       <field name="page">0</field>
       <field name="panes">null</field>
       <field name="panedata">null</field>
+      <field name="laststatic">0</field>
       
       <method name="switchToPane">
         <parameter name="pane"/>
@@ -215,7 +216,12 @@
       
       <method name="_onRemoteStateChange">
         <body>
+         <![CDATA[
           this._updatePage();
+          var curpage = this.getCurPane();
+          if (curpage < 2) this.laststatic = curpage;
+          dump("last static = " + this.laststatic + "\n");
+         ]]>
         </body>
       </method>
       
@@ -297,7 +303,7 @@
           if (this.panes) n = this.panes.length;
           this._reconstructPanes();
           if (this.panes) newn = this.panes.length;
-          if (newn < n) this.remote_state.intValue = 0;
+          if (newn < n) this.remote_state.intValue = this.laststatic;
           else if (newn > n) this.remote_state.intValue = this.getNumPanes()-1;
           this._updatePage();
          ]]>
@@ -348,7 +354,7 @@
           clone.removeAttribute("hidden");
           this.appendChild(clone);
           clone.setAttribute("paneid", pane.getPaneId());
-          clone.setAttribute("panename", pane.getPaneId());
+          clone.setAttribute("panename", pane.getPaneName());
           
           var label1 = document.getAnonymousElementByAttribute(this, "id", "template_box_label1");
           var label2 = document.getAnonymousElementByAttribute(this, "id", "template_box_label2");
@@ -402,4 +408,5 @@
   </binding>
 
 </bindings>
+
 

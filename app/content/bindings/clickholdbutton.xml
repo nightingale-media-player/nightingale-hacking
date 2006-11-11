@@ -42,8 +42,8 @@
   <binding id="clickholdbutton">
 
     <content>
-        <xul:button id="button" xbl:inherits="label,class" flex="1" />
-        <xul:menupopup id="popup" xbl:inherits="position,popupanchor,popupalign">
+        <xul:button sbid="button" xbl:inherits="label,class,id" flex="1" />
+        <xul:menupopup sbid="popup" xbl:inherits="position,popupanchor,popupalign,class">
           <children/>
         </xul:menupopup>
     </content>
@@ -53,8 +53,8 @@
      <constructor>
        <![CDATA[
        this.popupInterval = null;
-       this.popup = document.getElementById('popup');
-       this.button = document.getElementById('button');
+       this.popup = document.getAnonymousElementByAttribute(this, 'sbid', 'popup');
+       this.button = document.getAnonymousElementByAttribute(this, 'sbid', 'button');
 
        this.popupShowing = false;
        ]]>
@@ -148,4 +148,5 @@
    </handlers> 
   </binding>
 </bindings>
+
 

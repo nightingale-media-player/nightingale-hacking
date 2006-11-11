@@ -55,7 +55,6 @@ FaceplateRegistration.prototype = {
   
   _init: function() {
     this._panes = new Array();
-    this._faceplates = new Array();
     this.createDataRemote = new Components.Constructor( SONGBIRD_DATAREMOTE_CONTRACTID, SONGBIRD_DATAREMOTE_IID, "init");
     this.remote_npages = this.createDataRemote("faceplate.panes", null);
     this.remote_npages.intValue = 0;
@@ -65,19 +64,7 @@ FaceplateRegistration.prototype = {
     this.remote_npages.unbind();
   },
 
-  registerFaceplate: function(faceplate) {
-    this._faceplates.push(faceplate);
-  },
-
-  unregisterFaceplate: function(faceplate) {
-    for (var i=0;i<this._faceplates.length;i++) {
-      if (this._faceplates[i] == faceplate) {
-        this._faceplates.splice(i, 1);
-      }
-    }
-  },
-
-  registerPane: function (paneid) {
+  registerPane: function (paneid, panename) {
     
     for (var i=0;i<this._panes.length;i++) {
       if (this._panes[i].getPaneId() == paneid) {
@@ -88,6 +75,7 @@ FaceplateRegistration.prototype = {
     
     var pane = {
       id                             : "",
+      name                           : "",
       refcount                       : 1,
       manager                        : null,
       createDataRemote               : null,
@@ -119,6 +107,7 @@ FaceplateRegistration.prototype = {
       setLabel1: function(text) {
         this.remote_label1.stringValue = text;
       },
+      getPaneName: function() { return this.name; },
       showLabel1: function() {
         this.remote_label1_hidden.boolValue = false;
       },
@@ -147,8 +136,9 @@ FaceplateRegistration.prototype = {
       // private
       
       _setPaneId: function(id) { this.id = id; },
+      _setPaneName: function(name) { this.name = name; },
       _incRefCount: function() { return this.refcount++; },
-      _decRefCount: function() { return this.refcount--; },
+      _decRefCount: function() { return --this.refcount; },
       _setManager: function(manager) { this.manager = manager; },
       
       // xpcom
@@ -164,18 +154,17 @@ FaceplateRegistration.prototype = {
     pane.createDataRemote = this.createDataRemote;
     pane._setManager(this);
     pane._setPaneId(paneid);
+    pane._setPaneName(panename);
     pane._init(this.createDataRemote);
     this._panes.push(pane);
-    this.remote_npages.intValue = this._panes.length;
-    this._createUIPane(paneid);
+    this.remote_npages.intValue = this._panes.length; // creates ui panes
     return pane;
   },
   
-  unregisterPane: function(pane) {
+  unregisterPane: function(paneid) {
     for (var i=0;i<this._panes.length;i++) {
-      if (this._panes[i] == pane) {
+      if (this._panes[i].getPaneId() == paneid) {
         if (this._panes[i]._decRefCount() == 0) {
-          this._destroyUIPane(this._pane[i].getPaneId());
           this._panes.splice(i, 1);
         }
       }
@@ -191,20 +180,6 @@ FaceplateRegistration.prototype = {
     return this._panes[pane];
   },
   
-  _createUIPane: function (paneid) {
-    this._rebuildFaceplateEvent();
-  },
-  
-  _destroyUIPane: function (paneid) {
-    this._rebuildFaceplateEvent();
-  },
-  
-  _rebuildFaceplateEvent: function() {
-    for (var i=0;i<this._faceplates.length;i++) {
-      this._faceplates[i].onRebuild();
-    }
-  },
-
   // watch for XRE startup and shutdown messages 
   observe: function(subject, topic, data) {
     switch (topic) {
@@ -295,4 +270,5 @@ var gModule = {
 function NSGetModule(comMgr, fileSpec) {
   return gModule;
 } // NSGetModule
+
 

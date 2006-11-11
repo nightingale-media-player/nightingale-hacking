@@ -40,7 +40,8 @@ SUBDIRS = dataremote \
           servicesource \
           bundle \
           metrics \
-		  integration \
+          faceplateregistration \
+		      integration \
           $(NULL)
 
 

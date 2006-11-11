@@ -18,6 +18,7 @@
 interface sbIFaceplatePane : nsISupports
 {
   AString getPaneId();
+  AString getPaneName();
   void setLabel1(in AString text);
   void showLabel1();
   void hideLabel1();
@@ -30,52 +31,22 @@ interface sbIFaceplatePane : nsISupports
 };
 
 /**
- * \interface sbIFaceplate sbIFaceplate.h
- * \brief Songbird Faceplate Interface
- * This interface receives faceplate rebuild events from the faceplate registration service
- * \sa sbIFaceplateRegistration
- */
-      
-[scriptable, uuid(0c92c3fe-6f98-11db-968f-00e08161165f)]
-interface sbIFaceplate : nsISupports
-{
-  void onRebuild();
-};
-
-
-/**
  * \interface sbIFaceplateRegistration sbIFaceplateRegistration.h
  * \brief Songbird Faceplate Registration Interface
  * This is the main faceplate registration interface, used by faceplate providers to register their panes
- * \sa sbIFaceplatePane, sbIFaceplate
+ * \sa sbIFaceplatePane
  */
       
 [scriptable, uuid(4ca8a00c-6f8f-11db-968e-00e08161165f)]
 interface sbIFaceplateRegistration : nsISupports
 {
   /**
-   * \brief Register a faceplate object
-   * This method registers a faceplate object that will be used for event callbacks
-   * \param faceplate A faceplate object
-   * \sa sbIFaceplate
-   */
-  void registerFaceplate(in sbIFaceplate faceplate);
-
-  /**
-   * \brief Unregister a faceplate object
-   * This method unregisters a faceplate object that was previously registered via registerPane
-   * \param faceplate A faceplate object
-   * \sa sbIFaceplate
-   */
-  void unregisterFaceplate(in sbIFaceplate faceplate);
-
-  /**
    * \brief Create a new faceplate pane
    * This method creates a new faceplate pane and returns an interface to the pane object
    * \param paneid A string id for the pane.
    * \sa sbIFaceplatePane
    */
-  sbIFaceplatePane registerPane(in AString paneid);
+  sbIFaceplatePane registerPane(in AString paneid, in AString readablename);
 
   /**
    * \brief Destroys a faceplate pane
@@ -83,7 +54,7 @@ interface sbIFaceplateRegistration : nsISupports
    * \param pane The pane to destroy
    * \sa sbIFaceplatePane
    */
-  void unregisterPane(in sbIFaceplatePane pane);
+  void unregisterPane(in AString paneid);
 
 
 
@@ -93,4 +64,5 @@ interface sbIFaceplateRegistration : nsISupports
   sbIFaceplatePane enumPane(in PRInt32 pane);
 
 };
+
 

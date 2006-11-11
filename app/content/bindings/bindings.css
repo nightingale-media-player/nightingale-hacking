@@ -194,3 +194,9 @@ contentdrawer {
   -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#contentdrawer") !important;
 }
 
+faceplate {
+  -moz-binding: url("chrome://songbird/content/bindings/faceplate.xml#faceplate") !important;
+}
+
+
+

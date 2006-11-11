@@ -334,6 +334,7 @@ function SBInitialize()
     setMinMaxCallback();
     SBInitMouseWheel();
     initJumpToFileHotkey();
+    initFaceplateButton();
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkAltF4, true);
@@ -460,6 +461,8 @@ function SBInitialize()
 
 function SBUninitialize()
 {
+  shutdownFaceplateButton();
+  
   thePlaylistReader = null;
 
   window.removeEventListener("keydown", checkAltF4, true);
@@ -588,12 +591,6 @@ function onCurrentTrack()
     theServiceTree.launchServiceURL( "chrome://songbird/content/xul/playlist_test.xul?" + table+ "," + guid);
   } 
   theCurrentTrackInterval = setInterval( onCurrentTrack, 500 );
-}
-
-function onNextService()
-{
-  // this could, down the road become integer based for >2 services
-  SBDataToggleBoolValue("faceplate.state");
 }
 
 function onServiceTreeCommand( theEvent )
@@ -4654,5 +4651,39 @@ function buildHelpMenu()
   checkForUpdates.label = getStringWithUpdateName("updateCmd_" + key);
 }
 
+function initFaceplateButton() {
+  var button = document.getElementById("songbird_btn_next");
+  button.addEventListener("mousedown", buildFaceplateMenuItems, true);
+}
 
+function shutdownFaceplateButton() {
+  var button = document.getElementById("songbird_btn_next");
+  button.removeEventListener("mousedown", buildFaceplateMenuItems, true);
+}
+
+function buildFaceplateMenuItems() {
+  var button = document.getElementById("songbird_btn_next");
+  while (button.firstChild) button.removeChild(button.firstChild);
+  var faceplate = document.getElementById("main_faceplate");
+  for (var i=0;i<faceplate.getNumPanes();i++) {
+    var name = faceplate.getPaneName(i);
+    var item = document.createElement("menuitem");
+    item.setAttribute("id", faceplate.getPaneId(i));
+    item.setAttribute("label", name);
+    item.setAttribute("checked", (faceplate.getCurPane() == i) ? "true" : "false");
+    item.setAttribute("type", "checkbox");
+    button.appendChild(item);
+  }
+}
+
+function onFaceplateMenu(element) {
+  var faceplate = document.getElementById("main_faceplate");
+  var id = element.getAttribute("id");
+  if (id == "songbird_btn_next") {
+    faceplate.switchToNextPane();
+  } else {
+    var index = faceplate.getPaneIndex(id);
+    faceplate.switchToPane(index);
+  }
+}
 

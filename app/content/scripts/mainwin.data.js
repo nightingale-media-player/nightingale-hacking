@@ -54,10 +54,6 @@ try
       MainwinAdd( SBDataBindElementAttribute( "playlist.repeat", "control.repa", "checked", true, true, "parseInt( value ) != 2" ) );      
      
       // Faceplate Items    
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "intro_box", "hidden", true ) );
-      MainwinAdd( SBDataBindElementAttribute( "faceplate.state", "dashboard_box", "hidden", true, true ) );
-
-     
       MainwinAdd( SBDataBindElementProperty ( "faceplate.search.reset", "search_widget", "reset" ) );
       
       MainwinAdd( SBDataBindElementAttribute( "faceplate.loading", "spinner_stopped", "hidden", true ) );
@@ -110,9 +106,6 @@ try
       // Options
 //      MainwinAdd( SBDataBindElementAttribute( "option.htmlbar", "file.htmlbar", "checked", true ) );
 
-      // Complex Data Items
-      onSBMainwinComplexLoad();
-      
       // Events
       document.addEventListener( "search", onSBMainwinSearchEvent, true ); // this didn't work when we put it directly on the widget?
       
@@ -159,66 +152,6 @@ try
   // Complex Implementations (can't be handled by a simple eval)
   //
   
-  var MainwinArtistRemote = null;
-  var MainwinAlbumRemote = null;
-  function onSBArtistAlbumChanged()
-  {
-    // (we get called before they are fully bound)
-    if ( MainwinArtistRemote && MainwinAlbumRemote )
-    {
-      var artist = MainwinArtistRemote.stringValue;
-      var album = MainwinAlbumRemote.stringValue;
-      var theAASlash = document.getElementById( "songbird_text_slash" );
-      var theAABox = document.getElementById( "songbird_text_artistalbum" );
-      if ( album.length || artist.length )
-      {
-        if ( album.length && artist.length )
-        {
-          theAASlash.setAttribute( "hidden", "false" );    
-        }
-        else
-        {
-          theAASlash.setAttribute( "hidden", "true" );    
-        }
-        theAABox.setAttribute( "hidden", "false" );
-      }
-      else
-      {
-        theAASlash.setAttribute( "hidden", "true" );
-        // theAABox.setAttribute( "hidden", "true" ); // use this to center the seekbar & title
-        theAABox.setAttribute( "hidden", "false" ); // use this to keep the seekbar in the same place
-      }
-    }
-  }
-
-  // event handler for data remotes
-  const on_artist_album_changed = {
-    observe: function ( aSubject, aTopic, aData ) { onSBArtistAlbumChanged(); }
-  };
-
-  function onSBMainwinComplexLoad()
-  {
-    try
-    {
-      // Title/<slash>/Album Box Complex -- two data items for one callback.
-
-      // Create and bind the data remotes
-      MainwinArtistRemote = SB_NewDataRemote( "metadata.title", null ); // changed to title cuz we like to be odd.
-      MainwinAlbumRemote = SB_NewDataRemote( "metadata.album", null );
-      MainwinArtistRemote.bindObserver( on_artist_album_changed, false );
-      MainwinAlbumRemote.bindObserver( on_artist_album_changed, false );
-
-      // add both to the array to be unbound on shutdown
-      MainwinAdd( MainwinArtistRemote );
-      MainwinAdd( MainwinAlbumRemote );
-      
-    }
-    catch ( err )
-    {
-      alert( err );
-    }
-  }
-
   var theLastSearchEventTarget = null;
   var theSearchEventInterval = null;
   function onSBMainwinSearchEvent( evt )
@@ -280,4 +213,5 @@ catch ( err )
 {
   alert( err );
 }
+
 

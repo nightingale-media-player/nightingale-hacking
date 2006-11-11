@@ -848,6 +848,34 @@ Contains the Main Playback Controls and the Dashboard.
   border: 1px solid #1F292B !important;
 }
 
+.faceplate_text
+{
+  width: auto !important;
+  color: #1F292B !important;
+  overflow: hidden !important;
+  font-family: tahoma, arial !important;
+}
+
+.faceplate_progressmeter
+{
+  border: 1px solid !important;
+  -moz-border-bottom-colors: #1F292B !important;
+  -moz-border-left-colors: #1F292B !important;
+  -moz-border-top-colors: #1F292B !important;
+  -moz-border-right-colors: #1F292B !important;
+}
+
+.faceplate_progressmeter .progress-bar
+{
+  background-color: #1F292B !important;
+}
+
+.faceplate_progressmeter .progress-remainder
+{
+  background-color: #a3ab9f !important;
+}
+
+
 /** 
 ************************************************************************************************************************************************
 Main Playback Controls
@@ -1245,4 +1273,5 @@ Callout box used to give extra information
 {
   background-color: #fff !important;         
 }
+
 
