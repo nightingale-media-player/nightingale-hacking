@@ -7,11 +7,11 @@
 <!ENTITY window.apply "Aplica" >
 <!ENTITY window.cancel "Cancel·la" >
 <!ENTITY window.browse "Explora..." >
-<!ENTITY menu.file "Fitxer" >
+<!ENTITY menu.file "Arxiu" >
 <!ENTITY menu.file.new "Nova llista de reproducció..." >
 <!ENTITY menu.file.smart "Nova llista de reproducció intel·ligent..." >
 <!ENTITY menu.file.remote "Nova llista de reproducció remota..." >
-<!ENTITY menu.file.open "Obre un fitxer..." >
+<!ENTITY menu.file.open "Obre un arxiu..." >
 <!ENTITY menu.file.url "Obre des d'una adreça d'Internet..." >
 <!ENTITY menu.file.playlist "Carrega una llista de reproducció..." >
 <!ENTITY menu.file.scan "Escaneja per recurssos..." >
@@ -69,7 +69,7 @@
 <!ENTITY tooltip.control.repeat "Repeteix" >
 <!ENTITY tooltip.control.shuffle "Ordre aleatori" >
 <!ENTITY tooltip.control.shuf_off "Desactiva l'ordre aleatori" >
-<!ENTITY tooltip.control.curtrack "Troba la pista actual" >
+<!ENTITY tooltip.control.curtrack "Cerca la pista actual" >
 <!ENTITY tooltip.control.service "Canvia la coberta del visualitzador" >
 <!ENTITY tooltip.search "Cerca" >
 <!ENTITY tooltip.browser.back "Vés endarrere" >
@@ -121,7 +121,7 @@
 <!ENTITY subscribe.minutes "Minut(s)" >
 <!ENTITY subscribe.hours "Hora(es)" >
 <!ENTITY subscribe.days "Dia(es)" >
-<!ENTITY subscribe.autocheck "Actualitza automaticament cada" >
+<!ENTITY subscribe.autocheck "Actualitza automàticament cada" >
 <!ENTITY subscribe.destinationfolder "Seleccioneu el directori de destí:" >
 <!ENTITY exists.title "La llista de reproducció ja existeix" >
 <!ENTITY exists.exists "Ja existeix una llista de reproducció amb aquest nom!" >
@@ -139,7 +139,7 @@
 <!ENTITY setup.title "Configuració inicial del Songbird" >
 <!ENTITY setup.retrievingxpilist "S'està carregant la llista d'extensions. Espereu..." >
 <!ENTITY setup.networkerror1 "No s'ha pogut obtenir la llista d'extensions." >
-<!ENTITY setup.networkerror2 "la configuració de la vostra connexió" >
+<!ENTITY setup.networkerror2 "Configuració de la vostra connexió" >
 <!ENTITY setup.networkerror3 " o premeu D'acord per continuar configurant el Songbird." >
 <!ENTITY setup.metrics.optin "Permet l'enviament de dades anònimes sobre l'us del Songbird." >
 <!ENTITY setup.metrics.info "Ajudeu-nos a millorar el Songbird enviant-nos dades sobre com l'utilitzeu. Les dades són completament anònimes i no s'emmagatzema informació personal." >
@@ -147,7 +147,7 @@
 <!ENTITY setup.defaultlanguage "Idioma" >
 <!ENTITY setup.privacy "Privacitat" >
 <!ENTITY setupprogress.pleasewait "Espereu..." >
-<!ENTITY menu.file.accesskey "F" >
+<!ENTITY menu.file.accesskey "A" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "L" >
 <!ENTITY menu.file.remote.accesskey "R" >
@@ -237,14 +237,5 @@
 <!ENTITY menu.control.jumpto.accesskey "S" >
 <!ENTITY metadata.bitrate "Flux del bit" >
 <!ENTITY menu.devices.nodevices "Encara no hi han dispositius" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

@@ -2,7 +2,7 @@
 <!ENTITY window.dev.title "Songbird 0.2 vista previa" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
-<!ENTITY window.ok "OK" >
+<!ENTITY window.ok "Aceptar" >
 <!ENTITY window.undo "Deshacer" >
 <!ENTITY window.apply "Aplicar" >
 <!ENTITY window.cancel "Cancelar" >
@@ -70,7 +70,7 @@
 <!ENTITY tooltip.control.shuffle "Al azar" >
 <!ENTITY tooltip.control.shuf_off "Al azar apagado" >
 <!ENTITY tooltip.control.curtrack "Encontrar pista actual" >
-<!ENTITY tooltip.control.service "Switch Faceplate Display" >
+<!ENTITY tooltip.control.service "Cambiar vista de Reproducción" >
 <!ENTITY tooltip.search "Buscar" >
 <!ENTITY tooltip.browser.back "Explorar hacia atrás" >
 <!ENTITY tooltip.browser.fwd "Explorar hacia adelante" >
@@ -81,7 +81,7 @@
 <!ENTITY tooltip.browser.playlist "Mostrar/Ocultar lista de reproducción Web" >
 <!ENTITY tooltip.browser.download "Ver descargas en curso" >
 <!ENTITY smart.window "Constructor de listas inteligentes de reproducción" >
-<!ENTITY smart.library "Seleccionar biblioteca" >
+<!ENTITY smart.library "Seleccionar biblioteca:" >
 <!ENTITY smart.limit "Limitar a" >
 <!ENTITY smart.match "Coincidencia" >
 <!ENTITY smart.any "cualquiera" >
@@ -92,7 +92,7 @@
 <!ENTITY smart.artist "artista" >
 <!ENTITY smart.genre "género" >
 <!ENTITY smart.title "título" >
-<!ENTITY smart.high_rating "Rating Alto" >
+<!ENTITY smart.high_rating "rating alto" >
 <!ENTITY smart.low_rating "rating bajo" >
 <!ENTITY smart.most_recent "más reciente" >
 <!ENTITY smart.least_recent "menos reciente" >
@@ -102,8 +102,8 @@
 <!ENTITY smart.least_added "menos agregados" >
 <!ENTITY smart.minutes "minutos" >
 <!ENTITY smart.hours "horas" >
-<!ENTITY smart.mb "MB" >
-<!ENTITY smart.gb "GB" >
+<!ENTITY smart.mb "Mb" >
+<!ENTITY smart.gb "Gb" >
 <!ENTITY smart.songs "canciones" >
 <!ENTITY smart.contains "contiene" >
 <!ENTITY smart.not_contain "no contiene" >
@@ -138,10 +138,10 @@
 <!ENTITY about.version "Versión" >
 <!ENTITY setup.title "Opciones de Songbird" >
 <!ENTITY setup.retrievingxpilist "Obteniendo lista de extensiones, por favor espere..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "No se pudo establecer la lista de extensiones.  Por favor, cambie su" >
 <!ENTITY setup.networkerror2 "Ajustes de Conexión" >
 <!ENTITY setup.networkerror3 " o continúe configurando Songbird haciendo click en 'OK'." >
-<!ENTITY setup.metrics.optin "Mandar mediciones de uso anónimos" >
+<!ENTITY setup.metrics.optin "Enviar mediciones de uso anónimos" >
 <!ENTITY setup.metrics.info "Ayudenos a hacer que Songbird mejore mandándonos mediciones de cómo lo utiliza.  Las mediciones son completamente anónimas y no recolectan datos personales" >
 <!ENTITY setup.optionalextensions "Extensiones opcionales" >
 <!ENTITY setup.defaultlanguage "Idioma predeterminado" >
@@ -235,16 +235,7 @@
 <!ENTITY menu.control.jumpto "Saltar a..." >
 <!ENTITY html.context.playlist "Abrir como lista de reproducción" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
+<!ENTITY metadata.bitrate "Tasa de Bits" >
+<!ENTITY menu.devices.nodevices "No hay Dispositivos" >
 
 

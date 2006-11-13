@@ -3,8 +3,8 @@
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "אישור" >
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
+<!ENTITY window.undo "בטל" >
+<!ENTITY window.apply "החל" >
 <!ENTITY window.cancel "ביטול" >
 <!ENTITY window.browse "עיון" >
 <!ENTITY menu.file "קובץ" >
@@ -30,7 +30,7 @@
 <!ENTITY menu.edit.paste "הדבק" >
 <!ENTITY menu.edit.clear "מחק" >
 <!ENTITY menu.edit.selall "בחר הכל" >
-<!ENTITY menu.edit.selnone "בחר כלום" >
+<!ENTITY menu.edit.selnone "נקה בחירה" >
 <!ENTITY menu.controls "בקרים" >
 <!ENTITY menu.control.play "נגן/הפסק" >
 <!ENTITY menu.control.next "השיר הבא" >
@@ -38,28 +38,28 @@
 <!ENTITY menu.control.shuf "ערבב" >
 <!ENTITY menu.control.repa "חזור על הכל" >
 <!ENTITY menu.control.rep1 "חזור על הנוכחי" >
-<!ENTITY menu.control.repx "חזור על כלום" >
+<!ENTITY menu.control.repx "אל תחזור" >
 <!ENTITY menu.services "שירותים" >
-<!ENTITY menu.services.browse "...עיין שירותים" >
+<!ENTITY menu.services.browse "...עיין תוספות" >
 <!ENTITY menu.devices "התקנים" >
 <!ENTITY menu.help "עזרה" >
 <!ENTITY menu.help.topics "...נושאי עזרה" >
 <!ENTITY menu.help.about "...Songbird אודות" >
-<!ENTITY menu.preferences "Preferences..." >
-<!ENTITY menu.extensions "Extensions..." >
+<!ENTITY menu.preferences "...העדפות" >
+<!ENTITY menu.extensions "...תוספות" >
 <!ENTITY html.context.open "פתח" >
-<!ENTITY html.context.openexternal "Open with Default Browser" >
+<!ENTITY html.context.openexternal "פתח עם ברירת המחדל" >
 <!ENTITY html.context.play "נגן" >
 <!ENTITY html.context.add "הוסף לסיפריה" >
 <!ENTITY playlist.context.remove "הסר" >
-<!ENTITY playlist.context.rename "שנה השם" >
+<!ENTITY playlist.context.rename "שנה שם" >
 <!ENTITY playlist.context.search "חפש" >
 <!ENTITY playlist.context.lyrics "מילים" >
-<!ENTITY tooltip.miniplayer "עבור לנגן הממוזער" >
+<!ENTITY tooltip.miniplayer "עבור למיני-נגן" >
 <!ENTITY tooltip.minimize "מזער" >
 <!ENTITY tooltip.maximize "הגדל/השב" >
 <!ENTITY tooltip.exit "יציאה" >
-<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.hide "הסתר" >
 <!ENTITY tooltip.control.back "השיר הקודם" >
 <!ENTITY tooltip.control.play "נגן" >
 <!ENTITY tooltip.control.pause "הפסק" >
@@ -68,21 +68,21 @@
 <!ENTITY tooltip.control.volume "ווליום" >
 <!ENTITY tooltip.control.repeat "...חזור על" >
 <!ENTITY tooltip.control.shuffle "ערבב" >
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+<!ENTITY tooltip.control.shuf_off "בטל ערבוב" >
 <!ENTITY tooltip.control.curtrack "מצא השיר הנוכחי" >
 <!ENTITY tooltip.control.service "שנה תצוגת לוח הבקרה" >
 <!ENTITY tooltip.search "חפש" >
-<!ENTITY tooltip.browser.back "חזור דף אחורה" >
-<!ENTITY tooltip.browser.fwd "התקדם דף קדימה" >
-<!ENTITY tooltip.browser.stop "הפסק טעינת הדף" >
+<!ENTITY tooltip.browser.back "דפדף קדימה" >
+<!ENTITY tooltip.browser.fwd "דפדף אחורה" >
+<!ENTITY tooltip.browser.stop "עצור" >
 <!ENTITY tooltip.browser.home "דף הבית" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
-<!ENTITY tooltip.browser.playlist "הצג המדיה בדף זה" >
+<!ENTITY tooltip.browser.refresh "רענן" >
+<!ENTITY tooltip.browser.bookmark "סימנייה" >
+<!ENTITY tooltip.browser.playlist "הצג/הסתר את רשימת הניגון" >
 <!ENTITY tooltip.browser.download "הצג הורדות" >
-<!ENTITY smart.window "בנאי רשימות חכמות" >
+<!ENTITY smart.window "אשף רשימות חכמות" >
 <!ENTITY smart.library ":בחר סיפריה" >
-<!ENTITY smart.limit "...הגבל ל" >
+<!ENTITY smart.limit "הגבל ל" >
 <!ENTITY smart.match "התאם" >
 <!ENTITY smart.any "חלק מ" >
 <!ENTITY smart.all "כל" >
@@ -90,16 +90,16 @@
 <!ENTITY smart.random "אקראי" >
 <!ENTITY smart.album "האלבום" >
 <!ENTITY smart.artist "האמן" >
-<!ENTITY smart.genre "הסגנון" >
+<!ENTITY smart.genre "הז'אנר" >
 <!ENTITY smart.title "השם" >
-<!ENTITY smart.high_rating "עם הניקוד גבוה" >
-<!ENTITY smart.low_rating "עם הניקוד נמוך" >
-<!ENTITY smart.most_recent "שנוגן הכי הרבה באחרונה" >
-<!ENTITY smart.least_recent "שנוגן הכי פחות באחרונה" >
-<!ENTITY smart.most_often "הכי תכוף" >
-<!ENTITY smart.least_often "הכי פחות תכוף" >
-<!ENTITY smart.most_added "הכי מוסף" >
-<!ENTITY smart.least_added "הכי פחות מוסף" >
+<!ENTITY smart.high_rating "ציון גבוה" >
+<!ENTITY smart.low_rating "ציון נמוך" >
+<!ENTITY smart.most_recent "שנוגן הכי הרבה לאחרונה" >
+<!ENTITY smart.least_recent "שנוגן הכי פחות לאחרונה" >
+<!ENTITY smart.most_often "תדירות גבוהה" >
+<!ENTITY smart.least_often "תדירות נמוכה" >
+<!ENTITY smart.most_added "הכי מבוקש" >
+<!ENTITY smart.least_added "הכי פחות מבוקש" >
 <!ENTITY smart.minutes "דקות" >
 <!ENTITY smart.hours "שעות" >
 <!ENTITY smart.mb "MB" >
@@ -107,46 +107,46 @@
 <!ENTITY smart.songs "שירים" >
 <!ENTITY smart.contains "מכיל" >
 <!ENTITY smart.not_contain "לא מכיל" >
-<!ENTITY smart.is "הוא" >
-<!ENTITY smart.is_not "הוא לא" >
+<!ENTITY smart.is "אשר" >
+<!ENTITY smart.is_not "אשר לא" >
 <!ENTITY smart.starts "מתחיל ב" >
 <!ENTITY smart.ends "נגמר ב" >
 <!ENTITY smart.selectedby "Selected by" >
 <!ENTITY download.window "הורדות" >
-<!ENTITY download.select ":שמור הורדות לתיקיה" >
+<!ENTITY download.select ":בחר תיקיית יעד" >
 <!ENTITY download.always "תמיד השתמש בתיקיה זו" >
-<!ENTITY textbox.songbird_open_url ":הכנס את מיקום המדיה שברצונך לנגן" >
-<!ENTITY open_url.title "פתח מיקום" >
-<!ENTITY subscribe.title "צור מנוי" >
+<!ENTITY textbox.songbird_open_url ":הכנס את כתובת הקישור או מיקום המדיה שברצונך לנגן" >
+<!ENTITY open_url.title "פתח קישור" >
+<!ENTITY subscribe.title "הרשם" >
 <!ENTITY subscribe.minutes "דקות" >
 <!ENTITY subscribe.hours "שעות" >
 <!ENTITY subscribe.days "ימים" >
-<!ENTITY subscribe.autocheck "עדכונים אוטומטים" >
-<!ENTITY subscribe.destinationfolder ":בחר תיקית יעד" >
+<!ENTITY subscribe.autocheck "עדכן אוטומטית כל" >
+<!ENTITY subscribe.destinationfolder ":בחר תיקיית יעד" >
 <!ENTITY exists.title "הרשימה קיימת" >
-<!ENTITY exists.exists "רשימה בשם זה כבר קיימת" >
-<!ENTITY media_scan.title "סרוק מדיה" >
-<!ENTITY media_scan.watch "עקוב אחר הופעת מדיה חדשה בתיקיה זו" >
+<!ENTITY exists.exists "!כבר ישנה רשימה בשם זה" >
+<!ENTITY media_scan.title "מצא מדיה" >
+<!ENTITY media_scan.watch "עקוב אחר הופעת מדיה חדשה בתיקייה זו" >
 <!ENTITY new_playlist.title "צור רשימה חדשה" >
-<!ENTITY new_playlist.name "הכנס שם עבור הרשימה החדשה" >
+<!ENTITY new_playlist.name ".הכנס שם עבור הרשימה החדשה" >
 <!ENTITY addtoplaylist.title "הוסף לרשימה" >
 <!ENTITY addtoplaylist.create "צור רשימה חדשה" >
 <!ENTITY watchfolder.title "עקוב אחר תיקיות" >
 <!ENTITY watchfolder.folderlist ":עקוב אחר הופעת מדיה חדשה בתיקיות אלו" >
 <!ENTITY locale.language "שפה" >
-<!ENTITY menu.feathers "Feathers" >
-<!ENTITY about.version "Version" >
-<!ENTITY setup.title "Songbird Setup Options" >
-<!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
+<!ENTITY menu.feathers "נוצות" >
+<!ENTITY about.version "גרסא" >
+<!ENTITY setup.title "Songbird אפשרויות התקנת" >
+<!ENTITY setup.retrievingxpilist "...נא להמתין בעת שרשימת התוספות נקראת" >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
-<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror2 "הגדרות חיבור" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
-<!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
+<!ENTITY setup.metrics.optin ".שלח מידע אנונימי על אופן השימוש שלי בתוכנה" >
 <!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
-<!ENTITY setup.defaultlanguage "Default Language" >
-<!ENTITY setup.privacy "Privacy" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setup.optionalextensions "תוספות אפשריות" >
+<!ENTITY setup.defaultlanguage "שפת ברירת מחדל" >
+<!ENTITY setup.privacy "מידע אישי" >
+<!ENTITY setupprogress.pleasewait "...נא להמתין" >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -184,41 +184,41 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
-<!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
-<!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
-<!ENTITY jumptofile.search "Search:" >
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY bookmarks.edit.title "ערוך סימנייה" >
+<!ENTITY bookmarks.edit.url ":מיקום" >
+<!ENTITY bookmarks.edit.label ":שם" >
+<!ENTITY bookmarks.edit.icon ":סמליל" >
+<!ENTITY trackeditor.title "עורך השירים" >
+<!ENTITY trackeditor.trackdata "מידע השיר" >
+<!ENTITY trackeditor.exttrackdata "מידע מורחב" >
+<!ENTITY trackeditor.tags "תוויות" >
+<!ENTITY trackeditor.addtag.title "הוסף תווית" >
+<!ENTITY trackeditor.addtag.tag ":תווית" >
+<!ENTITY jumptofile.title "קפוץ ל" >
+<!ENTITY jumptofile.search ":חפש" >
+<!ENTITY hotkeys.useglobalhotkeys "השתמש במקשי הקיצור הגלובלים" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Action" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
+<!ENTITY hotkeys.action "פעולה" >
+<!ENTITY hotkeys.hotkey "מקש קיצור" >
+<!ENTITY hotkeys.add "הוסף" >
+<!ENTITY hotkeys.set "הגדר" >
+<!ENTITY hotkeys.remove "מחק" >
+<!ENTITY hotkeys.prefpane "מקשי קיצור" >
 <!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
-<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.url "מיקום" >
+<!ENTITY metadata.artist "אומן" >
+<!ENTITY metadata.title "שם" >
+<!ENTITY metadata.album "אלבום" >
 <!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Length" >
-<!ENTITY restartbox.restartnow "Restart Now" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
-<!ENTITY restartbox.restartlater "Restart Later" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY metadata.length "זמן" >
+<!ENTITY restartbox.restartnow "טען מחדש כעת" >
+<!ENTITY restartbox.restartonplaybackend "טען מחדש לאחר הקטע" >
+<!ENTITY restartbox.restartlater "טען מחדש מאוחר יותר" >
+<!ENTITY setupprogress.installingextensions "מתקין תוספות" >
+<!ENTITY menu.updateCmd.label "...בדוק עדכונים" >
 <!ENTITY menu.updateCmd.accessKey "o" >
 <!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
+<!ENTITY callout.firstwebplaylist ".השירים הללו נמצאו כניתנים לניגון" >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -232,19 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "...קפוץ ל" >
+<!ENTITY html.context.playlist "פתח כרשימה" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
+<!ENTITY metadata.bitrate "יחס דגימה" >
+<!ENTITY menu.devices.nodevices "לא נמצאו התקנים בינתיים" >
 
 

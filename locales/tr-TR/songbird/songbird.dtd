@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versiyon" >
 <!ENTITY setup.title "Songbird Durum Ayarları" >
 <!ENTITY setup.retrievingxpilist "Ekelntiler listesi alınıyor. Lütfen bekleyin..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Eklentiler listesine erişilemedi." >
 <!ENTITY setup.networkerror2 "Bağlantı Ayarları" >
 <!ENTITY setup.networkerror3 "ya da OK tuşuna basarak Sonbird kurulumuna devam edin." >
 <!ENTITY setup.metrics.optin "Anonim kullanıcı bilgilerini gönder." >
@@ -187,38 +187,38 @@
 <!ENTITY bookmarks.edit.title "Yerimini Düzenle" >
 <!ENTITY bookmarks.edit.url "URL:" >
 <!ENTITY bookmarks.edit.label "İsim:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
-<!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
-<!ENTITY jumptofile.search "Search:" >
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY bookmarks.edit.icon "İkon:" >
+<!ENTITY trackeditor.title "İz Düzenleyici" >
+<!ENTITY trackeditor.trackdata "İz bilgisi" >
+<!ENTITY trackeditor.exttrackdata "Genişletilmiş Bilgi" >
+<!ENTITY trackeditor.tags "Etiketler" >
+<!ENTITY trackeditor.addtag.title "Etiket Ekle" >
+<!ENTITY trackeditor.addtag.tag "Etiket:" >
+<!ENTITY jumptofile.title "Atla" >
+<!ENTITY jumptofile.search "Ara:" >
+<!ENTITY hotkeys.useglobalhotkeys "Evrensel Kısayolları Kullan" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Action" >
-<!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
-<!ENTITY hotkeys.prefpane "Hotkeys" >
-<!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
+<!ENTITY hotkeys.action "Aksiyon" >
+<!ENTITY hotkeys.hotkey "Kısayol" >
+<!ENTITY hotkeys.add "Ekle" >
+<!ENTITY hotkeys.set "Ayarla" >
+<!ENTITY hotkeys.remove "Kaldır" >
+<!ENTITY hotkeys.prefpane "Kısayollar" >
+<!ENTITY metadata.uuid "Medya UUID" >
+<!ENTITY metadata.url "Yer" >
 <!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
-<!ENTITY metadata.album "Album" >
-<!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Length" >
-<!ENTITY restartbox.restartnow "Restart Now" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
-<!ENTITY restartbox.restartlater "Restart Later" >
-<!ENTITY setupprogress.installingextensions "Installing Extensions" >
-<!ENTITY menu.updateCmd.label "Check for Updates..." >
+<!ENTITY metadata.title "Başlık" >
+<!ENTITY metadata.album "Albüm" >
+<!ENTITY metadata.genre "Tür" >
+<!ENTITY metadata.length "Uzunluk" >
+<!ENTITY restartbox.restartnow "Yeniden Başlat" >
+<!ENTITY restartbox.restartonplaybackend "Çalma Bittiğinde Yeniden Başlat" >
+<!ENTITY restartbox.restartlater "Sonra Yeniden Başlat" >
+<!ENTITY setupprogress.installingextensions "Eklentiler Yükleniyor" >
+<!ENTITY menu.updateCmd.label "Güncellemeleri Kontrol Et..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
-<!ENTITY trackeditor.disclaimer "The Track Editor feature is not yet complete.  Edited metadata is saved only in Songbird's database.  In a future version, metadata edited here will be saved to your media files as well." >
-<!ENTITY callout.firstwebplaylist "Songbird has found the following playable tracks." >
+<!ENTITY trackeditor.disclaimer "İz Düzenleyici özelliği henüz tamamlanmadı. Düzenlenen bilgiler Songbird'ün bilgi bankasında saklanacak. İleriki bir versiyonda düzenlenen bilgiler medya dosyalarınıza da kayıt edilebilir olacak." >
+<!ENTITY callout.firstwebplaylist "Songbird ilişikteki çalınabilir parçaları buldu." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -232,19 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "Atla..." >
+<!ENTITY html.context.playlist "Çalma Listesi gibi Aç" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

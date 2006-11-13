@@ -67,8 +67,8 @@
 <!ENTITY tooltip.control.mute "Silenzia" >
 <!ENTITY tooltip.control.volume "Volume" >
 <!ENTITY tooltip.control.repeat "Ripeti" >
-<!ENTITY tooltip.control.shuffle "Riproduci casualmente" >
-<!ENTITY tooltip.control.shuf_off "Shuffle Off" >
+<!ENTITY tooltip.control.shuffle "Attiva riproduzione casuale" >
+<!ENTITY tooltip.control.shuf_off "Disattiva riproduzione casuale" >
 <!ENTITY tooltip.control.curtrack "Cerca la Traccia Corrente" >
 <!ENTITY tooltip.control.service "Passa al Faceplate Display" >
 <!ENTITY tooltip.search "Cerca" >
@@ -237,14 +237,5 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "Nessun Device al momento" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

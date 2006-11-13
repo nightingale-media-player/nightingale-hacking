@@ -88,7 +88,7 @@
 <!ENTITY smart.all "Todo(a)" >
 <!ENTITY smart.following "de las sgtes condiciones:" >
 <!ENTITY smart.random "al azar" >
-<!ENTITY smart.album "album" >
+<!ENTITY smart.album "álbum" >
 <!ENTITY smart.artist "artista" >
 <!ENTITY smart.genre "género" >
 <!ENTITY smart.title "título" >
@@ -134,8 +134,8 @@
 <!ENTITY watchfolder.title "Explorar Carpetas" >
 <!ENTITY watchfolder.folderlist "Explorar estas carpetas por nuevos medios:" >
 <!ENTITY locale.language "Idioma" >
-<!ENTITY menu.feathers "Feathers" >
-<!ENTITY about.version "Version" >
+<!ENTITY menu.feathers "Plumas" >
+<!ENTITY about.version "Versión" >
 <!ENTITY setup.title "Opciones de instalacion de Songbird" >
 <!ENTITY setup.retrievingxpilist "Obteniendo el listado de extensiones. Por favor espere..." >
 <!ENTITY setup.networkerror1 "No fue posible obtener la lista de extensiones. Por favor cambie sus" >
@@ -208,7 +208,7 @@
 <!ENTITY metadata.url "Ubicacion" >
 <!ENTITY metadata.artist "Artista" >
 <!ENTITY metadata.title "Titulo" >
-<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.album "Álbum" >
 <!ENTITY metadata.genre "Genero" >
 <!ENTITY metadata.length "Tiempo" >
 <!ENTITY restartbox.restartnow "Reiniciar Ahora" >
@@ -235,16 +235,7 @@
 <!ENTITY menu.control.jumpto "Ir a..." >
 <!ENTITY html.context.playlist "Abrir como lista de reproduccion" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
-<!ENTITY metadata.bitrate "Bit Rate" >
+<!ENTITY metadata.bitrate "Índice binario" >
 <!ENTITY menu.devices.nodevices "Sin dispositivos aun" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

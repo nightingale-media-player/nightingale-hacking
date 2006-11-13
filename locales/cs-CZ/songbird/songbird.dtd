@@ -67,8 +67,8 @@
 <!ENTITY tooltip.control.mute "Ztlumí hlasitost na minimum" >
 <!ENTITY tooltip.control.volume "Hlasitost" >
 <!ENTITY tooltip.control.repeat "Opakovat" >
-<!ENTITY tooltip.control.shuffle "Vypne náhodné přehrávání" >
-<!ENTITY tooltip.control.shuf_off "Zapne náhodné přehrávání" >
+<!ENTITY tooltip.control.shuffle "Zapne náhodné přehrávání" >
+<!ENTITY tooltip.control.shuf_off "Vypne náhodné přehrávání" >
 <!ENTITY tooltip.control.curtrack "Najít aktuální skladbu" >
 <!ENTITY tooltip.control.service "Přepnout zobrazení displeje" >
 <!ENTITY tooltip.search "Hledat" >
@@ -237,14 +237,5 @@
 <!ENTITY menu.control.jumpto.accesskey "K" >
 <!ENTITY metadata.bitrate "Datový tok" >
 <!ENTITY menu.devices.nodevices "Nenalezeno žádné zařízení" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

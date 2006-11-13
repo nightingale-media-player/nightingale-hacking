@@ -132,13 +132,15 @@
 <!ENTITY addtoplaylist.title "Agregar a Lista de Reproduccion" >
 <!ENTITY addtoplaylist.create "Crear Nueva Lista de Reproduccion" >
 <!ENTITY watchfolder.title "Folders en Seguimiento" >
-<!ENTITY watchfolder.folderlist "Seguir estos folders para detectar nueva multimedia:" >
+<!ENTITY watchfolder.folderlist "Seguir estas carpetas para detectar nueva multimedia:" >
 <!ENTITY locale.language "Idioma" >
 <!ENTITY menu.feathers "Plumas" >
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Opciones de Instalacion de Songbird" >
 <!ENTITY setup.retrievingxpilist "Recuperando lista de extensiones. Favor de esperar..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "No fue posible obtener la lista de extensiones.
+Por favor cambie sus
+" >
 <!ENTITY setup.networkerror2 "Configuracion de Conexion" >
 <!ENTITY setup.networkerror3 " o continue la instalacion de Songbird haciendo click en 'OK'." >
 <!ENTITY setup.metrics.optin "Enviar estadisticas anonimas de uso." >
@@ -146,7 +148,7 @@
 <!ENTITY setup.optionalextensions "Extensiones Opcionales" >
 <!ENTITY setup.defaultlanguage "Lenguaje Predeterminado" >
 <!ENTITY setup.privacy "Privacidad" >
-<!ENTITY setupprogress.pleasewait "Un momento por favor..." >
+<!ENTITY setupprogress.pleasewait "Por favor espere…" >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -198,17 +200,17 @@
 <!ENTITY jumptofile.search "Buscar:" >
 <!ENTITY hotkeys.useglobalhotkeys "Usar Teclas Rapidas Globales" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
-<!ENTITY hotkeys.action "Accion" >
+<!ENTITY hotkeys.action "Acción" >
 <!ENTITY hotkeys.hotkey "Tecla Rapida" >
 <!ENTITY hotkeys.add "Agregar" >
 <!ENTITY hotkeys.set "Establecer" >
 <!ENTITY hotkeys.remove "Remover" >
 <!ENTITY hotkeys.prefpane "Teclas Rapidas" >
 <!ENTITY metadata.uuid "UUID del Medio" >
-<!ENTITY metadata.url "Ubicacion" >
+<!ENTITY metadata.url "Ubicación" >
 <!ENTITY metadata.artist "Artista" >
 <!ENTITY metadata.title "Titulo" >
-<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.album "Álbum" >
 <!ENTITY metadata.genre "Genero" >
 <!ENTITY metadata.length "Duracion" >
 <!ENTITY restartbox.restartnow "Reiniciar Ahora" >
@@ -232,19 +234,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
-<!ENTITY html.context.playlist "Open as Playlist" >
+<!ENTITY menu.control.jumpto "Saltar a..." >
+<!ENTITY html.context.playlist "Abrir como Lista de Reproducción" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
+<!ENTITY menu.devices.nodevices "Ningún Dispositivo Todavía" >
 
 

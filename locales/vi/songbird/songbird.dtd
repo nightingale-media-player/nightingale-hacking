@@ -3,35 +3,35 @@
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
-<!ENTITY window.undo "Undo" >
-<!ENTITY window.apply "Apply" >
-<!ENTITY window.cancel "Cancel" >
+<!ENTITY window.undo "Xoá" >
+<!ENTITY window.apply "Áp dụng" >
+<!ENTITY window.cancel "Bãi bỏ" >
 <!ENTITY window.browse "Duyệt...." >
 <!ENTITY menu.file "Tập tin" >
-<!ENTITY menu.file.new "New Playlist..." >
+<!ENTITY menu.file.new "Danh sách chơi mới " >
 <!ENTITY menu.file.smart "New Smart Playlist..." >
 <!ENTITY menu.file.remote "New Subscription..." >
 <!ENTITY menu.file.open "Mở tập tin..." >
-<!ENTITY menu.file.url "Open from URL..." >
-<!ENTITY menu.file.playlist "Import a Playlist..." >
+<!ENTITY menu.file.url "Mở từ URL" >
+<!ENTITY menu.file.playlist "Thêm vào danh sách" >
 <!ENTITY menu.file.scan "Scan for Media..." >
 <!ENTITY menu.file.dlfolder "Thiết lập thư mục tải về..." >
 <!ENTITY menu.file.watch "Thiết lập thư mục được giám sát..." >
-<!ENTITY menu.file.htmlbar "Always Show Web Bar" >
+<!ENTITY menu.file.htmlbar "Luôn luôn hiển thị Web Bar" >
 <!ENTITY menu.file.skin "Giao diện thay thế" >
 <!ENTITY menu.file.window "Mở cửa sổ chính" >
-<!ENTITY menu.file.mini "Open Mini Player" >
+<!ENTITY menu.file.mini "Mở cửa sổ chơi mini" >
 <!ENTITY menu.file.about "Về Songbird..." >
 <!ENTITY menu.file.exit "Thóat" >
 <!ENTITY menu.edit "Chỉnh sửa" >
-<!ENTITY menu.edit.undo "Undo" >
+<!ENTITY menu.edit.undo "Xoá" >
 <!ENTITY menu.edit.cut "Cắt" >
 <!ENTITY menu.edit.copy "Sao chép" >
 <!ENTITY menu.edit.paste "Dán" >
-<!ENTITY menu.edit.clear "Clear" >
+<!ENTITY menu.edit.clear "Thoát khỏi" >
 <!ENTITY menu.edit.selall "Chọn tất cả" >
 <!ENTITY menu.edit.selnone "Không chọn" >
-<!ENTITY menu.controls "Controls" >
+<!ENTITY menu.controls "Bộ điều khiển" >
 <!ENTITY menu.control.play "Phát/Ngừng" >
 <!ENTITY menu.control.next "Bài hát tiếp theo" >
 <!ENTITY menu.control.prev "Bài hát trước" >
@@ -43,9 +43,9 @@
 <!ENTITY menu.services.browse "Browse Extensions..." >
 <!ENTITY menu.devices "Thiết bị" >
 <!ENTITY menu.help "Trợ giúp" >
-<!ENTITY menu.help.topics "Help Topics..." >
+<!ENTITY menu.help.topics "Chủ đề trợ giúp" >
 <!ENTITY menu.help.about "Về Songbird..." >
-<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.preferences "Ưu tiên " >
 <!ENTITY menu.extensions "Phần mở rộng..." >
 <!ENTITY html.context.open "Mở" >
 <!ENTITY html.context.openexternal "Mở với Trình duyệt mặc định" >
@@ -55,7 +55,7 @@
 <!ENTITY playlist.context.rename "Đổi tên" >
 <!ENTITY playlist.context.search "Tìm kiếm" >
 <!ENTITY playlist.context.lyrics "Lời" >
-<!ENTITY tooltip.miniplayer "Switch to Miniplayer" >
+<!ENTITY tooltip.miniplayer "Chuyển tới miniplayer" >
 <!ENTITY tooltip.minimize "Thu nhỏ" >
 <!ENTITY tooltip.maximize "Maximize/Restore" >
 <!ENTITY tooltip.exit "Thóat" >
@@ -69,69 +69,70 @@
 <!ENTITY tooltip.control.repeat "Lặp lại" >
 <!ENTITY tooltip.control.shuffle "Shuffle" >
 <!ENTITY tooltip.control.shuf_off "Shuffle Off" >
-<!ENTITY tooltip.control.curtrack "Find Current Track" >
+<!ENTITY tooltip.control.curtrack "Tìm bài hiện hành" >
 <!ENTITY tooltip.control.service "Switch Faceplate Display" >
 <!ENTITY tooltip.search "Tìm kiếm" >
 <!ENTITY tooltip.browser.back "Duyệt lui" >
 <!ENTITY tooltip.browser.fwd "Duyệt tới" >
 <!ENTITY tooltip.browser.stop "Ngừng trình duyệt" >
-<!ENTITY tooltip.browser.home "Home" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
+<!ENTITY tooltip.browser.home "Trang chủ" >
+<!ENTITY tooltip.browser.refresh "Làm mới" >
 <!ENTITY tooltip.browser.bookmark "Bookmark" >
-<!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
+<!ENTITY tooltip.browser.playlist "Hiển thị/Ẩn Web playlist" >
 <!ENTITY tooltip.browser.download "View Current Downloads" >
 <!ENTITY smart.window "Smart Playlist Builder" >
 <!ENTITY smart.library "Chọn thư viện:" >
-<!ENTITY smart.limit "Limit to" >
+<!ENTITY smart.limit "Giới hạn tới" >
 <!ENTITY smart.match "Match" >
 <!ENTITY smart.any "bất cứ" >
 <!ENTITY smart.all "tất cả" >
-<!ENTITY smart.following "of the following condition(s):" >
+<!ENTITY smart.following "theo ( những )điều kiện sau :
+" >
 <!ENTITY smart.random "ngẫu nhiên" >
 <!ENTITY smart.album "album" >
 <!ENTITY smart.artist "nghệ sĩ" >
-<!ENTITY smart.genre "genre" >
+<!ENTITY smart.genre "thể loại" >
 <!ENTITY smart.title "tiêu đề" >
 <!ENTITY smart.high_rating "đánh giá cao" >
 <!ENTITY smart.low_rating "đánh giá thấp" >
 <!ENTITY smart.most_recent "most recent" >
 <!ENTITY smart.least_recent "least recent" >
-<!ENTITY smart.most_often "most often" >
+<!ENTITY smart.most_often "thường xuyên nhất" >
 <!ENTITY smart.least_often "least often" >
-<!ENTITY smart.most_added "most added" >
+<!ENTITY smart.most_added "thêm vào nhiều nhất" >
 <!ENTITY smart.least_added "least added" >
-<!ENTITY smart.minutes "minutes" >
-<!ENTITY smart.hours "hours" >
+<!ENTITY smart.minutes "phút" >
+<!ENTITY smart.hours "giờ" >
 <!ENTITY smart.mb "MB" >
 <!ENTITY smart.gb "GB" >
-<!ENTITY smart.songs "songs" >
-<!ENTITY smart.contains "contains" >
-<!ENTITY smart.not_contain "does not contain" >
-<!ENTITY smart.is "is" >
+<!ENTITY smart.songs "Những bài hát" >
+<!ENTITY smart.contains "Bao gồm" >
+<!ENTITY smart.not_contain "Ko bao gồm" >
+<!ENTITY smart.is "là" >
 <!ENTITY smart.is_not "is not" >
-<!ENTITY smart.starts "starts with" >
-<!ENTITY smart.ends "ends with" >
+<!ENTITY smart.starts "bắt đầu với" >
+<!ENTITY smart.ends "kết thúc với" >
 <!ENTITY smart.selectedby "Chọn bởi" >
 <!ENTITY download.window "Tải về" >
-<!ENTITY download.select "Select destination folder:" >
+<!ENTITY download.select "Lựa chọn folder gửi tới" >
 <!ENTITY download.always "Luôn dùng thư mục này" >
 <!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
 <!ENTITY open_url.title "Open URL" >
-<!ENTITY subscribe.title "Subscribe" >
-<!ENTITY subscribe.minutes "Minute(s)" >
-<!ENTITY subscribe.hours "Hour(s)" >
-<!ENTITY subscribe.days "Day(s)" >
+<!ENTITY subscribe.title "Mô tả" >
+<!ENTITY subscribe.minutes "phút" >
+<!ENTITY subscribe.hours "Giờ" >
+<!ENTITY subscribe.days "Ngày" >
 <!ENTITY subscribe.autocheck "Tự động cập nhật mỗi" >
-<!ENTITY subscribe.destinationfolder "Select destination folder:" >
-<!ENTITY exists.title "Playlist Exists" >
-<!ENTITY exists.exists "A playlist with that name already exists!" >
+<!ENTITY subscribe.destinationfolder "Lựa chọn folder gửi tới" >
+<!ENTITY exists.title "Danh sách tồn tại" >
+<!ENTITY exists.exists "Tên bài hát đã tồn tại" >
 <!ENTITY media_scan.title "Scan for Media" >
 <!ENTITY media_scan.watch "Watch this folder for new media" >
 <!ENTITY new_playlist.title "Tạo danh sách mới" >
-<!ENTITY new_playlist.name "Enter the name of the new playlist." >
+<!ENTITY new_playlist.name "Ghi tên danh sách chơi " >
 <!ENTITY addtoplaylist.title "Thêm vào danh sách" >
 <!ENTITY addtoplaylist.create "Tạo danh sách mới" >
-<!ENTITY watchfolder.title "Watch Folders" >
+<!ENTITY watchfolder.title "Xem folders" >
 <!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
 <!ENTITY locale.language "Ngôn ngữ" >
 <!ENTITY menu.feathers "Feathers" >
@@ -140,12 +141,12 @@
 <!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
 <!ENTITY setup.networkerror2 "Thiết lập kết nối" >
-<!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
+<!ENTITY setup.networkerror3 "hc tiếp tục Songbird Setup bằng cách nhấn OK" >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
 <!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
-<!ENTITY setup.optionalextensions "Optional Extensions" >
+<!ENTITY setup.optionalextensions "Tùy ý gia hạn" >
 <!ENTITY setup.defaultlanguage "Ngôn ngữ mặc định" >
-<!ENTITY setup.privacy "Privacy" >
+<!ENTITY setup.privacy "riêng tư" >
 <!ENTITY setupprogress.pleasewait "Xin hãy đợi..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
@@ -186,33 +187,33 @@
 <!ENTITY menu.help.about.accesskey "A" >
 <!ENTITY bookmarks.edit.title "Edit Bookmark" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
+<!ENTITY bookmarks.edit.label "Tên:" >
+<!ENTITY bookmarks.edit.icon "Biểu tượng:" >
 <!ENTITY trackeditor.title "Track Editor" >
-<!ENTITY trackeditor.trackdata "Track Data" >
-<!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
+<!ENTITY trackeditor.trackdata "Dữ liệu bài hát" >
+<!ENTITY trackeditor.exttrackdata "Mở rộng dữ liệu" >
+<!ENTITY trackeditor.tags "Thẻ" >
 <!ENTITY trackeditor.addtag.title "Add Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
 <!ENTITY jumptofile.title "Jump to" >
-<!ENTITY jumptofile.search "Search:" >
-<!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
+<!ENTITY jumptofile.search "Tìm kiếm:" >
+<!ENTITY hotkeys.useglobalhotkeys "Sử dụng Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
 <!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
-<!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.add "Thêm vào" >
+<!ENTITY hotkeys.set "Điều chỉnh" >
+<!ENTITY hotkeys.remove "Chuyển" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
 <!ENTITY metadata.uuid "Media UUID" >
-<!ENTITY metadata.url "Location" >
-<!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
+<!ENTITY metadata.url "VỊ trí" >
+<!ENTITY metadata.artist "Nghệ sĩ" >
+<!ENTITY metadata.title "Tựa đề" >
 <!ENTITY metadata.album "Album" >
 <!ENTITY metadata.genre "Thể lọai" >
 <!ENTITY metadata.length "Thời gian" >
 <!ENTITY restartbox.restartnow "Khởi động lại ngay" >
-<!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
+<!ENTITY restartbox.restartonplaybackend "Bắt đầu hoặc kết thúc Playback" >
 <!ENTITY restartbox.restartlater "Khởi động lại sau" >
 <!ENTITY setupprogress.installingextensions "Đang cài đặt phần mở rộng" >
 <!ENTITY menu.updateCmd.label "Cập nhật..." >

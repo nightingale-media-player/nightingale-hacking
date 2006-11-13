@@ -92,10 +92,10 @@
 <!ENTITY smart.artist "艺术家" >
 <!ENTITY smart.genre "类型" >
 <!ENTITY smart.title "曲目" >
-<!ENTITY smart.high_rating "高评级" >
-<!ENTITY smart.low_rating "低评级" >
+<!ENTITY smart.high_rating "高评价" >
+<!ENTITY smart.low_rating "低评价" >
 <!ENTITY smart.most_recent "最近" >
-<!ENTITY smart.least_recent "最老" >
+<!ENTITY smart.least_recent "最久" >
 <!ENTITY smart.most_often "最经常" >
 <!ENTITY smart.least_often "不经常" >
 <!ENTITY smart.most_added "经常添加的" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "版本" >
 <!ENTITY setup.title "Songbird 设置选项" >
 <!ENTITY setup.retrievingxpilist "获取扩展列表，请等待..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "无法获取扩展列表，请更改" >
 <!ENTITY setup.networkerror2 "连接设置" >
 <!ENTITY setup.networkerror3 "或者单击'OK'继续 Songbird 的安装." >
 <!ENTITY setup.metrics.optin "发送匿名使用数据." >
@@ -211,9 +211,10 @@
 <!ENTITY metadata.album "专集" >
 <!ENTITY metadata.genre "类型" >
 <!ENTITY metadata.length "持续时间" >
-<!ENTITY restartbox.restartnow "立即重起" >
+<!ENTITY restartbox.restartnow "立即重启" >
 <!ENTITY restartbox.restartonplaybackend "播放结束时重起" >
-<!ENTITY restartbox.restartlater "稍后重起" >
+<!ENTITY restartbox.restartlater "稍后重启
+" >
 <!ENTITY setupprogress.installingextensions "正在安装的扩展" >
 <!ENTITY menu.updateCmd.label "检查更新..." >
 <!ENTITY menu.updateCmd.accessKey "o" >
@@ -237,14 +238,5 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "比特率" >
 <!ENTITY menu.devices.nodevices "尚无设备" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

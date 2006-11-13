@@ -29,7 +29,7 @@
 <!ENTITY menu.edit.copy "Kopieren" >
 <!ENTITY menu.edit.paste "Einfügen" >
 <!ENTITY menu.edit.clear "Löschen" >
-<!ENTITY menu.edit.selall "Alle auswählen" >
+<!ENTITY menu.edit.selall "Alles auswählen" >
 <!ENTITY menu.edit.selnone "Auswahl aufheben" >
 <!ENTITY menu.controls "Steuerung" >
 <!ENTITY menu.control.play "Wiedergabe/Pause" >
@@ -162,7 +162,7 @@
 <!ENTITY menu.feathers.accesskey "F" >
 <!ENTITY menu.preferences.accesskey "T" >
 <!ENTITY menu.extensions.accesskey "E" >
-<!ENTITY menu.file.exit.accesskey "X" >
+<!ENTITY menu.file.exit.accesskey "B" >
 <!ENTITY menu.edit.accesskey "B" >
 <!ENTITY menu.edit.undo.accesskey "R" >
 <!ENTITY menu.edit.cut.accesskey "S" >
@@ -175,10 +175,10 @@
 <!ENTITY menu.control.play.accesskey "P" >
 <!ENTITY menu.control.next.accesskey "N" >
 <!ENTITY menu.control.prev.accesskey "R" >
-<!ENTITY menu.control.shuf.accesskey "S" >
+<!ENTITY menu.control.shuf.accesskey "Z" >
 <!ENTITY menu.control.repa.accesskey "A" >
-<!ENTITY menu.control.rep1.accesskey "O" >
-<!ENTITY menu.control.repx.accesskey "E" >
+<!ENTITY menu.control.rep1.accesskey "E" >
+<!ENTITY menu.control.repx.accesskey "I" >
 <!ENTITY menu.services.accesskey "S" >
 <!ENTITY menu.devices.accesskey "G" >
 <!ENTITY menu.help.accesskey "H" >
@@ -216,7 +216,7 @@
 <!ENTITY restartbox.restartlater "Später neustarten" >
 <!ENTITY setupprogress.installingextensions "Installiere Erweiterungen" >
 <!ENTITY menu.updateCmd.label "Nach Updates suchen..." >
-<!ENTITY menu.updateCmd.accessKey "o" >
+<!ENTITY menu.updateCmd.accessKey "U" >
 <!ENTITY trackeditor.disclaimer "Der Titel-Editor ist noch nicht vollständig.  Veränderte Angaben werden nur in Songbirds Datenbank gespeichert.  In einer künftigen Version werden die Informationen auch in den Mediendateien selbst gespeichert" >
 <!ENTITY callout.firstwebplaylist "Songbird hat folgende abspielbare Titel gefunden." >
 <!ENTITY menu.file.new.key "N" >
@@ -234,17 +234,8 @@
 <!ENTITY trackeditor.key "E" >
 <!ENTITY menu.control.jumpto "Springe zu..." >
 <!ENTITY html.context.playlist "Als Wiedergabeliste öffnen" >
-<!ENTITY menu.control.jumpto.accesskey "J" >
+<!ENTITY menu.control.jumpto.accesskey "S" >
 <!ENTITY metadata.bitrate "Bitrate" >
 <!ENTITY menu.devices.nodevices "Noch keine Geräte" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

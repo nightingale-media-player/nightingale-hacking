@@ -39,59 +39,59 @@
 <!ENTITY menu.control.repa "மீண்டும் எல்லாவற்றையும் இயக்கு" >
 <!ENTITY menu.control.rep1 "ஒன்றை மட்டும் மீண்டும்" >
 <!ENTITY menu.control.repx "Repeat None" >
-<!ENTITY menu.services "Services" >
+<!ENTITY menu.services "சேவைகள்" >
 <!ENTITY menu.services.browse "Browse Extensions..." >
-<!ENTITY menu.devices "Devices" >
-<!ENTITY menu.help "Help" >
+<!ENTITY menu.devices "கருவிகள்" >
+<!ENTITY menu.help "உதவி" >
 <!ENTITY menu.help.topics "Help Topics..." >
 <!ENTITY menu.help.about "About Songbird..." >
-<!ENTITY menu.preferences "Preferences..." >
+<!ENTITY menu.preferences "விருப்பங்கள்" >
 <!ENTITY menu.extensions "Extensions..." >
-<!ENTITY html.context.open "Open" >
+<!ENTITY html.context.open "திற" >
 <!ENTITY html.context.openexternal "Open with Default Browser" >
-<!ENTITY html.context.play "Play" >
+<!ENTITY html.context.play "ஓட்டு" >
 <!ENTITY html.context.add "Add to library" >
-<!ENTITY playlist.context.remove "Remove" >
-<!ENTITY playlist.context.rename "Rename" >
-<!ENTITY playlist.context.search "Search" >
-<!ENTITY playlist.context.lyrics "Lyrics" >
+<!ENTITY playlist.context.remove "நீக்கு" >
+<!ENTITY playlist.context.rename "பெயரை மாற்று" >
+<!ENTITY playlist.context.search "தேடு" >
+<!ENTITY playlist.context.lyrics "பாடல்" >
 <!ENTITY tooltip.miniplayer "Switch to Miniplayer" >
-<!ENTITY tooltip.minimize "Minimize" >
-<!ENTITY tooltip.maximize "Maximize/Restore" >
-<!ENTITY tooltip.exit "Exit" >
-<!ENTITY tooltip.hide "Hide" >
+<!ENTITY tooltip.minimize "பட்டைக்கு செலுத்து" >
+<!ENTITY tooltip.maximize "பெர்யதாக்கு/சுருக்கு" >
+<!ENTITY tooltip.exit "வெளியேறு" >
+<!ENTITY tooltip.hide "மறைத்துவிடு" >
 <!ENTITY tooltip.control.back "Previous Track" >
-<!ENTITY tooltip.control.play "Play" >
-<!ENTITY tooltip.control.pause "Pause" >
-<!ENTITY tooltip.control.fwd "Next Track" >
-<!ENTITY tooltip.control.mute "Mute" >
-<!ENTITY tooltip.control.volume "Volume" >
+<!ENTITY tooltip.control.play "ஓட்டு" >
+<!ENTITY tooltip.control.pause "நிறுத்து" >
+<!ENTITY tooltip.control.fwd "அடுத்த பாடல்" >
+<!ENTITY tooltip.control.mute "ஒலியை அடை" >
+<!ENTITY tooltip.control.volume "ஒலி அளவு" >
 <!ENTITY tooltip.control.repeat "Repeat" >
 <!ENTITY tooltip.control.shuffle "Shuffle" >
 <!ENTITY tooltip.control.shuf_off "Shuffle Off" >
 <!ENTITY tooltip.control.curtrack "Find Current Track" >
 <!ENTITY tooltip.control.service "Switch Faceplate Display" >
-<!ENTITY tooltip.search "Search" >
-<!ENTITY tooltip.browser.back "Browse Back" >
+<!ENTITY tooltip.search "தேடு" >
+<!ENTITY tooltip.browser.back "பின்புறமாக உலாவு" >
 <!ENTITY tooltip.browser.fwd "Browse Forward" >
-<!ENTITY tooltip.browser.stop "Stop Browser" >
-<!ENTITY tooltip.browser.home "Home" >
-<!ENTITY tooltip.browser.refresh "Refresh" >
-<!ENTITY tooltip.browser.bookmark "Bookmark" >
+<!ENTITY tooltip.browser.stop "உலாவியை நிறுத்து" >
+<!ENTITY tooltip.browser.home "வீடு" >
+<!ENTITY tooltip.browser.refresh "மீளேற்று" >
+<!ENTITY tooltip.browser.bookmark "புத்தக குறிப்பு" >
 <!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
-<!ENTITY tooltip.browser.download "View Current Downloads" >
+<!ENTITY tooltip.browser.download "கீழேற்றங்களை கான்பி" >
 <!ENTITY smart.window "Smart Playlist Builder" >
 <!ENTITY smart.library "Select Library:" >
 <!ENTITY smart.limit "Limit to" >
 <!ENTITY smart.match "Match" >
 <!ENTITY smart.any "any" >
-<!ENTITY smart.all "all" >
+<!ENTITY smart.all "எல்லாம்" >
 <!ENTITY smart.following "of the following condition(s):" >
 <!ENTITY smart.random "random" >
-<!ENTITY smart.album "album" >
+<!ENTITY smart.album "ஆல்பம்" >
 <!ENTITY smart.artist "artist" >
 <!ENTITY smart.genre "genre" >
-<!ENTITY smart.title "title" >
+<!ENTITY smart.title "தலைப்பு" >
 <!ENTITY smart.high_rating "high rating" >
 <!ENTITY smart.low_rating "low rating" >
 <!ENTITY smart.most_recent "most recent" >
@@ -100,23 +100,23 @@
 <!ENTITY smart.least_often "least often" >
 <!ENTITY smart.most_added "most added" >
 <!ENTITY smart.least_added "least added" >
-<!ENTITY smart.minutes "minutes" >
-<!ENTITY smart.hours "hours" >
+<!ENTITY smart.minutes "நிமிடங்கள்" >
+<!ENTITY smart.hours "மணிகள்" >
 <!ENTITY smart.mb "MB" >
 <!ENTITY smart.gb "GB" >
-<!ENTITY smart.songs "songs" >
+<!ENTITY smart.songs "பாடல்கள்" >
 <!ENTITY smart.contains "contains" >
 <!ENTITY smart.not_contain "does not contain" >
 <!ENTITY smart.is "is" >
 <!ENTITY smart.is_not "is not" >
-<!ENTITY smart.starts "starts with" >
-<!ENTITY smart.ends "ends with" >
+<!ENTITY smart.starts "ஆரம்பம்" >
+<!ENTITY smart.ends "முடிவு:" >
 <!ENTITY smart.selectedby "Selected by" >
-<!ENTITY download.window "Download" >
+<!ENTITY download.window "கீழிறக்கு" >
 <!ENTITY download.select "Select destination folder:" >
 <!ENTITY download.always "Always use this folder" >
 <!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:" >
-<!ENTITY open_url.title "Open URL" >
+<!ENTITY open_url.title "URLஐ திற" >
 <!ENTITY subscribe.title "Subscribe" >
 <!ENTITY subscribe.minutes "Minute(s)" >
 <!ENTITY subscribe.hours "Hour(s)" >
@@ -133,20 +133,20 @@
 <!ENTITY addtoplaylist.create "Create new playlist" >
 <!ENTITY watchfolder.title "Watch Folders" >
 <!ENTITY watchfolder.folderlist "Watch these folders for new media:" >
-<!ENTITY locale.language "Language" >
-<!ENTITY menu.feathers "Feathers" >
-<!ENTITY about.version "Version" >
+<!ENTITY locale.language "மொழி" >
+<!ENTITY menu.feathers "சிறகுகள்" >
+<!ENTITY about.version "பதிப்பு" >
 <!ENTITY setup.title "Songbird Setup Options" >
 <!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
 <!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
-<!ENTITY setup.networkerror2 "Connection Settings" >
+<!ENTITY setup.networkerror2 "தொடர்பு விருப்பங்கள்" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
 <!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
 <!ENTITY setup.optionalextensions "Optional Extensions" >
 <!ENTITY setup.defaultlanguage "Default Language" >
 <!ENTITY setup.privacy "Privacy" >
-<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setupprogress.pleasewait "சற்று பொரு. . ." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
 <!ENTITY menu.file.smart.accesskey "S" >
@@ -184,9 +184,9 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
+<!ENTITY bookmarks.edit.title "புத்தககுறிப்பை தொகு" >
 <!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
+<!ENTITY bookmarks.edit.label "பெயர்:" >
 <!ENTITY bookmarks.edit.icon "Icon:" >
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
@@ -194,24 +194,24 @@
 <!ENTITY trackeditor.tags "Tags" >
 <!ENTITY trackeditor.addtag.title "Add Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
-<!ENTITY jumptofile.search "Search:" >
+<!ENTITY jumptofile.title "தாவு:" >
+<!ENTITY jumptofile.search "தேடு:" >
 <!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
 <!ENTITY hotkeys.hotkey "Hotkey" >
-<!ENTITY hotkeys.add "Add" >
+<!ENTITY hotkeys.add "சேர்" >
 <!ENTITY hotkeys.set "Set" >
-<!ENTITY hotkeys.remove "Remove" >
+<!ENTITY hotkeys.remove "நீக்கு" >
 <!ENTITY hotkeys.prefpane "Hotkeys" >
 <!ENTITY metadata.uuid "Media UUID" >
 <!ENTITY metadata.url "Location" >
 <!ENTITY metadata.artist "Artist" >
-<!ENTITY metadata.title "Title" >
-<!ENTITY metadata.album "Album" >
+<!ENTITY metadata.title "தலைப்பு" >
+<!ENTITY metadata.album "ஆல்பம்" >
 <!ENTITY metadata.genre "Genre" >
-<!ENTITY metadata.length "Time" >
-<!ENTITY restartbox.restartnow "Restart Now" >
+<!ENTITY metadata.length "நேரம்" >
+<!ENTITY restartbox.restartnow "அனைத்து மீண்டும் ஆரம்பி" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
 <!ENTITY restartbox.restartlater "Restart Later" >
 <!ENTITY setupprogress.installingextensions "Installing Extensions" >
@@ -232,18 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto "தாவு..." >
 <!ENTITY html.context.playlist "Open as Playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
+<!ENTITY menu.devices.nodevices "எந்த கருவியும் இல்லை" >
 
 

@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2 Попередній Перегляд для Розробників" >
+<!ENTITY window.dev.title "Songbird 0.2 Попередній Перегляд для Розробників Тестовий Політ" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "Почали" >
@@ -137,15 +137,15 @@
 <!ENTITY menu.feathers "Пір'я" >
 <!ENTITY about.version "Версія" >
 <!ENTITY setup.title "Встановлення Songbird" >
-<!ENTITY setup.retrievingxpilist "Отримання списку розширень. Бедьласка зачекайте..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.retrievingxpilist "Отримання переліку розширень. Будь ласка, зачекайте..." >
+<!ENTITY setup.networkerror1 "Не можу отримати перелік розширень. Будь ласка, перевірте ваші" >
 <!ENTITY setup.networkerror2 "Налаштування мережі" >
 <!ENTITY setup.networkerror3 " або продовжуйте встановлення Songbird клацнувмш 'ОК'." >
 <!ENTITY setup.metrics.optin "Надсилати анонімну статистику користування." >
 <!ENTITY setup.metrics.info "Допоможіть вдосконалювати Songbird надсилаючи нам статистику використання програми. Статистика цілком анонімна та не включає в себе жлдних персональних даних." >
 <!ENTITY setup.optionalextensions "Додаткові розширення" >
 <!ENTITY setup.defaultlanguage "Стандартна мова" >
-<!ENTITY setup.privacy "Privacy" >
+<!ENTITY setup.privacy "Приватність" >
 <!ENTITY setupprogress.pleasewait "Будьласка зачекайте..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
@@ -184,18 +184,18 @@
 <!ENTITY menu.help.accesskey "H" >
 <!ENTITY menu.help.help.accesskey "H" >
 <!ENTITY menu.help.about.accesskey "A" >
-<!ENTITY bookmarks.edit.title "Edit Bookmark" >
-<!ENTITY bookmarks.edit.url "URL:" >
-<!ENTITY bookmarks.edit.label "Name:" >
-<!ENTITY bookmarks.edit.icon "Icon:" >
+<!ENTITY bookmarks.edit.title "Редагувати Закладинку" >
+<!ENTITY bookmarks.edit.url "Адреса в мережі:" >
+<!ENTITY bookmarks.edit.label "Назва:" >
+<!ENTITY bookmarks.edit.icon "Мініатюра:" >
 <!ENTITY trackeditor.title "Track Editor" >
 <!ENTITY trackeditor.trackdata "Track Data" >
 <!ENTITY trackeditor.exttrackdata "Extended Data" >
-<!ENTITY trackeditor.tags "Tags" >
-<!ENTITY trackeditor.addtag.title "Add Tag" >
-<!ENTITY trackeditor.addtag.tag "Tag:" >
+<!ENTITY trackeditor.tags "Мітки" >
+<!ENTITY trackeditor.addtag.title "Додати Мітку" >
+<!ENTITY trackeditor.addtag.tag "Мітка:" >
 <!ENTITY jumptofile.title "Перейти до" >
-<!ENTITY jumptofile.search "Search:" >
+<!ENTITY jumptofile.search "Пошук:" >
 <!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
 <!ENTITY hotkeys.action "Action" >
@@ -232,19 +232,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Jump To..." >
+<!ENTITY menu.control.jumpto "Перейти до..." >
 <!ENTITY html.context.playlist "Open as Playlist" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
+<!ENTITY menu.devices.nodevices "Наразі Жодних Приладів" >
 
 

@@ -3,11 +3,11 @@
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "OK" >
-<!ENTITY window.undo "Annuler" >
+<!ENTITY window.undo "Annuler les modifications" >
 <!ENTITY window.apply "Appliquer" >
 <!ENTITY window.cancel "Annuler" >
 <!ENTITY window.browse "Parcourir..." >
-<!ENTITY menu.file "Fichiers" >
+<!ENTITY menu.file "Fichier" >
 <!ENTITY menu.file.new "Nouvelle sélection..." >
 <!ENTITY menu.file.smart "Nouvelle sélection intelligente..." >
 <!ENTITY menu.file.remote "Nouvelle sélection distante..." >
@@ -24,7 +24,7 @@
 <!ENTITY menu.file.about "À propos de Songbird..." >
 <!ENTITY menu.file.exit "Quitter" >
 <!ENTITY menu.edit "Edition" >
-<!ENTITY menu.edit.undo "Annuler" >
+<!ENTITY menu.edit.undo "Annuler les modifications" >
 <!ENTITY menu.edit.cut "Couper" >
 <!ENTITY menu.edit.copy "Copier" >
 <!ENTITY menu.edit.paste "Coller" >
@@ -36,11 +36,11 @@
 <!ENTITY menu.control.next "Piste suivante" >
 <!ENTITY menu.control.prev "Piste précédente" >
 <!ENTITY menu.control.shuf "Aléatoire" >
-<!ENTITY menu.control.repa "Répéter toutes" >
-<!ENTITY menu.control.rep1 "Répéter une" >
+<!ENTITY menu.control.repa "Tout répéter" >
+<!ENTITY menu.control.rep1 "N'en répéter qu'une" >
 <!ENTITY menu.control.repx "Ne pas répéter" >
 <!ENTITY menu.services "Services" >
-<!ENTITY menu.services.browse "Parcourir les services..." >
+<!ENTITY menu.services.browse "Parcourir les extensions..." >
 <!ENTITY menu.devices "Périphériques" >
 <!ENTITY menu.help "Aide" >
 <!ENTITY menu.help.topics "Sommaire de l'aide..." >
@@ -67,7 +67,7 @@
 <!ENTITY tooltip.control.mute "Muet" >
 <!ENTITY tooltip.control.volume "Volume" >
 <!ENTITY tooltip.control.repeat "Répéter" >
-<!ENTITY tooltip.control.shuffle "Aléatoire" >
+<!ENTITY tooltip.control.shuffle "Lecture aléatoire activée" >
 <!ENTITY tooltip.control.shuf_off "Lecture aléatoire désactivée" >
 <!ENTITY tooltip.control.curtrack "Trouver la piste en cours" >
 <!ENTITY tooltip.control.service "Basculer vers l'affichage façade" >
@@ -104,20 +104,20 @@
 <!ENTITY smart.hours "heures" >
 <!ENTITY smart.mb "Mo" >
 <!ENTITY smart.gb "Go" >
-<!ENTITY smart.songs "chansons" >
+<!ENTITY smart.songs "musiques" >
 <!ENTITY smart.contains "contient" >
 <!ENTITY smart.not_contain "ne contient pas" >
 <!ENTITY smart.is "est" >
 <!ENTITY smart.is_not "n'est pas" >
 <!ENTITY smart.starts "commence par" >
-<!ENTITY smart.ends "termine pas" >
+<!ENTITY smart.ends "termine par" >
 <!ENTITY smart.selectedby "Sélectionné par" >
 <!ENTITY download.window "Télécharger" >
 <!ENTITY download.select "Sélectionnez le répertoire cible :" >
 <!ENTITY download.always "Toujours utiliser ce répertoire" >
 <!ENTITY textbox.songbird_open_url "Saisissez l'URL ou le chemin vers les fichiers que vous souhaitez lire :" >
 <!ENTITY open_url.title "Ouvrir l'URL" >
-<!ENTITY subscribe.title "Abonnement" >
+<!ENTITY subscribe.title "S'abonner" >
 <!ENTITY subscribe.minutes "Minute(s)" >
 <!ENTITY subscribe.hours "Heure(s)" >
 <!ENTITY subscribe.days "Jour(s)" >
@@ -219,7 +219,7 @@
 <!ENTITY menu.updateCmd.accessKey "R" >
 <!ENTITY trackeditor.disclaimer "La fonction d'éditeur de pistes n'est pas terminée. Les métadonnées modifiées ne sont enregistrées que dans la base de données de Songbird. Dans une prochaine version, les métadonnées modifiées ici seront également enregistrées dans vos fichiers.
 " >
-<!ENTITY callout.firstwebplaylist "Songbird à trouvé les pistes suivantes." >
+<!ENTITY callout.firstwebplaylist "Songbird a trouvé les pistes suivantes." >
 <!ENTITY menu.file.new.key "N" >
 <!ENTITY menu.file.open.key "O" >
 <!ENTITY menu.file.url.key "U" >
@@ -233,19 +233,10 @@
 <!ENTITY search.key "F" >
 <!ENTITY locationbar.key "L" >
 <!ENTITY trackeditor.key "E" >
-<!ENTITY menu.control.jumpto "Aller à ..." >
+<!ENTITY menu.control.jumpto "Aller à..." >
 <!ENTITY html.context.playlist "Ouvrir en tant que sélection" >
 <!ENTITY menu.control.jumpto.accesskey "A" >
 <!ENTITY metadata.bitrate "Débit" >
 <!ENTITY menu.devices.nodevices "Aucun périphérique pour le moment" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 

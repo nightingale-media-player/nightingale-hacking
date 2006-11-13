@@ -8,9 +8,9 @@
 <!ENTITY window.cancel "Hætta við" >
 <!ENTITY window.browse "Fletta..." >
 <!ENTITY menu.file "Skrá" >
-<!ENTITY menu.file.new "Nýr listi..." >
+<!ENTITY menu.file.new "Nýr lagalisti..." >
 <!ENTITY menu.file.smart "Nýr snjall listi..." >
-<!ENTITY menu.file.remote "Ný áskrift..." >
+<!ENTITY menu.file.remote "Bæta við áskrift..." >
 <!ENTITY menu.file.open "Opna skjal..." >
 <!ENTITY menu.file.url "Opna slóð..." >
 <!ENTITY menu.file.playlist "Flytja inn lista..." >
@@ -30,7 +30,7 @@
 <!ENTITY menu.edit.paste "Líma" >
 <!ENTITY menu.edit.clear "Hreinsa" >
 <!ENTITY menu.edit.selall "Velja allt" >
-<!ENTITY menu.edit.selnone "Velja ekkert" >
+<!ENTITY menu.edit.selnone "Afvelja allt" >
 <!ENTITY menu.controls "Stýringar" >
 <!ENTITY menu.control.play "Spila/Hlé" >
 <!ENTITY menu.control.next "Næsta lag" >
@@ -55,7 +55,7 @@
 <!ENTITY playlist.context.rename "Endurskíra" >
 <!ENTITY playlist.context.search "Leita" >
 <!ENTITY playlist.context.lyrics "Texti" >
-<!ENTITY tooltip.miniplayer "Skipta í smáspilara" >
+<!ENTITY tooltip.miniplayer "Skipta yfir í smáspilara" >
 <!ENTITY tooltip.minimize "Minnka" >
 <!ENTITY tooltip.maximize "Stækka/Endurstilla" >
 <!ENTITY tooltip.exit "Hætta" >
@@ -68,13 +68,13 @@
 <!ENTITY tooltip.control.volume "Hljóðstyrkur" >
 <!ENTITY tooltip.control.repeat "Endurtaka" >
 <!ENTITY tooltip.control.shuffle "Stokka" >
-<!ENTITY tooltip.control.shuf_off "Stokka af" >
+<!ENTITY tooltip.control.shuf_off "Hætta að stokka" >
 <!ENTITY tooltip.control.curtrack "Finna núverandi lag" >
 <!ENTITY tooltip.control.service "Switch Faceplate Display" >
 <!ENTITY tooltip.search "Leita" >
 <!ENTITY tooltip.browser.back "Til baka" >
 <!ENTITY tooltip.browser.fwd "Áfram" >
-<!ENTITY tooltip.browser.stop "Stopp" >
+<!ENTITY tooltip.browser.stop "Stoppa" >
 <!ENTITY tooltip.browser.home "Heim" >
 <!ENTITY tooltip.browser.refresh "Endurhlaða" >
 <!ENTITY tooltip.browser.bookmark "Bókamerki" >
@@ -84,24 +84,24 @@
 <!ENTITY smart.library "Velja safn:" >
 <!ENTITY smart.limit "Takmarka við" >
 <!ENTITY smart.match "Passar við" >
-<!ENTITY smart.any "eitthvað" >
-<!ENTITY smart.all "allt" >
+<!ENTITY smart.any "einhver" >
+<!ENTITY smart.all "öll" >
 <!ENTITY smart.following "eftirfarandi skilyrði:" >
 <!ENTITY smart.random "handahófi" >
-<!ENTITY smart.album "albúm" >
-<!ENTITY smart.artist "listamaður" >
+<!ENTITY smart.album "plötuheiti" >
+<!ENTITY smart.artist "listamanni" >
 <!ENTITY smart.genre "tegund" >
-<!ENTITY smart.title "titill" >
-<!ENTITY smart.high_rating "há stigagjöf" >
-<!ENTITY smart.low_rating "lág stigagjöf" >
-<!ENTITY smart.most_recent "nýlegast" >
-<!ENTITY smart.least_recent "elst" >
-<!ENTITY smart.most_often "oftast" >
-<!ENTITY smart.least_often "síst" >
+<!ENTITY smart.title "titli" >
+<!ENTITY smart.high_rating "hárri stigagjöf" >
+<!ENTITY smart.low_rating "lágri stigagjöf" >
+<!ENTITY smart.most_recent "aldri - nýlegast" >
+<!ENTITY smart.least_recent "aldri - elst" >
+<!ENTITY smart.most_often "oftast spilað" >
+<!ENTITY smart.least_often "síst spilað" >
 <!ENTITY smart.most_added "mest bætt við" >
 <!ENTITY smart.least_added "síst bætt við" >
 <!ENTITY smart.minutes "mínútur" >
-<!ENTITY smart.hours "klukktímar" >
+<!ENTITY smart.hours "klukktíma" >
 <!ENTITY smart.mb "MB" >
 <!ENTITY smart.gb "GB" >
 <!ENTITY smart.songs "lög" >
@@ -111,11 +111,11 @@
 <!ENTITY smart.is_not "er ekki" >
 <!ENTITY smart.starts "byrjar á" >
 <!ENTITY smart.ends "endar á" >
-<!ENTITY smart.selectedby "Valið af" >
+<!ENTITY smart.selectedby "Valið út frá" >
 <!ENTITY download.window "Hlaða niður" >
 <!ENTITY download.select "Veldu áfangastað:" >
 <!ENTITY download.always "Alltaf nota þessa möppu" >
-<!ENTITY textbox.songbird_open_url "Sláðu inn URL eða slóð að skjalinu sem þú vilt spila:" >
+<!ENTITY textbox.songbird_open_url "Sláðu inn slóðina að skjalinu sem þú vilt spila:" >
 <!ENTITY open_url.title "Opna slóð" >
 <!ENTITY subscribe.title "Gerast áskrifandi" >
 <!ENTITY subscribe.minutes "Mínúta/Mínútur" >
@@ -132,9 +132,9 @@
 <!ENTITY addtoplaylist.title "Bæta við lista" >
 <!ENTITY addtoplaylist.create "Búa til nýjan lista" >
 <!ENTITY watchfolder.title "Fylgjast með möppun" >
-<!ENTITY watchfolder.folderlist "Fylgjast með nýjum gögnum í þessaum möppum:" >
+<!ENTITY watchfolder.folderlist "Fylgjast með nýjum gögnum í þessum möppum:" >
 <!ENTITY locale.language "Tungumál" >
-<!ENTITY menu.feathers "Fjaðrir" >
+<!ENTITY menu.feathers "Útlit" >
 <!ENTITY about.version "Útgáfa" >
 <!ENTITY setup.title "Uppsetning Söngfuglsins" >
 <!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
@@ -145,7 +145,7 @@
 <!ENTITY setup.metrics.info "Help us make Songbird better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected." >
 <!ENTITY setup.optionalextensions "Optional Extensions" >
 <!ENTITY setup.defaultlanguage "Sjálfgefið tungumál" >
-<!ENTITY setup.privacy "Privacy" >
+<!ENTITY setup.privacy "Gangaleynd" >
 <!ENTITY setupprogress.pleasewait "Vinsamlegast hinkraðu..." >
 <!ENTITY menu.file.accesskey "F" >
 <!ENTITY menu.file.new.accesskey "N" >
@@ -194,7 +194,7 @@
 <!ENTITY trackeditor.tags "Tags" >
 <!ENTITY trackeditor.addtag.title "Add Tag" >
 <!ENTITY trackeditor.addtag.tag "Tag:" >
-<!ENTITY jumptofile.title "Jump to" >
+<!ENTITY jumptofile.title "Hoppa yfir í" >
 <!ENTITY jumptofile.search "Search:" >
 <!ENTITY hotkeys.useglobalhotkeys "Use Global Hotkeys" >
 <!ENTITY hotkeys.useglobalhotkeys.accesskey "U" >
@@ -237,3 +237,5 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
+
+

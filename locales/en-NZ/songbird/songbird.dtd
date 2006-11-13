@@ -1,5 +1,5 @@
-<!ENTITY window.main.title "Songbird 0.2 Developer Preview" >
-<!ENTITY window.dev.title "Songbird 0.2 Developer Preview Test Flight" >
+<!ENTITY window.main.title "Songbird 0.2" >
+<!ENTITY window.dev.title "Songbird 0.2 Test Flight" >
 <!ENTITY songbird "Songbird" >
 <!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok "Ok" >
@@ -102,8 +102,8 @@
 <!ENTITY smart.least_added "least added" >
 <!ENTITY smart.minutes "minutes" >
 <!ENTITY smart.hours "hours" >
-<!ENTITY smart.mb "MB" >
-<!ENTITY smart.gb "GB" >
+<!ENTITY smart.mb "MiB" >
+<!ENTITY smart.gb "GiB" >
 <!ENTITY smart.songs "songs" >
 <!ENTITY smart.contains "contains" >
 <!ENTITY smart.not_contain "does not contain" >
@@ -237,14 +237,5 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
-
-
-
-
-<!ENTITY web.url.first.old "" >
-<!ENTITY menu.help.bugz "Report a Bug" >
-<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
-<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
-<!ENTITY menu.help.bugz.accesskey "B" >
 
 
