@@ -1,0 +1,243 @@
+<!ENTITY window.main.title "Songbird 0.2 Թարգմանեց Հրանտ Օհանյանը" >
+<!ENTITY window.dev.title "Songbird 0.2 Թարգմանությունը Հրանտ Օհանյանի" >
+<!ENTITY songbird "Songbird 0,2" >
+<!ENTITY web.url.first "http://www.songbirdnest.com/birdhouse/" >
+<!ENTITY window.ok "ՕԿ" >
+<!ENTITY window.undo "Հետ" >
+<!ENTITY window.apply "Կիրառել" >
+<!ENTITY window.cancel "Հրաժարվել" >
+<!ENTITY window.browse "Դիտել..." >
+<!ENTITY menu.file "Ֆայլ" >
+<!ENTITY menu.file.new "Նոր խաղացանկ..." >
+<!ENTITY menu.file.smart "Նոր խելացի խաղացանկ..." >
+<!ENTITY menu.file.remote "Նոր հեռադիր խաղացանկ..." >
+<!ENTITY menu.file.open "Բացել ֆայլ..." >
+<!ENTITY menu.file.url "Բացել URL-ից..." >
+<!ENTITY menu.file.playlist "Ներմուծել խաղացանկ..." >
+<!ENTITY menu.file.scan "Փնտրել մեդիա..." >
+<!ENTITY menu.file.dlfolder "Նշել բեռնման թղթապանակը..." >
+<!ENTITY menu.file.watch "Ընտրել ճանապարհը..." >
+<!ENTITY menu.file.htmlbar "Միշտ ցույց տալ ցանցային պատուհանը" >
+<!ENTITY menu.file.skin "Փոխել" >
+<!ENTITY menu.file.window "Բացել գլխավոր պատուհանը" >
+<!ENTITY menu.file.mini "Բացել Փոքր Խաղարկիչը" >
+<!ENTITY menu.file.about "Songbird-ի մասին..." >
+<!ENTITY menu.file.exit "Դուրս գալ" >
+<!ENTITY menu.edit "Խմբագրել" >
+<!ENTITY menu.edit.undo "Հետ" >
+<!ENTITY menu.edit.cut "Կտրել" >
+<!ENTITY menu.edit.copy "Պատճենել" >
+<!ENTITY menu.edit.paste "Տեղադրել" >
+<!ENTITY menu.edit.clear "Մաքրել" >
+<!ENTITY menu.edit.selall "Ընտրել բոլորը" >
+<!ENTITY menu.edit.selnone "Հանել ընտրումը..." >
+<!ENTITY menu.controls "Ղեկավարում..." >
+<!ENTITY menu.control.play "Վերարտադրել/Դադար" >
+<!ENTITY menu.control.next "Հաջորդ շավիղը" >
+<!ENTITY menu.control.prev "Նախորդ շավիղը" >
+<!ENTITY menu.control.shuf "Պատահական" >
+<!ENTITY menu.control.repa "Կրկնել բոլորը" >
+<!ENTITY menu.control.rep1 "Կրկնել մեկ անգամ" >
+<!ENTITY menu.control.repx "Չկրկնել" >
+<!ENTITY menu.services "Սպասարկում" >
+<!ENTITY menu.services.browse "Փնտրել ծառայություններ..." >
+<!ENTITY menu.devices "Սարքեր" >
+<!ENTITY menu.help "Օգնություն" >
+<!ENTITY menu.help.topics "Բովանդակությունը..." >
+<!ENTITY menu.help.about "Songbird-ի մասին..." >
+<!ENTITY menu.preferences "Գերադասություններ..." >
+<!ENTITY menu.extensions "Ընդլայնումներ..." >
+<!ENTITY html.context.open "Բացել" >
+<!ENTITY html.context.openexternal "Բացել Ձեր Դիտարկիչում" >
+<!ENTITY html.context.play "Վերարտադրել" >
+<!ENTITY html.context.add "Ավելացնել գրադարանին" >
+<!ENTITY playlist.context.remove "Ջնջել" >
+<!ENTITY playlist.context.rename "Վերանվանել" >
+<!ENTITY playlist.context.search "Փնտրել" >
+<!ENTITY playlist.context.lyrics "Լիրիկա" >
+<!ENTITY tooltip.miniplayer "Միացնել Փոքր Վերարտադրիչը" >
+<!ENTITY tooltip.minimize "Իջեցնել" >
+<!ENTITY tooltip.maximize "Վերականգնել" >
+<!ENTITY tooltip.exit "Դուրս գալ" >
+<!ENTITY tooltip.hide "Թաքցնել" >
+<!ENTITY tooltip.control.back "Նախորդ շավիղը" >
+<!ENTITY tooltip.control.play "Վերարտադրել" >
+<!ENTITY tooltip.control.pause "Դադար" >
+<!ENTITY tooltip.control.fwd "Հաջորդ շավիղը" >
+<!ENTITY tooltip.control.mute "Անջ.ձայնը" >
+<!ENTITY tooltip.control.volume "Ձայնը" >
+<!ENTITY tooltip.control.repeat "Կրկնել" >
+<!ENTITY tooltip.control.shuffle "Պատահական" >
+<!ENTITY tooltip.control.shuf_off "Անջ.պատհկ.կրկնումը" >
+<!ENTITY tooltip.control.curtrack "Գտնել տվյալ շավիղը" >
+<!ENTITY tooltip.control.service "Փոփոխել Faceplate Display-ը" >
+<!ENTITY tooltip.search "Փնտրել" >
+<!ENTITY tooltip.browser.back "Հետ" >
+<!ENTITY tooltip.browser.fwd "Առաջ" >
+<!ENTITY tooltip.browser.stop "Կանգնեցնել" >
+<!ENTITY tooltip.browser.home "Տուն" >
+<!ENTITY tooltip.browser.refresh "Թարմացնել" >
+<!ENTITY tooltip.browser.bookmark "Էջանիշներ" >
+<!ENTITY tooltip.browser.playlist "Ցույց տալ/Թաքցնել ցանցային խաղացանկը" >
+<!ENTITY tooltip.browser.download "Նայել Բեռնումները" >
+<!ENTITY smart.window "Ստեղծել Խելացի խաղացանկ" >
+<!ENTITY smart.library "Ընտրել գրադարանը." >
+<!ENTITY smart.limit "Սահմանափակել" >
+<!ENTITY smart.match "Համընկնում" >
+<!ENTITY smart.any "որևէ" >
+<!ENTITY smart.all "բոլորը" >
+<!ENTITY smart.following "ըստ պայմանի." >
+<!ENTITY smart.random "պատահական" >
+<!ENTITY smart.album "ալբոմի" >
+<!ENTITY smart.artist "կատարող" >
+<!ENTITY smart.genre "ոճ" >
+<!ENTITY smart.title "վերնագիր" >
+<!ENTITY smart.high_rating "բարձր վարկանիշ" >
+<!ENTITY smart.low_rating "ցածր վարկանիշ" >
+<!ENTITY smart.most_recent "վերջին" >
+<!ENTITY smart.least_recent "ամենավերջին" >
+<!ENTITY smart.most_often "ավելի հաճախ" >
+<!ENTITY smart.least_often "ամենաքիչը ավելացված" >
+<!ENTITY smart.most_added "ամենաշատը ավելացված" >
+<!ENTITY smart.least_added "բացառիկ" >
+<!ENTITY smart.minutes "րոպեներ" >
+<!ENTITY smart.hours "ժամեր" >
+<!ENTITY smart.mb "Մբ" >
+<!ENTITY smart.gb "Գբ" >
+<!ENTITY smart.songs "երգեր" >
+<!ENTITY smart.contains "պարունակում է" >
+<!ENTITY smart.not_contain "չի պարունակում" >
+<!ENTITY smart.is "հանդիսանում է" >
+<!ENTITY smart.is_not "չի հանդիսանում" >
+<!ENTITY smart.starts "սկսելով" >
+<!ENTITY smart.ends "ավարտելով" >
+<!ENTITY smart.selectedby "Ընտրված" >
+<!ENTITY download.window "Բեռնել" >
+<!ENTITY download.select "Նշանակել թղթապանակ." >
+<!ENTITY download.always "Միշտ օգտագործել այս թղթապանակը" >
+<!ENTITY textbox.songbird_open_url "Գրեք ստեղծագործության հասցեն կամ ցույց տվեք ճանապարհը." >
+<!ENTITY open_url.title "Բացել URL" >
+<!ENTITY subscribe.title "Գրվել" >
+<!ENTITY subscribe.minutes "Րոպե(ներ)" >
+<!ENTITY subscribe.hours "Ժամ" >
+<!ENTITY subscribe.days "Օր(եր)" >
+<!ENTITY subscribe.autocheck "Թարմացնել յուրաքանչյուր." >
+<!ENTITY subscribe.destinationfolder "Ընտրել նշանակման թղթապանակը.
+" >
+<!ENTITY exists.title "Խաղացանկը արդեն գոյ. ունի" >
+<!ENTITY exists.exists "Այս անունով խաղացանկ արդեն գոյություն ունի։" >
+<!ENTITY media_scan.title "Փնտրել Մեդիա" >
+<!ENTITY media_scan.watch "Փնտրել Մեդիա ֆայլեր այս թղթապանակում" >
+<!ENTITY new_playlist.title "Ստեղծել նոր խաղացանկ" >
+<!ENTITY new_playlist.name "Գրեք նոր խաղացանկի անունը" >
+<!ENTITY addtoplaylist.title "Ավելացնել խաղացանկին" >
+<!ENTITY addtoplaylist.create "Ստեղծել նոր խաղացանկ" >
+<!ENTITY watchfolder.title "Դիտել թղթապանակները" >
+<!ENTITY watchfolder.folderlist "Փնտրել այս թղթապանակներում նոր Մեդիա." >
+<!ENTITY locale.language "Լեզուն" >
+<!ENTITY menu.feathers "Հնարվ." >
+<!ENTITY about.version "Տարբերակը" >
+<!ENTITY setup.title "Songbird-ի տեղակայման ընտրանքներ" >
+<!ENTITY setup.retrievingxpilist "Բեռնվում է ընդլայնումների ցանկը։
+Խնդրում ենք սպասել..." >
+<!ENTITY setup.networkerror1 "Հնարավոր չէ ստանալ ընդլայնումների ցանկը։" >
+<!ENTITY setup.networkerror2 "Կապի կարգավորումներ" >
+<!ENTITY setup.networkerror3 "կամ շարունակել Songbird-ի տեղակայումը՝ սեղմելով 'ՕԿ'։" >
+<!ENTITY setup.metrics.optin "Ուղարկել անանուն։" >
+<!ENTITY setup.metrics.info "Օգնեք մեզկատարելագործել Songbird -ը՝հնարավորություն տալով Songbird-ին ուղարկել մեզ տեղեկություններ։" >
+<!ENTITY setup.optionalextensions "Լրացուցիչ ընդլայնումներ" >
+<!ENTITY setup.defaultlanguage "Լեզուն լռելայն" >
+<!ENTITY setup.privacy "Անվտանգություն" >
+<!ENTITY setupprogress.pleasewait "Խնդրում ենք սպասել..." >
+<!ENTITY menu.file.accesskey "f" >
+<!ENTITY menu.file.new.accesskey "n" >
+<!ENTITY menu.file.smart.accesskey "s" >
+<!ENTITY menu.file.remote.accesskey "r" >
+<!ENTITY menu.file.open.accesskey "o" >
+<!ENTITY menu.file.url.accesskey "u" >
+<!ENTITY menu.file.playlist.accesskey "i" >
+<!ENTITY menu.file.scan.accesskey "c" >
+<!ENTITY menu.file.dlfolder.accesskey "d" >
+<!ENTITY menu.file.watch.accesskey "w" >
+<!ENTITY menu.file.mini.accesskey "m" >
+<!ENTITY locale.language.accesskey "l" >
+<!ENTITY menu.feathers.accesskey "f" >
+<!ENTITY menu.preferences.accesskey "p" >
+<!ENTITY menu.extensions.accesskey "e" >
+<!ENTITY menu.file.exit.accesskey "x" >
+<!ENTITY menu.edit.accesskey "e" >
+<!ENTITY menu.edit.undo.accesskey "u" >
+<!ENTITY menu.edit.cut.accesskey "t" >
+<!ENTITY menu.edit.copy.accesskey "c" >
+<!ENTITY menu.edit.paste.accesskey "p" >
+<!ENTITY menu.edit.clear.accesskey "l" >
+<!ENTITY menu.edit.selall.accesskey "a" >
+<!ENTITY menu.edit.selnone.accesskey "n" >
+<!ENTITY menu.controls.accesskey "c" >
+<!ENTITY menu.control.play.accesskey "p" >
+<!ENTITY menu.control.next.accesskey "n" >
+<!ENTITY menu.control.prev.accesskey "r" >
+<!ENTITY menu.control.shuf.accesskey "s" >
+<!ENTITY menu.control.repa.accesskey "a" >
+<!ENTITY menu.control.rep1.accesskey "o" >
+<!ENTITY menu.control.repx.accesskey "e" >
+<!ENTITY menu.services.accesskey "s" >
+<!ENTITY menu.devices.accesskey "d" >
+<!ENTITY menu.help.accesskey "h" >
+<!ENTITY menu.help.help.accesskey "h" >
+<!ENTITY menu.help.about.accesskey "a" >
+<!ENTITY bookmarks.edit.title "Խմբագրել էջանիշները" >
+<!ENTITY bookmarks.edit.url "URL." >
+<!ENTITY bookmarks.edit.label "Անունը." >
+<!ENTITY bookmarks.edit.icon "Պատկերը." >
+<!ENTITY trackeditor.title "Շավիղի խմբագիր" >
+<!ENTITY trackeditor.trackdata "Շավիղի ամսաթիվը" >
+<!ENTITY trackeditor.exttrackdata "Տվյալները" >
+<!ENTITY trackeditor.tags "Կցապիտակներ" >
+<!ENTITY trackeditor.addtag.title "Ավելացնել կցապիտակ" >
+<!ENTITY trackeditor.addtag.tag "Կցապիտակ." >
+<!ENTITY jumptofile.title "Անցնել" >
+<!ENTITY jumptofile.search "Փնտրել." >
+<!ENTITY hotkeys.useglobalhotkeys "Օգտագործել ընդհանուր Տաք կարճուղիները" >
+<!ENTITY hotkeys.useglobalhotkeys.accesskey "u" >
+<!ENTITY hotkeys.action "Գործողություն" >
+<!ENTITY hotkeys.hotkey "Տաք կարճուղիներ" >
+<!ENTITY hotkeys.add "Ավելացնել" >
+<!ENTITY hotkeys.set "Որոշել" >
+<!ENTITY hotkeys.remove "Ջնջել" >
+<!ENTITY hotkeys.prefpane "Տաք կարճուղիներ" >
+<!ENTITY metadata.uuid "UUID Մեդիա" >
+<!ENTITY metadata.url "Տեղադրությունը" >
+<!ENTITY metadata.artist "Կատարող" >
+<!ENTITY metadata.title "Վերնագիրը" >
+<!ENTITY metadata.album "Ալբոմը" >
+<!ENTITY metadata.genre "Ոճը" >
+<!ENTITY metadata.length "Տևողությունը" >
+<!ENTITY restartbox.restartnow "Վերաբեռնել այժմ" >
+<!ENTITY restartbox.restartonplaybackend "Վերաբեռնել վերարտադրելուց հետո" >
+<!ENTITY restartbox.restartlater "Վերաբեռնել հետո" >
+<!ENTITY setupprogress.installingextensions "Տեղակայել ընդլայնումները" >
+<!ENTITY menu.updateCmd.label "Ստուգել թարմացումները..." >
+<!ENTITY menu.updateCmd.accessKey "Օ" >
+<!ENTITY trackeditor.disclaimer "Շավիղների խմբագիրը դեռ վերջնական չէ։" >
+<!ENTITY callout.firstwebplaylist "Songbird-ը գտել է հետևյալ շավիղները։" >
+<!ENTITY menu.file.new.key "n" >
+<!ENTITY menu.file.open.key "o" >
+<!ENTITY menu.file.url.key "u" >
+<!ENTITY menu.file.mini.key "m" >
+<!ENTITY menu.file.dominspector "i" >
+<!ENTITY menu.edit.undo.key "z" >
+<!ENTITY menu.edit.cut.key "x" >
+<!ENTITY menu.edit.copy.key "c" >
+<!ENTITY menu.edit.paste.key "v" >
+<!ENTITY jumpto.key "j" >
+<!ENTITY search.key "f" >
+<!ENTITY locationbar.key "l" >
+<!ENTITY trackeditor.key "e" >
+<!ENTITY menu.control.jumpto "Անցնել..." >
+<!ENTITY html.context.playlist "Բացել որպես Խաղացանկ" >
+<!ENTITY menu.control.jumpto.accesskey "j" >
+<!ENTITY metadata.bitrate "Բիթ Ռեյթ" >
+<!ENTITY menu.devices.nodevices "Ոչ մի սարք" >
+
+
