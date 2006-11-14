@@ -48,7 +48,7 @@ try
     } catch(e) {}
 
     // initialize the filepicker with our text, a parent and the mode
-    fp.init(window, sel, nsIFilePicker.modeOpen);
+    fp.init(window, sel, Components.interfaces.nsIFilePicker.modeOpen);
 
     // Tell it what filters to be using
     var mediafiles = "Media Files";
@@ -69,7 +69,7 @@ try
 
     // Show the filepicker
     var fp_status = fp.show();
-    if ( fp_status == nsIFilePicker.returnOK )
+    if ( fp_status == Components.interfaces.nsIFilePicker.returnOK )
     {
       // And if we're good, play it.
       seen_playing.boolValue = false;

@@ -85,11 +85,11 @@ var gOS         = null;
  *          The string to write to the error console..
  */  
 function LOG(string) {
-/* Shhh.
+/*
     dump("***sbPlaylistPlayback*** " + string + "\n");
     if (gConsole)
       gConsole.logStringMessage(string);
-*/      
+*/
 } // LOG
 
 /**
@@ -821,7 +821,7 @@ PlaylistPlayback.prototype = {
       // playlist's filters and search.
 
       // import the track in the library if it isn't in it already
-      this._importURLInLibrary(aURL);
+      var index = this._importURLInLibrary(aURL);
       var ref = "NC:songbird_library";
       this._source.waitForQueryCompletion(ref);
 
@@ -834,7 +834,8 @@ PlaylistPlayback.prototype = {
       this._source.forceGetTargets( ref, false );
 
       // play the track
-      this.playRefByURL(ref, aURL);
+      this.playRefByID(ref, index);
+      
     } catch( err ) {
       dump( "playAndImportURL:\n" + err + "\n" );
       return false;
