@@ -5,11 +5,15 @@ songbird.jar:
 % content  songbird  jar:songbird.jar!/content/songbird/
 #endif
   content/songbird/bindings/bindings.css          (bindings.css)
+  content/songbird/bindings/calloutbox.xml        (calloutbox.xml)  
+  content/songbird/bindings/clickholdbutton.xml   (clickholdbutton.xml)
   content/songbird/bindings/conditions.xml        (conditions.xml)
   content/songbird/bindings/db_controls.xml       (db_controls.xml)
   content/songbird/bindings/drawer.xml            (drawer.xml)
+  content/songbird/bindings/faceplate.xml         (faceplate.xml)  
   content/songbird/bindings/filterlist.xml        (filterlist.xml)
   content/songbird/bindings/folders.xml           (folders.xml)
+  content/songbird/bindings/hotkey.xml            (hotkey.xml)
   content/songbird/bindings/multistatebutton.xml  (multistatebutton.xml)
   content/songbird/bindings/player_controls.xml   (player_controls.xml)
   content/songbird/bindings/playlist.xml          (playlist.xml)
@@ -23,7 +27,3 @@ songbird.jar:
   content/songbird/bindings/trackeditor.xml       (trackeditor.xml)
   content/songbird/bindings/windowregion.xml      (windowregion.xml)
   content/songbird/bindings/smartsplitter.xml     (smartsplitter.xml)
-  content/songbird/bindings/clickholdbutton.xml   (clickholdbutton.xml)
-  content/songbird/bindings/hotkey.xml            (hotkey.xml)
-  content/songbird/bindings/calloutbox.xml        (calloutbox.xml)  
-
