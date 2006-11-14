@@ -48,6 +48,8 @@ namespace std
 #include "IWindowLayer.h"
 #include <list>
 
+#include "../NativeWindowFromNode.h"
+
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWLAYER_CONTRACTID                  \
   "@songbirdnest.com/Songbird/WindowLayer;1"

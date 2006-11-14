@@ -31,7 +31,6 @@
  
   // Yet another shameful hack from lone
 #include "WindowLayer.h"
-#include "../NativeWindowFromNode.h"
 
 #ifdef XP_WIN
 
