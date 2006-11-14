@@ -32,22 +32,13 @@
 #include "WindowCloak.h"
 
 #include <dom/nsIDOMWindow.h>
-#include <xpcom/nsCOMPtr.h>
-
-#ifdef XP_MACOSX
-
-#include <dom/nsIDOMWindowInternal.h>
-#define OUTER_SPACE_X -32000
-#define OUTER_SPACE_Y -32000
-
-#else /* XP_MACOSX */
-
-#include <docshell/nsIDocShell.h>
 #include <dom/nsIScriptGlobalObject.h>
-#include <widget/nsIBaseWindow.h>
-#include <widget/nsIWidget.h>
-
-#endif /* XP_MACOSX */
+#include <docshell/nsIDocShell.h>
+#include <docshell/nsIDocShellTreeItem.h>
+#include <docshell/nsIDocShellTreeOwner.h>
+#include <webbrwsr/nsIEmbeddingSiteWindow.h>
+#include <xpcom/nsCOMPtr.h>
+#include <xpcom/nsIInterfaceRequestorUtils.h>
 
 sbWindowCloak::~sbWindowCloak()
 {
@@ -85,8 +76,27 @@ sbWindowCloak::IsCloaked(nsIDOMWindow* aDOMWindow,
     return NS_OK;
   }
 
+  nsresult rv;
+  nsCOMPtr<nsIScriptGlobalObject> scriptGlobalObj =
+    do_QueryInterface(aDOMWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsIDocShell* docShell = scriptGlobalObj->GetDocShell();
+  NS_ENSURE_TRUE(docShell, NS_ERROR_FAILURE);
+
+  nsCOMPtr<nsIDocShellTreeItem> treeItem = do_QueryInterface(docShell, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDocShellTreeOwner> treeOwner;
+  rv = treeItem->GetTreeOwner(getter_AddRefs(treeOwner));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIEmbeddingSiteWindow> embedWindow =
+    do_GetInterface(treeOwner, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   sbCloakInfo* cloakInfo = nsnull;
-  mCloakedWindows.Get(aDOMWindow, &cloakInfo);
+  mCloakedWindows.Get(embedWindow, &cloakInfo);
 
   *_retval = cloakInfo && !cloakInfo->mVisible ? PR_TRUE : PR_FALSE;
   return NS_OK;
@@ -97,17 +107,34 @@ sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
                              PRBool aVisible)
 {
   // XXXben Someday we could just ask the window if it is visible rather than
-  //        trying to maintain a list ourselves. Sadly the sbCloakInfo structs
-  //        are necessary until we rid ourselves of QuickTime (see below).
-  //        After that, though, we should remove all this mess.
+  //        trying to maintain a list ourselves.
 
   // Make sure the hashtable is initialized.
   if (!mCloakedWindows.IsInitialized())
     NS_ENSURE_TRUE(mCloakedWindows.Init(), NS_ERROR_FAILURE);
 
+  nsresult rv;
+  nsCOMPtr<nsIScriptGlobalObject> scriptGlobalObj =
+    do_QueryInterface(aDOMWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsIDocShell* docShell = scriptGlobalObj->GetDocShell();
+  NS_ENSURE_TRUE(docShell, NS_ERROR_FAILURE);
+
+  nsCOMPtr<nsIDocShellTreeItem> treeItem = do_QueryInterface(docShell, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDocShellTreeOwner> treeOwner;
+  rv = treeItem->GetTreeOwner(getter_AddRefs(treeOwner));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIEmbeddingSiteWindow> embedWindow =
+    do_GetInterface(treeOwner, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // See if we have previously cloaked this window.
   sbCloakInfo* cloakInfo = nsnull;
-  PRBool alreadyHashedWindow = mCloakedWindows.Get(aDOMWindow, &cloakInfo);
+  PRBool alreadyHashedWindow = mCloakedWindows.Get(embedWindow, &cloakInfo);
 
   if (!cloakInfo) {
     // This is the first time we have seen this window so assume it is already
@@ -121,74 +148,19 @@ sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
 
     // Add it to our hashtable here so that the memory will be freed on
     // shutdown.
-    if (!mCloakedWindows.Put(aDOMWindow, cloakInfo))
+    if (!mCloakedWindows.Put(embedWindow, cloakInfo))
       return NS_ERROR_FAILURE;
 
     // Set the defaults.
     cloakInfo->mVisible = PR_TRUE;
-#ifdef XP_MACOSX
-    cloakInfo->mLastX = -1;
-    cloakInfo->mLastY = -1;
-#endif
   }
 
   // Return early if there's nothing to do.
   if (cloakInfo->mVisible == aVisible)
     return NS_OK;
 
-  nsresult rv;
-
-#ifdef XP_MACOSX
-  // Currently the QuickTime plugin refuses to play anything if the parent
-  // window is hidden, so we're just going to kick the window out by the
-  // XULRunner hidden window. Remove this as soon as QuickTime is gone!
-  nsCOMPtr<nsIDOMWindowInternal> window = do_QueryInterface(aDOMWindow, &rv);
+  rv = embedWindow->SetVisibility(aVisible);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  if (aVisible) {
-    NS_ASSERTION(cloakInfo->mLastX >= 0 && cloakInfo->mLastY >= 0,
-                 "Trying to uncloak a window without previous position!");
-
-    rv = window->MoveTo(cloakInfo->mLastX, cloakInfo->mLastY);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    PRInt32 currentX;
-    rv = window->GetScreenX(&currentX);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    PRInt32 currentY;
-    rv = window->GetScreenY(&currentY);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = window->MoveTo(OUTER_SPACE_X, OUTER_SPACE_Y);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    cloakInfo->mLastX = currentX;
-    cloakInfo->mLastY = currentY;
-  }
-#else /* XP_MACOSX */
-  nsCOMPtr<nsIScriptGlobalObject> scriptGlobalObj =
-    do_QueryInterface(aDOMWindow, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIBaseWindow> baseWindow =
-    do_QueryInterface(scriptGlobalObj->GetDocShell(), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIWidget> mainWidget;
-  rv = baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Make sure this is a toplevel window.
-  nsCOMPtr<nsIWidget> tempWidget = mainWidget->GetParent();
-  while (tempWidget) {
-    mainWidget = tempWidget;
-    tempWidget = tempWidget->GetParent();
-  }
-  rv = mainWidget->Show(aVisible);
-  NS_ENSURE_SUCCESS(rv, rv);
-#endif /* XP_MACOSX */
 
   // Everything has succeeded so update the sbCloakInfo with the new state.
   cloakInfo->mVisible = aVisible;

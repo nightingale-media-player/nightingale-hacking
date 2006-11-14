@@ -59,6 +59,7 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/webbrwsr \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 

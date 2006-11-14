@@ -565,7 +565,7 @@ function SBAppInitialize()
       }
       if ( hide )
       {
-        setTimeout(HideCoreWindow, 0);
+        HideCoreWindow();
       }
     }
   }

@@ -377,10 +377,14 @@ function onWindowSavePosition()
 
 function windowFocus()
 {
-  // Try to activate the window.
-  try {
-    window.focus();
-  } catch (e) {}
+  // Try to activate the window if it isn't cloaked.
+  var windowCloak =
+    Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+              .getService(Components.interfaces.sbIWindowCloak);
+  if (windowCloak.isCloaked(window))
+    return;
+  
+  window.focus();
 }
 
 function delayedActivate()
@@ -489,9 +493,6 @@ function getXULWindowFromWindow(win) // taken from venkman source
 
 function onWindowLoadPosition()
 {
-  // Activate whatever window is attempting to reload its info.
-  delayedActivate();
-  
   var root = "window." + document.documentElement.id;
 /*
   dump("******** onWindowLoadPosition: root:" + root +

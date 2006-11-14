@@ -56,10 +56,6 @@ class nsIDOMWindow;
 struct sbCloakInfo
 {
   PRBool mVisible;
-#ifdef XP_MACOSX
-  PRInt32 mLastX;
-  PRInt32 mLastY;
-#endif
 };
 
 class sbWindowCloak : public sbIWindowCloak
