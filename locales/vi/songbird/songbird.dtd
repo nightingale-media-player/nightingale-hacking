@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Browse Extensions..." >
 <!ENTITY menu.devices "Thiết bị" >
 <!ENTITY menu.help "Trợ giúp" >
-<!ENTITY menu.help.topics "Chủ đề trợ giúp" >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Về Songbird..." >
 <!ENTITY menu.preferences "Ưu tiên " >
 <!ENTITY menu.extensions "Phần mở rộng..." >
@@ -139,7 +139,7 @@
 <!ENTITY about.version "Phiên bản" >
 <!ENTITY setup.title "Tùy chọn cài đặt Songbird" >
 <!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Thiết lập kết nối" >
 <!ENTITY setup.networkerror3 "hc tiếp tục Songbird Setup bằng cách nhấn OK" >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
@@ -238,5 +238,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

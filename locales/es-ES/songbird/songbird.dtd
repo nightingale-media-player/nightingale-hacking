@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Examinar Servicios..." >
 <!ENTITY menu.devices "Dispositivos" >
 <!ENTITY menu.help "Ayuda" >
-<!ENTITY menu.help.topics "Temas de ayuda..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Sobre Songbird..." >
 <!ENTITY menu.preferences "Preferencias..." >
 <!ENTITY menu.extensions "Extensiones..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versión" >
 <!ENTITY setup.title "Opciones de configuración de Songbird" >
 <!ENTITY setup.retrievingxpilist "Recuperando lista de extensiones. Por favor espere..." >
-<!ENTITY setup.networkerror1 "Imposible de recuperar la lista de extensiones. Por favor cambie su" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Opciones de conexión" >
 <!ENTITY setup.networkerror3 " o continue la configuración de songbird haciendo clic en 'OK'." >
 <!ENTITY setup.metrics.optin "Enviar estadísticas anónimas de uso." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Ratio" >
 <!ENTITY menu.devices.nodevices "No se ha encontrado ningún dispositivo aún." >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

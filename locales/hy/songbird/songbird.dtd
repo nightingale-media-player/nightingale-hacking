@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Փնտրել ծառայություններ..." >
 <!ENTITY menu.devices "Սարքեր" >
 <!ENTITY menu.help "Օգնություն" >
-<!ENTITY menu.help.topics "Բովանդակությունը..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Songbird-ի մասին..." >
 <!ENTITY menu.preferences "Գերադասություններ..." >
 <!ENTITY menu.extensions "Ընդլայնումներ..." >
@@ -140,7 +140,7 @@
 <!ENTITY setup.title "Songbird-ի տեղակայման ընտրանքներ" >
 <!ENTITY setup.retrievingxpilist "Բեռնվում է ընդլայնումների ցանկը։
 Խնդրում ենք սպասել..." >
-<!ENTITY setup.networkerror1 "Հնարավոր չէ ստանալ ընդլայնումների ցանկը։" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Կապի կարգավորումներ" >
 <!ENTITY setup.networkerror3 "կամ շարունակել Songbird-ի տեղակայումը՝ սեղմելով 'ՕԿ'։" >
 <!ENTITY setup.metrics.optin "Ուղարկել անանուն։" >
@@ -239,5 +239,9 @@
 <!ENTITY menu.control.jumpto.accesskey "j" >
 <!ENTITY metadata.bitrate "Բիթ Ռեյթ" >
 <!ENTITY menu.devices.nodevices "Ոչ մի սարք" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

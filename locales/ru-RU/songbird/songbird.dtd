@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Загрузить расширения..." >
 <!ENTITY menu.devices "Устройства" >
 <!ENTITY menu.help "Справка" >
-<!ENTITY menu.help.topics "Содержание..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "О Songbird..." >
 <!ENTITY menu.preferences "Настройки..." >
 <!ENTITY menu.extensions "Расширения..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Версия" >
 <!ENTITY setup.title "Опции установки Songbird" >
 <!ENTITY setup.retrievingxpilist "Загрузка списка расширений. Пожалуйста, подождите..." >
-<!ENTITY setup.networkerror1 "Невозможно загрузить список расширений.  Пожалуйста, измените ваши" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 " настройки соединения," >
 <!ENTITY setup.networkerror3 " или продолжите установку Songbird, нажав 'OK'." >
 <!ENTITY setup.metrics.optin "Отправлять анонимные отчеты об использовании." >
@@ -238,5 +238,9 @@
 <!ENTITY menu.control.jumpto.accesskey "е" >
 <!ENTITY metadata.bitrate "Битрейт" >
 <!ENTITY menu.devices.nodevices "Пока нет никаких устройств" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

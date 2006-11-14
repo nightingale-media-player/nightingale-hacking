@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "서비스 검색..." >
 <!ENTITY menu.devices "장치" >
 <!ENTITY menu.help "도움말" >
-<!ENTITY menu.help.topics "주제별 도움말..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Songbird에 대하여..." >
 <!ENTITY menu.preferences "환경설정..." >
 <!ENTITY menu.extensions "확장기능..." >
@@ -139,7 +139,7 @@
 <!ENTITY setup.title "Songbird 설정 옵션" >
 <!ENTITY setup.retrievingxpilist "확장 기능 목록을 받아오고 있습니다.
 잠시만 기다려주세요..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "연결 설정" >
 <!ENTITY setup.networkerror3 "'확인'을 선택하시면 Songbird 설정을 계속합니다." >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
@@ -238,5 +238,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "비트 레이트" >
 <!ENTITY menu.devices.nodevices "장치가 없습니다." >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "...עיין תוספות" >
 <!ENTITY menu.devices "התקנים" >
 <!ENTITY menu.help "עזרה" >
-<!ENTITY menu.help.topics "...נושאי עזרה" >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "...Songbird אודות" >
 <!ENTITY menu.preferences "...העדפות" >
 <!ENTITY menu.extensions "...תוספות" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "גרסא" >
 <!ENTITY setup.title "Songbird אפשרויות התקנת" >
 <!ENTITY setup.retrievingxpilist "...נא להמתין בעת שרשימת התוספות נקראת" >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "הגדרות חיבור" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
 <!ENTITY setup.metrics.optin ".שלח מידע אנונימי על אופן השימוש שלי בתוכנה" >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "יחס דגימה" >
 <!ENTITY menu.devices.nodevices "לא נמצאו התקנים בינתיים" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

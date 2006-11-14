@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Servisleri Tara..." >
 <!ENTITY menu.devices "Aygıtlar" >
 <!ENTITY menu.help "Yardım" >
-<!ENTITY menu.help.topics "Yardım Konuları..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Songbird Hakkında..." >
 <!ENTITY menu.preferences "Ayarlar..." >
 <!ENTITY menu.extensions "Eklentiler..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versiyon" >
 <!ENTITY setup.title "Songbird Durum Ayarları" >
 <!ENTITY setup.retrievingxpilist "Ekelntiler listesi alınıyor. Lütfen bekleyin..." >
-<!ENTITY setup.networkerror1 "Eklentiler listesine erişilemedi." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Bağlantı Ayarları" >
 <!ENTITY setup.networkerror3 "ya da OK tuşuna basarak Sonbird kurulumuna devam edin." >
 <!ENTITY setup.metrics.optin "Anonim kullanıcı bilgilerini gönder." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

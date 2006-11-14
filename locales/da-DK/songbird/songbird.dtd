@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Gennemse tjenester..." >
 <!ENTITY menu.devices "Enheder" >
 <!ENTITY menu.help "Hjælp" >
-<!ENTITY menu.help.topics "Hjælpeemner..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Om Songbird..." >
 <!ENTITY menu.preferences "Indstillinger..." >
 <!ENTITY menu.extensions "Udvidelser..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird installations muligheder" >
 <!ENTITY setup.retrievingxpilist "Modtager udvidelsesliste. Vent venligst..." >
-<!ENTITY setup.networkerror1 "Kunne ikke hente extension listen. Skift venligst din" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Forbindelses Indstillinger" >
 <!ENTITY setup.networkerror3 "eller fortsæt Songbird installationen ved at klikke 'OK'." >
 <!ENTITY setup.metrics.optin "Send anonyme brugs-mønstre" >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "Ingen Udstyr Endnu" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

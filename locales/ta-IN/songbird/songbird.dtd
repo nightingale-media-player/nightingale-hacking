@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Browse Extensions..." >
 <!ENTITY menu.devices "கருவிகள்" >
 <!ENTITY menu.help "உதவி" >
-<!ENTITY menu.help.topics "Help Topics..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "About Songbird..." >
 <!ENTITY menu.preferences "விருப்பங்கள்" >
 <!ENTITY menu.extensions "Extensions..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "பதிப்பு" >
 <!ENTITY setup.title "Songbird Setup Options" >
 <!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "தொடர்பு விருப்பங்கள்" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "எந்த கருவியும் இல்லை" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

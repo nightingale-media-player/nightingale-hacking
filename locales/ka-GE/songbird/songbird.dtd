@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "სერვისების მოძიება..." >
 <!ENTITY menu.devices "მოწყობილობები" >
 <!ENTITY menu.help "დახმარება" >
-<!ENTITY menu.help.topics "დახმარების თემები..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Songbird-ის შესახებ..." >
 <!ENTITY menu.preferences "პარამეტრები..." >
 <!ENTITY menu.extensions "გაფართოებები..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "ვერსია" >
 <!ENTITY setup.title "Songbird-ის დაყენების პარამეტრები" >
 <!ENTITY setup.retrievingxpilist "გაფართოებების სიის ძებნა. გთხოვთ დაიცადოთ..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Connection Settings" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

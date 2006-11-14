@@ -47,7 +47,7 @@
 <!ENTITY menu.services.browse "Parcourir les Extensions..." >
 <!ENTITY menu.devices "Périphériques" >
 <!ENTITY menu.help "Aide" >
-<!ENTITY menu.help.topics "Sujets d'Aide..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "À propos de Songbird..." >
 <!ENTITY menu.preferences "Préférences..." >
 <!ENTITY menu.extensions "Extensions...
@@ -154,8 +154,7 @@
 " >
 <!ENTITY setup.title "Options de Configuration de Songbird" >
 <!ENTITY setup.retrievingxpilist "Obtention de la liste des extensions. S'il vous plait patientez..." >
-<!ENTITY setup.networkerror1 "Impossible d'obtenir la liste de vos extensions.
-Veuillez modifier vos" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Paramètres de Connection" >
 <!ENTITY setup.networkerror3 " ou continuer l'installation de Songbird en cliquant 'OK'." >
 <!ENTITY setup.metrics.optin "Envoyer des mesures d'utilisations anonymes." >
@@ -294,5 +293,9 @@ Les Métadonnées sont sauvegardées seulement dans la base de données de Songb
 " >
 <!ENTITY metadata.bitrate "Débit Binaire" >
 <!ENTITY menu.devices.nodevices "Aucun périphérique pour le moment" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

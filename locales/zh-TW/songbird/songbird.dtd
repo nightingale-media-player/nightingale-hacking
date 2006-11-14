@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "瀏覽擴充套件..." >
 <!ENTITY menu.devices "裝置" >
 <!ENTITY menu.help "說明" >
-<!ENTITY menu.help.topics "說明主題..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "關於 Songbird ..." >
 <!ENTITY menu.preferences "喜好設定..." >
 <!ENTITY menu.extensions "擴充套件..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "版本" >
 <!ENTITY setup.title "Songbird 安裝選項" >
 <!ENTITY setup.retrievingxpilist "擷取擴充套件清單中。請稍待..." >
-<!ENTITY setup.networkerror1 "無法擷取擴充套件清單。請變更你的" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "連線設定" >
 <!ENTITY setup.networkerror3 "或按 [確定] 繼續 Songbird 安裝程式。" >
 <!ENTITY setup.metrics.optin "傳送匿名使用數據。" >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "位元率" >
 <!ENTITY menu.devices.nodevices "目前無裝置" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Przeglądaj rozszerzenia..." >
 <!ENTITY menu.devices "Urządzenia" >
 <!ENTITY menu.help "Pomoc" >
-<!ENTITY menu.help.topics "Tematy pomocy..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "O Songbirdzie..." >
 <!ENTITY menu.preferences "Ustawienia..." >
 <!ENTITY menu.extensions "Rozszerzenia..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Wersja" >
 <!ENTITY setup.title "Opcje instalacyjne Songbirda" >
 <!ENTITY setup.retrievingxpilist "Pobieranie listy rozszerzeń. Proszę czekać..." >
-<!ENTITY setup.networkerror1 "Nie można pobrać listy rozszerzeń. Sprawdź swoje" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "ustawienia połączenia" >
 <!ENTITY setup.networkerror3 " lub kontynuuj instalację Songbirda klikając 'OK'." >
 <!ENTITY setup.metrics.optin "Wysyłaj anonimowe raporty użytkowania." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "P" >
 <!ENTITY metadata.bitrate "BitRate" >
 <!ENTITY menu.devices.nodevices "Nie wykryto urządzeń" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

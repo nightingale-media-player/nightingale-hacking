@@ -44,7 +44,7 @@
 <!ENTITY menu.services.browse "Selaa palveluita..." >
 <!ENTITY menu.devices "Laitteet" >
 <!ENTITY menu.help "Ohje" >
-<!ENTITY menu.help.topics "Ohjeen aiheet..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Tietoja Songbirdstä..." >
 <!ENTITY menu.preferences "Asetukset..." >
 <!ENTITY menu.extensions "Laajennukset..." >
@@ -139,7 +139,7 @@
 <!ENTITY about.version "Versio" >
 <!ENTITY setup.title "Songbird asennuksen asetukset" >
 <!ENTITY setup.retrievingxpilist "Haetaan laajennuksia. Ole hyvä ja odota..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Yhteysasetukset" >
 <!ENTITY setup.networkerror3 " tai jatka Songbirdin asennusta painamalla 'OK'." >
 <!ENTITY setup.metrics.optin "Salli anonyymin tiedon lähettäminen tavoistasi käyttää ohjelmaa." >
@@ -239,5 +239,9 @@ Tiedot ovat täysin yksilöimättömiä eikä henkilökohtaista tietoa kerätä 
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bittinopeus" >
 <!ENTITY menu.devices.nodevices "Ei laitteita" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Erweiterungen durchsuchen..." >
 <!ENTITY menu.devices "Geräte" >
 <!ENTITY menu.help "Hilfe" >
-<!ENTITY menu.help.topics "Hilfethemen..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Über Songbird..." >
 <!ENTITY menu.preferences "Einstellungen..." >
 <!ENTITY menu.extensions "Erweiterungen..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird Einstellungen" >
 <!ENTITY setup.retrievingxpilist "Lade Liste der Erweiterungen. Bitte warten..." >
-<!ENTITY setup.networkerror1 "Konnte Liste der Erweiterungen nicht laden. Bitte ändere deine" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Verbindungseinstellungen" >
 <!ENTITY setup.networkerror3 " oder mit der Installation von Songbird fortfahren durch Klick auf  'OK'." >
 <!ENTITY setup.metrics.optin "Anonyme Statistiken senden" >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "S" >
 <!ENTITY metadata.bitrate "Bitrate" >
 <!ENTITY menu.devices.nodevices "Noch keine Geräte" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

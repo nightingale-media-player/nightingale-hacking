@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Шукати послуги..." >
 <!ENTITY menu.devices "Пристрої" >
 <!ENTITY menu.help "Допомога" >
-<!ENTITY menu.help.topics "Теми допомоги..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Про Songbird..." >
 <!ENTITY menu.preferences "Налаштування..." >
 <!ENTITY menu.extensions "Розширення..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Версія" >
 <!ENTITY setup.title "Встановлення Songbird" >
 <!ENTITY setup.retrievingxpilist "Отримання переліку розширень. Будь ласка, зачекайте..." >
-<!ENTITY setup.networkerror1 "Не можу отримати перелік розширень. Будь ласка, перевірте ваші" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Налаштування мережі" >
 <!ENTITY setup.networkerror3 " або продовжуйте встановлення Songbird клацнувмш 'ОК'." >
 <!ENTITY setup.metrics.optin "Надсилати анонімну статистику користування." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "Наразі Жодних Приладів" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

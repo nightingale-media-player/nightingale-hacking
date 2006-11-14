@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Procházet služby..." >
 <!ENTITY menu.devices "Zařízení" >
 <!ENTITY menu.help "Nápověda" >
-<!ENTITY menu.help.topics "Témata nápovědy..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "O aplikaci Songbird..." >
 <!ENTITY menu.preferences "Možnosti..." >
 <!ENTITY menu.extensions "Rozšíření..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Verze" >
 <!ENTITY setup.title "Nastavení instalace aplikace Songbird" >
 <!ENTITY setup.retrievingxpilist "Získávání seznamu rozšíření. Prosím čekejte..." >
-<!ENTITY setup.networkerror1 "Nelze získat seznam rozšíření.  Prosím upravte" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "nastavení Vašeho připojení" >
 <!ENTITY setup.networkerror3 "nebo pokračujte klepnutím na OK." >
 <!ENTITY setup.metrics.optin "Odeslat anonymní uživatelské statistiky." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "K" >
 <!ENTITY metadata.bitrate "Datový tok" >
 <!ENTITY menu.devices.nodevices "Nenalezeno žádné zařízení" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

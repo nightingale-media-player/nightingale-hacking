@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "拡張機能の参照..." >
 <!ENTITY menu.devices "デバイス" >
 <!ENTITY menu.help "ヘルプ" >
-<!ENTITY menu.help.topics "ヘルプトピックス..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Songbird について..." >
 <!ENTITY menu.preferences "環境設定..." >
 <!ENTITY menu.extensions "拡張機能..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "バージョン" >
 <!ENTITY setup.title "Songbird セットアップオプション" >
 <!ENTITY setup.retrievingxpilist "拡張機能のリストを取得しています。お待ちください..." >
-<!ENTITY setup.networkerror1 "拡張機能のリストが受信できませんでした。" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "接続設定を変更してください。" >
 <!ENTITY setup.networkerror3 "'OK'をクリックするとSongbirdのセットアップを続けます。" >
 <!ENTITY setup.metrics.optin "匿名の使用統計情報を送信する。" >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "ビットレート" >
 <!ENTITY menu.devices.nodevices "デバイスがありません" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

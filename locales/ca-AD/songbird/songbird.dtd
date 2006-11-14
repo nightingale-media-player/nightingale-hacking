@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Explora les extensions..." >
 <!ENTITY menu.devices "Dispositius" >
 <!ENTITY menu.help "Ajuda" >
-<!ENTITY menu.help.topics "Consells de l'ajuda..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Quant al Songbird..." >
 <!ENTITY menu.preferences "Configuració..." >
 <!ENTITY menu.extensions "Extensions..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versió" >
 <!ENTITY setup.title "Configuració inicial del Songbird" >
 <!ENTITY setup.retrievingxpilist "S'està carregant la llista d'extensions. Espereu..." >
-<!ENTITY setup.networkerror1 "No s'ha pogut obtenir la llista d'extensions." >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Configuració de la vostra connexió" >
 <!ENTITY setup.networkerror3 " o premeu D'acord per continuar configurant el Songbird." >
 <!ENTITY setup.metrics.optin "Permet l'enviament de dades anònimes sobre l'us del Songbird." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "S" >
 <!ENTITY metadata.bitrate "Flux del bit" >
 <!ENTITY menu.devices.nodevices "Encara no hi han dispositius" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "浏览扩展..." >
 <!ENTITY menu.devices "设备" >
 <!ENTITY menu.help "帮助" >
-<!ENTITY menu.help.topics "帮助内容..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "关于Songbird..." >
 <!ENTITY menu.preferences "使用偏好..." >
 <!ENTITY menu.extensions "扩展..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "版本" >
 <!ENTITY setup.title "Songbird 设置选项" >
 <!ENTITY setup.retrievingxpilist "获取扩展列表，请等待..." >
-<!ENTITY setup.networkerror1 "无法获取扩展列表，请更改" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "连接设置" >
 <!ENTITY setup.networkerror3 "或者单击'OK'继续 Songbird 的安装." >
 <!ENTITY setup.metrics.optin "发送匿名使用数据." >
@@ -238,5 +238,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "比特率" >
 <!ENTITY menu.devices.nodevices "尚无设备" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

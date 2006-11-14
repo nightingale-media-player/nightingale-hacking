@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Diensten bekijken..." >
 <!ENTITY menu.devices "Apparaten" >
 <!ENTITY menu.help "Help" >
-<!ENTITY menu.help.topics "Help-onderwerpen..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Over Songbird..." >
 <!ENTITY menu.preferences "Opties..." >
 <!ENTITY menu.extensions "Extensies..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Versie" >
 <!ENTITY setup.title "Songbird setup opties" >
 <!ENTITY setup.retrievingxpilist "Verkrijgen van extensielijst. Even geduld..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Verbindingsinstellingen" >
 <!ENTITY setup.networkerror3 " of vervolg de Songbird setup door op 'OK' te klikken." >
 <!ENTITY setup.metrics.optin "Zend anonieme gebruiksgegevens." >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "Nog geen apparaten" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

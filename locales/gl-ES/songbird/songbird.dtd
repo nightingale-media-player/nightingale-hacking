@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "Procurar servizos..." >
 <!ENTITY menu.devices "Dispositivos" >
 <!ENTITY menu.help "Axuda" >
-<!ENTITY menu.help.topics "Temas de axuda..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "Sobre do Songbird..." >
 <!ENTITY menu.preferences "Preferences..." >
 <!ENTITY menu.extensions "Extensions..." >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "Version" >
 <!ENTITY setup.title "Songbird Setup Options" >
 <!ENTITY setup.retrievingxpilist "Retrieving extensions list. Please wait..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "Connection Settings" >
 <!ENTITY setup.networkerror3 " or continue Songbird Setup by clicking 'OK'." >
 <!ENTITY setup.metrics.optin "Send anonymous usage metrics." >
@@ -238,5 +238,9 @@
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "Non hai unidades
 " >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 

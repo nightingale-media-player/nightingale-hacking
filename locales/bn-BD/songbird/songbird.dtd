@@ -43,7 +43,7 @@
 <!ENTITY menu.services.browse "সংযোজনা পরিক্রমা" >
 <!ENTITY menu.devices "যন্ত্রসমূহ" >
 <!ENTITY menu.help "সহায়তা" >
-<!ENTITY menu.help.topics "সহায়তার বিষয়সমূহ..." >
+<!ENTITY menu.help.topics "Help Topics" >
 <!ENTITY menu.help.about "সঙ্গবার্ড সম্পর্কে..." >
 <!ENTITY menu.preferences "ব্যক্তিগত অগ্রাধিকারসমূহ..." >
 <!ENTITY menu.extensions "সংযোজনা-সমূহ" >
@@ -138,7 +138,7 @@
 <!ENTITY about.version "সংস্করণ" >
 <!ENTITY setup.title "সঙ্গবার্ড সেটআপ" >
 <!ENTITY setup.retrievingxpilist "সংযোজনা তালিকা গ্রহণ চলছে, অপেক্ষা করুণ..." >
-<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your" >
+<!ENTITY setup.networkerror1 "Unable to retrieve extensions list.  Please change your " >
 <!ENTITY setup.networkerror2 "কানেকশন সেটিংস" >
 <!ENTITY setup.networkerror3 "অথবা 'ঠিক আছে' বাটনে ক্লিক করে সঙ্গবার্ড সেটআপ অগ্রসর করা হোক" >
 <!ENTITY setup.metrics.optin "নাম-পরিচয় প্রদান ব্যতীত ব্যবহার-অভ্যাস প্রেরণ" >
@@ -237,5 +237,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 <!ENTITY metadata.bitrate "Bit Rate" >
 <!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.help.bugz "Report a Bug" >
+<!ENTITY menu.help.bugz.url "http://bugzilla.songbirdnest.com/" >
+<!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
+<!ENTITY menu.help.bugz.accesskey "B" >
 
 
