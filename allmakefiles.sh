@@ -248,6 +248,12 @@ MAKEFILES_update="
 update/Makefile
 "
 
+MAKEFILES_faceplateregistration="
+components/faceplateregistration/Makefile
+components/faceplateregistration/public/Makefile
+components/faceplateregistration/src/Makefile
+"
+
 #
 # Put it all together
 #
@@ -278,4 +284,5 @@ $MAKEFILES_playlistsource
 $MAKEFILES_servicesource
 $MAKEFILES_test_harness
 $MAKEFILES_update
+$MAKEFILES_faceplateregistration
 "
