@@ -1,0 +1,63 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/**       
+ * \file IWindowLayer.idl
+ * \brief Window layeringing service interface file
+ * This file contains the interface to the window layering service, used to
+ * set the transparency for an entire window.
+ */
+
+#include "nsISupports.idl"
+
+interface nsIDOMWindow;
+
+/**
+ * \interface sbIWindowLayer IWindowLayer.h
+ * \brief Window layering service interface
+ * This is an interface to the window layering service, used to set the
+ * opacity of an entire window
+ */
+[scriptable, uuid(4243fe6c-741d-11db-9694-00e08161165f)]
+interface sbIWindowLayer : nsISupports
+{
+  /**
+   * \brief Set the window opacity
+   * This method sets the opacity for an entire window to a particular value
+   * \param aDOMWindow The xul window on which to operate
+   * \param alpha The opacity value (0 = fully transparent, 255 = fully opaque)
+   * \sa getOpacity
+   */
+  void setOpacity(in nsISupports aWindow, in PRUInt32 alpha);
+
+  /**
+   * \brief Returns the opacity of a window
+   * \param aWindow The xul window to query for opacity
+   * \return The opacity of the window
+   * \sa setOpacity
+   */
+  PRUInt32 getOpacity(in nsISupports aWindow);
+};

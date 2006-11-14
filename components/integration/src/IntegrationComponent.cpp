@@ -39,6 +39,7 @@
 #include "WindowResizeHook.h"
 #include "WindowRegion.h"
 #include "GlobalHotkeys.h"
+#include "WindowLayer.h"
 #endif
 
 
@@ -53,6 +54,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
+NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
 #endif
 
 static nsModuleComponentInfo sbIntegration[] =
@@ -100,6 +102,13 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_GLOBALHOTKEYS_CID,
     SONGBIRD_GLOBALHOTKEYS_CONTRACTID,
     CGlobalHotkeysConstructor
+  },
+
+  {
+    SONGBIRD_WINDOWLAYER_CLASSNAME,
+    SONGBIRD_WINDOWLAYER_CID,
+    SONGBIRD_WINDOWLAYER_CONTRACTID,
+    CWindowLayerConstructor
   },
 #endif
 };
