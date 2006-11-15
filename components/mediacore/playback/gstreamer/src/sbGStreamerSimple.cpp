@@ -160,7 +160,7 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   GstElement *audioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
   g_object_set(mPlay, "audio-sink", audioSink, NULL);
 
-  mVideoSink = gst_element_factory_make("xvimagesink", "video-sink");
+  mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
   if (mVideoSink == NULL) {
       mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
   }
