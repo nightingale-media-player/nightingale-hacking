@@ -112,20 +112,20 @@ locales.jar:
 % locale  browser   is     @LOCALE_LOCATION@/locale/is/browser/
 % locale  songbird  ta-IN  @LOCALE_LOCATION@/locale/ta-IN/songbird/
 % locale  browser   ta-IN  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  es-UY  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   es-UY  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  haw  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   haw  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  hy  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   hy  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  es-PR  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   es-PR  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  en-CA  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   en-CA  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  dsb  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   dsb  @LOCALE_LOCATION@/locale/ta-IN/browser/
-% locale  songbird  de-CH  @LOCALE_LOCATION@/locale/ta-IN/songbird/
-% locale  browser   de-CH  @LOCALE_LOCATION@/locale/ta-IN/browser/
+% locale  songbird  es-UY  @LOCALE_LOCATION@/locale/es-UY/songbird/
+% locale  browser   es-UY  @LOCALE_LOCATION@/locale/es-UY/browser/
+% locale  songbird  haw  @LOCALE_LOCATION@/locale/haw/songbird/
+% locale  browser   haw  @LOCALE_LOCATION@/locale/haw/browser/
+% locale  songbird  hy  @LOCALE_LOCATION@/locale/hy/songbird/
+% locale  browser   hy  @LOCALE_LOCATION@/locale/hy/browser/
+% locale  songbird  es-PR  @LOCALE_LOCATION@/locale/es-PR/songbird/
+% locale  browser   es-PR  @LOCALE_LOCATION@/locale/es-PR/browser/
+% locale  songbird  en-CA  @LOCALE_LOCATION@/locale/en-CA/songbird/
+% locale  browser   en-CA  @LOCALE_LOCATION@/locale/en-CA/browser/
+% locale  songbird  dsb  @LOCALE_LOCATION@/locale/dsb/songbird/
+% locale  browser   dsb  @LOCALE_LOCATION@/locale/dsb/browser/
+% locale  songbird  de-CH  @LOCALE_LOCATION@/locale/de-CH/songbird/
+% locale  browser   de-CH  @LOCALE_LOCATION@/locale/de-CH/browser/
   locale/branding/brand.dtd                               (branding/brand.dtd)
   locale/branding/brand.properties                        (branding/brand.properties)
   locale/bg-BG/songbird/songbird.dtd            (bg-BG/songbird/songbird.dtd)
