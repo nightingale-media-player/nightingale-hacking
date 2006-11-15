@@ -44,13 +44,17 @@
  
 function CoreVLC()
 {
+  this._startTime = 0;
+  this._lastCalcTime = 0;
+  this._fileTime = 0;
+  
   this._object = null;
   this._id = "";
   this._muted = false;
   this._url = "";
   this._paused = false;
 
-  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "m4a", "m4v",
+  this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "aac", "m4a", "m4v",
                               "wma", "wmv", "asx", "asf", "avi",  "mov", "mpg",
                               "mp4", "mp2", "mpeg", "mpga", "mpega", "mkv",
                               "mka", "ogm", "mpe", "qt"];
@@ -85,6 +89,12 @@ CoreVLC.prototype.playURL = function (aURL)
 {
   this._verifyObject();
 
+  this._fileTime = 0;
+  this._lastCalcTime = 0;
+  this._startTime = 0;
+
+  this.LOG("theURL: " + aURL);
+
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
   
@@ -103,7 +113,7 @@ CoreVLC.prototype.playURL = function (aURL)
     if (user_agent.indexOf("Windows") != -1)
       platform = "Windows_NT";
   }
-
+  
   //Fix paths under win32 for VLC.
   if (platform == "Windows_NT") {
     var localFileURI = (Components.classes["@mozilla.org/network/simple-uri;1"]).createInstance(Components.interfaces.nsIURI);
@@ -113,13 +123,20 @@ CoreVLC.prototype.playURL = function (aURL)
   
     if (localFileURI.scheme == "file") {
       this._url = localFileURI.path.slice(3);
-      this._url = this._url.replace(/\//g, '\\');
+      if(this._url.search(/^\/\//) == 0)
+         this._url = "smb://" + this._url;
+      else
+        this._url = this._url.replace(/\//g, '\\');
     }
   }
 
   this._object.playlist.clear();
   var item = this._object.playlist.add(this._url);
   this._object.playlist.playItem(item);
+  
+  this._lastCalcTime = new Date();
+  this._startTime = new Date();
+  
   dump("\ncoreVLC playing " + this._url + " as item " + item + "\n");
   
   if (this._object.playlist.isPlaying) 
@@ -153,6 +170,10 @@ CoreVLC.prototype.stop = function()
     this._object.playlist.stop();
 
   this._paused = false;
+  this._fileTime = 0;
+  this._lastCalcTime = 0;
+  this._startTime = 0;
+
   return this._object.playlist.isPlaying == false;
 };
   
@@ -168,8 +189,7 @@ CoreVLC.prototype.pause = function()
     return false;
     
   this._paused = true;
-  this.LOG("Pause!!!");
-  
+ 
   return true;
 };
 
@@ -247,6 +267,9 @@ CoreVLC.prototype.getLength = function()
 	  || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
     return null;
 
+  if(this._fileTime)
+    return this._fileTime;
+    
   return this._object.input.length;
 };
 
@@ -257,8 +280,31 @@ CoreVLC.prototype.getPosition = function()
   if (this._object.playlist.itemCount <= 0 
 	  || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
     return null;
-
-  return this._object.input.time;
+  
+  var currentPos = this._object.input.position;
+  var currentPosTime = this._object.input.time;
+  
+  if(currentPos < 1 && currentPosTime == 0)
+  {
+    var currentTime = new Date();
+    var deltaTime = currentTime.getTime() - this._startTime.getTime();
+    
+    if( currentPos > 0  && (currentTime.getTime() - this._lastCalcTime.getTime() > 5000))
+    {
+      var posMul = 1 / currentPos;
+      this._fileTime = posMul * deltaTime;
+      this._lastCalcTime = currentTime;
+    }
+    
+    currentPos = deltaTime;
+  }
+  else
+  {
+    this._fileTime = 0;
+    currentPos = currentPosTime;
+  }
+  
+  return currentPos;
 };
 
 CoreVLC.prototype.setPosition = function(position) 
