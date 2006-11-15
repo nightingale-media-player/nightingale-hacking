@@ -592,7 +592,9 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
 
               if(!seenLength)
               {
-                strQuery.AppendLiteral(", length=\"\" ");
+                if (curValue > 1)
+                  strQuery.AppendLiteral(", ");
+                strQuery.AppendLiteral("length=\"\" ");
               }
 
               strQuery.AppendLiteral(" WHERE uuid = \"");
@@ -943,4 +945,5 @@ sbMetadataBackscanner::Observe(nsISupports *aSubject, const char *aTopic,
   }
   return NS_OK;
 }
+
 
