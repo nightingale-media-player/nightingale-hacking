@@ -53,8 +53,21 @@
 //-----------------------------------------------------------------------------
 NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 {
-  NATIVEWINDOW wnd = NULL;
-  
+  NATIVEWINDOW wnd;
+  nsIWidget *widget = NativeWindowFromNode::getWidget(window);
+  if (!widget) return NULL;
+
+#ifdef XP_WIN
+  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_WIDGET));
+#elif defined(XP_MACOSX)
+  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_DISPLAY)); 
+#endif
+
+  return wnd;
+} // NativeWindowFromNode::get
+
+nsIWidget *NativeWindowFromNode::getWidget(nsISupports *window)
+{
   nsCOMPtr<nsIDOMDocumentView> domDocumentView(do_QueryInterface(window));
   if (!domDocumentView) return NULL;
 
@@ -75,14 +88,7 @@ NATIVEWINDOW NativeWindowFromNode::get(nsISupports *window)
 
   nsCOMPtr<nsIWidget> widget; 
   baseWindow->GetMainWidget(getter_AddRefs(widget)); 
-  if (!widget) return NULL;
 
-#ifdef XP_WIN
-  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_WIDGET));
-#elif defined(XP_MACOSX)
-  wnd = reinterpret_cast<NATIVEWINDOW>(widget->GetNativeData(NS_NATIVE_DISPLAY)); 
-#endif
-
-  return wnd;
+  return widget;
 } // NativeWindowFromNode::get
 

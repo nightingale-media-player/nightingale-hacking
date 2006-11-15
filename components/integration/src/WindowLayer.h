@@ -47,8 +47,22 @@ namespace std
 
 #include "IWindowLayer.h"
 #include <list>
+#include <xpcom/nsClassHashtable.h>
 
 #include "../NativeWindowFromNode.h"
+
+//#define MOZTRANSPARENCY // define this on windows to use the mozilla interfaces for implementing transparency regardless of platform
+
+#if !defined(XP_WIN) || defined(MOZTRANSPARENCY)
+
+#include "nsIWidget.h"
+
+struct sbLayerInfo
+{
+  nsIWidget *widget;
+  PRUint32 alpha;
+};
+#endif
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWLAYER_CONTRACTID                  \
@@ -73,8 +87,10 @@ public:
   NS_DECL_SBIWINDOWLAYER
   
 protected:
-#ifdef XP_WIN
+#if defined(XP_WIN) && !defined(MOZTRANSPARENCY)
   HMODULE hUser32;
+#else
+  nsClassHashtable<nsISupportsHashKey, sbLayerInfo> mLayeredWindows;
 #endif
 
 };

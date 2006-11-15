@@ -50,12 +50,14 @@
 // INCLUDES ===================================================================
 
 class nsISupports;
+class nsIWidget;
 
 // CLASSES ====================================================================
 class NativeWindowFromNode 
 {
 public:
   static NATIVEWINDOW get(nsISupports *window);  
+  static nsIWidget *getWidget(nsISupports *window);  
 
 protected:
 };
