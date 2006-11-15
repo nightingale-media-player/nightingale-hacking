@@ -80,6 +80,7 @@ CPP_SRCS = MultiMonitor.cpp \
            ../NativeWindowFromNode.cpp \
            ../WindowCloak.cpp \
            ../WindowDragger.cpp \
+           ../WindowLayer.cpp \
            WindowMinMax.cpp \
            WindowMinMaxSubclass.cpp \
            WindowRegion.cpp \

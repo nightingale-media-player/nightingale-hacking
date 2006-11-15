@@ -56,6 +56,21 @@
 //=============================================================================
 
 #ifdef XP_WIN
+
+char FirstDriveFromMask (ULONG unitmask)
+{
+  char i;
+
+  for (i = 0; i < 26; ++i)
+  {
+    if (unitmask & 0x1)
+      break;
+    unitmask = unitmask >> 1;
+  }
+
+  return (i + 'A');
+}
+
 //-----------------------------------------------------------------------------
 static LRESULT CALLBACK WindowMinMaxSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -302,6 +317,17 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
       rv = deviceManager->HasDeviceForCategory(usbCategory, &hasUSBDevice);
       if (NS_SUCCEEDED(rv) && hasUSBDevice)
       {
+        nsCOMPtr<sbIDeviceBase> baseDevice;
+        rv = deviceManager->GetDeviceByCategory(usbCategory,
+          getter_AddRefs(baseDevice));
+        if (NS_FAILED(rv))
+          break;
+
+        nsCOMPtr<sbIUSBMassStorageDevice> usbDevice =
+          do_QueryInterface(baseDevice, &rv);
+        if (NS_FAILED(rv))
+          break;
+ 
         // Bail if we don't care about the message
         if (DBT_DEVICEARRIVAL != wParam &&
             DBT_DEVICEREMOVECOMPLETE != wParam)
@@ -310,6 +336,22 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         nsAutoString strDeviceName, strDeviceGUID;
         GUID deviceGUID = GUID_NULL;
         PDEV_BROADCAST_HDR pBroadcastHeader = (PDEV_BROADCAST_HDR) lParam;
+
+        if (pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_VOLUME)
+        {
+          PDEV_BROADCAST_VOLUME pDevBroadcastVolume = 
+            (PDEV_BROADCAST_VOLUME) pBroadcastHeader;
+
+          if(pDevBroadcastVolume->dbcv_devicetype == DBT_DEVTYP_VOLUME)
+          {
+            PRBool retVal = PR_FALSE;
+            wchar_t wszBuf[8] = {0};
+            wsprintf(wszBuf, L"%c:\\",FirstDriveFromMask(pDevBroadcastVolume->dbcv_unitmask));
+            
+            nsDependentString strMountPoint((PRUnichar *)wszBuf);
+            rv = usbDevice->OnUSBDeviceMounted(strMountPoint, &retVal);
+          }
+        }
 
         if (pBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
         {
@@ -328,17 +370,6 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
           StringFromGUID2(deviceGUID, wszGUID, 63);
           strDeviceGUID.Assign(wszGUID);
 
-          nsCOMPtr<sbIDeviceBase> baseDevice;
-          rv = deviceManager->GetDeviceByCategory(usbCategory,
-                                                  getter_AddRefs(baseDevice));
-          if (NS_FAILED(rv))
-            break;
-
-          nsCOMPtr<sbIUSBMassStorageDevice> usbDevice =
-            do_QueryInterface(baseDevice, &rv);
-          if (NS_FAILED(rv))
-            break;
-          
           PRBool retVal;
           PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
           rv = usbDevice->OnUSBDeviceEvent(mediaInserted, strDeviceName,
