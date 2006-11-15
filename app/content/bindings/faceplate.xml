@@ -220,7 +220,6 @@
           this._updatePage();
           var curpage = this.getCurPane();
           if (curpage < 2) this.laststatic = curpage;
-          dump("last static = " + this.laststatic + "\n");
          ]]>
         </body>
       </method>
