@@ -878,6 +878,7 @@ PlaylistPlayback.prototype = {
       this._stopPlayerLoop();
       this._stopNextLoop = false; // If we make it here, we don't need this
     }
+    this._playingVideo.boolValue = false;
     return true;
   },
 
@@ -1458,9 +1459,11 @@ PlaylistPlayback.prototype = {
       
       // If we think we want to play a track, do so.
       LOG( "next index: " + next_index );
-      if ( next_index != -1 ) 
+      if ( next_index != -1 ) {
         this.playRef( cur_ref, next_index );
-        
+      } else {
+        this.stop();
+      }        
     }
   },
   
