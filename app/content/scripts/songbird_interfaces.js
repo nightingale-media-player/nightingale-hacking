@@ -42,6 +42,7 @@ const sbIPlaylistReaderManager = new Components.Constructor("@songbirdnest.com/S
 const sbIPlaylistsource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=playlist", "sbIPlaylistsource");
 const sbISimplePlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SimplePlaylist;1", "sbISimplePlaylist");
 const sbISmartPlaylist = new Components.Constructor("@songbirdnest.com/Songbird/SmartPlaylist;1", "sbISmartPlaylist");
+const sbIServicesource = new Components.Constructor("@mozilla.org/rdf/datasource;1?name=Servicesource", "sbIServicesource");
 
 // XXXredfive - this goes in the sbWindowUtils.js file when I get around to making it.
 var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);

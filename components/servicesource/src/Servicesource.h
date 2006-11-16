@@ -32,12 +32,13 @@
 #ifndef __SERVICE_SOURCE_H__
 #define __SERVICE_SOURCE_H__
 
-#include "nsISupportsImpl.h"
-#include "nsISupportsUtils.h"
-#include "nsIStringBundle.h"
-#include "nsIRDFLiteral.h"
-#include "sbIServicesource.h"
+#include <nsISupportsImpl.h>
+#include <nsISupportsUtils.h>
+#include <nsIStringBundle.h>
+#include <nsIRDFLiteral.h>
+#include <nsString.h>
 
+#include "sbIServicesource.h"
 #include "sbIDatabaseQuery.h"
 
 #include <map>
@@ -114,7 +115,15 @@ private:
 
   class resmap_t : public std::map< nsIRDFResource *, int > {};
   resmap_t m_PlaylistMap;
+
+
+private:
+  class commandmap_t : public std::map<nsString,
+    nsCOMPtr<sbIPlaylistCommands> > {};
+  commandmap_t g_CommandMap;
+
 };
 
 #endif // __SERVICE_SOURCE_H__
+
 

@@ -73,6 +73,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistsource", "component
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "servicesource", "components\servicesource\servicesource.vcproj", "{E9C17F59-5D09-496B-A524-170FA0908892}"
 	ProjectSection(ProjectDependencies) = postProject
+		{9B1EB104-44C7-4504-B037-CC275C8DF27A} = {9B1EB104-44C7-4504-B037-CC275C8DF27A}
 		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
 	EndProjectSection
 EndProject

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 /*
 //
@@ -26,6 +26,8 @@
 //
  */
 -->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -100,6 +102,28 @@
 
         </xul:template>
       </xul:tree>
+
+      <xul:popupset>
+        <!-- PLAYLIST POPUP FOR THE SERVICE PANE PLAYLISTS -->
+        <xul:popup id="service_popup_playlist" class="sb_faceplate" oncommand="onServiceTreeDefaultCommand( event );">
+          <xul:menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
+          <xul:menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
+        </xul:popup>
+        <xul:popup id="service_popup_smart" class="sb_faceplate" oncommand="onServiceTreeDefaultCommand( event );">
+          <xul:menuitem id="playlist_context_smartedit" label="&menu.edit;"/>
+          <xul:menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
+          <xul:menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
+        </xul:popup>
+        <xul:popup id="service_popup_none" class="sb_faceplate" oncommand="onServiceTreeDefaultCommand( event );">
+          <xul:menuitem id="service_popup_new" label="&menu.file.new;"/>
+          <xul:menuitem id="service_popup_new_smart" label="&menu.file.smart;"/>
+          <xul:menuitem id="service_popup_new_remote" label="&menu.file.remote;"/>
+        </xul:popup>
+        <xul:popup id="service_popup_commands" sid="service_popup_commands" oncommand="onServiceTreeCommand( event );">
+          <xul:menuitem id="dummy" label="----------------------"/>
+        </xul:popup>
+      </xul:popupset>
+
     </content>
 
   <implementation type="application/x-javascript" implements="nsIXULBuilderListener" name="service_tree_binding">
@@ -110,6 +134,7 @@
     <field name="urlFromServicePane">false</field>
     <field name="ignoreOnSelect">false</field>
     <field name="onPlaylistHide">null</field>
+    <field name="onPlaylistDefaultCommand">null</field>
 
     <!-- CONSTRUCTOR/DESTRUCTOR -->
     
@@ -119,10 +144,11 @@
         try {
           this.strid = this.tree.parentNode.id;
           this.currentSelection = "";
-          this.popup_playlist = null;
-          this.popup_smartplaylist = null;
+          this.popup_playlist = document.getAnonymousElementByAttribute(this, "id", "service_popup_playlist");
+          this.popup_smartplaylist = document.getAnonymousElementByAttribute(this, "id", "service_popup_smart");
           this.popup_default = null;
-          this.popup_none = null;
+          this.popup_none = document.getAnonymousElementByAttribute(this, "id", "service_popup_none");
+          this.popup_commands = document.getAnonymousElementByAttribute(this, "sid", "service_popup_commands");
 
           // Load the javascript we want to use
           var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -130,6 +156,14 @@
           jsLoader.loadSubScript("chrome://global/content/nsTransferable.js", this);
           jsLoader.loadSubScript("chrome://songbird/content/scripts/dragAndDrop.js", this);
           this.tree.builder.addListener( this );
+
+          // Load up the string bundle
+          var src = "chrome://songbird/locale/songbird.properties";
+          var stringBundleService =
+              Components.classes["@mozilla.org/intl/stringbundle;1"]
+              .getService(Components.interfaces.nsIStringBundleService);
+          this.stringbundle = stringBundleService.createBundle( src );
+
         }
         catch (err) {
           alert( "servicetree.xml - constructor - " + err );
@@ -147,6 +181,9 @@
         }
       ]]>
     </destructor>
+
+    <field name="menuitems">new Array();</field>
+    <field name="stringbundle">null</field>
     
     <!-- Init -->
     
@@ -450,34 +487,6 @@
     
     <!-- Context menu -->
     
-    <method name="setPlaylistPopup">
-      <parameter name="popup"/>
-      <body>
-        this.popup_playlist = popup;
-      </body>
-    </method>
-    
-    <method name="setSmartPlaylistPopup">
-      <parameter name="popup"/>
-      <body>
-        this.popup_smartplaylist = popup;
-      </body>
-    </method>
-    
-    <method name="setDefaultPopup">
-      <parameter name="popup"/>
-      <body>
-        this.popup_default = popup;
-      </body>
-    </method>
-    
-    <method name="setNotAnItemPopup">
-      <parameter name="popup"/>
-      <body>
-        this.popup_none = popup;
-      </body>
-    </method>
-    
     <method name="onServiceTreeContext">
       <parameter name="theEvent"/>
       <body>
@@ -536,8 +545,8 @@
               
               // For now, make a set of short-circuits to protect
               //   our special playlists
-              if ( table == WEB_PLAYLIST_TABLE && guid == WEB_PLAYLIST_CONTEXT )
-                return;
+              //if ( table == WEB_PLAYLIST_TABLE && guid == WEB_PLAYLIST_CONTEXT )
+              //  return;
               
               if ( type == "transfer" && base_type == "simple" )
                 return;
@@ -545,13 +554,22 @@
               // No context menu for the download service
               if ( guid == "downloadDB" )
                 return;
-
+                
               var theServiceTreePlaylistPopup = this.popup_playlist;
               if ( base_type == "smart" )
                 theServiceTreePlaylistPopup = this.popup_smartplaylist;
 
               if ( base_type == "dynamic" )
                 theServiceTreePlaylistPopup = this.popup_smartplaylist;
+
+              var servicesource = new sbIServicesource();
+              if (servicesource) {
+                var popup = servicesource.getPlaylistCommands(guid, table, type);
+                if (popup) {
+                  this.refreshCommands(popup);
+                  theServiceTreePlaylistPopup = this.popup_commands;
+                }
+              }
 
               theServiceTreePlaylistPopup.setAttribute( "sb_table", table );
               theServiceTreePlaylistPopup.setAttribute( "sb_guid", guid );
@@ -634,7 +652,116 @@
         }
       </body>
     </method>
+    
+    <method name="refreshCommands">
+      <parameter name="commands"/>
+      <body>
+       <![CDATA[
 
+        this.menuitems.length = 0; // clear the array??
+        this.commands = commands;
+        var popup = this.popup_commands;
+        // stooopid
+        while (popup.firstChild && popup.firstChild.nextSibling) popup.removeChild(popup.firstChild.nextSibling);
+        if ( this.commands )
+        {
+          // Once we get here, tell the commands who we are.
+          this.commands.setPlaylist( this );
+          
+          // And make all the new stuff
+          var num = this.commands.getNumCommands();
+          for ( var i = 0; i < num; i++ )
+          {
+            var menuitem;
+
+            // What id?
+            var obj_id = this.commands.getCommandId( i );
+            
+            var menuitem_type = "menuitem";
+            
+            if ( obj_id == "*separator*" )
+            {
+              menuitem_type = "menuseparator";
+            }
+          
+            // Create a menuitem
+            menuitem = document.createElement( menuitem_type );
+            menuitem.setAttribute( "id", obj_id );
+            menuitem.setAttribute( "sbtype", "command" );
+            menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
+            
+            // No label unless you have a label
+            var cmd_text = this.commands.getCommandText( i );
+            if ( cmd_text.length > 0 )
+            {
+              if ( cmd_text[ 0 ] == "&" )
+              {
+                try
+                {
+                  cmd_text = this.stringbundle.GetStringFromName( cmd_text.substr( 1, cmd_text.length ) );
+                }
+                catch( err )
+                {
+                  dump("error playlist.xml refreshCommands() - getStringFromName: " + err + "\n");
+                }
+              }
+              menuitem.setAttribute( "label", cmd_text );
+            }
+
+            if ( this.commands.getCommandEnabled( i ) )
+            {
+              menuitem.setAttribute( "disabled", "false" );
+            }
+            else
+            {
+              menuitem.setAttribute( "disabled", "true" );
+            }
+            
+            // Add them to the parents
+            this.menuitems.push( menuitem );
+            popup.appendChild( menuitem );
+          }
+        }
+       ]]>
+      </body>
+    </method>
+
+    <method name="onServiceTreeDefaultCommand">
+      <parameter name="evt"/>
+      <body>
+        // see songbird_hack.js for onPlaylistDefaultCommand()
+        if (this.onPlaylistDefaultCommand)
+          this.onPlaylistDefaultCommand(evt);
+      </body>
+    </method>
+
+    <method name="onServiceTreeCommand">
+      <parameter name="evt"/>
+      <body>
+       <![CDATA[
+          try
+          {
+            if ( ! evt.target )
+            {
+              return;
+            }
+            if ( evt.target.getAttribute( "sbtype" ) == "command" )
+            {
+              if ( this.commands ) // I hope so!
+              {
+                this.commands.onCommand( evt );
+              }
+            }
+          }
+          catch( err )
+          {
+            dump( "servicetree.xml - onServiceTreeCommand - " + err + "\n");
+          }
+          evt.stopPropagation();
+          evt.preventDefault();
+       ]]>
+      </body>
+    </method>
 
    </implementation>
  

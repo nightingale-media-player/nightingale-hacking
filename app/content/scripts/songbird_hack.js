@@ -331,6 +331,20 @@ function SBInitialize()
   try
   {
     onWindowLoadSizeAndPosition();
+
+    // because the main window can change its minmax size from session to session (ie, long items in the service tree), 
+    // we need to determine whether the loaded size is within the current minmax. If not, tweak the size by the difference
+    /*
+    var w = document.documentElement.boxObject.width;
+    var h = document.documentElement.boxObject.height;
+    var diffw = document.getElementById('window_parent').boxObject.width - window.innerWidth;
+    var diffh = document.getElementById('window_parent').boxObject.height - window.innerHeight;
+    // todo: see if that detects the situation
+    dump("diffw = " + diffw + "\n");
+    dump("diffh = " + diffh + "\n");
+    // todo: resize the window accordingly (same method as window_utils.js: 448 to 455)
+    */
+    
     setMinMaxCallback();
     SBInitMouseWheel();
     initJumpToFileHotkey();
@@ -378,11 +392,9 @@ function SBInitialize()
     
     var theServiceTree = document.getElementById( 'frame_servicetree' );
     theServiceTree.init(theMainPane);
-    theServiceTree.setPlaylistPopup(document.getElementById( "service_popup_playlist" ));
-    theServiceTree.setSmartPlaylistPopup(document.getElementById( "service_popup_smart" ));
-    //theServiceTree.setDefaultPopup(document.getElementById( "?" ));
-    theServiceTree.setNotAnItemPopup(document.getElementById( "service_popup_none" ));
     theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
+    theServiceTree.onPlaylistDefaultCommand = onServiceTreeCommand;
+    
     document.__THESERVICETREE__ = theServiceTree;
 
     document.__SEARCHWIDGET__ = document.getElementById( "search_widget" );
@@ -500,7 +512,6 @@ function SBUninitialize()
   theWebPlaylist = null;
   theWebPlaylistQuery = null;
   theNumPlaylistItemsRemote = null;
-
 }
 
 //
@@ -529,6 +540,7 @@ function switchFeathers(aFeathersName)
   // Open the new window
   var chromeFeatures =
     "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no";
+    
   var newMainWin = window.open(mainWinURL, "", chromeFeatures);
   newMainWin.focus();
 

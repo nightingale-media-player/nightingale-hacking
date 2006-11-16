@@ -309,21 +309,6 @@
                 <popup id="service_edit_popup" class="sb_faceplate" ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
                   <textbox id="service_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
                 </popup>
-                <!-- PLAYLIST POPUP FOR THE SERVICE PANE PLAYLISTS -->
-                <popup id="service_popup_playlist" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
-                  <menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
-                  <menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
-                </popup>
-                <popup id="service_popup_smart" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
-                  <menuitem id="playlist_context_smartedit" label="&menu.edit;"/>
-                  <menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
-                  <menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
-                </popup>
-                <popup id="service_popup_none" class="sb_faceplate" oncommand="onServiceTreeCommand( event );">
-                  <menuitem id="service_popup_new" label="&menu.file.new;"/>
-                  <menuitem id="service_popup_new_smart" label="&menu.file.smart;"/>
-                  <menuitem id="service_popup_new_remote" label="&menu.file.remote;"/>
-                </popup>
               </popupset>
             </hbox>
 

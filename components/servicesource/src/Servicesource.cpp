@@ -1060,4 +1060,69 @@ CServicesource::EndUpdateBatch()
   return NS_OK;
 }
 
+/*
+
+These are copied straight from the Playlistsource
+
+*/
+NS_IMETHODIMP
+CServicesource::RegisterPlaylistCommands(const nsAString     &aContextGUID,
+                                           const nsAString     &aTableName,
+                                           const nsAString     &aPlaylistType,
+                                           sbIPlaylistCommands *aCommandObj)
+{
+  LOG(("sbPlaylistsource::RegisterPlaylistCommands"));
+  NS_ENSURE_ARG_POINTER(aCommandObj);
+
+  METHOD_SHORTCIRCUIT;
+
+  // Yes, I'm copying strings 1 time too many here.  I can live with that.
+  nsString key(aContextGUID);
+  nsString type(aPlaylistType);
+
+  // Hah, uh, NO.
+  if (key.Equals(NS_LITERAL_STRING("songbird")))
+    return NS_OK;
+
+  key += aTableName;
+
+  g_CommandMap[type] = aCommandObj;
+  g_CommandMap[key] = aCommandObj;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+CServicesource::GetPlaylistCommands(const nsAString      &aContextGUID,
+                                      const nsAString      &aTableName,
+                                      const nsAString      &aPlaylistType,
+                                      sbIPlaylistCommands **_retval)
+{
+  LOG(("sbPlaylistsource::GetPlaylistCommands"));
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  METHOD_SHORTCIRCUIT;
+
+
+  nsString key(aContextGUID);
+  nsString type(aPlaylistType);
+
+  key += aTableName;
+
+  // "type" takes precedence over specific table names
+  commandmap_t::iterator c = g_CommandMap.find(type);
+  if (c != g_CommandMap.end()) {
+    (*c).second->Duplicate(_retval);
+    return NS_OK;
+  }
+
+  c = g_CommandMap.find(key);
+  if (c != g_CommandMap.end()) {
+    (*c).second->Duplicate(_retval);
+    return NS_OK;
+  }
+
+  *_retval = nsnull;
+  return NS_OK;
+}
 
