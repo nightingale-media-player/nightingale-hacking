@@ -142,6 +142,7 @@ function onBkgDown( theEvent, popup )
     case "li":
     case "#text":
     case "textarea":
+    case "faceplate":
       return;
   }
 //  alert(theEvent.target.nodeName);
