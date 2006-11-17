@@ -1,0 +1,13 @@
+classic.jar:
+#ifdef USING_FLAT_JARS
+% skin  songbird  classic/plucked/0.1  classic/feathers/classic/songbird/
+#else
+% skin  songbird  classic/plucked/0.1  jar:classic.jar!/feathers/classic/songbird/
+#endif
+  feathers/classic/songbird/bindings.xml                                 (bindings.xml)
+  feathers/classic/songbird/songbird.css                                 (songbird.css)
+  feathers/classic/songbird/mainwin_colors.css                           (mainwin_colors.css)
+  feathers/classic/songbird/mainwin_images.css                           (mainwin_images.css)
+  feathers/classic/songbird/mini.css                                     (mini.css)
+  feathers/classic/songbird/dialog_colors.css                            (dialog_colors.css)    
+

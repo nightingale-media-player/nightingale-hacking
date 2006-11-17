@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="classic"
+	ProjectGUID="{061CF388-0AF1-45BB-9CE0-12139E6CFAC0}"
+	RootNamespace="classic"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="10"
+			CharacterSet="2">
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\
+mkdir $(SolutionDir)dist\xulrunner\extensions\classic@songbirdnest.com
+echo $(ProjectExt) &gt; _EXCLUDE
+echo Release\ &gt;&gt; _EXCLUDE
+echo obj\ &gt;&gt; _EXCLUDE
+echo Makefile.in &gt;&gt; _EXCLUDE
+echo jar.mn.in &gt;&gt; _EXCLUDE
+echo install.rdf &gt;&gt; _EXCLUDE
+echo _EXCLUDE &gt;&gt; _EXCLUDE
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\
+copy /y $(InputDir)install.rdf $(SolutionDir)dist\xulrunner\extensions\classic@songbirdnest.com
+echo. &gt; $(SolutionDir)dist\xulrunner\extensions\classic@songbirdnest.com\chrome.manifest
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
+"
+				ExcludedFromBuild="FALSE"/>
+			<Tool
+				Name="VCPreBuildEventTool"
+				ExcludedFromBuild="TRUE"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="obj\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
+			ConfigurationType="10"
+			CharacterSet="2">
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir $(SolutionDir)dist\chrome\feathers\
+mkdir $(SolutionDir)dist\xulrunner\extensions\classic@songbirdnest.com
+echo $(ProjectExt) &gt; _EXCLUDE
+echo Release\ &gt;&gt; _EXCLUDE
+echo obj\ &gt;&gt; _EXCLUDE
+echo Makefile.in &gt;&gt; _EXCLUDE
+echo jar.mn.in &gt;&gt; _EXCLUDE
+echo install.rdf &gt;&gt; _EXCLUDE
+echo _EXCLUDE &gt;&gt; _EXCLUDE
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\feathers\$(SafeInputName)\
+copy /y $(InputDir)install.rdf $(SolutionDir)dist\xulrunner\extensions\classic@songbirdnest.com
+echo. &gt; $(SolutionDir)dist\xulrunner\extensions\classic@songbirdnest.com\chrome.manifest
+echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
+"
+				ExcludedFromBuild="FALSE"/>
+			<Tool
+				Name="VCPreBuildEventTool"
+				ExcludedFromBuild="TRUE"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\bindings.xml">
+		</File>
+		<File
+			RelativePath=".\dialog_colors.css">
+		</File>
+		<File
+			RelativePath=".\install.rdf">
+		</File>
+		<File
+			RelativePath=".\jar.mn.in">
+		</File>
+		<File
+			RelativePath=".\mainwin_colors.css">
+		</File>
+		<File
+			RelativePath=".\mainwin_images.css">
+		</File>
+		<File
+			RelativePath=".\mini.css">
+		</File>
+		<File
+			RelativePath=".\songbird.css">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
