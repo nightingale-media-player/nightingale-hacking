@@ -3,6 +3,7 @@ locale  branding  en-US             locales/branding/
 skin    songbird  rubberducky/0.2   feathers/rubberducky/skin/
 content rubberducky                 feathers/rubberducky/content/
 skin    songbird  dove/0.1          feathers/dove/
+skin    songbird  classic/plucked/0.1          feathers/classic/
 
 locale	songbird	uk-UA	        locales/uk-UA/songbird/
 locale	browser 	uk-UA	        locales/uk-UA/browser/
