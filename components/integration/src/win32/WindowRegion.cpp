@@ -54,10 +54,16 @@ CWindowRegion::~CWindowRegion()
 
 NS_IMETHODIMP CWindowRegion::SetWindowRegion(nsISupports *window, nsISupports *region)
 {
-  if (!region) return NS_ERROR_FAILURE;
   if (!window) return NS_ERROR_FAILURE;
   
   NATIVEWINDOW wnd = NativeWindowFromNode::get(window);
+
+  if (region == NULL) {
+#ifdef XP_WIN
+    ::SetWindowRgn(wnd, NULL, TRUE);
+#endif
+    return NS_OK;
+  }
 
   nsIScriptableRegion *srgn = NULL;
   region->QueryInterface(NS_GET_IID(nsIScriptableRegion), (void **)&srgn);

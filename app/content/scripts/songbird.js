@@ -173,7 +173,9 @@ function doMainwinStart()
   // file->new window
   setPref("setCharPref", PREF_BONES_SELECTED, mainwinURL);
 
-  var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no,titlebar=no";
+  var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
+  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
+
   var mainWin = window.open(mainwinURL, "mainwin", chromeFeatures);
   
   mainWin.focus();

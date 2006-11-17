@@ -612,7 +612,11 @@ function SBMainWindowOpen()
     } catch (err) {}
    
     // Open the window
-    window.open( mainwin, "", "chrome,modal=no,titlebar=no,resizable=no,toolbar=no,popup=no,titlebar=no" );
+
+    var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
+    if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
+
+    window.open( mainwin, "", chromeFeatures );
     onExit();
   }
 }
@@ -902,6 +906,7 @@ function fixOSXWindow(aBoxId, aLabelId)
 }
 
 function disableResizers() {
+  if (SBDataGetBoolValue("accessibility.enabled")) return;
   var resizers = document.getElementsByTagName("resizer");
   var xresizers = document.getElementsByTagName("x_resizer");
   // only perform the swap if we have both types of objects
@@ -916,6 +921,7 @@ function disableResizers() {
 }
 	
 function enableResizers() {
+  if (SBDataGetBoolValue("accessibility.enabled")) return;
   var resizers = document.getElementsByTagName("resizer");
   var xresizers = document.getElementsByTagName("x_resizer");
   // only perform the swap if we have both types of objects
@@ -928,3 +934,53 @@ function enableResizers() {
     }
   }
 }
+
+function hideElement(e) {
+  var element = document.getElementById(e);
+  if (element) element.setAttribute("hidden", "true");
+}
+
+function moveElement(e, before) {
+  var element = document.getElementById(e);
+  var beforeElement = document.getElementById(before);
+  if (element && beforeElement) {
+    element.parentNode.removeChild(element);
+    beforeElement.parentNode.insertBefore(element, beforeElement);
+  }
+}
+
+function fixAccessibleWindow() {
+  
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  
+  var curfeathers = "rubberducky";
+  try {
+    curfeathers = prefs.getCharPref("general.skins.selectedSkin");  
+  } catch (err) {}
+  
+  // Test if this is an accessible skin, and if so, make the necessary modification to the window so that it uses the OS frames and widgets
+
+  if (curfeathers.indexOf("/plucked") < 0) {
+    SBDataSetBoolValue("accessibility.enabled", false); 
+  } else {
+
+    // remove the hidechrome flag on the window
+    document.documentElement.setAttribute("hidechrome", "false");
+    
+    // disable our custom resizers (should be done before setting accessibility.enabled to true)
+    disableResizers(); // will be locked by accessibility.enabled = true
+    
+    // switching accessibility to on, some objects in the app will dynamically change their internal state to reflect this
+    SBDataSetBoolValue("accessibility.enabled", true); 
+    
+    // make some modifications to the dom
+    hideElement("mainwin_app_title");
+    hideElement("app_icon");
+    hideElement("sysbtn_minimode");
+    hideElement("sysbtn_minimize");
+    hideElement("sysbtn_maximize");
+    hideElement("sysbtn_close");
+    moveElement("songbird_menu", "songbird_strings");
+  }
+}
+

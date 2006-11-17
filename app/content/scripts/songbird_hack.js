@@ -318,6 +318,7 @@ function SBInitialize()
   
   try {
     fixOSXWindow("songbird_top", "mainwin_app_title");
+    fixAccessibleWindow();
   }
   catch(e) { }
 
@@ -538,9 +539,9 @@ function switchFeathers(aFeathersName)
   onWindowSaveSizeAndPosition();
   
   // Open the new window
-  var chromeFeatures =
-    "chrome,modal=no,toolbar=no,popup=no,titlebar=no,resizable=no";
-    
+  var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
+  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
+
   var newMainWin = window.open(mainWinURL, "", chromeFeatures);
   newMainWin.focus();
 

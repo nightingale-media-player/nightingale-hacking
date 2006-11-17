@@ -43,7 +43,18 @@
         <![CDATA[
         try
         {
-          this.is_hidden = false;
+          this.on_remote_accessibility_change = { 
+            _that: null, 
+            observe: function( aSubject, aTopic, aData ) { this._that._onRemoteAccessibilityChange(); } 
+          };
+          this.on_remote_accessibility_change._that = this;
+
+          // Create and bind data remotes
+          this.remote_accessibility = SB_NewDataRemote( "accessibility.enabled", null );
+          this.remote_accessibility.bindObserver(on_remote_accessibility_change, true);
+
+          this.is_hidden = this.remote_accessibility.boolValue;
+
           this.makeRegionList();
           var windowResizeHook = Components.classes["@songbirdnest.com/Songbird/WindowResizeHook;1"];
           
@@ -78,16 +89,6 @@
         }
         ]]>
       </destructor>
-      
-      <property name="hidden">
-        <getter>
-          return this.is_hidden;
-        </getter>
-        <setter>
-          this.is_hidden = val;
-          this.setRegion();
-        </setter>
-      </property>
       
       <method name="onResize">
         <parameter name="x"/>
@@ -163,7 +164,7 @@
             {
               var dw = document.documentElement.boxObject.width;
               var dh = document.documentElement.boxObject.height;
-              region.unionRect(0, 0, dw, dh);
+              region = null;
             } 
             else 
             {
@@ -213,6 +214,13 @@
             dump( "windowregionset setRegion - " + err + "\n" );
           }
           ]]>
+        </body>
+      </method>
+      
+      <method name="_onRemoteAccessibilityChange">
+        <body>
+          this.is_hidden = this.remote_accessibility.boolValue;
+          this.setRegion();
         </body>
       </method>
 
