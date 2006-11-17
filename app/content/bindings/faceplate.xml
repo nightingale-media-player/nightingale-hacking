@@ -64,9 +64,11 @@
           <xul:vbox flex="1" class="sb_faceplate" id="dashboard_bkgd">
             <xul:spacer flex="1"/>
             <!-- SONG ARTIST/SONGTITLE DISPLAY -->
-            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate">
-              <xul:player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" />
-            </xul:hbox>
+            <autoscroll hidden="true" id="songbird_text_artistalbum">
+              <xul:hbox pack="center" align="center" style="overflow: hidden;" class="sb_faceplate">
+                <xul:player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" />
+              </xul:hbox>
+            </autoscroll>
             <!-- SONG ALBUM DISPLAY -->
             <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate">
               <xul:player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end"/>
@@ -175,9 +177,9 @@
         for (var i=0;i<this.remotes.length;i++) {
           this.remotes[i].unbind();
         }
-        this.on_remote_state_change.that = null; this.on_remote_state_change = null;
-        this.on_remote_npages_change.that = null; this.on_remote_npages_change = null;
-        this.on_artistalbum_change.that = null; this.on_artistalbum_change = null;
+        if (this.on_remote_state_change) this.on_remote_state_change.that = null; this.on_remote_state_change = null;
+        if (this.on_remote_npages_change) this.on_remote_npages_change.that = null; this.on_remote_npages_change = null;
+        if (this.on_artistalbum_change) this.on_artistalbum_change.that = null; this.on_artistalbum_change = null;
        ]]>
      </destructor>
 
