@@ -300,6 +300,8 @@
                   <menuitem id="html.context.play" label="&html.context.play;"/>
                   <menuitem id="html.context.add"  label="&html.context.add;"/>
                   <menuitem id="html.context.playlist"  label="&html.context.playlist;"/>
+                  <menuseparator/>
+                  <menuitem id="html.context.copytoclipboard" label="&html.context.copytoclipboard;"/>
                 </popup>
                 <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
                 <popup id="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">

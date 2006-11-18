@@ -2549,6 +2549,10 @@ function onHTMLContextMenu( target )
         // Add playlists to the service pane (force it as a playlist)
         handleMediaURL(theHTMLContextURL, false, true);
       break;
+      case "html.context.copytoclipboard":
+        var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
+        clipboard.copyString(theHTMLContextURL);
+      break;
     }
     theHTMLContextURL = null; // clear it because now we're done.
   }
