@@ -1133,7 +1133,13 @@
             {
               this_column_node.setAttribute("type", "progressmeter");
             }
-           
+
+            // HACK: Temp fix from Nathan Yergler at CC to support license display
+            if (name == "title") {
+              treecell_node.setAttribute("properties", 
+                   "rdf:http://home.netscape.com/NC-rdf#ccLicenseCode");
+            }
+
             // need to check string, to check for unset state 
             var savedHidden = SBDataGetStringValue( "playlist." + this.ref + ".column." + name + ".hidden" );
 
