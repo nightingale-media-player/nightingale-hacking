@@ -126,6 +126,13 @@ pref("plugin.default_plugin_disabled", true);
 pref("security.warn_entering_secure.show_once", true);
 pref("security.warn_leaving_secure.show_once", true);
 
+
+// Prefer a window size that can handle 1024px-ish websites
+// If this pref turns out to be bigger than the screen 
+// the window size will fall back to that specified by css
+pref("songbird.window.frame_outer.w", "1157");
+pref("songbird.window.frame_outer.h", "718");
+
 #includesubst songbird-update-prefs.js
 
 #ifdef DEBUG

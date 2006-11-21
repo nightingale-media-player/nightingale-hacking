@@ -412,7 +412,6 @@ function onWindowLoadSizeAndPosition()
        SBDataGetStringValue( root + ".h" ) == "" )
   {
     // nothing to do to set the default width/height, we already get a default from xul and css definitions
-    
     // but still try to load position !
     onWindowLoadPosition();
     return;
@@ -424,7 +423,8 @@ function onWindowLoadSizeAndPosition()
 
   if ( rootW && rootH )
   {
-    // test if the window is resizable. if it is, and rootW/rootH are below some limit, skip these steps so that we reload the default w/h from xul and css
+    // test if the window is resizable. if it is, and rootW/rootH are below 
+    // some limit, skip these steps so that we reload the default w/h from xul and css
     var resetsize = false;
     var resizers = document.getElementsByTagName("resizer");
     var resizable = resizers.length > 0;
@@ -432,7 +432,9 @@ function onWindowLoadSizeAndPosition()
     var minheight = getStyle(document.documentElement, "min-height");
     if (minwidth) minwidth = parseInt(minwidth);
     if (minheight) minheight = parseInt(minheight);
+
 /*
+    dump("SCREEN LOAD: " + screen.width + " " + screen.height + "\n");
     dump("window = " + document.documentElement.getAttribute("id") + "\n");
     dump("minwidth = " + minwidth + "\n");
     dump("rootW = " + rootW + "\n");
@@ -440,9 +442,13 @@ function onWindowLoadSizeAndPosition()
     dump("rootH = " + rootH + "\n");
     dump("resizable = " + resizable + "\n");
 */
-    if (resizable &&
-        ((minwidth && rootW < minwidth) || 
-         (minheight && rootH < minheight))) resetsize = true;
+
+    // also, if the desired w/h are larger than the screen, we should reset.
+
+    if (resizable && 
+        ( ((minwidth && rootW < minwidth) || (minheight && rootH < minheight))
+        || (rootW > screen.width || rootH > screen.height) ))
+      resetsize = true;
 /*
     dump("resetsize = " + resetsize + "\n");
 */
@@ -458,7 +464,7 @@ function onWindowLoadSizeAndPosition()
       var diffW = rootW - document.documentElement.boxObject.width;
       var diffH = rootH - document.documentElement.boxObject.height;
       window.resizeTo( rootW + diffW, rootH + diffH);
-    }
+    } 
   }
   onWindowLoadPosition();
 }
