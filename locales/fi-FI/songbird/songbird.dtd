@@ -245,3 +245,9 @@ Tiedot ovat täysin yksilöimättömiä eikä henkilökohtaista tietoa kerätä 
 <!ENTITY menu.help.bugz.accesskey "B" >
 
 
+
+
+<!ENTITY web.url.first.old "" >
+<!ENTITY html.context.copytoclipboard "Copy Link Location" >
+
+
