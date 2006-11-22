@@ -1,0 +1,1188 @@
+Index: layout/xul/base/src/nsResizerFrame.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/nsResizerFrame.cpp,v
+retrieving revision 1.20.10.1
+diff -u -1 -0 -p -r1.20.10.1 nsResizerFrame.cpp
+--- layout/xul/base/src/nsResizerFrame.cpp	26 May 2006 06:27:57 -0000	1.20.10.1
++++ layout/xul/base/src/nsResizerFrame.cpp	22 Nov 2006 07:23:27 -0000
+@@ -14,20 +14,21 @@
+  *
+  * The Original Code is Mozilla Communicator client code.
+  *
+  * The Initial Developer of the Original Code is
+  * Netscape Communications Corporation.
+  * Portions created by the Initial Developer are Copyright (C) 1998
+  * the Initial Developer. All Rights Reserved.
+  *
+  * Contributor(s):
+  *   Original Author: Eric J. Burley (ericb@neoplanet.com)
++ *   Ben Turner <mozilla@songbirdnest.com>
+  *
+  * Alternatively, the contents of this file may be used under the terms of
+  * either of the GNU General Public License Version 2 or later (the "GPL"),
+  * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  * in which case the provisions of the GPL or the LGPL are applicable instead
+  * of those above. If you wish to allow use of your version of this file only
+  * under the terms of either the GPL or the LGPL, and not to allow others to
+  * use your version of this file under the terms of the MPL, indicate your
+  * decision by deleting the provisions above and replace them with the notice
+  * and other provisions required by the GPL or the LGPL. If you do not delete
+@@ -48,20 +49,21 @@
+ #include "nsIWidget.h"
+ #include "nsPresContext.h"
+ #include "nsIDocShell.h"
+ #include "nsIDocShellTreeItem.h"
+ #include "nsIDocShellTreeOwner.h"
+ #include "nsIBaseWindow.h"
+ #include "nsIScriptGlobalObject.h"
+ #include "nsIViewManager.h"
+ #include "nsXULAtoms.h"
+ #include "nsGUIEvent.h"
++#include "nsIPresShell.h"
+ 
+ //
+ // NS_NewXULButtonFrame
+ //
+ // Creates a new Button frame and returns it in |aNewFrame|
+ //
+ nsresult
+ NS_NewResizerFrame( nsIPresShell* aPresShell, nsIFrame** aNewFrame )
+ {
+   NS_PRECONDITION(aNewFrame, "null OUT ptr");
+@@ -72,108 +74,110 @@ NS_NewResizerFrame( nsIPresShell* aPresS
+   if (nsnull == it)
+     return NS_ERROR_OUT_OF_MEMORY;
+ 
+   // it->SetFlags(aFlags);
+   *aNewFrame = it;
+   return NS_OK;
+   
+ } // NS_NewTitleBarFrame
+ 
+ nsResizerFrame::nsResizerFrame(nsIPresShell* aPresShell)
+-:nsTitleBarFrame(aPresShell) 
++: nsTitleBarFrame(aPresShell),
++  mSizeConstraints(-1, -1, -1, -1),
++  mDisabled(PR_FALSE)
+ {
+ 	mDirection = topleft; // by default...
+ }
+ 
+ NS_IMETHODIMP  nsResizerFrame::Init(nsPresContext*  aPresContext,
+                 nsIContent*      aContent,
+                 nsIFrame*        aParent,
+                 nsStyleContext*  aContext,
+                 nsIFrame*        asPrevInFlow)
+ {
+ 	nsresult rv = nsTitleBarFrame::Init(aPresContext, aContent, aParent, aContext, asPrevInFlow);
+ 
+-	GetInitialDirection(mDirection);
++  NS_WARN_IF_FALSE(GetInitialDirection(mDirection),
++                   "GetInitialDirection failed!");
++  NS_WARN_IF_FALSE(CacheDisabledAttr(), "CacheDisabledAttr failed!");
+ 
+ 	return rv;
+ }
+ 
+ 
+ NS_IMETHODIMP
+ nsResizerFrame::HandleEvent(nsPresContext* aPresContext, 
+                             nsGUIEvent* aEvent,
+                             nsEventStatus* aEventStatus)
+ {
+   PRBool doDefault = PR_TRUE;
+ 
+   switch (aEvent->message) {
+ 
+ 	 case NS_MOUSE_LEFT_BUTTON_DOWN:	{
+ 			 
+-			 // we're tracking.
+-			 mTrackingMouseMove = PR_TRUE;
+-			 
+-			 // start capture.		 
+-			 aEvent->widget->CaptureMouse(PR_TRUE);
+-			 CaptureMouseEvents(aPresContext,PR_TRUE);
++       // Prevent default processing
++       doDefault = PR_FALSE;
+ 
++       if (!IsDisabled(aPresContext)) {
+ 
+-			 
+-			 // remember current mouse coordinates.
+-			 mLastPoint = aEvent->refPoint;
+-			 aEvent->widget->GetScreenBounds(mWidgetRect);
++         nsresult rv =
++           GetWindowFromPresContext(aPresContext,
++                                    getter_AddRefs(mResizingWindow));
++         NS_ENSURE_SUCCESS(rv, rv);
++
++         // we're tracking.
++         mTrackingMouseMove = PR_TRUE;
++
++         // start capture.
++         aEvent->widget->CaptureMouse(PR_TRUE);
++         CaptureMouseEvents(aPresContext, PR_TRUE);
+ 
+-			 *aEventStatus = nsEventStatus_eConsumeNoDefault;
+-			 doDefault = PR_FALSE;
++         // remember current mouse coordinates.
++         mLastPoint = aEvent->refPoint;
++
++         *aEventStatus = nsEventStatus_eConsumeNoDefault;
++       }
+ 		 }
+ 		 break;
+ 		 
+ 
+ 	 case NS_MOUSE_LEFT_BUTTON_UP: {
+ 
+-			 if(mTrackingMouseMove)
+-			 {
+-				 // we're done tracking.
+-				 mTrackingMouseMove = PR_FALSE;
+-				 
+-				 // end capture
+-				 aEvent->widget->CaptureMouse(PR_FALSE);				 
+-				 CaptureMouseEvents(aPresContext,PR_FALSE);
++			 if(mTrackingMouseMove) {
++
++         // we're done tracking.
++         mTrackingMouseMove = PR_FALSE;
++
++         // Clear all cached data
++         mResizingWindow = nsnull;
++         mSizeConstraints.minWidth = mSizeConstraints.maxWidth = -1;
++         mSizeConstraints.minHeight = mSizeConstraints.maxHeight = -1;
++
++         // end capture
++         aEvent->widget->CaptureMouse(PR_FALSE);
++         CaptureMouseEvents(aPresContext, PR_FALSE);
+ 
+-				 *aEventStatus = nsEventStatus_eConsumeNoDefault;
+-				 doDefault = PR_FALSE;
++         *aEventStatus = nsEventStatus_eConsumeNoDefault;
++         doDefault = PR_FALSE;
+ 			 }
+ 		 }
+ 		 break;
+ 
+ 	 case NS_MOUSE_MOVE: {
+-			 if(mTrackingMouseMove)
+-			 {				 				 
+-			   // get the document and the global script object - should this be cached?
+-			   nsIScriptGlobalObject *scriptGlobalObject =
+-           aPresContext->PresShell()->GetDocument()->GetScriptGlobalObject();
+-         NS_ENSURE_TRUE(scriptGlobalObject, NS_ERROR_FAILURE);
+-
+-         nsCOMPtr<nsIDocShellTreeItem> docShellAsItem =
+-           do_QueryInterface(scriptGlobalObject->GetDocShell());
+-         NS_ENSURE_TRUE(docShellAsItem, NS_ERROR_FAILURE);
+ 
+-         nsCOMPtr<nsIDocShellTreeOwner> treeOwner;
+-         docShellAsItem->GetTreeOwner(getter_AddRefs(treeOwner));
++       if (mTrackingMouseMove && !IsDisabled(aPresContext)) {
+ 
+-         nsCOMPtr<nsIBaseWindow> window(do_QueryInterface(treeOwner));
++         NS_ENSURE_STATE(mResizingWindow);
+ 
+-         if (!window) {
+-           return NS_OK;
+-         }
+-
+-				 nsPoint nsMoveBy(0,0),nsSizeBy(0,0);
++				 nsPoint nsMoveBy(0,0), nsSizeBy(0,0);
++         nsPoint nsBeyondMaximum(0,0), nsBeyondMinimum(0,0);
+ 				 nsPoint nsMouseMove(aEvent->refPoint - mLastPoint);
+ 				 				 
+ 
+ 				 switch(mDirection)
+ 				 {
+ 						case topleft:
+ 							nsMoveBy = nsMouseMove;
+ 							nsSizeBy -= nsMouseMove;
+ 							break;
+ 						case top:
+@@ -203,67 +207,152 @@ nsResizerFrame::HandleEvent(nsPresContex
+ 						case bottom:													
+ 							nsSizeBy.y = nsMouseMove.y;							
+ 							mLastPoint.y += nsMouseMove.y;
+ 							break;
+ 						case bottomright:							
+ 							nsSizeBy = nsMouseMove;		
+ 							mLastPoint += nsMouseMove;							
+ 							break;
+ 				 }
+ 
++         // Remember this because nsSizeBy is about to be changed
++         nsPoint requestedSizeChange(nsSizeBy);
+ 
++         PRInt32 x,y,cx,cy;
++				 mResizingWindow->GetPositionAndSize(&x,&y,&cx,&cy);
+ 
+-				 PRInt32 x,y,cx,cy;
+-				 window->GetPositionAndSize(&x,&y,&cx,&cy);
+-
+-				 x+=nsMoveBy.x;
+-				 y+=nsMoveBy.y;
+-				 cx+=nsSizeBy.x;
+-				 cy+=nsSizeBy.y;
++         // Figure out the size constraints
++         nsresult rv;
++         nsCOMPtr<nsIWidget> mainWidget;
++         rv = mResizingWindow->GetMainWidget(getter_AddRefs(mainWidget));
++         NS_ENSURE_SUCCESS(rv, rv);
++
++         rv = mainWidget->GetSizeConstraints(&mSizeConstraints.minWidth,
++                                             &mSizeConstraints.maxWidth,
++                                             &mSizeConstraints.minHeight,
++                                             &mSizeConstraints.maxHeight);
++         NS_ENSURE_SUCCESS(rv, rv);
++
++         // It would be nice to simply pass the new size on to the window but
++         // we have to have a way to keep the window from moving
++         // inappropriately when size constraints are in effect. Also platform
++         // support for size constraints may not exist everywhere, so we go on
++         // and do all the necessary calculations here. This will make resizers
++         // support size constraints even if native window decorations don't.
++
++         // Make sure a constraint is set
++         if (mSizeConstraints.minWidth != -1) {
++           PRInt32 newWidth = cx + requestedSizeChange.x;
++           if (newWidth < mSizeConstraints.minWidth) {
++             // Always fix the size
++             nsSizeBy.x = mSizeConstraints.minWidth - cx;
++             if (mDirection == topleft || mDirection == left || mDirection == bottomleft) {
++               // Move as far as possible
++               nsMoveBy.x = cx - mSizeConstraints.minWidth;
++             }
++             else {
++               // Track the distance beyond the minimum
++               nsBeyondMinimum.x = mSizeConstraints.minWidth - newWidth;
++               // Don't move at all
++               nsMoveBy.x = 0;
++             }
++           }
++         }
+ 
+-				 window->SetPositionAndSize(x,y,cx,cy,PR_TRUE); // do the repaint.
++         // Make sure a constraint is set
++         if (mSizeConstraints.minHeight != -1) {
++           PRInt32 newHeight = cy + requestedSizeChange.y;
++           if (newHeight < mSizeConstraints.minHeight) {
++             // Always fix the size
++             nsSizeBy.y = mSizeConstraints.minHeight - cy;
++             if (mDirection == topleft || mDirection == top || mDirection == topright) {
++              // Move as far as possible
++              nsMoveBy.y = cy - mSizeConstraints.minHeight;
++             }
++             else {
++               // Track the distance beyond the minimum
++               nsBeyondMinimum.y = mSizeConstraints.minHeight - newHeight;
++               // Don't move at all
++               nsMoveBy.y = 0;
++             }
++           }
++         }
+ 
+-				 /*
+-				 if(nsSizeBy.x || nsSizeBy.y)
+-				 {
+-					window->ResizeBy(nsSizeBy.x,nsSizeBy.y);
+-				 }
++         // Make sure a constraint is set
++         if (mSizeConstraints.maxWidth != -1) {
++           PRInt32 newWidth = cx + requestedSizeChange.x;
++           if (newWidth > mSizeConstraints.maxWidth) {
++             // Always fix the size
++             nsSizeBy.x = mSizeConstraints.maxWidth - cx;
++             if (mDirection == topleft || mDirection == left || mDirection == bottomleft) {
++               // Move as far as possible
++               nsMoveBy.x = cx - mSizeConstraints.maxWidth;
++             }
++             else {
++               // Track the distance beyond the maximum
++               nsBeyondMaximum.x = newWidth - mSizeConstraints.maxWidth;
++               // Don't move at all
++               nsMoveBy.x = 0;
++             }
++           }
++         }
+ 
+-				 if(nsMoveBy.x || nsMoveBy.y)
+-				 {
+-					window->MoveBy(nsMoveBy.x,nsMoveBy.y);
+-				 }	*/
+-				 
+-				 
+-				 
+-				 *aEventStatus = nsEventStatus_eConsumeNoDefault;				
+-				 
+-				 doDefault = PR_FALSE;
+-			 }
+-		 }
+-		 break;
++         // Make sure a constraint is set
++         if (mSizeConstraints.maxHeight != -1) {
++           PRInt32 newHeight = cy + requestedSizeChange.y;
++           if (newHeight > mSizeConstraints.maxHeight) {
++             // Always fix the size
++             nsSizeBy.y = mSizeConstraints.maxHeight - cy;
++             if (mDirection == topleft || mDirection == top || mDirection == topright) {
++               // Move as far as possible
++               nsMoveBy.y = cy - mSizeConstraints.maxHeight;
++             }
++             else {
++               // Track the distance beyond the maximum
++               nsBeyondMaximum.y = newHeight - mSizeConstraints.maxHeight;
++               // Don't move at all
++               nsMoveBy.y = 0;
++             }
++           }
++         }
+ 
++         // Update all the variables
++         x += nsMoveBy.x;
++         y += nsMoveBy.y;
++         cx += nsSizeBy.x;
++         cy += nsSizeBy.y;
++
++         // Update our tracking point
++         mLastPoint += nsBeyondMinimum - nsBeyondMaximum;
++
++         // Do the repaint
++         mResizingWindow->SetPositionAndSize(x, y, cx, cy, PR_TRUE);
++         *aEventStatus = nsEventStatus_eConsumeNoDefault;
++       }
+ 
++       doDefault = PR_FALSE;
++     }
++		 break;
+ 
+     case NS_MOUSE_LEFT_CLICK:
+-      MouseClicked(aPresContext, aEvent);
+-      break;
++      if (!IsDisabled(aPresContext))
++        MouseClicked(aPresContext, aEvent);
++    break;
+   }
+   
+   if ( doDefault )  
+ 	  return nsTitleBarFrame::HandleEvent(aPresContext, aEvent, aEventStatus);
+   else
+ 	  return NS_OK;
+ }
+ 
+ 
+-
+ /* returns true if aText represented a valid direction 
+  */
+ PRBool 
+ nsResizerFrame::EvalDirection(nsAutoString& aText,eDirection& aDir)
+ {
+ 	PRBool aResult = PR_TRUE;
+ 	
+ 	if( aText.Equals( NS_LITERAL_STRING("topleft") ) )
+ 	{
+ 		aDir = topleft;
+@@ -353,10 +442,88 @@ nsResizerFrame::MouseClicked(nsPresConte
+ {
+   // Execute the oncommand event handler.
+   nsEventStatus status = nsEventStatus_eIgnore;
+ 
+   nsXULCommandEvent event(aEvent ? NS_IS_TRUSTED_EVENT(aEvent) : PR_FALSE,
+                           NS_XUL_COMMAND, nsnull);
+ 
+   mContent->HandleDOMEvent(aPresContext, &event, nsnull, NS_EVENT_FLAG_INIT,
+                            &status);
+ }
++
++PRBool
++nsResizerFrame::CacheDisabledAttr()
++{
++  nsCOMPtr<nsIContent> content;
++  GetContentOf(getter_AddRefs(content));
++
++  if (!content)
++    return PR_FALSE;
++
++  nsAutoString disabled;
++  content->GetAttr(kNameSpaceID_None, nsXULAtoms::disabled, disabled);
++  mDisabled = disabled.EqualsLiteral("true");
++
++  return PR_TRUE;
++}
++
++
++nsresult
++nsResizerFrame::GetWindowFromPresContext(nsPresContext* aPresContext,
++                                         nsIBaseWindow** _retval)
++{
++  NS_ENSURE_ARG_POINTER(aPresContext);
++  NS_ENSURE_ARG_POINTER(_retval);
++
++  nsIPresShell* presShell = aPresContext->PresShell();
++  NS_ENSURE_STATE(presShell);
++
++  nsIDocument* document = presShell->GetDocument();
++  NS_ENSURE_STATE(document);
++
++  nsIScriptGlobalObject* scriptObj = document->GetScriptGlobalObject();
++  NS_ENSURE_STATE(scriptObj);
++
++  nsIDocShell* docShell = scriptObj->GetDocShell();
++  NS_ENSURE_STATE(docShell);
++
++  nsresult rv;
++  nsCOMPtr<nsIDocShellTreeItem> docShellAsItem =
++    do_QueryInterface(docShell, &rv);
++  NS_ENSURE_SUCCESS(rv, rv);
++
++  nsCOMPtr<nsIDocShellTreeOwner> treeOwner;
++  rv = docShellAsItem->GetTreeOwner(getter_AddRefs(treeOwner));
++  NS_ENSURE_SUCCESS(rv, rv);
++
++  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(treeOwner, &rv);
++  NS_ENSURE_SUCCESS(rv, rv);
++
++  NS_ADDREF(*_retval = baseWindow);
++  return NS_OK;
++}
++
++
++PRBool
++nsResizerFrame::IsDisabled(nsPresContext* aPresContext)
++{
++  if (mDisabled)
++    return PR_TRUE;
++
++  // Resizers shouldn't be active if the window is maximized
++  nsresult rv;
++  nsCOMPtr<nsIBaseWindow> baseWindow = mResizingWindow;
++  if (!baseWindow) {
++    rv = GetWindowFromPresContext(aPresContext, getter_AddRefs(baseWindow));
++    NS_ENSURE_SUCCESS(rv, PR_FALSE);
++  }
++
++  nsCOMPtr<nsIWidget> mainWidget;
++  rv = baseWindow->GetMainWidget(getter_AddRefs(mainWidget));
++  NS_ENSURE_SUCCESS(rv, PR_FALSE);
++
++  PRInt32 sizeMode;
++  rv = mainWidget->GetSizeMode(&sizeMode);
++  NS_ENSURE_SUCCESS(rv, PR_FALSE);
++
++  return sizeMode == nsSizeMode_Maximized;
++}
+Index: layout/xul/base/src/nsResizerFrame.h
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/nsResizerFrame.h,v
+retrieving revision 1.9
+diff -u -1 -0 -p -r1.9 nsResizerFrame.h
+--- layout/xul/base/src/nsResizerFrame.h	28 Apr 2005 23:48:00 -0000	1.9
++++ layout/xul/base/src/nsResizerFrame.h	22 Nov 2006 07:23:27 -0000
+@@ -32,36 +32,55 @@
+  * decision by deleting the provisions above and replace them with the notice
+  * and other provisions required by the GPL or the LGPL. If you do not delete
+  * the provisions above, a recipient may use your version of this file under
+  * the terms of any one of the MPL, the GPL or the LGPL.
+  *
+  * ***** END LICENSE BLOCK ***** */
+ #ifndef nsResizerFrame_h___
+ #define nsResizerFrame_h___
+ 
+ #include "nsTitleBarFrame.h"
++#include "nsCOMPtr.h"
++
++class nsIBaseWindow;
++class nsPresContext;
+ 
+ class nsResizerFrame : public nsTitleBarFrame 
+ {
+ 
+ protected:
+   enum eDirection {
+     topleft,
+     top,
+-	 topright,
+-	 left,	 
+-	 right,
+-	 bottomleft,
+-	 bottom,
+-	 bottomright
++    topright,
++    left,	 
++    right,
++    bottomleft,
++    bottom,
++    bottomright
++  };
++
++  struct SizeConstraints {
++    PRInt32 minHeight;
++    PRInt32 maxHeight;
++    PRInt32 minWidth;
++    PRInt32 maxWidth;
++
++    SizeConstraints(PRInt32 aMinHeight,
++                    PRInt32 aMaxHeight,
++                    PRInt32 aMinWidth,
++                    PRInt32 aMaxWidth) :
++      minHeight(aMinHeight),
++      maxHeight(aMaxHeight),
++      minWidth(aMinWidth),
++      maxWidth(aMaxWidth) { }
+   };
+-  
+ 
+ public:
+   friend nsresult NS_NewResizerFrame(nsIPresShell* aPresShell, nsIFrame** aNewFrame);  
+ 
+   nsResizerFrame(nsIPresShell* aPresShell);
+ 
+   
+   NS_IMETHOD HandleEvent(nsPresContext* aPresContext, 
+                                       nsGUIEvent* aEvent,
+                                       nsEventStatus* aEventStatus);
+@@ -73,22 +92,25 @@ public:
+                    nsIFrame*        asPrevInFlow);
+   
+   NS_IMETHOD AttributeChanged(nsIContent* aChild,
+                               PRInt32 aNameSpaceID,
+                               nsIAtom* aAttribute,
+                               PRInt32 aModType);
+ 
+   virtual void MouseClicked(nsPresContext* aPresContext, nsGUIEvent *aEvent);
+ 
+ protected:
+-	PRBool GetInitialDirection(eDirection& aDirection);
+-	PRBool EvalDirection(nsAutoString& aText,eDirection& aResult);
++  PRBool GetInitialDirection(eDirection& aDirection);
++  PRBool EvalDirection(nsAutoString& aText,eDirection& aResult);
++  PRBool CacheDisabledAttr();
++  static nsresult GetWindowFromPresContext(nsPresContext* aPresContext,
++                                           nsIBaseWindow** _retval);
++  PRBool IsDisabled(nsPresContext* aPresContext);
+ 
+ protected:
+-	eDirection mDirection;
+-	nsRect mWidgetRect;
+-
+-
+-
++  eDirection mDirection;
++  SizeConstraints mSizeConstraints;
++  PRBool mDisabled;
++  nsCOMPtr<nsIBaseWindow> mResizingWindow;
+ }; // class nsResizerFrame
+ 
+ #endif /* nsResizerFrame_h___ */
+Index: widget/public/nsIWidget.h
+===================================================================
+RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
+retrieving revision 3.140.4.3
+diff -u -1 -0 -p -r3.140.4.3 nsIWidget.h
+--- widget/public/nsIWidget.h	20 Jul 2006 01:11:31 -0000	3.140.4.3
++++ widget/public/nsIWidget.h	22 Nov 2006 07:23:27 -0000
+@@ -444,20 +444,71 @@ class nsIWidget : public nsISupports {
+      * @param aY in: an y position expressed in screen coordinates.
+      *           out: the y position constrained to fit on the screen(s).
+      * @return vapid success indication. but see also the parameters.
+      *
+      **/
+     NS_IMETHOD ConstrainPosition(PRBool aAllowSlop,
+                                  PRInt32 *aX,
+                                  PRInt32 *aY) = 0;
+ 
+     /**
++     * Platform-dependent method that uses the OS to ensure that the size of
++     * widget never exceeds the given minimum or maximum values. Also affects
++     * the behavior of the <xul:resizer> element.
++     *
++     * This is only guaranteed to work on top-level window widgets (i.e.
++     * widgets created with the 'eWindowType_dialog', 'eWindowType_toplevel',
++     * or 'eWindowType_invisible' windowTypes that have no parent). Calling
++     * this function on any other type of window will throw
++     * NS_ERROR_UNEXPECTED. In contrast, calls to GetSizeConstraints will
++     * always succeed, but each constraint will be set to -1.
++     *
++     * XXXbent All of the following pixel values are supposed to be device
++     *         pixels, but note that we currently assume device pixels map 1:1
++     *         to CSS pixels.
++     *
++     * @param aMinWidth: the minimum width in device pixels (-1 to ignore)
++     * @param aMaxWidth: the maximum width in device pixels (-1 to ignore)
++     * @param aMinHeight: the minimum height in device pixels (-1 to ignore)
++     * @param aMaxHeight: the maximum height in device pixels (-1 to ignore)
++     *
++     * @throws NS_ERROR_UNEXPECTED if called on a non-top-level widget
++     **/
++    NS_IMETHOD SetSizeConstraints(PRInt32 aMinWidth,
++                                  PRInt32 aMaxWidth,
++                                  PRInt32 aMinHeight,
++                                  PRInt32 aMaxHeight) = 0;
++
++    /**
++     * Return the size constraints currently observed by the widget.
++     *
++     * You can pass nsnull for any of the parameters if you don't care to
++     * retrieve their value. Constraint values set to -1 by this function
++     * indicate that that particular constraint is not observed.
++     *
++     * Calling this function on non-top-level widgets will succeed, however
++     * *all* constraints will be reported as -1 (unconstrained).
++     *
++     * XXXbent All of the following pixel values are supposed to be device
++     *         pixels, but note that we currently assume device pixels map 1:1
++     *         to CSS pixels.
++     *
++     * @param aMinWidth: the minimum width of the widget in device pixels
++     * @param aMaxWidth: the maximum width for the widget in device pixels
++     * @param aMinHeight: the minimum height for the widget in device pixels
++     * @param aMaxHeight: the maximum height for the widget in device pixels
++     **/
++    NS_IMETHOD GetSizeConstraints(PRInt32* aMinWidth,
++                                  PRInt32* aMaxWidth,
++                                  PRInt32* aMinHeight,
++                                  PRInt32* aMaxHeight) = 0;
++    /**
+      * Move this widget.
+      *
+      * @param aX the new x position expressed in the parent's coordinate system
+      * @param aY the new y position expressed in the parent's coordinate system
+      *
+      **/
+     NS_IMETHOD Move(PRInt32 aX, PRInt32 aY) = 0;
+ 
+     /**
+      * Resize this widget. 
+Index: widget/src/windows/nsWindow.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.cpp,v
+retrieving revision 3.569.2.35
+diff -u -1 -0 -p -r3.569.2.35 nsWindow.cpp
+--- widget/src/windows/nsWindow.cpp	15 Aug 2006 20:14:37 -0000	3.569.2.35
++++ widget/src/windows/nsWindow.cpp	22 Nov 2006 07:23:28 -0000
+@@ -26,20 +26,21 @@
+  *   Mark Hammond <markh@activestate.com>
+  *   Michael Lowe <michael.lowe@bigfoot.com>
+  *   Peter Bajusz <hyp-x@inf.bme.hu>
+  *   Pierre Phaneuf <pp@ludusdesign.com>
+  *   Robert O'Callahan <roc+moz@cs.cmu.edu>
+  *   Roy Yokoyama <yokoyama@netscape.com>
+  *   Makoto Kato  <m_kato@ga2.so-net.ne.jp>
+  *   Masayuki Nakano <masayuki@d-toybox.com>
+  *   Dainis Jonitis <Dainis_Jonitis@swh-t.lv>
+  *   Christian Biesinger <cbiesinger@web.de>
++ *   Ben Turner <mozilla@songbirdnest.com>
+  *
+  * Alternatively, the contents of this file may be used under the terms of
+  * either the GNU General Public License Version 2 or later (the "GPL"), or
+  * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  * in which case the provisions of the GPL or the LGPL are applicable instead
+  * of those above. If you wish to allow use of your version of this file only
+  * under the terms of either the GPL or the LGPL, and not to allow others to
+  * use your version of this file under the terms of the MPL, indicate your
+  * decision by deleting the provisions above and replace them with the notice
+  * and other provisions required by the GPL or the LGPL. If you do not delete
+@@ -1032,20 +1033,28 @@ nsWindow::nsWindow() : nsBaseWidget()
+   mBorderStyle        = eBorderStyle_default;
+   mBorderlessParent   = 0;
+   mUnicodeWidget      = PR_TRUE;
+   mIsInMouseCapture   = PR_FALSE;
+   mIsInMouseWheelProcessing = PR_FALSE;
+   mLastSize.width     = 0;
+   mLastSize.height    = 0;
+   mOldStyle           = 0;
+   mOldExStyle         = 0;
+   mPainting           = 0;
++  mIsHideChrome       = PR_FALSE;
++  mIsMaximizing       = PR_FALSE;
++  mWasMaximized       = PR_FALSE;
++
++  mConstrainedMinWidth  = -1;
++  mConstrainedMaxWidth  = -1;
++  mConstrainedMinHeight = -1;
++  mConstrainedMaxHeight = -1;
+ 
+   mLeadByte = '\0';
+   mBlurEventSuppressionLevel = 0;
+ 
+   static BOOL gbInitGlobalValue = FALSE;
+   if (! gbInitGlobalValue) {
+     gbInitGlobalValue = TRUE;
+     gKeyboardLayout = GetKeyboardLayout(0);
+     LangIDToCP((WORD)(0x0FFFFL & (DWORD)gKeyboardLayout), gCurrentKeyboardCP);
+ 
+@@ -2259,20 +2268,57 @@ NS_METHOD nsWindow::ConstrainPosition(PR
+ 
+     if (*aY < screenRect.top)
+       *aY = screenRect.top;
+     else if (*aY >= screenRect.bottom - mBounds.height)
+       *aY = screenRect.bottom - mBounds.height;
+   }
+ 
+   return NS_OK;
+ }
+ 
++NS_IMETHODIMP nsWindow::SetSizeConstraints(PRInt32 aMinWidth,
++                                           PRInt32 aMaxWidth,
++                                           PRInt32 aMinHeight,
++                                           PRInt32 aMaxHeight)
++{
++  // This function is only guaranteed to work with top-level widget windows
++  if (!mIsTopWidgetWindow)
++    return NS_ERROR_UNEXPECTED;
++
++  PRInt32 sysMinWidth = ::GetSystemMetrics(SM_CXMINTRACK);
++  mConstrainedMinWidth = PR_MAX(sysMinWidth, aMinWidth);
++
++  PRInt32 sysMinHeight = ::GetSystemMetrics(SM_CYMINTRACK);
++  mConstrainedMinHeight = PR_MAX(sysMinHeight, aMinHeight);
++
++  mConstrainedMaxWidth = aMaxWidth;
++  mConstrainedMaxHeight = aMaxHeight;
++
++  return NS_OK;
++}
++
++NS_IMETHODIMP nsWindow::GetSizeConstraints(PRInt32* aMinWidth,
++                                           PRInt32* aMaxWidth,
++                                           PRInt32* aMinHeight,
++                                           PRInt32* aMaxHeight)
++{
++  if (aMinWidth)
++    *aMinWidth = mConstrainedMinWidth;
++  if (aMaxWidth)
++    *aMaxWidth = mConstrainedMaxWidth;
++  if (aMinHeight)
++    *aMinHeight = mConstrainedMinHeight;
++  if (aMaxHeight)
++    *aMaxHeight = mConstrainedMaxHeight;
++  return NS_OK;
++}
++
+ //-------------------------------------------------------------------------
+ //
+ // Move this component
+ //
+ //-------------------------------------------------------------------------
+ NS_METHOD nsWindow::Move(PRInt32 aX, PRInt32 aY)
+ {
+   // Check to see if window needs to be moved first
+   // to avoid a costly call to SetWindowPos. This check
+   // can not be moved to the calling code in nsView, because
+@@ -3181,20 +3227,22 @@ NS_IMETHODIMP nsWindow::HideWindowChrome
+       mOldExStyle = nsToolkit::mGetWindowLong(hwnd, GWL_EXSTYLE);
+     }
+ 
+     style = mOldStyle;
+     exStyle = mOldExStyle;
+   }
+ 
+   nsToolkit::mSetWindowLong(hwnd, GWL_STYLE, style);
+   nsToolkit::mSetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
+ 
++  mIsHideChrome = aShouldHide;
++
+   return NS_OK;
+ }
+ 
+ // ------------------------------------------------------------------------
+ //
+ // Validate a visible area of a widget.
+ //
+ // ------------------------------------------------------------------------
+ 
+ NS_METHOD nsWindow::Validate()
+@@ -4459,20 +4507,26 @@ PRBool nsWindow::ProcessMessage(UINT msg
+         InitEvent(event);
+         result = DispatchWindowEvent(&event);
+         NS_RELEASE(event.widget);
+       }
+     }
+     break;
+ 
+ #ifndef WINCE
+     case WM_DISPLAYCHANGE:
+       DispatchStandardEvent(NS_DISPLAYCHANGED);
++
++      // When the window's chrome is hidden and the work area changes, 
++      // the window is not invalidated as it is supposed to
++      if (mIsHideChrome)
++        Invalidate(PR_TRUE);
++
+       break;
+ #endif
+ 
+     case WM_SYSCOLORCHANGE:
+       // Note: This is sent for child windows as well as top-level windows.
+       // The Win32 toolkit normally only sends these events to top-level windows.
+       // But we cycle through all of the childwindows and send it to them as well
+       // so all presentations get notified properly.
+       // See nsWindow::GlobalMsgWindowProc.
+       DispatchStandardEvent(NS_SYSCOLORCHANGED);
+@@ -4988,20 +5042,76 @@ PRBool nsWindow::ProcessMessage(UINT msg
+       // enforce local z-order rules
+       if (!(info->flags & SWP_NOZORDER))
+         ConstrainZLevel(&info->hwndInsertAfter);
+       // prevent rude external programs from making hidden window visible
+       if (mWindowType == eWindowType_invisible)
+         info->flags &= ~SWP_SHOWWINDOW;
+     }
+     break;
+ #endif
+ 
++    case WM_GETMINMAXINFO:
++    {
++      PRInt32 minTrackWidth = mConstrainedMinWidth;
++      PRInt32 minTrackHeight = mConstrainedMinHeight;
++      PRInt32 maxTrackWidth = mConstrainedMaxWidth;
++      PRInt32 maxTrackHeight = mConstrainedMaxHeight;
++      PRInt32 maxWidth = mConstrainedMaxWidth;
++      PRInt32 maxHeight = mConstrainedMaxHeight;
++
++      PRInt32 left = -1, top = -1;
++
++      // Restrict the window from covering the taskbar if hidechrome is enabled
++      // (because the OS doesn't do this for us) and the size mode is set to
++      // maximized (because 'fullscreen' mode still uses nsSizeMode_Normal).
++      if (mIsHideChrome &&
++          (mSizeMode == nsSizeMode_Maximized || mIsMaximizing)) {
++
++        // Figure out the maximized window's size and position
++        RECT workArea;
++        if (::SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0)) {
++          PRInt32 workWidth = workArea.right - workArea.left;
++          maxWidth = mConstrainedMaxWidth != -1 ?
++                     PR_MIN(workWidth, mConstrainedMaxWidth) :
++                     workWidth;
++
++          PRInt32 workHeight = workArea.bottom - workArea.top;
++          maxHeight = mConstrainedMaxHeight != -1 ?
++                      PR_MIN(workHeight, mConstrainedMaxHeight) :
++                      workHeight;
++          
++          left = workArea.left;
++          top = workArea.top;
++        }
++      }
++
++      // Set our values
++      MINMAXINFO* mmi = (MINMAXINFO*)lParam;
++      if (minTrackWidth != -1 && minTrackWidth > mmi->ptMinTrackSize.x)
++        mmi->ptMinTrackSize.x = minTrackWidth;
++      if (minTrackHeight != -1 && minTrackHeight > mmi->ptMinTrackSize.y)
++        mmi->ptMinTrackSize.y = minTrackHeight;
++      if (maxTrackWidth != -1 && maxTrackWidth < mmi->ptMaxTrackSize.x)
++        mmi->ptMaxTrackSize.x = maxTrackWidth;
++      if (maxTrackHeight != -1 && maxTrackHeight < mmi->ptMaxTrackSize.y)
++        mmi->ptMaxTrackSize.y = maxTrackHeight;
++      if (maxWidth != -1 && maxWidth < mmi->ptMaxSize.x)
++        mmi->ptMaxSize.x = maxWidth;
++      if (maxHeight != -1 && maxHeight < mmi->ptMaxSize.y)
++        mmi->ptMaxSize.y = maxHeight;
++      if (left != -1 && left > mmi->ptMaxPosition.x)
++        mmi->ptMaxPosition.x = left;
++      if (top != -1 && top > mmi->ptMaxPosition.y)
++        mmi->ptMaxPosition.y = top;
++    }
++    break;
++
+     case WM_SETFOCUS:
+ #ifdef WINCE
+       {
+         // Get current input context
+         HIMC hC = ImmGetContext(mWnd);		
+         // Open the IME 
+         ImmSetOpenStatus(hC, TRUE);
+         // Set "multi-press" input mode
+         ImmEscapeW(NULL, hC, IME_ESC_SET_MODE, (LPVOID)IM_SPELL);
+       }
+@@ -5068,20 +5178,25 @@ PRBool nsWindow::ProcessMessage(UINT msg
+     case WM_WINDOWPOSCHANGED:
+     {
+ #ifdef MOZ_XUL
+       if (mIsTopTranslucent && !IsAlphaTranslucencySupported() && w9x.mPerformingSetWindowRgn)
+       {
+         result = PR_FALSE;    // Ignore events generated by SetWindowRgn
+         break;
+       }
+ #endif
+ 
++      // Reset our special case flag for maximizing a hidechrome window now
++      // that all sizing is completed
++      if (mIsMaximizing)
++        mIsMaximizing = PR_FALSE;
++
+       WINDOWPOS *wp = (LPWINDOWPOS)lParam;
+ 
+       // We only care about a resize, so filter out things like z-order
+       // changes. Note: there's a WM_MOVE handler above which is why we're
+       // not handling them here...
+       if (0 == (wp->flags & SWP_NOSIZE)) {
+         // XXX Why are we using the client size area? If the size notification
+         // is for the client area then the origin should be (0,0) and not
+         // the window origin in screen coordinates...
+         RECT r;
+@@ -5345,24 +5460,43 @@ PRBool nsWindow::ProcessMessage(UINT msg
+       if (msaaAccessible) {
+         lAcc = LresultFromObject(IID_IAccessible, wParam, msaaAccessible); // does an addref
+         msaaAccessible->Release(); // release extra addref
+       }
+       return (*aRetValue = lAcc) != 0;
+     }
+ #endif
+ 
+ #ifndef WINCE
+     case WM_SYSCOMMAND:
+-      // prevent Windows from trimming the working set. bug 76831
+-      if (!gTrimOnMinimize && wParam == SC_MINIMIZE) {
+-        ::ShowWindow(mWnd, SW_SHOWMINIMIZED);
+-        result = PR_TRUE;
++      if (wParam == SC_MINIMIZE) {
++        // prevent Windows from trimming the working set. bug 76831
++        if (!gTrimOnMinimize) {
++          ::ShowWindow(mWnd, SW_SHOWMINIMIZED);
++          result = PR_TRUE;
++        }
++        // Set this flag so that we restore to the proper size
++        if (mIsHideChrome && mSizeMode == nsSizeMode_Maximized)
++          mWasMaximized = PR_TRUE;
++      }
++      else if (wParam == SC_MAXIMIZE) {
++        if (mIsHideChrome) {
++          // Set a flag to properly animate the maximizing of a hidechrome window
++          // that will be handled in WM_GETMINMAXINFO
++          mWasMaximized = PR_FALSE;
++          mIsMaximizing = PR_TRUE;
++        }
++      }
++      else if (wParam == SC_RESTORE) {
++        if (mIsHideChrome && mWasMaximized) {
++          mWasMaximized = PR_FALSE;
++          mIsMaximizing = PR_TRUE;
++        }
+       }
+       break;
+ #endif
+ 
+ 
+ #ifdef WINCE
+   case WM_HIBERNATE:        
+     nsMemory::HeapMinimize(PR_TRUE);
+     break;
+ #endif
+Index: widget/src/windows/nsWindow.h
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.h,v
+retrieving revision 3.204.2.11
+diff -u -1 -0 -p -r3.204.2.11 nsWindow.h
+--- widget/src/windows/nsWindow.h	26 Jul 2006 19:06:59 -0000	3.204.2.11
++++ widget/src/windows/nsWindow.h	22 Nov 2006 07:23:28 -0000
+@@ -50,20 +50,22 @@
+ 
+ #include "nsIWidget.h"
+ #include "nsIKBStateControl.h"
+ 
+ #include "nsIMouseListener.h"
+ #include "nsIEventListener.h"
+ #include "nsString.h"
+ 
+ #include "nsVoidArray.h"
+ 
++#include "nsRect.h"
++
+ #include <imm.h>
+ 
+ class nsNativeDragTarget;
+ class nsIRollupListener;
+ 
+ class nsIMenuBar;
+ class nsIFile;
+ 
+ class imgIContainer;
+ 
+@@ -324,20 +326,24 @@ public:
+   NS_IMETHOD              Destroy();
+   NS_IMETHOD              SetParent(nsIWidget *aNewParent);
+   virtual nsIWidget*      GetParent(void);
+   NS_IMETHOD              Show(PRBool bState);
+   NS_IMETHOD              IsVisible(PRBool & aState);
+   NS_IMETHOD              PlaceBehind(nsTopLevelWidgetZPlacement aPlacement, nsIWidget *aWidget, PRBool aActivate);
+   NS_IMETHOD              SetSizeMode(PRInt32 aMode);
+   NS_IMETHOD              ModalEventFilter(PRBool aRealEvent, void *aEvent, PRBool *aForWindow);
+   NS_IMETHOD              CaptureMouse(PRBool aCapture);
+   NS_IMETHOD              ConstrainPosition(PRBool aAllowSlop, PRInt32 *aX, PRInt32 *aY);
++  NS_IMETHOD              SetSizeConstraints(PRInt32 aMinWidth, PRInt32 aMaxWidth,
++                                             PRInt32 aMinHeight, PRInt32 aMaxHeight);
++  NS_IMETHOD              GetSizeConstraints(PRInt32* aMinWidth, PRInt32* aMaxWidth,
++                                             PRInt32* aMinHeight, PRInt32* aMaxHeight);
+   NS_IMETHOD              Move(PRInt32 aX, PRInt32 aY);
+   NS_IMETHOD              Resize(PRInt32 aWidth, PRInt32 aHeight, PRBool aRepaint);
+   NS_IMETHOD              Resize(PRInt32 aX, PRInt32 aY, PRInt32 aWidth, PRInt32 aHeight, PRBool aRepaint);
+   NS_IMETHOD              Enable(PRBool aState);
+   NS_IMETHOD              IsEnabled(PRBool *aState);
+   NS_IMETHOD              SetFocus(PRBool aRaise);
+   NS_IMETHOD              GetBounds(nsRect &aRect);
+   NS_IMETHOD              GetClientBounds(nsRect &aRect);
+   NS_IMETHOD              GetScreenBounds(nsRect &aRect);
+   NS_IMETHOD              SetBackgroundColor(const nscolor &aColor);
+@@ -513,20 +519,21 @@ protected:
+   PRBool DispatchAppCommandEvent(PRUint32 aEventCommand);
+   void RelayMouseEvent(UINT aMsg, WPARAM wParam, LPARAM lParam);
+ 
+   void GetNonClientBounds(nsRect &aRect);
+   void HandleTextEvent(HIMC hIMEContext, PRBool aCheckAttr=PR_TRUE);
+   BOOL HandleStartComposition(HIMC hIMEContext);
+   void HandleEndComposition(void);
+   void GetTextRangeList(PRUint32* textRangeListLengthResult, nsTextRangeArray* textRangeListResult);
+ 
+   void ConstrainZLevel(HWND *aAfter);
++  void EnsureSizeConstraints(WINDOWPOS* aInfo);
+ 
+   PRBool CanTakeFocus();
+ 
+ private:
+ 
+ 
+ #ifdef DEBUG
+   void DebugPrintEvent(nsGUIEvent& aEvent, HWND aWnd);
+ #endif
+ 
+@@ -589,21 +596,23 @@ protected:
+   PRPackedBool  mHas3DBorder;
+   PRPackedBool  mIsShiftDown;
+   PRPackedBool  mIsControlDown;
+   PRPackedBool  mIsAltDown;
+   PRPackedBool  mIsDestroying;
+   PRPackedBool  mOnDestroyCalled;
+   PRPackedBool  mIsVisible;
+   PRPackedBool  mIsInMouseCapture;
+   PRPackedBool  mIsInMouseWheelProcessing;
+   PRPackedBool  mUnicodeWidget;
+-
++  PRPackedBool  mIsHideChrome;
++  PRPackedBool  mIsMaximizing;
++  PRPackedBool  mWasMaximized;
+   PRPackedBool  mPainting;
+   char          mLeadByte;
+   PRUint32      mBlurEventSuppressionLevel;
+   nsContentType mContentType;
+ 
+   // XXX Temporary, should not be caching the font
+   nsFont *      mFont;
+ 
+   PRInt32       mPreferredWidth;
+   PRInt32       mPreferredHeight;
+@@ -616,20 +625,25 @@ protected:
+ 
+   static UINT   gCurrentKeyboardCP;
+   static HKL    gKeyboardLayout;
+   static PRBool gSwitchKeyboardLayout;
+ 
+   HKL           mLastKeyboardLayout;
+ 
+   // Drag & Drop
+   nsNativeDragTarget * mNativeDragTarget;
+ 
++  PRInt32 mConstrainedMinWidth;
++  PRInt32 mConstrainedMaxWidth;
++  PRInt32 mConstrainedMinHeight;
++  PRInt32 mConstrainedMaxHeight;
++
+   // Enumeration of the methods which are accessible on the "main GUI thread"
+   // via the CallMethod(...) mechanism...
+   // see nsSwitchToUIThread
+   enum {
+     CREATE = 0x0101,
+     CREATE_NATIVE,
+     DESTROY,
+     SET_FOCUS,
+     SET_CURSOR,
+     CREATE_HACK
+Index: widget/src/xpwidgets/nsBaseWidget.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.cpp,v
+retrieving revision 1.135
+diff -u -1 -0 -p -r1.135 nsBaseWidget.cpp
+--- widget/src/xpwidgets/nsBaseWidget.cpp	21 Jul 2005 04:28:40 -0000	1.135
++++ widget/src/xpwidgets/nsBaseWidget.cpp	22 Nov 2006 07:23:29 -0000
+@@ -789,21 +789,46 @@ NS_METHOD nsBaseWidget::GetBoundsAppUnit
+ * 
+ *
+ **/
+ NS_METHOD nsBaseWidget::SetBounds(const nsRect &aRect)
+ {
+   mBounds = aRect;
+ 
+   return NS_OK;
+ }
+  
++NS_IMETHODIMP nsBaseWidget::SetSizeConstraints(PRInt32 aMinWidth,
++                                               PRInt32 aMaxWidth,
++                                               PRInt32 aMinHeight,
++                                               PRInt32 aMaxHeight)
++{
++  return NS_ERROR_NOT_IMPLEMENTED;
++}
++
++NS_IMETHODIMP nsBaseWidget::GetSizeConstraints(PRInt32* aMinWidth,
++                                               PRInt32* aMaxWidth,
++                                               PRInt32* aMinHeight,
++                                               PRInt32* aMaxHeight)
++{
++  // Returning -1 indicates that no constraints have been set
++  if (aMinWidth)
++    *aMinWidth = -1;
++  if (aMaxWidth)
++    *aMaxWidth = -1;
++  if (aMinHeight)
++    *aMinHeight = -1;
++  if (aMaxHeight)
++    *aMaxHeight = -1;
++  return NS_OK;
++}
+ 
++//-------------------------------------------------------------------------
+ 
+ /**
+ * Calculates the border width and height  
+ *
+ **/
+ NS_METHOD nsBaseWidget::GetBorderSize(PRInt32 &aWidth, PRInt32 &aHeight)
+ {
+   nsRect rectWin;
+   nsRect rect;
+   GetBounds(rectWin);
+Index: widget/src/xpwidgets/nsBaseWidget.h
+===================================================================
+RCS file: /cvsroot/mozilla/widget/src/xpwidgets/nsBaseWidget.h,v
+retrieving revision 1.75
+diff -u -1 -0 -p -r1.75 nsBaseWidget.h
+--- widget/src/xpwidgets/nsBaseWidget.h	21 Jul 2005 04:28:40 -0000	1.75
++++ widget/src/xpwidgets/nsBaseWidget.h	22 Nov 2006 07:23:29 -0000
+@@ -127,20 +127,24 @@ public:
+   NS_IMETHOD              GetBorderSize(PRInt32 &aWidth, PRInt32 &aHeight);
+   NS_IMETHOD              Paint(nsIRenderingContext& aRenderingContext, const nsRect& aDirtyRect);
+   NS_IMETHOD              ScrollRect(nsRect &aRect, PRInt32 aDx, PRInt32 aDy);
+   NS_IMETHOD              ScrollWidgets(PRInt32 aDx, PRInt32 aDy);
+   NS_IMETHOD              EnableDragDrop(PRBool aEnable);
+   NS_IMETHOD              GetAttention(PRInt32 aCycleCount);
+   NS_IMETHOD              GetLastInputEventTime(PRUint32& aTime);
+   NS_IMETHOD              SetIcon(const nsAString &anIconSpec);
+   virtual void            ConvertToDeviceCoordinates(nscoord  &aX,nscoord &aY) {}
+   virtual void            FreeNativeData(void * data, PRUint32 aDataType) {}//~~~
++  NS_IMETHOD              SetSizeConstraints(PRInt32 aMinWidth, PRInt32 aMaxWidth,
++                                             PRInt32 aMinHeight, PRInt32 aMaxHeight);
++  NS_IMETHOD              GetSizeConstraints(PRInt32* aMinWidth, PRInt32* aMaxWidth,
++                                             PRInt32* aMinHeight, PRInt32* aMaxHeight);
+ 
+ protected:
+ 
+   virtual void            ResolveIconName(const nsAString &aIconName,
+                                           const nsAString &aIconSuffix,
+                                           nsILocalFile **aResult);
+   virtual void            DrawScaledRect(nsIRenderingContext& aRenderingContext,
+                                          const nsRect & aRect,
+                                          float aScale,
+                                          float aAppUnits);
