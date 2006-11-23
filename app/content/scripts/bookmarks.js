@@ -123,8 +123,10 @@ var bmManager = {
       this.bookmark_nodes = this._getDefaultNodes();    
       this.saveBookmarks();
       SBDataSetBoolValue("bookmarks.prepopulated", true);
-      // HACK to force the Bookmarks tree entry open on first run
+      // HACK to force the Bookmarks  and MP3 Blogs tree entries open on first run.
+      // Note that this won't work out for locales other than en-US.
       SBDataSetBoolValue("servicetree_opened_frame_servicetree_Bookmarks", true);
+      SBDataSetBoolValue("servicetree_opened_frame_servicetree_MP3 Blogs", true);
     } 
     else
     {
@@ -385,6 +387,27 @@ var bmManager = {
                   url: "",
                   children: [   
                   { 
+                      label: "Extensions",
+                      icon: "chrome://songbird/skin/default/logo_16.png",
+                      url: "http://extensions.songbirdnest.com/",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
+                      label: "Directory",
+                      icon: "chrome://songbird/skin/default/logo_16.png",
+                      url: "http://www.songbirdnest.com/directory",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
+                      label: "Windjay.com",
+                      icon: "chrome://songbird/skin/serviceicons/default.ico",
+                      url: "http://windjay.com/",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
                       label: "Podbop",
                       icon: "http://podbop.org/favicon.ico",
                       url: "http://podbop.org/",
@@ -392,69 +415,71 @@ var bmManager = {
                       children: []
                   },
                   { 
-                      label: "Scissorkick",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://www.scissorkick.com/",
+                      label: "Creative Commons",
+                      icon: "http://creativecommons.org/favicon.ico",
+                      url: "http://www.creativecommons.org/",
                       properties: "bookmark",
                       children: []
-                  },                                    
-                  { 
-                      label: "Fluxblog",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://fluxblog.org",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Swedelife",
-                      icon: "http://www.swedelife.com/favicon.ico",
-                      url: "http://www.swedelife.com/",
-                      properties: "bookmark",
-                      children: []
-                  },                                    
-                  { 
-                      label: "La Blogothèque",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://www.blogotheque.net/mp3/",
-                      properties: "bookmark",
-                      children: []
-                  },  
+                  }
+                  ] // end of bookmark children
+            },
+             { /////// MP3 Blogs
+                 label: "&servicesource.mp3_blogs",
+                 icon: "chrome://songbird/skin/default/icon_folder.png",
+                 url: "",
+                 properties: "bookmark",
+                 children: [
+                 { 
+                     label: "Fluxblog",
+                     icon: "chrome://songbird/skin/serviceicons/default.ico",
+                     url: "http://fluxblog.org",
+                     properties: "bookmark",
+                     children: []
+                 },
+                 { 
+                     label: "La Blogothèque",
+                     icon: "chrome://songbird/skin/serviceicons/default.ico",
+                     url: "http://www.blogotheque.net/mp3/",
+                     properties: "bookmark",
+                     children: []
+                 },
+                 { 
+                     label: "Scissorkick",
+                     icon: "chrome://songbird/skin/serviceicons/default.ico",
+                     url: "http://www.scissorkick.com/",
+                     properties: "bookmark",
+                     children: []
+                 },
+                 { 
+                     label: "Swedelife",
+                     icon: "http://www.swedelife.com/favicon.ico",
+                     url: "http://www.swedelife.com/",
+                     properties: "bookmark",
+                     children: []
+                 },
+                 { 
+                     label: "MonkeyFilter Wiki",
+                     icon: "chrome://songbird/skin/serviceicons/default.ico",
+                     url: "http://wiki.monkeyfilter.com/index.php?title=MP3_Blog_Listing",
+                     properties: "bookmark",
+                     children: []
+                 },
+                 { 
+                     label: "elbo.ws",
+                     icon: "http://elbo.ws/favicon.ico",
+                     url: "http://elbo.ws/",
+                     properties: "bookmark",
+                     children: []
+                 }
+/* ,
+
                   { 
                       label: "Banana Nutrament",
                       icon: "chrome://songbird/skin/serviceicons/default.ico",
                       url: "http://banananutrament.blogspot.com/",
                       properties: "bookmark",
                       children: []
-                  },
-                  { 
-                      label: "Beggars Group",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://www.beggars.com/us/audio_video/index.html",
-                      properties: "bookmark",
-                      children: []
-                  },
-                  { 
-                      label: "Up Records",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://www.uprecords.com/mp3s/",
-                      properties: "bookmark",
-                      children: []
-                  },
-                  { 
-                      label: "MonkeyFilter Wiki",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://wiki.monkeyfilter.com/index.php?title=MP3_Blog_Listing",
-                      properties: "bookmark",
-                      children: []
-                  },
-                  { 
-                      label: "Songbirdnest",
-                      icon: "chrome://songbird/skin/default/logo_16.png",
-                      url: "http://songbirdnest.com/",
-                      properties: "bookmark",
-                      children: []
-                  }
-/*              ,                   
+                  },              
                   { 
                       label: "Autodownload",
                       icon: "chrome://songbird/skin/serviceicons/default.ico",
@@ -462,15 +487,37 @@ var bmManager = {
                       properties: "bookmark",
                       children: []
                 }
-*/              
-                  ] // end of bookmark children
-            },
+*/
+
+                 ] // end of mp3blog children
+           },
               { /////// SEARCHES
                   label: "&servicesource.searches",
                   icon: "chrome://songbird/skin/default/icon_folder.png",
                   url: "",
                   properties: "bookmark",
                   children: [
+                  { 
+                      label: "Singingfish",
+                      icon: "http://singingfish.com/favicon.ico",
+                      url: "http://search.singingfish.com/sfw/home.jsp?a_submit=0&aw=1&sfor=av&dur=1&fmp3=1&fmpeg=1&call=1&cmus=1&cmov=1&crad=1&coth=1&ctv=1&cnews=1&cspt=1&cfin=1",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
+                      label: "elbo.ws",
+                      icon: "http://elbo.ws/favicon.ico",
+                      url: "http://elbo.ws/",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
+                      label: "mefeedia",
+                      icon: "http://mefeedia.com/favicon.ico",
+                      url: "http://www.mefeedia.com/search.php?q=&object=feed&Submit=Search",
+                      properties: "bookmark",
+                      children: []
+                  },
                   { 
                       label: "Google",
                       icon: "chrome://songbird/skin/serviceicons/google.ico",
@@ -486,12 +533,12 @@ var bmManager = {
                       children: []
                   },  
                   { 
-                      label: "Creative Commons",
-                      icon: "http://creativecommons.org/favicon.ico",
-                      url: "http://search.creativecommons.org/",
+                      label: "Wikipedia",
+                      icon: "http://en.wikipedia.org/favicon.ico",
                       properties: "bookmark",
+                      url: "http://www.wikipedia.org/",
                       children: []
-                  }         
+                  }
                   ] // end of searches children
             },      
               { /////// MUSIC STORES
@@ -501,44 +548,9 @@ var bmManager = {
                   url: "",
                   children: [
                   { 
-                      label: "Connect",
-                      icon: "chrome://songbird/skin/serviceicons/connect.ico",
-                      url: "http://musicstore.connect.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Amazon",
-                      icon: "chrome://songbird/skin/serviceicons/amazon.ico",
-                      url: "http://www.faser.net/mab/chrome/content/mab.xul",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Audible",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://audible.com/",
-                      properties: "bookmark",
-                      children: []
-                  },                                    
-                  { 
-                      label: "Beatport",
-                      icon: "http://www.beatport.com/favicon.ico",
-                      url: "http://beatport.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "MP3Tunes",
-                      icon: "http://www.mp3tunes.com/favicon.ico",
-                      url: "http://www.mp3tunes.com/store.php",
-                      properties: "bookmark",
-                      children: []
-                },
-                  { 
                       label: "eMusic",
                       icon: "chrome://songbird/skin/serviceicons/emusic.ico",
-                      url: "http://emusic.com/",
+                      url: "http://emusic.com/sb/",
                       properties: "bookmark",
                       children: []
                   },  
@@ -550,64 +562,28 @@ var bmManager = {
                       children: []
                   },  
                   { 
-                      label: "Selectric Records",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://www.selectricrecords.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Arts and Crafts Records",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://www.galleryac.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Calabash Music",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",                      
-                      url: "http://calabashmusic.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Project Opus",
-                      icon: "http://projectopus.com/favicon.ico",
-                      url: "http://projectopus.com/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
                       label: "Birdman Records",
                       icon: "http://www.birdmanrecords.com/favicon.ico",
                       url: "http://www.birdmanrecords.com/",
                       properties: "bookmark",
                       children: []
-                  }                                                                                                                                           
-                  ] // end of music stores children
-            },              
-              { /////// PODCASTS
-                  label: "&servicesource.podcasts",
-                  icon: "chrome://songbird/skin/default/icon_folder.png",
-                  url: "",
-                  properties: "bookmark",
-                  children: [
-                  { 
-                      label: "Odeo Featured",
-                      icon: "chrome://songbird/skin/serviceicons/odeo.ico",
-                      url: "http://odeo.com/listen/featured/",
-                      properties: "bookmark",
-                      children: []
-                  },  
-                  { 
-                      label: "Podemus",
+                  },
+                  {
+                      label: "Beggars Group",
                       icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://podemus.fr/",
+                      url: "http://www.beggars.com/us/audio_video/index.html",
                       properties: "bookmark",
                       children: []
-                  }         
-                  ] // end of podcasts children
-            },  
+                  },
+                  { 
+                      label: "Amazon",
+                      icon: "chrome://songbird/skin/serviceicons/amazon.ico",
+                      url: "http://www.faser.net/mab/chrome/content/mab.xul",
+                      properties: "bookmark",
+                      children: []
+                  }                                                                                                               
+                  ] // end of music stores children
+            },
               { /////// RADIO
                   label: "&servicesource.radio",
                   icon: "chrome://songbird/skin/default/icon_folder.png",
@@ -615,19 +591,12 @@ var bmManager = {
                   properties: "bookmark",
                   children: [
                   { 
-                      label: "soma fm",
-                      icon: "http://somafm.com/favicon.ico",
-                      url: "http://somafm.com/",
+                      label: "SHOUTcast",
+                      icon: "http://www.shoutcast.com/favicon.ico",
+                      url: "http://www.shoutcast.com/directory/",
                       properties: "bookmark",
                       children: []
-                  },   
-                  { 
-                      label: "95.7 Max FM",
-                      icon: "chrome://songbird/skin/serviceicons/default.ico",
-                      url: "http://957maxfm.com/stream.cfm",
-                      properties: "bookmark",
-                      children: []
-                  }     
+                  }  
                   ] // end of radio children
             },  
               { /////// NETWORK SERVICES
@@ -642,8 +611,9 @@ var bmManager = {
                       url: "http://ninjam.com/samples.php",
                       properties: "bookmark",
                       children: []
-                  },  
-                  { 
+                  }  
+/* Sorry guys :(
+                  {
                       label: "last.fm",
                       icon: "chrome://songbird/skin/serviceicons/default.ico",
                       url: "http://last.fm/group/Songbird",
@@ -691,7 +661,8 @@ var bmManager = {
                       url: "http://jamendo.com/",
                       properties: "bookmark",
                       children: []
-                  }                                                                 
+                  }  
+*/                                                               
                   ] // end of net services children
               },                          
               { /////// NETWORK DEVICES
@@ -708,9 +679,9 @@ var bmManager = {
                       children: []
                     },  
                     { 
-                      label: "Sonos",
-                      icon: "http://www.sonos.com/favicon.ico",
-                      url: "http://www.sonos.com/",
+                      label: "Sondigo",
+                      icon: "http://www.sondigo.com/favicon.ico",
+                      url: "http://www.sondigo.com/",
                       properties: "bookmark",
                       children: []
                     }         

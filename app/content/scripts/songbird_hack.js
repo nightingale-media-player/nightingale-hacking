@@ -2279,6 +2279,12 @@ function onSearchTerm( target, in_term )
       case "search.popup.songbird":
         onSearchEditIdle();
       break;
+      case "search.popup.creativecommons":
+        search_url = "http://search.creativecommons.com/?q=" + term;
+      break;
+      case "search.popup.mefeedia":
+        search_url = "http://www.mefeedia.com/search.php?object=feed&q=" + term;
+      break;
       case "search.popup.google":
         search_url = "http://www.google.com/musicsearch?q=" + term + "&sa=Search";
       break;
@@ -2289,7 +2295,7 @@ function onSearchTerm( target, in_term )
         search_url = "http://audio.search.yahoo.com/search/audio?ei=UTF-8&fr=sfp&p=" + term;
       break;
       case "search.popup.emusic":
-        search_url = "http://www.emusic.com/search.html?mode=x&QT=" + term + "&x=0&y=0";
+        search_url = "http://www.emusic.com/search.html?mode=x&QT=" + term + "&fref=150554";
       break;
       case "search.popup.insound":
         search_url = "http://search.insound.com/search/searchmain.jsp?searchby=meta&query=" + term + "&fromindex=1&submit.x=0&submit.y=0";

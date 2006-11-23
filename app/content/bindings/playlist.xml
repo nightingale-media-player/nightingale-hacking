@@ -106,30 +106,24 @@
                   <xul:menuitem id="search.popup.elbows" 
                     label="elbo.ws" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/elbows.ico"
                 />
+                  <xul:menuitem id="search.popup.mefeedia" 
+                    label="mefeedia" class="menuitem-iconic" image="http://www.mefeedia.com/favicon.ico"
+                />
                   <xul:menuitem id="search.popup.google" 
                     label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
-                />
-                  <xul:menuitem id="search.popup.wiki" 
-                    label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
                 />
                   <xul:menuitem id="search.popup.yahoo" 
                     label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
                 />
+                  <xul:menuitem id="search.popup.wiki" 
+                    label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
+                />
                   <xul:menuitem id="search.popup.emusic" 
                     label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
                 />
-                  <xul:menuitem id="search.popup.insound" 
-                    label="Insound" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/insound.ico"
-                />
-                  <xul:menuitem id="playlist.popup.odeo" 
-                    label="Odeo" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/odeo.ico"
-                />
-                  <xul:menuitem id="search.popup.shoutcast" 
-                    label="Shoutcast" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/shoutcast.ico"
-                />
-                  <xul:menuitem id="search.popup.radiotime" 
-                    label="Radiotime" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/radiotime.ico"
-                />
+<!--                  <xul:menuitem id="search.popup.creativecommons" 
+                    label="Creative Commons" class="menuitem-iconic" image="http://creativecommons.org/favicon.ico"
+                /> -->
                 </xul:menupopup>
               </xul:menu>
               <xul:menu id="playlist.context.lyrics" label="&playlist.context.lyrics;">

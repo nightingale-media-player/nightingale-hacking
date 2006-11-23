@@ -203,7 +203,7 @@ ServicesourceProxy.prototype = {
     
     if (subj == NC_SERVICESOURCE) 
     {
-        if (pred == NC_CHILD)
+      if (pred == NC_CHILD)
       {
         var originalEnumerator = this.mInner.GetTargets(subj, pred, tv);
         
@@ -227,7 +227,7 @@ ServicesourceProxy.prototype = {
         var items = this._filterNodes(originalEnumerator);
         
         // Get a list of all the leaf nodes
-         items = items.concat(this._flattenNodeTree());
+        items = items.concat(this._flattenNodeTree());
       
         // Wrap the items in an nsISimpleEnumerator
         var enumerator = new ArrayEnumerator(items);

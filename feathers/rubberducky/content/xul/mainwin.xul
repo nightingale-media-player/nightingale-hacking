@@ -180,8 +180,10 @@
                     datasources="rdf:Servicesource"
                     ref="NC:ServicesourceFlat"
                 >
+<!--  Disabled, since content is duplicated in bookmarks
                     <menuitem id="services.browse" label="&menu.services.browse;"/>
                     <menuseparator/>   
+-->
                     <template>                 
                       <rule>
                         <menuitem uri="rdf:*"
