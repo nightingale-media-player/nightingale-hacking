@@ -437,6 +437,13 @@ var bmManager = {
                      children: []
                  },
                  { 
+                     label: "Idolator",
+                     icon: "http://cache.idolator.com/assets/www.idolator.com/img/favicon.ico",
+                     url: "http://www.idolator.com/",
+                     properties: "bookmark",
+                     children: []
+                 },
+                 { 
                      label: "La Blogothèque",
                      icon: "chrome://songbird/skin/serviceicons/default.ico",
                      url: "http://www.blogotheque.net/mp3/",
@@ -463,15 +470,15 @@ var bmManager = {
                      url: "http://wiki.monkeyfilter.com/index.php?title=MP3_Blog_Listing",
                      properties: "bookmark",
                      children: []
-                 },
+                 }
+/* ,
                  { 
                      label: "elbo.ws",
                      icon: "http://elbo.ws/favicon.ico",
                      url: "http://elbo.ws/",
                      properties: "bookmark",
                      children: []
-                 }
-/* ,
+                 },
 
                   { 
                       label: "Banana Nutrament",
