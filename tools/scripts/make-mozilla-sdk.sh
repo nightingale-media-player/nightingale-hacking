@@ -33,7 +33,6 @@ update_bin_files="*mar*
 update_script_files="common.sh
                      make_full_update.sh
                      make_incremental_update.sh
-                     unwrap_full_update.sh
                      unwrap_full_update.pl
 "
 

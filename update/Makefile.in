@@ -99,9 +99,9 @@ partial-patch:: $(PARTIAL_PATCH_TASK)
 
 partial-patch-unwrap::
 	@$(MKDIR) -p $(STAGE_DIR)/from
-	cd $(STAGE_DIR)/from && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.sh "../$(SRC_BUILD)"
+	cd $(STAGE_DIR)/from && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.pl "../$(SRC_BUILD)"
 	@$(MKDIR) -p $(STAGE_DIR)/to
-	cd $(STAGE_DIR)/to && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.sh "../$(DST_BUILD)"
+	cd $(STAGE_DIR)/to && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.pl "../$(DST_BUILD)"
 	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
     $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
