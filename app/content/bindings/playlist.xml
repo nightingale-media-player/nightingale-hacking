@@ -1549,8 +1549,19 @@
                     var value = this._saved_selection.pop();
                     var row = this._saved_selection.position.pop();
                     
-                    var cell = this.tree.view.getCellText( row, column );
-                    if (value == cell) {
+                    // Dumb tryblock because sometimes getCellText throws an error on an "Invalid Value"?
+                    var failed = false;
+                    var cell = "";
+                    try {
+                      cell = this.tree.view.getCellText( row, column );
+                    } catch (e) {
+                      dump( "WARNING: playlist.xml<restoreSelection>: " + 
+                            "getCellText(" + row + ", " + column + ") FAILED, " + 
+                            "this.tree.view.rowCount = " + this.tree.view.rowCount + "\n");
+                      failed = true;
+                    }
+                    
+                    if (!failed && value == cell) {
                       // the item at that position is still the right item, select it
                       this.tree.view.selection.rangedSelect(row, row, true);
                     } else {
