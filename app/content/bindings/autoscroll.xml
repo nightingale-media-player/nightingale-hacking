@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  
+  
+  <!-- AUTOSCROLL CONTAINER -->
+
+  <binding id="autoscroll">
+
+    <content>
+    
+      <xul:bulletinboard pack="center" style="overflow: hidden;" class="sb_faceplate" sid="parent">
+        <xul:hbox sid="hbox">
+          <children/>
+        </xul:hbox>
+      </xul:bulletinboard>
+
+    </content>
+
+   <implementation type="application/x-javascript">
+
+     <constructor>
+       <![CDATA[
+        if (this.isVertical()) this.setAttribute("style", "-moz-box-orient: horizontal"); else this.setAttribute("style", "-moz-box-orient: vertical");
+        var controller = this;
+        this.startupcb = function() { controller.start(); };
+        this.startuptimeout = setTimeout(this.startupcb, 0);
+       ]]>
+     </constructor>
+     
+     <destructor>
+       <![CDATA[
+       ]]>
+     </destructor>
+     
+     <method name="reset">
+       <body>
+       <![CDATA[
+          this.nscount = 0;
+          this.initialinterval = null;
+          this.initialintervalcb = null;
+          this.scrollinginterval = null;
+          this.scrollingintervalcb = null;
+          this.onmouseup = null;
+          this.onmousemove = null;
+          this.scrollingoffset = 0;
+          this.hbox = document.getAnonymousElementByAttribute(this, "sid", "hbox");
+          this.parent = document.getAnonymousElementByAttribute(this, "sid", "parent");
+          this.contentclone = null;
+          this.setAlignment();
+          this.anchorx = 0;
+          this.anchory = 0;
+          this.anchoro = 0;
+        ]]>
+       </body>
+     </method>
+
+     <method name="start">
+       <body>
+        <![CDATA[
+         this.reset();
+         this.startInitialTimer();
+        ]]>
+       </body>
+     </method>
+
+     <method name="cloneChildren">
+       <body>
+        <![CDATA[
+          if (!this.contentclone) {
+            this.contentclone = document.createElement("hbox");
+            var children = this.childNodes;
+            for (var i=0;i<children.length;i++) {
+              var object = children[i].cloneNode(true);
+              this.contentclone.appendChild(object);
+            }
+            this.parent.appendChild(this.contentclone);
+          }
+        ]]>
+       </body>
+     </method>
+
+     <method name="deleteClonedChildren">
+       <body>
+         <![CDATA[
+         if (this.contentclone) {
+           this.contentclone.parentNode.removeChild(this.contentclone);
+           this.contentclone = null;
+         }
+         ]]>
+      </body>
+     </method>
+
+     <method name="startInitialTimer">
+       <body>
+        <![CDATA[
+          if (this.initialinterval) this.stopInitialTimer();
+          this.nscount = 0;
+          var controller = this;
+          this.initialintervalcb = function() { controller.onInitialTimer(); };
+          this.initialinterval = setInterval(this.initialintervalcb, 1000);
+        ]]>
+       </body>
+     </method>
+
+     <method name="stopInitialTimer">
+       <body>
+        <![CDATA[
+         if (this.initialinterval) {
+           clearInterval(this.initialinterval);
+           this.initialintervalcb = null;
+           this.initialinterval = null;
+         }
+         this.nscount = 0;
+        ]]>
+       </body>
+     </method>
+
+     <method name="needScroll">
+       <body>
+        <![CDATA[
+          if (this.isVertical()) {
+            var height = this.hbox.boxObject.height;
+            return (height > this.boxObject.height);
+          } else {
+            var width = this.hbox.boxObject.width;
+            return (width > this.boxObject.width);
+          }
+        ]]>
+       </body>
+     </method>
+
+     <method name="startAnimationTimer">
+       <body>
+        <![CDATA[
+         if (this.scrollinginterval) this.stopAnimationTimer();
+         var controller = this;
+         this.scrollingintervalcb = function() { controller.onAnimationTimer(); };
+         this.scrollinginterval = setInterval(this.scrollingintervalcb, 20);
+        ]]>
+       </body>
+     </method>
+
+     <method name="stopAnimationTimer">
+       <body>
+        <![CDATA[
+         if (!this.scrollinginterval) return;
+         clearInterval(this.scrollinginterval);
+         this.scrollingintervalcb = null;
+         this.scrollinginterval = null;
+        ]]>
+       </body>
+     </method>
+     
+     <method name="startAnimation">
+       <body>
+        <![CDATA[
+         this.cloneChildren();
+         this.setAlignment();
+         this.startAnimationTimer();
+        ]]>
+       </body>
+     </method>
+
+     <method name="stopAnimation">
+       <body>
+        <![CDATA[
+         this.deleteClonedChildren();
+         this.setOffset(0);
+         this.setAlignment();
+         this.stopAnimationTimer();
+        ]]>
+       </body>
+     </method>
+
+    <method name="setAlignment">
+      <body>
+        <![CDATA[
+          var fa = this.getAttribute("fitalign");
+          if (fa && fa != "") {
+            if (this.needScroll()) {
+              this.removeAttribute("align");
+            } else {
+              this.setAttribute("align", fa);
+              this.hbox.removeAttribute("left");
+              this.hbox.removeAttribute("top");
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+     <method name="setOffset">
+       <parameter name="offset"/>
+       <body>
+        <![CDATA[
+         this.scrollingoffset = offset;
+         if (this.isVertical()) {
+           this.scrollingoffset %= (this.hbox.boxObject.height + this.getSpacing());
+           this.hbox.setAttribute("top", -this.scrollingoffset);
+           if (this.scrollingoffset > 0) {
+             if (this.contentclone) this.contentclone.setAttribute("top", this.hbox.boxObject.height - this.scrollingoffset + this.getSpacing());
+           } else {
+             if (this.contentclone) this.contentclone.setAttribute("top", -this.hbox.boxObject.height - this.scrollingoffset - this.getSpacing());
+           }
+         } else {
+           this.scrollingoffset %= (this.hbox.boxObject.width + this.getSpacing());
+           this.hbox.setAttribute("left", -this.scrollingoffset);
+           if (this.scrollingoffset > 0) {
+             if (this.contentclone) this.contentclone.setAttribute("left", this.hbox.boxObject.width - this.scrollingoffset + this.getSpacing());
+           } else {
+             if (this.contentclone) this.contentclone.setAttribute("left", -this.hbox.boxObject.width - this.scrollingoffset - this.getSpacing());
+           }
+         }
+        ]]>
+       </body>
+     </method>
+
+     <method name="getOffset">
+       <body>
+        <![CDATA[
+         return this.scrollingoffset;
+        ]]>
+       </body>
+     </method>
+
+    <method name="onAnimationTimer">
+      <body>
+       <![CDATA[
+         if (!this.needScroll()) {
+           this.stopAnimation();
+           this.startInitialTimer();
+           return;
+         }
+        this.setOffset(this.getOffset()+1);
+       ]]>
+      </body>
+    </method>
+ 
+    <method name="onInitialTimer">
+      <body>
+       <![CDATA[
+        this.setAlignment();
+        if (this.needScroll() && ++this.nscount == 2) {
+          this.stopInitialTimer();
+          this.startAnimation();
+        }
+       ]]>
+      </body>
+    </method>
+
+    <method name="beginManualMove">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this.needScroll()) {
+            if (this.onmouseup) this.endManualMove();
+            this.stopAnimationTimer();
+            this.stopInitialTimer();
+            if (!this.contentclone) this.cloneChildren();
+            this.setAlignment();
+            this.onmouseup = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.endManualMove(event); } 
+            }; this.onmouseup._that = this; 
+            document.addEventListener("mouseup", this.onmouseup, true);
+            this.onmousemove = { 
+              _that: null, 
+              handleEvent: function( event ) { this._that.doManualMove(event); } 
+            }; this.onmousemove._that = this; 
+            document.addEventListener("mousemove", this.onmousemove, true);
+            this.anchorx = event.screenX;
+            this.anchory = event.screenY;
+            this.anchoro = this.getOffset();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="endManualMove">
+      <parameter name="event"/>
+      <body>
+       <![CDATA[
+        document.removeEventListener("mouseup", this.onmouseup, true);
+        document.removeEventListener("mousemove", this.onmousemove, true);
+        this.onmouseup = null;
+        this.onmousemove = null;
+        this.startInitialTimer();
+       ]]>
+      </body>
+    </method>
+
+    <method name="doManualMove">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this.isVertical()) {
+            var dy = event.screenY - this.anchory;
+            this.setOffset(this.anchoro - dy);
+          } else {
+            var dx = event.screenX - this.anchorx;
+            this.setOffset(this.anchoro - dx);
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="getSpacing">
+      <body>
+        <![CDATA[
+          return parseInt(this.getAttribute("spacing"));
+        ]]>
+      </body>
+    </method>
+
+    <method name="isVertical">
+      <body>
+        <![CDATA[
+          return (this.getAttribute("orientation") == "vertical");
+        ]]>
+      </body>
+    </method>
+
+    </implementation>
+
+   <handlers>
+     <handler event="mousedown" phase="capturing">
+      <![CDATA[
+       this.beginManualMove(event);
+      ]]>
+     </handler>
+   </handlers>
+    
+  </binding>
+
+</bindings>
+
+
