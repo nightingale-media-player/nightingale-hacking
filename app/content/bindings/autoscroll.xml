@@ -63,6 +63,8 @@
      
      <destructor>
        <![CDATA[
+         this.stopAnimation();
+         this.stopInitialTimer();
        ]]>
      </destructor>
      
