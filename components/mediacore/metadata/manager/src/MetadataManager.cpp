@@ -139,9 +139,9 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
 {
   nsAutoLock lock(m_pContractListLock);
 
+  if(!_retval) return NS_ERROR_NULL_POINTER;
   *_retval = nsnull;
   nsresult nRet = NS_ERROR_UNEXPECTED;
-  if(!_retval) return NS_ERROR_NULL_POINTER;
 
   sbIMetadataHandler *pHandler = nsnull;
   nsCOMPtr<nsIChannel> pChannel;
