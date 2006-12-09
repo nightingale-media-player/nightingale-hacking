@@ -152,7 +152,7 @@ function onScanComplete( )
 
       if ( ! msDBQuery || ! aMediaLibrary )
       {
-        return -1;
+        return;
       }
       
       msDBQuery.resetQuery();
