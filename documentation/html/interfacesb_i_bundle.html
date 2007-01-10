@@ -24,9 +24,9 @@
 <a href="interfacesb_i_bundle-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#ce91eeeb8d01e0346b02658d17fff054">retrieveBundleFile</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#631dd6ba173ba546f164cfe89968835b">retrieveBundleFile</a> (in long timeout)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use <a class="el" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> to monitor progress.  <a href="#ce91eeeb8d01e0346b02658d17fff054"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use <a class="el" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> to monitor progress.  <a href="#631dd6ba173ba546f164cfe89968835b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#043e4be7f7a7cfb921c397420c3a2052">addBundleObserver</a> (in <a class="el" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> observer)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a bundle observer This method registers a bundle observer object associated with the download of bundle data in order to get error and completion callbacks.  <a href="#043e4be7f7a7cfb921c397420c3a2052"></a><br></td></tr>
@@ -51,9 +51,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#d2b369eb5b9461997fae282ff91730d1">setExtensionInstallState</a> (in long idx, in boolean installstate)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the installation flag for a bundled extension This method sets the installation flag associated with a particular bundled extension.  <a href="#d2b369eb5b9461997fae282ff91730d1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#fee4eabc6808cdca1a47ca02a42570ea">installSelectedExtensions</a> (in nsISupports window)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#7cf358044d887d03e8eb589f3a84cc70">installSelectedExtensions</a> (in nsISupports window)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Install specified bundled extensions This method installs the extensions whose install flags are set to true. A dialog box showing the installer's progress will be spawned.  <a href="#fee4eabc6808cdca1a47ca02a42570ea"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Install specified bundled extensions This method installs the extensions whose install flags are set to true. A dialog box showing the installer's progress will be spawned.  <a href="#7cf358044d887d03e8eb589f3a84cc70"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#ad1368efd7ce3bc2a511edcf2f6f132b">setInstallResult</a> (in AString result)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the result of the installation attempt This method records the result of the extension installation attempt. It should be called by the dialog implementing download and XPI installation.  <a href="#ad1368efd7ce3bc2a511edcf2f6f132b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#cb649b463839b67ca7f5ecfa3ad45477">downloadFile</a> (in AString url, in <a class="el" href="interfacesb_i_download_observer.html">sbIDownloadObserver</a> observer)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Download a file This method asynchronously downloads a file from a URL and sends progress callbacks to the specified sbiDownloadObserver object.  <a href="#cb649b463839b67ca7f5ecfa3ad45477"></a><br></td></tr>
@@ -291,7 +294,7 @@ Gets the installation flag for a bundled extension This method returns the insta
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>The extension's installation flag (boolean) </dd></dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#d2b369eb5b9461997fae282ff91730d1">setExtensionInstallState</a>, <a class="el" href="interfacesb_i_bundle.html#fee4eabc6808cdca1a47ca02a42570ea">installSelectedExtensions</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#d2b369eb5b9461997fae282ff91730d1">setExtensionInstallState</a>, <a class="el" href="interfacesb_i_bundle.html#7cf358044d887d03e8eb589f3a84cc70">installSelectedExtensions</a> </dd></dl>
 
 </div>
 </div><p>
@@ -495,12 +498,12 @@ Gets the bundle document xml in text format This method returns the xml for the 
 
 </div>
 </div><p>
-<a class="anchor" name="fee4eabc6808cdca1a47ca02a42570ea"></a><!-- doxytag: member="sbIBundle::installSelectedExtensions" ref="fee4eabc6808cdca1a47ca02a42570ea" args="(in nsISupports window)" -->
+<a class="anchor" name="7cf358044d887d03e8eb589f3a84cc70"></a><!-- doxytag: member="sbIBundle::installSelectedExtensions" ref="7cf358044d887d03e8eb589f3a84cc70" args="(in nsISupports window)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void sbIBundle::installSelectedExtensions           </td>
+          <td class="memname">AString sbIBundle::installSelectedExtensions           </td>
           <td>(</td>
           <td class="paramtype">in nsISupports&nbsp;</td>
           <td class="paramname"> <em>window</em>          </td>
@@ -520,6 +523,7 @@ Install specified bundled extensions This method installs the extensions whose i
   </table>
 </dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#d2b369eb5b9461997fae282ff91730d1">setExtensionInstallState</a>, <a class="el" href="interfacesb_i_bundle.html#cd8341bb97b183478d35788bd9b9f9a1">getExtensionInstallState</a> </dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>A string describing the result of the download and installation attempt ("success" or "failure") </dd></dl>
 
 </div>
 </div><p>
@@ -580,14 +584,15 @@ Remove a bundle observer This method unregisters a bundle observer object from t
 
 </div>
 </div><p>
-<a class="anchor" name="ce91eeeb8d01e0346b02658d17fff054"></a><!-- doxytag: member="sbIBundle::retrieveBundleFile" ref="ce91eeeb8d01e0346b02658d17fff054" args="()" -->
+<a class="anchor" name="631dd6ba173ba546f164cfe89968835b"></a><!-- doxytag: member="sbIBundle::retrieveBundleFile" ref="631dd6ba173ba546f164cfe89968835b" args="(in long timeout)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void sbIBundle::retrieveBundleFile           </td>
           <td>(</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">in long&nbsp;</td>
+          <td class="paramname"> <em>timeout</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
         </tr>
@@ -598,6 +603,11 @@ Remove a bundle observer This method unregisters a bundle observer object from t
 <p>
 Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use <a class="el" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> to monitor progress. 
 <p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>timeout</em>&nbsp;</td><td>Maximum time in milliseconds to wait for the server response. Specify 0 to use the system socket timeout. </td></tr>
+  </table>
+</dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#043e4be7f7a7cfb921c397420c3a2052">addBundleObserver</a>, <a class="el" href="interfacesb_i_bundle.html#1a68d463997aea2a4cf708c5d3d4196b">removeBundleObserver</a>, <a class="el" href="interfacesb_i_bundle_observer.html">sbIBundleObserver</a> </dd></dl>
 
 </div>
@@ -635,7 +645,35 @@ Sets the installation flag for a bundled extension This method sets the installa
     <tr><td valign="top"></td><td valign="top"><em>idx</em>&nbsp;</td><td>Index of the extension whose flag you wish to set </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#cd8341bb97b183478d35788bd9b9f9a1">getExtensionInstallState</a>, <a class="el" href="interfacesb_i_bundle.html#fee4eabc6808cdca1a47ca02a42570ea">installSelectedExtensions</a> </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#cd8341bb97b183478d35788bd9b9f9a1">getExtensionInstallState</a>, <a class="el" href="interfacesb_i_bundle.html#7cf358044d887d03e8eb589f3a84cc70">installSelectedExtensions</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="ad1368efd7ce3bc2a511edcf2f6f132b"></a><!-- doxytag: member="sbIBundle::setInstallResult" ref="ad1368efd7ce3bc2a511edcf2f6f132b" args="(in AString result)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIBundle::setInstallResult           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>result</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sets the result of the installation attempt This method records the result of the extension installation attempt. It should be called by the dialog implementing download and XPI installation. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>window</em>&nbsp;</td><td>The parent for the progress dialog box </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#d2b369eb5b9461997fae282ff91730d1">setExtensionInstallState</a>, <a class="el" href="interfacesb_i_bundle.html#cd8341bb97b183478d35788bd9b9f9a1">getExtensionInstallState</a> </dd></dl>
 
 </div>
 </div><p>
@@ -669,7 +707,7 @@ Sets the flag indicating that a restart is needed This method sets the flag indi
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/bundle/public/<a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

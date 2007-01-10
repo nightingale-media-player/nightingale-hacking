@@ -1,0 +1,556 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_bundle" kind="interface" prot="public">
+    <compoundname>sbIBundle</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_bundle_1631dd6ba173ba546f164cfe89968835b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::retrieveBundleFile</definition>
+        <argsstring>(in long timeout)</argsstring>
+        <name>retrieveBundleFile</name>
+        <param>
+          <type>in long</type>
+          <declname>timeout</declname>
+        </param>
+        <briefdescription>
+<para>Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use <ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref> to monitor progress. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>timeout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum time in milliseconds to wait for the server response. Specify 0 to use the system socket timeout. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1043e4be7f7a7cfb921c397420c3a2052" kindref="member">addBundleObserver</ref>, <ref refid="interfacesb_i_bundle_11a68d463997aea2a4cf708c5d3d4196b" kindref="member">removeBundleObserver</ref>, <ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="32"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1043e4be7f7a7cfb921c397420c3a2052" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::addBundleObserver</definition>
+        <argsstring>(in sbIBundleObserver observer)</argsstring>
+        <name>addBundleObserver</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref></type>
+          <declname>observer</declname>
+        </param>
+        <briefdescription>
+<para>Add a bundle observer This method registers a bundle observer object associated with the download of bundle data in order to get error and completion callbacks. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observer object to register </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="41"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_11a68d463997aea2a4cf708c5d3d4196b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::removeBundleObserver</definition>
+        <argsstring>(in sbIBundleObserver observer)</argsstring>
+        <name>removeBundleObserver</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref></type>
+          <declname>observer</declname>
+        </param>
+        <briefdescription>
+<para>Remove a bundle observer This method unregisters a bundle observer object from the list of bundle callbacks. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observer object to unregister </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="49"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_19b15164275dd2cc61b68ef4f717e4ce6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long sbIBundle::getStatus</definition>
+        <argsstring>()</argsstring>
+        <name>getStatus</name>
+        <briefdescription>
+<para>Gets the status of bundle download This method returns the status of the asynchronous bundle download process. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The state of the bundle download process: 0 while downloading, 1 after success, -1 after error </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="56"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsISupports</type>
+        <definition>nsISupports sbIBundle::getBundleDocument</definition>
+        <argsstring>()</argsstring>
+        <name>getBundleDocument</name>
+        <briefdescription>
+<para>Gets the DOM document describing the downloaded bundle This method returns an interface to the bundle DOM document describing each bundled extension. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A Document interface to the bundle DOM document </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="64"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1b98d315d9219e94dfced88cfc109324b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getTextData</definition>
+        <argsstring>()</argsstring>
+        <name>getTextData</name>
+        <briefdescription>
+<para>Gets the bundle document xml in text format This method returns the xml for the bundle document describing each bundled extension in text format. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>An XML bundle document </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="72"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_13be75af063db441b1000a2d66272d792" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getBundleVersion</definition>
+        <argsstring>()</argsstring>
+        <name>getBundleVersion</name>
+        <briefdescription>
+<para>Gets the version of the downloaded bundle This method returns the version of the downloaded bundle, as extracted from the document&apos;s data. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The bundle&apos;s version </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="79"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1cd8341bb97b183478d35788bd9b9f9a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIBundle::getExtensionInstallState</definition>
+        <argsstring>(in long idx)</argsstring>
+        <name>getExtensionInstallState</name>
+        <param>
+          <type>in long</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+<para>Gets the installation flag for a bundled extension This method returns the installation flag associated with a particular bundled extension. The flag is then used by installSelectedExtensions to determine which, extension should be installed. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the extension whose flag you wish to retrieve </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The extension&apos;s installation flag (boolean) </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1d2b369eb5b9461997fae282ff91730d1" kindref="member">setExtensionInstallState</ref>, <ref refid="interfacesb_i_bundle_17cf358044d887d03e8eb589f3a84cc70" kindref="member">installSelectedExtensions</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="90"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1d2b369eb5b9461997fae282ff91730d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::setExtensionInstallState</definition>
+        <argsstring>(in long idx, in boolean installstate)</argsstring>
+        <name>setExtensionInstallState</name>
+        <param>
+          <type>in long</type>
+          <declname>idx</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>installstate</declname>
+        </param>
+        <briefdescription>
+<para>Sets the installation flag for a bundled extension This method sets the installation flag associated with a particular bundled extension. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the extension whose flag you wish to set </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1cd8341bb97b183478d35788bd9b9f9a1" kindref="member">getExtensionInstallState</ref>, <ref refid="interfacesb_i_bundle_17cf358044d887d03e8eb589f3a84cc70" kindref="member">installSelectedExtensions</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="98"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_17cf358044d887d03e8eb589f3a84cc70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::installSelectedExtensions</definition>
+        <argsstring>(in nsISupports window)</argsstring>
+        <name>installSelectedExtensions</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>window</declname>
+        </param>
+        <briefdescription>
+<para>Install specified bundled extensions This method installs the extensions whose install flags are set to true. A dialog box showing the installer&apos;s progress will be spawned. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>window</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parent for the progress dialog box </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1d2b369eb5b9461997fae282ff91730d1" kindref="member">setExtensionInstallState</ref>, <ref refid="interfacesb_i_bundle_1cd8341bb97b183478d35788bd9b9f9a1" kindref="member">getExtensionInstallState</ref> </para></simplesect>
+<simplesect kind="return"><para>A string describing the result of the download and installation attempt (&quot;success&quot; or &quot;failure&quot;) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="108"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1ad1368efd7ce3bc2a511edcf2f6f132b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::setInstallResult</definition>
+        <argsstring>(in AString result)</argsstring>
+        <name>setInstallResult</name>
+        <param>
+          <type>in AString</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+<para>Sets the result of the installation attempt This method records the result of the extension installation attempt. It should be called by the dialog implementing download and XPI installation. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>window</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parent for the progress dialog box </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1d2b369eb5b9461997fae282ff91730d1" kindref="member">setExtensionInstallState</ref>, <ref refid="interfacesb_i_bundle_1cd8341bb97b183478d35788bd9b9f9a1" kindref="member">getExtensionInstallState</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="117"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1cb649b463839b67ca7f5ecfa3ad45477" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::downloadFile</definition>
+        <argsstring>(in AString url, in sbIDownloadObserver observer)</argsstring>
+        <name>downloadFile</name>
+        <param>
+          <type>in AString</type>
+          <declname>url</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_download_observer" kindref="compound">sbIDownloadObserver</ref></type>
+          <declname>observer</declname>
+        </param>
+        <briefdescription>
+<para>Download a file This method asynchronously downloads a file from a URL and sends progress callbacks to the specified sbiDownloadObserver object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>url</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The url for the file to download </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>observer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observer object for progress and error callbacks </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The local temporary filename which will be used to store the downloaded file. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1b600872210f033d7329727cc6d754ed5" kindref="member">deleteLastDownloadedFile</ref>, <ref refid="interfacesb_i_download_observer" kindref="compound">sbIDownloadObserver</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1b600872210f033d7329727cc6d754ed5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::deleteLastDownloadedFile</definition>
+        <argsstring>()</argsstring>
+        <name>deleteLastDownloadedFile</name>
+        <briefdescription>
+<para>Deletes a temporary download file This method deletes the local file associated with the last downloadFile call. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>url</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The url for the file to download </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>observer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The observer object for progress and error callbacks </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The local temporary filename which will be used to store the downloaded file. </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1cb649b463839b67ca7f5ecfa3ad45477" kindref="member">downloadFile</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="138"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_13f7e1a0812ab3b579f4b2db87946b8da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long sbIBundle::installXPI</definition>
+        <argsstring>(in AString localFilename)</argsstring>
+        <name>installXPI</name>
+        <param>
+          <type>in AString</type>
+          <declname>localFilename</declname>
+        </param>
+        <briefdescription>
+<para>Install an extension This method installs an XPI extension previously downloaded locally. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>localFilenale</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The local filename for the XPI to install </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Indicates the installation&apos;s success (1) or failure (0, ie: not a valid XPI, could not be installed). </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1cb649b463839b67ca7f5ecfa3ad45477" kindref="member">downloadFile</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="147"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_16281a3a76a2852931fbe05506e8e88a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundle::setNeedRestart</definition>
+        <argsstring>(in boolean needed)</argsstring>
+        <name>setNeedRestart</name>
+        <param>
+          <type>in boolean</type>
+          <declname>needed</declname>
+        </param>
+        <briefdescription>
+<para>Sets the flag indicating that a restart is needed This method sets the flag indicating that a restart of the application is needed in order for installed extensions to take effect. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>needed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the flag to set </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1069a824b16f69d31971169f3fc759481" kindref="member">getNeedRestart</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="156"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1069a824b16f69d31971169f3fc759481" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long sbIBundle::getNeedRestart</definition>
+        <argsstring>()</argsstring>
+        <name>getNeedRestart</name>
+        <briefdescription>
+<para>Gets the flag indicating that a restart is needed This method gets the flag indicating whether a restart of the application is needed or not, in order for installed extensions to take effect. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Value of the flag </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_16281a3a76a2852931fbe05506e8e88a1" kindref="member">setNeedRestart</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="165"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1d2b606817fa8a9f531ac47327a22d113" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long sbIBundle::getNumExtensions</definition>
+        <argsstring>()</argsstring>
+        <name>getNumExtensions</name>
+        <briefdescription>
+<para>Gets the number of extensions in the bundle document This method returns the number of extensions listed in the bundled document. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Number of extensions </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" kindref="member">getBundleDocument</ref>, <ref refid="interfacesb_i_bundle_11a558bc642c87120c93b8f5097df3317" kindref="member">getExtensionName</ref>, <ref refid="interfacesb_i_bundle_1479b1362ce259cc69dd406dba5c21153" kindref="member">getExtensionDesc</ref>, <ref refid="interfacesb_i_bundle_1c5dac5687e3d9ead975039d3021df285" kindref="member">getExtensionURL</ref>, getExtensionId </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="175"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_11a558bc642c87120c93b8f5097df3317" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getExtensionName</definition>
+        <argsstring>(in long index)</argsstring>
+        <name>getExtensionName</name>
+        <param>
+          <type>in long</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Gets the name of an extension from the bundle document This method returns the name of a an extensions listed in the bundled document. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the extension within the bundle document (zero based) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Name of the extension </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" kindref="member">getBundleDocument</ref>, <ref refid="interfacesb_i_bundle_1479b1362ce259cc69dd406dba5c21153" kindref="member">getExtensionDesc</ref>, <ref refid="interfacesb_i_bundle_1c5dac5687e3d9ead975039d3021df285" kindref="member">getExtensionURL</ref>, getExtensionId </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="184"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1479b1362ce259cc69dd406dba5c21153" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getExtensionDesc</definition>
+        <argsstring>(in long index)</argsstring>
+        <name>getExtensionDesc</name>
+        <param>
+          <type>in long</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Gets the description of an extension from the bundle document This method returns the description of a an extensions listed in the bundled document. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the extension within the bundle document (zero based) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>description of the extension </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" kindref="member">getBundleDocument</ref>, <ref refid="interfacesb_i_bundle_11a558bc642c87120c93b8f5097df3317" kindref="member">getExtensionName</ref>, <ref refid="interfacesb_i_bundle_1c5dac5687e3d9ead975039d3021df285" kindref="member">getExtensionURL</ref>, getExtensionId </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="193"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1c5dac5687e3d9ead975039d3021df285" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getExtensionURL</definition>
+        <argsstring>(in long index)</argsstring>
+        <name>getExtensionURL</name>
+        <param>
+          <type>in long</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Gets the URL of an extension from the bundle document This method returns the URL of a an extensions listed in the bundled document. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the extension within the bundle document (zero based) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>URL of the extension </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" kindref="member">getBundleDocument</ref>, <ref refid="interfacesb_i_bundle_11a558bc642c87120c93b8f5097df3317" kindref="member">getExtensionName</ref>, <ref refid="interfacesb_i_bundle_1479b1362ce259cc69dd406dba5c21153" kindref="member">getExtensionDesc</ref>, getExtensionId </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="202"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1ad926791278624c704a9680185ff4452" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getExtesionId</definition>
+        <argsstring>(in long index)</argsstring>
+        <name>getExtesionId</name>
+        <param>
+          <type>in long</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Gets the Id of an extension from the bundle document This method returns the Id of a an extensions listed in the bundled document. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the extension within the bundle document (zero based) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Id for the extension </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" kindref="member">getBundleDocument</ref>, <ref refid="interfacesb_i_bundle_11a558bc642c87120c93b8f5097df3317" kindref="member">getExtensionName</ref>, <ref refid="interfacesb_i_bundle_1479b1362ce259cc69dd406dba5c21153" kindref="member">getExtensionDesc</ref>, <ref refid="interfacesb_i_bundle_1c5dac5687e3d9ead975039d3021df285" kindref="member">getExtensionURL</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="211"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_1fb97cce4bb648e98ac2ef2650987662c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIBundle::getTempFilename</definition>
+        <argsstring>()</argsstring>
+        <name>getTempFilename</name>
+        <briefdescription>
+<para>Creates a temporary filename This method returns a temporary filename that is guaranteed not to already exist and points to the user&apos;s temporary files&apos; directory. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Temporary filename </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_1cb649b463839b67ca7f5ecfa3ad45477" kindref="member">downloadFile</ref>, <ref refid="interfacesb_i_bundle_1b600872210f033d7329727cc6d754ed5" kindref="member">deleteLastDownloadedFile</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="220"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Bundle Interface This is the main bundle management interface, used to get the bundle data, perform and observe the download process, list the bundle content and install bundled extensions. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle_observer" kindref="compound">sbIBundleObserver</ref>, <ref refid="interfacesb_i_download_observer" kindref="compound">sbIDownloadObserver</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="24" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="23" bodyend="221"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_bundle_1043e4be7f7a7cfb921c397420c3a2052" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>addBundleObserver</name></member>
+      <member refid="interfacesb_i_bundle_1b600872210f033d7329727cc6d754ed5" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>deleteLastDownloadedFile</name></member>
+      <member refid="interfacesb_i_bundle_1cb649b463839b67ca7f5ecfa3ad45477" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>downloadFile</name></member>
+      <member refid="interfacesb_i_bundle_16f906acc57e52ba38d4e345492ece3fa" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getBundleDocument</name></member>
+      <member refid="interfacesb_i_bundle_13be75af063db441b1000a2d66272d792" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getBundleVersion</name></member>
+      <member refid="interfacesb_i_bundle_1479b1362ce259cc69dd406dba5c21153" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getExtensionDesc</name></member>
+      <member refid="interfacesb_i_bundle_1cd8341bb97b183478d35788bd9b9f9a1" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getExtensionInstallState</name></member>
+      <member refid="interfacesb_i_bundle_11a558bc642c87120c93b8f5097df3317" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getExtensionName</name></member>
+      <member refid="interfacesb_i_bundle_1c5dac5687e3d9ead975039d3021df285" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getExtensionURL</name></member>
+      <member refid="interfacesb_i_bundle_1ad926791278624c704a9680185ff4452" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getExtesionId</name></member>
+      <member refid="interfacesb_i_bundle_1069a824b16f69d31971169f3fc759481" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getNeedRestart</name></member>
+      <member refid="interfacesb_i_bundle_1d2b606817fa8a9f531ac47327a22d113" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getNumExtensions</name></member>
+      <member refid="interfacesb_i_bundle_19b15164275dd2cc61b68ef4f717e4ce6" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getStatus</name></member>
+      <member refid="interfacesb_i_bundle_1fb97cce4bb648e98ac2ef2650987662c" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getTempFilename</name></member>
+      <member refid="interfacesb_i_bundle_1b98d315d9219e94dfced88cfc109324b" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>getTextData</name></member>
+      <member refid="interfacesb_i_bundle_17cf358044d887d03e8eb589f3a84cc70" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>installSelectedExtensions</name></member>
+      <member refid="interfacesb_i_bundle_13f7e1a0812ab3b579f4b2db87946b8da" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>installXPI</name></member>
+      <member refid="interfacesb_i_bundle_11a68d463997aea2a4cf708c5d3d4196b" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>removeBundleObserver</name></member>
+      <member refid="interfacesb_i_bundle_1631dd6ba173ba546f164cfe89968835b" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>retrieveBundleFile</name></member>
+      <member refid="interfacesb_i_bundle_1d2b369eb5b9461997fae282ff91730d1" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>setExtensionInstallState</name></member>
+      <member refid="interfacesb_i_bundle_1ad1368efd7ce3bc2a511edcf2f6f132b" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>setInstallResult</name></member>
+      <member refid="interfacesb_i_bundle_16281a3a76a2852931fbe05506e8e88a1" prot="public" virt="non-virtual"><scope>sbIBundle</scope><name>setNeedRestart</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

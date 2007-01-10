@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_playlist_writer_manager" kind="interface" prot="public">
+    <compoundname>sbIPlaylistWriterManager</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_playlist_writer_manager_1b74f690cc8f115296d5b7cc60d8f47b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIPlaylistWriterManager::write</definition>
+        <argsstring>(in AString aGUID, in AString aName, in AString aOutputURL, in AString aOutputContentType, in sbIPlaylistWriterListener aWriterListener)</argsstring>
+        <name>write</name>
+        <param>
+          <type>in AString</type>
+          <declname>aGUID</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aOutputURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aOutputContentType</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_playlist_writer_listener" kindref="compound">sbIPlaylistWriterListener</ref></type>
+          <declname>aWriterListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>\sa</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylistWriter.idl" line="117"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_writer_manager_169a3b383ebf69f6440ccd9fccdb2fff1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistWriterManager::supportedMIMETypes</definition>
+        <argsstring>(out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)</argsstring>
+        <name>supportedMIMETypes</name>
+        <param>
+          <type>out PRUint32</type>
+          <declname>aMIMECount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aMIMECount), retval]</attributes>
+          <type>out wstring</type>
+          <declname>aMIMETypes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>\sa</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylistWriter.idl" line="126"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_writer_manager_1394bed219a53ea5f530a363df966f5ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistWriterManager::supportedFileExtensions</definition>
+        <argsstring>(out PRUint32 aExtCount,[array, size_is(aExtCount), retval] out wstring aExts)</argsstring>
+        <name>supportedFileExtensions</name>
+        <param>
+          <type>out PRUint32</type>
+          <declname>aExtCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aExtCount), retval]</attributes>
+          <type>out wstring</type>
+          <declname>aExts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>\sa</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylistWriter.idl" line="135"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylistWriter.idl" line="106" bodyfile="C:/projects/songbird/components/medialibrary/public/sbIPlaylistWriter.idl" bodystart="105" bodyend="136"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_writer_manager_1394bed219a53ea5f530a363df966f5ee" prot="public" virt="non-virtual"><scope>sbIPlaylistWriterManager</scope><name>supportedFileExtensions</name></member>
+      <member refid="interfacesb_i_playlist_writer_manager_169a3b383ebf69f6440ccd9fccdb2fff1" prot="public" virt="non-virtual"><scope>sbIPlaylistWriterManager</scope><name>supportedMIMETypes</name></member>
+      <member refid="interfacesb_i_playlist_writer_manager_1b74f690cc8f115296d5b7cc60d8f47b7" prot="public" virt="non-virtual"><scope>sbIPlaylistWriterManager</scope><name>write</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

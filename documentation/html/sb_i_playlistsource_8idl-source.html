@@ -23,14 +23,14 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright© 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2006 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
-<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the “GPL”).</span>
+<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the "GPL").</span>
 <a name="l00012"></a>00012 <span class="comment">// </span>
 <a name="l00013"></a>00013 <span class="comment">// Software distributed under the License is distributed </span>
-<a name="l00014"></a>00014 <span class="comment">// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either </span>
+<a name="l00014"></a>00014 <span class="comment">// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either </span>
 <a name="l00015"></a>00015 <span class="comment">// express or implied. See the GPL for the specific language </span>
 <a name="l00016"></a>00016 <span class="comment">// governing rights and limitations.</span>
 <a name="l00017"></a>00017 <span class="comment">//</span>
@@ -50,7 +50,7 @@
 <a name="l00036"></a>00036 interface nsIDOMEvent;
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_database_result.html">sbIDatabaseResult</a>;
 <a name="l00038"></a>00038 
-<a name="l00069"></a>00069 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(A0C79C6C-BED5-4b13-8567-37D105FA12E1)]
+<a name="l00069"></a>00069 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(47bc06b4-44c5-11db-9652-00e08161165f)]
 <a name="l00070"></a><a class="code" href="interfacesb_i_playlist_commands.html">00070</a> interface <a class="code" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> : nsISupports 
 <a name="l00071"></a>00071 {
 <a name="l00082"></a>00082   <span class="keywordtype">void</span> setPlaylist( in nsIDOMNode node );
@@ -75,55 +75,68 @@
 <a name="l00235"></a>00235 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(836D6EA5-CA63-418f-BFD8-27704509A6A3)]
 <a name="l00236"></a><a class="code" href="interfacesb_i_playlistsource.html">00236</a> interface <a class="code" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> : nsIRDFDataSource
 <a name="l00237"></a>00237 {
-<a name="l00255"></a>00255   <span class="keywordtype">void</span> feedPlaylist( in AString aRefName, in AString aContextGUID, in AString aTableName );
-<a name="l00256"></a>00256 
-<a name="l00262"></a>00262   <span class="keywordtype">void</span> clearPlaylist( in AString aRefName );
-<a name="l00263"></a>00263 
-<a name="l00273"></a>00273   PRInt32 executeFeed( in AString aRefName );
-<a name="l00274"></a>00274   
-<a name="l00303"></a>00303   <span class="keywordtype">void</span> setFilter( in AString aRefName, in PRInt32 aIndex, in AString aFilterString, in AString aFilterRefName, in AString aFilterColumn  );
-<a name="l00304"></a>00304   
-<a name="l00313"></a>00313   PRInt32 getNumFilters( in AString aRefName );
-<a name="l00314"></a>00314   
-<a name="l00324"></a>00324   <span class="keywordtype">void</span> clearFilter( in AString aRefName, in PRInt32 aIndex);
-<a name="l00325"></a>00325   
-<a name="l00333"></a>00333   AString getFilter( in AString aRefName, in PRInt32 aIndex ); 
-<a name="l00334"></a>00334   
-<a name="l00342"></a>00342   AString getFilterRef( in AString aRefName, in PRInt32 aIndex );
-<a name="l00343"></a>00343 
-<a name="l00356"></a>00356   <span class="keywordtype">void</span> setSearchString( in AString aRefName, in AString aSearchString );
+<a name="l00244"></a>00244   PRBool refExists( in AString aRefName );
+<a name="l00245"></a>00245 
+<a name="l00246"></a>00246 
+<a name="l00264"></a>00264   <span class="keywordtype">void</span> feedPlaylist( in AString aRefName, in AString aContextGUID, in AString aTableName );
+<a name="l00265"></a>00265 
+<a name="l00271"></a>00271   <span class="keywordtype">void</span> clearPlaylist( in AString aRefName );
+<a name="l00272"></a>00272 
+<a name="l00282"></a>00282   PRInt32 executeFeed( in AString aRefName );
+<a name="l00283"></a>00283   
+<a name="l00312"></a>00312   <span class="keywordtype">void</span> setFilter( in AString aRefName, in PRInt32 aIndex, in AString aFilterString, in AString aFilterRefName, in AString aFilterColumn  );
+<a name="l00313"></a>00313   
+<a name="l00322"></a>00322   PRInt32 getNumFilters( in AString aRefName );
+<a name="l00323"></a>00323   
+<a name="l00338"></a>00338   <span class="keywordtype">void</span> removeFilter( in AString aRefName, in PRInt32 aIndex);
+<a name="l00339"></a>00339   
+<a name="l00347"></a>00347   AString getFilter( in AString aRefName, in PRInt32 aIndex ); 
+<a name="l00348"></a>00348 
+<a name="l00356"></a>00356   AString getFilterColumn( in AString aRefName, in PRInt32 aIndex ); 
 <a name="l00357"></a>00357   
-<a name="l00364"></a>00364   AString getSearchString( in AString aRefName );
-<a name="l00365"></a>00365 
-<a name="l00377"></a>00377   <span class="keywordtype">void</span> setOrder( in AString aRefName, in AString aColumnName );
-<a name="l00378"></a>00378 
-<a name="l00385"></a>00385   AString getOrder( in AString aRefName );
-<a name="l00386"></a>00386 
-<a name="l00393"></a>00393   AString getRefGUID( in AString aRefName );
-<a name="l00394"></a>00394   
-<a name="l00401"></a>00401   AString getRefTable( in AString aRefName ); 
-<a name="l00402"></a>00402   
-<a name="l00409"></a>00409   PRInt32 getRefRowCount( in AString aRefName );
-<a name="l00410"></a>00410   
-<a name="l00417"></a>00417   PRInt32 getRefColumnCount( in AString aRefName );
+<a name="l00365"></a>00365   AString getFilterRef( in AString aRefName, in PRInt32 aIndex );
+<a name="l00366"></a>00366 
+<a name="l00380"></a>00380   <span class="keywordtype">void</span> setSearchString( in AString aRefName, in AString aSearchString, in PRBool aResetFilters );
+<a name="l00381"></a>00381   
+<a name="l00388"></a>00388   AString getSearchString( in AString aRefName );
+<a name="l00389"></a>00389 
+<a name="l00401"></a>00401   <span class="keywordtype">void</span> setOrder( in AString aRefName, in AString aColumnName );
+<a name="l00402"></a>00402 
+<a name="l00409"></a>00409   AString getOrder( in AString aRefName );
+<a name="l00410"></a>00410 
+<a name="l00417"></a>00417   AString getRefGUID( in AString aRefName );
 <a name="l00418"></a>00418   
-<a name="l00427"></a>00427   AString getRefRowCellByColumn( in AString aRefName, in PRInt32 aRow, in AString aColumn );
-<a name="l00428"></a>00428   
-<a name="l00437"></a>00437   PRInt32 getRefRowByColumnValue( in AString aRefName, in AString aColumn, in AString aValue );
-<a name="l00438"></a>00438   
-<a name="l00445"></a>00445   PRBool isQueryExecuting( in AString aRefName );
-<a name="l00446"></a>00446 
-<a name="l00453"></a>00453   PRInt32 waitForQueryCompletion( in AString aRefName );
-<a name="l00454"></a>00454 
-<a name="l00470"></a>00470   <span class="keywordtype">void</span> forceGetTargets( in AString aRefName, in PRBool isPermanent );
-<a name="l00471"></a>00471 
-<a name="l00487"></a>00487   <span class="keywordtype">void</span> incomingObserver( in AString aRefName, in nsIDOMNode aObject );
-<a name="l00488"></a>00488 
-<a name="l00506"></a>00506   <span class="keywordtype">void</span> registerPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> aCommandObj );
-<a name="l00507"></a>00507   
-<a name="l00525"></a>00525   <a class="code" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> getPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType );
-<a name="l00526"></a>00526 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<a name="l00425"></a>00425   AString getRefTable( in AString aRefName ); 
+<a name="l00426"></a>00426   
+<a name="l00433"></a>00433   PRInt32 getRefRowCount( in AString aRefName );
+<a name="l00434"></a>00434   
+<a name="l00441"></a>00441   PRInt32 getRefColumnCount( in AString aRefName );
+<a name="l00442"></a>00442   
+<a name="l00451"></a>00451   AString getRefRowCellByColumn( in AString aRefName, in PRInt32 aRow, in AString aColumn );
+<a name="l00452"></a>00452   
+<a name="l00461"></a>00461   PRInt32 getRefRowByColumnValue( in AString aRefName, in AString aColumn, in AString aValue );
+<a name="l00462"></a>00462 
+<a name="l00471"></a>00471   AString getRefColumnValueByRow( in AString aRefName, in AString aColumn, in PRUint32 aRow);
+<a name="l00472"></a>00472   
+<a name="l00483"></a>00483   <span class="keywordtype">void</span> getRefRowsByColumnValues( in AString aRefName, in AString aColumn, in PRUint32 aValueCount, [array, size_is(aValueCount)] in wstring aValues, out PRUint32 aRowCount, [array, size_is (aRowCount), retval] out PRUint32 aRows);
+<a name="l00484"></a>00484   
+<a name="l00495"></a>00495   <span class="keywordtype">void</span> getRefColumnValuesByRows( in AString aRefName, in AString aColumn, in PRUint32 aRowCount, [array, size_is(aRowCount)] in PRUint32 aRows, out PRUint32 aValueCount, [array, size_is (aValueCount), retval] out wstring aValues);
+<a name="l00496"></a>00496   
+<a name="l00503"></a>00503   PRBool isQueryExecuting( in AString aRefName );
+<a name="l00504"></a>00504 
+<a name="l00511"></a>00511   PRInt32 waitForQueryCompletion( in AString aRefName );
+<a name="l00512"></a>00512 
+<a name="l00528"></a>00528   <span class="keywordtype">void</span> forceGetTargets( in AString aRefName, in PRBool isPermanent );
+<a name="l00529"></a>00529 
+<a name="l00545"></a>00545   <span class="keywordtype">void</span> incomingObserver( in AString aRefName, in nsIDOMNode aObject );
+<a name="l00546"></a>00546 
+<a name="l00564"></a>00564   <span class="keywordtype">void</span> registerPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in <a class="code" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> aCommandObj );
+<a name="l00565"></a>00565   
+<a name="l00583"></a>00583   <a class="code" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> getPlaylistCommands( in AString aContextGUID, in AString aTableName, in AString aPlaylistType );
+<a name="l00584"></a>00584 
+<a name="l00596"></a>00596   AString calculateRef( in AString aContextGUID, in AString aTableName );
+<a name="l00597"></a>00597 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_database_query_8idl" kind="file">
+    <compoundname>sbIDatabaseQuery.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="104">
+        <label>C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl</label>
+        <link refid="sbIDatabaseQuery.idl"/>
+        <childnode refid="105" relation="include">
+        </childnode>
+      </node>
+      <node id="105">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_database_simple_query_callback" prot="public">sbIDatabaseSimpleQueryCallback</innerclass>
+    <innerclass refid="interfacesb_i_database_query_callback" prot="public">sbIDatabaseQueryCallback</innerclass>
+    <innerclass refid="interfacesb_i_database_query" prot="public">sbIDatabaseQuery</innerclass>
+    <briefdescription>
+<para>Objects for executing SQL queries against the internal database. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="sb_i_database_query_8idl" kindref="compound">sbIDatabaseQuery.idl</ref>, DatabaseQuery.h, <ref refid="sb_i_playlist_8idl-source" kindref="compound">sbIPlaylist.idl</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2006<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_1a5f4ef393f681f1be6cf7c49a2ff5826" kindref="member">uuid</ref>(918745AE-0F40-4d08-BA4E-27A739459952)]</highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_database_simple_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_1a5f4ef393f681f1be6cf7c49a2ff5826" kindref="member">uuid</ref>(A901158A-3735-44fd-9AD2-1753F1407284)]</highlight></codeline>
+<codeline lineno="90" refid="interfacesb_i_database_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryError(in<sp/>PRInt32<sp/>dbError,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryStart(in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryRow(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>PRInt32<sp/>dbRowResult,<sp/>in<sp/>PRInt32<sp/>dbRowTotal);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);<sp/></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_1a5f4ef393f681f1be6cf7c49a2ff5826" kindref="member">uuid</ref>(192FE564-1D86-49c8-A31A-5798D62B2525)]</highlight></codeline>
+<codeline lineno="173" refid="interfacesb_i_database_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="174"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setAsyncQuery(in<sp/>PRBool<sp/>bAsyncQuery);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/>PRBool<sp/>isAyncQuery();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setPersistentQuery(in<sp/>PRBool<sp/>bPersistentQuery);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/>PRBool<sp/>isPersistentQuery();</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setDatabaseGUID(in<sp/>AString<sp/>dbGUID);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/>AString<sp/>getDatabaseGUID();</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addQuery(in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getQueryCount();</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/>AString<sp/>getQuery(in<sp/>PRInt32<sp/>nIndex);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetQuery();</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>getResultObject();</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/>[noscript]<sp/><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref><sp/>getResultObjectOrphan();</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/>PRInt32<sp/>getLastError();</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setLastError(in<sp/>PRInt32<sp/>dbError);</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/>PRInt32<sp/>execute();</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/>PRInt32<sp/>waitForCompletion();</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/>PRBool<sp/>isExecuting();</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/>PRInt32<sp/>currentQuery();</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/>PRBool<sp/>abort();</highlight></codeline>
+<codeline lineno="369"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl"/>
+  </compounddef>
+</doxygen>

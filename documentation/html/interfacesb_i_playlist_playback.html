@@ -116,6 +116,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#443493bb9c9422ba7c4db510e6259abc">isPlaylistURL</a> (in AString aURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to a playlist This checks for a number of known file extensions to see if the URL contains them and is therefore a playlist.  <a href="#443493bb9c9422ba7c4db510e6259abc"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIStringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#a02047a9651809af3b830e9abff0ccc3">getSupportedFileExtensions</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return an enumeration of the file extensions that are supported for playback.  <a href="#a02047a9651809af3b830e9abff0ccc3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback.html#e02ca0130ec8807194dcde3f07775537">stripHoursFromTimeString</a> (in AString aTimeString)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes the hours from the string passed in.  <a href="#e02ca0130ec8807194dcde3f07775537"></a><br></td></tr>
@@ -195,7 +198,7 @@ Defines standard media player playback functionality. This interface defines the
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00055">55</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00056">56</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="57b2697c1029d00279d841c57fa6dd77"></a><!-- doxytag: member="sbIPlaylistPlayback::addCore" ref="57b2697c1029d00279d841c57fa6dd77" args="(in sbICoreWrapper aCore, in boolean aSelect)" -->
 <div class="memitem">
 <div class="memproto">
@@ -367,7 +370,7 @@ Convert an integer into a time duration.
 <p>
 Give the value of the metadata field specified. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000018">Todo:</a></b></dt><dd><ul>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000021">Todo:</a></b></dt><dd><ul>
 <li>implement getCurrentValue - currently returns ""</li></ul>
 </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -419,7 +422,7 @@ Give the value of the metadata field specified.
 <p>
 Get the values of multiple metadata fields. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000020">Todo:</a></b></dt><dd>implement getCurrentValues - currently sets out paramst to 0 and ""</dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000023">Todo:</a></b></dt><dd>implement getCurrentValues - currently sets out paramst to 0 and ""</dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aFieldCount</em>&nbsp;</td><td>- the number of metadata fields to retrieve </td></tr>
@@ -460,7 +463,7 @@ Get the values of multiple metadata fields.
 <p>
 Return metadata metadata. Return the number of fields supported and their identifiers. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd><ul>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000020">Todo:</a></b></dt><dd><ul>
 <li>implement getMetadataFields, currently sets out params to 0 and ""</li></ul>
 </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -475,6 +478,28 @@ Return metadata metadata. Return the number of fields supported and their identi
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>void </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="a02047a9651809af3b830e9abff0ccc3"></a><!-- doxytag: member="sbIPlaylistPlayback::getSupportedFileExtensions" ref="a02047a9651809af3b830e9abff0ccc3" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIStringEnumerator sbIPlaylistPlayback::getSupportedFileExtensions           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Return an enumeration of the file extensions that are supported for playback. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>an nsIStringEnumerator containting the list of extensions </dd></dl>
 
 </div>
 </div><p>
@@ -1307,7 +1332,7 @@ Select the core passed in as the current core. If the core passed in doesn't alr
 <p>
 Set the value of the metadata specified. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000019">Todo:</a></b></dt><dd><ul>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000022">Todo:</a></b></dt><dd><ul>
 <li>implement setCurrentValue - current does nothing.</li></ul>
 </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -1360,7 +1385,7 @@ Set the value of the metadata specified.
 <p>
 Set the values of multiple metadata fields. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000021">Todo:</a></b></dt><dd>implement setCurrentValues - currently does nothing.</dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000024">Todo:</a></b></dt><dd>implement setCurrentValues - currently does nothing.</dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aFieldCount</em>&nbsp;</td><td>- the number of metadata fields to set </td></tr>
@@ -1447,7 +1472,7 @@ Removes the hours from the string passed in.
 <p>
 /brief The length of the current track. Reported by the core. 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00110">110</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00111">111</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="9c1b43840438ca39cf5dc7126d3b89f7"></a><!-- doxytag: member="sbIPlaylistPlayback::paused" ref="9c1b43840438ca39cf5dc7126d3b89f7" args="" -->
@@ -1465,7 +1490,7 @@ Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l
 /brief The pause state of the core. If paused, playback will continue from the current position. <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_playback.html#a9d8868c0c6ba509a9dd0b9974f7da0a">playing</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00117">117</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00118">118</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a9d8868c0c6ba509a9dd0b9974f7da0a"></a><!-- doxytag: member="sbIPlaylistPlayback::playing" ref="a9d8868c0c6ba509a9dd0b9974f7da0a" args="" -->
@@ -1485,7 +1510,7 @@ The playing state of the core. Seperate from pause state. A paused track is play
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">paused</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00125">125</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00126">126</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="e00d5a1f97614cb4c473767f38878d9a"></a><!-- doxytag: member="sbIPlaylistPlayback::repeat" ref="e00d5a1f97614cb4c473767f38878d9a" args="" -->
@@ -1507,7 +1532,7 @@ Repeat state. This has 3 possible states the are reflected in the constants.
 <a class="el" href="interfacesb_i_playlist_playback.html#23faa5a2cbbb59e2a049be8bdf546875">REPEAT_MODE_ONE</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00139">139</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00140">140</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="b474c491f7e8e4633843372338f65b98"></a><!-- doxytag: member="sbIPlaylistPlayback::started" ref="b474c491f7e8e4633843372338f65b98" args="" -->
@@ -1526,12 +1551,12 @@ Has playback started. This is mainly used internally. This does not check the st
 <p>
 Does this really need to be exposed through an interface? 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00168">168</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_playback_8idl-source.html#l00169">169</a> of file <a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/playlistplayback/public/<a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:51 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

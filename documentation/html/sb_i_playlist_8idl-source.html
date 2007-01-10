@@ -23,14 +23,14 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright© 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2006 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
-<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the “GPL”).</span>
+<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the "GPL").</span>
 <a name="l00012"></a>00012 <span class="comment">// </span>
 <a name="l00013"></a>00013 <span class="comment">// Software distributed under the License is distributed </span>
-<a name="l00014"></a>00014 <span class="comment">// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either </span>
+<a name="l00014"></a>00014 <span class="comment">// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either </span>
 <a name="l00015"></a>00015 <span class="comment">// express or implied. See the GPL for the specific language </span>
 <a name="l00016"></a>00016 <span class="comment">// governing rights and limitations.</span>
 <a name="l00017"></a>00017 <span class="comment">//</span>
@@ -248,187 +248,195 @@
 <a name="l00229"></a>00229   <span class="keywordtype">void</span> setReadableName(in AString strReadableName);
 <a name="l00230"></a>00230 
 <a name="l00231"></a>00231   AString getReadableName();
-<a name="l00232"></a>00232 };
-<a name="l00233"></a>00233 
-<a name="l00234"></a>00234 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(8A1A3D68-E3A4-484b-B9A5-4088ADEDA5B3)]
-<a name="l00235"></a><a class="code" href="interfacesb_i_dynamic_playlist.html">00235</a> interface <a class="code" href="interfacesb_i_dynamic_playlist.html">sbIDynamicPlaylist</a> : <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a>
-<a name="l00236"></a>00236 {
-<a name="l00237"></a>00237   <span class="keywordtype">void</span> setPeriodicity(in PRUint32 nPeriodicity, 
-<a name="l00238"></a>00238     in PRBool bWillRunLater);
-<a name="l00239"></a>00239 
-<a name="l00240"></a>00240   PRUint32 getPeriodicity();
-<a name="l00241"></a>00241   
-<a name="l00242"></a>00242   <span class="keywordtype">void</span> setURL(in AString strURL, 
-<a name="l00243"></a>00243     in PRBool bWillRunLater);
-<a name="l00244"></a>00244   AString getURL();
-<a name="l00245"></a>00245 
-<a name="l00246"></a>00246   <span class="keywordtype">void</span> setLastUpdateTime();
+<a name="l00232"></a>00232 
+<a name="l00233"></a>00233   <span class="keywordtype">void</span> setDescription(in AString strDescription);
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235   AString getDescription();
+<a name="l00236"></a>00236 
+<a name="l00237"></a>00237   <span class="keywordtype">void</span> setType(in AString strType);
+<a name="l00238"></a>00238 
+<a name="l00239"></a>00239   AString getType();
+<a name="l00240"></a>00240 };
+<a name="l00241"></a>00241 
+<a name="l00242"></a>00242 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(8A1A3D68-E3A4-484b-B9A5-4088ADEDA5B3)]
+<a name="l00243"></a><a class="code" href="interfacesb_i_dynamic_playlist.html">00243</a> interface <a class="code" href="interfacesb_i_dynamic_playlist.html">sbIDynamicPlaylist</a> : <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a>
+<a name="l00244"></a>00244 {
+<a name="l00245"></a>00245   <span class="keywordtype">void</span> setPeriodicity(in PRUint32 nPeriodicity, 
+<a name="l00246"></a>00246     in PRBool bWillRunLater);
 <a name="l00247"></a>00247 
-<a name="l00248"></a>00248   PRInt64 getLastUpdateTime();
-<a name="l00249"></a>00249 };
-<a name="l00250"></a>00250 
-<a name="l00251"></a>00251 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(07BC8B9F-FB08-4fd6-92A4-9D5CDFE2D823)]
-<a name="l00252"></a><a class="code" href="interfacesb_i_smart_playlist.html">00252</a> interface <a class="code" href="interfacesb_i_smart_playlist.html">sbISmartPlaylist</a> : <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a>
-<a name="l00253"></a>00253 {
-<a name="l00254"></a>00254   <span class="keywordtype">void</span> setLibrary(in AString strLibrary, 
-<a name="l00255"></a>00255     in PRBool bWillRunLater);
-<a name="l00256"></a>00256 
-<a name="l00257"></a>00257   AString getLibrary();
+<a name="l00248"></a>00248   PRUint32 getPeriodicity();
+<a name="l00249"></a>00249   
+<a name="l00250"></a>00250   <span class="keywordtype">void</span> setURL(in AString strURL, 
+<a name="l00251"></a>00251     in PRBool bWillRunLater);
+<a name="l00252"></a>00252   AString getURL();
+<a name="l00253"></a>00253 
+<a name="l00254"></a>00254   <span class="keywordtype">void</span> setLastUpdateTime();
+<a name="l00255"></a>00255 
+<a name="l00256"></a>00256   PRInt64 getLastUpdateTime();
+<a name="l00257"></a>00257 };
 <a name="l00258"></a>00258 
-<a name="l00259"></a>00259   <span class="keywordtype">void</span> setLimitAndType(in PRUint32 nLimit, 
-<a name="l00260"></a>00260     in AString strLimitType, 
-<a name="l00261"></a>00261     in PRBool bWillRunLater);
-<a name="l00262"></a>00262 
-<a name="l00263"></a>00263   PRUint32 getLimit();
+<a name="l00259"></a>00259 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(07BC8B9F-FB08-4fd6-92A4-9D5CDFE2D823)]
+<a name="l00260"></a><a class="code" href="interfacesb_i_smart_playlist.html">00260</a> interface <a class="code" href="interfacesb_i_smart_playlist.html">sbISmartPlaylist</a> : <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a>
+<a name="l00261"></a>00261 {
+<a name="l00262"></a>00262   <span class="keywordtype">void</span> setLibrary(in AString strLibrary, 
+<a name="l00263"></a>00263     in PRBool bWillRunLater);
 <a name="l00264"></a>00264 
-<a name="l00265"></a>00265   AString getLimitType();
+<a name="l00265"></a>00265   AString getLibrary();
 <a name="l00266"></a>00266 
-<a name="l00267"></a>00267   <span class="keywordtype">void</span> getLimitAndType(out PRUint32 nLimit, 
-<a name="l00268"></a>00268     out AString strLimitType);
-<a name="l00269"></a>00269 
-<a name="l00270"></a>00270   <span class="keywordtype">void</span> setSelectedBy(in AString strSelectedBy);
-<a name="l00271"></a>00271   
-<a name="l00272"></a>00272   AString getSelectedBy();
-<a name="l00273"></a>00273 
-<a name="l00274"></a>00274   <span class="keywordtype">void</span> setMatch(in AString strMatchOn);
-<a name="l00275"></a>00275 
-<a name="l00276"></a>00276   AString getMatch();
+<a name="l00267"></a>00267   <span class="keywordtype">void</span> setLimitAndType(in PRUint32 nLimit, 
+<a name="l00268"></a>00268     in AString strLimitType, 
+<a name="l00269"></a>00269     in PRBool bWillRunLater);
+<a name="l00270"></a>00270 
+<a name="l00271"></a>00271   PRUint32 getLimit();
+<a name="l00272"></a>00272 
+<a name="l00273"></a>00273   AString getLimitType();
+<a name="l00274"></a>00274 
+<a name="l00275"></a>00275   <span class="keywordtype">void</span> getLimitAndType(out PRUint32 nLimit, 
+<a name="l00276"></a>00276     out AString strLimitType);
 <a name="l00277"></a>00277 
-<a name="l00278"></a>00278   <span class="keywordtype">void</span> addConstraint(in AString strMetadata, 
-<a name="l00279"></a>00279     in AString strConstraint, 
-<a name="l00280"></a>00280     in AString strConstraintValue, 
-<a name="l00281"></a>00281     in PRBool bWillRunLater);
-<a name="l00282"></a>00282 
-<a name="l00283"></a>00283   PRUint32 getConstraintCount();
-<a name="l00284"></a>00284 
-<a name="l00285"></a>00285   PRUint32 getAllConstraints();
-<a name="l00286"></a>00286 
-<a name="l00287"></a>00287   PRBool getConstraint(in PRUint32 nIndex);
-<a name="l00288"></a>00288 
-<a name="l00289"></a>00289   <span class="keywordtype">void</span> replaceConstraint(in PRUint32 nIndex, 
-<a name="l00290"></a>00290     in AString strMetadata, 
-<a name="l00291"></a>00291     in AString strConstraint, 
-<a name="l00292"></a>00292     in AString strConstraintValue, 
-<a name="l00293"></a>00293     in PRBool bWillRunLater);
+<a name="l00278"></a>00278   <span class="keywordtype">void</span> setSelectedBy(in AString strSelectedBy);
+<a name="l00279"></a>00279   
+<a name="l00280"></a>00280   AString getSelectedBy();
+<a name="l00281"></a>00281 
+<a name="l00282"></a>00282   <span class="keywordtype">void</span> setMatch(in AString strMatchOn);
+<a name="l00283"></a>00283 
+<a name="l00284"></a>00284   AString getMatch();
+<a name="l00285"></a>00285 
+<a name="l00286"></a>00286   <span class="keywordtype">void</span> addConstraint(in AString strMetadata, 
+<a name="l00287"></a>00287     in AString strConstraint, 
+<a name="l00288"></a>00288     in AString strConstraintValue, 
+<a name="l00289"></a>00289     in PRBool bWillRunLater);
+<a name="l00290"></a>00290 
+<a name="l00291"></a>00291   PRUint32 getConstraintCount();
+<a name="l00292"></a>00292 
+<a name="l00293"></a>00293   PRUint32 getAllConstraints();
 <a name="l00294"></a>00294 
-<a name="l00295"></a>00295   <span class="keywordtype">void</span> removeConstraint(in PRUint32 nIndex, 
-<a name="l00296"></a>00296     in PRBool bWillRunLater);
-<a name="l00297"></a>00297 
-<a name="l00298"></a>00298   <span class="keywordtype">void</span> removeAllConstraints(in PRBool bWillRunLater);
-<a name="l00299"></a>00299 
-<a name="l00300"></a>00300   <span class="comment">//Don't use SetQuery unless you want to build a custom query that's not doable from the</span>
-<a name="l00301"></a>00301   <span class="comment">//SmartPlaylist query builder!</span>
-<a name="l00302"></a>00302   <span class="keywordtype">void</span> setQuery(in AString strQuery, 
-<a name="l00303"></a>00303     in PRBool bWillRunLater);
-<a name="l00304"></a>00304 
-<a name="l00305"></a>00305   <span class="comment">//Get the SQL Query representation of the SmartPlaylist.</span>
-<a name="l00306"></a>00306   AString getQuery();
+<a name="l00295"></a>00295   PRBool getConstraint(in PRUint32 nIndex);
+<a name="l00296"></a>00296 
+<a name="l00297"></a>00297   <span class="keywordtype">void</span> replaceConstraint(in PRUint32 nIndex, 
+<a name="l00298"></a>00298     in AString strMetadata, 
+<a name="l00299"></a>00299     in AString strConstraint, 
+<a name="l00300"></a>00300     in AString strConstraintValue, 
+<a name="l00301"></a>00301     in PRBool bWillRunLater);
+<a name="l00302"></a>00302 
+<a name="l00303"></a>00303   <span class="keywordtype">void</span> removeConstraint(in PRUint32 nIndex, 
+<a name="l00304"></a>00304     in PRBool bWillRunLater);
+<a name="l00305"></a>00305 
+<a name="l00306"></a>00306   <span class="keywordtype">void</span> removeAllConstraints(in PRBool bWillRunLater);
 <a name="l00307"></a>00307 
-<a name="l00308"></a>00308   PRBool rebuildPlaylist();
-<a name="l00309"></a>00309 };
-<a name="l00310"></a>00310 
-<a name="l00311"></a>00311 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(0BE3A41A-6673-494a-A53E-9740A98ACFF7)]
-<a name="l00312"></a><a class="code" href="interfacesb_i_playlist_manager.html">00312</a> interface <a class="code" href="interfacesb_i_playlist_manager.html">sbIPlaylistManager</a> : nsISupports
-<a name="l00313"></a>00313 {
-<a name="l00314"></a>00314   <span class="keywordtype">void</span> createDefaultPlaylistManager(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00308"></a>00308   <span class="comment">//Don't use SetQuery unless you want to build a custom query that's not doable from the</span>
+<a name="l00309"></a>00309   <span class="comment">//SmartPlaylist query builder!</span>
+<a name="l00310"></a>00310   <span class="keywordtype">void</span> setQuery(in AString strQuery, 
+<a name="l00311"></a>00311     in PRBool bWillRunLater);
+<a name="l00312"></a>00312 
+<a name="l00313"></a>00313   <span class="comment">//Get the SQL Query representation of the SmartPlaylist.</span>
+<a name="l00314"></a>00314   AString getQuery();
 <a name="l00315"></a>00315 
-<a name="l00316"></a>00316   <a class="code" href="interfacesb_i_simple_playlist.html">sbISimplePlaylist</a> createSimplePlaylist(in AString strName, 
-<a name="l00317"></a>00317     in AString strReadableName, 
-<a name="l00318"></a>00318     in AString strDescription, 
-<a name="l00319"></a>00319     in AString strType, 
-<a name="l00320"></a>00320     in PRUint32 nColumnCount, 
-<a name="l00321"></a>00321     [array, size_is(nColumnCount)] in wstring aColumns, 
-<a name="l00322"></a>00322     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00316"></a>00316   PRBool rebuildPlaylist();
+<a name="l00317"></a>00317 };
+<a name="l00318"></a>00318 
+<a name="l00319"></a>00319 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(0BE3A41A-6673-494a-A53E-9740A98ACFF7)]
+<a name="l00320"></a><a class="code" href="interfacesb_i_playlist_manager.html">00320</a> interface <a class="code" href="interfacesb_i_playlist_manager.html">sbIPlaylistManager</a> : nsISupports
+<a name="l00321"></a>00321 {
+<a name="l00322"></a>00322   <span class="keywordtype">void</span> createDefaultPlaylistManager(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
 <a name="l00323"></a>00323 
-<a name="l00324"></a>00324   <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a> createPlaylist(in AString strName, 
+<a name="l00324"></a>00324   <a class="code" href="interfacesb_i_simple_playlist.html">sbISimplePlaylist</a> createSimplePlaylist(in AString strName, 
 <a name="l00325"></a>00325     in AString strReadableName, 
 <a name="l00326"></a>00326     in AString strDescription, 
 <a name="l00327"></a>00327     in AString strType, 
-<a name="l00328"></a>00328     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00329"></a>00329 
-<a name="l00330"></a>00330   <a class="code" href="interfacesb_i_dynamic_playlist.html">sbIDynamicPlaylist</a> createDynamicPlaylist(in AString strName, 
-<a name="l00331"></a>00331     in AString strReadableName, 
-<a name="l00332"></a>00332     in AString strDescription, 
-<a name="l00333"></a>00333     in AString strType, 
-<a name="l00334"></a>00334     in AString strURL, 
-<a name="l00335"></a>00335     in PRUint32 nPeriodicity, 
+<a name="l00328"></a>00328     in PRUint32 nColumnCount, 
+<a name="l00329"></a>00329     [array, size_is(nColumnCount)] in wstring aColumns, 
+<a name="l00330"></a>00330     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00331"></a>00331 
+<a name="l00332"></a>00332   <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a> createPlaylist(in AString strName, 
+<a name="l00333"></a>00333     in AString strReadableName, 
+<a name="l00334"></a>00334     in AString strDescription, 
+<a name="l00335"></a>00335     in AString strType, 
 <a name="l00336"></a>00336     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
 <a name="l00337"></a>00337 
-<a name="l00338"></a>00338   <a class="code" href="interfacesb_i_smart_playlist.html">sbISmartPlaylist</a> createSmartPlaylist(in AString strName, 
+<a name="l00338"></a>00338   <a class="code" href="interfacesb_i_dynamic_playlist.html">sbIDynamicPlaylist</a> createDynamicPlaylist(in AString strName, 
 <a name="l00339"></a>00339     in AString strReadableName, 
 <a name="l00340"></a>00340     in AString strDescription, 
 <a name="l00341"></a>00341     in AString strType, 
-<a name="l00342"></a>00342     in AString strLibrary, 
-<a name="l00343"></a>00343     in PRUint32 nLimit, 
-<a name="l00344"></a>00344     in AString strLimitType, 
-<a name="l00345"></a>00345     in AString strSelectedBy, 
-<a name="l00346"></a>00346     in AString strMatchOn, 
-<a name="l00347"></a>00347     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00348"></a>00348 
-<a name="l00349"></a>00349   <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a> copyPlaylist(in AString strSourceDB, 
-<a name="l00350"></a>00350     in AString strSourceName, 
-<a name="l00351"></a>00351     in AString strDestDB, 
-<a name="l00352"></a>00352     in AString strDestName, 
-<a name="l00353"></a>00353     in AString strReadableName, 
-<a name="l00354"></a>00354     in AString strDescription, 
-<a name="l00355"></a>00355     in AString strType, 
-<a name="l00356"></a>00356     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00357"></a>00357 
-<a name="l00358"></a>00358   <a class="code" href="interfacesb_i_simple_playlist.html">sbISimplePlaylist</a> copySimplePlaylist(in AString strSourceDB, 
-<a name="l00359"></a>00359     in AString strSourceName, 
-<a name="l00360"></a>00360     in AString strSourceFilterColumn, 
-<a name="l00361"></a>00361     in PRUint32 nSourceFilterValueCount, 
-<a name="l00362"></a>00362     [array, size_is(nSourceFilterValueCount)] in wstring aSourceFilterValues, 
-<a name="l00363"></a>00363     in AString strDestDB, 
-<a name="l00364"></a>00364     in AString strDestName, 
-<a name="l00365"></a>00365     in AString strReadableName, 
-<a name="l00366"></a>00366     in AString strDescription, 
-<a name="l00367"></a>00367     in AString strType, 
-<a name="l00368"></a>00368     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00369"></a>00369 
-<a name="l00370"></a>00370   PRInt32 deleteSimplePlaylist(in AString strName, 
-<a name="l00371"></a>00371     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00372"></a>00372 
-<a name="l00373"></a>00373   PRInt32 deletePlaylist(in AString strName, 
-<a name="l00374"></a>00374     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00375"></a>00375 
-<a name="l00376"></a>00376   PRInt32 deleteDynamicPlaylist(in AString strName, 
-<a name="l00377"></a>00377     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00378"></a>00378 
-<a name="l00379"></a>00379   PRInt32 deleteSmartPlaylist(in AString strName,
-<a name="l00380"></a>00380     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00381"></a>00381   
-<a name="l00382"></a>00382   <span class="keywordtype">void</span> getAllPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00383"></a>00383   
-<a name="l00384"></a>00384   <span class="keywordtype">void</span> getSimplePlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00385"></a>00385 
-<a name="l00386"></a>00386   <span class="keywordtype">void</span> getPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00387"></a>00387 
-<a name="l00388"></a>00388   <span class="keywordtype">void</span> getDynamicPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00389"></a>00389 
-<a name="l00390"></a>00390   <span class="keywordtype">void</span> getSmartPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00342"></a>00342     in AString strURL, 
+<a name="l00343"></a>00343     in PRUint32 nPeriodicity, 
+<a name="l00344"></a>00344     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00345"></a>00345 
+<a name="l00346"></a>00346   <a class="code" href="interfacesb_i_smart_playlist.html">sbISmartPlaylist</a> createSmartPlaylist(in AString strName, 
+<a name="l00347"></a>00347     in AString strReadableName, 
+<a name="l00348"></a>00348     in AString strDescription, 
+<a name="l00349"></a>00349     in AString strType, 
+<a name="l00350"></a>00350     in AString strLibrary, 
+<a name="l00351"></a>00351     in PRUint32 nLimit, 
+<a name="l00352"></a>00352     in AString strLimitType, 
+<a name="l00353"></a>00353     in AString strSelectedBy, 
+<a name="l00354"></a>00354     in AString strMatchOn, 
+<a name="l00355"></a>00355     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00356"></a>00356 
+<a name="l00357"></a>00357   <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a> copyPlaylist(in AString strSourceDB, 
+<a name="l00358"></a>00358     in AString strSourceName, 
+<a name="l00359"></a>00359     in AString strDestDB, 
+<a name="l00360"></a>00360     in AString strDestName, 
+<a name="l00361"></a>00361     in AString strReadableName, 
+<a name="l00362"></a>00362     in AString strDescription, 
+<a name="l00363"></a>00363     in AString strType, 
+<a name="l00364"></a>00364     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00365"></a>00365 
+<a name="l00366"></a>00366   <a class="code" href="interfacesb_i_simple_playlist.html">sbISimplePlaylist</a> copySimplePlaylist(in AString strSourceDB, 
+<a name="l00367"></a>00367     in AString strSourceName, 
+<a name="l00368"></a>00368     in AString strSourceFilterColumn, 
+<a name="l00369"></a>00369     in PRUint32 nSourceFilterValueCount, 
+<a name="l00370"></a>00370     [array, size_is(nSourceFilterValueCount)] in wstring aSourceFilterValues, 
+<a name="l00371"></a>00371     in AString strDestDB, 
+<a name="l00372"></a>00372     in AString strDestName, 
+<a name="l00373"></a>00373     in AString strReadableName, 
+<a name="l00374"></a>00374     in AString strDescription, 
+<a name="l00375"></a>00375     in AString strType, 
+<a name="l00376"></a>00376     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00377"></a>00377 
+<a name="l00378"></a>00378   PRInt32 deleteSimplePlaylist(in AString strName, 
+<a name="l00379"></a>00379     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00380"></a>00380 
+<a name="l00381"></a>00381   PRInt32 deletePlaylist(in AString strName, 
+<a name="l00382"></a>00382     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00383"></a>00383 
+<a name="l00384"></a>00384   PRInt32 deleteDynamicPlaylist(in AString strName, 
+<a name="l00385"></a>00385     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00386"></a>00386 
+<a name="l00387"></a>00387   PRInt32 deleteSmartPlaylist(in AString strName,
+<a name="l00388"></a>00388     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00389"></a>00389   
+<a name="l00390"></a>00390   <span class="keywordtype">void</span> getAllPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
 <a name="l00391"></a>00391   
-<a name="l00392"></a>00392   <a class="code" href="interfacesb_i_simple_playlist.html">sbISimplePlaylist</a> getSimplePlaylist(in AString strName, 
-<a name="l00393"></a>00393     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00394"></a>00394 
-<a name="l00395"></a>00395   <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a> getPlaylist(in AString strName, 
-<a name="l00396"></a>00396     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00392"></a>00392   <span class="keywordtype">void</span> getSimplePlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00393"></a>00393 
+<a name="l00394"></a>00394   <span class="keywordtype">void</span> getPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00395"></a>00395 
+<a name="l00396"></a>00396   <span class="keywordtype">void</span> getDynamicPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
 <a name="l00397"></a>00397 
-<a name="l00398"></a>00398   <a class="code" href="interfacesb_i_dynamic_playlist.html">sbIDynamicPlaylist</a> getDynamicPlaylist(in AString strName, 
-<a name="l00399"></a>00399     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00400"></a>00400 
-<a name="l00401"></a>00401   <a class="code" href="interfacesb_i_smart_playlist.html">sbISmartPlaylist</a> getSmartPlaylist(in AString strName, 
-<a name="l00402"></a>00402     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00403"></a>00403 
-<a name="l00404"></a>00404   PRUint32 getDynamicPlaylistsForUpdate(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
-<a name="l00405"></a>00405   
-<a name="l00406"></a>00406   PRBool setDynamicPlaylistLastUpdate(in AString strName, 
+<a name="l00398"></a>00398   <span class="keywordtype">void</span> getSmartPlaylistList(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00399"></a>00399   
+<a name="l00400"></a>00400   <a class="code" href="interfacesb_i_simple_playlist.html">sbISimplePlaylist</a> getSimplePlaylist(in AString strName, 
+<a name="l00401"></a>00401     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00402"></a>00402 
+<a name="l00403"></a>00403   <a class="code" href="interfacesb_i_playlist.html">sbIPlaylist</a> getPlaylist(in AString strName, 
+<a name="l00404"></a>00404     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00405"></a>00405 
+<a name="l00406"></a>00406   <a class="code" href="interfacesb_i_dynamic_playlist.html">sbIDynamicPlaylist</a> getDynamicPlaylist(in AString strName, 
 <a name="l00407"></a>00407     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
 <a name="l00408"></a>00408 
-<a name="l00409"></a>00409   <span class="keywordtype">void</span> purgeTrackByGUIDFromPlaylists(in AString mediaGUID, 
-<a name="l00410"></a>00410     in AString strDBGUID);
-<a name="l00411"></a>00411 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<a name="l00409"></a>00409   <a class="code" href="interfacesb_i_smart_playlist.html">sbISmartPlaylist</a> getSmartPlaylist(in AString strName, 
+<a name="l00410"></a>00410     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00411"></a>00411 
+<a name="l00412"></a>00412   PRUint32 getDynamicPlaylistsForUpdate(in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00413"></a>00413   
+<a name="l00414"></a>00414   PRBool setDynamicPlaylistLastUpdate(in AString strName, 
+<a name="l00415"></a>00415     in <a class="code" href="interfacesb_i_database_query.html">sbIDatabaseQuery</a> queryObj);
+<a name="l00416"></a>00416 
+<a name="l00417"></a>00417   <span class="keywordtype">void</span> purgeTrackByGUIDFromPlaylists(in AString mediaGUID, 
+<a name="l00418"></a>00418     in AString strDBGUID);
+<a name="l00419"></a>00419 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

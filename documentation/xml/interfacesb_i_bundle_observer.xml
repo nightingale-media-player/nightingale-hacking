@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_bundle_observer" kind="interface" prot="public">
+    <compoundname>sbIBundleObserver</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_bundle_observer_10d20caa67698bb4ec577ad1d38ff907a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleObserver::onLoad</definition>
+        <argsstring>(in sbIBundle bundle)</argsstring>
+        <name>onLoad</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>bundle</declname>
+        </param>
+        <briefdescription>
+<para>Bundle download completion callback This method is called upon completion of the bundle download. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_observer_102f80a6b76feef483f5caaadad3c0b78" kindref="member">onError</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="238"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_bundle_observer_102f80a6b76feef483f5caaadad3c0b78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIBundleObserver::onError</definition>
+        <argsstring>(in sbIBundle bundle)</argsstring>
+        <name>onError</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref></type>
+          <declname>bundle</declname>
+        </param>
+        <briefdescription>
+<para>Bundle download error callback This method is called upon error while download the bundle data. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bundle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An interface to the bundle manager </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_bundle_observer_10d20caa67698bb4ec577ad1d38ff907a" kindref="member">onLoad</ref>, <ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="245"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Bundle Observer Interface This interface is used to receive bundle download notification upon error or completion. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_bundle" kindref="compound">sbIBundle</ref>, <ref refid="interfacesb_i_bundle_1043e4be7f7a7cfb921c397420c3a2052" kindref="member">sbIBundle::addBundleObserver()</ref>, <ref refid="interfacesb_i_bundle_11a68d463997aea2a4cf708c5d3d4196b" kindref="member">sbIBundle::removeBundleObserver()</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/bundle/public/sbIBundle.idl" line="231" bodyfile="C:/projects/songbird/components/bundle/public/sbIBundle.idl" bodystart="230" bodyend="246"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_bundle_observer_102f80a6b76feef483f5caaadad3c0b78" prot="public" virt="non-virtual"><scope>sbIBundleObserver</scope><name>onError</name></member>
+      <member refid="interfacesb_i_bundle_observer_10d20caa67698bb4ec577ad1d38ff907a" prot="public" virt="non-virtual"><scope>sbIBundleObserver</scope><name>onLoad</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

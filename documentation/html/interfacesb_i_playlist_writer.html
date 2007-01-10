@@ -21,7 +21,7 @@
 <h1>sbIPlaylistWriter Interface Reference</h1><!-- doxytag: class="sbIPlaylistWriter" --><a href="interfacesb_i_playlist_writer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#d084241db5a6c238a5b5159dcf37b241">write</a> (in AString aGUID, in AString aDestTable, in PRBool aReplace, out PRInt32 aErrorCode)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#6c5c2916d3d3808bf0c3f8fe3f298d07">write</a> (in AString aGUID, in AString aSourcePlaylist, in AString aOutputURL, in AString aOutputContentType, out PRInt32 aErrorCode)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#93bdf5a267467fb9b3ef581339612de9">vote</a> (in AString aURL)</td></tr>
 
@@ -32,6 +32,10 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#0a3790bd97bf000be6d8f8661bdf7ab7">supportedMIMETypes</a> (out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#9fa8fada5cae500f460f7a6e9db7e850">supportedFileExtensions</a> (out PRUint32 aExtCount,[array, size_is(aExtCount), retval] out wstring aExts)</td></tr>
+
+<tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f5cdf7f32be328351c79ffd954a91c89"></a><!-- doxytag: member="sbIPlaylistWriter::writerListener" ref="f5cdf7f32be328351c79ffd954a91c89" args="" -->
+attribute <a class="el" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#f5cdf7f32be328351c79ffd954a91c89">writerListener</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -181,7 +185,7 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 
 </div>
 </div><p>
-<a class="anchor" name="d084241db5a6c238a5b5159dcf37b241"></a><!-- doxytag: member="sbIPlaylistWriter::write" ref="d084241db5a6c238a5b5159dcf37b241" args="(in AString aGUID, in AString aDestTable, in PRBool aReplace, out PRInt32 aErrorCode)" -->
+<a class="anchor" name="6c5c2916d3d3808bf0c3f8fe3f298d07"></a><!-- doxytag: member="sbIPlaylistWriter::write" ref="6c5c2916d3d3808bf0c3f8fe3f298d07" args="(in AString aGUID, in AString aSourcePlaylist, in AString aOutputURL, in AString aOutputContentType, out PRInt32 aErrorCode)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -195,13 +199,19 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aDestTable</em>, </td>
+          <td class="paramname"> <em>aSourcePlaylist</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">in PRBool&nbsp;</td>
-          <td class="paramname"> <em>aReplace</em>, </td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aOutputURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aOutputContentType</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -229,7 +239,7 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:56 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:51 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

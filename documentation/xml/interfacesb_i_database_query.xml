@@ -1,0 +1,472 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_database_query" kind="interface" prot="public">
+    <compoundname>sbIDatabaseQuery</compoundname>
+    <includes refid="sb_i_database_query_8idl" local="no">sbIDatabaseQuery.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_database_query_13010be8388a4dcf2026e62b081b96def" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::setAsyncQuery</definition>
+        <argsstring>(in PRBool bAsyncQuery)</argsstring>
+        <name>setAsyncQuery</name>
+        <param>
+          <type>in PRBool</type>
+          <declname>bAsyncQuery</declname>
+        </param>
+        <briefdescription>
+<para>Set the query to run asynchronously (ie: <ref refid="interfacesb_i_database_query_1911879a9ecd0df09ecc7b3f44eb1e9a3" kindref="member">execute()</ref> does not block). </para>        </briefdescription>
+        <detaileddescription>
+<para>Use callbacks or poll via <ref refid="interfacesb_i_database_query_1fca6f80c0778a2f5f19578d2eabb7088" kindref="member">isExecuting()</ref> to know when the query completes.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bAsyncQuery</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, do not block on execute (default: false) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="182"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_130afe6784335377610ccbe854343c7f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIDatabaseQuery::isAyncQuery</definition>
+        <argsstring>()</argsstring>
+        <name>isAyncQuery</name>
+        <briefdescription>
+<para>Return whether or not the query will run asynchronously. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>If the query will run asynchronously </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query_13010be8388a4dcf2026e62b081b96def" kindref="member">setAsyncQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="190"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1d9594c55592a90779bf05df60ec279c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::setPersistentQuery</definition>
+        <argsstring>(in PRBool bPersistentQuery)</argsstring>
+        <name>setPersistentQuery</name>
+        <param>
+          <type>in PRBool</type>
+          <declname>bPersistentQuery</declname>
+        </param>
+        <briefdescription>
+<para>Set the query to run persistently. </para>        </briefdescription>
+        <detaileddescription>
+<para>A persistent query will be executed again if the database engine detects that an update or an insert has occured on the table queried by this object.</para><para>Usually, this is only useful with a callback. :)</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bPersistentQuery</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, register as a persistent query (default: false) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="203"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1e11f1da815ae55701dfd3f0431b37d0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIDatabaseQuery::isPersistentQuery</definition>
+        <argsstring>()</argsstring>
+        <name>isPersistentQuery</name>
+        <briefdescription>
+<para>Return whether or not the query should run persistently. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>If the query is persistent </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_database_query_1d9594c55592a90779bf05df60ec279c4" kindref="member">setPersistentQuery</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="211"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1e0bb05525bf143e2bf8e726e5780092f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::addSimpleQueryCallback</definition>
+        <argsstring>(in sbIDatabaseSimpleQueryCallback dbPersistCB)</argsstring>
+        <name>addSimpleQueryCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref></type>
+          <declname>dbPersistCB</declname>
+        </param>
+        <briefdescription>
+<para>Add a <ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref> instance to the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dbPersistCB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback instance </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="218"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1a36913599717e4c903126dac94eb2e10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::removeSimpleQueryCallback</definition>
+        <argsstring>(in sbIDatabaseSimpleQueryCallback dbPersistCB)</argsstring>
+        <name>removeSimpleQueryCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref></type>
+          <declname>dbPersistCB</declname>
+        </param>
+        <briefdescription>
+<para>Remove a <ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref> instance from the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dbPersistCB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback instance </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="225"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1e23fc826898b53ffb1912491072f0657" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::setDatabaseGUID</definition>
+        <argsstring>(in AString dbGUID)</argsstring>
+        <name>setDatabaseGUID</name>
+        <param>
+          <type>in AString</type>
+          <declname>dbGUID</declname>
+        </param>
+        <briefdescription>
+<para>Set the database to be queried. </para>        </briefdescription>
+        <detaileddescription>
+<para>This function associates the query object with a particular database.</para><para>The dbGUID parameter is any unique string used as a filename to create a queryable database sandbox.</para><para>The special character &quot;*&quot; may be passed to execute a query across all databases tracked by the application.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dbGUID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The database identifier </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="240"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1f9fe2f4c5732ec9906ebbcacabf83a30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIDatabaseQuery::getDatabaseGUID</definition>
+        <argsstring>()</argsstring>
+        <name>getDatabaseGUID</name>
+        <briefdescription>
+<para>Get the database identifier string. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The identifier string </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="247"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1188d8ac26b0b452e3b58a6fb3d20b4fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::addQuery</definition>
+        <argsstring>(in AString strQuery)</argsstring>
+        <name>addQuery</name>
+        <param>
+          <type>in AString</type>
+          <declname>strQuery</declname>
+        </param>
+        <briefdescription>
+<para>Add a SQL query string to the queue. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method enqueues a string to be exectued as a SQL query.</para><para>See: <ulink url="http://www.sqlite.org/lang.html">http://www.sqlite.org/lang.html</ulink> for supported query syntax.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>strQuery</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The query string </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="258"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_15328476206d947a38c2a63eb12aaee5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIDatabaseQuery::getQueryCount</definition>
+        <argsstring>()</argsstring>
+        <name>getQueryCount</name>
+        <briefdescription>
+<para>Return the number of query strings enqueued for execution. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of query strings enqueued </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="265"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1451a801f0d63319782dbb46e9afc3062" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIDatabaseQuery::getQuery</definition>
+        <argsstring>(in PRInt32 nIndex)</argsstring>
+        <name>getQuery</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>nIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get the query string at the Nth index. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>nIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index into the queue </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="272"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1919882c633a1ac5da38942d05470f334" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::resetQuery</definition>
+        <argsstring>()</argsstring>
+        <name>resetQuery</name>
+        <briefdescription>
+<para>Clear out the query and make it all sparkly new. </para>        </briefdescription>
+        <detaileddescription>
+<para>You *must* call this method if you want to reuse a query object with new query strings.</para><para>Otherwise, you may simply call execute again on a query object to reissue the last set of queries. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="283"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref></type>
+        <definition>sbIDatabaseResult sbIDatabaseQuery::getResultObject</definition>
+        <argsstring>()</argsstring>
+        <name>getResultObject</name>
+        <briefdescription>
+<para>Get the results object for the query that has executed. </para>        </briefdescription>
+        <detaileddescription>
+<para>Don&apos;t get this object unless you know the query has completed executing.</para><para><simplesect kind="return"><para>The results object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="292"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1b5c58c1d9fcd54edbb64b8b65d07b76a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_database_result" kindref="compound">sbIDatabaseResult</ref></type>
+        <definition>sbIDatabaseResult sbIDatabaseQuery::getResultObjectOrphan</definition>
+        <argsstring>()</argsstring>
+        <name>getResultObjectOrphan</name>
+        <briefdescription>
+<para>[DEPRECATED] </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="297"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_16a37fab423c745660290c3437218ac53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIDatabaseQuery::getLastError</definition>
+        <argsstring>()</argsstring>
+        <name>getLastError</name>
+        <briefdescription>
+<para>Get the last error on the query that has executed. </para>        </briefdescription>
+        <detaileddescription>
+<para>Don&apos;t call this method unless you know the query has completed executing.</para><para><simplesect kind="return"><para>The error code, or 0 if no error </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="306"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_10fde6f90db06af44048c336a09c10d97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::setLastError</definition>
+        <argsstring>(in PRInt32 dbError)</argsstring>
+        <name>setLastError</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>dbError</declname>
+        </param>
+        <briefdescription>
+<para>Set the last error on the query. </para>        </briefdescription>
+        <detaileddescription>
+<para>The database engine calls this. Don&apos;t.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dbError</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error code to insert </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="315"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1911879a9ecd0df09ecc7b3f44eb1e9a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIDatabaseQuery::execute</definition>
+        <argsstring>()</argsstring>
+        <name>execute</name>
+        <briefdescription>
+<para>Execute the queries enqueued in the object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The error value if synchronous, or 0 if async </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="322"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_125ad0e33ac03f59aca11cb8c94e45bda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIDatabaseQuery::waitForCompletion</definition>
+        <argsstring>()</argsstring>
+        <name>waitForCompletion</name>
+        <briefdescription>
+<para>Wait until the query has finished executing asynchronously. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the query is not executing, this immediately returns.</para><para><simplesect kind="return"><para>NS_OK </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="331"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_10be34c86138def567ec7d89002b9c037" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::addCallback</definition>
+        <argsstring>(in sbIDatabaseQueryCallback dbCallback)</argsstring>
+        <name>addCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref></type>
+          <declname>dbCallback</declname>
+        </param>
+        <briefdescription>
+<para>Add a <ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref> instance to the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dbPersistCB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback instance </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="338"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_138f90315055dc28f3549479159792633" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDatabaseQuery::removeCallback</definition>
+        <argsstring>(in sbIDatabaseQueryCallback dbCallback)</argsstring>
+        <name>removeCallback</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref></type>
+          <declname>dbCallback</declname>
+        </param>
+        <briefdescription>
+<para>Remove a <ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref> instance from the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dbPersistCB</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The callback instance </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="345"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_1fca6f80c0778a2f5f19578d2eabb7088" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIDatabaseQuery::isExecuting</definition>
+        <argsstring>()</argsstring>
+        <name>isExecuting</name>
+        <briefdescription>
+<para>Return whether or not the query is currently executing. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if executing </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="352"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_134d2b51d7f5cad556b0026bef597b08f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIDatabaseQuery::currentQuery</definition>
+        <argsstring>()</argsstring>
+        <name>currentQuery</name>
+        <briefdescription>
+<para>Return the current index in the queue being indexed. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The current query index </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="359"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_database_query_10f179af41bd1aa495079d31e3a6848c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIDatabaseQuery::abort</definition>
+        <argsstring>()</argsstring>
+        <name>abort</name>
+        <briefdescription>
+<para>Abort a currently executing query. </para>        </briefdescription>
+        <detaileddescription>
+<para>This method blocks until the query has aborted</para><para><simplesect kind="return"><para>True, if the query was executing and aborted (false if not executing) </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="368"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object responsible for executing SQL queries on the database. </para>    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> object is used to execute queries on the underlying databases that store library and playlist data.</para><para>While client code running from chrome is free to query the databases directly, this object is more commonly passed to the database helper objects (<ref refid="interfacesb_i_media_library" kindref="compound">sbIMediaLibrary</ref>, <ref refid="interfacesb_i_playlist_manager" kindref="compound">sbIPlaylistManager</ref>) that translate their methods into SQL queries placed into the passed <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref> instance.</para><para>The basic loop for using a query is as follows:</para><para>1) Object Initialization - <ref refid="interfacesb_i_database_query_1e23fc826898b53ffb1912491072f0657" kindref="member">setDatabaseGUID()</ref>, optionally <ref refid="interfacesb_i_database_query_13010be8388a4dcf2026e62b081b96def" kindref="member">setAsyncQuery()</ref>, <ref refid="interfacesb_i_database_query_1d9594c55592a90779bf05df60ec279c4" kindref="member">setPersistentQuery()</ref>, set callbacks, etc</para><para>2) Query Construction - <ref refid="interfacesb_i_database_query_1188d8ac26b0b452e3b58a6fb3d20b4fa" kindref="member">addQuery()</ref>, or calls to the helper objects</para><para>3) Execution - <ref refid="interfacesb_i_database_query_1911879a9ecd0df09ecc7b3f44eb1e9a3" kindref="member">execute()</ref>, optionally <ref refid="interfacesb_i_database_query_125ad0e33ac03f59aca11cb8c94e45bda" kindref="member">waitForCompletion()</ref></para><para>4) Get Results - <ref refid="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" kindref="member">getResultObject()</ref></para><para>5) Reset - optionally <ref refid="interfacesb_i_database_query_1919882c633a1ac5da38942d05470f334" kindref="member">resetQuery()</ref>, if you&apos;re going to reuse the object with a new set of query strings</para><para>Multiple queries may be added to the object via multiple calls to addQuery, or multiple calls to the helper interfaces. The queries will execute sequentially and the result object will be for the last query executed.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound">sbIDatabaseSimpleQueryCallback</ref>, <ref refid="interfacesb_i_database_query_callback" kindref="compound">sbIDatabaseQueryCallback</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" line="174" bodyfile="C:/projects/songbird/components/medialibrary/public/sbIDatabaseQuery.idl" bodystart="173" bodyend="369"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_database_query_10f179af41bd1aa495079d31e3a6848c0" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>abort</name></member>
+      <member refid="interfacesb_i_database_query_10be34c86138def567ec7d89002b9c037" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>addCallback</name></member>
+      <member refid="interfacesb_i_database_query_1188d8ac26b0b452e3b58a6fb3d20b4fa" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>addQuery</name></member>
+      <member refid="interfacesb_i_database_query_1e0bb05525bf143e2bf8e726e5780092f" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>addSimpleQueryCallback</name></member>
+      <member refid="interfacesb_i_database_query_134d2b51d7f5cad556b0026bef597b08f" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>currentQuery</name></member>
+      <member refid="interfacesb_i_database_query_1911879a9ecd0df09ecc7b3f44eb1e9a3" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>execute</name></member>
+      <member refid="interfacesb_i_database_query_1f9fe2f4c5732ec9906ebbcacabf83a30" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>getDatabaseGUID</name></member>
+      <member refid="interfacesb_i_database_query_16a37fab423c745660290c3437218ac53" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>getLastError</name></member>
+      <member refid="interfacesb_i_database_query_1451a801f0d63319782dbb46e9afc3062" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>getQuery</name></member>
+      <member refid="interfacesb_i_database_query_15328476206d947a38c2a63eb12aaee5e" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>getQueryCount</name></member>
+      <member refid="interfacesb_i_database_query_16dda54df53ed7d5a702d009ad1831315" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>getResultObject</name></member>
+      <member refid="interfacesb_i_database_query_1b5c58c1d9fcd54edbb64b8b65d07b76a" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>getResultObjectOrphan</name></member>
+      <member refid="interfacesb_i_database_query_130afe6784335377610ccbe854343c7f7" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>isAyncQuery</name></member>
+      <member refid="interfacesb_i_database_query_1fca6f80c0778a2f5f19578d2eabb7088" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>isExecuting</name></member>
+      <member refid="interfacesb_i_database_query_1e11f1da815ae55701dfd3f0431b37d0b" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>isPersistentQuery</name></member>
+      <member refid="interfacesb_i_database_query_138f90315055dc28f3549479159792633" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>removeCallback</name></member>
+      <member refid="interfacesb_i_database_query_1a36913599717e4c903126dac94eb2e10" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>removeSimpleQueryCallback</name></member>
+      <member refid="interfacesb_i_database_query_1919882c633a1ac5da38942d05470f334" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>resetQuery</name></member>
+      <member refid="interfacesb_i_database_query_13010be8388a4dcf2026e62b081b96def" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>setAsyncQuery</name></member>
+      <member refid="interfacesb_i_database_query_1e23fc826898b53ffb1912491072f0657" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>setDatabaseGUID</name></member>
+      <member refid="interfacesb_i_database_query_10fde6f90db06af44048c336a09c10d97" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>setLastError</name></member>
+      <member refid="interfacesb_i_database_query_1d9594c55592a90779bf05df60ec279c4" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>setPersistentQuery</name></member>
+      <member refid="interfacesb_i_database_query_125ad0e33ac03f59aca11cb8c94e45bda" prot="public" virt="non-virtual"><scope>sbIDatabaseQuery</scope><name>waitForCompletion</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

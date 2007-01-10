@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_faceplate_registration" kind="interface" prot="public">
+    <compoundname>sbIFaceplateRegistration</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_faceplate_registration_1fa4c905553eea9ea075e3bcafcd1ab19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref></type>
+        <definition>sbIFaceplatePane sbIFaceplateRegistration::registerPane</definition>
+        <argsstring>(in AString paneid, in AString readablename)</argsstring>
+        <name>registerPane</name>
+        <param>
+          <type>in AString</type>
+          <declname>paneid</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>readablename</declname>
+        </param>
+        <briefdescription>
+<para>Create a new faceplate pane This method creates a new faceplate pane and returns an interface to the pane object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>paneid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A string id for the pane. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="49"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_registration_1da99f7dfde7bc6bed93b58972ed88f53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplateRegistration::unregisterPane</definition>
+        <argsstring>(in AString paneid)</argsstring>
+        <name>unregisterPane</name>
+        <param>
+          <type>in AString</type>
+          <declname>paneid</declname>
+        </param>
+        <briefdescription>
+<para>Destroys a faceplate pane This method destroys a previously created faceplate pane. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pane</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pane to destroy </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="57"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_registration_1d0feae7019b45baebfd647a626f0d332" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIFaceplateRegistration::getNumPanes</definition>
+        <argsstring>()</argsstring>
+        <name>getNumPanes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="63"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_registration_19af927ad79f3cd33d21a321eb7cd9188" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref></type>
+        <definition>sbIFaceplatePane sbIFaceplateRegistration::enumPane</definition>
+        <argsstring>(in PRInt32 pane)</argsstring>
+        <name>enumPane</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>pane</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="64"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Faceplate Registration Interface This is the main faceplate registration interface, used by faceplate providers to register their panes. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_faceplate_pane" kindref="compound">sbIFaceplatePane</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="42" bodyfile="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" bodystart="41" bodyend="66"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_faceplate_registration_19af927ad79f3cd33d21a321eb7cd9188" prot="public" virt="non-virtual"><scope>sbIFaceplateRegistration</scope><name>enumPane</name></member>
+      <member refid="interfacesb_i_faceplate_registration_1d0feae7019b45baebfd647a626f0d332" prot="public" virt="non-virtual"><scope>sbIFaceplateRegistration</scope><name>getNumPanes</name></member>
+      <member refid="interfacesb_i_faceplate_registration_1fa4c905553eea9ea075e3bcafcd1ab19" prot="public" virt="non-virtual"><scope>sbIFaceplateRegistration</scope><name>registerPane</name></member>
+      <member refid="interfacesb_i_faceplate_registration_1da99f7dfde7bc6bed93b58972ed88f53" prot="public" virt="non-virtual"><scope>sbIFaceplateRegistration</scope><name>unregisterPane</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_faceplate_pane" kind="interface" prot="public">
+    <compoundname>sbIFaceplatePane</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1a3c4a1b973afe4bb9f0e640329a4718b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIFaceplatePane::getPaneId</definition>
+        <argsstring>()</argsstring>
+        <name>getPaneId</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="20"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1027ee1cb8e1c88f4f67c299b45f18236" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIFaceplatePane::getPaneName</definition>
+        <argsstring>()</argsstring>
+        <name>getPaneName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="21"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1e1263a003bb2aa0df53e321eade1037a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::setLabel1</definition>
+        <argsstring>(in AString text)</argsstring>
+        <name>setLabel1</name>
+        <param>
+          <type>in AString</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="22"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1f2fe828cbf743595616896ff7b726966" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::showLabel1</definition>
+        <argsstring>()</argsstring>
+        <name>showLabel1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="23"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1e30ab52b22606a8ae04688595c4685d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::hideLabel1</definition>
+        <argsstring>()</argsstring>
+        <name>hideLabel1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="24"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1d63414db794434e610ea9a4d459bd5cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::setLabel2</definition>
+        <argsstring>(in AString text)</argsstring>
+        <name>setLabel2</name>
+        <param>
+          <type>in AString</type>
+          <declname>text</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="25"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_10a0fc48b3e0c3e192a6ba04774a04f9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::showLabel2</definition>
+        <argsstring>()</argsstring>
+        <name>showLabel2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="26"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_13dfc6bc866831c22b73149dd01b9794f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::hideLabel2</definition>
+        <argsstring>()</argsstring>
+        <name>hideLabel2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="27"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_17bdc93a8c36290a580e5f94fc3aafc47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::setProgressMeter</definition>
+        <argsstring>(in PRInt32 percent)</argsstring>
+        <name>setProgressMeter</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>percent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="28"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_1bc552bec33c4ac53c60a4ed51da2a157" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::showProgressMeter</definition>
+        <argsstring>()</argsstring>
+        <name>showProgressMeter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="29"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_faceplate_pane_12bde88a966f55e61ecf041be0ecf84ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFaceplatePane::hideProgressMeter</definition>
+        <argsstring>()</argsstring>
+        <name>hideProgressMeter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Songbird Faceplate Pane Interface This interface manipulates faceplate panes created by the faceplate registration service. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_faceplate_registration" kindref="compound">sbIFaceplateRegistration</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" line="19" bodyfile="C:/projects/songbird/components/faceplateregistration/public/sbIFaceplateRegistration.idl" bodystart="18" bodyend="31"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_faceplate_pane_1a3c4a1b973afe4bb9f0e640329a4718b" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>getPaneId</name></member>
+      <member refid="interfacesb_i_faceplate_pane_1027ee1cb8e1c88f4f67c299b45f18236" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>getPaneName</name></member>
+      <member refid="interfacesb_i_faceplate_pane_1e30ab52b22606a8ae04688595c4685d7" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>hideLabel1</name></member>
+      <member refid="interfacesb_i_faceplate_pane_13dfc6bc866831c22b73149dd01b9794f" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>hideLabel2</name></member>
+      <member refid="interfacesb_i_faceplate_pane_12bde88a966f55e61ecf041be0ecf84ab" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>hideProgressMeter</name></member>
+      <member refid="interfacesb_i_faceplate_pane_1e1263a003bb2aa0df53e321eade1037a" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>setLabel1</name></member>
+      <member refid="interfacesb_i_faceplate_pane_1d63414db794434e610ea9a4d459bd5cb" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>setLabel2</name></member>
+      <member refid="interfacesb_i_faceplate_pane_17bdc93a8c36290a580e5f94fc3aafc47" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>setProgressMeter</name></member>
+      <member refid="interfacesb_i_faceplate_pane_1f2fe828cbf743595616896ff7b726966" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>showLabel1</name></member>
+      <member refid="interfacesb_i_faceplate_pane_10a0fc48b3e0c3e192a6ba04774a04f9c" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>showLabel2</name></member>
+      <member refid="interfacesb_i_faceplate_pane_1bc552bec33c4ac53c60a4ed51da2a157" prot="public" virt="non-virtual"><scope>sbIFaceplatePane</scope><name>showProgressMeter</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

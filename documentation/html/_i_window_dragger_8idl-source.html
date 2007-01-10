@@ -23,14 +23,14 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright© 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2006 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
-<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the “GPL”).</span>
+<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the "GPL").</span>
 <a name="l00012"></a>00012 <span class="comment">// </span>
 <a name="l00013"></a>00013 <span class="comment">// Software distributed under the License is distributed </span>
-<a name="l00014"></a>00014 <span class="comment">// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either </span>
+<a name="l00014"></a>00014 <span class="comment">// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either </span>
 <a name="l00015"></a>00015 <span class="comment">// express or implied. See the GPL for the specific language </span>
 <a name="l00016"></a>00016 <span class="comment">// governing rights and limitations.</span>
 <a name="l00017"></a>00017 <span class="comment">//</span>
@@ -44,12 +44,20 @@
 <a name="l00025"></a>00025 <span class="comment"> */</span>
 <a name="l00026"></a>00026 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00027"></a>00027 
-<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(880147D8-8DE1-44ae-AB4E-FC3D52C048BE)]
-<a name="l00044"></a><a class="code" href="interfacesb_i_window_dragger.html">00044</a> interface <a class="code" href="interfacesb_i_window_dragger.html">sbIWindowDragger</a> : nsISupports
-<a name="l00045"></a>00045 {
-<a name="l00054"></a>00054   <span class="keywordtype">void</span> beginWindowDrag( in PRInt32 dockDistance );
-<a name="l00055"></a>00055 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<a name="l00041"></a>00041 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(55bc09ea-6ded-11db-968c-00e08161165f)]
+<a name="l00042"></a><a class="code" href="interfacesb_i_window_dragger_callback.html">00042</a> interface <a class="code" href="interfacesb_i_window_dragger_callback.html">sbIWindowDraggerCallback</a> : nsISupports
+<a name="l00043"></a>00043 {
+<a name="l00048"></a>00048   <span class="keywordtype">void</span> onWindowDragComplete();
+<a name="l00049"></a>00049 };
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051 
+<a name="l00059"></a>00059 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(47fcfb00-6ded-11db-968c-00e08161165f)]
+<a name="l00060"></a><a class="code" href="interfacesb_i_window_dragger.html">00060</a> interface <a class="code" href="interfacesb_i_window_dragger.html">sbIWindowDragger</a> : nsISupports
+<a name="l00061"></a>00061 {
+<a name="l00072"></a>00072   <span class="keywordtype">void</span> beginWindowDrag( in PRInt32 dockDistance, in <a class="code" href="interfacesb_i_window_dragger_callback.html">sbIWindowDraggerCallback</a> cb );
+<a name="l00073"></a>00073 };
+<a name="l00074"></a>00074 
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

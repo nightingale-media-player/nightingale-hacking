@@ -23,14 +23,14 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright© 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2006 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
-<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the “GPL”).</span>
+<a name="l00011"></a>00011 <span class="comment">// GNU General Public License Version 2 (the "GPL").</span>
 <a name="l00012"></a>00012 <span class="comment">// </span>
 <a name="l00013"></a>00013 <span class="comment">// Software distributed under the License is distributed </span>
-<a name="l00014"></a>00014 <span class="comment">// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either </span>
+<a name="l00014"></a>00014 <span class="comment">// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either </span>
 <a name="l00015"></a>00015 <span class="comment">// express or implied. See the GPL for the specific language </span>
 <a name="l00016"></a>00016 <span class="comment">// governing rights and limitations.</span>
 <a name="l00017"></a>00017 <span class="comment">//</span>
@@ -57,39 +57,43 @@
 <a name="l00038"></a>00038 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(27B68B9B-E471-4367-B159-63B65C581847)]
 <a name="l00039"></a><a class="code" href="interfacesb_i_playlist_writer.html">00039</a> interface <a class="code" href="interfacesb_i_playlist_writer.html">sbIPlaylistWriter</a> : nsISupports
 <a name="l00040"></a>00040 {
-<a name="l00047"></a>00047   PRBool write(in AString aGUID, 
-<a name="l00048"></a>00048                in AString aDestTable, 
-<a name="l00049"></a>00049                in PRBool aReplace, 
-<a name="l00050"></a>00050                out PRInt32 aErrorCode);
-<a name="l00051"></a>00051 
-<a name="l00058"></a>00058   PRInt32 vote(in AString aURL);
-<a name="l00059"></a>00059 
-<a name="l00066"></a>00066   AString name();
-<a name="l00067"></a>00067 
-<a name="l00074"></a>00074   AString description();
-<a name="l00075"></a>00075   
-<a name="l00082"></a>00082   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 aMIMECount, 
-<a name="l00083"></a>00083     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
-<a name="l00084"></a>00084 
-<a name="l00091"></a>00091   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 aExtCount, 
-<a name="l00092"></a>00092     [array, size_is (aExtCount), retval] out wstring aExts);
-<a name="l00093"></a>00093 };
-<a name="l00094"></a>00094 
-<a name="l00101"></a>00101 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(CB6A505E-D8CB-4711-A50F-38439561C6D0)]
-<a name="l00102"></a><a class="code" href="interfacesb_i_playlist_writer_manager.html">00102</a> interface <a class="code" href="interfacesb_i_playlist_writer_manager.html">sbIPlaylistWriterManager</a> : nsISupports
-<a name="l00103"></a>00103 {
-<a name="l00110"></a>00110   PRInt32 write(in AString aGUID, 
-<a name="l00111"></a>00111     in AString aName, 
-<a name="l00112"></a>00112     in AString aOutputContentType,
-<a name="l00113"></a>00113     in <a class="code" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a> aWriterListener);
-<a name="l00114"></a>00114 
-<a name="l00121"></a>00121   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 aMIMECount, 
-<a name="l00122"></a>00122     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
-<a name="l00123"></a>00123 
-<a name="l00130"></a>00130   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 aExtCount, 
-<a name="l00131"></a>00131     [array, size_is (aExtCount), retval] out wstring aExts);
-<a name="l00132"></a>00132 };
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<a name="l00041"></a><a class="code" href="interfacesb_i_playlist_writer.html#f5cdf7f32be328351c79ffd954a91c89">00041</a>   attribute <a class="code" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a> writerListener;
+<a name="l00042"></a>00042 
+<a name="l00049"></a>00049   PRBool write(in AString aGUID, 
+<a name="l00050"></a>00050                in AString aSourcePlaylist,
+<a name="l00051"></a>00051                in AString aOutputURL,
+<a name="l00052"></a>00052                in AString aOutputContentType,
+<a name="l00053"></a>00053                out PRInt32 aErrorCode);
+<a name="l00054"></a>00054 
+<a name="l00061"></a>00061   PRInt32 vote(in AString aURL);
+<a name="l00062"></a>00062 
+<a name="l00069"></a>00069   AString name();
+<a name="l00070"></a>00070 
+<a name="l00077"></a>00077   AString description();
+<a name="l00078"></a>00078   
+<a name="l00085"></a>00085   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 aMIMECount, 
+<a name="l00086"></a>00086     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+<a name="l00087"></a>00087 
+<a name="l00094"></a>00094   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 aExtCount, 
+<a name="l00095"></a>00095     [array, size_is (aExtCount), retval] out wstring aExts);
+<a name="l00096"></a>00096 };
+<a name="l00097"></a>00097 
+<a name="l00104"></a>00104 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(CB6A505E-D8CB-4711-A50F-38439561C6D0)]
+<a name="l00105"></a><a class="code" href="interfacesb_i_playlist_writer_manager.html">00105</a> interface <a class="code" href="interfacesb_i_playlist_writer_manager.html">sbIPlaylistWriterManager</a> : nsISupports
+<a name="l00106"></a>00106 {
+<a name="l00113"></a>00113   PRInt32 write(in AString aGUID, 
+<a name="l00114"></a>00114     in AString aName,
+<a name="l00115"></a>00115     in AString aOutputURL,
+<a name="l00116"></a>00116     in AString aOutputContentType,
+<a name="l00117"></a>00117     in <a class="code" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a> aWriterListener);
+<a name="l00118"></a>00118 
+<a name="l00125"></a>00125   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 aMIMECount, 
+<a name="l00126"></a>00126     [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+<a name="l00127"></a>00127 
+<a name="l00134"></a>00134   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 aExtCount, 
+<a name="l00135"></a>00135     [array, size_is (aExtCount), retval] out wstring aExts);
+<a name="l00136"></a>00136 };
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

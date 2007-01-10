@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_quick_time" kind="interface" prot="public">
+    <compoundname>sbIQuickTime</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_quick_time_16127c2b185f3c577ee50e13c8f4fb5e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIQuickTime::play</definition>
+        <argsstring>()</argsstring>
+        <name>play</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="106"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_quick_time_168f1fd03e2077d5976a4632fea960807" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIQuickTime::stop</definition>
+        <argsstring>()</argsstring>
+        <name>stop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="111"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_quick_time_1d0facc1db39214e92b49d673b38e79c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIQuickTime::pause</definition>
+        <argsstring>()</argsstring>
+        <name>pause</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="116"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_quick_time_11c0ca63f8b83ea7ed95d6a7418ebd562" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIQuickTime::isMediaURI</definition>
+        <argsstring>(in nsIURI aURI)</argsstring>
+        <name>isMediaURI</name>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aURI</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="121"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_quick_time_13dbc98d5123de9742461c26cff87fd2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIQuickTime::isVideoURI</definition>
+        <argsstring>(in nsIURI aURI)</argsstring>
+        <name>isVideoURI</name>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aURI</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="126"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_quick_time_14b4302aad1d6c6510d9281b02414af0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIQuickTime::getMetadataForKey</definition>
+        <argsstring>(in AString aKey)</argsstring>
+        <name>getMetadataForKey</name>
+        <param>
+          <type>in AString</type>
+          <declname>aKey</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="131"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_quick_time_184c9e4fec641da104a5e1ebe2f779c59" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRInt32</type>
+        <definition>readonly attribute PRInt32 sbIQuickTime::quickTimeVersion</definition>
+        <argsstring></argsstring>
+        <name>quickTimeVersion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the version of QuickTime installed. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="46" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_1f331be2f7f83b76579911229d4b98240" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIQuickTime::playing</definition>
+        <argsstring></argsstring>
+        <name>playing</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="51" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_144a789984f6ae527bf7d396576a51ec0" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIQuickTime::paused</definition>
+        <argsstring></argsstring>
+        <name>paused</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="56" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_13a960e455a4ede798d0e205e9f0ed939" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIQuickTime::stopped</definition>
+        <argsstring></argsstring>
+        <name>stopped</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="61" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_107b11fe4d3e2ac33c5bbd9fffb17b361" prot="public" static="no" mutable="no">
+        <type>attribute PRBool</type>
+        <definition>attribute PRBool sbIQuickTime::muted</definition>
+        <argsstring></argsstring>
+        <name>muted</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="66" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_129dea19f7fe0f47eaec0e650a1a18348" prot="public" static="no" mutable="no">
+        <type>attribute PRUint32</type>
+        <definition>attribute PRUint32 sbIQuickTime::volume</definition>
+        <argsstring></argsstring>
+        <name>volume</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="71" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_1a7edaa5cb45c030f7a7a9417ecc8d9cb" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint64</type>
+        <definition>readonly attribute PRUint64 sbIQuickTime::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="76" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_10de02bd6617e88e0da0d78e3ffec7971" prot="public" static="no" mutable="no">
+        <type>attribute PRUint64</type>
+        <definition>attribute PRUint64 sbIQuickTime::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="81" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_1415591264cb0c9bd38d44bd707094e8a" prot="public" static="no" mutable="no">
+        <type>attribute PRBool</type>
+        <definition>attribute PRBool sbIQuickTime::fullScreen</definition>
+        <argsstring></argsstring>
+        <name>fullScreen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="86" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_176eed21bbd2c96f7b76fe359000bb519" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbIQuickTime::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="91" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_131ce0e11642f6a8646981e9e7e4e5018" prot="public" static="no" mutable="no">
+        <type>attribute nsIDOMXULElement</type>
+        <definition>attribute nsIDOMXULElement sbIQuickTime::targetElement</definition>
+        <argsstring></argsstring>
+        <name>targetElement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="96" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_quick_time_15fe93e2c23fbec13d6eada2729f8776a" prot="public" static="no" mutable="no">
+        <type>attribute nsIURI</type>
+        <definition>attribute nsIURI sbIQuickTime::currentURI</definition>
+        <argsstring></argsstring>
+        <name>currentURI</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="101" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" line="42" bodyfile="C:/projects/songbird/components/mediacore/playback/quicktime/public/sbIQuickTime.idl" bodystart="41" bodyend="132"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_quick_time_15fe93e2c23fbec13d6eada2729f8776a" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>currentURI</name></member>
+      <member refid="interfacesb_i_quick_time_1415591264cb0c9bd38d44bd707094e8a" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>fullScreen</name></member>
+      <member refid="interfacesb_i_quick_time_14b4302aad1d6c6510d9281b02414af0b" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>getMetadataForKey</name></member>
+      <member refid="interfacesb_i_quick_time_176eed21bbd2c96f7b76fe359000bb519" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>id</name></member>
+      <member refid="interfacesb_i_quick_time_11c0ca63f8b83ea7ed95d6a7418ebd562" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>isMediaURI</name></member>
+      <member refid="interfacesb_i_quick_time_13dbc98d5123de9742461c26cff87fd2b" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>isVideoURI</name></member>
+      <member refid="interfacesb_i_quick_time_1a7edaa5cb45c030f7a7a9417ecc8d9cb" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>length</name></member>
+      <member refid="interfacesb_i_quick_time_107b11fe4d3e2ac33c5bbd9fffb17b361" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>muted</name></member>
+      <member refid="interfacesb_i_quick_time_1d0facc1db39214e92b49d673b38e79c0" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>pause</name></member>
+      <member refid="interfacesb_i_quick_time_144a789984f6ae527bf7d396576a51ec0" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>paused</name></member>
+      <member refid="interfacesb_i_quick_time_16127c2b185f3c577ee50e13c8f4fb5e3" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>play</name></member>
+      <member refid="interfacesb_i_quick_time_1f331be2f7f83b76579911229d4b98240" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>playing</name></member>
+      <member refid="interfacesb_i_quick_time_10de02bd6617e88e0da0d78e3ffec7971" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>position</name></member>
+      <member refid="interfacesb_i_quick_time_184c9e4fec641da104a5e1ebe2f779c59" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>quickTimeVersion</name></member>
+      <member refid="interfacesb_i_quick_time_168f1fd03e2077d5976a4632fea960807" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>stop</name></member>
+      <member refid="interfacesb_i_quick_time_13a960e455a4ede798d0e205e9f0ed939" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>stopped</name></member>
+      <member refid="interfacesb_i_quick_time_131ce0e11642f6a8646981e9e7e4e5018" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>targetElement</name></member>
+      <member refid="interfacesb_i_quick_time_129dea19f7fe0f47eaec0e650a1a18348" prot="public" virt="non-virtual"><scope>sbIQuickTime</scope><name>volume</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_playlist_commands" kind="interface" prot="public">
+    <compoundname>sbIPlaylistCommands</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_11cc94e9053544cb133cc1c3447e001cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommands::setPlaylist</definition>
+        <argsstring>(in nsIDOMNode node)</argsstring>
+        <name>setPlaylist</name>
+        <param>
+          <type>in nsIDOMNode</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Be informed when a set of commands are attached to a playlist element. </para>        </briefdescription>
+        <detaileddescription>
+<para>When a playlist element is about to use an <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> instance, after it has been duplicated, the element will pass itself as the param to this method. The implementor may save the playlist object for later reference and use.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The playlist object </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="82"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_1c884c177ca154a21ec5c5b99469b24f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIPlaylistCommands::getNumCommands</definition>
+        <argsstring>()</argsstring>
+        <name>getNumCommands</name>
+        <briefdescription>
+<para>Return the number of command elements to be displayed. </para>        </briefdescription>
+        <detaileddescription>
+<para>The implementor should return the number of commands to be created</para><para>The other functions will be called in turn with the index value that represents each specific command element</para><para><simplesect kind="return"><para>The number of commands to be created </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="94"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_12b93643586cf0e3e22c0c77a8b2fe3bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistCommands::getCommandId</definition>
+        <argsstring>(in PRInt32 index)</argsstring>
+        <name>getCommandId</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the id string for the requested command element index. </para>        </briefdescription>
+        <detaileddescription>
+<para>Each command id should be unique within this commands object. The visual style of the command can be set in the CSS.</para><para>Some id strings are parsed to create different objects:</para><para>&quot;*separator*&quot; - Create a menuseparator or an empty box</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the element for which the data is being requested </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string for the command id </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="109"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_14aac42eb263b4251d023c402df1eafdb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistCommands::getCommandText</definition>
+        <argsstring>(in PRInt32 index)</argsstring>
+        <name>getCommandText</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the human readable text for the requested command element index. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the string begins with an &quot;&amp;&quot; character, the remaining portion of the string will be used as an index into the current localization&apos;s properties file.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the element for which the data is being requested </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string for the displayed text </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="121"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_14fefdaab579028f7180a4f213e098350" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbIPlaylistCommands::getCommandFlex</definition>
+        <argsstring>(in PRInt32 index)</argsstring>
+        <name>getCommandFlex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the flex value for the requested command element index. </para>        </briefdescription>
+        <detaileddescription>
+<para>For instance, you can make your &quot;*separator*&quot; element have a flex of 1 and then right-justify all the command buttons after it. By default, command buttons will adjust their width to the width of their human readable text.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the element for which the data is being requested </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value for the flex </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="133"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_19bc74516c28ae0e6bb744c788a039233" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPlaylistCommands::getCommandToolTipText</definition>
+        <argsstring>(in PRInt32 index)</argsstring>
+        <name>getCommandToolTipText</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the human readable text for the requested command element&apos;s tooltip. </para>        </briefdescription>
+        <detaileddescription>
+<para>If the string begins with an &quot;&amp;&quot; character, the remaining portion of the string will be used as an index into the current localization&apos;s properties file.</para><para><xrefsect id="todo_1_todo000025"><xreftitle>Todo</xreftitle><xrefdescription><para>The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip. </para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the element for which the data is being requested </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The string for the tooltip </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="146"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_147e5745b62c2e5cfa883d1b70116d79b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIPlaylistCommands::getCommandEnabled</definition>
+        <argsstring>(in PRInt32 index)</argsstring>
+        <name>getCommandEnabled</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the enabled state for the requested command element index. </para>        </briefdescription>
+        <detaileddescription>
+<para>When the selection of the playlist changes state, or the tree is rebuilt, this method will be called to allow the code to enable or disable commands based upon the state of the playlist.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the element for which the data is being requested </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the command should display as enabled </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="158"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_1d870f235a289869548290b3653529c9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistCommands::onCommand</definition>
+        <argsstring>(in nsIDOMEvent event)</argsstring>
+        <name>onCommand</name>
+        <param>
+          <type>in nsIDOMEvent</type>
+          <declname>event</declname>
+        </param>
+        <briefdescription>
+<para>Handle the fact that a command was activated. </para>        </briefdescription>
+        <detaileddescription>
+<para>When the user activates the command button or menuitem, this method will be called with the event generated.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>event</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The event generated by the user&apos;s action </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="168"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref></type>
+        <definition>sbIPlaylistCommands sbIPlaylistCommands::duplicate</definition>
+        <argsstring>()</argsstring>
+        <name>duplicate</name>
+        <briefdescription>
+<para>Duplicate the command object. </para>        </briefdescription>
+        <detaileddescription>
+<para>When a command object is to be given to a playlist, the object registered with <ref refid="interfacesb_i_playlistsource" kindref="compound">sbIPlaylistsource</ref> will have this method called. The method should be implemented like this:</para><para><programlisting><codeline><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate</ref>:<sp/>function()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/>obj<sp/>=<sp/>{};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>var<sp/>i<sp/>in<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>obj[<sp/>i<sp/>]<sp/>=<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">[<sp/>i<sp/>];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>obj;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>},</highlight></codeline>
+</programlisting></para><para>It creates a new object instance and copies the methods over to it.</para><para><simplesect kind="return"><para>A new copy of this object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="190"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An interface that represents the set of command buttons and context menu items available on a displayed playlist. </para>    </briefdescription>
+    <detaileddescription>
+<para>This interface is meant to be implemented by user code.</para><para>Implementors that create their own specific database libraries and playlists (eg: sbIDeviceBase) may also specify a commands object to be shown when the tables are displayed in a &lt;playlist&gt; element. This object&apos;s purpose is to return abstract information that can be used by the playlist element to autogenerate its xul button and menuitm elements.</para><para>These objects ought to be created in javascript. When a new playlist is created, it will query <ref refid="interfacesb_i_playlistsource" kindref="compound">sbIPlaylistsource</ref> for a commands object, and the playlist source will call <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> on the object it has stored and return the newly duplicated object.</para><para>The <ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate()</ref> method should be implemented like so:</para><para><programlisting><codeline><highlight class="normal"><ref refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" kindref="member">duplicate</ref>:<sp/>function()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>var<sp/>obj<sp/>=<sp/>{};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>var<sp/>i<sp/>in<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>obj[<sp/>i<sp/>]<sp/>=<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal">[<sp/>i<sp/>];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>obj;</highlight></codeline>
+<codeline><highlight class="normal">},</highlight></codeline>
+</programlisting></para><para><simplesect kind="see"><para>playlist.xml, playlist_test.xul </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" line="71" bodyfile="C:/projects/songbird/components/playlistsource/public/sbIPlaylistsource.idl" bodystart="70" bodyend="191"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_commands_151cc0b067c69415f31b861762528cb55" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>duplicate</name></member>
+      <member refid="interfacesb_i_playlist_commands_147e5745b62c2e5cfa883d1b70116d79b" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getCommandEnabled</name></member>
+      <member refid="interfacesb_i_playlist_commands_14fefdaab579028f7180a4f213e098350" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getCommandFlex</name></member>
+      <member refid="interfacesb_i_playlist_commands_12b93643586cf0e3e22c0c77a8b2fe3bc" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getCommandId</name></member>
+      <member refid="interfacesb_i_playlist_commands_14aac42eb263b4251d023c402df1eafdb" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getCommandText</name></member>
+      <member refid="interfacesb_i_playlist_commands_19bc74516c28ae0e6bb744c788a039233" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getCommandToolTipText</name></member>
+      <member refid="interfacesb_i_playlist_commands_1c884c177ca154a21ec5c5b99469b24f0" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>getNumCommands</name></member>
+      <member refid="interfacesb_i_playlist_commands_1d870f235a289869548290b3653529c9f" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>onCommand</name></member>
+      <member refid="interfacesb_i_playlist_commands_11cc94e9053544cb133cc1c3447e001cd" prot="public" virt="non-virtual"><scope>sbIPlaylistCommands</scope><name>setPlaylist</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

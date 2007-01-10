@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_u_s_b_mass_storage_device" kind="interface" prot="public">
+    <compoundname>sbIUSBMassStorageDevice</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_u_s_b_mass_storage_device_1eba0bd09c7511e3b3e4e80c0917f5e16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbIUSBMassStorageDevice::OnUSBDeviceEvent</definition>
+        <argsstring>(in PRBool deviceAdded, in AString deviceName, in AString deviceIdentifier)</argsstring>
+        <name>OnUSBDeviceEvent</name>
+        <param>
+          <type>in PRBool</type>
+          <declname>deviceAdded</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>deviceName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>deviceIdentifier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/devices/usb_mass_storage/public/sbIUSBMassStorageDevice.idl" line="33"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/devices/usb_mass_storage/public/sbIUSBMassStorageDevice.idl" line="32" bodyfile="C:/projects/songbird/components/devices/usb_mass_storage/public/sbIUSBMassStorageDevice.idl" bodystart="31" bodyend="34"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_u_s_b_mass_storage_device_1eba0bd09c7511e3b3e4e80c0917f5e16" prot="public" virt="non-virtual"><scope>sbIUSBMassStorageDevice</scope><name>OnUSBDeviceEvent</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -32,6 +32,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#32094dc5f440b02c1b121ed146eddc65">getPlaying</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the playing state Return the play state of the playback core. If the core is stopped, this will return FALSE, but if paused it will still return TRUE.  <a href="#32094dc5f440b02c1b121ed146eddc65"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#b675191d02e23d031279a7acb62435af">getPlayingVideo</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the playing video state Returns TRUE if the core has a video stream and it either playing or paused.  <a href="#b675191d02e23d031279a7acb62435af"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#d65edbd87eb69184f7c4bb1e40ef1c1c">getMute</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the mute state.  <a href="#d65edbd87eb69184f7c4bb1e40ef1c1c"></a><br></td></tr>
@@ -92,6 +95,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#79d8fad16b1eab43475cf366cb635d68">isVideoURL</a> (in AString aURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to video content This checks for a number of known file extensions to see if the URL contains them and is therefore video.  <a href="#79d8fad16b1eab43475cf366cb635d68"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIStringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_core_wrapper.html#6984edfd800edc0f501ce4afb7d2d39a">getSupportedFileExtensions</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return an enumeration of the file extensions this core supports.  <a href="#6984edfd800edc0f501ce4afb7d2d39a"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A wrapper for various media cores Defines the inteface for objects that will provide playback functionality. 
@@ -101,7 +107,7 @@ A wrapper for various media cores Defines the inteface for objects that will pro
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_core_wrapper_8idl-source.html#l00044">44</a> of file <a class="el" href="sb_i_core_wrapper_8idl-source.html">sbICoreWrapper.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_core_wrapper_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_core_wrapper_8idl-source.html">sbICoreWrapper.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="56719bd6b89638ac0a0ac04e193e38ca"></a><!-- doxytag: member="sbICoreWrapper::getId" ref="56719bd6b89638ac0a0ac04e193e38ca" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -265,6 +271,29 @@ FALSE if not playing </dd></dl>
 
 </div>
 </div><p>
+<a class="anchor" name="b675191d02e23d031279a7acb62435af"></a><!-- doxytag: member="sbICoreWrapper::getPlayingVideo" ref="b675191d02e23d031279a7acb62435af" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbICoreWrapper::getPlayingVideo           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the playing video state Returns TRUE if the core has a video stream and it either playing or paused. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>TRUE if current stream has video <p>
+FALSE if current stream is audio only </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="fda840066806fc4f830c1f547d313df7"></a><!-- doxytag: member="sbICoreWrapper::getPosition" ref="fda840066806fc4f830c1f547d313df7" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -284,6 +313,28 @@ FALSE if not playing </dd></dl>
 Get the position within the current media. 
 <p>
 <dl compact><dt><b>Returns:</b></dt><dd>Position of playback in the current media, in milliseconds </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="6984edfd800edc0f501ce4afb7d2d39a"></a><!-- doxytag: member="sbICoreWrapper::getSupportedFileExtensions" ref="6984edfd800edc0f501ce4afb7d2d39a" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIStringEnumerator sbICoreWrapper::getSupportedFileExtensions           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Return an enumeration of the file extensions this core supports. 
+<p>
+<dl compact><dt><b>Returns:</b></dt><dd>an nsIStringEnumerator containting the list of extensions </dd></dl>
 
 </div>
 </div><p>
@@ -649,7 +700,7 @@ Stop playback.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/playlistplayback/public/<a class="el" href="sb_i_core_wrapper_8idl-source.html">sbICoreWrapper.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

@@ -20,58 +20,63 @@
 <h1>C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl</h1><a href="sb_i_core_wrapper_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
 <a name="l00034"></a>00034 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00035"></a>00035 <span class="preprocessor">#include "nsIDOMHTMLObjectElement.idl"</span>
-<a name="l00036"></a>00036 
-<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(ea5d3666-c790-4bf8-8d2f-780bb90e5579)]
-<a name="l00044"></a><a class="code" href="interfacesb_i_core_wrapper.html">00044</a> interface <a class="code" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a> : nsISupports
-<a name="l00045"></a>00045 {
-<a name="l00052"></a>00052   <span class="keywordtype">boolean</span> getPaused();
-<a name="l00053"></a>00053 
-<a name="l00061"></a>00061   <span class="keywordtype">boolean</span> getPlaying();
-<a name="l00062"></a>00062 
-<a name="l00068"></a>00068   <span class="keywordtype">boolean</span> getMute();
-<a name="l00069"></a>00069 
-<a name="l00074"></a>00074   <span class="keywordtype">void</span> setMute(in <span class="keywordtype">boolean</span> aMute);
-<a name="l00075"></a>00075 
-<a name="l00080"></a>00080   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getVolume();
-<a name="l00081"></a>00081 
-<a name="l00086"></a>00086   <span class="keywordtype">void</span> setVolume(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aVolume);
-<a name="l00087"></a>00087 
-<a name="l00092"></a>00092   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> getLength();
-<a name="l00093"></a>00093 
-<a name="l00099"></a>00099   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> getPosition();
-<a name="l00100"></a>00100 
-<a name="l00106"></a>00106   <span class="keywordtype">void</span> setPosition(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> aPosition);
-<a name="l00107"></a>00107 
-<a name="l00113"></a>00113   <span class="keywordtype">void</span> goFullscreen();
-<a name="l00114"></a>00114 
-<a name="l00119"></a>00119   AString getId();
-<a name="l00120"></a>00120 
-<a name="l00126"></a>00126   <span class="keywordtype">void</span> setId(in AString aId);
-<a name="l00127"></a>00127 
-<a name="l00137"></a>00137   nsIDOMHTMLElement getObject();
-<a name="l00138"></a>00138 
-<a name="l00149"></a>00149   <span class="keywordtype">void</span> setObject(in nsIDOMHTMLElement aObject);
-<a name="l00150"></a>00150 
-<a name="l00159"></a>00159   <span class="keywordtype">boolean</span> playURL(in AString aURL);
+<a name="l00036"></a>00036 <span class="preprocessor">#include "nsIStringEnumerator.idl"</span>
+<a name="l00037"></a>00037 
+<a name="l00044"></a>00044 [scriptable, <a class="code" href="sb_i_device_base_8idl.html#a5f4ef393f681f1be6cf7c49a2ff5826">uuid</a>(ea5d3666-c790-4bf8-8d2f-780bb90e5579)]
+<a name="l00045"></a><a class="code" href="interfacesb_i_core_wrapper.html">00045</a> interface <a class="code" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a> : nsISupports
+<a name="l00046"></a>00046 {
+<a name="l00053"></a>00053   <span class="keywordtype">boolean</span> getPaused();
+<a name="l00054"></a>00054 
+<a name="l00062"></a>00062   <span class="keywordtype">boolean</span> getPlaying();
+<a name="l00063"></a>00063 
+<a name="l00071"></a>00071   <span class="keywordtype">boolean</span> getPlayingVideo();
+<a name="l00072"></a>00072 
+<a name="l00078"></a>00078   <span class="keywordtype">boolean</span> getMute();
+<a name="l00079"></a>00079 
+<a name="l00084"></a>00084   <span class="keywordtype">void</span> setMute(in <span class="keywordtype">boolean</span> aMute);
+<a name="l00085"></a>00085 
+<a name="l00090"></a>00090   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getVolume();
+<a name="l00091"></a>00091 
+<a name="l00096"></a>00096   <span class="keywordtype">void</span> setVolume(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aVolume);
+<a name="l00097"></a>00097 
+<a name="l00102"></a>00102   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> getLength();
+<a name="l00103"></a>00103 
+<a name="l00109"></a>00109   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> getPosition();
+<a name="l00110"></a>00110 
+<a name="l00116"></a>00116   <span class="keywordtype">void</span> setPosition(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> aPosition);
+<a name="l00117"></a>00117 
+<a name="l00123"></a>00123   <span class="keywordtype">void</span> goFullscreen();
+<a name="l00124"></a>00124 
+<a name="l00129"></a>00129   AString getId();
+<a name="l00130"></a>00130 
+<a name="l00136"></a>00136   <span class="keywordtype">void</span> setId(in AString aId);
+<a name="l00137"></a>00137 
+<a name="l00147"></a>00147   nsIDOMHTMLElement getObject();
+<a name="l00148"></a>00148 
+<a name="l00159"></a>00159   <span class="keywordtype">void</span> setObject(in nsIDOMHTMLElement aObject);
 <a name="l00160"></a>00160 
-<a name="l00165"></a>00165   <span class="keywordtype">boolean</span> play();
-<a name="l00166"></a>00166 
-<a name="l00171"></a>00171   <span class="keywordtype">boolean</span> stop();
-<a name="l00172"></a>00172 
-<a name="l00177"></a>00177   <span class="keywordtype">boolean</span> pause();
-<a name="l00178"></a>00178 
-<a name="l00185"></a>00185   AString getMetadata(in AString aKey);
-<a name="l00186"></a>00186 
-<a name="l00193"></a>00193   <span class="keywordtype">void</span> onSwapCore();
-<a name="l00194"></a>00194 
-<a name="l00195"></a>00195  
-<a name="l00205"></a>00205   <span class="keywordtype">boolean</span> isMediaURL(in AString aURL);
-<a name="l00206"></a>00206  
-<a name="l00216"></a>00216   <span class="keywordtype">boolean</span> isVideoURL(in AString aURL);
-<a name="l00217"></a>00217 
-<a name="l00218"></a>00218 };
-<a name="l00219"></a>00219 
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<a name="l00169"></a>00169   <span class="keywordtype">boolean</span> playURL(in AString aURL);
+<a name="l00170"></a>00170 
+<a name="l00175"></a>00175   <span class="keywordtype">boolean</span> play();
+<a name="l00176"></a>00176 
+<a name="l00181"></a>00181   <span class="keywordtype">boolean</span> stop();
+<a name="l00182"></a>00182 
+<a name="l00187"></a>00187   <span class="keywordtype">boolean</span> pause();
+<a name="l00188"></a>00188 
+<a name="l00195"></a>00195   AString getMetadata(in AString aKey);
+<a name="l00196"></a>00196 
+<a name="l00203"></a>00203   <span class="keywordtype">void</span> onSwapCore();
+<a name="l00204"></a>00204 
+<a name="l00205"></a>00205  
+<a name="l00215"></a>00215   <span class="keywordtype">boolean</span> isMediaURL(in AString aURL);
+<a name="l00216"></a>00216  
+<a name="l00226"></a>00226   <span class="keywordtype">boolean</span> isVideoURL(in AString aURL);
+<a name="l00227"></a>00227 
+<a name="l00233"></a>00233   nsIStringEnumerator getSupportedFileExtensions();
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235 };
+<a name="l00236"></a>00236 
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

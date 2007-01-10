@@ -92,6 +92,18 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> (in AString mediaGUID, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get multiple values from a single database row.  <a href="#8d18865741a112d60af3f569d39427f9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#f838c59e0fc0c9c4e602908ed2298d0f">setValueByURL</a> (in AString mediaURL, in AString columnName, in AString columnValue, in PRBool willRunQueryLater)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set cell a value into the library table.  <a href="#f838c59e0fc0c9c4e602908ed2298d0f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#96fbf477a2aeade715bd47a91cae3d60">setValuesByURL</a> (in AString mediaURL, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool willRunQueryLater)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set multiple values into a single database row.  <a href="#96fbf477a2aeade715bd47a91cae3d60"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#935ae028062344f2948af64a1d766840">getValueByURL</a> (in AString mediaURL, in AString columnName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get cell a value from the library table.  <a href="#935ae028062344f2948af64a1d766840"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_library.html#d5b00b48d6899f4526023eb9a31ccb00">getValuesByURL</a> (in AString mediaURL, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get multiple values from a single database row.  <a href="#d5b00b48d6899f4526023eb9a31ccb00"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The media library object constructs SQL queries designed to reference the library of a database. 
@@ -259,7 +271,7 @@ This method will synchronously execute the query required to create the default 
 <p>
 Remove a column from the library table. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000012">Todo:</a></b></dt><dd>deleteColumn is not yet implemented </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>deleteColumn is not yet implemented </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column to delete </td></tr>
@@ -520,7 +532,7 @@ Get cell a value from the library table.
 <p>
 Get cell a value from the library table. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000018">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to get </td></tr>
@@ -529,6 +541,45 @@ Get cell a value from the library table.
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>The value of the cell </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="935ae028062344f2948af64a1d766840"></a><!-- doxytag: member="sbIMediaLibrary::getValueByURL" ref="935ae028062344f2948af64a1d766840" args="(in AString mediaURL, in AString columnName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIMediaLibrary::getValueByURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>mediaURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>columnName</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get cell a value from the library table. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The url of the cell to get, where media library row URL equals mediaURL </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column for the cell to get </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The value of the cell </dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#f838c59e0fc0c9c4e602908ed2298d0f">setValueByURL</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#96fbf477a2aeade715bd47a91cae3d60">setValuesByURL</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d5b00b48d6899f4526023eb9a31ccb00">getValuesByURL</a> </dd></dl>
 
 </div>
 </div><p>
@@ -637,7 +688,7 @@ Get multiple values from a single database row.
 <p>
 Get multiple values from a single database row. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000019">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to get </td></tr>
@@ -648,6 +699,65 @@ Get multiple values from a single database row.
   </table>
 </dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d5b00b48d6899f4526023eb9a31ccb00"></a><!-- doxytag: member="sbIMediaLibrary::getValuesByURL" ref="d5b00b48d6899f4526023eb9a31ccb00" args="(in AString mediaURL, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIMediaLibrary::getValuesByURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>mediaURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>metaColumnCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(metaColumnCount)] in wstring&nbsp;</td>
+          <td class="paramname"> <em>metaColumnNames</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>metaValueCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(metaValueCount), retval] out wstring&nbsp;</td>
+          <td class="paramname"> <em>metaValues</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get multiple values from a single database row. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The url of the cell to get, where media library row URL equals mediaURL </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>The array of columns to get </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>The array of values retrieved </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#f838c59e0fc0c9c4e602908ed2298d0f">setValueByURL</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#96fbf477a2aeade715bd47a91cae3d60">setValuesByURL</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#935ae028062344f2948af64a1d766840">getValueByURL</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a> </dd></dl>
 
 </div>
 </div><p>
@@ -973,7 +1083,7 @@ Set cell a value into the library table.
 <p>
 Set cell a value into the library table. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to set </td></tr>
@@ -984,6 +1094,59 @@ Set cell a value into the library table.
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>True if the query was properly loaded/executed </dd></dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#d6625d5b9f8ccd87953afed793a77a76">setValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c41eb46369e53863259ecc18a3034ba9">setValuesByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#054eee531354d6fa47df0565351162af">getValueByGUID</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#8d18865741a112d60af3f569d39427f9">getValuesByGUID</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="f838c59e0fc0c9c4e602908ed2298d0f"></a><!-- doxytag: member="sbIMediaLibrary::setValueByURL" ref="f838c59e0fc0c9c4e602908ed2298d0f" args="(in AString mediaURL, in AString columnName, in AString columnValue, in PRBool willRunQueryLater)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRBool sbIMediaLibrary::setValueByURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>mediaURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>columnName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>columnValue</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRBool&nbsp;</td>
+          <td class="paramname"> <em>willRunQueryLater</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set cell a value into the library table. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The url of the cell to get, where media library row URL equals mediaURL </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnName</em>&nbsp;</td><td>The name of the column for the cell to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>columnValue</em>&nbsp;</td><td>The value of the cell to be set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#96fbf477a2aeade715bd47a91cae3d60">setValuesByURL</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#935ae028062344f2948af64a1d766840">getValueByURL</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d5b00b48d6899f4526023eb9a31ccb00">getValuesByURL</a> </dd></dl>
 
 </div>
 </div><p>
@@ -1106,7 +1269,7 @@ Set multiple values into a single database row.
 <p>
 Set multiple values into a single database row. 
 <p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>This won't work, it tries to use row number as ID. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>mediaIndex</em>&nbsp;</td><td>The row number of the cell to set </td></tr>
@@ -1122,9 +1285,76 @@ Set multiple values into a single database row.
 
 </div>
 </div><p>
+<a class="anchor" name="96fbf477a2aeade715bd47a91cae3d60"></a><!-- doxytag: member="sbIMediaLibrary::setValuesByURL" ref="96fbf477a2aeade715bd47a91cae3d60" args="(in AString mediaURL, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool willRunQueryLater)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRBool sbIMediaLibrary::setValuesByURL           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>mediaURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>metaColumnCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(metaColumnCount)] in wstring&nbsp;</td>
+          <td class="paramname"> <em>metaColumnNames</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>metaValueCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(metaValueCount)] in wstring&nbsp;</td>
+          <td class="paramname"> <em>metaValues</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRBool&nbsp;</td>
+          <td class="paramname"> <em>willRunQueryLater</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set multiple values into a single database row. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>mediaURL</em>&nbsp;</td><td>The url of the cell to get, where media library row URL equals mediaURL </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaColumnNames</em>&nbsp;</td><td>The array of columns to set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValueCount</em>&nbsp;</td><td>The number of items in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>metaValues</em>&nbsp;</td><td>The array of values to be set </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>willRunQueryLater</em>&nbsp;</td><td>If false, execute the query before returning </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd></dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_media_library.html#2a1e02c956ef9707570b0cbab89f4f8d">getUniqueValuesByColumn</a>, <a class="el" href="interfacesb_i_media_library.html#14b46d41764873b1bd32a6e80b499cf8">setValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#f838c59e0fc0c9c4e602908ed2298d0f">setValueByURL</a>, <a class="el" href="interfacesb_i_media_library.html#c4a17b445fbc0c5ec09ba4dec8150b7d">setValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#3aab0777b29917b5924f34e831ad37ab">getValueByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#935ae028062344f2948af64a1d766840">getValueByURL</a>, <a class="el" href="interfacesb_i_media_library.html#2ee0999594d3c16b89e68004a06f8aac">getValuesByIndex</a>, <a class="el" href="interfacesb_i_media_library.html#d5b00b48d6899f4526023eb9a31ccb00">getValuesByURL</a> </dd></dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_media_library_8idl-source.html">sbIMediaLibrary.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:50 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

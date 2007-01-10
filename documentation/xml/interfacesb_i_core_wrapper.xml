@@ -1,0 +1,496 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_core_wrapper" kind="interface" prot="public">
+    <compoundname>sbICoreWrapper</compoundname>
+    <includes refid="sb_i_core_wrapper_8idl" local="no">sbICoreWrapper.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1e7ec60c6f17a667f85cd4443dd410da4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::getPaused</definition>
+        <argsstring>()</argsstring>
+        <name>getPaused</name>
+        <briefdescription>
+<para>Get the pause state Return the pause state of the playback core. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>TRUE if paused </para><para>FALSE if not paused </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="53"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_132094dc5f440b02c1b121ed146eddc65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::getPlaying</definition>
+        <argsstring>()</argsstring>
+        <name>getPlaying</name>
+        <briefdescription>
+<para>Get the playing state Return the play state of the playback core. If the core is stopped, this will return FALSE, but if paused it will still return TRUE. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>TRUE if playing (paused or not) </para><para>FALSE if not playing </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="62"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1b675191d02e23d031279a7acb62435af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::getPlayingVideo</definition>
+        <argsstring>()</argsstring>
+        <name>getPlayingVideo</name>
+        <briefdescription>
+<para>Get the playing video state Returns TRUE if the core has a video stream and it either playing or paused. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>TRUE if current stream has video </para><para>FALSE if current stream is audio only </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="71"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1d65edbd87eb69184f7c4bb1e40ef1c1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::getMute</definition>
+        <argsstring>()</argsstring>
+        <name>getMute</name>
+        <briefdescription>
+<para>Get the mute state. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>TRUE if muted </para><para>FALSE if not muted </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="78"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1d8a608ab5252c864f4627ac125dfebc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::setMute</definition>
+        <argsstring>(in boolean aMute)</argsstring>
+        <name>setMute</name>
+        <param>
+          <type>in boolean</type>
+          <declname>aMute</declname>
+        </param>
+        <briefdescription>
+<para>Set the mute state. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMute</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- A boolean indicating the desired mute state </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="84"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1bcdeb5843cdd4310e5cf18ad03c9d2ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long sbICoreWrapper::getVolume</definition>
+        <argsstring>()</argsstring>
+        <name>getVolume</name>
+        <briefdescription>
+<para>Get the volume. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>An integer between 0 and 255 inclusive </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="90"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1c14b289154628ab0c5749d03f29a112d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::setVolume</definition>
+        <argsstring>(in unsigned long aVolume)</argsstring>
+        <name>setVolume</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aVolume</declname>
+        </param>
+        <briefdescription>
+<para>Set the volume. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aVolume</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- an integer between 0 and 255 inclusive </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="96"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1fdecb25063494aa74b0c20760f29b952" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long sbICoreWrapper::getLength</definition>
+        <argsstring>()</argsstring>
+        <name>getLength</name>
+        <briefdescription>
+<para>Get the length of the current media. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The length, in milliseconds, of the current media. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="102"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1fda840066806fc4f830c1f547d313df7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long sbICoreWrapper::getPosition</definition>
+        <argsstring>()</argsstring>
+        <name>getPosition</name>
+        <briefdescription>
+<para>Get the position within the current media. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Position of playback in the current media, in milliseconds </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="109"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1021bb68615d01318acf9a78b56ccdf94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::setPosition</definition>
+        <argsstring>(in unsigned long long aPosition)</argsstring>
+        <name>setPosition</name>
+        <param>
+          <type>in unsigned long long</type>
+          <declname>aPosition</declname>
+        </param>
+        <briefdescription>
+<para>Set the position of playback. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aPosition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The position, in milliseconds, of where to move the playback to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="116"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_14251e6473e082d92bd6dff79555e6a6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::goFullscreen</definition>
+        <argsstring>()</argsstring>
+        <name>goFullscreen</name>
+        <briefdescription>
+<para>Maximize the plugin window to be fullscreen. Have the plugin render to the full size of the screen. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="123"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_156719bd6b89638ac0a0ac04e193e38ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbICoreWrapper::getId</definition>
+        <argsstring>()</argsstring>
+        <name>getId</name>
+        <briefdescription>
+<para>Generic id string. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>String identifier </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="129"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1a1898e1ee3622191574c97f5c4ae62bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::setId</definition>
+        <argsstring>(in AString aId)</argsstring>
+        <name>setId</name>
+        <param>
+          <type>in AString</type>
+          <declname>aId</declname>
+        </param>
+        <briefdescription>
+<para>Set the string identifier. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the string identifier </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="136"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_11656e0ab0d6b0b556f372aa55952ab90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIDOMHTMLElement</type>
+        <definition>nsIDOMHTMLElement sbICoreWrapper::getObject</definition>
+        <argsstring>()</argsstring>
+        <name>getObject</name>
+        <briefdescription>
+<para>Retrieve the HTML element that implements playback functionality This gets the object that actually implements the playback functionality. For some cores this will be an nsIHTMLDOMObjectElement and some it will be an nsIHTMLDOMEmbedElement. Either way, it is the additional javascript API that exists on the object that will be utilized in most cases. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The HTML element. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="147"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_14aa009b8e9732542335fcc96dd11c2b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::setObject</definition>
+        <argsstring>(in nsIDOMHTMLElement aObject)</argsstring>
+        <name>setObject</name>
+        <param>
+          <type>in nsIDOMHTMLElement</type>
+          <declname>aObject</declname>
+        </param>
+        <briefdescription>
+<para>Set the HTML element that implements playback functionality This sets the object that actually implements the playback functionality. For some cores this will be an nsIHTMLDOMObjectElement and some it will be an nsIHTMLDOMEmbedElement. Either way, it is the additional javascript API that exists on the object that will be utilized in most cases. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aObject</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The HTML element </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="159"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1b0b4d7d8d1ea9aae9d91d0afe367e7c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::playURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>playURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Specify the url to play and start playback. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>\return</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>true If playback was successful. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>false If there was an error with playback </para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_INVALID_ARG</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the URL passed in is null/undefined. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_INITIALIZED</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If no object has been set. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="169"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1fd29002a7bf70f65a8fa367e456ed2f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::play</definition>
+        <argsstring>()</argsstring>
+        <name>play</name>
+        <briefdescription>
+<para>Resume paused playback. Multiple calls do nothing. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para></para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="175"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1210849d716d88fe169e5360fae51ddd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::stop</definition>
+        <argsstring>()</argsstring>
+        <name>stop</name>
+        <briefdescription>
+<para>Stop playback. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para></para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="181"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1f2089a6104f20fcd072948b20a09138b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::pause</definition>
+        <argsstring>()</argsstring>
+        <name>pause</name>
+        <briefdescription>
+<para>Pause playing playback. Multiple calls do nothing. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para></para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="187"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1a807d8a1b9e5202b1846efa7feed39e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbICoreWrapper::getMetadata</definition>
+        <argsstring>(in AString aKey)</argsstring>
+        <name>getMetadata</name>
+        <param>
+          <type>in AString</type>
+          <declname>aKey</declname>
+        </param>
+        <briefdescription>
+<para>Get the requested metadata. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aKey</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The category of metadata to retrieve (name, artist, etc...) </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value of the metadata, the empty string if it is not set or doesn&apos;t exist. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="195"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1f09b4eab4ef7c38c23c779dff1ede3f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbICoreWrapper::onSwapCore</definition>
+        <argsstring>()</argsstring>
+        <name>onSwapCore</name>
+        <briefdescription>
+<para>Called when the core is swapping. Allows the core to do any cleaning up it needs to. Also stops the playback of any media. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>void </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="203"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_1fd90762a67bf33051b2961f5cbcd52d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::isMediaURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>isMediaURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Check to see if an url points to media content This checks for a number of known file extensions and prefixes to see if the URL contains them and is therefore media. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the URL points to media content </para><para>false if the URL does not point to media content </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="215"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_179d8fad16b1eab43475cf366cb635d68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbICoreWrapper::isVideoURL</definition>
+        <argsstring>(in AString aURL)</argsstring>
+        <name>isVideoURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>aURL</declname>
+        </param>
+        <briefdescription>
+<para>Check to see if an url points to video content This checks for a number of known file extensions to see if the URL contains them and is therefore video. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- the URL to check </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the URL points to video content </para><para>false if the URL does not point to video content </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="226"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_core_wrapper_16984edfd800edc0f501ce4afb7d2d39a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbICoreWrapper::getSupportedFileExtensions</definition>
+        <argsstring>()</argsstring>
+        <name>getSupportedFileExtensions</name>
+        <briefdescription>
+<para>Return an enumeration of the file extensions this core supports. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>an nsIStringEnumerator containting the list of extensions </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="233"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A wrapper for various media cores Defines the inteface for objects that will provide playback functionality. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para>baseCore coreFlash </para></simplesect>
+</para>    </detaileddescription>
+    <location file="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" line="46" bodyfile="C:/projects/songbird/components/playlistplayback/public/sbICoreWrapper.idl" bodystart="45" bodyend="235"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_core_wrapper_156719bd6b89638ac0a0ac04e193e38ca" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getId</name></member>
+      <member refid="interfacesb_i_core_wrapper_1fdecb25063494aa74b0c20760f29b952" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getLength</name></member>
+      <member refid="interfacesb_i_core_wrapper_1a807d8a1b9e5202b1846efa7feed39e5" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getMetadata</name></member>
+      <member refid="interfacesb_i_core_wrapper_1d65edbd87eb69184f7c4bb1e40ef1c1c" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getMute</name></member>
+      <member refid="interfacesb_i_core_wrapper_11656e0ab0d6b0b556f372aa55952ab90" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getObject</name></member>
+      <member refid="interfacesb_i_core_wrapper_1e7ec60c6f17a667f85cd4443dd410da4" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getPaused</name></member>
+      <member refid="interfacesb_i_core_wrapper_132094dc5f440b02c1b121ed146eddc65" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getPlaying</name></member>
+      <member refid="interfacesb_i_core_wrapper_1b675191d02e23d031279a7acb62435af" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getPlayingVideo</name></member>
+      <member refid="interfacesb_i_core_wrapper_1fda840066806fc4f830c1f547d313df7" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getPosition</name></member>
+      <member refid="interfacesb_i_core_wrapper_16984edfd800edc0f501ce4afb7d2d39a" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getSupportedFileExtensions</name></member>
+      <member refid="interfacesb_i_core_wrapper_1bcdeb5843cdd4310e5cf18ad03c9d2ee" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>getVolume</name></member>
+      <member refid="interfacesb_i_core_wrapper_14251e6473e082d92bd6dff79555e6a6b" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>goFullscreen</name></member>
+      <member refid="interfacesb_i_core_wrapper_1fd90762a67bf33051b2961f5cbcd52d4" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>isMediaURL</name></member>
+      <member refid="interfacesb_i_core_wrapper_179d8fad16b1eab43475cf366cb635d68" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>isVideoURL</name></member>
+      <member refid="interfacesb_i_core_wrapper_1f09b4eab4ef7c38c23c779dff1ede3f6" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>onSwapCore</name></member>
+      <member refid="interfacesb_i_core_wrapper_1f2089a6104f20fcd072948b20a09138b" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>pause</name></member>
+      <member refid="interfacesb_i_core_wrapper_1fd29002a7bf70f65a8fa367e456ed2f3" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>play</name></member>
+      <member refid="interfacesb_i_core_wrapper_1b0b4d7d8d1ea9aae9d91d0afe367e7c3" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>playURL</name></member>
+      <member refid="interfacesb_i_core_wrapper_1a1898e1ee3622191574c97f5c4ae62bc" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>setId</name></member>
+      <member refid="interfacesb_i_core_wrapper_1d8a608ab5252c864f4627ac125dfebc8" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>setMute</name></member>
+      <member refid="interfacesb_i_core_wrapper_14aa009b8e9732542335fcc96dd11c2b4" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>setObject</name></member>
+      <member refid="interfacesb_i_core_wrapper_1021bb68615d01318acf9a78b56ccdf94" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>setPosition</name></member>
+      <member refid="interfacesb_i_core_wrapper_1c14b289154628ab0c5749d03f29a112d" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>setVolume</name></member>
+      <member refid="interfacesb_i_core_wrapper_1210849d716d88fe169e5360fae51ddd4" prot="public" virt="non-virtual"><scope>sbICoreWrapper</scope><name>stop</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

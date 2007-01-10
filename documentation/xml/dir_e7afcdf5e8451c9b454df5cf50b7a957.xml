@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="dir_e7afcdf5e8451c9b454df5cf50b7a957" kind="dir">
+    <compoundname>C:/projects/songbird/components/devices/</compoundname>
+    <innerdir refid="dir_fa45ef02db420779fcdac4dcecd8c1f2">C:/projects/songbird/components/devices/base/</innerdir>
+    <innerdir refid="dir_e942f79c8b8323f8c5200130fd7a0305">C:/projects/songbird/components/devices/cd/</innerdir>
+    <innerdir refid="dir_3ac5d60b0f0ab22ba1d2c44cad98b1cc">C:/projects/songbird/components/devices/download/</innerdir>
+    <innerdir refid="dir_00807bbc20a258f96490b10c8aecf001">C:/projects/songbird/components/devices/manager/</innerdir>
+    <innerdir refid="dir_4f5c32c320dfcae0d1a53efdbd9bcac4">C:/projects/songbird/components/devices/usb_mass_storage/</innerdir>
+    <innerdir refid="dir_5b662a4092207b64700cfdc5d5da47ac">C:/projects/songbird/components/devices/wm/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/devices/"/>
+  </compounddef>
+</doxygen>

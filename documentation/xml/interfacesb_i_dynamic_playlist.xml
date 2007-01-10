@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_dynamic_playlist" kind="interface" prot="public">
+    <compoundname>sbIDynamicPlaylist</compoundname>
+    <basecompoundref refid="interfacesb_i_playlist" prot="public" virt="non-virtual">sbIPlaylist</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_19240c58b91bc0b2a62dcfea39355beb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicPlaylist::setPeriodicity</definition>
+        <argsstring>(in PRUint32 nPeriodicity, in PRBool bWillRunLater)</argsstring>
+        <name>setPeriodicity</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nPeriodicity</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="246"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_134e60575f7fdf3550217252419f0eaac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUint32</type>
+        <definition>PRUint32 sbIDynamicPlaylist::getPeriodicity</definition>
+        <argsstring>()</argsstring>
+        <name>getPeriodicity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="248"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_1573104dc2e36e1a695eedddb0c96a372" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicPlaylist::setURL</definition>
+        <argsstring>(in AString strURL, in PRBool bWillRunLater)</argsstring>
+        <name>setURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>strURL</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="251"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_1246ee2ad89fd38a48aa03faa40364e4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIDynamicPlaylist::getURL</definition>
+        <argsstring>()</argsstring>
+        <name>getURL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="252"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_104106e96858960ea2a6266911ff1aefb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicPlaylist::setLastUpdateTime</definition>
+        <argsstring>()</argsstring>
+        <name>setLastUpdateTime</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="254"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_124db1ffbff2fe278aac093bed5077753" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt64</type>
+        <definition>PRInt64 sbIDynamicPlaylist::getLastUpdateTime</definition>
+        <argsstring>()</argsstring>
+        <name>getLastUpdateTime</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="256"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="29">
+        <label>sbIPlaylist</label>
+        <link refid="interfacesb_i_playlist"/>
+      </node>
+      <node id="28">
+        <label>sbIDynamicPlaylist</label>
+        <link refid="interfacesb_i_dynamic_playlist"/>
+        <childnode refid="29" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="31">
+        <label>sbIPlaylist</label>
+        <link refid="interfacesb_i_playlist"/>
+      </node>
+      <node id="30">
+        <label>sbIDynamicPlaylist</label>
+        <link refid="interfacesb_i_dynamic_playlist"/>
+        <childnode refid="31" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="244" bodyfile="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" bodystart="243" bodyend="257"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_154b8b6fd0afdf7f4465294f085c81542" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>addByGUID</name></member>
+      <member refid="interfacesb_i_playlist_12ada41236c2d2a25f86803e4f375fcfc" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>addColumn</name></member>
+      <member refid="interfacesb_i_playlist_1c51288804809cdf1a1fd6a349c27a306" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>deleteColumn</name></member>
+      <member refid="interfacesb_i_playlist_10a013191c792cab77dd63eca2294210d" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>findByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1097228c0911c575bdfe0691ce51cec32" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>findByIndex</name></member>
+      <member refid="interfacesb_i_playlist_1900a1bed324db4f07de36e2ad16fc610" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getAllEntries</name></member>
+      <member refid="interfacesb_i_playlist_14ee9a5d1f2de6923048fb176344c929a" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getColumnInfo</name></member>
+      <member refid="interfacesb_i_playlist_108cfe2a17bf69cb7fa3d943c6da9fb8c" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getColumnValueByGUID</name></member>
+      <member refid="interfacesb_i_playlist_197d4fb6fbf8bede155246d9bdce597f4" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getColumnValueByIndex</name></member>
+      <member refid="interfacesb_i_playlist_16d53ab297274be41474505194a659f32" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getColumnValuesByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1520d9f2c9506d469fb2ffd90524847c6" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getColumnValuesByIndex</name></member>
+      <member refid="interfacesb_i_playlist_11db57b5bce30f610250efd7d64c97fd4" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getDescription</name></member>
+      <member refid="interfacesb_i_playlist_185af7eec7df63c26d57a87ad1cae74b6" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getEntry</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_124db1ffbff2fe278aac093bed5077753" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getLastUpdateTime</name></member>
+      <member refid="interfacesb_i_playlist_1f4a405275d71b7c8dff60a785025cf8e" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getName</name></member>
+      <member refid="interfacesb_i_playlist_1222cf3e97b42030a58b99ed863e8448f" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getNumEntries</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_134e60575f7fdf3550217252419f0eaac" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getPeriodicity</name></member>
+      <member refid="interfacesb_i_playlist_1e8d527e6531edc591d58307ebece1863" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getQueryObject</name></member>
+      <member refid="interfacesb_i_playlist_171635de15af06260808f35150c6a7272" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getReadableName</name></member>
+      <member refid="interfacesb_i_playlist_1d847acd93c5ba6594ec792edd3449ec9" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getTableInfo</name></member>
+      <member refid="interfacesb_i_playlist_136e4386161e089b59b772f28f9604fd1" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getType</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_1246ee2ad89fd38a48aa03faa40364e4a" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>getURL</name></member>
+      <member refid="interfacesb_i_playlist_132b7671cd86d1c20b89b4493d7eb3e7b" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>moveByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1fe93c1712020c498156e96f445d697fb" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>moveByIndex</name></member>
+      <member refid="interfacesb_i_playlist_1b05eacd96e69813295a37b205bb3c2bb" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>removeByGUID</name></member>
+      <member refid="interfacesb_i_playlist_106e25704d92b1043768f8e2647cb6197" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>removeByIndex</name></member>
+      <member refid="interfacesb_i_playlist_1958f2763245ed524daa2655f3ab019b1" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setColumnInfo</name></member>
+      <member refid="interfacesb_i_playlist_1e6e547794289b96a2627be78891cdada" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setColumnValueByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1b1080d2a5be9e9ba0a1bfe79bf9f3574" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setColumnValueByIndex</name></member>
+      <member refid="interfacesb_i_playlist_1aa94d0cb027091ea9f7f61a41861ee7b" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setColumnValuesByGUID</name></member>
+      <member refid="interfacesb_i_playlist_19c451089d51921e6b1796a1a1fb8cb52" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setColumnValuesByIndex</name></member>
+      <member refid="interfacesb_i_playlist_17eed7e7def097f2dcc4118d859534975" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setDescription</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_104106e96858960ea2a6266911ff1aefb" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setLastUpdateTime</name></member>
+      <member refid="interfacesb_i_playlist_151b932e2e5e09126b0301feff7deefc0" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setName</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_19240c58b91bc0b2a62dcfea39355beb3" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setPeriodicity</name></member>
+      <member refid="interfacesb_i_playlist_19f8de9b58ed9dab943094d125c088f7b" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setQueryObject</name></member>
+      <member refid="interfacesb_i_playlist_1554a9396221577698746d03d4c0d8d46" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setReadableName</name></member>
+      <member refid="interfacesb_i_playlist_184783945d1a092c10a9ec9e7e4471f22" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setType</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_1573104dc2e36e1a695eedddb0c96a372" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylist</scope><name>setURL</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

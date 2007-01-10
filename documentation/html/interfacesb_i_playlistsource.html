@@ -24,6 +24,9 @@
 <a href="interfacesb_i_playlistsource-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#2efc10bd0627bf5525ea01f1a7762e21">refExists</a> (in AString aRefName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine whether or not a ref value is already loaded in the system.  <a href="#2efc10bd0627bf5525ea01f1a7762e21"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#7cba66906dfa84b51d53cbfc2ab281ac">feedPlaylist</a> (in AString aRefName, in AString aContextGUID, in AString aTableName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Prepare a database table to be made available to the UI as an RDFDataSource.  <a href="#7cba66906dfa84b51d53cbfc2ab281ac"></a><br></td></tr>
@@ -39,18 +42,21 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#9095aad2ed77a76875f9df9818a8f514">getNumFilters</a> (in AString aRefName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the count of filters on a datasource.  <a href="#9095aad2ed77a76875f9df9818a8f514"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#413f15c9035c254e5d105def21c1248f">clearFilter</a> (in AString aRefName, in PRInt32 aIndex)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#b1eb2bc05563de7808b101b1c78c31bc">removeFilter</a> (in AString aRefName, in PRInt32 aIndex)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a filter from a datasource.  <a href="#413f15c9035c254e5d105def21c1248f"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a filter (entirely) from a datasource.  <a href="#b1eb2bc05563de7808b101b1c78c31bc"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#67fab740f41a3f7942cb2faef2d5be05">getFilter</a> (in AString aRefName, in PRInt32 aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the filter string from a datasource's filter.  <a href="#67fab740f41a3f7942cb2faef2d5be05"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#1281ef77d0adaa4232a8065c720799d5">getFilterColumn</a> (in AString aRefName, in PRInt32 aIndex)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the filter column from a datasource's filter.  <a href="#1281ef77d0adaa4232a8065c720799d5"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#c33c099ede486f421d9594cc025e3fc2">getFilterRef</a> (in AString aRefName, in PRInt32 aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the ref for the filter's published RDF datasource.  <a href="#c33c099ede486f421d9594cc025e3fc2"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#2adcd2b83d2e75bddaa538905a4b4832">setSearchString</a> (in AString aRefName, in AString aSearchString)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#23e18fe37391d19aa14d26d79bc60ddf">setSearchString</a> (in AString aRefName, in AString aSearchString, in PRBool aResetFilters)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the search string on a datasource.  <a href="#2adcd2b83d2e75bddaa538905a4b4832"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the search string on a datasource.  <a href="#23e18fe37391d19aa14d26d79bc60ddf"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#1b0ee23d3cfdeac9b4d4c215f7c734a5">getSearchString</a> (in AString aRefName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the search string on a datasource.  <a href="#1b0ee23d3cfdeac9b4d4c215f7c734a5"></a><br></td></tr>
@@ -78,6 +84,15 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#1a7c7584eb7e068731feeafedf35fdd3">getRefRowByColumnValue</a> (in AString aRefName, in AString aColumn, in AString aValue)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Calculate the row index of a cell based upon the value of a column.  <a href="#1a7c7584eb7e068731feeafedf35fdd3"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#70f855d07d4b464586e13ddbf4c75df2">getRefColumnValueByRow</a> (in AString aRefName, in AString aColumn, in PRUint32 aRow)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Extract the value of a column based on the cell row.  <a href="#70f855d07d4b464586e13ddbf4c75df2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#2bc53c53868489b336756fefee80aeed">getRefRowsByColumnValues</a> (in AString aRefName, in AString aColumn, in PRUint32 aValueCount,[array, size_is(aValueCount)] in wstring aValues, out PRUint32 aRowCount,[array, size_is(aRowCount), retval] out PRUint32 aRows)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Calculate the row indices of an array of cells based upon their values for a column.  <a href="#2bc53c53868489b336756fefee80aeed"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#dc448aa09ceff922b96b77c0417f4f3b">getRefColumnValuesByRows</a> (in AString aRefName, in AString aColumn, in PRUint32 aRowCount,[array, size_is(aRowCount)] in PRUint32 aRows, out PRUint32 aValueCount,[array, size_is(aValueCount), retval] out wstring aValues)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Extract the values of a column based on the rows for an array of cells.  <a href="#dc448aa09ceff922b96b77c0417f4f3b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#b8b46852edde8982064c59af12001ea0">isQueryExecuting</a> (in AString aRefName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine if a datasource is currently executing its internal queries.  <a href="#b8b46852edde8982064c59af12001ea0"></a><br></td></tr>
@@ -96,6 +111,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#0084fd6816e662d61a66ae258dcb2bae">getPlaylistCommands</a> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Retrieve the <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> object to be shown for a specific playlist.  <a href="#0084fd6816e662d61a66ae258dcb2bae"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlistsource.html#e621715726ddb2122b051b30ab32269c">calculateRef</a> (in AString aContextGUID, in AString aTableName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Calculate the unique identifier for a playlist based on a guid and a table.  <a href="#e621715726ddb2122b051b30ab32269c"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The internal RDF Data Source that sends playlist data to the UI. 
@@ -103,7 +121,7 @@ The internal RDF Data Source that sends playlist data to the UI.
 <a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> acts as the intermediary between the database table that represents a library or a playlist and the display of that info into a &lt;playlist&gt; UI element.<p>
 When a playlist element is told to bind to a specific database table, the playlist asks <a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> to create a new RDF ref that can properly feed data to its internal xul tree (see: <a class="el" href="interfacesb_i_playlistsource.html#7cba66906dfa84b51d53cbfc2ab281ac">feedPlaylist()</a>, <a class="el" href="interfacesb_i_playlistsource.html#c6837b064124287a7d0593d3bcb54c3e">executeFeed()</a>). A table may be fed and made available to this interface without involving a playlist element by calling <a class="el" href="interfacesb_i_playlistsource.html#084b810650bc01feb3811e75a947ce08">forceGetTargets()</a> for that RefName.<p>
 The RefName param passed to <a class="el" href="interfacesb_i_playlistsource.html#7cba66906dfa84b51d53cbfc2ab281ac">feedPlaylist()</a> is used from then on to identify each specific source for further modification or information. If you would like to obtain specific information about the data currently displayed in a playlist object, use that object's .ref property as the RefName parameter to these methods.<p>
-<a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> provides methods to implement various modifications to the underlying SQL queries that drive the display of a playlist table. Filters may be specified that feed a dependent RDF source and are used by the &lt;filterlist&gt; UI element when displaying a standard libaray (see: <a class="el" href="interfacesb_i_playlistsource.html#72443689f82b47f25e78c777519e1e7f">setFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#9095aad2ed77a76875f9df9818a8f514">getNumFilters()</a>, <a class="el" href="interfacesb_i_playlistsource.html#413f15c9035c254e5d105def21c1248f">clearFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#67fab740f41a3f7942cb2faef2d5be05">getFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#c33c099ede486f421d9594cc025e3fc2">getFilterRef()</a>) and an override string may be specified to support a direct search feature (see: <a class="el" href="interfacesb_i_playlistsource.html#2adcd2b83d2e75bddaa538905a4b4832">setSearchString()</a>, <a class="el" href="interfacesb_i_playlistsource.html#1b0ee23d3cfdeac9b4d4c215f7c734a5">getSearchString()</a>).<p>
+<a class="el" href="interfacesb_i_playlistsource.html">sbIPlaylistsource</a> provides methods to implement various modifications to the underlying SQL queries that drive the display of a playlist table. Filters may be specified that feed a dependent RDF source and are used by the &lt;filterlist&gt; UI element when displaying a standard libaray (see: <a class="el" href="interfacesb_i_playlistsource.html#72443689f82b47f25e78c777519e1e7f">setFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#9095aad2ed77a76875f9df9818a8f514">getNumFilters()</a>, <a class="el" href="interfacesb_i_playlistsource.html#b1eb2bc05563de7808b101b1c78c31bc">removeFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#67fab740f41a3f7942cb2faef2d5be05">getFilter()</a>, <a class="el" href="interfacesb_i_playlistsource.html#c33c099ede486f421d9594cc025e3fc2">getFilterRef()</a>) and an override string may be specified to support a direct search feature (see: <a class="el" href="interfacesb_i_playlistsource.html#23e18fe37391d19aa14d26d79bc60ddf">setSearchString()</a>, <a class="el" href="interfacesb_i_playlistsource.html#1b0ee23d3cfdeac9b4d4c215f7c734a5">getSearchString()</a>).<p>
 This interface also allows direct access to the underlying data returned by the database, avoiding additional queries (see: <a class="el" href="interfacesb_i_playlistsource.html#557de9e5bf5b4762598ae09c5fdeec89">getRefRowCount()</a>, <a class="el" href="interfacesb_i_playlistsource.html#8116add630302d287f0309e1ece0c874">getRefColumnCount()</a>, <a class="el" href="interfacesb_i_playlistsource.html#cbb07ee906cfeb6a1bfd846b92713c69">getRefRowCellByColumn()</a>, <a class="el" href="interfacesb_i_playlistsource.html#1a7c7584eb7e068731feeafedf35fdd3">getRefRowByColumnValue()</a>) and can also return the table and guid of the query (see: <a class="el" href="interfacesb_i_playlistsource.html#1d234687358c422ec6389e41781726fd">getRefGUID()</a>, <a class="el" href="interfacesb_i_playlistsource.html#d4992a81c2566d41f04111449d398c03">getRefTable()</a>).<p>
 Lastly, it acts as a centralized storehouse for <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> implementations. Registering a custom commands object into this interface will specify rules to be used to determine if those commands should be shown in any specific playlist element's display (see: <a class="el" href="interfacesb_i_playlistsource.html#d4573ffc4adc449ee8fd0fdf365a63b6">registerPlaylistCommands()</a>, <a class="el" href="interfacesb_i_playlistsource.html#0084fd6816e662d61a66ae258dcb2bae">getPlaylistCommands()</a>).<p>
 <dl compact><dt><b>See also:</b></dt><dd>playlist.xml </dd></dl>
@@ -112,21 +130,21 @@ Lastly, it acts as a centralized storehouse for <a class="el" href="interfacesb_
 
 <p>
 Definition at line <a class="el" href="sb_i_playlistsource_8idl-source.html#l00236">236</a> of file <a class="el" href="sb_i_playlistsource_8idl-source.html">sbIPlaylistsource.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="413f15c9035c254e5d105def21c1248f"></a><!-- doxytag: member="sbIPlaylistsource::clearFilter" ref="413f15c9035c254e5d105def21c1248f" args="(in AString aRefName, in PRInt32 aIndex)" -->
+<a class="anchor" name="e621715726ddb2122b051b30ab32269c"></a><!-- doxytag: member="sbIPlaylistsource::calculateRef" ref="e621715726ddb2122b051b30ab32269c" args="(in AString aContextGUID, in AString aTableName)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void sbIPlaylistsource::clearFilter           </td>
+          <td class="memname">AString sbIPlaylistsource::calculateRef           </td>
           <td>(</td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aRefName</em>, </td>
+          <td class="paramname"> <em>aContextGUID</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">in PRInt32&nbsp;</td>
-          <td class="paramname"> <em>aIndex</em></td><td>&nbsp;</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aTableName</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -138,15 +156,17 @@ Definition at line <a class="el" href="sb_i_playlistsource_8idl-source.html#l002
 <div class="memdoc">
 
 <p>
-Remove a filter from a datasource. 
+Calculate the unique identifier for a playlist based on a guid and a table. 
 <p>
-This value can only be used for enumeration if <a class="el" href="interfacesb_i_playlistsource.html#72443689f82b47f25e78c777519e1e7f">setFilter()</a> was properly called with its indices in order from 0<p>
+Given a guid and table, calculate the unique identifier of a playlist and return it.<p>
+This function should only be used for normal playlists<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index value of the filter to be referenced </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aGuidContextGUID</em>&nbsp;</td><td>The guid string for the playlist </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aTableName</em>&nbsp;</td><td>The name of the playlist </td></tr>
   </table>
 </dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The unique identifier for the playlist </dd></dl>
 
 </div>
 </div><p>
@@ -282,7 +302,7 @@ Force the nsIRDFDataSource::GetTargets() method to be called.
 <p>
 At times, it may be convenient to feed a playlist, without actually displaying the playlist (for instance, <a class="el" href="interfacesb_i_playlist_playback.html">sbIPlaylistPlayback</a> operates upon datasources).<p>
 This method forces the internal RDF method called by the consumers of its data in RDF format, and properly constructs the internal structures necessary to properly query this interface for its information.<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000023">Todo:</a></b></dt><dd>I'm pretty sure this is broken right now </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000026">Todo:</a></b></dt><dd>I'm pretty sure this is broken right now </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
@@ -327,6 +347,44 @@ Get the filter string from a datasource's filter.
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>The filter string </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="1281ef77d0adaa4232a8065c720799d5"></a><!-- doxytag: member="sbIPlaylistsource::getFilterColumn" ref="1281ef77d0adaa4232a8065c720799d5" args="(in AString aRefName, in PRInt32 aIndex)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIPlaylistsource::getFilterColumn           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRInt32&nbsp;</td>
+          <td class="paramname"> <em>aIndex</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the filter column from a datasource's filter. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index value of the filter to be referenced </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The filter column string </dd></dl>
 
 </div>
 </div><p>
@@ -461,7 +519,7 @@ Retrieve the <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlayli
 Given the guid, table, and type strings, return a duplicate instance of the <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> object registered.<p>
 The "type" string has precedence over the "guid"/"table" pair.<p>
 This method is only called by the playlist UI object, in playlist.xml<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000025">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000028">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aContextGUID</em>&nbsp;</td><td>The guid string for the playlist </td></tr>
@@ -499,6 +557,116 @@ Get the column count on a datasource.
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>The column count </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="70f855d07d4b464586e13ddbf4c75df2"></a><!-- doxytag: member="sbIPlaylistsource::getRefColumnValueByRow" ref="70f855d07d4b464586e13ddbf4c75df2" args="(in AString aRefName, in AString aColumn, in PRUint32 aRow)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIPlaylistsource::getRefColumnValueByRow           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aColumn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aRow</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Extract the value of a column based on the cell row. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aColumn</em>&nbsp;</td><td>The column name on which to get the value </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRow</em>&nbsp;</td><td>The row for which to extract column values </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The value (or undefined if the row is invalid) </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="dc448aa09ceff922b96b77c0417f4f3b"></a><!-- doxytag: member="sbIPlaylistsource::getRefColumnValuesByRows" ref="dc448aa09ceff922b96b77c0417f4f3b" args="(in AString aRefName, in AString aColumn, in PRUint32 aRowCount,[array, size_is(aRowCount)] in PRUint32 aRows, out PRUint32 aValueCount,[array, size_is(aValueCount), retval] out wstring aValues)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistsource::getRefColumnValuesByRows           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aColumn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aRowCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aRowCount)] in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aRows</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aValueCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aValueCount), retval] out wstring&nbsp;</td>
+          <td class="paramname"> <em>aValues</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Extract the values of a column based on the rows for an array of cells. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aColumn</em>&nbsp;</td><td>The column name on which to perform the extraction </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRowCount</em>&nbsp;</td><td>The number of rows passed in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRows</em>&nbsp;</td><td>The array of rows for which to extract column values </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aValueCount</em>&nbsp;</td><td>The number of values extracted and returned in the array </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The array of values (items for rows that were invalid are set to undefined) </dd></dl>
 
 </div>
 </div><p>
@@ -648,6 +816,71 @@ Get the row count on a datasource.
 
 </div>
 </div><p>
+<a class="anchor" name="2bc53c53868489b336756fefee80aeed"></a><!-- doxytag: member="sbIPlaylistsource::getRefRowsByColumnValues" ref="2bc53c53868489b336756fefee80aeed" args="(in AString aRefName, in AString aColumn, in PRUint32 aValueCount,[array, size_is(aValueCount)] in wstring aValues, out PRUint32 aRowCount,[array, size_is(aRowCount), retval] out PRUint32 aRows)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistsource::getRefRowsByColumnValues           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aColumn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aValueCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aValueCount)] in wstring&nbsp;</td>
+          <td class="paramname"> <em>aValues</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aRowCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aRowCount), retval] out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aRows</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Calculate the row indices of an array of cells based upon their values for a column. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aColumn</em>&nbsp;</td><td>The column name on which to perform the search </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aValueCount</em>&nbsp;</td><td>The number of values passed in the array </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aValues</em>&nbsp;</td><td>The array of values to test against </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRowCount</em>&nbsp;</td><td>The number of rows returned in the array </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>The array of row indices (items for values that were not found are set to -1) </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="d4992a81c2566d41f04111449d398c03"></a><!-- doxytag: member="sbIPlaylistsource::getRefTable" ref="d4992a81c2566d41f04111449d398c03" args="(in AString aRefName)" -->
 <div class="memitem">
 <div class="memproto">
@@ -771,6 +1004,34 @@ Determine if a datasource is currently executing its internal queries.
 
 </div>
 </div><p>
+<a class="anchor" name="2efc10bd0627bf5525ea01f1a7762e21"></a><!-- doxytag: member="sbIPlaylistsource::refExists" ref="2efc10bd0627bf5525ea01f1a7762e21" args="(in AString aRefName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PRBool sbIPlaylistsource::refExists           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Determine whether or not a ref value is already loaded in the system. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Returns:</b></dt><dd>True, if the ref exists in the system. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="d4573ffc4adc449ee8fd0fdf365a63b6"></a><!-- doxytag: member="sbIPlaylistsource::registerPlaylistCommands" ref="d4573ffc4adc449ee8fd0fdf365a63b6" args="(in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj)" -->
 <div class="memitem">
 <div class="memproto">
@@ -813,7 +1074,7 @@ Register <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCo
 <p>
 The <a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a> interface is used to algorithmically define a set of commands to be rendered arbitrarily by a playlist ui object (currently, playlist.xml).<p>
 Commands can be registered for an entire database (by setting ContextGUID and leaving TableName null), or for any "type" characteristic.<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000024">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000027">Todo:</a></b></dt><dd>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don't overwrite our standard commands. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aContextGUID</em>&nbsp;</td><td>The guid string for the database to register against </td></tr>
@@ -823,6 +1084,46 @@ Commands can be registered for an entire database (by setting ContextGUID and le
   </table>
 </dl>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlist_commands.html">sbIPlaylistCommands</a>, playlist.xml </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b1eb2bc05563de7808b101b1c78c31bc"></a><!-- doxytag: member="sbIPlaylistsource::removeFilter" ref="b1eb2bc05563de7808b101b1c78c31bc" args="(in AString aRefName, in PRInt32 aIndex)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaylistsource::removeFilter           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aRefName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRInt32&nbsp;</td>
+          <td class="paramname"> <em>aIndex</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove a filter (entirely) from a datasource. 
+<p>
+This method entirely removes a filter from being bound to a playlist. Set aFilterString to blank ("") if you want to make the filter have no current filtering value.<p>
+This value can only be used for enumeration if <a class="el" href="interfacesb_i_playlistsource.html#72443689f82b47f25e78c777519e1e7f">setFilter()</a> was properly called with its indices in order from 0<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>The index value of the filter to be referenced </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_playlistsource.html#72443689f82b47f25e78c777519e1e7f">setFilter()</a> </dd></dl>
 
 </div>
 </div><p>
@@ -928,7 +1229,7 @@ Pass a blank string to reset to a default order.<p>
 
 </div>
 </div><p>
-<a class="anchor" name="2adcd2b83d2e75bddaa538905a4b4832"></a><!-- doxytag: member="sbIPlaylistsource::setSearchString" ref="2adcd2b83d2e75bddaa538905a4b4832" args="(in AString aRefName, in AString aSearchString)" -->
+<a class="anchor" name="23e18fe37391d19aa14d26d79bc60ddf"></a><!-- doxytag: member="sbIPlaylistsource::setSearchString" ref="23e18fe37391d19aa14d26d79bc60ddf" args="(in AString aRefName, in AString aSearchString, in PRBool aResetFilters)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -942,7 +1243,13 @@ Pass a blank string to reset to a default order.<p>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aSearchString</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aSearchString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in PRBool&nbsp;</td>
+          <td class="paramname"> <em>aResetFilters</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -962,6 +1269,7 @@ Pass a blank string to clear this value.<p>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aRefName</em>&nbsp;</td><td>The unique identifier for the datasource </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aSearchString</em>&nbsp;</td><td>The string defining the search </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aResetFilters</em>&nbsp;</td><td>If true, setting this string will also reset the filters. </td></tr>
   </table>
 </dl>
 
@@ -997,7 +1305,7 @@ Wait the main thread until the ref is completely updated.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/playlistsource/public/<a class="el" href="sb_i_playlistsource_8idl-source.html">sbIPlaylistsource.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:56 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:51 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

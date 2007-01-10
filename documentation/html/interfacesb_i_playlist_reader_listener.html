@@ -37,13 +37,28 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">attribute PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_reader_listener.html#6375024c65c7ded66a0b754a5c7a143f">appendOrReplace</a></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_reader_listener.html#30f9f51b6fbec58bf3c67c996132e646">playWhenLoaded</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Automatically start playing when stream is done loading.  <a href="#30f9f51b6fbec58bf3c67c996132e646"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3748fe73fc2e08fa16b131126c50240e"></a><!-- doxytag: member="sbIPlaylistReaderListener::observer" ref="3748fe73fc2e08fa16b131126c50240e" args="" -->
+attribute nsIObserver&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_reader_listener.html#3748fe73fc2e08fa16b131126c50240e">observer</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Observer to get notified about the failure or success of creating a playlist. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3641f37f9258986764827c784a2631b4"></a><!-- doxytag: member="sbIPlaylistReaderListener::mediaMimetypesOnly" ref="3641f37f9258986764827c784a2631b4" args="" -->
+attribute PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_reader_listener.html#3641f37f9258986764827c784a2631b4">mediaMimetypesOnly</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Only create playlists for media mime-types ( audio* or video* ), not text/html. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="de93434ff1afc48f4ee0a3a7fda154c0"></a><!-- doxytag: member="sbIPlaylistReaderListener::state" ref="de93434ff1afc48f4ee0a3a7fda154c0" args="" -->
+attribute ASTring&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_reader_listener.html#de93434ff1afc48f4ee0a3a7fda154c0">state</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">expose the state of the web downloading (currently only set to "" or STATE_STOP) <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.<hr><h2>Member Data Documentation</h2>
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00048">48</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.<hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="6375024c65c7ded66a0b754a5c7a143f"></a><!-- doxytag: member="sbIPlaylistReaderListener::appendOrReplace" ref="6375024c65c7ded66a0b754a5c7a143f" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -63,7 +78,7 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00110">110</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00112">112</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a11b0e0dbb843c30da6804a8c8922e7b"></a><!-- doxytag: member="sbIPlaylistReaderListener::description" ref="a11b0e0dbb843c30da6804a8c8922e7b" args="" -->
@@ -85,7 +100,7 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00102">102</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00104">104</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="c7956c50f45b3dc36387c5f59866529c"></a><!-- doxytag: member="sbIPlaylistReaderListener::destinationTable" ref="c7956c50f45b3dc36387c5f59866529c" args="" -->
@@ -107,7 +122,7 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00078">78</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00080">80</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="fa7890a3f75246ca855d7b9cdb4e61bb"></a><!-- doxytag: member="sbIPlaylistReaderListener::destinationURL" ref="fa7890a3f75246ca855d7b9cdb4e61bb" args="" -->
@@ -129,7 +144,7 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00070">70</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00072">72</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a6662aec300466a15aaa6c9eaef3d899"></a><!-- doxytag: member="sbIPlaylistReaderListener::originalURL" ref="a6662aec300466a15aaa6c9eaef3d899" args="" -->
@@ -151,7 +166,7 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00054">54</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00056">56</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="b011fca5d58b4f8756734b895eb7fda3"></a><!-- doxytag: member="sbIPlaylistReaderListener::playlistType" ref="b011fca5d58b4f8756734b895eb7fda3" args="" -->
@@ -173,7 +188,26 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00094">94</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00096">96</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="30f9f51b6fbec58bf3c67c996132e646"></a><!-- doxytag: member="sbIPlaylistReaderListener::playWhenLoaded" ref="30f9f51b6fbec58bf3c67c996132e646" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute PRBool <a class="el" href="interfacesb_i_playlist_reader_listener.html#30f9f51b6fbec58bf3c67c996132e646">sbIPlaylistReaderListener::playWhenLoaded</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Automatically start playing when stream is done loading. 
+<p>
+False by default. 
+<p>
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00119">119</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="1e2b27f16497197be589295d6045b5b5"></a><!-- doxytag: member="sbIPlaylistReaderListener::readableName" ref="1e2b27f16497197be589295d6045b5b5" args="" -->
@@ -195,7 +229,7 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00086">86</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00088">88</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a563da863781cf17a0c4814f2511d46a"></a><!-- doxytag: member="sbIPlaylistReaderListener::serviceGuid" ref="a563da863781cf17a0c4814f2511d46a" args="" -->
@@ -217,12 +251,12 @@ Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00
 </dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00062">62</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
+Definition at line <a class="el" href="sb_i_playlist_reader_8idl-source.html#l00064">64</a> of file <a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>C:/projects/songbird/components/medialibrary/public/<a class="el" href="sb_i_playlist_reader_8idl-source.html">sbIPlaylistReader.idl</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Aug 21 21:01:55 2006 for Songbird by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Wed Jan 10 14:43:51 2007 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.7 </small></address>
 </body>

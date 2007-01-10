@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="todo" kind="page">
+    <compoundname>todo</compoundname>
+    <title>Todo List</title>
+    <detaileddescription>
+<para><anchor id="todo_1_todo000015"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_media_library_1932fd74bb830444b58374e611114f26d" kindref="member">sbIMediaLibrary::deleteColumn</ref> (in AString columnName) </term></varlistentry>
+<listitem><para>deleteColumn is not yet implemented </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000018"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_media_library_13aab0777b29917b5924f34e831ad37ab" kindref="member">sbIMediaLibrary::getValueByIndex</ref> (in PRInt32 mediaIndex, in AString columnName) </term></varlistentry>
+<listitem><para>This won&apos;t work, it tries to use row number as ID. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000019"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_media_library_12ee0999594d3c16b89e68004a06f8aac" kindref="member">sbIMediaLibrary::getValuesByIndex</ref> (in PRInt32 mediaIndex, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, out PRUint32 metaValueCount,[array, size_is(metaValueCount), retval] out wstring metaValues) </term></varlistentry>
+<listitem><para>This won&apos;t work, it tries to use row number as ID. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000016"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_media_library_114b46d41764873b1bd32a6e80b499cf8" kindref="member">sbIMediaLibrary::setValueByIndex</ref> (in PRInt32 mediaIndex, in AString columnName, in AString columnValue, in PRBool willRunQueryLater) </term></varlistentry>
+<listitem><para>This won&apos;t work, it tries to use row number as ID. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000017"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_media_library_1c4a17b445fbc0c5ec09ba4dec8150b7d" kindref="member">sbIMediaLibrary::setValuesByIndex</ref> (in PRInt32 mediaIndex, in PRUint32 metaColumnCount,[array, size_is(metaColumnCount)] in wstring metaColumnNames, in PRUint32 metaValueCount,[array, size_is(metaValueCount)] in wstring metaValues, in PRBool willRunQueryLater) </term></varlistentry>
+<listitem><para>This won&apos;t work, it tries to use row number as ID. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000013"/> <variablelist>
+<varlistentry><term>Class <ref refid="interfacesb_i_media_transcoder" kindref="compound">sbIMediaTranscoder</ref>  </term></varlistentry>
+<listitem><para>Stub interface. Currently unimplemented. Lots of work. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000012"/> <variablelist>
+<varlistentry><term>Class <ref refid="interfacesb_i_media_transcoder_callback" kindref="compound">sbIMediaTranscoderCallback</ref>  </term></varlistentry>
+<listitem><para>Stub interface. Currently unimplemented. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000014"/> <variablelist>
+<varlistentry><term>Class <ref refid="interfacesb_i_media_transcoder_manager" kindref="compound">sbIMediaTranscoderManager</ref>  </term></varlistentry>
+<listitem><para>Stub interface. Currently unimplemented. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000011"/> <variablelist>
+<varlistentry><term>Class <ref refid="interfacesb_i_media_type" kindref="compound">sbIMediaType</ref>  </term></varlistentry>
+<listitem><para>Stub interface. Currently unimplemented. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000003"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_backscanner_188d9b8b94a9b875be7559d040f1c1db5" kindref="member">sbIMetadataBackscanner::currentFile</ref>  </term></varlistentry>
+<listitem><para>This is not implemented. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000001"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_backscanner_1efaa9a87b084f62d4e87aa514de7db6b" kindref="member">sbIMetadataBackscanner::scannedMediaCount</ref>  </term></varlistentry>
+<listitem><para>This is not implemented. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000002"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_backscanner_12f625a6e2dea277d01ddda80ed41b9ab" kindref="member">sbIMetadataBackscanner::totalMediaCount</ref>  </term></varlistentry>
+<listitem><para>This is not implemented. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000004"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_channel_17ab89a2563f897b7311a856067956809" kindref="member">sbIMetadataChannel::pos</ref>  </term></varlistentry>
+<listitem><para>Make &quot;SetPos()&quot; work past the end of the buffer. Right now, nothing is seekable. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000005"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_channel_131900ec93b36e8097b1165b6ebe5cde1" kindref="member">sbIMetadataChannel::seekable</ref>  </term></varlistentry>
+<listitem><para>Make &quot;GetSeekable()&quot; work. Right now, nothing is seekable. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000007"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_handler_17a6c8e683a208b6acae06a6ea4edd3b7" kindref="member">sbIMetadataHandler::supportedFileExtensions</ref> (out PRUint32 nExtCount,[array, size_is(nExtCount), retval] out wstring aExts) </term></varlistentry>
+<listitem><para>Make sure it&apos;s safe to deprecate these. Only the cores should need to return mimetype/extension info, I think. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000006"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_handler_10e2be754f36f62a4984cb56576142ee4" kindref="member">sbIMetadataHandler::supportedMIMETypes</ref> (out PRUint32 nMIMECount,[array, size_is(nMIMECount), retval] out wstring aMIMETypes) </term></varlistentry>
+<listitem><para>Make sure it&apos;s safe to deprecate these. Only the cores should need to return mimetype/extension info, I think. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000008"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" kindref="member">sbIMetadataHandler::write</ref> () </term></varlistentry>
+<listitem><para>Make anything actually work with a write operation </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000009"/> <variablelist>
+<varlistentry><term>Class <ref refid="interfacesb_i_metadata_values" kindref="compound">sbIMetadataValues</ref>  </term></varlistentry>
+<listitem><para>Make a list of keys. Make a type enumeration. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000025"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlist_commands_19bc74516c28ae0e6bb744c788a039233" kindref="member">sbIPlaylistCommands::getCommandToolTipText</ref> (in PRInt32 index) </term></varlistentry>
+<listitem><para>The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000021"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_10876200cb49aa473e345cddf07ca3d24" kindref="member">sbIPlaylistPlayback::getCurrentValue</ref> (in AString aField) </term></varlistentry>
+<listitem><para>- implement getCurrentValue - currently returns &quot;&quot;</para><para></para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000023"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_152034b678ca53a540bea83645997fea2" kindref="member">sbIPlaylistPlayback::getCurrentValues</ref> (in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, out PRUint32 aValueCount,[array, size_is(aValueCount), retval] out wstring aMetaValues) </term></varlistentry>
+<listitem><para>implement getCurrentValues - currently sets out paramst to 0 and &quot;&quot;</para><para></para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000020"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_1d21cb95118038ef1c3f51be7d6fbf6e4" kindref="member">sbIPlaylistPlayback::getMetadataFields</ref> (out PRUint32 aFieldCount,[array, size_is(aFieldCount), retval] out wstring aMetaFields) </term></varlistentry>
+<listitem><para>- implement getMetadataFields, currently sets out params to 0 and &quot;&quot;</para><para></para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000022"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_1fe49d1a9aeafe4a6c697ed4e395a8eb0" kindref="member">sbIPlaylistPlayback::setCurrentValue</ref> (in AString aField, in AString aValue) </term></varlistentry>
+<listitem><para>- implement setCurrentValue - current does nothing.</para><para></para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000024"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_1c54bd378b48598fe690ced4a7c44626f" kindref="member">sbIPlaylistPlayback::setCurrentValues</ref> (in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, in PRUint32 aValueCount,[array, size_is(aValueCount)] in wstring aMetaValues) </term></varlistentry>
+<listitem><para>implement setCurrentValues - currently does nothing.</para><para></para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000026"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlistsource_1084b810650bc01feb3811e75a947ce08" kindref="member">sbIPlaylistsource::forceGetTargets</ref> (in AString aRefName, in PRBool isPermanent) </term></varlistentry>
+<listitem><para>I&apos;m pretty sure this is broken right now </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000028"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlistsource_10084fd6816e662d61a66ae258dcb2bae" kindref="member">sbIPlaylistsource::getPlaylistCommands</ref> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType) </term></varlistentry>
+<listitem><para>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don&apos;t overwrite our standard commands. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000027"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_playlistsource_1d4573ffc4adc449ee8fd0fdf365a63b6" kindref="member">sbIPlaylistsource::registerPlaylistCommands</ref> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> aCommandObj) </term></varlistentry>
+<listitem><para>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don&apos;t overwrite our standard commands. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000030"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_servicesource_1e88892100cf2c017f61dc451e2a13436" kindref="member">sbIServicesource::getPlaylistCommands</ref> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType) </term></varlistentry>
+<listitem><para>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don&apos;t overwrite our standard commands. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000029"/> <variablelist>
+<varlistentry><term>Member <ref refid="interfacesb_i_servicesource_152af52f89ed16752a191a6046d638157" kindref="member">sbIServicesource::registerPlaylistCommands</ref> (in AString aContextGUID, in AString aTableName, in AString aPlaylistType, in <ref refid="interfacesb_i_playlist_commands" kindref="compound">sbIPlaylistCommands</ref> aCommandObj) </term></varlistentry>
+<listitem><para>Currently, new registrations overwrite previous registrations. BAD. Make them save and return an array. Please don&apos;t overwrite our standard commands. </para></listitem>
+</variablelist>
+</para><para><anchor id="todo_1_todo000010"/> <variablelist>
+<varlistentry><term>File <ref refid="sb_i_media_transcoder_8idl" kindref="compound">sbIMediaTranscoder.idl</ref>  </term></varlistentry>
+<listitem><para>Stub module. Currently unimplemented. </para></listitem>
+</variablelist>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

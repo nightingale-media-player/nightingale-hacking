@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_g_streamer_service" kind="interface" prot="public">
+    <compoundname>sbIGStreamerService</compoundname>
+    <includes refid="sb_i_g_streamer_service_8idl" local="no">sbIGStreamerService.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_g_streamer_service_1b9940ac969bf39db2dd97c0c84e1c57e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerService::init</definition>
+        <argsstring>()</argsstring>
+        <name>init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="41"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>USER CODE SHOULD NOT REFERENCE THIS CLASS. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="40" bodyfile="C:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="39" bodyend="42"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_g_streamer_service_1b9940ac969bf39db2dd97c0c84e1c57e" prot="public" virt="non-virtual"><scope>sbIGStreamerService</scope><name>init</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

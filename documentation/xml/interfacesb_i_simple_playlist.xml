@@ -1,0 +1,677 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_simple_playlist" kind="interface" prot="public">
+    <compoundname>sbISimplePlaylist</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_108982736dac0c210e31f1f421e9ae4c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setQueryObject</definition>
+        <argsstring>(in sbIDatabaseQuery queryObj)</argsstring>
+        <name>setQueryObject</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref></type>
+          <declname>queryObj</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="34"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_10d7707f3c1405fc85c7fc8d3418dcea0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_database_query" kindref="compound">sbIDatabaseQuery</ref></type>
+        <definition>sbIDatabaseQuery sbISimplePlaylist::getQueryObject</definition>
+        <argsstring>()</argsstring>
+        <name>getQueryObject</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="36"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1c49ffc3fe1732a1332b7f5a4542aee24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::addByURL</definition>
+        <argsstring>(in AString strURL, in PRUint32 nColumnCount,[array, size_is(nColumnCount)] in wstring aColumns, in PRUint32 nValueCount,[array, size_is(nValueCount)] in wstring aValues, in PRBool bWillRunLater)</argsstring>
+        <name>addByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>strURL</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nColumnCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nColumnCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aColumns</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nValueCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aValues</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="43"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_115244c3dd3e969f03638f93b53b9dd76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbISimplePlaylist::removeByURL</definition>
+        <argsstring>(in AString strURL, in PRBool bWillRunLater)</argsstring>
+        <name>removeByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>strURL</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="46"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_132bb2e3d5d7e3f7435bbe443ebbcc7fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbISimplePlaylist::removeByIndex</definition>
+        <argsstring>(in PRInt32 nIndex, in PRBool bWillRunLater)</argsstring>
+        <name>removeByIndex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>nIndex</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="49"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_192d7658da721c4637122fe41424c6c6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbISimplePlaylist::removeByGUID</definition>
+        <argsstring>(in AString mediaGUID, in PRBool bWillRunLater)</argsstring>
+        <name>removeByGUID</name>
+        <param>
+          <type>in AString</type>
+          <declname>mediaGUID</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1f06d6c6a487a982b67acdffd16b73188" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbISimplePlaylist::findByURL</definition>
+        <argsstring>(in AString strURL)</argsstring>
+        <name>findByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>strURL</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1a7b9080274661304261804909e746900" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISimplePlaylist::findByIndex</definition>
+        <argsstring>(in PRInt32 nIndex)</argsstring>
+        <name>findByIndex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>nIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="56"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1e727867a637212031a5ff126f0cb997f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::getColumnInfo</definition>
+        <argsstring>()</argsstring>
+        <name>getColumnInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1eb43f60f6fafc363f613d2b7548bf3f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setColumnInfo</definition>
+        <argsstring>(in AString columnName, in AString columnReadableName, in PRBool isColumnEverVisible, in PRBool isColumnVisibleByDefault, in PRBool isMetadataColumn, in PRInt32 columnSortWeight, in PRInt32 columnDefaultUIWidth, in AString columnDataType, in PRBool isColumnReadOnly, in PRBool willRunQueryLater)</argsstring>
+        <name>setColumnInfo</name>
+        <param>
+          <type>in AString</type>
+          <declname>columnName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>columnReadableName</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>isColumnEverVisible</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>isColumnVisibleByDefault</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>isMetadataColumn</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>columnSortWeight</declname>
+        </param>
+        <param>
+          <type>in PRInt32</type>
+          <declname>columnDefaultUIWidth</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>columnDataType</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>isColumnReadOnly</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>willRunQueryLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="69"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_14d1939e813a83948ebe4a8bbd6ab8f06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::getTableInfo</definition>
+        <argsstring>()</argsstring>
+        <name>getTableInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="71"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_10db4ccd518a3a576d579b57a45e7b259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::addColumn</definition>
+        <argsstring>(in AString strColumn, in AString strDataType)</argsstring>
+        <name>addColumn</name>
+        <param>
+          <type>in AString</type>
+          <declname>strColumn</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strDataType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="74"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1c911a4316824901af8b4f255859b777c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::deleteColumn</definition>
+        <argsstring>(in AString strColumn)</argsstring>
+        <name>deleteColumn</name>
+        <param>
+          <type>in AString</type>
+          <declname>strColumn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="76"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1c4af0e4ebb56158c4becc609fab2c9f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbISimplePlaylist::getNumEntries</definition>
+        <argsstring>()</argsstring>
+        <name>getNumEntries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="78"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_11b4ca86f0e197ebfa01ad6825a870af4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbISimplePlaylist::getEntry</definition>
+        <argsstring>(in PRInt32 nEntry)</argsstring>
+        <name>getEntry</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>nEntry</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_18fb4f33822000e89a10d50e18c9ecd29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbISimplePlaylist::getAllEntries</definition>
+        <argsstring>()</argsstring>
+        <name>getAllEntries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="82"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1d758d88b2041b3f3426b6697e5552535" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISimplePlaylist::getColumnValueByIndex</definition>
+        <argsstring>(in PRInt32 mediaIndex, in AString strColumn)</argsstring>
+        <name>getColumnValueByIndex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>mediaIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strColumn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_16be1553659540865704506419a7bec71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISimplePlaylist::getColumnValueByURL</definition>
+        <argsstring>(in AString mediaURL, in AString strColumn)</argsstring>
+        <name>getColumnValueByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>mediaURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strColumn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="88"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1eff608db4aebe5203731f233c0c4d21f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::getColumnValuesByIndex</definition>
+        <argsstring>(in PRInt32 mediaIndex, in PRUint32 nColumnCount,[array, size_is(nColumnCount)] in wstring aColumns, out PRUint32 nValueCount,[array, size_is(nValueCount), retval] out wstring aValues)</argsstring>
+        <name>getColumnValuesByIndex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>mediaIndex</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nColumnCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nColumnCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aColumns</declname>
+        </param>
+        <param>
+          <type>out PRUint32</type>
+          <declname>nValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nValueCount), retval]</attributes>
+          <type>out wstring</type>
+          <declname>aValues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="94"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1aebc9233658e918f24752b0688051a1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::getColumnValuesByURL</definition>
+        <argsstring>(in AString mediaURL, in PRUint32 nColumnCount,[array, size_is(nColumnCount)] in wstring aColumns, out PRUint32 nValueCount,[array, size_is(nValueCount), retval] out wstring aValues)</argsstring>
+        <name>getColumnValuesByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>mediaURL</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nColumnCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nColumnCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aColumns</declname>
+        </param>
+        <param>
+          <type>out PRUint32</type>
+          <declname>nValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nValueCount), retval]</attributes>
+          <type>out wstring</type>
+          <declname>aValues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="100"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_12da7f1954351be4f2992401b4b9ba3df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setColumnValueByIndex</definition>
+        <argsstring>(in PRInt32 mediaIndex, in AString strColumn, in AString strValue, in PRBool bWillRunLater)</argsstring>
+        <name>setColumnValueByIndex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>mediaIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strColumn</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strValue</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="105"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_18d94f93bb3cc25f4e7137d90b910d46d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setColumnValueByURL</definition>
+        <argsstring>(in AString mediaURL, in AString strColumn, in AString strValue, in PRBool bWillRunLater)</argsstring>
+        <name>setColumnValueByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>mediaURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strColumn</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strValue</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="110"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_19584f09e8137067e27e8ad13640fbd50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setColumnValuesByIndex</definition>
+        <argsstring>(in PRInt32 mediaIndex, in PRUint32 nColumnCount,[array, size_is(nColumnCount)] in wstring aColumns, in PRUint32 nValueCount,[array, size_is(nValueCount)] in wstring aValues, in PRBool bWillRunLater)</argsstring>
+        <name>setColumnValuesByIndex</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>mediaIndex</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nColumnCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nColumnCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aColumns</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nValueCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aValues</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="117"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1adab397e854933a828cd2969a3e2967a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setColumnValuesByURL</definition>
+        <argsstring>(in AString mediaURL, in PRUint32 nColumnCount,[array, size_is(nColumnCount)] in wstring aColumns, in PRUint32 nValueCount,[array, size_is(nValueCount)] in wstring aValues, in PRBool bWillRunLater)</argsstring>
+        <name>setColumnValuesByURL</name>
+        <param>
+          <type>in AString</type>
+          <declname>mediaURL</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nColumnCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nColumnCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aColumns</declname>
+        </param>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nValueCount</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(nValueCount)]</attributes>
+          <type>in wstring</type>
+          <declname>aValues</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="124"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1bcb3aad82c15ce52c7c62bd2c4194e1f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setName</definition>
+        <argsstring>(in AString strName)</argsstring>
+        <name>setName</name>
+        <param>
+          <type>in AString</type>
+          <declname>strName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="126"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1db4b4817c95c1fd053e44528095130b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISimplePlaylist::getName</definition>
+        <argsstring>()</argsstring>
+        <name>getName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_11f35121b9b4608d9f15c76af8edb859f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISimplePlaylist::setReadableName</definition>
+        <argsstring>(in AString strReadableName)</argsstring>
+        <name>setReadableName</name>
+        <param>
+          <type>in AString</type>
+          <declname>strReadableName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="130"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_simple_playlist_1fb02e5a9f827e7aff948ef10a661e5d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISimplePlaylist::getReadableName</definition>
+        <argsstring>()</argsstring>
+        <name>getReadableName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="132"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="33" bodyfile="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" bodystart="32" bodyend="133"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_simple_playlist_1c49ffc3fe1732a1332b7f5a4542aee24" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>addByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_10db4ccd518a3a576d579b57a45e7b259" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>addColumn</name></member>
+      <member refid="interfacesb_i_simple_playlist_1c911a4316824901af8b4f255859b777c" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>deleteColumn</name></member>
+      <member refid="interfacesb_i_simple_playlist_1a7b9080274661304261804909e746900" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>findByIndex</name></member>
+      <member refid="interfacesb_i_simple_playlist_1f06d6c6a487a982b67acdffd16b73188" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>findByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_18fb4f33822000e89a10d50e18c9ecd29" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getAllEntries</name></member>
+      <member refid="interfacesb_i_simple_playlist_1e727867a637212031a5ff126f0cb997f" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getColumnInfo</name></member>
+      <member refid="interfacesb_i_simple_playlist_1d758d88b2041b3f3426b6697e5552535" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getColumnValueByIndex</name></member>
+      <member refid="interfacesb_i_simple_playlist_16be1553659540865704506419a7bec71" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getColumnValueByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_1eff608db4aebe5203731f233c0c4d21f" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getColumnValuesByIndex</name></member>
+      <member refid="interfacesb_i_simple_playlist_1aebc9233658e918f24752b0688051a1a" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getColumnValuesByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_11b4ca86f0e197ebfa01ad6825a870af4" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getEntry</name></member>
+      <member refid="interfacesb_i_simple_playlist_1db4b4817c95c1fd053e44528095130b5" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getName</name></member>
+      <member refid="interfacesb_i_simple_playlist_1c4af0e4ebb56158c4becc609fab2c9f6" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getNumEntries</name></member>
+      <member refid="interfacesb_i_simple_playlist_10d7707f3c1405fc85c7fc8d3418dcea0" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getQueryObject</name></member>
+      <member refid="interfacesb_i_simple_playlist_1fb02e5a9f827e7aff948ef10a661e5d6" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getReadableName</name></member>
+      <member refid="interfacesb_i_simple_playlist_14d1939e813a83948ebe4a8bbd6ab8f06" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>getTableInfo</name></member>
+      <member refid="interfacesb_i_simple_playlist_192d7658da721c4637122fe41424c6c6e" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>removeByGUID</name></member>
+      <member refid="interfacesb_i_simple_playlist_132bb2e3d5d7e3f7435bbe443ebbcc7fd" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>removeByIndex</name></member>
+      <member refid="interfacesb_i_simple_playlist_115244c3dd3e969f03638f93b53b9dd76" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>removeByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_1eb43f60f6fafc363f613d2b7548bf3f7" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setColumnInfo</name></member>
+      <member refid="interfacesb_i_simple_playlist_12da7f1954351be4f2992401b4b9ba3df" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setColumnValueByIndex</name></member>
+      <member refid="interfacesb_i_simple_playlist_18d94f93bb3cc25f4e7137d90b910d46d" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setColumnValueByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_19584f09e8137067e27e8ad13640fbd50" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setColumnValuesByIndex</name></member>
+      <member refid="interfacesb_i_simple_playlist_1adab397e854933a828cd2969a3e2967a" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setColumnValuesByURL</name></member>
+      <member refid="interfacesb_i_simple_playlist_1bcb3aad82c15ce52c7c62bd2c4194e1f" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setName</name></member>
+      <member refid="interfacesb_i_simple_playlist_108982736dac0c210e31f1f421e9ae4c3" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setQueryObject</name></member>
+      <member refid="interfacesb_i_simple_playlist_11f35121b9b4608d9f15c76af8edb859f" prot="public" virt="non-virtual"><scope>sbISimplePlaylist</scope><name>setReadableName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

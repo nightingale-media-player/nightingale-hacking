@@ -1,0 +1,449 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="interfacesb_i_smart_playlist" kind="interface" prot="public">
+    <compoundname>sbISmartPlaylist</compoundname>
+    <basecompoundref refid="interfacesb_i_playlist" prot="public" virt="non-virtual">sbIPlaylist</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_12ca5158ed8926981a5e0e497de85b5d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::setLibrary</definition>
+        <argsstring>(in AString strLibrary, in PRBool bWillRunLater)</argsstring>
+        <name>setLibrary</name>
+        <param>
+          <type>in AString</type>
+          <declname>strLibrary</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="263"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1f40727fd33f342d303c885bb59d6b624" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISmartPlaylist::getLibrary</definition>
+        <argsstring>()</argsstring>
+        <name>getLibrary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="265"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1a2f6b6f44be411dcc306237d9a0c7f05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::setLimitAndType</definition>
+        <argsstring>(in PRUint32 nLimit, in AString strLimitType, in PRBool bWillRunLater)</argsstring>
+        <name>setLimitAndType</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nLimit</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strLimitType</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="269"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_18ef0a5386e828a90a160145bf56d403d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUint32</type>
+        <definition>PRUint32 sbISmartPlaylist::getLimit</definition>
+        <argsstring>()</argsstring>
+        <name>getLimit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="271"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_14bae652a685333a4f606ec1de9e2860f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISmartPlaylist::getLimitType</definition>
+        <argsstring>()</argsstring>
+        <name>getLimitType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="273"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1498d7aa3c77a0f74f77fcbaebe0bca59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::getLimitAndType</definition>
+        <argsstring>(out PRUint32 nLimit, out AString strLimitType)</argsstring>
+        <name>getLimitAndType</name>
+        <param>
+          <type>out PRUint32</type>
+          <declname>nLimit</declname>
+        </param>
+        <param>
+          <type>out AString</type>
+          <declname>strLimitType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="276"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_180853e5770473dcadc2f6198ef6300cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::setSelectedBy</definition>
+        <argsstring>(in AString strSelectedBy)</argsstring>
+        <name>setSelectedBy</name>
+        <param>
+          <type>in AString</type>
+          <declname>strSelectedBy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="278"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1f2068902a49b84311df9ca70e1cc01c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISmartPlaylist::getSelectedBy</definition>
+        <argsstring>()</argsstring>
+        <name>getSelectedBy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="280"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1002be52e1f1da2cdcf620fcf1d44b5b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::setMatch</definition>
+        <argsstring>(in AString strMatchOn)</argsstring>
+        <name>setMatch</name>
+        <param>
+          <type>in AString</type>
+          <declname>strMatchOn</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="282"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_14b6875031fdde123dc6010e0605034ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISmartPlaylist::getMatch</definition>
+        <argsstring>()</argsstring>
+        <name>getMatch</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="284"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_140b1ec28f2a0e54ee79ddae45da9d514" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::addConstraint</definition>
+        <argsstring>(in AString strMetadata, in AString strConstraint, in AString strConstraintValue, in PRBool bWillRunLater)</argsstring>
+        <name>addConstraint</name>
+        <param>
+          <type>in AString</type>
+          <declname>strMetadata</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strConstraint</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strConstraintValue</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="289"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1c67117b38ba85372bb7f07da1c885a19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUint32</type>
+        <definition>PRUint32 sbISmartPlaylist::getConstraintCount</definition>
+        <argsstring>()</argsstring>
+        <name>getConstraintCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="291"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1e7deb90a12c90e714973beec642638fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRUint32</type>
+        <definition>PRUint32 sbISmartPlaylist::getAllConstraints</definition>
+        <argsstring>()</argsstring>
+        <name>getAllConstraints</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="293"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1ccda4a40b1f1c5ba6f99df76eb0b6caa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbISmartPlaylist::getConstraint</definition>
+        <argsstring>(in PRUint32 nIndex)</argsstring>
+        <name>getConstraint</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nIndex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="295"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_185e764bab872cdf40cfd1ac8eabdeb30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::replaceConstraint</definition>
+        <argsstring>(in PRUint32 nIndex, in AString strMetadata, in AString strConstraint, in AString strConstraintValue, in PRBool bWillRunLater)</argsstring>
+        <name>replaceConstraint</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nIndex</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strMetadata</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strConstraint</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>strConstraintValue</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="301"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1165633159903bc2c84d3fe7c6f1d92ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::removeConstraint</definition>
+        <argsstring>(in PRUint32 nIndex, in PRBool bWillRunLater)</argsstring>
+        <name>removeConstraint</name>
+        <param>
+          <type>in PRUint32</type>
+          <declname>nIndex</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="304"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1249a51a216bd1a10126466fcaaa4eabf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::removeAllConstraints</definition>
+        <argsstring>(in PRBool bWillRunLater)</argsstring>
+        <name>removeAllConstraints</name>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="306"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_18a07035b3b8629a72f6894491fbe2e26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylist::setQuery</definition>
+        <argsstring>(in AString strQuery, in PRBool bWillRunLater)</argsstring>
+        <name>setQuery</name>
+        <param>
+          <type>in AString</type>
+          <declname>strQuery</declname>
+        </param>
+        <param>
+          <type>in PRBool</type>
+          <declname>bWillRunLater</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="311"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_1dedc42917443e96f8bdc2025c80b1442" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbISmartPlaylist::getQuery</definition>
+        <argsstring>()</argsstring>
+        <name>getQuery</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="314"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_170c0c527cbfeba35a0468a8ca551071f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRBool</type>
+        <definition>PRBool sbISmartPlaylist::rebuildPlaylist</definition>
+        <argsstring>()</argsstring>
+        <name>rebuildPlaylist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="316"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="110">
+        <label>sbIPlaylist</label>
+        <link refid="interfacesb_i_playlist"/>
+      </node>
+      <node id="109">
+        <label>sbISmartPlaylist</label>
+        <link refid="interfacesb_i_smart_playlist"/>
+        <childnode refid="110" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="112">
+        <label>sbIPlaylist</label>
+        <link refid="interfacesb_i_playlist"/>
+      </node>
+      <node id="111">
+        <label>sbISmartPlaylist</label>
+        <link refid="interfacesb_i_smart_playlist"/>
+        <childnode refid="112" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" line="261" bodyfile="C:/projects/songbird/components/medialibrary/public/sbIPlaylist.idl" bodystart="260" bodyend="317"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_playlist_154b8b6fd0afdf7f4465294f085c81542" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>addByGUID</name></member>
+      <member refid="interfacesb_i_playlist_12ada41236c2d2a25f86803e4f375fcfc" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>addColumn</name></member>
+      <member refid="interfacesb_i_smart_playlist_140b1ec28f2a0e54ee79ddae45da9d514" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>addConstraint</name></member>
+      <member refid="interfacesb_i_playlist_1c51288804809cdf1a1fd6a349c27a306" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>deleteColumn</name></member>
+      <member refid="interfacesb_i_playlist_10a013191c792cab77dd63eca2294210d" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>findByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1097228c0911c575bdfe0691ce51cec32" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>findByIndex</name></member>
+      <member refid="interfacesb_i_smart_playlist_1e7deb90a12c90e714973beec642638fd" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getAllConstraints</name></member>
+      <member refid="interfacesb_i_playlist_1900a1bed324db4f07de36e2ad16fc610" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getAllEntries</name></member>
+      <member refid="interfacesb_i_playlist_14ee9a5d1f2de6923048fb176344c929a" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getColumnInfo</name></member>
+      <member refid="interfacesb_i_playlist_108cfe2a17bf69cb7fa3d943c6da9fb8c" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getColumnValueByGUID</name></member>
+      <member refid="interfacesb_i_playlist_197d4fb6fbf8bede155246d9bdce597f4" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getColumnValueByIndex</name></member>
+      <member refid="interfacesb_i_playlist_16d53ab297274be41474505194a659f32" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getColumnValuesByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1520d9f2c9506d469fb2ffd90524847c6" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getColumnValuesByIndex</name></member>
+      <member refid="interfacesb_i_smart_playlist_1ccda4a40b1f1c5ba6f99df76eb0b6caa" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getConstraint</name></member>
+      <member refid="interfacesb_i_smart_playlist_1c67117b38ba85372bb7f07da1c885a19" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getConstraintCount</name></member>
+      <member refid="interfacesb_i_playlist_11db57b5bce30f610250efd7d64c97fd4" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getDescription</name></member>
+      <member refid="interfacesb_i_playlist_185af7eec7df63c26d57a87ad1cae74b6" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getEntry</name></member>
+      <member refid="interfacesb_i_smart_playlist_1f40727fd33f342d303c885bb59d6b624" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getLibrary</name></member>
+      <member refid="interfacesb_i_smart_playlist_18ef0a5386e828a90a160145bf56d403d" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getLimit</name></member>
+      <member refid="interfacesb_i_smart_playlist_1498d7aa3c77a0f74f77fcbaebe0bca59" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getLimitAndType</name></member>
+      <member refid="interfacesb_i_smart_playlist_14bae652a685333a4f606ec1de9e2860f" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getLimitType</name></member>
+      <member refid="interfacesb_i_smart_playlist_14b6875031fdde123dc6010e0605034ac" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getMatch</name></member>
+      <member refid="interfacesb_i_playlist_1f4a405275d71b7c8dff60a785025cf8e" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getName</name></member>
+      <member refid="interfacesb_i_playlist_1222cf3e97b42030a58b99ed863e8448f" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getNumEntries</name></member>
+      <member refid="interfacesb_i_smart_playlist_1dedc42917443e96f8bdc2025c80b1442" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getQuery</name></member>
+      <member refid="interfacesb_i_playlist_1e8d527e6531edc591d58307ebece1863" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getQueryObject</name></member>
+      <member refid="interfacesb_i_playlist_171635de15af06260808f35150c6a7272" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getReadableName</name></member>
+      <member refid="interfacesb_i_smart_playlist_1f2068902a49b84311df9ca70e1cc01c8" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getSelectedBy</name></member>
+      <member refid="interfacesb_i_playlist_1d847acd93c5ba6594ec792edd3449ec9" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getTableInfo</name></member>
+      <member refid="interfacesb_i_playlist_136e4386161e089b59b772f28f9604fd1" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>getType</name></member>
+      <member refid="interfacesb_i_playlist_132b7671cd86d1c20b89b4493d7eb3e7b" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>moveByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1fe93c1712020c498156e96f445d697fb" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>moveByIndex</name></member>
+      <member refid="interfacesb_i_smart_playlist_170c0c527cbfeba35a0468a8ca551071f" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>rebuildPlaylist</name></member>
+      <member refid="interfacesb_i_smart_playlist_1249a51a216bd1a10126466fcaaa4eabf" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>removeAllConstraints</name></member>
+      <member refid="interfacesb_i_playlist_1b05eacd96e69813295a37b205bb3c2bb" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>removeByGUID</name></member>
+      <member refid="interfacesb_i_playlist_106e25704d92b1043768f8e2647cb6197" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>removeByIndex</name></member>
+      <member refid="interfacesb_i_smart_playlist_1165633159903bc2c84d3fe7c6f1d92ac" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>removeConstraint</name></member>
+      <member refid="interfacesb_i_smart_playlist_185e764bab872cdf40cfd1ac8eabdeb30" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>replaceConstraint</name></member>
+      <member refid="interfacesb_i_playlist_1958f2763245ed524daa2655f3ab019b1" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setColumnInfo</name></member>
+      <member refid="interfacesb_i_playlist_1e6e547794289b96a2627be78891cdada" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setColumnValueByGUID</name></member>
+      <member refid="interfacesb_i_playlist_1b1080d2a5be9e9ba0a1bfe79bf9f3574" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setColumnValueByIndex</name></member>
+      <member refid="interfacesb_i_playlist_1aa94d0cb027091ea9f7f61a41861ee7b" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setColumnValuesByGUID</name></member>
+      <member refid="interfacesb_i_playlist_19c451089d51921e6b1796a1a1fb8cb52" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setColumnValuesByIndex</name></member>
+      <member refid="interfacesb_i_playlist_17eed7e7def097f2dcc4118d859534975" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setDescription</name></member>
+      <member refid="interfacesb_i_smart_playlist_12ca5158ed8926981a5e0e497de85b5d3" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setLibrary</name></member>
+      <member refid="interfacesb_i_smart_playlist_1a2f6b6f44be411dcc306237d9a0c7f05" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setLimitAndType</name></member>
+      <member refid="interfacesb_i_smart_playlist_1002be52e1f1da2cdcf620fcf1d44b5b8" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setMatch</name></member>
+      <member refid="interfacesb_i_playlist_151b932e2e5e09126b0301feff7deefc0" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setName</name></member>
+      <member refid="interfacesb_i_smart_playlist_18a07035b3b8629a72f6894491fbe2e26" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setQuery</name></member>
+      <member refid="interfacesb_i_playlist_19f8de9b58ed9dab943094d125c088f7b" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setQueryObject</name></member>
+      <member refid="interfacesb_i_playlist_1554a9396221577698746d03d4c0d8d46" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setReadableName</name></member>
+      <member refid="interfacesb_i_smart_playlist_180853e5770473dcadc2f6198ef6300cb" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setSelectedBy</name></member>
+      <member refid="interfacesb_i_playlist_184783945d1a092c10a9ec9e7e4471f22" prot="public" virt="non-virtual"><scope>sbISmartPlaylist</scope><name>setType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

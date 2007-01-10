@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='iso-8859-1' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.4.7">
+  <compounddef id="sb_i_playlist_reader_8idl" kind="file">
+    <compoundname>sbIPlaylistReader.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <includes local="yes">nsIArray.idl</includes>
+    <includes local="yes">nsIWebProgressListener.idl</includes>
+    <incdepgraph>
+      <node id="116">
+        <label>C:/projects/songbird/components/medialibrary/public/sbIPlaylistReader.idl</label>
+        <link refid="sbIPlaylistReader.idl"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+      </node>
+      <node id="118">
+        <label>nsIArray.idl</label>
+      </node>
+      <node id="117">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="119">
+        <label>nsIWebProgressListener.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_playlist_reader_listener" prot="public">sbIPlaylistReaderListener</innerclass>
+    <innerclass refid="interfacesb_i_playlist_reader" prot="public">sbIPlaylistReader</innerclass>
+    <innerclass refid="interfacesb_i_playlist_reader_manager" prot="public">sbIPlaylistReaderManager</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="sb_i_playlist_8idl-source" kindref="compound">sbIPlaylist.idl</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2006<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIArray.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIWebProgressListener.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/>nsIObserver;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_1a5f4ef393f681f1be6cf7c49a2ff5826" kindref="member">uuid</ref>(5770099E-503B-4b76-B1A6-0BC53F53D2BF)]</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_playlist_reader_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_reader_listener" kindref="compound">sbIPlaylistReaderListener</ref><sp/>:<sp/>nsIWebProgressListener</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_playlist_reader_listener_1a6662aec300466a15aaa6c9eaef3d899" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>originalURL;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_playlist_reader_listener_1a563da863781cf17a0c4814f2511d46a" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>serviceGuid;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72" refid="interfacesb_i_playlist_reader_listener_1fa7890a3f75246ca855d7b9cdb4e61bb" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>destinationURL;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="interfacesb_i_playlist_reader_listener_1c7956c50f45b3dc36387c5f59866529c" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>destinationTable;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="interfacesb_i_playlist_reader_listener_11e2b27f16497197be589295d6045b5b5" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>readableName;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="interfacesb_i_playlist_reader_listener_1b011fca5d58b4f8756734b895eb7fda3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>playlistType;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104" refid="interfacesb_i_playlist_reader_listener_1a11b0e0dbb843c30da6804a8c8922e7b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>description;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="interfacesb_i_playlist_reader_listener_16375024c65c7ded66a0b754a5c7a143f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRBool<sp/><sp/>appendOrReplace;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119" refid="interfacesb_i_playlist_reader_listener_130f9f51b6fbec58bf3c67c996132e646" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRBool<sp/><sp/>playWhenLoaded;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="interfacesb_i_playlist_reader_listener_13748fe73fc2e08fa16b131126c50240e" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIObserver<sp/>observer;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="interfacesb_i_playlist_reader_listener_13641f37f9258986764827c784a2631b4" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRBool<sp/>mediaMimetypesOnly;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="interfacesb_i_playlist_reader_listener_1de93434ff1afc48f4ee0a3a7fda154c0" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>ASTring<sp/>state;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_1a5f4ef393f681f1be6cf7c49a2ff5826" kindref="member">uuid</ref>(43005B48-8138-424d-AA12-FE604BA3A3E8)]</highlight></codeline>
+<codeline lineno="145" refid="interfacesb_i_playlist_reader" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_reader" kindref="compound">sbIPlaylistReader</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="146"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="153" refid="interfacesb_i_playlist_reader_12b54613d6b3a3ce6df84fe52fb2f1d92" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>originalURL;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>PRBool<sp/>read(in<sp/>AString<sp/>aURL,<sp/></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDestTable,<sp/></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>PRBool<sp/>aReplace,<sp/></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/>out<sp/>PRInt32<sp/>aErrorCode);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/>PRInt32<sp/>vote(in<sp/>AString<sp/>aURL);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/>AString<sp/>name();</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>AString<sp/>description();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,<sp/></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>aExtCount,<sp/></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_device_base_8idl_1a5f4ef393f681f1be6cf7c49a2ff5826" kindref="member">uuid</ref>(18032AD6-CB1F-403d-B3F5-7FE8EB579C28)]</highlight></codeline>
+<codeline lineno="217" refid="interfacesb_i_playlist_reader_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_reader_manager" kindref="compound">sbIPlaylistReaderManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="218"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="225" refid="interfacesb_i_playlist_reader_manager_1479158f113b7e70e86b5eb17a3d05f07" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>originalURL;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/>PRInt32<sp/>autoLoad(in<sp/>AString<sp/>aURL,<sp/></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aReadableName,<sp/></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aPlaylistType,<sp/></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDescription,<sp/></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentType,<sp/></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_reader_listener" kindref="compound">sbIPlaylistReaderListener</ref><sp/>aPlaylistReaderListener);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/>PRInt32<sp/>loadPlaylist(in<sp/>AString<sp/>aURL,<sp/></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aUniqueName,<sp/></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aReadableName,<sp/></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aPlaylistType,<sp/></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDescription,<sp/></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentType,<sp/></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>PRBool<sp/>aAppendOrReplace,<sp/></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_reader_listener" kindref="compound">sbIPlaylistReaderListener</ref><sp/>aPlaylistReaderListener);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/>PRInt32<sp/>read(in<sp/>AString<sp/>aFile,<sp/></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aName,<sp/></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aReadableName,<sp/></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentType,<sp/></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>PRBool<sp/>aAppendOrReplace);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,<sp/></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>aExtCount,<sp/></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="C:/projects/songbird/components/medialibrary/public/sbIPlaylistReader.idl"/>
+  </compounddef>
+</doxygen>
