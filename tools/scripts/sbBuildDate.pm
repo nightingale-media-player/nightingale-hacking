@@ -42,6 +42,9 @@
 # Specifically, it has been modified to provide build times accurate to the
 # second (Mozilla ignores minute and second) and it has been changed to replace
 # the value of SB_BUILD_ID (rather than NS_BUILD_ID and GRE_BUILD_ID).
+#
+# Modifications are Copyright(c) 2005-2007 POTI, Inc.
+#
 
 package sbBuildDate;
 

@@ -1,9 +1,10 @@
 
-Certain files in this binary application (“binary”) are Copyright © 2006 POTI Inc.
+Certain files in this binary application (“binary”) are
+Copyright(c) 2005-2007 POTI, Inc.
 
 Certain files in this binary may contain code from VLC and XUL Runner which is 
 copyright their respective copyright holders. These files may include 
-modifications which are Copyright © 2006 POTI Inc.
+modifications which are Copyright(c) 2005-2007 POTI, Inc.
  
 This binary also contains trademarks of POTI Inc. including, but not limited to, 
 the name “Songbird”, logos, icons, and page layout files (“feathers”). POTI Inc. 
