@@ -473,7 +473,7 @@ case "$SB_PLATFORM" in
     fi
 
     # We always want to include "mozilla-config.h"
-    GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
+    GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
     GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,$(MOZSDK_LIB_DIR)/lib"
 
@@ -523,7 +523,7 @@ case "$SB_PLATFORM" in
     fi
 
     # We always want to include "mozilla-config.h"
-    GCC_COMPILE_FLAGS="$GCC_COMPILE_FLAGS -include \"mozilla-config.h\""
+    GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
     GCC_LINKER_FLAGS=""
 
