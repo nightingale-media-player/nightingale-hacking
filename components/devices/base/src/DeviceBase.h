@@ -183,16 +183,13 @@ protected:
 
   virtual PRBool ResumeTransfer(const nsAString& aDeviceString);
 
+  // Device event handlers
   virtual PRBool InitializeAsync();
-
   virtual PRBool FinalizeAsync();
-
   virtual PRBool DeviceEventAsync(PRBool mediaInserted);
-
   virtual PRBool InitializeSync();
-
   virtual PRBool FinalizeSync();
-
+  virtual PRBool EjectDeviceSync(const nsAString& aDeviceString);
   virtual PRBool DeviceEventSync(PRBool mediaInserted);
 
   PRBool SubmitMessage(PRUint32 message, void* data1, void* data2);

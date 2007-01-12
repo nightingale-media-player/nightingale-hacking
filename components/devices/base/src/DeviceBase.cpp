@@ -240,6 +240,9 @@ sbDeviceBase::DeviceProcess(sbDeviceBase* pDevice)
       case MSG_DEVICE_FINALIZE:
         pDevice->FinalizeSync();
         break;
+      case MSG_DEVICE_EJECT:
+        pDevice->EjectDeviceSync(((TransferData *) pDeviceMessage->data2)->deviceString);
+        break;
       case MSG_DEVICE_EVENT:
         pDevice->DeviceEventSync(NS_PTR_TO_INT32(pDeviceMessage->data2));
         break;
@@ -446,11 +449,24 @@ sbDeviceBase::EjectDevice(const nsAString& aDeviceString,
                           PRBool *_retval)
 {
   *_retval = PR_FALSE;
-  if (IsEjectSupported(aDeviceString, _retval)) {
-    SubmitMessage(MSG_DEVICE_EJECT, 0, 0);
-    *_retval = PR_TRUE;
+  if (PR_TRUE) { //IsEjectSupported(aDeviceString, _retval)) {
+    if (mUsingThread)
+    {
+      SubmitMessage(MSG_DEVICE_EJECT, 0, 0);
+      *_retval = PR_TRUE;
+    }
+    else
+    {
+      *_retval = EjectDeviceSync(aDeviceString);
+    }
   }
   return NS_OK;
+}
+
+// Default implementation of EjectDeviceSync() function.
+PRBool sbDeviceBase::EjectDeviceSync(const nsAString& aDeviceString)
+{
+  return PR_FALSE;
 }
 
 // Use the prevIndex to get the next row in the table which will have an "id"
