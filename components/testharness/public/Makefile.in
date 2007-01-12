@@ -22,39 +22,19 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = bundle \
-          commandline \
-          dataremote \
-          devices \
-          faceplateregistration \
-          integration \
-          mediacore \
-          medialibrary \
-          metrics \
-          playlistplayback \
-          playlistreader \
-          playlistsource \
-          servicesource \
-          $(NULL)
+XPIDL_SRCS = sbITestHarness.idl \
+             $(NULL)
 
-# XXX make me a configure option
-ifdef DEBUG
-CREATEDIRS += $(SONGBIRD_TESTSDIR)
-SUBDIRS += testharness
-endif
+XPIDL_MODULE = sbTestHarness.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-SUBDIRDEPS  = mediacore : medialibrary
-SUBDIRDEPS2 = playlistreader : medialibrary
-SUBDIRDEPS3 = playlistsource : medialibrary
-SUBDIRDEPS4 = servicesource : medialibrary
-SUBDIRDEPS5 = devices : medialibrary
-SUBDIRDEPS6 = integration : devices
+SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

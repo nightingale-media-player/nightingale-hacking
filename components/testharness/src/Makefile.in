@@ -22,23 +22,14 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = public \
-          src \
-          $(NULL)
-
-SUBDIRDEPS = src : public
-
-# XXX make me a configure option
-ifdef DEBUG
-SUBDIRS += tests
-SUBDIRDEPS2 = tests : src
-endif
+SONGBIRD_COMPONENTS = $(srcdir)/sbTestHarness.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

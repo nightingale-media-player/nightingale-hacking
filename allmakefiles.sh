@@ -118,10 +118,16 @@ components/bundle/public/Makefile
 components/bundle/src/Makefile
 "
 
+MAKEFILES_commandline="
+components/commandline/Makefile
+components/commandline/src/Makefile
+"
+
 MAKEFILES_dataremote="
 components/dataremote/Makefile
 components/dataremote/public/Makefile
 components/dataremote/src/Makefile
+components/dataremote/tests/Makefile
 "
 
 MAKEFILES_devices="
@@ -240,8 +246,11 @@ components/servicesource/public/Makefile
 components/servicesource/src/Makefile
 "
 
-MAKEFILES_test_harness="
-test-harness/Makefile
+MAKEFILES_testharness="
+components/testharness/Makefile
+components/testharness/basetests/Makefile
+components/testharness/public/Makefile
+components/testharness/src/Makefile
 "
 
 MAKEFILES_update="
@@ -267,6 +276,7 @@ $MAKEFILES_feathers
 $MAKEFILES_installer
 $MAKEFILES_locales
 $MAKEFILES_bundle
+$MAKEFILES_commandline
 $MAKEFILES_dataremote
 $MAKEFILES_devices
 $MAKEFILES_devicemanager
@@ -282,7 +292,8 @@ $MAKEFILES_playlistplayback
 $MAKEFILES_playlistreader
 $MAKEFILES_playlistsource
 $MAKEFILES_servicesource
-$MAKEFILES_test_harness
+$MAKEFILES_testharness
+$MAKEFILES_tests
 $MAKEFILES_update
 $MAKEFILES_faceplateregistration
 "

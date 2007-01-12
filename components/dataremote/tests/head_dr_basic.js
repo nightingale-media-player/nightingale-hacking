@@ -25,10 +25,11 @@
  */
 
 /**
- * \brief Very basic "get it working" unit test
+ * \brief Head file for DataRemote unit tests 
  */
-function runTest () {
-  dump("Hello World\n");
-  return Components.results.NS_OK;
-}
+
+function prepDRBasic () {
+  // place any code neccessary to run the dataremote tests
+  // here.
+} 
 

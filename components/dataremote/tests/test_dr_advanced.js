@@ -25,10 +25,25 @@
  */
 
 /**
- * \brief Very basic "get it working" unit test
+ * \brief Advanced DataRemote unit tests
+ * 
+ * Initial file to test testharness architecture. Ultimately this
+ *   file would hold more advanced unit tests.
  */
+
 function runTest () {
-  dump("Hello World\n");
+  prepDataRemotes();
+
+  const drConstructor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+  var dr = new drConstructor("foo", null);
+  dr.stringValue = "Success";
+
+  // Add section to link dataremotes to dom nodes here
+
+  var expression = /Success/;
+  if ( !expression.test(dr.stringValue) )
+    return Components.results.NS_ERROR_FAILURE;
+
   return Components.results.NS_OK;
 }
 

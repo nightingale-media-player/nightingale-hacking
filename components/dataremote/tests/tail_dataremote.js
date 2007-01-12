@@ -25,10 +25,11 @@
  */
 
 /**
- * \brief Very basic "get it working" unit test
+ * \brief Tail file for DataRemote unit tests
  */
-function runTest () {
-  dump("Hello World\n");
-  return Components.results.NS_OK;
-}
+
+// place any cleanup code neccessary to restore profile for additional
+// tests here. 
+//dump("Dataremote Global Cleanup\n");
+
 

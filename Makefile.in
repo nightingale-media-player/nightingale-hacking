@@ -64,9 +64,5 @@ SUBDIRS += update
 SUBDIRDEPS2 = update : installer
 endif
 
-ifdef DEBUG
-CREATEDIRS += $(SONGBIRD_TESTSDIR)
-SUBDIRS += test-harness 
-endif
-
 include $(topsrcdir)/build/rules.mk
+

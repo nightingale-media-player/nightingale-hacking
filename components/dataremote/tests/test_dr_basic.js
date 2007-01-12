@@ -25,10 +25,21 @@
  */
 
 /**
- * \brief Very basic "get it working" unit test
+ * \brief Basic DataRemote unit tests
  */
+
 function runTest () {
-  dump("Hello World\n");
+  prepDataRemotes();
+  prepDRBasic();
+
+  const drConstructor = new Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+  var dr = new drConstructor("foo", null);
+  dr.stringValue = "Success";
+
+  var expression = /Success/;
+  if ( !expression.test(dr.stringValue) )
+    return Components.results.NS_ERROR_FAILURE;
+
   return Components.results.NS_OK;
 }
 

@@ -1,0 +1,62 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbITestHarness.idl
+ * \brief Definition of the sbITestHarness Interface
+ * \sa sbTestHarness.js
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbITestHarness
+ * \brief An interface for launching unit tests from XULRunner apps
+ */
+[scriptable, uuid(d0531d0b-36a8-4a59-84f3-8e9488dc2a96)]
+interface sbITestHarness : nsISupports
+{
+  /**
+   * \brief Initialize the Test Harness object
+   *
+   * Set the location or file to run the tests on. The testharness expects
+   *  to recieve a string containing a comma seperated list of subdirectories
+   *  within the testharness directory to test.
+   * \param aPath A comma seperated list of components to test. If this 
+   *              variable is null, all tests will be run.
+   * \return 
+   */
+  void init( in AString aComponentList );
+
+  /**
+   * \brief Run the tests
+   * \return  Success or failure
+   */
+  PRInt32 run();
+
+};
+
+
