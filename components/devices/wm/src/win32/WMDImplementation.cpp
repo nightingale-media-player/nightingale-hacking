@@ -36,10 +36,7 @@
 
 #include "mswmdm.h"
 #include "wmsdk.h"
-
-#include "sbIDatabaseQuery.h"
-#include "sbIMediaLibrary.h"
-#include "sbIPlaylist.h"
+#include "winioctl.h"
 
 #include "nspr.h"
 #include <xpcom/nscore.h>
@@ -55,13 +52,16 @@
 #include <xpcom/nsMemory.h>
 #include <unicharutil/nsUnicharUtils.h>
 
-#define WM_USER_WMD_ADDED (WM_USER+1)
+#define WM_USER_WMD_ADDED           (WM_USER+1)
+#define WM_USER_WMD_UPDATE_DATABASE (WM_USER+2)
 
 #define SONGBIRD_WMD_SYNC_WINDOW NS_L("sbWmdSyncWindow")
 
 EXTERN_GUID(CLSID_WMDRMDeviceApp, 0x5C140836,0x43DE,0x11d3,0x84,0x7D,0x00,0xC0,0x4F,0x79,0xDB,0xC0);
 EXTERN_GUID(IID_IWMDRMDeviceApp, 0x93AFDB44,0xB1E1,0x411d,0xb8,0x9b,0x75,0xad,0x4f,0x97,0x88,0x2b);
 EXTERN_GUID(IID_IWMDRMDeviceApp2, 0x600D6E55,0xDEA5,0x4e4c,0x9c,0x3a,0x6b,0xd6,0x42,0xa4,0x5b,0x9d);
+
+#define NUM_TRACKS_ADD_PER_ITERATION 10
 
 // Note: This certificate would allow you to transfer clear content only.
 // To transfer content protected with Microsoft DRM, you need to obtain a valid certificate from Microsoft.
@@ -101,6 +101,9 @@ struct
 };
 const PRUint32 NumPredefinedMimeFormats = sizeof(MediaFileTypeToMimeFormatMappings)/sizeof(MediaFileTypeToMimeFormatMappings[0]);
 
+#define LOCK_TIMEOUT  10000       // 10 Seconds
+#define LOCK_RETRIES  20
+
 PRUint32 WMDeviceTrack::mNextTrackID = 0;
 
 #define SB_CHECK_FAILURE(_rv)                             \
@@ -124,7 +127,7 @@ WMDeviceTrack::WMDeviceTrack():
 
 WMDeviceTrack::~WMDeviceTrack()
 {
-  SAFE_RELEASE(mIWMDMStorage);
+  //SAFE_RELEASE(mIWMDMStorage);
 }
 
 PRBool WMDeviceTrack::AttachStorage(IWMDMStorage *pIWMDMStorage, WMDeviceFolder* pParentWMDFolder, DWORD deviceType)
@@ -258,6 +261,7 @@ WMDeviceFolder::WMDeviceFolder(WMDeviceFolder* pParentWMDFolder):
 
 WMDeviceFolder::~WMDeviceFolder()
 {
+  return;
   for (list<WMDeviceFolder*>::iterator folderIterator = mSubFolders.begin(); folderIterator != mSubFolders.end();folderIterator ++)
   {
     SAFE_DELETE(*folderIterator);
@@ -666,21 +670,19 @@ PRBool WMDevice::Initialize()
 
   if (retVal == PR_TRUE)
   {
+    nsCOMPtr<nsIStringBundle> stringBundle;
     // Get the string bundle for our strings
-    if ( !mStringBundle.get() )
+    nsresult rv = NS_OK;
+    nsIStringBundleService *  StringBundleService = nsnull;
+    rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
+    if ( NS_SUCCEEDED(rv) )
     {
-      nsresult rv = NS_OK;
-      nsIStringBundleService *  StringBundleService = nsnull;
-      rv = CallGetService("@mozilla.org/intl/stringbundle;1", &StringBundleService );
-      if ( NS_SUCCEEDED(rv) )
-      {
-        rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs(mStringBundle) );
-        StringBundleService->Release();
-      }
+      rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs(stringBundle) );
+      StringBundleService->Release();
     }
 
     PRUnichar *value = nsnull;
-    mStringBundle->GetStringFromName(DEVICE_STRING, &value);
+    stringBundle->GetStringFromName(DEVICE_STRING, &value);
     mDeviceString = value;
     PR_Free(value);
     mDeviceString += DEVICE_STRING_PREFIX;
@@ -693,7 +695,6 @@ PRBool WMDevice::Initialize()
     mDeviceContext.AppendInt(mDeviceNumber);
 
     EnumTracks();
-    //UpdateDeviceLibraryData();
   }
 
   return retVal;
@@ -727,54 +728,69 @@ nsString& WMDevice::GetDeviceContext()
   return mDeviceContext;
 }
 
-PRBool WMDevice::UpdateDeviceLibraryData()
+void WMDevice::BeginDatabaseUpdate()
 {
-  nsresult rv;
-  PRBool bRet = PR_FALSE;
-  if (mNumTracks)
-  {
-    nsCOMPtr<sbIDatabaseQuery> pQuery =
+    nsresult rv;
+    mDatabaseUpdateQuery =
       do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
     SB_CHECK_FAILURE(rv);
 
-    rv = pQuery->SetAsyncQuery(PR_FALSE);
+    rv = mDatabaseUpdateQuery->SetAsyncQuery(PR_FALSE);
     SB_CHECK_FAILURE(rv);
 
-    rv = pQuery->SetDatabaseGUID(GetDeviceContext());
+    rv = mDatabaseUpdateQuery->SetDatabaseGUID(GetDeviceContext());
     SB_CHECK_FAILURE(rv);
 
-    nsCOMPtr<sbIMediaLibrary> pLibrary =
+    mDatabaseUpdateLibrary =
       do_CreateInstance("@songbirdnest.com/Songbird/MediaLibrary;1", &rv);
     SB_CHECK_FAILURE(rv);
 
-    rv = pLibrary->SetQueryObject(pQuery);
+    rv = mDatabaseUpdateLibrary->SetQueryObject(mDatabaseUpdateQuery);
     SB_CHECK_FAILURE(rv);
 
-    rv = pLibrary->CreateDefaultLibrary();
+    rv = mDatabaseUpdateLibrary->CreateDefaultLibrary();
     SB_CHECK_FAILURE(rv);
 
     nsCOMPtr<sbIPlaylistManager> pPlaylistManager =
       do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1", &rv);
     SB_CHECK_FAILURE(rv);
 
-    rv = pPlaylistManager->CreateDefaultPlaylistManager(pQuery);
+    rv = pPlaylistManager->CreateDefaultPlaylistManager(mDatabaseUpdateQuery);
     SB_CHECK_FAILURE(rv);
 
     nsAutoString strDevice(GetDeviceString());
-    nsCOMPtr<sbIPlaylist> pPlaylist;
     rv = pPlaylistManager->CreatePlaylist(GetTracksTable(), strDevice,
       strDevice, NS_LITERAL_STRING("wmd"),
-      pQuery, getter_AddRefs(pPlaylist));
+      mDatabaseUpdateQuery, getter_AddRefs(mDatabaseUpdatePlaylist));
     SB_CHECK_FAILURE(rv);
 
-    rv = pQuery->Execute(&bRet);
+    PRBool bRet = PR_FALSE;
+    rv = mDatabaseUpdateQuery->Execute(&bRet);
     SB_CHECK_FAILURE(rv);
 
-    rv = pQuery->ResetQuery();
+    rv = mDatabaseUpdateQuery->ResetQuery();
     SB_CHECK_FAILURE(rv);
+}
+
+PRBool WMDevice::UpdateDeviceLibraryData(PRUint32 beginTrackNumber, PRUint32 endTrackNumber, PRBool& doneUpdating)
+{
+  nsresult rv;
+  PRBool bRet = PR_FALSE;
+  if (mNumTracks)
+  {
+    if (endTrackNumber >= mNumTracks)
+    {
+      endTrackNumber = mNumTracks;
+    }
+    else
+    {
+      // We will have some more tracks to add after
+      // this iteration.
+      doneUpdating = PR_FALSE; 
+    }
 
     // Create record for each track
-    for (unsigned int trackNum = 0; trackNum < mNumTracks; trackNum ++)
+    for (unsigned int trackNum = beginTrackNumber; trackNum < endTrackNumber; trackNum ++)
     {
       WMDeviceTrack* currentTrack = mRootFolder.GetMediaTrackIncSubFolders(trackNum);
       if (currentTrack == NULL)
@@ -815,7 +831,7 @@ PRBool WMDevice::UpdateDeviceLibraryData()
       url += currentTrack->mAlbum;
       url += currentTrack->mGenre;
 
-      rv = pLibrary->AddMedia(url, nMetaKeyCount, aMetaKeys, nMetaKeyCount,
+      rv = mDatabaseUpdateLibrary->AddMedia(url, nMetaKeyCount, aMetaKeys, nMetaKeyCount,
         const_cast<const PRUnichar **>(aMetaValues),
         PR_TRUE, PR_FALSE, guid);
       SB_CHECK_FAILURE(rv);
@@ -824,14 +840,14 @@ PRBool WMDevice::UpdateDeviceLibraryData()
       // sometimes "addMedia" fails the first time and calling it again
       // succeeds, needs to be investigated.
       if (guid.IsEmpty()) {
-        rv = pLibrary->AddMedia(url, nMetaKeyCount, aMetaKeys, nMetaKeyCount,
+        rv = mDatabaseUpdateLibrary->AddMedia(url, nMetaKeyCount, aMetaKeys, nMetaKeyCount,
           const_cast<const PRUnichar **>(aMetaValues),
           PR_FALSE, PR_FALSE, guid);
         SB_CHECK_FAILURE(rv);
       }
 
-      if(!guid.IsEmpty() && pPlaylist) {
-        rv = pPlaylist->AddByGUID(guid, GetDeviceContext(), -1, PR_FALSE,
+      if(!guid.IsEmpty() && mDatabaseUpdatePlaylist) {
+        rv = mDatabaseUpdatePlaylist->AddByGUID(guid, GetDeviceContext(), -1, PR_FALSE,
           PR_FALSE, &bRet);
         SB_CHECK_FAILURE(rv);
       }
@@ -843,13 +859,22 @@ PRBool WMDevice::UpdateDeviceLibraryData()
       nsMemory::Free(aMetaValues[4]);
       nsMemory::Free(aMetaValues[5]);
       nsMemory::Free(aMetaValues);
-    }
-    rv = pQuery->Execute(&bRet);
-    SB_CHECK_FAILURE(rv);
 
+    }
+    rv = mDatabaseUpdateQuery->Execute(&bRet);
+    SB_CHECK_FAILURE(rv);
+    rv = mDatabaseUpdateQuery->ResetQuery();
   }
 
   return PR_TRUE;
+}
+
+void WMDevice::EndDatabaseUpdate()
+{
+  // Release instances of objects used in DB updater.
+  ((sbIDatabaseQuery *) mDatabaseUpdateQuery.get())->Release();
+  ((sbIMediaLibrary *) mDatabaseUpdateLibrary.get())->Release();
+  ((sbIPlaylist*) mDatabaseUpdatePlaylist.get())->Release();
 }
 
 PRBool WMDevice::IsTetheredDownloadCapable()
@@ -1052,6 +1077,76 @@ void WMDevice::ResumeTransfer()
 {
 }
 
+PRBool WMDevice::EjectDevice()
+{
+  PRBool retVal = PR_FALSE;
+  IWMDMDevice3* pDevice3 = NULL;
+  HRESULT hr = mIWMDevice->QueryInterface(IID_IWMDMDevice3, (void **)&pDevice3);
+
+  DWORD dummy = 0;
+  while (pDevice3) // while loop for better error handling
+  {
+    // Lock the volume
+    DWORD dwBytesReturned = 4;
+    const dwSleepAmount = LOCK_TIMEOUT / LOCK_RETRIES;
+
+    // Do this in a loop until a timeout period has expired
+    for (int nTryCount = 0; nTryCount < LOCK_RETRIES; nTryCount++) 
+    {
+      if (SUCCEEDED(pDevice3->DeviceIoControl(FSCTL_LOCK_VOLUME,
+                                                NULL, 0,
+                                                (BYTE *) &dummy,
+                                                &dwBytesReturned)))
+                                                break;
+
+      Sleep(dwSleepAmount);
+    }
+
+    if (nTryCount == LOCK_RETRIES)
+    {
+      // Unable to lock
+      break;
+    }
+
+    // Dismount the drive
+    if (SUCCEEDED(pDevice3->DeviceIoControl(
+                  FSCTL_DISMOUNT_VOLUME, 
+                  NULL, 0,
+                  (BYTE *) &dummy,
+                  &dwBytesReturned)))
+    {
+      break;
+    }
+
+    PREVENT_MEDIA_REMOVAL PMRBuffer;
+
+    PMRBuffer.PreventMediaRemoval = false;
+
+    // Allow media removal
+    if (!SUCCEEDED(pDevice3->DeviceIoControl(IOCTL_STORAGE_MEDIA_REMOVAL,
+                                                (BYTE *) &PMRBuffer, sizeof(PREVENT_MEDIA_REMOVAL),
+                                                (BYTE *) &dummy,
+                                                &dwBytesReturned)))
+    {
+      break;
+    }
+
+    // Eject the device, well a disconnect for the device?
+    if (pDevice3->DeviceIoControl(IOCTL_STORAGE_EJECT_MEDIA,
+                                              NULL, 0,
+                                              (BYTE *) &dummy,
+                                              &dwBytesReturned))
+    {
+      retVal = PR_TRUE;
+    }
+    break;
+  }
+
+  SAFE_RELEASE(pDevice3);
+
+  return retVal;
+}
+
 
 // ********************************
 // CWMDProgress related definitions
@@ -1113,22 +1208,55 @@ ULONG STDMETHODCALLTYPE CWMDProgress::Release()
 
 // WMDManager class related definitions
 //
-static LRESULT CALLBACK CreatorThreadWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WMDManager::CreatorThreadWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   WMDManager *wmdmObject = reinterpret_cast<WMDManager*>(GetWindowLong(hWnd, GWL_USERDATA));
 
   if (uMsg == WM_USER_WMD_ADDED)
   {
     // Assuming lParam has the device id
-    nsString deviceString;
-    wmdmObject->GetDeviceStringByIndex((PRUint32) lParam, deviceString);
-    wmdmObject->UpdateDatabase(deviceString);
-    // Notify listeners of the event
-    wmdmObject->mParentDevice->DoDeviceConnectCallback(deviceString);
+    // and wParam has the beginning Track 
+    // number of the next batch of tracks
+    // to add.
+    WMDevice* device = wmdmObject->GetDeviceMatchingIndex((PRUint32) lParam);
+    if (device)
+    {
+      device->BeginDatabaseUpdate();
+      wmdmObject->PostWindowMessage(WM_USER_WMD_UPDATE_DATABASE, 0, lParam);
+    }
+  }
+  else
+  if (uMsg == WM_USER_WMD_UPDATE_DATABASE)
+  {
+    // Assuming wParam has the starting track id and the iParam has number
+    // of tracks to update in this iteration.
+    PRBool doneUpdating = PR_TRUE;
+    WMDevice* device = wmdmObject->GetDeviceMatchingIndex((PRUint32) lParam);
+    if (device)
+    {
+      device->UpdateDeviceLibraryData((PRUint32) wParam, (wParam+NUM_TRACKS_ADD_PER_ITERATION), doneUpdating);
+      if (doneUpdating)
+      {
+        device->EndDatabaseUpdate();
+        // Now that we have added all the tracks to
+        // the database, Notify listeners that a device is added
+        wmdmObject->mParentDevice->DoDeviceConnectCallback(device->GetDeviceString());
+      }
+      else
+      {
+        // More tracks to add to the database so post a message for another iteration
+        wmdmObject->PostWindowMessage(WM_USER_WMD_UPDATE_DATABASE, (wParam + NUM_TRACKS_ADD_PER_ITERATION), lParam);
+      }
+    }
   }
 
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 } 
+
+void WMDManager::PostWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  PostMessage(mCreatorThreadWindow, uMsg, wParam, lParam);
+}
 
 WMDManager::WMDManager(class sbWMDevice* parent):
   mParentDevice(parent),
@@ -1154,20 +1282,10 @@ WMDManager::WMDManager(class sbWMDevice* parent):
 
 WMDManager::~WMDManager()
 {
-  for (std::list<WMDevice *>::iterator iteratorWMObjectects = mDevices.begin(); iteratorWMObjectects != mDevices.end(); iteratorWMObjectects ++)
-  {
-    WMDevice* wmObject =(*iteratorWMObjectects);
-    delete wmObject;
-  } 
-
   // Clean up sync window stuff here.
   DestroyWindow(mCreatorThreadWindow);
   UnregisterClass(SONGBIRD_WMD_SYNC_WINDOW, GetModuleHandle(NULL));
   
-  SAFE_DELETE(mSAC);
-  SAFE_RELEASE(mWMDevMgr);
-
-  CoUninitialize();
 }
 
 // Function used to re-use DB numbers for suffixing db names
@@ -1201,7 +1319,13 @@ void WMDManager::Finalize()
   {
     WMDevice* wmObject =(*iteratorWMObjectects);
     wmObject->Finalize();
+    //delete wmObject;
   } 
+
+  SAFE_DELETE(mSAC);
+  SAFE_RELEASE(mWMDevMgr);
+
+  CoUninitialize();
 }
 
 WMDevice* WMDManager::GetDeviceMatchingString(const nsAString& deviceString)
@@ -1219,6 +1343,24 @@ WMDevice* WMDManager::GetDeviceMatchingString(const nsAString& deviceString)
 
   return wmObject;
 }
+
+WMDevice* WMDManager::GetDeviceMatchingIndex(PRUint32 index)
+{
+  WMDevice* wmObject = NULL;
+
+  for (std::list<WMDevice *>::iterator iteratorWMObjectects = mDevices.begin(); iteratorWMObjectects != mDevices.end(); iteratorWMObjectects ++)
+  {
+    if (index == 0)
+    {
+      wmObject = (*iteratorWMObjectects);
+      break;
+    }
+    index --;
+  } 
+
+  return wmObject;
+}
+
 
 void WMDManager::GetContext(const nsAString& deviceString, nsAString& _retval)
 { 
@@ -1312,10 +1454,10 @@ PRBool WMDManager::GetTrackTable(const nsAString&  deviceString, nsAString& dbCo
   return PR_TRUE;
 }
 
-PRBool WMDManager::EjectDevice(const nsAString&  deviceString)
+PRBool WMDManager::EjectDevice(const nsAString& aDeviceString)
 { 
   PRBool retVal = PR_FALSE;
-  WMDevice* wmObject = GetDeviceMatchingString(deviceString);
+  WMDevice* wmObject = GetDeviceMatchingString(aDeviceString);
 
   if (wmObject)
   {
@@ -1649,13 +1791,13 @@ PRBool WMDManager::AddDevice(IWMDMDevice* pIDevice)
     mDevices.push_back(wmdevice);
     // Post a message to our invisible window to update the database
     // can call device add notification.
-    PostMessage(mCreatorThreadWindow, WM_USER_WMD_ADDED, 0, wmdevice->GetDeviceNumber());
+    PostWindowMessage(WM_USER_WMD_ADDED, 0/*begin track number*/, wmdevice->GetDeviceNumber());
   }
   else
   {
     // Probably a removable drive or something posing
     // as a device.
-    delete wmdevice;
+    //delete wmdevice;
   }
 
   return PR_FALSE;
@@ -1674,7 +1816,7 @@ PRInt32 WMDManager::RemoveDevice(LPCWSTR pCanonicalName)
       mParentDevice->DoDeviceDisconnectCallback(device->GetDeviceString());
       mDBAvaliable[device->GetDeviceNumber()] = PR_TRUE;
       mParentDevice->ClearLibraryData(device->GetDeviceContext());
-      delete device;
+      //delete device;
       mDevices.erase(iteratorWMObjectects);
 
       return PR_TRUE;
@@ -1697,7 +1839,7 @@ PRInt32 WMDManager::RemoveDevice(WMDevice *wmdevice)
       mDBAvaliable[device->GetDeviceNumber()] = PR_TRUE;
       mParentDevice->DoDeviceDisconnectCallback(device->GetDeviceString());
       mParentDevice->ClearLibraryData(device->GetDeviceContext());
-      delete device;
+      //delete device;
       mDevices.erase(iteratorWMObjectects);
 
       return PR_TRUE;
@@ -1733,16 +1875,6 @@ void WMDManager::MediaInsert(LPCWSTR pwszCanonicalName)
 
 void WMDManager::MediaRemove(LPCWSTR pwszCanonicalName)
 {
-}
-
-void WMDManager::UpdateDatabase(const nsAString& deviceString)
-{
-  WMDevice* wmObject = GetDeviceMatchingString(deviceString);
-
-  if (wmObject)
-  {
-    wmObject->UpdateDeviceLibraryData();
-  }
 }
 
 HRESULT CNotificationHandler::WMDMMessage (/*[in]*/ DWORD dwMessageType, /*[in]*/ LPCWSTR pwszCanonicalName)

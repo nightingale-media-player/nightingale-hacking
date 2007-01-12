@@ -58,7 +58,6 @@ public:
   virtual PRBool      IsUploadPaused(const nsAString& deviceString) = 0;
   virtual PRBool      IsTransferPaused(const nsAString& deviceString) = 0;
   virtual void        TransferComplete(const nsAString& deviceString) = 0;
-  virtual void        UpdateDatabase(const nsAString& deviceString) = 0;
 
   virtual ~sbWMDObjectManager(){}
 

@@ -81,6 +81,7 @@ sbWMDevice::~sbWMDevice()
   //worker thread. Doing this for *your* device is ill advised!
   sbDeviceBase::RequestThreadShutdown();
 
+
   PR_EnterMonitor(mpMonitor);
 
   delete mDeviceManager;
@@ -94,6 +95,7 @@ sbWMDevice::~sbWMDevice()
 NS_IMETHODIMP
 sbWMDevice::Initialize(PRBool *_retval)
 {
+  // Do this in wm thread
   InitializeAsync();
   return NS_OK;
 }
@@ -115,8 +117,17 @@ PRBool sbWMDevice::InitializeSync()
 NS_IMETHODIMP
 sbWMDevice::Finalize(PRBool *_retval)
 {
-  mDeviceManager->Finalize();
+  // Do this in wm thread
+  FinalizeAsync();
   return NS_OK;
+}
+
+PRBool sbWMDevice::FinalizeSync()
+{
+  CleanupWMDEntries();
+  mDeviceManager->Finalize();
+
+  return PR_TRUE;
 }
 
 
@@ -300,12 +311,6 @@ sbWMDevice::GetName(nsAString& aName)
   return NS_OK;
 }
 
-PRBool
-sbWMDevice::IsEjectSupported() 
-{
-  return PR_FALSE;
-}
-
 void
 sbWMDevice::OnThreadBegin()
 {
@@ -331,7 +336,14 @@ NS_IMETHODIMP
 sbWMDevice::IsEjectSupported(const nsAString& aDeviceString,
                              PRBool *_retval)
 {
-  return sbDeviceBase::IsEjectSupported(aDeviceString, _retval);
+  *_retval = PR_FALSE;
+
+  if(mDeviceManager)
+  {
+    *_retval = mDeviceManager->IsEjectSupported(aDeviceString);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -530,4 +542,16 @@ void sbWMDevice::ClearLibraryData(nsAString& dbContext)
   }
 }
 
+PRBool sbWMDevice::EjectDeviceSync(const nsAString& aDeviceString)
+{
+  PRBool retVal = PR_FALSE;
+  if(mDeviceManager)
+  {
+    // Pass this eject command down to our platform specific
+    // WM device handler.
+    retVal = mDeviceManager->EjectDevice(aDeviceString);
+  }
+
+  return retVal;
+}
 

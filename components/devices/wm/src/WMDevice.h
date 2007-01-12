@@ -84,10 +84,12 @@ private:
   virtual void OnThreadBegin();
   virtual void OnThreadEnd();
 
-  virtual PRBool  IsEjectSupported();
   virtual PRBool  SuspendCurrentTransfer(const nsAString& aDeviceString);
   void            CleanupWMDEntries();
+
   virtual PRBool  InitializeSync();
+  virtual PRBool  FinalizeSync();
+  virtual PRBool  EjectDeviceSync(const nsAString& aDeviceString);
 
   PRMonitor *mpMonitor;
   sbWMDObjectManager* mDeviceManager;

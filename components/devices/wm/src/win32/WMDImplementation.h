@@ -42,6 +42,10 @@
 
 #include <list>
 
+#include "sbIDatabaseQuery.h"
+#include "sbIMediaLibrary.h"
+#include "sbIPlaylist.h"
+
 #define MAX_WMD_SUPPORTED 100
 
 class CWMDProgress : public IWMDMProgress
@@ -199,11 +203,14 @@ public:
   PRBool      IsTransferPaused() { return mDeviceState == kSB_DEVICE_STATE_BUSY; }
   void        TransferComplete();
   PRBool      IsDownloadSupported();
-  PRBool      IsEjectSupported(){return PR_FALSE;}
-  PRBool      EjectDevice(){return PR_FALSE;}
+  PRBool      IsEjectSupported(){return PR_TRUE;}
+  PRBool      EjectDevice();
   PRBool      IsUpdateSupported(){return PR_FALSE;}
   PRUint32    GetDeviceNumber() { return mDeviceNumber; }
-  PRBool      UpdateDeviceLibraryData();
+  PRBool      UpdateDeviceLibraryData(PRUint32 beginTrackNumber, PRUint32 endTrackNumber, PRBool& doneUpdating);
+  void        ClearLibraryData();
+  void        BeginDatabaseUpdate();
+  void        EndDatabaseUpdate();
 
 private:
   WMDevice() {}
@@ -223,7 +230,6 @@ private:
   PRInt32  mDeviceState;
   DWORD    mDeviceType;
   PRBool   mStopTransfer;
-  nsCOMPtr<nsIStringBundle> mStringBundle;
 
   nsCOMPtr<nsITimer> mTimer;
 
@@ -237,13 +243,15 @@ private:
 
   WMDManager* mParentWMDManager;
 
-private:
   PRBool  IsMediaPlayer();
   PRBool  IsTetheredDownloadCapable();
   PRBool  ReadDeviceAttributes(void);
   PRBool  IsFileFormatAcceptable(const char* fileFormat);
   void    EnumTracks();
-  void    ClearLibraryData();
+
+  nsCOMPtr<sbIDatabaseQuery>  mDatabaseUpdateQuery;
+  nsCOMPtr<sbIMediaLibrary>   mDatabaseUpdateLibrary;
+  nsCOMPtr<sbIPlaylist>       mDatabaseUpdatePlaylist;
 
   _WAVEFORMATEX   mFormat;
   WMDMDATETIME    mDateTime;
@@ -324,15 +332,18 @@ public:
   virtual PRBool      IsUploadPaused(const nsAString& deviceString);
   virtual PRBool      IsTransferPaused(const nsAString& deviceString);
   virtual void        TransferComplete(const nsAString& deviceString);
-  virtual void        UpdateDatabase(const nsAString& deviceString);
+
+  void PostWindowMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   PRUint32 GetNextAvailableDBNumber();
 
-  friend LRESULT CALLBACK CreatorThreadWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  static LRESULT CALLBACK CreatorThreadWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
-  WMDevice* GetDeviceMatchingString(const nsAString& deviceString);
   WMDManager() {}
+
+  WMDevice* GetDeviceMatchingString(const nsAString& deviceString);
+  WMDevice* GetDeviceMatchingIndex(PRUint32 index);
   void EnumerateDevices();
   void RemoveTransferEntries(const PRUnichar* deviceString);
 
