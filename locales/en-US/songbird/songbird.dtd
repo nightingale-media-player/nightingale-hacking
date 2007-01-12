@@ -73,6 +73,8 @@
 <!ENTITY playlist.context.search  "Search" >
 <!ENTITY playlist.context.lyrics  "Lyrics" >
 
+<!ENTITY device.context.eject  "Eject" >
+
 <!ENTITY tooltip.miniplayer       "Switch to Miniplayer" >
 <!ENTITY tooltip.minimize         "Minimize" >
 <!ENTITY tooltip.maximize         "Maximize/Restore" >
