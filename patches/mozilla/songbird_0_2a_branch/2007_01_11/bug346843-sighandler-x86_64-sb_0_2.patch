@@ -1,0 +1,16 @@
+Index: xpfe/bootstrap/nsSigHandlers.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpfe/bootstrap/nsSigHandlers.cpp,v
+retrieving revision 1.41.18.1
+diff -u -p -r1.41.18.1 nsSigHandlers.cpp
+--- xpfe/bootstrap/nsSigHandlers.cpp	22 Jun 2006 22:31:13 -0000	1.41.18.1
++++ xpfe/bootstrap/nsSigHandlers.cpp	10 Jan 2007 01:58:23 -0000
+@@ -76,7 +76,7 @@
+ static char _progname[1024] = "huh?";
+ static unsigned int _gdb_sleep_duration = 300;
+ 
+-#if defined(LINUX) && defined(DEBUG) && (defined(__i386) || defined(PPC))
++#if defined(LINUX) && defined(DEBUG) && (defined(__i386) || defined(__x86_64) || defined(PPC))
+ #define CRAWL_STACK_ON_SIGSEGV
+ #endif
+  

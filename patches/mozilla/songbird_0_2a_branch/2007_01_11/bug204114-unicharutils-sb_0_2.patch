@@ -1,0 +1,943 @@
+Index: intl/unicharutil/src/nsCaseConversionImp2.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/intl/unicharutil/src/nsCaseConversionImp2.cpp,v
+retrieving revision 1.33
+diff -u -p -r1.33 nsCaseConversionImp2.cpp
+--- intl/unicharutil/src/nsCaseConversionImp2.cpp	30 Mar 2005 04:48:44 -0000	1.33
++++ intl/unicharutil/src/nsCaseConversionImp2.cpp	10 Jan 2007 01:35:51 -0000
+@@ -20,6 +20,7 @@
+  * the Initial Developer. All Rights Reserved.
+  *
+  * Contributor(s):
++ *   Ben Turner <mozilla@songbirdnest.com>
+  *
+  * Alternatively, the contents of this file may be used under the terms of
+  * either of the GNU General Public License Version 2 or later (the "GPL"),
+@@ -40,7 +41,6 @@
+ #include "nsCaseConversionImp2.h"
+ #include "casetable.h"
+ 
+-
+ // For gUpperToTitle 
+ enum {
+   kUpperIdx =0,
+@@ -64,40 +64,35 @@ enum {
+   
+ // Size of Tables
+ 
+-
+ #define CASE_MAP_CACHE_SIZE 0x40
+ #define CASE_MAP_CACHE_MASK 0x3F
+ 
+ class nsCompressedMap {
+ public:
+-   nsCompressedMap(const PRUnichar *aTable, PRUint32 aSize);
+-   ~nsCompressedMap();
++   void Initialize(const PRUnichar *aTable, PRUint32 aSize);
+    PRUnichar Map(PRUnichar aChar);
++
+ protected:
+    PRUnichar Lookup(PRUint32 l, PRUint32 m, PRUint32 r, PRUnichar aChar);
+ 
+-private: 
++private:
++   // Not meant to be implemented
++   static void* operator new(size_t /*size*/) CPP_THROW_NEW;
++
+    const PRUnichar *mTable;
+    PRUint32 mSize;
+-   PRUint32 *mCache;
++   PRUint32 mCache[CASE_MAP_CACHE_SIZE];
+    PRUint32 mLastBase;
+ };
+ 
+-nsCompressedMap::nsCompressedMap(const PRUnichar *aTable, PRUint32 aSize)
++void nsCompressedMap::Initialize(const PRUnichar *aTable,
++                                 PRUint32 aSize)
+ {
+-   MOZ_COUNT_CTOR(nsCompressedMap);
+    mTable = aTable;
+    mSize = aSize;
+    mLastBase = 0;
+-   mCache = new PRUint32[CASE_MAP_CACHE_SIZE];
+    for(int i = 0; i < CASE_MAP_CACHE_SIZE; i++)
+-      mCache[i] = 0;
+-}
+-
+-nsCompressedMap::~nsCompressedMap()
+-{
+-   MOZ_COUNT_DTOR(nsCompressedMap);
+-   delete[] mCache;
++     mCache[i] = 0;
+ }
+ 
+ PRUnichar nsCompressedMap::Map(PRUnichar aChar)
+@@ -173,12 +168,10 @@ PRUnichar nsCompressedMap::Lookup(
+   }
+ }
+ 
+-nsrefcnt nsCaseConversionImp2::gInit      = 0;
+-
+-NS_IMPL_ISUPPORTS1(nsCaseConversionImp2, nsICaseConversion)
++NS_IMPL_THREADSAFE_ISUPPORTS1(nsCaseConversionImp2, nsICaseConversion)
+ 
+-static nsCompressedMap *gUpperMap = nsnull;
+-static nsCompressedMap *gLowerMap = nsnull;
++static nsCompressedMap gUpperMap;
++static nsCompressedMap gLowerMap;
+ 
+ nsresult nsCaseConversionImp2::ToUpper(
+   PRUnichar aChar, PRUnichar* aReturn
+@@ -197,7 +190,7 @@ nsresult nsCaseConversionImp2::ToUpper(
+   } 
+   else 
+   {
+-    *aReturn = gUpperMap->Map(aChar);
++    *aReturn = gUpperMap.Map(aChar);
+   }
+   return NS_OK;
+ }
+@@ -215,14 +208,9 @@ static PRUnichar FastToLower(
+         return aChar;
+   } 
+   else if( IS_NOCASE_CHAR(aChar)) // optimize for block which have no case
+-  {
+-    return aChar;
+-  } 
+-  else
+-  {
+-    return gLowerMap->Map(aChar);
+-  } 
+-  return NS_OK;
++     return aChar;
++
++  return gLowerMap.Map(aChar);
+ }
+ 
+ nsresult nsCaseConversionImp2::ToLower(
+@@ -232,6 +220,7 @@ nsresult nsCaseConversionImp2::ToLower(
+   *aReturn = FastToLower(aChar);
+   return NS_OK;
+ }
++
+ nsresult nsCaseConversionImp2::ToTitle(
+   PRUnichar aChar, PRUnichar* aReturn
+ )
+@@ -258,8 +247,7 @@ nsresult nsCaseConversionImp2::ToTitle(
+       }
+     }
+ 
+-    PRUnichar upper;
+-    upper = gUpperMap->Map(aChar);
++    PRUnichar upper = gUpperMap.Map(aChar);
+     
+     if( 0x01C0 == ( upper & 0xFFC0)) // 0x01Cx - 0x01Fx
+     {
+@@ -296,7 +284,7 @@ nsresult nsCaseConversionImp2::ToUpper(
+     } 
+     else 
+     {
+-      aReturn[i] = gUpperMap->Map(aChar);
++      aReturn[i] = gUpperMap.Map(aChar);
+     }
+   }
+   return NS_OK;
+@@ -391,28 +379,16 @@ nsCaseConversionImp2::CaseInsensitiveCom
+ 
+ nsCaseConversionImp2::nsCaseConversionImp2()
+ {
+-  if (gInit++ == 0) {
+-    gUpperMap = new nsCompressedMap(NS_REINTERPRET_CAST(const PRUnichar*, &gToUpper[0]), gToUpperItems);
+-    gLowerMap = new nsCompressedMap(NS_REINTERPRET_CAST(const PRUnichar*, &gToLower[0]), gToLowerItems);
+-  }
++  gUpperMap.Initialize(NS_REINTERPRET_CAST(const PRUnichar*, &gToUpper[0]),
++                       gToUpperItems);
++  gLowerMap.Initialize(NS_REINTERPRET_CAST(const PRUnichar*, &gToLower[0]),
++                       gToLowerItems);
+ }
+ 
+-nsCaseConversionImp2::~nsCaseConversionImp2()
+-{
+-  if (--gInit == 0) {
+-    delete gUpperMap;
+-    gUpperMap = nsnull;
+-    delete gLowerMap;
+-    gLowerMap = nsnull;
+-  }
+-}
+-
+-nsresult NS_NewCaseConversion(nsISupports** oResult)
+-{
+-  if(!oResult)
+-    return NS_ERROR_NULL_POINTER;
+-  *oResult = new nsCaseConversionImp2();
+-  if(*oResult)
+-    NS_ADDREF(*oResult);
+-  return (*oResult) ? NS_OK : NS_ERROR_OUT_OF_MEMORY; 
++nsresult NS_NewCaseConversion(nsICaseConversion** oResult)
++{
++  NS_ENSURE_ARG_POINTER(oResult);
++  NS_NEWXPCOM(*oResult, nsCaseConversionImp2);
++  NS_IF_ADDREF(*oResult);
++  return *oResult ? NS_OK :NS_ERROR_OUT_OF_MEMORY; 
+ }
+Index: intl/unicharutil/src/nsCaseConversionImp2.h
+===================================================================
+RCS file: /cvsroot/mozilla/intl/unicharutil/src/nsCaseConversionImp2.h,v
+retrieving revision 1.17
+diff -u -p -r1.17 nsCaseConversionImp2.h
+--- intl/unicharutil/src/nsCaseConversionImp2.h	18 Apr 2004 14:21:16 -0000	1.17
++++ intl/unicharutil/src/nsCaseConversionImp2.h	10 Jan 2007 01:35:51 -0000
+@@ -50,7 +50,7 @@ class nsCaseConversionImp2 : public nsIC
+ 
+ public:
+   nsCaseConversionImp2();
+-  virtual ~nsCaseConversionImp2();
++  virtual ~nsCaseConversionImp2() { };
+ 
+ 
+   NS_IMETHOD ToUpper(PRUnichar aChar, PRUnichar* aReturn);
+@@ -67,8 +67,6 @@ public:
+                      PRUint32 aLen, PRBool aStartInWordBoundary = PR_TRUE);
+    
+   NS_IMETHOD CaseInsensitiveCompare(const PRUnichar* aLeft, const PRUnichar* aRight, PRUint32 aLength, PRInt32 *aResult);
+-private:
+-  static nsrefcnt gInit;
+ };
+ 
+ #endif
+Index: intl/unicharutil/util/nsUnicharUtils.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/intl/unicharutil/util/nsUnicharUtils.cpp,v
+retrieving revision 1.27.8.1
+diff -u -p -r1.27.8.1 nsUnicharUtils.cpp
+--- intl/unicharutil/util/nsUnicharUtils.cpp	22 Jun 2006 19:13:00 -0000	1.27.8.1
++++ intl/unicharutil/util/nsUnicharUtils.cpp	10 Jan 2007 01:35:51 -0000
+@@ -21,6 +21,7 @@
+  *
+  * Contributor(s):
+  *   Alec Flett <alecf@netscape.com>
++ *   Ben Turner <mozilla@songbirdnest.com>
+  *
+  * Alternatively, the contents of this file may be used under the terms of
+  * either the GNU General Public License Version 2 or later (the "GPL"), or
+@@ -36,315 +37,358 @@
+  *
+  * ***** END LICENSE BLOCK ***** */
+ 
+-#include "nsString.h"
+ #include "nsUnicharUtils.h"
+ #include "nsUnicharUtilCIID.h"
+-#include "nsICaseConversion.h"
+-#include "nsIServiceManager.h"
+-#include "nsCRT.h"
+ 
++#include "nsCRT.h"
++#include "nsICaseConversion.h"
+ #include "nsIObserver.h"
+-#include "nsIObserverService.h"
++#include "nsObserverService.h"
++#include "nsIServiceManager.h"
++#include "nsIThread.h"
++#include "nsServiceManagerUtils.h"
++#include "nsString.h"
++#include "nsXPCOMCID.h"
+ 
+-// global cache of the case conversion service
++// global cache of the case conversion service, set only on the main thread
+ static nsICaseConversion *gCaseConv = nsnull;
+ 
+ class nsShutdownObserver : public nsIObserver
+ {
+ public:
+-    nsShutdownObserver() { }
+-    virtual ~nsShutdownObserver() {}
+-    NS_DECL_ISUPPORTS
+-    
+-    NS_IMETHOD Observe(nsISupports *aSubject, const char *aTopic,
+-                       const PRUnichar *aData)
+-    {
+-        if (nsCRT::strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)==0) {
+-            NS_IF_RELEASE(gCaseConv);
+-        }
++  nsShutdownObserver() { }
++  virtual ~nsShutdownObserver() {}
++  NS_DECL_ISUPPORTS
++  
++  NS_IMETHOD Observe(nsISupports *aSubject,
++                     const char *aTopic,
++                     const PRUnichar *aData)
++  {
++    if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)==0)
++      NS_IF_RELEASE(gCaseConv);
++    return NS_OK;
++  }
++};
+ 
+-        return NS_OK;
+-    }
++NS_IMPL_THREADSAFE_ISUPPORTS1(nsShutdownObserver, nsIObserver)
+ 
+-};
++already_AddRefed<nsICaseConversion>
++NS_GetCaseConversion()
++{
++  // If we've already cached the conversion service then return it
++  if (gCaseConv) {
++    NS_ADDREF(gCaseConv);
++    return gCaseConv;
++  }
+ 
+-NS_IMPL_ISUPPORTS1(nsShutdownObserver, nsIObserver)
++  // If we're on a non-main thread then just return the service manager's copy
++  nsresult rv;
++  if (!nsIThread::IsMainThread()) {
++    nsICaseConversion* caseConv;
++    rv = CallGetService(NS_UNICHARUTIL_CONTRACTID, &caseConv);
++    if (NS_FAILED(rv)) {
++      NS_WARNING("Failed to get the case conversion service");
++      return nsnull;
++    }
++    return caseConv;
++  }
++  // We must be on the main thread so try to cache the service and register a
++  // shutdown observer.
++  // Return null if we can't get the service
++  rv = CallGetService(NS_UNICHARUTIL_CONTRACTID, &gCaseConv);
++  if (NS_FAILED(rv)) {
++    NS_WARNING("Failed to get the case conversion service");
++    return gCaseConv = nsnull;
++  }
+ 
+-static nsresult NS_InitCaseConversion() {
+-    if (gCaseConv) return NS_OK;
++  NS_ADDREF(gCaseConv);
+ 
+-    nsresult rv;
+-    
+-    rv = CallGetService(NS_UNICHARUTIL_CONTRACTID, &gCaseConv);
++  nsCOMPtr<nsIObserverService> obs =
++    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+ 
+-    if (NS_SUCCEEDED(rv)) {
+-        nsCOMPtr<nsIObserverService> obs =
+-            do_GetService("@mozilla.org/observer-service;1", &rv);
+-        if (NS_SUCCEEDED(rv)) {
+-            nsShutdownObserver *observer = new nsShutdownObserver();
+-            if (observer)
+-                obs->AddObserver(observer, NS_XPCOM_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+-        }
+-    }
+-    
+-    return NS_OK;
++  // Try to register for shutdown notification, but we'll return a valid
++  // pointer even if that fails.
++  if (NS_SUCCEEDED(rv)) {
++    nsCOMPtr<nsIObserver> observer;
++    NS_NEWXPCOM(observer, nsShutdownObserver);
++    if (observer)
++      obs->AddObserver(observer, NS_XPCOM_SHUTDOWN_OBSERVER_ID, PR_FALSE);
++    else
++      NS_WARNING("Failed to create an nsShutdownObserver");
++  }
++  else
++    NS_WARNING("Failed to get the observer service");
++
++  return gCaseConv;
+ }
+ 
+ class ConvertToLowerCase
+ {
+ public:
+-    typedef PRUnichar value_type;
+-    
+-    ConvertToLowerCase()
+-    {
+-        NS_InitCaseConversion();
++  typedef PRUnichar value_type;
++  
++  ConvertToLowerCase() {
++    mCaseConv = NS_GetCaseConversion();
++  }
++
++  PRUint32 write(const PRUnichar* aSource,
++                 PRUint32 aSourceLength) {
++    if (mCaseConv) {
++      mCaseConv->ToLower(aSource, NS_CONST_CAST(PRUnichar*, aSource),
++                         aSourceLength);
+     }
++    else
++      NS_WARNING("No case converter: no conversion done");
+ 
+-    PRUint32 write( const PRUnichar* aSource, PRUint32 aSourceLength)
+-    {
+-        if (gCaseConv)
+-            gCaseConv->ToLower(aSource, NS_CONST_CAST(PRUnichar*,aSource), aSourceLength);
+-        else
+-            NS_WARNING("No case converter: no conversion done");
++    return aSourceLength;
++  }
+ 
+-        return aSourceLength;
+-    }
++protected:
++  nsCOMPtr<nsICaseConversion> mCaseConv;
+ };
+ 
+ #ifdef MOZ_V1_STRING_ABI
+ void
+-ToLowerCase( nsAString& aString )
+-  {
+-    nsAString::iterator fromBegin, fromEnd;
+-    ConvertToLowerCase converter;
+-    copy_string(aString.BeginWriting(fromBegin), aString.EndWriting(fromEnd), converter);
+-  }
++ToLowerCase(nsAString& aString)
++{
++  nsAString::iterator fromBegin, fromEnd;
++  ConvertToLowerCase converter;
++  copy_string(aString.BeginWriting(fromBegin), aString.EndWriting(fromEnd),
++              converter);
++}
+ #endif
+ 
+ void
+-ToLowerCase( nsASingleFragmentString& aString )
+-  {
+-    ConvertToLowerCase converter;
+-    PRUnichar* start;
+-    converter.write(aString.BeginWriting(start), aString.Length());
+-  }
++ToLowerCase(nsASingleFragmentString& aString)
++{
++  ConvertToLowerCase converter;
++  PRUnichar* start;
++  converter.write(aString.BeginWriting(start), aString.Length());
++}
+ 
+ void
+-ToLowerCase( nsString& aString )
+-  {
+-    ConvertToLowerCase converter;
+-    PRUnichar* start;
+-    converter.write(aString.BeginWriting(start), aString.Length());
+-  }
++ToLowerCase(nsString& aString)
++{
++  ConvertToLowerCase converter;
++  PRUnichar* start;
++  converter.write(aString.BeginWriting(start), aString.Length());
++}
+ 
+ class CopyToLowerCase
+-  {
+-    public:
+-      typedef PRUnichar value_type;
+-    
+-      CopyToLowerCase( nsAString::iterator& aDestIter )
+-        : mIter(aDestIter)
+-        {
+-          NS_InitCaseConversion();
+-        }
+-
+-      PRUint32 write( const PRUnichar* aSource, PRUint32 aSourceLength )
+-        {
+-          PRUint32 len = PR_MIN(PRUint32(mIter.size_forward()), aSourceLength);
+-          PRUnichar* dest = mIter.get();
+-          if (gCaseConv)
+-              gCaseConv->ToLower(aSource, dest, len);
+-          else {
+-              NS_WARNING("No case converter: only copying");
+-              memcpy(dest, aSource, len * sizeof(*aSource));
+-          }
+-          mIter.advance(len);
+-          return len;
+-        }
+-
+-    protected:
+-      nsAString::iterator& mIter;
+-  };
++{
++public:
++  typedef PRUnichar value_type;
+ 
+-void
+-ToLowerCase( const nsAString& aSource, nsAString& aDest )
+-  {
+-    nsAString::const_iterator fromBegin, fromEnd;
+-    nsAString::iterator toBegin;
+-    // FIXME: need way to return error
+-    if (!EnsureStringLength(aDest, aSource.Length())) {
+-      aDest.Truncate();
+-      return; // out of memory
++  CopyToLowerCase(nsAString::iterator& aDestIter)
++  : mIter(aDestIter) {
++    mCaseConv = NS_GetCaseConversion();
++  }
++
++  PRUint32 write(const PRUnichar* aSource,
++                 PRUint32 aSourceLength) {
++    PRUint32 len = PR_MIN(PRUint32(mIter.size_forward()), aSourceLength);
++    PRUnichar* dest = mIter.get();
++    if (mCaseConv)
++      mCaseConv->ToLower(aSource, dest, len);
++    else {
++      NS_WARNING("No case converter: only copying");
++      memcpy(dest, aSource, len * sizeof(*aSource));
+     }
+-    CopyToLowerCase converter(aDest.BeginWriting(toBegin));
+-    copy_string(aSource.BeginReading(fromBegin), aSource.EndReading(fromEnd), converter);
++    mIter.advance(len);
++    return len;
+   }
+ 
++protected:
++  nsAString::iterator& mIter;
++  nsCOMPtr<nsICaseConversion> mCaseConv;
++};
++
++void
++ToLowerCase(const nsAString& aSource,
++            nsAString& aDest)
++{
++  nsAString::const_iterator fromBegin, fromEnd;
++  nsAString::iterator toBegin;
++  // FIXME: need way to return error
++  if (!EnsureStringLength(aDest, aSource.Length())) {
++    aDest.Truncate();
++    return; // out of memory
++  }
++  CopyToLowerCase converter(aDest.BeginWriting(toBegin));
++  copy_string(aSource.BeginReading(fromBegin), aSource.EndReading(fromEnd),
++              converter);
++}
++
+ class ConvertToUpperCase
+ {
+ public:
+-    typedef PRUnichar value_type;
+-    
+-    ConvertToUpperCase()
+-    {
+-        NS_InitCaseConversion();
+-    }
++  typedef PRUnichar value_type;
++  
++  ConvertToUpperCase() {
++    mCaseConv = NS_GetCaseConversion();
++  }
++  
++  PRUint32 write(const PRUnichar* aSource,
++                 PRUint32 aSourceLength) {
++    if (mCaseConv)
++      mCaseConv->ToUpper(aSource, NS_CONST_CAST(PRUnichar*,aSource), aSourceLength);
++    else
++      NS_WARNING("No case converter: no conversion done");
+     
+-    PRUint32 write( const PRUnichar* aSource, PRUint32 aSourceLength)
+-    {
+-        if (gCaseConv)
+-            gCaseConv->ToUpper(aSource, NS_CONST_CAST(PRUnichar*,aSource), aSourceLength);
+-        else
+-            NS_WARNING("No case converter: no conversion done");
+-        
+-        return aSourceLength;
+-    }
++    return aSourceLength;
++  }
++
++protected:
++  nsCOMPtr<nsICaseConversion> mCaseConv;
+ };
+ 
+ #ifdef MOZ_V1_STRING_ABI
+ void
+-ToUpperCase( nsAString& aString )
+-  {
+-    nsAString::iterator fromBegin, fromEnd;
+-    ConvertToUpperCase converter;
+-    copy_string(aString.BeginWriting(fromBegin), aString.EndWriting(fromEnd), converter);
+-  }
++ToUpperCase(nsAString& aString)
++{
++  nsAString::iterator fromBegin, fromEnd;
++  ConvertToUpperCase converter;
++  copy_string(aString.BeginWriting(fromBegin), aString.EndWriting(fromEnd),
++              converter);
++}
+ #endif
+ 
+ void
+-ToUpperCase( nsASingleFragmentString& aString )
+-  {
+-    ConvertToUpperCase converter;
+-    PRUnichar* start;
+-    converter.write(aString.BeginWriting(start), aString.Length());
+-  }
++ToUpperCase(nsASingleFragmentString& aString)
++{
++  ConvertToUpperCase converter;
++  PRUnichar* start;
++  converter.write(aString.BeginWriting(start), aString.Length());
++}
+ 
+ void
+-ToUpperCase( nsString& aString )
+-  {
+-    ConvertToUpperCase converter;
+-    PRUnichar* start;
+-    converter.write(aString.BeginWriting(start), aString.Length());
+-  }
++ToUpperCase(nsString& aString)
++{
++  ConvertToUpperCase converter;
++  PRUnichar* start;
++  converter.write(aString.BeginWriting(start), aString.Length());
++}
+ 
+ class CopyToUpperCase
+-  {
+-    public:
+-      typedef PRUnichar value_type;
+-    
+-      CopyToUpperCase( nsAString::iterator& aDestIter )
+-        : mIter(aDestIter)
+-        {
+-          NS_InitCaseConversion();
+-        }
+-
+-      PRUint32 write( const PRUnichar* aSource, PRUint32 aSourceLength )
+-        {
+-          PRUint32 len = PR_MIN(PRUint32(mIter.size_forward()), aSourceLength);
+-          PRUnichar* dest = mIter.get();
+-          if (gCaseConv)
+-              gCaseConv->ToUpper(aSource, dest, len);
+-          else {
+-              NS_WARNING("No case converter: only copying");
+-              memcpy(dest, aSource, len * sizeof(*aSource));
+-          }
+-          mIter.advance(len);
+-          return len;
+-        }
+-
+-    protected:
+-      nsAString::iterator& mIter;
+-  };
++{
++public:
++  typedef PRUnichar value_type;
+ 
+-void
+-ToUpperCase( const nsAString& aSource, nsAString& aDest )
+-  {
+-    nsAString::const_iterator fromBegin, fromEnd;
+-    nsAString::iterator toBegin;
+-    // FIXME: need way to return error
+-    if (!EnsureStringLength(aDest, aSource.Length())) {
+-      aDest.Truncate();
+-      return; // out of memory
++  CopyToUpperCase(nsAString::iterator& aDestIter)
++  : mIter(aDestIter) {
++    mCaseConv = NS_GetCaseConversion();
++  }
++
++  PRUint32 write(const PRUnichar* aSource,
++                 PRUint32 aSourceLength) {
++    PRUint32 len = PR_MIN(PRUint32(mIter.size_forward()), aSourceLength);
++    PRUnichar* dest = mIter.get();
++    if (mCaseConv)
++      mCaseConv->ToUpper(aSource, dest, len);
++    else {
++      NS_WARNING("No case converter: only copying");
++      memcpy(dest, aSource, len * sizeof(*aSource));
+     }
+-    CopyToUpperCase converter(aDest.BeginWriting(toBegin));
+-    copy_string(aSource.BeginReading(fromBegin), aSource.EndReading(fromEnd), converter);
++    mIter.advance(len);
++    return len;
++  }
++
++protected:
++  nsAString::iterator& mIter;
++  nsCOMPtr<nsICaseConversion> mCaseConv;
++};
++
++void
++ToUpperCase(const nsAString& aSource,
++            nsAString& aDest)
++{
++  nsAString::const_iterator fromBegin, fromEnd;
++  nsAString::iterator toBegin;
++  // FIXME: need way to return error
++  if (!EnsureStringLength(aDest, aSource.Length())) {
++    aDest.Truncate();
++    return; // out of memory
+   }
++  CopyToUpperCase converter(aDest.BeginWriting(toBegin));
++  copy_string(aSource.BeginReading(fromBegin), aSource.EndReading(fromEnd),
++              converter);
++}
+ 
+ int
+-nsCaseInsensitiveStringComparator::operator()( const PRUnichar* lhs, const PRUnichar* rhs, PRUint32 aLength ) const
+-  {
+-      NS_InitCaseConversion();
+-      PRInt32 result;
+-      if (gCaseConv) {
+-          gCaseConv->CaseInsensitiveCompare(lhs, rhs, aLength, &result);
+-      }
+-      else {
+-          NS_WARNING("No case converter: using default");
+-          nsDefaultStringComparator comparator;
+-          result = comparator(lhs, rhs, aLength);
+-      }
+-      return result;
++nsCaseInsensitiveStringComparator::operator()(const PRUnichar* lhs,
++                                              const PRUnichar* rhs,
++                                              PRUint32 aLength) const
++{
++  PRInt32 result;
++  nsCOMPtr<nsICaseConversion> caseConv = NS_GetCaseConversion();
++  if (caseConv)
++    caseConv->CaseInsensitiveCompare(lhs, rhs, aLength, &result);
++  else {
++    NS_WARNING("No case converter: using default");
++    nsDefaultStringComparator comparator;
++    result = comparator(lhs, rhs, aLength);
+   }
++  return result;
++}
+ 
+ int
+-nsCaseInsensitiveStringComparator::operator()( PRUnichar lhs, PRUnichar rhs ) const
+-  {
+-      // see if they're an exact match first
+-      if (lhs == rhs) return 0;
+-      
+-      NS_InitCaseConversion();
+-
+-      if (gCaseConv) {
+-          gCaseConv->ToLower(lhs, &lhs);
+-          gCaseConv->ToLower(rhs, &rhs);
+-      } else {
+-          if (lhs < 256)
+-              lhs = tolower(char(lhs));
+-          if (rhs < 256)
+-              rhs = tolower(char(rhs));
+-          NS_WARNING("No case converter: no conversion done");
+-      }
+-      
+-      if (lhs == rhs) return 0;
+-      if (lhs < rhs) return -1;
+-      return 1;
++nsCaseInsensitiveStringComparator::operator()(PRUnichar lhs,
++                                              PRUnichar rhs) const
++{
++  // see if they're an exact match first
++  if (lhs == rhs)
++    return 0;
++  
++  nsCOMPtr<nsICaseConversion> caseConv = NS_GetCaseConversion();
++  if (caseConv) {
++    caseConv->ToLower(lhs, &lhs);
++    caseConv->ToLower(rhs, &rhs);
+   }
++  else {
++    if (lhs < 256)
++      lhs = tolower(char(lhs));
++    if (rhs < 256)
++      rhs = tolower(char(rhs));
++    NS_WARNING("No case converter: no conversion done");
++  }
++  
++  if (lhs == rhs)
++    return 0;
++  if (lhs < rhs)
++    return -1;
++  return 1;
++}
+ 
+ PRUnichar
+ ToLowerCase(PRUnichar aChar)
+ {
+-    PRUnichar result;
+-    if (NS_FAILED(NS_InitCaseConversion()))
+-        return aChar;
+-
+-    if (gCaseConv)
+-        gCaseConv->ToLower(aChar, &result);
+-    else {
+-        NS_WARNING("No case converter: no conversion done");
+-        if (aChar < 256)
+-            result = tolower(char(aChar));
+-        else
+-            result = aChar;
+-    }
+-    return result;
++  PRUnichar result;
++  nsCOMPtr<nsICaseConversion> caseConv = NS_GetCaseConversion();
++  if (caseConv)
++    caseConv->ToLower(aChar, &result);
++  else {
++    NS_WARNING("No case converter: no conversion done");
++    if (aChar < 256)
++      result = tolower(char(aChar));
++    else
++      result = aChar;
++  }
++  return result;
+ }
+ 
+ PRUnichar
+ ToUpperCase(PRUnichar aChar)
+ {
+-    PRUnichar result;
+-    if (NS_FAILED(NS_InitCaseConversion()))
+-        return aChar;
+-
+-    if (gCaseConv)
+-        gCaseConv->ToUpper(aChar, &result);
+-    else {
+-        NS_WARNING("No case converter: no conversion done");
+-        if (aChar < 256)
+-            result = toupper(char(aChar));
+-        else
+-            result = aChar;
+-    }
+-    return result;
++  PRUnichar result;
++  nsCOMPtr<nsICaseConversion> caseConv = NS_GetCaseConversion();
++  if (caseConv)
++    caseConv->ToUpper(aChar, &result);
++  else {
++    NS_WARNING("No case converter: no conversion done");
++    if (aChar < 256)
++      result = toupper(char(aChar));
++    else
++      result = aChar;
++  }
++  return result;
+ }
+-
+Index: intl/unicharutil/util/nsUnicharUtils.h
+===================================================================
+RCS file: /cvsroot/mozilla/intl/unicharutil/util/nsUnicharUtils.h,v
+retrieving revision 1.19
+diff -u -p -r1.19 nsUnicharUtils.h
+--- intl/unicharutil/util/nsUnicharUtils.h	24 Feb 2005 15:50:57 -0000	1.19
++++ intl/unicharutil/util/nsUnicharUtils.h	10 Jan 2007 01:35:51 -0000
+@@ -43,38 +43,41 @@
+ #endif
+ #include "nsReadableUtils.h"
+ 
+-void ToLowerCase( nsAString& );
+-void ToUpperCase( nsAString& );
++void ToLowerCase(nsAString&);
++void ToUpperCase(nsAString&);
+ 
+-void ToLowerCase( nsASingleFragmentString& );
+-void ToUpperCase( nsASingleFragmentString& );
++void ToLowerCase(nsASingleFragmentString&);
++void ToUpperCase(nsASingleFragmentString&);
+ 
+-void ToLowerCase( nsString& );
+-void ToUpperCase( nsString& );
++void ToLowerCase(nsString&);
++void ToUpperCase(nsString&);
+ 
+-void ToLowerCase( const nsAString& aSource, nsAString& aDest );
+-void ToUpperCase( const nsAString& aSource, nsAString& aDest );
++void ToLowerCase(const nsAString& aSource, nsAString& aDest );
++void ToUpperCase(const nsAString& aSource, nsAString& aDest );
+ 
+ class nsCaseInsensitiveStringComparator
+-    : public nsStringComparator
+-  {
+-    public:
+-      virtual int operator()( const PRUnichar*, const PRUnichar*, PRUint32 aLength ) const;
+-      virtual int operator()( PRUnichar, PRUnichar ) const;
+-  };
+-
+-inline PRBool CaseInsensitiveFindInReadable( const nsAString& aPattern,
+-                                             nsAString::const_iterator& aSearchStart,
+-                                             nsAString::const_iterator& aSearchEnd ) {
++: public nsStringComparator
++{
++public:
++  virtual int operator()(const PRUnichar*,
++                         const PRUnichar*,
++                         PRUint32 aLength) const;
++
++  virtual int operator()(PRUnichar,
++                         PRUnichar) const;
++};
++
++inline PRBool CaseInsensitiveFindInReadable(const nsAString& aPattern,
++                                            nsAString::const_iterator& aSearchStart,
++                                            nsAString::const_iterator& aSearchEnd) {
+   return FindInReadable(aPattern, aSearchStart, aSearchEnd,
+                         nsCaseInsensitiveStringComparator());
+ }
+ 
+-inline PRBool CaseInsensitiveFindInReadable( const nsAString& aPattern,
+-                                             const nsAString& aHay ) {
++inline PRBool CaseInsensitiveFindInReadable(const nsAString& aPattern,
++                                            const nsAString& aHay) {
+   nsAString::const_iterator searchBegin, searchEnd;
+-  return FindInReadable(aPattern, 
+-                        aHay.BeginReading(searchBegin),
++  return FindInReadable(aPattern, aHay.BeginReading(searchBegin),
+                         aHay.EndReading(searchEnd),
+                         nsCaseInsensitiveStringComparator());
+ }
+@@ -83,29 +86,35 @@ PRUnichar ToUpperCase(PRUnichar);
+ PRUnichar ToLowerCase(PRUnichar);
+ 
+ inline PRBool IsUpperCase(PRUnichar c) {
+-    return ToLowerCase(c) != c;
++  return ToLowerCase(c) != c;
+ }
+ 
+ inline PRBool IsLowerCase(PRUnichar c) {
+-    return ToUpperCase(c) != c;
++  return ToUpperCase(c) != c;
+ }
+ 
+-#define IS_HIGH_SURROGATE(u)  ((PRUnichar)(u) >= (PRUnichar)0xd800 && (PRUnichar)(u) <= (PRUnichar)0xdbff)
+-#define IS_LOW_SURROGATE(u)  ((PRUnichar)(u) >= (PRUnichar)0xdc00 && (PRUnichar)(u) <= (PRUnichar)0xdfff)
+-
+-#define SURROGATE_TO_UCS4(h, l)  ((((PRUint32)(h)-(PRUint32)0xd800) << 10) +  \
+-                                    (PRUint32)(l) - (PRUint32)(0xdc00) + 0x10000)
+-
+-#define H_SURROGATE(s) ((PRUnichar)(((PRUint32)s - (PRUint32)0x10000) >> 10) + (PRUnichar)0xd800)
+-#define L_SURROGATE(s) ((PRUnichar)(((PRUint32)s - (PRUint32)0x10000) & 0x3ff) + (PRUnichar)0xdc00)
+-#define IS_IN_BMP(ucs) ((PRUint32)ucs < 0x10000)
++#define IS_HIGH_SURROGATE(u) \
++  ((PRUnichar)(u) >= (PRUnichar)0xd800 && (PRUnichar)(u) <= (PRUnichar)0xdbff)
++#define IS_LOW_SURROGATE(u) \
++  ((PRUnichar)(u) >= (PRUnichar)0xdc00 && (PRUnichar)(u) <= (PRUnichar)0xdfff)
++
++#define SURROGATE_TO_UCS4(h, l) \
++  ((((PRUint32)(h)-(PRUint32)0xd800) << 10) +  \
++  (PRUint32)(l) - (PRUint32)(0xdc00) + 0x10000)
++
++#define H_SURROGATE(s) \
++  ((PRUnichar)(((PRUint32)s - (PRUint32)0x10000) >> 10) + (PRUnichar)0xd800)
++#define L_SURROGATE(s) \
++  ((PRUnichar)(((PRUint32)s - (PRUint32)0x10000) & 0x3ff) + (PRUnichar)0xdc00)
++#define IS_IN_BMP(ucs) \
++  ((PRUint32)ucs < 0x10000)
+ 
+ /* (0x3131u <= (u) && (u) <= 0x318eu) => Hangul Compatibility Jamo */
+ /* (0xac00u <= (u) && (u) <= 0xd7a3u) => Hangul Syllables          */
+ #define IS_CJ_CHAR(u) \
+-         ((0x2e80u <= (u) && (u) <= 0x312fu) || \
+-          (0x3190u <= (u) && (u) <= 0xabffu) || \
+-          (0xf900u <= (u) && (u) <= 0xfaffu) || \
+-          (0xff00u <= (u) && (u) <= 0xffefu) )
++  ((0x2e80u <= (u) && (u) <= 0x312fu) || \
++   (0x3190u <= (u) && (u) <= 0xabffu) || \
++   (0xf900u <= (u) && (u) <= 0xfaffu) || \
++   (0xff00u <= (u) && (u) <= 0xffefu))
+ 
+ #endif  /* nsUnicharUtils_h__ */

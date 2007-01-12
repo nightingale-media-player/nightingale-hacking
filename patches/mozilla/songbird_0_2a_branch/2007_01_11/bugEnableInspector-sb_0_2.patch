@@ -1,0 +1,27 @@
+Index: extensions/inspector/install.rdf
+===================================================================
+RCS file: /cvsroot/mozilla/extensions/inspector/install.rdf,v
+retrieving revision 1.3.2.4
+diff -u -p -r1.3.2.4 install.rdf
+--- extensions/inspector/install.rdf	2 Aug 2006 04:51:05 -0000	1.3.2.4
++++ extensions/inspector/install.rdf	10 Jan 2007 02:07:10 -0000
+@@ -35,6 +35,19 @@
+       </Description>
+     </em:targetApplication>
+ 
++    <em:targetApplication>
++      <!-- Songbird -->
++      <!-- we really should figure out a way to pass in a value.
++           The issue becomes we are building XULRunner when we
++           package inspector so we don't actually have Songbird
++           info available (unless we can pass it in via configure. -->
++      <Description>
++        <em:id>songbird@songbirdnest.com</em:id>
++        <em:minVersion>0.2</em:minVersion>
++        <em:maxVersion>0.3.*</em:maxVersion>
++      </Description>
++    </em:targetApplication>
++
+     <!-- EXTENSION AUTHORS!
+          DO NOT COPY THIS PROPERTY INTO YOUR INSTALL RDF FILES
+          It will cause users not to be informed of incompatibilities 
