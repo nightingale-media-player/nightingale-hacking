@@ -1,0 +1,82 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIFilterableMediaList.idl
+ * \brief Definition of the sbIFilterableMediaList interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface nsISimpleEnumerator;
+
+/**
+* \interface sbIFilterableMediaList
+* \brief Control the filter settings on a media list
+*
+* Media lists that implement this interface declare themselves as filterable.
+* The filter is applied as an additional constraint to the list.
+*
+* \sa sbIMediaList
+*/
+[scriptable, uuid(6dc5cfa6-7f95-4bb8-872d-af3ac227c121)]
+interface sbIFilterableMediaList : nsISupports
+{
+  /**
+   * \brief A string enumerator of all the property names that can be used
+   * in the filter
+   */
+  readonly attribute nsIStringEnumerator filterableProperties;
+
+  /**
+   * \brief Returns a string enumerator of all of the possible values for the
+   * given property.
+   * \param aPropertyName The property name to return values for
+   * \return An nsIStringEnumerator of the values for the given property
+   */
+  nsIStringEnumerator getFilterValues(in AString aPropertyName);
+
+  /**
+   * \brief Add a new filter constraint to the current filter configuration
+   * \param aPropertyName The property name to filter on
+   * \param aPropertyValue The value to constrain the given property to
+   */
+  void appendFilter(in AString aPropertyName, in AString aPropertyValue);
+
+  /**
+   * \brief A simple enumerator of nsIProperty objects that contains the
+   * list of current filter settings
+   */
+  readonly attribute nsISimpleEnumerator currentFilters;
+
+  /**
+   * \brief Clears the current filter configuration
+   */
+  void clearFilter();
+};
+

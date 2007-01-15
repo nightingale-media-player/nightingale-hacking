@@ -1,0 +1,133 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIMediaItem.idl
+ * \brief Definition of the sbIMediaItem interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "sbIResource.idl"
+
+interface nsIObserver;
+interface nsIURI;
+interface nsIInputStream;
+interface nsIOutputStream;
+interface sbILibrary;
+
+/**
+* \interface sbIMediaItem
+* \brief Interface that defines a single item of media in the system
+*
+* The Songbird concept of a media item is the abstraction of a renderable piece
+* of media. A media item contains content as well as metadata about the
+* content.  A media item must be associated with a particular library.
+*
+* \sa sbILibrary, sbIMediaList
+*/
+[scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
+interface sbIMediaItem : sbIResource
+{
+  /**
+   * \brief The library that this media item is contained in
+   */
+  readonly attribute sbILibrary library;
+
+  /**
+   * \brief The library that this media item is linked from.  This is to aid
+   * in support of foreign media items
+   */
+  readonly attribute sbILibrary originLibrary;
+
+  /**
+   * \brief Can the media item be changed?
+   */
+  readonly attribute boolean isMutable;
+
+  /**
+   * \brief Guid of the media item
+   */
+  readonly attribute AString guid;
+
+  /**
+   * \brief Creation time of the media item as a unix timestamp.
+   *
+   * Note that this is the creation time of the media item itself, not the
+   * creation time of the item's content
+   */
+  attribute long mediaCreated;
+
+  /**
+   * \brief Last modification time of the media item as a unix timestamp.
+   *
+   * Note that this is the last modification time of the media item itself, not
+   * the creation time of the item's content
+   */
+  attribute long mediaUpdated;
+
+  /**
+   * \brief Test if this media item is available for playback
+   * \param aObserver An observer that is notified with the item's availabilty
+   */
+  void testIsAvailable(in nsIObserver aObserver);
+
+  /**
+   * \brief A nsIURI that resolves to the content of the media item
+   */
+  attribute nsIURI contentSrc;
+
+  /**
+   * \brief Size (in bytes) of the content of the media item
+   */
+  attribute long contentLength;
+
+  /**
+   * \brief Content type of the content of the media item, typically a mime
+   * type (should this be renamed?)
+   */
+  attribute AString contentType;
+
+  /**
+   * \brief Get an input stream to the content of the media item
+   * \param aOffset Offset (in bytes) to start reading the content
+   * \return The input stream
+   */
+  nsIInputStream openInputStream(in unsigned long aOffset);
+
+  /**
+   * \brief Get an output stream to the content of the media item
+   * \param aOffset Offset (in bytes) to start writing to the content
+   * \return The output stream
+   */
+  nsIOutputStream openOutputStream(in unsigned long aOffset);
+
+  /**
+   * \brief Get a string representation of the media item, useful for debugging
+   * \return A string representation of the media item
+   */
+  AString toString();
+};
+

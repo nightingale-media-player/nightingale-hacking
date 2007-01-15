@@ -1,0 +1,79 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryManager.idl
+ * \brief Definition of the sbILibraryManager interface
+ * \sa sbILibrary.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIRDFDatasource;
+interface sbILibrary;
+interface sbILibraryFactory;
+
+/**
+* \interface sbILibraryManager
+* \brief Manages the lifecycle of libraries in the system
+* \sa sbILibrary
+*/
+[scriptable, uuid(6fcdb1c0-73ee-40bd-9e54-a53d2bae58be)]
+interface sbILibraryManager : nsISupports
+{
+  /**
+   * \brief Get a library by its guid
+   * \param aGuid Guid of the library you seek
+   * \return Libray instance identified by the suppplied guid
+   */
+  sbILibrary getLibrary(in AString aGuid);
+
+  /**
+   * \brief Get a library by its guid
+   * \param aGuid Guid of the library you seek
+   * \return Libray instance identified by the suppplied guid
+   */
+  sbILibraryFactory getLibraryFactory(in AString aType);
+
+  /**
+   * \brief Runtime registration of a library
+   * \param aLibrary Library to register
+   */
+  void registerLibrary(in sbILibrary aLibrary);
+
+  /**
+   * \brief Runtime registration of a library factory
+   * \param aLibraryFactory Library factory to register
+   */
+  void registerLibraryFactory(in sbILibraryFactory aLibraryFactory);
+
+  /**
+   * \brief RDF datasource that exposes the currently active libraries and
+   * library factories
+   */
+  readonly attribute nsIRDFDatasource datasource;
+};
+

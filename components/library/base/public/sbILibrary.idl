@@ -1,0 +1,141 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibrary.idl
+ * \brief Definition of the sbILibrary interface
+ * \sa sbILibraryFactory.idl, sbILibraryManager.idl
+ */
+
+#include "sbIResource.idl"
+
+interface nsIChannel;
+interface nsISimpleEnumerator;
+interface nsIURI;
+interface sbIDevice;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIMediaListFactory;
+
+/**
+* \interface sbILibrary
+* \brief Media library abstraction
+*
+* The library interface is the primary means of exposing media library data
+* to Songbird.  Implementors of this interface must also provide
+* implementations of sbIMediaItem and sbIMediaList.
+*
+* \sa sbIMediaItem, sbIMediaList
+*/
+[scriptable, uuid(cd0a02c7-3c0d-4e54-ab92-e8ac4f22c17f)]
+interface sbILibrary : sbIResource
+{
+  /**
+   * \brief Reference to the device that this library is stored on
+   */
+  readonly attribute sbIDevice device;
+
+  /**
+   * \brief Declares if this library will host foreign media items
+   */
+  readonly attribute boolean supportsForeignMediaItems;
+
+  /**
+   * \brief Resolves a songbird schemed URL to a channel.  Throws an exception
+   * if the item referenced in the URL is not found
+   * \param aUri The nsIURI to a media item to resolve
+   * \return An open channel to the content of the referenced media item
+   */
+  nsIChannel resolve(in nsIURI aUri);
+
+  /**
+   * \brief Creates a new media item
+   * \return A new, persisted media item
+   */
+  sbIMediaItem createMediaItem();
+
+  /**
+   * \brief A list of available media list factories, returns an enumerator
+   * of sbIMediaListFactory
+   */
+  readonly attribute nsISimpleEnumerator mediaListFactories;
+
+  /**
+   * \brief Get a specific media list factory
+   * \param aType Media list factory type.  Every library should support the
+   * "view" and "simple" types.
+   * \return Media list factory for the specified type
+   */
+  sbIMediaListFactory getMediaListFactory(in AString aType);
+
+  /**
+   * \brief Register a new media list type at run time
+   * \param aType Type name for new media list type
+   * \param aCid XPCOM contract id for the new media list type
+   */
+  void addMediaListFactory(in AString aType, in AString aCid);
+
+  /**
+   * \brief Import a media list and its contents into this library
+   * \param aMediaList Foreign media list to import into this library
+   * \return A reference to the media list after it has been imported
+   */
+  sbIMediaList adoptMediaList(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Begin a batch operation
+   * \param aIsAsync Specify if the batch operation is to execute
+   * asynchronously
+   */
+  void beginBatch(in boolean aIsAsync);
+
+  /**
+   * \brief Cancel current batch operation.  Changes made in the current
+   * batch operation should not be applied
+   */
+  void cancelBatch();
+
+  /**
+   * \brief End the current batch operation.  Changes made in the current
+   * batch operation should be applied
+   */
+  void endBatch();
+
+  /**
+   * Hints for transfer service to possibly add a transcode step
+   */
+/*
+  AString getPreferedAudioMimeType();
+  AString getPreferedVideoMimeType();
+*/
+
+  /**
+   * \brief Remove unsupported media list types, unknown property types, and
+   * temporary items
+   */
+  void tidyUp();
+};
+

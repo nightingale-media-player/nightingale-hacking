@@ -1,0 +1,89 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbISearchableMediaList.idl
+ * \brief Definition of the sbISearchableMediaList interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+
+/**
+* \interface sbISearchableMediaList
+* \brief Control the search settings on a media list
+*
+* Media lists that implement this interface declare themselves as searchable.
+* The search is applied as an additional constraint to the list.
+*
+* \sa sbIMediaList
+*/
+[scriptable, uuid(1db2f57c-5fcf-4fe0-8951-c1b40d9f7bf6)]
+interface sbISearchableMediaList : nsISupports
+{
+  /**
+   * \brief A brief description of this method
+   *
+   * A detailed description of this method
+   *
+   * \param aSomeInParameter Description of this parameter
+   * \return Description of the return value
+   * \sa Also see the other methods listed here
+   */
+  long someMethod(in AString aSomeInParameter);
+
+  /**
+   * \brief Get a list of all the properties that can be searched
+   */
+  readonly attribute nsIStringEnumerator serchableProperties;
+
+  /**
+   * \brief The current search string
+   */
+  readonly attribute AString currentSearchString;
+
+  /**
+   * \brief The current search property.  If this value is null, all
+   * properties are searched
+   */
+  readonly attribute AString currentPropertyName;
+
+  /**
+   * \brief Set a new search string and property
+   * \param aSearchString The string to search for
+   * \param aPropertyName The property to search over.  If this value is null,
+   * all properties are searched
+   */
+  void applySearch(in AString aSearchString, in AString aPropertyName);
+
+  /**
+   * \brief Clear the search
+   */
+  void clearSearch();
+};
+

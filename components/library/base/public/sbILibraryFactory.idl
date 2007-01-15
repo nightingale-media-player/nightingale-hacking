@@ -1,0 +1,60 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryFactory.idl
+ * \brief Definition of the sbILibraryFactory interface
+ * \sa sbILibrary.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbILibrary;
+
+/**
+* \interface sbILibraryFactory
+* \brief Factory for new library instances
+*
+* This interface is used to create new instances of a library
+*
+* \sa sbILibrary
+*/
+[scriptable, uuid(5e49042d-3676-4dc5-8366-24ea5cace552)]
+interface sbILibraryFactory : nsISupports
+{
+  /**
+   * \brief Key to the localized name of the library type this factory creates
+   */
+  readonly attribute AString nameKey;
+
+  /**
+   * \brief Create a new instance of a library
+   * \return New library instance
+   */
+  sbILibrary createLibrary();
+  
+};
+

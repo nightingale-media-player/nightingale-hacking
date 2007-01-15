@@ -1,0 +1,180 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIMediaList.idl
+ * \brief Definition of the sbIMediaList interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "sbIResource.idl"
+
+interface nsISimpleEnumerator;
+interface nsITreeView;
+interface sbILibrary;
+interface sbIMediaItem;
+interface sbIMediaListListener;
+
+/**
+* \interface sbIMediaList
+* \brief A brief description of the contents of this interface
+*
+* A detailed description of this interface
+*
+* \sa List of "see also" interfaces
+*/
+[scriptable, uuid(9e9684b0-9580-4370-98d4-1d123c65c8aa)]
+interface sbIMediaList : sbIResource
+{
+  /**
+   * \brief The name of the media list
+   */
+  attribute AString name;
+
+  /**
+   * \brief Library where this media list is stored
+   */
+  readonly attribute sbILibrary library;
+
+  /**
+   * \brief Contents of the list as a nsISimpleEnumerator of sbIMediaItem
+   * objects
+   */
+  readonly attribute nsISimpleEnumerator items;
+
+  /**
+   * \brief Get a media item in the list by guid
+   * \param aGuid Guid of the media item
+   * \return Media item with the requested guid or null if not found
+   */
+  sbIMediaItem getItemByGuid(in AString aGuid);
+
+  /**
+   * \brief Get a media item in the list by index
+   * \param aIndex Index of the media item
+   * \return Media item with the requested index or null if not found
+   */
+  sbIMediaItem getItemByIndex(in short aIndex);
+
+  /**
+   * \brief Get a list of media items that match a given property and propery
+   * value
+   * \param aName Property name to search
+   * \param aValue Property value to search
+   * \return List of found media items as a nsISimpleEnumerator containing
+   * sbIMediaItem objects
+   */
+  nsISimpleEnumerator getItemsByPropertyValue(in AString aName, in AString aValue);
+
+  /**
+   * \brief Get the first index of a media item int he list
+   * \param aMediaItem Media item to search for
+   * \return The index that the media item was first found at, or -1 if not
+   * found
+   */
+  short indexOf(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Get the last index of a media item int he list
+   * \param aMediaItem Media item to search for
+   * \return The index that the media item was last found at, or -1 if not
+   * found
+   */
+  short lastIndexOf(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Check if the list contains a media item
+   * \param aMediaItem Media item to search for
+   * \return true if the media item was found, false if it was not found
+   */
+  boolean contains(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Is the list empty?
+   */
+  readonly attribute boolean isEmpty;
+
+  /**
+   * \brief Add a media item to this list
+   * \param aMediaItem The media item to add to the list
+   */
+  void add(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Add the contents of a media list to this list
+   * \param aMediaList The media list whose contents are to be added
+   */
+  void addAll(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Insert a media item before the specified media item
+   * \param aIndex Position of item to insert before
+   * \param aMediaItem Media item to insert
+   */
+  void insertBefore(in short aIndex, in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Remove a media item from the list
+   * \param aMediaItem Media item to remove
+   */
+  void remove(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Remove a media item from the list by index
+   * \param aIndex Index of the item to remove
+   */
+  void removeByIndex(in short aIndex);
+
+  /**
+   * \brief Clear the list
+   */
+  void clear();
+
+  /**
+   * \brief Get a treeview that will display this media list
+   */
+  readonly attribute nsITreeView treeView;
+
+  /**
+   * \brief Add a listener to this media list
+   * \param aListener The listener to add
+   */
+  void addListener(in sbIMediaListListener aListener);
+
+  /**
+   * \brief Remove a listener from this media list
+   * \param aListener The listener to remove
+   */
+  void removeListner(in sbIMediaListListener aListener);
+
+  /**
+   * \brief Get a string representation of this media list.  This can be
+   * useful for debugging
+   * \return A string representation of the media list.
+   */
+  AString toString();
+};
+
