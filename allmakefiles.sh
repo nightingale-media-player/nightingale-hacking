@@ -293,7 +293,6 @@ $MAKEFILES_playlistreader
 $MAKEFILES_playlistsource
 $MAKEFILES_servicesource
 $MAKEFILES_testharness
-$MAKEFILES_tests
 $MAKEFILES_update
 $MAKEFILES_faceplateregistration
 "
