@@ -1,0 +1,156 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbISQLBuilder.idl
+ * \brief Definition of the sbISQLBuilder interfaces
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+
+interface sbISQLBuilderCriterion;
+
+/**
+* \interface sbISQLBuilder
+* \brief Base interface for SQL building components
+*
+* Components implementing this interface are used to build SQL string.
+* The interface is inspired by Squiggle:
+* http://joe.truemesh.com/squiggle/javadoc/index.html
+*/
+[scriptable, uuid(9286bd63-ffb4-44e6-a3e6-a6cf8f457cb1)]
+interface sbISQLBuilder : nsISupports
+{
+  /**
+   * \brief The query's base table
+   */
+  attribute ACString baseTableName;
+
+  /**
+   * \brief Add a column to the output column list
+   * \param aTableName The table name the column belongs to
+   * \param aColumnName The name of the column to add to the list
+   */
+  void addColumn(in ACString aTableName, in ACString aColumnName);
+
+  /**
+   * \brief Add a join to the query
+   * \param aSrcTableName The left hand table of the join
+   * \param aSrcColumnName The left hand column in the join
+   * \param aDestTableName The right hand table of the join
+   * \param aDestolumnName The right hand column in the join
+   */
+  void addJoin(in ACString aSrcTableName, in ACString aSrcColumnName,
+               in ACString aDestTable, in ACString aDestColumnName);
+
+  /**
+   * \brief Add a criteria constraint to the query
+   * \param aCriterion The Criterion to add
+   */
+  void addCriterion(in sbISQLBuilderCriterion aCriterion);
+
+  /**
+   * \brief Return the generated SQL statement for the query
+   * \return The generated SQL statement
+   */
+  AString toString();
+
+  /**
+   * \brief Create a match criterion with an AString datatype
+   * \param aTableName The table name the column in the criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type, must be one of the MATCHTYPE
+   * constant values
+   * \param aValue The AString value to match agains
+   */
+  sbISQLBuilderCriterion createMatchCriterionString(in ACString aTableName,
+    in ACString aSrcColumnName, in short aMatchType, in AString aValue);
+
+  /**
+   * \brief Create a match criterion with an long datatype
+   * \param aTableName The table name the column in the criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type, must be one of the MATCHTYPE
+   * constant values
+   * \param aValue The long value to match agains
+   */
+  sbISQLBuilderCriterion createMatchCriterionInt32(in ACString aTableName,
+    in ACString aSrcColumnName, in short aMatchType, in long aValue);
+
+  /**
+   * \brief Create a match criterion that tests against the null value
+   * \param aTableName The table name the column in the Criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type, must be one of the MATCHTYPE
+   * constant values
+   */
+  sbISQLBuilderCriterion createMatchCriterionNull(in ACString aTableName,
+    in ACString aSrcColumnName, in short aMatchType);
+
+  /**
+   * \brief Create a match criterion that is the logical AND of two critera
+   * \param aLeft The left side of the expression
+   * \param aRight The right side of the expression
+   */
+  sbISQLBuilderCriterion createAndCriterion(in sbISQLBuilderCriterion aLeft,
+    in sbISQLBuilderCriterion aRight);
+
+  /**
+   * \brief Create a match criterion that is the logical OR of two critera
+   * \param aLeft The left side of the expression
+   * \param aRight The right side of the expression
+   */
+  sbISQLBuilderCriterion createOrCriterion(in sbISQLBuilderCriterion aLeft,
+    in sbISQLBuilderCriterion aRight);
+};
+
+/**
+* \interface sbISQLSelectBuilder
+* \brief Interface for building SELECT statements
+*/
+[scriptable, uuid(b91ae93b-9c1e-427c-a751-5c0c19fcdbc3)]
+interface sbISQLSelectBuilder : sbISQLBuilder
+{
+  /**
+   * \brief Add an order clause to the query
+   * \param aTableName Table name the column belongs to
+   * \param aColumnName Name of the column to sort
+   * \param aAscending True if the sort should be ascending
+   */
+  void addOrder(in ACString aTableName, in ACString aColumnName,
+    in boolean aAscending);
+};
+
+/**
+* \interface sbISQLBuilderCriterion
+* \brief Interface for SQL critera
+*/
+[scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
+interface sbISQLBuilderCriterion : nsISupports
+{
+};
+
