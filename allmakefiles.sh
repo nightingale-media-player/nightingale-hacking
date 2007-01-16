@@ -263,6 +263,26 @@ components/faceplateregistration/public/Makefile
 components/faceplateregistration/src/Makefile
 "
 
+MAKEFILES_library="
+components/library/Makefile
+components/library/base/Makefile
+components/library/base/public/Makefile
+components/library/localdatabase/Makefile
+components/library/localdatabase/public/Makefile
+"
+
+MAKEFILES_property="
+components/property/Makefile
+components/property/public/Makefile
+"
+
+MAKEFILES_sqlbuilder="
+components/sqlbuilder/Makefile
+components/sqlbuilder/public/Makefile
+components/sqlbuilder/src/Makefile
+components/sqlbuilder/test/Makefile
+"
+
 #
 # Put it all together
 #
@@ -295,4 +315,8 @@ $MAKEFILES_servicesource
 $MAKEFILES_testharness
 $MAKEFILES_update
 $MAKEFILES_faceplateregistration
+$MAKEFILES_property
+$MAKEFILES_sqlbuilder
+$MAKEFILES_library
 "
+

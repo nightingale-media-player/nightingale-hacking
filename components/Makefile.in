@@ -42,6 +42,9 @@ SUBDIRS = bundle \
           playlistreader \
           playlistsource \
           servicesource \
+          sqlbuilder \
+          property \
+          library \
           $(NULL)
 
 # XXX make me a configure option
