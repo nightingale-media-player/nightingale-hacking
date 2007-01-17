@@ -30,9 +30,11 @@
  * \sa
  */
 
-#include nsIControllers.idl
+#include "nsIControllers.idl"
 
-interface sbIMediaList; 
+interface sbIMediaList;
+interface nsIDOMNode;
+interface nsIDOMWindow;
 
 /**
  * \interface sbIApplicationController
@@ -86,5 +88,5 @@ interface sbIApplicationController : nsIControllers
    * \return The active media list object, if present.
    * \retval null No active media list object in specified window.
    */
-  sbIMediaList getActiveMediaListInWindow(in nsIDOMWindow);
+  sbIMediaList getActiveMediaListInWindow(in nsIDOMWindow aWindow);
 };

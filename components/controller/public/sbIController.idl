@@ -30,14 +30,14 @@
  * \sa sbIApplicationController.idl
  */
 
-#include nsIController.idl
+#include "nsIController.idl"
 
 /**
  * \interface sbIController
  * \brief Simple wrapper around the standard nsIController interface.
  * \sa sbIApplicationController nsIController
  */
-[uuid(5FD7CE4D-45DA-4e43-A08B-D97443E11AC6)]
+[uuid(A780AD2E-8655-4d4d-8B9B-C25C69051026)]
 interface sbIController : nsIController
 {
 };
