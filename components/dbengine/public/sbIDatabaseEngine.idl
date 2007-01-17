@@ -1,0 +1,72 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbIDatabaseEngine.idl
+ * \brief 
+ * 
+ * \sa sbIDatabaseQuery.idl, sbIDatabaseResult.idl
+ */
+#include "nsISupports.idl"
+
+[ptr] native CDatabaseQueryPtr(CDatabaseQuery);
+[ref] native stlCStringRef(std::string);
+
+/**
+* \interface sbIDatabaseEngine 
+* \brief USER CODE SHOULD NOT REFERENCE THIS CLASS
+*
+* You should use the sbIDatabaseQuery object to submit SQL queries to the database.
+*
+* \sa sbIDatabaseQuery, sbIDatabaseResult
+*/
+[uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
+interface sbIDatabaseEngine : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] void AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] void RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
+
+  /**
+   * \brief 
+   *
+   * \param 
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
+};
