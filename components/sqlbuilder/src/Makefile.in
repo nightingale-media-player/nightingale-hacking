@@ -56,6 +56,12 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
+ifeq ($(SB_PLATFORM), win32)
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_s \
+                               xul \
+                               $(NULL)
+endif
+
 ifeq ($(SB_PLATFORM), macosx)
   DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
