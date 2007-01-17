@@ -30,9 +30,10 @@
  * \sa sbIStateObject.idl
  */
 
-#include nsISupports.idl
+#include "nsISupports.idl"
 
 interface sbIStateObject;
+interface nsISimpleEnumerator;
 
 /**
  * \interface sbPIStateService
@@ -60,7 +61,7 @@ interface sbPIStateService: nsISupports
    * Adding a state object to the state service repository is automatic upon 
    * creation of a state object.
    */
-  addStateObject(in sbIStateObject aStateObject, in bool aPersistentObject);
+  void addStateObject(in sbIStateObject aStateObject, in boolean aPersistentObject);
 
   /**
    * \brief Remove a state object to the state service repository.
@@ -68,5 +69,5 @@ interface sbPIStateService: nsISupports
    * Removing a state object from the state service repository is automatic upon
    * destruction of a state object.
    */
-  removeStateObject(in sbIStateObject aStateObject);
+  void removeStateObject(in sbIStateObject aStateObject);
 };

@@ -32,7 +32,7 @@
 
 #include "nsISupports.idl"
 
-interface sbIStateObject
+interface sbIStateObject;
 
 /**
  * \interface sbIStateDatastore
@@ -54,35 +54,35 @@ interface sbIStateDatastore: nsISupports
    * If this datastore can accept serializable objects the value
    * of this attribute will be true.
    */
-  attribute bool canStoreSerializableObjects;
+  attribute boolean canStoreSerializableObjects;
  
   /**
    * \brief Suggested maximum byte size for objects stored.
    * Maximum size of serializable objects this datastore may accept before
    * severe performance impact.
    */
-  attribute int  suggestedMaxSizeForObjects;
+  attribute long  suggestedMaxSizeForObjects;
  
   /**
    * \brief Suggested maximum amount of objects that may be stored.
    * Maximum object count that may be stored in this datastore before
    * severe performance impact.
    */
-  attribute int  suggestedMaxObjectCount;
+  attribute long  suggestedMaxObjectCount;
  
   /**
    * \brief Create storage for a state object.
    * Create storage for a state object.
    * \param aStateObject The state object.
    */
-  createObjectStorage(in sbIStateObject aStateObject);
+  void createObjectStorage(in sbIStateObject aStateObject);
  
   /**
    * \brief Destroy storage for a state object.
    * Delete the storage space and value for a state object.
    * \param aStateObject The state object.
    */
-  destroyObjectStorage(in sbIStateObject aStateObject);
+  void destroyObjectStorage(in sbIStateObject aStateObject);
  
   /**
    * \brief Save this state object. Will optionally create storage 
@@ -90,5 +90,5 @@ interface sbIStateDatastore: nsISupports
    * \param aStateObject The state object.
    * \param aCreateStorage Create storage for this state object.
    */
-  save(in sbIStateObject aStateObject, in bool aCreateStorage);
+  void save(in sbIStateObject aStateObject, in boolean aCreateStorage);
 };

@@ -33,8 +33,8 @@
 #include "nsISupports.idl" 
 
 interface nsIObserver;
-interface nsIWritablePropertyBag2.idl
-interface nsIWriteableVariant;
+interface nsIWritablePropertyBag2;
+interface nsIWritableVariant;
 
 /**
  * \interface sbIStateObject
@@ -51,10 +51,10 @@ interface sbIStateObject: nsISupports
    * \brief State object specific error codes returned by 
    * the initialize method.
    */
-  const PRUint32 STATEOBJECT_CREATION_FAILED = 0x800000001;
-  const PRUint32 STATEOBJECT_LOADING_FAILED = 0x800000002;
-  const PRUint32 STATEOBJECT_CREATED = 0x01;
-  const PRUint32 STATEOBJECT_LOADED = 0x02;
+  const unsigned long STATEOBJECT_CREATION_FAILED = 0x800000001;
+  const unsigned long STATEOBJECT_LOADING_FAILED = 0x800000002;
+  const unsigned long STATEOBJECT_CREATED = 0x01;
+  const unsigned long STATEOBJECT_LOADED = 0x02;
 
   /**
    * \brief The key for this state object. 
@@ -103,7 +103,7 @@ interface sbIStateObject: nsISupports
    * \retval STATEOBJECT_CREATED The creation of a new state object has succeeded.
    * \retval STATEOBJECT_LOADED The loading of a previously created state object has succeeded.
    */
-  PRInt32 initialize(in AString aFullKey, in bool aCreate, in AString aDatastoreImpl);
+  unsigned long initialize(in AString aFullKey, in boolean aCreate, in AString aDatastoreImpl);
 
   /**
    * \brief Reconstitute the full key for this object.
