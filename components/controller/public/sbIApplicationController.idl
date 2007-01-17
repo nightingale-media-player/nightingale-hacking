@@ -1,0 +1,90 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIApplicationController.idl
+ * \brief
+ * \sa
+ */
+
+#include nsIControllers.idl
+
+interface sbIMediaList; 
+
+/**
+ * \interface sbIApplicationController
+ * \brief
+ * \sa
+ */
+[uuid(5FD7CE4D-45DA-4e43-A08B-D97443E11AC6)]
+interface sbIApplicationController : nsIControllers
+{
+  /**
+   * \brief The current active media list object.
+   * The current active media list object. 
+   * May be null if no media list is active or present.
+   */
+  attribute sbIMediaList activeMediaList;
+
+  /**
+   * \brief The current active browser.
+   * The current active browser
+   */
+  attribute nsIDOMNode activeBrowser;
+
+  /**
+   * \brief The current active "main" window.
+   * The current active window of category "main".
+   */
+  attribute nsIDOMWindow activeMainWindow;
+
+  /**
+   * \brief The current active "mini" window.
+   * The current active window of category "mini".
+   */
+  attribute nsIDOMWindow activeMiniWindow;
+
+  /**
+   * \brief The current active window.
+   * The current active window, regardless of category.
+   */
+  attribute nsIDOMWindow activeWindow;
+
+  /**
+   * \brief Get the current active window of specified type.
+   * Get the current active window of specified type, such as "main", "mini" or "browser".
+   * \param aWindowType The type of window, such as "main", "mini" or "browser".
+   */
+  nsIDOMWindow getActiveWindowOfType(in AString aWindowType);
+
+  /**
+   * \brief Get the current active media list object in the specified window.
+   * \param aWindow The window possibly containing a media list object.
+   * \return The active media list object, if present.
+   * \retval null No active media list object in specified window.
+   */
+  sbIMediaList getActiveMediaListInWindow(in nsIDOMWindow);
+};
