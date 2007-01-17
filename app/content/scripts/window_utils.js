@@ -270,11 +270,12 @@ function onExit( skipSave )
 // Hide
 function onHide()
 {
+/*
   var windowCloak =
     Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);
   windowCloak.cloak(window); 
-
+*/
   // And try to focus another of our windows. We'll try to focus in this order:
   var windowList = ["Songbird:Main",
                     "Songbird:TrackEditor",
@@ -379,12 +380,13 @@ function onWindowSavePosition()
 function windowFocus()
 {
   // Try to activate the window if it isn't cloaked.
+/*
   var windowCloak =
     Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);
   if (windowCloak.isCloaked(window))
     return;
-  
+*/
   window.focus();
 }
 

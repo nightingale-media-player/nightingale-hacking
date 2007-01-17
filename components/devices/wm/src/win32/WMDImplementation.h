@@ -33,7 +33,7 @@
 #include "nsCOMPtr.h"
 #include "nsITimer.h"
 #include "nsIStringBundle.h"
-#include "NSString.h"
+#include <nsStringGlue.h>
 
 #include "mswmdm.h"
 #include "wmdrmdeviceapp.h"

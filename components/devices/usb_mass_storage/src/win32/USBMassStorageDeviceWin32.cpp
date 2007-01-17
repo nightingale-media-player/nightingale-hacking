@@ -48,7 +48,8 @@ PRBool CUSBMassStorageDeviceHelperWin32::Initialize(const nsAString &deviceName,
 {
   PRBool bCanHandleDevice = PR_FALSE;
 
-  if(FindInReadable(NS_LITERAL_STRING("USBSTOR"), deviceName) == PR_TRUE)
+  PRInt32 index = deviceName.Find(NS_LITERAL_STRING("USBSTOR"));
+  if(index > -1)
   {
     bCanHandleDevice = PR_TRUE;
     m_DeviceName = deviceName;

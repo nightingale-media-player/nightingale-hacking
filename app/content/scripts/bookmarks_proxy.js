@@ -193,7 +193,12 @@ ServicesourceProxy.prototype = {
       return RDF.GetLiteral(outstring);
     }
     
-    return this.mInner.GetTarget(subj, pred, tv);
+    var result = this.mInner.GetTarget(subj, pred, tv);
+    if (!result)
+      throw Components.results.NS_ERROR_FAILURE;
+    
+    return result;
+    
   },
 
 

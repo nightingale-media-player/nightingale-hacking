@@ -34,7 +34,7 @@
 
 // INCLUDES ===================================================================
 
-#include <nsString.h>
+#include <nsStringGlue.h>
 
 #ifdef XP_WIN
 #include <windows.h>

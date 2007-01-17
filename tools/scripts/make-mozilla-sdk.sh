@@ -8,19 +8,11 @@ bin_files="regxpcom*
 "
 
 # lib_files are relative to $objdir/dist/lib/
-lib_files="*embed_base.*
+lib_files="*plds4.*
            *nspr4.*
-           *nspr4_s.*
-           *plc4.*
-           *plc4_s.*
-           *plds4.*
-           *plds4_s.*
-           *unicharutil_s.*
+           *unicharutil_external_s.*
            *xpcom.*
-           *xpcomglue.*
            *xpcomglue_s.*
-           *xul.*
-           *XUL*
            *mozjs*
 "
 
@@ -47,6 +39,11 @@ build_script_files="build/cygwin-wrapper
                     config/make-jars.pl
                     config/mozLock.pm
                     config/preprocessor.pl
+"
+
+# airbag scripts are relative to $srcdir
+airbag_script_files="toolkit/airbag/tools/make_symbol_store.pl
+                     toolkit/airbag/tools/upload_symbols.sh
 "
 
 notice() {
@@ -106,6 +103,7 @@ cd "$distdir/sdk" && cp -RLfp * "$sdkdir/frozen"
 notice "copying scripts..."
 cd "$sdkdir" && mkdir -p scripts
 cd "$srcdir" && cp -Lfp $build_script_files "$sdkdir/scripts"
+cd "$srcdir" && cp -Lfp $airbag_script_files "$sdkdir/scripts"
 cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scripts"
 
 notice "performing post-processing..."

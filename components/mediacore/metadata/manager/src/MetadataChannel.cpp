@@ -35,7 +35,7 @@
 #include <nspr.h>
 #include <nscore.h>
 
-#include <string/nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <nsIInputStream.h>
 #include <nsIResumableChannel.h>
 #include <nsIChannel.h>

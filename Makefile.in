@@ -39,17 +39,17 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(NULL)
 
 ifeq (win32,$(SB_PLATFORM))
-CREATEDIRS += $(SONGBIRD_VLCPLUGINSDIR)
+  CREATEDIRS += $(SONGBIRD_VLCPLUGINSDIR)
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
-CREATEDIRS += $(SONGBIRD_MACOS)
+  CREATEDIRS += $(SONGBIRD_MACOS)
 endif
 
 SUBDIRS = build \
+          dependencies \
           app \
           components \
-          dependencies \
           feathers \
           locales \
           $(NULL)
@@ -62,6 +62,43 @@ endif
 ifdef SONGBIRD_OFFICIAL
 SUBDIRS += update
 SUBDIRDEPS2 = update : installer
+endif
+
+ifdef SONGBIRD_OFFICIAL
+ifeq (win32,$(SB_PLATFORM))
+  AIRBAG_BASENAME=airbag-symbols
+  AIRBAG_SYMBOL_PATH=$(SONGBIRD_DISTDIR)/$(AIRBAG_BASENAME)/$(SB_BUILD_ID)
+  AIRBAG_ARCHIVE_PATH=$(SONGBIRD_DISTDIR)
+  AIRBAG_ARCHIVE_FILENAME=$(AIRBAG_BASENAME)-$(SB_BUILD_ID).tar.bz2
+endif
+endif
+
+tasks: all
+
+buildsymbols:
+ifdef SONGBIRD_OFFICIAL
+ifeq (win32,$(SB_PLATFORM))
+	echo building airbag symbol store at $(AIRBAG_SYMBOL_PATH)
+	$(MKDIR) -p $(AIRBAG_SYMBOL_PATH)
+	$(FIND) . -path "$(SONGBIRD_DISTDIR)" -prune -o -name "*.exe"                 \
+          -o -name "*.dll" -o -name "*.EXE" -o -name "*.DLL" |                  \
+          sed "s/\.[^\.]*$$/\.pdb/" |                                           \
+	  xargs $(MOZSDK_SCRIPTS_DIR)/make_symbol_store.pl -c                         \
+	  $(topsrcdir)/tools/$(SB_PLATFORM)/dump_syms$(BIN_SUFFIX)                    \
+	  $(AIRBAG_SYMBOL_PATH) >                                                     \
+	  $(AIRBAG_SYMBOL_PATH)/$(SB_BUILD_ID)-symbols.txt
+	echo packing symbols at $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
+	$(MKDIR) -p $(AIRBAG_ARCHIVE_PATH)
+	cd $(AIRBAG_SYMBOL_PATH) && $(TAR) -cvjf $(AIRBAG_ARCHIVE_FILENAME) *
+	mv $(AIRBAG_SYMBOL_PATH)/$(AIRBAG_ARCHIVE_FILENAME) $(AIRBAG_ARCHIVE_PATH)
+endif
+endif
+
+uploadsymbols:
+ifdef SONGBIRD_OFFICIAL
+ifeq (win32,$(SB_PLATFORM))
+	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
+endif
 endif
 
 include $(topsrcdir)/build/rules.mk

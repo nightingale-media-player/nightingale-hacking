@@ -28,6 +28,7 @@
 #define __WIN_CD_IMPLEMENTATION_H__
 
 #include "windows.h"
+#include <nsStringGlue.h>
 #include "nsISupportsUtils.h"
 #include "CDCrossPrlatformDefs.h"
 #include "nsCOMPtr.h"

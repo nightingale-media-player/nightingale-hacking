@@ -33,12 +33,8 @@
   
 #include "NativeWindowFromNode.h"
 #include "nsIInterfaceRequestorUtils.h"
-#include "nsIAccessibleDocument.h"
-#include "nsIAccessNode.h"
-#include "nsIAccessible.h"
 #include "nsIDOMNode.h"
 
-#include "nsIAccessibilityService.h"
 #include <xpcom/nsCOMPtr.h>
 #include "nsIServiceManager.h"
 #include "nsIDOMDocument.h"

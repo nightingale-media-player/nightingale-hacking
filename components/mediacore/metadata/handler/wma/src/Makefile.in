@@ -58,17 +58,16 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plc4 \
-                            plds4 \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
                             xpcom \
+                            xpcomglue_s \
                             $(NULL)
 
 ifeq (win32,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += WMVCORE \
                                ole32 \
-                               xul \
-                               unicharutil_s \
+                               unicharutil_external_s \
                                $(NULL)
 endif
 

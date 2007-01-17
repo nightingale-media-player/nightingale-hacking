@@ -35,8 +35,7 @@
 #include <necko/nsIFileStreams.h>
 #include <xpcom/nsILocalFile.h>
 #include <webbrowserpersist/nsIWebBrowserPersist.h>
-#include <string/nsStringAPI.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsXPCOM.h>

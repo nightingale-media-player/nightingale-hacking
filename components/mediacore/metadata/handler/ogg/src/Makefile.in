@@ -53,28 +53,22 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plc4 \
-                            plds4 \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
                             xpcom \
+                            xpcomglue_s \
                             $(NULL)
 
 ifeq (win32,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
-                               unicharutil_s \
-                               $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_s
-  DYNAMIC_LIB_EXTRA_IMPORTS += xul \
-                               $(NULL)
+  DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs \
-                               $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

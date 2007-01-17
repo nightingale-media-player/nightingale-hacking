@@ -34,15 +34,16 @@
 #include <nscore.h>
 #include <nsAutoLock.h>
 
-#include <string/nsReadableUtils.h>
 #include <unicharutil/nsUnicharUtils.h>
+#include <nsComponentManagerUtils.h>
 #include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsEventQueueUtils.h>
 #include <xpcom/nsIObserverService.h>
-#include <xpcom/nsCRT.h>
+#include <xpcom/nsCRTGlue.h>
 #include <pref/nsIPrefService.h>
 #include <pref/nsIPrefBranch2.h>
 #include <nsISupportsPrimitives.h>
+#include <nsThreadUtils.h>
+#include <nsMemory.h>
 
 #include "MetadataBackscanner.h"
 
@@ -84,7 +85,7 @@ void PrepareStringForQuery(nsAString &str)
 void FormatLengthToString(nsAString &str)
 {
   nsAutoString strConvert(str);
-  PRInt32 errCode = 0;
+  nsresult errCode = 0;
   PRInt32 length = strConvert.ToInteger(&errCode);
 
   //Shorter than a second, return empty string.
@@ -222,26 +223,9 @@ sbMetadataBackscanner::sbMetadataBackscanner()
 
   if (pBackscannerProcessorRunner)
   {
-    rv = NS_NewThread(getter_AddRefs(m_pThread),
-      pBackscannerProcessorRunner,
-      0,
-      PR_JOINABLE_THREAD);
+    rv = NS_NewThread(getter_AddRefs(m_pThread), pBackscannerProcessorRunner);
 
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
-
-    // Create a monitored event queue for the new thread. This is needed for us
-    // to get events posted from the channel.  Note that because this is a
-    // monitored event queue, we must call ProcessPendingEvents() to cause the
-    // events to be processed.
-    nsCOMPtr<nsIEventQueueService> pEventQueueService;
-    rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
-    if(NS_SUCCEEDED(rv)) {
-      rv = pEventQueueService->CreateFromIThread(m_pThread,
-                                                 PR_FALSE,
-                                                 getter_AddRefs(m_pEventQueue));
-    }
-
-    NS_ASSERTION(m_pEventQueue, "Unable to create event queue");
   }
 
   if ( ! m_StringBundle.get() )
@@ -459,7 +443,9 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
         nsCOMPtr<sbIMetadataHandler> pHandler;
         nsAutoString strURL, strUUID, strSUUID;
 
-        pBackscanner->m_pResultToScan->GetRowCellByColumn(currentRow, strColURL, strURL);
+        nsAutoString strTest(strColURL);
+
+        pBackscanner->m_pResultToScan->GetRowCellByColumn(currentRow, strTest, strURL);
         pBackscanner->m_pResultToScan->GetRowCellByColumn(currentRow, strColUUID, strUUID);
         pBackscanner->m_pResultToScan->GetRowCellByColumn(currentRow, strColSUUID, strSUUID);
 
@@ -479,10 +465,6 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
                 !pBackscanner->m_backscanShouldShutdown &&
                 values != 0)
           {
-            // Process events until the channel has completed reading the
-            // metadata.
-            // XXX: Should we time out here if this takes too long?
-            pBackscanner->m_pEventQueue->ProcessPendingEvents();
             pHandler->GetCompleted(&completed);
 
             if(pBackscanner->m_backscanShouldShutdown)
@@ -657,12 +639,6 @@ NS_IMETHODIMP sbMetadataBackscanner::Stop()
    
     PR_Sleep(PR_MillisecondsToInterval(33));
   }
-
-  nsCOMPtr<nsIEventQueueService> pEventQueueService;
-  rv = NS_GetEventQueueService(getter_AddRefs(pEventQueueService));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = pEventQueueService->DestroyThreadEventQueue();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("BackscannerProcessor thread exited"));
 
@@ -921,7 +897,7 @@ NS_IMETHODIMP
 sbMetadataBackscanner::Observe(nsISupports *aSubject, const char *aTopic,
                                const PRUnichar *aData)
 {
-  if(!nsCRT::strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)) {
+  if(!strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)) {
     nsresult rv;
 
     PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Backscanner shutting down..."));
@@ -935,7 +911,7 @@ sbMetadataBackscanner::Observe(nsISupports *aSubject, const char *aTopic,
     Stop();
 
     if(m_pThread) {
-      m_pThread->Join();
+      m_pThread->Shutdown();
     }
 
     nsCOMPtr<nsIObserverService> observerService =

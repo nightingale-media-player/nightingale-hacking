@@ -33,9 +33,19 @@
 #include <prmem.h>
 #include <xpcom/nsMemory.h>
 
-#ifdef DEBUG_locks
-#include <nsString.h>
-#include <nsPrintfCString.h>
+#include <nsStringGlue.h>
+
+#include <prlog.h>
+
+/*
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbDatabaseResult:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gDatabaseResultLog = nsnull;
+#define LOG(args) PR_LOG(gDatabaseResultLog, PR_LOG_DEBUG, args)
+#else
+#define LOG(args) /* nothing */
 #endif
 
 // CLASSES ====================================================================
@@ -49,21 +59,16 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseResult, sbIDatabaseResult)
 //-----------------------------------------------------------------------------
 CDatabaseResult::CDatabaseResult()
 {
+#ifdef PR_LOGGING
+  if (!gDatabaseResultLog)
+    gDatabaseResultLog = PR_NewLogModule("sbDatabaseResult");
+#endif
   m_pColumnNamesLock = PR_NewLock();
   m_pRowCellsLock = PR_NewLock();
   m_pColumnResolveMap = PR_NewLock();
 
   NS_ASSERTION(m_pColumnNamesLock, "CDatabaseResult.m_pColumnNamesLock failed");
   NS_ASSERTION(m_pRowCellsLock, "CDatabaseResult.m_pRowCellsLock failed");
-#ifdef DEBUG_locks
-  nsCAutoString log;
-  log += NS_LITERAL_CSTRING("\n\nCDatabaseResult (") + nsPrintfCString("%x", this) + NS_LITERAL_CSTRING(") lock addresses:\n");
-  log += NS_LITERAL_CSTRING("m_pColumnNamesLock  = ") + nsPrintfCString("%x\n", m_pColumnNamesLock);
-  log += NS_LITERAL_CSTRING("m_pRowCellsLock     = ") + nsPrintfCString("%x\n", m_pRowCellsLock);
-  log += NS_LITERAL_CSTRING("m_pColumnResolveMap = ") + nsPrintfCString("%x\n", m_pColumnResolveMap);
-  log += NS_LITERAL_CSTRING("\n");
-  NS_WARNING(log.get());
-#endif
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -148,6 +153,7 @@ NS_IMETHODIMP CDatabaseResult::GetRowCell(PRInt32 dbRow, PRInt32 dbCell, nsAStri
 NS_IMETHODIMP CDatabaseResult::GetRowCellByColumn(PRInt32 dbRow, const nsAString &dbColumn, nsAString &_retval)
 {
   NS_ENSURE_ARG_MIN(dbRow, 0);
+  PRInt32 length = dbColumn.Length();
   PRInt32 dbCell = GetColumnIndexFromName(dbColumn);
   return GetRowCell(dbRow, dbCell, _retval);
 } //GetRowCellByColumn
@@ -294,8 +300,10 @@ PRInt32 CDatabaseResult::GetColumnIndexFromName(const nsAString &strColumnName)
   PRInt32 retval = -1;
 
   PR_Lock(m_pColumnResolveMap);
-  
-  dbcolumnresolvemap_t::const_iterator itColumnIndex = m_ColumnResolveMap.find(PromiseFlatString(strColumnName));
+
+  dbcolumnresolvemap_t::const_iterator itColumnIndex =
+    m_ColumnResolveMap.find(PromiseFlatString(strColumnName));
+
   if(itColumnIndex != m_ColumnResolveMap.end())
     retval = itColumnIndex->second;
 

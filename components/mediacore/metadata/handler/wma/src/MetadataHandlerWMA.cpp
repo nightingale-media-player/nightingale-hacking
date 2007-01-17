@@ -32,7 +32,6 @@
 #pragma once
 
 // INCLUDES ===================================================================
-#include <nscore.h>
 #include "MetadataHandlerWMA.h"
 
 #include <necko/nsIURI.h>
@@ -41,7 +40,6 @@
 #include <necko/nsNetUtil.h>
 
 #include <unicharutil/nsUnicharUtils.h>
-#include <xpcom/nsEscape.h>
 
 #ifdef XP_WIN
 #include <wmsdk.h>
@@ -200,22 +198,15 @@ NS_IMETHODIMP sbMetadataHandlerWMA::Read(PRInt32 *_retval)
   {
 
 #if defined(XP_WIN)
-    nsCString::iterator itBegin, itEnd;
-
     if(StringBeginsWith(cstrPath, NS_LITERAL_CSTRING("/")))
       cstrPath.Cut(0, 1);
 
-    cstrPath.BeginWriting(itBegin);
-    cstrPath.EndWriting(itEnd);
-
-    while(itBegin != itEnd)
-    {
-      if( (*itBegin) == '/') (*itBegin) = '\\';
-      itBegin++;
-    }
+    PRInt32 foundIndex = 0;
+    while (-1 != (foundIndex = cstrPath.FindChar('/', foundIndex)))
+      cstrPath.Replace(foundIndex, 1, '\\');
 
     // ?? Local file
-    char *u8url = const_cast<char *>(NS_UnescapeURL(cstrPath).get());
+    char *u8url = const_cast<char *>(cstrPath.get());
     NS_ConvertUTF8toUTF16 u16url( cstrPath );
 
     // Do it all here.

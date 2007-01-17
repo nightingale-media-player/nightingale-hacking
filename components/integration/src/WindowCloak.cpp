@@ -32,7 +32,7 @@
 #include "WindowCloak.h"
 
 #include <dom/nsIDOMWindow.h>
-#include <dom/nsIScriptGlobalObject.h>
+#include <dom/nsPIDOMWindow.h>
 #include <docshell/nsIDocShell.h>
 #include <docshell/nsIDocShellTreeItem.h>
 #include <docshell/nsIDocShellTreeOwner.h>
@@ -77,11 +77,11 @@ sbWindowCloak::IsCloaked(nsIDOMWindow* aDOMWindow,
   }
 
   nsresult rv;
-  nsCOMPtr<nsIScriptGlobalObject> scriptGlobalObj =
+  nsCOMPtr<nsPIDOMWindow> pWindow =
     do_QueryInterface(aDOMWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsIDocShell* docShell = scriptGlobalObj->GetDocShell();
+  nsIDocShell* docShell = pWindow->GetDocShell();
   NS_ENSURE_TRUE(docShell, NS_ERROR_FAILURE);
 
   nsCOMPtr<nsIDocShellTreeItem> treeItem = do_QueryInterface(docShell, &rv);
@@ -114,11 +114,11 @@ sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
     NS_ENSURE_TRUE(mCloakedWindows.Init(), NS_ERROR_FAILURE);
 
   nsresult rv;
-  nsCOMPtr<nsIScriptGlobalObject> scriptGlobalObj =
+  nsCOMPtr<nsPIDOMWindow> pWindow =
     do_QueryInterface(aDOMWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsIDocShell* docShell = scriptGlobalObj->GetDocShell();
+  nsIDocShell* docShell = pWindow->GetDocShell();
   NS_ENSURE_TRUE(docShell, NS_ERROR_FAILURE);
 
   nsCOMPtr<nsIDocShellTreeItem> treeItem = do_QueryInterface(docShell, &rv);

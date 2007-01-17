@@ -43,9 +43,8 @@
 #include <webbrowserpersist/nsIWebBrowserPersist.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
-#include <string/nsStringAPI.h>
+#include <nsStringGlue.h>
 #include <unicharutil/nsUnicharUtils.h>
-#include "nsString.h"
 
 #include "DownloadDevice.h"
 
@@ -382,7 +381,7 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
   nsString strSourceURL(source);
   nsCString cstr;
 
-  NS_UTF16ToCString(strSourceURL, NS_CSTRING_ENCODING_ASCII, cstr);
+  CopyUTF16toUTF8(strSourceURL, cstr);
   if(NS_FAILED(pSourceURI->SetSpec(cstr))) return PR_FALSE;
   if(NS_FAILED(pSourceURI->GetScheme(cstr))) return PR_FALSE;
 
@@ -391,7 +390,7 @@ sbDownloadDevice::TransferFile(PRUnichar* deviceString,
   {
     PRBool bRet = PR_FALSE;
 
-    PRInt32 ec = 0;
+    nsresult ec = 0;
     PRInt32 mediaId = nsString(index).ToInteger(&ec);
 
     RemoveTranferTracks(EmptyString(), mediaId, &bRet);

@@ -34,7 +34,7 @@
 
 // INCLUDES ===================================================================
 #include <nscore.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 #include "sbIMetadataValues.h"
 #include <map>
 

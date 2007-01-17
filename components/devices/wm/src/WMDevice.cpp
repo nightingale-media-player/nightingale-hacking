@@ -41,7 +41,7 @@
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsMemory.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 #include "nsIWebProgressListener.h"
 #include "nsNetUtil.h"
 

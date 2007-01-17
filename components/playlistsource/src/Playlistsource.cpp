@@ -32,7 +32,6 @@
 #pragma warning(push)
 #pragma warning(disable:4800)
 
-#include "nscore.h"
 #include "prlog.h"
 #include "nspr.h"
 #include "nsCOMPtr.h"
@@ -59,9 +58,10 @@
 #include <xpcom/nsVoidArray.h>
 #include <xpcom/nsCOMArray.h>
 #include <xpcom/nsArrayEnumerator.h>
-#include "nsCRT.h"
 #include "nsRDFCID.h"
-#include "nsLiteralString.h"
+#include <nsStringGlue.h>
+#include <nsMemory.h>
+#include <nsCRTGlue.h>
 
 #include "Playlistsource.h"
 #include "sbIPlaylist.h"
@@ -332,11 +332,13 @@ sbPlaylistsource::Init()
   g_pMonitor = nsAutoMonitor::NewMonitor("sbPlaylistsource.g_pMonitor");
   NS_ENSURE_TRUE(g_pMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  // Make the shared query
-  m_SharedQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
-  NS_ENSURE_TRUE(m_SharedQuery, NS_ERROR_FAILURE);
-
   nsresult rv;
+
+  // Make the shared query
+  m_SharedQuery =
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = m_SharedQuery->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -423,7 +425,7 @@ sbPlaylistsource::FeedPlaylist(const nsAString &aRefName,
   rv = query->SetAsyncQuery(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->SetDatabaseGUID(nsPromiseFlatString(aContextGUID));
+  rv = query->SetDatabaseGUID(PromiseFlatString(aContextGUID));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // New callback for a new query.
@@ -459,7 +461,7 @@ sbPlaylistsource::FeedPlaylist(const nsAString &aRefName,
   info.m_ForceGetTargets = PR_FALSE;
   g_InfoMap[new_resource] = info;
   callback->m_Info = &g_InfoMap[new_resource];
-  g_StringMap[nsPromiseFlatString(aRefName)] = new_resource;
+  g_StringMap[PromiseFlatString(aRefName)] = new_resource;
 
   return NS_OK;
 }
@@ -471,7 +473,7 @@ sbPlaylistsource::ClearPlaylist(const nsAString &aRefName)
 
   METHOD_SHORTCIRCUIT;
 
-  ClearPlaylistSTR(nsPromiseFlatString(aRefName).get());
+  ClearPlaylistSTR(PromiseFlatString(aRefName).get());
 
   return NS_OK;
 }
@@ -676,7 +678,7 @@ sbPlaylistsource::GetRefRowCellByColumn(const nsAString &aRefName,
     // The LoadRowResults above will fail silently if the table has been deleted and the UI is still asking for values.
     if (valueInfo.m_Resultset) {
       rv = valueInfo.m_Resultset->GetRowCellByColumn(valueInfo.m_ResultsRow,
-                                                    nsPromiseFlatString(aColumn),
+                                                    PromiseFlatString(aColumn),
                                                     _retval);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -722,21 +724,24 @@ sbPlaylistsource::GetRefRowByColumnValue(const nsAString &aRefName,
   // Ugh.  If we have an orderby, remove it.
   PRInt32 mark = query.Find("order");
   if ( mark != -1 )
-    query.Left( query, mark );
+    query.Assign(StringHead(query, mark));
 
-  nsAString::const_iterator start, end;
-  query.BeginReading(start);
-  query.EndReading(end);
 
   // If we already have a where, don't add another one
   nsAutoString aw_str;
-  if (!FindInReadable(NS_LITERAL_STRING("where"), start, end))
+  PRInt32 foundIndex = query.Find(NS_LITERAL_STRING("where"));
+  if (foundIndex == -1)
     aw_str = NS_LITERAL_STRING(" where ");
   else
     aw_str = NS_LITERAL_STRING(" and ");
 
   // Append the metadata column restraint
-  query += aw_str + aColumn + eq_str + qu_str + aValue + qu_str;
+  query += aw_str;
+  query += aColumn;
+  query += eq_str;
+  query += qu_str;
+  query += aValue;
+  query += qu_str;
 
   PRInt32 exeReturn;
   rv = m_SharedQuery->AddQuery(query);
@@ -1040,6 +1045,10 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
   nsresult rv  = info->m_Resultset->GetColumnCount(&col_count);
   NS_ENSURE_SUCCESS(rv, rv);
 
+/*
+  // Uhm... for now, I'm going to remove this optimization because it
+  // is disruptive to the new functionality.
+
   // XXXredfive may want to pull this out into a helper function later
   nsAString::const_iterator start, end;
   aSearchString.BeginReading(start);
@@ -1048,9 +1057,6 @@ sbPlaylistsource::SetSearchString(const nsAString &aRefName,
   // check to see if the new query is more restrictive
   PRBool subquery = FindInReadable(info->m_SearchString, start, end);
 
-/*
-  // Uhm... for now, I'm going to remove this optimization because it
-  // is disruptive to the new functionality.
 
   if ( col_count == 0 && subquery ) {
     // we have no results and the filter string is at least as
@@ -1379,19 +1385,40 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   PRBool isSimplePlaylist = pSimplePlaylist != nsnull;
   PRBool isSmartPlaylist = pSmartPlaylist != nsnull;
 
-  nsAutoString library_query_str = select_str + row_str + from_str + qu_str +
-                                   table_name + qu_str + where_str;
-  nsAutoString library_simple_query_str = select_str + row_str + from_str +
-                                          qu_str + table_name + qu_str;
+  nsAutoString library_query_str = select_str;
+  library_query_str += row_str;
+  library_query_str += from_str;
+  library_query_str += qu_str;
+  library_query_str += table_name;
+  library_query_str += qu_str;
+  library_query_str += where_str;
+
+  nsAutoString library_simple_query_str = select_str;
+  library_simple_query_str += row_str;
+  library_simple_query_str += from_str;
+  library_simple_query_str += qu_str;
+  library_simple_query_str += table_name;
+  library_simple_query_str += qu_str;
 
   // The beginning of the main query string before we dump on it.
-  nsAutoString playlist_simple_query_str = select_str + row_str + from_str +
-                                           qu_str + table_name + qu_str +
-                                           left_join_str + library_str +
-                                           on_str + qu_str + table_name +
-                                           qu_str + dot_str +
-                                           playlist_uuid_str + eq_str +
-                                           library_str + dot_str + uuid_str;
+  nsAutoString playlist_simple_query_str = select_str;
+  playlist_simple_query_str += row_str;
+  playlist_simple_query_str += from_str;
+  playlist_simple_query_str += qu_str;
+  playlist_simple_query_str += table_name;
+  playlist_simple_query_str += qu_str;
+  playlist_simple_query_str += left_join_str;
+  playlist_simple_query_str += library_str;
+  playlist_simple_query_str += on_str;
+  playlist_simple_query_str += qu_str;
+  playlist_simple_query_str += table_name;
+  playlist_simple_query_str += qu_str;
+  playlist_simple_query_str += dot_str;
+  playlist_simple_query_str += playlist_uuid_str;
+  playlist_simple_query_str += eq_str;
+  playlist_simple_query_str += library_str;
+  playlist_simple_query_str += dot_str;
+  playlist_simple_query_str += uuid_str;
 
   PRBool useLibraryQuery = (table_name == library_str ||
                             isSimplePlaylist ||
@@ -1400,7 +1427,9 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
                                   library_simple_query_str :
                                   playlist_simple_query_str;
 
-  nsAutoString main_query_str = simple_query_str + where_str;
+  nsAutoString main_query_str = simple_query_str;
+  main_query_str += where_str;
+
   nsAutoString main_query_wherestr;
 
   info->m_SimpleQueryStr = simple_query_str;
@@ -1436,17 +1465,37 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
           search_query_str += or_str;
         any_column = PR_TRUE;
         // ( artist like "%cc%" )
-        search_query_str += op_str + (*f).second.m_Column + like_str + qu_str +
-          pct_str + *search_values[index] + pct_str + qu_str +
-          cp_str;
+        search_query_str += op_str;
+        search_query_str += (*f).second.m_Column;
+        search_query_str += like_str;
+        search_query_str += qu_str;
+        search_query_str += pct_str;
+        search_query_str += *search_values[index];
+        search_query_str += pct_str;
+        search_query_str += qu_str;
+        search_query_str += cp_str;
       }
 
       // or ( title like "%cc%" ) )
-      search_query_str += or_str + op_str + NS_LITERAL_STRING("title") +
-        like_str + qu_str + pct_str + *search_values[index] +
-        pct_str + qu_str + or_str + NS_LITERAL_STRING("url") +
-        like_str + qu_str + pct_str + *search_values[index] +
-        pct_str + qu_str + cp_str + cp_str;
+      search_query_str += or_str;
+      search_query_str += op_str;
+      search_query_str += NS_LITERAL_STRING("title");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += or_str;
+      search_query_str += NS_LITERAL_STRING("url");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += cp_str;
+      search_query_str += cp_str;
     }
   } else {
     // no filterlist, do it from a fixed set of columns.
@@ -1461,18 +1510,47 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
       any_column = PR_FALSE;
       // ( title like "%cc%" or genre like "%cc%" or artist like "%cc%"
       //     or album like "%cc%" )
-      search_query_str += op_str + NS_LITERAL_STRING("title") + like_str +
-        qu_str + pct_str + *search_values[index] + pct_str +
-        qu_str + or_str + NS_LITERAL_STRING("genre") +
-        like_str + qu_str + pct_str + *search_values[index] +
-        pct_str + qu_str + or_str +
-        NS_LITERAL_STRING("artist") + like_str + qu_str +
-        pct_str + *search_values[index] + pct_str + qu_str +
-        or_str + NS_LITERAL_STRING("album") + like_str +
-        qu_str + pct_str + *search_values[index] + pct_str +
-        qu_str + or_str + NS_LITERAL_STRING("url") +
-        like_str + qu_str + pct_str + *search_values[index] +
-        pct_str + qu_str+ cp_str;
+      search_query_str += op_str;
+      search_query_str += NS_LITERAL_STRING("title");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += or_str;
+      search_query_str += NS_LITERAL_STRING("genre");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += or_str;
+      search_query_str += NS_LITERAL_STRING("artist");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += or_str;
+      search_query_str += NS_LITERAL_STRING("album");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += or_str;
+      search_query_str += NS_LITERAL_STRING("url");
+      search_query_str += like_str;
+      search_query_str += qu_str;
+      search_query_str += pct_str;
+      search_query_str += *search_values[index];
+      search_query_str += pct_str;
+      search_query_str += qu_str;
+      search_query_str += cp_str;
     }
     if (any_value)
       search_query_str += cp_str;
@@ -1499,8 +1577,11 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
     for (PRInt32 index = 0; index < count; index++) {
       if (any_filter)
         sql_filter_str += or_str;
-      sql_filter_str += (*filterIter).second.m_Column + eq_str + qu_str +
-                        *filter_values[index] + qu_str;
+      sql_filter_str += (*filterIter).second.m_Column;
+      sql_filter_str += eq_str;
+      sql_filter_str += qu_str;
+      sql_filter_str += *filter_values[index];
+      sql_filter_str += qu_str;
       any_filter = PR_TRUE;
     }
 
@@ -1508,26 +1589,42 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
       // Append this filter's constraints to the main query
       if (anything)
         main_query_wherestr += and_str;
-      main_query_wherestr += op_str + sql_filter_str + cp_str;
+      main_query_wherestr += op_str;
+      main_query_wherestr += sql_filter_str;
+      main_query_wherestr += cp_str;
     }
 
     // Compose the sub query
-    nsAutoString sub_query_str = unique_str + op_str + (*filterIter).second.m_Column +
-                                 cp_str + from_str + qu_str + table_name +
-                                 qu_str;
+    nsAutoString sub_query_str = unique_str;
+    sub_query_str += op_str;
+    sub_query_str += (*filterIter).second.m_Column;
+    sub_query_str += cp_str;
+    sub_query_str += from_str;
+    sub_query_str += qu_str;
+    sub_query_str += table_name;
+    sub_query_str += qu_str;
+
     // if anything is selected in the filter, use that
-    if (anything)
-      sub_query_str += where_str + sub_filter_str;
-    else if (search_count) // otherwise, use the search if it exists. if it doesn't then select all (no "where ...")
-      sub_query_str += where_str + search_query_str;
+    if (anything) {
+      sub_query_str += where_str;
+      sub_query_str += sub_filter_str;
+    }
+    else if (search_count) {
+      // otherwise, use the search if it exists. if it doesn't then select all (no "where ...")
+      sub_query_str += where_str;
+      sub_query_str += search_query_str;
+    }
       
-    sub_query_str += order_str + (*filterIter).second.m_Column;
+    sub_query_str += order_str;
+    sub_query_str += (*filterIter).second.m_Column;
 
     // Append this filter's constraints to the next sub query
     if (any_filter) {
       if (anything)
         sub_filter_str += and_str;
-      sub_filter_str += op_str + sql_filter_str + cp_str; 
+      sub_filter_str += op_str;
+      sub_filter_str += sql_filter_str;
+      sub_filter_str += cp_str; 
     }
 
     // Make sure there is a feed for this filter
@@ -1576,18 +1673,28 @@ sbPlaylistsource::ExecuteFeed(const nsAString &aRefName,
   if (!anything) {
     main_query_str = simple_query_str;
     // but if there is a search in progress, restrict to its filters
-    if (search_count)
-      main_query_str += where_str + search_query_str;
+    if (search_count) {
+      main_query_str += where_str;
+      main_query_str += search_query_str;
+    }
   } else {
     // if we have active filters, we still need to apply the search string on top of them
     if (search_count) {
-      main_query_wherestr = op_str + main_query_wherestr + cp_str + and_str + op_str + search_query_str + cp_str;
+      nsAutoString temp(main_query_wherestr);
+      main_query_wherestr = op_str;
+      main_query_wherestr += temp;
+      main_query_wherestr += cp_str;
+      main_query_wherestr += and_str;
+      main_query_wherestr += op_str;
+      main_query_wherestr += search_query_str;
+      main_query_wherestr += cp_str;
     }
     main_query_str += main_query_wherestr;
   }
 
   if (!info->m_SortOrder.IsEmpty()) {
-    main_query_str += order_str + info->m_SortOrder; 
+    main_query_str += order_str;
+    main_query_str += info->m_SortOrder; 
   }
 
   // Remove the previous results
@@ -1781,7 +1888,7 @@ sbPlaylistsource::GetURI(char** uri)
   NS_ENSURE_ARG_POINTER(uri);
   METHOD_SHORTCIRCUIT;
 
-  if (!(*uri = nsCRT::strdup("rdf:playlist")))
+  if (!(*uri = NS_strdup("rdf:playlist")))
     return NS_ERROR_OUT_OF_MEMORY;
 
   return NS_OK;
@@ -2100,17 +2207,29 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     rv = info->m_Query->GetQuery(0, q);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString tablerow_str = library_str + dot_str + row_str;
-    nsAutoString find_str = spc_str + tablerow_str + spc_str;
+    nsAutoString tablerow_str = library_str;
+    tablerow_str += dot_str;
+    tablerow_str += row_str;
+
+    nsAutoString find_str = spc_str;
+    find_str += tablerow_str;
+    find_str += spc_str;
 
     if (q.Find(find_str) == -1) {
-      q.ReplaceSubstring(NS_LITERAL_STRING(" id "),
-                         NS_LITERAL_STRING(" *,id "));
+      NS_NAMED_LITERAL_STRING(findIdStr, " id ");
+      PRInt32 foundIndex = q.Find(findIdStr);
+      if (foundIndex > -1)
+        q.Replace(foundIndex, findIdStr.Length(), NS_LITERAL_STRING(" *,id "));
     }
     else {
-      nsAutoString replacement = spc_str + NS_LITERAL_STRING("*,") +
-                                 tablerow_str + spc_str;
-      q.ReplaceSubstring(find_str, replacement);
+      nsAutoString replacement = spc_str;
+      replacement += NS_LITERAL_STRING("*,");
+      replacement += tablerow_str;
+      replacement += spc_str;
+
+      PRInt32 foundIndex = q.Find(find_str);
+      if (foundIndex > -1)
+        q.Replace(foundIndex, find_str.Length(), replacement);
     }
     q += NS_LITERAL_STRING(" limit 1");
 
@@ -2142,8 +2261,8 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
     rv = colresults->GetColumnName(j, col_str);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI) +
-                                       NS_ConvertUTF16toUTF8(col_str);
+    nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI);
+    utf8_resource_name += NS_ConvertUTF16toUTF8(col_str);
 
     nsIRDFResource* col_resource;
     rv = sRDFService->GetResource(utf8_resource_name,
@@ -2156,8 +2275,9 @@ sbPlaylistsource::GetTargets(nsIRDFResource*       source,
 
   if ((colcount == 0) && (!info->m_Column.IsEmpty())) {
     // If there is a column for this item, use it instead.
-    nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI) +
-                                       NS_ConvertUTF16toUTF8(info->m_Column);
+    nsCAutoString utf8_resource_name = NS_LITERAL_CSTRING(NC_NAMESPACE_URI);
+    utf8_resource_name += NS_ConvertUTF16toUTF8(info->m_Column);
+
     nsIRDFResource *col_resource;
     rv = sRDFService->GetResource(utf8_resource_name,
                                   &col_resource);
@@ -2606,15 +2726,27 @@ sbPlaylistsource::LoadRowResults(sbPlaylistsource::sbValueInfo& value, nsAutoMon
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Hack the given query string to get all the metadata
-  nsAutoString tablerow_str = library_str + dot_str + row_str;
-  nsAutoString find_str = spc_str + tablerow_str + spc_str;
-  if (q.Find(find_str) == -1 ) {
-    q.ReplaceSubstring(NS_LITERAL_STRING(" id "),
-                       NS_LITERAL_STRING(" *,id "));
+  nsAutoString tablerow_str = library_str;
+  tablerow_str += dot_str;
+  tablerow_str += row_str;
+
+  nsAutoString find_str = spc_str;
+  find_str += tablerow_str;
+  find_str += spc_str;
+
+  PRInt32 foundIndex = q.Find(find_str);
+  if (foundIndex == -1 ) {
+    NS_NAMED_LITERAL_STRING(findIdString, " id ");
+    PRInt32 offset = q.Find(findIdString);
+    if (offset > -1)
+      q.Replace(offset, findIdString.Length(), NS_LITERAL_STRING(" *,id "));
   } else {
-    nsAutoString replace = spc_str + NS_LITERAL_STRING("*,") + tablerow_str +
-                           spc_str;
-    q.ReplaceSubstring(find_str, replace);
+    nsAutoString replace = spc_str;
+    replace += NS_LITERAL_STRING("*,");
+    replace += tablerow_str;
+    replace += spc_str;
+
+    q.Replace(foundIndex, find_str.Length(), replace);
   }
 
   // And read from the current row

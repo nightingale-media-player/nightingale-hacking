@@ -51,12 +51,12 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/gfx \
-               $(MOZSDK_INCLUDE_DIR)/accessibility \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/xultmpl \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/widget \
                $(MOZSDK_INCLUDE_DIR)/docshell \
+               $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -65,16 +65,12 @@ DYNAMIC_LIB = $(target_name)
 DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4  \
-                            plc4  \
                             xpcom \
+                            xpcomglue_s \
                             $(NULL)
 
 CPP_EXTRA_FLAGS= -isysroot /Developer/SDKs/MacOSX10.4u.sdk
 DYNAMIC_LIB_EXTRA_FLAGS= -framework Carbon -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk
-
-DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
-DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 
 CPP_SRCS = ../WindowDragger.cpp \
            ../NativeWindowFromNode.cpp \

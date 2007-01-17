@@ -44,7 +44,7 @@
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsIComponentRegistrar.h>
-#include <xpcom/nsSupportsPrimitives.h>
+#include <xpcom/nsISupportsPrimitives.h>
 
 #include <necko/nsIURI.h>
 #include <necko/nsIFileStreams.h>
@@ -52,8 +52,7 @@
 
 #include <necko/nsNetUtil.h>
 
-#include <string/nsStringAPI.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 
 #include "prlog.h"
 #ifdef PR_LOGGING

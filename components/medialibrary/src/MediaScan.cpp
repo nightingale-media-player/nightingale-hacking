@@ -39,6 +39,8 @@
 #include <necko/nsIIOService.h>
 #include <necko/nsIURI.h>
 #include <unicharutil/nsUnicharUtils.h>
+#include <nsThreadUtils.h>
+#include <nsStringGlue.h>
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -316,19 +318,10 @@ NS_IMETHODIMP CMediaScanQuery::IsCancelled(PRBool *_retval)
 nsString CMediaScanQuery::GetExtensionFromFilename(const nsAString &strFilename)
 {
   nsAutoString str(strFilename);
-  nsAutoString::const_iterator strStart, start, strEnd, end;
-  str.BeginReading(start);
-  str.BeginReading(strStart);
-  str.EndReading(end);
-  str.EndReading(strEnd);
 
-  if(RFindInReadable(NS_LITERAL_STRING("."), start, end))
-  {
-    ++start;
-    size_t index = Distance(strStart, start);
-    size_t cutLen = Distance(start, strEnd);
-    return nsString(Substring(str, index, cutLen));
-  }
+  PRInt32 index = str.RFindChar(NS_L('.'));
+  if (index > -1)
+    return nsString(Substring(str, index + 1, str.Length() - index));
 
   return EmptyString();
 } //GetExtensionFromFilename
@@ -377,9 +370,7 @@ CMediaScan::CMediaScan()
     if (!pThreadRunner)
       break;
     nsresult rv = NS_NewThread(getter_AddRefs(m_pThread),
-                               pThreadRunner,
-                               0,
-                               PR_JOINABLE_THREAD);
+                               pThreadRunner);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbMediaScanThread");
   } while (PR_FALSE); // Only do this once
 } //ctor
@@ -393,7 +384,7 @@ CMediaScan::~CMediaScan()
       m_ThreadShouldShutdown = PR_TRUE;
       mon.Notify();
     }
-    m_pThread->Join();
+    m_pThread->Shutdown();
     m_pThread = nsnull;
   }
 

@@ -32,6 +32,7 @@
 #ifndef __DOWNLOAD_DEVICE_H__
 #define __DOWNLOAD_DEVICE_H__
 
+#include <nsStringGlue.h>
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
 #include "nsIRDFLiteral.h"

@@ -35,14 +35,13 @@
 // INCLUDES ===================================================================
 #include "sbIDatabaseResult.h"
 
-#include <string>
 #include <vector>
 #include <map>
 
 #include <prlock.h>
 
 #include <nscore.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASERESULT_CONTRACTID                \

@@ -47,7 +47,7 @@ class CDatabaseQuery;
 #include <prmon.h>
 
 #include <xpcom/nsCOMPtr.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEQUERY_CONTRACTID                 \

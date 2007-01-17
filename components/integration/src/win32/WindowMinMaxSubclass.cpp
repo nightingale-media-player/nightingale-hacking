@@ -43,7 +43,7 @@
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
-#include <nsString.h>
+#include <nsStringGlue.h>
 
 #include "sbIDeviceManager.h"
 #include "sbICDDevice.h"

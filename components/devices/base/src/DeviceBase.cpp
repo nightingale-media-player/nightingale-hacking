@@ -36,8 +36,7 @@
 #include "objbase.h"
 #endif
 
-#include "nspr.h"
-#include "nsEscape.h"
+//#include "nspr.h"
 
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsComponentManagerUtils.h>
@@ -45,7 +44,7 @@
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsServiceManagerUtils.h>
 
-#include <xpcom/nsCRT.h>
+#include <nsCRTGlue.h>
 
 #include <necko/nsIURI.h>
 #include <docshell/nsIURIFixup.h>
@@ -56,6 +55,9 @@
 
 #include "sbIMediaLibrary.h"
 #include "sbIPlaylist.h"
+
+#include <nsThreadUtils.h>
+#include <nsStringGlue.h>
 
 #define MSG_DEVICE_BASE             (0x2000) // Base message ID
 
@@ -73,6 +75,43 @@
 #define SOURCE_COLUMN_NAME          NS_LITERAL_STRING("source")
 #define DESTINATION_COLUMN_NAME     NS_LITERAL_STRING("destination")
 #define INDEX_COLUMN_NAME           NS_LITERAL_STRING("id")
+
+// Copied from nsCRT.h
+#if defined(XP_WIN) || defined(XP_OS2)
+  #define FILE_PATH_SEPARATOR       "\\"
+  #define FILE_ILLEGAL_CHARACTERS   "/:*?\"<>|"
+#elif defined(XP_UNIX) || defined(XP_BEOS)
+  #define FILE_PATH_SEPARATOR       "/"
+  #define FILE_ILLEGAL_CHARACTERS   ""
+#else
+  #error need_to_define_your_file_path_separator_and_illegal_characters
+#endif
+
+static void ReplaceChars(nsAString& aOldString,
+                         const nsAString& aOldChars,
+                         const PRUnichar aNewChar)
+{
+  PRUint32 length = aOldString.Length();
+  for (PRUint32 index = 0; index < length; index++) {
+    PRUnichar currentChar = aOldString.CharAt(index);
+    PRInt32 oldCharsIndex = aOldString.FindChar(currentChar, index);
+    if (oldCharsIndex > -1)
+      aOldString.Replace(index, 1, aNewChar);
+  }
+}
+
+static void ReplaceChars(nsACString& aOldString,
+                         const nsACString& aOldChars,
+                         const char aNewChar)
+{
+  PRUint32 length = aOldString.Length();
+  for (PRUint32 index = 0; index < length; index++) {
+    char currentChar = aOldString.CharAt(index);
+    PRInt32 oldCharsIndex = aOldString.FindChar(currentChar, index);
+    if (oldCharsIndex > -1)
+      aOldString.Replace(index, 1, aNewChar);
+  }
+}
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceThread, nsIRunnable)
 
@@ -92,10 +131,7 @@ sbDeviceBase::sbDeviceBase(PRBool usingThread)
       NS_ASSERTION(pThread, "Unable to create sbDeviceThread");
       if (!pThread) 
         break;
-      nsresult rv = NS_NewThread(getter_AddRefs(mpDeviceThread),
-        pThread,
-        0,
-        PR_JOINABLE_THREAD);
+      nsresult rv = NS_NewThread(getter_AddRefs(mpDeviceThread), pThread);
       NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbDeviceThread");
       if (NS_FAILED(rv))
         mpDeviceThread = nsnull;
@@ -113,7 +149,7 @@ sbDeviceBase::~sbDeviceBase()
       mDeviceThreadShouldShutdown = PR_TRUE;
       mon.NotifyAll();
     }
-    mpDeviceThread->Join();
+    mpDeviceThread->Shutdown();
     mpDeviceThread = nsnull;
   }
 
@@ -520,7 +556,7 @@ sbDeviceBase::GetNextTransferFileEntry(PRInt32 prevIndex,
     nsAutoString id;
     resultset->GetRowCellByColumn(rowNumber, INDEX_COLUMN_NAME, id);
     
-    PRInt32 conversionError = 0;
+    nsresult conversionError;
     curIndex = id.ToInteger(&conversionError);
     
     resultset->GetRowCellByColumn(rowNumber, SOURCE_COLUMN_NAME, recvSource);
@@ -621,7 +657,7 @@ PRBool sbDeviceBase::TransferNextFile(PRInt32 prevTransferRowNumber, void *data)
       // Get progress value
       nsAutoString progressString;
       resultset->GetRowCellByColumn(rowNumber, NS_LITERAL_STRING("progress"), progressString);
-      PRInt32 errorCode;
+      nsresult errorCode;
       PRInt32 progress = progressString.ToInteger(&errorCode);
 
       if (progress == 100)
@@ -1108,8 +1144,9 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
     nsAutoString updateDataQuery, destinationPathFile, sourcePathFile;
 
     updateDataQuery.AssignLiteral("UPDATE \"");
-    updateDataQuery += destTable + NS_LITERAL_STRING("\"") +
-                       NS_LITERAL_STRING(" SET source = ");
+    updateDataQuery += destTable;
+    updateDataQuery += NS_LITERAL_STRING("\"");
+    updateDataQuery += NS_LITERAL_STRING(" SET source = ");
 
     rv = resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("source"),
                                        sourcePathFile);
@@ -1145,7 +1182,8 @@ sbDeviceBase::CreateTransferTable(const nsAString& aDeviceString,
     if (!isDestinationGiven)
       destinationPathFile = dataString;
     else {
-      fileName.ReplaceChar(FILE_ILLEGAL_CHARACTERS, '_');
+      NS_NAMED_LITERAL_STRING(illegalChars, FILE_ILLEGAL_CHARACTERS);
+      ReplaceChars(fileName, illegalChars, NS_L('_'));
       destinationPathFile += fileName;
     }
 
@@ -1269,11 +1307,14 @@ sbDeviceBase::GetFileNameFromURL(const PRUnichar *DeviceString,
   {
     fileName = Substring(url, ++foundPosition);
 
+    // XXXBen This won't work on 1.9!
+    /*
     // Unescape URL
     nsCAutoString tmp;
     NS_UnescapeURL(NS_ConvertUTF16toUTF8(fileName),
                    esc_FileBaseName|esc_AlwaysCopy, tmp);
     fileName.Assign(NS_ConvertUTF8toUTF16(tmp));
+    */
 
     // Now add the extension if the device changes the format
     // of transferred file.
@@ -1594,7 +1635,7 @@ sbDeviceBase::ResumeAbortedDownload(const PRUnichar* deviceString)
   for ( PRInt32 row = 0; row < rowcount; row++ ) {
     nsAutoString progressString;
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress"), progressString);
-    PRInt32 errorCode;
+    nsresult errorCode;
     PRInt32 progress = progressString.ToInteger(&errorCode);
     if (progress < 100) {
       // Unfinished transfer,
@@ -1650,7 +1691,7 @@ sbDeviceBase::ResumeAbortedUpload(const PRUnichar* deviceString)
   {
     nsAutoString progressString;
     resultset->GetRowCellByColumn(row, NS_LITERAL_STRING("progress"), progressString);
-    PRInt32 errorCode;
+    nsresult errorCode;
     PRInt32 progress = progressString.ToInteger(&errorCode);
     if (progress < 100)
     {
@@ -1969,8 +2010,8 @@ sbDeviceBase::DownloadDone(PRUnichar* deviceString,
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("title"), strFile, PR_FALSE, &bRet);
     pLibrary->SetValueByGUID(guid, NS_LITERAL_STRING("length"), NS_LITERAL_STRING("0"), PR_FALSE, &bRet);
 
-    PR_Free(aMetaValues[0]);
-    PR_Free(aMetaValues);
+    nsMemory::Free(aMetaValues[0]);
+    nsMemory::Free(aMetaValues);
   }
 
   TransferData* data = new TransferData;

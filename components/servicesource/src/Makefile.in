@@ -60,17 +60,14 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4  \
-                            plc4  \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
                             xpcom \
+                            xpcomglue_s \
                             $(NULL)
 
 ifeq ($(SB_PLATFORM), macosx)
-  DYNAMIC_LIB_OBJS += $(MOZSDK_LIB_DIR)/XUL 
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
-else
-  DYNAMIC_LIB_EXTRA_IMPORTS += xul
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

@@ -32,6 +32,7 @@
 * \brief Songbird USBMassStorageDevice Component Definition.
 */
 
+#include <nsStringGlue.h>
 #include "nsISupportsImpl.h"
 #include "nsISupportsUtils.h"
 #include "nsIRDFLiteral.h"

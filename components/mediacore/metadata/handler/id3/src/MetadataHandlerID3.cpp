@@ -45,9 +45,7 @@
 #include <necko/nsIIOService.h>
 #include <necko/nsNetUtil.h>
 
-#include <string/nsReadableUtils.h>
 #include <unicharutil/nsUnicharUtils.h>
-#include <xpcom/nsEscape.h>
 
 // DEFINES ====================================================================
 
@@ -517,7 +515,7 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
         // Then open a file with it.
         nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1", &rv);
         NS_ENSURE_SUCCESS(rv, rv);
-        file->InitWithNativePath(NS_UnescapeURL(cstrPath));
+        file->InitWithNativePath(cstrPath);
 
         // Then open an input stream with it.
         nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
@@ -959,23 +957,20 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
       if ( strKey == NS_LITERAL_STRING("track_no") || strKey == NS_LITERAL_STRING("disc_no") )
       {
         PRInt32 mark = strKey.Find("_");
-        nsAutoString totalKey;
-        strKey.Left( totalKey, mark );
+        nsAutoString totalKey(StringHead(strKey, mark));
         totalKey.AppendLiteral("_total");
 
         if ( ( mark = strValue.Find( "of", PR_TRUE ) ) != -1 )
         {
-          nsAutoString _no, _total;
-          strValue.Left( _no, mark - 1 );
-          strValue.Right( _total, strValue.Length() - mark - 3 );
+          nsAutoString _no(StringHead(strValue, mark - 1));
+          nsAutoString _total(StringTail(strValue, strValue.Length() - mark - 3));
           m_Values->SetValue( strKey, _no, type );
           m_Values->SetValue( totalKey, _total, type );
         }
         else if ( ( mark = strValue.Find( "/", PR_TRUE ) ) != -1 )
         {
-          nsAutoString _no, _total;
-          strValue.Left( _no, mark );
-          strValue.Right( _total, strValue.Length() - mark - 1 );
+          nsAutoString _no(StringHead(strValue, mark));
+          nsAutoString _total(StringTail(strValue, strValue.Length() - mark - 1));
           m_Values->SetValue( strKey, _no, type );
           m_Values->SetValue( totalKey, _total, type );
         }
@@ -1023,9 +1018,8 @@ PRInt32 sbMetadataHandlerID3::ReadTag(ID3_Tag &tag)
     PRInt32 rparen = str.Find(")");
     if ( lparen == 0 && rparen != -1 )
     {
-      nsAutoString gen;
-      str.Mid( gen, lparen + 1, rparen - 1 );
-      PRInt32 aErrorCode;
+      nsAutoString gen(Substring(str, lparen + 1, rparen - 1));
+      nsresult aErrorCode;
       PRInt32 g = gen.ToInteger(&aErrorCode);
       if ( !aErrorCode && g < ID3_NR_OF_V1_GENRES )
       {

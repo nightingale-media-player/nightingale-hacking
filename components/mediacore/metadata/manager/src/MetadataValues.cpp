@@ -38,7 +38,7 @@
 #include <nscore.h>
 #include "MetadataValues.h"
 
-#include <string/nsStringAPI.h>
+#include <nsStringGlue.h>
 
 // DEFINES ====================================================================
 
@@ -83,7 +83,7 @@ NS_IMETHODIMP sbMetadataValues::SetValue(const nsAString &key, const nsAString &
   if (!key.Length())
     return NS_OK;
   // Put it into the map
-  m_Map[ nsPromiseFlatString(key) ] = sbMetadataValue( nsPromiseFlatString(value), type );
+  m_Map[ PromiseFlatString(key) ] = sbMetadataValue( PromiseFlatString(value), type );
   return NS_OK;
 }
 

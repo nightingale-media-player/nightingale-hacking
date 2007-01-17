@@ -33,22 +33,18 @@
 #include "DatabaseEngine.h"
 
 #include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsCRT.h>
 #include <xpcom/nsIFile.h>
 #include <xpcom/nsILocalFile.h>
-#include <string/nsStringAPI.h>
+#include <nsStringGlue.h>
+#include <nsThreadUtils.h>
 #include <xpcom/nsIObserverService.h>
 #include <xpcom/nsISimpleEnumerator.h>
 #include <xpcom/nsDirectoryServiceDefs.h>
 #include <xpcom/nsAppDirectoryServiceDefs.h>
 #include <xpcom/nsDirectoryServiceUtils.h>
-#include <unicharutil/nsUnicharUtils.h>
+#include <nsUnicharUtils.h>
 
 #include <nsAutoLock.h>
-
-#ifdef DEBUG_locks
-#include <nsPrintfCString.h>
-#endif
 
 #include <vector>
 #include <prmem.h>
@@ -69,7 +65,6 @@
   #if defined(XP_WIN)
     #include <windows.h>
   #endif
-  #include <nsPrintfCString.h>
   #define HARD_SANITY_CHECK             1
 #endif
 
@@ -452,9 +447,7 @@ NS_IMETHODIMP CDatabaseEngine::Init()
     if (!pQueryProcessorRunner)
       break;        
     rv = NS_NewThread(getter_AddRefs(pThread),
-                      pQueryProcessorRunner,
-                      0,
-                      PR_JOINABLE_THREAD);
+                      pQueryProcessorRunner);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start thread");
     if (NS_SUCCEEDED(rv))
       m_QueryProcessorThreads.AppendObject(pThread);
@@ -493,7 +486,7 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
     }
 
     for (PRInt32 i = 0; i < count; i++)
-      m_QueryProcessorThreads[i]->Join();
+      m_QueryProcessorThreads[i]->Shutdown();
   }
 
   NS_WARN_IF_FALSE(NS_SUCCEEDED(CloseAllDB()), "CloseAllDB Failed!");
@@ -514,7 +507,7 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
                                        const PRUnichar *aData)
 {
   // Bail if we don't care about the message
-  if (nsCRT::strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
+  if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
     return NS_OK;
   
   // Shutdown our threads
@@ -950,15 +943,11 @@ void CDatabaseEngine::GenerateDBGUIDList()
                 rv = pEntry->GetLeafName(strLeaf);
                 if (NS_SUCCEEDED(rv))
                 {
-                  nsAutoString::const_iterator itStrStart, itStart, itEnd;
-                  strLeaf.BeginReading(itStrStart);
-                  strLeaf.BeginReading(itStart);
-                  strLeaf.EndReading(itEnd);
-
-                  if(FindInReadable(NS_LITERAL_STRING(".db"), itStart, itEnd))
+                  NS_NAMED_LITERAL_STRING(dbExt, ".db");
+                  PRInt32 index = strLeaf.Find(dbExt);
+                  if (index > -1)
                   {
-                    strLeaf.Cut((PRUint32)Distance(itStrStart, itStart),
-                                (PRUint32)Distance(itStart, itEnd));
+                    strLeaf.Cut(index, dbExt.Length());
 
                     PR_Lock(m_pDatabasesGUIDListLock);
                     m_DatabasesGUIDList.push_back(strLeaf);
@@ -1091,47 +1080,38 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
         sqlite3_stmt *pStmt = nsnull;
 
         nsAutoString strQuery;
-        nsAutoString::const_iterator start, end, lineStart, lineEnd;
-
         const void *pzTail = nsnull;
 
         pQuery->GetQuery(i, strQuery);
-        strQuery.BeginReading(start);
-        strQuery.BeginReading(lineStart);
-        strQuery.EndReading(end);
-        strQuery.EndReading(lineEnd);
-        
-        if(FindInReadable(strAttachToken, start, end))
+
+        PRInt32 attachOffset = strQuery.Find(strAttachToken);
+        if(attachOffset > -1)
         {
-          start = lineStart = end;
-          strQuery.EndReading(end);
-          if(FindInReadable(strStartToken, start, end))
+          PRInt32 startOffset = strQuery.Find(strStartToken, attachOffset);
+          if(startOffset > -1)
           {
-            start = lineStart = end;
-            strQuery.EndReading(end);
-            FindInReadable(strEndToken, start, end);
+            PRInt32 endOffset = strQuery.Find(strEndToken, startOffset);
             
             if(pSecondDB) {
               pEngine->UnlockDatabase(pSecondDB);
               pSecondDB = nsnull;
             }
 
-            nsAutoString strSecondDBGUID(Substring(lineStart, start));
+            nsAutoString strSecondDBGUID(Substring(strQuery,
+                                                   (PRUint32)startOffset,
+                                                   (PRUint32)(endOffset - startOffset)));
+
             pSecondDB = pEngine->GetDBByGUID(strSecondDBGUID, PR_TRUE);
             if(pSecondDB)
             {
-              nsAutoString::const_iterator stringStart, guidStart, guidEnd;
               nsAutoString strDBPath(strSecondDBGUID);
               strDBPath.AppendLiteral(".db");
               
-              strQuery.BeginReading(stringStart);
-              strQuery.BeginReading(guidStart);
-              strQuery.EndReading(guidEnd);
-
-              if(FindInReadable(strDBPath, guidStart, guidEnd))
+              PRInt32 index = strQuery.Find(strDBPath);
+              if(index > -1)
               {
                 pEngine->GetDBStorePath(strSecondDBGUID, strDBPath);
-                strQuery.Replace(Distance(stringStart, guidStart), Distance(guidStart, guidEnd), strDBPath);
+                strQuery.Replace(index, strDBPath.Length(), strDBPath);
               }
 
               pEngine->LockDatabase(pSecondDB);
@@ -1374,43 +1354,30 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
             if(isPersistent)
             {
               nsAutoString strTableName(strQuery);
-              PRBool bFound = PR_FALSE;
-              nsString::const_iterator itStrStart, itStart, itEnd;
-              {
-                ToLowerCase(strTableName);
+              ToLowerCase(strTableName);
 
-                strTableName.BeginReading(itStrStart);
-                strTableName.BeginReading(itStart);
-                strTableName.EndReading(itEnd);
+              NS_NAMED_LITERAL_STRING(searchStr, " from ");
 
-                bFound = FindInReadable(NS_LITERAL_STRING(" from "), itStart, itEnd);
-              }
-              if(bFound)
+              PRInt32 foundIndex = strTableName.Find(searchStr);
+              if(foundIndex > -1)
               {
-                PRUint32 nCutLen = (PRUint32)Distance(itStrStart, itEnd);
+                PRUint32 nCutLen = foundIndex + searchStr.Length();
                 strTableName.Cut(0, nCutLen);
 
-                strTableName.BeginReading(itStrStart);
-                strTableName.BeginReading(itStart);
-                while(*itStart == ' ')
-                  itStart++;
+                PRUint32 offset = 0;
+                while(strTableName.CharAt(offset) == NS_L(' '))
+                  offset++;
 
-                nCutLen = (PRUint32)Distance(itStrStart, itStart);
-                strTableName.Cut(0, nCutLen);
+                strTableName.Cut(0, offset);
 
-                strTableName.BeginReading(itStart);
-                strTableName.EndReading(itEnd);
-                bFound = FindInReadable(NS_LITERAL_STRING(" "), itStart, itEnd);
+                NS_NAMED_LITERAL_STRING(spaceStr, " ");
+                foundIndex = strTableName.Find(spaceStr);
 
-                if(bFound)
-                {
-                  PRInt32 nEndLen = (PRInt32)Distance(itStrStart, itStart);
-                  strTableName.SetLength(nEndLen);
-                }
+                if(foundIndex > -1)
+                  strTableName.SetLength((PRUint32)foundIndex);
 
-                nsCString theCTableName;
-                NS_UTF16ToCString(strTableName, NS_CSTRING_ENCODING_UTF8, theCTableName);
-                pEngine->AddPersistentQuery(pQuery, theCTableName);
+                // XXXben This makes an nsCAutoString... Is that ok? Otherwise need a new CString
+                pEngine->AddPersistentQuery(pQuery, NS_ConvertUTF16toUTF8(strTableName));
               }
             }
             CDatabaseResult *pRes = pQuery->GetResultObject();

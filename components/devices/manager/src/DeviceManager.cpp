@@ -32,13 +32,12 @@
 #include "DeviceBase.h"
 
 #include <nsAutoLock.h>
-#include <nsCRT.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIComponentRegistrar.h>
-#include <nsObserverService.h>
+#include <nsIObserverService.h>
 #include <nsISimpleEnumerator.h>
 #include <nsServiceManagerUtils.h>
-#include <nsSupportsPrimitives.h>
+#include <nsISupportsPrimitives.h>
 #include <nsXPCOM.h>
 #include <prlog.h>
 
@@ -393,17 +392,17 @@ sbDeviceManager::Observe(nsISupports* aSubject,
   LOG(("DeviceManager[0x%x] - Observe: %s", this, aTopic));
 
   nsresult rv;
-  if (nsCRT::strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+  if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
     // The profile has been loaded so now we can go hunting for devices
     rv = LoadSupportedDevices();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else if (nsCRT::strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
+  else if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
     // The profile is about to be unloaded so finalize our devices
     rv = Finalize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else if (nsCRT::strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
+  else if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
     // Remove ourselves from the observer service
     nsCOMPtr<nsIObserverService> observerService = 
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);

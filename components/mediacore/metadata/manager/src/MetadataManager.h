@@ -38,7 +38,7 @@
 #include "sbIMetadataManager.h"
 #include "sbIMetadataHandler.h"
 #include <nsCOMPtr.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 
 #include <set>
 #include <list>

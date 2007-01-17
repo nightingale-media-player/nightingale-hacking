@@ -1,0 +1,722 @@
+Index: xpcom/tests/external/TestMinStringAPI.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/tests/external/TestMinStringAPI.cpp,v
+retrieving revision 1.2
+diff -u -8 -p -r1.2 TestMinStringAPI.cpp
+--- xpcom/tests/external/TestMinStringAPI.cpp	23 May 2006 19:50:24 -0000	1.2
++++ xpcom/tests/external/TestMinStringAPI.cpp	12 Jan 2007 20:31:57 -0000
+@@ -542,16 +542,367 @@ static PRBool test_find()
+ 
+ static PRBool test_compressws()
+ {
+   nsString check(NS_LITERAL_STRING(" \tTesting  \n\t1\n 2 3\n "));
+   CompressWhitespace(check);
+   return check.Equals(NS_LITERAL_STRING("Testing 1 2 3"));
+ }
+ 
++static PRBool test_comparisons()
++{
++  PRBool result;
++
++  // nsString
++
++  NS_NAMED_LITERAL_STRING(shortString1, "Foo");
++  NS_NAMED_LITERAL_STRING(shortString2, "Bar");
++  NS_NAMED_LITERAL_STRING(shortString3, "Bar");
++  NS_NAMED_LITERAL_STRING(shortString4, "bar");
++  NS_NAMED_LITERAL_STRING(longString, "FooBar");
++
++  // ==
++
++  result = (shortString1 == shortString2);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString2 == shortString3);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString3 == shortString4);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString1 == longString);
++  if (result)
++    return PR_FALSE;
++
++  result = (longString == shortString1);
++  if (result)
++    return PR_FALSE;
++
++  // !=
++
++  result = (shortString1 != shortString2);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString2 != shortString3);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString3 != shortString4);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString1 != longString);
++  if (!result)
++    return PR_FALSE;
++
++  result = (longString != shortString1);
++  if (!result)
++    return PR_FALSE;
++
++  // <
++
++  result = (shortString1 < shortString2);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString2 < shortString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString1 < longString);
++  if (!result)
++    return PR_FALSE;
++
++  result = (longString < shortString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString2 < shortString3);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString3 < shortString4);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString4 < shortString3);
++  if (result)
++    return PR_FALSE;
++
++  // <=
++
++  result = (shortString1 <= shortString2);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString2 <= shortString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString1 <= longString);
++  if (!result)
++    return PR_FALSE;
++
++  result = (longString <= shortString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString2 <= shortString3);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString3 <= shortString4);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString4 <= shortString3);
++  if (result)
++    return PR_FALSE;
++
++  // >
++
++  result = (shortString1 > shortString2);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString2 > shortString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString1 > longString);
++  if (result)
++    return PR_FALSE;
++
++  result = (longString > shortString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString2 > shortString3);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString3 > shortString4);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString4 > shortString3);
++  if (!result)
++    return PR_FALSE;
++
++  // >=
++
++  result = (shortString1 >= shortString2);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString2 >= shortString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString1 >= longString);
++  if (result)
++    return PR_FALSE;
++
++  result = (longString >= shortString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString2 >= shortString3);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortString3 >= shortString4);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortString4 >= shortString3);
++  if (!result)
++    return PR_FALSE;
++
++  // nsCString
++
++  NS_NAMED_LITERAL_CSTRING(shortCString1, "Foo");
++  NS_NAMED_LITERAL_CSTRING(shortCString2, "Bar");
++  NS_NAMED_LITERAL_CSTRING(shortCString3, "Bar");
++  NS_NAMED_LITERAL_CSTRING(shortCString4, "bar");
++  NS_NAMED_LITERAL_CSTRING(longCString, "FooBar");
++
++  // ==
++
++  result = (shortCString1 == shortCString2);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString2 == shortCString3);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString3 == shortCString4);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString1 == longCString);
++  if (result)
++    return PR_FALSE;
++
++  result = (longCString == shortCString1);
++  if (result)
++    return PR_FALSE;
++
++  // !=
++
++  result = (shortCString1 != shortCString2);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString2 != shortCString3);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString3 != shortCString4);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString1 != longCString);
++  if (!result)
++    return PR_FALSE;
++
++  result = (longCString != shortCString1);
++  if (!result)
++    return PR_FALSE;
++
++  // <
++
++  result = (shortCString1 < shortCString2);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString2 < shortCString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString1 < longCString);
++  if (!result)
++    return PR_FALSE;
++
++  result = (longCString < shortCString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString2 < shortCString3);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString3 < shortCString4);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString4 < shortCString3);
++  if (result)
++    return PR_FALSE;
++
++  // <=
++
++  result = (shortCString1 <= shortCString2);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString2 <= shortCString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString1 <= longCString);
++  if (!result)
++    return PR_FALSE;
++
++  result = (longCString <= shortCString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString2 <= shortCString3);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString3 <= shortCString4);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString4 <= shortCString3);
++  if (result)
++    return PR_FALSE;
++
++  // >
++
++  result = (shortCString1 > shortCString2);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString2 > shortCString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString1 > longCString);
++  if (result)
++    return PR_FALSE;
++
++  result = (longCString > shortCString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString2 > shortCString3);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString3 > shortCString4);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString4 > shortCString3);
++  if (!result)
++    return PR_FALSE;
++
++  // >=
++
++  result = (shortCString1 >= shortCString2);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString2 >= shortCString1);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString1 >= longCString);
++  if (result)
++    return PR_FALSE;
++
++  result = (longCString >= shortCString1);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString2 >= shortCString3);
++  if (!result)
++    return PR_FALSE;
++
++  result = (shortCString3 >= shortCString4);
++  if (result)
++    return PR_FALSE;
++
++  result = (shortCString4 >= shortCString3);
++  if (!result)
++    return PR_FALSE;
++
++  return PR_TRUE;
++}
++
+ //----
+ 
+ typedef PRBool (*TestFunc)();
+ 
+ static const struct Test
+   {
+     const char* name;
+     TestFunc    func;
+@@ -568,16 +919,17 @@ tests[] =
+     { "test_depend_sub", test_depend_sub },
+     { "test_adopt", test_adopt },
+     { "test_adopt_sub", test_adopt_sub },
+     { "test_mutation", test_mutation },
+     { "test_stripchars", test_stripchars },
+     { "test_trim", test_trim },
+     { "test_find", test_find },
+     { "test_compressws", test_compressws },
++    { "test_comparisons", test_comparisons },
+     { nsnull, nsnull }
+   };
+ 
+ //----
+ 
+ int main(int argc, char **argv)
+   {
+     int count = 1;
+Index: xpcom/glue/nsStringAPI.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.cpp,v
+retrieving revision 3.8
+diff -u -8 -p -r3.8 nsStringAPI.cpp
+--- xpcom/glue/nsStringAPI.cpp	13 Nov 2006 17:52:59 -0000	3.8
++++ xpcom/glue/nsStringAPI.cpp	12 Jan 2007 20:31:57 -0000
+@@ -16,16 +16,17 @@
+  *
+  * The Initial Developer of the Original Code is IBM Corporation.
+  * Portions created by IBM Corporation are Copyright (C) 2003
+  * IBM Corporation.  All Rights Reserved.
+  *
+  * Contributor(s):
+  *   Darin Fisher <darin@meer.net>
+  *   Benjamin Smedberg <benjamin@smedbergs.us>
++ *   Ben Turner <mozilla@songbirdnest.com>
+  *
+  * Alternatively, the contents of this file may be used under the terms of
+  * either the GNU General Public License Version 2 or later (the "GPL"), or
+  * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  * in which case the provisions of the GPL or the LGPL are applicable instead
+  * of those above. If you wish to allow use of your version of this file only
+  * under the terms of either the GPL or the LGPL, and not to allow others to
+  * use your version of this file under the terms of the MPL, indicate your
+@@ -225,22 +226,58 @@ nsAString::Trim(const char *aSet, PRBool
+ PRInt32
+ nsAString::DefaultComparator(const char_type *a, const char_type *b,
+                              PRUint32 len)
+ {
+   for (const char_type *end = a + len; a < end; ++a, ++b) {
+     if (*a == *b)
+       continue;
+ 
+-    return a < b ? -1 : 1;
++    return *a < *b ? -1 : 1;
+   }
+ 
+   return 0;
+ }
+ 
++PRInt32
++nsAString::Compare(const char_type *other, ComparatorFunc c) const
++{
++  const char_type *cself;
++  PRUint32 selflen = NS_StringGetData(*this, &cself);
++  PRUint32 otherlen = NS_strlen(other);
++  PRUint32 comparelen = selflen <= otherlen ? selflen : otherlen;
++
++  PRInt32 result = c(cself, other, comparelen);
++  if (result == 0) {
++    if (selflen < otherlen)
++      return -1;
++    else if (selflen > otherlen)
++      return 1;
++  }
++  return result;
++}
++
++PRInt32
++nsAString::Compare(const self_type &other, ComparatorFunc c) const
++{
++  const char_type *cself, *cother;
++  PRUint32 selflen = NS_StringGetData(*this, &cself);
++  PRUint32 otherlen = NS_StringGetData(other, &cother);
++  PRUint32 comparelen = selflen <= otherlen ? selflen : otherlen;
++
++  PRInt32 result = c(cself, cother, comparelen);
++  if (result == 0) {
++    if (selflen < otherlen)
++      return -1;
++    else if (selflen > otherlen)
++      return 1;
++  }
++  return result;
++}
++
+ PRBool
+ nsAString::Equals(const char_type *other, ComparatorFunc c) const
+ {
+   const char_type *cself;
+   PRUint32 selflen = NS_StringGetData(*this, &cself);
+   PRUint32 otherlen = NS_strlen(other);
+ 
+   if (selflen != otherlen)
+@@ -612,16 +649,52 @@ nsACString::Trim(const char *aSet, PRBoo
+ 
+ PRInt32
+ nsACString::DefaultComparator(const char_type *a, const char_type *b,
+                               PRUint32 len)
+ {
+   return memcmp(a, b, len);
+ }
+ 
++PRInt32
++nsACString::Compare(const char_type *other, ComparatorFunc c) const
++{
++  const char_type *cself;
++  PRUint32 selflen = NS_CStringGetData(*this, &cself);
++  PRUint32 otherlen = strlen(other);
++  PRUint32 comparelen = selflen <= otherlen ? selflen : otherlen;
++
++  PRInt32 result = c(cself, other, comparelen);
++  if (result == 0) {
++    if (selflen < otherlen)
++      return -1;
++    else if (selflen > otherlen)
++      return 1;
++  }
++  return result;
++}
++
++PRInt32
++nsACString::Compare(const self_type &other, ComparatorFunc c) const
++{
++  const char_type *cself, *cother;
++  PRUint32 selflen = NS_CStringGetData(*this, &cself);
++  PRUint32 otherlen = NS_CStringGetData(other, &cother);
++  PRUint32 comparelen = selflen <= otherlen ? selflen : otherlen;
++
++  PRInt32 result = c(cself, cother, comparelen);
++  if (result == 0) {
++    if (selflen < otherlen)
++      return -1;
++    else if (selflen > otherlen)
++      return 1;
++  }
++  return result;
++}
++
+ PRBool
+ nsACString::Equals(const char_type *other, ComparatorFunc c) const
+ {
+   const char_type *cself;
+   PRUint32 selflen = NS_CStringGetData(*this, &cself);
+   PRUint32 otherlen = strlen(other);
+ 
+   if (selflen != otherlen)
+Index: xpcom/glue/nsStringAPI.h
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/glue/nsStringAPI.h,v
+retrieving revision 3.8
+diff -u -8 -p -r3.8 nsStringAPI.h
+--- xpcom/glue/nsStringAPI.h	13 Nov 2006 17:52:59 -0000	3.8
++++ xpcom/glue/nsStringAPI.h	12 Jan 2007 20:31:57 -0000
+@@ -16,16 +16,17 @@
+  *
+  * The Initial Developer of the Original Code is IBM Corporation.
+  * Portions created by IBM Corporation are Copyright (C) 2003
+  * IBM Corporation.  All Rights Reserved.
+  *
+  * Contributor(s):
+  *   Darin Fisher <darin@meer.net>
+  *   Benjamin Smedberg <benjamin@smedbergs.us>
++ *   Ben Turner <mozilla@songbirdnest.com>
+  *
+  * Alternatively, the contents of this file may be used under the terms of
+  * either the GNU General Public License Version 2 or later (the "GPL"), or
+  * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  * in which case the provisions of the GPL or the LGPL are applicable instead
+  * of those above. If you wish to allow use of your version of this file only
+  * under the terms of either the GPL or the LGPL, and not to allow others to
+  * use your version of this file under the terms of the MPL, indicate your
+@@ -180,31 +181,82 @@ public:
+   typedef PRInt32 (*ComparatorFunc)(const char_type *a,
+                                     const char_type *b,
+                                     PRUint32 length);
+ 
+   static NS_HIDDEN_(PRInt32) DefaultComparator(const char_type *a,
+                                                const char_type *b,
+                                                PRUint32 length);
+ 
++  NS_HIDDEN_(PRInt32) Compare( const char_type *other,
++                               ComparatorFunc c = DefaultComparator ) const;
++
++  NS_HIDDEN_(PRInt32) Compare( const self_type &other,
++                               ComparatorFunc c = DefaultComparator ) const;
++
+   NS_HIDDEN_(PRBool) Equals( const char_type *other,
+                              ComparatorFunc c = DefaultComparator ) const;
+ 
+   NS_HIDDEN_(PRBool) Equals( const self_type &other,
+                              ComparatorFunc c = DefaultComparator ) const;
+ 
++  NS_HIDDEN_(PRBool) operator < (const self_type &other) const
++  {
++    return Compare(other) < 0;
++  }
++  NS_HIDDEN_(PRBool) operator < (const char_type *other) const
++  {
++    return Compare(other) < 0;
++  }
++
++  NS_HIDDEN_(PRBool) operator <= (const self_type &other) const
++  {
++    return Compare(other) <= 0;
++  }
++  NS_HIDDEN_(PRBool) operator <= (const char_type *other) const
++  {
++    return Compare(other) <= 0;
++  }
++
+   NS_HIDDEN_(PRBool) operator == (const self_type &other) const
+   {
+     return Equals(other);
+   }
+   NS_HIDDEN_(PRBool) operator == (const char_type *other) const
+   {
+     return Equals(other);
+   }
+ 
++  NS_HIDDEN_(PRBool) operator >= (const self_type &other) const
++  {
++    return Compare(other) >= 0;
++  }
++  NS_HIDDEN_(PRBool) operator >= (const char_type *other) const
++  {
++    return Compare(other) >= 0;
++  }
++
++  NS_HIDDEN_(PRBool) operator > (const self_type &other) const
++  {
++    return Compare(other) > 0;
++  }
++  NS_HIDDEN_(PRBool) operator > (const char_type *other) const
++  {
++    return Compare(other) > 0;
++  }
++
++  NS_HIDDEN_(PRBool) operator != (const self_type &other) const
++  {
++    return !Equals(other);
++  }
++  NS_HIDDEN_(PRBool) operator != (const char_type *other) const
++  {
++    return !Equals(other);
++  }
++
+   NS_HIDDEN_(PRBool) EqualsLiteral(const char *aASCIIString) const;
+ 
+   /**
+    * Case-insensitive match this string to a lowercase ASCII string.
+    */
+   NS_HIDDEN_(PRBool) LowerCaseEqualsLiteral(const char *aASCIIString) const;
+ 
+   /**
+@@ -406,31 +458,82 @@ public:
+   typedef PRInt32 (*ComparatorFunc)(const char_type *a,
+                                     const char_type *b,
+                                     PRUint32 length);
+ 
+   static NS_HIDDEN_(PRInt32) DefaultComparator(const char_type *a,
+                                                const char_type *b,
+                                                PRUint32 length);
+ 
++  NS_HIDDEN_(PRInt32) Compare( const char_type *other,
++                               ComparatorFunc c = DefaultComparator ) const;
++
++  NS_HIDDEN_(PRInt32) Compare( const self_type &other,
++                               ComparatorFunc c = DefaultComparator ) const;
++
+   NS_HIDDEN_(PRBool) Equals( const char_type *other,
+                              ComparatorFunc c = DefaultComparator ) const;
+ 
+   NS_HIDDEN_(PRBool) Equals( const self_type &other,
+                              ComparatorFunc c = DefaultComparator ) const;
+ 
++  NS_HIDDEN_(PRBool) operator < (const self_type &other) const
++  {
++    return Compare(other) < 0;
++  }
++  NS_HIDDEN_(PRBool) operator < (const char_type *other) const
++  {
++    return Compare(other) < 0;
++  }
++
++  NS_HIDDEN_(PRBool) operator <= (const self_type &other) const
++  {
++    return Compare(other) <= 0;
++  }
++  NS_HIDDEN_(PRBool) operator <= (const char_type *other) const
++  {
++    return Compare(other) <= 0;
++  }
++
+   NS_HIDDEN_(PRBool) operator == (const self_type &other) const
+   {
+     return Equals(other);
+   }
+   NS_HIDDEN_(PRBool) operator == (const char_type *other) const
+   {
+     return Equals(other);
+   }
+ 
++  NS_HIDDEN_(PRBool) operator >= (const self_type &other) const
++  {
++    return Compare(other) >= 0;
++  }
++  NS_HIDDEN_(PRBool) operator >= (const char_type *other) const
++  {
++    return Compare(other) >= 0;
++  }
++
++  NS_HIDDEN_(PRBool) operator > (const self_type &other) const
++  {
++    return Compare(other) > 0;
++  }
++  NS_HIDDEN_(PRBool) operator > (const char_type *other) const
++  {
++    return Compare(other) > 0;
++  }
++
++  NS_HIDDEN_(PRBool) operator != (const self_type &other) const
++  {
++    return !Equals(other);
++  }
++  NS_HIDDEN_(PRBool) operator != (const char_type *other) const
++  {
++    return !Equals(other);
++  }
++
+   NS_HIDDEN_(PRBool) EqualsLiteral( const char_type *other ) const
+   {
+     return Equals(other);
+   }
+ 
+   /**
+    * Find the first occurence of aStr in this string.
+    *

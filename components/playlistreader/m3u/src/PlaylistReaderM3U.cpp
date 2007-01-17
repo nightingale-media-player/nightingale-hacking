@@ -39,7 +39,6 @@
 #include "sbIMediaLibrary.h"
 #include "sbIPlaylist.h"
 
-#include <xpcom/nscore.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
 #include <necko/nsIFileStreams.h>
@@ -52,8 +51,7 @@
 #include <xpcom/nsAutoLock.h>
 #include <docshell/nsIURIFixup.h>
 
-#include <string/nsString.h>
-#include <string/nsReadableUtils.h>
+#include <nsStringGlue.h>
 #include <unicharutil/nsUnicharUtils.h>
 
 // CLASSES ====================================================================

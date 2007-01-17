@@ -30,6 +30,18 @@ AC_PREREQ(2.59)
 AC_INIT(build/rules.mk)
 AC_CONFIG_AUX_DIR(${srcdir}/build/autoconf)
 
+
+#
+# We're going to hardcode our obj and dist directory names for the moment.
+# These MUST match the vars in songbird.mk or bad things will happen!
+#
+
+OBJDIRNAME="compiled"
+DISTDIRNAME="dist"
+
+AC_SUBST(OBJDIRNAME)
+AC_SUBST(DISTDIRNAME)
+
 #
 # Check for --enable-debug
 #
@@ -120,10 +132,10 @@ case "$target" in
         # no cygwin wrapper for mingw
       ;;  
       *)
-        CYGWIN_WRAPPER="${srcdir}/dependencies/win32/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
+        CYGWIN_WRAPPER="${srcdir}/dependencies/$SB_PLATFORM/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         if test "`echo ${srcdir} | grep -c ^/ 2>/dev/null`" = 0; then
           _pwd=`pwd`
-          CYGWIN_WRAPPER="${_pwd}/${srcdir}/dependencies/win32/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
+          CYGWIN_WRAPPER="${_pwd}/${srcdir}/dependencies/$SB_PLATFORM/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         fi
         CYGDRIVE_MOUNT=`mount -p | awk '{ if (/^\//) { print $1; exit } }'`
       ;;
@@ -315,12 +327,6 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #AC_CHECK_FUNCS([ftruncate getcwd gethostbyaddr gethostname getpagesize gettimeofday memchr memmove memset munmap putenv select socket strcasecmp strdup strncasecmp strndup strstr strtol])
 
 #
-# Generic defines
-#
-
-AC_DEFINE(MOZILLA_INTERNAL_API)
-
-#
 # Set platform-specific defines
 #
 
@@ -432,7 +438,7 @@ case "$SB_PLATFORM" in
     fi
 
     # We always want to include "mozilla-config.h"
-    MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -FI \"mozilla-config.h\""
+    MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -FI \"mozilla-config.h\" -FI \"xpcom/xpcom-config.h\""
    
     MSVC_LINKER_FLAGS="-NOLOGO -INCREMENTAL:NO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG"
     if test "$enable_debug" != "yes"; then
@@ -465,6 +471,12 @@ case "$SB_PLATFORM" in
     XULRUNNERDIR="/xulrunner"
   ;;
   macosx)
+    MACOSX_APPBUNDLE="Songbird.app"
+    MACOSX_CONTENTS="/$MACOSX_APPBUNDLE/Contents"
+    MACOSX_RESOURCES="$MACOSX_CONTENTS/Resources"
+    MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
+    XULRUNNERDIR="/XUL.framework"
+
     GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -fno-inline"
@@ -475,7 +487,7 @@ case "$SB_PLATFORM" in
     # We always want to include "mozilla-config.h"
     GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,$(MOZSDK_LIB_DIR)/lib"
+    GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,${srcdir}/$OBJDIRNAME/$DISTDIRNAME$MACOSX_FRAMEWORKS$XULRUNNERDIR"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
@@ -500,11 +512,6 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
-    MACOSX_APPBUNDLE="Songbird.app"
-    MACOSX_CONTENTS="/$MACOSX_APPBUNDLE/Contents"
-    MACOSX_RESOURCES="$MACOSX_CONTENTS/Resources"
-    MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
-    XULRUNNERDIR="/XUL.framework"
   ;;
   linux)
     # Our GStreamer component needs GTK headers (we don't link, so we only
@@ -580,17 +587,6 @@ AC_SUBST(MACOSX_CONTENTS)
 AC_SUBST(MACOSX_FRAMEWORKS)
 AC_SUBST(MACOSX_RESOURCES)
 AC_SUBST(XULRUNNERDIR)
-
-#
-# We're going to hardcode our obj and dist directory names for the moment.
-# These MUST match the vars in songbird.mk or bad things will happen!
-#
-
-OBJDIRNAME="compiled"
-DISTDIRNAME="dist"
-
-AC_SUBST(OBJDIRNAME)
-AC_SUBST(DISTDIRNAME)
 
 #
 # Set the name of the file to be generated containing the build ID. It will

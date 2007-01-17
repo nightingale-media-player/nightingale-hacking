@@ -32,9 +32,9 @@
 #pragma once
 
 // INCLUDES ===================================================================
-#include <nscore.h>
 #include "MetadataHandlerOGG.h"
 #include <unicharutil/nsUnicharUtils.h>
+#include <nsMemory.h>
 
 // DEFINES ====================================================================
 
@@ -296,10 +296,9 @@ void sbMetadataHandlerOGG::ParseChannel()
           if ( split != -1 )
           {
             // Split out key and value
-            nsAutoString key, value;
+            nsAutoString key(StringHead(comment_string, split));
+            nsAutoString value(StringTail(comment_string, comment_string.Length() - split - 1));
             PRInt32 type = 0;
-            comment_string.Left( key, split );
-            comment_string.Right( value, comment_string.Length() - split - 1 );
             ToLowerCase( key );
 
             // Transform their keynames to our keynames
@@ -317,23 +316,20 @@ void sbMetadataHandlerOGG::ParseChannel()
             {
               type = 1; // Int
               PRInt32 mark = key.Find("_");
-              nsAutoString totalKey;
-              key.Left( totalKey, mark );
+              nsAutoString totalKey(StringHead(key, mark));
               totalKey.AppendLiteral("_total");
 
               if ( ( mark = value.Find( "of", PR_TRUE ) ) != -1 )
               {
-                nsAutoString _no, _total;
-                value.Left( _no, mark - 1 );
-                value.Right( _total, value.Length() - mark - 3 );
+                nsAutoString _no(StringHead(value, mark - 1));
+                nsAutoString _total(StringTail(value, value.Length() - mark - 3));
                 m_Values->SetValue( key, _no, type );
                 m_Values->SetValue( totalKey, _total, type );
               }
               else if ( ( mark = value.Find( "/", PR_TRUE ) ) != -1 )
               {
-                nsAutoString _no, _total;
-                value.Left( _no, mark );
-                value.Right( _total, value.Length() - mark - 1 );
+                nsAutoString _no(StringHead(value, mark));
+                nsAutoString _total(StringTail(value, value.Length() - mark - 1));
                 m_Values->SetValue( key, _no, type );
                 m_Values->SetValue( totalKey, _total, type );
               }

@@ -40,9 +40,7 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
-#include <xpcom/nsEscape.h>
-#include <string/nsReadableUtils.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"

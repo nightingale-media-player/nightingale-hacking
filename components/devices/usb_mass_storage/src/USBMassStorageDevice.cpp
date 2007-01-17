@@ -39,8 +39,7 @@
 #include <necko/nsIURI.h>
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
-#include <string/nsStringAPI.h>
-#include "nsString.h"
+#include <nsStringGlue.h>
 
 #include "USBMassStorageDevice.h"
 

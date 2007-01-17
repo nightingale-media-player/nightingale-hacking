@@ -50,7 +50,7 @@
 #include <nsIRunnable.h>
 #include <xpcom/nsIObserver.h>
 
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \

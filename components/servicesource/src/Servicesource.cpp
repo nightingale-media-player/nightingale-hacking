@@ -59,9 +59,9 @@
 #include "nsRDFBuiltInServicesources.h"
 */
 
-#include "nsCRT.h"
+#include "nsCRTGlue.h"
 #include "nsRDFCID.h"
-#include "nsString.h"
+#include <nsStringGlue.h>
 
 #include "Servicesource.h"
 
@@ -366,7 +366,7 @@ CServicesource::GetURI(char **uri)
   if (! uri)
     return NS_ERROR_NULL_POINTER;
 
-  if ((*uri = nsCRT::strdup("rdf:Servicesource")) == nsnull)
+  if ((*uri = NS_strdup("rdf:Servicesource")) == nsnull)
     return NS_ERROR_OUT_OF_MEMORY;
 
   return NS_OK;
@@ -521,10 +521,12 @@ CServicesource::GetTarget(nsIRDFResource *source,
       {
         nsAutoString data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
-        outstring = gPlaylistUrl + data;
+        outstring = gPlaylistUrl;
+        outstring += data;
 
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
-        outstring += NS_LITERAL_STRING(",") + data;
+        outstring += NS_LITERAL_STRING(",");
+        outstring += data;
       }
       else if (property == kNC_Properties)
       {
@@ -532,13 +534,17 @@ CServicesource::GetTarget(nsIRDFResource *source,
         outstring = NS_LITERAL_STRING( "playlist" );
         nsAutoString data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
-        outstring += NS_LITERAL_STRING(" ") + data;
+        outstring += NS_LITERAL_STRING(" ");
+        outstring += data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
-        outstring += NS_LITERAL_STRING(" ") + data;
+        outstring += NS_LITERAL_STRING(" ");
+        outstring += data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("type"), data);
-        outstring += NS_LITERAL_STRING(" ") + data;
+        outstring += NS_LITERAL_STRING(" ");
+        outstring += data;
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("base_type"), data);
-        outstring += NS_LITERAL_STRING(" ") + data;
+        outstring += NS_LITERAL_STRING(" ");
+        outstring += data;
       }
       else if (property == kNC_Open)
       {

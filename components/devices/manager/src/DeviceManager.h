@@ -36,7 +36,7 @@
 
 #include <nsCOMArray.h>
 #include <nsIObserver.h>
-#include <nsString.h>
+#include <nsStringGlue.h>
 #include <prlock.h>
 
 // DEFINES ====================================================================

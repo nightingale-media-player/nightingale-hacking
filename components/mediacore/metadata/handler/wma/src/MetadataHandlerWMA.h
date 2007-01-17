@@ -33,14 +33,13 @@
 #define __METADATA_HANDLER_WMA_H__
 
 // INCLUDES ===================================================================
-#include <nscore.h>
 #include <necko/nsIChannel.h>
 #include <necko/nsIResumableChannel.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
-#include <string/nsReadableUtils.h>
+#include <nsStringGlue.h>
 
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataValues.h"

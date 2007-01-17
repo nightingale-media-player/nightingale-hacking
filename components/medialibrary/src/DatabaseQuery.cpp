@@ -37,7 +37,7 @@
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsXPCOM.h>
 #include <xpcom/nsServiceManagerUtils.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 #include <nsAutoLock.h>
 
 #ifdef DEBUG_locks

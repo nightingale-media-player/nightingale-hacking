@@ -42,7 +42,7 @@
 #include <xpcom/nsCOMPtr.h>
 #include <xpcom/nsIFile.h>
 #include <xpcom/nsILocalFile.h>
-#include <string/nsString.h>
+#include <nsStringGlue.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsComponentManagerUtils.h>
 #include <xpcom/nsISimpleEnumerator.h>

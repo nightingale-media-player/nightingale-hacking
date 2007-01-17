@@ -36,7 +36,7 @@
 #include <nsISupportsUtils.h>
 #include <nsIStringBundle.h>
 #include <nsIRDFLiteral.h>
-#include <nsString.h>
+#include <nsStringGlue.h>
 
 #include "sbIServicesource.h"
 #include "sbIDatabaseQuery.h"

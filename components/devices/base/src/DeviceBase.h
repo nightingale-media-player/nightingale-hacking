@@ -36,7 +36,7 @@
 #include "nsISupportsUtils.h"
 #include "nsIRDFLiteral.h"
 #include "sbIDeviceBase.h"
-#include "nsString.h"
+#include <nsStringGlue.h>
 #include <nspr/prlock.h>
 #include <nspr/prmon.h>
 #include <deque>

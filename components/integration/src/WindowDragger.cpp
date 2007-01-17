@@ -49,7 +49,7 @@
 #include "nspr.h"
 #include "nsXPCOM.h"
 #include "nsComponentManagerUtils.h"  // THIS for "do_CreateInstance" ??
-#include "nsString.h"
+#include <nsStringGlue.h>
 
 #include <math.h>
 

@@ -33,7 +33,7 @@
  */
 
 #include "nspr.h"
-#include "nsString.h"
+#include <nsStringGlue.h>
 
 #include <windows.h>
 #include <stdio.h>

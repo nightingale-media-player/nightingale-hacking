@@ -37,8 +37,7 @@
 #include <prlock.h>
 #include <prmon.h>
 
-#include <string/nsString.h>
-#include <nsIEventQueueService.h>
+#include <nsStringGlue.h>
 #include <nsITimer.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
@@ -118,7 +117,6 @@ protected:
   PRLock *m_pCurrentFileLock;
 
   nsCOMPtr<nsIStringBundle> m_StringBundle;
-  nsCOMPtr<nsIEventQueue> m_pEventQueue;
   nsCOMPtr<sbIDatabaseQuery> m_pQuery;
   nsCOMPtr<sbIDatabaseQuery> m_pQueryToScan;
   nsCOMPtr<sbIDatabaseResult> m_pResultToScan;
