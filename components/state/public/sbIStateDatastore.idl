@@ -1,0 +1,94 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIStateDatastore.idl
+ * \brief sbIStateDatastore interface definition.
+ * \sa sbPIStateService sbIStateObject
+ */
+
+#include "nsISupports.idl"
+
+interface sbIStateObject
+
+/**
+ * \interface sbIStateDatastore
+ * \brief This interface may be implemented to provide new datastores for the state service.
+ * \sa sbIStateObject
+ * \note This interface *is* threadsafe. Implementations should follow this assumption.
+ */
+[uuid(781BA202-338B-45ba-B378-77A92D0A15B9)]
+interface sbIStateDatastore: nsISupports
+{
+  /**
+   * \brief The type of datastore.
+   * The type of datastore implemented. As an example, 
+   */
+  attribute AString datastoreType;
+ 
+  /**
+   * \brief Can this datastore accept serializable objects?
+   * If this datastore can accept serializable objects the value
+   * of this attribute will be true.
+   */
+  attribute bool canStoreSerializableObjects;
+ 
+  /**
+   * \brief Suggested maximum byte size for objects stored.
+   * Maximum size of serializable objects this datastore may accept before
+   * severe performance impact.
+   */
+  attribute int  suggestedMaxSizeForObjects;
+ 
+  /**
+   * \brief Suggested maximum amount of objects that may be stored.
+   * Maximum object count that may be stored in this datastore before
+   * severe performance impact.
+   */
+  attribute int  suggestedMaxObjectCount;
+ 
+  /**
+   * \brief Create storage for a state object.
+   * Create storage for a state object.
+   * \param aStateObject The state object.
+   */
+  createObjectStorage(in sbIStateObject aStateObject);
+ 
+  /**
+   * \brief Destroy storage for a state object.
+   * Delete the storage space and value for a state object.
+   * \param aStateObject The state object.
+   */
+  destroyObjectStorage(in sbIStateObject aStateObject);
+ 
+  /**
+   * \brief Save this state object. Will optionally create storage 
+   * for your object as well.
+   * \param aStateObject The state object.
+   * \param aCreateStorage Create storage for this state object.
+   */
+  save(in sbIStateObject aStateObject, in bool aCreateStorage);
+};

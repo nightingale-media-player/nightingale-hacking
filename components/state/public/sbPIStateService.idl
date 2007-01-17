@@ -1,0 +1,72 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbPIStateService.idl
+ * \brief sbPIStateService interface definition.
+ * \sa sbIStateObject.idl
+ */
+
+#include nsISupports.idl
+
+interface sbIStateObject;
+
+/**
+ * \interface sbPIStateService
+ * \brief USER CODE SHOULD NOT REFERENCE THIS CLASS.
+ *
+ * This interface is implemented as a singleton service. This interface
+ * should only be used by code implementing the sbIStateObject interface.
+ *
+ * \sa sbIStateObject
+ * \note This interface *is* threadsafe. Implementations should follow this assumption.
+ */
+[uuid(A2CB5117-40AE-441f-9F8A-CDC6327CA74E)]
+interface sbPIStateService: nsISupports
+{
+  /**
+   * \brief Enumerator of available datastore types.
+   * Enumerator of available datastore types. The enumerated 
+   * nsISupports should always QI to a sbIStateDatastore interface.
+   */
+  attribute nsISimpleEnumerator stateDatastores;
+  
+  /**
+   * \brief Add a state object to the state service repository.
+   *
+   * Adding a state object to the state service repository is automatic upon 
+   * creation of a state object.
+   */
+  addStateObject(in sbIStateObject aStateObject, in bool aPersistentObject);
+
+  /**
+   * \brief Remove a state object to the state service repository.
+   *
+   * Removing a state object from the state service repository is automatic upon
+   * destruction of a state object.
+   */
+  removeStateObject(in sbIStateObject aStateObject);
+};
