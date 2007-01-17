@@ -40,7 +40,7 @@ CPP_SRCS = DatabaseEngine.cpp \
            DatabaseResult.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
+CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
