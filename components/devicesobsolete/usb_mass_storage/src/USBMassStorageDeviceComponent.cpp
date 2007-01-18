@@ -33,6 +33,7 @@
 #include "USBMassStorageDevice.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbUSBMassStorageDevice)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbUSBMassStorageDeviceScanCallback)
 
 static nsModuleComponentInfo components[] =
 {
@@ -41,6 +42,13 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_USBMassStorageDevice_CID,
     SONGBIRD_USBMassStorageDevice_CONTRACTID,
     sbUSBMassStorageDeviceConstructor,
+  },
+
+  {
+    SONGBIRD_USBMassStorageDeviceCallback_CLASSNAME, 
+    SONGBIRD_USBMassStorageDeviceCallback_CID,
+    SONGBIRD_USBMassStorageDeviceCallback_CONTRACTID,
+    sbUSBMassStorageDeviceScanCallbackConstructor,
   }
 };
 

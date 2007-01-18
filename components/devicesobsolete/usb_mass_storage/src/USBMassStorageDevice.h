@@ -38,6 +38,12 @@
 #include "nsIRDFLiteral.h"
 #include "sbIUSBMassStorageDevice.h"
 
+#include "sbIDatabaseResult.h"
+#include "sbIDatabaseQuery.h"
+
+#include "sbIMediaLibrary.h"
+#include "sbIPlaylist.h"
+
 #include "DeviceBase.h"
 
 #if defined(XP_WIN)
@@ -55,13 +61,34 @@
 #define SONGBIRD_USBMassStorageDevice_CLASSNAME   "Songbird USBMassStorage Device"
 #define SONGBIRD_USBMassStorageDevice_CID { 0xa20bf454, 0x673b, 0x4308, { 0x88, 0x98, 0x93, 0xf2, 0xb0, 0x1, 0xd4, 0xe9 } }
 
-// CLASSES ====================================================================
+#define SONGBIRD_USBMassStorageDeviceCallback_CONTRACTID  "@songbirdnest.com/Songbird/Device/USBMassStorageDeviceCallback;1"
+#define SONGBIRD_USBMassStorageDeviceCallback_CLASSNAME   "Songbird USBMassStorage Device Media Scan Callback"
+#define SONGBIRD_USBMassStorageDeviceCallback_CID { 0x892daf29, 0xa264, 0x4d5c, { 0x9a, 0x4a, 0xe3, 0x0, 0xa3, 0x97, 0xad, 0x4 } }
 
-// Since download device has only one instance, the "Device String" notion does not
-// apply to this device and hence ignored in all the functions.
+// FORWARD REFERENCES =========================================================
+class sbUSBMassStorageDevice;
+
+// CLASSES ====================================================================
+class sbUSBMassStorageDeviceScanCallback : public sbIMediaScanCallback
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIASCANCALLBACK
+
+  sbUSBMassStorageDeviceScanCallback();
+
+private:
+  ~sbUSBMassStorageDeviceScanCallback();
+
+  sbUSBMassStorageDevice *m_pUSBMassDevice;
+
+};
+
 class sbUSBMassStorageDevice : public sbIUSBMassStorageDevice,
                                public sbDeviceBase
 {
+  friend class sbUSBMassStorageDeviceScanCallback;
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICEBASE
@@ -182,19 +209,21 @@ private:
     mDeviceState = kSB_DEVICE_STATE_BUSY;
   }
 
-private:
+protected:
+  void GetDevicePlaylistDisplayName(nsAString & strDisplayName);
+  void GetTracksTable(nsAString & strTracksTable);
 
-  typedef std::map<nsString, nsString> devicemap_t;
+  nsresult SetupLocalDeviceDatabase();
+  nsresult RemoveLocalDevicePlaylist();
+  nsresult ImportDeviceMedia();
 
   PRUint32 mDeviceState;
-
   PRInt32 mCurrentTransferRowNumber;
 
   IUSBMassStorageDeviceHelper * m_pHelperImpl;
-  
-  PRLock *mConnectedDevicesLock;
 
-  devicemap_t mConnectedDevices;
+  nsCOMPtr<sbIPlaylist> m_pDevicePlaylist;
+  nsCOMPtr<sbIDatabaseQuery> m_pDeviceQuery;
 };
 
 #endif // __USB_MASS_STORAGE_DEVICE_H__

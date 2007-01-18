@@ -43,12 +43,6 @@
 
 #include "USBMassStorageDevice.h"
 
-#include "sbIDatabaseResult.h"
-#include "sbIDatabaseQuery.h"
-
-#include "sbIMediaLibrary.h"
-#include "sbIPlaylist.h"
-
 #if defined(XP_WIN)
 #include "objbase.h"
 #include "win32/USBMassStorageDeviceWin32.h"
@@ -71,7 +65,42 @@
 
 // CLASSES ====================================================================
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbUSBMassStorageDevice, sbIDeviceBase, sbIUSBMassStorageDevice)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbUSBMassStorageDeviceScanCallback, sbIMediaScanCallback);
 
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+sbUSBMassStorageDeviceScanCallback::sbUSBMassStorageDeviceScanCallback()
+{
+  /* member initializers and constructor code */
+}
+
+//-----------------------------------------------------------------------------
+sbUSBMassStorageDeviceScanCallback::~sbUSBMassStorageDeviceScanCallback()
+{
+  /* destructor code */
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP sbUSBMassStorageDeviceScanCallback::OnMediaScanStart()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP sbUSBMassStorageDeviceScanCallback::OnMediaScanFile(const nsAString & filePath, PRInt32 fileCount)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP sbUSBMassStorageDeviceScanCallback::OnMediaScanEnd()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 sbUSBMassStorageDevice::sbUSBMassStorageDevice()
 : sbDeviceBase(PR_FALSE)
@@ -100,6 +129,41 @@ sbUSBMassStorageDevice::~sbUSBMassStorageDevice()
 //-----------------------------------------------------------------------------
 // sbIUSBMassStorageDevice
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+/* readonly attribute AString deviceModel; */
+NS_IMETHODIMP sbUSBMassStorageDevice::GetDeviceModel(nsAString & aDeviceModel)
+{
+  aDeviceModel.Assign(m_pHelperImpl->GetDeviceModel());
+  return NS_OK;
+} //GetDeviceModel
+
+//-----------------------------------------------------------------------------
+/* readonly attribute AString deviceVendor; */
+NS_IMETHODIMP sbUSBMassStorageDevice::GetDeviceVendor(nsAString & aDeviceVendor)
+{
+  aDeviceVendor.Assign(m_pHelperImpl->GetDeviceVendor());
+  return NS_OK;
+} //GetDeviceVendor
+
+//-----------------------------------------------------------------------------
+/* readonly attribute AString deviceSerialNumber; */
+NS_IMETHODIMP sbUSBMassStorageDevice::GetDeviceSerialNumber(nsAString & aDeviceSerialNumber)
+{
+  aDeviceSerialNumber.Assign(m_pHelperImpl->GetDeviceSerialNumber());
+  return NS_OK;
+} //GetDeviceSerialNumber
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+sbUSBMassStorageDevice::OnUSBDeviceMounted(const nsAString &deviceMountPath, PRBool *_retval)
+{
+  m_pHelperImpl->UpdateMountPoint(deviceMountPath);
+  ImportDeviceMedia();
+
+  return NS_OK;  
+} //OnUSBDeviceMounted
+
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP
 sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded,
                                          const nsAString &deviceName,
@@ -112,10 +176,16 @@ sbUSBMassStorageDevice::OnUSBDeviceEvent(PRBool deviceAdded,
   {
     Initialize(&bInit);
     *_retval = m_pHelperImpl->Initialize(deviceName, deviceIdentifier);
+
+    if(*_retval)
+    {
+      SetupLocalDeviceDatabase();
+    }
   }
   else
   {
-    
+    RemoveLocalDevicePlaylist();
+    m_pHelperImpl->Shutdown();
   }
 
   return NS_OK;
@@ -126,10 +196,6 @@ NS_IMETHODIMP
 sbUSBMassStorageDevice::Initialize(PRBool *_retval)
 {
   *_retval = PR_TRUE;
-
-  // Resume transfer if any pending
-  //sbDeviceBase::ResumeAbortedTransfer(NULL);
-
   return NS_OK;
 }
 
@@ -633,3 +699,198 @@ sbUSBMassStorageDevice::GetUploadFileType(const nsAString& aDeviceString,
 {
   return sbDeviceBase::GetUploadFileType(aDeviceString, _retval);
 }
+
+//-----------------------------------------------------------------------------
+void sbUSBMassStorageDevice::GetDevicePlaylistDisplayName(nsAString & strDisplayName)
+{
+  nsAutoString str(m_pHelperImpl->GetDeviceModel());
+
+  str.Assign(m_pHelperImpl->GetDeviceModel());
+  str.AppendLiteral(" (");
+  str.Append(m_pHelperImpl->GetDeviceVendor());
+  str.AppendLiteral(")");
+  
+  strDisplayName.Assign(str);
+
+  return;
+} //GetDevicePlaylistDisplayName
+
+//-----------------------------------------------------------------------------
+void sbUSBMassStorageDevice::GetTracksTable(nsAString & strTracksTable)
+{
+  nsAutoString str(m_pHelperImpl->GetDeviceVendor()) ;
+  str.AppendLiteral("_");
+  str.Append(m_pHelperImpl->GetDeviceModel());
+  str.AppendLiteral("_");
+  str.Append(m_pHelperImpl->GetDeviceSerialNumber());
+  str.StripWhitespace();
+
+  strTracksTable.Assign(str);
+
+  return;
+} //GetTracksTable
+
+//-----------------------------------------------------------------------------
+nsresult sbUSBMassStorageDevice::SetupLocalDeviceDatabase()
+{
+  nsresult rv;
+
+  nsAutoString strTracksTable;
+  nsAutoString strPlaylistName;
+  GetTracksTable(strTracksTable);
+  GetDevicePlaylistDisplayName(strPlaylistName);
+
+  nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  if(NS_FAILED(rv)) return rv;
+  nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance("@songbirdnest.com/Songbird/MediaLibrary;1", &rv);
+  if(NS_FAILED(rv)) return rv;
+  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1", &rv);
+  if(NS_FAILED(rv)) return rv;
+  
+  rv = pQuery->SetAsyncQuery(PR_FALSE);
+  if(NS_FAILED(rv)) return rv;
+  rv = pQuery->SetDatabaseGUID(strTracksTable);
+  if(NS_FAILED(rv)) return rv;
+  rv = pLibrary->SetQueryObject(pQuery);
+  if(NS_FAILED(rv)) return rv;
+  rv = pLibrary->CreateDefaultLibrary();
+  if(NS_FAILED(rv)) return rv;
+  rv = pPlaylistManager->CreateDefaultPlaylistManager(pQuery);
+  if(NS_FAILED(rv)) return rv;
+
+  nsCOMPtr<sbIPlaylist> pPlaylist;
+  rv = pPlaylistManager->CreatePlaylist(strTracksTable, strPlaylistName,
+    strPlaylistName, NS_LITERAL_STRING("usb_mass_storage"),
+    pQuery, getter_AddRefs(pPlaylist));
+  if(NS_FAILED(rv)) return rv;
+
+  PRInt32 errCode = 0;
+  rv = pQuery->Execute(&errCode);
+  if(NS_FAILED(rv)) return rv;
+
+  rv = pQuery->ResetQuery();
+  if(NS_FAILED(rv)) return rv;
+
+  m_pDevicePlaylist = pPlaylist;
+
+  return rv;
+} //SetupLocalDeviceDatabase
+
+//-----------------------------------------------------------------------------
+nsresult sbUSBMassStorageDevice::RemoveLocalDevicePlaylist()
+{
+  nsresult rv;
+
+  nsAutoString strTracksTable;
+  GetTracksTable(strTracksTable);
+
+  nsCOMPtr<sbIDatabaseQuery> pQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  if(NS_FAILED(rv)) return rv;
+  nsCOMPtr<sbIPlaylistManager> pPlaylistManager = do_CreateInstance("@songbirdnest.com/Songbird/PlaylistManager;1", &rv);
+  if(NS_FAILED(rv)) return rv;
+
+  rv = pQuery->SetAsyncQuery(PR_FALSE);
+  if(NS_FAILED(rv)) return rv;
+  rv = pQuery->SetDatabaseGUID(strTracksTable);
+  if(NS_FAILED(rv)) return rv;
+
+  PRInt32 errCode = 0;
+  pPlaylistManager->DeletePlaylist(strTracksTable, pQuery, &errCode);
+
+  return rv;
+} //RemoveLocalDevicePlaylist
+
+//-----------------------------------------------------------------------------
+nsresult sbUSBMassStorageDevice::ImportDeviceMedia()
+{
+  nsresult rv = NS_ERROR_FAILURE;
+
+  const static PRUnichar *aMetaKeys[] =
+  {
+    NS_LITERAL_STRING("title").get(),
+  };
+
+  const static PRUint32 nMetaKeyCount =
+    sizeof(aMetaKeys) / sizeof(aMetaKeys[0]);
+
+  nsCOMPtr<sbIDatabaseQuery> m_pDeviceQuery = do_CreateInstance( "@songbirdnest.com/Songbird/DatabaseQuery;1" );
+  nsCOMPtr<sbIMediaLibrary> pLibrary = do_CreateInstance( "@songbirdnest.com/Songbird/MediaLibrary;1" );
+
+  nsCOMPtr<sbIMediaScanQuery> pMediaScanQuery = do_CreateInstance("@songbirdnest.com/Songbird/MediaScanQuery;1", &rv);
+  nsCOMPtr<sbIMediaScan> pMediaScan = do_CreateInstance("@songbirdnest.com/Songbird/MediaScan;1", &rv);
+
+  rv = pMediaScanQuery->SetDirectory(m_pHelperImpl->GetDeviceMountPoint());
+  rv = pMediaScanQuery->SetRecurse(PR_TRUE);
+  
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("mp3"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("m4a"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("wma"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("ogg"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("flac"));
+
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("avi"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("mpg"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("mp4"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("wmv"));
+  rv = pMediaScanQuery->AddFileExtension(NS_LITERAL_STRING("mpeg"));
+
+  //rv = pMediaScanQuery->SetCallback();
+  rv = pMediaScan->SubmitQuery(pMediaScanQuery);
+  
+  PRBool isScanning = PR_FALSE;
+  do 
+  {
+    rv = pMediaScanQuery->IsScanning(&isScanning);
+  } while(isScanning);
+
+  PRUint32 fileCount = 0, currentFile = 0;
+  rv = pMediaScanQuery->GetFileCount(&fileCount);
+
+  nsAutoString strTracksTable;
+  GetTracksTable(strTracksTable);
+
+  m_pDeviceQuery->SetAsyncQuery(PR_TRUE);
+  m_pDeviceQuery->SetDatabaseGUID(strTracksTable);
+  pLibrary->SetQueryObject(m_pDeviceQuery);
+
+  for(; currentFile < fileCount; currentFile++)
+  {
+    nsAutoString strURL, strGUID;
+    pMediaScanQuery->GetFilePath(currentFile, strURL);
+
+    PRUnichar** aMetaValues =
+      (PRUnichar **) nsMemory::Alloc(nMetaKeyCount * sizeof(PRUnichar *));
+    
+    aMetaValues[0] = ToNewUnicode(strURL);
+
+    rv = pLibrary->AddMedia(strURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount,
+      const_cast<const PRUnichar **>(aMetaValues),
+      PR_FALSE, PR_FALSE, strGUID);
+
+    if (strGUID.IsEmpty()) {
+      rv = pLibrary->AddMedia(strURL, nMetaKeyCount, aMetaKeys, nMetaKeyCount,
+        const_cast<const PRUnichar **>(aMetaValues),
+        PR_FALSE, PR_TRUE, strGUID);
+    }
+    
+    if(!strGUID.IsEmpty() && m_pDevicePlaylist) {
+      PRBool retVal = PR_FALSE;
+      rv = m_pDevicePlaylist->AddByGUID(strGUID, strTracksTable, -1, PR_FALSE,
+        PR_TRUE, &retVal);
+      if(NS_FAILED(rv)) return rv;
+    }
+
+    nsMemory::Free(aMetaValues[0]);
+    nsMemory::Free(aMetaValues);
+  }
+
+  PRInt32 retVal;
+  m_pDeviceQuery->Execute(&retVal);
+  
+  nsCOMPtr<sbIDatabaseQuery> pQuery;
+  m_pDevicePlaylist->GetQueryObject(getter_AddRefs(pQuery));
+  pQuery->SetAsyncQuery(PR_TRUE);
+  pQuery->Execute(&retVal);
+
+  return rv;
+} //ImportDeviceMedia

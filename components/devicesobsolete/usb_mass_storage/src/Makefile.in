@@ -45,10 +45,10 @@ ifeq (win32,$(SB_PLATFORM))
 CPP_SRCS += $(SB_PLATFORM)/USBMassStorageDeviceWin32.cpp
 endif
 
-CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
-               $(DEPTH)/components/devicesobsolete/base/public \
-               $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
-               $(DEPTH)/components/devicesobsolete/usb_mass_storage/src/$(SB_PLATFORM) \
+CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
+               $(DEPTH)/components/devices/base/public \
+               $(DEPTH)/components/devices/usb_mass_storage/public \
+               $(DEPTH)/components/devices/usb_mass_storage/src/$(SB_PLATFORM) \
                $(DEPTH)/components/medialibrary/public \
                $(srcdir)/$(SB_PLATFORM)/ \
                $(srcdir) \
@@ -66,7 +66,7 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
 
-DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devicesobsolete/base/src/$(devicebase)
+DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/$(devicebase)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
@@ -83,9 +83,13 @@ ifeq (linux,$(SB_PLATFORM))
 endif
 
 ifeq (win32,$(SB_PLATFORM))
-  CPP_INCLUDES += $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include
+  CPP_INCLUDES += $(DEPS_DIR)/libusb/$(SB_CONFIGURATION)/include \
+                  $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include \
+                  $(NULL)
 
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+  DYNAMIC_LIB_EXTRA_IMPORTS += $(DEPS_DIR)/libusb/$(SB_CONFIGURATION)/lib/msvc/libusb \
+                               unicharutil_external_s \
+                               $(NULL)
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
