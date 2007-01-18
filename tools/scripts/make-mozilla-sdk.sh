@@ -109,7 +109,7 @@ cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scr
 notice "performing post-processing..."
 
 # bump WINVER and _WIN32_WINNT to 0x501 on windows
-cd "$sdkdir/include" && perl -pi -e 's/WINVER 0x400/WINVER 0x501/g;s/_WIN32_WINNT 0x400/_WIN32_WINNT 0x501/g' ./mozilla-config.h
+cd "$sdkdir/include" && perl -pi -e 's/WINVER 0x500/WINVER 0x501/g;s/_WIN32_WINNT 0x500/_WIN32_WINNT 0x501/g' ./mozilla-config.h
 cd "$sdkdir/include" && rm -f ./mozilla-config.h.bak
 
 notice "done."
