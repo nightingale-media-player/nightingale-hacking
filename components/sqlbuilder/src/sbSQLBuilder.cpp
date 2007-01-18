@@ -26,7 +26,7 @@
 
 #include "sbSQLBuilder.h"
 
-#include <nsString.h>
+#include <nsStringGlue.h>
 
 NS_IMPL_ISUPPORTS1(sbSQLBuilder, sbISQLBuilder)
 

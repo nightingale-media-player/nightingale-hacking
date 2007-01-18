@@ -69,11 +69,10 @@ DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
-                            plc4  \
                             xpcom \
+                            xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_EXTRA_IMPORTS += xul
 DYNAMIC_LIB_EXTRA_IMPORTS += ole32
 
 CPP_SRCS = MultiMonitor.cpp \
