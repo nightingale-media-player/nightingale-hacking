@@ -34,7 +34,6 @@ SUBDIRS = bundle \
           controller \
           dataremote \
           dbengine \
-          devices \
           devicesobsolete \
           faceplateregistration \
           integration \
@@ -42,7 +41,6 @@ SUBDIRS = bundle \
           medialibrary \
           metrics \
           playlistplayback \
-          playlistreader \
           playlistsource \
           servicesource \
           state \
