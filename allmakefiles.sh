@@ -118,6 +118,12 @@ components/bundle/public/Makefile
 components/bundle/src/Makefile
 "
 
+MAKEFILES_controller="
+components/controller/Makefile
+components/controller/public/Makefile
+components/controller/src/Makefile
+"
+
 MAKEFILES_commandline="
 components/commandline/Makefile
 components/commandline/src/Makefile
@@ -128,6 +134,13 @@ components/dataremote/Makefile
 components/dataremote/public/Makefile
 components/dataremote/src/Makefile
 components/dataremote/tests/Makefile
+"
+
+MAKEFILES_dbengine="
+components/dbengine/Makefile
+components/dbengine/public/Makefile
+components/dbengine/src/Makefile
+components/dbengine/tests/Makefile
 "
 
 MAKEFILES_devicesobsolete="
@@ -231,6 +244,13 @@ components/servicesource/public/Makefile
 components/servicesource/src/Makefile
 "
 
+MAKEFILES_state="
+components/state/Makefile
+components/state/public/Makefile
+components/state/src/Makefile
+components/state/tests/Makefile
+"
+
 MAKEFILES_testharness="
 components/testharness/Makefile
 components/testharness/basetests/Makefile
@@ -282,8 +302,19 @@ $MAKEFILES_installer
 $MAKEFILES_locales
 $MAKEFILES_bundle
 $MAKEFILES_commandline
+$MAKEFILES_controller
 $MAKEFILES_dataremote
+<<<<<<< .mine
+$MAKEFILES_dbengine
+$MAKEFILES_devices
+$MAKEFILES_devicemanager
+$MAKEFILES_cddevice
+$MAKEFILES_downloaddevice
+$MAKEFILES_wmdevice
+$MAKEFILES_usb_mass_storagedevice
+=======
 $MAKEFILES_devicesobsolete
+>>>>>>> .r3048
 $MAKEFILES_integration
 $MAKEFILES_mediacore
 $MAKEFILES_medialibrary
@@ -292,6 +323,7 @@ $MAKEFILES_playlistplayback
 $MAKEFILES_playlistreader
 $MAKEFILES_playlistsource
 $MAKEFILES_servicesource
+$MAKEFILES_state
 $MAKEFILES_testharness
 $MAKEFILES_update
 $MAKEFILES_faceplateregistration
