@@ -37,7 +37,7 @@ XPIDL_SRCS = sbIFilterableMediaList.idl \
              sbIMediaList.idl \
              sbIMediaListFactory.idl \
              sbIMediaListListener.idl \
-             sbIResource.idl \
+             sbILibraryResource.idl \
              sbISearchableMediaList.idl \
              sbISortableMediaList.idl \
              $(NULL)
