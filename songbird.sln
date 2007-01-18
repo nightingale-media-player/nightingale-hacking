@@ -7,29 +7,29 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dataremote", "components\da
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devicebase", "components\devices\base\devicebase.vcproj", "{41A7BFF0-687D-4B2A-90AD-1022284592FF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devicebase", "components\devicesobsolete\base\devicebase.vcproj", "{41A7BFF0-687D-4B2A-90AD-1022284592FF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5684DF11-A153-4DC9-BB42-B5C824BA27E5} = {5684DF11-A153-4DC9-BB42-B5C824BA27E5}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cddevice", "components\devices\cd\cddevice.vcproj", "{A128DAEA-38CB-4F4C-B1D8-7E31CD3DBD60}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cddevice", "components\devicesobsolete\cd\cddevice.vcproj", "{A128DAEA-38CB-4F4C-B1D8-7E31CD3DBD60}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "downloaddevice", "components\devices\download\downloaddevice.vcproj", "{B8E3BEB2-96CB-4FA7-B500-FD8C5B61AA71}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "downloaddevice", "components\devicesobsolete\download\downloaddevice.vcproj", "{B8E3BEB2-96CB-4FA7-B500-FD8C5B61AA71}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devicemanager", "components\devices\manager\devicemanager.vcproj", "{581FC30D-8DE2-4824-8039-B9CA1BDCB179}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devicemanager", "components\devicesobsolete\manager\devicemanager.vcproj", "{581FC30D-8DE2-4824-8039-B9CA1BDCB179}"
 	ProjectSection(ProjectDependencies) = postProject
 		{69FBC35D-F95B-47E6-BD5E-B38B7FE1F75D} = {69FBC35D-F95B-47E6-BD5E-B38B7FE1F75D}
 		{B8E3BEB2-96CB-4FA7-B500-FD8C5B61AA71} = {B8E3BEB2-96CB-4FA7-B500-FD8C5B61AA71}
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wmdevice", "components\devices\wm\wmdevice.vcproj", "{69FBC35D-F95B-47E6-BD5E-B38B7FE1F75D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wmdevice", "components\devicesobsolete\wm\wmdevice.vcproj", "{69FBC35D-F95B-47E6-BD5E-B38B7FE1F75D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
 	EndProjectSection
@@ -112,7 +112,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "integration", "components\i
 		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC} = {653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usb_mass_storage", "components\devices\usb_mass_storage\usb_mass_storage.vcproj", "{E61D8808-C882-479C-B447-DD957B60E62C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "usb_mass_storage", "components\devicesobsolete\usb_mass_storage\usb_mass_storage.vcproj", "{E61D8808-C882-479C-B447-DD957B60E62C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{581FC30D-8DE2-4824-8039-B9CA1BDCB179} = {581FC30D-8DE2-4824-8039-B9CA1BDCB179}
 		{41A7BFF0-687D-4B2A-90AD-1022284592FF} = {41A7BFF0-687D-4B2A-90AD-1022284592FF}
