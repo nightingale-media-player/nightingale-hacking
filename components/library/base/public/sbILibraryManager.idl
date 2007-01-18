@@ -47,14 +47,14 @@ interface sbILibraryManager : nsISupports
   /**
    * \brief Get a library by its guid
    * \param aGuid Guid of the library you seek
-   * \return Libray instance identified by the suppplied guid
+   * \return Library instance identified by the supplied guid
    */
   sbILibrary getLibrary(in AString aGuid);
 
   /**
    * \brief Get a library by its guid
    * \param aGuid Guid of the library you seek
-   * \return Libray instance identified by the suppplied guid
+   * \return Library instance identified by the supplied guid
    */
   sbILibraryFactory getLibraryFactory(in AString aType);
 

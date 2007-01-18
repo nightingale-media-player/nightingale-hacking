@@ -165,6 +165,12 @@ components/devicesobsolete/usb_mass_storage/public/Makefile
 components/devicesobsolete/usb_mass_storage/src/Makefile
 "
 
+MAKEFILES_featherscomponent="
+components/feathers/Makefile
+components/feathers/public/Makefile
+"
+
+
 MAKEFILES_integration="
 components/integration/Makefile
 components/integration/public/Makefile
@@ -306,6 +312,7 @@ $MAKEFILES_controller
 $MAKEFILES_dataremote
 $MAKEFILES_dbengine
 $MAKEFILES_devicesobsolete
+$MAKEFILES_featherscomponent
 $MAKEFILES_integration
 $MAKEFILES_mediacore
 $MAKEFILES_medialibrary

@@ -1,0 +1,211 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIFeathersManager.idl
+ * \brief Coordinates the loading of feathers (skins)
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface sbILayoutPackage;
+interface sbIThemePackage;
+
+interface sbIFeathersChangeListener;
+
+
+/**
+* \interface sbIFeathersManager
+* \brief Controls the appearance of the application
+*
+* Acts as a registry for installed themes and layouts (alternate XUL windows)
+* and provides a mechanism for switching between them.
+*
+* \sa sbIThemePackage, sbILayoutPackage, sbIFeathersChangeListener
+*/
+[scriptable, uuid(99f24350-a67f-11db-befa-0800200c9a66)]
+interface sbIFeathersManager : nsISupports
+{
+  /**
+   * \brief Description of the active layout extension
+   */
+  readonly attribute sbILayoutPackage currentLayout;
+  
+  /**
+   * \brief Description of the active theme extension
+   */
+  readonly attribute sbIThemePackage currentTheme;
+
+
+  /**
+   * \brief Enumerator for all registered sbIThemePackage objects
+   */
+  readonly attribute nsISimpleEnumerator themes;
+
+  /**
+   * \brief Number of registered themes
+   */
+  readonly attribute unsigned long themeCount;
+
+
+  /**
+   * \brief Enumerator for all registered sbILayoutPackage objects
+   */
+  readonly attribute nsISimpleEnumerator layouts;
+
+  /**
+   * \brief Number of registered layouts
+   */
+  readonly attribute unsigned long layoutCount;
+
+
+
+  /**
+   * \brief Make the given theme available for use
+   * \param theme Theme description
+   */
+  void addTheme(in sbIThemePackage theme);
+  
+  /**
+   * \brief Disable the given theme
+   * \param theme Theme description
+   */
+  void removeTheme(in sbIThemePackage theme);
+
+  /**
+   * \brief Gets the full theme description associated with a theme ID
+   *
+   * \param id Unique theme identifier
+   * \return Theme description
+   */
+  sbIThemePackage getTheme(in AString id);
+
+
+
+  /**
+   * \brief Make the given layout available for use
+   * \param layout Layout description
+   */
+  void addLayout(in sbILayoutPackage layout);
+
+  /**
+   * \brief Disable the given layout
+   * \param layout Layout description
+   */    
+  void removeLayout(in sbILayoutPackage layout);
+
+  /**
+   * \brief Gets the full layout description associated with a layout ID
+   *
+   * \param id Unique layout identifier
+   * \return Layout description
+   */
+  sbILayoutPackage getLayout(in AString id);
+
+
+
+  /**
+   * \brief Assert compatibility of a theme-layout pair
+   *
+   * Indicate that themeID and layoutID can be active at the same time, 
+   * and whether the window chrome (titlebar, borders) should be shown.
+   *
+   * Note that the given theme and layout IDs do not need to be registered with the
+   * feathers manager. 
+   *
+   * \param themeID Unique identifier for a theme
+   * \param layoutID Unique identifier for a layout
+   * \param showChrome Whether or not the OS titlebar should be used 
+   *        when the theme-layout pair is active
+   */
+  void addMapping(in AString layoutID, in AString themeID , in boolean showChrome);
+ 
+
+  /**
+   * \brief Get an enumerator for all registered themes compatible with 
+   *        the given layoutID
+   * 
+   * \param layoutID Unique identifier for a layout
+   * \return Enumerator for a list of sbIThemePackage objects
+   */
+  nsISimpleEnumerator getThemesForLayout(in AString layoutID);
+
+  
+  /**
+   * \brief Switch to the given layout-theme pair
+   *
+   * Attempts to reopens all Songbird windows using the given
+   * layout and theme.
+   *
+   * Note: triggers the onSelectRequest callback
+   * 
+   * \param layoutID Unique identifier for a layout
+   * \return True if the selection process can proceed
+   * \sa sbIFeathersChangeListener
+   */
+  boolean select(in AString layoutID, in AString themeID);
+
+
+  /**
+   * \brief Register to receive modification callbacks
+   * 
+   * \param listener Callback interface
+   */
+  void addChangeListener(in sbIFeathersChangeListener listener);
+
+  /**
+   * \brief Unregister modification callbacks
+   * 
+   * \param listener Callback interface
+   */
+  void removeChangeListener(in sbIFeathersChangeListener listener);
+};
+
+
+
+
+/**
+* \interface sbIFeathersChangeListener
+* \brief Callback interface used to listen to Feathers Manager changes
+*
+* \sa sbIFeathersManager
+*/
+[scriptable, uuid(989ca002-eea7-4eff-ae93-2615f89b5581)]
+interface sbIFeathersChangeListener : nsISupports
+{
+  /**
+   * \brief Called whenever the feathers manager is modified
+   */  
+  void onUpdate();
+
+  /**
+   * \brief Called when the feathers manager is about to switch feathers
+   * \param layout Description of the layout to be selected
+   * \param theme Description of the theme to be selected
+   */  
+  void onSelectRequest(in sbILayoutPackage layout, in sbIThemePackage theme);
+};
