@@ -30,28 +30,21 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbUSBMassStorageDevice_d
+target_name = sbDownloadDevice_d
 devicebase = devicebase_d
 else
-target_name = sbUSBMassStorageDevice
+target_name = sbDownloadDevice
 devicebase = devicebase
 endif
 
-CPP_SRCS = USBMassStorageDevice.cpp \
-           USBMassStorageDeviceComponent.cpp \
+CPP_SRCS = DownloadDevice.cpp \
+           DownloadDeviceComponent.cpp \
            $(NULL)
 
-ifeq (win32,$(SB_PLATFORM))
-CPP_SRCS += $(SB_PLATFORM)/USBMassStorageDeviceWin32.cpp
-endif
-
-CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
-               $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/usb_mass_storage/public \
-               $(DEPTH)/components/devices/usb_mass_storage/src/$(SB_PLATFORM) \
+CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
+               $(DEPTH)/components/devicesobsolete/base/public \
+               $(DEPTH)/components/devicesobsolete/download/public \
                $(DEPTH)/components/medialibrary/public \
-               $(srcdir)/$(SB_PLATFORM)/ \
-               $(srcdir) \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -64,9 +57,9 @@ CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
 
-DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/$(devicebase)
+DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devicesobsolete/base/src/$(devicebase)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
@@ -83,9 +76,8 @@ ifeq (linux,$(SB_PLATFORM))
 endif
 
 ifeq (win32,$(SB_PLATFORM))
-  CPP_INCLUDES += $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include
-
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
+                               $(NULL)
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

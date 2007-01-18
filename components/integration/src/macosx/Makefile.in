@@ -38,13 +38,13 @@ endif
 
 CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/dataremote/public \
-               $(DEPTH)/components/devices/manager/public \
-               $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/cd/public \
-               $(DEPTH)/components/devices/usb_mass_storage/public \
+               $(DEPTH)/components/devicesobsolete/manager/public \
+               $(DEPTH)/components/devicesobsolete/base/public \
+               $(DEPTH)/components/devicesobsolete/cd/public \
+               $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
                $(COMPONENTS_DIR)/integration/src/win32 \
-               $(COMPONENTS_DIR)/devices/base/src \
-               $(COMPONENTS_DIR)/devices/cd/src \
+               $(COMPONENTS_DIR)/devicesobsolete/base/src \
+               $(COMPONENTS_DIR)/devicesobsolete/cd/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

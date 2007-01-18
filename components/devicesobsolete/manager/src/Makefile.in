@@ -30,22 +30,21 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbDownloadDevice_d
-devicebase = devicebase_d
+target_name = sbDeviceManager_d
 else
-target_name = sbDownloadDevice
-devicebase = devicebase
+target_name = sbDeviceManager
 endif
 
-CPP_SRCS = DownloadDevice.cpp \
-           DownloadDeviceComponent.cpp \
+CPP_SRCS = DeviceManager.cpp \
+           DeviceManagerComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
-               $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/download/public \
+CPP_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
+               $(topsrcdir)/components/devicesobsolete/base/src \
+               $(DEPTH)/components/devicesobsolete/manager/public \
                $(DEPTH)/components/medialibrary/public \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
@@ -57,9 +56,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devices/base/src\
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
-
-DYNAMIC_LIB_STATIC_IMPORTS = $(DEPTH)/components/devices/base/src/$(devicebase)
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
@@ -76,12 +73,11 @@ ifeq (linux,$(SB_PLATFORM))
 endif
 
 ifeq (win32,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
+                          $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 

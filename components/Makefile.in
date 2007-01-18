@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = bundle \
           commandline \
           dataremote \
-          devices \
+          devicesobsolete \
           faceplateregistration \
           integration \
           mediacore \
@@ -57,7 +57,7 @@ SUBDIRDEPS  = mediacore : medialibrary
 SUBDIRDEPS2 = playlistreader : medialibrary
 SUBDIRDEPS3 = playlistsource : medialibrary
 SUBDIRDEPS4 = servicesource : medialibrary
-SUBDIRDEPS5 = devices : medialibrary
+SUBDIRDEPS5 = devicesobsolete : medialibrary
 SUBDIRDEPS6 = integration : devices
 
 include $(topsrcdir)/build/rules.mk

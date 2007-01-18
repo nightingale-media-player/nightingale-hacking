@@ -29,13 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = $(COMPONENTS_DIR)/devices/base/public \
+XPIDL_INCLUDES = $(COMPONENTS_DIR)/devicesobsolete/base/public \
                  $(NULL)
 
-XPIDL_SRCS = sbIDownloadDevice.idl \
+XPIDL_SRCS = sbIUSBMassStorageDevice.idl \
              $(NULL)
 
-XPIDL_MODULE = sbDownloadDevice.xpt
+XPIDL_MODULE = sbUSBMassStorageDevice.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
