@@ -31,7 +31,10 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = bundle \
           commandline \
+          controller \
           dataremote \
+          dbengine \
+          devices \
           devicesobsolete \
           faceplateregistration \
           integration \
@@ -42,6 +45,7 @@ SUBDIRS = bundle \
           playlistreader \
           playlistsource \
           servicesource \
+          state \
           sqlbuilder \
           property \
           library \
