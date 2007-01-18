@@ -339,7 +339,7 @@ endif
 
 dll_link: $(DYNAMIC_LIB_OBJS)
 	$(ranlib_cmd)
-	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_imports) $(linker_objs)
+	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(DYNAMIC_LIB)
 	$(makelink_cmd)
 
