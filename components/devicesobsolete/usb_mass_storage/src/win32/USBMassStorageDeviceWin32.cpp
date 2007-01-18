@@ -236,13 +236,13 @@ int CUSBMassStorageDeviceHelperWin32::GetStringFromDescriptor(int index, nsAStri
 
   int len = usb_get_string_simple(dev, index, (char *) szBuf, sizeof(szBuf));
 
+  nsAutoString strSerial;
   nsDependentCString cstrSerial(szBuf);
-  cstrSerial.CompressWhitespace();
   
-  nsAutoString str;
-  str.AssignWithConversion(cstrSerial);
-
-  deviceString.Assign(str);
+  CopyUTF8toUTF16(cstrSerial, strSerial);
+  CompressWhitespace(strSerial);
+  
+  deviceString.Assign(strSerial);
   return len;
 } //GetDeviceInformation
 
@@ -266,7 +266,7 @@ struct usb_device *CUSBMassStorageDeviceHelperWin32::GetDeviceByName(const nsASt
         nsAutoString strSerial;
         GetStringFromDescriptor(d->descriptor.iSerialNumber, strSerial, dh);
 
-        if(FindInReadable(strSerial, deviceName))
+        if(strSerial.Find(deviceName) > -1)
         {
           dev = d;
           usb_close(dh);

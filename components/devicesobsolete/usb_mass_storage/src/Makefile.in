@@ -83,11 +83,11 @@ ifeq (linux,$(SB_PLATFORM))
 endif
 
 ifeq (win32,$(SB_PLATFORM))
-  CPP_INCLUDES += $(DEPS_DIR)/libusb/$(SB_CONFIGURATION)/include \
+  CPP_INCLUDES += $(DEPS_DIR)/libusb/release/include \
                   $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include \
                   $(NULL)
 
-  DYNAMIC_LIB_EXTRA_IMPORTS += $(DEPS_DIR)/libusb/$(SB_CONFIGURATION)/lib/msvc/libusb \
+  DYNAMIC_LIB_EXTRA_IMPORTS += $(DEPS_DIR)/libusb/release/lib/msvc/libusb \
                                unicharutil_external_s \
                                $(NULL)
 endif

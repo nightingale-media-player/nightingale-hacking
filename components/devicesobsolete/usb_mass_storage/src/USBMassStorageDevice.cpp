@@ -40,6 +40,7 @@
 #include <xpcom/nsILocalFile.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
+#include <nsMemory.h>
 
 #include "USBMassStorageDevice.h"
 
