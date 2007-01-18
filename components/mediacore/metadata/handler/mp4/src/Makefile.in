@@ -70,7 +70,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_externals \
+DYNAMIC_LIB_STATIC_IMPORTS = $(MOZSDK_LIB_DIR)/libunicharutil_external_s \
                              $(MP4LIB_DIR)/lib/libmp4 \
                              $(NULL)                             
 endif
