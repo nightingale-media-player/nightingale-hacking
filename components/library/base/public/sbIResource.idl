@@ -46,17 +46,6 @@ interface nsIURI;
 interface sbIResource : nsISupports
 {
   /**
-   * \brief A brief description of this method
-   *
-   * A detailed description of this method
-   *
-   * \param aSomeInParameter Description of this parameter
-   * \return Description of the return value
-   * \sa Also see the other methods listed here
-   */
-  long someMethod(in AString aSomeInParameter);
-
-  /**
    * \brief A unique uri for this resource
    */
   readonly attribute nsIURI uri;
