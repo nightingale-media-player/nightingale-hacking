@@ -304,17 +304,8 @@ $MAKEFILES_bundle
 $MAKEFILES_commandline
 $MAKEFILES_controller
 $MAKEFILES_dataremote
-<<<<<<< .mine
 $MAKEFILES_dbengine
-$MAKEFILES_devices
-$MAKEFILES_devicemanager
-$MAKEFILES_cddevice
-$MAKEFILES_downloaddevice
-$MAKEFILES_wmdevice
-$MAKEFILES_usb_mass_storagedevice
-=======
 $MAKEFILES_devicesobsolete
->>>>>>> .r3048
 $MAKEFILES_integration
 $MAKEFILES_mediacore
 $MAKEFILES_medialibrary
