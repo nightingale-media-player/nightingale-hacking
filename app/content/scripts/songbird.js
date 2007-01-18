@@ -365,6 +365,12 @@ function SBAppDeinitialize()
   // Save position before closing, in case the window has been moved, but its position hasnt been saved yet (the window is still up)
   onWindowSaveSizeAndPosition();
   SBMetricsAppShutdown();
+  
+  try {
+    WFShutdown();
+  } catch(err) {
+    dump(err);
+  }
 }
 
 

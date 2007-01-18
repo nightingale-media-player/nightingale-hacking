@@ -71,6 +71,16 @@ function WFInit()
   setTimeout( onWFWakeUpScan, 30 * 1000 );
 }
 
+function WFShutdown()
+{
+  wfMediaScan = null;
+  wfMediaScanQuery = null;
+  wfQuery = null;
+  
+  if(wfWakeUpTimer)
+    clearInterval(wfWakeUpTimer); 
+}
+
 function onWFWakeUpScan()
 {
   if ( ! wfWakeUpTimer )
