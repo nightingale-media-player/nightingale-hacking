@@ -47,7 +47,6 @@ interface nsIPropertyBag;
 [scriptable, uuid(1db2f57c-5fcf-4fe0-8951-c1b40d9f7bf6)]
 interface sbISearchableMediaList : nsISupports
 {
-  // TODO: make this more like the filter interface
   /**
    * \brief Get a list of all the properties that can be searched
    */
@@ -59,18 +58,12 @@ interface sbISearchableMediaList : nsISupports
   readonly attribute nsIPropertyBag currentSearch;
 
   /**
-   * \brief Set a new property search
+   * \brief Set a new search
    * \param aSearch A property bag of search parameters.  The keys map to
-   * properties and the values are the search value for each property.
+   * properties and the values are the search value for each property.  A
+   * null key will search all searchable properties with its value.
    */
-  void setPropertySearch(in nsIPropertyBag aSearch);
-
-  /**
-   * \brief Set a new all search.  This search is applied to all searchable
-   * properties.
-   * \param aSearchString Search string
-   */
-  void setAllSearch(in nsIPropertyBag aSearchString);
+  void setSearch(in nsIPropertyBag aSearch);
 
   /**
    * \brief Clear the search

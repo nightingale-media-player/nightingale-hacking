@@ -60,7 +60,8 @@ interface sbISortableMediaList : nsISupports
    * \brief Set a new sort for the media list
    * \param aSort A property bag containing the sort parameters.  The keys
    * map to sortable properties and the value for each key is a boolean where
-   * true is ascending and false is descending
+   * true is ascending and false is descending.  The sort is applied in the
+   * order they appear in the bag (XXX: does the bag preserve order?)
    */
   void setSort(in nsIPropertyBag aSort);
 
