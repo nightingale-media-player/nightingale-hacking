@@ -1,0 +1,63 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+
+interface sbIDevice;
+
+/**
+ * 
+ */
+[scriptable, uuid(eba35eee-89e8-4d7f-bc54-755cd28a4a57)]
+interface sbIDeviceRegistrar : nsISupports
+{
+  /**
+   * Registers an sbIDevice object.
+   */
+  void registerDevice(in sbIDevice aDevice);
+
+  /**
+   * Unregisters an sbIDevice object.
+   */
+  void unregisterDevice(in sbIDevice aDevice);
+
+  /**
+   * An enumeration of sbIDevices currently registered.
+   */
+  readonly attribute nsISimpleEnumerator devices;
+
+  /**
+   * The number of sbIDevices currently registered.
+   */
+  readonly attribute unsigned long deviceCount;
+
+  /**
+   * Retrieve a registered device.
+   */
+  sbIDevice getDevice(in unsigned long aDeviceId);
+};

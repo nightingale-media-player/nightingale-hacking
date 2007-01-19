@@ -1,0 +1,48 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+
+[scriptable, uuid(f08c6820-fa6c-44c0-9ce5-19c1d4a5fc3c)]
+interface sbIContentTypeFormat : nsISupports
+{
+  /**
+   * Code for the container type
+   */
+  readonly attribute unsigned long containerFormat;
+   
+  /**
+   * Enumerates nsISupportsPRUint32 values of FourCC codes
+   */
+  readonly attribute nsISimpleEnumerator encodingFormats;
+   
+  /**
+   * Enumerates nsISupportsPRUint32 values of FourCC codes
+   */
+  readonly attribute nsISimpleEnumerator decodingFormats; 
+};

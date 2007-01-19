@@ -1,0 +1,121 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIVariant;
+
+interface sbIDeviceEventTarget;
+
+/**
+ * \interface sbIDeviceEvent
+ */
+[scriptable, uuid(54a5ba3c-d409-458f-9cab-60f499c603e7)]
+interface sbIDeviceEvent : nsISupports
+{
+  /**
+   * 
+   */
+  const unsigned long COMMAND_DEVICE_BASE         = 0x00000000;
+  const unsigned long COMMAND_DEVICE_RESET        = 0x00000001;
+  const unsigned long COMMAND_DEVICE_POWER_DOWN   = 0x00000002;
+  const unsigned long COMMAND_DEVICE_POWER_UP     = 0x00000003;
+  const unsigned long COMMAND_DEVICE_MEDIA_EJECT  = 0x00000004;
+  const unsigned long COMMAND_DEVICE_MEDIA_FORMAT = 0x00000005;
+
+  /**
+   * 
+   */
+  const unsigned long COMMAND_CONTROLLER_BASE  = 0x00020000;
+  const unsigned long COMMAND_CONTROLLER_RESET = 0x00020001;
+
+  /**
+   * 
+   */
+  const unsigned long COMMAND_MARSHALL_BASE  = 0x00040000;
+  const unsigned long COMMAND_MARSHALL_RESET = 0x00040001;
+
+  /**
+   * 
+   */
+  const unsigned long COMMAND_MANAGER_BASE    = 0x00060000;
+  const unsigned long COMMAND_MANAGER_REFRESH = 0x00060001;
+
+  /**
+   * 
+   */
+  const unsigned long COMMAND_CLIENT_DEFINED = 0x20000000;
+
+  /**
+   * 
+   */
+  const unsigned long EVENT_DEVICE_BASE               = 0x40000000;
+  const unsigned long EVENT_DEVICE_ADDED              = 0x40000001;
+  const unsigned long EVENT_DEVICE_REMOVED            = 0x40000002;
+  const unsigned long EVENT_DEVICE_MEDIA_INSERTED     = 0x40000003;
+  const unsigned long EVENT_DEVICE_MEDIA_REMOVED      = 0x40000004;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_START   = 0x40000005;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_END     = 0x40000006;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_FAILED  = 0x40000007;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = 0x40000008;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = 0x40000009;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = 0x4000000A;
+
+  /**
+   * 
+   */
+  const unsigned long EVENT_CONTROLLER_BASE = 0x40020000;
+
+  /**
+   * 
+   */
+  const unsigned long EVENT_MARSHALL_BASE = 0x40040000;
+
+  /**
+   * 
+   */
+  const unsigned long EVENT_MANAGER_BASE = 0x40060000;
+
+  /**
+   * 
+   */
+  const unsigned long EVENT_CLIENT_DEFINED = 0x60000000;
+
+  /**
+   * 
+   */
+  readonly attribute PRUint32 id;
+
+  /**
+   * 
+   */
+  readonly attribute nsIVariant data;
+
+  /**
+   * 
+   */
+  readonly attribute sbIDeviceEventTarget source;
+};

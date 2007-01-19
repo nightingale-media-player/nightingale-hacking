@@ -1,0 +1,106 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIDevice.idl
+ *
+ * \brief The IDL for sbIDevice.
+ */
+
+#include "nsISupports.idl"
+
+interface nsIVariant;
+
+interface sbIDeviceCapabilities;
+interface sbIDeviceContent;
+interface sbIDeviceIdentification;
+interface sbIDeviceParameters;
+
+/**
+ * \interface sbIDevice
+ *
+ * The main interface to all device objects
+ */
+[scriptable, uuid(ef5c2db8-37b7-42d4-aa7e-f76bd91d710e)]
+interface sbIDevice : nsISupports
+{
+  /**
+   * A human-readable name identifying the device. Optional.
+   */
+  readonly attribute AString name;
+
+  /**
+   * The id of the controller that created the device.
+   */
+  readonly attribute nsIDPtr controllerId;
+
+  /**
+   * Called when the device should initialize.
+   */
+  void connect();
+
+  /**
+   * Called when the device is to finalize.
+   */
+  void disconnect();
+
+  /**
+   * Whether or not the device is currently connected.
+   */
+  readonly attribute boolean connected;
+
+  /**
+   * Whether or not the device's events are being processed in additional threads
+   * (i.e. off the main UI thread).
+   */
+  readonly attribute boolean threaded;
+
+  /**
+   * Get a preference stored on the device.
+   */
+  nsIVariant getPreference(in AString aPrefName);
+
+  /**
+   * Sets a preference stored on the device.
+   */
+  void setPreference(in AString aPrefName,
+                     in nsIVariant aPrefValue);
+
+  /**
+   * Get the capabilities of the device.
+   */
+  readonly attribute sbIDeviceCapabilities capabilities;
+
+  /**
+   * All the device's content.
+   */
+  readonly attribute sbIDeviceContent content;
+
+  /**
+   * The parameters with which the device was created
+   */
+  readonly attribute sbIDeviceParamaters parameters;
+};

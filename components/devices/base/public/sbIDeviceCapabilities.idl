@@ -1,0 +1,90 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+
+/**
+ * \interface sbIDeviceCapabilities
+ */
+[scriptable, uuid(193121e6-51a6-40ea-b63d-701ed240a953)]
+interface sbIDeviceCapabilities : nsISupports
+{
+  /**
+   *
+   */
+  const PRUint32 FUNCTION_UNKNOWN        = 0x00;
+  const PRUint32 FUNCTION_DEVICE         = 0x01;
+  const PRUint32 FUNCTION_AUDIO_PLAYBACK = 0x02;
+  const PRUint32 FUNCTION_AUDIO_CAPTURE  = 0x03;
+  const PRUint32 FUNCTION_IMAGE_DISPLAY  = 0x04;
+  const PRUint32 FUNCTION_IMAGE_CAPTURE  = 0x05;
+  const PRUint32 FUNCTION_VIDEO_PLAYBACK = 0x06;
+  const PRUint32 FUNCTION_VIDEO_CAPTURE  = 0x07;
+
+  /**
+   * 
+   */
+  const PRUint32 FUNCTION_CLIENT_DEFINED = 0x800000000;
+
+  /**
+   * An enumeration of nsISupportsPRUint32 values defined above.
+   */
+  nsISimpleEnumerator getSupportedFunctionTypes();
+
+  /**
+   * 
+   */
+  const PRUint32 CONTENT_UNKNOWN  = 0x00;
+  const PRUint32 CONTENT_FILE     = 0x01;
+  const PRUint32 CONTENT_FOLDER   = 0x02;
+  const PRUint32 CONTENT_AUDIO    = 0x03;
+  const PRUint32 CONTENT_IMAGE    = 0x04;
+  const PRUint32 CONTENT_VIDEO    = 0x05;
+  const PRUint32 CONTENT_PLAYLIST = 0x06;
+  const PRUint32 CONTENT_ALBUM    = 0x07;
+
+  /**
+   * 
+   */
+  const PRUint32 CONTENT_CLIENT_DEFINED = 0x800000000;
+
+  /**
+   * An enumeration of nsISupportsPRUint32 values defined above.
+   */
+  nsISimpleEnumerator getSupportedContentTypes(in PRUint32 aFunctionType);
+
+  /**
+   * Returns an enumeration of sbIContentTypeFormat objects.
+   */
+  nsISimpleEnumerator getSupportedFormats(in PRUint32 aContentType);
+
+  /**
+   * An enumeration of nsISupportsPRUint32 values defined in sbIDeviceEvent.idl
+   */
+  nsISimpleEnumerator getSupportedEvents();
+};

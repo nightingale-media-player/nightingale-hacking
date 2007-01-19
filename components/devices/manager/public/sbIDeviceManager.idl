@@ -1,0 +1,42 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+
+/**
+ * This is the DeviceManager service.
+ * Make sure to use getService rather than createInstance when using.
+ */
+[scriptable, uuid(82102e1c-e620-4c9e-9a3f-059eee1355b5)]
+interface sbIDeviceManager : nsISupports
+{
+  /**
+   * Simply calls updateDevices on all loaded controllers.
+   */
+  void updateDevices();
+};

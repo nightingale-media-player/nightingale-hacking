@@ -1,0 +1,159 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2006 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIDeviceControllerRegistrar;
+
+/**
+ * 
+ */
+[scriptable, uuid(8e7daa39-f4d2-4366-8841-a76de3cff7be)]
+interface sbIDeviceMarshall : nsISupports
+{
+  /**
+   * Gets the unique id associated with this marshall.
+   */
+  readonly attribute nsIDPtr id;
+
+  /**
+   * A human-readable name for the marshall. Optional.
+   */
+  readonly attribute AString name;
+
+  /**
+   * Loads all controllers registered with this marshall's category. Registers
+   * each one with the registrar given.
+   */
+  void loadControllers(in sbIDeviceControllerRegistrar aRegistrar);
+
+  /**
+   * 
+   */
+};
+
+%{C++
+#include "nsCOMPtr.h"
+#include "nsIComponentManager.h"
+#include "nsICategoryManager.h"
+#include "nsIServiceManager.h"
+#include "nsStringGlue.h"
+#include "nsXPCOMCID.h"
+
+class nsIFile;
+struct nsModuleComponentInfo;
+
+#define SB_DEVICE_MARSHALL_CATEGORY "songbird-device-marshall"
+
+/**
+ * Put this in your module definition file. Give your class name. Then your
+ * moduleInfo should look something like this:
+ *
+ *   NS_GENERIC_FACTORY_CONSTRUCTOR(sbSampleMarshall);
+ *   SB_DEVICE_MARSHALL_REGISTERSELF(sbSampleMarshall);
+ *
+ *   static nsModuleComponentInfo components[] =
+ *   {
+ *     {
+ *       CLASSNAME, 
+ *       CID,
+ *       CONTRACTID,
+ *       sbSampleMarshallConstructor,
+ *       sbSampleMarshallRegisterSelf,
+ *       sbSampleMarshallUnregisterSelf
+ *     }
+ *   };
+ *
+ *   NS_IMPL_NSGETMODULE("Sample Controller", components)
+ */
+#define SB_DEVICE_MARSHALL_REGISTERSELF(_name)                                 \
+                                                                               \
+  static NS_METHOD _name##RegisterSelf(nsIComponentManager* aCompMgr,          \
+                                       nsIFile* aPath,                         \
+                                       const char* registryLocation,           \
+                                       const char* componentType,              \
+                                       const nsModuleComponentInfo* info);     \
+                                                                               \
+  static NS_METHOD _name##UnregisterSelf(nsIComponentManager* aCompMgr,        \
+                                         nsIFile* aPath,                       \
+                                         const char* registryLocation,         \
+                                         const nsModuleComponentInfo* info)
+
+/**
+ * Stick this in your implementation file. Give your class name.
+ */
+#define SB_DEVICE_MARSHALL_REGISTERSELF_IMPL(_name)                            \
+                                                                               \
+  NS_METHOD                                                                    \
+  _name##RegisterSelf(nsIComponentManager* aCompMgr,                           \
+                      nsIFile* aPath,                                          \
+                      const char* registryLocation,                            \
+                      const char* componentType,                               \
+                      const nsModuleComponentInfo* info)                       \
+  {                                                                            \
+    nsresult rv;                                                               \
+    nsCOMPtr<nsICategoryManager> catMan =                                      \
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    nsID id;                                                                   \
+    rv = this->GetIdInPlace(&id);                                              \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    nsCAutoString idString(id.ToString());                                     \
+    NS_ENSURE_STATE(!idString.IsEmpty());                                      \
+    nsXPIDLCString prevEntry;                                                  \
+    rv = catMan->AddCategoryEntry(SB_DEVICE_MARSHALL_CATEGORY,                 \
+                                  idString.get(),                              \
+                                  info->mContractID,                           \
+                                  PR_TRUE, PR_TRUE,                            \
+                                  getter_Copies(prevEntry));                   \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    NS_WARN_IF_FALSE(prevEntry.IsEmpty(),                                      \
+                     "Another marshall was registered with that id!");         \
+    return NS_OK;                                                              \
+  }                                                                            \
+                                                                               \
+  NS_METHOD                                                                    \
+  _name##UnregisterSelf(nsIComponentManager* aCompMgr,                         \
+                        nsIFile* aPath,                                        \
+                        const char* registryLocation,                          \
+                        const nsModuleComponentInfo* info)                     \
+  {                                                                            \
+    nsresult rv;                                                               \
+    nsCOMPtr<nsICategoryManager> catMan =                                      \
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    nsID id;                                                                   \
+    rv = this->GetIdInPlace(&id);                                              \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    nsCAutoString idString(id.ToString());                                     \
+    NS_ENSURE_STATE(!idString.IsEmpty());                                      \
+    rv = catMan->DeleteCategoryEntry(SB_DEVICE_MARSHALL_CATEGORY,              \
+                                     idString.get(),                           \
+                                     PR_TRUE);                                 \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    return NS_OK;                                                              \
+  }
+%}
