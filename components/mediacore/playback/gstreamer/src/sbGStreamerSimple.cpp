@@ -17,7 +17,7 @@
 #include "nsIBaseWindow.h"
 #include "nsIWidget.h"
 #include "nsIBoxObject.h"
-#include "nsString.h"
+#include "nsStringGlue.h"
 #include "prlog.h"
 
 #if defined( PR_LOGGING )

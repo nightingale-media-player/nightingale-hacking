@@ -2,7 +2,7 @@
 #include "nsCOMPtr.h"
 #include "nsICategoryManager.h"
 #include "nsIGenericFactory.h"
-#include "nsIServiceManager.h"
+#include "nsServiceManagerUtils.h"
 #include "sbGStreamerService.h"
 #include "sbGStreamerSimple.h"
 #include "prlog.h"

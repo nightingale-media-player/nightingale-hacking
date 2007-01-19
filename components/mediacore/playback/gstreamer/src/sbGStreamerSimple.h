@@ -2,7 +2,7 @@
 #define _SB_GSTREAMER_SIMPLE_H_
 
 #include "nsCOMPtr.h"
-#include "nsString.h"
+#include "nsStringGlue.h"
 #include "nsIDOMEventListener.h"
 #include "nsIDOMWindow.h"
 

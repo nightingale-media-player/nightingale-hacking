@@ -44,9 +44,8 @@ DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
       nspr4 \
-      plds4 \
-      plc4 \
       xpcom \
+      xpcomglue_s \
       gstreamer-0.10 \
       gstinterfaces-0.10 \
       gobject-2.0 \
