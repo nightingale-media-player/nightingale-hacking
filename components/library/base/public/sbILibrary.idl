@@ -30,7 +30,7 @@
  * \sa sbILibraryFactory.idl, sbILibraryManager.idl
  */
 
-#include "sbIResource.idl"
+#include "sbILibraryResource.idl"
 
 interface nsIChannel;
 interface nsISimpleEnumerator;
@@ -51,7 +51,7 @@ interface sbIMediaListFactory;
 * \sa sbIMediaItem, sbIMediaList
 */
 [scriptable, uuid(cd0a02c7-3c0d-4e54-ab92-e8ac4f22c17f)]
-interface sbILibrary : sbIResource
+interface sbILibrary : sbILibraryResource
 {
   /**
    * \brief Reference to the device that this library is stored on
@@ -103,7 +103,7 @@ interface sbILibrary : sbIResource
    * \param aMediaList Foreign media list to import into this library
    * \return A reference to the media list after it has been imported
    */
-  sbIMediaList adoptMediaList(in sbIMediaList aMediaList);
+  sbIMediaList importMediaList(in sbIMediaList aMediaList);
 
   /**
    * \brief Begin a batch operation

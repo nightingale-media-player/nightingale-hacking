@@ -33,7 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
-interface nsISimpleEnumerator;
+interface nsIArray;
 
 /**
 * \interface sbIFilterableMediaList
@@ -54,25 +54,35 @@ interface sbIFilterableMediaList : nsISupports
   readonly attribute nsIStringEnumerator filterableProperties;
 
   /**
-   * \brief Returns a string enumerator of all of the possible values for the
+   * \brief Returns an array of all of the possible values for the
    * given property.
    * \param aPropertyName The property name to return values for
-   * \return An nsIStringEnumerator of the values for the given property
+   * \return An nsIArray of nsISupportsString object of the values for the
+   * given property
    */
-  nsIStringEnumerator getFilterValues(in AString aPropertyName);
+  nsIArray getFilterValues(in AString aPropertyName);
 
   /**
-   * \brief Add a new filter constraint to the current filter configuration
-   * \param aPropertyName The property name to filter on
-   * \param aPropertyValue The value to constrain the given property to
+   * \brief Set a new filter configuration.
+   * \param aProperties Array of nsISupportsString objects that describes the
+   * property to be used for each filter.  The filters are applied in the
+   * same order as the array.
+   * \param aValueEnumerators Array of nsIStringEnumerator objects that supply
+   * the value list for each filter property specified in the aProperty
+   * parameter.  A null value (or an emtpy enumerator) represents no filtering
+   * on the corresponding property.
    */
-  void appendFilter(in AString aPropertyName, in AString aPropertyValue);
+  void setFilters(in nsIArray aProperties, in nsIArray aValueEnumerators);
 
   /**
-   * \brief A simple enumerator of nsIProperty objects that contains the
-   * list of current filter settings
+   * \brief Update an existing filter
+   * \param aPropertyName Property name that specifies which filter to update
+   * \param nsIStingEnumerator Enumerator of the new values for the filter.
+   * A null value (or an emtpy enumerator) represents no filtering on the
+   * specified property.
    */
-  readonly attribute nsISimpleEnumerator currentFilters;
+  void updateFilter(in AString aPropertyName,
+                    in nsIStringEnumerator aValueEnumerator);
 
   /**
    * \brief Clears the current filter configuration

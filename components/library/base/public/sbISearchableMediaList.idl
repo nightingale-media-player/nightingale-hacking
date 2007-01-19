@@ -33,6 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
+interface nsIPropertyBag;
 
 /**
 * \interface sbISearchableMediaList
@@ -46,40 +47,30 @@ interface nsIStringEnumerator;
 [scriptable, uuid(1db2f57c-5fcf-4fe0-8951-c1b40d9f7bf6)]
 interface sbISearchableMediaList : nsISupports
 {
-  /**
-   * \brief A brief description of this method
-   *
-   * A detailed description of this method
-   *
-   * \param aSomeInParameter Description of this parameter
-   * \return Description of the return value
-   * \sa Also see the other methods listed here
-   */
-  long someMethod(in AString aSomeInParameter);
-
+  // TODO: make this more like the filter interface
   /**
    * \brief Get a list of all the properties that can be searched
    */
-  readonly attribute nsIStringEnumerator serchableProperties;
+  readonly attribute nsIStringEnumerator searchableProperties;
 
   /**
-   * \brief The current search string
+   * \brief The current search
    */
-  readonly attribute AString currentSearchString;
+  readonly attribute nsIPropertyBag currentSearch;
 
   /**
-   * \brief The current search property.  If this value is null, all
-   * properties are searched
+   * \brief Set a new property search
+   * \param aSearch A property bag of search parameters.  The keys map to
+   * properties and the values are the search value for each property.
    */
-  readonly attribute AString currentPropertyName;
+  void setPropertySearch(in nsIPropertyBag aSearch);
 
   /**
-   * \brief Set a new search string and property
-   * \param aSearchString The string to search for
-   * \param aPropertyName The property to search over.  If this value is null,
-   * all properties are searched
+   * \brief Set a new all search.  This search is applied to all searchable
+   * properties.
+   * \param aSearchString Search string
    */
-  void applySearch(in AString aSearchString, in AString aPropertyName);
+  void setAllSearch(in nsIPropertyBag aSearchString);
 
   /**
    * \brief Clear the search

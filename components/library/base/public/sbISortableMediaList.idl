@@ -33,6 +33,7 @@
 #include "nsISupports.idl"
 
 interface nsIStringEnumerator;
+interface nsIPropertyBag;
 
 /**
 * \interface sbISortableMediaList
@@ -45,29 +46,23 @@ interface nsIStringEnumerator;
 [scriptable, uuid(a3579817-5ba7-49e6-98ad-5ab8270d1848)]
 interface sbISortableMediaList : nsISupports
 {
+  /**
+   * \brief A list of properties that support sorting
+   */
+  readonly attribute nsIStringEnumerator sortableProperties;
 
   /**
-   * \brief A list of keys that support sorting
+   * \brief The current sort
    */
-  readonly attribute nsIStringEnumerator sortableKeys;
-
-  /**
-   * \brief The current sort key
-   */
-  readonly attribute AString currentSortKay;
-
-  /**
-   * \brief The current sort direction.  True if it is ascending, false if it
-   * is descending
-   */
-  readonly attribute boolean currentSortIsAscending;
+  readonly attribute nsIPropertyBag currentSort;
 
   /**
    * \brief Set a new sort for the media list
-   * \param aKey The key to sort on
-   * \param aIsAscending True for an ascending sort, false for descending
+   * \param aSort A property bag containing the sort parameters.  The keys
+   * map to sortable properties and the value for each key is a boolean where
+   * true is ascending and false is descending
    */
-  void setSort(in AString aKey, in boolean aIsAscending);
+  void setSort(in nsIPropertyBag aSort);
 
   /**
    * \brief Clear the sort

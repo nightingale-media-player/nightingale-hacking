@@ -30,10 +30,11 @@
  * \sa sbIMediaList.idl
  */
 
-#include "sbIResource.idl"
+#include "sbILibraryResource.idl"
 
 interface nsISimpleEnumerator;
 interface nsITreeView;
+interface nsIPropertyBag;
 interface sbILibrary;
 interface sbIMediaItem;
 interface sbIMediaListListener;
@@ -47,7 +48,7 @@ interface sbIMediaListListener;
 * \sa List of "see also" interfaces
 */
 [scriptable, uuid(9e9684b0-9580-4370-98d4-1d123c65c8aa)]
-interface sbIMediaList : sbIResource
+interface sbIMediaList : sbILibraryResource
 {
   /**
    * \brief The name of the media list
@@ -88,6 +89,16 @@ interface sbIMediaList : sbIResource
    * sbIMediaItem objects
    */
   nsISimpleEnumerator getItemsByPropertyValue(in AString aName, in AString aValue);
+
+  /**
+   * \brief Get a list of media items that match a listr of property and
+   * propery values
+   * \param aBag Property bag describing the item search where the keys map
+   * to property names and values map to property values.
+   * \return List of found media items as a nsISimpleEnumerator containing
+   * sbIMediaItem objects
+   */
+  nsISimpleEnumerator getItemsByPropertyValues(in nsIPropertyBag aBag);
 
   /**
    * \brief Get the first index of a media item int he list
@@ -135,6 +146,19 @@ interface sbIMediaList : sbIResource
    * \param aMediaItem Media item to insert
    */
   void insertBefore(in short aIndex, in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Move a media item from one position to another in the list
+   * \param aFromIndex Index of media item to move
+   * \param aToIndex Index of media item to insert the moved item before
+   */
+  void moveBefore(in short aFromIndex, in short aToIndex);
+
+  /**
+   * \brief Move a media item to the end of the list
+   * \param aIndex Index of media item to move
+   */
+  void moveLast(in short aIndex);
 
   /**
    * \brief Remove a media item from the list

@@ -30,7 +30,7 @@
  * \sa sbIMediaList.idl
  */
 
-#include "sbIResource.idl"
+#include "sbILibraryResource.idl"
 
 interface nsIObserver;
 interface nsIURI;
@@ -49,7 +49,7 @@ interface sbILibrary;
 * \sa sbILibrary, sbIMediaList
 */
 [scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
-interface sbIMediaItem : sbIResource
+interface sbIMediaItem : sbILibraryResource
 {
   /**
    * \brief The library that this media item is contained in
