@@ -87,16 +87,19 @@ endif
 
 ifeq (macosx,$(SB_PLATFORM))
 
-tasks: all vlcplugin
+tasks: all runtimelibs vlcplugin
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/xulrunner$(BIN_SUFFIX)
 
-SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
-                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
-                     $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
-                     $(NULL)
+runtimelibs::
+	$(MKDIR) -p $(SONGBIRD_MACOS)
+	$(CP) -dfp $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+               $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+               $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+               $(SONGBIRD_MACOS) \
+               $(NULL)
 
 # Plugins on OS X are not files but rather directories! Doing it this way
 # keeps us from having to remove a bunch of '.svn' folders after a recursive
