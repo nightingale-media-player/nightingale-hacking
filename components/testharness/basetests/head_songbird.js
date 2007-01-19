@@ -54,7 +54,6 @@
 */
 
 // setup the main thread event queue
-var _eqs = null;
 var _quit = false;
 var _fail = false;
 var _running_event_loop = false;
@@ -86,17 +85,14 @@ function doMain() {
     return;
 
   dump("*** [" + _test_name + "] - running event loop\n");
-  var eq = _eqs.getSpecialEventQueue(_eqs.CURRENT_THREAD_EVENT_QUEUE);
 
-  _running_event_loop = true;
-  eq.eventLoop();  // unblocked via interrupt from doQuit()
-  _running_event_loop = false;
+  var tm = Cc["@mozilla.org/thread-manager;1"].createInstance(Ci.nsIThreadManager);
+  var mainThread = tm.mainThread;
 
-  // not needed - these actually cause a crash.
-  // process any remaining events before exiting
-  //eq.processPendingEvents();
-  //eq.stopAcceptingEvents();
-  //eq.processPendingEvents();
+  while(!_quit) {
+    mainThread.processNextEvent(true);
+  }
+
 }
 
 function doQuit() {
@@ -104,11 +100,6 @@ function doQuit() {
 
   _quit = true;
 
-  if (_running_event_loop) {
-    // interrupt the current thread to make eventLoop return.
-    var thr = Cc["@mozilla.org/thread;1"].createInstance(Ci.nsIThread);
-    thr.currentThread.interrupt();
-  }
 }
 
 function doThrow(text) {
@@ -148,5 +139,3 @@ function testFinished() {
     doQuit();
 }
 
-_eqs = Cc["@mozilla.org/event-queue-service;1"].getService(Ci.nsIEventQueueService);
-_eqs.createMonitoredThreadEventQueue();
