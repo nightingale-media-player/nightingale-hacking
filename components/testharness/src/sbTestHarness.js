@@ -79,6 +79,11 @@ sbTestHarness.prototype = {
   },
 
   run : function () {
+
+    var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+    var consoleListener = Cc["@songbirdnest.com/Songbird/TestHarness/ConsoleListener;1"].createInstance(Ci.nsIConsoleListener);
+    consoleService.registerListener(consoleListener);
+
     var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
     var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
 
@@ -156,7 +161,7 @@ sbTestHarness.prototype = {
 
         // load the test script
         if (testFile.exists()) {
-          dump("*** [" + testBase + "] - Testing...\n");
+          consoleService.logStringMessage("*** [" + testBase + "] - Testing...\n");
           scriptUri = ioService.newFileURI(testFile);
           jsLoader.loadSubScript( scriptUri.spec, null );
         }
@@ -190,6 +195,9 @@ sbTestHarness.prototype = {
 
       }
     }
+
+    consoleService.unregisterListener(consoleListener);
+
   },
 
   // called only if there are NO components passed in, builds a list

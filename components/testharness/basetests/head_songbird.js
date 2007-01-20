@@ -59,6 +59,7 @@ var _fail = false;
 var _running_event_loop = false;
 var _tests_pending = 0;
 var _test_name = "sbTestHarness";
+var _consoleService = null;
 
 function _TimerCallback(expr) {
   this._expr = expr;
@@ -84,7 +85,7 @@ function doMain() {
   if (_quit)
     return;
 
-  dump("*** [" + _test_name + "] - running event loop\n");
+  _consoleService.logStringMessage("*** [" + _test_name + "] - running event loop\n");
 
   var tm = Cc["@mozilla.org/thread-manager;1"].createInstance(Ci.nsIThreadManager);
   var mainThread = tm.mainThread;
@@ -105,10 +106,10 @@ function doQuit() {
 function doThrow(text) {
   _fail = true;
   doQuit();
-  dump("*** [" + _test_name + "] - CHECK FAILED: " + text + "\n");
+  log("*** [" + _test_name + "] - CHECK FAILED: " + text + "\n");
   var frame = Components.stack;
   while (frame != null) {
-    dump(frame + "\n");
+    _consoleService.logStringMessage(frame + "\n");
     frame = frame.caller;
   }
   throw Cr.NS_ERROR_ABORT;
@@ -138,4 +139,10 @@ function testFinished() {
   if (--_tests_pending == 0)
     doQuit();
 }
+
+function log(s) {
+  _consoleService.logStringMessage(s);
+}
+
+_consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 

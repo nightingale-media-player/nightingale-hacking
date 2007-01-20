@@ -44,11 +44,11 @@ try {
   doMain();
 } catch (e) {
   _fail = true;
-  dump("*** [" + _test_name + " ] - EXCEPTION: " + e + "\n");
+  log("*** [" + _test_name + " ] - EXCEPTION: " + e + "\n");
 }
 
 if (_fail)
-  dump("*** [" + _test_name + "] - ***** FAIL *****\n");
+  log("*** [" + _test_name + "] - ***** FAIL *****\n");
 else
-  dump("*** [" + _test_name + "] - ***** PASS *****\n");
+  log("*** [" + _test_name + "] - ***** PASS *****\n");
 
