@@ -29,10 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = sqlbuilder
+#SONGBIRD_TEST_COMPONENT = sqlbuilder
 
-SONGBIRD_TESTS = \
-                 $(NULL)
+#SONGBIRD_TESTS = \
+#                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
