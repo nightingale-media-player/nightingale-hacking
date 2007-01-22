@@ -30,9 +30,9 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbMediaLibrary_d
+target_name = sbDBEngine_d
 else
-target_name = sbMediaLibrary
+target_name = sbDBEngine
 endif
 
 CPP_SRCS = DatabaseEngine.cpp \
