@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = sqlbuilder
 
-SONGBIRD_TESTS = $(srcdir)/test_dev.js \
+SONGBIRD_TESTS = \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
