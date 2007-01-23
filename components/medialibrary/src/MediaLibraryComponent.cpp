@@ -31,42 +31,13 @@
 
 #include "nsIGenericFactory.h"
 
-#include "DatabaseQuery.h"
-#include "DatabaseResult.h"
-#include "DatabaseEngine.h"
-
 #include "MediaScan.h"
 
-NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(CDatabaseEngine, CDatabaseEngine::GetSingleton)
-
-NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseQuery)
-NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CMediaScan)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CMediaScanQuery)
 
 static nsModuleComponentInfo sbMediaLibrary[] =
 {
-  {
-    SONGBIRD_DATABASEENGINE_CLASSNAME,
-    SONGBIRD_DATABASEENGINE_CID,
-    SONGBIRD_DATABASEENGINE_CONTRACTID,
-    CDatabaseEngineConstructor
-  },
-
-  {
-    SONGBIRD_DATABASEQUERY_CLASSNAME,
-    SONGBIRD_DATABASEQUERY_CID,
-    SONGBIRD_DATABASEQUERY_CONTRACTID,
-    CDatabaseQueryConstructor
-  },
-
-  {
-    SONGBIRD_DATABASERESULT_CLASSNAME,
-    SONGBIRD_DATABASERESULT_CID,
-    SONGBIRD_DATABASERESULT_CONTRACTID,
-    CDatabaseResultConstructor
-  },
-
   {
     SONGBIRD_MEDIASCAN_CLASSNAME,
     SONGBIRD_MEDIASCAN_CID,
@@ -83,11 +54,4 @@ static nsModuleComponentInfo sbMediaLibrary[] =
   
 };
 
-// When everything else shuts down, delete it.
-static void sbMediaLibraryDestructor(nsIModule* me)
-{
-  NS_IF_RELEASE(gEngine);
-  gEngine = nsnull;
-}
-
-NS_IMPL_NSGETMODULE_WITH_DTOR("SongbirdMetadataManagerComponent", sbMediaLibrary, sbMediaLibraryDestructor)
+NS_IMPL_NSGETMODULE("SongbirdMediaLibraryComponent", sbMediaLibrary)

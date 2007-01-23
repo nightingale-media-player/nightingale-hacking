@@ -35,7 +35,8 @@ else
 target_name = sbDBEngine
 endif
 
-CPP_SRCS = DatabaseEngine.cpp \
+CPP_SRCS = DatabaseEngineComponent.cpp \
+           DatabaseEngine.cpp \
            DatabaseQuery.cpp \
            DatabaseResult.cpp \
            $(NULL)

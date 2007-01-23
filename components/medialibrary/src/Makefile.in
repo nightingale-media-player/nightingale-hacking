@@ -35,10 +35,7 @@ else
 target_name = sbMediaLibrary
 endif
 
-CPP_SRCS = DatabaseEngine.cpp \
-           DatabaseQuery.cpp \
-           DatabaseResult.cpp \
-           MediaScan.cpp \
+CPP_SRCS = MediaScan.cpp \
            MediaLibraryComponent.cpp \
            $(NULL)
 
@@ -63,25 +60,21 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += sqlite3 \
-                               unicharutil_external_s \
-							   $(NULL)
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
+                               $(NULL)
 endif
 
 ifeq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s \
-                                $(SQLITE_DIR)/lib/libsqlite3 \
                                 $(NULL)
 endif
 
 ifeq (win32,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               sqlite \
                                $(NULL)
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(SQLITE_DIR)/lib \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
