@@ -56,6 +56,8 @@ CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
+IS_COMPONENT = 1
+
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \

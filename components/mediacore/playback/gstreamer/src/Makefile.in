@@ -38,6 +38,8 @@ CPP_EXTRA_INCLUDES = \
       $(GTK_CFLAGS) \
       $(NULL)
 
+IS_COMPONENT = 1
+
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))

@@ -55,6 +55,8 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/playback/quicktime/public \
                $(MOZSDK_INCLUDE_DIR)/widget \
                $(NULL)
 
+IS_COMPONENT = 1
+
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))

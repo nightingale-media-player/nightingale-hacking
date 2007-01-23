@@ -292,7 +292,17 @@ ifdef DYNAMIC_LIB
 ifdef DYNAMIC_LIB_FLAGS
 linker_flags = $(DYNAMIC_LIB_FLAGS)
 else
+
+ifeq (macosx,$(SB_PLATFORM))
+ifdef IS_COMPONENT
+LDFLAGS_DLL = -bundle
+else
+LDFLAGS_DLL += -install_name @executable_path/$(DYNAMIC_LIB) -compatibility_version 1 -current_version 1
+endif
+endif
+
 linker_flags = $(LDFLAGS) $(LDFLAGS_DLL)
+
 ifdef DYNAMIC_LIB_EXTRA_FLAGS
 linker_flags += $(DYNAMIC_LIB_EXTRA_FLAGS)
 endif

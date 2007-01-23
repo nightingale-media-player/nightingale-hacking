@@ -63,6 +63,8 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
+IS_COMPONENT = 1
+
 DYNAMIC_LIB = $(target_name)
 
 DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
