@@ -40,6 +40,7 @@ CPP_SRCS = MediaScan.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/medialibrary/public \
+               $(DEPTH)/components/dbengine/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \

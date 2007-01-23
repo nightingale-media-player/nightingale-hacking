@@ -41,6 +41,7 @@ CPP_SRCS = Servicesource.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/servicesource/public \
                $(DEPTH)/components/medialibrary/public \
+               $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/playlistsource/public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \

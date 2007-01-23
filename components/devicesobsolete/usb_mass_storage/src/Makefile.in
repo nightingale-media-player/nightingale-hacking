@@ -50,6 +50,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
                $(DEPTH)/components/devicesobsolete/usb_mass_storage/src/$(SB_PLATFORM) \
                $(DEPTH)/components/medialibrary/public \
+               $(DEPTH)/components/dbengine/public \
                $(srcdir)/$(SB_PLATFORM)/ \
                $(srcdir) \
                $(MOZSDK_INCLUDE_DIR) \
