@@ -21,7 +21,7 @@ songbird.jar:
   content/songbird/scripts/messagebox.js                (messagebox.js)
   content/songbird/scripts/metrics.js                   (metrics.js)
   content/songbird/scripts/miniplayer.js                (miniplayer.js)
-  content/songbird/scripts/mousewheel.js                (mousewheel.js)
+  content/songbird/scripts/mousewheel_volume.js         (mousewheel_volume.js)
   content/songbird/scripts/player_open.js               (player_open.js)
   content/songbird/scripts/restartbox.js                (restartbox.js)
   content/songbird/scripts/sbIAsyncForLoop.js           (sbIAsyncForLoop.js)

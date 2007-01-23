@@ -115,7 +115,7 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/mousewheel.js"/>
+   src="chrome://songbird/content/scripts/mousewheel_volume.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/player_open.js"/>
 

@@ -30,21 +30,39 @@
 
 try 
 {
-  function SBInitMouseWheel()
+
+  // Module specific global for auto-init/deinit support
+  var mousewheel_volume = {};
+  mousewheel_volume.init_once = 0;
+  mousewheel_volume.deinit_once = 0;
+  mousewheel_volume.onLoad = function()
   {
-    window.addEventListener("DOMMouseScroll", onMouseWheel, false);
+    if (mousewheel_volume.init_once++) { dump("WARNING: mousewheel_volume double init!!\n"); return; }
+    window.addEventListener("DOMMouseScroll", mousewheel_volume.onDOMMouseScroll, false);
+  }
+  mousewheel_volume.onUnload = function()
+  {
+    if (mousewheel_volume.deinit_once++) { dump("WARNING: mousewheel_volume double deinit!!\n"); return; }
+    window.removeEventListener("DOMMouseScroll", mousewheel_volume.onDOMMouseScroll, false);
+    window.removeEventListener("load", mousewheel_volume.onLoad, false);
+    window.removeEventListener("unload", mousewheel_volume.onUnload, false);
   }
 
-  function onMouseWheel(event)
+  // Auto-init/deinit registration
+  window.addEventListener("load", mousewheel_volume.onLoad, false);
+  window.addEventListener("unload", mousewheel_volume.onUnload, false);
+
+  // Functionality
+  mousewheel_volume.onDOMMouseScroll = function(evt)
   {
     try
     {
-      var node = event.originalTarget;
+      var node = evt.originalTarget;
       while (node != document && node != null)
       {
-        // if your object implements an event on the wheel,
+        // if your object implements an evt on the wheel,
         // but is not one of these, you should prevent the 
-        // event from bubbling
+        // evt from bubbling
         if (node.tagName == "tree") return;
         if (node.tagName == "xul:tree") return;
         if (node.tagName == "listbox") return;
@@ -57,16 +75,16 @@ try
       if (node == null)
       {
         // could not walk up to the window before hitting a document, 
-        // we're inside a sub document. the event will continue bubbling, 
+        // we're inside a sub document. the evt will continue bubbling, 
         // and we'll catch it on the next pass
         return;
       }
     
       var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-
+      
       // walked up to the window
       var s = PPS.volume;
-      var v = parseInt(s)+((event.detail > 0) ? -8 : 8);
+      var v = parseInt(s)+((evt.detail > 0) ? -8 : 8);
       if (v < 0) v = 0;
       if (v > 255) v = 255;
       PPS.volume = v;
@@ -74,11 +92,13 @@ try
     }
     catch (err)
     {
-      dump("onMouseWheel - " + err);
+      dump("onMouseWheelVolume - " + err);
     }
   }
 }
 catch (err)
 {
-  dump("mousewheel.js - " + err);
+  dump("mousewheel_volume.js - " + err);
 }
+
+

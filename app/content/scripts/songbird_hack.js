@@ -347,7 +347,6 @@ function SBInitialize()
     */
     
     setMinMaxCallback();
-    SBInitMouseWheel();
     initJumpToFileHotkey();
     initFaceplateButton();
 
