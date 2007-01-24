@@ -171,7 +171,7 @@
     function doLoad()
     {
       try {
-        fixOSXWindow("window_top", "app_title");
+        fixWindow("window_top", "app_title");
       }
       catch (err) { }
 

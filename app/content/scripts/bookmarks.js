@@ -317,7 +317,7 @@ var bmManager = {
       data.in_url = node.url;
       data.in_label = node.label;
       data.in_icon= node.icon;
-      SBOpenModalDialog( "chrome://songbird/content/xul/editbookmark.xul", "edit_bookmark", "chrome,modal=yes, centerscreen", data );
+      SBOpenModalDialog( "chrome://songbird/content/xul/editbookmark.xul", "edit_bookmark", "chrome,centerscreen", data ); 
       if (data.result) {
         var newurl = data.out_url;
         var newicon = data.out_icon;

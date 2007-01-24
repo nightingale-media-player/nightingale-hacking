@@ -344,7 +344,7 @@ function SBMiniDropped()
     media_scan_data.URL = theDropPath;
     media_scan_data.retval = "";
     // Open the non-modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
     SBDataSetBoolValue( "media_scan.open", false );
   }
   else if ( gPPS.isMediaURL( theDropPath ) )

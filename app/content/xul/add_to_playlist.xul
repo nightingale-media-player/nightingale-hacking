@@ -150,7 +150,7 @@
     function initFocus()
     {
       try {
-        fixOSXWindow("window_top", "app_title");
+        fixWindow("window_top", "app_title");
       }
       catch (e) { }
 
@@ -220,7 +220,7 @@
       // Make a data object to get the name of the playlist from the dialog
       var new_playlist_data = new Object();
       // Open the modal dialog
-      SBOpenModalDialog( "chrome://songbird/content/xul/new_playlist.xul", "new_playlist", "chrome,modal=yes, centerscreen", new_playlist_data );
+      SBOpenModalDialog( "chrome://songbird/content/xul/new_playlist.xul", "new_playlist", "chrome,centerscreen", new_playlist_data ); 
       if ( new_playlist_data.retval == "ok" )
       {
         var playlistname = new_playlist_data.playlistname;
@@ -253,7 +253,7 @@
         var playlist_exists_data = new Object();
         playlist_exists_data.playlistname = name;
         // Open the modal dialog
-        SBOpenModalDialog( "chrome://songbird/content/xul/playlist_exists.xul", "playlist_exists", "chrome,modal=yes, centerscreen", playlist_exists_data );
+        SBOpenModalDialog( "chrome://songbird/content/xul/playlist_exists.xul", "playlist_exists", "chrome,centerscreen", playlist_exists_data ); 
         return;
       }
       // otherwise, create it, then add it to the list and select it 

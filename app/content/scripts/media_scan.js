@@ -61,7 +61,7 @@ var polling_interval;
 function onLoad()
 {
   try {
-    fixOSXWindow("window_top", "app_title");
+    fixWindow("window_top", "app_title"); 
   }
   catch (e) { }
 

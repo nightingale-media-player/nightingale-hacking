@@ -402,7 +402,7 @@ function SBAppInitialize()
     SBMetricsAppStart();
 
     try {
-      fixOSXWindow("cheezy_window_top", "app_title");
+      fixWindow("cheezy_window_top", "app_title"); 
     }
     catch (e) { }
 

@@ -551,13 +551,26 @@ function onWindowLoadPosition()
 function SBOpenModalDialog( url, param1, param2, param3 )
 {
   PushBackscanPause();
-  param2 += ",resizable=no,titlebar=no"; // bonus stuff to shut the mac up.
-  var retval = window.openDialog( url, param1, param2, param3 );
+
+  // bonus stuff to shut the mac up.
+  var chromeFeatures = ",modal=yes,resizable=no";
+  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",titlebar=yes"; else chromeFeatures += ",titlebar=no";
+
+  param2 += chromeFeatures;   var retval = window.openDialog( url, param1, param2, param3 );
   PopBackscanPause();
   return retval;
 }
 
+function SBOpenWindow( url, param1, param2, param3 )
+{
+  var titlebar = ",modal=no";
+  if (SBDataGetBoolValue("accessibility.enabled")) titlebar += ",titlebar=yes"; else titlebar += ",titlebar=no";
 
+  param2 += titlebar;
+  var retval = window.openDialog( url, param1, param2, param3 );
+
+  return retval;
+}
 
 function PushBackscanPause()
 {
@@ -628,36 +641,15 @@ function SBMainWindowOpen()
   }
 }
 
-/* Temporary hack to get the system buttons in the right (er, left) place on a
+/* Temporary hack to perform dynamic modifications depending on the platform,
+ * ie, to get the system buttons in the right (er, left) place on a 
  * mac. To be replaced with some sort of XBL/preprocessor magic after 0.2.
  *
  * aBoxId  - The id of the <hbox> element used for the titlebar
  * aLabelId - The id of the <label> element used to display the title
  */
-function fixOSXWindow(aBoxId, aLabelId)
+function fixWindow(aBoxId, aLabelId) 
 {
-  var platform;
-  try {
-    var sysInfo =
-      Components.classes["@mozilla.org/system-info;1"]
-                .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");                                          
-  }
-  catch (e) {
-    var user_agent = navigator.userAgent;
-    if (user_agent.indexOf("Mac OS X") != -1)
-      platform = "Darwin";
-    else
-      platform = "";
-  }
-
-  // Currently we only care about fixing OS X.
-  if (platform != "Darwin")
-    return;
-
-  if (!(aBoxId && aLabelId))
-    throw Components.results.NS_ERROR_INVALID_ARG;
-
   // Constants for titlebar manipulation
   const HBOX_CONTROLS_ID = "controlBox";
   const HBOX_TITLE_ID    = "titleBox";
@@ -681,265 +673,350 @@ function fixOSXWindow(aBoxId, aLabelId)
   
   const RESIZER_SPACE_SIZE = 9;
 
-  // Small helper to apply default attributes to new buttons
-  function createNewSysButton(aTag, aId) {
-    if (!(aTag && aId))
+  const MENU_ID          = "songbird_menu";
+
+  var platform;
+  var accessible;
+  
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+  
+  var curfeathers = "rubberducky";
+  try {
+    curfeathers = prefs.getCharPref("general.skins.selectedSkin");  
+  } catch (err) {}
+  
+  // Test if this is an accessible skin, and if so, make the necessary modification to the window so that it uses the OS frames and widgets
+
+  accessible = (curfeathers.indexOf("/plucked") > 0);
+  
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    platform = sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Mac OS X") != -1)
+      platform = "Darwin";
+    else
+      platform = "";
+  }
+
+  // Fixes for OS X.
+
+  if (!accessible && platform == "Darwin") {
+
+    if (!(aBoxId && aLabelId))
       throw Components.results.NS_ERROR_INVALID_ARG;
 
-    var button = document.createElement(aTag);
-    if (!button)
-      throw Components.results.NS_ERROR_OUT_OF_MEMORY;
+    // Small helper to apply default attributes to new buttons
+    function createNewSysButton(aTag, aId) {
+      if (!(aTag && aId))
+        throw Components.results.NS_ERROR_INVALID_ARG;
 
-    button.id = aId;
-    button.setAttribute("class", CLASS_SYSBTNS);
-    button.setAttribute("disabled", "true");
+      var button = document.createElement(aTag);
+      if (!button)
+        throw Components.results.NS_ERROR_OUT_OF_MEMORY;
 
-    return button;
-  }
-  
-  // Small helper to create a spacer with a default width of 5 (unless given)
-  function createNewSpacer(aWidth) {
-    var spacer = document.createElement("spacer");
-    if (!spacer)
-      throw Components.results.NS_ERROR_OUT_OF_MEMORY;
+      button.id = aId;
+      button.setAttribute("class", CLASS_SYSBTNS);
+      button.setAttribute("disabled", "true");
 
-    spacer.width = aWidth ? aWidth : 6;
-    return spacer;
-  }
-  
-  // Small helper to remove all children of a certain tag
-  function removeAllChildrenByTag(aParent, aTag) {
-    if (!(aParent && aTag))
-      throw Components.results.NS_ERROR_INVALID_ARG;
-  
-    var children = aParent.getElementsByTagName(aTag);
-    var count = children.length;
-    for (var index = 0; index < count; index++) {
-      var child = children.item(0);
-      if (child)
-        aParent.removeChild(child);
+      return button;
+    }
+    
+    // Small helper to create a spacer with a default width of 5 (unless given)
+    function createNewSpacer(aWidth) {
+      var spacer = document.createElement("spacer");
+      if (!spacer)
+        throw Components.results.NS_ERROR_OUT_OF_MEMORY;
+
+      spacer.width = aWidth ? aWidth : 6;
+      return spacer;
+    }
+    
+    // Small helper to remove all children of a certain tag
+    function removeAllChildrenByTag(aParent, aTag) {
+      if (!(aParent && aTag))
+        throw Components.results.NS_ERROR_INVALID_ARG;
+    
+      var children = aParent.getElementsByTagName(aTag);
+      var count = children.length;
+      for (var index = 0; index < count; index++) {
+        var child = children.item(0);
+        if (child)
+          aParent.removeChild(child);
+      }
+    }
+
+    // Get the titlebar
+    var topBar = document.getElementById(aBoxId);
+    topBar.align = "center";
+    
+    // Get the title label
+    var topLabel = document.getElementById(aLabelId);
+    topBar.removeChild(topLabel);
+
+    // Remove the app icon, if it exists
+    var appIcon = document.getElementById(BUTTON_APP_ID);
+    if (appIcon)
+      topBar.removeChild(appIcon);
+
+    // Get the close, minimize, and maximize buttons
+    var closeButton = document.getElementById(BUTTON_CLOSE_ID);
+    var minButton = document.getElementById(BUTTON_MIN_ID);
+    var maxButton = document.getElementById(BUTTON_MAX_ID);  
+
+    // Get the miniplayer button
+    var miniButton = document.getElementById(BUTTON_MINI_ID);
+    if (miniButton)
+      topBar.removeChild(miniButton);
+
+    // And then there's the 'hide' button on the video window
+    var hideButton = document.getElementById(BUTTON_HIDE_ID);
+
+    // Create a new hbox to hold the system buttons
+    var controlBox = document.createElement("hbox");
+    controlBox.id = HBOX_CONTROLS_ID;
+    controlBox.align = "center";
+    controlBox.setAttribute("class", CLASS_HBOX_OSX);
+
+    // Add buttons and spacers to controlBox, removing them from the original
+    // hbox. Also yank tooltips, as OS X assumes you know what the buttons do.
+
+    // The hide button is to be used rather than the close button on the video
+    // window.
+    if (hideButton) {
+      closeButton = hideButton;
+      closeButton.removeAttribute("tooltiptext");
+      closeButton.id = BUTTON_CLOSE_ID;
+      topBar.removeChild(hideButton);
+    }
+    else if (closeButton) {
+      topBar.removeChild(closeButton);
+      closeButton.removeAttribute("tooltiptext");
+    }
+    else
+      closeButton = createNewSysButton("button", BUTTON_CLOSE_ID);
+    controlBox.appendChild(closeButton);
+
+    controlBox.appendChild(createNewSpacer());
+
+    if (minButton) {
+      topBar.removeChild(minButton);
+      minButton.removeAttribute("tooltiptext");
+    }
+    else
+      minButton = createNewSysButton("button", BUTTON_MIN_ID);
+    controlBox.appendChild(minButton);
+    
+    controlBox.appendChild(createNewSpacer());
+    
+    if (maxButton) {
+      topBar.removeChild(maxButton);
+      maxButton.removeAttribute("tooltiptext");
+    }
+    else
+      maxButton = createNewSysButton("checkbox", BUTTON_MAX_ID);
+    controlBox.appendChild(maxButton);
+    
+    // Make a stack so that the title stays centered regardless of the buttons
+    var topStack = document.createElement("stack");
+    topStack.flex = 1;
+    
+    // Move all the other stuff out of topBar and into the stack. This seems
+    // silly, but we have to save the menu bar...
+    var oldContentsBox = topBar.cloneNode(true);
+    topStack.appendChild(oldContentsBox);
+    
+    // Now clear the contents of topBar
+    var childList = topBar.childNodes;
+    var childCount = childList.length;
+    for (var index = 0; index < childCount; index++) {
+      var child = childList.item(0);
+      topBar.removeChild(child);
+    }
+    
+    // And replace with our new stack
+    topBar.appendChild(topStack);
+    
+    // Make the button hbox
+    var buttonBox = document.createElement("hbox");
+    buttonBox.flex = 1;
+    
+    // Make the text hbox
+    var titleBox = document.createElement("hbox");
+    titleBox.id = HBOX_TITLE_ID;
+    titleBox.flex = 1;
+    titleBox.align = "center";
+    
+    // Add the hboxes to the stack
+    topStack.appendChild(titleBox);
+    topStack.appendChild(buttonBox);
+
+    // Insert the new control box
+    buttonBox.appendChild(controlBox);
+    
+    // Create spacers to center the titlebar text
+    var leftSpacer = document.createElement("spacer");
+    var rightSpacer = document.createElement("spacer");
+    leftSpacer.flex = rightSpacer.flex = 1;
+    
+    // Construct the new titlebar
+    titleBox.appendChild(leftSpacer);
+    titleBox.appendChild(topLabel);
+    titleBox.appendChild(rightSpacer);
+
+    // Add some space between the control box and the mini button
+    var bigSpacer = document.createElement("spacer");
+    bigSpacer.flex = 1;
+    buttonBox.appendChild(bigSpacer);
+
+    // Add a miniplayer button?
+    if (miniButton) {
+      miniButton.removeAttribute("tooltiptext");
+
+      // Create a new hbox for the mini button
+      var miniBox = document.createElement("hbox");
+      miniBox.id = HBOX_MINI_ID;
+      miniBox.align = "center";
+      miniBox.setAttribute("class", CLASS_HBOX_OSX);
+
+      // Add the miniButton
+      miniBox.appendChild(miniButton);
+    
+      // Add to the topBar with a spacer
+      buttonBox.appendChild(createNewSpacer());
+      buttonBox.appendChild(miniBox);
+    }
+    
+    // Now for the resizers...
+    var resizersTopBox = document.getElementById(HBOX_RESIZERS_TOP_ID);
+    var resizersLeftBox = document.getElementById(HBOX_RESIZERS_LEFT_ID);
+    var resizersRightBox = document.getElementById(HBOX_RESIZERS_RIGHT_ID);
+    var resizersBottomBox = document.getElementById(HBOX_RESIZERS_BOTTOM_ID);
+    
+    // Kill all the resizers in the top and left boxes and add back some space
+    // so that the border shows up properly.
+    if (resizersTopBox) {
+      removeAllChildrenByTag(resizersTopBox, "resizer");
+      var spacer = createNewSpacer();
+      spacer.height = RESIZER_SPACE_SIZE;
+      spacer.flex = 1;
+      resizersTopBox.insertBefore(spacer, resizersTopBox.firstChild);
+    }
+    if (resizersLeftBox) {
+      removeAllChildrenByTag(resizersLeftBox, "resizer");
+      var spacer = createNewSpacer(RESIZER_SPACE_SIZE);
+      spacer.flex = 1;
+      resizersLeftBox.insertBefore(spacer, resizersLeftBox.firstChild);
+    }
+    
+    // Now kill all other resizers except the two in the bottom right corner
+    var boxList = [];
+    if (resizersRightBox)
+      boxList.push(resizersRightBox);
+    if (resizersBottomBox)
+      boxList.push(resizersBottomBox);
+    var boxCount = boxList.length;
+    
+    // Loop over all boxes and all child resizer elements
+    for (var boxIndex = 0; boxIndex < boxCount; boxIndex++) {
+      var box = boxList[boxIndex];
+      var resizersList = box.getElementsByTagName("resizer");
+      var resizersCount = resizersList.length;
+      for (var resizersIndex = 0;
+          resizersIndex < resizersCount;
+          resizersIndex++) {
+        var resizer = resizersList.item(0);
+        if (resizer.dir != "bottomright")
+          box.removeChild(resizer);
+      }
+      // Add a spacer to make sure the resizer stays in the correct spot
+      var newSpacer = createNewSpacer();
+      newSpacer.flex = 1;
+      box.insertBefore(newSpacer, box.firstChild);
     }
   }
+  
+  if (accessible) {
 
-  // Get the titlebar
-  var topBar = document.getElementById(aBoxId);
-  topBar.align = "center";
-  
-  // Get the title label
-  var topLabel = document.getElementById(aLabelId);
-  topBar.removeChild(topLabel);
-
-  // Remove the app icon, if it exists
-  var appIcon = document.getElementById(BUTTON_APP_ID);
-  if (appIcon)
-    topBar.removeChild(appIcon);
-
-  // Get the close, minimize, and maximize buttons
-  var closeButton = document.getElementById(BUTTON_CLOSE_ID);
-  var minButton = document.getElementById(BUTTON_MIN_ID);
-  var maxButton = document.getElementById(BUTTON_MAX_ID);  
-
-  // Get the miniplayer button
-  var miniButton = document.getElementById(BUTTON_MINI_ID);
-  if (miniButton)
-    topBar.removeChild(miniButton);
-
-  // And then there's the 'hide' button on the video window
-  var hideButton = document.getElementById(BUTTON_HIDE_ID);
-
-  // Create a new hbox to hold the system buttons
-  var controlBox = document.createElement("hbox");
-  controlBox.id = HBOX_CONTROLS_ID;
-  controlBox.align = "center";
-  controlBox.setAttribute("class", CLASS_HBOX_OSX);
-
-  // Add buttons and spacers to controlBox, removing them from the original
-  // hbox. Also yank tooltips, as OS X assumes you know what the buttons do.
-
-  // The hide button is to be used rather than the close button on the video
-  // window.
-  if (hideButton) {
-    closeButton = hideButton;
-    closeButton.removeAttribute("tooltiptext");
-    closeButton.id = BUTTON_CLOSE_ID;
-    topBar.removeChild(hideButton);
-  }
-  else if (closeButton) {
-    topBar.removeChild(closeButton);
-    closeButton.removeAttribute("tooltiptext");
-  }
-  else
-    closeButton = createNewSysButton("button", BUTTON_CLOSE_ID);
-  controlBox.appendChild(closeButton);
-
-  controlBox.appendChild(createNewSpacer());
-
-  if (minButton) {
-    topBar.removeChild(minButton);
-    minButton.removeAttribute("tooltiptext");
-  }
-  else
-    minButton = createNewSysButton("button", BUTTON_MIN_ID);
-  controlBox.appendChild(minButton);
-  
-  controlBox.appendChild(createNewSpacer());
-  
-  if (maxButton) {
-    topBar.removeChild(maxButton);
-    maxButton.removeAttribute("tooltiptext");
-  }
-  else
-    maxButton = createNewSysButton("checkbox", BUTTON_MAX_ID);
-  controlBox.appendChild(maxButton);
-  
-  // Make a stack so that the title stays centered regardless of the buttons
-  var topStack = document.createElement("stack");
-  topStack.flex = 1;
-  
-  // Move all the other stuff out of topBar and into the stack. This seems
-  // silly, but we have to save the menu bar...
-  var oldContentsBox = topBar.cloneNode(true);
-  topStack.appendChild(oldContentsBox);
-  
-  // Now clear the contents of topBar
-  var childList = topBar.childNodes;
-  var childCount = childList.length;
-  for (var index = 0; index < childCount; index++) {
-    var child = childList.item(0);
-    topBar.removeChild(child);
-  }
-  
-  // And replace with our new stack
-  topBar.appendChild(topStack);
-  
-  // Make the button hbox
-  var buttonBox = document.createElement("hbox");
-  buttonBox.flex = 1;
-  
-  // Make the text hbox
-  var titleBox = document.createElement("hbox");
-  titleBox.id = HBOX_TITLE_ID;
-  titleBox.flex = 1;
-  titleBox.align = "center";
-  
-  // Add the hboxes to the stack
-  topStack.appendChild(titleBox);
-  topStack.appendChild(buttonBox);
-
-  // Insert the new control box
-  buttonBox.appendChild(controlBox);
-  
-  // Create spacers to center the titlebar text
-  var leftSpacer = document.createElement("spacer");
-  var rightSpacer = document.createElement("spacer");
-  leftSpacer.flex = rightSpacer.flex = 1;
-  
-  // Construct the new titlebar
-  titleBox.appendChild(leftSpacer);
-  titleBox.appendChild(topLabel);
-  titleBox.appendChild(rightSpacer);
-
-  // Add some space between the control box and the mini button
-  var bigSpacer = document.createElement("spacer");
-  bigSpacer.flex = 1;
-  buttonBox.appendChild(bigSpacer);
-
-  // Add a miniplayer button?
-  if (miniButton) {
-    miniButton.removeAttribute("tooltiptext");
-
-    // Create a new hbox for the mini button
-    var miniBox = document.createElement("hbox");
-    miniBox.id = HBOX_MINI_ID;
-    miniBox.align = "center";
-    miniBox.setAttribute("class", CLASS_HBOX_OSX);
-
-    // Add the miniButton
-    miniBox.appendChild(miniButton);
-  
-    // Add to the topBar with a spacer
-    buttonBox.appendChild(createNewSpacer());
-    buttonBox.appendChild(miniBox);
-  }
-  
-  // Now for the resizers...
-  var resizersTopBox = document.getElementById(HBOX_RESIZERS_TOP_ID);
-  var resizersLeftBox = document.getElementById(HBOX_RESIZERS_LEFT_ID);
-  var resizersRightBox = document.getElementById(HBOX_RESIZERS_RIGHT_ID);
-  var resizersBottomBox = document.getElementById(HBOX_RESIZERS_BOTTOM_ID);
-  
-  // Kill all the resizers in the top and left boxes and add back some space
-  // so that the border shows up properly.
-  if (resizersTopBox) {
-    removeAllChildrenByTag(resizersTopBox, "resizer");
-    var spacer = createNewSpacer();
-    spacer.height = RESIZER_SPACE_SIZE;
-    spacer.flex = 1;
-    resizersTopBox.insertBefore(spacer, resizersTopBox.firstChild);
-  }
-  if (resizersLeftBox) {
-    removeAllChildrenByTag(resizersLeftBox, "resizer");
-    var spacer = createNewSpacer(RESIZER_SPACE_SIZE);
-    spacer.flex = 1;
-    resizersLeftBox.insertBefore(spacer, resizersLeftBox.firstChild);
-  }
-  
-  // Now kill all other resizers except the two in the bottom right corner
-  var boxList = [];
-  if (resizersRightBox)
-    boxList.push(resizersRightBox);
-  if (resizersBottomBox)
-    boxList.push(resizersBottomBox);
-  var boxCount = boxList.length;
-  
-  // Loop over all boxes and all child resizer elements
-  for (var boxIndex = 0; boxIndex < boxCount; boxIndex++) {
-    var box = boxList[boxIndex];
-    var resizersList = box.getElementsByTagName("resizer");
-    var resizersCount = resizersList.length;
-    for (var resizersIndex = 0;
-         resizersIndex < resizersCount;
-         resizersIndex++) {
-      var resizer = resizersList.item(0);
-      if (resizer.dir != "bottomright")
-        box.removeChild(resizer);
+    if (!SBDataGetBoolValue("accessibility.enabled")) {
+      // switching accessibility to on, some objects in the app will dynamically change their internal state to reflect this
+      SBDataSetBoolValue("accessibility.enabled", true); 
+      // change startup flags for video window
+      try {
+        prefs.setCharPref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=yes");  
+      } catch (err) {}
     }
-    // Add a spacer to make sure the resizer stays in the correct spot
-    var newSpacer = createNewSpacer();
-    newSpacer.flex = 1;
-    box.insertBefore(newSpacer, box.firstChild);
+
+    // remove the hidechrome flag on the window
+    document.documentElement.setAttribute("hidechrome", "false");
+    
+    // disable our custom resizers
+    hideRealResizers();
+    showFakeResizers();
+    
+    // make some modifications to the dom
+    hideElement(aLabelId);
+    hideElement(BUTTON_APP_ID);
+    hideElement(BUTTON_MINI_ID);
+    hideElement(BUTTON_MIN_ID);
+    hideElement(BUTTON_MAX_ID);
+    hideElement(BUTTON_CLOSE_ID);
+    moveElement(MENU_ID, null);
+  } else {
+    if (SBDataGetBoolValue("accessibility.enabled")) {
+      // switching accessibility to off
+      SBDataSetBoolValue("accessibility.enabled", false); 
+      // change startup flags for video window
+      try {
+        prefs.setCharPref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
+      } catch (err) {}
+    }
   }
-  
+    
+}
+
+function hideRealResizers() {
+  var resizers = document.getElementsByTagName("resizer");
+  for (var i=0;i<resizers.length;i++) {
+    resizers[i].setAttribute("hidden", "true");
+  }
+}
+
+function showRealResizers() {
+  var resizers = document.getElementsByTagName("resizer");
+  for (var i=0;i<resizers.length;i++) {
+    resizers[i].removeAttribute("hidden");
+  }
+}
+
+function hideFakeResizers() {
+  var xresizers = document.getElementsByTagName("x_resizer");
+  for (var i=0;i<xresizers.length;i++) {
+    xresizers[i].setAttribute("hidden", "true");
+  }
+}
+
+function showFakeResizers() {
+  var xresizers = document.getElementsByTagName("x_resizer");
+  for (var i=0;i<xresizers.length;i++) {
+    xresizers[i].removeAttribute("hidden");
+  }
 }
 
 function disableResizers() {
   if (SBDataGetBoolValue("accessibility.enabled")) return;
-  var resizers = document.getElementsByTagName("resizer");
-  var xresizers = document.getElementsByTagName("x_resizer");
-  // only perform the swap if we have both types of objects
-  if (resizers.length > 0 && xresizers.length > 0) {
-    for (var i=0;i<resizers.length;i++) {
-      resizers[i].setAttribute("hidden", "true");
-    }
-    for (var i=0;i<xresizers.length;i++) {
-      xresizers[i].removeAttribute("hidden");
-    }
-  }
+  hideRealResizers();
+  showFakeResizers();
 }
 	
 function enableResizers() {
   if (SBDataGetBoolValue("accessibility.enabled")) return;
-  var resizers = document.getElementsByTagName("resizer");
-  var xresizers = document.getElementsByTagName("x_resizer");
-  // only perform the swap if we have both types of objects
-  if (resizers.length > 0 && xresizers.length > 0) {
-    for (var i=0;i<xresizers.length;i++) {
-      xresizers[i].setAttribute("hidden", "true");
-    }
-    for (var i=0;i<resizers.length;i++) {
-      resizers[i].removeAttribute("hidden");
-    }
-  }
+  hideFakeResizers();
+  showRealResizers();
 }
 
 function hideElement(e) {
@@ -953,41 +1030,6 @@ function moveElement(e, before) {
   if (element && beforeElement) {
     element.parentNode.removeChild(element);
     beforeElement.parentNode.insertBefore(element, beforeElement);
-  }
-}
-
-function fixAccessibleWindow() {
-  
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-  
-  var curfeathers = "rubberducky";
-  try {
-    curfeathers = prefs.getCharPref("general.skins.selectedSkin");  
-  } catch (err) {}
-  
-  // Test if this is an accessible skin, and if so, make the necessary modification to the window so that it uses the OS frames and widgets
-
-  if (curfeathers.indexOf("/plucked") < 0) {
-    SBDataSetBoolValue("accessibility.enabled", false); 
-  } else {
-
-    // remove the hidechrome flag on the window
-    document.documentElement.setAttribute("hidechrome", "false");
-    
-    // disable our custom resizers (should be done before setting accessibility.enabled to true)
-    disableResizers(); // will be locked by accessibility.enabled = true
-    
-    // switching accessibility to on, some objects in the app will dynamically change their internal state to reflect this
-    SBDataSetBoolValue("accessibility.enabled", true); 
-    
-    // make some modifications to the dom
-    hideElement("mainwin_app_title");
-    hideElement("app_icon");
-    hideElement("sysbtn_minimode");
-    hideElement("sysbtn_minimize");
-    hideElement("sysbtn_maximize");
-    hideElement("sysbtn_close");
-    moveElement("songbird_menu", "songbird_strings");
   }
 }
 

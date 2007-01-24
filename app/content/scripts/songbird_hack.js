@@ -317,8 +317,7 @@ function SBInitialize()
   dump("SBInitialize *** \n");
   
   try {
-    fixOSXWindow("songbird_top", "mainwin_app_title");
-    fixAccessibleWindow();
+    fixWindow("songbird_top", "mainwin_app_title"); 
   }
   catch(e) { }
 
@@ -2487,13 +2486,13 @@ function SBOpenPreferences(paneID)
     openDialog("chrome://browser/content/preferences/preferences.xul", "Preferences", features, paneID);
     
   // to open connection settings only:
-  // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,modal=yes,centerscreen", null);
+  // SBOpenModalDialog("chrome://browser/content/preferences/connection.xul", "chrome,centerscreen", null); 
 }
 
 function SBSetDownloadFolder()
 {
   // Just open the window, we don't care what the user does in it.
-  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", null );
+  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", null ); 
 }
 
 /*function SBOpenDownloadManager()
@@ -2515,7 +2514,7 @@ function SBSetDownloadFolder()
 
 function SBWatchFolders()
 {
-  SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,modal=yes,centerscreen", null );
+  SBOpenModalDialog( "chrome://songbird/content/xul/watch_folders.xul", "", "chrome,centerscreen", null ); 
 }
 
 // Menubar handling
@@ -2597,8 +2596,8 @@ function SBScanMedia( )
     var media_scan_data = new Object();
     media_scan_data.URL = fp.file.path;
     media_scan_data.retval = "";
-    // Open the non-modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
+    // Open the modal dialog
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
   }
   theMediaScanIsOpen.boolValue = false;
 }
@@ -2608,8 +2607,8 @@ function SBMabOpen()
   var mab_data = new Object();
   mab_data.retval = "";
   
-  // Open the modal dialog
-  SBOpenModalDialog( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome,modal=no", mab_data );
+  // Open the non modal dialog
+  SBOpenWindow( "chrome://songbird/content/xul/mab.xul", "Mozilla Amazon Browser", "chrome", mab_data ); 
 }
 
 function SBNewPlaylist()
@@ -2660,7 +2659,7 @@ function SBNewSmartPlaylist( guid, table )
   smart_playlist.guid = guid;
   smart_playlist.table = table
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,modal=yes,centerscreen", smart_playlist );
+  SBOpenModalDialog( "chrome://songbird/content/xul/smart_playlist.xul", "", "chrome,centerscreen", smart_playlist ); 
   
   if ( smart_playlist.retval == "ok" )
   {
@@ -2674,7 +2673,7 @@ function SBKoshiOpen()
   var koshi_data = new Object();
   koshi_data.retval = "";
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/koshi_test.xul", "", "chrome,modal=yes,centerscreen", koshi_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/koshi_test.xul", "", "chrome,centerscreen", koshi_data ); 
 }
 
 function SBExtensionsManagerOpen()
@@ -2706,8 +2705,8 @@ function SBTrackEditorOpen()
     theTE.focus();
   } else {
     const TEURL = "chrome://songbird/content/xul/trackeditor.xul";
-    const TEFEATURES = "chrome,dialog=no,resizable=no,titlebar=no";
-    window.openDialog(TEURL, "track_editor", TEFEATURES, document);
+    const TEFEATURES = "chrome,dialog=no,resizable=no";
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, document); 
   }
 }
 
@@ -2748,7 +2747,7 @@ function SBSubscribe( url, guid, table, readable_name )
   SBScanServiceTreeNewEntryEditable();
 
   // Open the window
-  SBOpenModalDialog( "chrome://songbird/content/xul/subscribe.xul", "", "chrome,modal=yes,centerscreen", subscribe_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/subscribe.xul", "", "chrome,centerscreen", subscribe_data ); 
   if ( subscribe_data.retval == "ok" && !subscribe_data.edit )
   {
     // if we are not editing an existing playlist open the edit box
@@ -2762,7 +2761,7 @@ function About( )
   var about_data = new Object();
   about_data.retval = "";
   // Open the modal dialog
-  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,modal=yes,centerscreen", about_data );
+  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,centerscreen", about_data ); 
   if ( about_data.retval == "ok" )
   {
   }  
@@ -2949,8 +2948,8 @@ function SBDroppedEntry()
     media_scan_data.retval = "";
     media_scan_data.target_pl = theDropPlaylist;
     media_scan_data.target_db = theDropDatabase;
-    // Open the non-modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,modal=yes,centerscreen", media_scan_data );
+    // Open the modal dialog
+    SBOpenModalDialog( "chrome://songbird/content/xul/media_scan.xul", "media_scan", "chrome,centerscreen", media_scan_data ); 
     theMediaScanIsOpen.boolValue = false;
   } 
   else if (gPPS.isMediaURL( theDropPath )) {
@@ -3242,7 +3241,7 @@ function onBrowserTransfer(guid, table, strFilterColumn, nFilterValueCount, aFil
                 else
                 {
                   // Open the window
-                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", download_data );
+                  SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", download_data ); 
                 }
 
                 // Pick download destination
@@ -3893,7 +3892,7 @@ function onCDRip(deviceName, guid, table, strFilterColumn, nFilterValueCount, aF
             else
             {
                 // Open the window
-                SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,modal=yes,centerscreen", ripping_data );
+                SBOpenModalDialog( "chrome://songbird/content/xul/download.xul", "", "chrome,centerscreen", ripping_data ); 
             }
 
             // Pick download destination

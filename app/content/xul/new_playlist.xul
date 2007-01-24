@@ -104,6 +104,8 @@
   
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script>
   <![CDATA[
@@ -116,7 +118,7 @@
     function initFocus()
     {
       try {
-        fixOSXWindow("window_top", "app_title");
+        fixWindow("window_top", "app_title");
       }
       catch (e) { }
 

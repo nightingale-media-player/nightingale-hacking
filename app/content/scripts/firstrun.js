@@ -66,7 +66,7 @@ function bundleDataReady() {
 function initFirstRun() 
 {
   try {
-    fixOSXWindow("window_top", "app_title");
+    fixWindow("window_top", "app_title"); 
   }
   catch (e) { }
   
