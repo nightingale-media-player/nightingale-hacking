@@ -485,7 +485,19 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     try
     {
       ID3_FileReader file_reader( cstrSpec );
-      nTagSize = tag.Link(file_reader, ID3TT_ID3V2);
+      try
+      {
+        nTagSize = tag.Link(file_reader, ID3TT_ID3V2);
+      }
+      catch (MetadataHandlerID3Exception)
+      {
+      }
+      catch (std::bad_alloc)
+      {
+      }
+      catch (std::length_error)
+      {
+      }
       if ( nTagSize == 0 )
       {
         nTagSize = tag.Link(file_reader, ID3TT_ALL);
@@ -495,6 +507,18 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
     {
       // Oops, failed in the file reader.  That's not good.  
       // Assume it's a total failure and don't waste time trying the channel.
+      m_Completed = PR_TRUE; 
+      return NS_OK;
+    }
+    catch (std::bad_alloc)
+    {
+      // Oops, failed in the stl in the file reader.  That's not good, either.
+      m_Completed = PR_TRUE; 
+      return NS_OK;
+    }
+    catch (std::length_error)
+    {
+      // Oops, failed in the stl in the file reader.  That's not good, either.
       m_Completed = PR_TRUE; 
       return NS_OK;
     }
