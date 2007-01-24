@@ -519,14 +519,21 @@ CServicesource::GetTarget(nsIRDFResource *source,
       }
       else if (property == kNC_URL)
       {
-        nsAutoString data;
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), data);
+        nsAutoString name, description, guid;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), name);
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("description"), description);
         outstring = gPlaylistUrl;
-        outstring += data;
-
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), data);
+        if ( description == NS_LITERAL_STRING("library") )
+        {
+          outstring += NS_LITERAL_STRING("library");
+        }
+        else
+        {
+          outstring += name;
+        }
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), guid);
         outstring += NS_LITERAL_STRING(",");
-        outstring += data;
+        outstring += guid;
       }
       else if (property == kNC_Properties)
       {

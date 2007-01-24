@@ -22,12 +22,12 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\locales\
+				CommandLine="mkdir $(SolutionDir)compiled\dist\chrome\locales\
 echo $(ProjectExt) &gt;&gt; _EXCLUDE
 echo Release\ &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
-xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\locales\
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)compiled\dist\chrome\locales\
+echo. &gt; $(SolutionDir)compiled\dist\xulrunner\.autoreg
 "
 				ExcludedFromBuild="FALSE"/>
 			<Tool
@@ -46,12 +46,12 @@ echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(SolutionDir)dist\chrome\locales\
+				CommandLine="mkdir $(SolutionDir)compiled\dist\chrome\locales\
 echo $(ProjectExt) &gt;&gt; _EXCLUDE
 echo Release\ &gt;&gt; _EXCLUDE
 echo _EXCLUDE &gt;&gt; _EXCLUDE
-xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)dist\chrome\locales\
-echo. &gt; $(SolutionDir)dist\xulrunner\.autoreg
+xcopy /q /s /y /exclude:$(InputDir)_EXCLUDE $(InputDir)*.* $(SolutionDir)compiled\dist\chrome\locales\
+echo. &gt; $(SolutionDir)compiled\dist\xulrunner\.autoreg
 "
 				ExcludedFromBuild="FALSE"/>
 			<Tool

@@ -458,27 +458,34 @@
         this.table = table;
         this.type = "";
         this.base_type = "";
-
-        // Find the table in the playlistlist if possible.
-        var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
-        queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-        queryObj.setDatabaseGUID(guid);
-        var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-        var playlistManager = new PlaylistManager();
-        playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
-        playlistManager.getAllPlaylistList( queryObj );
-        var resultset = queryObj.getResultObject();
-        for ( var i = 0; i < resultset.getRowCount(); i++ )
+        
+        if ( table == "library" )
         {
-          if ( table == resultset.getRowCellByColumn( i, "name" ) )
+          this.description = "library";
+        }
+        else
+        {
+          // Find the table in the playlistlist if possible.
+          var queryObj = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].createInstance();
+          queryObj = queryObj.QueryInterface(Components.interfaces.sbIDatabaseQuery);
+          queryObj.setDatabaseGUID(guid);
+          var PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
+          var playlistManager = new PlaylistManager();
+          playlistManager = playlistManager.QueryInterface(Components.interfaces.sbIPlaylistManager);
+          playlistManager.getAllPlaylistList( queryObj );
+          var resultset = queryObj.getResultObject();
+          for ( var i = 0; i < resultset.getRowCount(); i++ )
           {
-            this.type = resultset.getRowCellByColumn( i, "type" );
-            this.base_type = resultset.getRowCellByColumn( i, "base_type" );
-            this.description = resultset.getRowCellByColumn( i, "description" );
-            this.readable_name = resultset.getRowCellByColumn( i, "readable_name" );
-            break;
+            if ( table == resultset.getRowCellByColumn( i, "name" ) )
+            {
+              this.type = resultset.getRowCellByColumn( i, "type" );
+              this.base_type = resultset.getRowCellByColumn( i, "base_type" );
+              this.description = resultset.getRowCellByColumn( i, "description" );
+              this.readable_name = resultset.getRowCellByColumn( i, "readable_name" );
+              break;
+            }
           }
-        }        
+        }
 
         var ref = "NC:" + guid + "_" + table;
         if (refsuffix) ref += "_" + refsuffix;

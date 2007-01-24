@@ -1348,8 +1348,16 @@ var SBWebPlaylistCommands =
     var retval = false;
     switch ( this.m_Ids[index] )
     {
-      case "library_cmd_device":
-        retval = false; // not yet implemented
+      case "library_cmd_device": // Not yet implemented
+        retval = false;
+      break;
+      case "library_cmd_download": // Only download selected tracks from the library, never the whole library
+        if ( ( this.m_Playlist.description != "library" ) || ( this.m_Playlist.tree.view.selection.count > 0 ) )
+          retval = true;
+      break;
+      case "library_cmd_subscribe": // Never subscribe to the library
+        if ( this.m_Playlist.description != "library" )
+          retval = true;
       break;
       case "library_cmd_showdlplaylist":
         retval = this.m_Query.execute() == 0;
@@ -1498,6 +1506,7 @@ if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
 {
   var source = new sbIPlaylistsource();
   source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
+  source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, "library", "http", SBWebPlaylistCommands );
 }
 
 function onBrowserPlaylist()

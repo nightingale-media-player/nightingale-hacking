@@ -28,9 +28,10 @@
 // Web Playlist loader using sbIAsyncForLoop
 //
 
-const WEB_PLAYLIST_CONTEXT    = "webplaylist";
-const WEB_PLAYLIST_TABLE      = "webplaylist";
-const WEB_PLAYLIST_TABLE_NAME = "&device.webplaylist";
+const WEB_PLAYLIST_CONTEXT      = "webplaylist";
+const WEB_PLAYLIST_TABLE        = "webplaylist";
+const WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
+const WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
 try
 {
@@ -181,13 +182,11 @@ try
         if ( this.aPlaylist == null )
         {
           // When we first find media, flip the webplaylist. 
-          this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, 
-                                                this.aDBQuery );
-          //this.aDBQuery.resetQuery();
+          this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
+          this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE + "_library", WEB_PLAYLIST_LIBRARY_NAME, "library", "library", this.aDBQuery );
           this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
           this.data.boolValue = true;
           theWebPlaylistQuery = this.aDBQuery;
-          //this.aDBQuery.resetQuery();
           // Then pretend like we clicked on it.
           if ( !thePlaylistTree )
             onBrowserPlaylist();
