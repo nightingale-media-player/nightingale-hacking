@@ -538,8 +538,10 @@ function switchFeathers(aFeathersName)
   onWindowSaveSizeAndPosition();
   
   // Open the new window
+
   var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
-  if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
+  // can't test with accessibility.enabled here because the value hasn't been set yet (will be set after SBInitialize on the new window)
+  if (aFeathersName.indexOf("/plucked") < 0) chromeFeatures += ",titlebar=no"; else chromeFeatures += ",resizable=yes";
 
   var newMainWin = window.open(mainWinURL, "", chromeFeatures);
   newMainWin.focus();
