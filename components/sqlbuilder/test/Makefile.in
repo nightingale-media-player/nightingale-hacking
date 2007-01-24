@@ -29,10 +29,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#SONGBIRD_TEST_COMPONENT = sqlbuilder
+SONGBIRD_TEST_COMPONENT = sqlbuilder
 
-#SONGBIRD_TESTS = \
-#                 $(NULL)
+SONGBIRD_TESTS = $(srcdir)/test_misc.js \
+                 $(srcdir)/test_select.js \
+                 $(srcdir)/test_join.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

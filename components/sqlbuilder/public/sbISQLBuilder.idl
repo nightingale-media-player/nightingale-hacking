@@ -27,12 +27,12 @@
 /**
  * \file sbISQLBuilder.idl
  * \brief Definition of the sbISQLBuilder interfaces
- * \sa List of "see also" files
  */
 
 #include "nsISupports.idl"
 
 interface sbISQLBuilderCriterion;
+interface sbISQLSelectBuilder;
 
 /**
 * \interface sbISQLBuilder
@@ -48,26 +48,48 @@ interface sbISQLBuilder : nsISupports
   /**
    * \brief The query's base table
    */
-  attribute ACString baseTableName;
+  attribute AString baseTableName;
+
+  /**
+   * \brief The query's base table's alias
+   */
+  attribute AString baseTableAlias;
 
   /**
    * \brief Add a column to the output column list
-   * \param aTableName The table name the column belongs to
+   * \param aTableName The table name the column belongs to.  To omit the table
+   *        name qualification, use null.
    * \param aColumnName The name of the column to add to the list
    */
-  void addColumn(in ACString aTableName, in ACString aColumnName);
+  void addColumn(in AString aTableName,
+                 in AString aColumnName);
 
   /**
    * \brief Add a join to the query
-   * \param aSrcTableName The left hand table of the join
-   * \param aSrcColumnName The left hand column in the join
-   * \param aDestTableName The right hand table of the join
-   * \param aDestolumnName The right hand column in the join
+   * \param aJoinedTableName Table name of the table to join
+   * \param aJoinedTableAlias Alias to give the joined table, null for none
+   * \param aJoinedColumnName Column from joined table to use in join
+   *        expression
+   * \param aJoinToTableName Table name of the table to join to
+   * \param aJoinToColumnName Column from the joined to table to use in join
+   *        expression
    */
-  void addJoin(in ACString aSrcTableName, in ACString aSrcColumnName,
-               in ACString aDestTable, in ACString aDestColumnName);
+  void addJoin(in AString aJoinedTableName,
+               in AString aJoinedTableAlias,
+               in AString aJoinedColumnName,
+               in AString aJoinToTableName,
+               in AString aJoinToColumnName);
+
 
   /**
+   * \brief Add a subquery to the from clause
+   * \param aSubquery Query to add
+   * \param aAlias Alias to give the subquery, null for none
+   */
+  void addSubquery(in sbISQLSelectBuilder aSubquery,
+                   in AString aAlias);
+
+ /**
    * \brief Add a criteria constraint to the query
    * \param aCriterion The Criterion to add
    */
@@ -79,37 +101,50 @@ interface sbISQLBuilder : nsISupports
    */
   AString toString();
 
+  const unsigned long MATCH_EQUALS       = 0;
+  const unsigned long MATCH_NOTEQUALS    = 1;
+  const unsigned long MATCH_GREATER      = 2;
+  const unsigned long MATCH_GREATEREQUAL = 3;
+  const unsigned long MATCH_LESS         = 4;
+  const unsigned long MATCH_LESSEQUAL    = 5;
+  const unsigned long MATCH_LIKE         = 6;
+
   /**
    * \brief Create a match criterion with an AString datatype
    * \param aTableName The table name the column in the criterion belongs to
    * \param aSrcColumnName The name the column to use in the criterion
-   * \param aMatchType The criterion match type, must be one of the MATCHTYPE
-   * constant values
+   * \param aMatchType The criterion match type, must be one of the MATCH
+   *        constant values
    * \param aValue The AString value to match agains
    */
-  sbISQLBuilderCriterion createMatchCriterionString(in ACString aTableName,
-    in ACString aSrcColumnName, in short aMatchType, in AString aValue);
+  sbISQLBuilderCriterion createMatchCriterionString(in AString aTableName,
+                                                    in AString aSrcColumnName,
+                                                    in unsigned long aMatchType,
+                                                    in AString aValue);
 
   /**
    * \brief Create a match criterion with an long datatype
    * \param aTableName The table name the column in the criterion belongs to
    * \param aSrcColumnName The name the column to use in the criterion
-   * \param aMatchType The criterion match type, must be one of the MATCHTYPE
-   * constant values
+   * \param aMatchType The criterion match type, must be one of the MATCH
+   *        constant values
    * \param aValue The long value to match agains
    */
-  sbISQLBuilderCriterion createMatchCriterionInt32(in ACString aTableName,
-    in ACString aSrcColumnName, in short aMatchType, in long aValue);
+  sbISQLBuilderCriterion createMatchCriterionLong(in AString aTableName,
+                                                  in AString aSrcColumnName,
+                                                  in unsigned long aMatchType,
+                                                  in long aValue);
 
   /**
    * \brief Create a match criterion that tests against the null value
    * \param aTableName The table name the column in the Criterion belongs to
    * \param aSrcColumnName The name the column to use in the criterion
-   * \param aMatchType The criterion match type, must be one of the MATCHTYPE
-   * constant values
+   * \param aMatchType The criterion match type, must be either MATCH_EQUALS or
+   *        MATCH_NOTEQUALS
    */
-  sbISQLBuilderCriterion createMatchCriterionNull(in ACString aTableName,
-    in ACString aSrcColumnName, in short aMatchType);
+  sbISQLBuilderCriterion createMatchCriterionNull(in AString aTableName,
+                                                  in AString aSrcColumnName,
+                                                  in unsigned long aMatchType);
 
   /**
    * \brief Create a match criterion that is the logical AND of two critera
@@ -117,7 +152,7 @@ interface sbISQLBuilder : nsISupports
    * \param aRight The right side of the expression
    */
   sbISQLBuilderCriterion createAndCriterion(in sbISQLBuilderCriterion aLeft,
-    in sbISQLBuilderCriterion aRight);
+                                            in sbISQLBuilderCriterion aRight);
 
   /**
    * \brief Create a match criterion that is the logical OR of two critera
@@ -125,7 +160,7 @@ interface sbISQLBuilder : nsISupports
    * \param aRight The right side of the expression
    */
   sbISQLBuilderCriterion createOrCriterion(in sbISQLBuilderCriterion aLeft,
-    in sbISQLBuilderCriterion aRight);
+                                           in sbISQLBuilderCriterion aRight);
 };
 
 /**
@@ -141,13 +176,15 @@ interface sbISQLSelectBuilder : sbISQLBuilder
    * \param aColumnName Name of the column to sort
    * \param aAscending True if the sort should be ascending
    */
-  void addOrder(in ACString aTableName, in ACString aColumnName,
-    in boolean aAscending);
+  void addOrder(in AString aTableName,
+                in AString aColumnName,
+                in boolean aAscending);
 };
 
 /**
 * \interface sbISQLBuilderCriterion
-* \brief Interface for SQL critera
+* \brief Interface for SQL critera.  This interface has no public methods as
+*        it is used only as a return type for the critera creation methods.
 */
 [scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
 interface sbISQLBuilderCriterion : nsISupports

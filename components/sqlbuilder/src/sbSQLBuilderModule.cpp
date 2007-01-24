@@ -24,25 +24,21 @@
 //
 */
 
-#include "nsXPCOM.h"
-#include "nsCOMPtr.h"
 #include "nsIGenericFactory.h"
-#include "nsIServiceManager.h"
 #include "sbSQLBuilder.h"
 #include "sbSQLBuilderCID.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLBuilder)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbSQLSelectBuilder)
 
 static const nsModuleComponentInfo components[] =
 {
 	{
-		"SQLBuilder",
-		SB_SQLBUILDER_CID,
-		SB_SQLBUILDER_CONTRACTID,
-		sbSQLBuilderConstructor,
-    nsnull
+    "SQLBuilder for SELECT statements",
+    SB_SQLBUILDER_SELECT_CID,
+    SB_SQLBUILDER_SELECT_CONTRACTID,
+    sbSQLSelectBuilderConstructor
 	}
 };
 
-NS_IMPL_NSGETMODULE(sbSQLBuilderModule, components)
+NS_IMPL_NSGETMODULE("Songbird SQL Statement Builder Module", components)
 

@@ -24,9 +24,9 @@
 //
 */
 
-#define SB_SQLBUILDER_CID \
+#define SB_SQLBUILDER_SELECT_CID \
   { 0x588687d7, 0x3123, 0x418a, \
   { 0xb6, 0xba, 0xcc, 0x54, 0xb1, 0x06, 0x6c, 0x8a } }
-#define SB_SQLBUILDER_CONTRACTID \
+#define SB_SQLBUILDER_SELECT_CONTRACTID \
   "@songbirdnest.com/Songbird/SQLBuilder/Select;1"
 
