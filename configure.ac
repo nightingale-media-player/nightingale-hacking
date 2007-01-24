@@ -514,6 +514,8 @@ case "$SB_PLATFORM" in
     USING_RANLIB=1
   ;;
   linux)
+    XULRUNNERDIR="/xulrunner"
+
     # Our GStreamer component needs GTK headers (we don't link, so we only
     #   take the flags). We only check for gtk2 right now, if we _really_
     #    need gtk1 support we can add it later but we should resist at all costs.
@@ -532,7 +534,7 @@ case "$SB_PLATFORM" in
     # We always want to include "mozilla-config.h"
     GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
-    GCC_LINKER_FLAGS=""
+    GCC_LINKER_FLAGS="-Wl,-rpath-link,${srcdir}/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
     CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"
@@ -557,7 +559,6 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
-    XULRUNNERDIR="/xulrunner"
   ;;
 esac
 
