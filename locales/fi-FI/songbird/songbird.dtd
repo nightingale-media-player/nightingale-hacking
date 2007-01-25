@@ -251,3 +251,8 @@ Tiedot ovat täysin yksilöimättömiä eikä henkilökohtaista tietoa kerätä 
 <!ENTITY html.context.copytoclipboard "Copy Link Location" >
 
 
+
+
+<!ENTITY device.context.eject "Eject" >
+
+
