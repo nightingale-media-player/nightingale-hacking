@@ -58,7 +58,6 @@ appInit.onScriptInit = function()
   // !!! THIS FUNCTION GETS CALLED AT THE BOTTOM OF THIS MODULE FILE !!!
   // !!!
   
-  alert("appInit.onScriptInit\n");
   // If we aren't the oldest video window around then self destruct.
   // This can happen when
   //  - The user tries to load songbird.xul in the main browser
