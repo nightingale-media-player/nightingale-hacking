@@ -129,6 +129,11 @@ function assertNotEqual( aExpected, aActual, aMessage) {
   }
 }
 
+function fail(aMessage) {
+  var msg = (aMessage != null) ? ( "FAIL : " +  aMessage ) : "FAIL";
+  doThrow(msg);  
+}
+
 function testPending() {
   //dump("*** [" + _test_name + "] - test pending\n");
   _tests_pending++;
