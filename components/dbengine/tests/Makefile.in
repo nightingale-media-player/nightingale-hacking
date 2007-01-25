@@ -29,6 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-####
+SONGBIRD_TEST_COMPONENT = dbengine
+
+SONGBIRD_TESTS = $(srcdir)/test_bind.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk

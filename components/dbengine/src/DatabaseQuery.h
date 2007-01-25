@@ -48,6 +48,7 @@ class CDatabaseQuery;
 
 #include <xpcom/nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEQUERY_CONTRACTID                 \
@@ -62,6 +63,27 @@ class CDatabaseQuery;
   {0xa9, 0x41, 0xd4, 0x88, 0xab, 0xb5, 0xa8, 0xaa}        \
 }
 // CLASSES ====================================================================
+typedef enum {
+  ISNULL,
+  UTF8STRING,
+  STRING,
+  DOUBLE,
+  INT32,
+  INT64
+  } ParameterType;
+
+struct CQueryParameter
+{
+  ParameterType type;
+  nsCString utf8StringValue;
+  nsString stringValue;
+  double doubleValue;
+  PRInt32 int32Value;
+  PRInt64 int64Value;
+};
+
+typedef nsTArray<CQueryParameter> bindParameterArray_t;
+
 class CDatabaseEngine;
 
 class CDatabaseQuery : public sbIDatabaseQuery
@@ -81,6 +103,7 @@ protected:
   void RemoveAllCallbacks();
 
   CDatabaseResult* GetResultObject();
+  bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
 
   PRBool m_IsPersistentQueryRegistered;
   PRBool m_HasChangedDataOfPersistQuery;
@@ -123,6 +146,13 @@ protected:
   
   PRLock* m_pModifiedDataLock;
   modifieddata_t m_ModifiedData;
+
+  PRLock* m_pBindParametersLock;
+  nsTArray<bindParameterArray_t> m_BindParameters;
+  bindParameterArray_t* m_LastBindParameters;
+
+private:
+  NS_IMETHOD EnsureLastQueryParameter(PRUint32 aParamIndex);
 };
 
 #endif // __DATABASE_QUERY_H__

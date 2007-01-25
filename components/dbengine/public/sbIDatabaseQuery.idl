@@ -366,4 +366,50 @@ interface sbIDatabaseQuery : nsISupports
    * \return True, if the query was executing and aborted (false if not executing) 
    */
   PRBool abort();
+
+  /**
+   * \brief Binds a UTF8String to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindUTF8StringParameter(in unsigned long aParamIndex,
+                               in AUTF8String aValue);
+
+  /**
+   * \brief Binds a String to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindStringParameter(in unsigned long aParamIndex,
+                           in AString aValue);
+
+  /**
+   * \brief Binds a double to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindDoubleParameter(in unsigned long aParamIndex,
+                           in double aValue);
+
+  /**
+   * \brief Binds an int32 to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindInt32Parameter(in unsigned long aParamIndex,
+                          in long aValue);
+
+  /**
+   * \brief Binds an int64 to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindInt64Parameter(in unsigned long aParamIndex,
+                          in long long aValue);
+
+  /**
+   * \brief Binds a null to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   */
+  void bindNullParameter(in unsigned long aParamIndex);
 };

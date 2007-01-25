@@ -63,6 +63,7 @@ CDatabaseQuery::CDatabaseQuery()
 , m_DatabaseGUID(NS_LITERAL_STRING("").get())
 , m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
 , m_QueryHasCompleted(PR_FALSE)
+, m_LastBindParameters(nsnull)
 {
   m_pPersistentQueryTableLock = PR_NewLock();
   m_pQueryResultLock = PR_NewLock();
@@ -71,6 +72,7 @@ CDatabaseQuery::CDatabaseQuery()
   m_pCallbackListLock = PR_NewLock();
   m_pPersistentCallbackListLock = PR_NewLock();
   m_pModifiedDataLock = PR_NewLock();
+  m_pBindParametersLock = PR_NewLock();
 
   NS_ASSERTION(m_pPersistentQueryTableLock, "CDatabaseQuery.m_pPersistentQueryTableLock failed");
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
@@ -80,6 +82,7 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_pPersistentCallbackListLock, "CDatabaseQuery.m_pPersistentCallbackListLock failed");
   NS_ASSERTION(m_pModifiedDataLock, "CDatabaseQuery.m_pModifiedDataLock failed");
   NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
+  NS_ASSERTION(m_pBindParametersLock, "CDatabaseQuery.m_pBindParametersLock failed");
 
 #ifdef DEBUG_locks
   nsCAutoString log;
@@ -92,6 +95,7 @@ CDatabaseQuery::CDatabaseQuery()
   log += NS_LITERAL_CSTRING("m_pPersistentCallbackListLock = ") + nsPrintfCString("%x\n", m_pPersistentCallbackListLock);
   log += NS_LITERAL_CSTRING("m_pModifiedTablesLock         = ") + nsPrintfCString("%x\n", m_pModifiedTablesLock);
   log += NS_LITERAL_CSTRING("m_pQueryRunningMonitor        = ") + nsPrintfCString("%x\n", m_pQueryRunningMonitor);
+  log += NS_LITERAL_CSTRING("m_pBindParametersLock         = ") + nsPrintfCString("%x\n", m_pBindParametersLock);
   log += NS_LITERAL_CSTRING("\n");
   NS_WARNING(log.get());
 #endif
@@ -125,6 +129,8 @@ CDatabaseQuery::~CDatabaseQuery()
     PR_DestroyLock(m_pPersistentCallbackListLock);
   if (m_pModifiedDataLock)
     PR_DestroyLock(m_pModifiedDataLock);
+  if (m_pBindParametersLock)
+    PR_DestroyLock(m_pBindParametersLock);
   if (m_pQueryRunningMonitor)
     nsAutoMonitor::DestroyMonitor(m_pQueryRunningMonitor);
 } //dtor
@@ -234,6 +240,13 @@ NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
   PR_Lock(m_pDatabaseQueryListLock);
   m_DatabaseQueryList.push_back(PromiseFlatString(strQuery));
   PR_Unlock(m_pDatabaseQueryListLock);
+
+  // Also add an element to the bind parameters array
+  PR_Lock(m_pBindParametersLock);
+  m_LastBindParameters = m_BindParameters.AppendElement();
+  PR_Unlock(m_pBindParametersLock);
+  NS_ENSURE_TRUE(m_LastBindParameters, NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 } //AddQuery
 
@@ -276,6 +289,12 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
   m_DatabaseQueryList.clear();
   PR_Unlock(m_pDatabaseQueryListLock);
 
+  // Also clear parameters array
+  PR_Lock(m_pBindParametersLock);
+  m_LastBindParameters = nsnull;
+  m_BindParameters.Clear();
+  PR_Unlock(m_pBindParametersLock);
+
   PR_Lock(m_pQueryResultLock);
   m_QueryResult->ClearResultSet();
   PR_Unlock(m_pQueryResultLock);
@@ -310,7 +329,7 @@ NS_IMETHODIMP CDatabaseQuery::GetResultObjectOrphan(sbIDatabaseResult **_retval)
   NS_NEWXPCOM(pRes, CDatabaseResult);
   NS_ENSURE_TRUE(pRes, NS_ERROR_OUT_OF_MEMORY);
 
-  int sc = m_QueryResult->m_RowCells.size();
+  unsigned int sc = m_QueryResult->m_RowCells.size();
 
   pRes->m_ColumnNames = m_QueryResult->m_ColumnNames;
   pRes->m_RowCells = m_QueryResult->m_RowCells;
@@ -460,6 +479,100 @@ NS_IMETHODIMP CDatabaseQuery::Abort(PRBool *_retval)
   return NS_OK;
 }
 
+NS_IMETHODIMP CDatabaseQuery::BindUTF8StringParameter(PRUint32 aParamIndex,
+                                                      const nsACString &aValue)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  nsresult rv = EnsureLastQueryParameter(aParamIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
+  qp.type = UTF8STRING;
+  qp.utf8StringValue = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::BindStringParameter(PRUint32 aParamIndex,
+                                                  const nsAString &aValue)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  nsresult rv = EnsureLastQueryParameter(aParamIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
+  qp.type = STRING;
+  qp.stringValue = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::BindDoubleParameter(PRUint32 aParamIndex,
+                                                  double aValue)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  nsresult rv = EnsureLastQueryParameter(aParamIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
+  qp.type = DOUBLE;
+  qp.doubleValue = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::BindInt32Parameter(PRUint32 aParamIndex,
+                                                 PRInt32 aValue)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  nsresult rv = EnsureLastQueryParameter(aParamIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
+  qp.type = INT32;
+  qp.int32Value = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::BindInt64Parameter(PRUint32 aParamIndex,
+                                                  PRInt64 aValue)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  nsresult rv = EnsureLastQueryParameter(aParamIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
+  qp.type = INT64;
+  qp.int64Value = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::BindNullParameter(PRUint32 aParamIndex)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  nsresult rv = EnsureLastQueryParameter(aParamIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
+  qp.type = ISNULL;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseQuery::EnsureLastQueryParameter(PRUint32 aParamIndex)
+{
+  NS_ENSURE_ARG_POINTER(m_LastBindParameters);
+
+  if(aParamIndex + 1 > m_LastBindParameters->Length()) {
+    NS_ENSURE_TRUE(m_LastBindParameters->SetLength(aParamIndex + 1),
+                   NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
 //-----------------------------------------------------------------------------
 CDatabaseResult *CDatabaseQuery::GetResultObject()
 {
@@ -468,6 +581,15 @@ CDatabaseResult *CDatabaseQuery::GetResultObject()
   //m_QueryResult->AddRef();
   return m_QueryResult;
 } //GetResultObject
+
+
+bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRInt32 aQueryIndex)
+{
+  nsAutoLock lock(m_pBindParametersLock);
+
+  bindParameterArray_t* retval = new bindParameterArray_t(m_BindParameters[aQueryIndex]);
+  return retval;
+}
 
 //-----------------------------------------------------------------------------
 void CDatabaseQuery::RemoveAllCallbacks()
@@ -490,3 +612,4 @@ void CDatabaseQuery::RemoveAllCallbacks()
 
   return;
 }
+

@@ -357,14 +357,14 @@ CDatabaseEngine *gEngine = nsnull;
 // CLASSES ====================================================================
 //-----------------------------------------------------------------------------
 CDatabaseEngine::CDatabaseEngine()
-: m_QueryProcessorShouldShutdown(PR_FALSE)
-, m_QueryProcessorQueueHasItem(PR_FALSE)
+: m_pDBStorePathLock(nsnull)
+, m_pDatabasesGUIDListLock(nsnull)
 , m_pDatabasesLock(nsnull)
 , m_pDatabaseLocksLock(nsnull)
 , m_pQueryProcessorMonitor(nsnull)
+, m_QueryProcessorShouldShutdown(PR_FALSE)
+, m_QueryProcessorQueueHasItem(PR_FALSE)
 , m_pPersistentQueriesLock(nsnull)
-, m_pDBStorePathLock(nsnull)
-, m_pDatabasesGUIDListLock(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -1080,9 +1080,11 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
         sqlite3_stmt *pStmt = nsnull;
 
         nsAutoString strQuery;
+        bindParameterArray_t* pParameters;
         const void *pzTail = nsnull;
 
         pQuery->GetQuery(i, strQuery);
+        pParameters = pQuery->GetQueryParameters(i);
 
         PRInt32 attachOffset = strQuery.Find(strAttachToken);
         if(attachOffset > -1)
@@ -1164,6 +1166,43 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           }
 
           retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
+
+          // If we have parameters for this query, bind them
+          if(retDB == SQLITE_OK) {
+
+            PRUint32 len = pParameters->Length();
+            for(PRUint32 i = 0; i < len; i++) {
+              CQueryParameter& p = pParameters->ElementAt(i);
+
+              switch(p.type) {
+                case ISNULL:
+                  sqlite3_bind_null(pStmt, i + 1);
+                  break;
+                case UTF8STRING:
+                  sqlite3_bind_text(pStmt, i + 1,
+                                    p.utf8StringValue.get(),
+                                    p.utf8StringValue.Length(),
+                                    SQLITE_TRANSIENT);
+                  break;
+                case STRING:
+                  sqlite3_bind_text16(pStmt, i + 1,
+                                      p.stringValue.get(),
+                                      p.stringValue.Length() * 2,
+                                      SQLITE_TRANSIENT);
+                  break;
+                case DOUBLE:
+                  sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
+                  break;
+                case INT32:
+                  sqlite3_bind_int(pStmt, i + 1, p.int32Value);
+                  break;
+                case INT64:
+                  sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
+                  break;
+              }
+            }
+          }
+
           PR_LOG(gDatabaseEngineLog, PR_LOG_WARNING,
                  ("DBE: '%s' on '%s'\n",
                  NS_ConvertUTF16toUTF8(dbName).get(),
@@ -1400,6 +1439,8 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
           }
 #endif
         }
+
+        delete pParameters;
       }
     }
 

@@ -153,7 +153,6 @@ NS_IMETHODIMP CDatabaseResult::GetRowCell(PRInt32 dbRow, PRInt32 dbCell, nsAStri
 NS_IMETHODIMP CDatabaseResult::GetRowCellByColumn(PRInt32 dbRow, const nsAString &dbColumn, nsAString &_retval)
 {
   NS_ENSURE_ARG_MIN(dbRow, 0);
-  PRInt32 length = dbColumn.Length();
   PRInt32 dbCell = GetColumnIndexFromName(dbColumn);
   return GetRowCell(dbRow, dbCell, _retval);
 } //GetRowCellByColumn
