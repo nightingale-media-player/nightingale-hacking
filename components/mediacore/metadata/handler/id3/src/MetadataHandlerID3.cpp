@@ -495,9 +495,11 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
       catch (std::bad_alloc)
       {
       }
+/* Stupid gcc stl
       catch (std::length_error)
       {
       }
+*/
       if ( nTagSize == 0 )
       {
         nTagSize = tag.Link(file_reader, ID3TT_ALL);
@@ -516,12 +518,14 @@ NS_IMETHODIMP sbMetadataHandlerID3::Read(PRInt32 *_retval)
       m_Completed = PR_TRUE; 
       return NS_OK;
     }
+/* Stupid gcc stl
     catch (std::length_error)
     {
       // Oops, failed in the stl in the file reader.  That's not good, either.
       m_Completed = PR_TRUE; 
       return NS_OK;
     }
+*/
 
     if ( nTagSize > 0 )
     {
