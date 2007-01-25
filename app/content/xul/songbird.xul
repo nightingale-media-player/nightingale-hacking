@@ -39,10 +39,8 @@
   hidechrome="true"
   class="sb_faceplate"  
   title="Cheezy Video Window"  
-  onload="SBAppInitialize();SBInterfaceInitialize();"
-  onunload="SBAppDeinitialize();SBInterfaceDeinitialize();"
   windowtype="Songbird:Core"
-  onclose="return false; /*quitApp();*/"
+  onclose="return false; /*This window must never be closed unless the app is shutdown*/"
   
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
@@ -63,15 +61,15 @@
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/metrics.js" />
+   
+  <!-- The appInit.js module calls the mainwin startup code inline during scriptinit --> 
+  <!-- The appInit.js module sets up window event handlers for onload and onunload to auto-init/deinit --> 
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/songbird.js"/>   
-
-  <!-- Try to open mainwin as early as possible -->
-  <script>
-  <![CDATA[
-    SBAppStartup();
-  ]]>
-  </script>
+   src="chrome://songbird/content/scripts/appInit.js"/>
+   
+  <!-- The videoWinInit.js module sets up window event handlers for onload and onunload to auto-init/deinit --> 
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/videoWinInit.js"/>   
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
 <windowregion/>
