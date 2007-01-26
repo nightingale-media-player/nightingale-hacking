@@ -13,7 +13,6 @@ ac_add_options --enable-svg
 ac_add_options --disable-canvas
 ac_add_options --enable-update-packaging
 ac_add_options --disable-installer
-ac_add_options --disable-activex --disable-activex-scripting
 ac_add_options --enable-extensions=default,inspector,venkman
 
 # For GCC bug with visibility pragmas that causes SELinux to stop us with
