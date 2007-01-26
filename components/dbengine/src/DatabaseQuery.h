@@ -68,8 +68,8 @@ typedef enum {
   UTF8STRING,
   STRING,
   DOUBLE,
-  INT32,
-  INT64
+  INTEGER32,
+  INTEGER64
   } ParameterType;
 
 struct CQueryParameter

@@ -1193,10 +1193,10 @@ sqlite3 *CDatabaseEngine::FindDBByGUID(const nsAString &dbGUID)
                 case DOUBLE:
                   sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
                   break;
-                case INT32:
+                case INTEGER32:
                   sqlite3_bind_int(pStmt, i + 1, p.int32Value);
                   break;
-                case INT64:
+                case INTEGER64:
                   sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
                   break;
               }

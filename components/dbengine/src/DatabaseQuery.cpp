@@ -529,7 +529,7 @@ NS_IMETHODIMP CDatabaseQuery::BindInt32Parameter(PRUint32 aParamIndex,
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
   CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
-  qp.type = INT32;
+  qp.type = INTEGER32;
   qp.int32Value = aValue;
 
   return NS_OK;
@@ -543,7 +543,7 @@ NS_IMETHODIMP CDatabaseQuery::BindInt64Parameter(PRUint32 aParamIndex,
   nsresult rv = EnsureLastQueryParameter(aParamIndex);
   NS_ENSURE_SUCCESS(rv, rv);
   CQueryParameter& qp = m_LastBindParameters->ElementAt(aParamIndex);
-  qp.type = INT64;
+  qp.type = INTEGER64;
   qp.int64Value = aValue;
 
   return NS_OK;
