@@ -16,6 +16,14 @@ lib_files="*plds4.*
            *mozjs*
 "
 
+# symbol_files are relative to $objdir
+symbol_files="xpcom/stub/xpcom.pdb
+              toolkit/library/xul.pdb
+              xulrunner/app/xulrunner.pdb
+              xulrunner/stub/xulrunner-stub.pdb
+              js/src/js3250.pdb
+"
+
 # update_bin_files are relative to $objdir/dist/host/bin/
 update_bin_files="*mar*
                   *bsdiff*
@@ -87,6 +95,10 @@ notice "copying library files..."
 cd "$sdkdir" && mkdir -p lib
 # some os don't have all these files, so silence errors
 cd "$distdir/lib" && cp -Lfp $lib_files "$sdkdir/lib" 2>/dev/null
+
+notice "copying symbol files..."
+# some os don't have these files, so silence errors
+cd "$objdir" && cp -Lfp $symbol_files "$sdkdir/lib" 2>/dev/null
 
 notice "copying include files..."
 cd "$sdkdir" && mkdir -p include
