@@ -385,7 +385,10 @@ function windowFocus()
   if (windowCloak.isCloaked(window))
     return;
 
-  window.focus();
+  try {
+    window.focus();
+  } catch(e) {
+  }
 }
 
 function delayedActivate()
