@@ -56,53 +56,35 @@ function SB_LOG (scopeStr, msg) {
   gConsole.logStringMessage( scopeStr + " : " + msg );
   dump( scopeStr + " : " + msg + "\n");
 }
-
-
-
-//
-// SBBindInterface - take an object and make it a wrapper of the given type.
-//
-function SBBindInterface( obj, contract_id, cid, as_service )
-{
-  try
-  {
-    if ( !obj )
-    {
-      var new_obj = {};
-      obj = new_obj;
-    }
-    // First, get the factory by contract ID
-    obj.m_Instance = Components.classes[ contract_id ];
-    if ( obj.m_Instance )
-    {
-      // Massage it into an actual object of our type
-      if ( as_service )
-        obj.m_Instance = obj.m_Instance.getService();
-      else
-        obj.m_Instance = obj.m_Instance.createInstance();
-      obj.m_Instance = obj.m_Instance.QueryInterface( cid );
-
-      // Then attach the methods
-      if ( obj.m_Instance )
-      {
-        for ( var i in obj.m_Instance )
-        {
-          obj[ i ] = obj.m_Instance[ i ];
-        }
-      }
-      else
-      {
-        alert( "Load Failed - " + contract_id );
-      }
-    }
-    else
-    {
-      alert( "Load Failed - " + contract_id );
-    }
+const PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
+const nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
+/**
+ * Adapted from nsUpdateService.js.in. Need to replace with dataremotes.
+ */
+function getPref(aFunc, aPreference, aDefaultValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  try {
+    return prefs[aFunc](aPreference);
   }
-  catch ( err )
-  {
-    alert( err );
-  }
-  return obj;
+  catch (e) { }
+  return aDefaultValue;
 }
+function setPref(aFunc, aPreference, aValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  return prefs[aFunc](aPreference, aValue);
+}
+
+
+
+// Useful constants
+var CORE_WINDOWTYPE = "Songbird:Core";
+var PREF_BONES_SELECTED = "general.bones.selectedMainWinURL";
+var PREF_FEATHERS_SELECTED = "general.skins.selectedSkin";
+var BONES_DEFAULT_URL = "chrome://rubberducky/content/xul/mainwin.xul";
+var FEATHERS_DEFAULT_NAME = "rubberducky";
+
+// Lots of things assume the playlist playback service is a global
+var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                      .getService(Components.interfaces.sbIPlaylistPlayback);

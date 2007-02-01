@@ -24,13 +24,6 @@
 //
  */
 
-const BONES_DEFAULT_URL = "chrome://rubberducky/content/xul/mainwin.xul";
-const PREF_BONES_SELECTED = "general.bones.selectedMainWinURL";
-
-const PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
-const nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
-
-
 //
 // Module specific auto-init/deinit support
 //
@@ -43,6 +36,12 @@ appInit.onLoad = function()
   // Application, initialize thyself.
   SBAppInitialize();
   SBRestarterInitialize();
+  try
+  {
+    //Whatever migration is required between version, this function takes care of it.
+    SBMigrateDatabase();
+  }
+  catch(e) { }
 }
 appInit.onUnload = function()
 {
@@ -235,12 +234,15 @@ function doMainwinStart()
   }
 
   // Get mainwin URL
-  var mainwinURL = getPref("getCharPref", PREF_BONES_SELECTED,
-                           BONES_DEFAULT_URL);
+  var data = SB_NewDataRemote( PREF_BONES_SELECTED, "" );
+  var mainwinURL = data.stringValue;
+  if ( mainwinURL == "" )
+    mainwinURL = BONES_DEFAULT_URL;
+  
 
   // save it for later restarts and down the road if we want to allow
   // file->new window
-  setPref("setCharPref", PREF_BONES_SELECTED, mainwinURL);
+  data.stringValue = mainwinURL;
 
   var chromeFeatures = "chrome,modal=no,toolbar=no,popup=no";
   if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",resizable=yes"; else chromeFeatures += ",titlebar=no";
@@ -273,7 +275,7 @@ function doEULA(aAcceptAction, aCancelAction)
     eulaData.acceptAction = aAcceptAction;
     eulaData.cancelAction = aCancelAction;
 
-    var eulaCheck;
+    var eulaCheck = false;
     try {
       eulaCheck = gPrefs.getBoolPref("songbird.eulacheck");
     } catch (err) { /* prefs throws an exepction if the pref is not there */ }
@@ -317,7 +319,7 @@ function doFirstRun()
   dump("doFirstRun\n");
     
   try {
-    var haveRun;
+    var haveRun = false;
     try {
       haveRun = gPrefs.getBoolPref("songbird.firstruncheck");
     } catch (err) { /* prefs throws an exepction if the pref is not there */ }
@@ -470,22 +472,28 @@ function SBRestarterDeinitialize()
   songbird_restartNow = null;
 }
 
-/**
- * Adapted from nsUpdateService.js.in. Need to replace with dataremotes.
- */
-function getPref(aFunc, aPreference, aDefaultValue) {
-  var prefs = 
-    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
-  try {
-    return prefs[aFunc](aPreference);
-  }
-  catch (e) { }
-  return aDefaultValue;
-}
-function setPref(aFunc, aPreference, aValue) {
-  var prefs = 
-    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
-  return prefs[aFunc](aPreference, aValue);
+function SBMigrateDatabase()
+{
+  var queryObject = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    .createInstance(Components.interfaces.sbIDatabaseQuery);
+  queryObject.setAsyncQuery(false);
+  
+  queryObject.setDatabaseGUID("songbird");
+  queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
+  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"Origin URL\", 1, 0, 1, 0, -1, 'text', 1)");
+  queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
+  queryObject.addQuery("UPDATE library SET origin_url = url WHERE origin_url = ''");
+  
+  queryObject.execute();
+  
+  queryObject.resetQuery();
+  queryObject.setDatabaseGUID("webplaylist");
+  queryObject.addQuery("ALTER TABLE library ADD COLUMN origin_url TEXT DEFAULT ''");
+  queryObject.addQuery("INSERT OR REPLACE INTO library_desc VALUES (\"origin_url\", \"Origin URL\", 1, 0, 1, 0, -1, 'text', 1)");
+  queryObject.addQuery("CREATE UNIQUE INDEX IF NOT EXISTS library_index_origin_url ON library(origin_url)");
+  queryObject.addQuery("UPDATE library SET origin_url = url WHERE origin_url = ''");
+  
+  queryObject.execute();
 }
 
 // !!!

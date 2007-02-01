@@ -36,10 +36,6 @@ try
   {
   }
 
-  // NOW we have the playlist playback service!
-  var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                       .getService(Components.interfaces.sbIPlaylistPlayback);
-
   //
   // Core Wrapper Initialization (in XUL, this must happen after the entire page loads). 
   //

@@ -1036,3 +1036,24 @@ function moveElement(e, before) {
   }
 }
 
+function getPlatformString()
+{
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    return sysInfo.getProperty("name");                                          
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      return "Windows_NT";
+    else if (user_agent.indexOf("Mac OS X") != -1)
+      return "Darwin";
+    else if (user_agent.indexOf("Linux") != -1)
+      return "Linux";
+    return "";
+  }
+}
+

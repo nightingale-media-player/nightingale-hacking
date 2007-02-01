@@ -24,7 +24,6 @@
 //
  */
 
-var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
 var wfMediaLibrary = null;
 var wfMediaScan = null;
 var wfMediaScanQuery = null;
