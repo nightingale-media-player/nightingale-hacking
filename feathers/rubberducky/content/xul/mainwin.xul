@@ -606,8 +606,6 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/numplaylistitems_xbl_temp.js" />
-  <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/currenttrack_xbl_temp.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/faceplate_xbl_temp.js" />
