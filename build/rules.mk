@@ -863,7 +863,8 @@ endif
 
 $(JAR_MANIFEST): $(jar_manifest_in)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
-    $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(jar_manifest_in) > \
+    $(ACDEFINES) $(PPDEFINES) -- $(srcdir)/$(jar_manifest_in) | \
+    $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > \
     ./$(JAR_MANIFEST) \
     $(NULL)
 
