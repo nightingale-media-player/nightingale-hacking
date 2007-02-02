@@ -1342,6 +1342,69 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\browser_xbl_temp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\currenttrack_xbl_temp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\dndDefaultHandler.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\scripts\dndSourceTracker.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1402,6 +1465,27 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\faceplate_xbl_temp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
 				<File
@@ -1555,6 +1639,27 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\menubar_xbl_temp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\scripts\messagebox.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1660,6 +1765,27 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\scripts\playlist_xbl_temp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\content\scripts\restartbox.js">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1720,6 +1846,27 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 							CommandLine="copy /y $(InputPath) $(SolutionDir)dist\chrome\content\scripts\$(InputFileName)
 "
 							Outputs="$(SolutionDir)dist\chrome\content\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\content\scripts\servicetree_xbl_temp.js">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							Description="Performing Custom Build Step $(InputFileName)"
+							CommandLine="copy /y $(InputPath) $(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)
+"
+							Outputs="$(SolutionDir)compiled\dist\chrome\songbird\content\songbird\scripts\$(InputFileName)"/>
 					</FileConfiguration>
 				</File>
 				<File

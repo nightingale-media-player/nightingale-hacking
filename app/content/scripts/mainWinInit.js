@@ -267,3 +267,75 @@ function SBUninitialize()
   theNumPlaylistItemsRemote = null;
 }
 
+var SBWindowMinMaxCB = 
+{
+  // Shrink until the box doesn't match the window, then stop.
+  GetMinWidth: function()
+  {
+    // What we'd like it to be
+    var retval = 750;
+    // However, if in resizing the window size is different from the document's box object
+    if (window.innerWidth != document.getElementById('window_parent').boxObject.width)
+    { 
+      // That means we found the document's min width.  Because you can't query it directly.
+      retval = document.getElementById('window_parent').boxObject.width - 1;
+    }
+    return retval;
+  },
+
+  GetMinHeight: function()
+  {
+    // What we'd like it to be
+    var retval = 400;
+    // However, if in resizing the window size is different from the document's box object
+    if (window.innerHeight != document.getElementById('window_parent').boxObject.height)
+    { 
+      // That means we found the document's min width.  Because you can't query it directly.
+      retval = document.getElementById('window_parent').boxObject.height - 1;
+    }
+    return retval;
+  },
+
+  GetMaxWidth: function()
+  {
+    return -1;
+  },
+
+  GetMaxHeight: function()
+  {
+    return -1;
+  },
+
+  OnWindowClose: function()
+  {
+    setTimeout(quitApp, 0);
+  },
+
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+}; // SBWindowMinMax callback class definition
+
+function setMinMaxCallback()
+{
+  try {
+    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+    if (windowMinMax) {
+      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
+      if (service)
+        service.setCallback(document, SBWindowMinMaxCB);
+    }
+  }
+  catch (err) {
+    // No component
+    dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
+  }
+}

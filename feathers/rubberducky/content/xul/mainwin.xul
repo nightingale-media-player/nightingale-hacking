@@ -598,6 +598,25 @@
    src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/songbird_hack.js" />
+
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/browser_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/servicetree_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/numplaylistitems_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/currenttrack_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/faceplate_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/menubar_xbl_temp.js" />
+  <script type="application/x-javascript"   
+   src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
+
+
   <!-- Load the main window data bindings -->
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/mainwin.data.js" />

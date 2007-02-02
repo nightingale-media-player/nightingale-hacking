@@ -28,21 +28,8 @@
 /*
  * Contains functions common to all windows
  */
- 
- 
- 
-/*
-// If we are running under windows, there's a bug with background-color: transparent;
-if (PLATFORM_WIN32)
-{
-  // During script initialization, set the background color to black.
-  // Otherwise, all iframes are blank.  Dumb bug.
-  var win = document.getElementById("video_window");
-  if (win)
-    win.setAttribute("style","background-color: #000 !important;");
-  // At least this fixes it.
-}
-*/
+
+var theSongbirdStrings = document.getElementById( "songbird_strings" );
  
 //
 // XUL Event Methods
@@ -1055,5 +1042,43 @@ function getPlatformString()
       return "Linux";
     return "";
   }
+}
+
+function checkAltF4(evt)
+{
+  if (evt.keyCode == 0x73 && evt.altKey) 
+  {
+    evt.preventDefault();
+    quitApp();
+  }
+}
+
+/**
+* Convert a string containing binary values to hex.
+*/
+function binaryToHex(input)
+{
+  var result = "";
+  
+  for (var i = 0; i < input.length; ++i) 
+  {
+    var hex = input.charCodeAt(i).toString(16);
+  
+    if (hex.length == 1)
+      hex = "0" + hex;
+  
+    result += hex;
+  }
+  
+  return result;
+}
+
+function getCurrentPlaylist(disallowwebplaylist) {
+  var pl = document.__CURRENTPLAYLIST__;
+  if (!pl && !disallowwebplaylist) pl = document.__CURRENTWEBPLAYLIST__;
+  if (!pl) return null;
+  if ( pl.wrappedJSObject )
+    pl = pl.wrappedJSObject;
+  return pl;
 }
 
