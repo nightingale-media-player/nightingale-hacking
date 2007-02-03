@@ -41,6 +41,7 @@ endif
 
 SUBDIRS = branding \
           content \
+          skin \
           preferences \
           $(NULL)
 

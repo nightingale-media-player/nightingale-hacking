@@ -5,33 +5,6 @@ songbird.jar:
 % content  songbird  jar:songbird.jar!/content/songbird/
 #endif
 % overlay chrome://browser/content/preferences/preferences.xul     chrome://songbird/content/xul/preferences/main_overlay.xul
-  content/songbird/xul/about.xul            (about.xul)
-  content/songbird/xul/add_tag.xul          (add_tag.xul)
-  content/songbird/xul/add_to_playlist.xul  (add_to_playlist.xul)
-  content/songbird/xul/control_pane.xul     (control_pane.xul)
-  content/songbird/xul/download.xul         (download.xul)
-  content/songbird/xul/editbookmark.xul     (editbookmark.xul)
-  content/songbird/xul/eula.xul             (eula.xul)
-  content/songbird/xul/firstrun.xul         (firstrun.xul)
-  content/songbird/xul/jumptofile.xul       (jumptofile.xul)
-  content/songbird/xul/koshi_test.xul       (koshi_test.xul)
-  content/songbird/xul/mab.xul              (mab.xul)
-  content/songbird/xul/media_scan.xul       (media_scan.xul)
-  content/songbird/xul/messagebox.xul       (messagebox.xul)
-  content/songbird/xul/new_playlist.xul     (new_playlist.xul)
-  content/songbird/xul/open_url.xul         (open_url.xul)
-  content/songbird/xul/playlist_exists.xul  (playlist_exists.xul)
-  content/songbird/xul/playlist_test.xul    (playlist_test.xul)
-  content/songbird/xul/remote_download.xul  (remote_download.xul)
-  content/songbird/xul/restartbox.xul       (restartbox.xul)
-  content/songbird/xul/setup_progress.xul   (setup_progress.xul)
-  content/songbird/xul/smart_playlist.xul   (smart_playlist.xul)
-  content/songbird/xul/songbird.xul         (songbird.xul)
-  content/songbird/xul/subscribe.xul        (subscribe.xul)
-  content/songbird/xul/trackeditor.xul      (trackeditor.xul)
-  content/songbird/xul/trackeditor_form.xul (trackeditor_form.xul)
-  content/songbird/xul/watch_folders.xul    (watch_folders.xul)
-  content/songbird/xul/yahoo_hybrid.xul     (yahoo_hybrid.xul)
-  content/songbird/xul/preferences/hotkeys.xul      (preferences/hotkeys.xul)
-  content/songbird/xul/preferences/main_overlay.xul (preferences/main_overlay.xul)
+@include_all_to content/songbird/xul/
+
 

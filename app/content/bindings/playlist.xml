@@ -49,7 +49,6 @@
           <xul:smartsplitter
             id="horz_splitter"
             sbid="filter_splitter"
-            orientation="vertical" 
             state="open"
             collapse="before"
             resizebefore="closest"
@@ -101,25 +100,25 @@
                   <xul:menuitem id="search_popup_term" sbid="search_popup_term" label="" disabled="true"/>
                   <xul:menuseparator/>
                   <xul:menuitem id="search.popup.singingfish" 
-                    label="Singingfish" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/singingfish.ico"
+                    label="Singingfish" class="menuitem-iconic" image="chrome://service-icons/skin/singingfish.ico"
                   />
                   <xul:menuitem id="search.popup.elbows" 
-                    label="elbo.ws" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/elbows.ico"
+                    label="elbo.ws" class="menuitem-iconic" image="chrome://service-icons/skin/elbows.ico"
                 />
                   <xul:menuitem id="search.popup.mefeedia" 
                     label="mefeedia" class="menuitem-iconic" image="http://www.mefeedia.com/favicon.ico"
                 />
                   <xul:menuitem id="search.popup.google" 
-                    label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
+                    label="Google" class="menuitem-iconic" image="chrome://service-icons/skin/google.ico"
                 />
                   <xul:menuitem id="search.popup.yahoo" 
-                    label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
+                    label="Yahoo!" class="menuitem-iconic" image="chrome://service-icons/skin/yahoo.ico"
                 />
                   <xul:menuitem id="search.popup.wiki" 
-                    label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
+                    label="Wikipedia" class="menuitem-iconic" image="chrome://service-icons/skin/default.ico"
                 />
                   <xul:menuitem id="search.popup.emusic" 
-                    label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
+                    label="eMusic" class="menuitem-iconic" image="chrome://service-icons/skin/emusic.ico"
                 />
 <!--                  <xul:menuitem id="search.popup.creativecommons" 
                     label="Creative Commons" class="menuitem-iconic" image="http://creativecommons.org/favicon.ico"
@@ -131,7 +130,7 @@
                   <xul:menuitem id="lyrics_popup_term" sbid="lyrics_popup_term" label="" disabled="true"/>
                   <xul:menuseparator/>
                   <xul:menuitem id="lyrics.popup.google" 
-                    label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
+                    label="Google" class="menuitem-iconic" image="chrome://service-icons/skin/google.ico"
                   />
                 </xul:menupopup>
               </xul:menu>

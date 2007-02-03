@@ -105,16 +105,16 @@
 
       <xul:popupset>
         <!-- PLAYLIST POPUP FOR THE SERVICE PANE PLAYLISTS -->
-        <xul:popup id="service_popup_playlist" class="sb_faceplate" oncommand="onServiceTreeDefaultCommand( event );">
+        <xul:popup id="service_popup_playlist" oncommand="onServiceTreeDefaultCommand( event );">
           <xul:menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
           <xul:menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
         </xul:popup>
-        <xul:popup id="service_popup_smart" class="sb_faceplate" oncommand="onServiceTreeDefaultCommand( event );">
+        <xul:popup id="service_popup_smart" oncommand="onServiceTreeDefaultCommand( event );">
           <xul:menuitem id="playlist_context_smartedit" label="&menu.edit;"/>
           <xul:menuitem id="playlist_context_remove" label="&playlist.context.remove;"/>
           <xul:menuitem id="playlist_context_rename" label="&playlist.context.rename;"/>
         </xul:popup>
-        <xul:popup id="service_popup_none" class="sb_faceplate" oncommand="onServiceTreeDefaultCommand( event );">
+        <xul:popup id="service_popup_none" oncommand="onServiceTreeDefaultCommand( event );">
           <xul:menuitem id="service_popup_new" label="&menu.file.new;"/>
           <xul:menuitem id="service_popup_new_smart" label="&menu.file.smart;"/>
           <xul:menuitem id="service_popup_new_remote" label="&menu.file.remote;"/>

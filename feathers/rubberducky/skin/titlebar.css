@@ -1,0 +1,264 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** TODO The top bar implementation really needs to be cleaned up structurally  
+    before the styles can be fixed.  Leaving as is for now. **/
+
+
+/** 
+************************************************************************************************************************************************
+TOP BAR
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+
+#songbird_top
+{
+  margin-bottom: 7px;
+}
+
+/** TODO: Inefficient! **/
+#songbird_top button
+{  
+  margin: 0px;
+  padding: 0px;
+  min-width: 0px;
+  border: none;
+}
+/** TODO: Inefficient! **/
+#songbird_top .button-text
+{  
+  display: none;
+}
+
+#app_icon
+{
+  background-repeat: no-repeat !important;
+  height: 9px !important;
+  width: 9px !important;
+  margin: 1px 5px 0px 2px !important;
+}
+
+#mainwin_app_title,
+#video_window_title
+{
+  margin: 0px 0px 0px 0px !important;
+  font-family: tahoma, arial !important;
+  font-weight: bold !important;
+  font-size: 11px !important;
+}
+
+#sysbtn_close
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_maximize hbox,
+#sysbtn_maximize
+{
+  width: 9px !important;
+  height: 9px !important;
+  max-width: 9px !important;
+  max-height: 9px !important;
+  border: none !important;
+  margin: -2px 0px 0px 0px !important;
+  padding: 0px !important;
+}
+
+#sysbtn_maximize > hbox > image,
+#sysbtn_maximize > hbox > label,
+#sysbtn_maximize > hbox
+{
+  width: 0px !important;
+  height: 0px !important;
+  max-width: 0px !important;
+  max-height: 0px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+#sysbtn_maximize > image
+{
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  width: 9px !important;
+  height: 9px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_minimize
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_minimode
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+#sysbtn_hide
+{
+  width: 9px !important;
+  height: 9px !important;
+  background-repeat: no-repeat !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MAC OSX SPECIFIC CHROME - Top Bar
+Minimize, Maximize, Restore, and Switch to Mini-Mode
+************************************************************************************************************************************************
+*/
+.mac
+{
+	-moz-appearance: none !important;
+}
+
+.mac > #sysbtn_maximize
+{
+  width: 15px !important;
+  height: 17px !important;
+  background-repeat: no-repeat !important;
+}
+.mac > #sysbtn_maximize hbox,
+.mac > #sysbtn_maximize .checkbox-check
+{
+  width: 15px !important;
+  height: 17px !important;
+  max-width: 15px !important;
+  max-height: 17px !important;
+  border: none !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  opacity: 1.0 !important;
+}
+.mac > #sysbtn_maximize
+{
+  width: 15px !important;
+  height: 17px !important;
+  max-width: 15px !important;
+  max-height: 17px !important;
+  border: none !important;
+  margin: -1px 0px 0px 0px !important;
+  padding: 0px !important;
+  opacity: 1.0 !important;
+}
+
+.mac > #sysbtn_maximize > hbox > image,
+.mac > #sysbtn_maximize > hbox > label,
+.mac > #sysbtn_maximize > hbox
+{
+  width: 0px !important;
+  height: 0px !important;
+  max-width: 0px !important;
+  max-height: 0px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+.mac > #sysbtn_maximize > image
+{
+  width: 15px !important;
+  height: 17px !important;
+  max-width: 15px !important;
+  max-height: 17px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+.mac > #sysbtn_maximize[checked="true"] > image /* Restore */
+{
+  width: 15px !important;
+  height: 17px !important;
+  max-width: 15px !important;
+  max-height: 17px !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+.mac > #sysbtn_minimize
+{ 
+  width: 15px !important;
+  height: 17px !important;
+  max-width: 15px !important;
+  max-height: 17px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+.mac > #sysbtn_close
+{
+  width: 15px !important;
+  height: 17px !important;
+  max-width: 15px !important;
+  max-height: 17px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+.mac > #sysbtn_minimode
+{  
+  width: 25px !important;
+  height: 17px !important;
+  max-width: 25px !important;
+  max-height: 17px !important;
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px !important;
+  background-repeat: no-repeat !important;
+}
+
+
+
+
+
+
+
+                        
+
+

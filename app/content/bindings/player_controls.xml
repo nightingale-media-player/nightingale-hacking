@@ -212,7 +212,7 @@
   
   
   
-  <binding id="forward" extends="chrome://global/content/bindings/button.xml#button-base">
+  <binding id="forward" extends="chrome://global/content/bindings/button.xml#button">
 
    <handlers>
      <handler event="mousedown" action="this.onFwdMouseDown();"/>
@@ -325,7 +325,7 @@
   
   
   
-  <binding id="back" extends="chrome://global/content/bindings/button.xml#button-base">
+  <binding id="back" extends="chrome://global/content/bindings/button.xml#button">
 
    <handlers>
      <handler event="mousedown" action="this.onBackMouseDown();"/>
@@ -718,7 +718,7 @@
   <binding id="playpause">
   
    <content>
-     <xul:stack xbl:inherits="id=id,class=class" flex="1">
+     <xul:stack xbl:inherits="class=class,flex=flex">
        <xul:button sbid="play" xbl:inherits="id=playid,class=class" oncommand="onPlay( );" tooltiptext="&tooltip.control.play;" />
        <xul:button sbid="pause" xbl:inherits="id=pauseid,class=class" oncommand="onPause( );" tooltiptext="&tooltip.control.play;" />
      </xul:stack>

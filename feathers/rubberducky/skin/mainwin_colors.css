@@ -88,56 +88,17 @@ These pieces paint the resizeable window for Songbird.
   background-color: #000 !important; /* color of the Main Window **/
 }
 
-.chrome_iframe_bkgd,
-#mainwin_chrome_bkgd
+.chrome_iframe_bkgd
 {
   background-color: #000 !important; /* color of the Main Window **/
 }
 
-#mainwin_chrome_nw
+#mainwin_chrome_box
 {
   -moz-border-top-colors: #7a7c7c #ccc !important;
   -moz-border-left-colors: #686a6a #ccc !important;
-  background-color: #000 !important;
-}
-#mainwin_chrome_n
-{
-  -moz-border-top-colors: #7a7c7c #ccc !important;
-  background-color: #000 !important;
-}
-#mainwin_chrome_ne
-{
-  -moz-border-top-colors: #7a7c7c #ccc !important;
   -moz-border-right-colors: #505154 #999 !important;
-  background-color: #000 !important;
-}
-#mainwin_chrome_e
-{
-  -moz-border-right-colors: #505154 #999 !important;
-  background-color: #000 !important;
-}
-#mainwin_chrome_se
-{
   -moz-border-bottom-colors: #666 #999 !important;
-  -moz-border-right-colors: #505154 #999 !important;
-  background-color: #000 !important;
-}
-
-#mainwin_chrome_s
-{
-  -moz-border-bottom-colors: #666 #999 !important;
-  background-color: #000 !important;
-}
-#mainwin_chrome_w
-{
-  -moz-border-left-colors: #686a6a #ccc !important;
-  background-color: #000 !important;
-}
-#mainwin_chrome_sw
-{
-  -moz-border-bottom-colors: #666 #999 !important;
-  -moz-border-left-colors: #686a6a #ccc !important;
-  background-color: #000 !important;
 }
 
 /** 
@@ -146,15 +107,63 @@ SERVICE PANE
 Grey material for the Service Pane.
 ************************************************************************************************************************************************
 */ 
-.service-pane
+#frame_servicetree_pane
 {
-  background-color: #686a6a !important;
-  -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #474848 !important;
-  -moz-border-bottom-colors: #474848 !important;
-  -moz-border-right-colors: #474848 !important;
-  color: #cdd4c4 !important;
+  background-color: #686a6a;
+  border-top-color: #7a7c7c;
+  border-left-color: #474848;
+  border-bottom-color: #474848;
+  border-right-color: #474848;
+  color: #cdd4c4;
 }
+
+#frame_service_tree
+{
+  background-color: #686A6A;
+  color: #CDD4C4;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row
+{
+  background-color: #686A6A;
+}
+
+#frame_service_tree > treechildren::-moz-tree-row( selected )
+{
+  background-color: #FFF;
+}
+
+#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
+{
+  color: #333;
+}
+
+#frame_service_buttonbar button
+{
+  border-color: #808282 !important;
+  background-color: #686A6A;
+  color: #99A195; 
+}
+
+#frame_service_buttonbar button:hover
+{
+  border-top-color: #99A195;
+  border-left-color: #99A195;
+  border-bottom-color: #333;
+  border-right-color: #333;
+  background-color: #686A6A;
+  color: #fff !important; 
+}
+
+#frame_service_buttonbar button:active
+{
+  border-top-color: #333;
+  border-left-color: #333;
+  border-bottom-color: #99A195;
+  border-right-color: #99A195;
+}
+
+
 
 
 
@@ -187,94 +196,6 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
 }
 /* END CHROME **/
 
-/** 
-************************************************************************************************************************************************
-MAIN WINDOW
-Love your boxes.
-************************************************************************************************************************************************
-*/ 
-
-#frame_service_tree
-{
-  -moz-border-top-colors: transparent !important;
-  -moz-border-left-colors: transparent !important;
-  -moz-border-bottom-colors: transparent !important;
-  -moz-border-right-colors: transparent !important;  
-  background-color: #686A6A !important;
-  color: #CDD4C4 !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-row
-{
-  -moz-border-top-colors: #686A6A !important;
-  -moz-border-left-colors: #686A6A !important;
-  -moz-border-bottom-colors: #686A6A !important;
-  -moz-border-right-colors: #686A6A !important;
-  background-color: #686A6A !important;
-}
-
-#frame_service_buttonbar button
-{
-  border: 1px solid !important;
-  -moz-border-top-colors: #808282 !important;
-  -moz-border-left-colors: #808282 !important;
-  -moz-border-bottom-colors: #808282 !important;
-  -moz-border-right-colors: #808282 !important;
-  background-color: #686A6A !important;
-  color: #99A195 !important; 
-}
-
-#frame_service_buttonbar button:hover
-{
-  border: 1px solid !important;
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  background-color: #686A6A !important;
-  color: #fff !important; 
-}
-
-#frame_service_buttonbar button:active
-{
-  -moz-border-top-colors: #333 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-bottom-colors: #99A195 !important;
-  -moz-border-right-colors: #99A195 !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-row( selected )
-{
-  -moz-border-radius: 3px !important;
-  -moz-border-top-colors: #eee !important;
-  -moz-border-left-colors: #eee !important;
-  -moz-border-bottom-colors: #eee !important;
-  -moz-border-right-colors: #eee !important; 
-  background-color: #FFF !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-cell
-{
-  border: none !important;
-  background-color: #686A6A !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-cell( selected )
-{
-  border: none !important;
-  background-color: #FFF !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
-{
-  color: #333 !important;
-}
-
-#frame_service_tree_label
-{
-  border: none !important;
-  background-color: transparent !important; 
-}
 
 /** 
 ************************************************************************************************************************************************
@@ -438,44 +359,46 @@ Organize your collection with genre/artist/album filterlists.
 
 filterlist > tree
 {
-  background-color: transparent !important;
+  background-color: transparent;
   /* opacity: 0.8; slow on the mac :( **/
 }
 
-/* striping for genre filter */
+
 filterlist > tree > treechildren::-moz-tree-row
 {
-  background-color: #1d272d !important;
+  background-color: #1d272d;
 }
 
+
+/* striping */
 filterlist > tree > treechildren::-moz-tree-row( odd )
 {
-  background-color: #1d272d !important;
+  background-color: #1d272d;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( even )
 {
-  background-color: #343d42 !important;
+  background-color: #343d42;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected )
 {
-  background-color: #4A4E48 !important;
+  background-color: #4A4E48;
 }
 
 filterlist > tree > treechildren::-moz-tree-row( selected, focus )
 {
-  background-color: #99A195 !important;
+  background-color: #99A195;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text
 {
-  color: #EEE !important;
+  color: #EEE;
 }
 
 filterlist > tree > treechildren::-moz-tree-cell-text( selected )
 {
-  color: #FFF !important;
+  color: #FFF;
 }
 
 /** 
@@ -586,16 +509,6 @@ treechildren::-moz-tree-column(insertbefore)
   background-color: #676D65 !important;
 }
 
-/** 
-************************************************************************************************************************************************
-THE WEB PLAYLIST aka THE URL SLURPER
-Style this guy to match your webpage!
-************************************************************************************************************************************************
-#playlist_web
-{
- 
-} 
-*/
 
 /** 
 ************************************************************************************************************************************************
@@ -608,49 +521,41 @@ contextual menu.
 */ 
 
 /* the generic style for all playlist toolbarbuttons */
-button[class="sb_faceplate"][disabled="true"],
-button[class="sb_faceplate"][disabled="true"]:active,
-button[class="sb_faceplate"][disabled="true"]:hover
+button[disabled="true"],
+button[disabled="true"]:active,
+button[disabled="true"]:hover
 {
-  -moz-border-top-colors: #000 !important;
-  -moz-border-left-colors: #000 !important;
-  -moz-border-bottom-colors: #000 !important;
-  -moz-border-right-colors: #000 !important;
+  border-color: #000 !important;
   background-color: #000 !important;
+  -moz-border-top-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;  
   color: #333 !important;
 }
 
-button[class="sb_faceplate"][disabled="false"]
-{  
-  background-color: #333 !important;
-  color: #99A195 !important;  
+button
+{
+  border-color: #333 !important;
+  background-color: #333;
+  color: #99A195;  
 }
 
-button[class="sb_faceplate"]
+button:hover
 {
-  -moz-border-top-colors: #333 !important;
-  -moz-border-left-colors: #333 !important;
-  -moz-border-bottom-colors: #333 !important;
-  -moz-border-right-colors: #333 !important;
-  background-color: #333 !important;
-  color: #99A195 !important;  
+  border-top-color: #99A195 !important;
+  border-left-color: #99A195 !important;
+  border-bottom-color: #535751 !important;
+  border-right-color: #535751 !important;
+  color: #FFF;  
 }
 
-button[class="sb_faceplate"]:hover
+button:active
 {
-  -moz-border-top-colors: #99A195 !important;
-  -moz-border-left-colors: #99A195 !important;
-  -moz-border-bottom-colors: #535751 !important;
-  -moz-border-right-colors: #535751 !important;
-  color: #FFF !important;  
-}
-
-button[class="sb_faceplate"]:active
-{
-  -moz-border-top-colors: #535751 !important;
-  -moz-border-left-colors: #535751 !important;
-  -moz-border-bottom-colors: #99A195 !important;
-  -moz-border-right-colors: #99A195 !important;
+  border-top-color: #535751 !important;
+  border-left-color: #535751 !important;
+  border-bottom-color: #99A195 !important;
+  border-right-color: #99A195 !important;
 }
 
 menuitem[disabled="true"],
@@ -760,10 +665,10 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  -moz-border-top-colors: #7a7c7c !important;
-  -moz-border-left-colors: #444 !important;
-  -moz-border-bottom-colors: #444 !important;
-  -moz-border-right-colors: #444 !important;
+  border-top-color: #7a7c7c;
+  border-left-color: #444;
+  border-bottom-color: #444;
+  border-right-color: #444;
 }
 
 /** 
@@ -850,10 +755,7 @@ Contains the Main Playback Controls and the Dashboard.
 
 .faceplate_text
 {
-  width: auto !important;
   color: #1F292B !important;
-  overflow: hidden !important;
-  font-family: tahoma, arial !important;
 }
 
 .faceplate_progressmeter
@@ -875,218 +777,11 @@ Contains the Main Playback Controls and the Dashboard.
   background-color: #a3ab9f !important;
 }
 
-
-/** 
-************************************************************************************************************************************************
-Main Playback Controls
-Play/Pause, Previous (back), Next (forward)
-************************************************************************************************************************************************
-*/
-
-/* the play button */
-#playbutton_box
-{
-  background-color: transparent !important;
-}
-#songbird_btn_play
-{  
-  background-color: transparent !important;
-}
-
-#songbird_btn_play[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_play:hover
-{
-  background-color: transparent !important;
-}
-#songbird_btn_play:active
+#frame_control_pane button
 {
   background-color: transparent !important;
 }
 
-/* the pause button */
-#songbird_btn_pause
-{
-  background-color: transparent !important;
-}
-#songbird_btn_pause[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_pause:hover
-{
-  background-color: transparent !important;
-}
-#songbird_btn_pause:active
-{
-  background-color: transparent !important;
-}
-
-/* the back button */
-
-#songbird_btn_back
-{
-  background-color: transparent !important;
-}
-#songbird_btn_back[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_back:hover
-{
-  background-color: transparent !important;
-}
-#songbird_btn_back:active
-{
-  background-color: transparent !important;
-}
-
-/* the fwd button */
-#songbird_btn_fwd
-{
-  background-color: transparent !important;
-}
-#songbird_btn_fwd[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_fwd:hover
-{
-  background-color: transparent !important;
-}
-#songbird_btn_fwd:active
-{
-  background-color: transparent !important;
-}
-
-/* the curr button */
-#songbird_btn_curr
-{
-  background-color: transparent !important;
-}
-#songbird_btn_curr[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_curr:hover
-{
-  background-color: transparent !important;
-}
-#songbird_btn_curr:active
-{
-  background-color: transparent !important;
-}
-
-/* the next button */
-#songbird_btn_next
-{
-  background-color: transparent !important;
-}
-#songbird_btn_next[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_next:hover
-{
-  background-color: transparent !important;
-}
-#songbird_btn_next:active
-{
-  background-color: transparent !important;
-}
-
-/* the rep1 button */
-#songbird_btn_rep
-{
-  background-color: transparent !important;
-}
-#songbird_btn_rep[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_rep:hover[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_rep:active
-{
-  background-color: transparent !important;
-}
-
-/* the rep1_on button */
-#songbird_btn_rep1
-{
-  background-color: transparent !important;
-}
-#songbird_btn_rep1[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_rep1:hover[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_rep1:active
-{
-  background-color: transparent !important;
-}
-
-/* the repall button */
-#songbird_btn_repall
-{
-  background-color: transparent !important;
-}
-#songbird_btn_repall[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_repall:hover[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_repall:active
-{
-  background-color: transparent !important;
-}
-
-/* the shuf button */
-#songbird_btn_shuf
-{
-  background-color: transparent !important;
-}
-#songbird_btn_shuf[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_shuf:hover[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_shuf:active
-{
-  background-color: transparent !important;
-}
-
-/* the shuf_on button */
-#songbird_btn_shuf_on
-{
-  background-color: transparent !important;
-}
-#songbird_btn_shuf_on[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_shuf_on:hover[disabled="true"]
-{
-  background-color: transparent !important;
-}
-#songbird_btn_shuf_on:active
-{
-  background-color: transparent !important;
-}
-/* END CONTROL BOX **/
 
 /** 
 ************************************************************************************************************************************************
@@ -1096,49 +791,23 @@ Browser Toolbar, Address Box, and Url-Slurper Button
 */
 
 /* the box with the url image and the url textbox */
-#browser_url_box
-{
-  border: 2px solid !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
-  background-color: #000 !important; 
-  color: #FFF !important;
-}
 
-#browser_url_box:focus
-{
-  background-color: #99A195 !important;
-}
 
 #browser_url_image
 {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 
-#browser_url
+#browser_url[focused="true"]
 {
-  background-color: transparent !important;
-  color: #FFF !important;  
-}
-
-#browser_url input:focus
-{
-  background-color: #99A195 !important;
-  color: #FFF !important;
-}
-
-#browser_url input[selected="true"]
-{
-  background-color: #F00 !important;
-  color: #FFF !important;
+  background-color: #99A195;
+  color: #FFF;
 }
 
 #browser_toolbar
 {
-  border-bottom: 1px solid #808583 !important; 
-  background-color: transparent !important;
+  border-bottom: 1px solid #808583; 
+  background-color: transparent;
 }
 
 /* END WEB BAR */
@@ -1148,34 +817,27 @@ SEARCH WIDGET
 ************************************************************************************************************************************************
 */
 
-#search_temp
-{
-  background-color: transparent !important;
-}
-
 #search_service_button
 {
-  background-color: transparent !important;
-  -moz-border-top-colors: transparent !important;
-  -moz-border-right-colors: transparent !important;
-  -moz-border-bottom-colors: transparent !important;
-  -moz-border-left-colors: transparent !important;
+  background-color: transparent;
+  -moz-border-top-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
 }
-
 
 #search_service_list
 {
-  background-color: transparent !important;
+  background-color: transparent;
 }
-
 
 #search_widget
 {
-  border: 2px solid !important;
-  -moz-border-top-colors: #535751 #333 !important;
-  -moz-border-left-colors: #535751 #333 !important;
-  -moz-border-right-colors: #99A195 #333 !important;
-  -moz-border-bottom-colors: #99A195 #333 !important;
+  border: 1px solid !important;
+  border-top-color: #535751 !important;
+  border-left-color: #535751 !important;
+  border-right-color: #99A195 !important;
+  border-bottom-color: #99A195 !important;
   background-color: #000 !important; 
   color: #FFF !important;
 }

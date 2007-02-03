@@ -1,0 +1,164 @@
+<?xml version="1.0"?> 
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<overlay id="ovMenu"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <menubar id="songbird_menu">
+    <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
+      <menupopup id="file-popup">
+        <menuitem id="file.new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+        <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
+        <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
+        <menuitem id="file.file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
+        <menuitem id="file.url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
+        <menuitem id="file.playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="file.scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
+        <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
+        <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="file.window" key="miniplayer-key" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
+        <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
+          <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
+        </menu>
+        <menu id="songbird_menu_feathers" label="&menu.feathers;" class="menuitem-iconic" accesskey="&menu.feathers.accesskey;">
+          <menupopup id="feathers.popup" onpopupshowing="fillFeathersList(this);" />
+        </menu>
+        <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
+        <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
+        <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
+        <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
+        <menuitem id="menu.dominspector" key="dominspector-key" label="DOM Inspector" class="menuitem-iconic"/>
+
+        <!--<menuitem id="menu_Reload" label="Reload" oncommand="reloadWindow();"/> -->
+
+        <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
+        <menuseparator id="menu_FileQuitSeparator"/>
+        <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
+
+      </menupopup>
+    </menu>
+
+    <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate" accesskey="&menu.edit.accesskey;">
+      <menupopup id="edit-popup">
+        <menuitem id="edit.undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="edit.cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
+        <menuitem id="edit.copy" key="copy-key" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
+        <menuitem id="edit.paste" key="paste-key" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
+        <menuitem id="edit.clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="edit.selall" key="selectall-key" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
+        <menuitem id="edit.selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="songbird_menu_item_controls" label="&menu.controls;" class="sb_faceplate" accesskey="&menu.controls.accesskey;">
+      <menupopup id="controls-popup">
+        <menuitem id="control.play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="control.next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
+        <menuitem id="control.prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" checked="true" accesskey="&menu.control.shuf.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" checked="true" accesskey="&menu.control.repa.accesskey;"/>
+        <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" checked="true" accesskey="&menu.control.rep1.accesskey;"/>
+        <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" checked="true" accesskey="&menu.control.repx.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" checked="false" accesskey="&menu.control.jumpto.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="songbird_menu_item_services" label="&menu.services;" class="sb_faceplate" accesskey="&menu.services.accesskey;">
+      <!-- TRY FILLING THE MENUBAR WITH THE SAME DATA AS THE SERVICE PANE? -->
+      <menupopup 
+        id="services-popup"
+        datasources="rdf:Servicesource"
+        ref="NC:ServicesourceFlat"
+    >
+  <!--  Disabled, since content is duplicated in bookmarks
+        <menuitem id="services.browse" label="&menu.services.browse;"/>
+        <menuseparator/>   
+  -->
+        <template>                 
+          <rule>
+            <menuitem uri="rdf:*"
+              id="rdf:http://home.netscape.com/NC-rdf#Label" 
+              label="rdf:http://home.netscape.com/NC-rdf#Label"
+              value="rdf:http://home.netscape.com/NC-rdf#URL"
+              class="menuitem-iconic"
+              image="rdf:http://home.netscape.com/NC-rdf#Icon"
+          />
+          </rule>
+        </template>
+      </menupopup>
+    </menu>
+
+    <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate" accesskey="&menu.devices.accesskey;">
+      <menupopup id="devices-popup">
+        <menuitem label="&menu.devices.nodevices;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="songbird_menu_item_help"
+          label="&menu.help;"
+          class="sb_faceplate"
+          accesskey="&menu.help.accesskey;"
+          onpopupshowing="buildHelpMenu();">
+      <menupopup id="help-popup">
+        <menuitem id="help.bugz"
+                  label="&menu.help.bugz;"
+                  value="&menu.help.bugz.url;"
+                  accesskey="&menu.help.bugz.accesskey;"/>
+        <menuitem id="help.topics"
+                  label="&menu.help.topics;"
+                  value="&menu.help.topics.url;"
+                  key="help-key" 
+                  accesskey="&menu.help.help.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="updateCmd"
+                  label="&menu.updateCmd.label;"
+                  accesskey="&menu.updateCmd.accessKey;"
+                  oncommand="checkForUpdates();"/>
+        <menuseparator/>
+        <menuitem id="aboutName"
+                  label="&menu.help.about;"
+                  accesskey="&menu.help.about.accesskey;"/>
+      </menupopup>
+    </menu>
+
+  </menubar>
+
+</overlay>
+
+

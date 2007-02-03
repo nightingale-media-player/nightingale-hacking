@@ -42,10 +42,10 @@
   <binding id="clickholdbutton">
 
     <content>
-        <xul:button sbid="button" xbl:inherits="label,class,id" flex="1" />
+        <xul:button sbid="button" xbl:inherits="label,class,id,flex" />
         <xul:menupopup sbid="popup" xbl:inherits="position,popupanchor,popupalign,class">
           <children/>
-        </xul:menupopup>
+        </xul:menupopup>        
     </content>
 
    <implementation type="application/x-javascript">

@@ -27,11 +27,8 @@
 /** 
 ************************************************************************************************************************************************
 = Songbird CSS Architecture =
-Songbird's CSS is made to make feathering easier.  At the top level, we make a distinction between styles 
-for the Main Player, the Mini Player, and the Dialog Boxes. From there we split up styles into 3 cascading 
-layers: Size & Position, Color and Imagery. I've also excerpted out the "-moz-appearance: none" style into 
-a base style sheet so our potential featherers wouldn't have to worry about the default -moz styles 
-affecting their work as it did ours.  
+
+TODO: Rewrite
 
 == Size & Position ==
 Move it around, test it out, move it around. These style sheets include margins, padding, -moz-styles, 
@@ -51,23 +48,6 @@ and saved making another css file for dialogs. If you'd like to make one, be sur
 in the Cascade section and add it to the appropriate jar file.  In this case, it's jar.mn.in found in
 the same folder as this style sheet.
 
-== Songbird's 8 stylesheets ==
-1. Songbird.css - This style sheet @imports the other stylesheets.
-
-2. base_styles.css
-
-3. mainwin.css
-
-4. mainwin_colors.css
-
-5. mainwin_images.css
-
-6. dialog.css
-
-7. dialog_colors.css
-
-8. mini.css
- 
 ************************************************************************************************************************************************
 */ 
 
@@ -77,14 +57,23 @@ CASCADE!
 You can only use the @ at the top of the file.
 ************************************************************************************************************************************************
 */ 
-@import url(chrome://rubberducky/content/css/base_styles.css); /* base styles for the main application window **/
-@import url(chrome://rubberducky/content/css/mainwin.css); /* size and positioning for the main application window **/
-@import url(chrome://rubberducky/content/css/mainwin_images.css); /* images for the main application window colors **/
-@import url(chrome://rubberducky/content/css/dialog.css); /* size and positioning for the dialog windows **/
-@import url(chrome://rubberducky/content/css/mini.css); /* css for the mini player **/
 
+
+/** Use styled rather than native scroll bars **/
+@import url("chrome://global/skin/xulscrollbars.css");
+
+@import url(chrome://songbird-bindings/skin/bindings.css); 
+@import url(chrome://songbird-dialogs/skin/dialogs.css); 
+
+@import url(chrome://rubberducky/content/css/base_styles.css); 
+@import url(chrome://rubberducky/content/css/mainwin.css); /* size and positioning for the main application window **/
+
+@import url(titlebar.css); 
+
+@import url(chrome://rubberducky/content/css/mainwin_images.css); /* images for the main application window colors **/
+@import url(chrome://rubberducky/content/css/mini.css); /* css for the mini player **/
 
 @import url(mainwin_colors.css); /* colors for the main application window colors **/
 @import url(dialog_colors.css); /* colors for the dialog window colors **/
- 
+
 

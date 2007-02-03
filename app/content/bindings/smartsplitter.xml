@@ -218,7 +218,10 @@
     <method name="isVertical">
       <body>
         <![CDATA[
-          var or = this.getAttribute("orientation");
+          // The orient attribute is automatically set to 
+          // "vertical" when the smartsplitter is placed in 
+          // a vbox
+          var or = this.getAttribute("orient");
           if (or == "vert" || or == "vertical") return true;
           return false;
         ]]>

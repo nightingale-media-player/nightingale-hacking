@@ -48,7 +48,7 @@
 
       <!-- INTRO FACEPLATE -->
       <xul:hbox id="intro_box" paneid="sbintro" panename="Intro">
-        <xul:hbox id="intro_box_bkgd" hidden="false" class="sb_faceplate" flex="1">
+        <xul:hbox id="intro_box_bkgd" hidden="false"  flex="1">
 
           <xul:spacer flex="1"/>
           <xul:vbox>
@@ -59,46 +59,47 @@
       </xul:hbox>
 
       <!-- FACEPLATE -->
-      <xul:vbox id="dashboard_box" hidden="true" class="sb_faceplate" paneid="sbdashboard" panename="Dashboard">
-        <xul:hbox flex="1" class="sb_faceplate">
-          <xul:vbox flex="1" class="sb_faceplate" id="dashboard_bkgd">
+      <xul:vbox id="dashboard_box" hidden="true" paneid="sbdashboard" panename="Dashboard">
+        <xul:hbox flex="1" >
+          <xul:vbox flex="1"  id="dashboard_bkgd">
             <xul:spacer flex="1"/>
             <!-- SONG ARTIST/SONGTITLE DISPLAY -->
-            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="sb_faceplate">
-              <xul:player_artist id="songbird_text_artist" class="sb_faceplate" crop="end" />
+            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="faceplate_text">
+              <xul:player_artist id="songbird_text_artist"  crop="end" class="faceplate_text" />
             </xul:hbox>
             <!-- SONG ALBUM DISPLAY -->
-            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" class="sb_faceplate">
-              <xul:player_title align="center" id="songbird_text_title" class="sb_faceplate" crop="end"/>
-              <xul:label id="songbird_text_slash" value=" / " class="sb_faceplate" crop="end"/>
-              <xul:player_album id="songbird_text_album" value="" class="sb_faceplate" crop="end"/>
+            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" >
+              <xul:player_title align="center" id="songbird_text_title"  crop="end" class="faceplate_text"/>
+              <xul:label id="songbird_text_slash" value=" / "  crop="end" class="faceplate_text"/>
+              <xul:player_album id="songbird_text_album" value=""  crop="end" class="faceplate_text"/>
             </xul:hbox>
             <!-- SEEK BAR -->
-            <xul:hbox class="sb_faceplate">
+            <!-- TODO: Get rid of these spacers! -->
+            <xul:hbox >
               <xul:spacer width="10"/>
-              <xul:player_timeelapsed id="songbird_text_time_elapsed" class="sb_faceplate"/>
+              <xul:player_timeelapsed id="songbird_text_time_elapsed" class="faceplate_text" />
               <xul:spacer width="2"/>
               <xul:vbox flex="1">
                 <xul:spacer flex="1"/>
-                <xul:player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100"/>
+                <xul:player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal"  maxpos="100"/>
                 <xul:spacer flex="1"/>
               </xul:vbox>
               <xul:spacer width="2"/>
-              <xul:player_totaltime id="songbird_text_time_total" class="sb_faceplate" />
+              <xul:player_totaltime id="songbird_text_time_total"  class="faceplate_text" />
               <xul:spacer width="10"/>
             </xul:hbox>
 
             <xul:spacer flex="1"/>
 
-            <xul:label id="songbird_text_rep"   value="" class="sb_faceplate" hidden="true"/>
-            <xul:label id="songbird_text_shuf"  value="Shuffle" class="sb_faceplate" hidden="true"/>
+            <xul:label id="songbird_text_rep"   value=""  hidden="true"/>
+            <xul:label id="songbird_text_shuf"  value="Shuffle"  hidden="true"/>
           </xul:vbox>
         </xul:hbox>
       </xul:vbox>
 
 
       <xul:hbox id="template_box" hidden="true">
-        <xul:hbox id="dashboard_bkgd" hidden="false" class="sb_faceplate" flex="1" align="center">
+        <xul:hbox id="dashboard_bkgd" hidden="false"  flex="1" align="center">
           <xul:spacer flex="1"/>
           <xul:vbox align="center">
             <xul:label id="template_box_label1" class="faceplate_text" />

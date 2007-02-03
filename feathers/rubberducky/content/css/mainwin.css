@@ -31,291 +31,6 @@ This CSS files specifies the size and position of the Main Window UI.
 ************************************************************************************************************************************************
 */ 
 
-/** 
-************************************************************************************************************************************************
-THE WINDOW CHROME
-These pieces paint the resizeable window for Songbird.
-************************************************************************************************************************************************
-*/
-
-#mainwin_chrome_bkgd
-{
-  -moz-appearance: none !important; 
-}
-
-#mainwin_chrome_n
-{
-  -moz-appearance: none !important;
-  border-top: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important; 
-}
-
-#mainwin_chrome_nw
-{
-  -moz-appearance: none !important;
-  border-top: 2px solid !important;
-  border-left: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;   
-}
-
-#mainwin_chrome_ne
-{
-  -moz-appearance: none !important; 
-  border-top: 2px solid !important;
-  border-right: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;
-}
-
-#mainwin_chrome_w
-{
-  -moz-appearance: none !important; 
-  border-left: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;
-}
-
-#mainwin_chrome_e
-{
-  -moz-appearance: none !important; 
-  border-right: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;
-}
-
-#mainwin_chrome_sw
-{
-  -moz-appearance: none !important; 
-  border-bottom: 2px solid !important;
-  border-left: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;
-}
-
-#mainwin_chrome_s
-{
-  -moz-appearance: none !important; 
-  border-bottom: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;
-}
-
-#mainwin_chrome_se
-{
-  -moz-appearance: none !important; 
-  border-bottom: 2px solid !important;
-  border-right: 2px solid !important;
-  height: 9px !important;   
-  width: 9px !important;
-}
-/** 
-************************************************************************************************************************************************
-TOP BAR
-Minimize, Maximize, Restore, and Switch to Mini-Mode
-************************************************************************************************************************************************
-*/
-
-#app_icon
-{
-  background-repeat: no-repeat !important;
-  height: 9px !important;
-  width: 9px !important;
-  margin: 1px 5px 0px 2px !important;
-}
-
-#mainwin_app_title,
-#video_window_title
-{
-  margin: 0px 0px 0px 0px !important;
-  font-family: tahoma, arial !important;
-  font-weight: bold !important;
-  font-size: 11px !important;
-}
-
-#sysbtn_close
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-repeat: no-repeat !important;
-}
-
-#sysbtn_maximize hbox,
-#sysbtn_maximize
-{
-  width: 9px !important;
-  height: 9px !important;
-  max-width: 9px !important;
-  max-height: 9px !important;
-  border: none !important;
-  margin: -2px 0px 0px 0px !important;
-  padding: 0px !important;
-}
-
-#sysbtn_maximize > hbox > image,
-#sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox
-{
-  width: 0px !important;
-  height: 0px !important;
-  max-width: 0px !important;
-  max-height: 0px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-}
-
-#sysbtn_maximize > image
-{
-  width: 9px !important;
-  height: 9px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-
-#sysbtn_maximize[checked="true"] > image /* Restore */
-{
-  width: 9px !important;
-  height: 9px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-
-#sysbtn_minimize
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-repeat: no-repeat !important;
-}
-
-#sysbtn_minimode
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-repeat: no-repeat !important;
-}
-
-#sysbtn_hide
-{
-  width: 9px !important;
-  height: 9px !important;
-  background-repeat: no-repeat !important;
-}
-
-/** 
-************************************************************************************************************************************************
-MAC OSX SPECIFIC CHROME - Top Bar
-Minimize, Maximize, Restore, and Switch to Mini-Mode
-************************************************************************************************************************************************
-*/
-.mac
-{
-	-moz-appearance: none !important;
-}
-
-.mac > #sysbtn_maximize
-{
-  width: 15px !important;
-  height: 17px !important;
-  background-repeat: no-repeat !important;
-}
-.mac > #sysbtn_maximize hbox,
-.mac > #sysbtn_maximize .checkbox-check
-{
-  width: 15px !important;
-  height: 17px !important;
-  max-width: 15px !important;
-  max-height: 17px !important;
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  opacity: 1.0 !important;
-}
-.mac > #sysbtn_maximize
-{
-  width: 15px !important;
-  height: 17px !important;
-  max-width: 15px !important;
-  max-height: 17px !important;
-  border: none !important;
-  margin: -1px 0px 0px 0px !important;
-  padding: 0px !important;
-  opacity: 1.0 !important;
-}
-
-.mac > #sysbtn_maximize > hbox > image,
-.mac > #sysbtn_maximize > hbox > label,
-.mac > #sysbtn_maximize > hbox
-{
-  width: 0px !important;
-  height: 0px !important;
-  max-width: 0px !important;
-  max-height: 0px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-}
-
-.mac > #sysbtn_maximize > image
-{
-  width: 15px !important;
-  height: 17px !important;
-  max-width: 15px !important;
-  max-height: 17px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-
-.mac > #sysbtn_maximize[checked="true"] > image /* Restore */
-{
-  width: 15px !important;
-  height: 17px !important;
-  max-width: 15px !important;
-  max-height: 17px !important;
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-
-.mac > #sysbtn_minimize
-{ 
-  width: 15px !important;
-  height: 17px !important;
-  max-width: 15px !important;
-  max-height: 17px !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-.mac > #sysbtn_close
-{
-  width: 15px !important;
-  height: 17px !important;
-  max-width: 15px !important;
-  max-height: 17px !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-.mac > #sysbtn_minimode
-{  
-  width: 25px !important;
-  height: 17px !important;
-  max-width: 25px !important;
-  max-height: 17px !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  background-repeat: no-repeat !important;
-}
-
 
 
 /** 
@@ -327,968 +42,58 @@ Love the box.
 
 #frame_outer
 {
-  width:  974px !important;
-  height: 718px !important;
-  min-width: 750px !important;
-  min-height: 400px !important;
-}
-
-.service-pane /* aka The Service Pane, The Left Pane **/
-{
-  -moz-appearance: none !important;
-  -moz-border-radius-topleft: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;
-  -moz-border-radius-topright: 3px !important;
-  -moz-border-radius-bottomright: 3px !important;
-  border: 1px solid !important;
-  margin: 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  width: 135px !important;
+  width:  974px;
+  height: 718px;
+  min-width: 750px;
+  min-height: 400px;
 }
 
 #frame_top_pane
 {
-  top: 0px !important;
-  left: 0px !important;
-  height: 40px !important;
+  top: 0px;
+  left: 0px;
+  height: 40px;
 }
 
 #frame_control_pane
 {
-  max-height: 45px !important;
+  max-height: 45px;
 }
 
-#frame_middle_pane
+#frame_servicetree_pane /* aka The Service Pane, The Left Pane **/
 {
-  -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
+  -moz-border-radius: 5px;
+  border: 1px solid;
+  margin: 0px;
+  padding: 0px;
+  width: 135px;
 }
 
-#frame_main_pane
-{
-  -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-}
 
-#frame_service_tree
-{
-  -moz-appearance: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 6px 0px 0px 0px !important;
-}
 
-#frame_service_tree > treechildren::-moz-tree-row
-{
-  -moz-appearance: none !important;  
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-}
+/** 
+************************************************************************************************************************************************
+THE SERVICE TREE TOOLBAR
+Currently a single clickhold button below the service tree
+************************************************************************************************************************************************
+*/
+
 
 #frame_service_buttonbar button
 {
-  -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  padding: 0px !important;
-  margin: 2px 2px 2px 2px !important;
-  height: 25px !important;  
+  border: 1px solid; 
+  padding: 0px;
+  margin: 2px;
+  height: 25px;  
 }
 
-/** Offset menu a to account for rounded button **/
+/** Offset menu to account for rounded button **/
 #frame_service_buttonbar clickholdbutton menupopup
 {
  margin-left: 8px;
 }
 
-#frame_service_tree > treechildren::-moz-tree-row( selected )
-{
-  -moz-appearance: none !important;
-  -moz-border-radius: 3px !important;
-  border: 1px solid !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  font-size: larger;
-}
 
-#frame_service_tree > treechildren::-moz-tree-cell
-{
-  -moz-appearance: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  border: none !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-cell( selected )
-{
-  -moz-appearance: none !important;
-  -moz-border-radius: 5px !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  font-size: larger;
-}
-
-#frame_service_tree > treechildren::-moz-tree-cell-text( selected )
-{
-  font-weight: bold;
-}
-
-#frame_service_tree > treechildren::-moz-tree-cell-text
-{
-  margin: 0px 0px 0px 3px !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-twisty
-{
-  -moz-appearance: none !important;
-  margin: 0px 3px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-#frame_service_tree > treechildren::-moz-tree-twisty( open )
-{
-  -moz-appearance: none !important;
-  margin: 0px 3px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-#frame_service_tree_label
-{
-  -moz-appearance: none !important; /* grrrr! */
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  height: 0px !important; 
-}
-
-tree .treecol-image
-{
-  -moz-appearance: none !important; /* grrrr! */
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px !important;
-  border: none !important;
-}
-
-tree .tree-columnpicker-icon
-{
-  -moz-appearance: none !important; /* grrrr! */
-  margin: 0px 2px 0px 0px !important;
-  padding: 0px !important;
-  border: none !important;
-}
-
-tree treecol
-{
-  -moz-appearance: none !important; /* grrrr! */
-  margin: 0px !important;
-  padding: 0px 0px 0px 5px !important;
-  height: 20px !important;
-  border-width: 0px 1px 0px 0px !important;
-}
-
-/** 
-************************************************************************************************************************************************
-SCROLLBARS
-************************************************************************************************************************************************
-*/ 
-
-scrollbar
-{   
-  padding: 0 0 0 0 !important;  
-} 
-
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-border-radius: 2px !important;  
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-border-radius: 2px !important;  
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-scrollbar > slider > thumb > gripper
-{   
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  width: 16px !important;
-  background-image: none !important;
-  list-style-image: none !important;
-} 
-
-scrollbar > slider > thumb
-{    
-  -moz-border-radius: 2px !important;   
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  width: 16px !important;
-  background-image: none !important;
-  list-style-image: none !important;
-} 
-
-scrollbar > slider
-{   
-  padding: 0 0 0 0 !important; 
-  background-image: none !important;
-  list-style-image: none !important;
-} 
-
-/* service pane scrollbar*/
-#frame_service_tree scrollbar
-{   
-  padding: 0 0 0 0 !important;
-} 
-
-#frame_service_tree scrollbar > slider > thumb
-{     
-  -moz-border-radius: 3px !important;  
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;  
-  height: 16px !important;
-  width: 16px !important;
-} 
-
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
-{   
-  -moz-border-radius: 3px !important;  
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 16px !important;
-  width: 16px !important;
-} 
- 
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
-#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
-{   
-  -moz-border-radius: 3px !important;  
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-  height: 16px !important;
-  width: 16px !important;
-} 
-
-
-
-/** 
-************************************************************************************************************************************************
-THE LISTS, aka. the List Tree.
-A List Tree is a sortable column list with striping rows.
-************************************************************************************************************************************************
-*/ 
-tree treecol
-{
-  -moz-border-right-colors: #333 !important;
-}
-
-/** 
-************************************************************************************************************************************************
-THE FILTERLISTS
-Organize your collection with genre/artist/album filterlists.  
-************************************************************************************************************************************************
-*/ 
-
-filterlist
-{
-  margin: 0px !important;
-  padding: 0px !important;
-}
-
-filterlist > tree
-{
-  -moz-border-right-colors: none !important;
-  -moz-border-bottom-colors: none !important;
-  -moz-border-top-colors: none !important;
-  -moz-border-left-colors: none !important;
-  border-top: none !important;
-  border-right: none !important;
-  border-bottom: none !important;
-  border-left: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-  /* opacity: 0.8; slow on the mac :( **/
-}
-
-/* striping for genre filter */
-filterlist > tree > treechildren::-moz-tree-row
-{
-  border: none !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-row( selected, focus )
-{
-  border: none !important;
-}
-
-filterlist > tree > treechildren::-moz-tree-cell-text( selected )
-{
-  font-weight: bold !important;
-}
-
-/** 
-************************************************************************************************************************************************
-THE PLAYLIST
-************************************************************************************************************************************************
-*/ 
-
-playlist
-{
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-playlist > stack > vbox
-{
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-
-#playlist_tree
-{
-  border: none !important;
-  margin: 0px 0px 0px 0px !important;
-  padding: 0px 0px 0px 0px !important;
-}
-
-#playlist_toolbar
-{
-  border: none !important;
-}
-
-#playlist_toolbar_bkg,
-playlist > stack > vbox > hbox#playlist_toolbar_bkg
-{
-  -moz-border-radius-bottomright: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;  
-  border-top: 1px solid;
-}
-
-playlist > stack > vbox > hbox
-{
-  height: 27px !important;
-}
-
-#playlist_tree > treechildren::-moz-tree-row
-{
-  margin: 0px !important;
-  padding: 0px 0px 0px 0px !important;
-  border: 0px solid !important;
-}
-
-#playlist_tree > treechildren::-moz-tree-cell
-{
-  margin: 0px !important;
-  padding: 0px 0px 0px 5px !important;
-  border-right: 1px solid !important;
-}
-
-#playlist_tree > treechildren::-moz-tree-row( selected, focus )
-{
-  border: none !important;
-}
-
-#playlist_tree > treechildren::-moz-tree-cell-text( selected )
-{
-  font-weight: bold !important;
-}
-
-#playlist_tree > treechildren::-moz-tree-progressmeter
-{
- border: none !important;
- margin-top: 6px !important;
- margin-bottom: 6px !important;
- height: 10px !important;
-}
-
-#playlist_tree > treechildren::-moz-tree-progressmeter( selected, focus )
-{
-  border: none !important;
-}
-
-#playlist_context_popup
-{
-	min-width: 160px !important;
-}
-
-/** 
-************************************************************************************************************************************************
-THE WEB PLAYLIST aka THE URL SLURPER
-Style this to match your webpage!
-************************************************************************************************************************************************
-#playlist_web
-{
- 
-} 
-*/
-
-/** 
-************************************************************************************************************************************************
-THE TOOLBAR
-The Toolbar is a way for a user to discover pertinent contextual menu 
-features without having to know how to right-click.  You'll see styles
-for both the toolbar buttons and the corresponding entries in the 
-contextual menu.
-************************************************************************************************************************************************
-*/ 
-
-/* the generic style for all playlist toolbarbuttons */
-#playlist_toolbar > button[disabled="true"]
-{
-  -moz-border-radius: 3px !important;
-  border: 1px solid !important;
-  padding: 0px 5px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  height: 25px !important;  
-}
-
-#playlist_toolbar > button[disabled="false"]
-{
-  -moz-border-radius: 3px !important;
-  padding: 0px 5px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-  height: 25px !important;  
-}
-
-button
-{
-	-moz-border-radius: 3px !important;
-	border: 1px solid !important;
-}
-
-/* Toolbar: Play Button */
-button#library_cmd_play
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_play:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_play[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_play
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_play[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_play[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: remove Button */
-button#library_cmd_remove
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_remove:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_remove[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_remove
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_remove[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_remove[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: edit Button */
-button#library_cmd_edit
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_edit:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_edit[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_edit
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_edit[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_edit[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-
-/* Toolbar: addtoplaylist Button */
-button#library_cmd_addtoplaylist
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_addtoplaylist:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_addtoplaylist[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_addtoplaylist
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_addtoplaylist[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_addtoplaylist[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: burntocd Button */
-button#library_cmd_burntocd
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_burntocd:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_burntocd[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_burntocd
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_burntocd[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_burntocd[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: device Button */
-button#library_cmd_device
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_device:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_device[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_device
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_device[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_device[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: addtolibrary Button */
-button#library_cmd_addtolibrary
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_addtolibrary[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_addtolibrary[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_addtolibrary
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_addtolibrary[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_addtolibrary[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: download Button */
-button#library_cmd_download
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_download:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_download[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_download
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_download[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_download[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: subscribe Button */
-button#library_cmd_subscribe
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_subscribe:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_subscribe[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_subscribe
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_subscribe[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_subscribe[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: pause Button */
-button#library_cmd_pause
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_pause:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_pause[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_pause
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_pause[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_pause[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: resume Button */
-button#library_cmd_resume
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_resume:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_resume[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_resume
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_resume[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_resume[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: switch to downloads Button */
-button#library_cmd_showdlplaylist
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_showdlplaylist:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_showdlplaylist[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_showdlplaylist
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_showdlplaylist[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_showdlplaylist[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/* Toolbar: switch to webplaylist Button */
-button#library_cmd_showwebplaylist
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_showwebplaylist:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-button#library_cmd_showwebplaylist[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_showwebplaylist
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_showwebplaylist[active="true"]:hover
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-menuitem#library_cmd_showwebplaylist[disabled="true"]
-{
-  height: 8px !important;
-  width: 11px !important;
-}
-
-/** 
-************************************************************************************************************************************************
-THE SPLITTERS aka THE GRIPPY
-These let the user resize the frames in your box model.
-************************************************************************************************************************************************
-*/ 
-
-/* Spliters to resize the panes */
-
-.vert_splitter,
-#search_splitter,
-#vert_splitter,
-#filter_splitter
-{
-  width: 7px !important;
-  min-width: 7px !important;
-  max-width: 7px !important;
-  height: 50px !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  cursor: w-resize;
-}
-
-#search_splitter
-{
-  width: 7px !important;
-  min-width: 7px !important;
-  max-width: 7px !important;
-  height: 50px !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  cursor: w-resize;
-  margin: 0px 0px 0px 2px !important;
-}
-
-.vert_splitter[state="collapsed"],
-#vert_splitter[state="collapsed"]
-{
-  width: 10px !important;
-  -moz-border-radius-topleft: 3px !important;
-  -moz-border-radius-bottomleft: 3px !important;
-  -moz-border-radius-topright: 3px !important;
-  -moz-border-radius-bottomright: 3px !important;
-  border: 1px solid !important;
-}
-
-#vert_splitter[state="collapsed"]
-{
-  margin-right: 7px !important;
-}
-
-.horz_splitter,
-#horz_splitter,
-#playlist_web_split > grippy
-{
-  width: 50px !important;
-  height: 7px !important;
-  min-height: 7px !important;
-  max-height: 7px !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: 0px solid transparent !important;
-  cursor: n-resize;
-}
-
-#control_pane_splitter
-{
-  width: 50px !important;
-  height: 7px !important;
-  min-height: 7px !important;
-  max-height: 7px !important; /* Mac doesn't want to respect my height value without this? */
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  margin: 3px 0px 3px 0px;
-  cursor: n-resize;
-}
-
-#control_pane_splitter[state="collapsed"]
-{
-  width: 50px !important;
-  height: 7px !important;
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-  border: none !important;
-  margin: 3px 3px 3px 3px;
-  cursor: n-resize;
-}
-
-#horz_splitter[state="collapsed"]
-{
-  height: 7px !important;
-  min-height: 7px !important;
-  max-height: 7px !important;
-}
-
-#playlist_web_split[state="collapsed"]
-{
-  height: 7px !important;
-  min-height: 7px !important;
-  max-height: 7px !important;
-}
-/* END SPLITTERS **/
 
 /** 
 ************************************************************************************************************************************************
@@ -1298,10 +103,11 @@ THE MAIN PANE
 
 #main_pane_border
 {
-  -moz-border-radius-topright: 3px !important;
-  -moz-border-radius-topleft: 3px !important;
-  border: 1px solid !important;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-topleft: 5px;
+  border: 1px solid;
 }
+
 
 /** 
 ************************************************************************************************************************************************
@@ -1310,21 +116,24 @@ THE STATUS PANE
 */ 
 #frame_status_pane
 {
-  height: 10px !important;
+  margin: 3px 0px 0px 0px;
+}
+
+#status_status_box 
+{
+  margin: 3px 0px 0px 0px;
 }
 
 #status_progress_box
 {
-  -moz-appearance:none !important;
-  height: 5px !important;
-  width: 100px !important;
-  overflow: hidden !important;
+  width: 100px;
+  overflow: hidden;
 }
 
 #status_progress { 
-   margin: 2px 0px 0px 0px !important;
-   border: none !important;
-   min-width: 100px !important; 
+   margin: 2px 0px 0px 0px;
+   border: none;
+   min-width: 100px; 
 } 
 
 
@@ -1333,29 +142,17 @@ THE STATUS PANE
 RESIZERS
 ************************************************************************************************************************************************
 */ 
-#frame_resize_t
-{
-  width: 9px !important;
-  height: 9px !important;
-}
 
-#frame_resize_to
-{
-  width: 9px !important;
-  height: 9px !important;
-}
-
-#frame_resize_m
-{
-  width: 9px !important;
-  height: 9px !important;  
-}
-
+/** TODO Rename **/
+#frame_resize_t,
+#frame_resize_to,
+#frame_resize_m,
 #frame_resize_mo
 {
   height: 9px !important;
   width: 9px !important;
 }
+
 
 /** 
 ************************************************************************************************************************************************
@@ -1364,618 +161,127 @@ Contains the Main Playback Controls and the Dashboard.
 ************************************************************************************************************************************************
 */
 
-
 #control_left_box
 {
-  width: 138px !important;
+  width: 138px;
+}
+
+#playbutton_box
+{
+  width: 130px;
+  height: 36px;
+}
+
+#volume_box
+{
+  padding-top: 0px;
+  margin-top: 5px;
 }
 
 #control_right_box
 {
- width: 500px !important;
-}
-
-#face_left_box
-{
-  width: 35px !important;
+ width: 500px;
 }
 
 #face_middle_box
 {
-
-  height: 45px !important;
+  height: 45px;
 }
 
-#face_right_box
-{
-  width: 35px !important;
-}
 
-/** 
-************************************************************************************************************************************************
-DASHBOARD
-************************************************************************************************************************************************
-*/
 
-#dashboard_box
-{
-  height: 50px !important;
-}
-
-#dashboard_bkgd
-{
-  height: 50px !important;
-}
-
-#dashboard_w
-{
-  width: 25px !important;
-  height: 50px !important;
-  background-repeat: no-repeat !important;
-}
-#dashboard_e
-{
-  width: 25px !important;
-  height: 50px !important;
-  background-repeat: no-repeat !important;
-}
-
-#intro_box
-{
-  height: 50px !important;
-}
-
-#intro_box_bkgd
-{
-  height: 50px !important;
-}
-
-#intro_box_image
-{
-  width: 45px !important;
-  height: 50px !important;
-  background-repeat: no-repeat !important;
-}
-
-#songbird_text_artistalbum,
-#songbird_box_title
-{
-  height: 14px !important;
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 0px !important;
-}
-
-/* the texties */
-#songbird_text_title
-{ 
-  width: auto !important; /* was: max-width: auto !important; */
-  color: #1F292B !important;
-  overflow: hidden !important;
-  font-family: tahoma, arial !important;
-}
-#songbird_text_artist
-{
-  color: #1F292B !important;
-  overflow: hidden !important;
-  font-family: tahoma, arial !important;
-}
-#songbird_text_album
-{
-  color: #1F292B !important;
-  overflow: hidden !important;
-  font-family: tahoma, arial !important;
-}
-#songbird_text_slash
-{
-  font-family: tahoma, arial !important;
-  color: #1F292B !important;
-}
-#songbird_text_time
-{
-  font-family: tahoma, arial !important;
-  color: #1F292B !important; 
-}
-
-#songbird_text_time_total
-{
-  font-family: tahoma, arial !important;
-  color: #1F292B !important;
-}
-
-#songbird_text_time_elapsed
-{
-  font-family: tahoma, arial !important;
-  color: #1F292B !important;
-}
-
-/* the seekbar slider */
-#songbird_seekbar_slider
-{
-  height: 10px !important;
-}
-#songbird_seekbar_thumb
-{
-  width: 21px !important;
-  height: 8px !important;
-  border: 1px solid !important;
-}
-#songbird_seekbar_thumb > gripper
-{
-  height: 8px !important;
-}
-#songbird_seekbar_progress
-{
-  height: 10px !important;
-}
-#songbird_seekbar_progress > .progress-bar
-{
-  height: 10px !important;
-}
-#songbird_seekbar_progress > .progress-remainder
-{
-  height: 10px !important;
-}
-#songbird_seekbar
-{
-  border: 1px solid !important;
-  height: 10px !important;
-}
-
-/* the faceplate progressmeter */
-.faceplate_progressmeter
-{
-  border: 1px solid !important;
-  height: 10px !important;
-  min-height: 10px !important;
-}
-
-/** 
-************************************************************************************************************************************************
-Main Playback Controls
-Play/Pause, Previous (back), Next (forward)
-************************************************************************************************************************************************
-*/
-
-/* the play button */
-#playbutton_box
-{
-  width: 130px !important;
-  height: 36px !important;
-  padding-left: 7px !important;
-}
-#songbird_btn_play
-{  
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-}
-
-/* the pause button */
-#songbird_btn_pause
-{
-  background-repeat: no-repeat !important;
-  background-position: center center !important;
-}
-
-/* the back button */
-
-#songbird_btn_back
-{
-  margin: 2px 0px 0px 4px !important;
-  width: 32px !important;
-  height: 32px !important;
-  background-repeat: no-repeat !important;
-}
-
-/* the fwd button */
-#songbird_btn_fwd
-{
-  margin: 2px 13px 0px 0px !important;
-  width: 32px !important;
-  height: 32px !important;
-  background-repeat: no-repeat !important;
-}
-
-/* the curr button */
-#songbird_btn_curr
-{
-  width: 35px !important;
-  height: 20px !important;
-}
-
-/* the next button */
-#songbird_btn_next
-{
-  width: 35px !important;
-  height: 20px !important;
-}
-
-/* the rep1 button */
-#songbird_btn_rep
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-}
-
-/* the rep1_on button */
-#songbird_btn_rep1
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-}
-
-/* the repall button */
-#songbird_btn_repall
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-}
-
-/* the shuf button */
-#songbird_btn_shuf
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-}
-
-/* the shuf_on button */
-#songbird_btn_shuf_on
-{
-  top: 0px !important;
-  left: 0px !important;
-  width: 35px !important;
-  height: 20px !important;
-}
-/* END CONTROL BOX **/
-
-/** 
+/**
 ************************************************************************************************************************************************
 WEB BAR
 Browser Toolbar, Address Box, and Url-Slurper Button
 ************************************************************************************************************************************************
 */
 
-/* the box with the url image and the url textbox */
-#browser_url_box
+
+#browser_toolbar
 {
-  margin: 2px 0px 2px 3px !important;
-  padding: 4px 3px 2px 3px !important;
-  -moz-border-radius: 3px !important;
+  border-bottom: 1px solid; 
+  height: 35px;
+  padding-left: 2px;
 }
+
+
+
+/* the box with the url image and the url textbox */
+#browser_url
+{
+  margin: 2px;
+  padding: 0px;
+  border: 1px solid;
+  -moz-border-radius: 5px;
+  border-top-color: #535751;
+  border-left-color: #535751;
+  border-right-color: #99A195;
+  border-bottom-color: #99A195;
+  background-color: #000; 
+  height: 30px;
+  min-height: 30px;
+  color: #FFF;
+}
+
 
 #browser_url_image
 {
-  -moz-appearance: none !important; /* grrrr! */
-  height: 16px !important;
-  width: 16px !important;
+  height: 16px;
+  width: 16px;
   max-height: 16px !important;
   max-width: 16px !important;
   min-height: 16px !important;
   min-width: 16px !important;
-  margin: 3px 0px 3px 5px !important;
+  margin: 3px 5px 3px 5px;
 }
 
-#browser_url,
-.mainwin_location
-{
-  margin: 0px 0px 0px 5px !important;
-  border: none !important;
-}
-
-#browser_url .textbox-input,
-#browser_url .textbox-input:focus
-{
-  border: none !important;
-  padding: 2px 0px 0px 0px !important;
-}
-
-#browser_toolbar
-{
-  border-bottom: 1px solid !important; 
-  height: 35px !important;
-  padding-left: 2px !important;
-}
 
 #browser_toolbar button 
 {
-  height: 30px !important;
-  /* Must have an odd width so that odd width icons can be centered */
-  width: 31px !important;  
-  -moz-border-radius: 3px !important;
-  padding: 0px 3px 0px 0px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
- }
+  height: 30px;
+  width: 30px;  
+  padding: 0px;
+  margin: 2px 0px 2px 2px;
+  border: 1px solid;
+  min-width: 0px;
+}
+
+#browser_toolbar .button-text
+{
+  display: none;  
+}
  
-#browser_toolbar button[disabled="true"],
-#browser_toolbar button[disabled="true"]:hover
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-
-#browser_back[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-
-#browser_refresh[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-#browser_stop[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-#browser_fwd[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-#browser_home[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-#browser_bookmark[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-#browser_playlist[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
-
-#browser_download[disabled="true"]
-{
-  height: 30px !important;
-  width: 31px !important;
-  -moz-border-radius: 3px !important;
-  margin: 2px 0px 2px 2px !important;
-  border: 1px solid !important;
-}
 /* END WEB BAR */
 
 
-/** 
-************************************************************************************************************************************************
-SEARCH WIDGET
-************************************************************************************************************************************************
-*/
-
-#search_widget
-{
-  width: auto !important;
-  min-width: 0px !important;
-  height: 21px !important;
-}
-
-#search_widget .menulist-editable-box
-{
-  margin: 3px 0px 0px 0px !important;
-  border: none !important;
-}
-
-#search_widget .menulist-editable-input,
-#search_widget .menulist-editable-input:focus
-{
-  border: none !important;
-}
-
-button[class="sb_faceplate"] .button-icon
-{
-  margin: 0px 0px 0px 5px !important; 
-}
-
-#search_service_list
-{
-  width: 100px !important;
-  min-width: 50px !important;
-  margin: 3px 0px 3px 5px !important; 
-}
-
-
-#search_widget
-{ 
-  border: 1px solid !important; 
-  -moz-border-radius: 3px !important;
-  margin: 2px 2px 2px 2px !important; 
-} 
-
-#search_widget input
-{
-  padding-top: 2px !important;
-}
-
-.button-menu-dropmarker
-{
-  background-color: transparent !important;
-  background-repeat: no-repeat !important;
-  height: 9px !important;
-  width: 9px !important;
-}
-/* END SEARCH WIDGET **/
 
 /** 
 ************************************************************************************************************************************************
 SPINNER for the browser to show network activity.
 ************************************************************************************************************************************************
 */
-.spinner_spin
-{
-  background-repeat: no-repeat !important;
-  margin: 10px 0px 10px 0px !important;
-  min-height: 16px !important;
-  max-height: 16px !important;
-  min-width: 16px !important;
-  max-width: 16px !important;
-  height: 16px !important;
-  width: 16px !important;
-}
+
+/** TODO should probably become an XBL widget? **/
+
+.spinner_spin,
 .spinner_stopped
 {
-  background-repeat: no-repeat !important;
-  margin: 10px 0px 10px 0px !important;
-  min-height: 16px !important;
-  max-height: 16px !important;
-  min-width: 16px !important;
-  max-width: 16px !important;
-  height: 16px !important;
-  width: 16px !important;
-}
-
-
-/** 
-************************************************************************************************************************************************
-VOLUME
-Mute and Slider
-************************************************************************************************************************************************
-*/
-#mute_off
-{
-  width: 12px !important;
-  height: 12px !important;
-  background-repeat: no-repeat !important;
-}
-
-#mute_on
-{
-  width: 12px !important;
-  height: 12px !important;
-  background-repeat: no-repeat !important;
-}
-
-#volume_box
-{
-  height: 16px !important;    
-  padding-top: 0px !important;
-  margin-top: 5px !important;
-}
-
-#songbird_volume
-{
-  top: 5px !important;
-  left: 5px !important;
-  width: 104px !important;
-  height: 14px !important;
-}
-
-/*
-*/
-#songbird_volume > progress_slider,
-#songbird_volume gripper
-{  
-  padding: 0px 0px 0px 0px !important;
-  border: none !important;
+  background-repeat: no-repeat;
+  margin: 10px 0px 10px 0px;
+  min-height: 16px;
+  max-height: 16px;
+  min-width: 16px;
+  max-width: 16px;
+  height: 16px;
+  width: 16px;
 }
 
 
 
-#songbird_volume_thumb
-{
-  width: 36px !important;
-  height: 14px !important;
-}
-
-#songbird_volume_progress
-{
-  top: 0px !important;
-  left: 0px !important; /* previously 20px, 1 thumb-width in */
-  width: 104px !important; /* previously 78px, 2 thumb-widths less than the actual seekbar + 4 to keep us always under the thumb */
-  height: 14px !important;
-}
-
-#songbird_volume_e
-{
-  margin: 0px 0px 0px 0px !important;
-  height: 5px !important;
-  width: 3px !important;
-  background-repeat: no-repeat !important;
-}
-#songbird_volume_w
-{
-  margin: 0px 0px 0px 0px !important;
-  height: 5px !important;
-  width: 3px !important;
-  background-repeat: no-repeat !important;
-}
 
 
 
-/** 
-************************************************************************************************************************************************
-HELP CALLOUT
-Callout box used to give extra information
-************************************************************************************************************************************************
-*/
-
-
-#callout_bar_content 
-{
-  -moz-border-radius: 10px !important; 
-  margin: 10px 10px 0px 10px !important; 
-  height: 30px !important;    
-  padding: 10px 10px 10px 10px !important;
-}
-
-callout label, callout-once label
-{
-  font-family: Georgia, serif !important;
-  font-size: large !important;
-}
-
-#callout_bar_arrow
-{
-  height: 10px !important;
-  width: 20px !important;
-  padding: 0px 0px 0px 0px !important;
-  margin: 0px 0px 0px 30px !important;
-  background-repeat: no-repeat !important;
-}
-
-                        
                         
 
 

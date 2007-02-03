@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <!--?xml-stylesheet href="chrome://songbird/skin/cardinal.css" type="text/css" title="Other Skin"?-->
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
+
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
+
 
 <!--
 /*
@@ -35,10 +39,11 @@
  */
 -->
 
+
 <window
   id="frame_outer"
   hidechrome="true"
-  class="sb_faceplate, mainwin"
+  class="mainwin"
   onload="SBInitialize();onSBMainwinDataLoad();"
   onunload="SBUninitialize();onSBMainwinDataUnload();"
   onclose="/*return false;*/ quitApp();" 
@@ -54,211 +59,85 @@
 >
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+  
   <windowregion/> <!-- No matter what mig says, don't take this out!! -->
+  
+  <popupset id="popupset_main" />
+
 
   <stack flex="1" id="window_parent"
     ondragover="nsDragAndDrop.dragOver( event, SBDropObserver )"
     ondragdrop="nsDragAndDrop.drop( event, SBDropObserver )"
   >
-    <vbox class="sb_faceplate" flex="1">
-      <hbox class="sb_faceplate">
-        <image id="mainwin_chrome_nw" class="sb_faceplate"/>
-        <image id="mainwin_chrome_n" class="sb_faceplate" flex="1"/>
-        <image id="mainwin_chrome_ne" class="sb_faceplate"/>
+    <!-- Can be used to place images around windows. Currently unused -->
+    <vbox flex="1" id="mainwin_chrome_box">
+      <hbox >
+        <image id="mainwin_chrome_nw"/>
+        <image id="mainwin_chrome_n" flex="1"/>
+        <image id="mainwin_chrome_ne"/>
       </hbox>
-      <hbox class="sb_faceplate" flex="1">
-        <image id="mainwin_chrome_w" class="sb_faceplate"/>
+      <hbox flex="1">
+        <image id="mainwin_chrome_w" />
         <spacer flex="1"/>
-        <image id="mainwin_chrome_e" class="sb_faceplate"/>
+        <image id="mainwin_chrome_e" />
       </hbox>
-      <hbox class="sb_faceplate">
-        <image id="mainwin_chrome_sw" class="sb_faceplate"/>
-        <image id="mainwin_chrome_s" class="sb_faceplate" flex="1"/>
-        <image id="mainwin_chrome_se" class="sb_faceplate"/>
+      <hbox >
+        <image id="mainwin_chrome_sw" />
+        <image id="mainwin_chrome_s"  flex="1"/>
+        <image id="mainwin_chrome_se" />
       </hbox>
     </vbox>
 
-    <vbox class="sb_faceplate" flex="1">
-      <hbox class="sb_faceplate" id="frame_resizers_top">
+    <vbox flex="1">
+  
+      <hbox id="frame_resizers_top">
         <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topleft" style="cursor: nw-resize;"/>
         <resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="top" style="cursor: n-resize;" flex="1"/>
         <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="topright" style="cursor: ne-resize;"/>
-        <x_resizer hidden="true" id="frame_resize_to" dir="topleft"/>
-        <x_resizer hidden="true" id="frame_resize_t" dir="top" flex="1"/>
-        <x_resizer hidden="true" id="frame_resize_to" dir="topright"/>
       </hbox>
 
-      <vbox class="sb_faceplate" id="frame_outer_pane" flex="1">
+      <vbox id="frame_outer_pane" flex="1">
 
-        <hbox class="sb_faceplate" id="frame_middle_resizers" flex="1">
+        <hbox id="frame_middle_resizers" flex="1">
 
-          <vbox class="sb_faceplate" id="frame_resizers_left">
+          <vbox id="frame_resizers_left">
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topleft" style="cursor: nw-resize;"/>
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="left" style="cursor: w-resize;" flex="1"/>
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
-            <x_resizer hidden="true" id="frame_resize_mo" dir="topleft" />
-            <x_resizer hidden="true" id="frame_resize_m" dir="left" flex="1"/>
-            <x_resizer hidden="true" id="frame_resize_mo" dir="bottomleft"/>
           </vbox>
 
-          <vbox id="mainwin_chrome_bkgd" class="sb_faceplate" flex="1">
+          <vbox flex="1">
 
-            <!-- DRAGGER AND SYSTEM BUTTONS -->
-            <hbox id="songbird_top" class="sb_faceplate" >
+            <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
+            <!-- TODO: Clean up.  Leaving as is until the mac topbar is changed -->
+            <hbox id="songbird_top">
               <image id="app_icon" ondblclick="quitApp( );"/>
-              <label id="mainwin_app_title" value="&window.dev.title;" class="sb_faceplate"/>
+              <label id="mainwin_app_title" value="&window.dev.title;" />
               <spacer width="5"/>
-              <menubar id="songbird_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)">
-                <menu id="songbird_menu_item" label="&menu.file;" class="sb_faceplate" accesskey="&menu.file.accesskey;">
-                  <menupopup id="file-popup">
-                    <menuitem id="file.new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-                    <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
-                    <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
-                    <menuitem id="file.file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;"/>
-                    <menuitem id="file.url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;"/>
-                    <menuitem id="file.playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="file.scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
-                    <menuitem id="file.dlfolder" class="menuitem-iconic" label="&menu.file.dlfolder;" accesskey="&menu.file.dlfolder.accesskey;"/>
-                    <menuitem id="file.watch" class="menuitem-iconic" label="&menu.file.watch;" accesskey="&menu.file.watch.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="file.window" key="miniplayer-key" class="menuitem-iconic" label="&menu.file.mini;" accesskey="&menu.file.mini.accesskey;"/>
-                    <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
-                      <menupopup id="locale.popup" onpopupshowing="fillLocaleList(this);" />
-                    </menu>
-                    <menu id="songbird_menu_feathers" label="&menu.feathers;" class="menuitem-iconic" accesskey="&menu.feathers.accesskey;">
-                      <menupopup id="feathers.popup" onpopupshowing="fillFeathersList(this);" />
-                    </menu>
-                    <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
-                    <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
-                    <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
-                    <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
-                    <menuitem id="menu.dominspector" key="dominspector-key" label="DOM Inspector" class="menuitem-iconic"/>
-
-                    <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
-                    <menuseparator id="menu_FileQuitSeparator"/>
-                    <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"/>
-
-                  </menupopup>
-                </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
-                <menu id="songbird_menu_item_edit" label="&menu.edit;" class="sb_faceplate" accesskey="&menu.edit.accesskey;">
-                  <menupopup id="edit-popup">
-                    <menuitem id="edit.undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="edit.cut" key="cut-key" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-                    <menuitem id="edit.copy" key="copy-key" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-                    <menuitem id="edit.paste" key="paste-key" disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
-                    <menuitem id="edit.clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="edit.selall" key="selectall-key" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
-                    <menuitem id="edit.selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
-                  </menupopup>
-                </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
-                <menu id="songbird_menu_item_controls" label="&menu.controls;" class="sb_faceplate" accesskey="&menu.controls.accesskey;">
-                  <menupopup id="controls-popup">
-                    <menuitem id="control.play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="control.next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
-                    <menuitem id="control.prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="control.shuf" label="&menu.control.shuf;" type="checkbox" checked="true" accesskey="&menu.control.shuf.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="control.repa" label="&menu.control.repa;" type="checkbox" checked="true" accesskey="&menu.control.repa.accesskey;"/>
-                    <menuitem id="control.rep1" label="&menu.control.rep1;" type="checkbox" checked="true" accesskey="&menu.control.rep1.accesskey;"/>
-                    <menuitem id="control.repx" label="&menu.control.repx;" type="checkbox" checked="true" accesskey="&menu.control.repx.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="control.jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" checked="false" accesskey="&menu.control.jumpto.accesskey;"/>
-                  </menupopup>
-                </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
-                <menu id="songbird_menu_item_services" label="&menu.services;" class="sb_faceplate" accesskey="&menu.services.accesskey;">
-                  <!-- TRY FILLING THE MENUBAR WITH THE SAME DATA AS THE SERVICE PANE? -->
-                  <menupopup 
-                    id="services-popup"
-                    datasources="rdf:Servicesource"
-                    ref="NC:ServicesourceFlat"
-                >
-<!--  Disabled, since content is duplicated in bookmarks
-                    <menuitem id="services.browse" label="&menu.services.browse;"/>
-                    <menuseparator/>   
--->
-                    <template>                 
-                      <rule>
-                        <menuitem uri="rdf:*"
-                          id="rdf:http://home.netscape.com/NC-rdf#Label" 
-                          label="rdf:http://home.netscape.com/NC-rdf#Label"
-                          value="rdf:http://home.netscape.com/NC-rdf#URL"
-                          class="menuitem-iconic"
-                          image="rdf:http://home.netscape.com/NC-rdf#Icon"
-                      />
-                      </rule>
-                    </template>
-                  </menupopup>
-                </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
-                <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate" accesskey="&menu.devices.accesskey;">
-                  <menupopup id="devices-popup">
-                    <menuitem label="&menu.devices.nodevices;"/>
-                  </menupopup>
-                </menu>
-                <spacer id="songbird_menu_spacer" label="" class="sb_faceplate"/>
-                <menu id="songbird_menu_item_help"
-                      label="&menu.help;"
-                      class="sb_faceplate"
-                      accesskey="&menu.help.accesskey;"
-                      onpopupshowing="buildHelpMenu();">
-                  <menupopup id="help-popup">
-                    <menuitem id="help.bugz"
-                              label="&menu.help.bugz;"
-                              value="&menu.help.bugz.url;"
-                              accesskey="&menu.help.bugz.accesskey;"/>
-                    <menuitem id="help.topics"
-                              label="&menu.help.topics;"
-                              value="&menu.help.topics.url;"
-                              key="help-key" 
-                              accesskey="&menu.help.help.accesskey;"/>
-                    <menuseparator/>
-                    <menuitem id="updateCmd"
-                              label="&menu.updateCmd.label;"
-                              accesskey="&menu.updateCmd.accessKey;"
-                              oncommand="checkForUpdates();"/>
-                    <menuseparator/>
-                    <menuitem id="aboutName"
-                              label="&menu.help.about;"
-                              accesskey="&menu.help.about.accesskey;"/>
-                  </menupopup>
-                </menu>
-
-              </menubar>
-
+              <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
               <spacer flex="1"/>
-              <button id="sysbtn_minimode" class="sb_faceplate" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
+              <button id="sysbtn_minimode" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
               <spacer width="5"/>
-              <button id="sysbtn_minimize" class="sb_faceplate" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
+              <button id="sysbtn_minimize" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
               <spacer width="5"/>
-              <checkbox id="sysbtn_maximize" class="sb_faceplate" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
+              <checkbox id="sysbtn_maximize" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
               <spacer width="5"/>
-              <button id="sysbtn_close" class="sb_faceplate" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
+              <button id="sysbtn_close" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
             </hbox>
-
-            <spacer height="7"/>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
             <hbox id="frame_mini" hidden="true">
-              <!-- resizer id="mini_resize_w" dir="left" style="cursor: w-resize;"/ -->
               <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
               <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
               <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
 
               <vbox id="mini_volume">
-                <hbox id="mini_volume_box" class="sb_faceplate">
-                  <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
+                <hbox id="mini_volume_box">
+                  <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>
                   <spacer width="8"/>
                   <hbox>
-                    <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-                    <player_volume id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="sb_faceplate miniplayer" maxpos="100"/>
+                    <spacer width="3" height="5" id="songbird_volume_w"/>
+                    <player_volume id="songbird_volume" sliderid="mini_volume_slider" thumbid="mini_volume_thumb" progressid="mini_volume_progress" orient="horizontal" class="miniplayer" maxpos="100"/>
                     <spacer width="3" height="5" id="songbird_volume_e"/>
                   </hbox>
                 </hbox>
@@ -289,128 +168,79 @@
                 <button id="mini_btn_max"     class="sb_faceplate" oncommand="SBMainWindowOpen( );" hidden="true" />
                 <button id="mini_btn_exit"    class="sb_faceplate" oncommand="quitApp( );" hidden="true" />
               </hbox>
-              <!-- resizer id="mini_resize_w" dir="right" style="cursor: w-resize;"/ -->
             </hbox>
 
-            <!-- PUT THE POPUPSET INSIDE SOMETHING THAT CAN NEVER BE DISPLAYED -->
-            <hbox width="0" height="0" style="overflow: hidden;">
-              <popupset>
-                <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
-                <popup id="html_context_menu" oncommand="onHTMLContextMenu(event.target)">
-                  <menuitem id="html.context.open" label="&html.context.open;"/>
-                  <menuitem id="html.context.openexternal" label="&html.context.openexternal;"/>
-                  <menuitem id="html.context.play" label="&html.context.play;"/>
-                  <menuitem id="html.context.add"  label="&html.context.add;"/>
-                  <menuitem id="html.context.playlist"  label="&html.context.playlist;"/>
-                  <menuseparator/>
-                  <menuitem id="html.context.copytoclipboard" label="&html.context.copytoclipboard;"/>
-                </popup>
-                <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
-                <popup id="playlist_edit_popup" class="sb_faceplate" ignorekeys="true">
-                  <textbox id="playlist_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
-                </popup>
-                <!-- EDIT POPUP FOR THE SERVICE PANE -->
-                <popup id="service_edit_popup" class="sb_faceplate" ignorekeys="true" onpopuphiding="onServiceEditHide(event);">
-                  <textbox id="service_edit" multiline="false" wrap="off" class="sb_faceplate sb_faceplate_edit" onkeypress="onServiceEditKeypress( event );" onblur="onServiceEditChange()"/>
-                </popup>
-              </popupset>
-            </hbox>
 
             <!-- inner_frame -->
-            <vbox id="frame_inner_pane" class="sb_faceplate" flex="1">
+            <vbox id="frame_inner_pane" flex="1">
               
               <!-- CONTROL PANE -->
-              <hbox id="frame_control_pane" pack="center" align="center" class="sb_faceplate" src="control_pane/control_pane.xul">
+              <hbox id="frame_control_pane" pack="center" align="center">
 
-                <vbox id="control_left_box" class="sb_faceplate" pack="center" align="center">
-                  <spacer flex="1"/>
+                <vbox id="control_left_box" pack="center" align="center">
                   <!-- PLAY BUTTONS -->
-                  <hbox id="playbutton_box" class="sb_faceplate">
-                    <player_back id="songbird_btn_back"  class="sb_faceplate" tooltiptext="&tooltip.control.back;" />
-                    <spacer width="2"/>
-                    <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" class="sb_faceplate" flex="1"/>
-                    <!-- 
-                  <stack id="songbird_btn_play_pause" class="sb_faceplate" flex="1">
-                    <button id="songbird_btn_play"  class="sb_faceplate" oncommand="onPlay( );" tooltiptext="&tooltip.control.play;" />
-                    <button id="songbird_btn_pause" class="sb_faceplate" oncommand="onPause( );" tooltiptext="&tooltip.control.pause;" />
-                  </stack>
-                  -->
-                    <spacer width="2"/>
-                    <player_forward id="songbird_btn_fwd" class="sb_faceplate" tooltiptext="&tooltip.control.fwd;" /> -->
+                  <hbox id="playbutton_box" pack="center" align="center">
+                    <player_back id="songbird_btn_back"   tooltiptext="&tooltip.control.back;" />
+                    <player_playpause id="songbird_btn_play_pause" playid="songbird_btn_play" pauseid="songbird_btn_pause" />
+                    <player_forward id="songbird_btn_fwd" tooltiptext="&tooltip.control.fwd;" /> 
                   </hbox>
-                  <hbox id="volume_box" class="sb_faceplate">
-                    <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off" class="sb_faceplate"/>
-                    <spacer width="2"/>
-                    <vbox>
-                      <spacer flex="1"/>
-                      <hbox>
-                        <spacer class="sb_faceplate" width="3" height="5" id="songbird_volume_w"/>
-                        <player_volume id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" class="sb_faceplate" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
-                        <spacer width="3" height="5" id="songbird_volume_e"/>
-                      </hbox>
-                      <spacer flex="1"/>
-                    </vbox>
+                  <hbox id="volume_box" pack="center" align="center">
+                    <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>   
+                    <spacer id="songbird_volume_w"/>
+                    <player_volume id="songbird_volume" sliderid="songbird_volume_slider" thumbid="songbird_volume_thumb" progressid="songbird_volume_progress" flex="1" orient="horizontal" maxpos="100" tooltiptext="&tooltip.control.volume;"/>
+                    <spacer id="songbird_volume_e"/>
                   </hbox>
-                  <spacer flex="1"/>
                 </vbox>
 
-                <!-- SPACER -->
-                <spacer id="control_middle_spacer" flex="1" height="60"/>
+                <spacer id="control_middle_spacer" flex="1"/>
 
-                <hbox id="control_right_box" class="sb_faceplate">
+                <hbox id="control_right_box">
+                
                   <!-- REPEAT/SHUFFLE -->
-                  <vbox id="face_left_box" class="sb_faceplate">
-                    <spacer height="2"/>
-                    <player_repeat class="sb_faceplate" repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
-                    <spacer height="5"/>
-                    <player_shuffle class="sb_faceplate" shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
+                  <vbox id="face_left_box" >
+                    <player_repeat  repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
+                    <player_shuffle  shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
                   </vbox>
-                  <spacer width="6"/>
-
                   <spacer width="10" id="dashboard_w"/>
-                  <vbox id="face_middle_box" flex="1" class="sb_faceplate">
+                  <vbox id="face_middle_box" flex="1" >
                     <faceplate id="main_faceplate" style="-moz-box-orient: vertical"/>
                   </vbox>
                   <spacer width="10" id="dashboard_e"/>
 
                   <!-- CURRENT TRACK / NEXT SERVICE -->
-                  <spacer width="6"/>
-                  <vbox id="face_right_box" class="sb_faceplate">
-                    <spacer height="2"/>
-                    <button id="songbird_btn_curr" class="sb_faceplate" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
-                    <spacer height="5"/>
-                    <!-- button id="songbird_btn_next" class="sb_faceplate" oncommand="onNextService( );" tooltiptext="&tooltip.control.service;"/ -->
-                    <clickholdbutton id="songbird_btn_next" class="sb_faceplate" popupanchor="topleft" popupalign="bottomleft" oncommand="onFaceplateMenu(event.target)"/>
+                  <vbox id="face_right_box">
+                    <button id="songbird_btn_curr" oncommand="onCurrentTrack( );" tooltiptext="&tooltip.control.curtrack;"/>
+                    <clickholdbutton id="songbird_btn_next" popupanchor="topleft" popupalign="bottomleft" oncommand="onFaceplateMenu(event.target)"/>
                   </vbox>
                 </hbox>
 
-                <!-- SPACER -->
-                <spacer flex="1" height="60"/>
+                <spacer flex="1"/>
               </hbox>
 
-              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane" orientation="vertical">
+              <smartsplitter id="control_pane_splitter" class="horz_splitter" state="open" collapse="before" resizebefore="closest" hideonopen="frame_mini" showoncollapse="frame_mini" metricscategory="player" metricsid="collapse.controlpane"
+              >
                 <grippy/>
               </smartsplitter>
 
-              <vbox class="sb_faceplate" id="frame_middle_pane" flex="1">
-                <hbox class="sb_faceplate" id="frame_middle_pane_hbox" flex="1">
+              <vbox id="frame_middle_pane" flex="1">
+                <hbox id="frame_middle_pane_hbox" flex="1">
 
                   <!-- SERVICE PANE -->
-                  <vbox class="sb_faceplate, service-pane">
-                    <hbox class="sb_faceplate" flex="1">
+                  <vbox id="frame_servicetree_pane">
+                    <hbox flex="1">
+                      <!--  TODO: This is not a frame! change the id. -->
                       <servicetree id="frame_servicetree" flex="1"/>                  
                     </hbox>
                     <!-- Service Pane Button Bar, Buttons for adding a new service or playlist-->
                     <!-- For now just hijacking the file menu implementation.. -->
                     <!-- TODO: over state, up arrow, remove periods from all IDs -->
-                    <hbox class="sb_faceplate" id="frame_service_buttonbar">
-                      <clickholdbutton id="file.new"  flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft" class="sb_faceplate"  oncommand="onMenu(event.target)">
+                    <hbox id="frame_service_buttonbar">
+                      <clickholdbutton id="file.new"  flex="1" label="&menu.file.new;" popupanchor="topleft" popupalign="bottomleft"  oncommand="onMenu(event.target)">
                         <menuitem id="file.new" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
                         <menuitem id="file.smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;"/>
                         <menuitem id="file.remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;"/>
                       </clickholdbutton>
                     </hbox>
-
                   </vbox>
 
                   <smartsplitter id="vert_splitter" state="open" collapse="before" resizebefore="closest" resizeafter="closest" metricscategory="player" metricsid="collapse.servicepane">
@@ -418,23 +248,27 @@
                   </smartsplitter>
 
                   <!-- MAIN PANE -->
-                  <vbox class="sb_faceplate" flex="1" id="main_pane_border">
-                    <vbox class="sb_faceplate" id="frame_main_pane_html" hidden="false" >
+                  <vbox flex="1" id="main_pane_border">
+                  
+                    <vbox id="frame_main_pane_html" hidden="false" >
                       <!-- WEB BAR -->
-                      <hbox id="browser_toolbar" align="center" class="sb_faceplate" flex="1">
-                        <button class="sb_faceplate" disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
-                        <button class="sb_faceplate" disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
-                        <button class="sb_faceplate" disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
-                        <button class="sb_faceplate" disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
-                        <button class="sb_faceplate" disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
-                        <button class="sb_faceplate" disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
-                        <hbox class="sb_faceplate" id="browser_url_box" flex="6">
-                          <image id="browser_url_image" class="sb_faceplate" src=""/>
-                          <textbox id="browser_url" class="sb_faceplate, mainwin_location" flex="1" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );"/>
-                        </hbox>
+                      <hbox id="browser_toolbar" align="center" flex="1">
+                        <button disabled="true" id="browser_back" oncommand="onBrowserBack();" tooltiptext="&tooltip.browser.back;"/>
+                        <button disabled="true" id="browser_fwd" oncommand="onBrowserFwd();" tooltiptext="&tooltip.browser.fwd;"/>
+                        <button disabled="false" id="browser_refresh" oncommand="onBrowserRefresh();" tooltiptext="&tooltip.browser.refresh;"/>
+                        <button disabled="false" id="browser_stop" oncommand="onBrowserStop();" tooltiptext="&tooltip.browser.stop;"/>
+                        <button disabled="false" id="browser_home" oncommand="onBrowserHome();" tooltiptext="&tooltip.browser.home;"/>
+                        <button disabled="false" id="browser_bookmark" oncommand="onBrowserBookmark();" tooltiptext="&tooltip.browser.bookmark;"/>
+
+                        <!-- ADDRESS BOX -->
+                        <textbox id="browser_url" flex="6"  align="center" x_onchange="onHTMLUrlChange( event );" onkeypress="onHTMLUrlKeypress( event );" onfocus="onHTMLURLFocus( event );">
+                          <image id="browser_url_image" src=""/>
+                        </textbox>
+
                         <smartsplitter id="search_splitter" state="open">
                           <grippy/>
-                        </smartsplitter>                        
+                        </smartsplitter>    
+                                            
                         <!-- SEARCH WIDGET -->
                         <search
                           id="search_widget" 
@@ -442,6 +276,8 @@
                           buttonid="search_service_button"
                           flex="1"
                         />
+                        
+                        <!-- SPINNER -->
                         <spacer style="min-width: 5px !important;" width="5" height="16"/>
                         <spacer width="16" height="16" id="spinner_spin" class="spinner_spin" hidden="true"/>
                         <spacer width="16" height="16" id="spinner_stopped" class="spinner_stopped" hidden="true"/>
@@ -449,22 +285,17 @@
                       </hbox>
                     </vbox>
 
+
                     <browser id="frame_main_pane" x_type="content-primary" type="content" flex="1"/>
 
-                    <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after" orientation="vertical" >
+                    <smartsplitter id="playlist_web_split" hidden="true" class="horz_splitter" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
                       <grippy/>
                     </smartsplitter>
                     
                     
-                    <vbox
-                        id="playlist_web_vbox"
-                        height="200"
-                        hidden="true"
-                        minheight="0"
-                        _resize_height="200"
-                    >
+                    <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
                     
-                      <callout-once id="calloutbox_web_playlist" hidden="true" class="sb_faceplate">
+                      <callout-once id="calloutbox_web_playlist" hidden="true">
                         <label value="&callout.firstwebplaylist;"/>
                       </callout-once>
 
@@ -476,54 +307,33 @@
                         enableColumnDrag="true"
                         minheight="0"
                         _resize_height="105"
-                    >
-                        <!--
-                      <menuseparator/>
-                      <menuitem id="playlist.context.test" label="Test"/>
-                    -->
-                      </playlist>
+                      />
                     </vbox>
-                    
-
                   </vbox>
-                  
-                  
-                    
                 </hbox>
               </vbox>
               <!-- frame_middle_pane -->
-              <!--            
-            <separator id="separator" class="groove"/>
--->
-              <spacer height="3"/>
+              
               <!-- STATUS PANE -->
-              <hbox id="frame_status_pane" class="sb_faceplate">
-                <vbox flex="1">
-                  <spacer flex="1" height="3"/>
-                  <hbox>
-                    
-                    <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
-                    <player_numplaylistitems id="library_text" value=" " crop="end"/>
-                    <player_scanning id="scanning_text" value=" " crop="end"/>
-                  </hbox>
-                  <!--spacer flex="1"/-->
-                </vbox>
-                <vbox id="status_progress_box">
+              <hbox id="frame_status_pane">
+                <hbox id="status_status_box" flex="1">
+                  <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
+                  <player_numplaylistitems id="library_text" value=" " crop="end"/>
+                  <player_scanning id="scanning_text" value=" " crop="end"/>
+                </hbox>
+                <hbox id="status_progress_box">
                   <progressmeter id="status_progress" mode="undetermined" hidden="false"/>
-                </vbox>
+                </hbox>
               </hbox>
 
             </vbox>
             <!-- inner_frame -->
           </vbox>
 
-          <vbox class="sb_faceplate" id="frame_resizers_right">
+          <vbox id="frame_resizers_right">
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="topright" style="cursor: ne-resize;"/>
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_m" dir="right" style="cursor: e-resize;" flex="1"/>
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomright" style="cursor: se-resize;"/>
-            <x_resizer hidden="true" id="frame_resize_mo" dir="topright"/>
-            <x_resizer hidden="true" id="frame_resize_m" dir="right" flex="1"/>
-            <x_resizer hidden="true" id="frame_resize_mo" dir="bottomright"/>
           </vbox>
 
         </hbox>
@@ -532,13 +342,10 @@
       </vbox>
       <!-- frame_outer_pane -->
 
-      <hbox class="sb_faceplate" id="frame_resizers_bottom">
+      <hbox id="frame_resizers_bottom">
         <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomleft" style="cursor: sw-resize;"/>
         <resizer oncommand="onWindowResizeComplete()" id="frame_resize_t" dir="bottom" style="cursor: s-resize;" flex="1"/>
         <resizer oncommand="onWindowResizeComplete()" id="frame_resize_to" dir="bottomright" style="cursor: se-resize;"/>
-        <x_resizer hidden="true" id="frame_resize_to" dir="bottomleft" />
-        <x_resizer hidden="true" id="frame_resize_t" dir="bottom" flex="1"/>
-        <x_resizer hidden="true" id="frame_resize_to" dir="bottomright" />
       </hbox>
     </vbox>
 

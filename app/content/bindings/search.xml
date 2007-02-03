@@ -41,12 +41,11 @@
 
   <binding id="search">
     <content>
-      <xul:hbox onmousedown="onFirstMousedown();" onfocus="onFirstMousedown();" flex="1">
+      <xul:hbox onmousedown="onFirstMousedown();" onfocus="onFirstMousedown();" align="center" flex="1">
         <xul:button 
           sbid="search.button"
           type="menu"
           xbl:inherits="id=buttonid"
-          class="sb_faceplate"
           oncommand="onSearchServiceMenu(event.target);"
         >
           <xul:menupopup id="search.popup">
@@ -54,25 +53,25 @@
               label="Library" class="menuitem-iconic" image="chrome://songbird/skin/default/icon_lib_16x16.png"
             />
               <xul:menuitem id="search.popup.singingfish" 
-                label="Singingfish" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/singingfish.ico"
+                label="Singingfish" class="menuitem-iconic" image="chrome://service-icons/skin/singingfish.ico"
               />
               <xul:menuitem id="search.popup.elbows" 
-                label="elbo.ws" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/elbows.ico"
+                label="elbo.ws" class="menuitem-iconic" image="chrome://service-icons/skin/elbows.ico"
             />
               <xul:menuitem id="search.popup.mefeedia" 
                 label="mefeedia" class="menuitem-iconic" image="http://www.mefeedia.com/favicon.ico"
             />
               <xul:menuitem id="search.popup.google" 
-                label="Google" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/google.ico"
+                label="Google" class="menuitem-iconic" image="chrome://service-icons/skin/google.ico"
             />
               <xul:menuitem id="search.popup.yahoo" 
-                label="Yahoo!" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/yahoo.ico"
+                label="Yahoo!" class="menuitem-iconic" image="chrome://service-icons/skin/yahoo.ico"
             />
               <xul:menuitem id="search.popup.wiki" 
-                label="Wikipedia" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/default.ico"
+                label="Wikipedia" class="menuitem-iconic" image="chrome://service-icons/skin/default.ico"
             />
               <xul:menuitem id="search.popup.emusic" 
-                label="eMusic" class="menuitem-iconic" image="chrome://songbird/skin/serviceicons/emusic.ico"
+                label="eMusic" class="menuitem-iconic" image="chrome://service-icons/skin/emusic.ico"
             />
 <!--              <xul:menuitem id="search.popup.creativecommons" 
                 label="Creative Commons" class="menuitem-iconic" image="http://creativecommons.org/favicon.ico"
@@ -84,7 +83,6 @@
           sbid="search.list"
           xbl:inherits="id=listid"
           editable="true"
-          class="sb_faceplate"
           xxx_onchange="onSearchChange();"
           xxx_oncommand="onSearchChange();"
           onkeypress="onSearchKeypress( event );"
