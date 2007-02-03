@@ -60,7 +60,7 @@ while (<STDIN>)
     # and filter out things that definitely
     # shouldn't go in the jar
     @files_list = split(/\n/,
-       `find $source_path/* -type f ! -path "*.svn*" ! -name ".*" ! -name "Makefile.in" ! -name "jar.mn" ! -name "jar.mn.in" ! -name "*.vcproj" ! -name "_EXCLUDE"`);
+       `find $source_path/* -type f ! -path "*.svn*" ! -name ".*" ! -name "Makefile.in" ! -name "jar.mn" ! -name "jar.mn.in" ! -name "*.vcproj" ! -name "_EXCLUDE" ! -name "*.user"`);
                             
     # Create a jar manifest line for each file 
     foreach $file (@files_list) {
@@ -71,7 +71,7 @@ while (<STDIN>)
       # If you run into build problems you may need to add more extensions to
       # to the following regular expression.
       #
-      if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|html|dtd|properties|swf|swd|rdf|manifest|txt)$/)) {
+      if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|html|htm|dtd|properties|swf|swd|rdf|manifest|txt)$/)) {
         die <<END;
 --- WARNING ---
 expand-jar-mn.pl was aborted due to presence of file with non-whitelisted 
