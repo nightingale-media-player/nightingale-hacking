@@ -74,7 +74,7 @@ while (<STDIN>)
       if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|html|dtd|properties|swf|swd|rdf|manifest|txt)$/)) {
         die <<END;
 --- WARNING ---
-expand-jar-mn.pl was aborted due to presence file with non-whitelisted 
+expand-jar-mn.pl was aborted due to presence of file with non-whitelisted 
 file extension.  
 
 Offending file: $file
