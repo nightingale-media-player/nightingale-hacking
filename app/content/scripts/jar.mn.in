@@ -44,6 +44,7 @@ songbird.jar:
   content/songbird/scripts/menubar_xbl_temp.js          (menubar_xbl_temp.js)
   content/songbird/scripts/currenttrack_xbl_temp.js     (currenttrack_xbl_temp.js)
   content/songbird/scripts/dndDefaultHandler.js         (dndDefaultHandler.js)
+  content/songbird/scripts/playlist_xbl_temp.js         (playlistCommands.js)
   content/songbird/scripts/preferences/hotkeys.js       (preferences/hotkeys.js)
   
   
