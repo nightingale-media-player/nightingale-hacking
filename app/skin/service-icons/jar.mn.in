@@ -1,0 +1,7 @@
+songbird.jar:
+#ifdef USING_FLAT_JARS
+% skin  service-icons classic/1.0  songbird/skin/service-icons/
+#else
+% skin  service-icons  classic/1.0  jar:songbird.jar!/skin/service-icons/
+#endif
+@include_all_to skin/service-icons/

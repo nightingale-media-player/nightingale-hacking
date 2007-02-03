@@ -1,0 +1,7 @@
+songbird.jar:
+#ifdef USING_FLAT_JARS
+% skin  songbird-dialogs classic/1.0  songbird/skin/dialogs/
+#else
+% skin  songbird-dialogs  classic/1.0  jar:songbird.jar!/skin/dialogs/
+#endif
+@include_all_to skin/dialogs/

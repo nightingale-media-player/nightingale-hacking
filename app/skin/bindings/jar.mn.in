@@ -1,0 +1,7 @@
+songbird.jar:
+#ifdef USING_FLAT_JARS
+% skin  songbird-bindings classic/1.0  songbird/skin/bindings/
+#else
+% skin  songbird-bindings  classic/1.0  jar:songbird.jar!/skin/bindings/
+#endif
+@include_all_to skin/bindings/

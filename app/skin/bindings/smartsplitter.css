@@ -1,0 +1,137 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ 
+ 
+/** 
+************************************************************************************************************************************************
+THE SPLITTERS aka THE GRIPPY
+These let the user resize the frames in your box model.
+************************************************************************************************************************************************
+*/ 
+
+/* Splitters to resize the panes */
+
+
+/*
+TODO: Remove these from all xul
+.vert_splitter,
+#search_splitter,
+#vert_splitter,
+#filter_splitter
+*/
+
+
+/** TODO: This shouldn't be required...  modify the binding **/ 
+
+/** Careful, this actually refers to splitters inserted into 
+    hboxes.  That is, splitters that are visually vertical and slide
+    left-right.  **/    
+smartsplitter:not([orient="vertical"])
+{
+  width: 7px;
+  min-width: 7px;
+  max-width: 7px;
+  height: 50px;  /**WTF?**/
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: none;
+  cursor: w-resize;
+}
+
+smartsplitter[orient="vertical"],
+#playlist_web_split > grippy
+{
+  width: 50px !important;
+  height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: 0px solid transparent !important;
+  cursor: n-resize;
+}
+
+smartsplitter[state="collapsed"],
+splitter[state="collapsed"]
+{
+  width: 10px;
+  -moz-border-radius: 3px;
+  border: 1px solid;
+}
+
+/** Service pane splitter TODO: RENAME! **/
+#vert_splitter[state="collapsed"]
+{
+  margin-right: 7px !important;
+}
+
+
+#control_pane_splitter
+{
+  width: 50px !important;
+  height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important; /* Mac doesn't want to respect my height value without this? */
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 0px 3px 0px;
+  cursor: n-resize;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  width: 50px !important;
+  height: 7px !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  margin: 3px 3px 3px 3px;
+  cursor: n-resize;
+}
+
+#horz_splitter[state="collapsed"]
+{
+  height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important;
+}
+
+#playlist_web_split[state="collapsed"]
+{
+  height: 7px !important;
+  min-height: 7px !important;
+  max-height: 7px !important;
+}
+
+
+
+
+
+
+                        
+
+

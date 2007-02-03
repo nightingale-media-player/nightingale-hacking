@@ -1,0 +1,755 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ 
+ 
+ 
+ /** TODO: Most of this file should go away.  Base stuff should go in global and
+     dialog details should go to one sheet per dialog */
+
+
+
+
+
+/** 
+************************************************************************************************************************************************
+DIALOG SIZE & POSITION
+This CSS files specifies the size and position of dialog UI.
+************************************************************************************************************************************************
+*/ 
+
+.sb_faceplate_dialog
+{
+  -moz-background-clip: padding !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  border-width: 0px !important;
+  font-family: tahoma, arial !important; /*arial is the fallback font*/
+  font-size: 11px !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+DIALOG BOXES and their buttons
+************************************************************************************************************************************************
+*/
+#track_editor,
+#smart_playlist,
+#open_url,
+#watchfolder,
+#new_playlist,
+#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+{
+  width:  550px !important; /* makes all the dialog boxes the same size **/
+}
+
+
+
+/** 
+******************************************************************************************
+THE DIALOG CHROME
+These pieces paint the resizeable window for dialogs.
+*******************************************************************************************
+*/
+#chrome_bkgd
+{
+  -moz-appearance: none !important; 
+}
+
+#chrome_n
+{
+  -moz-appearance: none !important;
+  border-top: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important; 
+}
+
+#chrome_nw
+{
+  -moz-appearance: none !important;
+  border-top: 2px solid !important;
+  border-left: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;   
+}
+
+#chrome_ne
+{
+  -moz-appearance: none !important; 
+  border-top: 2px solid !important;
+  border-right: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_w
+{
+  -moz-appearance: none !important; 
+  border-left: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_e
+{
+  -moz-appearance: none !important; 
+  border-right: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_sw
+{
+  -moz-appearance: none !important; 
+  border-bottom: 2px solid !important;
+  border-left: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_s
+{
+  -moz-appearance: none !important; 
+  border-bottom: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+#chrome_se
+{
+  -moz-appearance: none !important; 
+  border-bottom: 2px solid !important;
+  border-right: 2px solid !important;
+  height: 9px !important;   
+  width: 9px !important;
+}
+
+/** 
+**************************************
+THE DIALOG CHROME IMAGES
+**************************************
+*/
+#cheezy_window_top,
+#chrome_bkgd,
+#chrome_e,
+#chrome_w
+{
+  background-image: url(chrome://songbird/skin/default/chrm_bkgd.png) !important; /** <img src="chrm_bkgd.png"> */
+  background-repeat: repeat-x !important;  
+}
+
+/** chrm_n.png creates an offset by 9 pixels to make up for the 9px height of the top frame */
+#chrome_nw,
+#chrome_n,
+#chrome_ne
+{
+  background-image: url(chrome://songbird/skin/default/chrm_n.png) !important; /** <img src="chrm_n.png"> */
+  background-repeat: repeat-x !important;   
+}
+
+/** 
+************************************************************************************************************************************************
+RESIZERS
+************************************************************************************************************************************************
+*/ 
+#frame_resize_t
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_to
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_m
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#frame_resize_mo
+{  
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+#resize
+{
+  background-image: none !important;
+  list-style-image: none !important;
+}
+
+/** 
+************************************************************************************************************************************************
+TOP BAR
+************************************************************************************************************************************************
+*/
+
+#window_top   /* Title  */
+{
+  border-bottom: 1px solid !important; /* this draws the line under the title bar */
+  padding-bottom: 6px !important;
+  margin-bottom: 4px !important;
+}
+
+#app_title,
+label.dialog_box
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 7px !important;
+  font-family: tahoma, arial !important;
+  font-weight: bold !important;
+  font-size: 11px !important;
+}
+
+#track_editor,
+#smart_playlist,
+#open_url,
+#watchfolder,
+#new_playlist
+{
+  width:  550px !important; /* makes all the dialog boxes the same size **/
+}
+
+#track_editor
+{
+  min-width:  550px !important;
+}
+
+#playlist_exists /* for the dialog that pops when a user tries to make a playlist with the same name as an existing playlist */
+{
+  width:  350px !important;
+}
+
+/* Dialog Form Elements */
+
+progressmeter
+{
+	border: none !important;
+}
+
+/* dialog buttons */
+.dialog_button 
+{
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
+  border: 1px solid !important;
+  -moz-user-focus: normal !important;
+}
+
+.backless_button /* Used in Watch Folders **/
+{
+  -moz-border-radius: 3px !important;
+  padding: 0px 0px 0px 0px !important;
+  border: 1px solid !important;
+  min-height: 20px !important;
+  min-width: 20px !important;
+  margin-right: 2px !important;
+}
+
+.dialog_button[disabled="true"],
+.dialog_button:hover[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+  padding: 3px 20px 3px 20px !important;
+  border: 1px solid !important;
+}
+
+/** 
+************************************************************************************************************************************************
+TEXTBOXES for dialogs and forms.
+************************************************************************************************************************************************
+*/
+.dialog_textbox
+{
+  -moz-border-radius: 3px !important;
+  height: 22px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+.dialog_textbox input
+{
+  height: 22px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+/** 
+*************************************************************************************************
+LISTBOXES for dialogs and forms.
+****************************************************************************
+*/
+.dialog_listbox
+{
+  -moz-border-radius: 3px !important;
+}
+
+.formgrouping
+{
+  padding: 5px !important; 
+  -moz-border-radius: 5px !important; 
+  border: 1px solid !important;
+}
+
+/** 
+********************************************************************************************
+CHECKBOXES, boxes, labels, images, states.
+**********************************************************************
+*/
+
+/* ::::: checkbox ::::: */
+
+checkbox {
+  -moz-box-align: center;
+  -moz-box-align: center;  
+}
+
+.checkbox-label-box {
+  -moz-margin-start: 2px;
+  border: 1px solid transparent;
+  padding: 0px 1px;
+}
+
+.checkbox-icon {
+  -moz-margin-end: 2px;
+}
+
+.checkbox-label {
+  margin: 0 !important;
+  opacity: 1 !important;
+}
+
+/* ..... focused state ..... */
+
+checkbox:focus,
+checkbox[checked="true"]:focus{
+  border: 1px dotted #666 !important;
+  margin: 2px 7px 2px 7px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+
+/* ::::: checkmark image ::::: */
+
+.checkbox-check {
+  -moz-box-align: center;
+  border: 2px solid;
+  min-width: 13px;
+  min-height: 13px;
+  background: -moz-Field no-repeat 50% 50%;
+}
+/** 
+**********************************************************************************
+The following styles are for the specific dialog boxes themselves.
+*/
+/** 
+**************************************************************************************************************
+*FIRST RUN dialog, aka, the Bundle Picker.
+**********************************************************************************
+*/
+
+richlistbox
+{
+  padding: 10px 10px 10px 10px !important;
+  
+}
+
+richlistitem > label
+{
+  margin: 2px 0px 0px -3px !important;
+}
+
+.spinner_spin
+{
+  background-image: url(chrome://songbird/skin/default/spinner_spin.gif) !important;
+}
+
+.firstrun_image
+{
+  background-image: url(chrome://songbird/skin/default/firstrun.png) !important;
+}
+
+/** 
+*****************************************************************************************************
+SMART PLAYLIST BUILDER
+*******************************************************************
+*/
+#smartpl_select_library
+{
+  margin: 10px 0px 0px 0px !important;
+}
+
+.drawer_box,
+.smart_condition_box
+{
+  -moz-border-radius: 5px !important; 
+  border: 1px solid !important;
+  margin: 0px 0px 10px 0px !important;
+  padding: 5px 5px 5px 0px !important;
+}
+
+#smart_playlist_name_label
+{
+  margin-top: 7px !important; /* lines this label with it's textbox counterpart in the smart playlist builder */
+}
+
+#smart_songs_check,
+#smart_match_check
+{
+  margin-top: 0px !important; /* the align="center" of the parent needs this to have no top margin. */
+}
+
+#smart_songs_count
+{
+  width: 40px !important;
+}
+
+.drawer_box,
+.smart_condition_box
+{
+  border: 1px solid !important;
+  -moz-border-radius: 5px !important; 
+}
+
+/** 
+**************************************************************************************************************
+MEDIA SCAN
+***********************************************************************************
+*/
+
+
+#media_scan 
+{ 
+  width: 600px !important;
+  height: 120px !important;
+} 
+
+/** 
+***********************************************************************************************
+ADD TO PLAYLIST
+**********************************************************************************
+*/
+#add_to_playlist
+{
+  height: 200px !important;
+}
+
+#jump_to_file
+{
+  width: 420px !important;
+  height: 500px !important;
+  min-width: 320px !important;
+  min-height: 150px !important;
+}
+
+#songbird_playlistlist > listitem
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+#songbird_playlistlist > listitem[selected=true]
+{
+  margin: 0px 0px 0px 0px !important;
+  padding: 0px 0px 0px 0px !important;
+}
+
+/** 
+*************************************************************************************************************
+DOWNLOAD DIALOG
+******************************************************************
+*/
+#subscribe_folder_path,
+#download_folder_path
+{
+  width: 365px !important;
+}
+
+#subscribe_url,
+#songbird_open_url
+{
+  width: 420px !important;
+}
+
+#subscribe_interval
+{
+  width: 40px !important;
+}
+
+#watchfolder
+{
+  width: 400px !important;
+}
+
+
+
+/** 
+************************************************************************************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+************************************************************************************************************************************************
+*/
+/** 
+*****************************************************************************************
+THE MENUS
+Poppin' Fresh.
+*****************************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) Styles **/
+
+#songbird_menu
+{
+  height: 10px !important;
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+#songbird_menu > menu > label
+{
+  height: 10px !important;  
+  padding-left: 2px !important;
+  padding-right: 6px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin-left: 0px !important;
+  margin-top: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu:hover,
+#songbird_menu > menu:hover > label,
+#songbird_menu > menu[open],
+#songbird_menu > menu[open] > label,
+#songbird_menu > menu[_moz-menuactive="true"],
+#songbird_menu > menu[_moz-menuactive="true"] > label
+{
+  height: 10px !important;
+  padding-left: 2px !important;
+  padding-right: 3px !important;
+  padding-top: 1px !important;
+  padding-bottom: 0px !important;
+  margin-left: -1px !important;
+  margin-top: -1px !important;
+  margin-right: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#songbird_menu > menu#songbird_menu_spacer
+{
+  width: 14px !important;
+}
+
+/* The Basic Menu Styles **/
+
+.menu-right[_moz-menuactive="true"] 
+{
+  margin: 0px 0px 0px 0px !important;
+  height: 9px !important;
+  width: 7px !important;
+  list-style-image: url(chrome://songbird/skin/default/menu-arrow-hover.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+.menu-right
+{    
+  margin: 0px 0px 0px 0px !important;
+  height: 9px !important;
+  width: 7px !important;
+  list-style-image: url(chrome://songbird/skin/default/menu-arrow.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+menuitem[checked="true"] > hbox[checked="true"] 
+{  
+  margin: 9px 0px 0px 7px !important;
+  height: 7px !important;
+  width: 7px !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+menuitem[checked="true"] > hbox[_moz-menuactive="true"] 
+{  
+  margin: 9px 0px 0px 7px !important;
+  height: 7px !important;
+  width: 7px !important;
+  list-style-image: none !important;
+  background-image: url(chrome://songbird/skin/default/check_fff.png) !important;
+  background-repeat: no-repeat !important;
+}
+
+/* sub menu elements should be indented to match other menuitem-iconic items in a menu */
+menu.menuitem-iconic > label  {
+  margin-left: 21px !important;
+}
+
+/* All menuitem icons are 16x16 */
+menuitem .menu-iconic-icon
+{
+  height: 16px !important;
+  min-height: 16px !important;
+  min-height: 16px !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+}
+
+/* Unless it's a command */
+menuitem[sbtype="command"] .menu-iconic-icon
+{
+  height: 8px !important;
+  min-height: 8px !important;
+  max-height: 8px !important;
+  width: 11px !important;
+  min-width: 11px !important;
+  max-width: 11px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+MENULIST
+************************************************************************************************************************************************
+*/
+
+menu,
+menuitem,
+menupop
+{
+  font-size: 11px !important;
+  font: inherit !important;
+}
+
+menulist
+{ 
+  border: 1px solid !important;
+  -moz-border-radius: 3px !important;
+} 
+.dropmarker-icon
+{
+  width:6px !important;
+  height:4px !important;
+  min-width:6px !important;
+  min-height:4px !important;
+  max-width:6px !important;
+  max-height:4px !important;
+  margin: 9px 0px 9px 0px !important;
+}
+.menulist-dropmarker
+{
+  -moz-appearance: none !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  width:24px !important;
+  height:24px !important;
+  min-width:24px !important;
+  min-height:24px !important;
+  max-width:24px !important;
+  max-height:24px !important;
+  margin: 0px 0px 0px 0px !important;
+  background-position: center center !important;
+  border: none !important;
+}
+
+menulist[disabled="true"]
+{
+  -moz-border-radius: 3px !important;
+}
+
+menulist[disabled="true"] > dropmarker
+{
+  opacity: 0.5 !important;
+}
+
+.menulist-editable-input,
+.menulist-editable-box
+{
+  border: none !important;
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
+}
+
+
+/** 
+************************************************************************************************************************************************
+MENU HIJINKS
+************************************************************************************************************************************************
+*/
+
+#Wikipedia > label
+{
+  padding: 0px 0px 0px 3px !important;
+}
+
+/** 
+************************************************************************************************************************************************
+The ABOUT BOX
+************************************************************************************************************************************************
+*/  
+
+#about_browser
+{
+  height: 180px !important;
+  width: 390px !important;
+  border: 0px solid #F00 !important;
+}
+
+
+/** 
+************************************************************************************************************************************************
+VIDEO WINDOW
+************************************************************************************************************************************************
+*/
+
+
+#video_window
+{
+  height: 600px;
+  width: 800px;
+  min-width: 320px;
+  min-height: 240px;
+}
+
+#video_chrome_bkgd
+{
+  background-image: url(chrome://songbird/skin/default//chrome_bkgd.png) !important; /** <img src="defaultchrome_bkgd.png"> */
+  background-position: 0px -15px !important;
+}
+
+iframe#video_controls
+{
+  height: 24px !important;
+  width: 700px !important;
+}
+
+

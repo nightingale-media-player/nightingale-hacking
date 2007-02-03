@@ -1,0 +1,123 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+/** 
+************************************************************************************************************************************************
+SCROLLBARS
+************************************************************************************************************************************************
+*/ 
+
+scrollbar
+{   
+  padding: 0 0 0 0 !important;  
+} 
+
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-border-radius: 2px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-border-radius: 2px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+scrollbar > slider > thumb > gripper
+{   
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  width: 16px !important;
+  background-image: none !important;
+  list-style-image: none !important;
+} 
+
+scrollbar > slider > thumb
+{    
+  -moz-border-radius: 2px !important;   
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  width: 16px !important;
+  background-image: none !important;
+  list-style-image: none !important;
+} 
+
+scrollbar > slider
+{   
+  padding: 0 0 0 0 !important; 
+  background-image: none !important;
+  list-style-image: none !important;
+} 
+
+/* service pane scrollbar*/
+#frame_service_tree scrollbar
+{   
+  padding: 0 0 0 0 !important;
+} 
+
+#frame_service_tree scrollbar > slider > thumb
+{     
+  -moz-border-radius: 3px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;  
+  height: 16px !important;
+  width: 16px !important;
+} 
+
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-up-bottom"]
+{   
+  -moz-border-radius: 3px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+ 
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-top"],  
+#frame_service_tree scrollbar > scrollbarbutton[sbattr="scrollbar-down-bottom"]
+{   
+  -moz-border-radius: 3px !important;  
+  padding: 0px 0px 0px 0px !important;
+  margin: 0px 0px 0px 0px !important;
+  height: 16px !important;
+  width: 16px !important;
+} 
+
+                        
+                        
+
+

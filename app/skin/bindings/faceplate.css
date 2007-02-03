@@ -1,0 +1,124 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+
+/** 
+************************************************************************************************************************************************
+FACEPLATE
+************************************************************************************************************************************************
+*/
+
+/** TODO Fix naming **/
+/** TODO Move the east and west end panels inside the binding **/
+#dashboard_w
+{
+  width: 25px;
+  height: 50px;
+  background-repeat: no-repeat;
+}
+
+#dashboard_e
+{
+  width: 25px;
+  height: 50px;
+  background-repeat: no-repeat;
+}
+
+
+#dashboard_box,
+#dashboard_bkgd,
+#intro_box,
+#intro_box_bkgd
+{
+  height: 50px;
+}
+
+#intro_box_image
+{
+  width: 45px;
+  height: 50px;
+  background-repeat: no-repeat;
+}
+
+#songbird_text_artistalbum,
+#songbird_box_title
+{
+  height: 14px;
+  padding: 0px;
+  margin: 0px;
+}
+
+
+/* the seekbar slider */
+#songbird_seekbar_slider
+{
+  height: 10px;
+}
+#songbird_seekbar_thumb
+{
+  width: 21px;
+  height: 8px;
+  border: 1px solid;
+}
+#songbird_seekbar_thumb > gripper
+{
+  height: 8px;
+}
+#songbird_seekbar_progress
+{
+  height: 10px;
+}
+#songbird_seekbar_progress > .progress-bar
+{
+  height: 10px;
+}
+#songbird_seekbar_progress > .progress-remainder
+{
+  height: 10px;
+}
+#songbird_seekbar
+{
+  border: 1px solid;
+  height: 10px;
+}
+
+/* the faceplate progressmeter */
+.faceplate_progressmeter
+{
+  border: 1px solid;
+  height: 10px;
+  min-height: 10px;
+}
+
+.faceplate_text
+{
+  width: auto;
+  overflow: hidden;
+}
+
+
+
