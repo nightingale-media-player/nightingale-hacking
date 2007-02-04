@@ -624,15 +624,7 @@
           this.loadColumns();
         }
         
-        // Compare the current ordering value in the playlistsource to make sure we stay in sync
-        var order = this.source.getOrder(this.ref);
-        var orderArray = order.split(","); // Split out any comma delimited values first
-        var orderArray = orderArray[0].split(" "); // And only look at the first value
-        
-        // Sync the order column and direction
-        this.sortorder = orderArray[0];
-        this.sortdirection = orderArray[1];
-        this.syncColumnSortIndicator();
+        this.loadSortOrder();         
       }
       catch( err )
       {
@@ -1786,30 +1778,60 @@
                 this.sortdirection = (id == "rating") ? "desc" : "asc";
               }
               
-              // Make some metadata columns have secondary columns associated!
-              var order = "";
-              if ( id == "row_id" ) // No sort on this column.  It does not exist.
-                this.sortorder = "";
-              else if ( id == "artist" )
-                order = "artist " + this.sortdirection + ", " +
-                        "album " + this.sortdirection + ", " +
-                        "track_no " + this.sortdirection;
-              else if ( id == "album" )
-                order = "album " + this.sortdirection + ", " +
-                        "track_no " + this.sortdirection;
-              else 
-                order = id + " " + this.sortdirection;
-              
-              // Tell the playlistsource how things should sort  
-              this.source.setOrder(this.ref, order);
-              
-              // Clear the selection
-              this.tree.view.selection.clearSelection();
+              this.applySortOrder();
+              this.saveSortOrder(); 
             }
           ]]>
         </body>
       </method>
 
+      
+      <method name="applySortOrder">
+        <body>
+          <![CDATA[
+            // Make some metadata columns have secondary columns associated!
+            var order = "";
+            if ( this.sortorder == "row_id" ) // No sort on this column.  It does not exist. Set sortorder to nothing so that syncColumnSortIndicator removes the arrow
+              this.sortorder = "";
+            else if ( this.sortorder == "artist" )
+              order = "artist " + this.sortdirection + ", " +
+                      "album " + this.sortdirection + ", " +
+                      "track_no " + this.sortdirection;
+            else if ( this.sortorder == "album" )
+              order = "album " + this.sortdirection + ", " +
+                      "track_no " + this.sortdirection;
+            else if ( this.sortorder != "")
+              order = this.sortorder + " " + this.sortdirection;
+            
+            // Tell the playlistsource how things should sort  
+            this.source.setOrder(this.ref, order);
+            
+            // Clear the selection
+            if (this.tree.view && this.tree.view.selection) this.tree.view.selection.clearSelection();
+          ]]>
+        </body>
+      </method>
+      
+      <method name="saveSortOrder">
+        <body>
+          <![CDATA[
+            SBDataSetStringValue( "playlist." + this.ref + ".sortorder", this.sortorder);
+            SBDataSetStringValue( "playlist." + this.ref + ".sortdirection", this.sortdirection);
+          ]]>
+        </body>
+      </method>
+
+      <method name="loadSortOrder">
+        <body>
+          <![CDATA[
+            this.sortorder = SBDataGetStringValue( "playlist." + this.ref + ".sortorder");
+            this.sortdirection = SBDataGetStringValue( "playlist." + this.ref + ".sortdirection");
+            this.applySortOrder();
+            this.syncColumnSortIndicator();
+          ]]>
+        </body>
+      </method>
+ 
       <!-- nsIXULTreeBuilderObserver implementation
       canDrop()
       onDrop()
