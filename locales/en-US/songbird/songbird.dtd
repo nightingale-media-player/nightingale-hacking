@@ -295,7 +295,7 @@
 <!ENTITY menu.edit.undo.key            "Z" >
 <!ENTITY menu.edit.cut.key             "X" >
 <!ENTITY menu.edit.copy.key            "C" >
-<!ENTITY menu.edit.paste.key       ?   "V" >
+<!ENTITY menu.edit.paste.key           "V" >
 <!ENTITY jumpto.key                    "J" >
 <!ENTITY search.key                    "F" >
 <!ENTITY locationbar.key               "L" >
