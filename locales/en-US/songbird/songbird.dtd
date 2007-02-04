@@ -183,7 +183,7 @@
 <!ENTITY setupprogress.pleasewait "Please wait..." >
 
 <!ENTITY menu.file.accesskey          "F" >
-<!ENTITY menu.file.new.accesskey      "N? >
+<!ENTITY menu.file.new.accesskey      "N" >
 <!ENTITY menu.file.smart.accesskey    "S" >
 <!ENTITY menu.file.remote.accesskey   "R" >
 <!ENTITY menu.file.open.accesskey     "O" >
