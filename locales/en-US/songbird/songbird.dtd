@@ -1,4 +1,4 @@
-﻿
+
 <!ENTITY window.main.title  "Songbird 0.2 Developer Preview" >
 <!ENTITY window.dev.title   "Songbird 0.2 Developer Preview Test Flight" >
 <!ENTITY songbird           "Songbird" >
@@ -72,6 +72,9 @@
 <!ENTITY playlist.context.rename  "Rename" >
 <!ENTITY playlist.context.search  "Search" >
 <!ENTITY playlist.context.lyrics  "Lyrics" >
+<!ENTITY device.context.eject   "Eject" >
+<!ENTITY device.context.rename  "Rename" >
+<!ENTITY device.context.prefs   "Preferences..." >
 
 <!ENTITY device.context.eject  "Eject" >
 
@@ -180,7 +183,7 @@
 <!ENTITY setupprogress.pleasewait "Please wait..." >
 
 <!ENTITY menu.file.accesskey          "F" >
-<!ENTITY menu.file.new.accesskey      "N" >
+<!ENTITY menu.file.new.accesskey      "N? >
 <!ENTITY menu.file.smart.accesskey    "S" >
 <!ENTITY menu.file.remote.accesskey   "R" >
 <!ENTITY menu.file.open.accesskey     "O" >
@@ -250,6 +253,19 @@
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
 
+<!ENTITY umsd.prefpane                      "USB" >
+<!ENTITY umsd.no_devices_present            "No USB mass-storage devices are connected." >
+<!ENTITY umsd.music.tab                     "Music" >
+<!ENTITY umsd.music.music_files_group       "Music files" >
+<!ENTITY umsd.music.music_path_desc         "When copying music files to the device, place them within the following directory:" >
+<!ENTITY umsd.music.music_path_browse_msg   "Select the device directory in which to place music files." >
+<!ENTITY umsd.music.music_ext_desc          "Copy music files with the following extensions to the device:" >
+<!ENTITY umsd.video.tab                     "Video" >
+<!ENTITY umsd.video.video_files_group       "Video files" >
+<!ENTITY umsd.video.video_path_desc         "When copying video files to the device, place them within the following directory:" >
+<!ENTITY umsd.video.video_path_browse_msg   "Select the device directory in which to place video files." >
+<!ENTITY umsd.video.video_ext_desc          "Copy video files with the following extensions to the device:" >
+
 <!ENTITY metadata.uuid                "Media UUID" >
 <!ENTITY metadata.url                 "Location" >
 <!ENTITY metadata.artist              "Artist" >
@@ -279,7 +295,7 @@
 <!ENTITY menu.edit.undo.key            "Z" >
 <!ENTITY menu.edit.cut.key             "X" >
 <!ENTITY menu.edit.copy.key            "C" >
-<!ENTITY menu.edit.paste.key           "V" >
+<!ENTITY menu.edit.paste.key       ?   "V" >
 <!ENTITY jumpto.key                    "J" >
 <!ENTITY search.key                    "F" >
 <!ENTITY locationbar.key               "L" >
