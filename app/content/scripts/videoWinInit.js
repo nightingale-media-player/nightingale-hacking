@@ -300,7 +300,7 @@ var SBVideoMinMaxCB =
   
   OnWindowClose: function()
   {
-    setTimeout(quitApp, 0);
+    setTimeout(onExit, 0);
   },
 
   QueryInterface : function(aIID)
