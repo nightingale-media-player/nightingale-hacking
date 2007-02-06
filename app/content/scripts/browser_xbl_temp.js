@@ -83,10 +83,12 @@ var sbWebProgressListener = {
   {
     try
     {
+      var cur_uri = aLocation.asciiSpec;
+      // save url for reload on next servicetree init
+      SBDataSetStringValue( "servicetree.selected_url", cur_uri );  
       // Set the value in the text box (shown or not)
       var theServiceTree = document.getElementById( "frame_servicetree" );
       var theMainPane = document.getElementById( "frame_main_pane" );
-      var cur_uri = aLocation.asciiSpec;
       if ( aRequest && aRequest.name )    
       {
         // Set the box
