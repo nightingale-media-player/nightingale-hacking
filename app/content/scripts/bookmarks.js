@@ -387,9 +387,9 @@ var bmManager = {
                   url: "",
                   children: [   
                   { 
-                      label: "Extensions",
+                      label: "Add-ons",
                       icon: "chrome://songbird/skin/default/logo_16.png",
-                      url: "http://extensions.songbirdnest.com/",
+                      url: "http://addons.songbirdnest.com/",
                       properties: "bookmark",
                       children: []
                   },
