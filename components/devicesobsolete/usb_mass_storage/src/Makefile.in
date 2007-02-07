@@ -42,7 +42,7 @@ CPP_SRCS = USBMassStorageDevice.cpp \
            $(NULL)
 
 ifeq (win,$(SB_PLATFORM))
-CPP_SRCS += $(SB_PLATFORM)/USBMassStorageDeviceWin32.cpp
+CPP_SRCS += win32/USBMassStorageDeviceWin32.cpp
 endif
 
 CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
@@ -88,6 +88,8 @@ endif
 ifeq (win,$(SB_PLATFORM))
   CPP_INCLUDES += $(DEPS_DIR)/libusb/release/include \
                   $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include \
+                  $(DEPTH)/components/devicesobsolete/usb_mass_storage/src/win32 \
+                  $(srcdir)/win32/ \
                   $(NULL)
 
   DYNAMIC_LIB_EXTRA_IMPORTS += $(DEPS_DIR)/libusb/release/lib/msvc/libusb \
