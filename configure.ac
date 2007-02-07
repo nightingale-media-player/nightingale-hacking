@@ -117,7 +117,7 @@ AC_SUBST(SB_UPDATE_CHANNEL)
 AC_CANONICAL_SYSTEM
 case "$target" in
   *-cygwin*|*-mingw*|*-msvc*|*-mks*)
-    SB_PLATFORM="win"
+    SB_PLATFORM="windows"
     case "$target_cpu" in
       *i*86*)
         SB_ARCH="$target_cpu"
