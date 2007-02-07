@@ -114,7 +114,7 @@ CoreVLC.prototype.playURL = function (aURL)
       platform = "Windows_NT";
   }
   
-  //Fix paths under win32 for VLC.
+  //Fix paths under windows for VLC.
   if (platform == "Windows_NT") {
     var localFileURI = (Components.classes["@mozilla.org/network/simple-uri;1"]).createInstance(Components.interfaces.nsIURI);
     try {

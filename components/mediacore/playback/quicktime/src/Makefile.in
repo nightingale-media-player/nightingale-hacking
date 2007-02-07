@@ -85,7 +85,7 @@ ifeq (linux,$(SB_PLATFORM))
                                $(NULL)
 endif
 
-ifeq (win32,$(SB_PLATFORM))
+ifeq (win,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += xul \
                                unicharutil_s \
                                $(NULL)

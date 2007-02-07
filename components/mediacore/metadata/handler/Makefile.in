@@ -34,7 +34,7 @@ SUBDIRS = id3 \
           mp4 \
           $(NULL)
 
-ifeq ($(SB_PLATFORM), win32)
+ifeq ($(SB_PLATFORM), win)
   SUBDIRS += wma \
              $(NULL)
 endif

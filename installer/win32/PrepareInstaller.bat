@@ -41,8 +41,8 @@ if "%4"=="prepare" goto prepare
 if "%4"=="package" goto package
 
 :prepare
-del /s /f /q %DEPTH%\_built_installer\*.*
-rd /s /q %DEPTH%\_built_installer
+del /s /f /q %DEPTH%\compiled\_built_installer\*.*
+rd /s /q %DEPTH%\compiled\_built_installer
 
 copy /y Songbird.nsi %DIST_DIR%\Songbird.nsi
 
@@ -79,9 +79,9 @@ goto failure
 @echo =====================================================
 @echo.
 
-@mkdir %DEPTH%\_built_installer
-@move /y %DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe %DEPTH%\_built_installer
-@%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%_%ARCH%.exe > %DEPTH%\_built_installer\Songbird_%BUILD_ID%_%ARCH%.exe.md5
+@mkdir %DEPTH%\compiled\_built_installer
+@move /y %DIST_DIR%\Songbird_%BUILD_ID%_%ARCH%.exe %DEPTH%\compiled\_built_installer
+@%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\compiled\_built_installer -md5 -sha1 -jm Songbird_%BUILD_ID%_%ARCH%.exe > %DEPTH%\compiled\_built_installer\Songbird_%BUILD_ID%_%ARCH%.exe.md5
 
 goto end
 
