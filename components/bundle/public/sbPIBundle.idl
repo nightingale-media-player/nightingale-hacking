@@ -1,0 +1,66 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIBundleDownloadListener;
+
+/**
+ * \file sbPIBundle.idl
+ * \brief This file contains the private interface for bundle management
+ * \sa sbIBundle.idl
+ */
+
+/**
+ * \interface sbPIBundle sbPIBundle.h
+ * \brief Songbird Private Bundle Interface
+ * This is a private interface for bundle management, used by the bundle download user interface
+ * \sa sbIBundle
+ */
+      
+[scriptable, uuid(849391df-aeff-11db-96e1-005056c00008)]
+interface sbPIBundle : nsISupports
+{
+
+ /**
+  * \brief Sets the result of the installation attempt
+  * This method records the result of the extension installation attempt. It should be called by the 
+  * dialog implementing download and XPI installation.
+  * \param window The parent for the progress dialog box
+  */
+ void setInstallResult(in long aResult);
+
+ /**
+  * \brief Sets the flag indicating that a restart is needed
+  * This method sets the flag indicating that a restart of the application is 
+  * needed in order for installed extensions to take effect.
+  * \param needed Value of the flag to set
+  */
+ void setNeedRestart(in boolean aNeeded);
+ 
+ readonly attribute long installListenerCount;
+ sbIBundleDownloadListener getInstallListener(in long aIndex);
+};
