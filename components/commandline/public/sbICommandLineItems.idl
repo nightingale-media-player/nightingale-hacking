@@ -1,0 +1,65 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+/**       
+ * \file sbICommandLineItems.idl
+ * \brief Songbird Commandline Items Interface file
+ * This file contains the interface used by the commandlineitems manager, 
+ * whose purpose is to hold on to items from the commandline for later
+ * opening, and to notify handlers of new items coming from
+ * remote instances. Handlers registered last have priority over
+ * those registered first.
+ * \sa sbCommandLine.js
+ */
+  
+interface sbICommandLineItemHandler;
+
+/**
+ * \interface sbICommandLineItems sbICommandLineItems.h
+ * \brief Songbird Command line items Interface
+ */
+      
+[scriptable, uuid(d54a8a7a-b390-11db-96e7-005056c00008)]
+interface sbICommandLineItems : nsISupports
+{
+  /**
+   * \brief Add command line item handler
+   * \param aHandler Handler to register
+   * \sa removeItemHandler
+   */
+  void addItemHandler(in sbICommandLineItemHandler aHandler);
+
+  /**
+   * \brief Remove command line item handler
+   * \param aHandler Handler to unregister
+   * \sa addItemHandler
+   */
+  void removeItemHandler(in sbICommandLineItemHandler aHandler);
+};
+
+

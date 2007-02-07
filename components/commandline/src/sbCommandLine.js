@@ -40,6 +40,48 @@ const SONGBIRD_CLH_CLASSNAME = "Songbird Command Line Handler";
 // "m" for ordinary priority see sbICommandLineHandler.idl
 const SONGBIRD_CLH_CATEGORY= "m-songbird-clh";
 
+function resolveURIInternal(aCmdLine, aArgument) {
+  var uri = aCmdLine.resolveURI(aArgument);
+
+  if (!(uri instanceof Components.interfaces.nsIFileURL)) {
+    return uri;
+  }
+
+  try {
+    if (uri.file.exists())
+      return uri;
+  }
+  catch (e) {
+    Components.utils.reportError(e);
+  }
+
+  // We have interpreted the argument as a relative file URI, but the file
+  // doesn't exist. Try URI fixup heuristics: see bug 290782.
+
+  try {
+    var urifixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
+                              .getService(nsIURIFixup);
+
+    uri = urifixup.createFixupURI(aArgument, 0);
+  }
+  catch (e) {
+    Components.utils.reportError(e);
+  }
+
+  return uri;
+}
+
+
+function shouldLoadURI(aURI) {
+  if (!aURI || aURI == "") return false;
+  if (aURI && !aURI.schemeIs("chrome"))
+    return true;
+
+  dump("*** Preventing external load of chrome URI into browser window (" + aURI.spec + ")\n");
+  dump("    Use -chrome <uri> instead\n");
+  return false;
+}
+
 /**
  * /brief Songbird commandline handler
  */
@@ -51,8 +93,25 @@ sbCommandLineHandler.prototype = {
   helpInfo : "  -test [tests]        Run tests on the components listed in the\n" +
              "                       optional comma-separated list of tests.\n" +
              "                       If no tests are passed in ALL tests will be run.\n",
+             "  [url|path]           Local path/filename to media items to import and play,\n",
+             "                       or URL to load in the browser.\n",
+  itemHandlers: [],           
+  itemUriSpecs: [],           
 
   handle : function (cmdLine) {
+    var urilist = [];
+    var oldlength = this.itemUriSpecs.length;
+    
+    try {
+      var ar;
+      while ((ar = cmdLine.handleFlagWithParam("url", false))) {
+        urilist.push(resolveURIInternal(cmdLine, ar));
+      }
+    }
+    catch (e) {
+      Components.utils.reportError(e);
+    }
+    
     var tests = null;
     var exception = false;
     try {
@@ -75,33 +134,71 @@ sbCommandLineHandler.prototype = {
     }
 
     // XXX bug 2186
-    // This section is an un-finished beginning of handling a commandline arg
-    // pointing to media to be played on startup. We need to define how this
-    // should be handled before implementing.
-    /*
-    try {
-      // will throw if no param specified
-      var uristr = cmdLine.handleFlagWithParam("play", false);
-      if (uristr) {
-        // convert uristr to an nsIURI
-        var uri = cmdLine.resolveURI(uristr);
+    var count = cmdLine.length;
 
-        // At this point we need to duplicate the code in the default
-        // command line handler to find/open Songbird and play the
-        // URI passed in.
-
-        // since we're opening the window ourself, don't let the default do it
-        cmdLine.preventDefault = true;
+    for (var i = 0; i < count; ++i) {
+      var curarg = cmdLine.getArgument(i);
+      if (curarg == "") continue;
+      if (curarg.match(/^-/)) {
+        Components.utils.reportError("Warning: unrecognized command line flag " + curarg + "\n");
+        // To emulate the pre-nsICommandLine behavior, we ignore
+        // the argument after an unrecognized flag.
+        ++i;
+      } else {
+        try {
+          urilist.push(resolveURIInternal(cmdLine, curarg));
+        }
+        catch (e) {
+          Components.utils.reportError("Error opening URI '" + curarg + "' from the command line: " + e + "\n");
+        }
       }
     }
-    catch (e) {
-      Components.utils.reportError("incorrect parameter passed to -play on the command line.");
+
+    for (var uri in urilist) {
+      if (shouldLoadURI(urilist[uri])) {
+        this.itemUriSpecs.push(urilist[uri].spec);
+      }
     }
-    */
+    
+    if (this.itemUriSpecs.length > oldlength) 
+      this.dispatchItems();
+   
+  },
+  
+  addItemHandler: function (aHandler) {
+    this.itemHandlers.push(aHandler);
+    // dispatch items immediatly to this handler
+    this.dispatchItems(aHandler);
+  },
+  
+  removeItemHandler: function(aHandler) {
+    var index = this.itemHandlers.indexOf(aHandler);
+    if (index != -1) this.itemHandlers.splice(index, 1);
+  },
+  
+  dispatchItems: function(aHandler) {
+    // if aHandler == null, dispatch to all handlers
+    // otherwise, only dispatch to specified handler
+    // note that the last handler to get registered 
+    // gets priority over the first ones, so that if 
+    // there are several instances of the main window,
+    // the items open in the one created last.
+    for (var handleridx = this.itemHandlers.length-1; handleridx >= 0; handleridx--) {
+      var handler = this.itemHandlers[handleridx];
+      if (aHandler && (handler != aHandler)) continue;
+      var count = 0;
+      var total = this.itemUriSpecs.length;
+      for (var i=0; i < this.itemUriSpecs.length; i++) {
+        if (handler.handleItem(this.itemUriSpecs[i], count++, total)) {
+          this.itemUriSpecs.splice(i--, 1);
+        }
+      }
+    }  
   },
 
   QueryInterface : function clh_QI(iid) {
     if (iid.equals(Ci.nsICommandLineHandler) ||
+        iid.equals(Ci.sbICommandLineItems) ||
         iid.equals(Ci.nsISupports))
       return this;
 
