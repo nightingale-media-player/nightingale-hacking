@@ -244,7 +244,7 @@ AC_CHECK_PROG(TAR, tar, tar)
 AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 case "$SB_PLATFORM" in
-  win)
+  windows)
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, ml, ml)
@@ -335,7 +335,7 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #
 
 case "$SB_PLATFORM" in
-  win)
+  windows)
     BIN_SUFFIX=".exe"
     OBJ_SUFFIX=".obj"
     LIB_SUFFIX=".lib"
@@ -377,7 +377,7 @@ AC_SUBST(DLL_SUFFIX)
 #
 
 case "$SB_PLATFORM" in
-  win)
+  windows)
     # We use MSVC on Windows
 
     changequote(,)
