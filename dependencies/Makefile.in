@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 FLASH_PLUGIN = NPSWF32
 VLC_PLUGIN = npvlc
 
