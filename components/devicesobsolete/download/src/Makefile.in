@@ -78,7 +78,7 @@ ifeq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
                                $(NULL)
 endif

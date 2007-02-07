@@ -38,7 +38,7 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_XULRUNNERDIR) \
              $(NULL)
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
   CREATEDIRS += $(SONGBIRD_VLCPLUGINSDIR)
 endif
 
@@ -65,7 +65,7 @@ SUBDIRDEPS2 = update : installer
 endif
 
 ifdef SONGBIRD_OFFICIAL
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
   AIRBAG_SYMBOL_PATH = $(SONGBIRD_OBJDIR)/airbag-symbols
   AIRBAG_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
   AIRBAG_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).tar.bz2
@@ -76,7 +76,7 @@ tasks: all
 
 buildsymbols:
 ifdef SONGBIRD_OFFICIAL
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 	@echo removing old symbol store at $(AIRBAG_SYMBOL_PATH)
 	$(RM) -f $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
 	$(RM) -rf $(AIRBAG_SYMBOL_PATH)
@@ -98,7 +98,7 @@ endif
 
 uploadsymbols:
 ifdef SONGBIRD_OFFICIAL
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh $(AIRBAG_ARCHIVE_PATH)/$(AIRBAG_ARCHIVE_FILENAME)
 endif
 endif

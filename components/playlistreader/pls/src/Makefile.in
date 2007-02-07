@@ -63,7 +63,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcom \
                             $(NULL)
 
-ifeq ($(SB_PLATFORM), win)
+ifeq ($(SB_PLATFORM), windows)
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_s \
                                xul \
                                $(NULL)

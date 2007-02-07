@@ -33,7 +33,7 @@ ICON_TARGET_DIR = $(SONGBIRD_CHROMEDIR)/icons/default
 ICON_SOURCE_NAME = songbird
 ICON_TARGET_NAME = default
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 ICON_EXTENSION = ico
 endif
 ifeq (linux,$(SB_PLATFORM))

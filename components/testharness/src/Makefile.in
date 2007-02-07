@@ -57,7 +57,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-ifeq ($(SB_PLATFORM), win)
+ifeq ($(SB_PLATFORM), windows)
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
                                $(NULL)
 endif

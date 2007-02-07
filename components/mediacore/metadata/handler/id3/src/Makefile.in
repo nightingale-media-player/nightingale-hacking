@@ -35,7 +35,7 @@ else
 target_name = sbMetadataHandlerID3
 endif
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 CPP_EXTRA_DEFS = -DID3LIB_LINKOPTION=3 \
                  $(NULL)
 endif
@@ -67,7 +67,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             xpcomglue_s \
                             $(NULL)
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += id3lib \
                                unicharutil_external_s \
                                $(NULL)

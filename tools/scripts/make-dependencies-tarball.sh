@@ -15,7 +15,7 @@ destdir="$1"
 tempdir=${destdir}/.__temp
 currenttime=`date +%Y%m%d`
 tarballbasename=dependencies_snapshot
-tarballname_win=${tarballbasename}-win-${currenttime}.tar.gz
+tarballname_windows=${tarballbasename}-windows-${currenttime}.tar.gz
 tarballname_linux=${tarballbasename}-linux-${currenttime}.tar.gz
 tarballname_macosx=${tarballbasename}-macosx-${currenttime}.tar.gz
 tarballname_macosxintel=${tarballbasename}-macosx.intel-${currenttime}.tar.gz
@@ -26,13 +26,13 @@ mkdir ${destdir}
 notice "Creating temporary directory: ${tempdir}"
 mkdir ${tempdir}
 
-notice "Checking out vendor-binaries/win-i686 from public svn to ${tempdir}/win-i686"
-svn co svn://publicsvn.songbirdnest.com/songbird/client/vendor-binaries/win-i686 ${tempdir}/win-i686
+notice "Checking out vendor-binaries/windows-i686 from public svn to ${tempdir}/windows-i686"
+svn co svn://publicsvn.songbirdnest.com/songbird/client/vendor-binaries/windows-i686 ${tempdir}/windows-i686
 
-notice "Creating gzipped tarball for win-i686 here: ${destdir}/${tarballname_win}"
+notice "Creating gzipped tarball for windows-i686 here: ${destdir}/${tarballname_windows}"
 cd ${tempdir}
-tar -f ${destdir}/${tarballname_win} -cz win-i686
-rm -rf win-i686
+tar -f ${destdir}/${tarballname_windows} -cz windows-i686
+rm -rf windows-i686
 
 notice "Checking out vendor-binaries/linux from public svn to ${tempdir}/linux"
 svn co svn://publicsvn.songbirdnest.com/songbird/client/vendor-binaries/linux ${tempdir}/linux

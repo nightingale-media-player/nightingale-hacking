@@ -35,7 +35,7 @@ else
 target_name = sbMetadataHandlerWMA
 endif
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 CPP_EXTRA_DEFS = -DWMALIB_LINKOPTION=3 \
                  $(NULL)
 endif
@@ -66,7 +66,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             xpcomglue_s \
                             $(NULL)
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += WMVCORE \
                                ole32 \
                                unicharutil_external_s \

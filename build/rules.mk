@@ -319,7 +319,7 @@ endif
 
 linker_objs = $(DYNAMIC_LIB_OBJS)
 
-ifeq (win,$(SB_PLATFORM))
+ifeq (windows,$(SB_PLATFORM))
 ifdef DYNAMIC_LIB_STATIC_IMPORTS
 linker_imports_temp1 += $(DYNAMIC_LIB_STATIC_IMPORTS)
 endif
@@ -717,8 +717,8 @@ endif #SONGBIRD_CONTENTS
 
 ifdef PREFERENCES
 
-# on win pref files need CRLF line endings
-ifeq (win,$(SB_PLATFORM))
+# on windows pref files need CRLF line endings
+ifeq (windows,$(SB_PLATFORM))
 PREF_PPFLAGS = --line-endings=crlf
 endif
 
