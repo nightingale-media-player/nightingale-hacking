@@ -117,10 +117,11 @@ AC_SUBST(SB_UPDATE_CHANNEL)
 AC_CANONICAL_SYSTEM
 case "$target" in
   *-cygwin*|*-mingw*|*-msvc*|*-mks*)
-    SB_PLATFORM="win32"
+    SB_PLATFORM="win"
     case "$target_cpu" in
       *i*86*)
         SB_ARCH="$target_cpu"
+        HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
@@ -146,9 +147,11 @@ case "$target" in
     case "$target_cpu" in
       powerpc* | ppc)
         SB_ARCH="ppc"
+        HAS_ARCH_DEPENDENCIES=1
       ;;
       *i*86*)
         SB_ARCH="$target_cpu"
+        HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
@@ -160,9 +163,10 @@ case "$target" in
     case "$target_cpu" in
       *86)
         SB_ARCH="$target_cpu"
+        HAS_ARCH_DEPENDENCIES=1
       ;;
       x86_64)
-        SB_ARCH="x86_64"
+        SB_ARCH="$target_cpu"
         HAS_ARCH_DEPENDENCIES=1
       ;;
       *)
@@ -240,7 +244,7 @@ AC_CHECK_PROG(TAR, tar, tar)
 AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 case "$SB_PLATFORM" in
-  win32)
+  win)
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AS, ml, ml)
@@ -331,7 +335,7 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #
 
 case "$SB_PLATFORM" in
-  win32)
+  win)
     BIN_SUFFIX=".exe"
     OBJ_SUFFIX=".obj"
     LIB_SUFFIX=".lib"
@@ -373,7 +377,7 @@ AC_SUBST(DLL_SUFFIX)
 #
 
 case "$SB_PLATFORM" in
-  win32)
+  win)
     # We use MSVC on Windows
 
     changequote(,)
