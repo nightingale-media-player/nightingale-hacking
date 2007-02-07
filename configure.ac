@@ -133,10 +133,10 @@ case "$target" in
         # no cygwin wrapper for mingw
       ;;  
       *)
-        CYGWIN_WRAPPER="${srcdir}/dependencies/$SB_PLATFORM/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
+        CYGWIN_WRAPPER="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         if test "`echo ${srcdir} | grep -c ^/ 2>/dev/null`" = 0; then
           _pwd=`pwd`
-          CYGWIN_WRAPPER="${_pwd}/${srcdir}/dependencies/$SB_PLATFORM/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
+          CYGWIN_WRAPPER="${_pwd}/${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
         fi
         CYGDRIVE_MOUNT=`mount -p | awk '{ if (/^\//) { print $1; exit } }'`
       ;;
