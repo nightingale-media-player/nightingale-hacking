@@ -383,6 +383,9 @@
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/dndSourceTracker.js" />
 
+  <!-- Command line -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/cmdline.js"/>
 
   <!-- Load the interface code -->
   <script type="application/x-javascript" 

@@ -28,6 +28,10 @@
 //  sbIRestartBox
 //
 
+const SB_RESTARTBOX_RESTARTLATER = 0;
+const SB_RESTARTBOX_RESTARTNOW   = 1;
+const SB_RESTARTBOX_RESTARTEOP   = 2;
+
 function sbRestartBox( title, message )
 {
   try
@@ -41,22 +45,24 @@ function sbRestartBox( title, message )
     var restartOnPlaybackEnd = SB_NewDataRemote( "restart.onplaybackend", null );
     switch (restartbox_data.ret)
     {
-      case 0: // restart later
+      case SB_RESTARTBOX_RESTARTLATER: // restart later
               restartOnPlaybackEnd.boolValue = false;
-              break;
-      case 1: // restart now
+              break; 
+      case SB_RESTARTBOX_RESTARTNOW: // restart now
               restartOnPlaybackEnd.boolValue = false;
               SBDataSetBoolValue("restart.restartnow", true);
               break;
-      case 2: // restart on end of playback
+      case SB_RESTARTBOX_RESTARTEOP: // restart on end of playback
               restartOnPlaybackEnd.boolValue = true;
               break;
     }
+    return restartbox_data.ret;
   }
   catch ( err )
   {
     alert("sbRestartBox - " + err);
   }
+  return -1;
 }
 
 function sbRestartBox_strings(titlestring, msgstring, defaulttitle, defaultmsg) {
@@ -69,6 +75,6 @@ function sbRestartBox_strings(titlestring, msgstring, defaulttitle, defaultmsg) 
     msg = prop.GetStringFromName(msgstring);
     title = prop.GetStringFromName(titlestring);
   } catch (e) { }
-  sbRestartBox(title, msg);
+  return sbRestartBox(title, msg);
 }
 

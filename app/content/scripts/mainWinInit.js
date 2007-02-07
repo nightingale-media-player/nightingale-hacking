@@ -99,6 +99,7 @@ var thePollPlaylistService = null;
 var theWebPlaylist = null;
 var theWebPlaylistQuery = null;
 var theNumPlaylistItemsRemote = SB_NewDataRemote( "playlist.numitems", null );
+var theDefaultUrlOverride = null;
 
 function SBInitialize()
 {
@@ -190,7 +191,7 @@ function SBInitialize()
     
     // Look at all these ugly hacks that need to go away.  (sigh)
     var theServiceTree = document.getElementById( 'frame_servicetree' );
-    theServiceTree.init(theMainPane);
+    theServiceTree.init(theMainPane, theDefaultUrlOverride);
     theServiceTree.onPlaylistHide = onBrowserPlaylistHide;
     theServiceTree.onPlaylistDefaultCommand = onServiceTreeCommand;
     

@@ -28,23 +28,24 @@ const SONGBIRD_BUNDLE_CLASSNAME = "Songbird Bundle Service Interface";
 const SONGBIRD_BUNDLE_CID = Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}");
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
-const SONGBIRD_GETBUNDLE_URL_WIN32 = 'http://www.songbirdnest.com/firstrun/bundle/win32';
-const SONGBIRD_GETBUNDLE_URL_MACOSX = 'http://www.songbirdnest.com/firstrun/bundle/macosx';
-const SONGBIRD_GETBUNDLE_URL_LINUX = 'http://www.songbirdnest.com/firstrun/bundle/linux';
+const SONGBIRD_GETBUNDLE_URL = 'http://bundles.songbirdnest.com/getbundle/';
 
 function Bundle() {
-  this._observers = new Array();
+  this._datalisteners = new Array();
+  this._installlisteners = new Array();
 }
 
 Bundle.prototype.constructor = Bundle;
 
 Bundle.prototype = {
+  _bundleid: null,
   _req: null,
-  _observers: null,
+  _datalisteners: null,
+  _installlisteners: null,
   _status: 0,
   _extlist: null,
   _browser: null,
-  _downloadObserver: null,
+  _downloadListener: null,
   _url: null,
   _file: null,
   _filename: null,
@@ -54,7 +55,7 @@ Bundle.prototype = {
   _init: false,
   _onload: null,
   _onerror: null,
-  _installresult: "",
+  _installresult: -1,
   _timer: null,
 
   LOG: function(str) {
@@ -62,15 +63,28 @@ Bundle.prototype = {
                             .getService(Components.interfaces.nsIConsoleService);
     consoleService.logStringMessage(str);
   },
+  
+  
+  get bundleId() {
+    return this._bundleid;
+  },
 
-  retrieveBundleFile: function(timeout) {
+  set bundleId(aStringValue) {
+    // Make sure there is a string object to pass.
+    if (aStringValue == null)
+      aStringValue = "";
+    this._bundleid = aStringValue;
+  },
+  
+  retrieveBundleData: function(aTimeout) {
   
     if (this._init && this._req) {
       this._req.abort();
-      this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).removeEventListener("load", this._onload, false);
-      this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).removeEventListener("error", this._onerror, false);
+      var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
+      httpReq.removeEventListener("load", this._onload, false);
+      httpReq.removeEventListener("error", this._onerror, false);
       this._req = null;
-      this._status = 0;
+      this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_DOWNLOADING;
     }
     
     this._onload = { 
@@ -84,73 +98,89 @@ Bundle.prototype = {
     }; this._onerror._that = this;
     
     this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
-    this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", this._onload, false);
-    this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("error", this._onerror, false);
-    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);
-    var url;
-    switch (xulRuntime.OS) {
-      case 'WINNT': 
-      case 'WIN95':
-        url = SONGBIRD_GETBUNDLE_URL_WIN32; 
-        break;
-      case 'Linux':
-        url = SONGBIRD_GETBUNDLE_URL_LINUX;
-        break;
-      case 'Darwin':
-        url = SONGBIRD_GETBUNDLE_URL_MACOSX;
-        break;
-    }
-
-    //this.LOG(url);
+    var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
+    httpReq.addEventListener("load", this._onload, false);
+    httpReq.addEventListener("error", this._onerror, false);
+    
+    var url = SONGBIRD_GETBUNDLE_URL + this._bundleid;
 
     this._req.open('GET', url + this._getRandomParameter(), true); 
     this._req.send(null);
     this._init = true;
 
     // If specified, set up a callback to enforce request timeout
-    if(timeout > 0) {
+    if (aTimeout > 0) {
       this._timer = Components.classes["@mozilla.org/timer;1"]
                               .createInstance(Components.interfaces.nsITimer);
-      this._timer.initWithCallback(this, timeout,
+      this._timer.initWithCallback(this, aTimeout,
                                    Components.interfaces.nsITimer.TYPE_ONE_SHOT);
     }
   },
 
-  getBundleDocument: function() {
+  get bundleDataDocument() {
     return this._req ? this._req.responseXML : null;
   },
 
-  getTextData: function() {
+  get bundleDataText() {
     return this._req ? this._req.responseText : "";
   },
   
-  addBundleObserver: function(obs) {
-    this._observers.push(obs);
+  addBundleDataListener: function(aListener) {
+    this._datalisteners.push(aListener);
   },
   
-  removeBundleObserver: function (obs) {
-    var r = this.getObserverIndex(obs);
-    if (r != -1) this._observers.splice(r, 1);
+  removeBundleDataListener: function (aListener) {
+    var r = this.getDataListenerIndex(aListener);
+    if (r != -1) this._datalisteners.splice(r, 1);
   },
   
-  getObserverIndex: function(obs) {
-    for (var i=0;i<this._observers.length;i++) if (this._observers[i] == obs) return i;
+  getNumDataListeners: function() {
+    return this._datalisteners.length;
+  },
+  
+  getDataListener: function(aIndex) {
+    return this._datalisteners[aIndex];
+  },
+
+  getDataListenerIndex: function(aListener) {
+    return this._datalisteners.indexOf(aListener);
+  },
+
+  addBundleInstallListener: function(aListener) {
+    this._installlisteners.push(aListener);
+  },
+  
+  removeBundleInstallListener: function (aListener) {
+    var r = this.getInstallListenerIndex(aListener);
+    if (r != -1) this._installlisteners.splice(r, 1);
+  },
+  
+  get installListenerCount() {
+    return this._installlisteners.length;
+  },
+  
+  getInstallListener: function(aIndex) {
+    return this._installlisteners[aIndex];
+  },
+  
+  getInstallaListenerIndex: function(aListener) {
+    for (var i=0;i<this._installlisteners.length;i++) if (this._datalisteners[i] == aListener) return i;
     return -1;
   },
   
-  getStatus: function() {
+  get bundleDataStatus() {
     return this._status;
   },
   
   onLoad: function() {
-    this._status = 1;
+    this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS;
     this.getExtensionList();
-    for (var i=0;i<this._observers.length;i++) this._observers[i].onLoad(this);
+    for (var i=0;i<this._datalisteners.length;i++) this._datalisteners[i].onDownloadComplete(this);
   },
 
   onError: function() {
-    this._status = -1;
-    for (var i=0;i<this._observers.length;i++) this._observers[i].onError(this);
+    this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_ERROR;
+    for (var i=0;i<this._datalisteners.length;i++) this._datalisteners[i].onError(this);
   },
   
   getDataNodes: function(bundledocument) {
@@ -165,31 +195,31 @@ Bundle.prototype = {
     return null;
   },
 
-  installSelectedExtensions: function(window) {
+  installFlaggedExtensions: function(aWindow) {
     var windowWatcherService = Components.classes['@mozilla.org/embedcomp/window-watcher;1']
                             .getService(Components.interfaces.nsIWindowWatcher);
                             
     // TODO: do the install !
     this._installresult = "";
-    windowWatcherService.openWindow(window, "chrome://songbird/content/xul/setup_progress.xul", "_blank", "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal", this);
+    windowWatcherService.openWindow(aWindow, "chrome://songbird/content/xul/setup_progress.xul", "_blank", "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal", this);
     return this._installresult;
   },
   
-  setInstallResult: function(result) {
-    this._installresult = result;
+  setInstallResult: function(aResult) {
+    this._installresult = aResult;
   },
   
   getExtensionList: function() {
     this._extlist = new Array();
-    if (this._status == 1) {
-      bundledocument = this.getBundleDocument();
+    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
+      bundledocument = this.bundleDataDocument;
       if (bundledocument) {
         var nodes = this.getDataNodes(bundledocument);
         if (nodes) {
           for (var i=0;i<nodes.length;i++) {
             if (nodes[i].tagName == "XPI") {
               var inst = nodes[i].getAttribute("default");
-              this._extlist.push(Array(nodes[i].getAttribute("name"), nodes[i].getAttribute("desc"), nodes[i].getAttribute("url"), (inst=="true" || inst=="1"), nodes[i].getAttribute("id")));
+              this._extlist.push(Array(nodes[i], (inst=="true" || inst=="1")));
             }
           }
         }
@@ -197,99 +227,38 @@ Bundle.prototype = {
     }
   },
   
-  getNumExtensions: function() {
-    if (this._status == 1) {
+  get bundleExtensionCount() {
+    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
       if (this._simulate_lots_of_entries) return this._extlist.length * 20;
       return this._extlist.length;
     }
     return 0;
   },
   
-  getExtensionName: function(idx) {
-    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
-    if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][0];
+  getExtensionAttribute: function(aIndex, aAttributeName) {
+    if (!this._extlist) return "";
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) 
+      aIndex = aIndex % this._extlist.length;
+    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
+      return this._extlist[aIndex][0].getAttribute(aAttributeName);
     return "";
   },
       
-  getExtensionDesc: function(idx) {
-    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
-    if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][1];
-    return "";
-  },
-      
-  getExtensionURL: function(idx) {
-    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
-    if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][2];
-    return "";
-  },
-      
-  getExtensionInstallState: function(idx) {
-    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
-    if (this._status == 1 && idx < this.getNumExtensions()) return this._extlist[idx][3];
+  getExtensionInstallFlag: function(aIndex) {
+    if (!this._extlist) return false;
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) 
+      aIndex = aIndex % this._extlist.length;
+    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
+      return this._extlist[aIndex][1];
     return false;
   },
   
-  setExtensionInstallState: function(idx, doinstall) {
-    if (this._extlist.length != 0 && this._simulate_lots_of_entries) idx = idx % this._extlist.length;
-    if (this._status == 1 && idx < this.getNumExtensions()) this._extlist[idx][3] = doinstall;
-  },
-  
-  downloadFile: function(url, observer) {
-    this._downloadObserver = observer;
-    this._url = url;
-
-    //this.LOG("downloading file " + url);
-
-    var destFile = this.getTempFilename() + ".xpi";
-    this._filename = destFile;
-    this._browser = (Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]).createInstance(Components.interfaces.nsIWebBrowserPersist);
-
-    if (!this._browser) return null;
-    this._browser.progressListener = this;
-    
-    var aLocalFile = (Components.classes["@mozilla.org/file/local;1"]).createInstance(Components.interfaces.nsILocalFile);
-    aLocalFile.initWithPath(destFile);
-    this._file = aLocalFile;
-    
-    var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(url + this._getRandomParameter(), null, null);
-
-    const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-    var flags = nsIWBP.PERSIST_FLAGS_NO_CONVERSION |
-                nsIWBP.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
-                nsIWBP.PERSIST_FLAGS_BYPASS_CACHE;
-    this._browser.persistFlags = flags;
-
-    this._browser.saveURI(aLocalURI, null, null, null, "", aLocalFile);
-
-    return destFile;
-  },
-  
-  deleteLastDownloadedFile: function() {
-    if (this._file) {
-      try {
-        this._file.remove(true);
-      } catch (e) {}
-      this._file = null;
-      this._filename = null;
-    }
-  },
-
-  getTempFilename: function () {
-    var strTempFile = "";
-    
-    var aDirectoryService = Components.classes["@mozilla.org/file/directory_service;1"].createInstance();
-    aDirectoryService = aDirectoryService.QueryInterface(Components.interfaces.nsIProperties);
-    
-    var aUUIDGenerator = (Components.classes["@mozilla.org/uuid-generator;1"]).createInstance();
-    aUUIDGenerator = aUUIDGenerator.QueryInterface(Components.interfaces.nsIUUIDGenerator);
-    var aUUID = aUUIDGenerator.generateUUID();
-    
-    var bResult = new Object;
-    var aTempFolder = aDirectoryService.get("DefProfLRt", Components.interfaces.nsIFile, bResult);
-    
-    aTempFolder.append(aUUID);
-    
-    return aTempFolder.path;
+  setExtensionInstallFlag: function(aIndex, aInstallFlag) {
+    if (!this._extlist) return;
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries) 
+      aIndex = aIndex % this._extlist.length;
+    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
+      this._extlist[aIndex][1] = aInstallFlag;
   },
   
   _getRandomParameter: function() {
@@ -299,68 +268,15 @@ Bundle.prototype = {
     return "?randomguid=" + escape(aUUID);
   },
   
-  installXPI: function(localFilename)
-  {
-    var file = Components.classes["@mozilla.org/file/local;1"]
-                     .createInstance(Components.interfaces.nsILocalFile);
-    //this.LOG("init file " + localFilename);
-    file.initWithPath(localFilename);
-    //this.LOG("exists = " + file.exists());
-    
-    var em = Components.classes["@mozilla.org/extensions/manager;1"]
-                       .getService(Components.interfaces.nsIExtensionManager);
-    var r = 0;
-    try {
-      em.installItemFromFile(file, "app-profile");
-      r = 1;
-    } catch (e) {}
-    return r;
-  },
-  
-  setNeedRestart: function(need) {
-    this._needrestart = need;
+  setNeedRestart: function(aRequired) {
+    this._needrestart = aRequired;
   },
 
-  getNeedRestart: function(need) {
+  get restartRequired() {
     return this._needrestart;
   },
 
-  onLocationChange: function(aWebProgress, aRequest, aLocation)
-  {
-  },
-
-  onProgressChange: function(aWebProgress, aRequest, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress)
-  {
-    this._downloadObserver.onProgress(this, curSelfProgress/maxSelfProgress*100);
-  },
-
-  onSecurityChange: function(aWebProgress, aRequest, aStateFlags)
-  {
-  },
-
-  onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus)
-  {
-    if (aStateFlags & 16 /*this.STATE_STOP*/)
-    {
-      try {
-        var file = Components.classes["@mozilla.org/file/local;1"]
-                        .createInstance(Components.interfaces.nsILocalFile);
-        file.initWithPath(this._filename);
-        if (file.exists())
-          this._downloadObserver.onDownloadComplete(this);
-        else
-          this._downloadObserver.onError(this);
-      } catch (e) {
-        this._downloadObserver.onError(this);
-      }
-    }
-  },
-  
-  onStatusChange: function(aWebProgress, aRequest, aStateFlags, strStateMessage)
-  {
-  },
-  
-  getBundleVersion: function() {
+  get bundleDataVersion() {
     return this._bundleversion;
   },
   
@@ -381,6 +297,7 @@ Bundle.prototype = {
    */
   QueryInterface: function(iid) {
     if (!iid.equals(SONGBIRD_BUNDLE_IID) &&
+        !iid.equals(Components.interfaces.sbPIBundle) &&
         !iid.equals(Components.interfaces.nsIWebProgressListener) &&
         !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
         !iid.equals(Components.interfaces.nsISupports))

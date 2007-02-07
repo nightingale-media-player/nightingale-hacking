@@ -83,6 +83,12 @@ $(SolutionDir)dependencies\win32\mozilla\$(ConfigurationName)\bin\xpidl -m typel
 						Outputs="$(OutDir)\$(InputName).h;$(OutDir)\$(InputName).xpt"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\public\sbIBundleDataListener.idl">
+			</File>
+			<File
+				RelativePath=".\public\sbIBundleInstallListener.idl">
+			</File>
 		</Filter>
 		<Filter
 			Name="src"

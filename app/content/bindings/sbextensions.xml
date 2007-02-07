@@ -79,14 +79,14 @@
           try
           {
             var listbox = document.getAnonymousElementByAttribute( this, 'sbid', 'extensions_list' );
-            var n = this.bundleInterface.getNumExtensions();
+            var n = this.bundleInterface.bundleExtensionCount; 
             for (var i=0;i<n;i++)
             {
               var item = document.createElement( "richlistitem" );
               var checkbox = document.createElement( "checkbox" );
-              checkbox.setAttribute("checked", this.bundleInterface.getExtensionInstallState(i));
+              checkbox.setAttribute("checked", this.bundleInterface.getExtensionInstallFlag(i)); 
               item.appendChild(checkbox);
-              item.setAttribute("url", this.bundleInterface.getExtensionURL(i));
+              item.setAttribute("url", this.bundleInterface.getExtensionAttribute(i, "url")); 
               var oncommand = { 
                 _that: null, 
                 _checkbox: null,
@@ -94,7 +94,7 @@
                 handleEvent: function( event ) { this._that.onToggle(this._index, this._checkbox); } 
               } oncommand._that = this; oncommand._checkbox = checkbox; oncommand._index = i;
               checkbox.addEventListener("command", oncommand, true);
-              checkbox.setAttribute("label", this.bundleInterface.getExtensionName(i) /*+ " - " + this.bundleInterface.getExtensionDesc(i)*/);
+              checkbox.setAttribute("label", this.bundleInterface.getExtensionAttribute(i, "name") /*+ " - " + this.bundleInterface.getExtensionAttribute(i, "desc")*/); 
               checkbox.setAttribute("class", "dialog_checkbox dialog_label");
               listbox.appendChild(item);
             }
@@ -111,14 +111,14 @@
         <parameter name="index"/>
         <parameter name="checkbox"/>
         <body>
-          if (this.bundleInterface) this.bundleInterface.setExtensionInstallState(index, checkbox.checked);
+          if (this.bundleInterface) this.bundleInterface.setExtensionInstallFlag(index, checkbox.checked); 
         </body>
       </method>
 
       <method name="getContentSize">
       <body>
         <![CDATA[
-          var n_ext = this.bundleInterface.getNumExtensions();
+          var n_ext = this.bundleInterface.bundleExtensionCount; 
           return Math.min(4, n_ext) * 20 + ((n_ext <= 4) ? 4 : 0);
         ]]>
       </body>

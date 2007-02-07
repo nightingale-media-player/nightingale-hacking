@@ -189,10 +189,11 @@
     
     <method name="init">
       <parameter name="aBrowserObject"/>
+      <parameter name="aDefaultUrlOverride"/>
       <body>
       <![CDATA[
         try {
-          var lastSelectedURI = SBDataGetStringValue("servicetree.selected_url");
+          var lastSelectedURI = aDefaultUrlOverride ? aDefaultUrlOverride : SBDataGetStringValue("servicetree.selected_url");
           
           this.browser = aBrowserObject;
           this.restoreCollapsedStates();

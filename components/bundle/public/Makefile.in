@@ -30,6 +30,9 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIBundle.idl \
+             sbIBundleDataListener.idl \
+             sbIBundleInstallListener.idl \
+             sbPIBundle.idl \
              $(NULL)
 
 XPIDL_MODULE = sbBundle.xpt

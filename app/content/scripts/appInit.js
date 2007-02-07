@@ -321,7 +321,7 @@ function doFirstRun()
   try {
     var haveRun = false;
     try {
-      haveRun = gPrefs.getBoolPref("songbird.firstruncheck");
+      haveRun = gPrefs.getBoolPref("songbird.firstrun.check");
     } catch (err) { /* prefs throws an exepction if the pref is not there */ }
 
     if ( ! haveRun ) {

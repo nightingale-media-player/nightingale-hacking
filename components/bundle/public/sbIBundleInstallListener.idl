@@ -1,0 +1,100 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIBundle;
+
+/**
+ * \file sbIBundleInstallListener.idl
+ * \brief This file contains the interface for listening to bundle installation events
+ * \sa sbIBundle.idl
+ */
+
+/**
+ * \interface sbIBundleInstallListener sbIBundleInstallListener.h
+ * \brief Songbird Bundle Installation Listener Interface
+ * \sa sbIBundle
+ */
+      
+[scriptable, uuid(849391de-aeff-11db-96e1-005056c00008)]
+interface sbIBundleInstallListener : nsISupports
+{
+ /**
+  * \brief Bundled extension download progress callback
+  * This method is called while a bundled extension is being downloaded to report progress
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \param index The 0-based index of the entry that completed downloading
+  * \param percent The percentage of the file that has been downloaded 
+  * \sa onInstallComplete, onComplete, sbIBundle
+  */
+ void onExtensionDownloadProgress(in sbIBundle aBundle, in long aIndex, in long long aCurrentProgress, in long long aMaxProgress);
+
+ /**
+  * \brief Bundled extension download completion callback
+  * This method is called upon download completion of a bundled extension
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \param index The 0-based index of the entry that completed downloading
+  * \sa onInstallComplete, sbIBundle
+  */
+ void onDownloadComplete(in sbIBundle aBundle, in long aIndex); 
+
+ /**
+  * \brief Bundle installation complete callback
+  * This method is called when a bundled extension has been successfully installed
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \param index The 0-based index of the entry that completed downloading
+  * \sa onDownloadComplete, onComplete, sbIBundle
+  */
+ void onInstallComplete(in sbIBundle aBundle, in long aIndex);  
+
+ /**
+  * \brief Bundle download error callback
+  * This method is called upon error downloading a bundled extension
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \param index The 0-based index of the entry that had an error downloading
+  * \sa onDownloadComplete, sbIBundle
+  */
+ void onDownloadError(in sbIBundle aBundle, in long aIndex);
+
+ /**
+  * \brief Bundle install error callback
+  * This method is called upon error installing a bundled extension
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \param index The 0-based index of the entry that had an error installing
+  * \sa onDownloadComplete, sbIBundle
+  */
+ void onInstallError(in sbIBundle aBundle, in long aIndex);
+
+ /**
+  * \brief Bundle download and installation complete callback
+  * This method is called when the downloading and installing of all the bundled extensions has been completed,
+  * regardless of any error that may have occured in the process.
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \sa onDownloadComplete, onDownloadError, sbIBundle
+  */
+ void onBundleInstallComplete(in sbIBundle aBundle);  
+};

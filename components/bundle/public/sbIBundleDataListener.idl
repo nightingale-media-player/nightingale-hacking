@@ -1,0 +1,60 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIBundle;
+
+/**
+ * \file sbIBundleDataListener.idl
+ * \brief This file contains the interface for listening to bundle data retrieval events
+ * \sa sbIBundle.idl
+ */
+
+/**
+ * \interface sbIBundleDataListener sbIBundleDataListener.h
+ * \brief Songbird Bundle Data Listener Interface
+ * \sa sbIBundle
+ */
+      
+[scriptable, uuid(7449a0fc-aeff-11db-96e1-005056c00008)]
+interface sbIBundleDataListener : nsISupports
+{
+ /**
+  * \brief Bundle download completion callback
+  * This method is called upon completion of the bundle data download 
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \sa onError, sbIBundle
+  */
+ void onDownloadComplete(in sbIBundle aBundle); 
+ /**
+  * \brief Bundle download error callback
+  * This method is called upon error while downloading the bundle data
+  * \param bundle An interface to the bundle manager that triggered the event
+  * \sa onDownloadComplete, sbIBundle
+  */
+ void onError(in sbIBundle aBundle);  
+};
