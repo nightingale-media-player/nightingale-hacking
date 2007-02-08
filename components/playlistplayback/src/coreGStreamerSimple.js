@@ -316,6 +316,9 @@ CoreGStreamerSimple.prototype.getMetadata = function ( key )
 CoreGStreamerSimple.prototype.goFullscreen = function ()
 {
   this._verifyObject();
+  window.fullScreen=!window.fullScreen;
+  if (!this._object.fullscreen) 
+    this._object.fullscreen = true;
 };
 
   

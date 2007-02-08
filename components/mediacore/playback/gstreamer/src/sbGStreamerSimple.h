@@ -5,6 +5,8 @@
 #include "nsStringGlue.h"
 #include "nsIDOMEventListener.h"
 #include "nsIDOMWindow.h"
+#include "nsITimer.h"
+#include "nsComponentManagerUtils.h"
 
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
@@ -15,12 +17,14 @@
 #include "sbIGStreamerSimple.h"
 
 class sbGStreamerSimple : public sbIGStreamerSimple,
-                          public nsIDOMEventListener
+                          public nsIDOMEventListener,
+                          public nsITimerCallback
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIGSTREAMERSIMPLE
   NS_DECL_NSIDOMEVENTLISTENER
+  NS_DECL_NSITIMERCALLBACK
 
   sbGStreamerSimple();
 
@@ -39,6 +43,18 @@ public:
 private:
   ~sbGStreamerSimple();
 
+  bool 
+  SetInvisibleCursor(sbGStreamerSimple* gsts);
+
+  bool 
+  SetDefaultCursor(sbGStreamerSimple* gsts);
+
+  void
+  SetToFullscreen(sbGStreamerSimple* gsts);
+
+  void
+  UnsetFromFullscreen(sbGStreamerSimple* gsts);
+
   PRBool mInitialized;
 
   GstElement* mPlay;
@@ -47,16 +63,28 @@ private:
   guint       mPixelAspectRatioD;
   gint        mVideoWidth;
   gint        mVideoHeight;
+  gint        mOldCursorX;
+  gint        mOldCursorY;
+  // mRedrawCursor - so as to not draw cursor if it's already drawn
+  bool        mRedrawCursor;
+  // mDelayHide - 300ms timer for mouse polling so use to delay hiding; 
+  // currently counts down from 10 for a 3 second wait.
+  int         mDelayHide; 
 
   GstElement* mVideoSink;
   GdkWindow*  mGdkWin;
+  GdkWindow*  mNativeWin;
+  GdkWindow*  mGdkWinFull;
 
   PRBool mIsAtEndOfStream;
   PRBool mIsPlayingVideo;
+  PRBool mFullscreen;
+  PRBool mMakeFullscreen;
   PRInt32 mLastErrorCode;
 
   nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;
   nsCOMPtr<nsIDOMWindow> mDomWindow;
+  nsCOMPtr<nsITimer> mCursorIntervalTimer;
 
   nsString  mArtist;
   nsString  mAlbum;

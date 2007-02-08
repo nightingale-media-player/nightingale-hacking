@@ -41,6 +41,7 @@ interface sbIGStreamerSimple : nsISupports
 {
   attribute AString uri;
   attribute double volume;
+  attribute boolean fullscreen;
   readonly attribute unsigned long long position;
   readonly attribute boolean isPlaying;
   readonly attribute boolean isPlayingVideo;

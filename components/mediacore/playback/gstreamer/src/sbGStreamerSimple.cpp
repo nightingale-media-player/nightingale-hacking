@@ -27,7 +27,8 @@ extern PRLogModuleInfo* gGStreamerLog;
 #define LOG(args)
 #endif
 
-NS_IMPL_ISUPPORTS2(sbGStreamerSimple, sbIGStreamerSimple, nsIDOMEventListener)
+NS_IMPL_ISUPPORTS3(sbGStreamerSimple, sbIGStreamerSimple, nsIDOMEventListener,
+nsITimerCallback)
 
 static GstBusSyncReply
 syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
@@ -58,12 +59,18 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mVideoHeight(0),
   mVideoSink(NULL),
   mGdkWin(NULL),
+  mNativeWin(NULL),
+  mGdkWinFull(NULL),
   mIsAtEndOfStream(PR_TRUE),
   mIsPlayingVideo(PR_FALSE),
   mLastErrorCode(0),
   mVideoOutputElement(nsnull),
-  mDomWindow(nsnull)
+  mDomWindow(nsnull),
+  mFullscreen(PR_FALSE)
 {
+  nsresult rv;
+  mCursorIntervalTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create sbGStreamerSimple::mCursorIntervalTimer");
   mArtist.Assign(EmptyString());
   mAlbum.Assign(EmptyString());
   mTitle.Assign(EmptyString());
@@ -138,9 +145,9 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
   target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
 
-  GdkWindow* win = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
+  mNativeWin = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
 
-  LOG(("Found native window %x", win));
+  LOG(("Found native window %x", mNativeWin));
 
   // Create the video window
   GdkWindowAttr attributes;
@@ -153,7 +160,11 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   attributes.wclass = GDK_INPUT_OUTPUT;
   attributes.event_mask = 0;
 
-  mGdkWin = gdk_window_new(win, &attributes, GDK_WA_X | GDK_WA_Y);
+  mGdkWin = gdk_window_new(mNativeWin, &attributes, GDK_WA_X | GDK_WA_Y);
+  mRedrawCursor = false;
+  mOldCursorX = -1;
+  mOldCursorY = -1;
+  mDelayHide = 10;
   gdk_window_show(mGdkWin);
   // Set up the playbin
   mPlay = gst_element_factory_make("playbin", "play");
@@ -226,6 +237,72 @@ sbGStreamerSimple::GetVolume(double* aVolume)
 
   g_object_get(G_OBJECT(mPlay), "volume", aVolume, NULL);
 
+  return NS_OK;
+}
+
+void
+sbGStreamerSimple::SetToFullscreen(sbGStreamerSimple* gsts)
+{
+  GdkScreen *fullScreen = NULL;
+  GdkWindowAttr attributes;
+  gint fullWidth, fullHeight;
+  attributes.window_type = GDK_WINDOW_TOPLEVEL;
+  attributes.x = 0;
+  attributes.y = 0;
+  attributes.width = 0;
+  attributes.height = 0;
+  attributes.wclass = GDK_INPUT_OUTPUT;
+  attributes.event_mask = 0;
+
+  gsts->mGdkWinFull = gdk_window_new(NULL, &attributes, GDK_WA_X | GDK_WA_Y);
+  gdk_window_show(gsts->mGdkWinFull);
+  gdk_window_reparent(gsts->mGdkWin, gsts->mGdkWinFull, 0, 0);
+  gdk_window_fullscreen(gsts->mGdkWinFull);
+
+  // might be needed for fallback - 
+  //fullScreen = gdk_display_get_screen(gdk_x11_lookup_xdisplay(
+  //  GDK_WINDOW_XDISPLAY(gsts->mGdkWinFull)), 0);
+  fullScreen = gdk_screen_get_default();
+
+  fullWidth = gdk_screen_get_width(fullScreen);
+  fullHeight = gdk_screen_get_height(fullScreen);
+  gdk_window_move_resize(gsts->mGdkWin, 0, 0, fullWidth, fullHeight);
+  gsts->Resize();
+  gsts->mFullscreen = PR_TRUE;
+  return;
+}
+
+void
+sbGStreamerSimple::UnsetFromFullscreen(sbGStreamerSimple* gsts)
+{
+  gdk_window_unfullscreen(gsts->mGdkWin);
+  gdk_window_reparent(gsts->mGdkWin, gsts->mNativeWin, 0, 0);
+  gsts->Resize();
+  gdk_window_destroy(gsts->mGdkWinFull);
+  gsts->mGdkWinFull = NULL;
+  return;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::GetFullscreen(PRBool* aFullscreen)
+{
+  *aFullscreen = mFullscreen;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
+{
+  if(aFullscreen) {
+    SetToFullscreen(this);
+  }
+  else {
+    UnsetFromFullscreen(this);
+  }
+
+  mFullscreen = aFullscreen;
+  mMakeFullscreen = aFullscreen;
   return NS_OK;
 }
 
@@ -487,6 +564,74 @@ sbGStreamerSimple::Seek(PRUint64 aTimeNanos)
   return NS_OK;
 }
 
+bool 
+sbGStreamerSimple::SetInvisibleCursor(sbGStreamerSimple* gsts)
+{
+  guint32 data = 0;
+  GdkPixmap* pixmap = gdk_bitmap_create_from_data(NULL, (gchar*)&data, 1, 1);
+  GdkColor color = { 0, 0, 0, 0 };
+  GdkCursor* cursor = gdk_cursor_new_from_pixmap(pixmap, 
+          pixmap, &color, &color, 0, 0);
+  gdk_pixmap_unref(pixmap);
+  gdk_window_set_cursor(gsts->mGdkWin, cursor);
+  gdk_cursor_unref(cursor);
+  return true;
+}
+
+bool 
+sbGStreamerSimple::SetDefaultCursor(sbGStreamerSimple* gsts) 
+{
+  gdk_window_set_cursor(gsts->mGdkWin, NULL);
+  return false;
+}
+
+//timeout function for determining when to hide/show mouse hide/show controls
+NS_IMETHODIMP 
+sbGStreamerSimple::Notify(nsITimer *aTimer)
+{
+  if (!aTimer) 
+    return NS_OK;
+  
+  GdkDisplay *gdkDisplay;
+  GdkWindow *gdkWin = this->mGdkWin;
+  gint newCursorX=-1;
+  gint newCursorY=-1;
+  
+  if (gdkWin == NULL) 
+    return NS_OK;
+  
+  gdkDisplay = gdk_x11_lookup_xdisplay(GDK_WINDOW_XDISPLAY(gdkWin));
+
+  if (gdk_display_get_window_at_pointer(gdkDisplay, NULL, NULL) == gdkWin) {
+    gdk_display_get_pointer(gdkDisplay, NULL, &newCursorX, &newCursorY, NULL);
+    if (newCursorX != this->mOldCursorX || 
+        newCursorY != this->mOldCursorY) {
+      // redraw cursor if mouse is invisible and the mouse has moved
+      if (this->mRedrawCursor) {
+        this->mRedrawCursor = SetDefaultCursor(this);
+        if(this->mFullscreen) UnsetFromFullscreen(this);
+      }
+      this->mDelayHide = 10;
+      this->mOldCursorX = newCursorX;
+      this->mOldCursorY = newCursorY;
+    }
+    else {
+      if (this->mDelayHide > 0) 
+        this->mDelayHide-=1;
+      }
+      else {
+        // otherwise hide the cursor in the video window
+        this->mRedrawCursor = SetInvisibleCursor(this);
+        if (this->mGdkWinFull == NULL && 
+            this->mMakeFullscreen) {
+          SetToFullscreen(this);
+        }
+      }
+    }
+  }
+  return NS_OK;
+}
+
 // nsIDOMEventListener
 NS_IMETHODIMP
 sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
@@ -579,6 +724,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       mLastErrorCode = error->code;
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
+      mCursorIntervalTimer->Cancel();
 
       break;
     }
@@ -600,6 +746,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_EOS: {
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
+      mCursorIntervalTimer->Cancel();
       break;
     }
 
@@ -640,6 +787,9 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
         XID window = GDK_WINDOW_XWINDOW(mGdkWin);
         gst_x_overlay_set_xwindow_id(xoverlay, window);
         LOG(("Set xoverlay %d to windowid %d\n", xoverlay, window));
+
+        mCursorIntervalTimer->InitWithCallback(this,
+          300, nsITimer::TYPE_REPEATING_SLACK);
 
         mIsPlayingVideo = PR_TRUE;
       }
