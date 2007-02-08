@@ -505,13 +505,6 @@ var bmManager = {
                   properties: "bookmark",
                   children: [
                   { 
-                      label: "Singingfish",
-                      icon: "http://singingfish.com/favicon.ico",
-                      url: "http://search.singingfish.com/sfw/home.jsp?a_submit=0&aw=1&sfor=av&dur=1&fmp3=1&fmpeg=1&call=1&cmus=1&cmov=1&crad=1&coth=1&ctv=1&cnews=1&cspt=1&cfin=1",
-                      properties: "bookmark",
-                      children: []
-                  },
-                  { 
                       label: "elbo.ws",
                       icon: "http://elbo.ws/favicon.ico",
                       url: "http://elbo.ws/",

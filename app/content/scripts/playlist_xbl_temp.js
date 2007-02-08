@@ -322,9 +322,6 @@ function onSearchTerm( target, in_term )
       case "search.popup.elbows":
         search_url = "http://elbo.ws/mp3s/" + term;
       break;
-      case "search.popup.singingfish":
-        search_url = "http://search.singingfish.com/sfw/search?a_submit=1&aw=1&sfor=a&dur=1&fmp3=1&cmus=1&cmov=1&crad=1&rpp=20&persist=1&exp=0&x=0&y=0&query=" + term;
-      break;
       case "lyrics.popup.google":
         search_url = "http://www.google.com/search?q=lyrics " + term + "&sa=Search&client=pub-4053348708517670&forid=1&ie=ISO-8859-1&oe=ISO-8859-1&hl=en&GALT:#333333;GL:1;DIV:#37352E;VLC:000000;AH:center;BGC:C6B396;LBGC:8E866F;ALC:000000;LC:000000;T:44423A;GFNT:663333;GIMP:663333;FORID:1;";
       break;

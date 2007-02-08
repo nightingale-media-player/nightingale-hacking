@@ -52,9 +52,6 @@
             <xul:menuitem id="search.popup.songbird" sid="search.item.songbird"
               label="Library" class="menuitem-iconic" image="chrome://songbird/skin/default/icon_lib_16x16.png"
             />
-              <xul:menuitem id="search.popup.singingfish" 
-                label="Singingfish" class="menuitem-iconic" image="chrome://service-icons/skin/singingfish.ico"
-              />
               <xul:menuitem id="search.popup.elbows" 
                 label="elbo.ws" class="menuitem-iconic" image="chrome://service-icons/skin/elbows.ico"
             />
