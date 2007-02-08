@@ -616,7 +616,7 @@ sbGStreamerSimple::Notify(nsITimer *aTimer)
       this->mOldCursorY = newCursorY;
     }
     else {
-      if (this->mDelayHide > 0) 
+      if (this->mDelayHide > 0) {
         this->mDelayHide-=1;
       }
       else {
