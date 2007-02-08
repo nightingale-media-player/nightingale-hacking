@@ -23,6 +23,7 @@
 
     <em:internalName>dove/0.1</em:internalName>
     <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
   </Description>
 
 </RDF>

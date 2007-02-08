@@ -28,6 +28,7 @@
 
     <!-- <em:internalName>rubberducky/0.2</em:internalName> -->
     <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
   </Description>
 
 </RDF>
