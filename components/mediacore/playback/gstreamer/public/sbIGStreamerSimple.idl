@@ -71,4 +71,3 @@ interface sbIGStreamerSimple : nsISupports
 #define SBGSTREAMERSIMPLE_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1"
 #define SBGSTREAMERSIMPLE_CLASSNAME	 "GStreamerSimple"
 %}
-

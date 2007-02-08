@@ -909,4 +909,3 @@ sbGStreamerSimple::CapsSet(GObject* obj, GParamSpec* pspec)
 
   gst_caps_unref(caps);
 }
-

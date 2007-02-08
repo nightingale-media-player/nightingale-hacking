@@ -381,4 +381,3 @@ function CoreGStreamerSimpleDocumentInit( id )
     dump( "\n!!! coreGStreamerSimple failed to bind properly\n" + err );
   }
 };
-

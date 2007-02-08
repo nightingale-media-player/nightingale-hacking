@@ -96,4 +96,3 @@ protected:
 };
 
 #endif // _SB_GSTREAMER_SIMPLE_H_
-
