@@ -25,167 +25,18 @@
  */
 
 
+
 /*
  * Contains functions common to all windows
  */
 
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
- 
-//
-// XUL Event Methods
-//
 
-//Necessary when WindowDragger is not available on the current platform.
-var trackerBkg = false;
-var offsetScrX = 0;
-var offsetScrY = 0;
-
-var windowDragCallback = {
-  onWindowDragComplete: function () {
-    onWindowDragComplete();
-  },
-
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIWindowDraggerCallback) &&
-        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
-        !aIID.equals(Components.interfaces.nsISupports)) 
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    
-    return this;
-  }
-  
-};
-
-// The background image allows us to move the window around the screen
-function onBkgDown( theEvent, popup ) 
-{
-  if (maximized) return;
-  // Don't allow dragging on nodes that want their own click handling.
-  // This is kinda dumb.  :(
-  switch (theEvent.target.nodeName.toLowerCase())
-  {
-    // Songbird Custom Elements
-    case "player_seekbar":
-    case "player_volume":
-    case "player_repeat":
-    case "player_shuffle":
-    case "player_playpause":
-    case "player_back":
-    case "player_forward":
-    case "player_mute":
-    case "player_numplaylistitems":
-    case "player_scaning":
-    case "dbedit_textbox":
-    case "dbedit_menulist":
-    case "exttrackeditor":
-    case "servicetree":
-    case "playlist":
-    case "search":
-    case "smartsplitter":
-    case "sbextensions":
-    case "smart_conditions":
-    case "watch_folders":
-    case "clickholdbutton":
-    // XUL Elements
-    case "splitter":
-    case "grippy":
-    case "button":
-    case "toolbarbutton":
-    case "scrollbar":
-    case "slider":
-    case "thumb":
-    case "checkbox":
-    case "resizer":
-    case "textbox":
-    case "tree":
-    case "listbox":
-    case "listitem":
-    case "menu":
-    case "menulist":
-    case "menuitem":
-    case "menupopup":
-    case "menuseparator":
-    // Heehee
-    case "parsererror":
-    // HTML Elements
-    case "img":
-    case "input":
-    case "select":
-    case "option":
-    case "object":
-    case "embed":
-    case "body":
-    case "html":
-    case "div":
-    case "a":
-    case "ul":
-    case "ol":
-    case "dl":
-    case "dt":
-    case "dd":
-    case "li":
-    case "#text":
-    case "textarea":
-    case "faceplate":
-      return;
-  }
-//  alert(theEvent.target.nodeName);
-  try
-  {
-    var windowDragger = Components.classes["@songbirdnest.com/Songbird/WindowDragger;1"];
-    if (windowDragger) {
-      var service = windowDragger.getService(Components.interfaces.sbIWindowDragger);
-      if (service) {
-        var dockDistance = (window.dockDistance ? window.dockDistance : 0);
-        service.beginWindowDrag(dockDistance, windowDragCallback); // automatically ends
-      }
-    }
-    else {
-      trackerBkg = true;
-      offsetScrX = document.documentElement.boxObject.screenX - theEvent.screenX;
-      offsetScrY = document.documentElement.boxObject.screenY - theEvent.screenY;
-      // ScreenY is reported incorrectly on osx for non-popup windows without title bars.
-      if ( ( popup != true ) && (navigator.userAgent.indexOf("Mac OS X") != -1) ) {
-        // TODO: This will be incorrect in the jumptofile dialog, as it is loaded as a popup.
-        // How do I know from this scope whether the window is loaded as popup?
-        offsetScrY -= 22; 
-      }
-      document.addEventListener( "mousemove", onBkgMove, true );
-    }
-  }
-  catch(err) {
-    dump("Error. Songbird.js::onBkDown() \n" + err + "\n");
-  }
-}
-
-function onBkgMove( theEvent ) 
-{
-  if ( trackerBkg )
-  {
-    document.defaultView.moveTo( offsetScrX + theEvent.screenX, offsetScrY + theEvent.screenY );
-  }
-}
-
-function onBkgUp( ) 
-{
-  if ( trackerBkg )
-  {
-    trackerBkg = false;
-    onWindowDragComplete();
-    document.removeEventListener( "mousemove", onBkgMove, true );
-  }
-}
-
+// Shorthand, hammerable 
 function eatEvent(evt)
 {
   evt.preventBubble();
 }
-
-
-
 
 // Minimize
 function onMinimize()

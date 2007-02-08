@@ -44,8 +44,8 @@
  onfocus="onFocus()"
  onblur="onBlur()"
 
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  
+ spacers_drag_window="true"
 >
   
 <windowregion/>
@@ -86,22 +86,22 @@
           <x_resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" x_style="cursor: sw-resize;"/>
         </vbox>
         
-        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
+        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1" drag_window="true">
           <menubar id="trackeditor_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
         
-          <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&trackeditor.title;" class="sb_faceplate"/>
-            <spacer width="5"/>                    
-            <spacer flex="1"/>           
-            <spacer width="5"/>
+          <hbox id="window_top" class="sb_faceplate" drag_window="true">
+            <label id="app_title" value="&trackeditor.title;" class="sb_faceplate" drag_window="true"/>
+            <spacer width="5" drag_window="true"/>                    
+            <spacer flex="1" drag_window="true"/>           
+            <spacer width="5" drag_window="true"/>
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
-          <spacer height="3"/>
+          <spacer height="3" drag_window="true"/>
           
-          <description class="dialog_label">
+          <description class="dialog_label" drag_window="true">
           &trackeditor.disclaimer;
           </description>
-          <spacer height="8"/>
+          <spacer height="8" drag_window="true"/>
           
 
           <hbox id="trackeditor.hflex">
@@ -153,6 +153,8 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/windowDrag.js" />
+  <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   
   <script>

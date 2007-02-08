@@ -112,6 +112,8 @@ try
   {
     try
     {
+      var aPlaylistReaderManager = (new sbIPlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
+      
       // Make a filepicker thingie
       var nsIFilePicker = Components.interfaces.nsIFilePicker;
       var fp = Components.classes["@mozilla.org/filepicker;1"]
@@ -126,7 +128,7 @@ try
       // Tell it what filters to be using
       var filterlist = "";
       var extensionCount = new Object;
-      var extensions = thePlaylistReader.supportedFileExtensions(extensionCount);
+      var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
       
       var first = true;
       for(var i = 0; i < extensions.length; i++)
@@ -160,7 +162,7 @@ try
         // And if we're good, play it.
         var plsFile = "file:///" + fp.file.path;
         var readableName = fp.file.leafName;
-        var success = thePlaylistReader.autoLoad(fp.fileURL.spec, "songbird", readableName, "user", plsFile, "", null);
+        var success = aPlaylistReaderManager.autoLoad(fp.fileURL.spec, "songbird", readableName, "user", plsFile, "", null);
         
         if ( ( success == true ) || ( success == 1 ) )
         {

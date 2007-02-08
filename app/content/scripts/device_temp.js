@@ -25,26 +25,12 @@
 //
  */
 
-//
-//  Yes, I know this file is a mess.
-//
-//  Yes, I know we have to clean it up.
-//
-//  Yes, this will happen soon.
-//
-//  I promise.  Or something.
-//
-//                  - mig
-//
-
 // ...and now I get to start cleaning up my mess...
 
 
 try
 {
 
-// okay
-var thePlaylistReader = null;
 
 
 

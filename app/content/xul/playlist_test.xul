@@ -51,6 +51,8 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/metrics.js"/>
   <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/windowDrag.js" />
+  <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js"/> 
 
   <!-- Local hardcoded sample js -->

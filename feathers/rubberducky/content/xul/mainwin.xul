@@ -50,8 +50,7 @@
   title="&window.dev.title;"
   windowtype="Songbird:Main"
 
-  ondraggesture="onBkgDown( event, false ); // Handle the window drag at the top level" 
-  onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  spacers_drag_window="true"
   
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
@@ -106,7 +105,7 @@
             <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
           </vbox>
 
-          <vbox flex="1">
+          <vbox flex="1" drag_window="true">
 
             <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
             <!-- TODO: Clean up.  Leaving as is until the mac topbar is changed -->
@@ -115,7 +114,7 @@
               <label id="mainwin_app_title" value="&window.dev.title;" />
               <spacer width="5"/>
               <menubar id="songbird_menu" hidden="false" oncommand="onMenu(event.target)" />               
-              <spacer flex="1"/>
+              <spacer flex="1" drag_window="true"/>
               <button id="sysbtn_minimode" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
               <spacer width="5"/>
               <button id="sysbtn_minimize" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
@@ -126,13 +125,13 @@
             </hbox>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
-            <hbox id="frame_mini" hidden="true">
+            <hbox id="frame_mini" hidden="true" drag_window="true">
               <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
               <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
               <player_forward id="mini_btn_fwd" class="sb_faceplate miniplayer" />
 
-              <vbox id="mini_volume">
-                <hbox id="mini_volume_box">
+              <vbox id="mini_volume" drag_window="true">
+                <hbox id="mini_volume_box" drag_window="true">
                   <player_mute id="mute" muteonid="mute_on" muteoffid="mute_off"/>
                   <spacer width="8"/>
                   <hbox>
@@ -143,17 +142,17 @@
                 </hbox>
               </vbox>
 
-              <hbox flex="1">
+              <hbox flex="1" drag_window="true">
                 <spacer width="4" height="18" id="mini_dash_w"/>
-                <vbox id="mini_dash" flex="1">
+                <vbox id="mini_dash" flex="1" drag_window="true">
                   <stack>
-                  <hbox id="mini_text_time" class="sb_faceplate" flex="1" >
-                    <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right"/>
-                    <spacer width="20"/>
-                    <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1"/>
-                    <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate"/>
-                    <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate"/>
-                    <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" />
+                  <hbox id="mini_text_time" class="sb_faceplate" flex="1" drag_window="true">
+                    <player_artist id="mini_text_artist" class="sb_faceplate" autotip="1" crop="right" drag_window="true"/>
+                    <spacer width="20" drag_window="true"/>
+                    <player_title id="mini_text_title" class="sb_faceplate" autotip="1" crop="right" flex="1" drag_window="true"/>
+                    <player_timeelapsed id="mini_text_time_elapsed" value="0:00" class="sb_faceplate" drag_window="true"/>
+                    <label id="mini_text_time_t_txt"   value=" / " class="sb_faceplate" drag_window="true"/>
+                    <player_totaltime id="mini_text_time_total" value="0:00" class="sb_faceplate" drag_window="true"/>
                   </hbox>
                   <player_seekbar id="mini_seekbar" sliderid="mini_seekbar_slider" thumbid="mini_seekbar_thumb" progressid="mini_seekbar_progress" orient="horizontal" class="sb_faceplate" maxpos="100"/>
                   </stack>
@@ -172,12 +171,12 @@
 
 
             <!-- inner_frame -->
-            <vbox id="frame_inner_pane" flex="1">
+            <vbox id="frame_inner_pane" flex="1" drag_window="true">
               
               <!-- CONTROL PANE -->
-              <hbox id="frame_control_pane" pack="center" align="center">
+              <hbox id="frame_control_pane" pack="center" align="center" drag_window="true">
 
-                <vbox id="control_left_box" pack="center" align="center">
+                <vbox id="control_left_box" pack="center" align="center" drag_window="true">
                   <!-- PLAY BUTTONS -->
                   <hbox id="playbutton_box" pack="center" align="center">
                     <player_back id="songbird_btn_back"   tooltiptext="&tooltip.control.back;" />
@@ -203,7 +202,7 @@
                   </vbox>
                   <spacer width="10" id="dashboard_w"/>
                   <vbox id="face_middle_box" flex="1" >
-                    <faceplate id="main_faceplate" style="-moz-box-orient: vertical"/>
+                    <faceplate id="main_faceplate" style="-moz-box-orient: vertical" drag_window="true"/>
                   </vbox>
                   <spacer width="10" id="dashboard_e"/>
 
@@ -315,13 +314,13 @@
               <!-- frame_middle_pane -->
               
               <!-- STATUS PANE -->
-              <hbox id="frame_status_pane">
+              <hbox id="frame_status_pane" drag_window="true">
                 <hbox id="status_status_box" flex="1">
-                  <sbstatustext id="status_text" value=" " crop="end" flex="1"/>
+                  <sbstatustext id="status_text" value=" " crop="end" flex="1" drag_window="true"/>
                   <player_numplaylistitems id="library_text" value=" " crop="end"/>
                   <player_scanning id="scanning_text" value=" " crop="end"/>
                 </hbox>
-                <hbox id="status_progress_box">
+                <hbox id="status_progress_box" drag_window="true">
                   <progressmeter id="status_progress" mode="undetermined" hidden="false"/>
                 </hbox>
               </hbox>
@@ -400,6 +399,8 @@
    src="chrome://songbird/content/scripts/sbIAsyncForLoop.js"/>
 
   <!-- Load the Songbird stuff -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/windowDrag.js" />
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script type="application/x-javascript"   
@@ -407,7 +408,7 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/async_webplaylist.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/songbird_hack.js" />
+   src="chrome://songbird/content/scripts/device_temp.js" />
 
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/playlist_xbl_temp.js" />

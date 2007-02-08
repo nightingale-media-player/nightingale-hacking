@@ -39,8 +39,8 @@
  onkeypress="if ( event.keyCode == 13 ) { if ( doOK() ) onExit(); } else if ( event.keyCode == 27 ) { if ( doCancel() ) onExit(); }"
  onload="doLoad();"
 
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  
+ spacers_drag_window="true"
 >
   
 <windowregion/>
@@ -105,6 +105,8 @@
 </stack>
   
   <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/windowDrag.js" />
+  <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script>
   <![CDATA[

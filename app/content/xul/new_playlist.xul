@@ -42,8 +42,8 @@
  onkeydown="handleKeyDown(event);"
  onload="initFocus();"
 
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  
+ spacers_drag_window="true"
 >
   
   <!-- Astounding complexity! -->  
@@ -105,6 +105,8 @@
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/windowDrag.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script>

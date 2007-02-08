@@ -39,9 +39,6 @@
  buttons="none"
  onload="onLoadJumpToFile();"
  onunload="onUnloadJumpToFile();"
-
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
 >
   
 <stack flex="1">
@@ -80,18 +77,18 @@
           <resizer oncommand="onWindowResizeComplete()" id="frame_resize_mo" dir="bottomleft" style="cursor: sw-resize;"/>
         </vbox>
         
-        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1">
+        <vbox class="sb_faceplate" id="chrome_bkgd" flex="1" drag_window="true">
           <menubar id="jumpto_menu" hidden="false" class="sb_faceplate" oncommand="onMenu(event.target)"/>
         
-          <hbox id="window_top" class="sb_faceplate" >
-            <label id="app_title" value="&jumptofile.title;" class="sb_faceplate"/>
-            <spacer width="5"/>                    
-            <spacer flex="1"/>           
-            <spacer width="5"/>
+          <hbox id="window_top" class="sb_faceplate" drag_window="true">
+            <label id="app_title" value="&jumptofile.title;" class="sb_faceplate" drag_window="true"/>
+            <spacer width="5" drag_window="true"/>                    
+            <spacer flex="1" drag_window="true"/>           
+            <spacer width="5" drag_window="true"/>
             <button id="sysbtn_close" class="sb_faceplate" oncommand="onExit( );" tooltiptext="&tooltip.exit;"/>
           </hbox>
 
-          <spacer height="5"/>
+          <spacer height="5" drag_window="true"/>
 
           <hbox align="center">
             <menulist id="playable_list" 
@@ -165,6 +162,8 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/windowDrag.js" />
+  <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/jumptofile.js" />

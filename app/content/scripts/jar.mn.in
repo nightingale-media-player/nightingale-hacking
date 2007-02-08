@@ -32,7 +32,7 @@ songbird.jar:
   content/songbird/scripts/appInit.js                   (appInit.js)  
   content/songbird/scripts/videoWinInit.js              (videoWinInit.js)  
   content/songbird/scripts/mainWinInit.js               (mainWinInit.js)  
-  content/songbird/scripts/songbird_hack.js             (songbird_hack.js)
+  content/songbird/scripts/device_temp.js               (device_temp.js)
   content/songbird/scripts/songbird_interfaces.js       (songbird_interfaces.js)
   content/songbird/scripts/switch_feathers.js           (switch_feathers.js)
   content/songbird/scripts/switch_locale.js             (switch_locale.js)
@@ -44,7 +44,8 @@ songbird.jar:
   content/songbird/scripts/menubar_xbl_temp.js          (menubar_xbl_temp.js)
   content/songbird/scripts/currenttrack_xbl_temp.js     (currenttrack_xbl_temp.js)
   content/songbird/scripts/dndDefaultHandler.js         (dndDefaultHandler.js)
-  content/songbird/scripts/playlist_xbl_temp.js         (playlistCommands.js)
+  content/songbird/scripts/playlistCommands.js          (playlistCommands.js)
+  content/songbird/scripts/dragWindow.js                (dragWindow.js)
   content/songbird/scripts/cmdline.js                   (cmdline.js)
   content/songbird/scripts/preferences/hotkeys.js       (preferences/hotkeys.js)
   

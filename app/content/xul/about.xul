@@ -40,8 +40,8 @@
  onload="return doInit();"
  ondialogaccept="return doOK();"
 
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  
+ spacers_drag_window="true"
 >
 
   <!-- Astounding complexity! -->

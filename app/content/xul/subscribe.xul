@@ -42,8 +42,8 @@
  onkeypress="onKeyPress(event);"
  flex="1"
  hidechrome="true"
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  
+ spacers_drag_window="true"
 >
 
 <windowregion/>
@@ -151,6 +151,7 @@
 </stack>
  
 <!-- SCRIPTS -->
+<script type="application/x-javascript" src="chrome://songbird/content/scripts/windowDrag.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/window_utils.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 <script type="application/x-javascript" src="chrome://songbird/content/scripts/songbird_interfaces.js" />

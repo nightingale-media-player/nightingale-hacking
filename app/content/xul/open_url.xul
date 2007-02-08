@@ -41,8 +41,8 @@
  ondialogcancel="return doCancel();"
  onload="try { fixWindow('window_top', 'app_title'); } catch (e) { } document.getElementById('songbird_open_url').focus();"
 
- ondraggesture="onBkgDown( event, true ); // Handle the window drag at the top level" 
- onmouseup="onBkgUp(); // Handle the window drag at the top level"
+  
+ spacers_drag_window="true"
 >
 <!-- Astounding complexity! -->
 <!--windowregion/-->
@@ -104,6 +104,8 @@
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"  
+   src="chrome://songbird/content/scripts/windowDrag.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js" />
   <script>

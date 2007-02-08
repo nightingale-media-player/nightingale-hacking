@@ -124,11 +124,6 @@ function SBInitialize()
 
   window.focus();
 
-  const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
-  const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
-  const PlaylistReaderManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderManager;1", "sbIPlaylistReaderManager");
-  thePlaylistReader = (new PlaylistReaderManager()).QueryInterface(Components.interfaces.sbIPlaylistReaderManager);
-
   try
   {
     onWindowLoadSizeAndPosition();
@@ -229,8 +224,6 @@ function SBUninitialize()
 {
   shutdownFaceplateButton();
   
-  thePlaylistReader = null;
-
   window.removeEventListener("keydown", checkAltF4, true);
   
   var mainPane = document.getElementById("frame_main_pane");
