@@ -28,7 +28,7 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
-ifeq ($(SB_PLATFORM), win)
+ifeq ($(SB_PLATFORM), windows)
 SUBDIRS = win32
 else
 SUBDIRS = $(SB_PLATFORM) 
