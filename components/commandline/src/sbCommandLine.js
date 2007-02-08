@@ -92,8 +92,8 @@ sbCommandLineHandler.prototype = {
   // there are specific formatting guidelines for help test, see nsICommandLineHandler
   helpInfo : "  -test [tests]        Run tests on the components listed in the\n" +
              "                       optional comma-separated list of tests.\n" +
-             "                       If no tests are passed in ALL tests will be run.\n",
-             "  [url|path]           Local path/filename to media items to import and play,\n",
+             "                       If no tests are passed in ALL tests will be run.\n" +
+             "  [url|path]           Local path/filename to media items to import and play,\n" +
              "                       or URL to load in the browser.\n",
   itemHandlers: [],           
   itemUriSpecs: [],           
