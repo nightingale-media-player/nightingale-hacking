@@ -28,10 +28,10 @@
 // Web Playlist loader using sbIAsyncForLoop
 //
 
-const WEB_PLAYLIST_CONTEXT      = "webplaylist";
-const WEB_PLAYLIST_TABLE        = "webplaylist";
-const WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
-const WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
+var WEB_PLAYLIST_CONTEXT      = "webplaylist";
+var WEB_PLAYLIST_TABLE        = "webplaylist";
+var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
+var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
 try
 {

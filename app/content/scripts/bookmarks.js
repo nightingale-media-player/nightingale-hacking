@@ -215,7 +215,9 @@ var bmManager = {
       var n = this.findBookmark(theurl);
       if (n == -1) {
         if (SBGetServiceFromUrl(theurl, true)) {
-          sbMessageBox(this.getString("bookmarks.addmsg.title", "Bookmark"), this.getString("bookmarks.addmsg.internal", "This page is already available from the service tree"), false);
+          gPrompt.alert( window, 
+                        SBString( "bookmarks.addmsg.title", "Bookmark" ),
+                        SBString( "bookmarks.addmsg.msg", "This page is already available from the service tree" ) );
           return;
         }
         var thelabel = browser.contentDocument.title;
@@ -255,7 +257,9 @@ var bmManager = {
         checker.asyncCheck(observer, null);
       } else {
         // tell user it already exists
-        sbMessageBox(this.getString("bookmarks.addmsg.title", "Bookmark"), this.getString("bookmarks.addmsg.exists", "This bookmark already exists"), false);
+        gPrompt.alert( window, 
+                      SBString( "bookmarks.addmsg.title", "Bookmark" ),
+                      SBString( "bookmarks.addmsg.msg", "This bookmark already exists" ) );
       }
     }
   },

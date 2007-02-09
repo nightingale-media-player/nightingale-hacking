@@ -48,7 +48,7 @@
     <constructor>
       <![CDATA[
         var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-        jsLoader.loadSubScript( "chrome://songbird/content/scripts/messagebox.js", this );
+        jsLoader.loadSubScript( "chrome://songbird/content/scripts/window_utils.js", this );
       ]]>
     </constructor>
     <destructor>
@@ -158,7 +158,9 @@
             if (tagname != "") 
             {
               if (this.isInList(tagname)) {
-                this.sbMessageBox_strings("tagseditor.tagexists.title", "tagseditor.tagexists.msg", "Add Tag", "This tag is already in the list", false);
+                this.gPrompt.alert( window, 
+                              SBString( "tagseditor.tagexists.title", "Add Tag" ),
+                              SBString( "tagseditor.tagexists.msg", "This tag is already in the list" ) );
                 return;
               }
               this.list.appendItem(tagname);
@@ -172,7 +174,11 @@
     <method name="onClickClear">
       <body>
         <![CDATA[
-          if (this.sbMessageBox_strings("tagseditor.clear.title", "tagseditor.clear.msg", "Clear", "Clear all tags ?", true) == "accept") {
+        
+          if ( this.gPrompt.confirm( window, 
+                                SBString( "tagseditor.clear.title", "Clear" ),
+                                SBString( "tagseditor.clear.msg", "Clear all tags ?" ) ) )
+          {
             this.clearAllTags();
           }
         ]]>

@@ -241,18 +241,16 @@
           
           // Thou shalt not.
           if ( ! localFile.isDirectory() ) {
-            sbMessageBox_strings("subscribe.selectvalidfolder.title",
-                                 "subscribe.selectvalidfolder.msg",
-                                 "Invalid folder",
-                                 "Please select a valid destination folder for download.");
+            gPrompt.alert( window, 
+                          SBString( "subscribe.selectvalidfolder.title", "Invalid folder" ),
+                          SBString( "subscribe.selectvalidfolder.msg", "Please select a valid destination folder for download." ) );
             return false;
           }
         }
         catch ( err ) {
-          sbMessageBox_strings("subscribe.selectvalidfolder.title",
-                               "subscribe.selectvalidfolder.msg",
-                               "Invalid folder",
-                               "Please select a valid destination folder for download.");
+          gPrompt.alert( window, 
+                        SBString( "subscribe.selectvalidfolder.title", "Invalid folder" ),
+                        SBString( "subscribe.selectvalidfolder.msg", "Please select a valid destination folder for download." ) );
           return false;
         }
 
@@ -267,10 +265,9 @@
         var unit = document.getElementById("subscribe_interval_unit").value;
 
         if ( time == 0 ) {
-          sbMessageBox_strings("subscribe.selectvalidtime.title",
-                               "subscribe.selectvalidtime.msg",
-                               "Invalid Update Interval",
-                               "Please select a valid time for automatic update.");
+          gPrompt.alert( window, 
+                        SBString( "subscribe.selectvalidtime.title", "Invalid Update Interval" ),
+                        SBString( "subscribe.selectvalidtime.msg", "Please select a valid time for automatic update." ) );
           return false;
         }
         

@@ -96,13 +96,9 @@ function onExtensionDownloadComplete() {
     pbundle.getInstallListener(i).onDownloadComplete(pbundle, cur_ext);
   var r = installXPI(destFile);
   if (r == 0) {
-    var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-    var couldnotinstall = "Could not install";
-    try {
-      couldnotinstall = songbirdStrings.GetStringFromName("setupprogress.couldnotinstall");
-    } catch (e) {}
-    sbMessageBox("Error", couldnotinstall + " " + bundle.getExtensionAttribute(cur_ext, "name"), false); 
+    gPrompt.alert( window, "Error",
+                  SBString( "setupprogress.couldnotinstall", "Could not install" ) + " " +
+                  bundle.getExtensionAttribute(cur_ext, "name") );
     for (var i=0;i<pbundle.installListenerCount;i++) 
       pbundle.getInstallListener(i).onInstallError(pbundle, cur_ext);
   } else pbundle.setNeedRestart(true);
@@ -113,12 +109,9 @@ function onExtensionDownloadComplete() {
 }
 
 function onExtensionDownloadError() {
-  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var couldnotdownload = "Downloading";
-  try {
-    couldnotdownload = songbirdStrings.GetStringFromName("setupprogress.couldnotdownload");
-  } catch (e) {}
+  gPrompt.alert( window, "Error",
+                SBString( "setupprogress.couldnotdownload", "Downloading" ) + " " +
+                bundle.getExtensionAttribute(cur_ext, "name") );
   sbMessageBox("Error", couldnotdownload + " " + bundle.getExtensionAttribute(cur_ext, "name"), false);
   afailure = true;
   deleteLastDownloadedFile();

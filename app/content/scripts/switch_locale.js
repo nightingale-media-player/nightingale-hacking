@@ -150,6 +150,7 @@ try {
     }
   }
 
+
   function switchLocale(locale, wantmessagebox) {
     try 
     {
@@ -284,7 +285,9 @@ try {
   }
   
   function installLocaleFromBundle(locale, bundleindex) {
-    if (sbMessageBox_strings("locales.installconfirm.title", "locales.installconfirm.msg", "Language Download", "This language is not installed, would you like to download and install it ?", true) == "accept") {
+    if (gPrompt.confirm( window, 
+                        SBString( "locales.installconfirm.title", "Language Download" ),
+                        SBString( "locales.installconfirm.msg", "This language is not installed, would you like to download and install it?" ) ) ) {
       if (bundleindex != -1 && menubar_locales_bundle && bundleindex < menubar_locales_bundle.bundleExtensionCount) {
         for (var i=0;i<menubar_locales_bundle.bundleExtensionCount;i++) {
           menubar_locales_bundle.setExtensionInstallFlag(i, i == bundleindex);
@@ -294,7 +297,9 @@ try {
         if (res == menubar_locales_bundle.BUNDLE_INSTALL_SUCCESS) {
           switchLocale(locale, true);
         } else {
-          sbMessageBox_strings("locales.installfailed.title", "locales.installfailed.msg", "Localization", "Language installation failed, check your network connectivity!");
+          gPrompt.alert( window, 
+                        SBString( "locales.installfailed.title", "Language Download" ),
+                        SBString( "locales.installfailed.msg", "Language installation failed, check your network connectivity!" ) );
         }
       }
     }

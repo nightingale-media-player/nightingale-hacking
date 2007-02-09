@@ -180,11 +180,9 @@
       }
                   
       if (!validDir) {
-        sbMessageBox_strings("subscribe.selectvalidfolder.title",
-                        "subscribe.selectvalidfolder.msg",
-                        "Invalid folder",
-                        "Please select a valid destination folder for download.");
-
+        gPrompt.alert( window, 
+                       SBString( "subscribe.selectvalidfolder.title", "Invalid folder" ),
+                       SBString( "subscribe.selectvalidfolder.msg", "Please select a valid destination folder for download." ) );
         return false;
       }
         

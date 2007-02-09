@@ -70,6 +70,7 @@
 
         if ( data.retval == "accept" ) {
           gPrefs.setBoolPref("songbird.eulacheck", true);
+          alert("eulacheck true!");
           if ( typeof(data.acceptAction) == "function" ) {
             retval = data.acceptAction();
           }
@@ -79,6 +80,7 @@
         }
         else {
           gPrefs.setBoolPref( "songbird.eulacheck", false );
+          alert("eulacheck false!");
           if ( typeof(data.cancelAction) == "function" ) {
             retval = data.cancelAction();
           }

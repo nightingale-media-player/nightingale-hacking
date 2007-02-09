@@ -30,7 +30,54 @@
  * Contains functions common to all windows
  */
 
+// Useful constants
+var CORE_WINDOWTYPE         = "Songbird:Core";
+var PREF_BONES_SELECTED     = "general.bones.selectedMainWinURL";
+var PREF_FEATHERS_SELECTED  = "general.skins.selectedSkin";
+var BONES_DEFAULT_URL       = "chrome://rubberducky/content/xul/mainwin.xul";
+var FEATHERS_DEFAULT_NAME   = "rubberducky";
+
+// Lots of things assume the playlist playback service is a global
+var gPPS    = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                      .getService(Components.interfaces.sbIPlaylistPlayback);
+// Overused services get put in headers?
+var gPrompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                      .getService(Components.interfaces.nsIPromptService);
+
+// Strings are cool.
 var theSongbirdStrings = document.getElementById( "songbird_strings" );
+
+// XXXredfive - this goes in the sbWindowUtils.js file when I get around to making it.
+var gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+var gConsole = Components.classes["@mozilla.org/consoleservice;1"]
+               .getService(Components.interfaces.nsIConsoleService);
+// log to JS console AND to the command line (in case of crashes)
+function SB_LOG (scopeStr, msg) {
+  msg = msg ? msg : ""; 
+  //This works, but adds everything as an Error
+  //Components.utils.reportError( scopeStr + " : " + msg);
+  gConsole.logStringMessage( scopeStr + " : " + msg );
+  dump( scopeStr + " : " + msg + "\n");
+}
+var PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
+var nsIPrefBranch2 = Components.interfaces.nsIPrefBranch2;
+/**
+ * Adapted from nsUpdateService.js.in. Need to replace with dataremotes.
+ */
+function getPref(aFunc, aPreference, aDefaultValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  try {
+    return prefs[aFunc](aPreference);
+  }
+  catch (e) { }
+  return aDefaultValue;
+}
+function setPref(aFunc, aPreference, aValue) {
+  var prefs = 
+    Components.classes[PREFS_SERVICE_CONTRACTID].getService(nsIPrefBranch2);
+  return prefs[aFunc](aPreference, aValue);
+}
 
 // Shorthand, hammerable 
 function eatEvent(evt)
@@ -902,6 +949,20 @@ function checkAltF4(evt)
     evt.preventDefault();
     quitApp();
   }
+}
+
+var SBStringBundleBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                                     .getService(Components.interfaces.nsIStringBundleService)
+                                     .createBundle("chrome://songbird/locale/songbird.properties");
+
+function SBString( key, dflt )
+{
+  // If there is no default, the key is the default.
+  var retval = (dflt) ? dflt : key;
+  try {
+    retval = SBStringBundleBundle.GetStringFromName(key);
+  } catch (e) {}
+  return retval;
 }
 
 /**

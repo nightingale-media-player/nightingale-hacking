@@ -278,7 +278,7 @@ function doEULA(aAcceptAction, aCancelAction)
     var eulaCheck = false;
     try {
       eulaCheck = gPrefs.getBoolPref("songbird.eulacheck");
-    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
+    } catch (err) { alert("shit!") /* prefs throws an exepction if the pref is not there */ }
 
     if ( !eulaCheck ) {
       var eulaWindow =
