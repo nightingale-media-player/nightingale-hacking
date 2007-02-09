@@ -250,7 +250,7 @@
    src="chrome://songbird/content/scripts/globalhotkeys.js" />
 
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/windowDrag.js" />
+   src="chrome://songbird/content/scripts/dragWindow.js" />
   <script type="application/x-javascript"  
    src="chrome://songbird/content/scripts/window_utils.js"/>
 
