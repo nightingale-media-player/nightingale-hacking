@@ -156,6 +156,10 @@ NoRequireMSVCP71:
   ;Back to normal install directory.
   SetOutPath $INSTDIR
   
+  ; Add XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+  WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\xulrunner.exe" "" ""
+  WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\songbird.exe" "" ""
+  
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\Songbird "Install_Dir" "$INSTDIR"
   
@@ -188,6 +192,10 @@ Section "Uninstall"
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird"
   DeleteRegKey HKLM SOFTWARE\Songbird
+
+  ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+  DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\xulrunner.exe"
+  DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\songbird.exe"
 
   ; Remove files and uninstaller
   Delete $INSTDIR\songbird-uninstall.exe
