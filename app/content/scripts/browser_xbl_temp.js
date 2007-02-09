@@ -28,6 +28,11 @@
 // This is a temporary file to house methods that need to roll into
 // our new Tabbed Browser XBL object that we'll be building for 0.3
 
+var WEB_PLAYLIST_CONTEXT      = "webplaylist";
+var WEB_PLAYLIST_TABLE        = "webplaylist";
+var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
+var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
+
 
 var theCanGoBackData = SB_NewDataRemote( "browser.cangoback", null );
 var theCanGoFwdData = SB_NewDataRemote( "browser.cangofwd", null );

@@ -25,8 +25,12 @@
 //
  */
 
-// The house for the web playlist and download commands objects.
+var WEB_PLAYLIST_CONTEXT      = "webplaylist";
+var WEB_PLAYLIST_TABLE        = "webplaylist";
+var WEB_PLAYLIST_TABLE_NAME   = "&device.webplaylist";
+var WEB_PLAYLIST_LIBRARY_NAME = "&device.weblibrary";
 
+// The house for the web playlist and download commands objects.
 var SBWebPlaylistCommands = 
 {
   m_Playlist: null,
@@ -222,13 +226,6 @@ var SBWebPlaylistCommands =
               }
             }
 
-  /*
-            for(var i in filterVals)
-            {
-              alert(filterVals[i]);
-            }
-  */
-            
             onBrowserTransfer( this.m_Playlist.guid, this.m_Playlist.table, filterCol, filterVals.length, filterVals );
             // And show the download table in the chrome playlist.
             onBrowserDownload();
@@ -308,6 +305,8 @@ var SBWebPlaylistCommands =
   }
 }; // SBWebPlaylistCommands declaration
 
+/*
+
 // Register the web playlist commands at startup
 if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
 {
@@ -315,6 +314,8 @@ if ( ( WEB_PLAYLIST_CONTEXT != "" ) && ( WEB_PLAYLIST_TABLE != "" ) )
   source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, WEB_PLAYLIST_TABLE, "http", SBWebPlaylistCommands );
   source.registerPlaylistCommands( WEB_PLAYLIST_CONTEXT, "library", "http", SBWebPlaylistCommands );
 }
+
+*/
 
 // Debugging Tool
 function listProperties(obj, objName) 
