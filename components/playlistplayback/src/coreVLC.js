@@ -130,6 +130,9 @@ CoreVLC.prototype.playURL = function (aURL)
     }
   }
 
+  //VLC handles it's own encoding.
+  this._url = unescape(this._url);
+
   this._object.playlist.clear();
   var item = this._object.playlist.add(this._url);
   this._object.playlist.playItem(item);
