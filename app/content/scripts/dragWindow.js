@@ -110,8 +110,10 @@ function onBkgDown( theEvent, popup )
       dump("Error. Songbird.js::onBkDown() \n" + err + "\n");
     }
   }
+/*  
   else
     alert( theEvent.target.nodeName + " - " + theEvent.target.id + " - " + theEvent.target.getAttribute("drag_window") );
+*/    
 }
 
 function onBkgMove( theEvent ) 
