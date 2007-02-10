@@ -470,7 +470,7 @@ case "$SB_PLATFORM" in
     ARFLAGS_PATH_PREFIX=""
     ARFLAGS_PATH_SUFFIX=""
     ARFLAGS_LIB=""
-    UNZIPFLAGS="-u -o -q"
+    UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     XULRUNNERDIR="/xulrunner"
   ;;
@@ -513,7 +513,7 @@ case "$SB_PLATFORM" in
     ARFLAGS_PATH_PREFIX=""
     ARFLAGS_PATH_SUFFIX=""
     ARFLAGS_LIB=""
-    UNZIPFLAGS="-u -o -q"
+    UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
   ;;
@@ -560,7 +560,7 @@ case "$SB_PLATFORM" in
     ARFLAGS_PATH_PREFIX=""
     ARFLAGS_PATH_SUFFIX=""
     ARFLAGS_LIB=""
-    UNZIPFLAGS="-u -o -q"
+    UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
   ;;
