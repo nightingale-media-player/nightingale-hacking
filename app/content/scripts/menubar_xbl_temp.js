@@ -122,6 +122,12 @@ function doMenu( command ) {
     case "menu.dominspector":
       SBDOMInspectorOpen();
     break;
+    case "menu.clearprivatedata":
+      clearPrivateData();
+    break;
+    case "menu.javascriptconsole":
+      javascriptConsole();
+    break;
     case "checkForUpdates": {
       var um =
           Components.classes["@mozilla.org/updates/update-manager;1"].

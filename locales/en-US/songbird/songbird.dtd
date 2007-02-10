@@ -60,6 +60,9 @@
 
 <!ENTITY menu.preferences   "Options..." >
 <!ENTITY menu.extensions    "Add-ons..." >
+<!ENTITY menu.clearprivatedata "Clear Private Data...">
+<!ENTITY menu.errorconsole "Error Console">
+
 
 <!ENTITY html.context.open  "Open" >
 <!ENTITY html.context.openexternal  "Open with Default Browser" >
@@ -194,8 +197,10 @@
 <!ENTITY menu.file.mini.accesskey     "M" >
 <!ENTITY locale.language.accesskey    "L" >
 <!ENTITY menu.feathers.accesskey      "F" >
-<!ENTITY menu.preferences.accesskey   "P" >
+<!ENTITY menu.preferences.accesskey   "O" >
 <!ENTITY menu.extensions.accesskey    "A" >
+<!ENTITY menu.clearprivatedata.accesskey "P" >
+<!ENTITY menu.errorconsole.accesskey  "C" >
 <!ENTITY menu.file.exit.accesskey     "X" >
 
 <!ENTITY menu.edit.accesskey          "E" >
@@ -299,4 +304,5 @@
 <!ENTITY search.key                    "F" >
 <!ENTITY locationbar.key               "L" >
 <!ENTITY trackeditor.key               "E" >
+<!ENTITY sanitize.key                  "Del" >
 

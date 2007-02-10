@@ -123,10 +123,26 @@
 
     <menu id="tools-menu" label="&menu.tools;" class="sb_faceplate" accesskey="&menu.tools.accesskey;">
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
-        <menuitem id="menu.dominspector" key="dominspector-key" label="DOM Inspector" class="menuitem-iconic"/>
-        <menuseparator />
-        <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
+        <menuitem id="menu.extensions" 
+                  label="&menu.extensions;" 
+                  accesskey="&menu.extensions.accesskey;"/>
+        <menuseparator id="devToolsSeparator"/> 
+        <menuitem id="menu.javascriptconsole"
+                  label="&menu.errorconsole;" 
+                  accesskey="&menu.errorconsole.accesskey;"/> 
+        <menuitem id="menu.dominspector" 
+                  key="dominspector-key" 
+                  label="DOM Inspector" />
+        <menuseparator id="sanitizeSeparator" hidden="true"/> 
+        <menuitem id="menu.sanitize"
+                  hidden="true" 
+                  key="sanitize-key" 
+                  label="&menu.clearprivatedata;" 
+                  accesskey="&menu.clearprivatedata.accesskey;"/> 
+        <menuseparator id="prefSep"/> 
+        <menuitem id="menu_preferences" 
+                  label="&menu.preferences;" 
+                  accesskey="&menu.preferences.accesskey;"/>
       </menupopup>
     </menu>
 
@@ -158,6 +174,11 @@
     </menu>
 
   </menubar>
+  
+  <keyset>
+    <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
+    <key id="dominspector-key" modifiers="accel,shift" key="&menu.file.dominspector;" oncommand="doMenu('menu.dominspector');"/>
+  </keyset>
 
 </overlay>
 

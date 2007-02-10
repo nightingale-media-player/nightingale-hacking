@@ -355,7 +355,6 @@
     <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('file.file');"/>
     <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('file.url');"/>
     <key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/>
-    <key id="dominspector-key" modifiers="accel,shift" key="&menu.file.dominspector;" oncommand="doMenu('menu.dominspector');"/>
     <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
     <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
     <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
