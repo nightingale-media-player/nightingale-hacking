@@ -34,7 +34,7 @@ include $(DEPTH)/build/autodefs.mk
 #
 
 ifndef STAGE_DIR
-STAGE_DIR	= $(DEPTH)/update
+STAGE_DIR	= $(DEPTH)/_built_installer/mars
 endif
 
 SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
