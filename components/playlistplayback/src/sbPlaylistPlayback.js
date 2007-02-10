@@ -1189,8 +1189,9 @@ PlaylistPlayback.prototype = {
       if ( pos > len && len > 0 )
         len = pos;
       // When the length changes, always set metadata.
-      if ( parseInt( this._metadataLen.intValue / 1000 ) != parseInt( len / 1000 ) ) 
-        this._set_metadata = true; 
+      if ((len > 0) &&
+          (Math.round(this._metadataLen.intValue / 1000) != Math.round(len / 1000)))
+        this._set_metadata = true;
       this._metadataLen.intValue = len;
       this._metadataPos.intValue = pos;
       
@@ -1533,7 +1534,7 @@ PlaylistPlayback.prototype = {
     if ( aTitle && aTitle.length ) 
       aLibrary.setValueByURL(aURL, "title", aTitle, false);
 
-    if ( aLength && aLength.length ) 
+    if ( aLength && aLength != "0:00" )
       aLibrary.setValueByURL(aURL, "length", aLength, false);
 
     if ( aAlbum && aAlbum.length ) 
@@ -1573,6 +1574,7 @@ PlaylistPlayback.prototype = {
     this._metadataArtist.stringValue = "";
     this._metadataAlbum.stringValue = "";
     this._metadataGenre.stringValue = "";
+    this._metadataLen.intValue = 0;
     
     // Set the data remotes to indicate what is about to play
     this._playURL.stringValue = url;
