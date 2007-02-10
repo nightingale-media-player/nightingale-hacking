@@ -135,6 +135,5 @@
    src="chrome://songbird/content/scripts/messagebox.js"/>
  <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/switch_locale.js"/>
-</script>   
 
 </window>

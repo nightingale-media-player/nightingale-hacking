@@ -382,6 +382,9 @@ move $(SolutionDir)dist\xulrunner\xulrunner-stub.exe $(SolutionDir)compiled\dist
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\content\xul\menuOverlay.xul">
+				</File>
+				<File
 					RelativePath=".\content\xul\messagebox.xul">
 					<FileConfiguration
 						Name="Debug|Win32">
