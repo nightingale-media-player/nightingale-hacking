@@ -280,12 +280,20 @@ CoreVLC.prototype.getPosition = function()
 {
   this._verifyObject();
 
-  if (this._object.playlist.itemCount <= 0 
-	  || this._object.input.state == CoreVLC.INPUT_STATES.IDLE)
-    return null;
-  
-  var currentPos = this._object.input.position;
-  var currentPosTime = this._object.input.time;
+  if (this._object.playlist.itemCount <= 0)
+    return null; 
+	
+	var input;
+	try {
+	  input = this._object.input;
+	}
+	catch (err) { }
+	
+	if (!input || input.state == CoreVLC.INPUT_STATES.IDLE)
+	  return null;
+	
+  var currentPos = input.position;
+  var currentPosTime = input.time;
   
   if(currentPos < 1 && currentPosTime == 0)
   {
