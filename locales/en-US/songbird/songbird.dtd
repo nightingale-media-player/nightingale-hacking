@@ -49,8 +49,7 @@
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-ons..." >
 
-<!ENTITY menu.devices       "Devices" >
-<!ENTITY menu.devices.nodevices "No Devices Yet" >
+<!ENTITY menu.tools         "Tools" >
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
@@ -59,7 +58,7 @@
 <!ENTITY menu.help.topics.url "http://www.songbirdnest.com/support" >
 <!ENTITY menu.help.about    "About Songbird..." >
 
-<!ENTITY menu.preferences   "Preferences..." >
+<!ENTITY menu.preferences   "Options..." >
 <!ENTITY menu.extensions    "Add-ons..." >
 
 <!ENTITY html.context.open  "Open" >
@@ -220,7 +219,7 @@
 
 <!ENTITY menu.services.accesskey      "S" >
 
-<!ENTITY menu.devices.accesskey       "D" >
+<!ENTITY menu.tools.accesskey         "T" >
 
 <!ENTITY menu.help.accesskey          "H" >
 <!ENTITY menu.help.bugz.accesskey     "B" >

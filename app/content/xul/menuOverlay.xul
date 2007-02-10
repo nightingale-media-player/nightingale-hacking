@@ -55,9 +55,6 @@
         </menu>
         <!-- <menuitem id="menu.downloadmgr" label="&menu.downloadmgr;" class="menuitem-iconic"/> -->
         <!-- ID changed for OS X nsMenuBarX::AquifyMenuBar -->
-        <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
-        <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
-        <menuitem id="menu.dominspector" key="dominspector-key" label="DOM Inspector" class="menuitem-iconic"/>
 
         <!--<menuitem id="menu_Reload" label="Reload" oncommand="reloadWindow();"/> -->
 
@@ -124,9 +121,12 @@
       </menupopup>
     </menu>
 
-    <menu id="songbird_menu_item_devices" label="&menu.devices;" class="sb_faceplate" accesskey="&menu.devices.accesskey;">
-      <menupopup id="devices-popup">
-        <menuitem label="&menu.devices.nodevices;"/>
+    <menu id="tools-menu" label="&menu.tools;" class="sb_faceplate" accesskey="&menu.tools.accesskey;">
+      <menupopup id="menu_ToolsPopup">
+        <menuitem id="menu.extensions" label="&menu.extensions;" class="menuitem-iconic" accesskey="&menu.extensions.accesskey;"/>
+        <menuitem id="menu.dominspector" key="dominspector-key" label="DOM Inspector" class="menuitem-iconic"/>
+        <menuseparator />
+        <menuitem id="menu_preferences" label="&menu.preferences;" class="menuitem-iconic" accesskey="&menu.preferences.accesskey;"/>
       </menupopup>
     </menu>
 
