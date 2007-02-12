@@ -67,6 +67,7 @@
 
 #include "sbIPlaylist.h"
 #include "sbIDatabaseResult.h"
+#include "sbIPlaylistPlayback.h"
 
 #define MODULE_SHORTCIRCUIT 0
 
@@ -88,6 +89,7 @@ static PRLogModuleInfo* gServicesourceLog = PR_NewLogModule("sbServicesource");
 
 static  CServicesource  *gServicesource = nsnull;
 static  nsIRDFService   *gRDFService = nsnull;
+static  sbIPlaylistPlayback *gPPS;
 
 // A callback from the database for when things change and we should repaint.
 class MyServicesourceQueryCallback : public sbIDatabaseSimpleQueryCallback
@@ -233,6 +235,12 @@ void CServicesource::Init(void)
         rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties", getter_AddRefs( m_StringBundle ) );
 //        StringBundleService->Release();
       }
+    }
+
+    // Get the playlist playback service to test for being a playlist
+    if ( nsnull == gPPS )
+    {
+      rv = CallGetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &gPPS );
     }
 
     // Get the RDF service
@@ -519,21 +527,38 @@ CServicesource::GetTarget(nsIRDFResource *source,
       }
       else if (property == kNC_URL)
       {
-        nsAutoString name, description, guid;
+        nsAutoString base_type, name, description, guid;
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("base_type"), base_type);
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("name"), name);
         resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("description"), description);
-        outstring = gPlaylistUrl;
-        if ( description == NS_LITERAL_STRING("library") )
+        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), guid);
+
+        // Is the value of the description url something we recognize as a playlist?  (html doesn't go here)
+        PRBool isPlaylistURL = false;
+        gPPS->IsPlaylistURL( description, &isPlaylistURL );
+
+        // If this is an html dynamic playlist, show the html page instead of the full page playlist
+        if ( base_type.EqualsLiteral("dynamic") && !isPlaylistURL )
         {
-          outstring += NS_LITERAL_STRING("library");
+          outstring = description;
         }
         else
         {
-          outstring += name;
+          // If this is a library playlist, show the library
+          outstring = gPlaylistUrl;
+          if ( description == NS_LITERAL_STRING("library") )
+          {
+            outstring += NS_LITERAL_STRING("library");
+          }
+          else
+          {
+            // Otherwise, just show the normal playlist diplay.
+            outstring += name;
+          }
+          // Lastly specify the database to which the playlist belongs.
+          outstring += NS_LITERAL_STRING(",");
+          outstring += guid;
         }
-        resultset->GetRowCellByColumn( (*pl).second, NS_LITERAL_STRING("service_uuid"), guid);
-        outstring += NS_LITERAL_STRING(",");
-        outstring += guid;
       }
       else if (property == kNC_Properties)
       {
@@ -1138,4 +1163,5 @@ CServicesource::GetPlaylistCommands(const nsAString      &aContextGUID,
   *_retval = nsnull;
   return NS_OK;
 }
+
 

@@ -561,7 +561,31 @@ function onMainPaneLoad()
         }
         else if ( theMainPane.contentDocument.getElementsByTagName('A').length != 0 )
         {
-          AsyncWebDocument( theMainPane.contentDocument );
+          // BIG HACK to show the subscribed playlist instead of scraping for the web playlist
+          var skip = false;
+          var cur_url = SBDataGetStringValue( "browser.uri" );
+          var aPlaylistManager = new sbIPlaylistManager();
+          var queryObj = new sbIDatabaseQuery();
+          queryObj.setAsyncQuery(false);
+          queryObj.setDatabaseGUID("songbird");      
+          aPlaylistManager.getDynamicPlaylistList(queryObj);
+          var resObj = queryObj.getResultObject();
+          var i, rows = resObj.getRowCount();
+          for ( i = 0; i < rows; i++ )
+          {
+            if ( cur_url == resObj.getRowCellByColumn( i, "description" ) )
+            {
+              skip = true;
+              var table = resObj.getRowCellByColumn( i, "name" );
+              // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
+              theWebPlaylist.bind( "songbird", table, null, null, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
+              // Show/hide them
+              SBDataSetBoolValue( "browser.playlist.show", true );
+            }
+          }
+          // Otherwise, scrape the document.
+          if ( !skip )
+            AsyncWebDocument( theMainPane.contentDocument );
         } 
 
 
