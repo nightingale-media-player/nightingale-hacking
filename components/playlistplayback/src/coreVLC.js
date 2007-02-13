@@ -281,22 +281,30 @@ CoreVLC.prototype.getPosition = function()
   this._verifyObject();
 
   if (this._object.playlist.itemCount <= 0)
-    return null; 
+    return 0; 
+		
+	var currentPos, currentPosTime;
 	
-	var input;
+	// VLC will throw an exception if there is no active input. Catch this and
+	// just return 0.
 	try {
-	  input = this._object.input;
+	  var input = this._object.input;
+	  if (input.state == CoreVLC.INPUT_STATES.IDLE)
+	    return 0;
+
+    currentPos = input.position;
+    currentPosTime = input.time;
 	}
-	catch (err) { }
+	catch (err) {
+	  return 0;
+	}
 	
-	if (!input || input.state == CoreVLC.INPUT_STATES.IDLE)
-	  return null;
-	
-  var currentPos = input.position;
-  var currentPosTime = input.time;
-  
   if(currentPos < 1 && currentPosTime == 0)
   {
+    // Sometimes the player loop will call this after we've stopped.
+    if (!this._startTime)
+      return 0;
+    
     var currentTime = new Date();
     var deltaTime = currentTime.getTime() - this._startTime.getTime();
     
