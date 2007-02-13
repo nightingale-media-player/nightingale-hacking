@@ -485,6 +485,7 @@ xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
 
 $(xpidl_headers): %.h: %.idl
 	$(CYGWIN_WRAPPER) $(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
+	$(CHMOD) -x $@
 
 xpidl_clean_headers:
 	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_headers)
@@ -510,6 +511,7 @@ xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
 
 $(xpidl_typelibs): %.xpt: %.idl
 	$(CYGWIN_WRAPPER) $(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
+	$(CHMOD) -x $@
 
 xpidl_clean_typelibs:
 	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_typelibs)
@@ -526,6 +528,7 @@ xpidl_module_typelibs = $(XPIDL_MODULE_TYPELIBS)
 
 xpidl_link: $(xpidl_module_typelibs)
 	$(CYGWIN_WRAPPER) $(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
+	$(CHMOD) -x $(XPIDL_MODULE
 
 xpidl_clean_link:
 	$(CYGWIN_WRAPPER) $(RM) -f $(XPIDL_MODULE)
