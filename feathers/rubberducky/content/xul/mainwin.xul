@@ -350,7 +350,9 @@
 
   </stack>
 
-  <keyset>
+  <commandset id="mainCommandSet" />
+  
+  <keyset id="mainKeyset">
     <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('file.new');"/>
     <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('file.file');"/>
     <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('file.url');"/>

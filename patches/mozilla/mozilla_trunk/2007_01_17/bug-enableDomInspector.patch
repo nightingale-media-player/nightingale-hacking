@@ -1,0 +1,96 @@
+Index: extensions/inspector/install.rdf
+===================================================================
+RCS file: /cvsroot/mozilla/extensions/inspector/install.rdf,v
+retrieving revision 1.12
+diff -u -p -r1.12 install.rdf
+--- extensions/inspector/install.rdf	2 Aug 2006 04:50:57 -0000	1.12
++++ extensions/inspector/install.rdf	10 Feb 2007 23:22:56 -0000
+@@ -44,6 +44,15 @@
+       </Description>
+     </em:targetApplication>
+     
++    <em:targetApplication>
++      <!-- Songbird -->
++      <Description>
++        <em:id>songbird@songbirdnest.com</em:id>
++        <em:minVersion>0.2</em:minVersion>
++        <em:maxVersion>0.5</em:maxVersion>
++      </Description>
++    </em:targetApplication>
++    
+     <!-- EXTENSION AUTHORS!
+          DO NOT COPY THIS PROPERTY INTO YOUR INSTALL RDF FILES
+          It will cause users not to be informed of incompatibilities 
+Index: extensions/inspector/jar.mn
+===================================================================
+RCS file: /cvsroot/mozilla/extensions/inspector/jar.mn,v
+retrieving revision 1.27
+diff -u -p -r1.27 jar.mn
+--- extensions/inspector/jar.mn	4 Dec 2006 01:02:05 -0000	1.27
++++ extensions/inspector/jar.mn	10 Feb 2007 23:22:56 -0000
+@@ -16,6 +16,7 @@ inspector.jar:
+ % overlay chrome://inspector/content/popupOverlay.xul chrome://inspector/content/viewers/dom/popupOverlay.xul
+ % overlay chrome://inspector/content/popupOverlay.xul chrome://inspector/content/viewers/styleRules/popupOverlay.xul
+ % overlay chrome://inspector/content/popupOverlay.xul chrome://inspector/content/search/modules/popupOverlay.xul
++% overlay chrome://songbird/content/xul/menuOverlay.xul chrome://inspector/content/tasksOverlay-songbird.xul application=songbird@songbirdnest.com
+ * content/inspector/contents.rdf                                      (resources/content/contents.rdf)
+   content/inspector/inspector.xul                                     (resources/content/inspector.xul)
+   content/inspector/inspector.js                                      (resources/content/inspector.js)
+@@ -34,6 +35,7 @@ inspector.jar:
+   content/inspector/tasksOverlay.xul                                  (resources/content/tasksOverlay.xul)
+   content/inspector/tasksOverlay-ff.xul                               (resources/content/tasksOverlay-ff.xul)
+   content/inspector/tasksOverlay-sb.xul                               (resources/content/tasksOverlay-sb.xul)
++  content/inspector/tasksOverlay-songbird.xul                         (resources/content/tasksOverlay-songbird.xul)
+   content/inspector/tasksOverlay-tb.xul                               (resources/content/tasksOverlay-tb.xul)
+   content/inspector/editingOverlay.xul                                (resources/content/editingOverlay.xul)
+   content/inspector/utilWindow.xul                                    (resources/content/utilWindow.xul)
+Index: extensions/inspector/resources/content/tasksOverlay-songbird.xul
+===================================================================
+RCS file: extensions/inspector/resources/content/tasksOverlay-songbird.xul
+diff -N extensions/inspector/resources/content/tasksOverlay-songbird.xul
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ extensions/inspector/resources/content/tasksOverlay-songbird.xul	10 Feb 2007 23:22:56 -0000
+@@ -0,0 +1,43 @@
++<?xml version="1.0"?>
++
++<!DOCTYPE overlay SYSTEM "chrome://inspector/locale/tasksOverlay.dtd" >
++
++<overlay id="eInspectorTasksOverlay"
++         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
++
++  <script type="application/x-javascript" src="chrome://inspector/content/hooks.js"/>
++  <script type="application/x-javascript">
++  <![CDATA[
++    function inspectorWindowLoad()
++    {
++      setTimeout(initWindowMediator, 0);
++    }
++
++    function initWindowMediator()
++    {
++      // Load the Window DataSource so that browser windows opened subsequent to DOM
++      // Inspector show up in the DOM Inspector's window list.
++      var windowDS = Components.classes["@mozilla.org/rdf/datasource;1?name=window-mediator"]
++                               .getService(Components.interfaces.nsIWindowDataSource);
++    }
++
++    window.addEventListener("load", inspectorWindowLoad, false);
++  ]]>
++  </script>
++
++  <commandset id="mainCommandSet">
++    <command id="Tasks:Inspector" oncommand="inspectDOMDocument();"/>
++    <command id="Tasks:InspectPage" oncommand="inspectDOMDocument(content.document);"/>
++  </commandset>
++
++  <keyset id="mainKeyset">
++    <key id="key_inspectPage" key="&inspectorTaskCmd.commandkey;" modifiers="accel,shift" command="Tasks:Inspector"/>
++  </keyset>
++  
++  <menupopup id="menu_ToolsPopup">
++    <menuitem id="menu_inspector" label="&inspectorTaskCmd.label;"
++              insertafter="javascriptConsole" key="key_inspectPage"
++              accesskey="&inspectorTaskCmd.accesskey.ff;" command="Tasks:Inspector"/>
++  </menupopup>
++
++</overlay>

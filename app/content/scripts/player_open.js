@@ -480,10 +480,6 @@ function SBTrackEditorOpen()
   }
 }
 
-function SBDOMInspectorOpen()
-{
-  window.open("chrome://inspector/content/", "", "chrome,dialog=no,resizable");
-}
 
 function SBSubscribe( url, guid, table, readable_name )
 {

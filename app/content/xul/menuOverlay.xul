@@ -127,12 +127,9 @@
                   label="&menu.extensions;" 
                   accesskey="&menu.extensions.accesskey;"/>
         <menuseparator id="devToolsSeparator"/> 
-        <menuitem id="menu.javascriptconsole"
+        <menuitem id="javascriptConsole"
                   label="&menu.errorconsole;" 
                   accesskey="&menu.errorconsole.accesskey;"/> 
-        <menuitem id="menu.dominspector" 
-                  key="dominspector-key" 
-                  label="DOM Inspector" />
         <menuseparator id="sanitizeSeparator" hidden="true"/> 
         <menuitem id="menu.sanitize"
                   hidden="true" 

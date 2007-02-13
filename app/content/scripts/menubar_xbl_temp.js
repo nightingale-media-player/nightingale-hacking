@@ -119,13 +119,11 @@ function doMenu( command ) {
 /*    case "menu.downloadmgr":
       SBOpenDownloadManager();
     break;*/
-    case "menu.dominspector":
-      SBDOMInspectorOpen();
-    break;
     case "menu.clearprivatedata":
       clearPrivateData();
     break;
-    case "menu.javascriptconsole":
+    // Renamed to match FireFox
+    case "javascriptConsole":
       javascriptConsole();
     break;
     case "checkForUpdates": {
