@@ -136,7 +136,7 @@
                   key="sanitize-key" 
                   label="&menu.clearprivatedata;" 
                   accesskey="&menu.clearprivatedata.accesskey;"/> 
-        <menuseparator id="prefSep"/> 
+        <menuseparator id="menu_PrefsSeparator"/> 
         <menuitem id="menu_preferences" 
                   label="&menu.preferences;" 
                   accesskey="&menu.preferences.accesskey;"/>
