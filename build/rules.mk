@@ -528,7 +528,7 @@ xpidl_module_typelibs = $(XPIDL_MODULE_TYPELIBS)
 
 xpidl_link: $(xpidl_module_typelibs)
 	$(CYGWIN_WRAPPER) $(XPTLINK) $(XPIDL_MODULE) $(xpidl_module_typelibs)
-	$(CHMOD) -x $(XPIDL_MODULE
+	$(CHMOD) -x $(XPIDL_MODULE)
 
 xpidl_clean_link:
 	$(CYGWIN_WRAPPER) $(RM) -f $(XPIDL_MODULE)
