@@ -208,6 +208,7 @@ PlaylistPlayback.prototype = {
   _seenPlaying:        null,
   _playingVideo:       null,
   _lastVolume:         null,
+  _lastPos:            null,
   _volume:             null,
   _muteData:           null,
   _playlistRef:        null,
@@ -1340,7 +1341,19 @@ PlaylistPlayback.prototype = {
         // Clear the search popup
         this._resetSearchData.intValue++;
         this._metadataPollCount = 0; // start the count again.
+        this._lookForPlayingCount = 0;
       }
+      // OH OH!  If our position isn't moving, go to the next track!
+      else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() ) {
+        // After 10 seconds, give up and go to the next one?
+        if ( this._lookForPlayingCount++ > 40 )
+          this.next();
+      }
+      else {
+        // Boring, reset the counters.
+        this._lastPos = pos;
+        this._lookForPlayingCount = 0;
+      }      
       // Then remember we saw it
       this._seenPlaying.boolValue = true;
     }
