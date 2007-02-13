@@ -327,7 +327,7 @@ function doFirstRun()
     if ( ! haveRun ) {
       var data = new Object();
       
-      data.onComplete = doMainwinStart;
+      data.onComplete = firstRunComplete;
       data.document = document;
 
       // This cannot be modal it will block the download of extensions
@@ -346,6 +346,14 @@ function doFirstRun()
   // If we reach this point this is not the first run and the user has accepted
   //   the EULA so launch the main window.
   return true;
+}
+
+function firstRunComplete(restartfirstrun) {
+  if (restartfirstrun) {
+    doFirstRun();
+  } else {
+    doMainwinStart();
+  }
 }
 
 function SBRestartApp()

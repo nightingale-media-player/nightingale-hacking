@@ -30,8 +30,10 @@ var wanted_locale_bundleindex = -1;
 var firstrun_bundle = null;
 var locales_bundle = null;
 var installed_locales = null;
+var restartfirstrun = false;
 
 const FIRSTRUN_BUNDLE_TIMEOUT = 15000;
+const RESTART_ON_LOCALE_SELECTION = true;
 
 const VK_ENTER = 13;
 const VK_F4 = 0x73;
@@ -212,11 +214,20 @@ function setWantedLocale(locale, bundleindex)
 {
   wanted_locale = locale;
   wanted_locale_bundleindex = bundleindex;
+  if (RESTART_ON_LOCALE_SELECTION) {
+    handleLocaleSelection();
+    if (locales_bundle.restartRequired) {
+      restartSongbird();
+    } else {
+      restartfirstrun = true;
+      document.defaultView.close();
+    }
+  }
 }
 
 function continueStartup() {
   //SB_LOG("continueStartup");
-  window.arguments[0].onComplete();
+  window.arguments[0].onComplete(restartfirstrun);
 }
 
 function openExtensionsList()
@@ -253,20 +264,8 @@ function doOK()
     noext = (count == 0);
   }
   
-  // do we need to install a language pack ?
-  if (wanted_locale_bundleindex != -1) {
-    if (locales_bundle) {
-      for (var i=0;i<locales_bundle.bundleExtensionCount;i++) {
-        locales_bundle.setExtensionInstallFlag(i, i == wanted_locale_bundleindex);
-      }
-      var res = locales_bundle.installFlaggedExtensions(window);
-      if (res == locales_bundle.BUNDLE_INSTALL_ERROR) 
-        return false;
-    }
-  }
+  handleLocaleSelection();
   
-  switchLocale(wanted_locale);
-
   if (noext) {
     gPrefs.setBoolPref("songbird.firstrun.check", true);  
   } else {
@@ -279,19 +278,39 @@ function doOK()
   
   if ((firstrun_bundle && firstrun_bundle.restartRequired) || 
       (locales_bundle && locales_bundle.restartRequired)) {
-    var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
-    var MetricsService = new nsIMetrics();
-    MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
-    var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
-              .getService(Components.interfaces.nsIAppStartup);
-    if (as)
-    {
-      as.quit(Components.interfaces.nsIAppStartup.eRestart | 
-              Components.interfaces.nsIAppStartup.eAttemptQuit);
-    }
+    restartSongbird();
   }
 
   return true;
+}
+
+function restartSongbird() {
+  var nsIMetrics = new Components.Constructor("@songbirdnest.com/Songbird/Metrics;1", "sbIMetrics");
+  var MetricsService = new nsIMetrics();
+  MetricsService.setSessionFlag(false); // mark this session as clean, we did not crash
+  var as = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+            .getService(Components.interfaces.nsIAppStartup);
+  if (as)
+  {
+    //Both calls are needed as the restart path only sets an internal
+    //   variable that gets cached and references during the second call.
+    as.quit(Components.interfaces.nsIAppStartup.eRestart | Components.interfaces.nsIAppStartup.eAttemptQuit);
+  }
+}
+
+function handleLocaleSelection() {
+  // do we need to install a language pack ?
+  if (wanted_locale_bundleindex != -1) {
+    if (locales_bundle) {
+      for (var i=0;i<locales_bundle.bundleExtensionCount;i++) {
+        locales_bundle.setExtensionInstallFlag(i, i == wanted_locale_bundleindex);
+      }
+      var res = locales_bundle.installFlaggedExtensions(window);
+      if (res == locales_bundle.BUNDLE_INSTALL_ERROR) 
+        return false;
+    }
+  }
+  switchLocale(wanted_locale);
 }
 
 function handleKeyDown(event) 
