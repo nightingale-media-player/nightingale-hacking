@@ -125,6 +125,7 @@
             </hbox>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->
+            <!-- TODO: Fix mini.xul and then duplicate here.  Better yet, use an overlay/include/iframe. -->
             <hbox id="frame_mini" hidden="true" drag_window="true">
               <player_back id="mini_btn_back" class="sb_faceplate miniplayer" />
               <player_playpause id="mini_btn_playpause" class="sb_faceplate miniplayer" playid="mini_btn_play" pauseid="mini_btn_pause"/>
@@ -200,11 +201,10 @@
                     <player_repeat  repid="songbird_btn_rep" rep1id="songbird_btn_rep1" repallid="songbird_btn_repall" />
                     <player_shuffle  shuffleonid="songbird_btn_shuf_on" shuffleoffid="songbird_btn_shuf" />
                   </vbox>
-                  <spacer width="10" id="dashboard_w"/>
-                  <vbox id="face_middle_box" flex="1" >
-                    <faceplate id="main_faceplate" style="-moz-box-orient: vertical" drag_window="true"/>
-                  </vbox>
-                  <spacer width="10" id="dashboard_e"/>
+                  
+
+                  <faceplate id="main_faceplate" flex="1" drag_window="true"/>
+                                    
 
                   <!-- CURRENT TRACK / NEXT SERVICE -->
                   <vbox id="face_right_box">

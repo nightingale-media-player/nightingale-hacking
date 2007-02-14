@@ -812,28 +812,26 @@ Contains the Main Playback Controls and the Dashboard.
 
 /* DASHBOARD **/
 
-#dashboard_bkgd
-{
-  background-image: url(chrome://songbird/skin/default/dashboard_bkgd.png) ;
-}
 
-#dashboard_w
+
+.faceplate-left-spacer
 {
   background-image: url(chrome://songbird/skin/default/dashboard_w.png) ;
 }
-#dashboard_e
+.faceplate-right-spacer
 {
   background-image: url(chrome://songbird/skin/default/dashboard_e.png) ;
 }
 
-#intro_box_bkgd
+
+.faceplate-bkgd-box
 {
   background-image: url(chrome://songbird/skin/default/dashboard_bkgd.png) ;
 }
 
-#intro_box_image
+.faceplate-intro-image
 {
-  background-image: url(chrome://songbird/skin/default/default_bkgd_logo.png) ;
+  list-style-image: url(chrome://songbird/skin/default/default_bkgd_logo.png) ;
 }
 
 /* the seekbar slider */

@@ -43,73 +43,45 @@
   <binding id="faceplate">
 
     <content>
-    
-      <children/>
+      <xul:spacer class="faceplate-left-spacer"/>
+      <xul:vbox flex="1" class="faceplate-bkgd-box" >    
+      
+        <children/>
 
-      <!-- INTRO FACEPLATE -->
-      <xul:hbox id="intro_box" paneid="sbintro" panename="Intro">
-        <xul:hbox id="intro_box_bkgd" hidden="false"  flex="1">
-
-          <xul:spacer flex="1"/>
-          <xul:vbox>
-            <xul:image id="intro_box_image"/>
-          </xul:vbox>
-          <xul:spacer flex="1"/>
+        <!-- INTRO FACEPLATE -->
+        <xul:hbox class="faceplate-box" paneid="sbintro" panename="Intro" hidden="false" pack="center" align="center" flex="1">
+          <xul:image class="faceplate-intro-image"/>
         </xul:hbox>
-      </xul:hbox>
 
-      <!-- FACEPLATE -->
-      <xul:vbox id="dashboard_box" hidden="true" paneid="sbdashboard" panename="Dashboard">
-        <xul:hbox flex="1" >
-          <xul:vbox flex="1"  id="dashboard_bkgd">
-            <xul:spacer flex="1"/>
-            <!-- SONG ARTIST/SONGTITLE DISPLAY -->
-            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="true" id="songbird_text_artistalbum" class="faceplate_text">
-              <xul:player_artist id="songbird_text_artist"  crop="end" class="faceplate_text" />
-            </xul:hbox>
-            <!-- SONG ALBUM DISPLAY -->
-            <xul:hbox pack="center" align="center" style="overflow: hidden;" hidden="false" id="songbird_box_title" >
-              <xul:player_title align="center" id="songbird_text_title"  crop="end" class="faceplate_text"/>
-              <xul:label id="songbird_text_slash" value=" / "  crop="end" class="faceplate_text"/>
-              <xul:player_album id="songbird_text_album" value=""  crop="end" class="faceplate_text"/>
-            </xul:hbox>
-            <!-- SEEK BAR -->
-            <!-- TODO: Get rid of these spacers! -->
-            <xul:hbox >
-              <xul:spacer width="10"/>
-              <xul:player_timeelapsed id="songbird_text_time_elapsed" class="faceplate_text" />
-              <xul:spacer width="2"/>
-              <xul:vbox flex="1">
-                <xul:spacer flex="1"/>
-                <xul:player_seekbar id="songbird_seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal"  maxpos="100"/>
-                <xul:spacer flex="1"/>
-              </xul:vbox>
-              <xul:spacer width="2"/>
-              <xul:player_totaltime id="songbird_text_time_total"  class="faceplate_text" />
-              <xul:spacer width="10"/>
-            </xul:hbox>
+        <!-- FACEPLATE -->
+        <xul:vbox  class="faceplate-box" hidden="true" paneid="sbdashboard" panename="Dashboard" flex="1" pack="center">
+          <!-- SONG ARTIST DISPLAY -->
+          <xul:hbox class="faceplate-artist-box" pack="center" align="center" anonid="songbird_box_artist">
+            <xul:player_artist anonid="songbird_text_artist"  crop="end" class="faceplate-text" />
+          </xul:hbox>
+          <!-- SONG ALBUM DISPLAY -->
+          <xul:hbox class="faceplate-album-box" pack="center" align="center" anonid="songbird_box_title" >
+            <xul:player_title align="center" anonid="songbird_text_title"  crop="end" class="faceplate-text"/>
+            <xul:label anonid="songbird_text_slash" value=" / "  crop="end" class="faceplate-text"/>
+            <xul:player_album anonid="songbird_text_album" value=""  crop="end" class="faceplate-text"/>
+          </xul:hbox>
+          <!-- SEEK BAR -->
+          <xul:hbox class="faceplate-seekbar-box" align="center" pack="center">
+            <xul:player_timeelapsed anonid="songbird_text_time_elapsed" class="faceplate-text" />
+            <!-- TODO: Change seekbar to class based styling and anonid --> 
+            <xul:player_seekbar class="faceplate-seekbar" sliderid="songbird_seekbar_slider" thumbid="songbird_seekbar_thumb" progressid="songbird_seekbar_progress" flex="1" orient="horizontal"  maxpos="100"/>
+            <xul:player_totaltime anonid="songbird_text_time_total"  class="faceplate-text" />
+          </xul:hbox>
+        </xul:vbox>
 
-            <xul:spacer flex="1"/>
-
-            <xul:label id="songbird_text_rep"   value=""  hidden="true"/>
-            <xul:label id="songbird_text_shuf"  value="Shuffle"  hidden="true"/>
-          </xul:vbox>
-        </xul:hbox>
+        <!-- TEMPLATE -->
+        <xul:vbox class="faceplate-box" paneid="template" hidden="true" flex="1" align="center" pack="center">
+          <xul:label anonid="template_box_label1" class="faceplate-text" />
+          <xul:label anonid="template_box_label2" class="faceplate-text" />
+          <xul:progressmeter anonid="template_box_progressmeter" class="faceplate-progressmeter" />
+        </xul:vbox>         
       </xul:vbox>
-
-
-      <xul:hbox id="template_box" hidden="true">
-        <xul:hbox id="dashboard_bkgd" hidden="false"  flex="1" align="center">
-          <xul:spacer flex="1"/>
-          <xul:vbox align="center">
-            <xul:label id="template_box_label1" class="faceplate_text" />
-            <xul:label id="template_box_label2" class="faceplate_text" />
-            <xul:progressmeter id="template_box_progressmeter" class="faceplate_progressmeter" />
-          </xul:vbox>
-          <xul:spacer flex="1"/>
-        </xul:hbox>
-      </xul:hbox> 
-
+      <xul:spacer class="faceplate-right-spacer"/>
     </content>
 
    <implementation type="application/x-javascript">
@@ -117,9 +89,9 @@
      <constructor>
        <![CDATA[
         this.panedata = Array();
-        this.intro_box = document.getAnonymousElementByAttribute(this, "id", "intro_box");
-        this.dashboard_box = document.getAnonymousElementByAttribute(this, "id", "dashboard_box");
-        this.template_box = document.getAnonymousElementByAttribute(this, "id", "template_box");
+        this.intro_box = document.getAnonymousElementByAttribute(this, "paneid", "sbintro");
+        this.dashboard_box = document.getAnonymousElementByAttribute(this, "paneid", "sbdashboard");
+        this.template_box = document.getAnonymousElementByAttribute(this, "paneid", "template");
 
         var component = Components.classes["@songbirdnest.com/Songbird/FaceplateRegistration;1"];
         this.manager = component.getService(Components.interfaces.sbIFaceplateRegistration);
@@ -233,8 +205,8 @@
           {
             var artist = this.remote_title.stringValue;
             var album = this.remote_album.stringValue;
-            var theAASlash = document.getAnonymousElementByAttribute( this, "id", "songbird_text_slash" );
-            var theAABox = document.getAnonymousElementByAttribute( this, "id", "songbird_text_artistalbum" );
+            var theAASlash = document.getAnonymousElementByAttribute( this, "anonid", "songbird_text_slash" );
+            var theAABox = document.getAnonymousElementByAttribute( this, "anonid", "songbird_box_artist" );
             if ( album.length || artist.length )
             {
               if ( album.length && artist.length )
@@ -356,13 +328,13 @@
           clone.setAttribute("paneid", pane.getPaneId());
           clone.setAttribute("panename", pane.getPaneName());
           
-          var label1 = document.getAnonymousElementByAttribute(this, "id", "template_box_label1");
-          var label2 = document.getAnonymousElementByAttribute(this, "id", "template_box_label2");
-          var progressmeter = document.getAnonymousElementByAttribute(this, "id", "template_box_progressmeter");
+          var label1 = document.getAnonymousElementByAttribute(this, "anonid", "template_box_label1");
+          var label2 = document.getAnonymousElementByAttribute(this, "anonid", "template_box_label2");
+          var progressmeter = document.getAnonymousElementByAttribute(this, "anonid", "template_box_progressmeter");
           
-          label1.setAttribute("id", "faceplate." + paneid + ".label1");
-          label2.setAttribute("id", "faceplate." + paneid + ".label2");
-          progressmeter.setAttribute("id", "faceplate." + paneid + ".progressmeter");
+          label1.setAttribute("anonid", "faceplate." + paneid + ".label1");
+          label2.setAttribute("anonid", "faceplate." + paneid + ".label2");
+          progressmeter.setAttribute("anonid", "faceplate." + paneid + ".progressmeter");
           
           var label1remote = SBDataBindElementProperty( "faceplate." + paneid + ".label1", label1, "value" );
           var label1remote2 = SBDataBindElementProperty( "faceplate." + paneid + ".label1.hidden", label1, "hidden", true );

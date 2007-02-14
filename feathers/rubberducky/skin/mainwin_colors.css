@@ -715,19 +715,6 @@ Contains the Main Playback Controls and the Dashboard.
 
 /* DASHBOARD **/
 
-#dashboard_box
-{
-  background-color: transparent !important;
-}
-
-#dashboard_w
-{
-  background-color: transparent !important;
-}
-#dashboard_e
-{
-  background-color: transparent !important;
-}
 
 /* the seekbar slider */
 #songbird_seekbar_thumb
@@ -748,17 +735,17 @@ Contains the Main Playback Controls and the Dashboard.
   -moz-border-right-colors: #ccd4c7 !important;
 }
 
-#songbird_seekbar
+.faceplate-seekbar
 {
   border: 1px solid #1F292B !important;
 }
 
-.faceplate_text
+.faceplate-text
 {
   color: #1F292B !important;
 }
 
-.faceplate_progressmeter
+.faceplate-progressmeter
 {
   border: 1px solid !important;
   -moz-border-bottom-colors: #1F292B !important;
@@ -767,12 +754,12 @@ Contains the Main Playback Controls and the Dashboard.
   -moz-border-right-colors: #1F292B !important;
 }
 
-.faceplate_progressmeter .progress-bar
+.faceplate-progressmeter .progress-bar
 {
   background-color: #1F292B !important;
 }
 
-.faceplate_progressmeter .progress-remainder
+.faceplate-progressmeter .progress-remainder
 {
   background-color: #a3ab9f !important;
 }

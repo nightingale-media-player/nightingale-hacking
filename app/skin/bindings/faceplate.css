@@ -32,40 +32,29 @@ FACEPLATE
 ************************************************************************************************************************************************
 */
 
-/** TODO Fix naming **/
-/** TODO Move the east and west end panels inside the binding **/
-#dashboard_w
+.faceplate-left-spacer,
+.faceplate-right-spacer
 {
-  width: 25px;
-  height: 50px;
-  background-repeat: no-repeat;
-}
-
-#dashboard_e
-{
-  width: 25px;
+  width: 10px;
   height: 50px;
   background-repeat: no-repeat;
 }
 
 
-#dashboard_box,
-#dashboard_bkgd,
-#intro_box,
-#intro_box_bkgd
+.faceplate-bkgd-box,
+.faceplate-box
 {
   height: 50px;
 }
 
-#intro_box_image
+.faceplate-seekbar-box
 {
-  width: 45px;
-  height: 50px;
-  background-repeat: no-repeat;
+ padding-left: 10px;
+ padding-right: 10px;
 }
 
-#songbird_text_artistalbum,
-#songbird_box_title
+.faceplate-album-box,
+.faceplate-artist-box
 {
   height: 14px;
   padding: 0px;
@@ -73,11 +62,29 @@ FACEPLATE
 }
 
 
+.faceplate-progressmeter,
+.faceplate-seekbar
+{
+  border: 1px solid;
+  height: 10px;
+}
+
+.faceplate-text
+{
+  width: auto;
+  overflow: hidden;
+}
+
+
+
+/*** TODO Convert seekbar to class based styling **/ 
+
 /* the seekbar slider */
 #songbird_seekbar_slider
 {
   height: 10px;
 }
+
 #songbird_seekbar_thumb
 {
   width: 21px;
@@ -91,34 +98,12 @@ FACEPLATE
 #songbird_seekbar_progress
 {
   height: 10px;
+  margin: 0px;
 }
-#songbird_seekbar_progress > .progress-bar
-{
-  height: 10px;
-}
+#songbird_seekbar_progress > .progress-bar,
 #songbird_seekbar_progress > .progress-remainder
 {
   height: 10px;
 }
-#songbird_seekbar
-{
-  border: 1px solid;
-  height: 10px;
-}
-
-/* the faceplate progressmeter */
-.faceplate_progressmeter
-{
-  border: 1px solid;
-  height: 10px;
-  min-height: 10px;
-}
-
-.faceplate_text
-{
-  width: auto;
-  overflow: hidden;
-}
-
 
 
