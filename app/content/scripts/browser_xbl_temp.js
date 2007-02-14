@@ -578,7 +578,7 @@ function onMainPaneLoad()
               skip = true;
               var table = resObj.getRowCellByColumn( i, "name" );
               // Bind the Web Playlist UI element to the subscribed playlist instead of scraping.
-              theWebPlaylist.bind( "songbird", table, null, null, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
+              theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
               // Show/hide them
               SBDataSetBoolValue( "browser.playlist.show", true );
             }

@@ -640,6 +640,8 @@
           <![CDATA[
       try
       {
+        if (this.tree.view == null) return; // Glaaaah.  WTF?!
+        
         if (!stateonly)
           stateonly = false;
         if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0) 

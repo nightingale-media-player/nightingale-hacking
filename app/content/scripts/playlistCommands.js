@@ -717,3 +717,210 @@ try
   }
 } catch(e) {}
 
+//
+// Default playlist commands.
+var SBDefaultCommands = 
+{
+  m_Playlist: null,
+
+  m_Ids: new Array
+  (
+    "library_cmd_play",
+    "library_cmd_remove",
+    "library_cmd_edit",
+    "library_cmd_addtoplaylist",
+    "library_cmd_burntocd",
+    "library_cmd_device"
+  ),
+  
+  m_Names: new Array
+  (
+    "&command.play",
+    "&command.remove",
+    "&command.edit",
+    "&command.addtoplaylist",
+    "&command.burntocd",
+    "&command.device"
+  ),
+  
+  m_Tooltips: new Array
+  (
+    "&command.tooltip.play",
+    "&command.tooltip.remove",
+    "&command.tooltip.edit",
+    "&command.tooltip.addtoplaylist",
+    "&command.tooltip.burntocd",
+    "&command.tooltip.device"
+  ),
+
+  getNumCommands: function()
+  {
+    if ( 
+        ( this.m_Tooltips.length != this.m_Ids.length ) ||
+        ( this.m_Names.length != this.m_Ids.length ) ||
+        ( this.m_Tooltips.length != this.m_Names.length )
+        )
+    {
+      alert( "PlaylistCommands - Array lengths do not match!" );
+      return 0;
+    }
+    return this.m_Ids.length;
+  },
+
+  getCommandId: function( index )
+  {
+    if ( index >= this.m_Ids.length )
+    {
+      return "";
+    }
+    return this.m_Ids[ index ];
+  },
+
+  getCommandText: function( index )
+  {
+    if ( index >= this.m_Names.length )
+    {
+      return "";
+    }
+    return this.m_Names[ index ];
+  },
+
+  getCommandFlex: function( index )
+  {
+    if ( this.m_Ids[ index ] == "*separator*" ) return 1;
+    return 0;
+  },
+
+  getCommandToolTipText: function( index )
+  {
+    if ( index >= this.m_Tooltips.length )
+    {
+      return "";
+    }
+    return this.m_Tooltips[ index ];
+  },
+
+  getCommandEnabled: function( index )
+  {
+    var playlist = this.m_Playlist;
+    
+    // Bail out early if we don't have our playlist somehow
+    if ( ! playlist )
+      return false;
+
+    var command = this.m_Ids[index];    
+
+    switch ( command )
+    {
+      case "library_cmd_device":
+      case "library_cmd_burntocd":
+      {
+        // These commands are not fully implemented yet
+        return false;
+      }
+      break;
+
+      case "library_cmd_remove":
+      {
+        // Special case for the Smart Playlist - "Remove" makes no sense and
+        // should be disabled. If this isn't a Smart Playlist then default
+        // logic is appropriate.
+        if ( playlist.base_type == "smart" )
+          return false;
+      }
+      break;
+    }
+
+    // By default return true if there is at least one item selected
+    return playlist.tree.view.selection.getRangeCount() > 0;
+  },
+
+  onCommand: function( event )
+  {
+    if ( event.target && event.target.id )
+    {
+      // Was it from the toolbarbutton?
+      var tbb = ( event.target.tagName == "button" || event.target.tagName == "xul:button" );
+      switch( event.target.id )
+      {
+        case "library_cmd_play":
+          if ( this.m_Playlist.tree.currentIndex != -1 )
+          {
+            // Repurpose the command to act as if a doubleclick
+            this.m_Playlist.sendPlayEvent();
+          }
+        break;
+        case "library_cmd_edit":
+          if ( this.m_Playlist.tree.currentIndex != -1 )
+          {
+            if ( tbb || this.m_Playlist.tree.view.selection.count > 1 )
+            {
+              // Edit the entire track
+              this.m_Playlist.sendEditorEvent();
+            }
+            else
+            {
+              // Edit the context cell
+              this.m_Playlist.sendEditEvent();
+            }
+          }
+        break;
+        case "library_cmd_addtoplaylist":
+          if ( this.m_Playlist.tree.currentIndex != -1 )
+          {
+            // add the currently selected track to a (possibly new) playlist
+            this.m_Playlist.addToPlaylist();
+          }
+        break;
+        case "library_cmd_remove":
+          if ( this.m_Playlist.tree.currentIndex != -1 )
+          {
+            // remove the currently select tracks
+            this.m_Playlist.removeTracks();
+          }
+        break;
+        case "library_cmd_burntocd":
+          if ( this.m_Playlist.tree.currentIndex != -1 )
+          {
+            // Repurpose the command to act as if a doubleclick
+            this.m_Playlist.sendBurnToCDEvent();
+          }
+        break;
+      }
+    }
+  },
+  
+  // The object registered with the sbIPlaylistSource interface acts 
+  // as a template for instances bound to specific playlist elements
+  duplicate: function()
+  {
+    var obj = {};
+    for ( var i in this )
+    {
+      obj[ i ] = this[ i ];
+    }
+    return obj;
+  },
+  
+  setPlaylist: function( playlist )
+  {
+    // Ah.  Sometimes, things are being secure.
+    if ( playlist.wrappedJSObject )
+      playlist = playlist.wrappedJSObject;
+    this.m_Playlist = playlist;
+  },
+  
+  QueryInterface : function(aIID)
+  {
+    if (!aIID.equals(Components.interfaces.sbIPlaylistCommands) &&
+        !aIID.equals(Components.interfaces.nsISupportsWeakReference) &&
+        !aIID.equals(Components.interfaces.nsISupports)) 
+    {
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+    
+    return this;
+  }
+  
+} // end of sbPlaylistCommands
+
