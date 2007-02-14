@@ -640,13 +640,29 @@
           <![CDATA[
       try
       {
-        if (this.tree.view == null) return; // Glaaaah.  WTF?!
+        // Sometimes we get here before the tree is properly built.  That's bad.
+        if (this.tree.view == null) 
+        {
+          // So if we're supposed to build the items here, remember that and quit.
+          if (!stateonly)
+            this._laststateonly = false;
+          return;
+        }
+        // And build them the next time it's time to refresh (this function gets called alot)
+        if (!this._laststateonly)
+        {
+          stateonly = false;
+          this._laststateonly = true;
+        }
         
+        // Convert null to bool.
         if (!stateonly)
           stateonly = false;
-        if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0) 
+          
+        // If our internal objects are out of sync, rebuild.
+        if (this.toolbarbuttons.length == 0 || this.menuitems.length == 0 || this.toolbarbuttons.length != this.commands.getNumCommands()) 
           stateonly = false;
-        
+          
         // Get the parents
         var toolbar = document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
         var parent = document.getAnonymousElementByAttribute(this, 'sbid', 'toolbar_parent');
@@ -658,6 +674,9 @@
         {
           // make a note that we need to refresh when the popup goes away
           this._needRefresh = true;
+          // So if we're supposed to build the items here, remember that and quit.
+          if (!stateonly)
+            this._laststateonly = false;
           return;
         }
         this._needRefresh = false;
