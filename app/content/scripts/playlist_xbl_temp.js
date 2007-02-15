@@ -325,6 +325,9 @@ function onSearchTerm( target, in_term )
       case "search.popup.dogpile":
         search_url = "http://www.dogpile.com/info.dogpl/search/redir.htm?r_fcid=414&r_fcp=top&advanced=1&top=1&nde=1&qcat=audio&q_all=" + term + "&q_phrase=&q_any=&q_not=&duration=long&ffmt=mp3&tviewby=1&qk=40&adultfilter=none&bottomadvancedsubmit=Go+Fetch%21";
       break;
+      case "search.popup.singingfish":
+        search_url = "http://singingfish.com/sfw/search?a_submit=1&aw=1&ff=1&sfor=av&dur=3&fmp3=1&favi=1&fmpeg=1&call=1&cmus=1&cmov=1&crad=1&coth=1&ctv=1&cnews=1&cspt=1&cfin=1&rpp=20&exp=0&adult_results=&a_eml_search=1&email_type=2&query=" + term;
+      break;
       case "lyrics.popup.google":
         search_url = "http://www.google.com/search?q=lyrics " + term + "&sa=Search&client=pub-4053348708517670&forid=1&ie=ISO-8859-1&oe=ISO-8859-1&hl=en&GALT:#333333;GL:1;DIV:#37352E;VLC:000000;AH:center;BGC:C6B396;LBGC:8E866F;ALC:000000;LC:000000;T:44423A;GFNT:663333;GIMP:663333;FORID:1;";
       break;

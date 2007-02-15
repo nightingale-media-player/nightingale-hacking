@@ -516,6 +516,20 @@ var bmManager = {
                       children: []
                   },
                   { 
+                      label: "Dogpile",
+                      icon: "http://dogpile.com/info.dogpl/pics/favicon.ico",
+                      url: "http://dogpile.com",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
+                      label: "Singingfish",
+                      icon: "http://singingfish.com/favicon.ico",
+                      url: "http://singingfish.com/sfw/home.jsp?a_submit=1&aw=1&ff=1&sfor=av&dur=3&fmp3=1&favi=1&fmpeg=1&call=1&cmus=1&cmov=1&crad=1&coth=1&ctv=1&cnews=1&cspt=1&cfin=1&rpp=20&exp=0&adult_results=&a_eml_search=1&email_type=2",
+                      properties: "bookmark",
+                      children: []
+                  },
+                  { 
                       label: "mefeedia",
                       icon: "http://mefeedia.com/favicon.ico",
                       url: "http://www.mefeedia.com/search.php?q=&object=feed&Submit=Search",

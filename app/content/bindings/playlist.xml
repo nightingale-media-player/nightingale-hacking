@@ -102,6 +102,9 @@
                   <xul:menuitem id="search.popup.dogpile" 
                     label="dogpile" class="menuitem-iconic" image="chrome://service-icons/skin/dogpile.ico"
                 />
+                  <xul:menuitem id="search.popup.singingfish" 
+                    label="Singingfish" class="menuitem-iconic" image="chrome://service-icons/skin/singingfish.ico"
+                  />
                   <xul:menuitem id="search.popup.elbows" 
                     label="elbo.ws" class="menuitem-iconic" image="chrome://service-icons/skin/elbows.ico"
                 />
