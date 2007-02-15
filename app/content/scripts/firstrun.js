@@ -137,7 +137,14 @@ function fillLanguageBox()
   try {
     wanted_locale = gPrefs.getCharPref("general.useragent.locale");
   }
-  catch (e) { }
+  catch (e) { 
+    wanted_locale = "en-US";
+  }
+  wanted_locale_bundleindex = -1;
+  if (!menu) {
+    menu = document.createElement("menupopup");
+    list.appendChild(menu);
+  }
 
   var cr = Components.classes["@mozilla.org/chrome/chrome-registry;1"].getService(Components.interfaces.nsIToolkitChromeRegistry);
 
@@ -197,6 +204,7 @@ function fillLanguageBox()
     list.selectedItem = select_item;
   } else {
     wanted_locale = "en-US";
+    wanted_locale_bundleindex = -1;
     list.selectedItem = en_us_item;
   }
 }
@@ -215,12 +223,16 @@ function setWantedLocale(locale, bundleindex)
   wanted_locale = locale;
   wanted_locale_bundleindex = bundleindex;
   if (RESTART_ON_LOCALE_SELECTION) {
-    handleLocaleSelection();
-    if (locales_bundle.restartRequired) {
-      restartSongbird();
+    if (handleLocaleSelection()) {
+      if (locales_bundle.restartRequired) {
+        restartSongbird();
+      } else {
+        restartfirstrun = true;
+        document.defaultView.close();
+      }
     } else {
-      restartfirstrun = true;
-      document.defaultView.close();
+      reinitLanguageBox();
+      loadBundledLocales();
     }
   }
 }
@@ -264,7 +276,11 @@ function doOK()
     noext = (count == 0);
   }
   
-  handleLocaleSelection();
+  if (!handleLocaleSelection()) {
+    reinitLanguageBox();
+    loadBundledLocales();
+    return false;
+  }
   
   if (noext) {
     gPrefs.setBoolPref("songbird.firstrun.check", true);  
@@ -311,6 +327,7 @@ function handleLocaleSelection() {
     }
   }
   switchLocale(wanted_locale);
+  return true;
 }
 
 function handleKeyDown(event) 
