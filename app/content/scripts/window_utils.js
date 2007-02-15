@@ -92,21 +92,26 @@ function onMinimize()
 }
 
 // Maximize
-var maximized = false;
 function onMaximize()
 {
-  if ( maximized )
+  if ( isMaximized() )
   {
     document.defaultView.restore();
-    maximized = false;
   }
   else
   {
     document.defaultView.maximize();
-    maximized = true;
   }
   syncMaxButton();
   syncResizers();
+}
+
+function isMaximized() {
+  return (window.windowState == STATE_MAXIMIZED);
+}
+
+function isMinimized() {
+  return (window.windowState == STATE_MINIMIZED);
 }
 
 function syncMaxButton() 
@@ -114,23 +119,22 @@ function syncMaxButton()
   var maxButton = document.getElementById("sysbtn_maximize");
   if (maxButton) 
   {
-    if (maximized) maxButton.setAttribute("checked", "true");
+    if (isMaximized()) maxButton.setAttribute("checked", "true");
     else maxButton.removeAttribute("checked");
   }
 }
 
 function syncResizers() 
 {
-  if (maximized) disableResizers();
+  if (isMaximized()) disableResizers();
   else enableResizers();
 }
 	
 function restoreWindow()
 {
-  if ( maximized )
+  if ( isMaximized() )
   {
     document.defaultView.restore();
-    maximized = false;
   }
   syncMaxButton();
   syncResizers();
@@ -139,7 +143,6 @@ function restoreWindow()
 // Exit
 function onExit( skipSave )
 {
-  restoreWindow();
   try
   {
     if ( skipSave != true )
@@ -234,16 +237,19 @@ function onWindowDragComplete() {
 function onWindowSaveSizeAndPosition()
 {
   var root = "window." + document.documentElement.id;
-/*
-  dump("******** onWindowSaveSizeAndPosition: root:" + root +
-                                  " root.w:" + SBDataGetIntValue(root+'.w') + 
-                                  " root.h:" + SBDataGetIntValue(root+'.h') + 
-                                  "\n");
-*/
-  SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
-  SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
+  if (!isMaximized() && !isMinimized()) {
+  /*
+    dump("******** onWindowSaveSizeAndPosition: root:" + root +
+                                    " root.w:" + SBDataGetIntValue(root+'.w') + 
+                                    " root.h:" + SBDataGetIntValue(root+'.h') + 
+                                    "\n");
+  */
+    SBDataSetIntValue( root + ".w", document.documentElement.boxObject.width );
+    SBDataSetIntValue( root + ".h", document.documentElement.boxObject.height );
 
-  onWindowSavePosition();
+    onWindowSavePosition();
+  }
+  SBDataSetBoolValue( root + ".maximized", isMaximized() );
 }
 
 function onWindowSavePosition()
@@ -355,6 +361,13 @@ function onWindowLoadSizeAndPosition()
     } 
   }
   onWindowLoadPosition();
+  // and of course, like focusing, maximizing at this stage won't work :( so introduce a small delay
+  setTimeout(delayedMaximize, 50);
+}
+
+function delayedMaximize() {
+  var root = "window." + document.documentElement.id;
+  if (SBDataGetBoolValue(root + ".maximized")) onMaximize();
 }
 
 function getStyle(el,styleProp)
