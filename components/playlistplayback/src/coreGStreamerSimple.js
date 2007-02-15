@@ -82,6 +82,14 @@ CoreGStreamerSimple.prototype.playURL = function ( aURL )
       this._object.stop();
     }
 
+    if (window.fullScreen)
+    {
+      window.fullScreen = !window.fullScreen;
+      if (this._object.fullscreen) {
+        this._object.fullscreen = false;
+      }
+    }
+
     this._object.uri = this._url;
     this._object.play();
   }
@@ -319,6 +327,8 @@ CoreGStreamerSimple.prototype.goFullscreen = function ()
   window.fullScreen=!window.fullScreen;
   if (!this._object.fullscreen) 
     this._object.fullscreen = true;
+  else
+    this._object.fullscreen = false;
 };
 
   

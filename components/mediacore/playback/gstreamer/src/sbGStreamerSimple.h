@@ -79,7 +79,6 @@ private:
   PRBool mIsAtEndOfStream;
   PRBool mIsPlayingVideo;
   PRBool mFullscreen;
-  PRBool mMakeFullscreen;
   PRInt32 mLastErrorCode;
 
   nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;

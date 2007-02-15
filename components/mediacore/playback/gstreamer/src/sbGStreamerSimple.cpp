@@ -294,15 +294,9 @@ sbGStreamerSimple::GetFullscreen(PRBool* aFullscreen)
 NS_IMETHODIMP
 sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 {
-  if(aFullscreen) {
-    SetToFullscreen(this);
-  }
-  else {
-    UnsetFromFullscreen(this);
-  }
-
   mFullscreen = aFullscreen;
-  mMakeFullscreen = aFullscreen;
+  if(!mFullscreen) UnsetFromFullscreen(this);
+
   return NS_OK;
 }
 
@@ -543,6 +537,8 @@ sbGStreamerSimple::Stop()
   gst_element_set_state(mPlay, GST_STATE_NULL);
   mIsAtEndOfStream = PR_TRUE;
   mIsPlayingVideo = PR_FALSE;
+  UnsetFromFullscreen(this);
+  mCursorIntervalTimer->Cancel();
   mLastErrorCode = 0;
 
   return NS_OK;
@@ -574,6 +570,9 @@ sbGStreamerSimple::SetInvisibleCursor(sbGStreamerSimple* gsts)
           pixmap, &color, &color, 0, 0);
   gdk_pixmap_unref(pixmap);
   gdk_window_set_cursor(gsts->mGdkWin, cursor);
+  gdk_window_set_cursor(gsts->mNativeWin, cursor);
+  if(gsts->mGdkWinFull != NULL )
+    gdk_window_set_cursor(gsts->mGdkWinFull, cursor);
   gdk_cursor_unref(cursor);
   return true;
 }
@@ -582,6 +581,9 @@ bool
 sbGStreamerSimple::SetDefaultCursor(sbGStreamerSimple* gsts) 
 {
   gdk_window_set_cursor(gsts->mGdkWin, NULL);
+  gdk_window_set_cursor(gsts->mNativeWin, NULL);
+  if(gsts->mGdkWinFull != NULL )
+    gdk_window_set_cursor(gsts->mGdkWinFull, NULL);
   return false;
 }
 
@@ -602,30 +604,27 @@ sbGStreamerSimple::Notify(nsITimer *aTimer)
   
   gdkDisplay = gdk_x11_lookup_xdisplay(GDK_WINDOW_XDISPLAY(gdkWin));
 
-  if (gdk_display_get_window_at_pointer(gdkDisplay, NULL, NULL) == gdkWin) {
-    gdk_display_get_pointer(gdkDisplay, NULL, &newCursorX, &newCursorY, NULL);
-    if (newCursorX != this->mOldCursorX || 
-        newCursorY != this->mOldCursorY) {
-      // redraw cursor if mouse is invisible and the mouse has moved
-      if (this->mRedrawCursor) {
-        this->mRedrawCursor = SetDefaultCursor(this);
-        if(this->mFullscreen) UnsetFromFullscreen(this);
-      }
-      this->mDelayHide = 10;
-      this->mOldCursorX = newCursorX;
-      this->mOldCursorY = newCursorY;
+  gdk_display_get_pointer(gdkDisplay, NULL, &newCursorX, &newCursorY, NULL);
+  if (newCursorX != this->mOldCursorX || 
+      newCursorY != this->mOldCursorY) {
+    // redraw cursor if mouse is invisible and the mouse has moved
+    if (this->mRedrawCursor) {
+      this->mRedrawCursor = SetDefaultCursor(this);
+      if(this->mFullscreen) UnsetFromFullscreen(this);
+    }
+    this->mDelayHide = 10;
+    this->mOldCursorX = newCursorX;
+    this->mOldCursorY = newCursorY;
+  }
+  else {
+    if (this->mDelayHide > 0) {
+      this->mDelayHide-=1;
     }
     else {
-      if (this->mDelayHide > 0) {
-        this->mDelayHide-=1;
-      }
-      else {
-        // otherwise hide the cursor in the video window
-        this->mRedrawCursor = SetInvisibleCursor(this);
-        if (this->mGdkWinFull == NULL && 
-            this->mMakeFullscreen) {
-          SetToFullscreen(this);
-        }
+      // otherwise hide the cursor in the video window
+      this->mRedrawCursor = SetInvisibleCursor(this);
+      if (this->mGdkWinFull == NULL && this->mFullscreen) {
+        SetToFullscreen(this);
       }
     }
   }
@@ -746,6 +745,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     case GST_MESSAGE_EOS: {
       mIsAtEndOfStream = PR_TRUE;
       mIsPlayingVideo = PR_FALSE;
+      UnsetFromFullscreen(this);
       mCursorIntervalTimer->Cancel();
       break;
     }
