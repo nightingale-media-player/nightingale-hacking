@@ -1344,7 +1344,7 @@ PlaylistPlayback.prototype = {
         this._lookForPlayingCount = 0;
       }
       // OH OH!  If our position isn't moving, go to the next track!
-      else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() ) {
+      else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() && ! this.paused ) {
         // After 10 seconds, give up and go to the next one?
         if ( this._lookForPlayingCount++ > 40 )
           this.next();
