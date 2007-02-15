@@ -25,24 +25,28 @@
 */
 
 /**
- * \file sbIThemePackage.idl
- * \brief Theme package description
+ * \file sbILayoutPackage.idl
+ * \brief Layout package description
  */
 
 #include "nsISupports.idl"
 
 
 /**
-* \interface sbIThemePackage
+* \interface sbILayoutPackage
 * \brief Struct describing the properties of a theme
+*
+* Describes the properties of a layout, which is an extension
+* containing an alternate XUL window.
+*
 * \sa sbIFeathersManager
 */
-[scriptable, uuid(1f46254a-0746-4a73-956e-263780b5d954)]
-interface sbIThemePackage : nsISupports
+[scriptable, uuid(8a687b2c-002f-4750-a29f-dd1b4b55b6f0)]
+interface sbILayoutPackage : nsISupports
 {
 
   /**
-   * \brief Unique identifier.  Use extension ID for now?
+   * \brief Unique identifier.  Needed? Could just use the url as id.
    */
   readonly attribute AString id;
 
@@ -67,13 +71,13 @@ interface sbIThemePackage : nsISupports
   readonly attribute AString version;
 
   /**
-   * \brief Skin provider name (internalName in install.rdf)
+   * \brief URL of the XUL document that represents this layout
    */  
-  readonly attribute AString provider;
+  readonly attribute AString url;
 
   /**
-   * \brief URL for a preview image
+   * \brief Type of layout. Currently unused?
    */  
-  readonly attribute AString previewImage;
+  readonly attribute AString category;
 
 };

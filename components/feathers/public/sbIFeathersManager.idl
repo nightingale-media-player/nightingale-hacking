@@ -26,14 +26,14 @@
 
 /**
  * \file sbIFeathersManager.idl
- * \brief Coordinates the loading of feathers (skins)
+ * \brief Coordinates the loading of feathers (combination of skin and XUL window)
  */
 
 #include "nsISupports.idl"
 
 interface nsISimpleEnumerator;
-interface sbILayoutPackage;
-interface sbIThemePackage;
+interface sbIXULProvider;
+interface sbISkinProvider;
 
 interface sbIFeathersChangeListener;
 
@@ -42,132 +42,151 @@ interface sbIFeathersChangeListener;
 * \interface sbIFeathersManager
 * \brief Controls the appearance of the application
 *
-* Acts as a registry for installed themes and layouts (alternate XUL windows)
+* Acts as a registry for installed skins and alternate XUL windows,
 * and provides a mechanism for switching between them.
 *
-* \sa sbIThemePackage, sbILayoutPackage, sbIFeathersChangeListener
+* \sa sbISkinProvider, sbIXULProvider, sbIFeathersChangeListener
 */
 [scriptable, uuid(99f24350-a67f-11db-befa-0800200c9a66)]
 interface sbIFeathersManager : nsISupports
 {
   /**
-   * \brief Description of the active layout extension
+   * \brief Description of the active xulWindow extension
    */
-  readonly attribute sbILayoutPackage currentLayout;
+  readonly attribute sbIXULProvider currentXUL;
   
   /**
-   * \brief Description of the active theme extension
+   * \brief Description of the active skin extension
    */
-  readonly attribute sbIThemePackage currentTheme;
+  readonly attribute sbISkinProvider currentSkin;
 
 
   /**
-   * \brief Enumerator for all registered sbIThemePackage objects
+   * \brief Enumerator for all registered sbISkinProvider objects
    */
-  readonly attribute nsISimpleEnumerator themes;
-
-  /**
-   * \brief Number of registered themes
-   */
-  readonly attribute unsigned long themeCount;
+  readonly attribute nsISimpleEnumerator skinProviders;
 
 
   /**
-   * \brief Enumerator for all registered sbILayoutPackage objects
+   * \brief Number of registered skins
    */
-  readonly attribute nsISimpleEnumerator layouts;
-
-  /**
-   * \brief Number of registered layouts
-   */
-  readonly attribute unsigned long layoutCount;
-
+  readonly attribute unsigned long skinCount;
 
 
   /**
-   * \brief Make the given theme available for use
-   * \param theme Theme description
+   * \brief Enumerator for all registered sbIXULProvider objects
    */
-  void addTheme(in sbIThemePackage theme);
+  readonly attribute nsISimpleEnumerator xulProviders;
+
+
+  /**
+   * \brief Number of registered XUL windows
+   */
+  readonly attribute unsigned long xulWindowCount;
+
+
+
+  /**
+   * \brief Make the given skin available for use
+   * \param skin Skin description
+   */
+  void registerSkin(in sbISkinProvider skin);
   
   /**
-   * \brief Disable the given theme
-   * \param theme Theme description
+   * \brief Disable the given skin
+   * \param skin Skin description
    */
-  void removeTheme(in sbIThemePackage theme);
+  void unregisterSkin(in sbISkinProvider skin);
 
   /**
-   * \brief Gets the full theme description associated with a theme ID
+   * \brief Gets the full skin description associated with a skin ID
    *
-   * \param id Unique theme identifier
-   * \return Theme description
+   * \param id Unique skin identifier
+   * \return Skin description
    */
-  sbIThemePackage getTheme(in AString id);
+  sbISkinProvider getSkin(in AString id);
 
 
 
   /**
-   * \brief Make the given layout available for use
-   * \param layout Layout description
+   * \brief Make the given XUL window available for use
+   * \param xulWindow Window description
    */
-  void addLayout(in sbILayoutPackage layout);
+  void registerXUL(in sbIXULProvider xulWindow);
 
   /**
-   * \brief Disable the given layout
-   * \param layout Layout description
+   * \brief Disable the given window
+   * \param xulWindow Window description
    */    
-  void removeLayout(in sbILayoutPackage layout);
+  void unregisterXUL(in sbIXULProvider xulWindow);
 
   /**
-   * \brief Gets the full layout description associated with a layout ID
+   * \brief Gets the full xulWindow description associated with a xulWindow ID
    *
-   * \param id Unique layout identifier
-   * \return Layout description
+   * \param id Unique identifier
+   * \return XULWindow description
    */
-  sbILayoutPackage getLayout(in AString id);
+  sbIXULProvider getXULWindow(in AString id);
 
 
 
   /**
-   * \brief Assert compatibility of a theme-layout pair
+   * \brief Assert compatibility of a skin-xul pair
    *
-   * Indicate that themeID and layoutID can be active at the same time, 
+   * Indicate that skinID and xulWindowID can be active at the same time, 
    * and whether the window chrome (titlebar, borders) should be shown.
    *
-   * Note that the given theme and layout IDs do not need to be registered with the
+   * Note that the given skin and xul window IDs do not need to be registered with the
    * feathers manager. 
    *
-   * \param themeID Unique identifier for a theme
-   * \param layoutID Unique identifier for a layout
+   * \param skinID Unique identifier for a skin
+   * \param xulWindowID Unique identifier for a xul window
    * \param showChrome Whether or not the OS titlebar should be used 
-   *        when the theme-layout pair is active
+   *        when the skin-window pair is active
    */
-  void addMapping(in AString layoutID, in AString themeID , in boolean showChrome);
+  void addMapping(in AString xulWindowID, in AString skinID , in boolean showChrome);
  
-
-  /**
-   * \brief Get an enumerator for all registered themes compatible with 
-   *        the given layoutID
-   * 
-   * \param layoutID Unique identifier for a layout
-   * \return Enumerator for a list of sbIThemePackage objects
-   */
-  nsISimpleEnumerator getThemesForLayout(in AString layoutID);
 
   
   /**
-   * \brief Switch to the given layout-theme pair
+   * \brief Unassert compatibility of a skin-xul pair
+   *
+   * Indicate that skinID and xulWindowID cannot be active at the same time.
+   *
+   * TODO: Throw an exception if the mapping is currently in use?
+   *
+   * \param skinID Unique identifier for a skin
+   * \param xulWindowID Unique identifier for a xul window
+   */
+  void removeMapping(in AString xulWindowID, in AString skinID);
+ 
+
+
+  /**
+   * \brief Get an enumerator for all registered skins compatible with 
+   *        the given xulWindowID
+   * 
+   * \param xulWindowID Unique identifier for a xul window
+   * \return Enumerator for a list of sbISkinProvider objects
+   */
+  nsISimpleEnumerator getSkinsForXULWindow(in AString xulWindowID);
+
+
+
+  /**
+   * \brief Switch to the given window-skin pair
    *
    * Attempts to reopens all Songbird windows using the given
-   * layout and theme.
+   * xulWindow and skin.
    *
    * Note: triggers the onSelectRequest callback
    * 
-   * \param layoutID Unique identifier for a layout
+   * \param xulWindowID Unique identifier for a xulWindow
    * \return True if the selection process can proceed
    * \sa sbIFeathersChangeListener
    */
-  boolean select(in AString layoutID, in AString themeID);
+  boolean select(in AString xulWindowID, in AString skinID);
+
 
 
   /**
@@ -204,8 +223,8 @@ interface sbIFeathersChangeListener : nsISupports
 
   /**
    * \brief Called when the feathers manager is about to switch feathers
-   * \param layout Description of the layout to be selected
-   * \param theme Description of the theme to be selected
+   * \param xulWindow Description of the xulWindow to be selected
+   * \param skin Description of the skin to be selected
    */  
-  void onSelectRequest(in sbILayoutPackage layout, in sbIThemePackage theme);
+  void onSelectRequest(in sbIXULProvider xulWindow, in sbISkinProvider skin);
 };
