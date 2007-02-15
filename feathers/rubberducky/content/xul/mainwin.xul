@@ -431,7 +431,7 @@
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/mainWinInit.js" />
   <script type="application/x-javascript"   
-   src="chrome://songbird/content/scripts/mainwin.data.js" />
+   src="chrome://rubberducky/content/scripts/mainwin.data.js" />
 
   <!-- Load the locale switcher -->
   <script type="application/x-javascript"   

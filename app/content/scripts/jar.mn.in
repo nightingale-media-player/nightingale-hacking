@@ -16,7 +16,6 @@ songbird.jar:
   content/songbird/scripts/globalhotkeys.js             (globalhotkeys.js)
   content/songbird/scripts/jumptofile.js                (jumptofile.js)
   content/songbird/scripts/language_scan.js             (language_scan.js)
-  content/songbird/scripts/mainwin.data.js              (mainwin.data.js)
   content/songbird/scripts/media_scan.js                (media_scan.js)
   content/songbird/scripts/messagebox.js                (messagebox.js)
   content/songbird/scripts/metrics.js                   (metrics.js)
