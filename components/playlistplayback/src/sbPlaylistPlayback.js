@@ -58,6 +58,9 @@ const URI_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
 // Database GUIDs
 const DB_TEST_GUID = "testdb-0000";
 
+// Other junk
+const MINIMUM_FILE_SIZE = 64000;
+
 // Regular consts
 // These MUST match those in the idl.
 const REPEAT_MODE_OFF = 0;
@@ -111,6 +114,28 @@ function listProperties(obj, objName) {
   }
   LOG("listProperties");
   dump(result + "\n");
+}
+
+/**
+ * Makes a new URI from a url string
+ */
+function newURI(aURLString)
+{
+  // Must be a string here
+  if (!(aURLString &&
+       (aURLString instanceof String) || typeof(aURLString) == "string"))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+  
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+    .getService(Components.interfaces.nsIIOService);
+  
+  try {
+    return ioService.newURI(aURLString, null, null);
+  }
+  catch (e) { }
+  
+  return null;
 }
 
 /**
@@ -776,12 +801,34 @@ PlaylistPlayback.prototype = {
         throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
       this._playURL.stringValue = "";
-      this._playURL.stringValue = aURL;
       this._metadataURL.stringValue = "";
-      this._metadataURL.stringValue = aURL;
 
-      core.stop();
-      core.playURL( aURL );
+      this.stop();
+      
+      var uri = newURI(aURL);
+      
+      var file;
+      try {
+        file = uri.QueryInterface(Components.interfaces.nsIFileURL).file;
+      }
+      catch (err) { }
+      
+      // See if this is a local file and do a basic integrity check if it is.
+      if (file) {
+        if (!file.exists())
+          throw Components.results.NS_ERROR_FILE_NOT_FOUND;
+        if (!file.isReadable())
+          throw Components.results.NS_ERROR_FILE_ACCESS_DENIED;
+        // If the size is too small we assume that the file is corrupted.
+        if (file.fileSize < MINIMUM_FILE_SIZE)
+          throw Components.results.NS_ERROR_FILE_CORRUPTED;
+      }
+            
+      var spec = uri.spec;
+      
+      this._metadataURL.stringValue = spec;
+      this._playURL.stringValue = spec;
+      core.playURL(spec);
 
       LOG( "playURL() '" + core.getId() + "'(" + this.position + "/" +
            this.length + ") - playing: " + this.playing +
@@ -795,7 +842,7 @@ PlaylistPlayback.prototype = {
       this._faceplateState.boolValue = true;
 
       // metrics
-      var s = aURL.split(".");
+      var s = spec.split(".");
       if (s.length > 1)
       {
         var ext = s[s.length-1];
