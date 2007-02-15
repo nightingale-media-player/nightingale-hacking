@@ -87,31 +87,20 @@ Minimize, Maximize, Restore, and Switch to Mini-Mode
   background-image: url(chrome://songbird/skin/default/sysbtn_close_9x9.png) ;
 }
 
-#sysbtn_maximize hbox,
 #sysbtn_maximize
-{ 
-  background-image: none ;
-  list-style-image: none ;
-}
-
-#sysbtn_maximize > hbox > image,
-#sysbtn_maximize > hbox > label,
-#sysbtn_maximize > hbox
-{
-  background-image: none ;
-  list-style-image: none ;
-}
-
-#sysbtn_maximize .checkbox-check
 {
   list-style-image: none ;
   background-image: url(chrome://songbird/skin/default/sysbtn_maximize_9x9.png) ; 
+  background-repeat: no-repeat !important;
+  background-position: center center;
 }
 
-#sysbtn_maximize[checked="true"] .checkbox-check /* Restore */
+#sysbtn_maximize[checked="true"] /* Restore */
 {
   list-style-image: none ;
   background-image: url(chrome://songbird/skin/default/sysbtn_restore_9x9.png) ;
+  background-repeat: no-repeat !important;
+  background-position: center center;
 }
 
 #sysbtn_minimize

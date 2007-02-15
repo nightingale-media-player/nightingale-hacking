@@ -117,11 +117,11 @@
               <spacer flex="1" drag_window="true"/>
               <button id="sysbtn_minimode" oncommand="SBMiniplayerOpen( );" tooltiptext="&tooltip.miniplayer;"/>
               <spacer width="5"/>
-              <button id="sysbtn_minimize" oncommand="onMinimize( );" tooltiptext="&tooltip.minimize;"/>
+              <sb-sys-minimize-button id="sysbtn_minimize"/>
               <spacer width="5"/>
-              <checkbox id="sysbtn_maximize" oncommand="onMaximize( );" tooltiptext="&tooltip.maximize;"/>
+              <sb-sys-maximize-button id="sysbtn_maximize"/>
               <spacer width="5"/>
-              <button id="sysbtn_close" oncommand="quitApp( );" tooltiptext="&tooltip.exit;"/>
+              <sb-sys-close-button id="sysbtn_close"/>
             </hbox>
 
             <!-- Hidden Mini Pane for when the Control Pane gets collapsed -->

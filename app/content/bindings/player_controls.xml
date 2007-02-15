@@ -1038,6 +1038,44 @@
  
   </binding>
 
+
+<!-- SYSBTNS -->
+
+  <binding id="sb-sys-maximize-button" extends="chrome://global/content/bindings/checkbox.xml#checkbox-baseline">
+    <handlers>
+      <!-- Grrr, apparently you use "CheckboxStateChange" instead of "command" from inside an XBL.  Of course.  Obviously. -->
+      <handler event="CheckboxStateChange" action="onMaximize();"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.maximize;")
+      </constructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-minimize-button" extends="chrome://global/content/bindings/button.xml#button">
+    <handlers>
+      <handler event="command" action="onMinimize();"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.minimize;")
+      </constructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-close-button" extends="chrome://global/content/bindings/button.xml#button">
+    <handlers>
+      <handler event="command" action="quitApp();"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.exit;")
+      </constructor>
+    </implementation>
+  </binding>
+
+
+
+<!-- EOF -->
 </bindings>
-
-

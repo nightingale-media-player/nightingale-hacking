@@ -198,5 +198,19 @@ faceplate {
   -moz-binding: url("chrome://songbird/content/bindings/faceplate.xml#faceplate") !important;
 }
 
+/* SYSBTNS */
+
+sb-sys-close-button {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#sb-sys-close-button") !important;
+}
+
+sb-sys-maximize-button {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#sb-sys-maximize-button") !important;
+}
+
+sb-sys-minimize-button {
+  -moz-binding: url("chrome://songbird/content/bindings/player_controls.xml#sb-sys-minimize-button") !important;
+}
+
 
 
