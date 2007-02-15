@@ -30,8 +30,8 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIFeathersManager.idl \
-             sbIThemePackage.idl \
-             sbILayoutPackage.idl \
+             sbISkinDescription.idl \
+             sbILayoutDescription.idl \
              $(NULL)
 
 XPIDL_MODULE = sbFeathers.xpt
