@@ -45,8 +45,10 @@ try
       href_loop = null;
     }
   }
-  function AsyncWebDocument( theDocument )
+  function AsyncWebDocument( theDocument, aGuid, aTable )
   {
+    if (!aGuid) aGuid = WEB_PLAYLIST_CONTEXT; // null protection
+    if (!aTable) aTable = WEB_PLAYLIST_TABLE; // null protection
     CancelAsyncWebDocument();
     const PlaylistManager = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistManager;1", "sbIPlaylistManager");
     const MediaLibrary = new Components.Constructor("@songbirdnest.com/Songbird/MediaLibrary;1", "sbIMediaLibrary");
@@ -147,6 +149,8 @@ try
     // End of class construction for sbIAsyncPlaylist
     
     // Attach a whole bunch of stuff to it so it can do its job in one pass.
+    href_loop.guid = aGuid;
+    href_loop.table = aTable;
     href_loop.doc = theDocument;
     href_loop.data = theCanAddToPlaylistData;
     href_loop.a_array = theDocument.getElementsByTagName('A');
@@ -156,7 +160,7 @@ try
     href_loop.aDBQuery = new sbIDatabaseQuery();
     href_loop.aMediaLibrary = (new MediaLibrary()).QueryInterface(Components.interfaces.sbIMediaLibrary);    
     href_loop.aDBQuery.setAsyncQuery( false );
-    href_loop.aDBQuery.setDatabaseGUID( WEB_PLAYLIST_CONTEXT );
+    href_loop.aDBQuery.setDatabaseGUID( aGuid );
     href_loop.aMediaLibrary.setQueryObject( href_loop.aDBQuery );
     href_loop.aMediaLibrary.createDefaultLibrary(); // Does waitForCompletion();
     href_loop.aPlaylistManager = (new PlaylistManager()).QueryInterface(Components.interfaces.sbIPlaylistManager);
@@ -179,19 +183,6 @@ try
         this.a_array[ this.i ].addEventListener( "click", onMediaClick, true );
         this.installed_listener = true;
         
-        if ( this.aPlaylist == null )
-        {
-          // When we first find media, flip the webplaylist. 
-          this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
-          this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE + "_library", WEB_PLAYLIST_LIBRARY_NAME, "library", "library", this.aDBQuery );
-          this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
-          this.data.boolValue = true;
-          theWebPlaylistQuery = this.aDBQuery;
-          // Then pretend like we clicked on it.
-          if ( !thePlaylistTree )
-            onBrowserPlaylist();
-        }
-        
         // Don't insert it if we already did.
         var skip = false;
         for ( var j in this.inserted )
@@ -205,10 +196,35 @@ try
         
         if ( ! skip )
         {
+          if ( this.aPlaylist == null )
+          {
+            if ( this.guid == WEB_PLAYLIST_CONTEXT )
+            {
+              // When we first find media, flip the webplaylist. 
+              this.aPlaylistManager.deletePlaylist( WEB_PLAYLIST_TABLE, this.aDBQuery );
+              this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE + "_library", WEB_PLAYLIST_LIBRARY_NAME, "library", "library", this.aDBQuery );
+              this.aPlaylist = this.aPlaylistManager.createPlaylist( WEB_PLAYLIST_TABLE, WEB_PLAYLIST_TABLE_NAME, WEB_PLAYLIST_TABLE, this.uri_now, this.aDBQuery );
+              this.data.boolValue = true;
+              theWebPlaylistQuery = this.aDBQuery;
+              // Then pretend like we clicked on it.
+              if ( !thePlaylistTree )
+                onBrowserPlaylist();
+            }
+            else
+            {
+              this.aPlaylist = this.aPlaylistManager.getPlaylist( this.table, this.aDBQuery );
+            }
+          }
+          
+          if ( this.aPlaylist == null )
+          {
+            return; // crap!
+          }
+                    
           var keys = new Array( "title" );
           var values = new Array( gPPS.convertURLToDisplayName( url ) );
-          var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, false, false );
-          this.aPlaylist.addByGUID( guid, WEB_PLAYLIST_CONTEXT, -1, false, false );
+          var guid = this.aMediaLibrary.addMedia( url, keys.length, keys, values.length, values, true, false );
+          this.aPlaylist.addByGUID( guid, this.guid, -1, true, false );
           //dump("XXredfive - just AddedByGUID:" + guid + " this.aDBQuery: " + this.aDBQuery + "\n");
           this.inserted.push( url );
           

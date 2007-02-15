@@ -561,6 +561,8 @@ function onMainPaneLoad()
         }
         else if ( theMainPane.contentDocument.getElementsByTagName('A').length != 0 )
         {
+          var playlist_guid = WEB_PLAYLIST_CONTEXT;
+          var playlist_table = WEB_PLAYLIST_TABLE;
           // BIG HACK to show the subscribed playlist instead of scraping for the web playlist
           var skip = false;
           var cur_url = SBDataGetStringValue( "browser.uri" );
@@ -581,11 +583,12 @@ function onMainPaneLoad()
               theWebPlaylist.bind( "songbird", table, null, SBDefaultCommands, SBDataGetIntValue( "browser.playlist.height" ), SBDataGetBoolValue( "browser.playlist.collapsed" ) );
               // Show/hide them
               SBDataSetBoolValue( "browser.playlist.show", true );
+              playlist_guid = "songbird";
+              playlist_table = table;
             }
           }
           // Otherwise, scrape the document.
-          if ( !skip )
-            AsyncWebDocument( theMainPane.contentDocument );
+          AsyncWebDocument( theMainPane.contentDocument, playlist_guid, playlist_table );
         } 
 
 
