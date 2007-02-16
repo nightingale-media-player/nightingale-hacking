@@ -26,7 +26,8 @@
 
 /**
  * \file sbIFeathersManager.idl
- * \brief Coordinates the loading of feathers (combination of skin and XUL window layout)
+ * \brief Interfaces for the Feathers Manager, which coordinates the loading 
+ *        of feathers (combination of skin and XUL window layout)
  */
 
 #include "nsISupports.idl"
@@ -64,7 +65,7 @@ interface sbIFeathersManager : nsISupports
   /**
    * \brief Enumerator for all registered sbISkinDescription objects
    */
-  readonly attribute nsISimpleEnumerator skinDescriptions;
+  nsISimpleEnumerator getSkinDescriptions();
 
 
   /**
@@ -76,7 +77,7 @@ interface sbIFeathersManager : nsISupports
   /**
    * \brief Enumerator for all registered sbILayoutDescription objects
    */
-  readonly attribute nsISimpleEnumerator layoutDescriptions;
+  nsISimpleEnumerator getLayoutDescriptions();
 
 
   /**
@@ -160,6 +161,18 @@ interface sbIFeathersManager : nsISupports
    */
   void removeMapping(in AString layoutURL, in AString skinProvider);
  
+
+
+  /**
+   * \brief Should window chrome be used with the given window-skin pair
+   *
+   * \param layoutURL URL for a xul window
+   * \param skinProvider Identifier for a skin
+   * \return True if the given pair should be displayed with native chrome (titlebar, etc.)
+   */
+  boolean shouldShowChrome(in AString layoutURL, in AString skinProvider);
+
+
 
 
   /**

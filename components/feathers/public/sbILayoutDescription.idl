@@ -41,7 +41,7 @@
 * \sa sbIFeathersManager
 */
 [scriptable, uuid(8a687b2c-002f-4750-a29f-dd1b4b55b6f0)]
-interface sbILayoutDesciption : nsISupports
+interface sbILayoutDescription : nsISupports
 {
   /**
    * \brief URL of the XUL document that represents this layout
