@@ -63,11 +63,6 @@ interface sbISkinDescription : nsISupports
   readonly attribute AString creator;
 
   /**
-   * \brief Version information
-   */  
-  readonly attribute AString version;
-
-  /**
    * \brief URL for a preview image
    */  
   readonly attribute AString previewImage;
