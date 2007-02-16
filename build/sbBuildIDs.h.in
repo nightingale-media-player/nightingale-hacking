@@ -20,10 +20,12 @@
 /**
  * These identify the target milestone
  */
-#define SB_MILESTONE 0.2
+#define SB_MILESTONE 0.3
 
 /**
  * This identifies the mozilla.org tag used to build XULRunner
+ *
+ * XXXredfive - unused, do we actually need this?
  */
 #define SB_MOZILLA_TAG SONGBIRD_0_2A_20060518_BRANCH
 
