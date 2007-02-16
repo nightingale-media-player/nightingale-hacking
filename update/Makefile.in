@@ -38,13 +38,13 @@ STAGE_DIR	= $(DEPTH)/_built_installer/mars
 endif
 
 SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
-SERVER_PATH = $(SERVER_BASE)/$(SB_BUILD_ID)-$(SB_BRANCHNAME)
+SERVER_PATH = $(SERVER_BASE)/$(SB_PLATFORM)-$(SB_ARCH)/$(SB_BRANCHNAME)
 
 ifdef DEBUG
 DEBUG_EXT = .debug
 endif
 
-UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE)-$(SB_BUILD_ID).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
+UPDATE_FILENAME_BASE = $(SB_APPNAME_LCASE)-$(SB_MILESTONE).$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
 
 #
 # On OS X we need to diff from the 'Contents' subdir inside the app bundle.
@@ -64,16 +64,16 @@ complete-patch::
 	@$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
-    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar" \
+    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
     "$(DEPTH)/$(DISTDIRNAME)$(APPBUNDLE_SUFFIX)"
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
 	SHA1SUM=$(SHA1SUM) $(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
-    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).mar \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar \
     "complete" \
-    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).snippet \
-    "$(SERVER_PATH)/$(UPDATE_FILENAME_BASE).mar" \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.snippet \
+    "$(SERVER_PATH)/$(UPDATE_FILENAME_BASE).complete.mar" \
     $(SB_BUILD_ID) \
     $(SB_MILESTONE) \
     "sha1" \
@@ -84,8 +84,8 @@ complete-snippet::
 #
 # SRC_BUILD:    the mar or directory containing the unpacked pre-update build
 # DST_BUILD:    the mar or directory containing the unpacked post-update build
-# SRC_BUILD_ID: the build ID of the pre-update build
 # DST_BUILD_ID: the build ID of the post-update build
+# SRC_BUILD_MS: the milestone of the pre-update build
 # DST_BUILD_MS: the milestone of the post-update build
 #
 
@@ -104,7 +104,7 @@ partial-patch-unwrap::
 	cd $(STAGE_DIR)/to && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.pl "../$(DST_BUILD)"
 	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
     $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
-    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).partial.mar" \
     "$(STAGE_DIR)/from" \
     "$(STAGE_DIR)/to" \
     $(NULL)
@@ -115,17 +115,17 @@ partial-patch-no-unwrap::
 	@$(MKDIR) -p $(STAGE_DIR)
 	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
     $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
-    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).partial.mar" \
     "$(SRC_BUILD)" \
     "$(DST_BUILD)"
 
 partial-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
 	SHA1SUM=$(SHA1SUM) $(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
-    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).partial.mar \
     "partial" \
-    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).snippet \
-    "$(SERVER_PATH)/$(UPDATE_FILENAME_BASE).$(SRC_BUILD_ID)-$(DST_BUILD_ID).mar" \
+    $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).partial.snippet \
+    "$(SERVER_PATH)/$(UPDATE_FILENAME_BASE).partial.mar" \
     $(DST_BUILD_ID) \
     $(DST_BUILD_MS) \
     "sha1" \
