@@ -1,0 +1,71 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseGUIDArray.idl
+ * \brief Definition of the sbILocalDatabaseGUIDArray interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+
+/**
+* \interface sbILocalDatabaseGUIDArray
+*/
+[scriptable, uuid(4499865f-b4f3-4e6d-90ed-0004ff38a49f)]
+interface sbILocalDatabaseGUIDArray : nsISupports
+{
+  attribute AString databaseGUID;
+
+  attribute AString baseTable;
+
+  attribute AString baseConstraintColumn;
+
+  attribute unsigned long baseConstraintValue;
+
+  attribute unsigned long fetchSize;
+
+  attribute boolean isAsync;
+
+  readonly attribute unsigned long length;
+
+  void addSort(in AString aProperty,
+               in boolean aAscending);
+
+  void clearSorts();
+
+  void addFilter(in AString aProperty,
+                 in nsIStringEnumerator aValues,
+                 in boolean aIsSearch);
+
+  void clearFilters();
+
+  AString getByIndex(in unsigned long aIndex);
+
+  void invalidate();
+};
+

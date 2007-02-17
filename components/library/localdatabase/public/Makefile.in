@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbILocalDatabaseSmartMediaList.idl \
+             sbILocalDatabaseGUIDArray.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt
