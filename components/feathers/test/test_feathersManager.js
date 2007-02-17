@@ -121,7 +121,7 @@ function assertEnumeratorEqualsArray(enumerator, list) {
 function setup()
 {
   // Register for change callbacks
-  feathersManager.addChangeListener(feathersChangeListener);
+  feathersManager.addListener(feathersChangeListener);
 
   // Make some skins
   var skin = new FeathersDescription();
@@ -157,9 +157,9 @@ function setup()
   
   // Create some mappings
   // Blue -> big, Red -> big, Orange -> mini with chrome
-  feathersManager.addMapping(layouts[1].url, skins[0].provider, false);
-  feathersManager.addMapping(layouts[1].url, skins[1].provider, false);
-  feathersManager.addMapping(layouts[0].url, skins[2].provider, true);
+  feathersManager.assertCompatibility(layouts[1].url, skins[0].provider, false);
+  feathersManager.assertCompatibility(layouts[1].url, skins[1].provider, false);
+  feathersManager.assertCompatibility(layouts[0].url, skins[2].provider, true);
 }
 
 
@@ -177,14 +177,14 @@ function teardown() {
 
   // Remove mappings
   // Blue -> big, Red -> big, Orange -> mini 
-  feathersManager.removeMapping(layouts[1].url, skins[0].provider);
-  feathersManager.removeMapping(layouts[1].url, skins[1].provider);
+  feathersManager.unassertCompatibility(layouts[1].url, skins[0].provider);
+  feathersManager.unassertCompatibility(layouts[1].url, skins[1].provider);
   
   // Remove change listener before final modification to confirm
   // that it actually gets unhooked.
-  feathersManager.removeChangeListener(feathersChangeListener);
+  feathersManager.removeListener(feathersChangeListener);
   
-  feathersManager.removeMapping(layouts[0].url, skins[2].provider);
+  feathersManager.unassertCompatibility(layouts[0].url, skins[2].provider);
 }
 
 
@@ -230,9 +230,9 @@ function runTest () {
   
   // ------------------------
   // Verify showChrome
-  assertEqual( feathersManager.shouldShowChrome(layouts[0].url, skins[2].provider), true );
-  assertEqual( feathersManager.shouldShowChrome(layouts[0].url, skins[1].provider), false );
-  assertEqual( feathersManager.shouldShowChrome(layouts[1].url, skins[1].provider), false );
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[2].provider), true );
+  assertEqual( feathersManager.isChromeEnabled(layouts[0].url, skins[1].provider), false );
+  assertEqual( feathersManager.isChromeEnabled(layouts[1].url, skins[1].provider), false );
 
 
   // ------------------------
@@ -240,16 +240,22 @@ function runTest () {
   // TODO Actually select!
   
   // First with an invalid pair
-  assertEqual(feathersManager.select(layouts[0].url, skins[1].provider), false);
+  var failed = false;
+  try {
+    feathersManager.switchFeathers(layouts[0].url, skins[1].provider);
+  } catch (e) {
+    failed = true;
+  }
 
   // Then with a valid pair.  Expect an onSelect callback.
   feathersChangeListener.expectSkin = skins[0];
   feathersChangeListener.expectLayout = layouts[1];
-  assertEqual(feathersManager.select(layouts[1].url, skins[0].provider), true);
+  feathersManager.switchFeathers(layouts[1].url, skins[0].provider);
   // Make sure onSelect callback occurred
   assertEqual(feathersChangeListener.expectSkin, null);
   assertEqual(feathersChangeListener.expectLayout, null);
 
+  // TODO: Test currentLayout currentSkin
 
 
   // ------------------------

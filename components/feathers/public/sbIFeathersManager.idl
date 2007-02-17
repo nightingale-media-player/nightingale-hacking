@@ -36,7 +36,7 @@ interface nsISimpleEnumerator;
 interface sbILayoutDescription;
 interface sbISkinDescription;
 
-interface sbIFeathersChangeListener;
+interface sbIFeathersManagerListener;
 
 
 /**
@@ -54,12 +54,12 @@ interface sbIFeathersManager : nsISupports
   /**
    * \brief URL for the active layout
    */
-  readonly attribute AString currentLayout;
+  readonly attribute AString currentLayoutURL;
   
   /**
    * \brief Skin provider string for the active skin
    */
-  readonly attribute AString currentSkin;
+  readonly attribute AString currentSkinProvider;
 
 
   /**
@@ -89,45 +89,55 @@ interface sbIFeathersManager : nsISupports
 
   /**
    * \brief Make the given skin available for use
-   * \param skin Skin description
+   *   
+   * Register the the given skin description.
+   * Note that any existing registration with the same
+   * skin provider name will be overwritten.
+   *
+   * \param aSkin Skin description
    */
-  void registerSkin(in sbISkinDescription skin);
+  void registerSkin(in sbISkinDescription aSkin);
   
   /**
    * \brief Disable the given skin
-   * \param skin Skin description
+   * \param aSkin Skin description
    */
-  void unregisterSkin(in sbISkinDescription skin);
+  void unregisterSkin(in sbISkinDescription aSkin);
 
   /**
    * \brief Gets the full skin description associated with a skin identifier
    *
-   * \param provider Skin identifier (internalName)
+   * \param aSkinProvider Skin identifier (internalName)
    * \return Skin description
    */
-  sbISkinDescription getSkinDescription(in AString provider);
+  sbISkinDescription getSkinDescription(in AString aSkinProvider);
 
 
 
   /**
    * \brief Make the given XUL window available for use
-   * \param layout Window description
+   *
+   * Register the the given layout description.
+   * Note that any existing registration with the same
+   * URL will be overwritten.
+   *
+   * \param aLayout Window description
    */
-  void registerLayout(in sbILayoutDescription layout);
+  void registerLayout(in sbILayoutDescription aLayout);
 
   /**
    * \brief Disable the given window
-   * \param layout Window description
+   * \param aLayout Window description
    */    
-  void unregisterLayout(in sbILayoutDescription layout);
+  void unregisterLayout(in sbILayoutDescription aLayout);
 
   /**
    * \brief Gets the full layout description associated with a layout URL
    *
-   * \param url Unique identifier
+   * \param aURL Unique identifier
    * \return Layout description
    */
-  sbILayoutDescription getLayoutDescription(in AString url);
+  sbILayoutDescription getLayoutDescription(in AString aURL);
 
 
 
@@ -140,12 +150,14 @@ interface sbIFeathersManager : nsISupports
    * Note that the given skin and xul window IDs do not need to be registered with the
    * feathers manager. 
    *
-   * \param layoutURL URL for a xul window
-   * \param skinProvider Identifier for a skin
-   * \param showChrome Whether or not the OS titlebar should be used 
+   * \param aLayoutURL URL for a xul window
+   * \param aSkinProvider Identifier for a skin
+   * \param aShowChrome Whether or not the OS titlebar should be used 
    *        when the skin-window pair is active
    */
-  void addMapping(in AString layoutURL, in AString skinProvider, in boolean showChrome);
+  void assertCompatibility(in AString aLayoutURL,
+                           in AString aSkinProvider,
+                           in boolean aShowChrome);
  
 
   
@@ -156,21 +168,23 @@ interface sbIFeathersManager : nsISupports
    *
    * TODO: Throw an exception if the mapping is currently in use?
    *
-   * \param layoutURL URL for a xul window
-   * \param skinProvider Identifier for a skin
+   * \param aLayoutURL URL for a xul window
+   * \param aSkinProvider Identifier for a skin
    */
-  void removeMapping(in AString layoutURL, in AString skinProvider);
+  void unassertCompatibility(in AString aLayoutURL,
+                             in AString aSkinProvider);
  
 
 
   /**
    * \brief Should window chrome be used with the given window-skin pair
    *
-   * \param layoutURL URL for a xul window
-   * \param skinProvider Identifier for a skin
+   * \param aLayoutURL URL for a xul window
+   * \param aSkinProvider Identifier for a skin
    * \return True if the given pair should be displayed with native chrome (titlebar, etc.)
    */
-  boolean shouldShowChrome(in AString layoutURL, in AString skinProvider);
+  boolean isChromeEnabled(in AString aLayoutURL,
+                          in AString aSkinProvider);
 
 
 
@@ -179,66 +193,45 @@ interface sbIFeathersManager : nsISupports
    * \brief Get an enumerator for all registered skins compatible with 
    *        the given layoutID
    * 
-   * \param layoutURL URL for a xul window
+   * \param aLayoutURL URL for a xul window
    * \return Enumerator for a list of sbISkinDescription objects
    */
-  nsISimpleEnumerator getSkinsForLayout(in AString layoutURL);
+  nsISimpleEnumerator getSkinsForLayout(in AString aLayoutURL);
 
 
 
   /**
    * \brief Switch to the given window-skin pair
    *
-   * Attempts to reopens all Songbird windows using the given
+   * Attempts to reopen all Songbird windows using the given
    * layout and skin.
    *
    * Note: triggers the onSelectRequest callback
    * 
-   * \param layoutURL URL for a xul window
-   * \param skinProvider Identifier for a skin
-   * \return True if the selection process can proceed
+   * \param aLayoutURL URL for a xul window
+   * \param aSkinProvider Identifier for a skin
    * \sa sbIFeathersChangeListener
    */
-  boolean select(in AString layoutURL, in AString skinProvider);
+  void switchFeathers(in AString aLayoutURL, 
+                         in AString aSkinProvider);
 
 
 
   /**
    * \brief Register to receive modification callbacks
    * 
-   * \param listener Callback interface
+   * \param aListener Callback interface
    */
-  void addChangeListener(in sbIFeathersChangeListener listener);
+  void addListener(in sbIFeathersManagerListener aListener);
 
   /**
    * \brief Unregister modification callbacks
    * 
-   * \param listener Callback interface
+   * \param aListener Callback interface
    */
-  void removeChangeListener(in sbIFeathersChangeListener listener);
+  void removeListener(in sbIFeathersManagerListener aListener);
 };
 
 
 
 
-/**
-* \interface sbIFeathersChangeListener
-* \brief Callback interface used to listen to Feathers Manager changes
-*
-* \sa sbIFeathersManager
-*/
-[scriptable, uuid(989ca002-eea7-4eff-ae93-2615f89b5581)]
-interface sbIFeathersChangeListener : nsISupports
-{
-  /**
-   * \brief Called whenever the feathers manager is modified
-   */  
-  void onFeathersUpdate();
-
-  /**
-   * \brief Called when the feathers manager is about to switch feathers
-   * \param layout Description of the layout to be selected
-   * \param skin Description of the skin to be selected
-   */  
-  void onFeathersSelectRequest(in sbILayoutDescription layout, in sbISkinDescription skin);
-};

@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIFeathersManager.idl \
+             sbIFeathersManagerListener.idl \
              sbISkinDescription.idl \
              sbILayoutDescription.idl \
              $(NULL)

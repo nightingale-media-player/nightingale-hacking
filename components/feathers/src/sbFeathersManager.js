@@ -35,14 +35,13 @@
 //  * Add doxygen comments
 //  * Make skin switching actually do something
 //  * Add function arg assertions
+//  * add onSwitchCompleted, change onSwitchRequested to allow feedback
 // 
  
 const CONTRACTID = "@songbirdnest.com/songbird/feathersmanager;1";
 const CLASSNAME = "Songbird Feathers Manager Service Interface";
 const CID = Components.ID("{99f24350-a67f-11db-befa-0800200c9a66}");
 const IID = Components.interfaces.sbIFeathersManager;
-
-var gOS = null;
 
 
 /**
@@ -70,7 +69,8 @@ ArrayEnumerator.prototype = {
   
   QueryInterface: function(iid)
   {
-    if (!iid.equals(Components.interfaces.nsISimpleEnumerator))
+    if (!iid.equals(Components.interfaces.nsISimpleEnumerator) &&
+        !iid.equals(Components.interfaces.nsISupports))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   }
@@ -87,28 +87,24 @@ ArrayEnumerator.prototype = {
  * and manages compatibility and selection.
  */
 function FeathersManager() {
-  try {
-    gOS      = Components.classes["@mozilla.org/observer-service;1"]
-                        .getService(Components.interfaces.nsIObserverService);
-    if (gOS.addObserver) {
-      // We should wait until the profile has been loaded to start
-      gOS.addObserver(this, "profile-after-change", false);
-      // We need to unhook things on shutdown
-      gOS.addObserver(this, "xpcom-shutdown", false);
-    }
-  } catch (e) { }
-  
+
+  os      = Components.classes["@mozilla.org/observer-service;1"]
+                      .getService(Components.interfaces.nsIObserverService);
+  // We should wait until the profile has been loaded to start
+  os.addObserver(this, "profile-after-change", false);
+  // We need to unhook things on shutdown
+  os.addObserver(this, "xpcom-shutdown", false);
   
   this._skins = {};
   this._layouts = {};
   this._mappings = {};
   this._listeners = [];
 };
-FeathersManager.prototype.constructor = FeathersManager;
 FeathersManager.prototype = {
+  constructor: FeathersManager,
   
-  _currentSkin: null,
-  _currentLayout: null,
+  _currentSkinProvider: null,
+  _currentLayoutURL: null,
   
   // Hash of skin descriptions keyed by provider (e.g. classic/1.0)
   _skins: null,
@@ -122,7 +118,7 @@ FeathersManager.prototype = {
   //
   // eg
   // {  
-  //     mainwin.xul : {
+  //     mainwin.xul: {
   //       blueskin: true,
   //       redskin: false,
   //     }
@@ -146,20 +142,20 @@ FeathersManager.prototype = {
   },
   
   _deinit: function FeathersManager_deinit() {
-      this._skins = {}
-      this._layouts = {};
-      this._mappings = {};
-      this._listeners = [];
+      this._skins = null;
+      this._layouts = null;
+      this._mappings = null;
+      this._listeners = null;
   },
   
   
   
-  get currentSkin() {
-    return this._currentSkin;
+  get currentSkinProvider() {
+    return this._currentSkinProvider;
   },
   
-  get currentLayout() {
-    return this._currentLayout;
+  get currentLayoutURL() {
+    return this._currentLayoutURL;
   },
   
   get skinCount() {
@@ -198,10 +194,10 @@ FeathersManager.prototype = {
     if (this._skins[skinDesc.provider]) {
       delete this._skins[skinDesc.provider];
       this._skinCount--;
+      
+      // Notify observers
+      this._onUpdate();
     }
-
-    // Notify observers
-    this._onUpdate();
   },
 
   getSkinDescription: function FeathersManager_getSkinDescription(provider) {
@@ -226,10 +222,10 @@ FeathersManager.prototype = {
     if (this._layouts[layoutDesc.url]) {
       delete this._layouts[layoutDesc.url];
       this._layoutCount--;
-    }
-    
-    // Notify observers
-    this._onUpdate();    
+      
+      // Notify observers
+      this._onUpdate();  
+    }  
   },
     
   getLayoutDescription: function FeathersManager_getLayoutDescription(url) {
@@ -238,7 +234,7 @@ FeathersManager.prototype = {
   
 
 
-  addMapping: function FeathersManager_addMapping(layoutURL, skinProvider, showChrome) {
+  assertCompatibility: function FeathersManager_assertCompatibility(layoutURL, skinProvider, showChrome) {
     // TODO verify
     
     if (this._mappings[layoutURL] == null) {
@@ -250,18 +246,18 @@ FeathersManager.prototype = {
     this._onUpdate();    
   },
 
-  removeMapping: function FeathersManager_removeMapping(layoutURL, skinProvider) {
+  unassertCompatibility: function FeathersManager_unassertCompatibility(layoutURL, skinProvider) {
     if (this._mappings[layoutURL]) {
       delete this._mappings[layoutURL][skinProvider];
-    }
-
-    // Notify observers
-    this._onUpdate();    
+      
+      // Notify observers
+      this._onUpdate();  
+    }  
   },
   
 
 
-  shouldShowChrome: function FeathersManager_shouldShowChrome(layoutURL, skinProvider) {
+  isChromeEnabled: function FeathersManager_isChromeEnabled(layoutURL, skinProvider) {
     if (this._mappings[layoutURL]) {
       return this._mappings[layoutURL][skinProvider] == true;
     }
@@ -288,20 +284,21 @@ FeathersManager.prototype = {
 
 
 
-  select: function FeathersManager_select(layoutURL, skinProvider) {
+  switchFeathers: function FeathersManager_switchFeathers(layoutURL, skinProvider) {
     layoutDescription = this.getLayoutDescription(layoutURL);
     skinDescription = this.getSkinDescription(skinProvider);
     
     // Make sure we know about the requested skin and layout
     if (layoutDescription == null || skinDescription == null) {
-      return false; // Should this be an exception?
+      throw("Unknown layout/skin passed to switchFeathers");
     }
     
     // Check compatibility.
     // True/false refer to the showChrome value, so check for undefined
     // to determine compatibility.
     if (this._mappings[layoutURL][skinProvider] === undefined) {
-      return false;
+      throw("Skin [" + skinProvider + "] and Layout [" + layoutURL +
+            " are not compatible");
     } 
     
     // Notify that a select is about to occur
@@ -310,18 +307,16 @@ FeathersManager.prototype = {
     // TODO!
     // Can we get away with killing the main window, or do we have to completely restart?
     // Modify dataremotes and keep a copy of the previous values.
-    
-    return true;
   },
 
 
 
-  addChangeListener: function FeathersManager_addChangeListener(listener) {
+  addListener: function FeathersManager_addListener(listener) {
     this._listeners.push(listener);
   },
   
   
-  removeChangeListener: function FeathersManager_removeChangeListener(listener) {
+  removeListener: function FeathersManager_removeListener(listener) {
     var index = this._listeners.indexOf(listener);
     if (index > -1) {
       this._listeners.splice(index,1);
@@ -351,18 +346,18 @@ FeathersManager.prototype = {
 
   // watch for XRE startup and shutdown messages 
   observe: function(subject, topic, data) {
+    os      = Components.classes["@mozilla.org/observer-service;1"]
+                      .getService(Components.interfaces.nsIObserverService);
     switch (topic) {
     case "profile-after-change":
-      gOS.removeObserver(this, "profile-after-change");
+      os.removeObserver(this, "profile-after-change");
       
       // Preferences are initialized, ready to start the service
       this._init();
       break;
     case "xpcom-shutdown":
-      gOS.removeObserver(this, "xpcom-shutdown");
+      os.removeObserver(this, "xpcom-shutdown");
       this._deinit();
-      
-      gOS  = null;
       break;
     }
   },
@@ -373,7 +368,6 @@ FeathersManager.prototype = {
   QueryInterface: function(iid) {
     if (!iid.equals(IID) &&
         !iid.equals(Components.interfaces.nsIObserver) && 
-        !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
         !iid.equals(Components.interfaces.nsISupports))
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
@@ -428,10 +422,10 @@ var gModule = {
   _objects: {
     // The FeathersManager Component
     feathersmanager:     { CID        : CID,
-                                 contractID : CONTRACTID,
-                                 className  : CLASSNAME,
-                                 factory    : #1#(FeathersManager)
-                               },
+                           contractID : CONTRACTID,
+                           className  : CLASSNAME,
+                           factory    : #1#(FeathersManager)
+                         },
   },
 
   canUnload: function(componentManager) { 

@@ -25,43 +25,34 @@
 */
 
 /**
- * \file sbILayoutDesciption.idl
- * \brief Layout package description
+ * \file sbIFeathersManagerListener.idl
+ * \brief Callback interface used to listen to Feathers Manager changes
  */
 
 #include "nsISupports.idl"
 
+interface sbILayoutDescription;
+interface sbISkinDescription;
 
 /**
-* \interface sbILayoutDesciption
-* \brief Struct describing the properties of a XUL window layout
-*
-* Describes the properties of an alternate XUL window.
+* \interface sbIFeathersManagerListener
+* \brief Callback interface used to listen to Feathers Manager changes
 *
 * \sa sbIFeathersManager
 */
-[scriptable, uuid(8a687b2c-002f-4750-a29f-dd1b4b55b6f0)]
-interface sbILayoutDescription : nsISupports
+[scriptable, uuid(989ca002-eea7-4eff-ae93-2615f89b5581)]
+interface sbIFeathersManagerListener : nsISupports
 {
   /**
-   * \brief URL of the XUL document that represents this layout
-   * The url and primary identifier for the layout
+   * \brief Called whenever the Feathers Manager is modified
    */  
-  readonly attribute AString url;
+  void onFeathersUpdate();
 
   /**
-   * \brief Human readable name
-   */
-  readonly attribute AString name;
-
-  /**
-   * \brief Human readable description
-   */
-  readonly attribute AString description;
-  
-  /**
-   * \brief Author details
+   * \brief Called when the feathers manager is about to switch feathers
+   * \param aLayout Description of the layout to be selected
+   * \param aSkin Description of the skin to be selected
    */  
-  readonly attribute AString creator;
-
+  void onFeathersSelectRequest(in sbILayoutDescription aLayout, 
+                               in sbISkinDescription aSkin);
 };
