@@ -42,7 +42,8 @@ function runTest () {
   q.baseTableName = "ttms"
   q.addColumn(null, "who");
   q.addColumn("country", "name");
-  q.addJoin("country", null, "id", "ttms", "country");
+  q.addJoin(Ci.sbISQLBuilder.JOIN_INNER, "country", null, "id", "ttms",
+            "country");
   c = q.createMatchCriterionLong(null, "games",
                                  Ci.sbISQLBuilder.MATCH_EQUALS,
                                  2000);
@@ -55,7 +56,8 @@ function runTest () {
   q.baseTableName = "ttms"
   q.addColumn(null, "who");
   q.addColumn(null, "color");
-  q.addJoin("country", null, "id", "ttms", "country");
+  q.addJoin(Ci.sbISQLBuilder.JOIN_INNER, "country", null, "id", "ttms",
+            "country");
   c = q.createMatchCriterionString(null, "name",
                                    Ci.sbISQLBuilder.MATCH_EQUALS,
                                    "Sweden");
@@ -66,7 +68,8 @@ function runTest () {
   q = newQuery();
   q.baseTableName = "ttms"
   q.addColumn(null, "games");
-  q.addJoin("country", null, "id", "ttms", "country");
+  q.addJoin(Ci.sbISQLBuilder.JOIN_INNER, "country", null, "id", "ttms",
+            "country");
   c = q.createMatchCriterionString(null, "name",
                                    Ci.sbISQLBuilder.MATCH_EQUALS,
                                    "China");
@@ -81,12 +84,25 @@ function runTest () {
   q = newQuery();
   q.baseTableName = "ttws"
   q.addColumn(null, "who");
-  q.addJoin("games", null, "yr", "ttws", "games");
+  q.addJoin(Ci.sbISQLBuilder.JOIN_INNER, "games", null, "yr", "ttws", "games");
   c = q.createMatchCriterionString(null, "city",
                                    Ci.sbISQLBuilder.MATCH_EQUALS,
                                    "Barcelona");
   q.addCriterion(c);
   sql = "select who from ttws join games on ttws.games = games.yr where city = 'Barcelona'";
+  assertEqual(sql, q.toString());
+
+  /*
+   * Test critera joins
+   */
+  q = newQuery();
+  q.baseTableName = "leftTable"
+  q.addColumn(null, "bar");
+  c = q.createMatchCriterionTable("leftTable", "a",
+                                   Ci.sbISQLBuilder.MATCH_EQUALS,
+                                   "rightTable", "b")  ;
+  q.addJoinWithCriterion(Ci.sbISQLBuilder.JOIN_INNER, "right", null, c);
+  sql = "select bar from leftTable join right on leftTable.a = rightTable.b";
   assertEqual(sql, q.toString());
 
   return Components.results.NS_OK;

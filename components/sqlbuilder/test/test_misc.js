@@ -72,6 +72,32 @@ function runTest () {
   q = newQuery();
   q.baseTableName = "bbc"
   q.addColumn(null, "name");
+  c = q.createMatchCriterionIn(null, "name");
+  c.addString("one");
+  c.addString("two");
+  q.addCriterion(c);
+  sql = "select name from bbc where name in ('one', 'two')";
+  assertEqual(sql, q.toString());
+
+  q = newQuery();
+  q.baseTableName = "bbc"
+  q.addColumn(null, "name");
+  q.limit = 10;
+  q.offset = 20;
+  sql = "select name from bbc limit 10 offset 20";
+  assertEqual(sql, q.toString());
+
+  q = newQuery();
+  q.baseTableName = "bbc"
+  q.addColumn(null, "name");
+  q.limitIsParameter = true;
+  q.offsetIsParameter = true;
+  sql = "select name from bbc limit ? offset ?";
+  assertEqual(sql, q.toString());
+
+  q = newQuery();
+  q.baseTableName = "bbc"
+  q.addColumn(null, "name");
   try {
   q.addSubquery(q, null);
     fail("No exception thrown");

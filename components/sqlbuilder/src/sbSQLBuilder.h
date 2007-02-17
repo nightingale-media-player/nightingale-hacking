@@ -42,6 +42,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBISQLBUILDER
 
+  sbSQLBuilder();
 protected:
 
   struct sbColumnInfo
@@ -52,11 +53,13 @@ protected:
 
   struct sbJoinInfo
   {
+    PRUint32 type;
     nsString joinedTableName;
     nsString joinedTableAlias;
     nsString joinedColumnName;
     nsString joinToTableName;
     nsString joinToColumnName;
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
   };
 
   struct sbOrderInfo
@@ -73,9 +76,14 @@ protected:
   };
 
   NS_IMETHOD ToStringInternal(nsAString& _retval) = 0;
+  NS_IMETHOD ResetInternal() = 0;
 
   nsString mBaseTableName;
   nsString mBaseTableAlias;
+  PRInt32 mLimit;
+  PRBool mLimitIsParameter;
+  PRInt32 mOffset;
+  PRBool mOffsetIsParameter;
   nsTArray<sbColumnInfo> mOutputColumns;
   nsTArray<sbJoinInfo> mJoins;
   nsTArray<sbSubqueryInfo> mSubqueries;
@@ -91,6 +99,7 @@ public:
   NS_DECL_SBISQLSELECTBUILDER
 
   NS_IMETHOD ToStringInternal(nsAString& _retval);
+  NS_IMETHOD ResetInternal();
 
 private:
   nsTArray<sbOrderInfo> mOrders;
@@ -100,7 +109,6 @@ class sbSQLBuilderCriterionBase : public sbISQLBuilderCriterion
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBISQLBUILDERCRITERION
 
   sbSQLBuilderCriterionBase(const nsAString& aTableName,
                             const nsAString& aColumnName,
@@ -108,11 +116,9 @@ public:
                             sbISQLBuilderCriterion* aLeft,
                             sbISQLBuilderCriterion* aRight);
 
-  NS_IMETHOD ToString(nsAString& retval) = 0;
-
 protected:
   void AppendMatchTo(nsAString& aStr);
-  void AssignTableColumnTo(nsAString& aStr);
+  void AppendTableColumnTo(nsAString& aStr);
   void AppendLogicalTo(const nsAString& aOperator, nsAString& aStr);
 
   nsString mTableName;
@@ -128,14 +134,12 @@ class sbSQLBuilderCriterionString : public sbSQLBuilderCriterionBase
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDERCRITERION(sbSQLBuilderCriterionBase::)
+  NS_DECL_SBISQLBUILDERCRITERION
 
   sbSQLBuilderCriterionString(const nsAString& aTableName,
                               const nsAString& aColumnName,
                               PRUint32 aMatchType,
                               const nsAString& aValue);
-
-  NS_IMETHOD ToString(nsAString& retval);
 
 private:
   nsString mValue;
@@ -145,14 +149,12 @@ class sbSQLBuilderCriterionLong : public sbSQLBuilderCriterionBase
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDERCRITERION(sbSQLBuilderCriterionBase::)
+  NS_DECL_SBISQLBUILDERCRITERION
 
   sbSQLBuilderCriterionLong(const nsAString& aTableName,
                             const nsAString& aColumnName,
                             PRUint32 aMatchType,
                             PRInt32 aValue);
-
-  NS_IMETHOD ToString(nsAString& retval);
 
 private:
   PRInt32 mValue;
@@ -162,37 +164,87 @@ class sbSQLBuilderCriterionNull : public sbSQLBuilderCriterionBase
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDERCRITERION(sbSQLBuilderCriterionBase::)
+  NS_DECL_SBISQLBUILDERCRITERION
 
   sbSQLBuilderCriterionNull(const nsAString& aTableName,
                             const nsAString& aColumnName,
                             PRUint32 aMatchType);
+};
 
-  NS_IMETHOD ToString(nsAString& retval);
+class sbSQLBuilderCriterionParameter : public sbSQLBuilderCriterionBase
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBISQLBUILDERCRITERION
+
+  sbSQLBuilderCriterionParameter(const nsAString& aTableName,
+                                 const nsAString& aColumnName,
+                                 PRUint32 aMatchType);
+};
+
+class sbSQLBuilderCriterionTable : public sbSQLBuilderCriterionBase
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBISQLBUILDERCRITERION
+
+  sbSQLBuilderCriterionTable(const nsAString& aLeftTableName,
+                             const nsAString& aLeftColumnName,
+                             PRUint32 aMatchType,
+                             const nsAString& aRightTableName,
+                             const nsAString& aRightColumnName);
+
+private:
+  nsString mRightTableName;
+  nsString mRightColumnName;
 };
 
 class sbSQLBuilderCriterionAnd : public sbSQLBuilderCriterionBase
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDERCRITERION(sbSQLBuilderCriterionBase::)
+  NS_DECL_SBISQLBUILDERCRITERION
 
   sbSQLBuilderCriterionAnd(sbISQLBuilderCriterion* aLeft,
                            sbISQLBuilderCriterion* aRight);
-
-  NS_IMETHOD ToString(nsAString& retval);
 };
 
 class sbSQLBuilderCriterionOr : public sbSQLBuilderCriterionBase
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBISQLBUILDERCRITERION(sbSQLBuilderCriterionBase::)
+  NS_DECL_SBISQLBUILDERCRITERION
 
   sbSQLBuilderCriterionOr(sbISQLBuilderCriterion* aLeft,
                           sbISQLBuilderCriterion* aRight);
+};
 
-  NS_IMETHOD ToString(nsAString& retval);
+class sbSQLBuilderCriterionIn : public sbSQLBuilderCriterionBase,
+                                public sbISQLBuilderCriterionIn
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBISQLBUILDERCRITERION
+  NS_DECL_SBISQLBUILDERCRITERIONIN
+
+  sbSQLBuilderCriterionIn(const nsAString& aTableName,
+                          const nsAString& aColumnName);
+
+private:
+  enum ParameterType {
+    eIsNull,
+    eString,
+    eInteger32
+  };
+
+  struct sbInItem
+  {
+    ParameterType type;
+    nsString stringValue;
+    PRInt32 int32Value;
+  };
+
+  nsTArray<sbInItem> mInItems;
 };
 
 static nsresult

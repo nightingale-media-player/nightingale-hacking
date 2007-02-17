@@ -29,7 +29,17 @@
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
 
+#include <stdio.h>
+
 NS_IMPL_ISUPPORTS1(sbSQLBuilder, sbISQLBuilder)
+
+sbSQLBuilder::sbSQLBuilder() :
+  mLimit(-1),
+  mLimitIsParameter(PR_FALSE),
+  mOffset(-1),
+  mOffsetIsParameter(PR_FALSE)
+{
+}
 
 NS_IMETHODIMP
 sbSQLBuilder::GetBaseTableName(nsAString& aBaseTableName)
@@ -37,7 +47,6 @@ sbSQLBuilder::GetBaseTableName(nsAString& aBaseTableName)
   aBaseTableName.Assign(mBaseTableName);
   return NS_OK;
 }
-
 NS_IMETHODIMP
 sbSQLBuilder::SetBaseTableName(const nsAString& aBaseTableName)
 {
@@ -51,11 +60,62 @@ sbSQLBuilder::GetBaseTableAlias(nsAString& aBaseTableAlias)
   aBaseTableAlias.Assign(mBaseTableAlias);
   return NS_OK;
 }
-
 NS_IMETHODIMP
 sbSQLBuilder::SetBaseTableAlias(const nsAString& aBaseTableAlias)
 {
   mBaseTableAlias.Assign(aBaseTableAlias);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::GetLimit(PRInt32 *aLimit)
+{
+  *aLimit = mLimit;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLBuilder::SetLimit(PRInt32 aLimit)
+{
+  mLimit = aLimit;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::GetLimitIsParameter(PRBool *aLimitIsParameter)
+{
+  *aLimitIsParameter = mLimitIsParameter;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLBuilder::SetLimitIsParameter(PRBool aLimitIsParameter)
+{
+  mLimitIsParameter = aLimitIsParameter;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::GetOffset(PRInt32 *aOffset)
+{
+  *aOffset = mOffset;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLBuilder::SetOffset(PRInt32 aOffset)
+{
+  mOffset = aOffset;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::GetOffsetIsParameter(PRBool *aOffsetIsParameter)
+{
+  *aOffsetIsParameter = mOffsetIsParameter;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbSQLBuilder::SetOffsetIsParameter(PRBool aOffsetIsParameter)
+{
+  mOffsetIsParameter = aOffsetIsParameter;
   return NS_OK;
 }
 
@@ -73,7 +133,16 @@ sbSQLBuilder::AddColumn(const nsAString& aTableName,
 }
 
 NS_IMETHODIMP
-sbSQLBuilder::AddJoin(const nsAString& aJoinedTableName,
+sbSQLBuilder::ClearColumns()
+{
+  mOutputColumns.Clear();
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::AddJoin(PRUint32 aJoinType,
+                      const nsAString& aJoinedTableName,
                       const nsAString& aJoinedTableAlias,
                       const nsAString& aJoinedColumnName,
                       const nsAString& aJoinToTableName,
@@ -82,11 +151,33 @@ sbSQLBuilder::AddJoin(const nsAString& aJoinedTableName,
   sbJoinInfo* ji = mJoins.AppendElement();
   NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);
 
+  ji->type             = aJoinType;
   ji->joinedTableName  = aJoinedTableName;
   ji->joinedTableAlias = aJoinedTableAlias;
   ji->joinedColumnName = aJoinedColumnName;
   ji->joinToTableName  = aJoinToTableName;
   ji->joinToColumnName = aJoinToColumnName;
+  ji->criterion        = nsnull;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::AddJoinWithCriterion(PRUint32 aJoinType,
+                                   const nsAString& aJoinedTableName,
+                                   const nsAString& aJoinedTableAlias,
+                                   sbISQLBuilderCriterion *aCriterion)
+{
+  sbJoinInfo* ji = mJoins.AppendElement();
+  NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);
+
+  ji->type             = aJoinType;
+  ji->joinedTableName  = aJoinedTableName;
+  ji->joinedTableAlias = aJoinedTableAlias;
+  ji->joinedColumnName = EmptyString();
+  ji->joinToTableName  = EmptyString();
+  ji->joinToColumnName = EmptyString();
+  ji->criterion        = aCriterion;
 
   return NS_OK;
 }
@@ -173,6 +264,57 @@ sbSQLBuilder::CreateMatchCriterionNull(const nsAString& aTableName,
 }
 
 NS_IMETHODIMP
+sbSQLBuilder::CreateMatchCriterionParameter(const nsAString& aTableName,
+                                            const nsAString& aSrcColumnName,
+                                            PRUint32 aMatchType,
+                                            sbISQLBuilderCriterion **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion =
+    new sbSQLBuilderCriterionParameter(aTableName, aSrcColumnName, aMatchType);
+  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = criterion);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::CreateMatchCriterionTable(const nsAString& aLeftTableName,
+                                        const nsAString& aLeftColumnName,
+                                        PRUint32 aMatchType,
+                                        const nsAString& aRightTableName,
+                                        const nsAString& aRightColumnName,
+                                        sbISQLBuilderCriterion **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion =
+    new sbSQLBuilderCriterionTable(aLeftTableName, aLeftColumnName, aMatchType,
+                                   aRightTableName, aRightColumnName);
+  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = criterion);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilder::CreateMatchCriterionIn(const nsAString& aTableName,
+                                     const nsAString& aSrcColumnName,
+                                     sbISQLBuilderCriterionIn **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbISQLBuilderCriterionIn> criterion =
+    new sbSQLBuilderCriterionIn(aTableName, aSrcColumnName);
+  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = criterion);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLBuilder::CreateAndCriterion(sbISQLBuilderCriterion *aLeft,
                                  sbISQLBuilderCriterion *aRight,
                                  sbISQLBuilderCriterion **_retval)
@@ -207,6 +349,12 @@ sbSQLBuilder::CreateOrCriterion(sbISQLBuilderCriterion *aLeft,
 }
 
 NS_IMETHODIMP
+sbSQLBuilder::Reset()
+{
+  return ResetInternal();
+}
+
+NS_IMETHODIMP
 sbSQLBuilder::ToString(nsAString& _retval)
 {
   // Foward this method call to the derived class' ToStringInternal() method.
@@ -234,6 +382,24 @@ sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
   oi->tableName  = aTableName;
   oi->columnName = aColumnName;
   oi->ascending  = aAscending;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::ResetInternal()
+{
+  mBaseTableName.Truncate();
+  mBaseTableAlias.Truncate();
+  mLimit = -1;
+  mLimitIsParameter = PR_FALSE;
+  mOffset = -1;
+  mOffsetIsParameter = PR_FALSE;
+  mOutputColumns.Clear();
+  mJoins.Clear();
+  mSubqueries.Clear();
+  mCritera.Clear();
+  mOrders.Clear();
 
   return NS_OK;
 }
@@ -285,6 +451,16 @@ sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
   len = mJoins.Length();
   for (PRUint32 i = 0; i < len; i++) {
     const sbJoinInfo& ji = mJoins[i];
+    switch(ji.type) {
+      case sbISQLBuilder::JOIN_INNER:
+        /* default is inner */
+        break;
+      case sbISQLBuilder::JOIN_LEFT:
+        buff.AppendLiteral(" left");
+        break;
+      default:
+        NS_NOTREACHED("Unknown Join Type");
+    }
     buff.AppendLiteral(" join ");
     buff.Append(ji.joinedTableName);
     if (!ji.joinedTableAlias.IsEmpty()) {
@@ -292,21 +468,28 @@ sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
       buff.Append(ji.joinedTableAlias);
     }
     buff.AppendLiteral(" on ");
-    buff.Append(ji.joinToTableName);
-    buff.AppendLiteral(".");
-    buff.Append(ji.joinToColumnName);
-    buff.AppendLiteral(" = ");
-    if (!ji.joinedTableAlias.IsEmpty()) {
-      buff.Append(ji.joinedTableAlias);
-      buff.AppendLiteral(".");
+    if (ji.criterion) {
+      nsAutoString str;
+      NS_STATIC_CAST(sbSQLBuilderCriterionBase*, ji.criterion.get())->ToString(str);
+      buff.Append(str);
     }
     else {
-      if (!ji.joinedTableName.IsEmpty()) {
-        buff.Append(ji.joinedTableName);
+      buff.Append(ji.joinToTableName);
+      buff.AppendLiteral(".");
+      buff.Append(ji.joinToColumnName);
+      buff.AppendLiteral(" = ");
+      if (!ji.joinedTableAlias.IsEmpty()) {
+        buff.Append(ji.joinedTableAlias);
         buff.AppendLiteral(".");
       }
+      else {
+        if (!ji.joinedTableName.IsEmpty()) {
+          buff.Append(ji.joinedTableName);
+          buff.AppendLiteral(".");
+        }
+      }
+      buff.Append(ji.joinedColumnName);
     }
-    buff.Append(ji.joinedColumnName);
   }
 
   // Append the where clause if there are criterea
@@ -344,6 +527,27 @@ sbSQLSelectBuilder::ToStringInternal(nsAString& _retval)
       if (i + 1 < len) {
         buff.AppendLiteral(", ");
       }
+    }
+  }
+
+  // Add limit and offset
+  if(mLimit >= 0 || mLimitIsParameter) {
+    buff.AppendLiteral(" limit ");
+    if(mLimitIsParameter) {
+      buff.AppendLiteral("?");
+    }
+    else {
+      buff.AppendInt(mLimit);
+    }
+  }
+
+  if(mOffset >= 0 || mOffsetIsParameter) {
+    buff.AppendLiteral(" offset ");
+    if(mOffsetIsParameter) {
+      buff.AppendLiteral("?");
+    }
+    else {
+      buff.AppendInt(mOffset);
     }
   }
 
@@ -398,11 +602,10 @@ sbSQLBuilderCriterionBase::AppendMatchTo(nsAString& aStr)
 }
 
 void
-sbSQLBuilderCriterionBase::AssignTableColumnTo(nsAString& aStr)
+sbSQLBuilderCriterionBase::AppendTableColumnTo(nsAString& aStr)
 {
-  aStr.Truncate();
   if (!mTableName.IsEmpty()) {
-    aStr.Assign(mTableName);
+    aStr.Append(mTableName);
     aStr.AppendLiteral(".");
   }
   aStr.Append(mColumnName);
@@ -410,7 +613,7 @@ sbSQLBuilderCriterionBase::AssignTableColumnTo(nsAString& aStr)
 
 void
 sbSQLBuilderCriterionBase::AppendLogicalTo(const nsAString& aOperator,
-                                       nsAString& aStr)
+                                           nsAString& aStr)
 {
   aStr.AppendLiteral("(");
 
@@ -447,7 +650,7 @@ sbSQLBuilderCriterionString::sbSQLBuilderCriterionString(const nsAString& aTable
 NS_IMETHODIMP
 sbSQLBuilderCriterionString::ToString(nsAString& _retval)
 {
-  AssignTableColumnTo(_retval);
+  AppendTableColumnTo(_retval);
 
   AppendMatchTo(_retval);
 
@@ -476,7 +679,7 @@ sbSQLBuilderCriterionLong::sbSQLBuilderCriterionLong(const nsAString& aTableName
 NS_IMETHODIMP
 sbSQLBuilderCriterionLong::ToString(nsAString& _retval)
 {
-  AssignTableColumnTo(_retval);
+  AppendTableColumnTo(_retval);
 
   AppendMatchTo(_retval);
 
@@ -500,7 +703,7 @@ sbSQLBuilderCriterionNull::sbSQLBuilderCriterionNull(const nsAString& aTableName
 NS_IMETHODIMP
 sbSQLBuilderCriterionNull::ToString(nsAString& _retval)
 {
-  AssignTableColumnTo(_retval);
+  AppendTableColumnTo(_retval);
 
   if (mMatchType == sbISQLBuilder::MATCH_EQUALS) {
     _retval.AppendLiteral(" is null");
@@ -508,6 +711,59 @@ sbSQLBuilderCriterionNull::ToString(nsAString& _retval)
   else {
     _retval.AppendLiteral(" is not null");
   }
+  return NS_OK;
+}
+
+// sbSQLBuilderCriterionParameter
+NS_IMPL_ISUPPORTS_INHERITED0(sbSQLBuilderCriterionParameter,
+                             sbSQLBuilderCriterionBase)
+
+sbSQLBuilderCriterionParameter::sbSQLBuilderCriterionParameter(const nsAString& aTableName,
+                                                               const nsAString& aColumnName,
+                                                               PRUint32 aMatchType) :
+  sbSQLBuilderCriterionBase(aTableName, aColumnName, aMatchType, nsnull, nsnull)
+{
+}
+
+NS_IMETHODIMP
+sbSQLBuilderCriterionParameter::ToString(nsAString& _retval)
+{
+  AppendTableColumnTo(_retval);
+
+  AppendMatchTo(_retval);
+
+  _retval.AppendLiteral("?");
+  return NS_OK;
+}
+
+// sbSQLBuilderCriterionTable
+NS_IMPL_ISUPPORTS_INHERITED0(sbSQLBuilderCriterionTable,
+                             sbSQLBuilderCriterionBase)
+
+sbSQLBuilderCriterionTable::sbSQLBuilderCriterionTable(const nsAString& aLeftTableName,
+                                                       const nsAString& aLeftColumnName,
+                                                       PRUint32 aMatchType,
+                                                       const nsAString& aRightTableName,
+                                                       const nsAString& aRightColumnName) :
+  sbSQLBuilderCriterionBase(aLeftTableName, aLeftColumnName, aMatchType, nsnull, nsnull),
+  mRightTableName(aRightTableName),
+  mRightColumnName(aRightColumnName)
+{
+}
+
+NS_IMETHODIMP
+sbSQLBuilderCriterionTable::ToString(nsAString& _retval)
+{
+  AppendTableColumnTo(_retval);
+
+  AppendMatchTo(_retval);
+
+  if (!mRightTableName.IsEmpty()) {
+    _retval.Append(mRightTableName);
+    _retval.AppendLiteral(".");
+  }
+  _retval.Append(mRightColumnName);
+
   return NS_OK;
 }
 
@@ -544,6 +800,69 @@ NS_IMETHODIMP
 sbSQLBuilderCriterionOr::ToString(nsAString& _retval)
 {
   AppendLogicalTo(NS_LITERAL_STRING("or"), _retval);
+  return NS_OK;
+}
+
+// sbSQLBuilderCriterionIn
+NS_IMPL_ISUPPORTS_INHERITED1(sbSQLBuilderCriterionIn,
+                             sbSQLBuilderCriterionBase,
+                             sbISQLBuilderCriterionIn)
+
+sbSQLBuilderCriterionIn::sbSQLBuilderCriterionIn(const nsAString& aTableName,
+                                                 const nsAString& aColumnName) :
+  sbSQLBuilderCriterionBase(aTableName, aColumnName, 0, nsnull, nsnull)
+{
+}
+
+NS_IMETHODIMP
+sbSQLBuilderCriterionIn::AddString(const nsAString& aValue)
+{
+  sbInItem* ii = mInItems.AppendElement();
+  NS_ENSURE_TRUE(ii, NS_ERROR_OUT_OF_MEMORY);
+
+  ii->type        = eString;
+  ii->stringValue = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilderCriterionIn::ToString(nsAString& _retval)
+{
+  AppendTableColumnTo(_retval);
+
+  _retval.AppendLiteral(" in (");
+
+  PRUint32 len = mInItems.Length();
+  for (PRUint32 i = 0; i < len; i++) {
+    const sbInItem& ii = mInItems[i];
+
+    switch(ii.type) {
+      case eIsNull:
+        /* not implemented */
+        break;
+      case eString:
+      {
+        nsAutoString escapedValue(ii.stringValue);
+        SB_EscapeSQL(escapedValue);
+
+        _retval.AppendLiteral("'");
+        _retval.Append(escapedValue);
+        _retval.AppendLiteral("'");
+        break;
+      }
+      case eInteger32:
+        /* not implemented */
+        break;
+    }
+
+    if (i + 1 < len) {
+      _retval.AppendLiteral(", ");
+    }
+  }
+
+  _retval.AppendLiteral(")");
+
   return NS_OK;
 }
 
