@@ -69,6 +69,11 @@ interface sbIPropertiesManager : nsISupports
 [scriptable, uuid(b01575d3-9c1a-49d0-ba70-61589cb10b65)]
 interface sbIProperty : nsISupports
 {
+  const unsigned long SORT_NULL_SMALL = 0;
+  const unsigned long SORT_NULL_BIG   = 1;
+  const unsigned long SORT_NULL_FIRST = 2;
+  const unsigned long SORT_NULL_LAST  = 3;
+
   /**
    * \brief Unique name for this property
    */
