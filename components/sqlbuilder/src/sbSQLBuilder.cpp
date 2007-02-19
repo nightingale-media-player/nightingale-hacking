@@ -827,6 +827,14 @@ sbSQLBuilderCriterionIn::AddString(const nsAString& aValue)
 }
 
 NS_IMETHODIMP
+sbSQLBuilderCriterionIn::Clear()
+{
+  mInItems.Clear();
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLBuilderCriterionIn::ToString(nsAString& _retval)
 {
   AppendTableColumnTo(_retval);

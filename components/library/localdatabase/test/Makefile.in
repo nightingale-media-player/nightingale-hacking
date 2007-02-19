@@ -34,6 +34,7 @@ SONGBIRD_TEST_COMPONENT = localdatabaselibrary
 SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_guidarray_sort.js \
                  $(srcdir)/test_guidarray_sortmulti.js \
+                 $(srcdir)/test_propertycache.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/schema.sql \
                  $(srcdir)/media_items.txt \

@@ -31,7 +31,7 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-//  createDatabase(databaseGUID);
+  createDatabase(databaseGUID);
   var array;
 
   // Try a variety of fetch sizes to expose edge cases
@@ -63,5 +63,4 @@ function runTest () {
   assertSort(array, "data_sort_artist_asc_album_asc_track_asc.txt");
 
 }
-
 

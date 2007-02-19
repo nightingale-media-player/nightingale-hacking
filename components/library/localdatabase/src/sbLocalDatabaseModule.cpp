@@ -26,9 +26,11 @@
 
 #include "nsIGenericFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
+#include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseCID.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabasePropertyCache)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -37,6 +39,12 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_GUIDARRAY_CID,
     SB_LOCALDATABASE_GUIDARRAY_CONTRACTID,
     sbLocalDatabaseGUIDArrayConstructor
+	},
+	{
+    "Local Database Property Cache",
+    SB_LOCALDATABASE_PROPERTYCACHE_CID,
+    SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID,
+    sbLocalDatabasePropertyCacheConstructor
 	}
 };
 

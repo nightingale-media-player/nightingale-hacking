@@ -24,8 +24,8 @@
 //
 */
 
-#ifndef __SBLOCALDATABASESMARTMEDIALIST_H__
-#define __SBLOCALDATABASESMARTMEDIALIST_H__
+#ifndef __SBLOCALDATABASEGUIDARRAY_H__
+#define __SBLOCALDATABASEGUIDARRAY_H__
 
 #include "sbILocalDatabaseGUIDArray.h"
 
@@ -178,5 +178,5 @@ protected:
   /* additional members */
 };
 
-#endif /* __SBLOCALDATABASESMARTMEDIALIST_H__ */
+#endif /* __SBLOCALDATABASEGUIDARRAY_H__ */
 

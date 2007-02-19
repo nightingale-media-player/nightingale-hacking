@@ -33,6 +33,7 @@ target_name = sbLocalDatabaseLibrary
 
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
+           sbLocalDatabasePropertyCache.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/localdatabase/public \

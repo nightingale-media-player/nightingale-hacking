@@ -1,0 +1,62 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabasePropertyCache.idl
+ * \brief Definition of the sbILocalDatabasePropertyCache interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface sbILocalDatabaseResourcePropertyBag;
+interface nsIStringEnumerator;
+
+/**
+* \interface sbILocalDatabasePropertyCache
+*/
+[scriptable, uuid(8711c7e2-8190-47f9-96d6-f19d2eed7b2b)]
+interface sbILocalDatabasePropertyCache : nsISupports
+{
+  attribute AString databaseGUID;
+
+  void getProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
+                     in unsigned long aGUIDArrayCount,
+                     out unsigned long aPropertyArrayCount,
+                     [retval, array, size_is(aPropertyArrayCount)]
+                       out sbILocalDatabaseResourcePropertyBag aPropertyArray);
+};
+
+/**
+* \interface sbILocalDatabaseResourcePropertyBag
+*/
+[scriptable, uuid(a6721ecf-d0e6-4216-94f6-147b2ee2932f)]
+interface sbILocalDatabaseResourcePropertyBag : nsISupports
+{
+  readonly attribute nsIStringEnumerator names;
+
+  AString getProperty(in AString aName);
+};
+

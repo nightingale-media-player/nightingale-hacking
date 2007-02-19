@@ -31,7 +31,7 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-//  createDatabase(databaseGUID);
+  createDatabase(databaseGUID);
   var a;
 
   var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]

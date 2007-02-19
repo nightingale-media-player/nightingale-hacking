@@ -24,15 +24,24 @@
 //
 */
 
-#define SB_LOCALDATABASE_GUIDARRAY_CID \
-  { 0xc7d2688a, 0xb214, 0x46be, \
-  { 0x90, 0x83, 0xd3, 0x94, 0xea, 0x6a, 0xb0, 0x18 } }
-#define SB_LOCALDATABASE_GUIDARRAY_CONTRACTID \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"
+/**
+ * \brief Test file
+ */
 
-#define SB_LOCALDATABASE_PROPERTYCACHE_CID \
-  { 0x870f0667, 0x029c, 0x4f2b, \
-  { 0xa6, 0xec, 0x36, 0xca, 0xd2, 0xf6, 0x22, 0xf9 } }
-#define SB_LOCALDATABASE_PROPERTYCACHE_CONTRACTID \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"
+function runTest () {
+
+  var databaseGUID = "test_localdatabaselibrary";
+  createDatabase(databaseGUID);
+
+  var cache = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/PropertyCache;1"]
+                .createInstance(Ci.sbILocalDatabasePropertyCache);
+  cache.databaseGUID = databaseGUID;
+
+  var guids = ['foo'];
+  var bagCount = {};
+
+  var bags = cache.getProperties(guids, guids.length, bagCount);
+  log(bags);
+
+}
 

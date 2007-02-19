@@ -36,6 +36,8 @@
 #include <DatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbIPropertiesManager.h>
+#include <prlog.h>
+#include <prprf.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -46,6 +48,13 @@
 #define PROPERTIES_TABLE NS_LITERAL_STRING("resource_properties")
 #define MEDIAITEMS_TABLE NS_LITERAL_STRING("media_items")
 
+#if defined PR_LOGGING
+static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
+#define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
+#else
+#define LOG(args)
+#endif
+
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
 
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
@@ -55,6 +64,11 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mLength(0),
   mValid(PR_FALSE)
 {
+#ifdef PR_LOGGING
+  if (!gLocalDatabaseGUIDArrayLog) {
+    gLocalDatabaseGUIDArrayLog = PR_NewLogModule("LocalDatabaseGUIDArray");
+  }
+#endif
 }
 
 sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
@@ -62,65 +76,75 @@ sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
   Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetDatabaseGUID(nsAString& aDatabaseGUID)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetDatabaseGUID(nsAString& aDatabaseGUID)
 {
   aDatabaseGUID = mDatabaseGUID;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
 {
   mDatabaseGUID = aDatabaseGUID;
 
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetBaseTable(nsAString& aBaseTable)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetBaseTable(nsAString& aBaseTable)
 {
   aBaseTable = mBaseTable;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetBaseTable(const nsAString& aBaseTable)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetBaseTable(const nsAString& aBaseTable)
 {
   mBaseTable = aBaseTable;
 
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetBaseConstraintColumn(nsAString& aBaseConstraintColumn)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetBaseConstraintColumn(nsAString& aBaseConstraintColumn)
 {
   aBaseConstraintColumn = mBaseConstraintColumn;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseConstraintColumn)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseConstraintColumn)
 {
   mBaseConstraintColumn = aBaseConstraintColumn;
 
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetBaseConstraintValue(PRUint32 *aBaseConstraintValue)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetBaseConstraintValue(PRUint32 *aBaseConstraintValue)
 {
   *aBaseConstraintValue = mBaseConstraintValue;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintValue)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintValue)
 {
   mBaseConstraintValue = aBaseConstraintValue;
 
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetFetchSize(PRUint32 *aFetchSize)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetFetchSize(PRUint32 *aFetchSize)
 {
   *aFetchSize = mFetchSize;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetFetchSize(PRUint32 aFetchSize)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetFetchSize(PRUint32 aFetchSize)
 {
   NS_ENSURE_ARG_MIN(aFetchSize, 1);
   mFetchSize = aFetchSize;
@@ -128,18 +152,19 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetFetchSize(PRUint32 aFetchSize)
   return NS_OK;
 }
 
-/* attribute boolean isAsync; */
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetIsAsync(PRBool *aIsAsync)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetIsAsync(PRBool *aIsAsync)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::SetIsAsync(PRBool aIsAsync)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetIsAsync(PRBool aIsAsync)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* readonly attribute unsigned long length; */
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
 {
   nsresult rv;
 
@@ -152,8 +177,9 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
-                                                PRBool aAscending)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
+                                  PRBool aAscending)
 {
   // TODO: Check for valid properties
   SortSpec* ss = mSorts.AppendElement();
@@ -165,16 +191,18 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::ClearSorts()
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::ClearSorts()
 {
   mSorts.Clear();
 
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
-                                                  nsIStringEnumerator *aValues,
-                                                  PRBool aIsSearch)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
+                                    nsIStringEnumerator *aValues,
+                                    PRBool aIsSearch)
 {
   // TODO: Check for valid properties
   NS_ENSURE_ARG_POINTER(aValues);
@@ -203,15 +231,17 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::ClearFilters()
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::ClearFilters()
 {
   mFilters.Clear();
 
   return Invalidate();
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
-                                                   nsAString& _retval)
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
+                                     nsAString& _retval)
 {
   nsresult rv;
 
@@ -219,8 +249,6 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
     rv = Initalize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  //printf("Get index %d, array length %d, cache length %d\n", aIndex, mLength, mCache.Length());
 
   if (aIndex >= mLength) {
     return NS_ERROR_ILLEGAL_VALUE;
@@ -245,7 +273,8 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::GetByIndex(PRUint32 aIndex,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::Invalidate()
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::Invalidate()
 {
   if (mValid == PR_FALSE) {
     return NS_OK;
@@ -269,7 +298,8 @@ NS_IMETHODIMP sbLocalDatabaseGUIDArray::Invalidate()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbLocalDatabaseGUIDArray::Initalize()
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::Initalize()
 {
   nsresult rv;
 
@@ -964,7 +994,7 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  printf("**************** make query: %s **************\n", NS_ConvertUTF16toUTF8(aSql).get());
+  LOG(("MakeQuery: %s", NS_ConvertUTF16toUTF8(aSql).get()));
 
   nsresult rv;
 
@@ -1287,7 +1317,7 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex)
        */
       rv = ReadRowRange(mQueryX,
                         indexD,
-                        indexB - indexD + 1,
+                        indexB - indexD,
                         indexD,
                         mNullsFirst);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1308,7 +1338,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
                                        PRUint32 aStartIndex,
                                        PRUint32 aCount,
                                        PRUint32 aDestIndexOffset,
-                                       PRBool isNull)
+                                       PRBool aIsNull)
 {
   nsresult rv;
   PRInt32 dbOk;
@@ -1317,7 +1347,11 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   NS_ENSURE_ARG_MIN(aCount, 1);
   NS_ENSURE_ARG_MIN(aDestIndexOffset, 0);
 
-  printf("ReadRowRange start %d count %d dest offset %d\n", aStartIndex, aCount, aDestIndexOffset);
+  LOG(("ReadRowRange start %d count %d dest offset %d isnull %d\n",
+       aStartIndex,
+       aCount,
+       aDestIndexOffset,
+       aIsNull));
 
   /*
    * Set up the query with limit and offset parameters and run it
@@ -1387,7 +1421,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
                         isFirstSort,
                         PR_FALSE,
                         PR_FALSE,
-                        isNull);
+                        aIsNull);
           NS_ENSURE_SUCCESS(rv, rv);
           isFirstSort = PR_FALSE;
         }
@@ -1405,7 +1439,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
                   isFirstSort,
                   PR_TRUE,
                   isFirstSort == PR_TRUE,
-                  isNull);
+                  aIsNull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1414,7 +1448,9 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
    * really bad.  Fill the rest in so we don't crash
    */
   if (rowCount < aCount) {
-    NS_WARNING("Did not get the requested number of rows");
+    char* message = PR_smprintf("Did not get the requested number of rows, requested %d got %d", aCount, rowCount);
+    NS_WARNING(message);
+    PR_smprintf_free(message);
     for (PRInt32 i = 0; i < aCount - rowCount; i++) {
       nsString* str = new nsString(NS_LITERAL_STRING("error"));
       NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
@@ -1438,7 +1474,14 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   nsresult rv;
   PRInt32 dbOk;
 
-  printf("Sorting rows %d to %d on %s, isfirst %d isonly %d isnull %d\n", aStartIndex, aEndIndex, NS_ConvertUTF16toUTF8(aKey).get(), aIsFirst, aIsOnly, aIsNull);
+  LOG(("Sorting rows %d to %d on %s, isfirst %d islast %d isonly %d isnull %d\n",
+       aStartIndex,
+       aEndIndex,
+       NS_ConvertUTF16toUTF8(aKey).get(),
+       aIsFirst,
+       aIsLast,
+       aIsOnly,
+       aIsNull));
 
   /*
    * If this is only one row and it is not the first, last, and only row in the

@@ -31,7 +31,7 @@
 function runTest () {
 
   var databaseGUID = "test_localdatabaselibrary";
-//  createDatabase(databaseGUID);
+  createDatabase(databaseGUID);
   var array;
 
   // One level sort, small fetch size, ascending

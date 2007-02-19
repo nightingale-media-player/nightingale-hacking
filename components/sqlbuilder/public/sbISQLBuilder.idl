@@ -272,5 +272,10 @@ interface sbISQLBuilderCriterionIn : sbISQLBuilderCriterion
    * \param aValue String to add to the list
    */
   void addString(in AString aValue);
+
+  /**
+   * \brief Clear In critera list
+   */
+  void clear();
 };
 
