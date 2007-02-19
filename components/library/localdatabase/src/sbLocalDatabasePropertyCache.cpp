@@ -382,6 +382,11 @@ sbLocalDatabasePropertyCache::GetPropertyID(const nsAString& aPropertyName)
 }
 
 // sbILocalDatabaseResourcePropertyBag
+sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache) :
+  mCache(aCache)
+{
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::Init()
 {
