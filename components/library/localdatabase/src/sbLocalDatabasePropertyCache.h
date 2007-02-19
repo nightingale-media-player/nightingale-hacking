@@ -62,7 +62,7 @@ public:
 private:
   ~sbLocalDatabasePropertyCache();
 
-  PRBool mInitalized;
+  PRBool mInitialized;
 
   // Database GUID
   // XXX: This will probably change to a path?

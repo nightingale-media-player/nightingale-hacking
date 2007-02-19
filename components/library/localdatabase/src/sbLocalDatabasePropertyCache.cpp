@@ -31,7 +31,7 @@
 #include <nsMemory.h>
 #include <nsCOMArray.h>
 
-#define INIT if (!mInitalized) { rv = Init(); NS_ENSURE_SUCCESS(rv, rv); }
+#define INIT if (!mInitialized) { rv = Init(); NS_ENSURE_SUCCESS(rv, rv); }
 
 #define MAX_IN_LENGTH 10
 
@@ -45,7 +45,7 @@ static const PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 NS_IMPL_ISUPPORTS1(sbLocalDatabasePropertyCache, sbILocalDatabasePropertyCache)
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache() :
-  mInitalized(PR_FALSE)
+  mInitialized(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabasePropertyCacheLog) {
