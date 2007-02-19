@@ -390,6 +390,10 @@ sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDa
 {
 }
 
+sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
+{
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::Init()
 {
