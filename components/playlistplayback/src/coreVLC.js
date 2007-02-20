@@ -130,8 +130,9 @@ CoreVLC.prototype.playURL = function (aURL)
     }
   }
 
-  //VLC handles it's own encoding.
-  this._url = unescape(this._url);
+  //Encode + signs since VLC will try and decode those as spaces. 
+  //Even though they are *VALID* characters for a filename as per URI specifications. :(
+  this._url = this._url.replace(/\+/g, '%2b');
 
   this._object.playlist.clear();
   var item = this._object.playlist.add(this._url);
