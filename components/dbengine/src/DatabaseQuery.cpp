@@ -156,7 +156,19 @@ NS_IMETHODIMP CDatabaseQuery::IsAyncQuery(PRBool *_retval)
 /* void SetPersistentQuery (in PRBool bPersistentQuery); */
 NS_IMETHODIMP CDatabaseQuery::SetPersistentQuery(PRBool bPersistentQuery)
 {
+  nsresult rv;
+
+  nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID, &rv);
+  if(NS_FAILED(rv)) return rv;
+
+  if(m_PersistentQuery == PR_TRUE &&
+    bPersistentQuery == PR_FALSE)
+  {
+    p->RemovePersistentQuery(this);    
+  }
+
   m_PersistentQuery = bPersistentQuery;
+
   return NS_OK;
 } //SetPersistentQuery
 
@@ -205,6 +217,7 @@ NS_IMETHODIMP CDatabaseQuery::RemoveSimpleQueryCallback(sbIDatabaseSimpleQueryCa
     {
       (*itCallback)->Release();
       m_PersistentCallbackList.erase(itCallback);
+      break;
     }
   }
 
@@ -435,6 +448,7 @@ NS_IMETHODIMP CDatabaseQuery::RemoveCallback(sbIDatabaseQueryCallback *dbCallbac
     {
       (*itCallback)->Release();
       m_CallbackList.erase(itCallback);
+      break;
     }
   }
 
