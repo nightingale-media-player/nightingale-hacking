@@ -527,7 +527,9 @@ NS_IMETHODIMP CMediaScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
   }
   else
   {
-    if(pCallback)
+    if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && 
+      bFlag && 
+      pCallback)
     {
       *_retval = 1;
       pCallback->OnMediaScanFile(strDirectory, *_retval);
@@ -713,7 +715,7 @@ PRInt32 CMediaScan::ScanDirectory(sbIMediaScanQuery *pQuery)
       }
     }
   }
-  else
+  else if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && bFlag)
   {
     pQuery->AddFilePath(strTheDirectory);
   }
